@@ -377,6 +377,9 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
 
     @gen.coroutine
     def post(self):
+        size = 1024*1024*1024
+        self.request.connection.set_max_body_size(size) 
+
         # Extract video file from the request
         video_file = self.request.files['video'][0]
         original_fname = video_file['filename']
