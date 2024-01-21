@@ -129,13 +129,16 @@ class SocialMediaVideoPublisher:
                 prompt = (
                     "Based on the provided English subtitles from a video, please generate a suitable title, "
                     "a brief introduction, tags, and some English words that viewers can learn. "
+                    "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
                     "The title should be in Chinese and up to 20 characters, the introduction should be in Chinese "
                     "and up to 80 characters, there should be 10 tags related to the content of the video, "
-                    "and 5 English words or phrases that are important for viewers to learn from the video. "
+                    "5 English words or phrases that are important for viewers to learn from the video, "
+                    "and a cover timestamp indicating the best scene to use as the cover image. "
                     "Each word should be accompanied by timestamps indicating when it appears in the video.\n\n"
                     "English subtitles:\n" + english_subtitles + "\n\n"
                     "Please write the output in the following format:\n"
-                    "{\"title\": \"\", \"description\": \"\", \"tags\": [], \"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"\"}]}"
+                    "{\"title\": \"\", \"description\": \"\", \"tags\": [], "
+                    "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"\"}], \"cover\": \"00:00:00,000 --> 00:00:03,500\"}"
                 )
 
                 messages[-1]["content"] = prompt  # Update the actual prompt content
