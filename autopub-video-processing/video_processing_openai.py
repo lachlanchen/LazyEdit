@@ -20,6 +20,8 @@ client = OpenAI()  # should use env variable OPENAI_API_KEY
 
 
 import json
+import json5
+import traceback
 
 
 
@@ -67,6 +69,11 @@ import json
 class JSONParsingError(Exception):
     def __init__(self, message, json_string, user_message):
         super().__init__(message)
+
+        print("JSON String: ")
+        print(json_string)
+
+
         self.json_string = json_string
         self.user_message = user_message
 
@@ -82,14 +89,15 @@ class SocialMediaVideoPublisher:
             with open(self.subtitles2metadata_file, 'r', encoding='utf-8') as file:
                 return json.load(file)
         else:
-            return {}
+            return []
 
     def save_subtitles2metadata(self):
         with open(self.subtitles2metadata_file, 'w', encoding='utf-8') as file:
             json.dump(self.subtitles2metadata, file, indent=4, ensure_ascii=False)
 
     def extract_and_parse_json(self, text):
-        bracket_pattern = r'\{.*?\}'
+
+        bracket_pattern = r'\{.*\}'
         matches = re.findall(bracket_pattern, text, re.DOTALL)
 
         if not matches:
@@ -131,6 +139,9 @@ class SocialMediaVideoPublisher:
                 )
 
                 messages[-1]["content"] = prompt  # Update the actual prompt content
+
+
+                print("Querying OpenAI...")
 
                 # Define the request to OpenAI API
                 response = self.client.chat.completions.create(
