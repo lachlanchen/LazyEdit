@@ -129,20 +129,37 @@ class SocialMediaVideoPublisher:
 
         while retries < self.max_retries:
             try:
+                # # Construct the prompt for the AI
+                # prompt = (
+                #     "Based on the provided English subtitles from a video, please generate a suitable title, "
+                #     "a brief introduction, tags, and some English words that viewers can learn. "
+                #     "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
+                #     "The title should be in Chinese and up to 20 characters, the introduction should be in Chinese "
+                #     "and up to 80 characters, there should be 10 tags related to the content of the video, "
+                #     "5 English words or phrases that are important for viewers to learn from the video sorted by interestingness, "
+                #     "and a cover timestamp indicating the best scene to use as the cover image. "
+                #     "Each word should be accompanied by a single timestamp indicating when it appears in the video.\n\n"
+                #     "English subtitles:\n" + english_subtitles + "\n\n"
+                #     "Please write the output in the following format:\n"
+                #     "{\"title\": \"\", \"description\": \"\", \"tags\": [], "
+                #     "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
+                # )
+
                 # Construct the prompt for the AI
                 prompt = (
                     "Based on the provided English subtitles from a video, please generate a suitable title, "
-                    "a brief introduction, tags, and some English words that viewers can learn. "
+                    "a brief introduction, a middle description, a long description, tags, and some English words that viewers can learn. "
                     "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
-                    "The title should be in Chinese and up to 20 characters, the introduction should be in Chinese "
-                    "and up to 80 characters, there should be 10 tags related to the content of the video, "
+                    "The title should be in Chinese and up to 20 characters, the brief introduction should be in Chinese "
+                    "and up to 80 characters, the middle description should be in Chinese and up to 250 characters, "
+                    "the long description should be in Chinese and up to 1000 characters, there should be 10 tags related to the content of the video, "
                     "5 English words or phrases that are important for viewers to learn from the video sorted by interestingness, "
                     "and a cover timestamp indicating the best scene to use as the cover image. "
-                    "Each word should be accompanied by a single timestamp indicating when it appears in the video.\n\n"
+                    "Each word should be accompanied by a time stamps range indicating when it appears in the video.\n\n"
                     "English subtitles:\n" + english_subtitles + "\n\n"
                     "Please write the output in the following format:\n"
-                    "{\"title\": \"\", \"description\": \"\", \"tags\": [], "
-                    "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"\"}], \"cover\": \"\"}"
+                    "{\"title\": \"\", \"brief_description\": \"\", \"middle_description\": \"\", \"long_description\": \"\", \"tags\": [], "
+                    "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
                 )
 
                 messages[-1]["content"] = prompt  # Update the actual prompt content
@@ -164,6 +181,7 @@ class SocialMediaVideoPublisher:
                 
                 # Save the prompt and response pair
                 self.subtitles2metadata.append({
+                    "subtitle_path": file_path,
                     "prompt": prompt,
                     "answer": ai_response
                 })
