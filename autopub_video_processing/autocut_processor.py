@@ -29,7 +29,7 @@ class AutocutProcessor:
         create_or_replace_hard_link(self.input_file, input_file_lang)
 
         # Define the command to process the video for the specified language
-        autocut_command = f"/home/lachlan/miniconda3/bin/python -m autocut -t {input_file_lang} --whisper-model large --lang={lang} --force"
+        autocut_command = f"/home/lachlan/miniconda3/bin/python -m autocut -t \"{input_file_lang}\" --whisper-model large --lang={lang} --force"
 
         # Run the autocut command with the specified environment
         subprocess.run(autocut_command, shell=True, check=True, env=env)

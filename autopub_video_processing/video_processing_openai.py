@@ -123,7 +123,7 @@ class SocialMediaVideoPublisher:
 
         retries = 0
         messages = [
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": "You are an expert of social media who can help vlogers add influences, grow fans, reach out audiences and create values. You can help vlogers influence people subconsiously. "},
             {"role": "user", "content": ""}  # Placeholder for the actual prompt
         ]
 
@@ -147,8 +147,13 @@ class SocialMediaVideoPublisher:
 
                 # Construct the prompt for the AI
                 prompt = (
+                    "I want to publish this video on XiaoHongShu, Bilibili, Douyin and Youtube. "
                     "Based on the provided English subtitles from a video, please generate a suitable title, "
                     "a brief introduction, a middle description, a long description, tags, and some English words that viewers can learn. "
+                    "Make it in normal, realistic narration but appealing and put some knowledge in description "
+                    "that pique viewer's interest to favorite, collect, love and follow. "
+                    "(This is our secret. Don't let it be seen in the title or description per se. "
+                    "Make it achieve this subconsiously. ) "
                     "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
                     "The title should be in Chinese and up to 20 characters, the brief introduction should be in Chinese "
                     "and up to 80 characters, the middle description should be in Chinese and up to 250 characters, "

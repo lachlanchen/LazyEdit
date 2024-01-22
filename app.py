@@ -53,7 +53,7 @@ def get_seconds(timestamp):
 def extract_cover(video_path, image_path, time):
     # Replace comma with dot for milliseconds
     time = time.replace(',', '.')
-    ffmpeg_command = f"ffmpeg -y -ss {time} -i {video_path} -frames:v 1 {image_path}"
+    ffmpeg_command = f"ffmpeg -y -ss {time} -i \"{video_path}\" -frames:v 1 \"{image_path}\""
     subprocess.run(ffmpeg_command, shell=True, check=True)
 
 
@@ -99,16 +99,56 @@ def escape_ffmpeg_text(text):
 
 import subprocess
 
+# def get_seconds_from_timestamp(timestamp):
+#     h, m, s = timestamp.split(':')
+#     s, ms = s.split(',')
+#     return int(h) * 3600 + int(m) * 60 + int(s) + int(ms) / 1000
+
+# def get_time_range(time_range):
+#     start_timestamp, end_timestamp = time_range.split(' --> ')
+#     start_seconds = get_seconds_from_timestamp(start_timestamp)
+#     end_seconds = get_seconds_from_timestamp(end_timestamp)
+#     return start_seconds, end_seconds
+
 def get_seconds_from_timestamp(timestamp):
-    h, m, s = timestamp.split(':')
-    s, ms = s.split(',')
-    return int(h) * 3600 + int(m) * 60 + int(s) + int(ms) / 1000
+    try:
+        h, m, s = timestamp.split(':')
+        s, ms = s.split(',')
+        return int(h) * 3600 + int(m) * 60 + int(s) + int(ms) / 1000
+    except ValueError:
+        # Return 0 if the timestamp is not parseable
+        return 0
+
+def format_timestamp(seconds):
+    # Helper function to format seconds back to a timestamp string
+    h = int(seconds // 3600)
+    m = int((seconds % 3600) // 60)
+    s = int(seconds % 60)
+    ms = int((seconds - int(seconds)) * 1000)
+    return f'{h:02}:{m:02}:{s:02},{ms:03}'
 
 def get_time_range(time_range):
-    start_timestamp, end_timestamp = time_range.split(' --> ')
+    timestamps = time_range.split(' --> ')
+    if len(timestamps) == 2:
+        start_timestamp, end_timestamp = timestamps
+    elif len(timestamps) == 1:
+        # If there's only one timestamp, use it as the start and add 1 second for the end
+        start_timestamp = timestamps[0]
+        end_timestamp = format_timestamp(get_seconds_from_timestamp(start_timestamp) + 1)
+    else:
+        # Handle unexpected format by setting both start and end to 0
+        start_timestamp, end_timestamp = '00:00:00,000', '00:00:00,000'
+
     start_seconds = get_seconds_from_timestamp(start_timestamp)
     end_seconds = get_seconds_from_timestamp(end_timestamp)
+    
+    # Add 1 second to end_timestamp if there's an error in parsing either timestamp
+    if start_seconds == 0 or end_seconds == 0:
+        end_seconds = start_seconds + 1
+        end_timestamp = format_timestamp(end_seconds)
+
     return start_seconds, end_seconds
+
 
 # def highlight_words(video_path, words_to_learn, output_path):
 #     # Initialize the filter_complex string
@@ -177,61 +217,117 @@ def get_time_range(time_range):
 #     command = f"ffmpeg -y -i {video_path} -filter_complex \"{filter_complex}\" -map \"[{input_label}]\" -map 0:a -c:a copy {output_path}"
 #     subprocess.run(command, shell=True, check=True)
 
-def highlight_words(video_path, words_to_learn, output_path):
-    # Initialize the filter_complex string
-    filter_complex = ''
-    # Initialize the input label for the first drawtext filter
-    input_label = '0:v'
-    # Initialize a list to store the time ranges for comparison
-    time_ranges = []
+# def highlight_words(video_path, words_to_learn, output_path):
+#     # Initialize the filter_complex string
+#     filter_complex = ''
+#     # Initialize the input label for the first drawtext filter
+#     input_label = '0:v'
+#     # Initialize a list to store the time ranges for comparison
+#     time_ranges = []
 
+#     # Sort words_to_learn by start time
+#     words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
+
+#     # Iterate over the words to learn and create drawtext filters
+#     for i, word_info in enumerate(words_to_learn[:5]):
+#         start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
+
+#         # Check if the current time range overlaps with previous ones
+#         overlap = False
+#         for existing_start, existing_end in time_ranges:
+#             if start_seconds < existing_end:  # Overlap condition
+#                 overlap = True
+#                 if end_seconds < existing_end:  # Current word ends before the existing word, skip it
+#                     break
+#                 else:  # Adjust the start time of the current word to not overlap
+#                     start_seconds = existing_end
+
+#         if overlap:
+#             continue  # Skip the current word if it overlaps and ends before the existing word
+
+#         # Store the current start and end times
+#         time_ranges.append((start_seconds, end_seconds))
+
+#         # Define the drawtext filter
+#         drawtext_filter = f"""
+#         drawtext=text='{word_info['word']}':
+#         x=(w-text_w)/2: 
+#         y=(h-text_h)/2:
+#         fontsize=128: 
+#         fontcolor=white@1.0: 
+#         box=1: 
+#         boxcolor=black@0.5: 
+#         boxborderw=5: 
+#         enable='between(t,{start_seconds},{end_seconds})'
+#         """
+#         # Add the drawtext filter to the filter_complex string
+#         filter_complex += f"[{input_label}]{drawtext_filter}[v{i}];"
+#         # Update the input label for the next filter
+#         input_label = f"v{i}"
+
+#     # Remove the last semicolon from the filter_complex string
+#     filter_complex = filter_complex.rstrip(';')
+
+#     # Construct the final ffmpeg command
+#     command = f"ffmpeg -y -i {video_path} -filter_complex \"{filter_complex}\" -map \"[{input_label}]\" -map 0:a -c:a copy {output_path}"
+#     subprocess.run(command, shell=True, check=True)
+
+
+def highlight_words(video_path, words_to_learn, output_path):
     # Sort words_to_learn by start time
     words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
 
-    # Iterate over the words to learn and create drawtext filters
-    for i, word_info in enumerate(words_to_learn[:5]):
-        start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
+    # Initialize variables
+    temp_output_path = output_path + ".temp.mp4"
+    final_output_path = output_path
+    current_input_path = video_path
+    successful = False
 
-        # Check if the current time range overlaps with previous ones
-        overlap = False
-        for existing_start, existing_end in time_ranges:
-            if start_seconds < existing_end:  # Overlap condition
-                overlap = True
-                if end_seconds < existing_end:  # Current word ends before the existing word, skip it
-                    break
-                else:  # Adjust the start time of the current word to not overlap
-                    start_seconds = existing_end
+    # Process each word
+    for i, word_info in enumerate(words_to_learn):
+        try:
+            # Get time range
+            start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
 
-        if overlap:
-            continue  # Skip the current word if it overlaps and ends before the existing word
+            # Construct drawtext filter
+            drawtext_filter = (
+                f"drawtext=text='{word_info['word']}':"
+                f"x=(w-text_w)/2: "
+                f"y=(h-text_h)/2: "
+                f"fontsize=128: "
+                f"fontcolor=white@1.0: "
+                f"box=1: "
+                f"boxcolor=black@0.5: "
+                f"boxborderw=5: "
+                f"enable='between(t,{start_seconds},{end_seconds})'"
+            )
 
-        # Store the current start and end times
-        time_ranges.append((start_seconds, end_seconds))
+            # Construct ffmpeg command
+            command = (
+                f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
+                f"-c:a copy \"{temp_output_path}\""
+            )
 
-        # Define the drawtext filter
-        drawtext_filter = f"""
-        drawtext=text='{word_info['word']}':
-        x=(w-text_w)/2: 
-        y=(h-text_h)/2:
-        fontsize=128: 
-        fontcolor=white@1.0: 
-        box=1: 
-        boxcolor=black@0.5: 
-        boxborderw=5: 
-        enable='between(t,{start_seconds},{end_seconds})'
-        """
-        # Add the drawtext filter to the filter_complex string
-        filter_complex += f"[{input_label}]{drawtext_filter}[v{i}];"
-        # Update the input label for the next filter
-        input_label = f"v{i}"
+            # Execute ffmpeg command
+            subprocess.run(command, shell=True, check=True)
 
-    # Remove the last semicolon from the filter_complex string
-    filter_complex = filter_complex.rstrip(';')
+            # If successful, prepare for next iteration
+            if i < len(words_to_learn) - 1:
+                os.rename(temp_output_path, final_output_path)
+                current_input_path = final_output_path
+            successful = True
+        except subprocess.CalledProcessError as e:
+            # Log error and skip to the next word
+            print(f"Error processing word '{word_info['word']}': {e}")
+            continue
 
-    # Construct the final ffmpeg command
-    command = f"ffmpeg -y -i {video_path} -filter_complex \"{filter_complex}\" -map \"[{input_label}]\" -map 0:a -c:a copy {output_path}"
-    subprocess.run(command, shell=True, check=True)
-
+    # Finalize output
+    if not successful:
+        # If no text was successfully drawn, copy the original video to the output
+        os.link(video_path, final_output_path)
+    else:
+        if current_input_path != final_output_path:
+            os.rename(current_input_path, final_output_path)
 
 
 
@@ -311,7 +407,7 @@ def merge_subtitles(subtitles_en, subtitles_zh, output_path):
 
 
 def burn_subtitles(video_path, srt_path, output_path):
-        command = f"ffmpeg -y -i {video_path} -vf subtitles={srt_path} {output_path}"
+        command = f"ffmpeg -y -i \"{video_path}\" -vf subtitles=\"{srt_path}\" \"{output_path}\""
         subprocess.run(command, shell=True, check=True)
 
 # fonts = [
@@ -486,10 +582,27 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
         burn_subtitles(input_file, combined_srt_path, final_video_path)
 
 
+        def validate_timestamp(timestamp):
+            try:
+                # Split the timestamp and check if it has the correct format
+                h, m, s = timestamp.split(':')
+                s, ms = s.split('.')
+                # Convert to integers to check if they are within the correct range
+                h, m, s, ms = int(h), int(m), int(s), int(ms)
+                # Check if hours, minutes, seconds, and milliseconds are in the correct range
+                if h >= 0 and m >= 0 and m < 60 and s >= 0 and s < 60 and ms >= 0 and ms < 1000:
+                    return timestamp  # The timestamp is valid
+            except ValueError:
+                # Catch ValueError if the timestamp is not in the correct format
+                print("Format unrecognized for timestamp of cover: ", timestamp)
+                pass
+            # Return the default value if the timestamp is not valid
+            return '00:00:00,000'
+
         # Extract the cover image
         print("Extracting cover...")
         cover_image_path = os.path.join(output_folder, f"{base_name}_cover.jpg")
-        cover_timestamp = metadata['cover'].replace(',', '.')  # Correct the timestamp format
+        cover_timestamp = validate_timestamp(metadata['cover'].replace(',', '.'))  # Correct the timestamp format
         extract_cover(input_file, cover_image_path, cover_timestamp)
 
         # Highlight words to learn on the video
