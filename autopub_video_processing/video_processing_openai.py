@@ -116,14 +116,21 @@ class SocialMediaVideoPublisher:
             raise JSONParsingError(f"JSON Decode Error: {e}", json_string, text)
 
 
-    def generate_video_metadata(self, file_path):
+    def generate_video_metadata(self, file_path_en, file_path_zh):
 
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(file_path_en, 'r', encoding='utf-8') as file:
             english_subtitles = file.read()
+
+        with open(file_path_zh, 'r', encoding='utf-8') as file:
+            chinese_subtitles = file.read()
 
         retries = 0
         messages = [
-            {"role": "system", "content": "You are an expert of social media who can help vlogers add influences, grow fans, reach out audiences and create values. You can help vlogers influence people subconsiously. "},
+            {"role": "system", "content": (
+                "My name is OpenAI. I am an expert of social media who can help vlogers add influences, grow fans, "
+                "reach out audiences and create values. "
+                "I can help vlogers influence people subconsiously. "
+            )},
             {"role": "user", "content": ""}  # Placeholder for the actual prompt
         ]
 
@@ -148,12 +155,13 @@ class SocialMediaVideoPublisher:
                 # Construct the prompt for the AI
                 prompt = (
                     "I want to publish this video on XiaoHongShu, Bilibili, Douyin and Youtube. "
-                    "Based on the provided English subtitles from a video, please generate a suitable title, "
+                    "Based on the provided subtitles from a video, please generate a suitable title, "
                     "a brief introduction, a middle description, a long description, tags, and some English words that viewers can learn. "
                     "Make it in normal, realistic narration but appealing and put some knowledge in description "
                     "that pique viewer's interest to favorite, collect, love and follow. "
                     "(This is our secret. Don't let it be seen in the title or description per se. "
                     "Make it achieve this subconsiously. ) "
+                    "Try to find instructions also in subtitles if exist. "
                     "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
                     "The title should be in Chinese and up to 20 characters, the brief introduction should be in Chinese "
                     "and up to 80 characters, the middle description should be in Chinese and up to 250 characters, "
@@ -162,6 +170,7 @@ class SocialMediaVideoPublisher:
                     "and a cover timestamp indicating the best scene to use as the cover image. "
                     "Each word should be accompanied by a time stamps range indicating when it appears in the video.\n\n"
                     "English subtitles:\n" + english_subtitles + "\n\n"
+                    "Chinese subtitles:\n" + chinese_subtitles + "\n\n"
                     "Please write the output in the following format:\n"
                     "{\"title\": \"\", \"brief_description\": \"\", \"middle_description\": \"\", \"long_description\": \"\", \"tags\": [], "
                     "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
@@ -186,7 +195,8 @@ class SocialMediaVideoPublisher:
                 
                 # Save the prompt and response pair
                 self.subtitles2metadata.append({
-                    "subtitle_path": file_path,
+                    "english_subtitle_path": file_path_en,
+                    "chinese_subtitle_path": file_path_zh,
                     "prompt": prompt,
                     "answer": ai_response
                 })
@@ -212,6 +222,8 @@ class SocialMediaVideoPublisher:
 
 if __name__ == "__main__":
 
+    from io import StringIO
+
     # Usage example
     openai_client = OpenAI()  # Make sure to authenticate your OpenAI client
     video_publisher = SocialMediaVideoPublisher(openai_client)
@@ -228,6 +240,30 @@ Very tender.
 00:00:05,500 --> 00:00:06,500
 Really good.
 
-    """  # Replace with actual subtitles
-    result = video_publisher.generate_video_metadata(english_subtitles)
+"""  # Replace with actual subtitles
+
+    chinese_subtitles = """
+1
+00:00:00,000 --> 00:00:02,880
+这个唯一好吃的是这个鸡肉挺好吃的
+
+2
+00:00:02,880 --> 00:00:03,400
+特别好吃
+
+3
+00:00:03,400 --> 00:00:04,180
+很嫩
+
+4
+00:00:04,180 --> 00:00:05,980
+太好吃了
+
+"""
+    # Creating file-like objects from strings.
+    english_subtitles_file = StringIO(english_subtitles)
+    chinese_subtitles_file = StringIO(chinese_subtitles)
+
+
+    result = video_publisher.generate_video_metadata(english_subtitles_file, chinese_subtitles_file)
     print(result)
