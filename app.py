@@ -42,6 +42,9 @@ import json
 import subprocess
 from urllib.parse import quote
 
+import cjkwrap
+from moviepy.editor import VideoFileClip
+
 
 def get_seconds(timestamp):
     print("timestamp: ", timestamp)
@@ -224,9 +227,53 @@ def merge_subtitles(subtitles_en, subtitles_zh, output_path):
 
 
 
+# def burn_subtitles(video_path, srt_path, output_path):
+#         command = f"ffmpeg -y -i \"{video_path}\" -vf \"subtitles={srt_path}\" \"{output_path}\""
+#         subprocess.run(command, shell=True, check=True)
+
+def wrap_text(text, width, is_cjk):
+    if is_cjk:
+        # Use cjkwrap for CJK text
+        return cjkwrap.wrap(text, width)
+    else:
+        # Use cjkwrap for non-CJK text as well, as it should handle both appropriately
+        return cjkwrap.wrap(text, width)
+
+def get_video_dimensions(video_file):
+    video = VideoFileClip(video_file)
+    return video.size  # (width, height)
+
+def process_subtitles(video_file, input_subtitle_file, output_subtitle_file, max_width):
+    video_width, video_height = get_video_dimensions(video_file)
+    is_landscape = video_width > video_height
+
+    if not is_landscape:
+        max_width = int(max_width * 0.6)
+
+    with open(input_subtitle_file, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    with open(output_subtitle_file, 'w', encoding='utf-8') as f:
+        for line in lines:
+            if '-->' in line:
+                f.write(line)
+            else:
+                is_cjk = any('\u4e00' <= char <= '\u9fff' for char in line)
+                wrapped_lines = wrap_text(line, max_width, is_cjk=is_cjk)
+                for wrapped_line in wrapped_lines:
+                    f.write(wrapped_line + '\n')
+
 def burn_subtitles(video_path, srt_path, output_path):
-        command = f"ffmpeg -y -i \"{video_path}\" -vf subtitles=\"{srt_path}\" \"{output_path}\""
-        subprocess.run(command, shell=True, check=True)
+    # Determine the name for the processed subtitles
+    wrapped_srt_path = srt_path.rsplit('.', 1)[0] + '_wrapped.srt'
+    
+    # Adjust 'max_width' as needed
+    max_width = 25  # You may want to dynamically set this based on the video dimensions
+    process_subtitles(video_path, srt_path, wrapped_srt_path, max_width)
+    
+    # Construct the FFmpeg command to burn the processed subtitles
+    command = f"ffmpeg -y -i \"{video_path}\" -vf \"subtitles={wrapped_srt_path}\" \"{output_path}\""
+    subprocess.run(command, shell=True, check=True)
 
 
 class FileUploaderHandler(tornado.web.RequestHandler):
@@ -258,6 +305,41 @@ class FileUploaderHandler(tornado.web.RequestHandler):
             'message': f'File {original_fname} uploaded successfully.',
             'file_path': input_file
         })
+
+
+@tornado.web.stream_request_body
+class FileUploadHandlerStream(tornado.web.RequestHandler):
+    def initialize(self, upload_folder):
+        self.bytes_received = 0
+        self.file = None
+        self.file_path = None
+        self.upload_folder = upload_folder
+
+    def prepare(self):
+        filename = self.get_argument('filename', default='uploaded_file')
+        base_name, _ = os.path.splitext(filename)
+        output_folder = os.path.join(self.upload_folder, base_name)
+        os.makedirs(output_folder, exist_ok=True)
+        
+        self.file_path = os.path.join(output_folder, filename)
+        self.file = open(self.file_path, 'wb')
+
+    def data_received(self, chunk):
+        if self.file:
+            self.file.write(chunk)
+            self.bytes_received += len(chunk)
+
+    def put(self):
+        if self.file:
+            self.file.close()
+            self.file = None
+            response = {
+                'status': 'success',
+                'message': f"Received {self.bytes_received} bytes.",
+                'file_path': self.file_path
+            }
+            self.write(response)
+
 
 
 class VideoProcessingHandler(tornado.web.RequestHandler):
@@ -436,13 +518,14 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
 def make_app(upload_folder):
     return tornado.web.Application([
         (r"/upload", FileUploaderHandler, dict(upload_folder=upload_folder)),
+        (r"/upload-stream", FileUploadHandlerStream, dict(upload_folder=upload_folder)),
         (r"/video-processing", VideoProcessingHandler),
     ])
 
 if __name__ == "__main__":
     upload_folder = '/home/lachlan/ProjectsLFS/autopub-video-processing/DATA'  # Folder where files will be uploaded
     app = make_app(upload_folder)
-    app.listen(8081, max_body_size=1024 * 1024 * 1024)
+    app.listen(8081, max_body_size=10*1024 * 1024 * 1024)
     tornado.autoreload.start()
     # tornado.autoreload.watch('path/to/config.yaml')
     # tornado.autoreload.watch('path/to/static/file.html')
