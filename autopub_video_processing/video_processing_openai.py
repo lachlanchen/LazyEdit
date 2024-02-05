@@ -77,6 +77,11 @@ class JSONParsingError(Exception):
         self.json_string = json_string
         self.user_message = user_message
 
+class MetadataValidationError(Exception):
+    def __init__(self, message, metadata):
+        super().__init__(message)
+        self.metadata = metadata
+
 class SocialMediaVideoPublisher:
     def __init__(self, openai_client, max_retries=3):
         self.client = openai_client
@@ -114,6 +119,15 @@ class SocialMediaVideoPublisher:
         except ValueError as e:
             traceback.print_exc()
             raise JSONParsingError(f"JSON Decode Error: {e}", json_string, text)
+
+    def validate_metadata(self, metadata):
+        required_fields = [
+            "title", "brief_description", "middle_description", "long_description",
+            "tags", "words_to_learn", "cover"
+        ]
+        missing_fields = [field for field in required_fields if field not in metadata]
+        if missing_fields:
+            raise MetadataValidationError(f"Missing required fields: {', '.join(missing_fields)}", metadata)
 
 
     def generate_video_metadata(self, file_path_en, file_path_zh):
@@ -192,6 +206,9 @@ class SocialMediaVideoPublisher:
 
                 # Extract and parse the JSON part of the AI's response
                 result = self.extract_and_parse_json(ai_response)
+
+                # Validate the parsed JSON data
+                self.validate_metadata(result)
                 
                 # Save the prompt and response pair
                 self.subtitles2metadata.append({
@@ -204,8 +221,20 @@ class SocialMediaVideoPublisher:
 
                 return result  # Successfully parsed JSON, return the result
 
-            except JSONParsingError as e:
-                error_message = f"JSON parsing failed on attempt {retries + 1}: {e}"
+            # except JSONParsingError as e:
+            #     error_message = f"JSON parsing failed on attempt {retries + 1}: {e}"
+            #     print(error_message)
+            #     traceback.print_exc()
+            #     retries += 1  # Increment the retry count
+                
+            #     # Append the response and error message for context
+            #     messages.append({"role": "system", "content": ai_response})
+            #     messages.append({"role": "user", "content": error_message})
+                
+            #     if retries >= self.max_retries:
+            #         raise JSONParsingError("Failed to parse JSON after maximum retries.", ai_response, error_message)
+            except (JSONParsingError, MetadataValidationError) as e:
+                error_message = f"Failed on attempt {retries + 1}: {e}"
                 print(error_message)
                 traceback.print_exc()
                 retries += 1  # Increment the retry count
@@ -215,7 +244,8 @@ class SocialMediaVideoPublisher:
                 messages.append({"role": "user", "content": error_message})
                 
                 if retries >= self.max_retries:
-                    raise JSONParsingError("Failed to parse JSON after maximum retries.", ai_response, error_message)
+                    raise e  # Re-raise the last exception (either JSONParsingError or MetadataValidationError)
+
 
         raise JSONParsingError("Reached maximum retries without success.", ai_response, messages[-1]["content"])
 

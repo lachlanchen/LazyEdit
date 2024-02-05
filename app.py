@@ -34,6 +34,7 @@ import zipfile  # for creating zip files
 from autopub_video_processing.autocut_processor import AutocutProcessor
 
 from autopub_video_processing.video_processing_openai import SocialMediaVideoPublisher
+from autopub_video_processing.words_card import VideoAddWordsCard, overlay_word_card_on_cover
 
 from pprint import pprint
 import json5
@@ -44,6 +45,18 @@ from urllib.parse import quote
 
 import cjkwrap
 from moviepy.editor import VideoFileClip
+
+import requests
+import base64
+import os
+import subprocess
+
+import cv2
+import subprocess
+import os
+from PIL import Image, ImageDraw, ImageFont
+
+
 
 
 def get_seconds(timestamp):
@@ -118,7 +131,102 @@ def get_time_range(time_range):
 
 
 
+# def highlight_words(video_path, words_to_learn, output_path):
+#     # Sort words_to_learn by start time
+#     words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
+
+#     # Initialize variables
+#     temp_output_path = output_path + ".temp.mp4"
+#     final_output_path = output_path
+#     current_input_path = video_path
+#     successful = False
+
+#     # Process each word
+#     for i, word_info in enumerate(words_to_learn):
+#         try:
+#             # Get time range
+#             start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
+
+#             # Construct drawtext filter
+#             drawtext_filter = (
+#                 f"drawtext=text='{word_info['word']}':"
+#                 f"x=(w-text_w)/2: "
+#                 f"y=(h-text_h)/2: "
+#                 f"fontsize=96: "
+#                 f"fontcolor=white@1.0: "
+#                 f"box=1: "
+#                 f"boxcolor=black@0.5: "
+#                 f"boxborderw=5: "
+#                 f"enable='between(t,{start_seconds},{end_seconds})'"
+#             )
+
+#             # Construct ffmpeg command
+#             command = (
+#                 f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
+#                 f"-c:a copy \"{temp_output_path}\""
+#             )
+
+#             # Execute ffmpeg command
+#             subprocess.run(command, shell=True, check=True)
+
+#             # If successful, prepare for next iteration
+#             if i < len(words_to_learn) - 1:
+#                 os.rename(temp_output_path, final_output_path)
+#                 current_input_path = final_output_path
+#             successful = True
+#         except subprocess.CalledProcessError as e:
+#             # Log error and skip to the next word
+#             print(f"Error processing word '{word_info['word']}': {e}")
+#             continue
+
+#     # Finalize output
+#     if not successful:
+#         # If no text was successfully drawn, copy the original video to the output
+#         os.link(video_path, final_output_path)
+#     else:
+#         if current_input_path != final_output_path:
+#             os.rename(current_input_path, final_output_path)
+
+
+
+
+def get_video_length(video_path):
+    # Get the length of the video using ffprobe
+    command = f"ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 \"{video_path}\""
+    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    return float(result.stdout)
+
+def get_video_resolution(video_path):
+    cap = cv2.VideoCapture(video_path)
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    cap.release()
+    return width, height
+
+def find_font_size(text, font_path, max_width, max_height, start_size=120, step=2):
+    font_size = start_size
+    font = ImageFont.truetype(font_path, font_size)
+    while True:
+        text_width, text_height = get_text_size(text, font, max_width, max_height)
+        if text_width <= max_width and text_height <= max_height:
+            break
+        font_size -= step
+        if font_size <= 0:
+            break
+        font = ImageFont.truetype(font_path, font_size)
+    return font_size
+
+def get_text_size(text, font, max_width, max_height):
+    test_canvas_size = (int(max_width), int(max_height))  # Canvas size based on max_width and max_height
+    dummy_image = Image.new('RGB', test_canvas_size)
+    draw = ImageDraw.Draw(dummy_image)
+    return draw.textbbox((0, 0), text, font=font)[2:]
+
 def highlight_words(video_path, words_to_learn, output_path):
+    # Get the length of the video
+    video_length = get_video_length(video_path)
+    video_width, video_height = get_video_resolution(video_path)
+
     # Sort words_to_learn by start time
     words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
 
@@ -127,23 +235,85 @@ def highlight_words(video_path, words_to_learn, output_path):
     final_output_path = output_path
     current_input_path = video_path
     successful = False
+    last_end_time = 3  # Initialize last end time
+
+    word_card_image_path = None
+    # Fetch the image for the first word and add to video
+    if words_to_learn:
+        first_word_info = words_to_learn[0]
+        first_word = first_word_info["word"]  # Get the first word from the first dictionary
+        output_folder = os.path.dirname(video_path)
+        word_card_image_path = get_word_card_image(first_word, output_folder)  # Function to fetch and save the word card image
+        if word_card_image_path:
+            video_add_words_card = VideoAddWordsCard(video_path, word_card_image_path)
+            video_with_first_word_card_path, _ = video_add_words_card.add_image_to_video()
+            current_input_path = video_with_first_word_card_path
+        else:
+            print(f"Failed to obtain word card for '{first_word}'. Proceeding without adding word card.")
+            current_input_path = video_path
+    else:
+        current_input_path = video_path
+
+
+    # font_path = "/System/Library/Fonts/Supplemental/Arial.ttf"  # Update this to the actual path of your font file
+    font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
     # Process each word
-    for i, word_info in enumerate(words_to_learn):
+    for i, word_info in enumerate(words_to_learn[1:]):
         try:
             # Get time range
             start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
 
+            # Ignore words that start beyond the video length
+            if start_seconds >= video_length:
+                break
+
+
+
+            # Update start time if it overlaps with the end time of the previous word
+            start_seconds = max(start_seconds, last_end_time)
+
+            # Ensure end time is at least 1 second after the start time and does not exceed video length
+            end_seconds = min(max(end_seconds, start_seconds + 1), video_length)
+
+
+
+            # Update last end time for the next iteration
+            last_end_time = end_seconds
+
+
+            word_text = word_info['word']
+
+            # Find the optimal font size using the find_font_size method for the video resolution
+            font_size = find_font_size(word_text, font_path, video_width*0.8, video_height*0.8)
+
+            # Set box width dynamically based on the actual video width and the length of the text
+            max_box_width = int(video_width * 0.8)  # The box can occupy up to 80% of the video width
+            box_width = min(max_box_width, font_size * len(word_text) / 2)
+            box_width += font_size / 2
+
             # Construct drawtext filter
+            # drawtext_filter = (
+            #     f"drawtext=text='{word_text}':"
+            #     f"x=(w-text_w)/2: "
+            #     f"y=(h-text_h)/2: "
+            #     f"fontsize=96: "
+            #     f"fontcolor=white@1.0: "
+            #     f"box=1: "
+            #     f"boxcolor=black@0.5: "
+            #     f"boxborderw=5: "
+            #     f"enable='between(t,{start_seconds},{end_seconds})'"
+            # )
             drawtext_filter = (
-                f"drawtext=text='{word_info['word']}':"
+                f"drawtext=text='{word_text}':"
                 f"x=(w-text_w)/2: "
                 f"y=(h-text_h)/2: "
-                f"fontsize=96: "
+                f"fontsize={font_size}: "
                 f"fontcolor=white@1.0: "
                 f"box=1: "
                 f"boxcolor=black@0.5: "
                 f"boxborderw=5: "
+                # f"boxw={box_width}: "
                 f"enable='between(t,{start_seconds},{end_seconds})'"
             )
 
@@ -173,6 +343,29 @@ def highlight_words(video_path, words_to_learn, output_path):
     else:
         if current_input_path != final_output_path:
             os.rename(current_input_path, final_output_path)
+
+    return word_card_image_path
+
+def get_word_card_image(word, output_folder):
+    # URL of the API
+    url = 'http://lazyingart:8082/get_words_card'
+    data = {"word": word}
+
+    response = requests.post(url, json=data)
+
+    if response.status_code == 200:
+        content = response.json()
+        image_data = base64.b64decode(content['image'])
+
+        # Construct file path
+        image_path = os.path.join(output_folder, f"{word}.jpeg")
+        with open(image_path, 'wb') as file:
+            file.write(image_data)
+        print(f'Image for word "{word}" saved as {image_path}')
+        return image_path
+    else:
+        print(f'Error fetching image for word "{word}": {response.status_code}')
+        return None
 
 
 
@@ -475,16 +668,21 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
             # Return the default value if the timestamp is not valid
             return '00:00:00,000'
 
-        # Extract the cover image
-        print("Extracting cover...")
-        cover_image_path = os.path.join(output_folder, f"{base_name}_cover.jpg")
-        cover_timestamp = validate_timestamp(metadata['cover'].replace(',', '.'))  # Correct the timestamp format
-        extract_cover(input_file, cover_image_path, cover_timestamp)
+        
 
         # Highlight words to learn on the video
         highlighted_video_path = os.path.join(output_folder, f"{base_name}_highlighted.mp4")
-        highlight_words(final_video_path, metadata['words_to_learn'], highlighted_video_path)
+        word_card_image_path = highlight_words(final_video_path, metadata['words_to_learn'], highlighted_video_path)
         
+        # Extract the cover image
+        print("Extracting cover...")
+        cover_image_path = os.path.join(output_folder, f"{base_name}_cover.jpg")
+        cover_plain_image_path = os.path.join(output_folder, f"{base_name}_cover_plain.jpg")
+        cover_timestamp = validate_timestamp(metadata['cover'].replace(',', '.'))  # Correct the timestamp format
+        extract_cover(input_file, cover_plain_image_path, cover_timestamp)
+
+        overlay_word_card_on_cover(word_card_image_path, cover_plain_image_path, cover_image_path)
+
         # Prepare the files to return by zipping them
         zip_file_path = os.path.join(output_folder, f"{base_name}.zip")
         with zipfile.ZipFile(zip_file_path, 'w') as zipf:
