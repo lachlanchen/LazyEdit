@@ -3,27 +3,32 @@ import re
 import traceback
 import openai
 
-import openai
 from packaging import version
 import json
 import os
 
-required_version = version.parse("1.1.1")
-current_version = version.parse(openai.__version__)
+# import openai
+# required_version = version.parse("1.1.1")
+# current_version = version.parse(openai.__version__)
 
-if current_version < required_version:
-    raise ValueError(f"Error: OpenAI version {openai.__version__}"
-                     " is less than the required version 1.1.1")
-else:
-    print("OpenAI version is compatible.")
-import os
+# if current_version < required_version:
+#     raise ValueError(f"Error: OpenAI version {openai.__version__}"
+#                      " is less than the required version 1.1.1")
+# else:
+#     print("OpenAI version is compatible.")
+# import os
 
-# -- Now we can get to it
-from openai import OpenAI
-client = OpenAI()  # should use env variable OPENAI_API_KEY
+# # -- Now we can get to it
+# from openai import OpenAI
+# client = OpenAI()  # should use env variable OPENAI_API_KEY
+
+from autopub_video_processing.openai_version_check import OpenAI
 
 
 from autopub_video_processing.utils import JSONParsingError, JSONValidationError
+
+from datetime import datetime
+from pprint import pprint
 
 
 
@@ -34,6 +39,29 @@ class SubtitlesTranslator:
         self.input_srt_path = input_srt_path
         self.output_srt_path = output_srt_path
         self.max_retries = max_retries
+
+        self.translation_log_folder = 'translation_logs'
+        self.ensure_log_folder_exists()
+
+    def ensure_log_folder_exists(self):
+        if not os.path.exists(self.translation_log_folder):
+            os.makedirs(self.translation_log_folder)
+
+    def get_log_filename(self):
+        base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
+        datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        return f"{self.translation_log_folder}/{base_filename}-{datetime_str}.json"
+
+    def save_translation_attempt(self, prompt, response):
+        log_filename = self.get_log_filename()
+        translation_attempt = {
+            "input_json_path": self.input_json_path,
+            "prompt": prompt,
+            "response": response
+        }
+        with open(log_filename, 'w', encoding='utf-8') as file:
+            json.dump(translation_attempt, file, indent=4, ensure_ascii=False)
+
 
     def load_subtitles_from_json(self):
         """Load subtitles from a JSON file."""
@@ -50,7 +78,7 @@ class SubtitlesTranslator:
             raise JSONParsingError("No JSON string found in text", text, text)
         json_string = matches[0].replace('\n', '')
 
-        print(json_string)
+        pprint(json_string)
 
         try:
             return json.loads(json_string)
@@ -87,9 +115,13 @@ class SubtitlesTranslator:
                     "If a subtitle is already in English, provide the corresponding Chinese translation, and vice versa. "
                     "For subtitles in any other language, keep the original text but also provide translations in both "
                     "English and Chinese.\n\n"
-                    
+
+                    "Slightly correct some apparent speech recognition error"
+                    "especially homonym in both origin and its translation based on the context.\n\n"
+            
                     "Process the following subtitles, ensuring translations are accurate and coherent, "
-                    "and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\n"
+                    "and format the output as shown in the example. "
+                    "Note that the original timestamps should be preserved for each entry.\n\n"
                     
                     "Subtitles to process:\n"
                     f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
@@ -101,7 +133,7 @@ class SubtitlesTranslator:
                     "    \"end\": \"timestamp\",\n"
                     "    \"en\": \"English text\",\n"
                     "    \"zh\": \"Chinese text\",\n"
-                    "    \"original lang key if exist\": \"Text in the original language, if not English or Chinese\"\n"
+                    "    \"other lang key if exist\": \"Text in the original language, if not English or Chinese\"\n"
                     "  }\n"
                     "]\n\n"
                     "Please provide a complete and accurate translation and formatting for each subtitle entry."
@@ -131,6 +163,10 @@ class SubtitlesTranslator:
 
                 translated_subtitles = self.extract_and_parse_json(ai_response)
                 self.validate_translated_subtitles(translated_subtitles)
+
+                 # Save the successful attempt with the new method
+                self.save_translation_attempt(prompt_content, ai_response)
+
                 return translated_subtitles
             except (JSONParsingError, JSONValidationError) as e:
                 print(f"Attempt {retries + 1} failed: {e}")

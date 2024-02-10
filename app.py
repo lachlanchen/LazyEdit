@@ -1,21 +1,24 @@
 import os
 
 
-import openai
-from packaging import version
+# import openai
+# from packaging import version
 
-required_version = version.parse("1.1.1")
-current_version = version.parse(openai.__version__)
+# required_version = version.parse("1.1.1")
+# current_version = version.parse(openai.__version__)
 
-if current_version < required_version:
-    raise ValueError(f"Error: OpenAI version {openai.__version__}"
-                     " is less than the required version 1.1.1")
-else:
-    print("OpenAI version is compatible.")
+# if current_version < required_version:
+#     raise ValueError(f"Error: OpenAI version {openai.__version__}"
+#                      " is less than the required version 1.1.1")
+# else:
+#     print("OpenAI version is compatible.")
 
-# -- Now we can get to it
-from openai import OpenAI
-# client = OpenAI()  # should use env variable OPENAI_API_KEY
+# # -- Now we can get to it
+# from openai import OpenAI
+# # client = OpenAI()  # should use env variable OPENAI_API_KEY
+
+from autopub_video_processing.openai_version_check import OpenAI
+
 
 
 import shlex
@@ -33,7 +36,7 @@ import zipfile  # for creating zip files
 
 from autopub_video_processing.autocut_processor import AutocutProcessor
 
-from autopub_video_processing.video_processing_openai import SocialMediaVideoPublisher
+from autopub_video_processing.subtitle_to_metadata import Subtitle2Metadata
 from autopub_video_processing.words_card import VideoAddWordsCard, overlay_word_card_on_cover
 from autopub_video_processing.subtitle_translate import SubtitlesTranslator
 
@@ -552,7 +555,7 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
 
     def initialize(self):
         self.openai_client = OpenAI()  # Make sure to authenticate your OpenAI client
-        self.video_publisher = SocialMediaVideoPublisher(self.openai_client)
+        self.sub2meta = Subtitle2Metadata(self.openai_client)
 
     def run_autocut(self, autocut_command, lang, gpu_id):
         # Set the CUDA_VISIBLE_DEVICES environment variable
@@ -664,8 +667,8 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
 
         # After fetching metadata
         print("Generating metadata with OpenAI...")
-        # metadata = self.video_publisher.generate_video_metadata(output_srt_en, output_srt_zh)
-        metadata = self.video_publisher.generate_video_metadata(output_srt_mixed)
+        # metadata = self.sub2meta.generate_video_metadata(output_srt_en, output_srt_zh)
+        metadata = self.sub2meta.generate_video_metadata(output_srt_mixed)
         metadata["video_filename"] = f"{base_name}_highlighted.mp4"
         metadata["cover_filename"] = f"{base_name}_cover.jpg"
 

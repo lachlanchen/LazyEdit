@@ -1,22 +1,26 @@
 import os
 import re
+from datetime import datetime
 
 
-import openai
-from packaging import version
+# import openai
+# from packaging import version
 
-required_version = version.parse("1.1.1")
-current_version = version.parse(openai.__version__)
+# required_version = version.parse("1.1.1")
+# current_version = version.parse(openai.__version__)
 
-if current_version < required_version:
-    raise ValueError(f"Error: OpenAI version {openai.__version__}"
-                     " is less than the required version 1.1.1")
-else:
-    print("OpenAI version is compatible.")
+# if current_version < required_version:
+#     raise ValueError(f"Error: OpenAI version {openai.__version__}"
+#                      " is less than the required version 1.1.1")
+# else:
+#     print("OpenAI version is compatible.")
 
-# -- Now we can get to it
-from openai import OpenAI
-client = OpenAI()  # should use env variable OPENAI_API_KEY
+# # -- Now we can get to it
+# from openai import OpenAI
+# client = OpenAI()  # should use env variable OPENAI_API_KEY
+
+from autopub_video_processing.openai_version_check import OpenAI
+
 
 
 import json
@@ -40,23 +44,49 @@ def robust_json5_parse(json_str):
 
 
 
-class SocialMediaVideoPublisher:
+class Subtitle2Metadata:
     def __init__(self, openai_client, max_retries=3):
         self.client = openai_client
         self.max_retries = max_retries
         self.subtitles2metadata_file = 'subtitles2metadata.json'
-        self.subtitles2metadata = self.load_subtitles2metadata()
+        # self.subtitles2metadata = self.load_subtitles2metadata()
 
-    def load_subtitles2metadata(self):
-        if os.path.exists(self.subtitles2metadata_file):
-            with open(self.subtitles2metadata_file, 'r', encoding='utf-8') as file:
-                return json.load(file)
-        else:
-            return []
+        self.subtitles2metadata_folder = 'subtitles2metadata'
+        self.ensure_folder_exists(self.subtitles2metadata_folder)
 
-    def save_subtitles2metadata(self):
-        with open(self.subtitles2metadata_file, 'w', encoding='utf-8') as file:
-            json.dump(self.subtitles2metadata, file, indent=4, ensure_ascii=False)
+    def ensure_folder_exists(self, folder_path):
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
+    def get_filename(self, subtitle_path, lang):
+        base_name = os.path.basename(subtitle_path)
+        # Strip extension from base_name if necessary
+        base_name = os.path.splitext(base_name)[0]
+        datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        return f"{self.subtitles2metadata_folder}/{base_name}-{datetime_str}_{lang}.json"
+
+    def save_subtitles2metadata(self, subtitle_path, prompt, ai_response, metatype="XiaoHongShu, Douyin, Bilibili", lang="en"):
+        filename = self.get_filename(subtitle_path, lang=lang)
+        data_to_save = {
+            "mixed_subtitle_path": subtitle_path,
+            "prompt": prompt,
+            "answer": ai_response,
+            "type": metatype
+        }
+        with open(filename, 'w', encoding='utf-8') as file:
+            json.dump(data_to_save, file, indent=4, ensure_ascii=False)
+
+
+    # def load_subtitles2metadata(self):
+    #     if os.path.exists(self.subtitles2metadata_file):
+    #         with open(self.subtitles2metadata_file, 'r', encoding='utf-8') as file:
+    #             return json.load(file)
+    #     else:
+    #         return []
+
+    # def save_subtitles2metadata(self):
+    #     with open(self.subtitles2metadata_file, 'w', encoding='utf-8') as file:
+    #         json.dump(self.subtitles2metadata, file, indent=4, ensure_ascii=False)
 
     def extract_and_parse_json(self, text):
 
@@ -99,10 +129,10 @@ class SocialMediaVideoPublisher:
 
     #     return result_zh
 
-    def generate_video_metadata(self, file_path_mixed):
-        result_zh = self.generate_video_metadata_zh(file_path_mixed)
+    def generate_video_metadata(self, subtitle_path):
+        result_zh = self.generate_video_metadata_zh(subtitle_path)
         try:
-            result_en = self.generate_video_metadata_en(file_path_mixed)
+            result_en = self.generate_video_metadata_en(subtitle_path)
             result_zh["english_version"] = result_en
         except:
             result_zh["english_version"] = result_zh.copy()
@@ -116,9 +146,9 @@ class SocialMediaVideoPublisher:
         return result_zh
 
 
-    def generate_video_metadata_zh(self, file_path_mixed):
+    def generate_video_metadata_zh(self, subtitle_path):
 
-        with open(file_path_mixed, 'r', encoding='utf-8') as file:
+        with open(subtitle_path, 'r', encoding='utf-8') as file:
             mixed_subtitles = file.read()
 
         retries = 0
@@ -191,14 +221,15 @@ class SocialMediaVideoPublisher:
                 # Validate the parsed JSON data
                 self.validate_metadata(result)
                 
-                # Save the prompt and response pair
-                self.subtitles2metadata.append({
-                    "mixed_subtitle_path": file_path_mixed,
-                    "prompt": prompt,
-                    "answer": ai_response,
-                    "type": "XiaoHongShu, Douyin, Bilibili"
-                })
-                self.save_subtitles2metadata()
+                # # Save the prompt and response pair
+                # self.subtitles2metadata.append({
+                #     "mixed_subtitle_path": subtitle_path,
+                #     "prompt": prompt,
+                #     "answer": ai_response,
+                #     "type": "XiaoHongShu, Douyin, Bilibili"
+                # })
+                # self.save_subtitles2metadata()
+                self.save_subtitles2metadata(subtitle_path, prompt, ai_response, metatype="XiaoHongShu, Douyin, Bilibili", lang="zh")
 
                 return result  # Successfully parsed JSON, return the result
 
@@ -219,9 +250,9 @@ class SocialMediaVideoPublisher:
 
         raise JSONParsingError("Reached maximum retries without success.", ai_response, messages[-1]["content"])
 
-    def generate_video_metadata_en(self, file_path_mixed):
+    def generate_video_metadata_en(self, subtitle_path):
 
-        with open(file_path_mixed, 'r', encoding='utf-8') as file:
+        with open(subtitle_path, 'r', encoding='utf-8') as file:
             mixed_subtitles = file.read()
 
 
@@ -281,14 +312,16 @@ class SocialMediaVideoPublisher:
                 # Validate the parsed JSON data
                 self.validate_metadata(result)
                 
-                # Save the prompt and response pair
-                self.subtitles2metadata.append({
-                    "mixed_subtitle_path": file_path_mixed,
-                    "prompt": prompt,
-                    "answer": ai_response,
-                    "type": "Youtube"
-                })
-                self.save_subtitles2metadata()
+                # # Save the prompt and response pair
+                # self.subtitles2metadata.append({
+                #     "mixed_subtitle_path": subtitle_path,
+                #     "prompt": prompt,
+                #     "answer": ai_response,
+                #     "type": "Youtube"
+                # })
+                # self.save_subtitles2metadata()
+
+                self.save_subtitles2metadata(subtitle_path, prompt, ai_response, metatype="Youtube", lang="en")
 
                 return result  # Successfully parsed JSON, return the result
 
@@ -506,7 +539,7 @@ if __name__ == "__main__":
 
     # Usage example
     openai_client = OpenAI()  # Make sure to authenticate your OpenAI client
-    video_publisher = SocialMediaVideoPublisher(openai_client)
+    sub2meta = Subtitle2Metadata(openai_client)
     english_subtitles = """
 1
 00:00:00,000 --> 00:00:03,500
@@ -545,5 +578,5 @@ Really good.
     chinese_subtitles_file = StringIO(chinese_subtitles)
 
 
-    result = video_publisher.generate_video_metadata(english_subtitles_file, chinese_subtitles_file)
+    result = sub2meta.generate_video_metadata(english_subtitles_file, chinese_subtitles_file)
     print(result)
