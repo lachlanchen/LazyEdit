@@ -45,6 +45,10 @@ import subprocess
 import os
 from PIL import Image, ImageDraw, ImageFont
 
+import os
+import subprocess
+import traceback  # Import traceback for detailed error logging
+
 
 
 
@@ -207,47 +211,82 @@ def add_first_word_card_to_video(video_path, words_to_learn, output_folder):
 
 
 
-def highlight_words(video_path, words_to_learn, output_path):
+
+def highlight_words(video_path, words_to_learn, output_path, delay=3):
+    # Get the length of the video
     video_length = get_video_length(video_path)
     video_width, video_height = get_video_resolution(video_path)
+
+    # Sort words_to_learn by start time
     words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
 
+    # Initialize variables
     temp_output_path = output_path + ".temp.mp4"
+    final_output_path = output_path
+    current_input_path = video_path
     successful = False
+    last_end_time = delay  # Initialize last end time with the optional delay parameter
 
     font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-    for i, word_info in enumerate(words_to_learn):
-        start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
-        if start_seconds >= video_length:
-            break
-        end_seconds = min(max(end_seconds, start_seconds + 1), video_length)
-        
-        word_text = word_info['word']
-        font_size = find_font_size(word_text, font_path, video_width * 0.8, video_height * 0.8)
 
-        drawtext_filter = (
-            f"drawtext=text='{word_text}':"
-            f"x=(w-text_w)/2:y=(h-text_h)/2:"
-            f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
-            f"enable='between(t,{start_seconds},{end_seconds})'"
-        )
-        
-        command = (
-            f"ffmpeg -y -i \"{video_path if i == 0 else temp_output_path}\" -vf \"{drawtext_filter}\" "
-            f"-c:a copy \"{output_path if i == len(words_to_learn)-1 else temp_output_path}\""
-        )
-        
+    # Process each word
+    for i, word_info in enumerate(words_to_learn):
         try:
+            # Get time range
+            start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
+
+            # Ignore words that start beyond the video length or before the last end time
+            if start_seconds >= video_length or start_seconds < last_end_time:
+                continue
+
+            # Ensure end time is at least 1 second after the start time and does not exceed video length
+            end_seconds = min(max(end_seconds, start_seconds + 1), video_length)
+
+            # Update last end time for the next iteration
+            last_end_time = end_seconds
+
+            word_text = word_info['word']
+            font_size = find_font_size(word_text, font_path, video_width * 0.8, video_height * 0.8)
+
+            drawtext_filter = (
+                f"drawtext=text='{word_text}':"
+                f"x=(w-text_w)/2:y=(h-text_h)/2:"
+                f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
+                f"enable='between(t,{start_seconds},{end_seconds})'"
+            )
+
+            command = (
+                f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
+                f"-c:a copy \"{temp_output_path}\""
+            )
+
             subprocess.run(command, shell=True, check=True)
+
+            # Prepare for next iteration
+            if i < len(words_to_learn) - 1 or current_input_path != final_output_path:
+                os.rename(temp_output_path, final_output_path)
+                current_input_path = final_output_path
             successful = True
-            if i < len(words_to_learn) - 1:
-                video_path = temp_output_path  # Update video_path for the next iteration
         except subprocess.CalledProcessError as e:
             print(f"Error processing word '{word_text}': {e}")
             continue
 
+    # Check if any word was successfully processed
     if not successful:
-        os.link(video_path, output_path)  # Ensure output exists even if no words were processed
+        # Check if output_path already exists, remove it before creating a new link
+        if os.path.exists(output_path):
+            os.remove(output_path)
+        try:
+            os.link(video_path, output_path)  # Attempt to create a hard link again
+        except Exception as e:
+            print(f"Error linking files: {e}")
+            traceback.print_exc()  # Print detailed traceback
+            # If os.link fails, consider using shutil.copy as a fallback
+            # import shutil
+            # shutil.copy(video_path, output_path)
+
+    return None  # Since word_card_image_path logic was removed
+
 
 
 # def highlight_words(video_path, words_to_learn, output_path):
@@ -665,7 +704,7 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
 
         # Step 3: Highlight the remaining words in the updated video
         highlighted_video_path = os.path.join(output_folder, f"{base_name}_highlighted.mp4")
-        highlight_words(video_with_word_card_path, updated_words_to_learn, highlighted_video_path)
+        highlight_words(video_with_word_card_path, updated_words_to_learn, highlighted_video_path, delay=repeat_sec)
 
         # Additional operations involving word_card_image_path can be performed here
 

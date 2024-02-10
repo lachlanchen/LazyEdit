@@ -1,6 +1,6 @@
 DATA/*
-subtitles2metadata/
-translation_logs/
-__pycache__/
+subtitles2metadata/*
+translation_logs/*
+__pycache__/*
 *.pyc
 
