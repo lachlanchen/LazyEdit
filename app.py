@@ -15,7 +15,7 @@ else:
 
 # -- Now we can get to it
 from openai import OpenAI
-client = OpenAI()  # should use env variable OPENAI_API_KEY
+# client = OpenAI()  # should use env variable OPENAI_API_KEY
 
 
 import shlex
@@ -35,6 +35,7 @@ from autopub_video_processing.autocut_processor import AutocutProcessor
 
 from autopub_video_processing.video_processing_openai import SocialMediaVideoPublisher
 from autopub_video_processing.words_card import VideoAddWordsCard, overlay_word_card_on_cover
+from autopub_video_processing.subtitle_translate import SubtitlesTranslator
 
 from pprint import pprint
 import json5
@@ -228,6 +229,8 @@ def highlight_words(video_path, words_to_learn, output_path):
     video_width, video_height = get_video_resolution(video_path)
 
     # Sort words_to_learn by start time
+    first_word_info = words_to_learn[0]
+    words_to_learn = words_to_learn[1:]
     words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
 
     # Initialize variables
@@ -240,7 +243,7 @@ def highlight_words(video_path, words_to_learn, output_path):
     word_card_image_path = None
     # Fetch the image for the first word and add to video
     if words_to_learn:
-        first_word_info = words_to_learn[0]
+        
         first_word = first_word_info["word"]  # Get the first word from the first dictionary
         output_folder = os.path.dirname(video_path)
         word_card_image_path = get_word_card_image(first_word, output_folder)  # Function to fetch and save the word card image
@@ -259,7 +262,7 @@ def highlight_words(video_path, words_to_learn, output_path):
     font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
     # Process each word
-    for i, word_info in enumerate(words_to_learn[1:]):
+    for i, word_info in enumerate(words_to_learn):
         try:
             # Get time range
             start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
@@ -432,16 +435,25 @@ def wrap_text(text, width, is_cjk):
         # Use cjkwrap for non-CJK text as well, as it should handle both appropriately
         return cjkwrap.wrap(text, width)
 
+# def get_video_dimensions(video_file):
+#     video = VideoFileClip(video_file)
+#     return video.size  # (width, height)
+
 def get_video_dimensions(video_file):
-    video = VideoFileClip(video_file)
-    return video.size  # (width, height)
+        video = cv2.VideoCapture(video_file)
+        width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        video.release()
+        print("width: ", width, "height: ", height)
+        return width, height
 
 def process_subtitles(video_file, input_subtitle_file, output_subtitle_file, max_width):
     video_width, video_height = get_video_dimensions(video_file)
     is_landscape = video_width > video_height
 
+    # if portrait
     if not is_landscape:
-        max_width = int(max_width * 0.6)
+        max_width = int(max_width * 0.4)
 
     with open(input_subtitle_file, 'r', encoding='utf-8') as f:
         lines = f.readlines()
@@ -461,7 +473,7 @@ def burn_subtitles(video_path, srt_path, output_path):
     wrapped_srt_path = srt_path.rsplit('.', 1)[0] + '_wrapped.srt'
     
     # Adjust 'max_width' as needed
-    max_width = 25  # You may want to dynamically set this based on the video dimensions
+    max_width = 50  # You may want to dynamically set this based on the video dimensions
     process_subtitles(video_path, srt_path, wrapped_srt_path, max_width)
     
     # Construct the FFmpeg command to burn the processed subtitles
@@ -555,8 +567,9 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
         # Process the video with autocut
         autocut_processor = AutocutProcessor(input_file, output_folder, base_name, extension)
         futures = [
-            self.executor.submit(autocut_processor.run_autocut, 'en', 0),
-            self.executor.submit(autocut_processor.run_autocut, 'zh', 1)
+            self.executor.submit(autocut_processor.run_autocut, 'mixed', 0),
+            # self.executor.submit(autocut_processor.run_autocut, 'en', 0),
+            # self.executor.submit(autocut_processor.run_autocut, 'zh', 1)
         ]
         for future in as_completed(futures):
             result = future.result()
@@ -607,14 +620,17 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
         # extract_cover(input_file, cover_image_path, time="00:00:00")
         
         # Define paths for the output files for both languages
-        output_md_en = f"{output_folder}/{base_name}_en.md"
-        output_srt_en = f"{output_folder}/{base_name}_en.srt"
-        output_md_zh = f"{output_folder}/{base_name}_zh.md"
-        output_srt_zh = f"{output_folder}/{base_name}_zh.srt"
+        # output_md_en = f"{output_folder}/{base_name}_en.md"
+        # output_srt_en = f"{output_folder}/{base_name}_en.srt"
+        # output_md_zh = f"{output_folder}/{base_name}_zh.md"
+        # output_srt_zh = f"{output_folder}/{base_name}_zh.srt"
+        output_json_mixed = f"{output_folder}/{base_name}_mixed.json"
+        output_srt_mixed = f"{output_folder}/{base_name}_mixed.srt"
         
 
         # Check if files exist before reading
-        for file_path in [output_md_en, output_srt_en, output_md_zh, output_srt_zh]:
+        # for file_path in [output_md_en, output_srt_en, output_md_zh, output_srt_zh]:
+        for file_path in [output_json_mixed, output_srt_mixed]:
             if not os.path.exists(file_path):
                 self.set_status(500)
                 self.write(f"Error: Expected output file not found: {file_path}")
@@ -622,9 +638,34 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
 
 
 
+        # # Parse subtitles
+        # subtitles_en = parse_subtitles(output_srt_en)
+        # subtitles_zh = parse_subtitles(output_srt_zh)
+
+        # Merge subtitles
+        print("Merging/Translating subtitles...")
+        combined_srt_path = os.path.join(output_folder, f"{base_name}_combined.srt")
+        # merge_subtitles(subtitles_en, subtitles_zh, combined_srt_path)
+        # os.link(output_srt_mixed, combined_srt_path)
+
+        # # Check if the combined_srt_path exists and remove it if it does
+        # if os.path.exists(combined_srt_path):
+        #     os.remove(combined_srt_path)
+
+        # # Now, safely create a hard link
+        # try:
+        #     os.link(output_srt_mixed, combined_srt_path)
+        # except OSError as e:
+        #     print(f"Error creating hard link: {e}")
+
+        subtitles_processor = SubtitlesTranslator(self.openai_client, output_json_mixed, output_srt_mixed, combined_srt_path)
+        subtitles_processor.process_subtitles()
+
+
         # After fetching metadata
         print("Generating metadata with OpenAI...")
-        metadata = self.video_publisher.generate_video_metadata(output_srt_en, output_srt_zh)
+        # metadata = self.video_publisher.generate_video_metadata(output_srt_en, output_srt_zh)
+        metadata = self.video_publisher.generate_video_metadata(output_srt_mixed)
         metadata["video_filename"] = f"{base_name}_highlighted.mp4"
         metadata["cover_filename"] = f"{base_name}_cover.jpg"
 
@@ -636,14 +677,9 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
             json.dump(metadata, json_file, indent=4, ensure_ascii=False)
 
 
-        # Parse subtitles
-        subtitles_en = parse_subtitles(output_srt_en)
-        subtitles_zh = parse_subtitles(output_srt_zh)
+        
 
-        # Merge subtitles
-        print("Merging subtitles...")
-        combined_srt_path = os.path.join(output_folder, f"{base_name}_combined.srt")
-        merge_subtitles(subtitles_en, subtitles_zh, combined_srt_path)
+
 
         # Burn combined subtitles onto the video
         print("Burning subtitles...")
@@ -687,10 +723,12 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
         zip_file_path = os.path.join(output_folder, f"{base_name}.zip")
         with zipfile.ZipFile(zip_file_path, 'w') as zipf:
             zipf.write(highlighted_video_path, os.path.basename(highlighted_video_path))
-            zipf.write(output_md_en, os.path.basename(output_md_en))
-            zipf.write(output_srt_en, os.path.basename(output_srt_en))
-            zipf.write(output_md_zh, os.path.basename(output_md_zh))
-            zipf.write(output_srt_zh, os.path.basename(output_srt_zh))
+            zipf.write(output_json_mixed, os.path.basename(output_json_mixed))
+            zipf.write(output_srt_mixed, os.path.basename(output_srt_mixed))
+            # zipf.write(output_md_en, os.path.basename(output_md_en))
+            # zipf.write(output_srt_en, os.path.basename(output_srt_en))
+            # zipf.write(output_md_zh, os.path.basename(output_md_zh))
+            # zipf.write(output_srt_zh, os.path.basename(output_srt_zh))
             zipf.write(cover_image_path, os.path.basename(cover_image_path))
             zipf.write(metadata_json_path, os.path.basename(metadata_json_path))  # Include the metadata JSON file
 

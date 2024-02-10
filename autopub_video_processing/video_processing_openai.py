@@ -23,64 +23,22 @@ import json
 import json5
 import traceback
 
+from autopub_video_processing.utils import JSONParsingError, JSONValidationError
+
+def robust_json5_parse(json_str):
+    # Attempt to handle unexpected newlines and unescaped double quotes
+    json_str = ''.join(line.strip() if not line.strip().startswith('"') else line for line in json_str.split('\n'))
+
+    # Try to parse the JSON string using json5 for more flexibility
+    try:
+        parsed_json = json5.loads(json_str)
+        return parsed_json
+    except ValueError as e:
+        print(f'JSON Decode Error: {e}')
+        return None
 
 
 
-# class SocialMediaVideoPublisher:
-#     def __init__(self, openai_client):
-#         self.client = openai_client
-
-#     def generate_video_metadata(self, english_subtitles):
-#         # Construct the prompt for the AI
-#         prompt = (
-#             "Based on the provided English subtitles from a video, please generate a suitable title, "
-#             "a brief introduction, tags, and some English words that viewers can learn. "
-#             "The title should be in Chinese and up to 20 characters, the introduction should be in Chinese "
-#             "and up to 80 characters, there should be 10 tags related to the content of the video, "
-#             "and 5 English words or phrases that are important for viewers to learn from the video. "
-#             "Each word should be accompanied by timestamps indicating when it appears in the video.\n\n"
-#             "English subtitles:\n" + english_subtitles + "\n\n"
-#             "Please write the output in the following format:\n"
-#             "{\"title\": \"\", \"description\": \"\", \"tags\": [], \"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"\"}]}"
-#         )
-
-#         # Define the request to OpenAI API
-#         response = self.client.chat.completions.create(
-#             model="gpt-4-1106-preview",
-#             messages=[
-#                 {"role": "system", "content": "You are a helpful assistant."},
-#                 {"role": "user", "content": prompt}
-#             ]
-#         )
-
-#         # Extract the AI's response
-#         ai_response = response.choices[0].message.content.strip()
-
-#         # Parse the response as JSON
-#         try:
-#             result = json.loads(ai_response)
-#         except json.JSONDecodeError:
-#             print("Failed to decode the AI's response as JSON.")
-#             return None
-
-#         return result
-
-
-class JSONParsingError(Exception):
-    def __init__(self, message, json_string, user_message):
-        super().__init__(message)
-
-        print("JSON String: ")
-        print(json_string)
-
-
-        self.json_string = json_string
-        self.user_message = user_message
-
-class MetadataValidationError(Exception):
-    def __init__(self, message, metadata):
-        super().__init__(message)
-        self.metadata = metadata
 
 class SocialMediaVideoPublisher:
     def __init__(self, openai_client, max_retries=3):
@@ -111,6 +69,8 @@ class SocialMediaVideoPublisher:
         json_string = matches[0]
 
         try:
+            # json_string = ''.join(line.strip() if not line.strip().startswith('"') else line for line in json_string.split('\n'))
+            json_string = json_string.replace('\n', '')
             parsed_json = json5.loads(json_string)
             if len(parsed_json) == 0:
                 raise JSONParsingError("Parsed JSON string is empty", json_string, text)
@@ -127,16 +87,39 @@ class SocialMediaVideoPublisher:
         ]
         missing_fields = [field for field in required_fields if field not in metadata]
         if missing_fields:
-            raise MetadataValidationError(f"Missing required fields: {', '.join(missing_fields)}", metadata)
+            raise JSONValidationError(f"Missing required fields: {', '.join(missing_fields)}", metadata)
+
+    # def generate_video_metadata(self, file_path_en, file_path_zh):
+    #     result_zh = self.generate_video_metadata_zh(file_path_en, file_path_zh)
+    #     try:
+    #         result_en = self.generate_video_metadata_en(file_path_en, file_path_zh)
+    #         result_zh["english_version"] = result_en
+    #     except:
+    #         result_zh["english_version"] = result_zh.copy()
+
+    #     return result_zh
+
+    def generate_video_metadata(self, file_path_mixed):
+        result_zh = self.generate_video_metadata_zh(file_path_mixed)
+        try:
+            result_en = self.generate_video_metadata_en(file_path_mixed)
+            result_zh["english_version"] = result_en
+        except:
+            result_zh["english_version"] = result_zh.copy()
+
+        try:
+            result_zh["words_to_learn_zh"] = result_zh["words_to_learn"].copy()
+            result_zh["words_to_learn"] = result_en["words_to_learn"]
+        except:
+            pass
+
+        return result_zh
 
 
-    def generate_video_metadata(self, file_path_en, file_path_zh):
+    def generate_video_metadata_zh(self, file_path_mixed):
 
-        with open(file_path_en, 'r', encoding='utf-8') as file:
-            english_subtitles = file.read()
-
-        with open(file_path_zh, 'r', encoding='utf-8') as file:
-            chinese_subtitles = file.read()
+        with open(file_path_mixed, 'r', encoding='utf-8') as file:
+            mixed_subtitles = file.read()
 
         retries = 0
         messages = [
@@ -150,25 +133,10 @@ class SocialMediaVideoPublisher:
 
         while retries < self.max_retries:
             try:
-                # # Construct the prompt for the AI
-                # prompt = (
-                #     "Based on the provided English subtitles from a video, please generate a suitable title, "
-                #     "a brief introduction, tags, and some English words that viewers can learn. "
-                #     "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
-                #     "The title should be in Chinese and up to 20 characters, the introduction should be in Chinese "
-                #     "and up to 80 characters, there should be 10 tags related to the content of the video, "
-                #     "5 English words or phrases that are important for viewers to learn from the video sorted by interestingness, "
-                #     "and a cover timestamp indicating the best scene to use as the cover image. "
-                #     "Each word should be accompanied by a single timestamp indicating when it appears in the video.\n\n"
-                #     "English subtitles:\n" + english_subtitles + "\n\n"
-                #     "Please write the output in the following format:\n"
-                #     "{\"title\": \"\", \"description\": \"\", \"tags\": [], "
-                #     "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
-                # )
 
                 # Construct the prompt for the AI
                 prompt = (
-                    "I want to publish this video on XiaoHongShu, Bilibili, Douyin and Youtube. "
+                    "I want to publish this video on XiaoHongShu, Bilibili, Douyin. "
                     "Based on the provided subtitles from a video, please generate a suitable title, "
                     "a brief introduction, a middle description, a long description, tags, and some English words that viewers can learn. "
                     "Make it in normal, realistic narration but appealing and put some knowledge in description "
@@ -177,23 +145,36 @@ class SocialMediaVideoPublisher:
                     "Make it achieve this subconsiously. ) "
                     "Try to find instructions also in subtitles if exist. "
                     "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
-                    "The title should be in Chinese and up to 20 characters, the brief introduction should be in Chinese "
+                    "The title should be in Chinese and up to 20 characters, the brief description should be in Chinese "
                     "and up to 80 characters, the middle description should be in Chinese and up to 250 characters, "
                     "the long description should be in Chinese and up to 1000 characters, there should be 10 tags related to the content of the video, "
-                    "5 English words or phrases that are important for viewers to learn from the video sorted by interestingness, "
+                    "5 to 10 ENGLISH (remember words_to_learn should be english) words or phrases that are important for viewers to learn from the video sorted by interestingness, "
                     "and a cover timestamp indicating the best scene to use as the cover image. "
                     "Each word should be accompanied by a time stamps range indicating when it appears in the video.\n\n"
-                    "English subtitles:\n" + english_subtitles + "\n\n"
-                    "Chinese subtitles:\n" + chinese_subtitles + "\n\n"
+                    "English subtitles:\n" + mixed_subtitles + "\n\n"
                     "Please write the output in the following format:\n"
-                    "{\"title\": \"\", \"brief_description\": \"\", \"middle_description\": \"\", \"long_description\": \"\", \"tags\": [], "
-                    "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
+                    # "{\"title\": \"\", \"brief_description\": \"\", \"middle_description\": \"\", \"long_description\": \"\", \"tags\": [], "
+                    # "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
+                    "{\n"
+                    "  \"title\": \"\",\n"
+                    "  \"brief_description\": \"\",\n"
+                    "  \"middle_description\": \"\",\n"
+                    "  \"long_description\": \"\",\n"
+                    "  \"tags\": [],\n"
+                    "  \"words_to_learn\": [\n"
+                    "    {\n"
+                    "      \"word\": \"\",\n"
+                    "      \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"\n"
+                    "    }\n"
+                    "  ],\n"
+                    "  \"cover\": \"HH:MM:SS,mmm\"\n"
+                    "}"
                 )
 
                 messages[-1]["content"] = prompt  # Update the actual prompt content
 
 
-                print("Querying OpenAI...")
+                print("Querying OpenAI (Chinese) ...")
 
                 # Define the request to OpenAI API
                 response = self.client.chat.completions.create(
@@ -212,28 +193,107 @@ class SocialMediaVideoPublisher:
                 
                 # Save the prompt and response pair
                 self.subtitles2metadata.append({
-                    "english_subtitle_path": file_path_en,
-                    "chinese_subtitle_path": file_path_zh,
+                    "mixed_subtitle_path": file_path_mixed,
                     "prompt": prompt,
-                    "answer": ai_response
+                    "answer": ai_response,
+                    "type": "XiaoHongShu, Douyin, Bilibili"
                 })
                 self.save_subtitles2metadata()
 
                 return result  # Successfully parsed JSON, return the result
 
-            # except JSONParsingError as e:
-            #     error_message = f"JSON parsing failed on attempt {retries + 1}: {e}"
-            #     print(error_message)
-            #     traceback.print_exc()
-            #     retries += 1  # Increment the retry count
+            
+            except (JSONParsingError, JSONValidationError) as e:
+                error_message = f"Failed on attempt {retries + 1}: {e}"
+                print(error_message)
+                traceback.print_exc()
+                retries += 1  # Increment the retry count
                 
-            #     # Append the response and error message for context
-            #     messages.append({"role": "system", "content": ai_response})
-            #     messages.append({"role": "user", "content": error_message})
+                # Append the response and error message for context
+                messages.append({"role": "system", "content": ai_response})
+                messages.append({"role": "user", "content": e.message})
                 
-            #     if retries >= self.max_retries:
-            #         raise JSONParsingError("Failed to parse JSON after maximum retries.", ai_response, error_message)
-            except (JSONParsingError, MetadataValidationError) as e:
+                if retries >= self.max_retries:
+                    raise e  # Re-raise the last exception (either JSONParsingError or JSONValidationError)
+
+
+        raise JSONParsingError("Reached maximum retries without success.", ai_response, messages[-1]["content"])
+
+    def generate_video_metadata_en(self, file_path_mixed):
+
+        with open(file_path_mixed, 'r', encoding='utf-8') as file:
+            mixed_subtitles = file.read()
+
+
+        retries = 2
+        messages = [
+            {"role": "system", "content": (
+                "My name is OpenAI. I am an expert of social media who can help Youtube vlogers add influences, grow fans, "
+                "reach out audiences and create values. "
+                "I can help vlogers influence people subconsiously. "
+            )},
+            {"role": "user", "content": ""}  # Placeholder for the actual prompt
+        ]
+
+        while retries < self.max_retries:
+            try:
+
+                # Construct the prompt for the AI
+                prompt = (
+                    "I want to publish this video on Youtube. "
+                    "Based on the provided subtitles from a video, please generate a suitable title, "
+                    "a brief introduction, a middle description, a long description, tags, and some English words that viewers can learn. "
+                    "Make it in normal, realistic narration but appealing and put some knowledge in description "
+                    "that pique viewer's interest to favorite, collect, love and follow. "
+                    "(This is our secret. Don't let it be seen in the title or description per se. "
+                    "Make it achieve this subconsiously. ) "
+                    "Try to find instructions also in subtitles if exist. "
+                    "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
+                    "The title should be in English and up to 20 words, the brief description should be in English "
+                    "and up to 80 words, the middle description should be in English and up to 250 characters, "
+                    "the long description should be in English and up to 1000 words, there should be 10 tags related to the content of the video, "
+                    "5 to 10 English words or phrases that are important for viewers to learn from the video sorted by interestingness, "
+                    "and a cover timestamp indicating the best scene to use as the cover image. "
+                    "Each word should be accompanied by a time stamps range indicating when it appears in the video.\n\n"
+                    "English subtitles:\n" + mixed_subtitles + "\n\n"
+                    "Please write the output in the following format:\n"
+                    "{\"title\": \"\", \"brief_description\": \"\", \"middle_description\": \"\", \"long_description\": \"\", \"tags\": [], "
+                    "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
+                )
+
+                messages[-1]["content"] = prompt  # Update the actual prompt content
+
+
+                print("Querying OpenAI (English) ...")
+
+                # Define the request to OpenAI API
+                response = self.client.chat.completions.create(
+                    model="gpt-4-1106-preview",
+                    messages=messages
+                )
+
+                # Extract the AI's response
+                ai_response = response.choices[0].message.content.strip()
+
+                # Extract and parse the JSON part of the AI's response
+                result = self.extract_and_parse_json(ai_response)
+
+                # Validate the parsed JSON data
+                self.validate_metadata(result)
+                
+                # Save the prompt and response pair
+                self.subtitles2metadata.append({
+                    "mixed_subtitle_path": file_path_mixed,
+                    "prompt": prompt,
+                    "answer": ai_response,
+                    "type": "Youtube"
+                })
+                self.save_subtitles2metadata()
+
+                return result  # Successfully parsed JSON, return the result
+
+            
+            except (JSONParsingError, JSONValidationError) as e:
                 error_message = f"Failed on attempt {retries + 1}: {e}"
                 print(error_message)
                 traceback.print_exc()
@@ -244,10 +304,200 @@ class SocialMediaVideoPublisher:
                 messages.append({"role": "user", "content": error_message})
                 
                 if retries >= self.max_retries:
-                    raise e  # Re-raise the last exception (either JSONParsingError or MetadataValidationError)
+                    raise e  # Re-raise the last exception (either JSONParsingError or JSONValidationError)
 
 
         raise JSONParsingError("Reached maximum retries without success.", ai_response, messages[-1]["content"])
+
+
+    # def generate_video_metadata_zh(self, file_path_en, file_path_zh):
+
+    #     with open(file_path_en, 'r', encoding='utf-8') as file:
+    #         english_subtitles = file.read()
+
+    #     with open(file_path_zh, 'r', encoding='utf-8') as file:
+    #         chinese_subtitles = file.read()
+
+    #     retries = 0
+    #     messages = [
+    #         {"role": "system", "content": (
+    #             "My name is OpenAI. I am an expert of social media who can help vlogers add influences, grow fans, "
+    #             "reach out audiences and create values. "
+    #             "I can help vlogers influence people subconsiously. "
+    #         )},
+    #         {"role": "user", "content": ""}  # Placeholder for the actual prompt
+    #     ]
+
+    #     while retries < self.max_retries:
+    #         try:
+
+    #             # Construct the prompt for the AI
+    #             prompt = (
+    #                 "I want to publish this video on XiaoHongShu, Bilibili, Douyin. "
+    #                 "Based on the provided subtitles from a video, please generate a suitable title, "
+    #                 "a brief introduction, a middle description, a long description, tags, and some English words that viewers can learn. "
+    #                 "Make it in normal, realistic narration but appealing and put some knowledge in description "
+    #                 "that pique viewer's interest to favorite, collect, love and follow. "
+    #                 "(This is our secret. Don't let it be seen in the title or description per se. "
+    #                 "Make it achieve this subconsiously. ) "
+    #                 "Try to find instructions also in subtitles if exist. "
+    #                 "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
+    #                 "The title should be in Chinese and up to 20 characters, the brief description should be in Chinese "
+    #                 "and up to 80 characters, the middle description should be in Chinese and up to 250 characters, "
+    #                 "the long description should be in Chinese and up to 1000 characters, there should be 10 tags related to the content of the video, "
+    #                 "5 English words or phrases that are important for viewers to learn from the video sorted by interestingness, "
+    #                 "and a cover timestamp indicating the best scene to use as the cover image. "
+    #                 "Each word should be accompanied by a time stamps range indicating when it appears in the video.\n\n"
+    #                 "English subtitles:\n" + english_subtitles + "\n\n"
+    #                 "Chinese subtitles:\n" + chinese_subtitles + "\n\n"
+    #                 "Please write the output in the following format:\n"
+    #                 "{\"title\": \"\", \"brief_description\": \"\", \"middle_description\": \"\", \"long_description\": \"\", \"tags\": [], "
+    #                 "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
+    #             )
+
+    #             messages[-1]["content"] = prompt  # Update the actual prompt content
+
+
+    #             print("Querying OpenAI (Chinese) ...")
+
+    #             # Define the request to OpenAI API
+    #             response = self.client.chat.completions.create(
+    #                 model="gpt-4-1106-preview",
+    #                 messages=messages
+    #             )
+
+    #             # Extract the AI's response
+    #             ai_response = response.choices[0].message.content.strip()
+
+    #             # Extract and parse the JSON part of the AI's response
+    #             result = self.extract_and_parse_json(ai_response)
+
+    #             # Validate the parsed JSON data
+    #             self.validate_metadata(result)
+                
+    #             # Save the prompt and response pair
+    #             self.subtitles2metadata.append({
+    #                 "english_subtitle_path": file_path_en,
+    #                 "chinese_subtitle_path": file_path_zh,
+    #                 "prompt": prompt,
+    #                 "answer": ai_response,
+    #                 "type": "XiaoHongShu, Douyin, Bilibili"
+    #             })
+    #             self.save_subtitles2metadata()
+
+    #             return result  # Successfully parsed JSON, return the result
+
+            
+    #         except (JSONParsingError, JSONValidationError) as e:
+    #             error_message = f"Failed on attempt {retries + 1}: {e}"
+    #             print(error_message)
+    #             traceback.print_exc()
+    #             retries += 1  # Increment the retry count
+                
+    #             # Append the response and error message for context
+    #             messages.append({"role": "system", "content": ai_response})
+    #             messages.append({"role": "user", "content": error_message})
+                
+    #             if retries >= self.max_retries:
+    #                 raise e  # Re-raise the last exception (either JSONParsingError or JSONValidationError)
+
+
+    #     raise JSONParsingError("Reached maximum retries without success.", ai_response, messages[-1]["content"])
+
+    # def generate_video_metadata_en(self, file_path_en, file_path_zh):
+
+    #     with open(file_path_en, 'r', encoding='utf-8') as file:
+    #         english_subtitles = file.read()
+
+    #     with open(file_path_zh, 'r', encoding='utf-8') as file:
+    #         chinese_subtitles = file.read()
+
+    #     retries = 2
+    #     messages = [
+    #         {"role": "system", "content": (
+    #             "My name is OpenAI. I am an expert of social media who can help Youtube vlogers add influences, grow fans, "
+    #             "reach out audiences and create values. "
+    #             "I can help vlogers influence people subconsiously. "
+    #         )},
+    #         {"role": "user", "content": ""}  # Placeholder for the actual prompt
+    #     ]
+
+    #     while retries < self.max_retries:
+    #         try:
+
+    #             # Construct the prompt for the AI
+    #             prompt = (
+    #                 "I want to publish this video on Youtube. "
+    #                 "Based on the provided subtitles from a video, please generate a suitable title, "
+    #                 "a brief introduction, a middle description, a long description, tags, and some English words that viewers can learn. "
+    #                 "Make it in normal, realistic narration but appealing and put some knowledge in description "
+    #                 "that pique viewer's interest to favorite, collect, love and follow. "
+    #                 "(This is our secret. Don't let it be seen in the title or description per se. "
+    #                 "Make it achieve this subconsiously. ) "
+    #                 "Try to find instructions also in subtitles if exist. "
+    #                 "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
+    #                 "The title should be in English and up to 20 words, the brief description should be in English "
+    #                 "and up to 80 words, the middle description should be in English and up to 250 characters, "
+    #                 "the long description should be in English and up to 1000 words, there should be 10 tags related to the content of the video, "
+    #                 "5 English words or phrases that are important for viewers to learn from the video sorted by interestingness, "
+    #                 "and a cover timestamp indicating the best scene to use as the cover image. "
+    #                 "Each word should be accompanied by a time stamps range indicating when it appears in the video.\n\n"
+    #                 "English subtitles:\n" + english_subtitles + "\n\n"
+    #                 "Chinese subtitles:\n" + chinese_subtitles + "\n\n"
+    #                 "Please write the output in the following format:\n"
+    #                 "{\"title\": \"\", \"brief_description\": \"\", \"middle_description\": \"\", \"long_description\": \"\", \"tags\": [], "
+    #                 "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
+    #             )
+
+    #             messages[-1]["content"] = prompt  # Update the actual prompt content
+
+
+    #             print("Querying OpenAI (English) ...")
+
+    #             # Define the request to OpenAI API
+    #             response = self.client.chat.completions.create(
+    #                 model="gpt-4-1106-preview",
+    #                 messages=messages
+    #             )
+
+    #             # Extract the AI's response
+    #             ai_response = response.choices[0].message.content.strip()
+
+    #             # Extract and parse the JSON part of the AI's response
+    #             result = self.extract_and_parse_json(ai_response)
+
+    #             # Validate the parsed JSON data
+    #             self.validate_metadata(result)
+                
+    #             # Save the prompt and response pair
+    #             self.subtitles2metadata.append({
+    #                 "english_subtitle_path": file_path_en,
+    #                 "chinese_subtitle_path": file_path_zh,
+    #                 "prompt": prompt,
+    #                 "answer": ai_response,
+    #                 "type": "Youtube"
+    #             })
+    #             self.save_subtitles2metadata()
+
+    #             return result  # Successfully parsed JSON, return the result
+
+            
+    #         except (JSONParsingError, JSONValidationError) as e:
+    #             error_message = f"Failed on attempt {retries + 1}: {e}"
+    #             print(error_message)
+    #             traceback.print_exc()
+    #             retries += 1  # Increment the retry count
+                
+    #             # Append the response and error message for context
+    #             messages.append({"role": "system", "content": ai_response})
+    #             messages.append({"role": "user", "content": error_message})
+                
+    #             if retries >= self.max_retries:
+    #                 raise e  # Re-raise the last exception (either JSONParsingError or JSONValidationError)
+
+
+    #     raise JSONParsingError("Reached maximum retries without success.", ai_response, messages[-1]["content"])
+
 
 
 if __name__ == "__main__":
