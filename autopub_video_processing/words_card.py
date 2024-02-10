@@ -49,10 +49,11 @@ def overlay_word_card_on_cover(words_card_path, cover_path, output_path, transpa
     combined_img.save(output_path, quality=100)
 
 class VideoAddWordsCard:
-    def __init__(self, video_path, image_path):
+    def __init__(self, video_path, image_path, duration=3):
         self.video_path = video_path
         self.image_path = image_path
         self.output_dir = os.path.dirname(video_path)
+        self.duration = duration
 
     def get_video_info(self):
         video = cv2.VideoCapture(self.video_path)
@@ -74,7 +75,7 @@ class VideoAddWordsCard:
             corrected_video_path = self.correct_video_metadata(video_width, video_height, tmp_folder)
             video_clip = VideoFileClip(corrected_video_path)
 
-            image_clip = ImageClip(self.image_path).set_duration(min(3, video_clip.duration))
+            image_clip = ImageClip(self.image_path).set_duration(min(self.duration, video_clip.duration))
             aspect_ratio_image = image_clip.h / image_clip.w
             new_width = video_width
             new_height = int(new_width * aspect_ratio_image)

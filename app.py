@@ -50,7 +50,8 @@ import subprocess
 import traceback  # Import traceback for detailed error logging
 
 
-
+import json
+from datetime import datetime, timedelta
 
 def get_seconds(timestamp):
     print("timestamp: ", timestamp)
@@ -161,6 +162,37 @@ def get_text_size(text, font, max_width, max_height):
 
 
 
+def calculate_optimal_repeat_sec(subtitle_json_path):
+    with open(subtitle_json_path, 'r') as file:
+        subtitles = json.load(file)
+
+    # Initialize thresholds
+    min_threshold = timedelta(seconds=2)
+    optimal_threshold = timedelta(seconds=3)
+    max_threshold = timedelta(seconds=4)
+    
+    video_start = datetime.strptime("00:00:00,000", "%H:%M:%S,%f")
+    optimal_duration = 0
+    min_duration_over_two = 0  # Track if we have a duration over 2 seconds
+
+    for subtitle in subtitles:
+        start_time = datetime.strptime(subtitle["start"], "%H:%M:%S,%f")
+        end_time = datetime.strptime(subtitle["end"], "%H:%M:%S,%f")
+        current_duration = (end_time - video_start).total_seconds()
+
+        if optimal_threshold.total_seconds() < current_duration <= max_threshold.total_seconds():
+            return current_duration  # Return this duration if it's within the optimal range (over 3 but not over 4)
+
+        if min_threshold.total_seconds() < current_duration <= optimal_threshold.total_seconds():
+            min_duration_over_two = max(min_duration_over_two, current_duration)  # Update if this is the largest duration over 2 but under 3
+
+    # If we found a duration over 2 but under 3 seconds, return it
+    if min_duration_over_two > 0:
+        return min_duration_over_two
+
+    # If no duration is found within the optimal or acceptable range, default to 2 seconds
+    return 3.0
+
 def repeat_start_of_video(video_path, repeat_sec, output_path):
     repeat_command = [
         "ffmpeg", "-y", "-i", video_path, "-filter_complex",
@@ -192,7 +224,7 @@ def get_word_card_image(word, output_folder):
         return None
 
 
-def add_first_word_card_to_video(video_path, words_to_learn, output_folder):
+def add_first_word_card_to_video(video_path, words_to_learn, output_folder, duration=3):
     if not words_to_learn:
         print("No words to learn provided.")
         return video_path, words_to_learn, None  # No word card to add
@@ -202,7 +234,7 @@ def add_first_word_card_to_video(video_path, words_to_learn, output_folder):
 
     word_card_image_path = get_word_card_image(first_word_info["word"], output_folder)
     if word_card_image_path:
-        video_add_words_card = VideoAddWordsCard(video_path, word_card_image_path)
+        video_add_words_card = VideoAddWordsCard(video_path, word_card_image_path, duration=duration)
         video_with_first_word_card_path, _ = video_add_words_card.add_image_to_video()
         return video_with_first_word_card_path, words_to_learn, word_card_image_path
     else:
@@ -691,14 +723,17 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
         # word_card_image_path = highlight_words(final_video_path, metadata['words_to_learn'], highlighted_video_path)
        
 
+
         # Repeat the first few seconds of the video (e.g., 3 seconds)
-        repeat_sec = 3
+        # repeat_sec = 3
+        repeat_sec = calculate_optimal_repeat_sec(output_json_mixed)
+        print("optimized repeat time:", repeat_sec)
         # Step 1: Repeat the initial section of the video
         repeated_video_path = os.path.join(output_folder, f"{base_name}_repeated.mp4")
         repeat_start_of_video(final_video_path, repeat_sec, repeated_video_path)
 
         # Step 2: Add the word card for the first word and update the words list
-        video_with_word_card_path, updated_words_to_learn, word_card_image_path = add_first_word_card_to_video(repeated_video_path, metadata['words_to_learn'], output_folder)
+        video_with_word_card_path, updated_words_to_learn, word_card_image_path = add_first_word_card_to_video(repeated_video_path, metadata['words_to_learn'], output_folder, duration=repeat_sec)
 
         # Ensure word_card_image_path is used or saved as needed here
 
