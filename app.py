@@ -1,21 +1,6 @@
 import os
 
 
-# import openai
-# from packaging import version
-
-# required_version = version.parse("1.1.1")
-# current_version = version.parse(openai.__version__)
-
-# if current_version < required_version:
-#     raise ValueError(f"Error: OpenAI version {openai.__version__}"
-#                      " is less than the required version 1.1.1")
-# else:
-#     print("OpenAI version is compatible.")
-
-# # -- Now we can get to it
-# from openai import OpenAI
-# # client = OpenAI()  # should use env variable OPENAI_API_KEY
 
 from autopub_video_processing.openai_version_check import OpenAI
 
@@ -135,62 +120,6 @@ def get_time_range(time_range):
 
 
 
-# def highlight_words(video_path, words_to_learn, output_path):
-#     # Sort words_to_learn by start time
-#     words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
-
-#     # Initialize variables
-#     temp_output_path = output_path + ".temp.mp4"
-#     final_output_path = output_path
-#     current_input_path = video_path
-#     successful = False
-
-#     # Process each word
-#     for i, word_info in enumerate(words_to_learn):
-#         try:
-#             # Get time range
-#             start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
-
-#             # Construct drawtext filter
-#             drawtext_filter = (
-#                 f"drawtext=text='{word_info['word']}':"
-#                 f"x=(w-text_w)/2: "
-#                 f"y=(h-text_h)/2: "
-#                 f"fontsize=96: "
-#                 f"fontcolor=white@1.0: "
-#                 f"box=1: "
-#                 f"boxcolor=black@0.5: "
-#                 f"boxborderw=5: "
-#                 f"enable='between(t,{start_seconds},{end_seconds})'"
-#             )
-
-#             # Construct ffmpeg command
-#             command = (
-#                 f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
-#                 f"-c:a copy \"{temp_output_path}\""
-#             )
-
-#             # Execute ffmpeg command
-#             subprocess.run(command, shell=True, check=True)
-
-#             # If successful, prepare for next iteration
-#             if i < len(words_to_learn) - 1:
-#                 os.rename(temp_output_path, final_output_path)
-#                 current_input_path = final_output_path
-#             successful = True
-#         except subprocess.CalledProcessError as e:
-#             # Log error and skip to the next word
-#             print(f"Error processing word '{word_info['word']}': {e}")
-#             continue
-
-#     # Finalize output
-#     if not successful:
-#         # If no text was successfully drawn, copy the original video to the output
-#         os.link(video_path, final_output_path)
-#     else:
-#         if current_input_path != final_output_path:
-#             os.rename(current_input_path, final_output_path)
-
 
 
 
@@ -226,131 +155,16 @@ def get_text_size(text, font, max_width, max_height):
     draw = ImageDraw.Draw(dummy_image)
     return draw.textbbox((0, 0), text, font=font)[2:]
 
-def highlight_words(video_path, words_to_learn, output_path):
-    # Get the length of the video
-    video_length = get_video_length(video_path)
-    video_width, video_height = get_video_resolution(video_path)
-
-    # Sort words_to_learn by start time
-    first_word_info = words_to_learn[0]
-    words_to_learn = words_to_learn[1:]
-    words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
-
-    # Initialize variables
-    temp_output_path = output_path + ".temp.mp4"
-    final_output_path = output_path
-    current_input_path = video_path
-    successful = False
-    last_end_time = 3  # Initialize last end time
-
-    word_card_image_path = None
-    # Fetch the image for the first word and add to video
-    if words_to_learn:
-        
-        first_word = first_word_info["word"]  # Get the first word from the first dictionary
-        output_folder = os.path.dirname(video_path)
-        word_card_image_path = get_word_card_image(first_word, output_folder)  # Function to fetch and save the word card image
-        if word_card_image_path:
-            video_add_words_card = VideoAddWordsCard(video_path, word_card_image_path)
-            video_with_first_word_card_path, _ = video_add_words_card.add_image_to_video()
-            current_input_path = video_with_first_word_card_path
-        else:
-            print(f"Failed to obtain word card for '{first_word}'. Proceeding without adding word card.")
-            current_input_path = video_path
-    else:
-        current_input_path = video_path
 
 
-    # font_path = "/System/Library/Fonts/Supplemental/Arial.ttf"  # Update this to the actual path of your font file
-    font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-
-    # Process each word
-    for i, word_info in enumerate(words_to_learn):
-        try:
-            # Get time range
-            start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
-
-            # Ignore words that start beyond the video length
-            if start_seconds >= video_length:
-                break
-
-
-
-            # Update start time if it overlaps with the end time of the previous word
-            start_seconds = max(start_seconds, last_end_time)
-
-            # Ensure end time is at least 1 second after the start time and does not exceed video length
-            end_seconds = min(max(end_seconds, start_seconds + 1), video_length)
-
-
-
-            # Update last end time for the next iteration
-            last_end_time = end_seconds
-
-
-            word_text = word_info['word']
-
-            # Find the optimal font size using the find_font_size method for the video resolution
-            font_size = find_font_size(word_text, font_path, video_width*0.8, video_height*0.8)
-
-            # Set box width dynamically based on the actual video width and the length of the text
-            max_box_width = int(video_width * 0.8)  # The box can occupy up to 80% of the video width
-            box_width = min(max_box_width, font_size * len(word_text) / 2)
-            box_width += font_size / 2
-
-            # Construct drawtext filter
-            # drawtext_filter = (
-            #     f"drawtext=text='{word_text}':"
-            #     f"x=(w-text_w)/2: "
-            #     f"y=(h-text_h)/2: "
-            #     f"fontsize=96: "
-            #     f"fontcolor=white@1.0: "
-            #     f"box=1: "
-            #     f"boxcolor=black@0.5: "
-            #     f"boxborderw=5: "
-            #     f"enable='between(t,{start_seconds},{end_seconds})'"
-            # )
-            drawtext_filter = (
-                f"drawtext=text='{word_text}':"
-                f"x=(w-text_w)/2: "
-                f"y=(h-text_h)/2: "
-                f"fontsize={font_size}: "
-                f"fontcolor=white@1.0: "
-                f"box=1: "
-                f"boxcolor=black@0.5: "
-                f"boxborderw=5: "
-                # f"boxw={box_width}: "
-                f"enable='between(t,{start_seconds},{end_seconds})'"
-            )
-
-            # Construct ffmpeg command
-            command = (
-                f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
-                f"-c:a copy \"{temp_output_path}\""
-            )
-
-            # Execute ffmpeg command
-            subprocess.run(command, shell=True, check=True)
-
-            # If successful, prepare for next iteration
-            if i < len(words_to_learn) - 1:
-                os.rename(temp_output_path, final_output_path)
-                current_input_path = final_output_path
-            successful = True
-        except subprocess.CalledProcessError as e:
-            # Log error and skip to the next word
-            print(f"Error processing word '{word_info['word']}': {e}")
-            continue
-
-    # Finalize output
-    if not successful:
-        # If no text was successfully drawn, copy the original video to the output
-        os.link(video_path, final_output_path)
-    else:
-        if current_input_path != final_output_path:
-            os.rename(current_input_path, final_output_path)
-
-    return word_card_image_path
+def repeat_start_of_video(video_path, repeat_sec, output_path):
+    repeat_command = [
+        "ffmpeg", "-y", "-i", video_path, "-filter_complex",
+        f"[0:v]trim=0:{repeat_sec},setpts=PTS-STARTPTS[first3v];[0:a]atrim=0:{repeat_sec},asetpts=PTS-STARTPTS[first3a];"
+        f"[first3v][0:v]concat=n=2:v=1:a=0[finalv];[first3a][0:a]concat=n=2:v=0:a=1[finala]",
+        "-map", "[finalv]", "-map", "[finala]", output_path
+    ]
+    subprocess.run(repeat_command, check=True)
 
 def get_word_card_image(word, output_folder):
     # URL of the API
@@ -372,6 +186,185 @@ def get_word_card_image(word, output_folder):
     else:
         print(f'Error fetching image for word "{word}": {response.status_code}')
         return None
+
+
+def add_first_word_card_to_video(video_path, words_to_learn, output_folder):
+    if not words_to_learn:
+        print("No words to learn provided.")
+        return video_path, words_to_learn, None  # No word card to add
+
+    first_word_info = words_to_learn[0]
+    words_to_learn = words_to_learn[1:]  # Exclude the first word for further processing
+
+    word_card_image_path = get_word_card_image(first_word_info["word"], output_folder)
+    if word_card_image_path:
+        video_add_words_card = VideoAddWordsCard(video_path, word_card_image_path)
+        video_with_first_word_card_path, _ = video_add_words_card.add_image_to_video()
+        return video_with_first_word_card_path, words_to_learn, word_card_image_path
+    else:
+        print(f"Failed to obtain word card for '{first_word_info['word']}'. Proceeding without adding word card.")
+        return video_path, words_to_learn, None
+
+
+
+def highlight_words(video_path, words_to_learn, output_path):
+    video_length = get_video_length(video_path)
+    video_width, video_height = get_video_resolution(video_path)
+    words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
+
+    temp_output_path = output_path + ".temp.mp4"
+    successful = False
+
+    font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+    for i, word_info in enumerate(words_to_learn):
+        start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
+        if start_seconds >= video_length:
+            break
+        end_seconds = min(max(end_seconds, start_seconds + 1), video_length)
+        
+        word_text = word_info['word']
+        font_size = find_font_size(word_text, font_path, video_width * 0.8, video_height * 0.8)
+
+        drawtext_filter = (
+            f"drawtext=text='{word_text}':"
+            f"x=(w-text_w)/2:y=(h-text_h)/2:"
+            f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
+            f"enable='between(t,{start_seconds},{end_seconds})'"
+        )
+        
+        command = (
+            f"ffmpeg -y -i \"{video_path if i == 0 else temp_output_path}\" -vf \"{drawtext_filter}\" "
+            f"-c:a copy \"{output_path if i == len(words_to_learn)-1 else temp_output_path}\""
+        )
+        
+        try:
+            subprocess.run(command, shell=True, check=True)
+            successful = True
+            if i < len(words_to_learn) - 1:
+                video_path = temp_output_path  # Update video_path for the next iteration
+        except subprocess.CalledProcessError as e:
+            print(f"Error processing word '{word_text}': {e}")
+            continue
+
+    if not successful:
+        os.link(video_path, output_path)  # Ensure output exists even if no words were processed
+
+
+# def highlight_words(video_path, words_to_learn, output_path):
+#     # Get the length of the video
+#     video_length = get_video_length(video_path)
+#     video_width, video_height = get_video_resolution(video_path)
+
+#     # Sort words_to_learn by start time
+#     first_word_info = words_to_learn[0]
+#     words_to_learn = words_to_learn[1:]
+#     words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
+
+#     # Initialize variables
+#     temp_output_path = output_path + ".temp.mp4"
+#     final_output_path = output_path
+#     current_input_path = video_path
+#     successful = False
+#     last_end_time = 3  # Initialize last end time
+
+#     word_card_image_path = None
+#     # Fetch the image for the first word and add to video
+#     if words_to_learn:
+        
+#         first_word = first_word_info["word"]  # Get the first word from the first dictionary
+#         output_folder = os.path.dirname(video_path)
+#         word_card_image_path = get_word_card_image(first_word, output_folder)  # Function to fetch and save the word card image
+#         if word_card_image_path:
+#             video_add_words_card = VideoAddWordsCard(video_path, word_card_image_path)
+#             video_with_first_word_card_path, _ = video_add_words_card.add_image_to_video()
+#             current_input_path = video_with_first_word_card_path
+#         else:
+#             print(f"Failed to obtain word card for '{first_word}'. Proceeding without adding word card.")
+#             current_input_path = video_path
+#     else:
+#         current_input_path = video_path
+
+
+#     # font_path = "/System/Library/Fonts/Supplemental/Arial.ttf"  # Update this to the actual path of your font file
+#     font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+
+#     # Process each word
+#     for i, word_info in enumerate(words_to_learn):
+#         try:
+#             # Get time range
+#             start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
+
+#             # Ignore words that start beyond the video length
+#             if start_seconds >= video_length:
+#                 break
+
+
+
+#             # Update start time if it overlaps with the end time of the previous word
+#             start_seconds = max(start_seconds, last_end_time)
+
+#             # Ensure end time is at least 1 second after the start time and does not exceed video length
+#             end_seconds = min(max(end_seconds, start_seconds + 1), video_length)
+
+
+
+#             # Update last end time for the next iteration
+#             last_end_time = end_seconds
+
+
+#             word_text = word_info['word']
+
+#             # Find the optimal font size using the find_font_size method for the video resolution
+#             font_size = find_font_size(word_text, font_path, video_width*0.8, video_height*0.8)
+
+#             # Set box width dynamically based on the actual video width and the length of the text
+#             max_box_width = int(video_width * 0.8)  # The box can occupy up to 80% of the video width
+#             box_width = min(max_box_width, font_size * len(word_text) / 2)
+#             box_width += font_size / 2
+
+
+#             drawtext_filter = (
+#                 f"drawtext=text='{word_text}':"
+#                 f"x=(w-text_w)/2: "
+#                 f"y=(h-text_h)/2: "
+#                 f"fontsize={font_size}: "
+#                 f"fontcolor=white@1.0: "
+#                 f"box=1: "
+#                 f"boxcolor=black@0.5: "
+#                 f"boxborderw=5: "
+#                 # f"boxw={box_width}: "
+#                 f"enable='between(t,{start_seconds},{end_seconds})'"
+#             )
+
+#             # Construct ffmpeg command
+#             command = (
+#                 f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
+#                 f"-c:a copy \"{temp_output_path}\""
+#             )
+
+#             # Execute ffmpeg command
+#             subprocess.run(command, shell=True, check=True)
+
+#             # If successful, prepare for next iteration
+#             if i < len(words_to_learn) - 1:
+#                 os.rename(temp_output_path, final_output_path)
+#                 current_input_path = final_output_path
+#             successful = True
+#         except subprocess.CalledProcessError as e:
+#             # Log error and skip to the next word
+#             print(f"Error processing word '{word_info['word']}': {e}")
+#             continue
+
+#     # Finalize output
+#     if not successful:
+#         # If no text was successfully drawn, copy the original video to the output
+#         os.link(video_path, final_output_path)
+#     else:
+#         if current_input_path != final_output_path:
+#             os.rename(current_input_path, final_output_path)
+
+#     return word_card_image_path
+
 
 
 
@@ -483,6 +476,22 @@ def burn_subtitles(video_path, srt_path, output_path):
     command = f"ffmpeg -y -i \"{video_path}\" -vf \"subtitles={wrapped_srt_path}\" \"{output_path}\""
     subprocess.run(command, shell=True, check=True)
 
+def validate_timestamp(timestamp):
+    try:
+        # Split the timestamp and check if it has the correct format
+        h, m, s = timestamp.split(':')
+        s, ms = s.split('.')
+        # Convert to integers to check if they are within the correct range
+        h, m, s, ms = int(h), int(m), int(s), int(ms)
+        # Check if hours, minutes, seconds, and milliseconds are in the correct range
+        if h >= 0 and m >= 0 and m < 60 and s >= 0 and s < 60 and ms >= 0 and ms < 1000:
+            return timestamp  # The timestamp is valid
+    except ValueError:
+        # Catch ValueError if the timestamp is not in the correct format
+        print("Format unrecognized for timestamp of cover: ", timestamp)
+        pass
+    # Return the default value if the timestamp is not valid
+    return '00:00:00,000'
 
 class FileUploaderHandler(tornado.web.RequestHandler):
     def initialize(self, upload_folder):
@@ -581,30 +590,6 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
 
     @gen.coroutine
     def post(self):
-        # size = 1024*1024*1024
-        # self.request.connection.set_max_body_size(size) 
-        
-
-
-        # # Extract video file from the request
-        # video_file = self.request.files['video'][0]
-        # original_fname = video_file['filename']
-
-        # print("Filename: ", original_fname)
-        
-        
-        
-        # # Determine the basename (without extension) and create a subfolder
-        # base_name, extension = os.path.splitext(original_fname)
-        # output_folder = os.path.join('/home/lachlan/ProjectsLFS/autopub-video-processing/DATA', base_name)
-        # os.makedirs(output_folder, exist_ok=True)
-        
-        # # Define the full path for the incoming video
-        # input_file = os.path.join(output_folder, original_fname)
-        
-        # # Write the incoming video to the file system
-        # with open(input_file, 'wb') as f:
-        #     f.write(video_file['body'])
         
         input_file = self.get_argument('file_path', None)
         if not input_file or not os.path.exists(input_file):
@@ -618,15 +603,7 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
 
         self.process_video(input_file, base_name, extension, output_folder)
         
-        # # Extract cover image from the video
-        # cover_image_path = os.path.join(output_folder, f"{base_name}.jpg")
-        # extract_cover(input_file, cover_image_path, time="00:00:00")
-        
-        # Define paths for the output files for both languages
-        # output_md_en = f"{output_folder}/{base_name}_en.md"
-        # output_srt_en = f"{output_folder}/{base_name}_en.srt"
-        # output_md_zh = f"{output_folder}/{base_name}_zh.md"
-        # output_srt_zh = f"{output_folder}/{base_name}_zh.srt"
+
         output_json_mixed = f"{output_folder}/{base_name}_mixed.json"
         output_srt_mixed = f"{output_folder}/{base_name}_mixed.srt"
         
@@ -641,25 +618,9 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
 
 
 
-        # # Parse subtitles
-        # subtitles_en = parse_subtitles(output_srt_en)
-        # subtitles_zh = parse_subtitles(output_srt_zh)
-
         # Merge subtitles
         print("Merging/Translating subtitles...")
         combined_srt_path = os.path.join(output_folder, f"{base_name}_combined.srt")
-        # merge_subtitles(subtitles_en, subtitles_zh, combined_srt_path)
-        # os.link(output_srt_mixed, combined_srt_path)
-
-        # # Check if the combined_srt_path exists and remove it if it does
-        # if os.path.exists(combined_srt_path):
-        #     os.remove(combined_srt_path)
-
-        # # Now, safely create a hard link
-        # try:
-        #     os.link(output_srt_mixed, combined_srt_path)
-        # except OSError as e:
-        #     print(f"Error creating hard link: {e}")
 
         subtitles_processor = SubtitlesTranslator(self.openai_client, output_json_mixed, output_srt_mixed, combined_srt_path)
         subtitles_processor.process_subtitles()
@@ -680,39 +641,35 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
             json.dump(metadata, json_file, indent=4, ensure_ascii=False)
 
 
-        
-
-
-
         # Burn combined subtitles onto the video
         print("Burning subtitles...")
         final_video_path = os.path.join(output_folder, f"{base_name}_final.mp4")
         burn_subtitles(input_file, combined_srt_path, final_video_path)
 
 
-        def validate_timestamp(timestamp):
-            try:
-                # Split the timestamp and check if it has the correct format
-                h, m, s = timestamp.split(':')
-                s, ms = s.split('.')
-                # Convert to integers to check if they are within the correct range
-                h, m, s, ms = int(h), int(m), int(s), int(ms)
-                # Check if hours, minutes, seconds, and milliseconds are in the correct range
-                if h >= 0 and m >= 0 and m < 60 and s >= 0 and s < 60 and ms >= 0 and ms < 1000:
-                    return timestamp  # The timestamp is valid
-            except ValueError:
-                # Catch ValueError if the timestamp is not in the correct format
-                print("Format unrecognized for timestamp of cover: ", timestamp)
-                pass
-            # Return the default value if the timestamp is not valid
-            return '00:00:00,000'
+        # # Highlight words to learn on the video
+        # highlighted_video_path = os.path.join(output_folder, f"{base_name}_highlighted.mp4")
+        # word_card_image_path = highlight_words(final_video_path, metadata['words_to_learn'], highlighted_video_path)
+       
 
-        
+        # Repeat the first few seconds of the video (e.g., 3 seconds)
+        repeat_sec = 3
+        # Step 1: Repeat the initial section of the video
+        repeated_video_path = os.path.join(output_folder, f"{base_name}_repeated.mp4")
+        repeat_start_of_video(final_video_path, repeat_sec, repeated_video_path)
 
-        # Highlight words to learn on the video
+        # Step 2: Add the word card for the first word and update the words list
+        video_with_word_card_path, updated_words_to_learn, word_card_image_path = add_first_word_card_to_video(repeated_video_path, metadata['words_to_learn'], output_folder)
+
+        # Ensure word_card_image_path is used or saved as needed here
+
+        # Step 3: Highlight the remaining words in the updated video
         highlighted_video_path = os.path.join(output_folder, f"{base_name}_highlighted.mp4")
-        word_card_image_path = highlight_words(final_video_path, metadata['words_to_learn'], highlighted_video_path)
-        
+        highlight_words(video_with_word_card_path, updated_words_to_learn, highlighted_video_path)
+
+        # Additional operations involving word_card_image_path can be performed here
+
+
         # Extract the cover image
         print("Extracting cover...")
         cover_image_path = os.path.join(output_folder, f"{base_name}_cover.jpg")
@@ -728,10 +685,7 @@ class VideoProcessingHandler(tornado.web.RequestHandler):
             zipf.write(highlighted_video_path, os.path.basename(highlighted_video_path))
             zipf.write(output_json_mixed, os.path.basename(output_json_mixed))
             zipf.write(output_srt_mixed, os.path.basename(output_srt_mixed))
-            # zipf.write(output_md_en, os.path.basename(output_md_en))
-            # zipf.write(output_srt_en, os.path.basename(output_srt_en))
-            # zipf.write(output_md_zh, os.path.basename(output_md_zh))
-            # zipf.write(output_srt_zh, os.path.basename(output_srt_zh))
+
             zipf.write(cover_image_path, os.path.basename(cover_image_path))
             zipf.write(metadata_json_path, os.path.basename(metadata_json_path))  # Include the metadata JSON file
 

@@ -7,28 +7,17 @@ from packaging import version
 import json
 import os
 
-# import openai
-# required_version = version.parse("1.1.1")
-# current_version = version.parse(openai.__version__)
-
-# if current_version < required_version:
-#     raise ValueError(f"Error: OpenAI version {openai.__version__}"
-#                      " is less than the required version 1.1.1")
-# else:
-#     print("OpenAI version is compatible.")
-# import os
-
-# # -- Now we can get to it
-# from openai import OpenAI
-# client = OpenAI()  # should use env variable OPENAI_API_KEY
 
 from autopub_video_processing.openai_version_check import OpenAI
 
 
 from autopub_video_processing.utils import JSONParsingError, JSONValidationError
+from autopub_video_processing.utils import safe_pretty_print
 
 from datetime import datetime
 from pprint import pprint
+
+
 
 
 
@@ -78,7 +67,8 @@ class SubtitlesTranslator:
             raise JSONParsingError("No JSON string found in text", text, text)
         json_string = matches[0].replace('\n', '')
 
-        pprint(json_string)
+        # pprint(json_string)
+        safe_pretty_print(json_string)
 
         try:
             return json.loads(json_string)
