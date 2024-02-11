@@ -101,18 +101,29 @@ class SubtitlesTranslator:
                 prompt_content = (
                     "Below are mixed language subtitles extracted from a video, including timestamps, "
                     "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
-                    "is presented with both English (en) and Chinese (zh) translations, maintaining the original timestamps. "
+                    "is presented with English (en),  Chinese (zh), Arabic (ar) and Japanese (ja) translations, "
+                    "maintaining the original timestamps. "
                     "If a subtitle is already in English, provide the corresponding Chinese translation, and vice versa. "
-                    "For subtitles in any other language, keep the original text but also provide translations in both "
-                    "English and Chinese.\n\n"
+                    "For subtitles in any other language, keep the original text but also provide translations in "
+                    "English, Chinese, Arabic and Japanese.\n\n"
+
+                    # "I only care about most common languages like Chinese, English, Japanese and Arabic. "
+                    "If I said, 阿南伯 it's regonition error of 阿拉伯. "
+                    "Fullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. "
+                    "If I said in subtitles that I want to know or I don't know how to say something, provide that subtitle in that language. "
+                    # "For example, if I want to know something in Arabic 阿拉伯, provide the Arabic language subtitle. Or,"
+                    # "if I said I don't know how to say something in Japanese 日语, Provide the Japanese language subtitle. \n\n"
+                    # "Some weird language might be speech recognition error. "
+                 
 
                     "Slightly correct some apparent speech recognition error"
-                    "especially homonym in both origin and its translation based on the context.\n\n"
+                    "especially homonym and mumble in both origin and its translation based on the context.\n\n"
             
                     "Process the following subtitles, ensuring translations are accurate and coherent, "
                     "and format the output as shown in the example. "
                     "Note that the original timestamps should be preserved for each entry.\n\n"
-                    
+
+                       
                     "Subtitles to process:\n"
                     f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
                     
@@ -123,6 +134,8 @@ class SubtitlesTranslator:
                     "    \"end\": \"timestamp\",\n"
                     "    \"en\": \"English text\",\n"
                     "    \"zh\": \"Chinese text\",\n"
+                    "    \"ar\": \"Arabic text\",\n"
+                    "    \"ja\": \"Japanese text\",\n"
                     "    \"other lang key if exist\": \"Text in the original language, if not English or Chinese\"\n"
                     "  }\n"
                     "]\n\n"
@@ -181,13 +194,41 @@ class SubtitlesTranslator:
 
 
 
+    # def save_translated_subtitles_to_srt(self, translated_subtitles):
+    #     """Save the translated subtitles to an SRT file."""
+    #     srt_content = ""
+    #     for index, subtitle in enumerate(translated_subtitles, start=1):
+    #         srt_content += f"{index}\n{subtitle['start']} --> {subtitle['end']}\n{subtitle['zh']}\n{subtitle['en']}\n\n"
+    #     with open(self.output_srt_path, 'w', encoding='utf-8') as file:
+    #         file.write(srt_content)
+
     def save_translated_subtitles_to_srt(self, translated_subtitles):
-        """Save the translated subtitles to an SRT file."""
+        """Save the translated subtitles to an SRT file, ensuring language order."""
         srt_content = ""
         for index, subtitle in enumerate(translated_subtitles, start=1):
-            srt_content += f"{index}\n{subtitle['start']} --> {subtitle['end']}\n{subtitle['zh']}\n{subtitle['en']}\n\n"
+            # Start the subtitle entry with its sequence number and time range
+            srt_content += f"{index}\n{subtitle['start']} --> {subtitle['end']}\n"
+            
+            # Always add Chinese (zh) translation first if it exists
+            if 'zh' in subtitle:
+                srt_content += f"{subtitle['zh']}\n"
+            
+            # Add English (en) translation
+            if 'en' in subtitle:
+                srt_content += f"{subtitle['en']}\n"
+            
+            # Add any additional languages present, excluding 'start', 'end', 'zh', and 'en'
+            additional_languages = {k: v for k, v in subtitle.items() if k not in ['start', 'end', 'zh', 'en']}
+            for lang_code, text in additional_languages.items():
+                srt_content += f"{text}\n"
+            
+            # Separate subtitles with an empty line
+            srt_content += "\n"
+        
+        # Write the constructed SRT content to the output file
         with open(self.output_srt_path, 'w', encoding='utf-8') as file:
             file.write(srt_content)
+
 
     def process_subtitles(self):
         """Main process to load, translate, merge, and save subtitles."""

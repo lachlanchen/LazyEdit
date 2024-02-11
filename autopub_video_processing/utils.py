@@ -11,7 +11,7 @@ def safe_pretty_print(json_str):
         pprint(parsed_json)
 
 
-    except json.JSONDecodeError as e:
+    except ValueError as e:
         print("JSONDecodeError: Could not parse the entire JSON string.")
         print("Attempting to print as much as possible...\n")
         

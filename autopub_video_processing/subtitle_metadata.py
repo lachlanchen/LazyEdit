@@ -96,7 +96,7 @@ class Subtitle2Metadata:
     def validate_metadata(self, metadata):
         required_fields = [
             "title", "brief_description", "middle_description", "long_description",
-            "tags", "words_to_learn", "cover"
+            "tags", "english_words_to_learn", "cover"
         ]
         missing_fields = [field for field in required_fields if field not in metadata]
         if missing_fields:
@@ -112,8 +112,8 @@ class Subtitle2Metadata:
             result_zh["english_version"] = result_zh.copy()
 
         try:
-            result_zh["words_to_learn_zh"] = result_zh["words_to_learn"].copy()
-            result_zh["words_to_learn"] = result_en["words_to_learn"]
+            result_zh["english_words_to_learn_zh"] = result_zh["english_words_to_learn"].copy()
+            result_zh["english_words_to_learn"] = result_en["english_words_to_learn"]
         except:
             pass
 
@@ -152,20 +152,21 @@ class Subtitle2Metadata:
                     "The title should be in Chinese and up to 20 characters, the brief description should be in Chinese "
                     "and up to 80 characters, the middle description should be in Chinese and up to 250 characters, "
                     "the long description should be in Chinese and up to 1000 characters, there should be 10 tags related to the content of the video, "
-                    "5 to 10 ENGLISH (remember words_to_learn should be english) words or phrases that are important for viewers to learn from the video sorted by interestingness, "
+                    "Five pure ENGLISH words or phrases that are important for viewers to learn from the video sorted by interestingness, "
                     "and a cover timestamp indicating the best scene to use as the cover image. "
                     "Each word should be accompanied by a time stamps range indicating when it appears in the video.\n\n"
-                    "English subtitles:\n" + mixed_subtitles + "\n\n"
+                    "Return correct format result with imagination even subtitles is little or even empty. "
+                    "Multilingual subtitles:\n" + mixed_subtitles + "\n\n"
                     "Please write the output in the following format:\n"
                     # "{\"title\": \"\", \"brief_description\": \"\", \"middle_description\": \"\", \"long_description\": \"\", \"tags\": [], "
-                    # "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
+                    # "\"english_words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
                     "{\n"
                     "  \"title\": \"\",\n"
                     "  \"brief_description\": \"\",\n"
                     "  \"middle_description\": \"\",\n"
                     "  \"long_description\": \"\",\n"
                     "  \"tags\": [],\n"
-                    "  \"words_to_learn\": [\n"
+                    "  \"english_words_to_learn\": [\n"
                     "    {\n"
                     "      \"word\": \"\",\n"
                     "      \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"\n"
@@ -230,7 +231,7 @@ class Subtitle2Metadata:
             mixed_subtitles = file.read()
 
 
-        retries = 2
+        retries = 0
         messages = [
             {"role": "system", "content": (
                 "My name is OpenAI. I am an expert of social media who can help Youtube vlogers add influences, grow fans, "
@@ -255,15 +256,30 @@ class Subtitle2Metadata:
                     "Try to find instructions also in subtitles if exist. "
                     "Also, suggest a timestamp for the best scene to use as a cover image for the video. "
                     "The title should be in English and up to 20 words, the brief description should be in English "
-                    "and up to 80 words, the middle description should be in English and up to 250 characters, "
+                    "and up to 80 words, the middle description should be in English and up to 250 words, "
                     "the long description should be in English and up to 1000 words, there should be 10 tags related to the content of the video, "
-                    "5 to 10 English words or phrases that are important for viewers to learn from the video sorted by interestingness, "
+                    "Five pure ENGLISH words that are important for viewers to learn from the video sorted by interestingness, "
                     "and a cover timestamp indicating the best scene to use as the cover image. "
                     "Each word should be accompanied by a time stamps range indicating when it appears in the video.\n\n"
-                    "English subtitles:\n" + mixed_subtitles + "\n\n"
+                    "Return correct format result with imagination even subtitles is little or even empty. "
+                    "Multilingual subtitles:\n" + mixed_subtitles + "\n\n"
                     "Please write the output in the following format:\n"
-                    "{\"title\": \"\", \"brief_description\": \"\", \"middle_description\": \"\", \"long_description\": \"\", \"tags\": [], "
-                    "\"words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
+                    # "{\"title\": \"\", \"brief_description\": \"\", \"middle_description\": \"\", \"long_description\": \"\", \"tags\": [], "
+                    # "\"english_words_to_learn\": [{\"word\": \"\", \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"}], \"cover\": \"HH:MM:SS,mmm\"}"
+                    "{\n"
+                    "  \"title\": \"\",\n"
+                    "  \"brief_description\": \"\",\n"
+                    "  \"middle_description\": \"\",\n"
+                    "  \"long_description\": \"\",\n"
+                    "  \"tags\": [],\n"
+                    "  \"english_words_to_learn\": [\n"
+                    "    {\n"
+                    "      \"word\": \"\",\n"
+                    "      \"time_stamps\": \"HH:MM:SS,mmm --> HH:MM:SS,mmm\"\n"
+                    "    }\n"
+                    "  ],\n"
+                    "  \"cover\": \"HH:MM:SS,mmm\"\n"
+                    "}"
                 )
 
                 messages[-1]["content"] = prompt  # Update the actual prompt content
