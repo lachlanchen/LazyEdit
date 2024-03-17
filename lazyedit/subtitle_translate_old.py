@@ -1,0 +1,1560 @@
+import json
+import json5
+import re
+import traceback
+import openai
+
+from packaging import version
+import json
+import os
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+
+
+from lazyedit.openai_version_check import OpenAI
+
+
+from lazyedit.utils import JSONParsingError, JSONValidationError
+from lazyedit.utils import safe_pretty_print, sample_texts, find_font_size
+
+from datetime import datetime
+from pprint import pprint
+
+import cjkwrap
+
+import glob
+
+import numpy as np
+
+
+# def wrap_text(text, width, is_cjk):
+#     if is_cjk:
+#         # Use cjkwrap for CJK text
+#         return cjkwrap.wrap(text, width)
+#     else:
+#         # Use cjkwrap for non-CJK text as well, as it should handle both appropriately
+#         return cjkwrap.wrap(text, width)
+
+
+
+class SubtitlesTranslator:
+    def __init__(self, 
+        openai_client, 
+        input_json_path, 
+        input_sub_path, 
+        output_sub_path,
+        video_length=None,
+        video_width=1080,
+        video_height=1920,
+        max_retries=3,
+        use_cache=False
+    ):
+        self.client = openai_client
+        self.input_json_path = input_json_path
+        self.input_sub_path = input_sub_path
+        self.output_sub_path = output_sub_path
+        self.max_retries = max_retries
+        self.video_length = video_length
+
+        self.video_width = video_width
+        self.video_height = video_height
+        self.base_width = 1920
+        self.base_height = 1080
+
+        self.wrapping_limit_half_width_default = 60  # Default wrapping_limit_half_width for landscape
+        
+        if not self.is_video_landscape:
+            self.wrapping_limit_half_width_default = int(self.wrapping_limit_half_width_default * 0.5)  # Adjust wrapping_limit_half_width for portrait videos
+
+
+        # self.is_video_landscape = video_width > video_height
+        self.font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+
+        self.translation_log_folder = 'translation_logs'
+        self.use_cache = use_cache
+
+        print("Using translation cache: ", use_cache)
+
+        self.ensure_log_folder_exists()
+
+
+
+    @property
+    def is_video_landscape(self):
+        """Determine if the video is landscape or portrait based on class variables."""
+        return self.video_width > self.video_height
+
+    def ensure_log_folder_exists(self):
+        if not os.path.exists(self.translation_log_folder):
+            os.makedirs(self.translation_log_folder)
+
+    def get_log_filename(self, lang="ja", idx=0):
+        base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
+        datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        return f"{self.translation_log_folder}/{base_filename}-part{idx}-{lang}-{datetime_str}.json"
+
+    def save_translation_attempt(self, prompt, response, lang="ja", idx=0):
+        log_filename = self.get_log_filename(lang=lang, idx=idx)
+        translation_attempt = {
+            "input_json_path": self.input_json_path,
+            "prompt": prompt,
+            "response": response
+        }
+        with open(log_filename, 'w', encoding='utf-8') as file:
+            json.dump(translation_attempt, file, indent=4, ensure_ascii=False)
+
+
+    def load_latest_translation_attempt(self, lang="ja", idx=0):
+        """
+        Load the latest translation attempt from the translation logs folder
+        based on the input JSON path.
+        """
+        base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
+        pattern = f"{self.translation_log_folder}/{base_filename}-part{idx}-{lang}-*.json"
+        files = glob.glob(pattern)
+        if not files:
+            return None  # No cache available
+
+        # Find the latest file based on the naming convention
+        latest_file = max(files, key=os.path.getctime)
+        with open(latest_file, 'r', encoding='utf-8') as file:
+            cached_data = json5.load(file)
+        return cached_data["response"]
+
+
+    def load_subtitles_from_json(self):
+        """Load subtitles from a JSON file."""
+        with open(self.input_json_path, 'r', encoding='utf-8') as file:
+            return json5.load(file)
+
+    @staticmethod
+    def correct_json_string(s):
+        # Remove trailing commas after object properties or array elements
+        corrected_s = re.sub(r',\s*}', '}', s)
+        corrected_s = re.sub(r',\s*\]', ']', corrected_s)
+        return corrected_s
+
+    def extract_and_parse_json(self, text):
+        """Extract and parse JSON from text, handling potential parsing issues."""
+        bracket_pattern = r'\[.*\]'
+        matches = re.findall(bracket_pattern, text, re.DOTALL)
+        # json_string = ""
+
+        if not matches:
+            raise JSONParsingError("No JSON string found in text", text, text)
+        json_string = matches[0].replace('\n', '')
+
+        # pprint(json_string)
+        safe_pretty_print(json_string)
+
+        try:
+            json_string = self.correct_json_string(json_string)
+            return json5.loads(json_string)
+        except ValueError as e:
+            traceback.print_exc()
+            raise JSONParsingError(f"JSON Decode Error: {e}", json_string, text)
+
+    def validate_translated_subtitles(self, subtitles, required_fields=["start", "end", "en", "zh"]):
+        """Validate the structure of translated subtitles."""
+        # required_fields = ["start", "end", "en", "zh"]
+        for subtitle in subtitles:
+            if not all(field in subtitle for field in required_fields):
+                raise JSONValidationError("Subtitle missing one of the required fields: " + ", ".join(required_fields))
+
+    # def translate_and_merge_subtitles(self, subtitles):
+    #     """Splits subtitles into 1-minute batches and processes each batch."""
+    #     # subtitles = self.load_subtitles_from_json()
+
+    #     # Splitting subtitles into 1-minute batches
+    #     batches = self.split_subtitles_into_batches(subtitles)
+
+    #     # Process each batch and accumulate results
+    #     translated_subtitles = []
+    #     for batch in batches:
+    #         translated_batch = self.translate_and_merge_subtitles_in_batch(batch)
+    #         translated_subtitles.extend(translated_batch)
+
+    #     # Save the final translated subtitles
+    #     # self.save_translated_subtitles_to_ass(translated_subtitles)
+    #     print("All subtitles have been processed and saved successfully.")
+
+    #     return translated_subtitles
+
+    def translate_and_merge_subtitles(self, subtitles):
+        """Splits subtitles into 1-minute batches and processes each batch in parallel."""
+        # subtitles = self.load_subtitles_from_json()
+
+        # Splitting subtitles into 1-minute batches
+        batches = self.split_subtitles_into_batches(subtitles)
+
+        # Process each batch and accumulate results in parallel
+        translated_subtitles = self.process_batches_in_parallel(batches)
+
+        # Save the final translated subtitles
+        # self.save_translated_subtitles_to_ass(translated_subtitles)
+        print("All subtitles have been processed and saved successfully.")
+
+        return translated_subtitles
+
+    def process_batches_in_parallel(self, batches):
+        """Process subtitle batches in parallel using ThreadPoolExecutor."""
+        translated_subtitles = []
+
+        with ThreadPoolExecutor(max_workers=5) as executor:
+            # Submit all batches to be processed in parallel
+            future_to_batch = {executor.submit(self.translate_and_merge_subtitles_in_batch, batch, i): batch for i, batch in enumerate(batches)}
+
+            for future in as_completed(future_to_batch):
+                batch = future_to_batch[future]
+                try:
+                    translated_batch = future.result()
+                    translated_subtitles.extend(translated_batch)
+                except Exception as exc:
+                    print(f'Batch {batch} generated an exception: {exc}')
+        
+        # Optional: Sort the merged list by start timestamps if necessary
+        translated_subtitles.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return translated_subtitles
+
+    def split_subtitles_into_batches(self, subtitles):
+        """Splits subtitles into 1-minute batches based on their timestamps."""
+        batches = []
+        current_batch = []
+        current_batch_start_time = None
+
+        for subtitle in subtitles:
+            start_time = datetime.strptime(subtitle["start"], '%H:%M:%S,%f')
+            if current_batch_start_time is None:
+                current_batch_start_time = start_time
+
+            if (start_time - current_batch_start_time).total_seconds() > 60:
+                # Start a new batch if the current subtitle start time exceeds 1 minute from the batch's start time
+                batches.append(current_batch)
+                current_batch = [subtitle]
+                current_batch_start_time = start_time
+            else:
+                current_batch.append(subtitle)
+
+        # Add the last batch if it contains subtitles
+        if current_batch:
+            batches.append(current_batch)
+
+        return batches
+
+    # def translate_and_merge_subtitles_in_batch(self, subtitles):
+    #     """Merge translations from Japanese-specific and other languages' functions."""
+    #     translations_ja = self.translate_and_merge_subtitles_ja(subtitles)
+    #     translations_other_lang = self.translate_and_merge_subtitles_other_languages(subtitles)
+
+    #     # Creating a dictionary for other languages translations for quick lookup by timestamp
+    #     timestamps_dict = {
+    #         (translation['start'], translation['end']): translation for translation in translations_other_lang
+    #     }
+
+    #     # Iterate through Japanese translations to merge
+    #     for ja_translation in translations_ja:
+    #         key = (ja_translation['start'], ja_translation['end'])
+    #         if key in timestamps_dict:
+    #             # If timestamp exists, replace Japanese translation
+    #             timestamps_dict[key]['ja'] = ja_translation['ja']
+    #         else:
+    #             # If timestamp does not exist, add new entry with Japanese translation
+    #             timestamps_dict[key] = ja_translation
+
+    #     # Convert the dictionary back to list to get the final merged translations
+    #     merged_translations = list(timestamps_dict.values())
+
+    #     # Optional: Sort the merged list by start timestamps if necessary
+    #     merged_translations.sort(key=lambda x: x['start'])
+
+    #     return merged_translations
+
+    def translate_and_merge_subtitles_in_batch(self, subtitles, idx):
+        """Merge translations from Japanese-specific and other languages' functions in parallel."""
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            # Submit both translation tasks to the executor
+            future_ja = executor.submit(self.translate_and_merge_subtitles_ja, subtitles, idx)
+            future_other_lang = executor.submit(self.translate_and_merge_subtitles_other_languages, subtitles, idx)
+
+            # Wait for both futures to complete and retrieve results
+            translations_ja = future_ja.result()
+            translations_other_lang = future_other_lang.result()
+
+        # Merge translations as before
+        timestamps_dict = {
+            (translation['start'], translation['end']): translation for translation in translations_other_lang
+        }
+
+        for ja_translation in translations_ja:
+            key = (ja_translation['start'], ja_translation['end'])
+            if key in timestamps_dict:
+                timestamps_dict[key]['ja'] = ja_translation['ja']
+            else:
+                timestamps_dict[key] = ja_translation
+
+        merged_translations = list(timestamps_dict.values())
+        merged_translations.sort(key=lambda x: x['start'])
+
+        return merged_translations
+
+
+    def translate_and_merge_subtitles_other_languages(self, subtitles, idx):
+        """Translate and merge subtitles using the OpenAI API."""
+
+        print("Translating subtitles into other languages...")
+        
+        client = self.client
+
+
+        # Constructing the messages with the optimized prompt
+        messages = [
+            {
+                "role": "system",
+                "content": "Translate and merge mixed language subtitles into English and Chinese, providing coherent and accurate translations."
+            },
+            {
+                "role": "user",
+                "content": ""
+            }
+        ]
+
+        retries = 0
+
+        while retries < self.max_retries:
+            try:
+                # Placeholder for OpenAI API call setup
+                # Construct the prompt for translation and merging
+                # Constructing the detailed prompt with placeholders for subtitles
+                # Prepare the detailed prompt for translation and merging
+                
+                prompt_content = (
+                    "Below are mixed language subtitles extracted from a video, including timestamps, "
+                    "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
+                    "is presented with English (en), Chinese (zh)， Arabic (ar) translations, "
+                    "maintaining the original timestamps. "
+                    "If a subtitle is already in English, provide the corresponding Chinese, Arabic translation, and vice versa. "
+                    "For subtitles in any other language, keep the original text but also provide translations in "
+                    "English, Chinese, Arabic. \n\n"
+
+                    # "Must provide Japanese subtitles with furigana in this format '< Kanji>[Furigana]'."
+                    # "Use '<>' to confine the whole annotated kanji area. Use '[]' to confine the furigana. "
+                    # "Please exact follow this format. Otherwise my parser will report error. \n\n"
+
+                    # "Below are mixed language subtitles extracted from a video, including timestamps, "
+                    # "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
+                    # "is presented with English (en),  Chinese (zh), Arabic (ar) and Japanese (ja) translations, "
+                    # "maintaining the original timestamps. "
+                    # "If a subtitle is already in English, provide the corresponding Chinese translation, and vice versa. "
+                    # "For subtitles in any other language, keep the original text but also provide translations in "
+                    # "English, Chinese, Arabic and Japanese.\n\n"
+
+                    # "I only care about most common languages like Chinese, English, Japanese and Arabic. "
+                    # "If I said 阿南伯, it's regonition error of 阿拉伯. "
+                    "Fullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. "
+                    "If I said in subtitles that I want to know or I don't know how to say something, "
+                    "provide the whole subtitles in that language. "
+                    # "For example, if I want to know something in Arabic 阿拉伯, provide the Arabic language subtitle. Or,"
+                    # "if I said I don't know how to say something in Japanese 日语, Provide the Japanese language subtitle. \n\n"
+                    # "Some weird language might be speech recognition error. "
+                 
+                    "Correct some apparent speech recognition error and inconsistencies, "
+                    "especially homonym and mumble in both origin and its translation based on the context.\n\n"
+            
+                    "Process the following subtitles, ensuring translations are accurate and coherent, "
+                    "and format the output as shown in the example. "
+                    "Note that the original timestamps should be preserved for each entry.\n\n"
+
+                    "Subtitles to process:\n"
+                    f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+                    
+                    # "Please provide a complete and accurate translation and formatting for each subtitle entry."
+
+                    "Output JSON format only:\n"
+                    "```json"
+                    "[\n"
+                    "  {\n"
+                    "    \"start\": \"timestamp\",\n"
+                    "    \"end\": \"timestamp\",\n"
+                    "    \"en\": \"English text\",\n"
+                    "    \"zh\": \"Chinese text\",\n"
+                    "    \"ar\": \"Arabic text\",\n"
+                    # "    \"ja\": \"Japanese text\",\n"
+                    "    \"...\": \"Text in the original language, if not English or Chinese\"\n"
+                    "  }\n"
+                    "]\n\n"
+                    "```"
+                )
+
+                ai_response = None
+                if self.use_cache:
+                    ai_response = self.load_latest_translation_attempt(lang="zh_en_ar", idx=idx)
+                
+                if not self.use_cache or not ai_response:
+                    
+
+                    messages[1]["content"] = prompt_content
+
+                    # Sending the request to the OpenAI API
+                    client = openai.OpenAI()  # Initializing the OpenAI client
+                    response = client.chat.completions.create(
+                        model=os.environ.get("OPENAI_MODEL", "gpt-4-0125-preview"),
+                        messages=messages
+                    )
+
+                    # Extracting and printing the AI's response
+                    ai_response = response.choices[0].message.content.strip()
+
+                translated_subtitles = self.extract_and_parse_json(ai_response)
+                
+                self.validate_translated_subtitles(translated_subtitles)
+
+                 # Save the successful attempt with the new method
+                self.save_translation_attempt(prompt_content, ai_response, lang="zh_en_ar", idx=idx)
+
+                return translated_subtitles
+            except (JSONParsingError, JSONValidationError) as e:
+                self.use_cache = False
+
+                print(f"Attempt {retries + 1} failed: {e}")
+
+                # Append the response and error message for context
+                messages.append({"role": "system", "content": ai_response})
+                messages.append({"role": "user", "content": e.message})
+                
+                retries += 1
+                
+                if retries >= self.max_retries:
+                    # # Check if the processed_sub_path exists and remove it if it does
+                    # if os.path.exists(self.output_sub_path):
+                    #     os.remove(self.output_sub_path)
+
+                    # # Now, safely create a hard link
+                    # try:
+                    #     os.link(self.input_sub_path, self.output_sub_path)
+                    # except OSError as e:
+                    #     print(f"Error creating hard link: {e}")
+
+                    raise Exception("Failed after maximum retries. ")
+
+    # Function to annotate Kanji and Katakana independently
+    @staticmethod
+    def annotate_kanji_katakana(subtitles):
+        # Define the regular expression patterns for Kanji and Katakana
+        kanji_pattern = r'[\u4e00-\u9faf]+'
+        katakana_pattern = r'[\u30a0-\u30ff]+'
+        
+        # Function to wrap text in <>[]
+        def replacer(match):
+            return f'<{match.group(0)}>[]'
+        
+        # Annotate each item in the list
+        for item in subtitles:
+            # Annotate Kanji
+            item['ja'] = re.sub(kanji_pattern, replacer, item['ja'])
+            # Annotate Katakana
+            item['ja'] = re.sub(katakana_pattern, replacer, item['ja'])
+        
+        return subtitles
+
+    def translate_and_merge_subtitles_ja(self, subtitles, idx):
+        """Request Japanese subtitles separately with specific formatting for furigana."""
+        print("Translating subtitles to Japanese...")
+
+        messages_ja = [
+            {
+                "role": "system",
+                # "content": "Translate subtitles into Japanese with furigana format, correcting any errors based on context."
+                "content": "Translate subtitles into Japanese, correcting any errors based on context."
+            },
+            {
+                "role": "user",
+                "content": ""
+            }
+        ]
+
+        retries = 0
+        while retries < self.max_retries:
+            try:
+                prompt_content_ja = (
+                    "Translate the following subtitles into Japanese. "
+                    # "with furigana in angle and square brackets like <漢字>[かんじ]. "
+                    # "ensuring to include furigana in the specified format '<Kanji>[Furigana]'. \n\n"
+                    "\n\n"
+                    
+                    # "Please exact follow this format. Otherwise my parser will report error. \n\n"
+
+                    # "Maintain the original timestamps and provide translations only in Japanese, "
+                    # "applying the correct formatting for furigana. "
+
+                    "Correct speech recognition errors and inconsistencies based on context.\n\n"
+                    
+                    "Note that the original timestamps should be preserved for each entry.\n\n"
+
+                    
+                    "Subtitles to process:\n"
+                    f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+
+                    # "KEEP the 漢字 in angle brackets like '<漢字>'. "
+                    # "KEEP the ふりがな in square brackets like '[ふりがな]'. "
+                    # "Prefer English transliterated word over furigana if exists."
+                    # "Provide furigana/transliterated word for ALL kanji/漢字. \n\n"
+                    # "Use '<>' to confine the whole annotated kanji area. Use '[]' to confine the furigana. "
+
+                    "Output JSON format only:\n"
+                    "```json\n"
+                    "[\n"
+                    "  {\n"
+                    "    \"start\": \"timestamp\",\n"
+                    "    \"end\": \"timestamp\",\n"
+                    "    \"ja\": \"Japanese text\",\n"
+                    "  }\n"
+                    "]\n"
+                    "```"
+                )
+
+                ai_response_ja = None
+                if self.use_cache:
+                    ai_response_ja = self.load_latest_translation_attempt(lang="ja", idx=idx)
+                
+                if not self.use_cache or not ai_response_ja:
+
+                    
+                    messages_ja[1]["content"] = prompt_content_ja
+                    
+
+                    response_ja = self.client.chat.completions.create(
+                        model=os.environ.get("OPENAI_MODEL", "gpt-4-0125-preview"),
+                        messages=messages_ja
+                    )
+
+                    ai_response_ja = response_ja.choices[0].message.content.strip()
+
+                translated_subtitles_ja = self.extract_and_parse_json(ai_response_ja)
+                self.validate_translated_subtitles(translated_subtitles_ja, required_fields=["start", "end", "ja"])
+                self.save_translation_attempt(prompt_content_ja, ai_response_ja, lang="ja", idx=idx)
+
+                annotated_subtitles = self.annotate_kanji_katakana(translated_subtitles_ja)
+
+                print("annotated subtitles: \n")
+                pprint(annotated_subtitles)
+
+                translated_subtitles_ja_with_furigana = self.add_furigana_for_japanese_subtitles(annotated_subtitles, idx)
+
+                print("furigana subtitles: \n")
+                pprint(translated_subtitles_ja_with_furigana)
+
+                # return translated_subtitles_ja
+                return translated_subtitles_ja_with_furigana
+
+            except (JSONParsingError, JSONValidationError) as e:
+                self.use_cache = False
+
+                print(f"Attempt {retries + 1} failed: {e}")
+
+                # Append the response and error message for context
+                messages_ja.append({"role": "system", "content": ai_response_ja})
+                messages_ja.append({"role": "user", "content": e.message})
+                
+                retries += 1
+                
+                if retries >= self.max_retries:
+                    # # Check if the processed_sub_path exists and remove it if it does
+                    # if os.path.exists(self.output_sub_path):
+                    #     os.remove(self.output_sub_path)
+
+                    # # Now, safely create a hard link
+                    # try:
+                    #     os.link(self.input_sub_path, self.output_sub_path)
+                    # except OSError as e:
+                    #     print(f"Error creating hard link: {e}")
+
+                    raise Exception("Failed after maximum retries. ")
+
+
+    def add_furigana_for_japanese_subtitles(self, subtitles, idx):
+        """Request Japanese subtitles separately with specific formatting for furigana."""
+        print("Adding furigana to translated subtitles...")
+
+        messages_ja = [
+            {
+                "role": "system",
+                "content": "Add furigana (inside []) to Japanese kanji (inside <>) with provided format. "
+            },
+            {
+                "role": "user",
+                "content": ""
+            }
+        ]
+
+        retries = 0
+        while retries < self.max_retries:
+            try:
+                prompt_content_ja = (
+                    "Add the correct furigana inside the square brackets like <漢字/katakana>[かんじ]. "
+                    # "ensuring to include furigana in the specified format '<Kanji>[Furigana]'. \n\n"
+                    "\n\n"
+                    
+                    # "Please exact follow this format. Otherwise my parser will report error. \n\n"
+
+                    # "Maintain the original timestamps and provide translations only in Japanese, "
+                    # "applying the correct formatting for furigana. "
+
+                    # "Correct speech recognition errors and inconsistencies based on context.\n\n"
+
+
+                    
+                    # "Prefer English transliterated word over furigana if exists."
+                    # "Provide furigana/transliterated word for ALL kanji/漢字. \n\n"
+                    # "Use '<>' to confine the whole annotated kanji area. Use '[]' to confine the furigana. "
+
+                    
+                    "Note that the original timestamps should be preserved for each entry.\n\n"
+
+                    
+                    "Subtitles to process:\n"
+                    f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+
+                    "KEEP the 漢字/katakana in angle brackets like '<漢字/katakana>' as original. "
+                    "Add the furigana ふりがな inside the square brackets like '[ふりがな]'. "
+
+                    
+                    "Output JSON format only:\n"
+                    "```json\n"
+                    "[\n"
+                    "  {\n"
+                    "    \"start\": \"timestamp\",\n"
+                    "    \"end\": \"timestamp\",\n"
+                    "    \"ja\": \"Japanese text with furigana format\",\n"
+                    "  }\n"
+                    "]\n"
+                    "```"
+                )
+
+                ai_response_ja = None
+                if self.use_cache:
+                    ai_response_ja = self.load_latest_translation_attempt(lang="furigana", idx=idx)
+                
+                if not self.use_cache or not ai_response_ja:
+
+                    
+                    messages_ja[1]["content"] = prompt_content_ja
+                    
+
+                    response_ja = self.client.chat.completions.create(
+                        model=os.environ.get("OPENAI_MODEL", "gpt-4-0125-preview"),
+                        messages=messages_ja
+                    )
+
+                    ai_response_ja = response_ja.choices[0].message.content.strip()
+
+                translated_subtitles_ja = self.extract_and_parse_json(ai_response_ja)
+                self.validate_translated_subtitles(translated_subtitles_ja, required_fields=["start", "end", "ja"])
+                self.save_translation_attempt(prompt_content_ja, ai_response_ja, lang="furigana", idx=idx)
+
+                return translated_subtitles_ja
+            except (JSONParsingError, JSONValidationError) as e:
+                self.use_cache = False
+
+                print(f"Attempt {retries + 1} failed: {e}")
+
+                # Append the response and error message for context
+                messages_ja.append({"role": "system", "content": ai_response_ja})
+                messages_ja.append({"role": "user", "content": e.message})
+                
+                retries += 1
+                
+                if retries >= self.max_retries:
+                    # # Check if the processed_sub_path exists and remove it if it does
+                    # if os.path.exists(self.output_sub_path):
+                    #     os.remove(self.output_sub_path)
+
+                    # # Now, safely create a hard link
+                    # try:
+                    #     os.link(self.input_sub_path, self.output_sub_path)
+                    # except OSError as e:
+                    #     print(f"Error creating hard link: {e}")
+
+                    raise Exception("Failed after maximum retries. ")
+
+    # def save_translated_subtitles_to_srt(self, translated_subtitles):
+    #     """Save the translated subtitles to an SRT file."""
+    #     srt_content = ""
+    #     for index, subtitle in enumerate(translated_subtitles, start=1):
+    #         srt_content += f"{index}\n{subtitle['start']} --> {subtitle['end']}\n{subtitle['zh']}\n{subtitle['en']}\n\n"
+    #     with open(self.output_sub_path, 'w', encoding='utf-8') as file:
+    #         file.write(srt_content)
+
+    def save_translated_subtitles_to_srt(self, translated_subtitles):
+        """Save the translated subtitles to an SRT file, ensuring language order."""
+        srt_content = ""
+        for index, subtitle in enumerate(translated_subtitles, start=1):
+            # Start the subtitle entry with its sequence number and time range
+            srt_content += f"{index}\n{subtitle['start']} --> {subtitle['end']}\n"
+            
+            # Always add Chinese (zh) translation first if it exists
+            if 'zh' in subtitle:
+                srt_content += f"{subtitle['zh']}\n"
+            
+            # Add English (en) translation
+            if 'en' in subtitle:
+                srt_content += f"{subtitle['en']}\n"
+            
+            # Add any additional languages present, excluding 'start', 'end', 'zh', and 'en'
+            additional_languages = {k: v for k, v in subtitle.items() if k not in ['start', 'end', 'zh', 'en']}
+            for lang_code, text in additional_languages.items():
+                srt_content += f"{text}\n"
+            
+            # Separate subtitles with an empty line
+            srt_content += "\n"
+        
+        # Write the constructed SRT content to the output file
+        with open(self.output_sub_path, 'w', encoding='utf-8') as file:
+            file.write(srt_content)
+
+
+    def process_subtitles(self):
+        """Main process to load, translate, merge, and save subtitles."""
+        subtitles = self.load_subtitles_from_json()
+        translated_subtitles = self.translate_and_merge_subtitles(subtitles)
+        # self.save_translated_subtitles_to_srt(translated_subtitles)
+        self.save_translated_subtitles_to_ass(translated_subtitles)
+        print("Subtitles have been processed and saved successfully.")
+
+    # @staticmethod
+    # def convert_furigana_to_ass(ja_text):
+    #     """Convert furigana format from <kanji>[furigana] to ASS ruby format with kanji in almost white with a hint of blue and furigana in salmon and larger size."""
+    #     def replace_with_ruby(match):
+    #         kanji, furigana = match.groups()
+    #         # Apply the Kanji style for kanji and the Furigana style for furigana
+    #         return f"{{\\rKanji}}{kanji}{{\\rFurigana}}{furigana}{{\\rDefault}}"
+    #         # return f"{{\\rFurigana}}{furigana}{{\\rKanji}}{kanji}{{\\rDefault}}"
+    #     # Updated regex to match the new format <kanji>[furigana]
+    #     return re.sub(r"<([^>]+)>\[([^]]+)\]", replace_with_ruby, ja_text)
+
+    # @staticmethod
+    # def convert_furigana_to_ass(ja_text):
+    #     """Convert furigana format from <kanji>[furigana] or standalone [furigana] to ASS ruby format,
+    #     applying styles for kanji and furigana where present."""
+    #     def replace_with_ruby(match):
+    #         kanji, furigana = match.groups()
+    #         # Check if kanji is None (which means only [furigana] was present)
+    #         if kanji is None:
+    #             # Format just the furigana with the Furigana style
+    #             return f"{{\\rFurigana}}{furigana}{{\\rDefault}}"
+    #         else:
+    #             # Format with both Kanji and Furigana styles
+    #             return f"{{\\rKanji}}{kanji}{{\\rFurigana}}{furigana}{{\\rDefault}}"
+
+    #     # Updated regex to match both <kanji>[furigana] and standalone [furigana]
+    #     # The kanji part is made optional by including '?' after the non-capturing group for kanji
+    #     pattern = r"(?:<([^>]+)>)?\[([^]]+)\]"
+    #     return re.sub(pattern, replace_with_ruby, ja_text)
+
+    # def clean_redundant_hiragana_sequence(self, ja_text):
+    #     """
+    #     Removes angle brackets when the content inside <> is identical to the content inside the immediately following [].
+    #     """
+        
+    #     # Define a regex pattern to find <content>[content] and capture the content
+    #     pattern = re.compile(r'<([^>]+)>\[\1\]')
+        
+    #     # Replace found patterns with just the content in square brackets
+    #     simplified_text = pattern.sub(r'[\1]', ja_text)
+        
+    #     return simplified_text
+
+    def rearrange_brackets(self, ja_text):
+        """
+        Detects and rearranges text where [] are found inside <> to follow the <>[] pattern.
+        """
+        
+        # Define a regex pattern to match <...[...]...>
+        pattern = re.compile(r'<([^>\[\]]+)\[([^\[\]]+)\]([^>\[\]]*)>')
+        
+        # Function to rearrange the matched pattern to <...> [...]
+        def rearrange(match):
+            # Extract the parts of the match
+            before_bracket = match.group(1)
+            inside_bracket = match.group(2)
+            after_bracket = match.group(3)
+            
+            # Return the rearranged format
+            return f'<{before_bracket}{after_bracket}>[{inside_bracket}]'
+
+        # Apply the rearrange function to all matching patterns in the text
+        rearranged_text = pattern.sub(rearrange, ja_text)
+
+        return rearranged_text
+
+    def remove_preceding_repetition(self, ja_text):
+        """
+        Removes a word or phrase that is repeated immediately before <...> when
+        the content inside <> is the same as the preceding word.
+        """
+        
+        # Define a regex pattern to match repetition before <>
+        pattern = re.compile(r'(\S+)<\1>')
+        
+        # Function to replace the matched pattern with just the content in angle brackets
+        def deduplicate(match):
+            # Return only the content within angle brackets
+            return f'<{match.group(1)}>'
+
+        # Apply the deduplication function to all matching patterns in the text
+        deduplicated_text = pattern.sub(deduplicate, ja_text)
+
+        return deduplicated_text
+
+
+    def clean_triplicated_sequences(self, ja_text):
+        """
+        Simplifies text by converting sequences of the form same<same>[same] to just 'same'.
+        """
+        # Define a regex pattern to match the 'same<same>[same]' structure
+        pattern = re.compile(r'(?:(\S+)<\1>\[\1\])')
+        
+        # Function to perform the substitution
+        def replacement(match):
+            # Return just the first 'same' part of the match
+            return match.group(1)
+        
+        # Remove same hiragana<same hiragana>[ same hiragana] anywhere
+        # Apply the replacement function to all matching patterns in the text
+        simplified_text = pattern.sub(replacement, ja_text)
+
+        return simplified_text
+
+
+
+    
+
+
+    def clean_duplicated_kanji_hiragana_sequence(self, ja_text):
+        """
+        Converts sequences of the form 'same kanji<same kanji>[hiragana]' to '<kanji>[hiragana]'.
+        """
+        # Define a regex pattern to match the specified structure
+        pattern = re.compile(r'([一-龠ァ-ヶ々ー]+)(<\1>)\[([ぁ-ん]+)\]')
+        
+        # Function to perform the substitution
+        def replacement(match):
+            # for i in range(4):
+            #     print(match.group(i))
+            
+            # Return the simplified structure '<kanji>[hiragana]'
+            kanji = match.group(2)
+            hiragana = match.group(3)
+            return f'{kanji}[{hiragana}]'
+        
+        # Convert kanji<kanji>[hiragana] to <kanji>[hiragana], preserving the sequence (two kanji seq is the same)
+        # Apply the replacement function to all matching patterns in the text
+        simplified_text = pattern.sub(replacement, ja_text)
+
+        return simplified_text
+
+    def clean_redundant_hiragana_sequence(self, ja_text):
+        """
+        Modifies text by removing redundant angle and square brackets for matching hiragana or kanji sequences.
+        - For hiragana immediately before or at the start, followed by <hiragana>[hiragana], it leaves just the hiragana.
+        - For kanji followed by <hiragana>[hiragana], it replaces them with [hiragana].
+        """
+
+        
+
+        # Remove <same hiragana>[same hiragana] when at the start or directly after punctuation or preceded by different hiragana
+        # hiragana_pattern = re.compile(r'(^|(?<=[ぁ-ん]))<([ぁ-ん]+)>\[\2\]')
+        hiragana_pattern = re.compile(r'(^|(?<=[、。！？>\]ぁ-ん]))<([ぁ-ん]+)>\[\2\]')
+        simplified_text = hiragana_pattern.sub(r'\1\2', ja_text)
+        
+        # Convert kanji<hiragana>[hiragana] to kanji[hiragana], preserving the sequence
+        kanji_hiragana_pattern = re.compile(r'(?<=[一-龠ァ-ヶ々ー])<([ぁ-ん]+)>\[\1\]')
+        simplified_text = kanji_hiragana_pattern.sub(r'[\1]', simplified_text)
+
+        
+        
+        return simplified_text
+
+    def clean_duplicated_hiragana_inside_angle_brackets(self, ja_text):
+        """
+        Simplifies sequences of the form 'same hiragana<same hiragana>' to just 'hiragana'.
+        """
+        # Define a regex pattern to match hiragana sequences repeated before and inside angle brackets
+        pattern = re.compile(r'<?([ぁ-ん]+)>?<\1>')
+
+        
+        # Perform the substitution to replace matched patterns with just the hiragana
+        simplified_text = pattern.sub(r'\1', ja_text)
+
+        return simplified_text
+
+
+    def convert_standalone_angle_to_square_brackets(self, ja_text):
+        """
+        Converts standalone angle brackets to square brackets in the given text,
+        while leaving <kanji>[furigana] pairs unchanged.
+        """
+        
+        # Define a regex pattern to find standalone <> not followed directly by []
+        # This pattern assumes 'standalone' means there's no furigana in square brackets immediately following
+        pattern = re.compile(r'<([^>]+)>(?!\[)')
+        
+        # Replace found patterns with square brackets
+        converted_text = pattern.sub(r'[\1]', ja_text)
+        
+        return converted_text
+
+
+
+
+
+
+    # # Example usage
+    # original_text = "<字幕>[じまく]上[じょう]でこの<日本語>[にほんご]の発音[はつおん]を学[まな]べるようにしています。"
+    # preprocessed_text = preprocess_text_for_furigana(original_text)
+
+    # print("Preprocessed Text:", preprocessed_text)
+
+    def katakana_to_hiragana(self, katakana):
+        """
+        Converts a katakana string to hiragana.
+        """
+        katakana_hiragana_map = str.maketrans(
+            "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲンガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポ",
+            "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをんがぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽ"
+        )
+        return katakana.translate(katakana_hiragana_map)
+
+    def fill_blank_of_katakana_without_furigana(self, ja_text):
+        """
+        Converts sequences of the form <katakana>[] to <katakana>[hiragana],
+        where hiragana is the equivalent of the katakana text inside the angle brackets.
+        """
+        # Define a regex pattern to match <katakana>[] structures
+        pattern = re.compile(r'<([ァ-ヶー]+)>\[\]')
+        
+        # Function to perform the substitution
+        def replacement(match):
+            # Convert the matched katakana to hiragana
+            katakana_text = match.group(1)
+            hiragana_text = self.katakana_to_hiragana(katakana_text)
+            return f'<{katakana_text}>[{hiragana_text}]'
+        
+        # Apply the replacement function to all matching patterns in the text
+        converted_text = pattern.sub(replacement, ja_text)
+
+        return converted_text
+
+    def convert_katakana_in_brackets_to_hiragana(self, ja_text):
+        """
+        Detects <Katakana>[Katakana] then converts the [Katakana] into [Hiragana].
+        """
+        # # Define a regex pattern to match <Katakana>[Katakana]
+        # pattern = re.compile(r'<([ァ-ヶー]+)>\[\1\]')
+
+        # Define a regex pattern to match both <Katakana>[Katakana] and Katakana[Katakana]
+        pattern = re.compile(r'(?:(<([ァ-ヶー]+)>)|([ァ-ヶー]+))\[(\2|\3)\]')
+
+        # # Use the katakana_to_hiragana function to convert matched katakana to hiragana in []
+        # corrected_text = re.sub(pattern, lambda m: f'<{m.group(1)}>[{katakana_to_hiragana(m)}]', ja_text)
+
+        def replacement(match):
+            # Determine if the match includes angle brackets or not
+            katakana = match.group(2) if match.group(2) else match.group(3)
+            hiragana = self.katakana_to_hiragana(katakana)
+            # Reconstruct the string with the katakana in brackets converted to hiragana
+            if match.group(1):  # If katakana was enclosed in angle brackets
+                return f'<{katakana}>[{hiragana}]'
+            else:  # If katakana was not enclosed in angle brackets
+                return f'{katakana}[{hiragana}]'
+
+        # Use the replacement function to convert matched katakana to hiragana in []
+        corrected_text = pattern.sub(replacement, ja_text)
+
+        return corrected_text
+
+    # @staticmethod
+    # def preprocess_text_for_furigana(self, ja_text):
+    #     """
+    #     Adjusts Japanese text to ensure that kanji/katakana sequences directly preceding standalone furigana
+    #     are enclosed in <>, without altering or removing any unassociated hiragana or other characters.
+    #     """
+        
+    #     # Define a regex pattern that captures sequences to be enclosed based on the presence of furigana.
+    #     # This pattern aims to avoid capturing leading hiragana that's not part of the kanji/katakana sequence for furigana.
+        
+
+    #     pattern = re.compile(r'(?<!<)([一-龠ァ-ヶ々ー]+)(?=\[([^\]]+)\])')
+
+    #     # Function to enclose matched kanji/katakana sequence in <>
+    #     def enclose_kanji_katakana(match):
+    #         kanji_katakana = match.group(1)  # The kanji/katakana sequence
+    #         return f'<{kanji_katakana}>'
+
+    #     # Apply the enclosure function to all appropriate sequences in the text
+    #     preprocessed_text = pattern.sub(enclose_kanji_katakana, ja_text)
+
+    #     # Return the modified text with appropriate enclosures
+    #     return preprocessed_text
+    def preprocess_text_for_furigana(self, ja_text):
+        """
+        Adjusts Japanese text to ensure that kanji/katakana sequences directly preceding standalone furigana
+        are enclosed in <>, without altering or removing any unassociated hiragana or other characters.
+        This version stops including characters in the sequence based on the starting character type (kanji or katakana).
+        """
+        
+        # This pattern is updated to differentiate between sequences starting with kanji or katakana.
+        # It ensures that if a sequence starts with kanji, it only includes kanji,
+        # and if it starts with katakana, it only includes katakana, directly preceding the furigana annotation.
+        # pattern = re.compile(
+        #     r'(?<!<)'
+        #     r'((?:[一-龠々]+|[ァ-ヶー]+))'  # Matches a sequence of kanji or a sequence of katakana
+        #     r'(?=\[([^\]]+)\])'  # Lookahead for furigana enclosed in brackets without including them in the match
+        # )
+        pattern = re.compile(
+            r'(?<!<)'
+            r'((?:[一-龠々]+|[ァ-ヶー]+))'  # Matches a sequence of kanji or a sequence of katakana
+            r'([ぁ-ん]{0,2})'  # Optionally matches zero to two hiragana characters
+            r'(?=\[([^\]]+)\])'  # Lookahead for furigana enclosed in brackets without including them in the match
+        )
+
+        # Function to enclose matched kanji/katakana sequence in <>
+        def enclose_kanji_katakana(match):
+            kanji_katakana = match.group(1)  # The kanji/katakana sequence
+            return f'<{kanji_katakana}>'
+
+        # Apply the enclosure function to all appropriate sequences in the text
+        preprocessed_text = pattern.sub(enclose_kanji_katakana, ja_text)
+
+        # Return the modified text with appropriate enclosures
+        return preprocessed_text
+
+    # @staticmethod
+    def convert_furigana_to_ass(self, ja_text):
+        """Convert furigana format from <kanji>[furigana], standalone [furigana], or <kanji> to ASS ruby format,
+        applying styles for kanji and furigana where present."""
+
+
+        
+
+        def replace_with_ruby(match):
+            # Adjusted to handle both standalone and combined cases properly.
+            kanji = match.group(1)   # Kanji could be in group 1 when present
+            furigana = match.group(2 )or match.group(3)  # Furigana is in group 2  or standalone furigana in group 3
+            
+            # Initialize an empty string for the result
+            result = ""
+            
+            # Format kanji and furigana if present
+            if kanji and furigana:
+                result = f"{{\\rKanji}}{kanji}{{\\rFurigana}}{furigana}{{\\rDefault}}"
+            elif kanji:
+                result = f"{{\\rKanji}}{kanji}{{\\rDefault}}"
+            elif furigana:
+                result = f"{{\\rFurigana}}{furigana}{{\\rDefault}}"
+            
+            return result
+
+        # Adjusted regex to correctly match <kanji>[furigana], standalone [furigana], or <kanji>
+        pattern = r"<([^>]+)>(?:\[(.*?)\])?|\[([^\]]+)\]"
+
+        # Use lambda to pass match object directly to replace_with_ruby
+        return re.sub(pattern, replace_with_ruby, ja_text)
+
+    def estimate_character_width(self, text):
+        half_width_count = 0
+        full_width_count = 0
+
+        for char in text:
+            # Ordinal value of the character
+            ord_char = ord(char)
+            # Simple checks for half-width vs. full-width character ranges
+            if 0x0020 <= ord_char <= 0x007E or 0xFF61 <= ord_char <= 0xFFDC or 0xFFA0 <= ord_char <= 0xFFBE:
+                half_width_count += 1
+            elif 0x1100 <= ord_char <= 0x11FF or 0x2E80 <= ord_char <= 0x9FFF or 0xAC00 <= ord_char <= 0xD7AF or 0xFF01 <= ord_char <= 0xFF60 or 0xFFE0 <= ord_char <= 0xFFE6:
+                full_width_count += 1
+
+        # Determine the predominant character width in the text
+        if half_width_count > full_width_count:
+            return "half-width"
+        else:
+            return "full-width"
+
+
+    # @staticmethod
+    def generate_ass_header(self):
+        """Generates the header for an ASS file, adjusting `PlayResX` and `PlayResY` based on video orientation."""
+        # Determine if the video is landscape or portrait
+        # is_video_landscape = self.video_width > self.video_height
+        is_video_landscape = self.is_video_landscape
+
+        # Adjust PlayResX and PlayResY based on orientation
+        # play_res_x, play_res_y = (self.base_width, self.base_height) if is_video_landscape else (self.base_height, self.base_width)
+        play_res_x, play_res_y = (self.video_width, self.video_height) if is_video_landscape else (self.video_height, self.video_width)
+
+        # wrapping_limit_half_width_default = self.wrapping_limit_half_width_default
+        # wrapping_limit_full_width_default = self.wrapping_limit_half_width_default // 2
+
+        max_width = self.video_width * 0.8
+
+        if self.is_video_landscape:
+            max_height = self.video_height * 0.5 / 8
+        else:
+            max_height = self.video_height * 0.5 / 16
+
+        font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        # english_portrait_font_size = find_font_size(sample_texts["english"][:wrapping_limit_half_width_default], font_path, max_width, max_height)
+
+
+        font_sizes = {}
+        for language, text in sample_texts.items():
+            char_width_type = self.estimate_character_width(text)
+            wrapping_limit = self.wrapping_limit_half_width_default # if char_width_type == 'half-width' else self.wrapping_limit_half_width_default // 2
+            text_section = text[:wrapping_limit]
+            font_sizes[language] = find_font_size(text_section, self.font_path, max_width, max_height)
+
+
+        print("calculated font size: ")
+        pprint(font_sizes)
+
+
+        # rescale = 4  # Scaling factor
+
+        # # Adjust base font sizes
+        # base_font_size = 24 * rescale if is_video_landscape else 20 * rescale  # Larger for landscape
+        # furigana_font_size = 20 * rescale if is_video_landscape else 18 * rescale
+        # arabic_font_size = 26 * rescale if is_video_landscape else 22 * rescale  # Specific for Arabic
+
+        
+
+        # # Calculate scale factors (assuming base resolution is for landscape; adjust if your baseline is portrait)
+        # scale_factor = min(self.video_width / play_res_x, self.video_height / play_res_y)
+
+        # # scale_factor = np.power(scale_factor, 4/5)
+
+        # # Apply scale factor to font sizes
+        # base_font_size = int(base_font_size * scale_factor)
+        # furigana_font_size = int(furigana_font_size * scale_factor)
+
+
+        base_font_size = font_sizes["English"]
+        chinese_font_size = font_sizes["Chinese"]
+        english_font_size = font_sizes["English"]
+        japanese_font_size = font_sizes["Japanese"]
+        kanji_font_size = font_sizes["Japanese"]
+        furigana_font_size = font_sizes["Japanese"]
+        arabic_font_size = font_sizes["Arabic"]
+        
+
+        return f"""[Script Info]
+ScriptType: v4.00+
+Collisions: Normal
+PlayResX: {play_res_x}
+PlayResY: {play_res_y}
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Vernada,{base_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: English,Vernada,{english_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Chinese,Vernada,{chinese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Japanese,Vernada,{japanese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Kanji,Vernada,{kanji_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Furigana,Vernada,{furigana_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
+Style: Arabic,Arial,{arabic_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""             
+
+
+    def save_translated_subtitles_to_ass(self, translated_subtitles):
+        
+        """Save the translated subtitles to an ASS file with text wrapping based on video orientation."""
+        
+
+        wrapping_limit_half_width_default = self.wrapping_limit_half_width_default
+
+        wrapping_limit_half_width_ja = wrapping_limit_half_width_default
+
+        # if self.is_video_landscape:
+        #     wrapping_limit_half_width_ja = wrapping_limit_half_width_default
+        # else:
+        #     wrapping_limit_half_width_ja = int(wrapping_limit_half_width_default * 1.)
+
+        # wrapping_limit_half_width_zh = wrapping_limit_half_width_default * 1.5
+        # wrapping_limit_half_width_en = wrapping_limit_half_width_default * 1.5
+        # wrapping_limit_half_width_ar = wrapping_limit_half_width_default * 1.5
+
+        ass_content = self.generate_ass_header()
+        for index, item in enumerate(translated_subtitles, start=1):
+            # Convert HH:MM:SS,mmm format to seconds
+            def convert_to_seconds(t):
+                parts = re.split('[:|,]', t)
+                if len(parts) == 4:
+                    h, m, s, ms = parts
+                    total_seconds = int(h) * 3600 + int(m) * 60 + int(s) + int(ms) / 1000
+                elif len(parts) == 3:
+                    # Fallback in case the format is not as expected
+                    h, m, s = parts
+                    total_seconds = int(h) * 3600 + int(m) * 60 + float(s.replace(',', '.'))
+                else:
+                    raise Exception(f"The format of timestamps is not recognized: {t}. ")
+                
+                return total_seconds
+            
+            # Format start and end times to ensure two decimal places with comma
+            start_seconds = convert_to_seconds(item['start'])
+            end_seconds = convert_to_seconds(item['end'])
+            start = "{:02d}:{:02d}:{:05.2f}".format(int(start_seconds // 3600), int((start_seconds % 3600) // 60), start_seconds % 60)#.replace('.', ',')
+            end = "{:02d}:{:02d}:{:05.2f}".format(int(end_seconds // 3600), int((end_seconds % 3600) // 60), end_seconds % 60)#.replace('.', ',')
+
+            dialogue_lines = []
+
+            # Process languages in a specific order if needed, then all additional languages
+            preferred_order = ['zh', 'en', 'ja', "ar"]  # Example: Start with Chinese, then English, then Japanese
+            handled_keys = set(preferred_order)
+
+            # Add preferred languages first
+            for lang in preferred_order:
+                if lang in item:
+                    text = item[lang]
+                    
+                    is_cjk = lang in ['zh', 'ja']  # Assuming CJK for Chinese and Japanese
+                    
+                    if lang == "ja":
+                        wrapping_limit_half_width = wrapping_limit_half_width_ja
+
+                        # Switch to control printing
+                        enable_print = False
+
+                        def custom_print(message, text):
+                            if enable_print:
+                                print(message, text)
+
+                        ja_text = text
+                        custom_print("Initial text:", ja_text)
+
+                        ja_text = self.rearrange_brackets(ja_text)
+                        custom_print("After rearranging brackets:", ja_text)
+
+                        ja_text = self.fill_blank_of_katakana_without_furigana(ja_text)
+                        custom_print("After filling in the blank of <katakana>[]:", ja_text)
+
+                        ja_text = self.convert_katakana_in_brackets_to_hiragana(ja_text)
+                        custom_print("After converting katakana in brackets to hiragana:", ja_text)
+
+                        ja_text = self.clean_triplicated_sequences(ja_text)
+                        custom_print("After simplifying triplicated sequences:", ja_text)
+
+                        ja_text = self.clean_duplicated_kanji_hiragana_sequence(ja_text)
+                        custom_print("After converting duplicated kanji-hiragana sequence:", ja_text)
+
+                        ja_text = self.clean_redundant_hiragana_sequence(ja_text)
+                        custom_print("After removing redundant hiragana sequence:", ja_text)
+
+                        ja_text = self.clean_duplicated_hiragana_inside_angle_brackets(ja_text)
+                        custom_print("After simplifying duplicated hiragana inside angle brackets:", ja_text)
+
+                        ja_text = self.convert_standalone_angle_to_square_brackets(ja_text)
+                        custom_print("After converting standalone angle to square brackets:", ja_text)
+
+                        ja_text = self.preprocess_text_for_furigana(ja_text)
+                        custom_print("After preprocessing text for furigana:", ja_text)
+
+                        text = ja_text
+                        custom_print("Final text:", text)
+
+
+                    else:
+                        wrapping_limit_half_width = wrapping_limit_half_width_default
+
+
+                    wrapped_text_lines = self.wrap_text(text, wrapping_limit_half_width, is_cjk=is_cjk)
+                    dialogue_line = '\\N'.join(wrapped_text_lines)
+
+                    # if "歴史" in dialogue_line:
+                    #         print("ja_text: ", ja_text)
+                    #         pprint(wrapped_text_lines)
+
+                    # if lang == 'ja':
+                    #     dialogue_lines.append(self.convert_furigana_to_ass(item[lang]))
+                    # else:
+                    #     dialogue_lines.append(item[lang])
+
+                    if lang == 'ja':
+                        dialogue_line = self.convert_furigana_to_ass(dialogue_line)
+
+                    # Specify the style for Arabic subtitles and apply it directly in the dialogue line
+                    # style = "Arabic" if lang == 'ar' else "Default"
+
+                    if lang == "ar":
+                        style = "Arabic"
+                    elif lang == "zh":
+                        style = "Chinese"
+                    elif lang == "en":
+                        style = "English"
+                    elif lang == "ja":
+                        style = "Japanese"
+                    else:
+                        style = "Default"
+
+                    subtitle_line = f"Dialogue: 0,{start},{end},{style},,0,0,0,,{dialogue_line}"
+                    ass_content += subtitle_line + "\n"
+
+            # Add any additional languages present
+            additional_languages = {k: v for k, v in item.items() if k not in handled_keys.union(['start', 'end'])}
+            for lang_code, text in additional_languages.items():
+                # Additional languages will use the default style as this block does not handle style differentiation
+                dialogue_line = self.wrap_text(text, wrapping_limit_half_width_default, is_cjk=False)
+                formatted_text = '\\N'.join(dialogue_line)
+                subtitle_line = f"Dialogue: 0,{start},{end},Default,,0,0,0,,{formatted_text}"
+                ass_content += subtitle_line + "\n"
+
+            #         # # Specify the style for Arabic subtitles
+            #         # style = "Arabic" if lang == 'ar' else "Default"
+            #         # if lang == 'ar':
+            #         #     # dialogue_line = f"Dialogue: 0,{start},{end},{style},,0,0,0,,{dialogue_line}\n"
+            #         #     dialogue_line = f"{style}:{dialogue_line}"
+
+
+            #         dialogue_lines.append(dialogue_line)
+
+            # # Add any additional languages present
+            # additional_languages = {k: v for k, v in item.items() if k not in handled_keys.union(['start', 'end'])}
+            # for lang_code, text in additional_languages.items():
+            #     dialogue_lines.append(text)
+
+            # # Format the dialogue line
+            # formatted_text = '\\N'.join(dialogue_lines)  # New line in ASS format
+            # subtitle = f"Dialogue: 0,{start},{end},Default,,0,0,0,,{formatted_text}\n"
+            # ass_content += subtitle
+
+        # Write the constructed ASS content to the output file
+        with open(self.output_sub_path, 'w', encoding='utf-8') as file:
+            file.write(ass_content)
+        print(f"Subtitles have been processed and saved successfully to {self.output_sub_path}.")
+
+    # def wrap_text(self, text, wrapping_limit_half_width, is_cjk=False):
+
+    #     # is_video_landscape = self.video_width > self.video_height
+    #     is_video_landscape = self.is_video_landscape
+
+    #     """Wrap text with special handling for Japanese furigana annotations, aiming to minimize the maximum length of any line."""
+    #     if not is_cjk:
+    #         # For non-CJK text
+    #         return self.cjkwrap_punctuation(text, wrapping_limit_half_width)
+
+        
+    #     # Step 1: Wrap the text into lines
+    #     wrapped_lines = self.cjkwrap_punctuation(text, wrapping_limit_half_width)  # Replace textwrap.wrap with cjkwrap.wrap in your environment
+
+    #     # Step 2: Join lines with a special marker ('###') to easily identify original line breaks
+    #     joined_text = '###'.join(wrapped_lines)
+
+    #     # Step 3: Correct breakpoints within structured texts
+    #     pattern = r'(<[^>]*>\[[^\]]*\]|<[^>]*>|\[[^\]]*\])'
+
+    #     corrected_text = re.sub(pattern, lambda m: m.group(0).replace('###', ''), joined_text)
+
+    #     # Split the text back into lines temporarily to manipulate structured text placement
+    #     temp_lines = corrected_text.split('###')
+
+    #     # Step 4: Refine placement of structured texts by evaluating line length differences
+    #     final_lines = []
+    #     for i, line in enumerate(temp_lines):
+    #         if i + 1 < len(temp_lines):  # Ensure there's a next line to compare with
+    #             next_line = temp_lines[i + 1]
+    #             # Find structured text at the end of the current line or beginning of the next line
+    #             structured_text_end = re.search(r'(<[^>]*>\[[^\]]*\]|<[^>]*>|\[[^\]]*\])$', line)
+    #             structured_text_start = re.search(r'^(<[^>]*>\[[^\]]*\]|<[^>]*>|\[[^\]]*\])', next_line)
+
+    #             if structured_text_end and structured_text_start:
+    #                 # Extract structured text
+    #                 structured_text = structured_text_end.group(0)
+    #                 # Compare line lengths to decide placement
+    #                 option_end = len(line) - len(structured_text)
+    #                 option_start = len(next_line) + len(structured_text)
+    #                 # Choose the option that minimizes the length difference
+    #                 if abs(option_end - len(next_line)) <= abs(len(line) - option_start):
+    #                     # Keep the structured text at the end of the current line
+    #                     final_lines.append(line)
+    #                 else:
+    #                     # Move the structured text to the beginning of the next line
+    #                     final_lines.append(line[:-len(structured_text)])
+    #                     temp_lines[i + 1] = structured_text + next_line
+    #                     continue  # Skip appending next_line in this iteration
+    #             else:
+    #                 final_lines.append(line)
+    #         else:
+    #             final_lines.append(line)  # Append last line without comparison
+
+    #     # Step 5: Optionally re-wrap lines if needed to ensure they adhere to the width constraint
+    #     # This step is skipped in this solution for simplicity and based on the approach description
+
+    #     return final_lines
+
+    def wrap_text(self, text, wrapping_limit_half_width, is_cjk=False):
+        if not is_cjk:
+            # For non-CJK text, directly use the wrapping function.
+            # return self.cjkwrap_punctuation(text, wrapping_limit_half_width)
+            return [text]
+
+        # Step 1: Wrap the text into lines.
+        wrapped_lines = self.cjkwrap_punctuation(text, wrapping_limit_half_width)
+
+        # Step 2: Join lines with '###' to mark original line breaks.
+        joined_text = '###'.join(wrapped_lines)
+
+        # if "歴史" in joined_text:
+        #     print("joined_text: ", joined_text)
+
+        # Step 3: Correct breakpoints only for structured texts that were split.
+        def correct_breakpoints(match):
+            structured_text = match.group(0)
+
+            # if "歴史" in joined_text:
+            #     for i in range(4):
+            #         try:
+            #             print(match.group(i))
+            #         except:
+            #             pass
+
+            # If '###' is inside the structured text, it indicates an incorrect break.
+            if '###' in structured_text:
+                # Remove '###' and keep the structure intact.
+                return "###" + structured_text.replace('###', '') + "###"
+            else:
+                # If no '###' inside, return the structured text as is.
+                return structured_text
+
+        # pattern = r'(<[^>]*>\[[^\]]*\]|<[^>]*>|\[[^\]]*\])'
+        # pattern = r'(<[^>]*>\[[^\]]*\])'
+        pattern = r'(<[^>]*>)(###)?\[[^\]]*\]|<[^>]*>|(\[[^\]]*\])'
+        corrected_text = re.sub(pattern, correct_breakpoints, joined_text)
+        # pattern = r'(<[^>]*>|\[[^\]]*\])'
+        # corrected_text = re.sub(pattern, correct_breakpoints, joined_text)
+
+        # if "歴史" in joined_text:
+        #     print("corrected_text: ", corrected_text)
+
+        # Step 4: Split the text back into lines at '###'.
+        corrected_lines = corrected_text.split('###')
+
+        joined_lines = self.join_lines_with_length_check(corrected_lines, wrapping_limit_half_width)
+
+        # return corrected_lines
+        return joined_lines
+
+    @staticmethod
+    def strip_brackets(input_string):
+        # Regular expression pattern to match <, >, [, and ]
+        pattern = r'[\<\>\[\]]'
+        # Replace matched characters with an empty string
+        stripped_string = re.sub(pattern, '', input_string)
+        return stripped_string
+
+    def join_lines_with_length_check(self, lines, wrapping_limit_half_width):
+        final_lines = []
+        current_line = ""
+        for line in lines:
+            if current_line:
+                # Attempt to join with the next line and check if it exceeds the wrapping limit.
+                test_line = current_line + line
+                wrapped_test = self.cjkwrap_punctuation(self.strip_brackets(test_line), wrapping_limit_half_width)
+                if len(wrapped_test) > 1:
+                    # If joining exceeds the limit, finalize the current line and start a new one.
+                    final_lines.append(current_line)
+                    current_line = line
+                else:
+                    # Otherwise, update the current line to include the next line.
+                    current_line = test_line
+            else:
+                current_line = line
+
+        # Ensure the last accumulated line is added to the final output.
+        if current_line:
+            final_lines.append(current_line)
+
+        return final_lines
+
+
+    def cjkwrap_punctuation(self, text, width):
+        """
+        Custom wrapper for CJK text that prioritizes wrapping at punctuation,
+        and adjusts lines to avoid starting with punctuation.
+        """
+
+
+        wrapped_lines = cjkwrap.wrap(text, width)
+
+        # return wrapped_lines
+
+
+        # Define full-width and half-width punctuation marks for CJK text
+        punctuations = ".。、，,！!？?；;：:「」『』（）()【】[]《》<>「」『』“”\"\""
+        # punctuations = ".。、，,！!？?；;：:「」『』（）()【】《》「」『』“”\"\""
+        # punctuations = "。、，,！!？?；;：:「」『』（）()【】《》「」『』“”\"\""
+
+        # is_video_landscape = self.video_width > self.video_height
+
+        # if self.is_video_landscape:
+        #     # punctuations = "。、，,！!？?；;：:「」『』（）()【】《》「」『』“”\"\""  
+        #     punctuations = "。！!？?；;：:"  
+        # else:
+        #     # punctuations = "。、，,！!？?；;：:「」『』（）()【】[]《》<>「」『』“”\"\""
+        #     # punctuations = "。！!？?；;：:[]<>"
+        #     # punctuations = "。！!？?；;：:[]<>"
+        #     punctuations = "。！!？?；;：:"
+
+
+
+        # segments = []
+        # start = 0
+
+        # # Split text at punctuation marks
+        # for i, char in enumerate(text):
+        #     if char in punctuations:
+        #         # Include punctuation in the segment
+        #         segment = text[start:i + 1]
+        #         if segment:
+        #             segments.append(segment)
+        #         start = i + 1
+        # # Add the last segment if there's any
+        # if start < len(text):
+        #     segments.append(text[start:])
+
+        # wrapped_lines = []
+        # for segment in segments:
+        #     # Wrap each segment with cjkwrap
+        #     wrapped_segment = cjkwrap.wrap(segment, width)
+        #     wrapped_lines.extend(wrapped_segment)
+
+        # Adjust lines to move punctuation from the beginning of a line to the end of the previous line
+        for i in range(1, len(wrapped_lines)):
+            if wrapped_lines[i][0] in punctuations:
+                # Move punctuation to the end of the previous line if it doesn't exceed width
+                if len(wrapped_lines[i-1]) + 1 <= width:
+                    wrapped_lines[i-1] += wrapped_lines[i][0]  # Move punctuation to the end of the previous line
+                    wrapped_lines[i] = wrapped_lines[i][1:]  # Remove punctuation from the current line
+
+        # Handle case where the first line starts with punctuation and there's no previous line to adjust
+        # This might involve a specific strategy, such as re-wrapping with cjkwrap if needed
+        # For simplicity, this case is not explicitly handled here but should be considered based on your requirements
+
+        return wrapped_lines
+
+
+
+if __name__ == '__main__':
+    
+    # Example usage:
+    input_json_path = '/home/lachlan/Projects/lazyedit/lazyedit/data/IMG_6276_mixed.json'
+    output_sub_path = '/home/lachlan/Projects/lazyedit/lazyedit/data/translated_subtitles.srt'
+    input_sub_path = '/home/lachlan/Projects/lazyedit/lazyedit/data/IMG_6276_mixed.srt'
+
+
+    openai_client = OpenAI()
+    subtitles_processor = SubtitlesTranslator(openai_client, input_json_path, input_sub_path, output_sub_path)
+    subtitles_processor.process_subtitles()
