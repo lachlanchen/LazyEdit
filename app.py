@@ -2,7 +2,7 @@ import os
 
 
 
-from autopub_video_processing.openai_version_check import OpenAI
+from lazyedit.openai_version_check import OpenAI
 
 
 
@@ -20,11 +20,12 @@ from tornado.concurrent import run_on_executor
 
 import zipfile  # for creating zip files
 
-from autopub_video_processing.autocut_processor import AutocutProcessor
+from lazyedit.autocut_processor import AutocutProcessor
 
-from autopub_video_processing.subtitle_metadata import Subtitle2Metadata
-from autopub_video_processing.words_card import VideoAddWordsCard, overlay_word_card_on_cover
-from autopub_video_processing.subtitle_translate import SubtitlesTranslator
+from lazyedit.subtitle_metadata import Subtitle2Metadata
+from lazyedit.words_card import VideoAddWordsCard, overlay_word_card_on_cover
+from lazyedit.subtitle_translate import SubtitlesTranslator
+from lazyedit.utils import find_font_size
 
 from pprint import pprint
 import json5
@@ -57,6 +58,10 @@ from datetime import datetime, timedelta
 import shutil
 
 from lingua import Language, LanguageDetectorBuilder
+
+import os
+
+
 
 
 
@@ -166,24 +171,150 @@ def get_video_resolution(video_path):
     cap.release()
     return width, height
 
-def find_font_size(text, font_path, max_width, max_height, start_size=120, step=2):
-    font_size = start_size
-    font = ImageFont.truetype(font_path, font_size)
-    while True:
-        text_width, text_height = get_text_size(text, font, max_width, max_height)
-        if text_width <= max_width and text_height <= max_height:
-            break
-        font_size -= step
-        if font_size <= 0:
-            break
-        font = ImageFont.truetype(font_path, font_size)
-    return font_size
 
-def get_text_size(text, font, max_width, max_height):
-    test_canvas_size = (int(max_width), int(max_height))  # Canvas size based on max_width and max_height
-    dummy_image = Image.new('RGB', test_canvas_size)
-    draw = ImageDraw.Draw(dummy_image)
-    return draw.textbbox((0, 0), text, font=font)[2:]
+
+
+def convert_time_to_seconds(time_str):
+    """
+    Convert a timestamp from "HH:MM:SS,mmm" format to seconds.
+    """
+    hours, minutes, seconds = time_str.split(':')
+    seconds, milliseconds = seconds.split(',')
+    return int(hours) * 3600 + int(minutes) * 60 + int(seconds) + int(milliseconds) / 1000
+
+
+
+# def adjust_teaser_range(teaser_start, teaser_end, subtitles, video_length, max_length=4, min_length=2):
+#     """
+#     Adjust the teaser range based on subtitle timings, treating start and end as equivalent time points.
+#     """
+#     print("Adjusting teaser range...")
+
+#     teaser_start_td = timedelta(seconds=teaser_start)
+#     teaser_end_td = timedelta(seconds=teaser_end)
+#     video_length_td = timedelta(seconds=video_length)
+
+#     # Get all subtitle boundaries (start and end) as a sorted list of time points
+#     subtitle_boundaries = sorted({timedelta(seconds=s['start']) for s in subtitles} | {timedelta(seconds=s['end']) for s in subtitles})
+
+#     # Function to find closest subtitle boundary for adjustment
+#     def find_adjustment(time, adjust_end=True, increase=True):
+#         if adjust_end:
+#             if increase:
+#                 # Extend end: find the next boundary after current end
+#                 return next((t for t in subtitle_boundaries if t > time), None)
+#             else:
+#                 # Reduce end: find the last boundary before current end
+#                 return next((t for t in reversed(subtitle_boundaries) if t < time), None)
+#         else:
+#             if increase:
+#                 # Extend start: find the last boundary before current start
+#                 return next((t for t in reversed(subtitle_boundaries) if t < time), None)
+#             else:
+#                 # Reduce start: find the next boundary after current start
+#                 return next((t for t in subtitle_boundaries if t > time), None)
+    
+
+#     # Adjusting for too long teaser
+#     while teaser_end_td - teaser_start_td > timedelta(seconds=max_length):
+#         new_end = find_adjustment(teaser_end_td, adjust_end=True, increase=False)
+#         if new_end and new_end - teaser_start_td >= timedelta(seconds=min_length):
+#             teaser_end_td = new_end
+#         else:
+#             new_start = find_adjustment(teaser_start_td, adjust_end=False, increase=False)
+#             if new_start and teaser_end_td - new_start >= timedelta(seconds=min_length):
+#                 teaser_start_td = new_start
+#             else:
+#                 break
+
+#     # Adjusting for too short teaser
+#     while teaser_end_td - teaser_start_td < timedelta(seconds=min_length):
+#         new_end = find_adjustment(teaser_end_td, adjust_end=True, increase=True)
+#         if new_end and new_end - teaser_start_td <= timedelta(seconds=max_length) and new_end <= video_length_td:
+#             teaser_end_td = new_end
+#         else:
+#             new_start = find_adjustment(teaser_start_td, adjust_end=False, increase=True)
+#             if new_start and teaser_end_td - new_start <= timedelta(seconds=max_length) and new_start >= 0:
+#                 teaser_start_td = new_start
+#             else:
+#                 break  # No suitable adjustment found
+
+#     return teaser_start_td.total_seconds(), teaser_end_td.total_seconds()
+
+def adjust_teaser_range(teaser_start, teaser_end, subtitles, video_length, max_length=4, min_length=2):
+    """
+    Adjust the teaser range based on subtitle timings, treating start and end as equivalent time points.
+    """
+    teaser_start_td = timedelta(seconds=teaser_start)
+    teaser_end_td = timedelta(seconds=teaser_end)
+    video_length_td = timedelta(seconds=video_length)
+
+    subtitle_boundaries = sorted({timedelta(seconds=s['start']) for s in subtitles} | {timedelta(seconds=s['end']) for s in subtitles})
+
+    def find_adjustment(time, adjust_end=True, increase=True):
+        if adjust_end:
+            if increase:
+                return next((t for t in subtitle_boundaries if t > time), None)
+            else:
+                return next((t for t in reversed(subtitle_boundaries) if t < time), None)
+        else:
+            if increase:
+                return next((t for t in reversed(subtitle_boundaries) if t < time), None)
+            else:
+                return next((t for t in subtitle_boundaries if t > time), None)
+    
+    while teaser_end_td - teaser_start_td > timedelta(seconds=max_length):
+        new_end = find_adjustment(teaser_end_td, adjust_end=True, increase=False)
+        if new_end and new_end - teaser_start_td >= timedelta(seconds=min_length):
+            teaser_end_td = new_end
+        else:
+            new_start = find_adjustment(teaser_start_td, adjust_end=False, increase=False)
+            if new_start and teaser_end_td - new_start >= timedelta(seconds=min_length):
+                teaser_start_td = new_start
+            else:
+                break
+
+    while teaser_end_td - teaser_start_td < timedelta(seconds=min_length):
+        new_end = find_adjustment(teaser_end_td, adjust_end=True, increase=True)
+        if new_end and new_end - teaser_start_td <= timedelta(seconds=max_length) and new_end <= video_length_td:
+            teaser_end_td = new_end
+        else:
+            new_start = find_adjustment(teaser_start_td, adjust_end=False, increase=True)
+            if new_start and teaser_end_td - new_start <= timedelta(seconds=max_length) and new_start >= timedelta(seconds=0):
+                teaser_start_td = new_start
+            else:
+                break
+
+    return teaser_start_td.total_seconds(), teaser_end_td.total_seconds()
+
+
+def calculate_optimal_teaser_range(metadata_path, subtitle_json_path, video_length):
+    """
+    Calculate an optimized teaser range based on the video's metadata and subtitle timings.
+    """
+
+    print("Calculating optimal teaser time...")
+    try:
+        with open(metadata_path, 'r') as meta_file:
+            metadata = json.load(meta_file)
+            teaser = metadata["teaser"].split(" --> ")
+            teaser_start, teaser_end = convert_time_to_seconds(teaser[0]), convert_time_to_seconds(teaser[1])
+            
+            teaser_start = max(teaser_start, 0)
+            teaser_end = min(teaser_end, video_length)
+
+        with open(subtitle_json_path, 'r') as sub_file:
+            subtitles = json.load(sub_file)
+            subtitles = [{'start': convert_time_to_seconds(sub['start']), 'end': convert_time_to_seconds(sub['end'])} for sub in subtitles]
+
+        adjusted_start, adjusted_end = adjust_teaser_range(teaser_start, teaser_end, subtitles, video_length)
+
+        return adjusted_start, adjusted_end
+    except Exception as e:
+        print(f"Error adjusting teaser range: {e}")
+        # Return default range if there's an error
+        default_start, default_end = 0, calculate_optimal_repeat_sec(subtitle_json_path)
+        return default_start, default_end
 
 
 
@@ -200,6 +331,7 @@ def calculate_optimal_repeat_sec(subtitle_json_path):
     optimal_duration = 0
     min_duration_over_two = 0  # Track if we have a duration over 2 seconds
 
+    print("Calculating optimal repeat time...")
     for subtitle in subtitles:
         start_time = datetime.strptime(subtitle["start"], "%H:%M:%S,%f")
         end_time = datetime.strptime(subtitle["end"], "%H:%M:%S,%f")
@@ -227,9 +359,96 @@ def repeat_start_of_video(video_path, repeat_sec, output_path):
     ]
     subprocess.run(repeat_command, check=True)
 
+def insert_video_segment_at_start(video_path, start_time, end_time, output_path):
+    """
+    Inserts a specific segment of a video at the beginning of the original video.
+
+    Args:
+    - video_path: Path to the input video file.
+    - start_time: Start time of the segment to insert (in seconds).
+    - end_time: End time of the segment to insert (in seconds).
+    - output_path: Path to save the output video with the segment inserted at the start.
+    """
+
+    print("Adding teaser...")
+
+    # Correctly format the ffmpeg command
+    ffmpeg_command = (
+        f'ffmpeg -y -i "{video_path}" -filter_complex '
+        f'"[0:v]trim=start={start_time}:end={end_time},setpts=PTS-STARTPTS[firstv];'
+        f'[0:a]atrim=start={start_time}:end={end_time},asetpts=PTS-STARTPTS[firsta];'
+        f'[firstv][0:v]concat=n=2:v=1:a=0[finalv];'
+        f'[firsta][0:a]concat=n=2:v=0:a=1[finala]" '
+        f'-map "[finalv]" -map "[finala]" "{output_path}"'
+    )
+
+    try:
+        # Execute the ffmpeg command
+        subprocess.run(ffmpeg_command, check=True, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        print("Segment successfully inserted at the start of the video.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e.stderr.decode()}\nReturning the original file.")
+        return video_path
+
+    return output_path
+
+def insert_video_segment_at_start_with_temp(video_path, start_time, end_time, output_path):
+    """
+    Inserts a specific segment of a video at the beginning of the original video.
+    
+    Args:
+    - video_path: Path to the input video file (can be relative or absolute).
+    - start_time: Start time of the segment to insert (in seconds).
+    - end_time: End time of the segment to insert (in seconds).
+    - output_path: Path to save the output video with the segment inserted at the start (can be relative or absolute).
+    """
+
+    # Convert paths to absolute paths to avoid confusion
+    video_path = os.path.abspath(video_path)
+    output_path = os.path.abspath(output_path)
+    directory = os.path.dirname(video_path)
+    basename = os.path.splitext(os.path.basename(video_path))[0]
+    temp_segment_path = os.path.join(directory, f"{basename}_temp_segment.mp4")
+    concat_list_path = os.path.join(directory, f"{basename}_concat_list.txt")
+
+    print("Adding teaser...")
+
+    try:
+        # Step 1: Extract the segment
+        subprocess.run(
+            ['ffmpeg', '-y', '-i', video_path,
+             '-ss', str(start_time), '-to', str(end_time),
+             '-c:v', 'libx264', '-c:a', 'aac', temp_segment_path],
+            check=True
+        )
+
+        # Step 2: Create a concat list file with absolute paths
+        with open(concat_list_path, 'w') as f:
+            f.writelines([f"file '{temp_segment_path}'\n", f"file '{video_path}'\n"])
+
+        # Step 3: Concatenate using the concat list
+        subprocess.run(
+            ['ffmpeg', '-y', '-f', 'concat', '-safe', '0',
+             '-i', concat_list_path, '-c:v', 'libx264', '-c:a', 'aac',
+             '-strict', 'experimental', output_path],
+            check=True
+        )
+
+        print(f"Segment successfully inserted. Output saved to {output_path}")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}\nReturning the original file.")
+        return video_path
+    finally:
+        # Clean up temporary files
+        os.remove(temp_segment_path)
+        os.remove(concat_list_path)
+
+    return output_path
+
 def get_word_card_image(word, output_folder):
     # URL of the API
     url = 'http://lazyingart:8082/get_words_card'
+    # url = 'http://lazyingart:7788/get_word_etymology/'
     data = {"word": word}
 
     response = requests.post(url, json=data)
@@ -240,6 +459,28 @@ def get_word_card_image(word, output_folder):
 
         # Construct file path
         image_path = os.path.join(output_folder, f"{word}.jpeg")
+        with open(image_path, 'wb') as file:
+            file.write(image_data)
+        print(f'Image for word "{word}" saved as {image_path}')
+        return image_path
+    else:
+        print(f'Error fetching image for word "{word}": {response.status_code}')
+        return None
+
+def get_etymology_image(word, output_folder):
+    # URL of the API
+    # url = 'http://lazyingart:8082/get_words_card'
+    url = 'http://lazyingart:7788/get_word_etymology/'
+    data = {"word": word}
+
+    response = requests.post(url, json=data)
+
+    if response.status_code == 200:
+        content = response.json()
+        image_data = base64.b64decode(content['image'])
+
+        # Construct file path
+        image_path = os.path.join(output_folder, f"{word}-etymology.jpeg")
         with open(image_path, 'wb') as file:
             file.write(image_data)
         print(f'Image for word "{word}" saved as {image_path}')
@@ -279,8 +520,19 @@ def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
     video_length = get_video_length(video_path)
     video_width, video_height = get_video_resolution(video_path)
 
+    # is_video_landscape = video_width > video_height
+
+    # rescale = 4  # Scaling factor
+
+    # # Adjust base font sizes
+    # base_font_size = 24 * rescale if is_video_landscape else 20 * rescale  # Larger for landscape
+    # furigana_font_size = 20 * rescale if is_video_landscape else 18 * rescale
+    # arabic_font_size = 26 * rescale if is_video_landscape else 22 * rescale  # Specific for Arabic
+
+
+
     # Sort english_words_to_learn by start time
-    english_words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
+    english_words_to_learn.sort(key=lambda x: get_time_range(x['timestamp_range'])[0])
 
     # Initialize variables
     temp_output_path = output_path + ".temp.mp4"
@@ -295,7 +547,7 @@ def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
     for i, word_info in enumerate(english_words_to_learn):
         try:
             # Get time range
-            start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
+            start_seconds, end_seconds = get_time_range(word_info['timestamp_range'])
 
             # Ignore words that start beyond the video length or before the last end time
             if start_seconds >= video_length or start_seconds < last_end_time:
@@ -310,10 +562,18 @@ def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
             word_text = word_info['word']
             font_size = find_font_size(word_text, font_path, video_width * 0.8, video_height * 0.8)
 
+            # drawtext_filter = (
+            #     f"drawtext=text='{word_text}':"
+            #     f"x=(w-text_w)/2:y=(h-text_h)/2:"
+            #     f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
+            #     f"enable='between(t,{start_seconds},{end_seconds})'"
+            # )
+
             drawtext_filter = (
                 f"drawtext=text='{word_text}':"
-                f"x=(w-text_w)/2:y=(h-text_h)/2:"
-                f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
+                f"x=(w-text_w)/2:y=text_h:"
+                # f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
+                f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=crimson@0.5:boxborderw=5:"
                 f"enable='between(t,{start_seconds},{end_seconds})'"
             )
 
@@ -400,7 +660,7 @@ def select_font_path(detected_language):
 #     video_length = get_video_length(video_path)
 #     video_width, video_height = get_video_resolution(video_path)
 
-#     english_words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
+#     english_words_to_learn.sort(key=lambda x: get_time_range(x['timestamp_range'])[0])
 
 #     temp_output_path = output_path + ".temp.mp4"
 #     final_output_path = output_path
@@ -413,7 +673,7 @@ def select_font_path(detected_language):
 
 #     for i, word_info in enumerate(english_words_to_learn):
 #         try:
-#             start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
+#             start_seconds, end_seconds = get_time_range(word_info['timestamp_range'])
 #             if start_seconds >= video_length or start_seconds < last_end_time:
 #                 continue
 #             end_seconds = min(max(end_seconds, start_seconds + 1), video_length)
@@ -467,7 +727,7 @@ def select_font_path(detected_language):
 #     # Sort english_words_to_learn by start time
 #     first_word_info = english_words_to_learn[0]
 #     english_words_to_learn = english_words_to_learn[1:]
-#     english_words_to_learn.sort(key=lambda x: get_time_range(x['time_stamps'])[0])
+#     english_words_to_learn.sort(key=lambda x: get_time_range(x['timestamp_range'])[0])
 
 #     # Initialize variables
 #     temp_output_path = output_path + ".temp.mp4"
@@ -501,7 +761,7 @@ def select_font_path(detected_language):
 #     for i, word_info in enumerate(english_words_to_learn):
 #         try:
 #             # Get time range
-#             start_seconds, end_seconds = get_time_range(word_info['time_stamps'])
+#             start_seconds, end_seconds = get_time_range(word_info['timestamp_range'])
 
 #             # Ignore words that start beyond the video length
 #             if start_seconds >= video_length:
@@ -652,7 +912,7 @@ def get_video_dimensions(video_file):
         print("width: ", width, "height: ", height)
         return width, height
 
-# def process_subtitles(video_file, input_subtitle_file, output_subtitle_file, max_width):
+# def wrap_subtitles(video_file, input_subtitle_file, output_subtitle_file, max_width):
 #     video_width, video_height = get_video_dimensions(video_file)
 #     is_landscape = video_width > video_height
 
@@ -673,13 +933,13 @@ def get_video_dimensions(video_file):
 #                 for wrapped_line in wrapped_lines:
 #                     f.write(wrapped_line + '\n')
 
-def process_subtitles(video_file, input_subtitle_file, output_subtitle_file, max_width):
+def wrap_subtitles(video_file, input_subtitle_file, output_subtitle_file, max_width):
     video_width, video_height = get_video_dimensions(video_file)
     is_landscape = video_width > video_height
 
     # Adjust max_width for portrait videos
     if not is_landscape:
-        max_width = int(max_width * 0.4)
+        max_width = int(max_width * 0.5)
 
     with open(input_subtitle_file, 'r', encoding='utf-8') as f:
         lines = f.readlines()
@@ -706,17 +966,53 @@ def process_subtitles(video_file, input_subtitle_file, output_subtitle_file, max
             f.write(f"{subtitle_block.strip()}\n")  # Ensure the last block is stripped and followed by a newline
 
 
-def burn_subtitles(video_path, srt_path, output_path):
-    # Determine the name for the processed subtitles
-    wrapped_srt_path = srt_path.rsplit('.', 1)[0] + '_wrapped.srt'
+# def burn_subtitles(video_path, sub_path, output_path):
+#     # # Determine the name for the processed subtitles
+#     # wrapped_sub_path = sub_path.rsplit('.', 1)[0] + '_wrapped.srt'
+#     wrapped_sub_path = sub_path
     
-    # Adjust 'max_width' as needed
-    max_width = 50  # You may want to dynamically set this based on the video dimensions
-    process_subtitles(video_path, srt_path, wrapped_srt_path, max_width)
+#     # # Adjust 'max_width' as needed
+#     # max_width = 50  # You may want to dynamically set this based on the video dimensions
+#     # wrap_subtitles(video_path, srt_path, wrapped_sub_path, max_width)
     
-    # Construct the FFmpeg command to burn the processed subtitles
-    command = f"ffmpeg -y -i \"{video_path}\" -vf \"subtitles={wrapped_srt_path}\" \"{output_path}\""
-    subprocess.run(command, shell=True, check=True)
+#     # Construct the FFmpeg command to burn the processed subtitles
+#     # command = f"ffmpeg -y -i \"{video_path}\" -vf \"subtitles={wrapped_sub_path}\" \"{output_path}\""
+#     command = f"ffmpeg -y -i \"{video_path}\" -vf \"ass={wrapped_sub_path}\" -c:a copy \"{output_path}\""
+#     subprocess.run(command, shell=True, check=True)
+
+def get_audio_bitrate(video_path):
+    # Use ffprobe to get the audio bitrate of the original video
+    command = f"ffprobe -v error -select_streams a:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1:nokey=1 \"{video_path}\""
+    result = subprocess.run(command, shell=True, text=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, check=False)
+
+    # Extract the bitrate from ffprobe output
+    bitrate = result.stdout.strip()
+    
+    # Return the bitrate in kbps if found, else default to 192k
+    return f"{int(bitrate)//1000}k" if bitrate.isdigit() else "192k"
+
+def burn_subtitles(video_path, sub_path, output_path):
+    # Determine the subtitle file extension
+    sub_extension = os.path.splitext(sub_path)[1].lower()
+    
+    # Determine the appropriate subtitle filter based on the extension
+    if sub_extension in [".ass", ".ssa"]:
+        subtitle_filter = f"ass={sub_path}"
+    elif sub_extension == ".srt":
+        subtitle_filter = f"subtitles={sub_path}"
+    else:
+        raise ValueError(f"Unsupported subtitle format: {sub_extension}")
+    
+    # Extract the original audio bitrate for use in conversion
+    audio_bitrate = get_audio_bitrate(video_path)
+    
+    # Construct the FFmpeg command
+    command = f'ffmpeg -y -i "{video_path}" -vf "{subtitle_filter}" -c:a aac -b:a {audio_bitrate} "{output_path}"'
+    
+    try:
+        subprocess.run(command, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing FFmpeg command: {e}")
 
 def validate_timestamp(timestamp):
     try:
@@ -737,6 +1033,11 @@ def validate_timestamp(timestamp):
     return '00:00:01,000', seconds
 
 
+# Function to copy a folder to a new location with a new name
+def copy_folder(output_folder, new_folder_name):
+    # Copy the folder to the new location with the new name
+    shutil.copytree(output_folder, new_folder_name)
+    print(f"Folder '{output_folder}' was copied to '{new_folder_name}'")
 
 
 class FileUploaderHandler(tornado.web.RequestHandler):
@@ -753,6 +1054,20 @@ class FileUploaderHandler(tornado.web.RequestHandler):
         # Determine the basename (without extension) and create a subfolder
         base_name, _ = os.path.splitext(original_fname)
         output_folder = os.path.join(self.upload_folder, base_name)
+
+        # Check if the folder already exists
+        if os.path.exists(output_folder) and os.path.isdir(output_folder):
+            # Get the folder creation time
+            creation_time = os.path.getctime(output_folder)
+            # Convert creation time to a readable format
+            creation_time_formatted = datetime.fromtimestamp(creation_time).strftime('%Y-%m-%d_%H-%M-%S')
+            # Define the new folder name with creation datetime appended
+            new_folder_name = f"{output_folder}_{creation_time_formatted}"
+            # Rename the existing folder
+            # os.rename(output_folder, new_folder_name)
+            copy_folder(output_folder, new_folder_name)
+            print(f"Existing folder renamed to: {new_folder_name}")
+
         os.makedirs(output_folder, exist_ok=True)
 
         # Define the full path for the incoming video
@@ -784,6 +1099,20 @@ class FileUploadHandlerStream(tornado.web.RequestHandler):
         filename = self.get_argument('filename', default='uploaded_file')
         base_name, _ = os.path.splitext(filename)
         output_folder = os.path.join(self.upload_folder, base_name)
+
+        # Check if the folder already exists
+        if os.path.exists(output_folder) and os.path.isdir(output_folder):
+            # Get the folder creation time
+            creation_time = os.path.getctime(output_folder)
+            # Convert creation time to a readable format
+            creation_time_formatted = datetime.fromtimestamp(creation_time).strftime('%Y-%m-%d_%H-%M-%S')
+            # Define the new folder name with creation datetime appended
+            new_folder_name = f"{output_folder}_{creation_time_formatted}"
+            # Rename the existing folder
+            # os.rename(output_folder, new_folder_name)
+            copy_folder(output_folder, new_folder_name)
+            print(f"Existing folder renamed to: {new_folder_name}")
+
         os.makedirs(output_folder, exist_ok=True)
         
         self.file_path = os.path.join(output_folder, filename)
@@ -812,7 +1141,7 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
 
     def initialize(self):
         self.openai_client = OpenAI()  # Make sure to authenticate your OpenAI client
-        self.sub2meta = Subtitle2Metadata(self.openai_client)
+        # self.sub2meta = Subtitle2Metadata(self.openai_client)
 
     def run_autocut(self, autocut_command, lang, gpu_id):
         # Set the CUDA_VISIBLE_DEVICES environment variable
@@ -823,11 +1152,11 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
         subprocess.run(autocut_command, shell=True, check=True, env=env)
         print(f"Finished autocut with lang={lang} on GPU {gpu_id}")
 
-    def process_video(self, input_file, base_name, extension, output_folder):
+    def transcribe_video(self, input_file, base_name, extension, output_folder):
         # Process the video with autocut
         autocut_processor = AutocutProcessor(input_file, output_folder, base_name, extension)
         futures = [
-            self.executor.submit(autocut_processor.run_autocut, 'mixed', 0),
+            self.executor.submit(autocut_processor.run_autocut, 'mixed', 1),
             # self.executor.submit(autocut_processor.run_autocut, 'en', 0),
             # self.executor.submit(autocut_processor.run_autocut, 'zh', 1)
         ]
@@ -844,6 +1173,8 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
     def post(self):
         
         input_file = self.get_argument('file_path', None)
+        use_translation_cache = self.get_argument('use_translation_cache', "false").lower() == 'true'
+        use_metadata_cache = self.get_argument('use_metadata_cache', "false").lower() == 'true'
         if not input_file or not os.path.exists(input_file):
             self.set_status(400)
             self.write({'status': 'error', 'message': 'File path is invalid or file does not exist'})
@@ -851,17 +1182,18 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
 
         print("Processing File: ", input_file)
 
+        video_length = get_video_length(input_file)
+        video_width, video_height = get_video_resolution(input_file)
 
-        
-        
-
+        print("video_length: ", video_length)
+        print("video_width: ", video_width)
+        print("video_height: ", video_height)
 
         base_name, extension = os.path.splitext(os.path.basename(input_file))
         output_folder = os.path.dirname(input_file)
 
-        self.process_video(input_file, base_name, extension, output_folder)
+        self.transcribe_video(input_file, base_name, extension, output_folder)
         
-
         output_json_mixed = f"{output_folder}/{base_name}_mixed.json"
         output_srt_mixed = f"{output_folder}/{base_name}_mixed.srt"
         
@@ -874,20 +1206,39 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
                 self.write(f"Error: Expected output file not found: {file_path}")
                 return
 
-
-
         # Merge subtitles
         print("Merging/Translating subtitles...")
-        combined_srt_path = os.path.join(output_folder, f"{base_name}_combined.srt")
+        processed_sub_path = os.path.join(output_folder, f"{base_name}_processed.ass")
 
-        subtitles_processor = SubtitlesTranslator(self.openai_client, output_json_mixed, output_srt_mixed, combined_srt_path)
+        subtitles_processor = SubtitlesTranslator(
+            self.openai_client, 
+            output_json_mixed, output_srt_mixed, 
+            processed_sub_path, 
+            video_length=video_length,
+            video_width=video_width,
+            video_height=video_height,
+            use_cache=use_translation_cache
+        )
         subtitles_processor.process_subtitles()
+
+        # Burn combined subtitles onto the video
+        print("Burning subtitles...")
+        subtitles_video_path = os.path.join(output_folder, f"{base_name}_subtitles.mp4")
+        burn_subtitles(input_file, processed_sub_path, subtitles_video_path)
+
+        # return
 
 
         # After fetching metadata
         print("Generating metadata with OpenAI...")
         # metadata = self.sub2meta.generate_video_metadata(output_srt_en, output_srt_zh)
-        metadata = self.sub2meta.generate_video_metadata(output_srt_mixed)
+        sub2meta = Subtitle2Metadata(
+            self.openai_client,
+            use_cache=use_metadata_cache
+        )
+        metadata = sub2meta.generate_video_metadata(
+            output_srt_mixed,
+        )
         metadata["video_filename"] = f"{base_name}_highlighted.mp4"
         metadata["cover_filename"] = f"{base_name}_cover.jpg"
 
@@ -899,28 +1250,34 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
             json.dump(metadata, json_file, indent=4, ensure_ascii=False)
 
 
-        # Burn combined subtitles onto the video
-        print("Burning subtitles...")
-        final_video_path = os.path.join(output_folder, f"{base_name}_final.mp4")
-        burn_subtitles(input_file, combined_srt_path, final_video_path)
+        
 
 
         # # Highlight words to learn on the video
         # highlighted_video_path = os.path.join(output_folder, f"{base_name}_highlighted.mp4")
-        # word_card_image_path = highlight_words(final_video_path, metadata['english_words_to_learn'], highlighted_video_path)
+        # word_card_image_path = highlight_words(subtitles_video_path, metadata['english_words_to_learn'], highlighted_video_path)
        
 
 
         # Repeat the first few seconds of the video (e.g., 3 seconds)
         # repeat_sec = 3
-        repeat_sec = calculate_optimal_repeat_sec(output_json_mixed)
-        print("optimized repeat time:", repeat_sec)
+        # repeat_sec = calculate_optimal_repeat_sec(output_json_mixed)
+        # print("optimized repeat time:", repeat_sec)
+
+        start_sec, end_sec = calculate_optimal_teaser_range(metadata_json_path, output_json_mixed, video_length)
+        repeat_sec = end_sec - start_sec  # Calculate the duration to repeat
+        print(f"Teaser range: {start_sec}s to {end_sec}s, repeating for {repeat_sec}s")
+        
         # Step 1: Repeat the initial section of the video
-        repeated_video_path = os.path.join(output_folder, f"{base_name}_repeated.mp4")
-        repeat_start_of_video(final_video_path, repeat_sec, repeated_video_path)
+        # repeated_video_path = os.path.join(output_folder, f"{base_name}_repeated.mp4")
+        # repeat_start_of_video(subtitles_video_path, repeat_sec, repeated_video_path)
+
+        teasered_video_path = os.path.join(output_folder, f"{base_name}_teasered.mp4")
+        insert_video_segment_at_start(subtitles_video_path, start_sec, end_sec, teasered_video_path)
+
 
         # Step 2: Add the word card for the first word and update the words list
-        video_with_word_card_path, updated_english_words_to_learn, word_card_image_path = add_first_word_card_to_video(repeated_video_path, metadata['english_words_to_learn'], output_folder, duration=repeat_sec)
+        video_with_word_card_path, updated_english_words_to_learn, word_card_image_path = add_first_word_card_to_video(teasered_video_path, metadata['english_words_to_learn'], output_folder, duration=repeat_sec)
 
         # Ensure word_card_image_path is used or saved as needed here
 
@@ -940,7 +1297,7 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
         if seconds > get_video_length(input_file) or seconds < 0:
             cover_timestamp = "00:00:01,000"
 
-        extract_cover(input_file, cover_plain_image_path, cover_timestamp)
+        extract_cover(input_file, cover_plain_image_path, cover_timestamp.replace(",", "."))
 
 
         overlay_word_card_on_cover(word_card_image_path, cover_plain_image_path, cover_image_path)
@@ -982,7 +1339,9 @@ def make_app(upload_folder):
     ])
 
 if __name__ == "__main__":
-    upload_folder = '/home/lachlan/ProjectsLFS/autopub-video-processing/DATA'  # Folder where files will be uploaded
+    # Set the OPENAI_MODEL environment variable
+    os.environ["OPENAI_MODEL"] = "gpt-4-0125-preview"
+    upload_folder = '/home/lachlan/ProjectsLFS/lazyedit/DATA'  # Folder where files will be uploaded
     app = make_app(upload_folder)
     app.listen(8081, max_body_size=10*1024 * 1024 * 1024)
     tornado.autoreload.start()
