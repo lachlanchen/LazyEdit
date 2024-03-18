@@ -1,0 +1,38 @@
+{
+    "prompt": "For words that have etymological Hanja alternatives (due to their Sino-Korean origin), I want to find the corresponding Chinese character origin to replace the Hangul. However, it's crucial that the Hangul in parenthesis followed by these traditional Hanja are put in brackets to maintain clarity as in this format: (hangul)[hanja].\n\nPlease also provide Roman pronunciation of the Hangul. Korean to be annotated: 모잠이 달리는 그 동작이 좀 대단해\n\nI don't need step by step explanation. PLEASE ONLY output the JSON:\n```json\n{\n  \"korean_with_annotation\": \"\",\n  \"korean_hanja_pairs\": [\n    {\n      \"korean_part\": \"한자 \",\n      \"hanja\": \"漢字 \",\n      \"roman\": \"hanja\"\n    }\n  ]\n}\n```",
+    "response": {
+        "korean_with_annotation": "모(毛)[모]잠(蠶)[잠]이 달리는 그 동(動)[동]작(作)[작]이 좀 대(大)[대]단(單)[단]해",
+        "korean_hanja_pairs": [
+            {
+                "korean_part": "모",
+                "hanja": "毛",
+                "roman": "mo"
+            },
+            {
+                "korean_part": "잠",
+                "hanja": "蠶",
+                "roman": "jam"
+            },
+            {
+                "korean_part": "동",
+                "hanja": "動",
+                "roman": "dong"
+            },
+            {
+                "korean_part": "작",
+                "hanja": "作",
+                "roman": "jak"
+            },
+            {
+                "korean_part": "대",
+                "hanja": "大",
+                "roman": "dae"
+            },
+            {
+                "korean_part": "단",
+                "hanja": "單",
+                "roman": "dan"
+            }
+        ]
+    }
+}

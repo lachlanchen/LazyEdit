@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,680\",\n    \"lang\": \"en\",\n    \"text\": \"So cute!\"\n  },\n  {\n    \"start\": \"00:00:03,266\",\n    \"end\": \"00:00:04,126\",\n    \"lang\": \"zh\",\n    \"text\": \"好可爱呀这个\"\n  },\n  {\n    \"start\": \"00:00:04,994\",\n    \"end\": \"00:00:05,234\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:06,014\",\n    \"end\": \"00:00:06,534\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:07,394\",\n    \"end\": \"00:00:08,093\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:08,794\",\n    \"end\": \"00:00:09,134\",\n    \"lang\": \"en\",\n    \"text\": \"Annyeonghaseyo.\"\n  },\n  {\n    \"start\": \"00:00:12,482\",\n    \"end\": \"00:00:13,722\",\n    \"lang\": \"ja\",\n    \"text\": \"チーズソースハネス\"\n  },\n  {\n    \"start\": \"00:00:14,681\",\n    \"end\": \"00:00:16,001\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬はかわいいです\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,680",
+            "ja": "とっても可愛い！"
+        },
+        {
+            "start": "00:00:03,266",
+            "end": "00:00:04,126",
+            "ja": "この子、本当に可愛いね"
+        },
+        {
+            "start": "00:00:04,994",
+            "end": "00:00:05,234",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:06,014",
+            "end": "00:00:06,534",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:07,394",
+            "end": "00:00:08,093",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:08,794",
+            "end": "00:00:09,134",
+            "ja": "こんにちは（アンニョンハセヨ）。"
+        },
+        {
+            "start": "00:00:12,482",
+            "end": "00:00:13,722",
+            "ja": "チーズソースがはねた"
+        },
+        {
+            "start": "00:00:14,681",
+            "end": "00:00:16,001",
+            "ja": "この犬はとても可愛いです"
+        }
+    ]
+}

@@ -1,0 +1,64 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,680\",\n    \"lang\": \"en\",\n    \"text\": \"So cute!\"\n  },\n  {\n    \"start\": \"00:00:03,266\",\n    \"end\": \"00:00:04,126\",\n    \"lang\": \"zh\",\n    \"text\": \"好可爱呀这个\"\n  },\n  {\n    \"start\": \"00:00:04,994\",\n    \"end\": \"00:00:05,234\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:06,014\",\n    \"end\": \"00:00:06,534\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:07,394\",\n    \"end\": \"00:00:08,093\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:08,794\",\n    \"end\": \"00:00:09,134\",\n    \"lang\": \"en\",\n    \"text\": \"Annyeonghaseyo.\"\n  },\n  {\n    \"start\": \"00:00:12,482\",\n    \"end\": \"00:00:13,722\",\n    \"lang\": \"ja\",\n    \"text\": \"チーズソースハネス\"\n  },\n  {\n    \"start\": \"00:00:14,681\",\n    \"end\": \"00:00:16,001\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬はかわいいです\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,680",
+            "en": "So cute!",
+            "zh": "好可爱啊！",
+            "ar": "لطيف جدا!"
+        },
+        {
+            "start": "00:00:03,266",
+            "end": "00:00:04,126",
+            "en": "This is so cute",
+            "zh": "好可爱呀这个",
+            "ar": "هذا لطيف جدا"
+        },
+        {
+            "start": "00:00:04,994",
+            "end": "00:00:05,234",
+            "en": "Hello.",
+            "zh": "你好。",
+            "ar": "مرحبا."
+        },
+        {
+            "start": "00:00:06,014",
+            "end": "00:00:06,534",
+            "en": "Hello.",
+            "zh": "你好。",
+            "ar": "مرحبا."
+        },
+        {
+            "start": "00:00:07,394",
+            "end": "00:00:08,093",
+            "en": "Hello.",
+            "zh": "你好。",
+            "ar": "مرحبا."
+        },
+        {
+            "start": "00:00:08,794",
+            "end": "00:00:09,134",
+            "en": "Hello.",
+            "zh": "你好。",
+            "ar": "مرحبا.",
+            "ko": "안녕하세요."
+        },
+        {
+            "start": "00:00:12,482",
+            "end": "00:00:13,722",
+            "en": "Cheese sauce is great",
+            "zh": "芝士酱很棒",
+            "ar": "صلصة الجبن رائعة",
+            "ja": "チーズソースハネス"
+        },
+        {
+            "start": "00:00:14,681",
+            "end": "00:00:16,001",
+            "en": "This dog is cute",
+            "zh": "这只狗很可爱",
+            "ar": "هذا الكلب لطيف",
+            "ja": "この犬はかわいいです"
+        }
+    ]
+}

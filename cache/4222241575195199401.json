@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,000\",\n    \"lang\": \"zh\",\n    \"text\": \"不想跳了\"\n  },\n  {\n    \"start\": \"00:00:04,380\",\n    \"end\": \"00:00:04,980\",\n    \"lang\": \"zh\",\n    \"text\": \"跑了\"\n  },\n  {\n    \"start\": \"00:00:04,980\",\n    \"end\": \"00:00:08,080\",\n    \"lang\": \"zh\",\n    \"text\": \"莫桑跑的这个动作有点牛逼啊\"\n  },\n  {\n    \"start\": \"00:00:08,080\",\n    \"end\": \"00:00:09,380\",\n    \"lang\": \"zh\",\n    \"text\": \"一切合成\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                \"vi\": \"Vietnamese text\"  // Vietnamese translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,000",
+            "es": "Ya no quiero saltar",
+            "fr": "Je ne veux plus sauter",
+            "vi": "Tôi không muốn nhảy nữa"
+        },
+        {
+            "start": "00:00:04,380",
+            "end": "00:00:04,980",
+            "es": "Corrió",
+            "fr": "Il a couru",
+            "vi": "Chạy rồi"
+        },
+        {
+            "start": "00:00:04,980",
+            "end": "00:00:08,080",
+            "es": "La forma en que Mosan corre es algo impresionante",
+            "fr": "La façon dont Mosan court est assez impressionnante",
+            "vi": "Cách Mosan chạy khá là ấn tượng"
+        },
+        {
+            "start": "00:00:08,080",
+            "end": "00:00:09,380",
+            "es": "Todo en uno",
+            "fr": "Tout en un",
+            "vi": "Tất cả trong một"
+        }
+    ]
+}

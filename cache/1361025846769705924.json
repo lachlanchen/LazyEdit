@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,750\",\n    \"end\": \"00:01:04,470\",\n    \"lang\": \"en\",\n    \"text\": \"prepared.\"\n  },\n  {\n    \"start\": \"00:01:05,890\",\n    \"end\": \"00:01:06,610\",\n    \"lang\": \"en\",\n    \"text\": \"No,\"\n  },\n  {\n    \"start\": \"00:01:06,610\",\n    \"end\": \"00:01:07,550\",\n    \"lang\": \"en\",\n    \"text\": \"not prepared.\"\n  },\n  {\n    \"start\": \"00:01:09,390\",\n    \"end\": \"00:01:09,930\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway,\"\n  },\n  {\n    \"start\": \"00:01:09,930\",\n    \"end\": \"00:01:11,610\",\n    \"lang\": \"en\",\n    \"text\": \"fast food.\"\n  },\n  {\n    \"start\": \"00:01:12,010\",\n    \"end\": \"00:01:13,130\",\n    \"lang\": \"en\",\n    \"text\": \"I believe it's fast food.\"\n  },\n  {\n    \"start\": \"00:01:21,250\",\n    \"end\": \"00:01:23,330\",\n    \"lang\": \"en\",\n    \"text\": \"But I still made it better.\"\n  },\n  {\n    \"start\": \"00:01:35,130\",\n    \"end\": \"00:01:36,290\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:36,290\",\n    \"end\": \"00:01:37,070\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:38,550\",\n    \"end\": \"00:01:39,710\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:39,810\",\n    \"end\": \"00:01:40,850\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:40,850\",\n    \"end\": \"00:01:41,010\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:41,390\",\n    \"end\": \"00:01:41,630\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:43,522\",\n    \"end\": \"00:01:44,082\",\n    \"lang\": \"en\",\n    \"text\": \"um\"\n  },\n  {\n    \"start\": \"00:01:44,082\",\n    \"end\": \"00:01:46,842\",\n    \"lang\": \"en\",\n    \"text\": \"um\"\n  },\n  {\n    \"start\": \"00:01:53,258\",\n    \"end\": \"00:01:54,658\",\n    \"lang\": \"ja\",\n    \"text\": \"今日もご視聴ありがとうございました。\"\n  },\n  {\n    \"start\": \"00:01:54,690\",\n    \"end\": \"00:01:55,150\",\n    \"lang\": \"ja\",\n    \"text\": \"おいしい\"\n  },\n  {\n    \"start\": \"00:01:58,114\",\n    \"end\": \"00:01:58,354\",\n    \"lang\": \"en\",\n    \"text\": \"出 hogy\"\n  },\n  {\n    \"start\": \"00:02:00,194\",\n    \"end\": \"00:02:00,834\",\n    \"lang\": \"en\",\n    \"text\": \"That's not share.\"\n  },\n  {\n    \"start\": \"00:02:01,794\",\n    \"end\": \"00:02:01,954\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:02:01,954\",\n    \"end\": \"00:02:08,574\",\n    \"lang\": \"en\",\n    \"text\": \"I'm updating this Korean subtitles with...\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,750",
+            "end": "00:01:04,470",
+            "ja": "準備しました。"
+        },
+        {
+            "start": "00:01:05,890",
+            "end": "00:01:06,610",
+            "ja": "いいえ、"
+        },
+        {
+            "start": "00:01:06,610",
+            "end": "00:01:07,550",
+            "ja": "準備していません。"
+        },
+        {
+            "start": "00:01:09,390",
+            "end": "00:01:09,930",
+            "ja": "とにかく、"
+        },
+        {
+            "start": "00:01:09,930",
+            "end": "00:01:11,610",
+            "ja": "ファーストフード。"
+        },
+        {
+            "start": "00:01:12,010",
+            "end": "00:01:13,130",
+            "ja": "ファーストフードだと思います。"
+        },
+        {
+            "start": "00:01:21,250",
+            "end": "00:01:23,330",
+            "ja": "でも、まだ良くしました。"
+        },
+        {
+            "start": "00:01:35,130",
+            "end": "00:01:36,290",
+            "ja": "ごめんなさい。"
+        },
+        {
+            "start": "00:01:36,290",
+            "end": "00:01:37,070",
+            "ja": "ごめんなさい。"
+        },
+        {
+            "start": "00:01:38,550",
+            "end": "00:01:39,710",
+            "ja": "ごめんなさい。"
+        },
+        {
+            "start": "00:01:39,810",
+            "end": "00:01:40,850",
+            "ja": "ごめんなさい。"
+        },
+        {
+            "start": "00:01:40,850",
+            "end": "00:01:41,010",
+            "ja": "ごめんなさい。"
+        },
+        {
+            "start": "00:01:41,390",
+            "end": "00:01:41,630",
+            "ja": "ごめんなさい。"
+        },
+        {
+            "start": "00:01:43,522",
+            "end": "00:01:44,082",
+            "ja": "えーと"
+        },
+        {
+            "start": "00:01:44,082",
+            "end": "00:01:46,842",
+            "ja": "えーと"
+        },
+        {
+            "start": "00:01:58,114",
+            "end": "00:01:58,354",
+            "ja": "出発"
+        },
+        {
+            "start": "00:02:00,194",
+            "end": "00:02:00,834",
+            "ja": "それは共有ではありません。"
+        },
+        {
+            "start": "00:02:01,794",
+            "end": "00:02:01,954",
+            "ja": "ああ、"
+        },
+        {
+            "start": "00:02:01,954",
+            "end": "00:02:08,574",
+            "ja": "この韓国語の字幕を更新しています…"
+        }
+    ]
+}

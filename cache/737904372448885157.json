@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,180\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:02,040\",\n    \"end\": \"00:00:05,080\",\n    \"lang\": \"ja\",\n    \"text\": \"私は海岸線を走ります\"\n  },\n  {\n    \"start\": \"00:00:05,960\",\n    \"end\": \"00:00:06,420\",\n    \"lang\": \"ja\",\n    \"text\": \"あ、\"\n  },\n  {\n    \"start\": \"00:00:06,420\",\n    \"end\": \"00:00:08,400\",\n    \"lang\": \"ja\",\n    \"text\": \"今日は荒なし日です\"\n  },\n  {\n    \"start\": \"00:00:10,338\",\n    \"end\": \"00:00:10,658\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:10,658\",\n    \"end\": \"00:00:12,678\",\n    \"lang\": \"en\",\n    \"text\": \"see you at the cosine line.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                \"vi\": \"Vietnamese text\"  // Vietnamese translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,180",
+            "es": "Buenos días",
+            "fr": "Bonjour",
+            "vi": "Chào buổi sáng"
+        },
+        {
+            "start": "00:00:02,040",
+            "end": "00:00:05,080",
+            "es": "Corro a lo largo de la costa",
+            "fr": "Je cours le long de la côte",
+            "vi": "Tôi chạy dọc theo bờ biển"
+        },
+        {
+            "start": "00:00:05,960",
+            "end": "00:00:06,420",
+            "es": "Ah,",
+            "fr": "Ah,",
+            "vi": "À,"
+        },
+        {
+            "start": "00:00:06,420",
+            "end": "00:00:08,400",
+            "es": "Hoy es un día sin oleaje",
+            "fr": "Aujourd'hui, il n'y a pas de vagues",
+            "vi": "Hôm nay là một ngày không sóng"
+        },
+        {
+            "start": "00:00:10,338",
+            "end": "00:00:10,658",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:10,658",
+            "end": "00:00:12,678",
+            "es": "nos vemos en la línea costera.",
+            "fr": "on se voit sur la côte.",
+            "vi": "hẹn gặp bạn ở ven biển."
+        }
+    ]
+}

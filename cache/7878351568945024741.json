@@ -1,0 +1,25 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Preserve the original timestamps. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,000\",\n    \"ja\": \"もう<跳>[]びたくない\"\n  },\n  {\n    \"start\": \"00:00:04,380\",\n    \"end\": \"00:00:04,980\",\n    \"ja\": \"<逃>[]げた\"\n  },\n  {\n    \"start\": \"00:00:04,980\",\n    \"end\": \"00:00:08,080\",\n    \"ja\": \"<モーサン>[]の<走>[]り<方>[]はちょっとすごいな\"\n  },\n  {\n    \"start\": \"00:00:08,080\",\n    \"end\": \"00:00:09,380\",\n    \"ja\": \"<全>[]てが<合成>[]だ\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,000",
+            "ja": "もう<跳>[と]びたくない"
+        },
+        {
+            "start": "00:00:04,380",
+            "end": "00:00:04,980",
+            "ja": "<逃>[に]げた"
+        },
+        {
+            "start": "00:00:04,980",
+            "end": "00:00:08,080",
+            "ja": "<モーサン>[もーさん]の<走>[はし]り<方>[かた]はちょっとすごいな"
+        },
+        {
+            "start": "00:00:08,080",
+            "end": "00:00:09,380",
+            "ja": "<全>[すべ]てが<合成>[ごうせい]だ"
+        }
+    ]
+}

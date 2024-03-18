@@ -1,0 +1,124 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,259\",\n    \"end\": \"00:00:04,380\",\n    \"lang\": \"en\",\n    \"text\": \"So I found this Korean,\"\n  },\n  {\n    \"start\": \"00:00:04,380\",\n    \"end\": \"00:00:08,620\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if this is Korean or Japanese,\"\n  },\n  {\n    \"start\": \"00:00:08,620\",\n    \"end\": \"00:00:09,860\",\n    \"lang\": \"en\",\n    \"text\": \"it's ramen.\"\n  },\n  {\n    \"start\": \"00:00:11,620\",\n    \"end\": \"00:00:12,780\",\n    \"lang\": \"en\",\n    \"text\": \"If it's ramen,\"\n  },\n  {\n    \"start\": \"00:00:12,780\",\n    \"end\": \"00:00:19,320\",\n    \"lang\": \"en\",\n    \"text\": \"the noodles are seen as Japanese.\"\n  },\n  {\n    \"start\": \"00:00:20,226\",\n    \"end\": \"00:00:24,106\",\n    \"lang\": \"ja\",\n    \"text\": \"この卵の\"\n  },\n  {\n    \"start\": \"00:00:24,450\",\n    \"end\": \"00:00:24,730\",\n    \"lang\": \"en\",\n    \"text\": \"Man.\"\n  },\n  {\n    \"start\": \"00:00:25,634\",\n    \"end\": \"00:00:27,354\",\n    \"lang\": \"ja\",\n    \"text\": \"作りました\"\n  },\n  {\n    \"start\": \"00:00:29,133\",\n    \"end\": \"00:00:34,594\",\n    \"lang\": \"ja\",\n    \"text\": \"私のこの卵の麺を作ってみます\"\n  },\n  {\n    \"start\": \"00:00:40,230\",\n    \"end\": \"00:00:41,030\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:41,030\",\n    \"end\": \"00:00:42,210\",\n    \"lang\": \"en\",\n    \"text\": \"it's so delicious.\"\n  },\n  {\n    \"start\": \"00:00:44,970\",\n    \"end\": \"00:00:46,630\",\n    \"lang\": \"en\",\n    \"text\": \"Even though it's...\"\n  },\n  {\n    \"start\": \"00:00:51,778\",\n    \"end\": \"00:00:53,678\",\n    \"lang\": \"en\",\n    \"text\": \"How to say...\"\n  },\n  {\n    \"start\": \"00:00:55,490\",\n    \"end\": \"00:00:56,230\",\n    \"lang\": \"en\",\n    \"text\": \"Fast food.\"\n  },\n  {\n    \"start\": \"00:00:57,630\",\n    \"end\": \"00:00:58,350\",\n    \"lang\": \"en\",\n    \"text\": \"No,\"\n  },\n  {\n    \"start\": \"00:00:58,350\",\n    \"end\": \"00:00:59,590\",\n    \"lang\": \"en\",\n    \"text\": \"not fast food.\"\n  },\n  {\n    \"start\": \"00:00:59,790\",\n    \"end\": \"00:01:01,990\",\n    \"lang\": \"en\",\n    \"text\": \"But it is...\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                \"vi\": \"Vietnamese text\"  // Vietnamese translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,259",
+            "end": "00:00:04,380",
+            "es": "Así que encontré este coreano,",
+            "fr": "Alors j'ai trouvé ce coréen,",
+            "vi": "Vì vậy tôi đã tìm thấy người Hàn Quốc này,"
+        },
+        {
+            "start": "00:00:04,380",
+            "end": "00:00:08,620",
+            "es": "no sé si esto es coreano o japonés,",
+            "fr": "je ne sais pas si c'est coréen ou japonais,",
+            "vi": "tôi không biết đây là tiếng Hàn hay tiếng Nhật,"
+        },
+        {
+            "start": "00:00:08,620",
+            "end": "00:00:09,860",
+            "es": "es ramen.",
+            "fr": "c'est du ramen.",
+            "vi": "đó là ramen."
+        },
+        {
+            "start": "00:00:11,620",
+            "end": "00:00:12,780",
+            "es": "Si es ramen,",
+            "fr": "Si c'est du ramen,",
+            "vi": "Nếu đó là ramen,"
+        },
+        {
+            "start": "00:00:12,780",
+            "end": "00:00:19,320",
+            "es": "los fideos son considerados japoneses.",
+            "fr": "les nouilles sont considérées comme japonaises.",
+            "vi": "mì được coi là của Nhật."
+        },
+        {
+            "start": "00:00:20,226",
+            "end": "00:00:24,106",
+            "es": "De este huevo",
+            "fr": "De cet œuf",
+            "vi": "Của quả trứng này"
+        },
+        {
+            "start": "00:00:24,450",
+            "end": "00:00:24,730",
+            "es": "Hombre.",
+            "fr": "Homme.",
+            "vi": "Anh chàng."
+        },
+        {
+            "start": "00:00:25,634",
+            "end": "00:00:27,354",
+            "es": "Lo hice.",
+            "fr": "Je l'ai fait.",
+            "vi": "Tôi đã làm."
+        },
+        {
+            "start": "00:00:29,133",
+            "end": "00:00:34,594",
+            "es": "Voy a intentar hacer estos fideos de huevo.",
+            "fr": "Je vais essayer de faire ces nouilles d'œuf.",
+            "vi": "Tôi sẽ thử làm mì trứng này."
+        },
+        {
+            "start": "00:00:40,230",
+            "end": "00:00:41,030",
+            "es": "Guau,",
+            "fr": "Wow,",
+            "vi": "Wow,"
+        },
+        {
+            "start": "00:00:41,030",
+            "end": "00:00:42,210",
+            "es": "es tan delicioso.",
+            "fr": "c'est tellement délicieux.",
+            "vi": "nó ngon quá."
+        },
+        {
+            "start": "00:00:44,970",
+            "end": "00:00:46,630",
+            "es": "Aunque es...",
+            "fr": "Bien que ce soit...",
+            "vi": "Mặc dù nó là..."
+        },
+        {
+            "start": "00:00:51,778",
+            "end": "00:00:53,678",
+            "es": "Cómo se dice...",
+            "fr": "Comment dit-on...",
+            "vi": "Làm sao để nói..."
+        },
+        {
+            "start": "00:00:55,490",
+            "end": "00:00:56,230",
+            "es": "Comida rápida.",
+            "fr": "Restauration rapide.",
+            "vi": "Đồ ăn nhanh."
+        },
+        {
+            "start": "00:00:57,630",
+            "end": "00:00:58,350",
+            "es": "No,",
+            "fr": "Non,",
+            "vi": "Không,"
+        },
+        {
+            "start": "00:00:58,350",
+            "end": "00:00:59,590",
+            "es": "no es comida rápida.",
+            "fr": "ce n'est pas de la restauration rapide.",
+            "vi": "không phải đồ ăn nhanh."
+        },
+        {
+            "start": "00:00:59,790",
+            "end": "00:01:01,990",
+            "es": "Pero es...",
+            "fr": "Mais c'est...",
+            "vi": "Nhưng nó là..."
+        }
+    ]
+}

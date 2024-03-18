@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,880\",\n    \"end\": \"00:00:02,460\",\n    \"lang\": \"en\",\n    \"text\": \"It's time for the sock shoot.\"\n  },\n  {\n    \"start\": \"00:00:03,440\",\n    \"end\": \"00:00:04,360\",\n    \"lang\": \"en\",\n    \"text\": \"I'm so lazy.\"\n  },\n  {\n    \"start\": \"00:00:04,360\",\n    \"end\": \"00:00:05,560\",\n    \"lang\": \"en\",\n    \"text\": \"Lazy boy.\"\n  },\n  {\n    \"start\": \"00:00:06,900\",\n    \"end\": \"00:00:08,440\",\n    \"lang\": \"en\",\n    \"text\": \"It's time for the sock shoot.\"\n  },\n  {\n    \"start\": \"00:00:09,440\",\n    \"end\": \"00:00:10,380\",\n    \"lang\": \"en\",\n    \"text\": \"I'm so lazy.\"\n  },\n  {\n    \"start\": \"00:00:10,380\",\n    \"end\": \"00:00:11,540\",\n    \"lang\": \"en\",\n    \"text\": \"Lazy boy.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,880",
+            "end": "00:00:02,460",
+            "ko": "양말 쏘는 시간이야."
+        },
+        {
+            "start": "00:00:03,440",
+            "end": "00:00:04,360",
+            "ko": "나 너무 게을러."
+        },
+        {
+            "start": "00:00:04,360",
+            "end": "00:00:05,560",
+            "ko": "게으른 아이."
+        },
+        {
+            "start": "00:00:06,900",
+            "end": "00:00:08,440",
+            "ko": "양말 쏘는 시간이야."
+        },
+        {
+            "start": "00:00:09,440",
+            "end": "00:00:10,380",
+            "ko": "나 너무 게을러."
+        },
+        {
+            "start": "00:00:10,380",
+            "end": "00:00:11,540",
+            "ko": "게으른 아이."
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,000\",\n    \"lang\": \"zh\",\n    \"text\": \"不想跳了\"\n  },\n  {\n    \"start\": \"00:00:04,380\",\n    \"end\": \"00:00:04,980\",\n    \"lang\": \"zh\",\n    \"text\": \"跑了\"\n  },\n  {\n    \"start\": \"00:00:04,980\",\n    \"end\": \"00:00:08,080\",\n    \"lang\": \"zh\",\n    \"text\": \"莫桑跑的这个动作有点牛逼啊\"\n  },\n  {\n    \"start\": \"00:00:08,080\",\n    \"end\": \"00:00:09,380\",\n    \"lang\": \"zh\",\n    \"text\": \"一切合成\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,000",
+            "ja": "もう跳びたくない"
+        },
+        {
+            "start": "00:00:04,380",
+            "end": "00:00:04,980",
+            "ja": "逃げた"
+        },
+        {
+            "start": "00:00:04,980",
+            "end": "00:00:08,080",
+            "ja": "モーサンの走り方はちょっとすごいな"
+        },
+        {
+            "start": "00:00:08,080",
+            "end": "00:00:09,380",
+            "ja": "全てが合成だ"
+        }
+    ]
+}

@@ -7,6 +7,13 @@ import csv
 from datetime import datetime
 from openai import OpenAI
 
+
+class JSONValidationError(Exception):
+    def __init__(self, message, json_string=None):
+        super().__init__(message)
+        self.message = message
+        self.json_string = json_string
+
 class JSONParsingError(Exception):
     def __init__(self, message, json_string, text):
         super().__init__(message)
@@ -43,7 +50,7 @@ class OpenAIRequestBase:
                 return cached_data["response"]
         return None
 
-    def send_request_with_retry(self, prompt, system_content="You are an AI."):
+    def send_request_with_retry(self, prompt, system_content="You are an AI.", sample_json=None):
         retries = 0
         # messages = [{"role": "system", "content": system_content}, {"role": "user", "content": prompt}]
         messages = [
@@ -64,15 +71,34 @@ class OpenAIRequestBase:
                 )
                 ai_response = response.choices[0].message.content.strip()
                 parsed_response = self.parse_response(ai_response)
+
+                if sample_json:
+                    self.validate_json(parsed_response, sample_json)
+
                 self.save_to_cache(prompt, parsed_response)
                 return parsed_response
             except Exception as e:
                 traceback.print_exc()
                 retries += 1
                 messages.append({"role": "system", "content": ai_response})
-                messages.append({"role": "system", "content": str(e)})
+                messages.append({"role": "system", "content": e.message})
 
         raise Exception("Maximum retries reached without success.")
+
+    def validate_json(self, json_data, sample_json):
+        if type(json_data) != type(sample_json):
+            raise JSONValidationError("JSON data type does not match the sample JSON type.")
+
+        if isinstance(sample_json, dict):
+            for key, sample_value in sample_json.items():
+                if key not in json_data:
+                    raise JSONValidationError(f"Key '{key}' is missing.")
+                self.validate_json(json_data[key], sample_value)
+        elif isinstance(sample_json, list):
+            if len(sample_json) > 0:
+                sample_item = sample_json[0]
+                for item in json_data:
+                    self.validate_json(item, sample_item)
 
     def parse_response(self, response):
         first_dict_index = response.find('{')

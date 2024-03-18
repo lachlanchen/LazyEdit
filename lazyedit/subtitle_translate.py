@@ -17,6 +17,7 @@ from lazyedit.openai_version_check import OpenAI
 
 from lazyedit.utils import JSONParsingError, JSONValidationError
 from lazyedit.utils import safe_pretty_print, sample_texts, find_font_size
+from lazyedit.openai_request import OpenAIRequestBase
 
 from datetime import datetime
 from pprint import pprint
@@ -28,17 +29,11 @@ import glob
 import numpy as np
 
 
-# def wrap_text(text, width, is_cjk):
-#     if is_cjk:
-#         # Use cjkwrap for CJK text
-#         return cjkwrap.wrap(text, width)
-#     else:
-#         # Use cjkwrap for non-CJK text as well, as it should handle both appropriately
-#         return cjkwrap.wrap(text, width)
 
 
 
-class SubtitlesTranslator:
+
+class SubtitlesTranslator(OpenAIRequestBase):
     def __init__(self, 
         openai_client, 
         input_json_path, 
@@ -48,15 +43,21 @@ class SubtitlesTranslator:
         video_width=1080,
         video_height=1920,
         max_retries=3,
-        use_cache=False
+        use_cache=False,
+        *args, **kwargs
     ):
+        kwargs["use_cache"] = use_cache
+        kwargs["max_retries"] = max_retries
+
+        super().__init__(*args, **kwargs)
+
+
         self.client = openai_client
         self.input_json_path = input_json_path
         self.input_sub_path = input_sub_path
         self.output_sub_path = output_sub_path
-        self.max_retries = max_retries
-        self.video_length = video_length
 
+        self.video_length = video_length
         self.video_width = video_width
         self.video_height = video_height
         self.base_width = 1920
@@ -72,11 +73,13 @@ class SubtitlesTranslator:
         self.font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
         self.translation_log_folder = 'translation_logs'
-        self.use_cache = use_cache
+
+        # self.max_retries = max_retries
+        # self.use_cache = use_cache
 
         print("Using translation cache: ", use_cache)
 
-        self.ensure_log_folder_exists()
+        # self.ensure_log_folder_exists()
 
 
 
@@ -85,42 +88,7 @@ class SubtitlesTranslator:
         """Determine if the video is landscape or portrait based on class variables."""
         return self.video_width > self.video_height
 
-    def ensure_log_folder_exists(self):
-        if not os.path.exists(self.translation_log_folder):
-            os.makedirs(self.translation_log_folder)
-
-    def get_log_filename(self, lang="ja", idx=0):
-        base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
-        datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        return f"{self.translation_log_folder}/{base_filename}-part{idx}-{lang}-{datetime_str}.json"
-
-    def save_translation_attempt(self, prompt, response, lang="ja", idx=0):
-        log_filename = self.get_log_filename(lang=lang, idx=idx)
-        translation_attempt = {
-            "input_json_path": self.input_json_path,
-            "prompt": prompt,
-            "response": response
-        }
-        with open(log_filename, 'w', encoding='utf-8') as file:
-            json.dump(translation_attempt, file, indent=4, ensure_ascii=False)
-
-
-    def load_latest_translation_attempt(self, lang="ja", idx=0):
-        """
-        Load the latest translation attempt from the translation logs folder
-        based on the input JSON path.
-        """
-        base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
-        pattern = f"{self.translation_log_folder}/{base_filename}-part{idx}-{lang}-*.json"
-        files = glob.glob(pattern)
-        if not files:
-            return None  # No cache available
-
-        # Find the latest file based on the naming convention
-        latest_file = max(files, key=os.path.getctime)
-        with open(latest_file, 'r', encoding='utf-8') as file:
-            cached_data = json5.load(file)
-        return cached_data["response"]
+    
 
 
     def load_subtitles_from_json(self):
@@ -162,24 +130,7 @@ class SubtitlesTranslator:
             if not all(field in subtitle for field in required_fields):
                 raise JSONValidationError("Subtitle missing one of the required fields: " + ", ".join(required_fields))
 
-    # def translate_and_merge_subtitles(self, subtitles):
-    #     """Splits subtitles into 1-minute batches and processes each batch."""
-    #     # subtitles = self.load_subtitles_from_json()
 
-    #     # Splitting subtitles into 1-minute batches
-    #     batches = self.split_subtitles_into_batches(subtitles)
-
-    #     # Process each batch and accumulate results
-    #     translated_subtitles = []
-    #     for batch in batches:
-    #         translated_batch = self.translate_and_merge_subtitles_in_batch(batch)
-    #         translated_subtitles.extend(translated_batch)
-
-    #     # Save the final translated subtitles
-    #     # self.save_translated_subtitles_to_ass(translated_subtitles)
-    #     print("All subtitles have been processed and saved successfully.")
-
-    #     return translated_subtitles
 
     def translate_and_merge_subtitles(self, subtitles):
         """Splits subtitles into 1-minute batches and processes each batch in parallel."""
@@ -243,56 +194,130 @@ class SubtitlesTranslator:
 
         return batches
 
-    # def translate_and_merge_subtitles_in_batch(self, subtitles):
-    #     """Merge translations from Japanese-specific and other languages' functions."""
-    #     translations_ja = self.translate_and_merge_subtitles_ja(subtitles)
-    #     translations_other_lang = self.translate_and_merge_subtitles_other_languages(subtitles)
+    
 
-    #     # Creating a dictionary for other languages translations for quick lookup by timestamp
+    # def translate_and_merge_subtitles_in_batch(self, subtitles, idx):
+    #     """Merge translations from Japanese-specific and other languages' functions in parallel."""
+    #     with ThreadPoolExecutor(max_workers=2) as executor:
+    #         # Submit both translation tasks to the executor
+    #         future_ja = executor.submit(self.translate_and_merge_subtitles_ja, subtitles, idx)
+    #         future_major_lang = executor.submit(self.translate_and_merge_subtitles_major_languages, subtitles, idx)
+
+    #         # Wait for both futures to complete and retrieve results
+    #         translations_ja = future_ja.result()
+    #         translations_major_lang = future_major_lang.result()
+
+    #     # Merge translations as before
     #     timestamps_dict = {
-    #         (translation['start'], translation['end']): translation for translation in translations_other_lang
+    #         (translation['start'], translation['end']): translation for translation in translations_major_lang
     #     }
 
-    #     # Iterate through Japanese translations to merge
     #     for ja_translation in translations_ja:
     #         key = (ja_translation['start'], ja_translation['end'])
     #         if key in timestamps_dict:
-    #             # If timestamp exists, replace Japanese translation
     #             timestamps_dict[key]['ja'] = ja_translation['ja']
     #         else:
-    #             # If timestamp does not exist, add new entry with Japanese translation
     #             timestamps_dict[key] = ja_translation
 
-    #     # Convert the dictionary back to list to get the final merged translations
     #     merged_translations = list(timestamps_dict.values())
+    #     merged_translations.sort(key=lambda x: x['start'])
 
-    #     # Optional: Sort the merged list by start timestamps if necessary
+    #     return merged_translations
+
+    # def translate_and_merge_subtitles_in_batch(self, subtitles, idx):
+    #     """Merge translations from multiple languages' functions in parallel."""
+    #     # Define a dictionary of language codes to their respective translation functions
+    #     translation_tasks = {
+    #         'major': self.translate_and_merge_subtitles_major_languages,  # This handles other major languages
+    #         'ja': self.translate_and_merge_subtitles_ja,
+    #         'ko': self.translate_and_merge_subtitles_ko,  # Assuming you have a similar function for Korean
+    #         'minor': self.translate_and_merge_subtitles_minor_languages
+    #     }
+
+    #     with ThreadPoolExecutor(max_workers=len(translation_tasks)) as executor:
+    #         # Submit all translation tasks to the executor and collect Future objects
+    #         futures = {
+    #             executor.submit(translation_func, subtitles, idx): lang_code
+    #             for lang_code, translation_func in translation_tasks.items()
+    #         }
+
+    #         # Initialize an empty dictionary to collect all translations
+    #         all_translations = {}
+
+    #         # Process completed translation tasks as they complete
+    #         for future in as_completed(futures):
+    #             lang_code = futures[future]
+    #             try:
+    #                 translations = future.result()
+    #                 # Store translations by language code
+    #                 all_translations[lang_code] = translations
+    #             except Exception as exc:
+    #                 print(f'{lang_code} translation generated an exception: {exc}')
+
+    #     # Merge translations
+    #     timestamps_dict = {}
+
+    #     # Start with 'major' language translations as the base
+    #     for translation in all_translations.pop('major', []):
+    #         key = (translation['start'], translation['end'])
+    #         timestamps_dict[key] = translation
+
+    #     # Merge additional language translations
+    #     for lang_code, translations in all_translations.items():
+    #         for translation in translations:
+    #             key = (translation['start'], translation['end'])
+    #             if key in timestamps_dict:
+    #                 timestamps_dict[key][lang_code] = translation[lang_code]
+    #             else:
+    #                 # If the key doesn't exist, it means this timestamp only has translation in this particular language
+    #                 timestamps_dict[key] = translation
+
+    #     merged_translations = list(timestamps_dict.values())
     #     merged_translations.sort(key=lambda x: x['start'])
 
     #     return merged_translations
 
     def translate_and_merge_subtitles_in_batch(self, subtitles, idx):
-        """Merge translations from Japanese-specific and other languages' functions in parallel."""
-        with ThreadPoolExecutor(max_workers=2) as executor:
-            # Submit both translation tasks to the executor
-            future_ja = executor.submit(self.translate_and_merge_subtitles_ja, subtitles, idx)
-            future_other_lang = executor.submit(self.translate_and_merge_subtitles_other_languages, subtitles, idx)
-
-            # Wait for both futures to complete and retrieve results
-            translations_ja = future_ja.result()
-            translations_other_lang = future_other_lang.result()
-
-        # Merge translations as before
-        timestamps_dict = {
-            (translation['start'], translation['end']): translation for translation in translations_other_lang
+        """Merge translations from multiple languages' functions in parallel."""
+        # Define a dictionary of language codes to their respective translation functions
+        translation_tasks = {
+            'major': self.translate_and_merge_subtitles_major_languages,
+            'ja': self.translate_and_merge_subtitles_ja,
+            'ko': self.translate_and_merge_subtitles_ko,
+            'minor': self.translate_and_merge_subtitles_minor_languages
         }
 
-        for ja_translation in translations_ja:
-            key = (ja_translation['start'], ja_translation['end'])
-            if key in timestamps_dict:
-                timestamps_dict[key]['ja'] = ja_translation['ja']
-            else:
-                timestamps_dict[key] = ja_translation
+        with ThreadPoolExecutor(max_workers=len(translation_tasks)) as executor:
+            futures = {
+                executor.submit(translation_func, subtitles, idx): lang_code
+                for lang_code, translation_func in translation_tasks.items()
+            }
+
+            all_translations = {}
+
+            for future in as_completed(futures):
+                lang_code = futures[future]
+                try:
+                    translations = future.result()
+                    all_translations[lang_code] = translations
+                except Exception as exc:
+                    print(f'{lang_code} translation generated an exception: {exc}')
+
+        # Merge translations
+        timestamps_dict = {}
+
+        for translations in all_translations.values():
+            for translation in translations:
+                key = (translation['start'], translation['end'])
+
+                # Initialize the dictionary entry if it doesn't exist
+                if key not in timestamps_dict:
+                    timestamps_dict[key] = {'start': translation['start'], 'end': translation['end']}
+                
+                # Dynamically add all language translations, regardless of the number of languages
+                for sub_lang, text in translation.items():
+                    if sub_lang not in ['start', 'end']:  # Skip timestamp keys
+                        timestamps_dict[key][sub_lang] = text
 
         merged_translations = list(timestamps_dict.values())
         merged_translations.sort(key=lambda x: x['start'])
@@ -300,143 +325,153 @@ class SubtitlesTranslator:
         return merged_translations
 
 
-    def translate_and_merge_subtitles_other_languages(self, subtitles, idx):
+    def translate_and_merge_subtitles_major_languages(self, subtitles, idx):
         """Translate and merge subtitles using the OpenAI API."""
 
         print("Translating subtitles into other languages...")
         
-        client = self.client
+        # client = self.client
 
 
-        # Constructing the messages with the optimized prompt
-        messages = [
+        # # Define a sample JSON structure for validation purposes
+        # sample_subtitles_structure = [
+        #     {
+        #         "start": "timestamp",
+        #         "end": "timestamp",
+        #         "en": "English text",
+        #         "zh": "Chinese text",
+        #         "ar": "Arabic text",
+        #         # "...": "Text in the original language, if not in the listed before. "
+        #     }
+        # ]
+
+        # sample_json_string = json.dumps(sample_subtitles_structure, indent=2, ensure_ascii=False)
+
+
+        # Define a JSONC string with comments
+        sample_json_string = """
+        [
             {
-                "role": "system",
-                "content": "Translate and merge mixed language subtitles into English and Chinese, providing coherent and accurate translations."
-            },
-            {
-                "role": "user",
-                "content": ""
+                "start": "timestamp",  // Start time of the subtitle
+                "end": "timestamp",    // End time of the subtitle
+                "en": "English text",  // English translation
+                "zh": "Chinese text",  // Chinese translation
+                "ar": "Arabic text",    // Arabic translation
+                // "...": "Text in the original language, if not in the listed before."
             }
         ]
+        """
 
-        retries = 0
+        # Parse the JSONC string into a Python object
+        sample_subtitles_structure = json5.loads(sample_json_string)
 
-        while retries < self.max_retries:
-            try:
-                # Placeholder for OpenAI API call setup
-                # Construct the prompt for translation and merging
-                # Constructing the detailed prompt with placeholders for subtitles
-                # Prepare the detailed prompt for translation and merging
-                
-                prompt_content = (
-                    "Below are mixed language subtitles extracted from a video, including timestamps, "
-                    "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
-                    "is presented with English (en), Chinese (zh)， Arabic (ar) translations, "
-                    "maintaining the original timestamps. "
-                    "If a subtitle is already in English, provide the corresponding Chinese, Arabic translation, and vice versa. "
-                    "For subtitles in any other language, keep the original text but also provide translations in "
-                    "English, Chinese, Arabic. \n\n"
 
-                    # "Must provide Japanese subtitles with furigana in this format '< Kanji>[Furigana]'."
-                    # "Use '<>' to confine the whole annotated kanji area. Use '[]' to confine the furigana. "
-                    # "Please exact follow this format. Otherwise my parser will report error. \n\n"
+        system_content = "Translate and merge mixed language subtitles into English and Chinese, providing coherent and accurate translations."
+        prompt = (
+            "Below are mixed language subtitles extracted from a video, including timestamps, "
+            "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
+            "is presented with English (en), Chinese (zh), and Arabic (ar) translations, "
+            "maintaining the original timestamps. "
+            "If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. "
+            "For subtitles in any other language, keep the original text but also provide translations in "
+            "English, Chinese and Arabic. \n\n"
 
-                    # "Below are mixed language subtitles extracted from a video, including timestamps, "
-                    # "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
-                    # "is presented with English (en),  Chinese (zh), Arabic (ar) and Japanese (ja) translations, "
-                    # "maintaining the original timestamps. "
-                    # "If a subtitle is already in English, provide the corresponding Chinese translation, and vice versa. "
-                    # "For subtitles in any other language, keep the original text but also provide translations in "
-                    # "English, Chinese, Arabic and Japanese.\n\n"
+            "Fullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. "
+            "If I said in subtitles that I want to know or I don't know how to say something, "
+            "provide the whole subtitles in that language. "
+         
+            "Correct some apparent speech recognition error and inconsistencies, "
+            "especially homonym and mumble in both origin and its translation based on the context.\n\n"
+    
+            "Process the following subtitles, ensuring translations are accurate and coherent, "
+            "and format the output as shown in the example. "
+            "Note that the original timestamps should be preserved for each entry.\n\n"
 
-                    # "I only care about most common languages like Chinese, English, Japanese and Arabic. "
-                    # "If I said 阿南伯, it's regonition error of 阿拉伯. "
-                    "Fullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. "
-                    "If I said in subtitles that I want to know or I don't know how to say something, "
-                    "provide the whole subtitles in that language. "
-                    # "For example, if I want to know something in Arabic 阿拉伯, provide the Arabic language subtitle. Or,"
-                    # "if I said I don't know how to say something in Japanese 日语, Provide the Japanese language subtitle. \n\n"
-                    # "Some weird language might be speech recognition error. "
-                 
-                    "Correct some apparent speech recognition error and inconsistencies, "
-                    "especially homonym and mumble in both origin and its translation based on the context.\n\n"
+            "Subtitles to process:\n"
+            f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
             
-                    "Process the following subtitles, ensuring translations are accurate and coherent, "
-                    "and format the output as shown in the example. "
-                    "Note that the original timestamps should be preserved for each entry.\n\n"
+            # "Please provide a complete and accurate translation and formatting for each subtitle entry."
 
-                    "Subtitles to process:\n"
-                    f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
-                    
-                    # "Please provide a complete and accurate translation and formatting for each subtitle entry."
+            "Output JSON format only:\n"
+            "```json"
+            f"{sample_json_string}\n"
+            "```"
+        )
 
-                    "Output JSON format only:\n"
-                    "```json"
-                    "[\n"
-                    "  {\n"
-                    "    \"start\": \"timestamp\",\n"
-                    "    \"end\": \"timestamp\",\n"
-                    "    \"en\": \"English text\",\n"
-                    "    \"zh\": \"Chinese text\",\n"
-                    "    \"ar\": \"Arabic text\",\n"
-                    # "    \"ja\": \"Japanese text\",\n"
-                    "    \"...\": \"Text in the original language, if not English or Chinese\"\n"
-                    "  }\n"
-                    "]\n\n"
-                    "```"
-                )
 
-                ai_response = None
-                if self.use_cache:
-                    ai_response = self.load_latest_translation_attempt(lang="zh_en_ar", idx=idx)
-                
-                if not self.use_cache or not ai_response:
-                    
 
-                    messages[1]["content"] = prompt_content
 
-                    # Sending the request to the OpenAI API
-                    client = openai.OpenAI()  # Initializing the OpenAI client
-                    response = client.chat.completions.create(
-                        model=os.environ.get("OPENAI_MODEL", "gpt-4-0125-preview"),
-                        messages=messages
-                    )
 
-                    # Extracting and printing the AI's response
-                    ai_response = response.choices[0].message.content.strip()
 
-                translated_subtitles = self.extract_and_parse_json(ai_response)
-                
-                self.validate_translated_subtitles(translated_subtitles)
+        translated_subtitles = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure)
 
-                 # Save the successful attempt with the new method
-                self.save_translation_attempt(prompt_content, ai_response, lang="zh_en_ar", idx=idx)
+        print("Translated subtitles (Major): \n")
+        pprint(translated_subtitles)
 
-                return translated_subtitles
-            except (JSONParsingError, JSONValidationError) as e:
-                self.use_cache = False
 
-                print(f"Attempt {retries + 1} failed: {e}")
 
-                # Append the response and error message for context
-                messages.append({"role": "system", "content": ai_response})
-                messages.append({"role": "user", "content": e.message})
-                
-                retries += 1
-                
-                if retries >= self.max_retries:
-                    # # Check if the processed_sub_path exists and remove it if it does
-                    # if os.path.exists(self.output_sub_path):
-                    #     os.remove(self.output_sub_path)
+        return translated_subtitles
 
-                    # # Now, safely create a hard link
-                    # try:
-                    #     os.link(self.input_sub_path, self.output_sub_path)
-                    # except OSError as e:
-                    #     print(f"Error creating hard link: {e}")
+    def translate_and_merge_subtitles_minor_languages(self, subtitles, idx):
+        """Translate and merge subtitles using the OpenAI API into Spanish, French, and Vietnamese."""
 
-                    raise Exception("Failed after maximum retries. ")
+        print("Translating subtitles into minor languages...")
+        
+        # Define a JSONC string with comments for the minor languages
+        sample_json_string = """
+        [
+            {
+                "start": "timestamp",  // Start time of the subtitle
+                "end": "timestamp",    // End time of the subtitle
+                "es": "Spanish text",  // Spanish translation
+                "fr": "French text",   // French translation
+                "vi": "Vietnamese text"  // Vietnamese translation
+                // "...": "Text in the original language, if not in the listed before."
+            }
+        ]
+        """
+
+        # Parse the JSONC string into a Python object using json5
+        sample_subtitles_structure = json5.loads(sample_json_string)
+
+        system_content = "Translate mixed language subtitles into Spanish, French, and Vietnamese, providing coherent and accurate translations."
+        prompt = (
+            "Below are mixed language subtitles extracted from a video, including timestamps, "
+            "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
+            "is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, "
+            "maintaining the original timestamps. "
+            "If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. "
+            # "For subtitles in any other language, keep the original text but also provide translations in "
+            # "Spanish, French, and Vietnamese.\n\n"
+
+            "Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. "
+            "If I said in subtitles that I want to know or I don't know how to say something, "
+            "provide the whole subtitles in that language.\n\n"
+
+            "Correct some apparent speech recognition error and inconsistencies, "
+            "especially homonym and mumble in both origin and its translation based on the context.\n\n"
+
+            "Process the following subtitles, ensuring translations are accurate and coherent, "
+            "and format the output as shown in the example. "
+            "Note that the original timestamps should be preserved for each entry.\n\n"
+
+            "Subtitles to process:\n"
+            f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+
+            "Output JSON format only:\n"
+            "```json"
+            f"{sample_json_string}\n"
+            "```"
+        )
+
+        translated_subtitles = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure)
+
+        print("Translated subtitles (Minor): \n")
+        pprint(translated_subtitles)
+
+        return translated_subtitles
+
+
 
     # Function to annotate Kanji and Katakana independently
     @staticmethod
@@ -462,229 +497,353 @@ class SubtitlesTranslator:
         """Request Japanese subtitles separately with specific formatting for furigana."""
         print("Translating subtitles to Japanese...")
 
-        messages_ja = [
+        sample_subtitles_structure = [
             {
-                "role": "system",
-                # "content": "Translate subtitles into Japanese with furigana format, correcting any errors based on context."
-                "content": "Translate subtitles into Japanese, correcting any errors based on context."
-            },
-            {
-                "role": "user",
-                "content": ""
+                "start": "timestamp",
+                "end": "timestamp",
+                "ja": "Japanese text with optional furigana annotations"
             }
         ]
 
-        retries = 0
-        while retries < self.max_retries:
-            try:
-                prompt_content_ja = (
-                    "Translate the following subtitles into Japanese. "
-                    # "with furigana in angle and square brackets like <漢字>[かんじ]. "
-                    # "ensuring to include furigana in the specified format '<Kanji>[Furigana]'. \n\n"
-                    "\n\n"
-                    
-                    # "Please exact follow this format. Otherwise my parser will report error. \n\n"
+        sample_json_string = json.dumps(sample_subtitles_structure, indent=2, ensure_ascii=False)
 
-                    # "Maintain the original timestamps and provide translations only in Japanese, "
-                    # "applying the correct formatting for furigana. "
+        system_content = "Translate subtitles into Japanese, correcting any errors based on context."
+        prompt = (
+            "Translate the following subtitles into Japanese. "
+            "\n\n"
 
-                    "Correct speech recognition errors and inconsistencies based on context.\n\n"
-                    
-                    "Note that the original timestamps should be preserved for each entry.\n\n"
+            "Correct speech recognition errors and inconsistencies based on context.\n\n"
+            
+            "Note that the original timestamps should be preserved for each entry.\n\n"
 
-                    
-                    "Subtitles to process:\n"
-                    f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+            
+            "Subtitles to process:\n"
+            f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
 
-                    # "KEEP the 漢字 in angle brackets like '<漢字>'. "
-                    # "KEEP the ふりがな in square brackets like '[ふりがな]'. "
-                    # "Prefer English transliterated word over furigana if exists."
-                    # "Provide furigana/transliterated word for ALL kanji/漢字. \n\n"
-                    # "Use '<>' to confine the whole annotated kanji area. Use '[]' to confine the furigana. "
 
-                    "Output JSON format only:\n"
-                    "```json\n"
-                    "[\n"
-                    "  {\n"
-                    "    \"start\": \"timestamp\",\n"
-                    "    \"end\": \"timestamp\",\n"
-                    "    \"ja\": \"Japanese text\",\n"
-                    "  }\n"
-                    "]\n"
-                    "```"
-                )
+            "Output JSON format only:\n"
+            "```json\n"
+            f"{sample_json_string}\n"
+            "```"
+        )
 
-                ai_response_ja = None
-                if self.use_cache:
-                    ai_response_ja = self.load_latest_translation_attempt(lang="ja", idx=idx)
-                
-                if not self.use_cache or not ai_response_ja:
+        
+        translated_subtitles_ja = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure)
 
-                    
-                    messages_ja[1]["content"] = prompt_content_ja
-                    
 
-                    response_ja = self.client.chat.completions.create(
-                        model=os.environ.get("OPENAI_MODEL", "gpt-4-0125-preview"),
-                        messages=messages_ja
-                    )
+        annotated_subtitles = self.annotate_kanji_katakana(translated_subtitles_ja)
 
-                    ai_response_ja = response_ja.choices[0].message.content.strip()
+        print("annotated subtitles: \n")
+        pprint(annotated_subtitles)
 
-                translated_subtitles_ja = self.extract_and_parse_json(ai_response_ja)
-                self.validate_translated_subtitles(translated_subtitles_ja, required_fields=["start", "end", "ja"])
-                self.save_translation_attempt(prompt_content_ja, ai_response_ja, lang="ja", idx=idx)
+        translated_subtitles_ja_with_furigana = self.add_furigana_for_japanese_subtitles(annotated_subtitles, idx)
 
-                annotated_subtitles = self.annotate_kanji_katakana(translated_subtitles_ja)
+        print("furigana subtitles: \n")
+        pprint(translated_subtitles_ja_with_furigana)
 
-                print("annotated subtitles: \n")
-                pprint(annotated_subtitles)
+        return translated_subtitles_ja_with_furigana
 
-                translated_subtitles_ja_with_furigana = self.add_furigana_for_japanese_subtitles(annotated_subtitles, idx)
-
-                print("furigana subtitles: \n")
-                pprint(translated_subtitles_ja_with_furigana)
-
-                # return translated_subtitles_ja
-                return translated_subtitles_ja_with_furigana
-
-            except (JSONParsingError, JSONValidationError) as e:
-                self.use_cache = False
-
-                print(f"Attempt {retries + 1} failed: {e}")
-
-                # Append the response and error message for context
-                messages_ja.append({"role": "system", "content": ai_response_ja})
-                messages_ja.append({"role": "user", "content": e.message})
-                
-                retries += 1
-                
-                if retries >= self.max_retries:
-                    # # Check if the processed_sub_path exists and remove it if it does
-                    # if os.path.exists(self.output_sub_path):
-                    #     os.remove(self.output_sub_path)
-
-                    # # Now, safely create a hard link
-                    # try:
-                    #     os.link(self.input_sub_path, self.output_sub_path)
-                    # except OSError as e:
-                    #     print(f"Error creating hard link: {e}")
-
-                    raise Exception("Failed after maximum retries. ")
+            
 
 
     def add_furigana_for_japanese_subtitles(self, subtitles, idx):
-        """Request Japanese subtitles separately with specific formatting for furigana."""
-        print("Adding furigana to translated subtitles...")
+        """Request Japanese subtitles with specific formatting for furigana using the OpenAI API with retries."""
 
-        messages_ja = [
+        sample_subtitles_structure_with_furigana = [
             {
-                "role": "system",
-                "content": "Add furigana (inside []) to Japanese kanji (inside <>) with provided format. "
-            },
-            {
-                "role": "user",
-                "content": ""
+                "start": "timestamp",
+                "end": "timestamp",
+                "ja": "Japanese text with furigana annotations"
             }
         ]
 
-        retries = 0
-        while retries < self.max_retries:
-            try:
-                prompt_content_ja = (
-                    "Add the correct furigana inside the square brackets like <漢字/katakana>[かんじ]. "
-                    # "ensuring to include furigana in the specified format '<Kanji>[Furigana]'. \n\n"
-                    "\n\n"
-                    
-                    # "Please exact follow this format. Otherwise my parser will report error. \n\n"
+        sample_json_string = json.dumps(sample_subtitles_structure_with_furigana, indent=2, ensure_ascii=False)
 
-                    # "Maintain the original timestamps and provide translations only in Japanese, "
-                    # "applying the correct formatting for furigana. "
+        system_content = "Add furigana annotations to the provided Japanese text."
+        prompt = (
+            "Given the Japanese subtitles, add furigana annotations correctly based on the context. "
+            "Preserve the original timestamps. Use the format '<Kanji>[Furigana]' for annotations. "
+            "Correct any speech recognition errors and inconsistencies based on context.\n\n"
+            
+            "Subtitles to process:\n"
+            f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
 
-                    # "Correct speech recognition errors and inconsistencies based on context.\n\n"
+            "Output JSON format only:\n"
+            "```json\n"
+            f"{sample_json_string}\n"
+            "```"
+        )
+
+        # Utilize send_request_with_retry to handle API requests, including retries, caching, and JSON validation
+        translated_subtitles_ja_with_furigana = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure_with_furigana)
+
+        print("Translated subtitles (Japanese with furigana): \n")
+        pprint(translated_subtitles_ja_with_furigana)
+
+        return translated_subtitles_ja_with_furigana
 
 
-                    
-                    # "Prefer English transliterated word over furigana if exists."
-                    # "Provide furigana/transliterated word for ALL kanji/漢字. \n\n"
-                    # "Use '<>' to confine the whole annotated kanji area. Use '[]' to confine the furigana. "
+    def translate_and_merge_subtitles_ko(self, subtitles, idx):
+        """Request Korean subtitles with specific considerations."""
+        print("Translating subtitles to Korean...")
 
-                    
-                    "Note that the original timestamps should be preserved for each entry.\n\n"
+        # Define a sample JSON structure for Korean subtitles
+        sample_subtitles_structure_ko = [
+            {
+                "start": "timestamp",
+                "end": "timestamp",
+                "ko": "Korean text"  # Use "ko" for Korean text
+            }
+        ]
 
-                    
-                    "Subtitles to process:\n"
-                    f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+        sample_json_string_ko = json.dumps(sample_subtitles_structure_ko, indent=2, ensure_ascii=False)
 
-                    "KEEP the 漢字/katakana in angle brackets like '<漢字/katakana>' as original. "
-                    "Add the furigana ふりがな inside the square brackets like '[ふりがな]'. "
+        system_content = "Translate subtitles into Korean, correcting any errors based on context."
+        prompt = (
+            "Translate the following subtitles into Korean. "
+            "\n\n"
+            "Correct speech recognition errors and inconsistencies based on context.\n\n"
+            "Note that the original timestamps should be preserved for each entry.\n\n"
+            "Subtitles to process:\n"
+            f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+            "Output JSON format only:\n"
+            "```json\n"
+            f"{sample_json_string_ko}\n"
+            "```"
+        )
 
-                    
-                    "Output JSON format only:\n"
-                    "```json\n"
-                    "[\n"
-                    "  {\n"
-                    "    \"start\": \"timestamp\",\n"
-                    "    \"end\": \"timestamp\",\n"
-                    "    \"ja\": \"Japanese text with furigana format\",\n"
-                    "  }\n"
-                    "]\n"
-                    "```"
-                )
+        # Use the function for sending requests with retries, similarly to the Japanese version
+        translated_subtitles_ko = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure_ko)
 
-                ai_response_ja = None
-                if self.use_cache:
-                    ai_response_ja = self.load_latest_translation_attempt(lang="furigana", idx=idx)
+        # Here, you might add any specific post-processing for Korean subtitles if necessary
+        # For example, annotating certain phrases, cultural references, or anything specific to Korean
+
+        translated_subtitles_ko_with_hanja = self.replace_hangul_with_hanja(translated_subtitles_ko, idx)
+
+        print("Translated subtitles (Korean): \n")
+        pprint(translated_subtitles_ko_with_hanja)
+
+        return translated_subtitles_ko_with_hanja
+
+
+    
+
+
+    def replace_hangul_with_hanja(self, subtitles, idx):
+        """Annotate Korean subtitles with Hanja and conservatively replace original text with Hanja annotations."""
+
+        print("Annotating Korean subtitles with Hanja...")
+
+        system_content = "Annotate Korean text with original Chinese Hanja."
+
+        # Sample JSON structure expected in the response
+        sample_annotation_structure = {
+            "korean_with_annotation": "",
+            "korean_hanja_pairs": [
+                # {"korean_part": "한자 ", "hanja": "漢字 ", "roman": "hanja"}
+                {"korean_part": "", "hanja": ""}
+            ]
+        }
+        sample_json_string = json.dumps(sample_annotation_structure, indent=2, ensure_ascii=False)
+
+
+        # Helper function for conservative replacement in the original text
+        def conservative_replace(original_text, hanja_pairs):
+            updated_text = original_text
+            for pair in hanja_pairs:
+                korean_part = pair.get("korean_part", "")
+                hanja = pair.get("hanja", "")
+                pronunciation = pair.get("roman", "")
+
+                # Check if the 'hanja' part is actually Hangul or if there's no Hanja present
+                if re.match(r'^[\uAC00-\uD7AF]+$', hanja):
+                    # If the 'hanja' part is fully Hangul, skip styling it as Hanja
+                    # hanja_part = ""
+                    continue
+
+                if len(hanja) == 0:
+                    continue
+
+                replace_with = f"<{hanja}>[{korean_part}]({pronunciation})"
+
+                # Perform a conservative replacement (only once for each pair)
+                if korean_part in updated_text:
+                    start_pos = updated_text.find(korean_part)
+                    if start_pos != -1:
+                        end_pos = start_pos + len(korean_part)
+                        updated_text = updated_text[:start_pos] + replace_with + updated_text[end_pos:]
+            
+            return updated_text
+
+        def process_subtitle(subtitle):
+            """Construct and send a request for annotating a single subtitle with Hanja."""
+            prompt = (
+                "For words that have etymological Hanja alternatives (due to their Sino-Korean origin), "
+                "I want to find the corresponding Chinese character origin to replace the Hangul. "
+                "However, it's crucial that the Hangul in parenthesis followed by these traditional Hanja "
+                "are put in brackets to maintain clarity as in this format: (hangul)[hanja].\n\n"
+                # "Please also provide Roman pronunciation of the Hangul. "
+                f"Korean to be annotated: {subtitle['ko']}\n\n"
+                "I don't need step by step explanation. "
+                "PLEASE ONLY output the JSON:\n"
+                f"```json\n{sample_json_string}\n```"
+            )
+
+            response = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_annotation_structure)
+            # Assume response is structured correctly
+            annotated_text = response.get("korean_with_annotation", "")
+            hanja_pairs = response.get("korean_hanja_pairs", [])
+            
+            # Update the original text using the conservative replace function
+            updated_original_text = conservative_replace(subtitle["ko"], hanja_pairs)
+
+            return {
+                "start": subtitle["start"],
+                "end": subtitle["end"],
+                "ko": updated_original_text,  # Updated original Korean text with Hanja annotations
+                # "annotated": annotated_text,  # Full annotated text (if needed separately)
+                # "hanja_pairs": hanja_pairs  # Hanja pairs for reference
+            }
+
+        # annotated_subtitles = [process_subtitle(sub) for sub in subtitles]
+
+        # Parallel execution with error handling to return original subtitles if an error occurs
+        with ThreadPoolExecutor() as executor:
+            futures = {executor.submit(process_subtitle, sub): sub for sub in subtitles}
+            for future in as_completed(futures):
+                sub = futures[future]
+                try:
+                    result = future.result()
+                    sub.update(result)
+                except Exception as exc:
+                    print(f"Subtitle processing generated an exception: {exc}")
+                    # If there's an error, the original subtitle remains unchanged
+
+        print("Korean with Hanja: \n")
+        pprint(subtitles)
+
+        return subtitles
+
+
+    def translate_and_merge_subtitles_vi(self, subtitles, idx):
+        """Request Vietnamese subtitles with specific considerations."""
+        print("Translating subtitles to Vietnamese...")
+
+        # Define a sample JSON structure for Vietnamese subtitles
+        sample_subtitles_structure_vi = [
+            {
+                "start": "timestamp",
+                "end": "timestamp",
+                "vi": "Vietnamese text"  # Use "vi" for Vietnamese text
+            }
+        ]
+
+        sample_json_string_vi = json.dumps(sample_subtitles_structure_vi, indent=2, ensure_ascii=False)
+
+        system_content = "Translate subtitles into Vietnamese, correcting any errors based on context."
+        prompt = (
+            "Translate the following subtitles into Vietnamese. "
+            "\n\n"
+            "Correct speech recognition errors and inconsistencies based on context.\n\n"
+            "Note that the original timestamps should be preserved for each entry.\n\n"
+            "Subtitles to process:\n"
+            f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+            "Output JSON format only:\n"
+            "```json\n"
+            f"{sample_json_string_vi}\n"
+            "```"
+        )
+
+        translated_subtitles_vi = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure_vi)
+
+        translated_subtitles_vi_with_chuhan = self.replace_viet_with_chuhan(translated_subtitles_vi, idx)
+
+        print("Translated subtitles (Vietnamese): \n")
+        pprint(translated_subtitles_vi_with_chuhan)
+
+        return translated_subtitles_vi_with_chuhan
+
+    def replace_viet_with_chuhan(self, subtitles, idx):
+        """Annotate Vietnamese subtitles with Chu-Han and conservatively replace original text with Chu-Han annotations."""
+        
+        print("Annotating Vietnamese subtitles with Chu-Han...")
+
+        system_content = "Annotate Vietnamese text with original Chinese Chu-Han."
+        
+        # Sample JSON structure expected in the response
+        sample_annotation_structure = {
+            "viet_with_annotation": "",
+            "viet_chuhan_pairs": [
+                {"viet_part": "", "chuhan": ""}
+            ]
+        }
+        sample_json_string = json.dumps(sample_annotation_structure, indent=2, ensure_ascii=False)
+
+        def conservative_replace(original_text, chuhan_pairs):
+            """Perform conservative replacement of Viet text with Chu-Han annotations."""
+            updated_text = original_text
+            for pair in chuhan_pairs:
+                viet_part = pair.get("viet_part", "")
+                chuhan = pair.get("chuhan", "")
+
+                if len(chuhan) == 0:
+                    continue
+
+                replace_with = f"<{chuhan}>[{viet_part}]"
                 
-                if not self.use_cache or not ai_response_ja:
+                # Perform a conservative replacement (only once for each pair)
+                if viet_part in updated_text:
+                    start_pos = updated_text.find(viet_part)
+                    if start_pos != -1:
+                        end_pos = start_pos + len(viet_part)
+                        updated_text = updated_text[:start_pos] + replace_with + updated_text[end_pos:]
+            
+            return updated_text
 
-                    
-                    messages_ja[1]["content"] = prompt_content_ja
-                    
+        def process_subtitle(subtitle):
+            """Construct and send a request for annotating a single subtitle with Chu-Han."""
+            prompt = (
+                "For words that have etymological Chu-Han alternative (due to their Sino-Korean origin), "
+                "I want to find the corresponding Chinese origin to replace the Viet. "
+                "However, it's crucial that the Viet in parenthesis followed by these traditional Chu-Han "
+                "are put in brackets to maintain clarity. "
+                "Like this example: (viet)[chuhan].\n\n"
+                f"Vietnamese to be annotated: {subtitle['vi']}\n\n"
+                "PLEASE ONLY output the JSON:\n"
+                f"```json\n{sample_json_string}\n```"
+            )
 
-                    response_ja = self.client.chat.completions.create(
-                        model=os.environ.get("OPENAI_MODEL", "gpt-4-0125-preview"),
-                        messages=messages_ja
-                    )
+            response = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_annotation_structure)
+            annotated_text = response.get("viet_with_annotation", "")
+            chuhan_pairs = response.get("viet_chuhan_pairs", [])
+            
+            updated_original_text = conservative_replace(subtitle["vi"], chuhan_pairs)
 
-                    ai_response_ja = response_ja.choices[0].message.content.strip()
+            return {
+                "start": subtitle["start"],
+                "end": subtitle["end"],
+                "vi": updated_original_text  # Updated original Vietnamese text with Chu-Han annotations
+            }
 
-                translated_subtitles_ja = self.extract_and_parse_json(ai_response_ja)
-                self.validate_translated_subtitles(translated_subtitles_ja, required_fields=["start", "end", "ja"])
-                self.save_translation_attempt(prompt_content_ja, ai_response_ja, lang="furigana", idx=idx)
+        # Parallel execution with error handling to return original subtitles if an error occurs
+        with ThreadPoolExecutor() as executor:
+            futures = {executor.submit(process_subtitle, sub): sub for sub in subtitles if 'vi' in sub}
+            for future in as_completed(futures):
+                sub = futures[future]
+                try:
+                    result = future.result()
+                    sub.update(result)
+                except Exception as exc:
+                    print(f"Subtitle processing generated an exception: {exc}")
+                    # If there's an error, the original subtitle remains unchanged
 
-                return translated_subtitles_ja
-            except (JSONParsingError, JSONValidationError) as e:
-                self.use_cache = False
+        print("Vietnamese with Chu-Han: \n")
+        pprint(subtitles)
 
-                print(f"Attempt {retries + 1} failed: {e}")
+        return subtitles
 
-                # Append the response and error message for context
-                messages_ja.append({"role": "system", "content": ai_response_ja})
-                messages_ja.append({"role": "user", "content": e.message})
-                
-                retries += 1
-                
-                if retries >= self.max_retries:
-                    # # Check if the processed_sub_path exists and remove it if it does
-                    # if os.path.exists(self.output_sub_path):
-                    #     os.remove(self.output_sub_path)
 
-                    # # Now, safely create a hard link
-                    # try:
-                    #     os.link(self.input_sub_path, self.output_sub_path)
-                    # except OSError as e:
-                    #     print(f"Error creating hard link: {e}")
 
-                    raise Exception("Failed after maximum retries. ")
-
-    # def save_translated_subtitles_to_srt(self, translated_subtitles):
-    #     """Save the translated subtitles to an SRT file."""
-    #     srt_content = ""
-    #     for index, subtitle in enumerate(translated_subtitles, start=1):
-    #         srt_content += f"{index}\n{subtitle['start']} --> {subtitle['end']}\n{subtitle['zh']}\n{subtitle['en']}\n\n"
-    #     with open(self.output_sub_path, 'w', encoding='utf-8') as file:
-    #         file.write(srt_content)
 
     def save_translated_subtitles_to_srt(self, translated_subtitles):
         """Save the translated subtitles to an SRT file, ensuring language order."""
@@ -722,48 +881,6 @@ class SubtitlesTranslator:
         self.save_translated_subtitles_to_ass(translated_subtitles)
         print("Subtitles have been processed and saved successfully.")
 
-    # @staticmethod
-    # def convert_furigana_to_ass(ja_text):
-    #     """Convert furigana format from <kanji>[furigana] to ASS ruby format with kanji in almost white with a hint of blue and furigana in salmon and larger size."""
-    #     def replace_with_ruby(match):
-    #         kanji, furigana = match.groups()
-    #         # Apply the Kanji style for kanji and the Furigana style for furigana
-    #         return f"{{\\rKanji}}{kanji}{{\\rFurigana}}{furigana}{{\\rDefault}}"
-    #         # return f"{{\\rFurigana}}{furigana}{{\\rKanji}}{kanji}{{\\rDefault}}"
-    #     # Updated regex to match the new format <kanji>[furigana]
-    #     return re.sub(r"<([^>]+)>\[([^]]+)\]", replace_with_ruby, ja_text)
-
-    # @staticmethod
-    # def convert_furigana_to_ass(ja_text):
-    #     """Convert furigana format from <kanji>[furigana] or standalone [furigana] to ASS ruby format,
-    #     applying styles for kanji and furigana where present."""
-    #     def replace_with_ruby(match):
-    #         kanji, furigana = match.groups()
-    #         # Check if kanji is None (which means only [furigana] was present)
-    #         if kanji is None:
-    #             # Format just the furigana with the Furigana style
-    #             return f"{{\\rFurigana}}{furigana}{{\\rDefault}}"
-    #         else:
-    #             # Format with both Kanji and Furigana styles
-    #             return f"{{\\rKanji}}{kanji}{{\\rFurigana}}{furigana}{{\\rDefault}}"
-
-    #     # Updated regex to match both <kanji>[furigana] and standalone [furigana]
-    #     # The kanji part is made optional by including '?' after the non-capturing group for kanji
-    #     pattern = r"(?:<([^>]+)>)?\[([^]]+)\]"
-    #     return re.sub(pattern, replace_with_ruby, ja_text)
-
-    # def clean_redundant_hiragana_sequence(self, ja_text):
-    #     """
-    #     Removes angle brackets when the content inside <> is identical to the content inside the immediately following [].
-    #     """
-        
-    #     # Define a regex pattern to find <content>[content] and capture the content
-    #     pattern = re.compile(r'<([^>]+)>\[\1\]')
-        
-    #     # Replace found patterns with just the content in square brackets
-    #     simplified_text = pattern.sub(r'[\1]', ja_text)
-        
-    #     return simplified_text
 
     def rearrange_brackets(self, ja_text):
         """
@@ -974,29 +1091,7 @@ class SubtitlesTranslator:
 
         return corrected_text
 
-    # @staticmethod
-    # def preprocess_text_for_furigana(self, ja_text):
-    #     """
-    #     Adjusts Japanese text to ensure that kanji/katakana sequences directly preceding standalone furigana
-    #     are enclosed in <>, without altering or removing any unassociated hiragana or other characters.
-    #     """
-        
-    #     # Define a regex pattern that captures sequences to be enclosed based on the presence of furigana.
-    #     # This pattern aims to avoid capturing leading hiragana that's not part of the kanji/katakana sequence for furigana.
-        
-
-    #     pattern = re.compile(r'(?<!<)([一-龠ァ-ヶ々ー]+)(?=\[([^\]]+)\])')
-
-    #     # Function to enclose matched kanji/katakana sequence in <>
-    #     def enclose_kanji_katakana(match):
-    #         kanji_katakana = match.group(1)  # The kanji/katakana sequence
-    #         return f'<{kanji_katakana}>'
-
-    #     # Apply the enclosure function to all appropriate sequences in the text
-    #     preprocessed_text = pattern.sub(enclose_kanji_katakana, ja_text)
-
-    #     # Return the modified text with appropriate enclosures
-    #     return preprocessed_text
+    
     def preprocess_text_for_furigana(self, ja_text):
         """
         Adjusts Japanese text to ensure that kanji/katakana sequences directly preceding standalone furigana
@@ -1030,6 +1125,9 @@ class SubtitlesTranslator:
         # Return the modified text with appropriate enclosures
         return preprocessed_text
 
+
+    
+
     # @staticmethod
     def convert_furigana_to_ass(self, ja_text):
         """Convert furigana format from <kanji>[furigana], standalone [furigana], or <kanji> to ASS ruby format,
@@ -1061,6 +1159,65 @@ class SubtitlesTranslator:
 
         # Use lambda to pass match object directly to replace_with_ruby
         return re.sub(pattern, replace_with_ruby, ja_text)
+
+    def convert_hanja_to_ass(self, text):
+        """Converts text with Hanja annotations to ASS formatted text with styling, based on the given pattern."""
+        
+        def replace_with_ass(match):
+            hanja = match.group(1)
+            hangul = match.group(2)
+            roman = match.group(3)
+
+            result = ""
+
+
+            
+            # If Hanja is present, style it with the Kanji style
+            if hanja:
+                result += f"{{\\rHanja}}{hanja}{{\\rDefault}}"
+            
+            # Style the Hangul part with the Hangul style
+            if hangul:
+                result += f"{{\\rHangul}}{hangul}{{\\rDefault}}"
+            
+            # Add Romanized Korean (RomanKO) if present, styled differently
+            if roman:
+                # result += f"{{\\rRomanKO}}({roman}){{\\rDefault}}"
+                # result += f"{{\\rRomanKO}}{roman}{{\\rDefault}}"
+                pass
+
+            return result
+
+        # Pattern to match the format: <Hanja>[Hangul](RomanKO)
+        pattern = r"<([^>]+)>\[([^]]+)\]\(([^)]*)\)"
+
+        # Replace matches in the text with styled ASS text
+        return re.sub(pattern, replace_with_ass, text)
+
+    def convert_chuhan_to_ass(self, text):
+        """Converts text with Chu-Han annotations to ASS formatted text with styling, based on the given pattern."""
+        
+        def replace_with_ass(match):
+            chuhan = match.group(1)
+            viet = match.group(2)
+
+            result = ""
+
+            # Style the Chu-Han part with the Kanji (or a specific Chu-Han) style
+            if chuhan:
+                result += f"{{\\rChuhan}}{chuhan}{{\\rDefault}}"
+            
+            # Style the Viet part with a specific Viet style
+            if viet:
+                result += f"{{\\rViet}}{viet}{{\\rDefault}}"
+
+            return result
+
+        # Pattern to match the format: <Chu-Han>[Viet]
+        pattern = r"<([^>]+)>\[([^]]*)\]"
+
+        # Replace matches in the text with styled ASS text
+        return re.sub(pattern, replace_with_ass, text)
 
     def estimate_character_width(self, text):
         half_width_count = 0
@@ -1119,23 +1276,6 @@ class SubtitlesTranslator:
         pprint(font_sizes)
 
 
-        # rescale = 4  # Scaling factor
-
-        # # Adjust base font sizes
-        # base_font_size = 24 * rescale if is_video_landscape else 20 * rescale  # Larger for landscape
-        # furigana_font_size = 20 * rescale if is_video_landscape else 18 * rescale
-        # arabic_font_size = 26 * rescale if is_video_landscape else 22 * rescale  # Specific for Arabic
-
-        
-
-        # # Calculate scale factors (assuming base resolution is for landscape; adjust if your baseline is portrait)
-        # scale_factor = min(self.video_width / play_res_x, self.video_height / play_res_y)
-
-        # # scale_factor = np.power(scale_factor, 4/5)
-
-        # # Apply scale factor to font sizes
-        # base_font_size = int(base_font_size * scale_factor)
-        # furigana_font_size = int(furigana_font_size * scale_factor)
 
 
         base_font_size = font_sizes["English"]
@@ -1145,6 +1285,18 @@ class SubtitlesTranslator:
         kanji_font_size = font_sizes["Japanese"]
         furigana_font_size = font_sizes["Japanese"]
         arabic_font_size = font_sizes["Arabic"]
+        # korean
+        korean_font_size = japanese_font_size
+        hanja_font_size = kanji_font_size
+        hangul_font_size = furigana_font_size
+        romanko_font_size = furigana_font_size
+        #
+        spanish_font_size = english_font_size
+        french_font_size = english_font_size
+        # vietnamese
+        vietnamese_font_size = english_font_size
+        chuhan_font_size = chuhan_font_size
+        viet_font_size = viet_font_size
         
 
         return f"""[Script Info]
@@ -1161,12 +1313,76 @@ Style: Chinese,Vernada,{chinese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64
 Style: Japanese,Vernada,{japanese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
 Style: Kanji,Vernada,{kanji_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
 Style: Furigana,Vernada,{furigana_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
-Style: Arabic,Arial,{arabic_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-
+Style: Arabic1,Arial,{arabic_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Arabic,Arial,{arabic_font_size},&H0071B33C,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Korean,Vernada,{korean_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Hanja1,Vernada,{hanja_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Hanja,Vernada,{hanja_font_size},&H00E16941,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Hangul1,Vernada,{hangul_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
+Style: Hangul,Vernada,{hangul_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
+Style: RomanKO,Vernada,{romanko_font_size},&H00FACADE,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,1,1,2,10,10,10,1
+Style: Spanish1,Arial,{spanish_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Spanish,Arial,{spanish_font_size},&H0000BFF1,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: French,Arial,{french_font_size},&H003929ED,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Vietnamese,Arial,{vietnamese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Chuhan,Vernada,{chuhan_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Viet,Vernada,{viet_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """             
+
+    def preprocess_japanese_ruby(self, subtitles):
+        """Preprocess Japanese text within subtitles."""
+        
+        def custom_print(enable_print, message, text):
+            """Custom print function controlled by an enable flag."""
+            if enable_print:
+                print(message, text)
+        
+        enable_print = False  # Control printing for debugging
+
+        for subtitle in subtitles:
+            # Check for Japanese text under the 'ja' key
+            if 'ja' in subtitle:
+                ja_text = subtitle['ja']
+                custom_print(enable_print, "Initial text:", ja_text)
+
+                # Apply preprocessing steps
+                ja_text = self.rearrange_brackets(ja_text)
+                custom_print(enable_print, "After rearranging brackets:", ja_text)
+
+                ja_text = self.fill_blank_of_katakana_without_furigana(ja_text)
+                custom_print(enable_print, "After filling in the blank of <katakana>[]:", ja_text)
+
+                ja_text = self.convert_katakana_in_brackets_to_hiragana(ja_text)
+                custom_print(enable_print, "After converting katakana in brackets to hiragana:", ja_text)
+
+                ja_text = self.clean_triplicated_sequences(ja_text)
+                custom_print(enable_print, "After simplifying triplicated sequences:", ja_text)
+
+                ja_text = self.clean_duplicated_kanji_hiragana_sequence(ja_text)
+                custom_print(enable_print, "After converting duplicated kanji-hiragana sequence:", ja_text)
+
+                ja_text = self.clean_redundant_hiragana_sequence(ja_text)
+                custom_print(enable_print, "After removing redundant hiragana sequence:", ja_text)
+
+                ja_text = self.clean_duplicated_hiragana_inside_angle_brackets(ja_text)
+                custom_print(enable_print, "After simplifying duplicated hiragana inside angle brackets:", ja_text)
+
+                ja_text = self.convert_standalone_angle_to_square_brackets(ja_text)
+                custom_print(enable_print, "After converting standalone angle to square brackets:", ja_text)
+
+                ja_text = self.preprocess_text_for_furigana(ja_text)
+                custom_print(enable_print, "After preprocessing text for furigana:", ja_text)
+
+
+                # Update the Japanese text in the subtitle
+                subtitle['ja'] = ja_text
+                custom_print(enable_print, "Final text:", ja_text)
+
+        return subtitles
+
 
 
     def save_translated_subtitles_to_ass(self, translated_subtitles):
@@ -1178,14 +1394,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
         wrapping_limit_half_width_ja = wrapping_limit_half_width_default
 
-        # if self.is_video_landscape:
-        #     wrapping_limit_half_width_ja = wrapping_limit_half_width_default
-        # else:
-        #     wrapping_limit_half_width_ja = int(wrapping_limit_half_width_default * 1.)
-
-        # wrapping_limit_half_width_zh = wrapping_limit_half_width_default * 1.5
-        # wrapping_limit_half_width_en = wrapping_limit_half_width_default * 1.5
-        # wrapping_limit_half_width_ar = wrapping_limit_half_width_default * 1.5
+        translated_subtitles = self.preprocess_japanese_ruby(translated_subtitles)
 
         ass_content = self.generate_ass_header()
         for index, item in enumerate(translated_subtitles, start=1):
@@ -1213,7 +1422,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             dialogue_lines = []
 
             # Process languages in a specific order if needed, then all additional languages
-            preferred_order = ['zh', 'en', 'ja', "ar"]  # Example: Start with Chinese, then English, then Japanese
+            preferred_order = ['zh', 'en', 'ja', "ar", "ko", "es", "vi", "fr"]  # Example: Start with Chinese, then English, then Japanese
             handled_keys = set(preferred_order)
 
             # Add preferred languages first
@@ -1225,48 +1434,6 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                     
                     if lang == "ja":
                         wrapping_limit_half_width = wrapping_limit_half_width_ja
-
-                        # Switch to control printing
-                        enable_print = False
-
-                        def custom_print(message, text):
-                            if enable_print:
-                                print(message, text)
-
-                        ja_text = text
-                        custom_print("Initial text:", ja_text)
-
-                        ja_text = self.rearrange_brackets(ja_text)
-                        custom_print("After rearranging brackets:", ja_text)
-
-                        ja_text = self.fill_blank_of_katakana_without_furigana(ja_text)
-                        custom_print("After filling in the blank of <katakana>[]:", ja_text)
-
-                        ja_text = self.convert_katakana_in_brackets_to_hiragana(ja_text)
-                        custom_print("After converting katakana in brackets to hiragana:", ja_text)
-
-                        ja_text = self.clean_triplicated_sequences(ja_text)
-                        custom_print("After simplifying triplicated sequences:", ja_text)
-
-                        ja_text = self.clean_duplicated_kanji_hiragana_sequence(ja_text)
-                        custom_print("After converting duplicated kanji-hiragana sequence:", ja_text)
-
-                        ja_text = self.clean_redundant_hiragana_sequence(ja_text)
-                        custom_print("After removing redundant hiragana sequence:", ja_text)
-
-                        ja_text = self.clean_duplicated_hiragana_inside_angle_brackets(ja_text)
-                        custom_print("After simplifying duplicated hiragana inside angle brackets:", ja_text)
-
-                        ja_text = self.convert_standalone_angle_to_square_brackets(ja_text)
-                        custom_print("After converting standalone angle to square brackets:", ja_text)
-
-                        ja_text = self.preprocess_text_for_furigana(ja_text)
-                        custom_print("After preprocessing text for furigana:", ja_text)
-
-                        text = ja_text
-                        custom_print("Final text:", text)
-
-
                     else:
                         wrapping_limit_half_width = wrapping_limit_half_width_default
 
@@ -1274,20 +1441,18 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                     wrapped_text_lines = self.wrap_text(text, wrapping_limit_half_width, is_cjk=is_cjk)
                     dialogue_line = '\\N'.join(wrapped_text_lines)
 
-                    # if "歴史" in dialogue_line:
-                    #         print("ja_text: ", ja_text)
-                    #         pprint(wrapped_text_lines)
 
-                    # if lang == 'ja':
-                    #     dialogue_lines.append(self.convert_furigana_to_ass(item[lang]))
-                    # else:
-                    #     dialogue_lines.append(item[lang])
 
                     if lang == 'ja':
                         dialogue_line = self.convert_furigana_to_ass(dialogue_line)
 
-                    # Specify the style for Arabic subtitles and apply it directly in the dialogue line
-                    # style = "Arabic" if lang == 'ar' else "Default"
+                    if lang == "ko":
+                        dialogue_line = self.convert_hanja_to_ass(dialogue_line)
+
+
+                    if lang == "vi":
+                        dialogue_line = self.convert_chuhan_to_ass(dialogue_line)
+
 
                     if lang == "ar":
                         style = "Arabic"
@@ -1297,6 +1462,12 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                         style = "English"
                     elif lang == "ja":
                         style = "Japanese"
+                    elif lang == "es":
+                        style = "Spanish"
+                    elif lang == "fr":
+                        style = "French"
+                    elif lang == "vi":
+                        style = "Vietnamese"
                     else:
                         style = "Default"
 
@@ -1312,88 +1483,11 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                 subtitle_line = f"Dialogue: 0,{start},{end},Default,,0,0,0,,{formatted_text}"
                 ass_content += subtitle_line + "\n"
 
-            #         # # Specify the style for Arabic subtitles
-            #         # style = "Arabic" if lang == 'ar' else "Default"
-            #         # if lang == 'ar':
-            #         #     # dialogue_line = f"Dialogue: 0,{start},{end},{style},,0,0,0,,{dialogue_line}\n"
-            #         #     dialogue_line = f"{style}:{dialogue_line}"
-
-
-            #         dialogue_lines.append(dialogue_line)
-
-            # # Add any additional languages present
-            # additional_languages = {k: v for k, v in item.items() if k not in handled_keys.union(['start', 'end'])}
-            # for lang_code, text in additional_languages.items():
-            #     dialogue_lines.append(text)
-
-            # # Format the dialogue line
-            # formatted_text = '\\N'.join(dialogue_lines)  # New line in ASS format
-            # subtitle = f"Dialogue: 0,{start},{end},Default,,0,0,0,,{formatted_text}\n"
-            # ass_content += subtitle
-
         # Write the constructed ASS content to the output file
         with open(self.output_sub_path, 'w', encoding='utf-8') as file:
             file.write(ass_content)
         print(f"Subtitles have been processed and saved successfully to {self.output_sub_path}.")
 
-    # def wrap_text(self, text, wrapping_limit_half_width, is_cjk=False):
-
-    #     # is_video_landscape = self.video_width > self.video_height
-    #     is_video_landscape = self.is_video_landscape
-
-    #     """Wrap text with special handling for Japanese furigana annotations, aiming to minimize the maximum length of any line."""
-    #     if not is_cjk:
-    #         # For non-CJK text
-    #         return self.cjkwrap_punctuation(text, wrapping_limit_half_width)
-
-        
-    #     # Step 1: Wrap the text into lines
-    #     wrapped_lines = self.cjkwrap_punctuation(text, wrapping_limit_half_width)  # Replace textwrap.wrap with cjkwrap.wrap in your environment
-
-    #     # Step 2: Join lines with a special marker ('###') to easily identify original line breaks
-    #     joined_text = '###'.join(wrapped_lines)
-
-    #     # Step 3: Correct breakpoints within structured texts
-    #     pattern = r'(<[^>]*>\[[^\]]*\]|<[^>]*>|\[[^\]]*\])'
-
-    #     corrected_text = re.sub(pattern, lambda m: m.group(0).replace('###', ''), joined_text)
-
-    #     # Split the text back into lines temporarily to manipulate structured text placement
-    #     temp_lines = corrected_text.split('###')
-
-    #     # Step 4: Refine placement of structured texts by evaluating line length differences
-    #     final_lines = []
-    #     for i, line in enumerate(temp_lines):
-    #         if i + 1 < len(temp_lines):  # Ensure there's a next line to compare with
-    #             next_line = temp_lines[i + 1]
-    #             # Find structured text at the end of the current line or beginning of the next line
-    #             structured_text_end = re.search(r'(<[^>]*>\[[^\]]*\]|<[^>]*>|\[[^\]]*\])$', line)
-    #             structured_text_start = re.search(r'^(<[^>]*>\[[^\]]*\]|<[^>]*>|\[[^\]]*\])', next_line)
-
-    #             if structured_text_end and structured_text_start:
-    #                 # Extract structured text
-    #                 structured_text = structured_text_end.group(0)
-    #                 # Compare line lengths to decide placement
-    #                 option_end = len(line) - len(structured_text)
-    #                 option_start = len(next_line) + len(structured_text)
-    #                 # Choose the option that minimizes the length difference
-    #                 if abs(option_end - len(next_line)) <= abs(len(line) - option_start):
-    #                     # Keep the structured text at the end of the current line
-    #                     final_lines.append(line)
-    #                 else:
-    #                     # Move the structured text to the beginning of the next line
-    #                     final_lines.append(line[:-len(structured_text)])
-    #                     temp_lines[i + 1] = structured_text + next_line
-    #                     continue  # Skip appending next_line in this iteration
-    #             else:
-    #                 final_lines.append(line)
-    #         else:
-    #             final_lines.append(line)  # Append last line without comparison
-
-    #     # Step 5: Optionally re-wrap lines if needed to ensure they adhere to the width constraint
-    #     # This step is skipped in this solution for simplicity and based on the approach description
-
-    #     return final_lines
 
     def wrap_text(self, text, wrapping_limit_half_width, is_cjk=False):
         if not is_cjk:
@@ -1429,15 +1523,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                 # If no '###' inside, return the structured text as is.
                 return structured_text
 
-        # pattern = r'(<[^>]*>\[[^\]]*\]|<[^>]*>|\[[^\]]*\])'
-        # pattern = r'(<[^>]*>\[[^\]]*\])'
         pattern = r'(<[^>]*>)(###)?\[[^\]]*\]|<[^>]*>|(\[[^\]]*\])'
         corrected_text = re.sub(pattern, correct_breakpoints, joined_text)
-        # pattern = r'(<[^>]*>|\[[^\]]*\])'
-        # corrected_text = re.sub(pattern, correct_breakpoints, joined_text)
-
-        # if "歴史" in joined_text:
-        #     print("corrected_text: ", corrected_text)
 
         # Step 4: Split the text back into lines at '###'.
         corrected_lines = corrected_text.split('###')
@@ -1489,7 +1576,6 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
         wrapped_lines = cjkwrap.wrap(text, width)
 
-        # return wrapped_lines
 
 
         # Define full-width and half-width punctuation marks for CJK text
@@ -1497,39 +1583,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         # punctuations = ".。、，,！!？?；;：:「」『』（）()【】《》「」『』“”\"\""
         # punctuations = "。、，,！!？?；;：:「」『』（）()【】《》「」『』“”\"\""
 
-        # is_video_landscape = self.video_width > self.video_height
-
-        # if self.is_video_landscape:
-        #     # punctuations = "。、，,！!？?；;：:「」『』（）()【】《》「」『』“”\"\""  
-        #     punctuations = "。！!？?；;：:"  
-        # else:
-        #     # punctuations = "。、，,！!？?；;：:「」『』（）()【】[]《》<>「」『』“”\"\""
-        #     # punctuations = "。！!？?；;：:[]<>"
-        #     # punctuations = "。！!？?；;：:[]<>"
-        #     punctuations = "。！!？?；;：:"
-
-
-
-        # segments = []
-        # start = 0
-
-        # # Split text at punctuation marks
-        # for i, char in enumerate(text):
-        #     if char in punctuations:
-        #         # Include punctuation in the segment
-        #         segment = text[start:i + 1]
-        #         if segment:
-        #             segments.append(segment)
-        #         start = i + 1
-        # # Add the last segment if there's any
-        # if start < len(text):
-        #     segments.append(text[start:])
-
-        # wrapped_lines = []
-        # for segment in segments:
-        #     # Wrap each segment with cjkwrap
-        #     wrapped_segment = cjkwrap.wrap(segment, width)
-        #     wrapped_lines.extend(wrapped_segment)
+        
 
         # Adjust lines to move punctuation from the beginning of a line to the end of the previous line
         for i in range(1, len(wrapped_lines)):

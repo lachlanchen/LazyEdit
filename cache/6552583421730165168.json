@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,520\",\n    \"lang\": \"en\",\n    \"text\": \"I think it's a suit.\"\n  },\n  {\n    \"start\": \"00:00:01,520\",\n    \"end\": \"00:00:02,380\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not wearing a suit.\"\n  },\n  {\n    \"start\": \"00:00:03,300\",\n    \"end\": \"00:00:04,800\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not wearing a suit.\"\n  },\n  {\n    \"start\": \"00:00:05,240\",\n    \"end\": \"00:00:05,940\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not wearing a suit.\"\n  },\n  {\n    \"start\": \"00:00:08,080\",\n    \"end\": \"00:00:08,480\",\n    \"lang\": \"en\",\n    \"text\": \"Listen.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                \"vi\": \"Vietnamese text\"  // Vietnamese translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,520",
+            "es": "Creo que es un traje.",
+            "fr": "Je pense que c'est un costume.",
+            "vi": "Tôi nghĩ đó là một bộ đồ."
+        },
+        {
+            "start": "00:00:01,520",
+            "end": "00:00:02,380",
+            "es": "No llevo puesto un traje.",
+            "fr": "Je ne porte pas de costume.",
+            "vi": "Tôi không mặc bộ đồ nào."
+        },
+        {
+            "start": "00:00:03,300",
+            "end": "00:00:04,800",
+            "es": "No llevo puesto un traje.",
+            "fr": "Je ne porte pas de costume.",
+            "vi": "Tôi không mặc bộ đồ nào."
+        },
+        {
+            "start": "00:00:05,240",
+            "end": "00:00:05,940",
+            "es": "No llevo puesto un traje.",
+            "fr": "Je ne porte pas de costume.",
+            "vi": "Tôi không mặc bộ đồ nào."
+        },
+        {
+            "start": "00:00:08,080",
+            "end": "00:00:08,480",
+            "es": "Escucha.",
+            "fr": "Écoute.",
+            "vi": "Nghe này."
+        }
+    ]
+}

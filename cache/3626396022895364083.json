@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,180\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:02,040\",\n    \"end\": \"00:00:05,080\",\n    \"lang\": \"ja\",\n    \"text\": \"私は海岸線を走ります\"\n  },\n  {\n    \"start\": \"00:00:05,960\",\n    \"end\": \"00:00:06,420\",\n    \"lang\": \"ja\",\n    \"text\": \"あ、\"\n  },\n  {\n    \"start\": \"00:00:06,420\",\n    \"end\": \"00:00:08,400\",\n    \"lang\": \"ja\",\n    \"text\": \"今日は荒なし日です\"\n  },\n  {\n    \"start\": \"00:00:10,338\",\n    \"end\": \"00:00:10,658\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:10,658\",\n    \"end\": \"00:00:12,678\",\n    \"lang\": \"en\",\n    \"text\": \"see you at the cosine line.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,180",
+            "ko": "안녕하세요"
+        },
+        {
+            "start": "00:00:02,040",
+            "end": "00:00:05,080",
+            "ko": "저는 해안가를 달립니다"
+        },
+        {
+            "start": "00:00:05,960",
+            "end": "00:00:06,420",
+            "ko": "아,"
+        },
+        {
+            "start": "00:00:06,420",
+            "end": "00:00:08,400",
+            "ko": "오늘은 평온한 날입니다"
+        },
+        {
+            "start": "00:00:10,338",
+            "end": "00:00:10,658",
+            "ko": "알겠습니다,"
+        },
+        {
+            "start": "00:00:10,658",
+            "end": "00:00:12,678",
+            "ko": "해안선에서 만나요."
+        }
+    ]
+}

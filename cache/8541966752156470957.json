@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,520\",\n    \"lang\": \"en\",\n    \"text\": \"I think it's a suit.\"\n  },\n  {\n    \"start\": \"00:00:01,520\",\n    \"end\": \"00:00:02,380\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not wearing a suit.\"\n  },\n  {\n    \"start\": \"00:00:03,300\",\n    \"end\": \"00:00:04,800\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not wearing a suit.\"\n  },\n  {\n    \"start\": \"00:00:05,240\",\n    \"end\": \"00:00:05,940\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not wearing a suit.\"\n  },\n  {\n    \"start\": \"00:00:08,080\",\n    \"end\": \"00:00:08,480\",\n    \"lang\": \"en\",\n    \"text\": \"Listen.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,520",
+            "ja": "スーツだと思う。"
+        },
+        {
+            "start": "00:00:01,520",
+            "end": "00:00:02,380",
+            "ja": "スーツは着ていないよ。"
+        },
+        {
+            "start": "00:00:03,300",
+            "end": "00:00:04,800",
+            "ja": "スーツは着ていません。"
+        },
+        {
+            "start": "00:00:05,240",
+            "end": "00:00:05,940",
+            "ja": "スーツを着てはいないんだ。"
+        },
+        {
+            "start": "00:00:08,080",
+            "end": "00:00:08,480",
+            "ja": "聞いて。"
+        }
+    ]
+}

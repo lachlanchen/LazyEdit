@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:09,698\",\n    \"end\": \"00:02:10,437\",\n    \"lang\": \"zh\",\n    \"text\": \"玚家\"\n  },\n  {\n    \"start\": \"00:02:10,877\",\n    \"end\": \"00:02:11,438\",\n    \"lang\": \"zh\",\n    \"text\": \"玚家\"\n  },\n  {\n    \"start\": \"00:02:11,438\",\n    \"end\": \"00:02:11,998\",\n    \"lang\": \"zh\",\n    \"text\": \"玚家\"\n  },\n  {\n    \"start\": \"00:02:12,898\",\n    \"end\": \"00:02:21,538\",\n    \"lang\": \"en\",\n    \"text\": \"replace those Korean that it has a challenging origin.\"\n  },\n  {\n    \"start\": \"00:02:22,378\",\n    \"end\": \"00:02:26,518\",\n    \"lang\": \"en\",\n    \"text\": \"So to make myself learning easier,\"\n  },\n  {\n    \"start\": \"00:02:27,098\",\n    \"end\": \"00:02:33,418\",\n    \"lang\": \"en\",\n    \"text\": \"so there's no any other intention like so-called lower\"\n  },\n  {\n    \"start\": \"00:02:34,538\",\n    \"end\": \"00:02:35,618\",\n    \"lang\": \"en\",\n    \"text\": \"the Korean.\"\n  },\n  {\n    \"start\": \"00:02:35,958\",\n    \"end\": \"00:02:37,298\",\n    \"lang\": \"en\",\n    \"text\": \"That's not my purpose.\"\n  },\n  {\n    \"start\": \"00:02:37,658\",\n    \"end\": \"00:02:41,158\",\n    \"lang\": \"en\",\n    \"text\": \"I just want to make Korean,\"\n  },\n  {\n    \"start\": \"00:02:41,158\",\n    \"end\": \"00:02:41,818\",\n    \"lang\": \"en\",\n    \"text\": \"Japanese,\"\n  },\n  {\n    \"start\": \"00:02:41,818\",\n    \"end\": \"00:02:44,378\",\n    \"lang\": \"en\",\n    \"text\": \"and Vietnamese together\"\n  },\n  {\n    \"start\": \"00:02:45,238\",\n    \"end\": \"00:02:46,498\",\n    \"lang\": \"en\",\n    \"text\": \"being more easy.\"\n  },\n  {\n    \"start\": \"00:03:00,158\",\n    \"end\": \"00:03:00,558\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:03:00,558\",\n    \"end\": \"00:03:01,418\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:09,698",
+            "end": "00:02:10,437",
+            "ja": "楊(よう)家"
+        },
+        {
+            "start": "00:02:10,877",
+            "end": "00:02:11,438",
+            "ja": "楊(よう)家"
+        },
+        {
+            "start": "00:02:11,438",
+            "end": "00:02:11,998",
+            "ja": "楊(よう)家"
+        },
+        {
+            "start": "00:02:12,898",
+            "end": "00:02:21,538",
+            "ja": "韓国(かんこく)語のある挑戦的な起源を置き換える。"
+        },
+        {
+            "start": "00:02:22,378",
+            "end": "00:02:26,518",
+            "ja": "だから自分の学習を簡単にするために、"
+        },
+        {
+            "start": "00:02:27,098",
+            "end": "00:02:33,418",
+            "ja": "そういう他の意図、いわゆる低い目的はありません。"
+        },
+        {
+            "start": "00:02:34,538",
+            "end": "00:02:35,618",
+            "ja": "韓国(かんこく)語を。"
+        },
+        {
+            "start": "00:02:35,958",
+            "end": "00:02:37,298",
+            "ja": "それが私の目的ではありません。"
+        },
+        {
+            "start": "00:02:37,658",
+            "end": "00:02:41,158",
+            "ja": "私はただ韓国語、"
+        },
+        {
+            "start": "00:02:41,158",
+            "end": "00:02:41,818",
+            "ja": "日本語、"
+        },
+        {
+            "start": "00:02:41,818",
+            "end": "00:02:44,378",
+            "ja": "そしてベトナム語を一緒に"
+        },
+        {
+            "start": "00:02:45,238",
+            "end": "00:02:46,498",
+            "ja": "もっと簡単にしたいだけです。"
+        },
+        {
+            "start": "00:03:00,158",
+            "end": "00:03:00,558",
+            "ja": "OK、"
+        },
+        {
+            "start": "00:03:00,558",
+            "end": "00:03:01,418",
+            "ja": "じゃあね。"
+        }
+    ]
+}

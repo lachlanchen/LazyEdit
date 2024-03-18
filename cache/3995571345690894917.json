@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,000\",\n    \"lang\": \"zh\",\n    \"text\": \"不想跳了\"\n  },\n  {\n    \"start\": \"00:00:04,380\",\n    \"end\": \"00:00:04,980\",\n    \"lang\": \"zh\",\n    \"text\": \"跑了\"\n  },\n  {\n    \"start\": \"00:00:04,980\",\n    \"end\": \"00:00:08,080\",\n    \"lang\": \"zh\",\n    \"text\": \"莫桑跑的这个动作有点牛逼啊\"\n  },\n  {\n    \"start\": \"00:00:08,080\",\n    \"end\": \"00:00:09,380\",\n    \"lang\": \"zh\",\n    \"text\": \"一切合成\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,000",
+            "en": "Don't want to jump anymore",
+            "zh": "不想跳了",
+            "ar": "لا أريد القفز بعد الآن"
+        },
+        {
+            "start": "00:00:04,380",
+            "end": "00:00:04,980",
+            "en": "Ran away",
+            "zh": "跑了",
+            "ar": "هرب"
+        },
+        {
+            "start": "00:00:04,980",
+            "end": "00:00:08,080",
+            "en": "Mo Zhang's running move is kind of awesome",
+            "zh": "莫桑跑的这个动作有点牛逼啊",
+            "ar": "حركة الجري مو زانج رائعة بعض الشيء"
+        },
+        {
+            "start": "00:00:08,080",
+            "end": "00:00:09,380",
+            "en": "All combined",
+            "zh": "一切合成",
+            "ar": "الكل مجتمع"
+        }
+    ]
+}

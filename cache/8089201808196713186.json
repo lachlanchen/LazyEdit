@@ -1,0 +1,152 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,750\",\n    \"end\": \"00:01:04,470\",\n    \"lang\": \"en\",\n    \"text\": \"prepared.\"\n  },\n  {\n    \"start\": \"00:01:05,890\",\n    \"end\": \"00:01:06,610\",\n    \"lang\": \"en\",\n    \"text\": \"No,\"\n  },\n  {\n    \"start\": \"00:01:06,610\",\n    \"end\": \"00:01:07,550\",\n    \"lang\": \"en\",\n    \"text\": \"not prepared.\"\n  },\n  {\n    \"start\": \"00:01:09,390\",\n    \"end\": \"00:01:09,930\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway,\"\n  },\n  {\n    \"start\": \"00:01:09,930\",\n    \"end\": \"00:01:11,610\",\n    \"lang\": \"en\",\n    \"text\": \"fast food.\"\n  },\n  {\n    \"start\": \"00:01:12,010\",\n    \"end\": \"00:01:13,130\",\n    \"lang\": \"en\",\n    \"text\": \"I believe it's fast food.\"\n  },\n  {\n    \"start\": \"00:01:21,250\",\n    \"end\": \"00:01:23,330\",\n    \"lang\": \"en\",\n    \"text\": \"But I still made it better.\"\n  },\n  {\n    \"start\": \"00:01:35,130\",\n    \"end\": \"00:01:36,290\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:36,290\",\n    \"end\": \"00:01:37,070\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:38,550\",\n    \"end\": \"00:01:39,710\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:39,810\",\n    \"end\": \"00:01:40,850\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:40,850\",\n    \"end\": \"00:01:41,010\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:41,390\",\n    \"end\": \"00:01:41,630\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sorry.\"\n  },\n  {\n    \"start\": \"00:01:43,522\",\n    \"end\": \"00:01:44,082\",\n    \"lang\": \"en\",\n    \"text\": \"um\"\n  },\n  {\n    \"start\": \"00:01:44,082\",\n    \"end\": \"00:01:46,842\",\n    \"lang\": \"en\",\n    \"text\": \"um\"\n  },\n  {\n    \"start\": \"00:01:53,258\",\n    \"end\": \"00:01:54,658\",\n    \"lang\": \"ja\",\n    \"text\": \"今日もご視聴ありがとうございました。\"\n  },\n  {\n    \"start\": \"00:01:54,690\",\n    \"end\": \"00:01:55,150\",\n    \"lang\": \"ja\",\n    \"text\": \"おいしい\"\n  },\n  {\n    \"start\": \"00:01:58,114\",\n    \"end\": \"00:01:58,354\",\n    \"lang\": \"en\",\n    \"text\": \"出 hogy\"\n  },\n  {\n    \"start\": \"00:02:00,194\",\n    \"end\": \"00:02:00,834\",\n    \"lang\": \"en\",\n    \"text\": \"That's not share.\"\n  },\n  {\n    \"start\": \"00:02:01,794\",\n    \"end\": \"00:02:01,954\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:02:01,954\",\n    \"end\": \"00:02:08,574\",\n    \"lang\": \"en\",\n    \"text\": \"I'm updating this Korean subtitles with...\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                \"vi\": \"Vietnamese text\"  // Vietnamese translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:03,750",
+            "end": "00:01:04,470",
+            "es": "preparado.",
+            "fr": "préparé.",
+            "vi": "đã chuẩn bị."
+        },
+        {
+            "start": "00:01:05,890",
+            "end": "00:01:06,610",
+            "es": "No,",
+            "fr": "Non,",
+            "vi": "Không,"
+        },
+        {
+            "start": "00:01:06,610",
+            "end": "00:01:07,550",
+            "es": "no preparado.",
+            "fr": "pas préparé.",
+            "vi": "chưa được chuẩn bị."
+        },
+        {
+            "start": "00:01:09,390",
+            "end": "00:01:09,930",
+            "es": "De todos modos,",
+            "fr": "Quoi qu'il en soit,",
+            "vi": "Dù sao đi nữa,"
+        },
+        {
+            "start": "00:01:09,930",
+            "end": "00:01:11,610",
+            "es": "comida rápida.",
+            "fr": "restauration rapide.",
+            "vi": "đồ ăn nhanh."
+        },
+        {
+            "start": "00:01:12,010",
+            "end": "00:01:13,130",
+            "es": "Creo que es comida rápida.",
+            "fr": "Je crois que c'est de la restauration rapide.",
+            "vi": "Tôi tin đó là đồ ăn nhanh."
+        },
+        {
+            "start": "00:01:21,250",
+            "end": "00:01:23,330",
+            "es": "Pero aún así lo hice mejor.",
+            "fr": "Mais je l'ai quand même amélioré.",
+            "vi": "Nhưng tôi vẫn làm cho nó tốt hơn."
+        },
+        {
+            "start": "00:01:35,130",
+            "end": "00:01:36,290",
+            "es": "Lo siento.",
+            "fr": "Je suis désolé.",
+            "vi": "Tôi xin lỗi."
+        },
+        {
+            "start": "00:01:36,290",
+            "end": "00:01:37,070",
+            "es": "Lo siento.",
+            "fr": "Je suis désolé.",
+            "vi": "Tôi xin lỗi."
+        },
+        {
+            "start": "00:01:38,550",
+            "end": "00:01:39,710",
+            "es": "Lo siento.",
+            "fr": "Je suis désolé.",
+            "vi": "Tôi xin lỗi."
+        },
+        {
+            "start": "00:01:39,810",
+            "end": "00:01:40,850",
+            "es": "Lo siento.",
+            "fr": "Je suis désolé.",
+            "vi": "Tôi xin lỗi."
+        },
+        {
+            "start": "00:01:40,850",
+            "end": "00:01:41,010",
+            "es": "Lo siento.",
+            "fr": "Je suis désolé.",
+            "vi": "Tôi xin lỗi."
+        },
+        {
+            "start": "00:01:41,390",
+            "end": "00:01:41,630",
+            "es": "Lo siento.",
+            "fr": "Je suis désolé.",
+            "vi": "Tôi xin lỗi."
+        },
+        {
+            "start": "00:01:43,522",
+            "end": "00:01:44,082",
+            "es": "eh",
+            "fr": "euh",
+            "vi": "ừm"
+        },
+        {
+            "start": "00:01:44,082",
+            "end": "00:01:46,842",
+            "es": "eh",
+            "fr": "euh",
+            "vi": "ừm"
+        },
+        {
+            "start": "00:01:53,258",
+            "end": "00:01:54,658",
+            "es": "Gracias por ver también hoy.",
+            "fr": "Merci d'avoir regardé aussi aujourd'hui.",
+            "vi": "Cảm ơn bạn đã xem ngày hôm nay."
+        },
+        {
+            "start": "00:01:54,690",
+            "end": "00:01:55,150",
+            "es": "Delicioso",
+            "fr": "Délicieux",
+            "vi": "Ngon"
+        },
+        {
+            "start": "00:01:58,114",
+            "end": "00:01:58,354",
+            "es": "Eso no comparte.",
+            "fr": "Ça ne partage pas.",
+            "vi": "Điều đó không được chia sẻ."
+        },
+        {
+            "start": "00:02:00,194",
+            "end": "00:02:00,834",
+            "es": "Eso no es justo.",
+            "fr": "Ce n'est pas juste.",
+            "vi": "Điều đó không công bằng."
+        },
+        {
+            "start": "00:02:01,794",
+            "end": "00:02:01,954",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "vi": "Ôi,"
+        },
+        {
+            "start": "00:02:01,954",
+            "end": "00:02:08,574",
+            "es": "Estoy actualizando estos subtítulos coreanos con...",
+            "fr": "Je mets à jour ces sous-titres coréens avec...",
+            "vi": "Tôi đang cập nhật phụ đề tiếng Hàn này với..."
+        }
+    ]
+}
