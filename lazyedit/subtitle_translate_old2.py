@@ -284,7 +284,6 @@ class SubtitlesTranslator(OpenAIRequestBase):
             'major': self.translate_and_merge_subtitles_major_languages,
             'ja': self.translate_and_merge_subtitles_ja,
             'ko': self.translate_and_merge_subtitles_ko,
-            'vi': self.translate_and_merge_subtitles_vi, 
             'minor': self.translate_and_merge_subtitles_minor_languages
         }
 
@@ -426,6 +425,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
                 "end": "timestamp",    // End time of the subtitle
                 "es": "Spanish text",  // Spanish translation
                 "fr": "French text",   // French translation
+                "vi": "Vietnamese text"  // Vietnamese translation
                 // "...": "Text in the original language, if not in the listed before."
             }
         ]
@@ -434,13 +434,13 @@ class SubtitlesTranslator(OpenAIRequestBase):
         # Parse the JSONC string into a Python object using json5
         sample_subtitles_structure = json5.loads(sample_json_string)
 
-        system_content = "Translate mixed language subtitles into Spanish, French, providing coherent and accurate translations."
+        system_content = "Translate mixed language subtitles into Spanish, French, and Vietnamese, providing coherent and accurate translations."
         prompt = (
             "Below are mixed language subtitles extracted from a video, including timestamps, "
             "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
-            "is presented with Spanish (es) and French (fr) translations, "
+            "is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, "
             "maintaining the original timestamps. "
-            "If a subtitle is already in one of these languages, provide the corresponding translations in the other language. "
+            "If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. "
             # "For subtitles in any other language, keep the original text but also provide translations in "
             # "Spanish, French, and Vietnamese.\n\n"
 
@@ -649,28 +649,30 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
         # Helper function for conservative replacement in the original text
         def conservative_replace(original_text, hanja_pairs):
-            """Perform conservative replacement of Korean text with Hanja annotations."""
             updated_text = original_text
-            last_pos = 0  # Initialize the position tracker to the start of the string
-
             for pair in hanja_pairs:
                 korean_part = pair.get("korean_part", "")
                 hanja = pair.get("hanja", "")
                 pronunciation = pair.get("roman", "")
 
                 # Check if the 'hanja' part is actually Hangul or if there's no Hanja present
-                if re.match(r'^[\uAC00-\uD7AF]+$', hanja) or len(hanja) == 0:
-                    continue  # Skip replacement if Hanja is actually Hangul or if Hanja is missing
+                if re.match(r'^[\uAC00-\uD7AF]+$', hanja):
+                    # If the 'hanja' part is fully Hangul, skip styling it as Hanja
+                    # hanja_part = ""
+                    continue
+
+                if len(hanja) == 0:
+                    continue
 
                 replace_with = f"<{hanja}>[{korean_part}]({pronunciation})"
 
-                # Start search from the last modification position to only look forward
-                start_pos = updated_text.find(korean_part, last_pos)
-                if start_pos != -1:
-                    end_pos = start_pos + len(korean_part)
-                    updated_text = updated_text[:start_pos] + replace_with + updated_text[end_pos:]
-                    last_pos = start_pos + len(replace_with)  # Update last_pos to the end of the newly inserted segment
-
+                # Perform a conservative replacement (only once for each pair)
+                if korean_part in updated_text:
+                    start_pos = updated_text.find(korean_part)
+                    if start_pos != -1:
+                        end_pos = start_pos + len(korean_part)
+                        updated_text = updated_text[:start_pos] + replace_with + updated_text[end_pos:]
+            
             return updated_text
 
         def process_subtitle(subtitle):
@@ -778,35 +780,31 @@ class SubtitlesTranslator(OpenAIRequestBase):
         sample_json_string = json.dumps(sample_annotation_structure, indent=2, ensure_ascii=False)
 
         def conservative_replace(original_text, chuhan_pairs):
-            """Perform conservative replacement of Viet text with Chu-Han annotations, excluding text within <>[]."""
+            """Perform conservative replacement of Viet text with Chu-Han annotations."""
             updated_text = original_text
-            last_pos = 0  # Keep track of the last position after the most recent replacement
-
             for pair in chuhan_pairs:
                 viet_part = pair.get("viet_part", "")
                 chuhan = pair.get("chuhan", "")
 
-                if len(chuhan) == 0 or len(viet_part) == 0:
+                if len(chuhan) == 0:
                     continue
 
                 replace_with = f"<{chuhan}>[{viet_part}]"
-
-                # Start search from the last modification position
-                start_pos = updated_text.find(viet_part, last_pos)
-
-                if start_pos != -1:
-                    end_pos = start_pos + len(viet_part)
-                    updated_text = updated_text[:start_pos] + replace_with + updated_text[end_pos:]
-                    last_pos = start_pos + len(replace_with)  # Update last_pos to the end of the newly inserted segment
+                
+                # Perform a conservative replacement (only once for each pair)
+                if viet_part in updated_text:
+                    start_pos = updated_text.find(viet_part)
+                    if start_pos != -1:
+                        end_pos = start_pos + len(viet_part)
+                        updated_text = updated_text[:start_pos] + replace_with + updated_text[end_pos:]
             
             return updated_text
-
 
         def process_subtitle(subtitle):
             """Construct and send a request for annotating a single subtitle with Chu-Han."""
             prompt = (
-                "For words that have etymological Chu-Han alternative (due to their Sino-Vietnamese origin), "
-                "I want to find the corresponding Chinese origin to replace the Viet WORDS (provide consecutive words if exist). "
+                "For words that have etymological Chu-Han alternative (due to their Sino-Korean origin), "
+                "I want to find the corresponding Chinese origin to replace the Viet. "
                 "However, it's crucial that the Viet in parenthesis followed by these traditional Chu-Han "
                 "are put in brackets to maintain clarity. "
                 "Like this example: (viet)[chuhan].\n\n"
@@ -1176,11 +1174,11 @@ class SubtitlesTranslator(OpenAIRequestBase):
             
             # If Hanja is present, style it with the Kanji style
             if hanja:
-                result += f"{{\\rHanja}}{hanja}{{\\rKorean}}"
+                result += f"{{\\rHanja}}{hanja}{{\\rDefault}}"
             
             # Style the Hangul part with the Hangul style
             if hangul:
-                result += f"{{\\rHangul}}{hangul}{{\\rKorean}}"
+                result += f"{{\\rHangul}}{hangul}{{\\rDefault}}"
             
             # Add Romanized Korean (RomanKO) if present, styled differently
             if roman:
@@ -1207,11 +1205,11 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
             # Style the Chu-Han part with the Kanji (or a specific Chu-Han) style
             if chuhan:
-                result += f"{{\\rChuhan}}{chuhan}{{\\rVietnamese}}"
+                result += f"{{\\rChuhan}}{chuhan}{{\\rDefault}}"
             
             # Style the Viet part with a specific Viet style
             if viet:
-                result += f"{{\\rViet}}{viet}{{\\rVietnamese}}"
+                result += f"{{\\rViet}}{viet}{{\\rDefault}}"
 
             return result
 
@@ -1282,23 +1280,23 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
         base_font_size = font_sizes["English"]
         chinese_font_size = font_sizes["Chinese"]
-        english_font_size = font_sizes["English"] * 0.6
+        english_font_size = font_sizes["English"]
         japanese_font_size = font_sizes["Japanese"]
         kanji_font_size = font_sizes["Japanese"]
         furigana_font_size = font_sizes["Japanese"]
         arabic_font_size = font_sizes["Arabic"]
         # korean
-        korean_font_size = japanese_font_size * 0.7
-        hanja_font_size = kanji_font_size * 0.7
-        hangul_font_size = furigana_font_size * 0.7
-        romanko_font_size = furigana_font_size * 0.7
+        korean_font_size = japanese_font_size
+        hanja_font_size = kanji_font_size
+        hangul_font_size = furigana_font_size
+        romanko_font_size = furigana_font_size
         #
         spanish_font_size = english_font_size
         french_font_size = english_font_size
         # vietnamese
-        vietnamese_font_size = kanji_font_size * 0.7
-        chuhan_font_size = kanji_font_size * 0.7
-        viet_font_size = furigana_font_size * 0.7
+        vietnamese_font_size = english_font_size
+        chuhan_font_size = chuhan_font_size
+        viet_font_size = viet_font_size
         
 
         return f"""[Script Info]
@@ -1326,12 +1324,9 @@ Style: RomanKO,Vernada,{romanko_font_size},&H00FACADE,&H000000FF,&H00000000,&H64
 Style: Spanish1,Arial,{spanish_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
 Style: Spanish,Arial,{spanish_font_size},&H0000BFF1,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
 Style: French,Arial,{french_font_size},&H003929ED,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-Style: French2,Arial,{french_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
 Style: Vietnamese,Arial,{vietnamese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-Style: Chuhan1,Vernada,{chuhan_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-Style: Chuhan,Vernada,{chuhan_font_size},&H00ADDEFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-Style: Viet1,Vernada,{viet_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
-Style: Viet,Vernada,{viet_font_size},&H00E1E4FF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
+Style: Chuhan,Vernada,{chuhan_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Viet,Vernada,{viet_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
