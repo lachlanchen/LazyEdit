@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,660\",\n    \"lang\": \"en\",\n    \"text\": \"I used to use knowledge as an escape from reality.\"\n  },\n  {\n    \"start\": \"00:00:05,140\",\n    \"end\": \"00:00:06,900\",\n    \"lang\": \"en\",\n    \"text\": \"The reality that I'm nobody,\"\n  },\n  {\n    \"start\": \"00:00:06,900\",\n    \"end\": \"00:00:07,780\",\n    \"lang\": \"en\",\n    \"text\": \"I'm nothing.\"\n  },\n  {\n    \"start\": \"00:00:09,940\",\n    \"end\": \"00:00:13,880\",\n    \"lang\": \"en\",\n    \"text\": \"But I finally accepted myself to be nothing,\"\n  },\n  {\n    \"start\": \"00:00:13,880\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"to be nobody.\"\n  },\n  {\n    \"start\": \"00:00:17,320\",\n    \"end\": \"00:00:18,660\",\n    \"lang\": \"en\",\n    \"text\": \"And the feeling is great.\"\n  },\n  {\n    \"start\": \"00:00:20,260\",\n    \"end\": \"00:00:23,980\",\n    \"lang\": \"en\",\n    \"text\": \"I don't need to be successful.\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:32,700\",\n    \"lang\": \"en\",\n    \"text\": \"To have some achievement.\"\n  },\n  {\n    \"start\": \"00:00:39,200\",\n    \"end\": \"00:00:40,280\",\n    \"lang\": \"en\",\n    \"text\": \"Before,\"\n  },\n  {\n    \"start\": \"00:00:40,280\",\n    \"end\": \"00:00:43,280\",\n    \"lang\": \"en\",\n    \"text\": \"I always learned new stuff.\"\n  },\n  {\n    \"start\": \"00:00:44,220\",\n    \"end\": \"00:00:48,940\",\n    \"lang\": \"en\",\n    \"text\": \"I think I can escape from the ignorance.\"\n  },\n  {\n    \"start\": \"00:00:50,160\",\n    \"end\": \"00:00:51,460\",\n    \"lang\": \"en\",\n    \"text\": \"To build,\"\n  },\n  {\n    \"start\": \"00:00:51,460\",\n    \"end\": \"00:00:55,140\",\n    \"lang\": \"en\",\n    \"text\": \"to live this imaginary world.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,660",
+            "en": "I used to use knowledge as an escape from reality.",
+            "zh": "我过去常用知识作为逃避现实的手段。",
+            "ar": "كنت أستخدم المعرفة كمهرب من الواقع."
+        },
+        {
+            "start": "00:00:05,140",
+            "end": "00:00:06,900",
+            "en": "The reality that I'm nobody,",
+            "zh": "那个我是无名小卒的现实，",
+            "ar": "الواقع بأنني لا أحد،"
+        },
+        {
+            "start": "00:00:06,900",
+            "end": "00:00:07,780",
+            "en": "I'm nothing.",
+            "zh": "我什么都不是。",
+            "ar": "أنا لا شيء."
+        },
+        {
+            "start": "00:00:09,940",
+            "end": "00:00:13,880",
+            "en": "But I finally accepted myself to be nothing,",
+            "zh": "但我最终接受了自己一无所有，",
+            "ar": "لكني في النهاية قبلت بنفسي أن أكون لا شيء،"
+        },
+        {
+            "start": "00:00:13,880",
+            "end": "00:00:15,380",
+            "en": "to be nobody.",
+            "zh": "成为一个无名小卒。",
+            "ar": "أن أكون لا أحد."
+        },
+        {
+            "start": "00:00:17,320",
+            "end": "00:00:18,660",
+            "en": "And the feeling is great.",
+            "zh": "这种感觉很棒。",
+            "ar": "والشعور رائع."
+        },
+        {
+            "start": "00:00:20,260",
+            "end": "00:00:23,980",
+            "en": "I don't need to be successful.",
+            "zh": "我不需要成功。",
+            "ar": "لا أحتاج إلى أن أكون ناجحًا."
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:32,700",
+            "en": "To have some achievement.",
+            "zh": "去拥有一些成就。",
+            "ar": "لتحقيق بعض الإنجازات."
+        },
+        {
+            "start": "00:00:39,200",
+            "end": "00:00:40,280",
+            "en": "Before,",
+            "zh": "以前，",
+            "ar": "من قبل،"
+        },
+        {
+            "start": "00:00:40,280",
+            "end": "00:00:43,280",
+            "en": "I always learned new stuff.",
+            "zh": "我总是学习新东西。",
+            "ar": "دائمًا ما كنت أتعلم أشياء جديدة."
+        },
+        {
+            "start": "00:00:44,220",
+            "end": "00:00:48,940",
+            "en": "I think I can escape from the ignorance.",
+            "zh": "我认为我可以逃离无知。",
+            "ar": "أظن أنني أستطيع الفرار من الجهل."
+        },
+        {
+            "start": "00:00:50,160",
+            "end": "00:00:51,460",
+            "en": "To build,",
+            "zh": "去构建，",
+            "ar": "لبناء،"
+        },
+        {
+            "start": "00:00:51,460",
+            "end": "00:00:55,140",
+            "en": "to live this imaginary world.",
+            "zh": "活在这个虚构的世界里。",
+            "ar": "للعيش في هذا العالم الخيالي."
+        }
+    ]
+}

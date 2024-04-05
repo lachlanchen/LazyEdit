@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,180\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not joking.\"\n  },\n  {\n    \"start\": \"00:00:01,180\",\n    \"end\": \"00:00:08,039\",\n    \"lang\": \"en\",\n    \"text\": \"This chicken is really the best chicken I've ever cooked.\"\n  },\n  {\n    \"start\": \"00:00:16,580\",\n    \"end\": \"00:00:21,740\",\n    \"lang\": \"en\",\n    \"text\": \"Even though my cooking skill baseline is quite high,\"\n  },\n  {\n    \"start\": \"00:00:21,740\",\n    \"end\": \"00:00:24,420\",\n    \"lang\": \"en\",\n    \"text\": \"this is high over the high.\"\n  },\n  {\n    \"start\": \"00:00:34,940\",\n    \"end\": \"00:00:36,060\",\n    \"lang\": \"en\",\n    \"text\": \"It's so delicious.\"\n  },\n  {\n    \"start\": \"00:00:42,400\",\n    \"end\": \"00:00:47,140\",\n    \"lang\": \"en\",\n    \"text\": \"I should let the people around the world know my cooking skill.\"\n  },\n  {\n    \"start\": \"00:00:53,506\",\n    \"end\": \"00:00:54,286\",\n    \"lang\": \"ja\",\n    \"text\": \"今日のページ\"\n  },\n  {\n    \"start\": \"00:00:55,106\",\n    \"end\": \"00:00:55,886\",\n    \"lang\": \"en\",\n    \"text\": \"Give me a platform,\"\n  },\n  {\n    \"start\": \"00:00:55,886\",\n    \"end\": \"00:00:58,406\",\n    \"lang\": \"en\",\n    \"text\": \"let me serve you guys.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,180",
+            "ko": "농담이 아니에요."
+        },
+        {
+            "start": "00:00:01,180",
+            "end": "00:00:08,039",
+            "ko": "이 치킨은 정말 제가 만든 치킨 중에 최고예요."
+        },
+        {
+            "start": "00:00:16,580",
+            "end": "00:00:21,740",
+            "ko": "비록 제 요리 실력 기준이 꽤 높다고 하더라도,"
+        },
+        {
+            "start": "00:00:21,740",
+            "end": "00:00:24,420",
+            "ko": "이건 높은 것 이상이에요."
+        },
+        {
+            "start": "00:00:34,940",
+            "end": "00:00:36,060",
+            "ko": "정말 맛있어요."
+        },
+        {
+            "start": "00:00:42,400",
+            "end": "00:00:47,140",
+            "ko": "전 세계 사람들에게 제 요리 실력을 알려야겠어요."
+        },
+        {
+            "start": "00:00:53,506",
+            "end": "00:00:54,286",
+            "ko": "오늘의 페이지"
+        },
+        {
+            "start": "00:00:55,106",
+            "end": "00:00:55,886",
+            "ko": "플랫폼을 줘요,"
+        },
+        {
+            "start": "00:00:55,886",
+            "end": "00:00:58,406",
+            "ko": "여러분에게 대접하게 해주세요."
+        }
+    ]
+}

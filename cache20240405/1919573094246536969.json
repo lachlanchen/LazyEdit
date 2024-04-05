@@ -1,0 +1,127 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,300\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:02,480\",\n    \"end\": \"00:00:05,260\",\n    \"lang\": \"ja\",\n    \"text\": \"私の朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:07,490\",\n    \"end\": \"00:00:09,110\",\n    \"lang\": \"en\",\n    \"text\": \"Recently I found a thing,\"\n  },\n  {\n    \"start\": \"00:00:09,110\",\n    \"end\": \"00:00:11,490\",\n    \"lang\": \"en\",\n    \"text\": \"the SK-II,\"\n  },\n  {\n    \"start\": \"00:00:11,490\",\n    \"end\": \"00:00:17,670\",\n    \"lang\": \"en\",\n    \"text\": \"it kind of cause harm to my skin.\"\n  },\n  {\n    \"start\": \"00:00:18,670\",\n    \"end\": \"00:00:19,930\",\n    \"lang\": \"en\",\n    \"text\": \"Because when I use it,\"\n  },\n  {\n    \"start\": \"00:00:19,930\",\n    \"end\": \"00:00:23,290\",\n    \"lang\": \"en\",\n    \"text\": \"I play guitar,\"\n  },\n  {\n    \"start\": \"00:00:23,290\",\n    \"end\": \"00:00:26,310\",\n    \"lang\": \"en\",\n    \"text\": \"and the finger tip,\"\n  },\n  {\n    \"start\": \"00:00:26,710\",\n    \"end\": \"00:00:26,910\",\n    \"lang\": \"en\",\n    \"text\": \"it's like...\"\n  },\n  {\n    \"start\": \"00:00:26,946\",\n    \"end\": \"00:00:27,446\",\n    \"lang\": \"ja\",\n    \"text\": \"ごめんね\"\n  },\n  {\n    \"start\": \"00:00:28,098\",\n    \"end\": \"00:00:28,858\",\n    \"lang\": \"en\",\n    \"text\": \"It hurts.\"\n  },\n  {\n    \"start\": \"00:00:29,918\",\n    \"end\": \"00:00:36,858\",\n    \"lang\": \"en\",\n    \"text\": \"So I guess it's because the ingredients in SQ2,\"\n  },\n  {\n    \"start\": \"00:00:36,858\",\n    \"end\": \"00:00:40,598\",\n    \"lang\": \"en\",\n    \"text\": \"it has this erosion effect.\"\n  },\n  {\n    \"start\": \"00:00:41,838\",\n    \"end\": \"00:00:53,898\",\n    \"lang\": \"en\",\n    \"text\": \"So please,\"\n  },\n  {\n    \"start\": \"00:00:53,898\",\n    \"end\": \"00:00:54,858\",\n    \"lang\": \"en\",\n    \"text\": \"SQ2,\"\n  },\n  {\n    \"start\": \"00:00:54,858\",\n    \"end\": \"00:00:58,078\",\n    \"lang\": \"en\",\n    \"text\": \"don't prosecute me.\"\n  },\n  {\n    \"start\": \"00:00:58,078\",\n    \"end\": \"00:01:11,318\",\n    \"lang\": \"en\",\n    \"text\": \"I just want to share some thoughts and some hypothesis.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,300",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير",
+            "ja": "おはようございます"
+        },
+        {
+            "start": "00:00:02,480",
+            "end": "00:00:05,260",
+            "en": "I'm eating my breakfast",
+            "zh": "我在吃早餐",
+            "ar": "أنا آكل وجبة الإفطار الخاصة بي",
+            "ja": "私の朝ごはんを食べています"
+        },
+        {
+            "start": "00:00:07,490",
+            "end": "00:00:09,110",
+            "en": "Recently I found a thing,",
+            "zh": "最近我发现了一件事，",
+            "ar": "مؤخرا وجدت شيئا،"
+        },
+        {
+            "start": "00:00:09,110",
+            "end": "00:00:11,490",
+            "en": "the SK-II,",
+            "zh": "SK-II，",
+            "ar": "سك-الثاني،"
+        },
+        {
+            "start": "00:00:11,490",
+            "end": "00:00:17,670",
+            "en": "it kind of causes harm to my skin.",
+            "zh": "它在某种程度上伤害了我的皮肤。",
+            "ar": "إنه نوع من الضرر لبشرتي."
+        },
+        {
+            "start": "00:00:18,670",
+            "end": "00:00:19,930",
+            "en": "Because when I use it,",
+            "zh": "因为当我使用它时，",
+            "ar": "لأنه عندما أستخدمه،"
+        },
+        {
+            "start": "00:00:19,930",
+            "end": "00:00:23,290",
+            "en": "I play guitar,",
+            "zh": "我弹吉他，",
+            "ar": "أعزف على الجيتار،"
+        },
+        {
+            "start": "00:00:23,290",
+            "end": "00:00:26,310",
+            "en": "and the fingertip,",
+            "zh": "指尖，",
+            "ar": "وطرف الإصبع،"
+        },
+        {
+            "start": "00:00:26,710",
+            "end": "00:00:26,910",
+            "en": "it's like...",
+            "zh": "就像是...",
+            "ar": "إنها مثل..."
+        },
+        {
+            "start": "00:00:26,946",
+            "end": "00:00:27,446",
+            "en": "I'm sorry",
+            "zh": "对不起",
+            "ar": "أنا آسف",
+            "ja": "ごめんね"
+        },
+        {
+            "start": "00:00:28,098",
+            "end": "00:00:28,858",
+            "en": "It hurts.",
+            "zh": "很疼。",
+            "ar": "إنه يؤلم."
+        },
+        {
+            "start": "00:00:29,918",
+            "end": "00:00:36,858",
+            "en": "So I guess it's because of the ingredients in SK-II,",
+            "zh": "所以我猜是因为SK-II中的成分，",
+            "ar": "لذا أعتقد أن السبب هو مكونات SK-II،"
+        },
+        {
+            "start": "00:00:36,858",
+            "end": "00:00:40,598",
+            "en": "it has this erosion effect.",
+            "zh": "它有这种侵蚀效果。",
+            "ar": "له تأثير التآكل هذا."
+        },
+        {
+            "start": "00:00:41,838",
+            "end": "00:00:53,898",
+            "en": "So please,",
+            "zh": "所以请，",
+            "ar": "لذا من فضلك،"
+        },
+        {
+            "start": "00:00:53,898",
+            "end": "00:00:54,858",
+            "en": "SK-II,",
+            "zh": "SK-II，",
+            "ar": "سك-الثاني،"
+        },
+        {
+            "start": "00:00:54,858",
+            "end": "00:00:58,078",
+            "en": "don't sue me.",
+            "zh": "不要起诉我。",
+            "ar": "لا تقاضيني."
+        },
+        {
+            "start": "00:00:58,078",
+            "end": "00:01:11,318",
+            "en": "I just want to share some thoughts and hypotheses.",
+            "zh": "我只是想分享一些想法和假设。",
+            "ar": "أريد فقط أن أشارك بعض الأفكار والفرضيات."
+        }
+    ]
+}

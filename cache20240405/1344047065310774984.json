@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,460\",\n    \"lang\": \"ja\",\n    \"text\": \"海岸線を歩いています\"\n  },\n  {\n    \"start\": \"00:00:03,394\",\n    \"end\": \"00:00:06,254\",\n    \"lang\": \"en\",\n    \"text\": \"So today is the recovery training.\"\n  },\n  {\n    \"start\": \"00:00:06,970\",\n    \"end\": \"00:00:09,470\",\n    \"lang\": \"ja\",\n    \"text\": \"海岸線を歩いています\"\n  },\n  {\n    \"start\": \"00:00:10,370\",\n    \"end\": \"00:00:13,270\",\n    \"lang\": \"en\",\n    \"text\": \"So today is the recovery training.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,460",
+            "en": "Walking along the coastline",
+            "zh": "沿着海岸线行走",
+            "ar": "المشي على طول الساحل"
+        },
+        {
+            "start": "00:00:03,394",
+            "end": "00:00:06,254",
+            "en": "So today is the recovery training.",
+            "zh": "所以今天是康复训练。",
+            "ar": "إذًا اليوم هو تدريب التعافي."
+        },
+        {
+            "start": "00:00:06,970",
+            "end": "00:00:09,470",
+            "en": "Walking along the coastline",
+            "zh": "沿着海岸线行走",
+            "ar": "المشي على طول الساحل"
+        },
+        {
+            "start": "00:00:10,370",
+            "end": "00:00:13,270",
+            "en": "So today is the recovery training.",
+            "zh": "所以今天是康复训练。",
+            "ar": "إذًا اليوم هو تدريب التعافي."
+        }
+    ]
+}

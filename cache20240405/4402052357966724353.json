@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:08,100\",\n    \"lang\": \"en\",\n    \"text\": \"Never wait for this perfect moment that everything is prepared because it will never come.\"\n  },\n  {\n    \"start\": \"00:00:14,680\",\n    \"end\": \"00:00:18,960\",\n    \"lang\": \"en\",\n    \"text\": \"So allow yourself to fail,\"\n  },\n  {\n    \"start\": \"00:00:18,960\",\n    \"end\": \"00:00:20,660\",\n    \"lang\": \"en\",\n    \"text\": \"to be imperfect,\"\n  },\n  {\n    \"start\": \"00:00:20,660\",\n    \"end\": \"00:00:23,500\",\n    \"lang\": \"en\",\n    \"text\": \"to be attacked,\"\n  },\n  {\n    \"start\": \"00:00:23,500\",\n    \"end\": \"00:00:29,200\",\n    \"lang\": \"en\",\n    \"text\": \"to be to be\"\n  },\n  {\n    \"start\": \"00:00:29,200\",\n    \"end\": \"00:00:29,820\",\n    \"lang\": \"en\",\n    \"text\": \"discriminated,\"\n  },\n  {\n    \"start\": \"00:00:29,820\",\n    \"end\": \"00:00:36,040\",\n    \"lang\": \"en\",\n    \"text\": \"to be criticized by other people,\"\n  },\n  {\n    \"start\": \"00:00:36,040\",\n    \"end\": \"00:00:37,540\",\n    \"lang\": \"en\",\n    \"text\": \"by the world.\"\n  },\n  {\n    \"start\": \"00:00:38,400\",\n    \"end\": \"00:00:42,380\",\n    \"lang\": \"en\",\n    \"text\": \"So accept yourself to be imperfect.\"\n  },\n  {\n    \"start\": \"00:00:42,380\",\n    \"end\": \"00:00:48,220\",\n    \"lang\": \"en\",\n    \"text\": \"Accept failure as a normal experience in your life.\"\n  },\n  {\n    \"start\": \"00:00:54,100\",\n    \"end\": \"00:00:54,780\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:54,780\",\n    \"end\": \"00:00:55,180\",\n    \"lang\": \"en\",\n    \"text\": \"I love you.\"\n  },\n  {\n    \"start\": \"00:00:55,202\",\n    \"end\": \"00:00:57,002\",\n    \"lang\": \"en\",\n    \"text\": \"I used to want to...\"\n  },\n  {\n    \"start\": \"00:00:57,570\",\n    \"end\": \"00:01:02,550\",\n    \"lang\": \"en\",\n    \"text\": \"wait for a perfect moment to present myself to the world.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:08,100",
+            "en": "Never wait for this perfect moment that everything is prepared because it will never come.",
+            "zh": "永远不要等待这个完美的时刻，等一切都准备好了，因为那一刻永远不会到来。",
+            "ar": "لا تنتظر هذه اللحظة المثالية التي يكون كل شيء فيها جاهزًا لأنها لن تأتي أبدًا."
+        },
+        {
+            "start": "00:00:14,680",
+            "end": "00:00:18,960",
+            "en": "So allow yourself to fail,",
+            "zh": "所以允许自己失败，",
+            "ar": "لذا دع نفسك تفشل،"
+        },
+        {
+            "start": "00:00:18,960",
+            "end": "00:00:20,660",
+            "en": "to be imperfect,",
+            "zh": "去面对不完美，",
+            "ar": "أن تكون غير مثالي،"
+        },
+        {
+            "start": "00:00:20,660",
+            "end": "00:00:23,500",
+            "en": "to be attacked,",
+            "zh": "去面对攻击，",
+            "ar": "أن تتعرض للهجوم،"
+        },
+        {
+            "start": "00:00:23,500",
+            "end": "00:00:29,200",
+            "en": "to be discriminated,",
+            "zh": "去面对歧视，",
+            "ar": "أن تواجه التمييز،"
+        },
+        {
+            "start": "00:00:29,200",
+            "end": "00:00:29,820",
+            "en": "to be discriminated,",
+            "zh": "去面对歧视，",
+            "ar": "أن تواجه التمييز،"
+        },
+        {
+            "start": "00:00:29,820",
+            "end": "00:00:36,040",
+            "en": "to be criticized by other people,",
+            "zh": "被其他人批评，",
+            "ar": "أن ينتقدك الآخرون،"
+        },
+        {
+            "start": "00:00:36,040",
+            "end": "00:00:37,540",
+            "en": "by the world.",
+            "zh": "被这个世界。",
+            "ar": "من قبل العالم."
+        },
+        {
+            "start": "00:00:38,400",
+            "end": "00:00:42,380",
+            "en": "So accept yourself to be imperfect.",
+            "zh": "所以接受自己的不完美。",
+            "ar": "لذا اقبل بأن تكون غير مثالي."
+        },
+        {
+            "start": "00:00:42,380",
+            "end": "00:00:48,220",
+            "en": "Accept failure as a normal experience in your life.",
+            "zh": "接受失败作为你人生中的一次普通经历。",
+            "ar": "اقبل الفشل كتجربة طبيعية في حياتك."
+        },
+        {
+            "start": "00:00:54,100",
+            "end": "00:00:54,780",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:00:54,780",
+            "end": "00:00:55,180",
+            "en": "I love you.",
+            "zh": "我爱你。",
+            "ar": "أحبك."
+        },
+        {
+            "start": "00:00:55,202",
+            "end": "00:00:57,002",
+            "en": "I used to want to...",
+            "zh": "我曾经想要...",
+            "ar": "كنت أرغب في..."
+        },
+        {
+            "start": "00:00:57,570",
+            "end": "00:01:02,550",
+            "en": "wait for a perfect moment to present myself to the world.",
+            "zh": "等待一个完美的时刻，向这个世界展示自我。",
+            "ar": "انتظر لحظة مثالية لأقدم نفسي للعالم."
+        }
+    ]
+}

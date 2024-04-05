@@ -1,0 +1,154 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,220\",\n    \"lang\": \"en\",\n    \"text\": \"I found this explosive.\"\n  },\n  {\n    \"start\": \"00:00:02,882\",\n    \"end\": \"00:00:03,662\",\n    \"lang\": \"ar\",\n    \"text\": \"يقصد نوديل\"\n  },\n  {\n    \"start\": \"00:00:05,282\",\n    \"end\": \"00:00:05,982\",\n    \"lang\": \"en\",\n    \"text\": \"Sweet potato.\"\n  },\n  {\n    \"start\": \"00:00:06,442\",\n    \"end\": \"00:00:06,902\",\n    \"lang\": \"en\",\n    \"text\": \"Tastes.\"\n  },\n  {\n    \"start\": \"00:00:07,162\",\n    \"end\": \"00:00:07,702\",\n    \"lang\": \"en\",\n    \"text\": \"Tastes.\"\n  },\n  {\n    \"start\": \"00:00:07,938\",\n    \"end\": \"00:00:08,478\",\n    \"lang\": \"ja\",\n    \"text\": \"こぢゃす\"\n  },\n  {\n    \"start\": \"00:00:09,986\",\n    \"end\": \"00:00:11,046\",\n    \"lang\": \"en\",\n    \"text\": \"So it's crispy,\"\n  },\n  {\n    \"start\": \"00:00:11,046\",\n    \"end\": \"00:00:12,566\",\n    \"lang\": \"en\",\n    \"text\": \"sweet,\"\n  },\n  {\n    \"start\": \"00:00:12,566\",\n    \"end\": \"00:00:14,466\",\n    \"lang\": \"en\",\n    \"text\": \"and...\"\n  },\n  {\n    \"start\": \"00:00:16,206\",\n    \"end\": \"00:00:17,126\",\n    \"lang\": \"en\",\n    \"text\": \"and perfect.\"\n  },\n  {\n    \"start\": \"00:00:18,626\",\n    \"end\": \"00:00:22,586\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot find a word to describe this.\"\n  },\n  {\n    \"start\": \"00:00:23,126\",\n    \"end\": \"00:00:29,646\",\n    \"lang\": \"en\",\n    \"text\": \"But it really tastes better than the unexploded version.\"\n  },\n  {\n    \"start\": \"00:00:32,886\",\n    \"end\": \"00:00:34,245\",\n    \"lang\": \"en\",\n    \"text\": \"This has this...\"\n  },\n  {\n    \"start\": \"00:00:34,246\",\n    \"end\": \"00:00:39,286\",\n    \"lang\": \"en\",\n    \"text\": \"It's burnt sugar.\"\n  },\n  {\n    \"start\": \"00:00:41,506\",\n    \"end\": \"00:00:42,526\",\n    \"lang\": \"zh\",\n    \"text\": \"教堂\"\n  },\n  {\n    \"start\": \"00:00:43,045\",\n    \"end\": \"00:00:44,186\",\n    \"lang\": \"zh\",\n    \"text\": \"教堂怎么说?\"\n  },\n  {\n    \"start\": \"00:00:44,346\",\n    \"end\": \"00:00:45,426\",\n    \"lang\": \"zh\",\n    \"text\": \"好多是教堂\"\n  },\n  {\n    \"start\": \"00:00:45,922\",\n    \"end\": \"00:00:46,582\",\n    \"lang\": \"ja\",\n    \"text\": \"いいイメージ\"\n  },\n  {\n    \"start\": \"00:00:50,050\",\n    \"end\": \"00:00:50,270\",\n    \"lang\": \"en\",\n    \"text\": \"So\"\n  },\n  {\n    \"start\": \"00:00:53,070\",\n    \"end\": \"00:00:53,770\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:53,770\",\n    \"end\": \"00:00:56,010\",\n    \"lang\": \"en\",\n    \"text\": \"it tastes gorgeous\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,220",
+            "en": "I found this explosive.",
+            "zh": "我发现了这个爆炸物。",
+            "ar": "وجدت هذا المتفجر."
+        },
+        {
+            "start": "00:00:02,882",
+            "end": "00:00:03,662",
+            "en": "He means noodle.",
+            "zh": "他的意思是面条。",
+            "ar": "يقصد نودل."
+        },
+        {
+            "start": "00:00:05,282",
+            "end": "00:00:05,982",
+            "en": "Sweet potato.",
+            "zh": "红薯。",
+            "ar": "البطاطا الحلوة."
+        },
+        {
+            "start": "00:00:06,442",
+            "end": "00:00:06,902",
+            "en": "Tastes.",
+            "zh": "味道。",
+            "ar": "الطعم."
+        },
+        {
+            "start": "00:00:07,162",
+            "end": "00:00:07,702",
+            "en": "Tastes.",
+            "zh": "味道。",
+            "ar": "الطعم."
+        },
+        {
+            "start": "00:00:07,938",
+            "end": "00:00:08,478",
+            "en": "Delicious.",
+            "zh": "美味的。",
+            "ar": "لذيذ.",
+            "ja": "こぢゃす"
+        },
+        {
+            "start": "00:00:09,986",
+            "end": "00:00:11,046",
+            "en": "So it's crispy,",
+            "zh": "所以它很脆，",
+            "ar": "إذن، هي مقرمشة،"
+        },
+        {
+            "start": "00:00:11,046",
+            "end": "00:00:12,566",
+            "en": "sweet,",
+            "zh": "甜，",
+            "ar": "حلوة،"
+        },
+        {
+            "start": "00:00:12,566",
+            "end": "00:00:14,466",
+            "en": "and...",
+            "zh": "和...",
+            "ar": "و..."
+        },
+        {
+            "start": "00:00:16,206",
+            "end": "00:00:17,126",
+            "en": "and perfect.",
+            "zh": "完美。",
+            "ar": "ومثالي."
+        },
+        {
+            "start": "00:00:18,626",
+            "end": "00:00:22,586",
+            "en": "I cannot find a word to describe this.",
+            "zh": "我找不到词语来形容这个。",
+            "ar": "لا أستطيع أن أجد كلمة تصف هذا."
+        },
+        {
+            "start": "00:00:23,126",
+            "end": "00:00:29,646",
+            "en": "But it really tastes better than the unexploded version.",
+            "zh": "但它的确比未爆炸的版本味道更好。",
+            "ar": "لكن طعمها حقًا أفضل من النسخة غير المنفجرة."
+        },
+        {
+            "start": "00:00:32,886",
+            "end": "00:00:34,245",
+            "en": "This has this...",
+            "zh": "这有这个...",
+            "ar": "هذا لديه هذا..."
+        },
+        {
+            "start": "00:00:34,246",
+            "end": "00:00:39,286",
+            "en": "It's burnt sugar.",
+            "zh": "这是烧焦的糖。",
+            "ar": "إنه سكر محروق."
+        },
+        {
+            "start": "00:00:41,506",
+            "end": "00:00:42,526",
+            "en": "Church.",
+            "zh": "教堂。",
+            "ar": "الكنيسة."
+        },
+        {
+            "start": "00:00:43,045",
+            "end": "00:00:44,186",
+            "en": "How to say church?",
+            "zh": "怎么说教堂?",
+            "ar": "كيف نقول كنيسة؟"
+        },
+        {
+            "start": "00:00:44,346",
+            "end": "00:00:45,426",
+            "en": "There are a lot of churches.",
+            "zh": "有很多教堂。",
+            "ar": "هناك العديد من الكنائس."
+        },
+        {
+            "start": "00:00:45,922",
+            "end": "00:00:46,582",
+            "en": "A good image.",
+            "zh": "一个好图像。",
+            "ar": "صورة جيدة.",
+            "ja": "いいイメージ"
+        },
+        {
+            "start": "00:00:50,050",
+            "end": "00:00:50,270",
+            "en": "So",
+            "zh": "所以",
+            "ar": "إذًا"
+        },
+        {
+            "start": "00:00:53,070",
+            "end": "00:00:53,770",
+            "en": "Wow,",
+            "zh": "哇，",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:00:53,770",
+            "end": "00:00:56,010",
+            "en": "it tastes gorgeous",
+            "zh": "它的味道很美",
+            "ar": "طعمها رائع"
+        }
+    ]
+}

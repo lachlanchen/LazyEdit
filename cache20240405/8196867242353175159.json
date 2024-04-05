@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,720\",\n    \"lang\": \"en\",\n    \"text\": \"accent ever\"\n  },\n  {\n    \"start\": \"00:00:02,754\",\n    \"end\": \"00:00:04,654\",\n    \"lang\": \"ja\",\n    \"text\": \"自由とは言えない\"\n  },\n  {\n    \"start\": \"00:00:04,674\",\n    \"end\": \"00:00:06,834\",\n    \"lang\": \"en\",\n    \"text\": \"could be a misery,\"\n  },\n  {\n    \"start\": \"00:00:06,834\",\n    \"end\": \"00:00:11,274\",\n    \"lang\": \"en\",\n    \"text\": \"a thing that is non-freedom,\"\n  },\n  {\n    \"start\": \"00:00:11,674\",\n    \"end\": \"00:00:12,514\",\n    \"lang\": \"en\",\n    \"text\": \"is a freedom,\"\n  },\n  {\n    \"start\": \"00:00:12,514\",\n    \"end\": \"00:00:13,394\",\n    \"lang\": \"en\",\n    \"text\": \"freeness.\"\n  },\n  {\n    \"start\": \"00:00:16,013\",\n    \"end\": \"00:00:21,454\",\n    \"lang\": \"en\",\n    \"text\": \"So if you treat freedom as a goal,\"\n  },\n  {\n    \"start\": \"00:00:21,454\",\n    \"end\": \"00:00:22,494\",\n    \"lang\": \"en\",\n    \"text\": \"as a purpose,\"\n  },\n  {\n    \"start\": \"00:00:23,554\",\n    \"end\": \"00:00:24,354\",\n    \"lang\": \"ar\",\n    \"text\": \"ايوه يا امو\"\n  },\n  {\n    \"start\": \"00:00:24,354\",\n    \"end\": \"00:00:25,374\",\n    \"lang\": \"ar\",\n    \"text\": \"ياللي خبي يدني\"\n  },\n  {\n    \"start\": \"00:00:26,114\",\n    \"end\": \"00:00:26,574\",\n    \"lang\": \"en\",\n    \"text\": \"Get a trap.\"\n  },\n  {\n    \"start\": \"00:00:31,714\",\n    \"end\": \"00:00:41,654\",\n    \"lang\": \"en\",\n    \"text\": \"can easily get a drive in this Freedom tribe.\"\n  },\n  {\n    \"start\": \"00:00:45,894\",\n    \"end\": \"00:00:46,194\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:46,194\",\n    \"end\": \"00:00:46,834\",\n    \"lang\": \"en\",\n    \"text\": \"okay,\"\n  },\n  {\n    \"start\": \"00:00:46,834\",\n    \"end\": \"00:00:47,654\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  },\n  {\n    \"start\": \"00:00:50,314\",\n    \"end\": \"00:00:51,094\",\n    \"lang\": \"en\",\n    \"text\": \"That's it.\"\n  },\n  {\n    \"start\": \"00:00:53,614\",\n    \"end\": \"00:00:55,814\",\n    \"lang\": \"en\",\n    \"text\": \"Look at this beautiful thing.\"\n  },\n  {\n    \"start\": \"00:00:58,014\",\n    \"end\": \"00:01:00,094\",\n    \"lang\": \"en\",\n    \"text\": \"Freedom Peace.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,720",
+            "vi": "giọng điệu mãi mãi"
+        },
+        {
+            "start": "00:00:02,754",
+            "end": "00:00:04,654",
+            "vi": "không thể nói là tự do"
+        },
+        {
+            "start": "00:00:04,674",
+            "end": "00:00:06,834",
+            "vi": "có thể là một sự khổ đau,"
+        },
+        {
+            "start": "00:00:06,834",
+            "end": "00:00:11,274",
+            "vi": "một thứ không phải là tự do,"
+        },
+        {
+            "start": "00:00:11,674",
+            "end": "00:00:12,514",
+            "vi": "là một tự do,"
+        },
+        {
+            "start": "00:00:12,514",
+            "end": "00:00:13,394",
+            "vi": "sự tự do."
+        },
+        {
+            "start": "00:00:16,013",
+            "end": "00:00:21,454",
+            "vi": "Vậy nếu bạn coi tự do như một mục tiêu,"
+        },
+        {
+            "start": "00:00:21,454",
+            "end": "00:00:22,494",
+            "vi": "như một mục đích,"
+        },
+        {
+            "start": "00:00:23,554",
+            "end": "00:00:24,354",
+            "vi": "Ừ, mẹ à"
+        },
+        {
+            "start": "00:00:24,354",
+            "end": "00:00:25,374",
+            "vi": "Người che giấu nỗi đau này"
+        },
+        {
+            "start": "00:00:26,114",
+            "end": "00:00:26,574",
+            "vi": "Đặt bẫy."
+        },
+        {
+            "start": "00:00:31,714",
+            "end": "00:00:41,654",
+            "vi": "có thể dễ dàng lái xe trong bộ lạc Tự Do này."
+        },
+        {
+            "start": "00:00:45,894",
+            "end": "00:00:46,194",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:46,194",
+            "end": "00:00:46,834",
+            "vi": "được,"
+        },
+        {
+            "start": "00:00:46,834",
+            "end": "00:00:47,654",
+            "vi": "được."
+        },
+        {
+            "start": "00:00:50,314",
+            "end": "00:00:51,094",
+            "vi": "Đó là nó."
+        },
+        {
+            "start": "00:00:53,614",
+            "end": "00:00:55,814",
+            "vi": "Nhìn vào thứ đẹp đẽ này."
+        },
+        {
+            "start": "00:00:58,014",
+            "end": "00:01:00,094",
+            "vi": "Hòa Bình Tự Do."
+        }
+    ]
+}

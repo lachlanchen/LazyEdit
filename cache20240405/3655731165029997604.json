@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,440\",\n    \"lang\": \"en\",\n    \"text\": \"Hi.\"\n  },\n  {\n    \"start\": \"00:00:01,410\",\n    \"end\": \"00:00:02,350\",\n    \"lang\": \"zh\",\n    \"text\": \"清口令了啊\"\n  },\n  {\n    \"start\": \"00:00:02,350\",\n    \"end\": \"00:00:03,210\",\n    \"lang\": \"zh\",\n    \"text\": \"来头发\"\n  },\n  {\n    \"start\": \"00:00:05,069\",\n    \"end\": \"00:00:06,010\",\n    \"lang\": \"zh\",\n    \"text\": \"耳朵\"\n  },\n  {\n    \"start\": \"00:00:07,690\",\n    \"end\": \"00:00:08,550\",\n    \"lang\": \"zh\",\n    \"text\": \"嘴巴\"\n  },\n  {\n    \"start\": \"00:00:09,990\",\n    \"end\": \"00:00:10,830\",\n    \"lang\": \"zh\",\n    \"text\": \"鼻子\"\n  },\n  {\n    \"start\": \"00:00:12,354\",\n    \"end\": \"00:00:12,674\",\n    \"lang\": \"zh\",\n    \"text\": \"搶!\"\n  },\n  {\n    \"start\": \"00:00:15,586\",\n    \"end\": \"00:00:17,266\",\n    \"lang\": \"zh\",\n    \"text\": \"哈哈哈哈哎\"\n  },\n  {\n    \"start\": \"00:00:17,266\",\n    \"end\": \"00:00:18,306\",\n    \"lang\": \"zh\",\n    \"text\": \"好姐姐\"\n  },\n  {\n    \"start\": \"00:00:18,845\",\n    \"end\": \"00:00:20,766\",\n    \"lang\": \"zh\",\n    \"text\": \"哎先听我说\"\n  },\n  {\n    \"start\": \"00:00:21,245\",\n    \"end\": \"00:00:21,946\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是你\"\n  },\n  {\n    \"start\": \"00:00:22,665\",\n    \"end\": \"00:00:23,766\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是你输了\"\n  },\n  {\n    \"start\": \"00:00:23,766\",\n    \"end\": \"00:00:24,986\",\n    \"lang\": \"zh\",\n    \"text\": \"你输了啊\"\n  },\n  {\n    \"start\": \"00:00:25,626\",\n    \"end\": \"00:00:27,446\",\n    \"lang\": \"zh\",\n    \"text\": \"还有机会呢还有机会\"\n  },\n  {\n    \"start\": \"00:00:27,446\",\n    \"end\": \"00:00:27,846\",\n    \"lang\": \"zh\",\n    \"text\": \"还有机会\"\n  },\n  {\n    \"start\": \"00:00:27,874\",\n    \"end\": \"00:00:28,374\",\n    \"lang\": \"zh\",\n    \"text\": \"哎呀\"\n  },\n  {\n    \"start\": \"00:00:28,954\",\n    \"end\": \"00:00:29,054\",\n    \"lang\": \"zh\",\n    \"text\": \"哈哈\"\n  },\n  {\n    \"start\": \"00:00:29,054\",\n    \"end\": \"00:00:29,414\",\n    \"lang\": \"zh\",\n    \"text\": \"哈哈\"\n  },\n  {\n    \"start\": \"00:00:29,414\",\n    \"end\": \"00:00:30,074\",\n    \"lang\": \"zh\",\n    \"text\": \"哈哈\"\n  },\n  {\n    \"start\": \"00:00:30,074\",\n    \"end\": \"00:00:30,494\",\n    \"lang\": \"zh\",\n    \"text\": \"哈哈\"\n  },\n  {\n    \"start\": \"00:00:30,494\",\n    \"end\": \"00:00:30,614\",\n    \"lang\": \"zh\",\n    \"text\": \"哈哈\"\n  },\n  {\n    \"start\": \"00:00:30,614\",\n    \"end\": \"00:00:30,714\",\n    \"lang\": \"zh\",\n    \"text\": \"哈哈\"\n  },\n  {\n    \"start\": \"00:00:31,682\",\n    \"end\": \"00:00:33,362\",\n    \"lang\": \"zh\",\n    \"text\": \"还有机会还有机会听我说\"\n  },\n  {\n    \"start\": \"00:00:33,362\",\n    \"end\": \"00:00:34,462\",\n    \"lang\": \"zh\",\n    \"text\": \"愿赌服输啊\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,440",
+            "en": "Hi.",
+            "zh": "嗨。",
+            "ar": "مرحبا."
+        },
+        {
+            "start": "00:00:01,410",
+            "end": "00:00:02,350",
+            "en": "Clear and loud.",
+            "zh": "清口令了啊",
+            "ar": "واضح وبصوت عال."
+        },
+        {
+            "start": "00:00:02,350",
+            "end": "00:00:03,210",
+            "en": "Fixing hair.",
+            "zh": "来头发",
+            "ar": "تصفيف الشعر."
+        },
+        {
+            "start": "00:00:05,069",
+            "end": "00:00:06,010",
+            "en": "Ears.",
+            "zh": "耳朵",
+            "ar": "الأذنان."
+        },
+        {
+            "start": "00:00:07,690",
+            "end": "00:00:08,550",
+            "en": "Mouth.",
+            "zh": "嘴巴",
+            "ar": "الفم."
+        },
+        {
+            "start": "00:00:09,990",
+            "end": "00:00:10,830",
+            "en": "Nose.",
+            "zh": "鼻子",
+            "ar": "الأنف."
+        },
+        {
+            "start": "00:00:12,354",
+            "end": "00:00:12,674",
+            "en": "Grab!",
+            "zh": "搶!",
+            "ar": "اقتنص!"
+        },
+        {
+            "start": "00:00:15,586",
+            "end": "00:00:17,266",
+            "en": "Hahaha, hey.",
+            "zh": "哈哈哈哈哎",
+            "ar": "هاهاها، مهلا."
+        },
+        {
+            "start": "00:00:17,266",
+            "end": "00:00:18,306",
+            "en": "Good sister.",
+            "zh": "好姐姐",
+            "ar": "أخت جيدة."
+        },
+        {
+            "start": "00:00:18,845",
+            "end": "00:00:20,766",
+            "en": "Hey, listen to me first.",
+            "zh": "哎先听我说",
+            "ar": "أسمعني أولا."
+        },
+        {
+            "start": "00:00:21,245",
+            "end": "00:00:21,946",
+            "en": "This one is you.",
+            "zh": "这个是你",
+            "ar": "هذا أنت."
+        },
+        {
+            "start": "00:00:22,665",
+            "end": "00:00:23,766",
+            "en": "This means you lost.",
+            "zh": "这个是你输了",
+            "ar": "هذا يعني أنك خسرت."
+        },
+        {
+            "start": "00:00:23,766",
+            "end": "00:00:24,986",
+            "en": "You lost.",
+            "zh": "你输了啊",
+            "ar": "لقد خسرت."
+        },
+        {
+            "start": "00:00:25,626",
+            "end": "00:00:27,446",
+            "en": "There's still a chance, still a chance.",
+            "zh": "还有机会呢还有机会",
+            "ar": "لا تزال هناك فرصة، لا تزال هناك فرصة."
+        },
+        {
+            "start": "00:00:27,446",
+            "end": "00:00:27,846",
+            "en": "Still a chance.",
+            "zh": "还有机会",
+            "ar": "لا تزال هناك فرصة."
+        },
+        {
+            "start": "00:00:27,874",
+            "end": "00:00:28,374",
+            "en": "Oh no.",
+            "zh": "哎呀",
+            "ar": "آه لا."
+        },
+        {
+            "start": "00:00:28,954",
+            "end": "00:00:30,614",
+            "en": "Haha",
+            "zh": "哈哈",
+            "ar": "هاها"
+        },
+        {
+            "start": "00:00:31,682",
+            "end": "00:00:33,362",
+            "en": "There's still a chance, listen to me.",
+            "zh": "还有机会还有机会听我说",
+            "ar": "لا تزال هناك فرصة، استمع إلي."
+        },
+        {
+            "start": "00:00:33,362",
+            "end": "00:00:34,462",
+            "en": "A wager admits defeat.",
+            "zh": "愿赌服输啊",
+            "ar": "الرهان يعترف بالهزيمة."
+        }
+    ]
+}

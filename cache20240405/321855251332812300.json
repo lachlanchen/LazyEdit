@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:11,570\",\n    \"end\": \"00:01:13,090\",\n    \"lang\": \"en\",\n    \"text\": \"It's over-salted.\"\n  },\n  {\n    \"start\": \"00:01:14,710\",\n    \"end\": \"00:01:15,350\",\n    \"lang\": \"en\",\n    \"text\": \"Over-salted.\"\n  },\n  {\n    \"start\": \"00:01:18,070\",\n    \"end\": \"00:01:22,730\",\n    \"lang\": \"en\",\n    \"text\": \"I put too much salt in it.\"\n  },\n  {\n    \"start\": \"00:01:34,818\",\n    \"end\": \"00:01:38,318\",\n    \"lang\": \"en\",\n    \"text\": \"This beef might be the worst I've ever cooked\"\n  },\n  {\n    \"start\": \"00:01:41,758\",\n    \"end\": \"00:01:47,718\",\n    \"lang\": \"en\",\n    \"text\": \"Too much salt and the taste is not as usual\"\n  },\n  {\n    \"start\": \"00:01:57,658\",\n    \"end\": \"00:01:58,058\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  },\n  {\n    \"start\": \"00:02:00,438\",\n    \"end\": \"00:02:01,078\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  },\n  {\n    \"start\": \"00:02:01,838\",\n    \"end\": \"00:02:02,438\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:11,570",
+            "end": "00:01:13,090",
+            "en": "It's over-salted.",
+            "zh": "它太咸了。",
+            "ar": "إنه مالح جدًا."
+        },
+        {
+            "start": "00:01:14,710",
+            "end": "00:01:15,350",
+            "en": "Over-salted.",
+            "zh": "太咸了。",
+            "ar": "مالح جدًا."
+        },
+        {
+            "start": "00:01:18,070",
+            "end": "00:01:22,730",
+            "en": "I put too much salt in it.",
+            "zh": "我放了太多盐。",
+            "ar": "لقد وضعت الكثير من الملح فيه."
+        },
+        {
+            "start": "00:01:34,818",
+            "end": "00:01:38,318",
+            "en": "This beef might be the worst I've ever cooked",
+            "zh": "这牛肉可能是我做过最差的",
+            "ar": "قد يكون هذا اللحم البقري هو الأسوأ الذي طبخته على الإطلاق"
+        },
+        {
+            "start": "00:01:41,758",
+            "end": "00:01:47,718",
+            "en": "Too much salt and the taste is not as usual",
+            "zh": "太咸了，味道也不像平时",
+            "ar": "الكثير من الملح والطعم ليس كالمعتاد"
+        },
+        {
+            "start": "00:01:57,658",
+            "end": "00:01:58,058",
+            "en": "Okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:02:00,438",
+            "end": "00:02:01,078",
+            "en": "See you",
+            "zh": "再见",
+            "ar": "أراك لاحقًا"
+        },
+        {
+            "start": "00:02:01,838",
+            "end": "00:02:02,438",
+            "en": "See you",
+            "zh": "再见",
+            "ar": "أراك لاحقًا"
+        }
+    ]
+}

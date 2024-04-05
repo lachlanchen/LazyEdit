@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,350\",\n    \"end\": \"00:01:06,930\",\n    \"lang\": \"en\",\n    \"text\": \"But now I think that is wrong.\"\n  },\n  {\n    \"start\": \"00:01:08,910\",\n    \"end\": \"00:01:10,610\",\n    \"lang\": \"en\",\n    \"text\": \"I can never wait for that moment.\"\n  },\n  {\n    \"start\": \"00:01:11,910\",\n    \"end\": \"00:01:14,210\",\n    \"lang\": \"en\",\n    \"text\": \"Just present yourself to the world,\"\n  },\n  {\n    \"start\": \"00:01:14,550\",\n    \"end\": \"00:01:15,610\",\n    \"lang\": \"en\",\n    \"text\": \"show yourself to the world,\"\n  },\n  {\n    \"start\": \"00:01:15,610\",\n    \"end\": \"00:01:16,850\",\n    \"lang\": \"en\",\n    \"text\": \"being transparent.\"\n  },\n  {\n    \"start\": \"00:01:27,570\",\n    \"end\": \"00:01:28,290\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm.\"\n  },\n  {\n    \"start\": \"00:01:29,410\",\n    \"end\": \"00:01:32,450\",\n    \"lang\": \"en\",\n    \"text\": \"Kendrick Lamar – Do It.\"\n  },\n  {\n    \"start\": \"00:01:33,666\",\n    \"end\": \"00:01:34,186\",\n    \"lang\": \"zh\",\n    \"text\": \"再聽\"\n  },\n  {\n    \"start\": \"00:01:40,162\",\n    \"end\": \"00:01:49,182\",\n    \"lang\": \"en\",\n    \"text\": \"I used to use the knowledge as an escape from reality,\"\n  },\n  {\n    \"start\": \"00:01:49,182\",\n    \"end\": \"00:01:54,062\",\n    \"lang\": \"en\",\n    \"text\": \"to escape the fact that I'm nobody,\"\n  },\n  {\n    \"start\": \"00:01:54,302\",\n    \"end\": \"00:01:54,862\",\n    \"lang\": \"en\",\n    \"text\": \"I'm nothing.\"\n  },\n  {\n    \"start\": \"00:01:54,862\",\n    \"end\": \"00:02:02,362\",\n    \"lang\": \"en\",\n    \"text\": \"But I finally realized that I didn't need to worry about it.\"\n  },\n  {\n    \"start\": \"00:02:02,362\",\n    \"end\": \"00:02:03,782\",\n    \"lang\": \"en\",\n    \"text\": \"So no matter\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,350",
+            "end": "00:01:06,930",
+            "vi": "Nhưng bây giờ tôi nghĩ điều đó là sai."
+        },
+        {
+            "start": "00:01:08,910",
+            "end": "00:01:10,610",
+            "vi": "Tôi không thể đợi được khoảnh khắc đó."
+        },
+        {
+            "start": "00:01:11,910",
+            "end": "00:01:14,210",
+            "vi": "Hãy tự giới thiệu bản thân với thế giới,"
+        },
+        {
+            "start": "00:01:14,550",
+            "end": "00:01:15,610",
+            "vi": "hãy tự bày tỏ mình với thế giới,"
+        },
+        {
+            "start": "00:01:15,610",
+            "end": "00:01:16,850",
+            "vi": "hãy sống một cách minh bạch."
+        },
+        {
+            "start": "00:01:27,570",
+            "end": "00:01:28,290",
+            "vi": "Ừm."
+        },
+        {
+            "start": "00:01:29,410",
+            "end": "00:01:32,450",
+            "vi": "Kendrick Lamar – Hãy làm đi."
+        },
+        {
+            "start": "00:01:33,666",
+            "end": "00:01:34,186",
+            "vi": "Nghe lại"
+        },
+        {
+            "start": "00:01:40,162",
+            "end": "00:01:49,182",
+            "vi": "Tôi từng sử dụng kiến thức như một cách để trốn chạy khỏi thực tế,"
+        },
+        {
+            "start": "00:01:49,182",
+            "end": "00:01:54,062",
+            "vi": "tránh khỏi sự thật là tôi chẳng là ai cả,"
+        },
+        {
+            "start": "00:01:54,302",
+            "end": "00:01:54,862",
+            "vi": "tôi chẳng là gì cả."
+        },
+        {
+            "start": "00:01:54,862",
+            "end": "00:02:02,362",
+            "vi": "Nhưng cuối cùng tôi đã nhận ra rằng mình không cần phải lo lắng về điều đó."
+        },
+        {
+            "start": "00:02:02,362",
+            "end": "00:02:03,782",
+            "vi": "Vì vậy không thành vấn đề"
+        }
+    ]
+}

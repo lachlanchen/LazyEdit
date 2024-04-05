@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:10,406\",\n    \"end\": \"00:01:13,086\",\n    \"lang\": \"en\",\n    \"text\": \"I used to have a dream that I could build a building\"\n  },\n  {\n    \"start\": \"00:01:13,516\",\n    \"end\": \"00:01:15,086\",\n    \"lang\": \"en\",\n    \"text\": \"with 23 floors.\"\n  },\n  {\n    \"start\": \"00:01:15,706\",\n    \"end\": \"00:01:20,546\",\n    \"lang\": \"en\",\n    \"text\": \"So the top floor is letting me eat per weather food\"\n  },\n  {\n    \"start\": \"00:01:21,026\",\n    \"end\": \"00:01:24,926\",\n    \"lang\": \"en\",\n    \"text\": \"and without price and no need to pay.\"\n  },\n  {\n    \"start\": \"00:01:25,366\",\n    \"end\": \"00:01:30,606\",\n    \"lang\": \"en\",\n    \"text\": \"It's an invitation mechanism.\"\n  },\n  {\n    \"start\": \"00:01:31,166\",\n    \"end\": \"00:01:32,546\",\n    \"lang\": \"en\",\n    \"text\": \"So only you are invited,\"\n  },\n  {\n    \"start\": \"00:01:32,666\",\n    \"end\": \"00:01:35,806\",\n    \"lang\": \"en\",\n    \"text\": \"you can enjoy the food at the 23rd floor\"\n  },\n  {\n    \"start\": \"00:01:39,466\",\n    \"end\": \"00:01:40,266\",\n    \"lang\": \"en\",\n    \"text\": \"in this building.\"\n  },\n  {\n    \"start\": \"00:01:41,186\",\n    \"end\": \"00:01:47,426\",\n    \"lang\": \"en\",\n    \"text\": \"And I will recruit the best chef around the world\"\n  },\n  {\n    \"start\": \"00:01:47,716\",\n    \"end\": \"00:01:52,146\",\n    \"lang\": \"en\",\n    \"text\": \"and give them extremely high salary.\"\n  },\n  {\n    \"start\": \"00:01:56,156\",\n    \"end\": \"00:01:59,046\",\n    \"lang\": \"en\",\n    \"text\": \"And they didn't care about KPI,\"\n  },\n  {\n    \"start\": \"00:01:59,046\",\n    \"end\": \"00:02:00,205\",\n    \"lang\": \"en\",\n    \"text\": \"performance,\"\n  },\n  {\n    \"start\": \"00:02:00,446\",\n    \"end\": \"00:02:01,546\",\n    \"lang\": \"en\",\n    \"text\": \"all these things,\"\n  },\n  {\n    \"start\": \"00:02:01,546\",\n    \"end\": \"00:02:03,546\",\n    \"lang\": \"en\",\n    \"text\": \"they just focus on\"\n  },\n  {\n    \"start\": \"00:02:04,096\",\n    \"end\": \"00:02:06,186\",\n    \"lang\": \"en\",\n    \"text\": \"provide the best food ever.\"\n  },\n  {\n    \"start\": \"00:02:06,946\",\n    \"end\": \"00:02:07,546\",\n    \"lang\": \"en\",\n    \"text\": \"That's my dream.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:10,406",
+            "end": "00:01:13,086",
+            "ko": "나는 건물을 지을 수 있는 꿈을 꿔왔어요"
+        },
+        {
+            "start": "00:01:13,516",
+            "end": "00:01:15,086",
+            "ko": "23층짜리 건물을 말이죠."
+        },
+        {
+            "start": "00:01:15,706",
+            "end": "00:01:20,546",
+            "ko": "그래서 제일 꼭대기 층은 날씨에 따라 음식을 먹게 해주는 곳이에요"
+        },
+        {
+            "start": "00:01:21,026",
+            "end": "00:01:24,926",
+            "ko": "그리고 가격이 없으며 지불할 필요도 없어요."
+        },
+        {
+            "start": "00:01:25,366",
+            "end": "00:01:30,606",
+            "ko": "이건 초대 메커니즘이에요."
+        },
+        {
+            "start": "00:01:31,166",
+            "end": "00:01:32,546",
+            "ko": "그래서 당신만이 초대되면,"
+        },
+        {
+            "start": "00:01:32,666",
+            "end": "00:01:35,806",
+            "ko": "23층에서 음식을 즐길 수 있어요"
+        },
+        {
+            "start": "00:01:39,466",
+            "end": "00:01:40,266",
+            "ko": "이 건물에서."
+        },
+        {
+            "start": "00:01:41,186",
+            "end": "00:01:47,426",
+            "ko": "그리고 전 세계 최고의 셰프를 모집해서"
+        },
+        {
+            "start": "00:01:47,716",
+            "end": "00:01:52,146",
+            "ko": "매우 높은 급여를 줄 거에요."
+        },
+        {
+            "start": "00:01:56,156",
+            "end": "00:01:59,046",
+            "ko": "그들은 KPI나"
+        },
+        {
+            "start": "00:01:59,046",
+            "end": "00:02:00,205",
+            "ko": "성과,"
+        },
+        {
+            "start": "00:02:00,446",
+            "end": "00:02:01,546",
+            "ko": "이런 것들에 신경 쓰지 않고,"
+        },
+        {
+            "start": "00:02:01,546",
+            "end": "00:02:03,546",
+            "ko": "그저 집중하는 건"
+        },
+        {
+            "start": "00:02:04,096",
+            "end": "00:02:06,186",
+            "ko": "지금까지 최고의 음식을 제공하는 것입니다."
+        },
+        {
+            "start": "00:02:06,946",
+            "end": "00:02:07,546",
+            "ko": "그게 제 꿈이에요."
+        }
+    ]
+}

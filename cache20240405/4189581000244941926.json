@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,120\",\n    \"end\": \"00:00:07,160\",\n    \"lang\": \"en\",\n    \"text\": \"So this morning I regret that I didn't take a video of this kite dog.\"\n  },\n  {\n    \"start\": \"00:00:07,880\",\n    \"end\": \"00:00:12,480\",\n    \"lang\": \"en\",\n    \"text\": \"This dog that he climbed on this kind of height.\"\n  },\n  {\n    \"start\": \"00:00:14,210\",\n    \"end\": \"00:00:14,510\",\n    \"lang\": \"ar\",\n    \"text\": \"فنت\"\n  },\n  {\n    \"start\": \"00:00:15,266\",\n    \"end\": \"00:00:16,265\",\n    \"lang\": \"en\",\n    \"text\": \"in Fins,\"\n  },\n  {\n    \"start\": \"00:00:16,265\",\n    \"end\": \"00:00:16,586\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:00:16,586\",\n    \"end\": \"00:00:17,006\",\n    \"lang\": \"en\",\n    \"text\": \"Fins.\"\n  },\n  {\n    \"start\": \"00:00:17,666\",\n    \"end\": \"00:00:18,686\",\n    \"lang\": \"en\",\n    \"text\": \"in one jump,\"\n  },\n  {\n    \"start\": \"00:00:18,686\",\n    \"end\": \"00:00:19,906\",\n    \"lang\": \"en\",\n    \"text\": \"in a single jump.\"\n  },\n  {\n    \"start\": \"00:00:20,686\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"So he's so agile.\"\n  },\n  {\n    \"start\": \"00:00:23,106\",\n    \"end\": \"00:00:25,666\",\n    \"lang\": \"en\",\n    \"text\": \"I regret that I didn't take a photo,\"\n  },\n  {\n    \"start\": \"00:00:25,666\",\n    \"end\": \"00:00:28,246\",\n    \"lang\": \"en\",\n    \"text\": \"take a video for it.\"\n  },\n  {\n    \"start\": \"00:00:29,066\",\n    \"end\": \"00:00:34,216\",\n    \"lang\": \"en\",\n    \"text\": \"But I comfort myself.\"\n  },\n  {\n    \"start\": \"00:00:36,994\",\n    \"end\": \"00:00:37,594\",\n    \"lang\": \"zh\",\n    \"text\": \"又一定要停\"\n  },\n  {\n    \"start\": \"00:00:38,786\",\n    \"end\": \"00:00:42,926\",\n    \"lang\": \"en\",\n    \"text\": \"The past has passed and the future has not yet come.\"\n  },\n  {\n    \"start\": \"00:00:43,966\",\n    \"end\": \"00:00:46,886\",\n    \"lang\": \"en\",\n    \"text\": \"So even I regret it.\"\n  },\n  {\n    \"start\": \"00:00:50,446\",\n    \"end\": \"00:00:54,266\",\n    \"lang\": \"en\",\n    \"text\": \"There is this Eustrohitch sentence,\"\n  },\n  {\n    \"start\": \"00:00:54,266\",\n    \"end\": \"00:00:55,946\",\n    \"lang\": \"en\",\n    \"text\": \"that live in the present.\"\n  },\n  {\n    \"start\": \"00:00:58,006\",\n    \"end\": \"00:00:59,946\",\n    \"lang\": \"en\",\n    \"text\": \"It's not that this is wrong,\"\n  },\n  {\n    \"start\": \"00:00:59,946\",\n    \"end\": \"00:01:04,385\",\n    \"lang\": \"en\",\n    \"text\": \"because it's just only present you can live.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,120",
+            "end": "00:00:07,160",
+            "vi": "Vậy là sáng nay tôi hối tiếc vì đã không quay video chú chó diều này."
+        },
+        {
+            "start": "00:00:07,880",
+            "end": "00:00:12,480",
+            "vi": "Chú chó đã leo lên những độ cao như thế này."
+        },
+        {
+            "start": "00:00:14,210",
+            "end": "00:00:14,510",
+            "vi": "فنت"
+        },
+        {
+            "start": "00:00:15,266",
+            "end": "00:00:16,265",
+            "vi": "ở Fins,"
+        },
+        {
+            "start": "00:00:16,265",
+            "end": "00:00:16,586",
+            "vi": "xin lỗi,"
+        },
+        {
+            "start": "00:00:16,586",
+            "end": "00:00:17,006",
+            "vi": "Fins."
+        },
+        {
+            "start": "00:00:17,666",
+            "end": "00:00:18,686",
+            "vi": "trong một cú nhảy,"
+        },
+        {
+            "start": "00:00:18,686",
+            "end": "00:00:19,906",
+            "vi": "chỉ với một cú nhảy."
+        },
+        {
+            "start": "00:00:20,686",
+            "end": "00:00:22,146",
+            "vi": "Vậy là nó rất linh hoạt."
+        },
+        {
+            "start": "00:00:23,106",
+            "end": "00:00:25,666",
+            "vi": "Tôi hối tiếc là đã không chụp một bức ảnh,"
+        },
+        {
+            "start": "00:00:25,666",
+            "end": "00:00:28,246",
+            "vi": "quay một đoạn video về nó."
+        },
+        {
+            "start": "00:00:29,066",
+            "end": "00:00:34,216",
+            "vi": "Nhưng tôi tự an ủi mình."
+        },
+        {
+            "start": "00:00:36,994",
+            "end": "00:00:37,594",
+            "vi": "又一定要停"
+        },
+        {
+            "start": "00:00:38,786",
+            "end": "00:00:42,926",
+            "vi": "Quá khứ đã qua và tương lai chưa đến."
+        },
+        {
+            "start": "00:00:43,966",
+            "end": "00:00:46,886",
+            "vi": "Vì vậy dù tôi hối tiếc đi chăng nữa."
+        },
+        {
+            "start": "00:00:50,446",
+            "end": "00:00:54,266",
+            "vi": "Có câu nói của Eustrohitch,"
+        },
+        {
+            "start": "00:00:54,266",
+            "end": "00:00:55,946",
+            "vi": "rằng hãy sống ở hiện tại."
+        },
+        {
+            "start": "00:00:58,006",
+            "end": "00:00:59,946",
+            "vi": "Không phải là điều này sai,"
+        },
+        {
+            "start": "00:00:59,946",
+            "end": "00:01:04,385",
+            "vi": "bởi vì chỉ có hiện tại là bạn có thể sống."
+        }
+    ]
+}

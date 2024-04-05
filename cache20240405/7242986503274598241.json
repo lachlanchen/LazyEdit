@@ -1,0 +1,26 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,780\",\n    \"end\": \"00:00:01,860\",\n    \"lang\": \"en\",\n    \"text\": \"Can we make a friend?\"\n  },\n  {\n    \"start\": \"00:00:03,320\",\n    \"end\": \"00:00:04,000\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness!\"\n  },\n  {\n    \"start\": \"00:00:07,200\",\n    \"end\": \"00:00:09,360\",\n    \"lang\": \"en\",\n    \"text\": \"It seems that you don't want to make a friend with me.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,780",
+            "end": "00:00:01,860",
+            "en": "Can we make a friend?",
+            "zh": "我们可以交个朋友吗？",
+            "ar": "هل يمكننا أن نكون صديق؟"
+        },
+        {
+            "start": "00:00:03,320",
+            "end": "00:00:04,000",
+            "en": "Oh my goodness!",
+            "zh": "哦，我的天哪！",
+            "ar": "يا له من أمر مدهش!"
+        },
+        {
+            "start": "00:00:07,200",
+            "end": "00:00:09,360",
+            "en": "It seems that you don't want to make a friend with me.",
+            "zh": "看来你不想和我交朋友。",
+            "ar": "يبدو أنك لا تريد أن تكون صديقي."
+        }
+    ]
+}

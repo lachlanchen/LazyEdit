@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,780\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:00,780\",\n    \"end\": \"00:00:10,400\",\n    \"lang\": \"en\",\n    \"text\": \"first we play the main melody.\"\n  },\n  {\n    \"start\": \"00:00:10,400\",\n    \"end\": \"00:00:12,520\",\n    \"lang\": \"en\",\n    \"text\": \"Then I turn down the pitch and ring an oath.\"\n  },\n  {\n    \"start\": \"00:00:12,520\",\n    \"end\": \"00:00:28,860\",\n    \"lang\": \"en\",\n    \"text\": \"We share one ear of coffee and drink another cup of coffee.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,780",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:00,780",
+            "end": "00:00:10,400",
+            "es": "primero tocamos la melodía principal.",
+            "fr": "d'abord nous jouons la mélodie principale.",
+            "uk": "спочатку граємо головну мелодію."
+        },
+        {
+            "start": "00:00:10,400",
+            "end": "00:00:12,520",
+            "es": "Luego bajo el tono y toco una promesa.",
+            "fr": "Ensuite, je baisse le ton et je fais un serment.",
+            "uk": "Потім я знижую тон і даю обіцянку."
+        },
+        {
+            "start": "00:00:12,520",
+            "end": "00:00:28,860",
+            "es": "Compartimos una oreja de café y bebemos otra taza de café.",
+            "fr": "Nous partageons une oreille de café et buvons une autre tasse de café.",
+            "uk": "Ми ділимося одним вухом кави і п'ємо ще одну чашку кави."
+        }
+    ]
+}

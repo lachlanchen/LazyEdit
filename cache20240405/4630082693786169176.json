@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,839\",\n    \"end\": \"00:00:03,460\",\n    \"lang\": \"en\",\n    \"text\": \"Our society has too many restrictions,\"\n  },\n  {\n    \"start\": \"00:00:03,460\",\n    \"end\": \"00:00:09,240\",\n    \"lang\": \"en\",\n    \"text\": \"so if you cannot really have some breakthrough creation,\"\n  },\n  {\n    \"start\": \"00:00:10,839\",\n    \"end\": \"00:00:15,060\",\n    \"lang\": \"en\",\n    \"text\": \"I suggest that just set some basic guidelines,\"\n  },\n  {\n    \"start\": \"00:00:15,060\",\n    \"end\": \"00:00:16,079\",\n    \"lang\": \"en\",\n    \"text\": \"basic principles,\"\n  },\n  {\n    \"start\": \"00:00:16,079\",\n    \"end\": \"00:00:19,280\",\n    \"lang\": \"en\",\n    \"text\": \"such as that you don't hurt other people,\"\n  },\n  {\n    \"start\": \"00:00:19,280\",\n    \"end\": \"00:00:20,800\",\n    \"lang\": \"en\",\n    \"text\": \"and then it's okay,\"\n  },\n  {\n    \"start\": \"00:00:20,800\",\n    \"end\": \"00:00:21,820\",\n    \"lang\": \"en\",\n    \"text\": \"do anything you want.\"\n  },\n  {\n    \"start\": \"00:00:21,820\",\n    \"end\": \"00:00:24,120\",\n    \"lang\": \"en\",\n    \"text\": \"Remove these taboos,\"\n  },\n  {\n    \"start\": \"00:00:24,120\",\n    \"end\": \"00:00:26,520\",\n    \"lang\": \"en\",\n    \"text\": \"remove these moral violence.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,839",
+            "end": "00:00:03,460",
+            "ko": "우리 사회는 너무 많은 제한이 있어요,"
+        },
+        {
+            "start": "00:00:03,460",
+            "end": "00:00:09,240",
+            "ko": "그래서 정말 혁신적인 창조를 할 수 없다면,"
+        },
+        {
+            "start": "00:00:10,839",
+            "end": "00:00:15,060",
+            "ko": "기본적인 지침을 설정하는 것을 제안해요,"
+        },
+        {
+            "start": "00:00:15,060",
+            "end": "00:00:16,079",
+            "ko": "기본 원칙들,"
+        },
+        {
+            "start": "00:00:16,079",
+            "end": "00:00:19,280",
+            "ko": "예를 들어 다른 사람을 해치지 않는 것과 같은,"
+        },
+        {
+            "start": "00:00:19,280",
+            "end": "00:00:20,800",
+            "ko": "그러면 괜찮아요,"
+        },
+        {
+            "start": "00:00:20,800",
+            "end": "00:00:21,820",
+            "ko": "원하는 것 무엇이든 하세요."
+        },
+        {
+            "start": "00:00:21,820",
+            "end": "00:00:24,120",
+            "ko": "이 금기들을 없애세요,"
+        },
+        {
+            "start": "00:00:24,120",
+            "end": "00:00:26,520",
+            "ko": "이 도덕적 폭력을 제거하세요."
+        }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,400\",\n    \"ja\": \"<影>[]の<線>[]を<走>[]りました\"\n  },\n  {\n    \"start\": \"00:00:02,146\",\n    \"end\": \"00:00:03,206\",\n    \"ja\": \"これは<私>[]が<買>[]ったものです、\"\n  },\n  {\n    \"start\": \"00:00:03,206\",\n    \"end\": \"00:00:03,826\",\n    \"ja\": \"<バナナ>[]、\"\n  },\n  {\n    \"start\": \"00:00:03,826\",\n    \"end\": \"00:00:04,706\",\n    \"ja\": \"<栗>[]、\"\n  },\n  {\n    \"start\": \"00:00:04,706\",\n    \"end\": \"00:00:05,726\",\n    \"ja\": \"<ブルーベリー>[]、\"\n  },\n  {\n    \"start\": \"00:00:05,726\",\n    \"end\": \"00:00:07,266\",\n    \"ja\": \"<豆>[]<ジュース>[]、\"\n  },\n  {\n    \"start\": \"00:00:07,266\",\n    \"end\": \"00:00:12,166\",\n    \"ja\": \"そして<様>[]々な<種類>[]の<野菜>[]。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,400",
+            "ja": "<影>[かげ]の<線>[せん]を<走>[はし]りました"
+        },
+        {
+            "start": "00:00:02,146",
+            "end": "00:00:03,206",
+            "ja": "これは<私>[わたし]が<買>[か]ったものです、"
+        },
+        {
+            "start": "00:00:03,206",
+            "end": "00:00:03,826",
+            "ja": "<バナナ>、"
+        },
+        {
+            "start": "00:00:03,826",
+            "end": "00:00:04,706",
+            "ja": "<栗>[くり]、"
+        },
+        {
+            "start": "00:00:04,706",
+            "end": "00:00:05,726",
+            "ja": "<ブルーベリー>、"
+        },
+        {
+            "start": "00:00:05,726",
+            "end": "00:00:07,266",
+            "ja": "<豆>[まめ]<ジュース>、"
+        },
+        {
+            "start": "00:00:07,266",
+            "end": "00:00:12,166",
+            "ja": "そして<様々>[さまざま]な<種類>[しゅるい]の<野菜>[やさい]。"
+        }
+    ]
+}

@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,240\",\n    \"lang\": \"en\",\n    \"text\": \"Want my potato?\"\n  },\n  {\n    \"start\": \"00:00:05,730\",\n    \"end\": \"00:00:06,270\",\n    \"lang\": \"ja\",\n    \"text\": \"クッカーだ\"\n  },\n  {\n    \"start\": \"00:00:07,682\",\n    \"end\": \"00:00:11,122\",\n    \"lang\": \"en\",\n    \"text\": \"Except this two piece is okay.\"\n  },\n  {\n    \"start\": \"00:00:14,262\",\n    \"end\": \"00:00:17,562\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if this is eatable.\"\n  },\n  {\n    \"start\": \"00:00:22,850\",\n    \"end\": \"00:00:23,530\",\n    \"lang\": \"ja\",\n    \"text\": \"おまえっぽだね、\"\n  },\n  {\n    \"start\": \"00:00:23,530\",\n    \"end\": \"00:00:24,590\",\n    \"lang\": \"ja\",\n    \"text\": \"そう\"\n  },\n  {\n    \"start\": \"00:00:29,666\",\n    \"end\": \"00:00:33,106\",\n    \"lang\": \"en\",\n    \"text\": \"and we also have prawns\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,240",
+            "es": "¿Quieres mi patata?",
+            "fr": "Veux-tu ma pomme de terre?",
+            "uk": "Хочеш мою картоплю?"
+        },
+        {
+            "start": "00:00:05,730",
+            "end": "00:00:06,270",
+            "es": "Es un cocinero",
+            "fr": "C'est un cuisinier",
+            "uk": "Це кухар"
+        },
+        {
+            "start": "00:00:07,682",
+            "end": "00:00:11,122",
+            "es": "Excepto que este par está bien.",
+            "fr": "Sauf que cette paire est correcte.",
+            "uk": "За винятком того, що ця пара в порядку."
+        },
+        {
+            "start": "00:00:14,262",
+            "end": "00:00:17,562",
+            "es": "No sé si esto se puede comer.",
+            "fr": "Je ne sais pas si c'est comestible.",
+            "uk": "Не знаю, чи це можна їсти."
+        },
+        {
+            "start": "00:00:22,850",
+            "end": "00:00:23,530",
+            "es": "Eres como tú,",
+            "fr": "Tu es comme toi,",
+            "uk": "Ти схожий на тебе,"
+        },
+        {
+            "start": "00:00:23,530",
+            "end": "00:00:24,590",
+            "es": "así es",
+            "fr": "c'est ça",
+            "uk": "так"
+        },
+        {
+            "start": "00:00:29,666",
+            "end": "00:00:33,106",
+            "es": "y también tenemos camarones",
+            "fr": "et nous avons aussi des crevettes",
+            "uk": "і у нас також є креветки"
+        }
+    ]
+}

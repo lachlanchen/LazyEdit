@@ -1,0 +1,25 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,040\",\n    \"ja\": \"12<キログラム>[]の<ハスキー>[]\"\n  },\n  {\n    \"start\": \"00:00:02,017\",\n    \"end\": \"00:00:02,898\",\n    \"ja\": \"<彼女>[]はとても<可愛>[]いです。\"\n  },\n  {\n    \"start\": \"00:00:08,058\",\n    \"end\": \"00:00:09,038\",\n    \"ja\": \"たくさんの<犬>[]がいます。\"\n  },\n  {\n    \"start\": \"00:00:09,318\",\n    \"end\": \"00:00:10,938\",\n    \"ja\": \"<犬>[]の<公園>[]に<戻>[]ります。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,040",
+            "ja": "12キログラムのハスキー"
+        },
+        {
+            "start": "00:00:02,017",
+            "end": "00:00:02,898",
+            "ja": "彼女[かのじょ]はとても可愛[かわい]いです。"
+        },
+        {
+            "start": "00:00:08,058",
+            "end": "00:00:09,038",
+            "ja": "たくさんの犬[いぬ]がいます。"
+        },
+        {
+            "start": "00:00:09,318",
+            "end": "00:00:10,938",
+            "ja": "犬[いぬ]の公園[こうえん]に戻[もど]ります。"
+        }
+    ]
+}

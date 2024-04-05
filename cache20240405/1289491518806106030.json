@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,660\",\n    \"lang\": \"en\",\n    \"text\": \"I used to use knowledge as an escape from reality.\"\n  },\n  {\n    \"start\": \"00:00:05,140\",\n    \"end\": \"00:00:06,900\",\n    \"lang\": \"en\",\n    \"text\": \"The reality that I'm nobody,\"\n  },\n  {\n    \"start\": \"00:00:06,900\",\n    \"end\": \"00:00:07,780\",\n    \"lang\": \"en\",\n    \"text\": \"I'm nothing.\"\n  },\n  {\n    \"start\": \"00:00:09,940\",\n    \"end\": \"00:00:13,880\",\n    \"lang\": \"en\",\n    \"text\": \"But I finally accepted myself to be nothing,\"\n  },\n  {\n    \"start\": \"00:00:13,880\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"to be nobody.\"\n  },\n  {\n    \"start\": \"00:00:17,320\",\n    \"end\": \"00:00:18,660\",\n    \"lang\": \"en\",\n    \"text\": \"And the feeling is great.\"\n  },\n  {\n    \"start\": \"00:00:20,260\",\n    \"end\": \"00:00:23,980\",\n    \"lang\": \"en\",\n    \"text\": \"I don't need to be successful.\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:32,700\",\n    \"lang\": \"en\",\n    \"text\": \"To have some achievement.\"\n  },\n  {\n    \"start\": \"00:00:39,200\",\n    \"end\": \"00:00:40,280\",\n    \"lang\": \"en\",\n    \"text\": \"Before,\"\n  },\n  {\n    \"start\": \"00:00:40,280\",\n    \"end\": \"00:00:43,280\",\n    \"lang\": \"en\",\n    \"text\": \"I always learned new stuff.\"\n  },\n  {\n    \"start\": \"00:00:44,220\",\n    \"end\": \"00:00:48,940\",\n    \"lang\": \"en\",\n    \"text\": \"I think I can escape from the ignorance.\"\n  },\n  {\n    \"start\": \"00:00:50,160\",\n    \"end\": \"00:00:51,460\",\n    \"lang\": \"en\",\n    \"text\": \"To build,\"\n  },\n  {\n    \"start\": \"00:00:51,460\",\n    \"end\": \"00:00:55,140\",\n    \"lang\": \"en\",\n    \"text\": \"to live this imaginary world.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,660",
+            "ja": "以前、私は現実から逃れるために知識を使っていました。"
+        },
+        {
+            "start": "00:00:05,140",
+            "end": "00:00:06,900",
+            "ja": "その現実とは、私が誰でもないということです、"
+        },
+        {
+            "start": "00:00:06,900",
+            "end": "00:00:07,780",
+            "ja": "何もないということです。"
+        },
+        {
+            "start": "00:00:09,940",
+            "end": "00:00:13,880",
+            "ja": "しかし、ついに私は自分自身を何もないもの、誰でもないものとして受け入れました、"
+        },
+        {
+            "start": "00:00:13,880",
+            "end": "00:00:15,380",
+            "ja": "誰でもなく、何もないと。"
+        },
+        {
+            "start": "00:00:17,320",
+            "end": "00:00:18,660",
+            "ja": "そして、その感覚は素晴らしいです。"
+        },
+        {
+            "start": "00:00:20,260",
+            "end": "00:00:23,980",
+            "ja": "成功する必要はありません。"
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:32,700",
+            "ja": "何かを成し遂げる必要はありません。"
+        },
+        {
+            "start": "00:00:39,200",
+            "end": "00:00:40,280",
+            "ja": "以前、"
+        },
+        {
+            "start": "00:00:40,280",
+            "end": "00:00:43,280",
+            "ja": "いつも新しいことを学んでいました。"
+        },
+        {
+            "start": "00:00:44,220",
+            "end": "00:00:48,940",
+            "ja": "無知から逃れられると思っていました。"
+        },
+        {
+            "start": "00:00:50,160",
+            "end": "00:00:51,460",
+            "ja": "構築するために、"
+        },
+        {
+            "start": "00:00:51,460",
+            "end": "00:00:55,140",
+            "ja": "この想像上の世界で生きるために。"
+        }
+    ]
+}

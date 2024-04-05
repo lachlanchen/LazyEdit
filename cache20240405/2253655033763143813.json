@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,980\",\n    \"lang\": \"en\",\n    \"text\": \"There is an inevitable discrimination chain.\"\n  },\n  {\n    \"start\": \"00:00:06,900\",\n    \"end\": \"00:00:17,180\",\n    \"lang\": \"en\",\n    \"text\": \"Like the French think English pronunciation is vascular.\"\n  },\n  {\n    \"start\": \"00:00:17,580\",\n    \"end\": \"00:00:22,380\",\n    \"lang\": \"en\",\n    \"text\": \"And the British think American accent is vascular.\"\n  },\n  {\n    \"start\": \"00:00:23,620\",\n    \"end\": \"00:00:24,620\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:24,620\",\n    \"end\": \"00:00:25,940\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:00:25,940\",\n    \"end\": \"00:00:26,860\",\n    \"lang\": \"en\",\n    \"text\": \"it's not vascular,\"\n  },\n  {\n    \"start\": \"00:00:26,860\",\n    \"end\": \"00:00:27,620\",\n    \"lang\": \"en\",\n    \"text\": \"it's wasp-cule.\"\n  },\n  {\n    \"start\": \"00:00:30,020\",\n    \"end\": \"00:00:31,020\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway...\"\n  },\n  {\n    \"start\": \"00:00:34,320\",\n    \"end\": \"00:00:34,820\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway...\"\n  },\n  {\n    \"start\": \"00:00:36,960\",\n    \"end\": \"00:00:37,960\",\n    \"lang\": \"en\",\n    \"text\": \"So...\"\n  },\n  {\n    \"start\": \"00:00:38,620\",\n    \"end\": \"00:00:42,700\",\n    \"lang\": \"en\",\n    \"text\": \"I think you cannot avoid this discrimination from others.\"\n  },\n  {\n    \"start\": \"00:00:44,100\",\n    \"end\": \"00:00:50,820\",\n    \"lang\": \"en\",\n    \"text\": \"We all have the right to discriminate others and to be discriminated.\"\n  },\n  {\n    \"start\": \"00:00:50,820\",\n    \"end\": \"00:00:58,660\",\n    \"lang\": \"en\",\n    \"text\": \"I think the best part of the US is that you can discriminate,\"\n  },\n  {\n    \"start\": \"00:00:58,660\",\n    \"end\": \"00:01:07,560\",\n    \"lang\": \"en\",\n    \"text\": \"but you can never harm my benefits.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,980",
+            "ja": "避けられない差別の連鎖があります。"
+        },
+        {
+            "start": "00:00:06,900",
+            "end": "00:00:17,180",
+            "ja": "フランス人は英語の発音を上流階級的だと思っています。"
+        },
+        {
+            "start": "00:00:17,580",
+            "end": "00:00:22,380",
+            "ja": "そして、イギリス人はアメリカのアクセントを上流階級的だと思っています。"
+        },
+        {
+            "start": "00:00:23,620",
+            "end": "00:00:24,620",
+            "ja": "そして…"
+        },
+        {
+            "start": "00:00:24,620",
+            "end": "00:00:25,940",
+            "ja": "すみません、"
+        },
+        {
+            "start": "00:00:25,940",
+            "end": "00:00:26,860",
+            "ja": "「血管的」ではなく、"
+        },
+        {
+            "start": "00:00:26,860",
+            "end": "00:00:27,620",
+            "ja": "「ワスプ風」です。"
+        },
+        {
+            "start": "00:00:30,020",
+            "end": "00:00:31,020",
+            "ja": "とにかく…"
+        },
+        {
+            "start": "00:00:34,320",
+            "end": "00:00:34,820",
+            "ja": "とにかく…"
+        },
+        {
+            "start": "00:00:36,960",
+            "end": "00:00:37,960",
+            "ja": "そう…"
+        },
+        {
+            "start": "00:00:38,620",
+            "end": "00:00:42,700",
+            "ja": "他人からの差別を避けることはできないと思います。"
+        },
+        {
+            "start": "00:00:44,100",
+            "end": "00:00:50,820",
+            "ja": "私たちは皆、他人を差別する権利と差別される権利を持っています。"
+        },
+        {
+            "start": "00:00:50,820",
+            "end": "00:00:58,660",
+            "ja": "アメリカの最良の点は、差別できることですが、"
+        },
+        {
+            "start": "00:00:58,660",
+            "end": "00:01:07,560",
+            "ja": "しかし、私の利益を決して害することはできません。"
+        }
+    ]
+}

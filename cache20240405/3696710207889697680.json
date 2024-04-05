@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,420\",\n    \"lang\": \"ja\",\n    \"text\": \"私の妹がこのケーキを作りました。\"\n  },\n  {\n    \"start\": \"00:00:07,010\",\n    \"end\": \"00:00:09,190\",\n    \"lang\": \"en\",\n    \"text\": \"So this kick is awesome.\"\n  },\n  {\n    \"start\": \"00:00:10,274\",\n    \"end\": \"00:00:10,894\",\n    \"lang\": \"en\",\n    \"text\": \"It's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:11,634\",\n    \"end\": \"00:00:12,894\",\n    \"lang\": \"en\",\n    \"text\": \"And next is...\"\n  },\n  {\n    \"start\": \"00:00:13,858\",\n    \"end\": \"00:00:16,538\",\n    \"lang\": \"en\",\n    \"text\": \"It seems it's a white strawberry,\"\n  },\n  {\n    \"start\": \"00:00:16,538\",\n    \"end\": \"00:00:18,478\",\n    \"lang\": \"en\",\n    \"text\": \"but in my hometown,\"\n  },\n  {\n    \"start\": \"00:00:18,478\",\n    \"end\": \"00:00:23,178\",\n    \"lang\": \"en\",\n    \"text\": \"we have this local species.\"\n  },\n  {\n    \"start\": \"00:00:26,588\",\n    \"end\": \"00:00:29,178\",\n    \"lang\": \"en\",\n    \"text\": \"It is similar to strawberry,\"\n  },\n  {\n    \"start\": \"00:00:29,178\",\n    \"end\": \"00:00:30,438\",\n    \"lang\": \"en\",\n    \"text\": \"but it's not strawberry.\"\n  },\n  {\n    \"start\": \"00:00:30,718\",\n    \"end\": \"00:00:33,078\",\n    \"lang\": \"en\",\n    \"text\": \"And it also tastes gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:33,818\",\n    \"end\": \"00:00:36,838\",\n    \"lang\": \"en\",\n    \"text\": \"It's the best taste I've ever had.\"\n  },\n  {\n    \"start\": \"00:00:36,866\",\n    \"end\": \"00:00:38,546\",\n    \"lang\": \"zh\",\n    \"text\": \"我記憶中有\"\n  },\n  {\n    \"start\": \"00:00:41,314\",\n    \"end\": \"00:00:44,514\",\n    \"lang\": \"en\",\n    \"text\": \"This work is great.\"\n  },\n  {\n    \"start\": \"00:00:45,394\",\n    \"end\": \"00:00:48,234\",\n    \"lang\": \"en\",\n    \"text\": \"And I have another sister,\"\n  },\n  {\n    \"start\": \"00:00:48,234\",\n    \"end\": \"00:00:48,854\",\n    \"lang\": \"en\",\n    \"text\": \"little sister.\"\n  },\n  {\n    \"start\": \"00:00:50,193\",\n    \"end\": \"00:00:54,274\",\n    \"lang\": \"en\",\n    \"text\": \"She also can make this great handcraft.\"\n  },\n  {\n    \"start\": \"00:00:55,254\",\n    \"end\": \"00:01:00,054\",\n    \"lang\": \"en\",\n    \"text\": \"And I have the best little sister ever.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,420",
+            "ko": "제 여동생이 이 케이크를 만들었어요."
+        },
+        {
+            "start": "00:00:07,010",
+            "end": "00:00:09,190",
+            "ko": "이 케이크 정말 멋져요."
+        },
+        {
+            "start": "00:00:10,274",
+            "end": "00:00:10,894",
+            "ko": "정말 화려해요."
+        },
+        {
+            "start": "00:00:11,634",
+            "end": "00:00:12,894",
+            "ko": "그리고 다음은..."
+        },
+        {
+            "start": "00:00:13,858",
+            "end": "00:00:16,538",
+            "ko": "하얀 딸기 같은데,"
+        },
+        {
+            "start": "00:00:16,538",
+            "end": "00:00:18,478",
+            "ko": "제 고향에는,"
+        },
+        {
+            "start": "00:00:18,478",
+            "end": "00:00:23,178",
+            "ko": "이 토종 종류가 있어요."
+        },
+        {
+            "start": "00:00:26,588",
+            "end": "00:00:29,178",
+            "ko": "딸기랑 비슷하지만,"
+        },
+        {
+            "start": "00:00:29,178",
+            "end": "00:00:30,438",
+            "ko": "딸기는 아니에요."
+        },
+        {
+            "start": "00:00:30,718",
+            "end": "00:00:33,078",
+            "ko": "그리고 맛도 환상적이에요."
+        },
+        {
+            "start": "00:00:33,818",
+            "end": "00:00:36,838",
+            "ko": "지금까지 먹어본 것 중 최고의 맛이에요."
+        },
+        {
+            "start": "00:00:36,866",
+            "end": "00:00:38,546",
+            "ko": "제 기억 속에는"
+        },
+        {
+            "start": "00:00:41,314",
+            "end": "00:00:44,514",
+            "ko": "이 작품 멋져요."
+        },
+        {
+            "start": "00:00:45,394",
+            "end": "00:00:48,234",
+            "ko": "그리고 저에게는 또 다른 여동생이 있어요,"
+        },
+        {
+            "start": "00:00:48,234",
+            "end": "00:00:48,854",
+            "ko": "막내 여동생."
+        },
+        {
+            "start": "00:00:50,193",
+            "end": "00:00:54,274",
+            "ko": "그녀도 이런 훌륭한 수공예를 만들 수 있어요."
+        },
+        {
+            "start": "00:00:55,254",
+            "end": "00:01:00,054",
+            "ko": "그리고 저는 세상에서 가장 멋진 막내 여동생을 가지고 있어요."
+        }
+    ]
+}

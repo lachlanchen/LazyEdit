@@ -1,0 +1,42 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,399\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"ja\",\n    \"text\": \"私はクスニット\"\n  },\n  {\n    \"start\": \"00:00:03,874\",\n    \"end\": \"00:00:06,994\",\n    \"lang\": \"ja\",\n    \"text\": \"果物を買っています\"\n  },\n  {\n    \"start\": \"00:00:08,002\",\n    \"end\": \"00:00:10,042\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot take this disease anymore.\"\n  },\n  {\n    \"start\": \"00:00:10,822\",\n    \"end\": \"00:00:14,642\",\n    \"lang\": \"en\",\n    \"text\": \"I have to buy some drugs to help me.\"\n  },\n  {\n    \"start\": \"00:00:15,762\",\n    \"end\": \"00:00:19,062\",\n    \"lang\": \"en\",\n    \"text\": \"My own immune system cannot handle it anymore.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,399",
+            "end": "00:00:03,060",
+            "en": "I am Kusunoki",
+            "zh": "我是楠木",
+            "ar": "أنا كوسونوكي",
+            "ja": "私はクスニット"
+        },
+        {
+            "start": "00:00:03,874",
+            "end": "00:00:06,994",
+            "en": "I am buying fruits",
+            "zh": "我在买水果",
+            "ar": "أنا اشتري الفواكه",
+            "ja": "果物を買っています"
+        },
+        {
+            "start": "00:00:08,002",
+            "end": "00:00:10,042",
+            "en": "I cannot take this disease anymore.",
+            "zh": "我再也受不了这个病了。",
+            "ar": "لا أستطيع تحمل هذا المرض بعد الآن."
+        },
+        {
+            "start": "00:00:10,822",
+            "end": "00:00:14,642",
+            "en": "I have to buy some drugs to help me.",
+            "zh": "我得买些药来帮助我。",
+            "ar": "يجب علي شراء بعض الأدوية لمساعدتي."
+        },
+        {
+            "start": "00:00:15,762",
+            "end": "00:00:19,062",
+            "en": "My own immune system cannot handle it anymore.",
+            "zh": "我的免疫系统再也无法处理了。",
+            "ar": "جهاز المناعة الخاص بي لا يمكنه التعامل معه بعد الآن."
+        }
+    ]
+}

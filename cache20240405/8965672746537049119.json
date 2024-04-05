@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,920\",\n    \"lang\": \"zh\",\n    \"text\": \"这个冰滴犬可以\"\n  },\n  {\n    \"start\": \"00:00:01,920\",\n    \"end\": \"00:00:03,400\",\n    \"lang\": \"zh\",\n    \"text\": \"有冰滴犬的贵宾犬\"\n  },\n  {\n    \"start\": \"00:00:03,400\",\n    \"end\": \"00:00:05,480\",\n    \"lang\": \"zh\",\n    \"text\": \"说了一天他冰滴犬了\"\n  },\n  {\n    \"start\": \"00:00:05,480\",\n    \"end\": \"00:00:07,220\",\n    \"lang\": \"zh\",\n    \"text\": \"OMG 那个好不加危险\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,920",
+            "en": "This ice-drop dog can",
+            "zh": "这个冰滴犬可以",
+            "ar": "هذا الكلب قطرة الثلج يمكن"
+        },
+        {
+            "start": "00:00:01,920",
+            "end": "00:00:03,400",
+            "en": "have an ice-drop poodle",
+            "zh": "有冰滴犬的贵宾犬",
+            "ar": "لديه بودل نقطة الثلج"
+        },
+        {
+            "start": "00:00:03,400",
+            "end": "00:00:05,480",
+            "en": "He talked about his ice-drop dog all day",
+            "zh": "说了一天他冰滴犬了",
+            "ar": "تحدث عن كلبه نقطة الثلج طوال اليوم"
+        },
+        {
+            "start": "00:00:05,480",
+            "end": "00:00:07,220",
+            "en": "OMG, that's so dangerously cute",
+            "zh": "OMG 那个好不加危险",
+            "ar": "يا إلهي، هذا لطيف بشكل خطير"
+        }
+    ]
+}

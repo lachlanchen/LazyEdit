@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,700\",\n    \"lang\": \"zh\",\n    \"text\": \"好有力喔\"\n  },\n  {\n    \"start\": \"00:00:01,122\",\n    \"end\": \"00:00:02,422\",\n    \"lang\": \"en\",\n    \"text\": \"남피worthy\"\n  },\n  {\n    \"start\": \"00:00:03,650\",\n    \"end\": \"00:00:04,270\",\n    \"lang\": \"zh\",\n    \"text\": \"看我手機\"\n  },\n  {\n    \"start\": \"00:00:06,242\",\n    \"end\": \"00:00:10,442\",\n    \"lang\": \"en\",\n    \"text\": \"influence if you're never happy you're\"\n  },\n  {\n    \"start\": \"00:00:10,466\",\n    \"end\": \"00:00:11,226\",\n    \"lang\": \"zh\",\n    \"text\": \"而且沒什麼積聚霜\"\n  },\n  {\n    \"start\": \"00:00:12,770\",\n    \"end\": \"00:00:15,370\",\n    \"lang\": \"en\",\n    \"text\": \"can also help and influence others.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,700",
+            "vi": "Rất mạnh mẽ nhỉ"
+        },
+        {
+            "start": "00:00:01,122",
+            "end": "00:00:02,422",
+            "vi": "xứng đáng"
+        },
+        {
+            "start": "00:00:03,650",
+            "end": "00:00:04,270",
+            "vi": "Nhìn điện thoại của tôi"
+        },
+        {
+            "start": "00:00:06,242",
+            "end": "00:00:10,442",
+            "vi": "nếu bạn không bao giờ hạnh phúc bạn sẽ"
+        },
+        {
+            "start": "00:00:10,466",
+            "end": "00:00:11,226",
+            "vi": "và cũng không có gì tích lũy được"
+        },
+        {
+            "start": "00:00:12,770",
+            "end": "00:00:15,370",
+            "vi": "cũng có thể giúp và ảnh hưởng đến người khác."
+        }
+    ]
+}

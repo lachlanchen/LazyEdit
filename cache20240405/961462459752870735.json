@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,440\",\n    \"lang\": \"en\",\n    \"text\": \"It has a new word,\"\n  },\n  {\n    \"start\": \"00:00:01,440\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"en\",\n    \"text\": \"veto.\"\n  },\n  {\n    \"start\": \"00:00:03,480\",\n    \"end\": \"00:00:06,820\",\n    \"lang\": \"en\",\n    \"text\": \"I believe the meaning is similar to idiot,\"\n  },\n  {\n    \"start\": \"00:00:06,820\",\n    \"end\": \"00:00:11,420\",\n    \"lang\": \"en\",\n    \"text\": \"but it specifically refers to how to use a\"\n  },\n  {\n    \"start\": \"00:00:11,458\",\n    \"end\": \"00:00:12,058\",\n    \"lang\": \"ar\",\n    \"text\": \"زوجي\"\n  },\n  {\n    \"start\": \"00:00:14,402\",\n    \"end\": \"00:00:21,082\",\n    \"lang\": \"en\",\n    \"text\": \"know his wife is between him and then annoyed.\"\n  },\n  {\n    \"start\": \"00:00:22,142\",\n    \"end\": \"00:00:22,262\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:22,262\",\n    \"end\": \"00:00:24,162\",\n    \"lang\": \"en\",\n    \"text\": \"totally annoyed.\"\n  },\n  {\n    \"start\": \"00:00:24,194\",\n    \"end\": \"00:00:24,974\",\n    \"lang\": \"zh\",\n    \"text\": \"空间展示了\"\n  },\n  {\n    \"start\": \"00:00:25,154\",\n    \"end\": \"00:00:25,474\",\n    \"lang\": \"en\",\n    \"text\": \"Foo good.\"\n  },\n  {\n    \"start\": \"00:00:25,954\",\n    \"end\": \"00:00:27,434\",\n    \"lang\": \"zh\",\n    \"text\": \"就是他老婆出軌了\"\n  },\n  {\n    \"start\": \"00:00:27,854\",\n    \"end\": \"00:00:29,254\",\n    \"lang\": \"zh\",\n    \"text\": \"但是這個丈夫他依然\"\n  },\n  {\n    \"start\": \"00:00:30,193\",\n    \"end\": \"00:00:31,394\",\n    \"lang\": \"zh\",\n    \"text\": \"容許這件事情\"\n  },\n  {\n    \"start\": \"00:00:32,454\",\n    \"end\": \"00:00:33,954\",\n    \"lang\": \"zh\",\n    \"text\": \"這就稱之為傻瓜\"\n  },\n  {\n    \"start\": \"00:00:34,978\",\n    \"end\": \"00:00:35,318\",\n    \"lang\": \"en\",\n    \"text\": \"Vita.\"\n  },\n  {\n    \"start\": \"00:00:36,578\",\n    \"end\": \"00:00:38,078\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a Vita.\"\n  },\n  {\n    \"start\": \"00:00:38,298\",\n    \"end\": \"00:00:38,658\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you.\"\n  },\n  {\n    \"start\": \"00:00:38,690\",\n    \"end\": \"00:00:39,030\",\n    \"lang\": \"zh\",\n    \"text\": \"空间\"\n  },\n  {\n    \"start\": \"00:00:39,470\",\n    \"end\": \"00:00:41,390\",\n    \"lang\": \"zh\",\n    \"text\": \"空间这个我怎么突然想不起来了\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,440",
+            "es": "Tiene una nueva palabra,",
+            "fr": "Il a un nouveau mot,",
+            "uk": "Це нове слово,"
+        },
+        {
+            "start": "00:00:01,440",
+            "end": "00:00:02,240",
+            "es": "veto.",
+            "fr": "véto.",
+            "uk": "вето."
+        },
+        {
+            "start": "00:00:03,480",
+            "end": "00:00:06,820",
+            "es": "Creo que el significado es similar a idiota,",
+            "fr": "Je crois que le sens est similaire à idiot,",
+            "uk": "Я вважаю, що значення схоже на ідіота,"
+        },
+        {
+            "start": "00:00:06,820",
+            "end": "00:00:11,420",
+            "es": "pero específicamente se refiere a cómo usar un",
+            "fr": "mais cela se réfère spécifiquement à comment utiliser un",
+            "uk": "але це конкретно стосується того, як використовувати"
+        },
+        {
+            "start": "00:00:11,458",
+            "end": "00:00:12,058",
+            "es": "pareja",
+            "fr": "partenaire",
+            "uk": "партнер"
+        },
+        {
+            "start": "00:00:14,402",
+            "end": "00:00:21,082",
+            "es": "sabe que su esposa está entre él y luego molesta.",
+            "fr": "sait que sa femme est entre lui et puis agacée.",
+            "uk": "знає, що його дружина між ним а потім здратована."
+        },
+        {
+            "start": "00:00:22,142",
+            "end": "00:00:22,262",
+            "es": "Así que,",
+            "fr": "Donc,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:22,262",
+            "end": "00:00:24,162",
+            "es": "totalmente molesto.",
+            "fr": "totalement agacé.",
+            "uk": "зовсім здратований."
+        },
+        {
+            "start": "00:00:24,194",
+            "end": "00:00:24,974",
+            "es": "El espacio muestra",
+            "fr": "L’espace montre",
+            "uk": "Простір показує"
+        },
+        {
+            "start": "00:00:25,154",
+            "end": "00:00:25,474",
+            "es": "Fomentar el bien.",
+            "fr": "Favoriser le bien.",
+            "uk": "Заохочувати добро."
+        },
+        {
+            "start": "00:00:25,954",
+            "end": "00:00:27,434",
+            "es": "Eso es, su esposa le fue infiel",
+            "fr": "C'est-à-dire, sa femme l'a trompé",
+            "uk": "Це, його дружина його зрадила"
+        },
+        {
+            "start": "00:00:27,854",
+            "end": "00:00:29,254",
+            "es": "pero este esposo todavía",
+            "fr": "mais ce mari toujours",
+            "uk": "але цей чоловік все ще"
+        },
+        {
+            "start": "00:00:30,193",
+            "end": "00:00:31,394",
+            "es": "permite este asunto",
+            "fr": "permet cette affaire",
+            "uk": "дозволяє цю справу"
+        },
+        {
+            "start": "00:00:32,454",
+            "end": "00:00:33,954",
+            "es": "a esto se le llama tonto",
+            "fr": "cela s'appelle un fou",
+            "uk": "це називається дурник"
+        },
+        {
+            "start": "00:00:34,978",
+            "end": "00:00:35,318",
+            "es": "Vida.",
+            "fr": "Vie.",
+            "uk": "Життя."
+        },
+        {
+            "start": "00:00:36,578",
+            "end": "00:00:38,078",
+            "es": "Así que esto es una Vita.",
+            "fr": "Donc, ceci est une Vita.",
+            "uk": "Отже, це Vita."
+        },
+        {
+            "start": "00:00:38,298",
+            "end": "00:00:38,658",
+            "es": "Gracias.",
+            "fr": "Merci.",
+            "uk": "Дякую."
+        },
+        {
+            "start": "00:00:38,690",
+            "end": "00:00:39,030",
+            "es": "Espacio",
+            "fr": "Espace",
+            "uk": "Простір"
+        },
+        {
+            "start": "00:00:39,470",
+            "end": "00:00:41,390",
+            "es": "Espacio, ¿por qué de repente no puedo recordarlo?",
+            "fr": "Espace, pourquoi tout d'un coup ne puis-je pas me rappeler?",
+            "uk": "Простір, чому раптом не можу згадати?"
+        }
+    ]
+}

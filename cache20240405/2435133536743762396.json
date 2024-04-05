@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,440\",\n    \"lang\": \"en\",\n    \"text\": \"It has a new word,\"\n  },\n  {\n    \"start\": \"00:00:01,440\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"en\",\n    \"text\": \"veto.\"\n  },\n  {\n    \"start\": \"00:00:03,480\",\n    \"end\": \"00:00:06,820\",\n    \"lang\": \"en\",\n    \"text\": \"I believe the meaning is similar to idiot,\"\n  },\n  {\n    \"start\": \"00:00:06,820\",\n    \"end\": \"00:00:11,420\",\n    \"lang\": \"en\",\n    \"text\": \"but it specifically refers to how to use a\"\n  },\n  {\n    \"start\": \"00:00:11,458\",\n    \"end\": \"00:00:12,058\",\n    \"lang\": \"ar\",\n    \"text\": \"زوجي\"\n  },\n  {\n    \"start\": \"00:00:14,402\",\n    \"end\": \"00:00:21,082\",\n    \"lang\": \"en\",\n    \"text\": \"know his wife is between him and then annoyed.\"\n  },\n  {\n    \"start\": \"00:00:22,142\",\n    \"end\": \"00:00:22,262\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:22,262\",\n    \"end\": \"00:00:24,162\",\n    \"lang\": \"en\",\n    \"text\": \"totally annoyed.\"\n  },\n  {\n    \"start\": \"00:00:24,194\",\n    \"end\": \"00:00:24,974\",\n    \"lang\": \"zh\",\n    \"text\": \"空间展示了\"\n  },\n  {\n    \"start\": \"00:00:25,154\",\n    \"end\": \"00:00:25,474\",\n    \"lang\": \"en\",\n    \"text\": \"Foo good.\"\n  },\n  {\n    \"start\": \"00:00:25,954\",\n    \"end\": \"00:00:27,434\",\n    \"lang\": \"zh\",\n    \"text\": \"就是他老婆出軌了\"\n  },\n  {\n    \"start\": \"00:00:27,854\",\n    \"end\": \"00:00:29,254\",\n    \"lang\": \"zh\",\n    \"text\": \"但是這個丈夫他依然\"\n  },\n  {\n    \"start\": \"00:00:30,193\",\n    \"end\": \"00:00:31,394\",\n    \"lang\": \"zh\",\n    \"text\": \"容許這件事情\"\n  },\n  {\n    \"start\": \"00:00:32,454\",\n    \"end\": \"00:00:33,954\",\n    \"lang\": \"zh\",\n    \"text\": \"這就稱之為傻瓜\"\n  },\n  {\n    \"start\": \"00:00:34,978\",\n    \"end\": \"00:00:35,318\",\n    \"lang\": \"en\",\n    \"text\": \"Vita.\"\n  },\n  {\n    \"start\": \"00:00:36,578\",\n    \"end\": \"00:00:38,078\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a Vita.\"\n  },\n  {\n    \"start\": \"00:00:38,298\",\n    \"end\": \"00:00:38,658\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you.\"\n  },\n  {\n    \"start\": \"00:00:38,690\",\n    \"end\": \"00:00:39,030\",\n    \"lang\": \"zh\",\n    \"text\": \"空间\"\n  },\n  {\n    \"start\": \"00:00:39,470\",\n    \"end\": \"00:00:41,390\",\n    \"lang\": \"zh\",\n    \"text\": \"空间这个我怎么突然想不起来了\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,440",
+            "ja": "それには新しい言葉があります、"
+        },
+        {
+            "start": "00:00:01,440",
+            "end": "00:00:02,240",
+            "ja": "「拒否権」です。"
+        },
+        {
+            "start": "00:00:03,480",
+            "end": "00:00:06,820",
+            "ja": "意味は「ばか」に似ていると思いますが、"
+        },
+        {
+            "start": "00:00:06,820",
+            "end": "00:00:11,420",
+            "ja": "特にどのように使用するかを指します"
+        },
+        {
+            "start": "00:00:11,458",
+            "end": "00:00:12,058",
+            "ja": "私の夫"
+        },
+        {
+            "start": "00:00:14,402",
+            "end": "00:00:21,082",
+            "ja": "彼女が彼と一緒にいることを知り、そして彼が迷惑していることを知っています。"
+        },
+        {
+            "start": "00:00:22,142",
+            "end": "00:00:22,262",
+            "ja": "そう、"
+        },
+        {
+            "start": "00:00:22,262",
+            "end": "00:00:24,162",
+            "ja": "完全に迷惑しています。"
+        },
+        {
+            "start": "00:00:24,194",
+            "end": "00:00:24,974",
+            "ja": "空間が展示されました。"
+        },
+        {
+            "start": "00:00:25,154",
+            "end": "00:00:25,474",
+            "ja": "「フー、いいね。」"
+        },
+        {
+            "start": "00:00:25,954",
+            "end": "00:00:27,434",
+            "ja": "つまり、彼の妻は浮気をしています。"
+        },
+        {
+            "start": "00:00:27,854",
+            "end": "00:00:29,254",
+            "ja": "しかし、この夫はまだ"
+        },
+        {
+            "start": "00:00:30,193",
+            "end": "00:00:31,394",
+            "ja": "この事を許容しています。"
+        },
+        {
+            "start": "00:00:32,454",
+            "end": "00:00:33,954",
+            "ja": "これを「ばか」と呼びます。"
+        },
+        {
+            "start": "00:00:34,978",
+            "end": "00:00:35,318",
+            "ja": "「ビタ」。"
+        },
+        {
+            "start": "00:00:36,578",
+            "end": "00:00:38,078",
+            "ja": "これがビタです。"
+        },
+        {
+            "start": "00:00:38,298",
+            "end": "00:00:38,658",
+            "ja": "ありがとうございます。"
+        },
+        {
+            "start": "00:00:38,690",
+            "end": "00:00:39,030",
+            "ja": "空間"
+        },
+        {
+            "start": "00:00:39,470",
+            "end": "00:00:41,390",
+            "ja": "急に空間が思い浮かばないんですが"
+        }
+    ]
+}

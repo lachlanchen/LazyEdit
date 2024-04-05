@@ -1,0 +1,32 @@
+{
+    "prompt": "For words that have etymological Chu-Han alternative (due to their Sino-Vietnamese origin), I want to find the corresponding Chinese origin to replace the Viet WORDS (provide consecutive words if exist). However, it's crucial that the Viet in parenthesis followed by these traditional Chu-Han are put in brackets to maintain clarity. Like this example: (viet)[chuhan].\n\nVietnamese to be annotated: Tôi nên để mọi người trên thế giới biết đến kỹ năng nấu ăn của mình.\n\nI don't need step by step explanation. ONLY and ALWAYS return a valid JSON back:\n```json\n{\n  \"viet_with_annotation\": \"\",\n  \"viet_chuhan_pairs\": [\n    {\n      \"viet_part\": \"\",\n      \"chuhan\": \"\"\n    }\n  ]\n}\n```",
+    "response": {
+        "viet_with_annotation": "Tôi nên để mọi (người)[人] trên thế (giới)[界] (biết)[知] đến kỹ (năng)[能] (nấu)[煮] (ăn)[食] của mình.",
+        "viet_chuhan_pairs": [
+            {
+                "viet_part": "người",
+                "chuhan": "人"
+            },
+            {
+                "viet_part": "giới",
+                "chuhan": "界"
+            },
+            {
+                "viet_part": "biết",
+                "chuhan": "知"
+            },
+            {
+                "viet_part": "năng",
+                "chuhan": "能"
+            },
+            {
+                "viet_part": "nấu",
+                "chuhan": "煮"
+            },
+            {
+                "viet_part": "ăn",
+                "chuhan": "食"
+            }
+        ]
+    }
+}

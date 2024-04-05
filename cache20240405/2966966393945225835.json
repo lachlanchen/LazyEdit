@@ -1,0 +1,70 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,700\",\n    \"end\": \"00:00:02,480\",\n    \"lang\": \"en\",\n    \"text\": \"Let's do this.\"\n  },\n  {\n    \"start\": \"00:00:03,460\",\n    \"end\": \"00:00:04,740\",\n    \"lang\": \"en\",\n    \"text\": \"Gonna have a fight.\"\n  },\n  {\n    \"start\": \"00:00:05,440\",\n    \"end\": \"00:00:05,500\",\n    \"lang\": \"en\",\n    \"text\": \"Go,\"\n  },\n  {\n    \"start\": \"00:00:05,500\",\n    \"end\": \"00:00:05,800\",\n    \"lang\": \"en\",\n    \"text\": \"go,\"\n  },\n  {\n    \"start\": \"00:00:05,800\",\n    \"end\": \"00:00:06,200\",\n    \"lang\": \"en\",\n    \"text\": \"go.\"\n  },\n  {\n    \"start\": \"00:00:06,520\",\n    \"end\": \"00:00:07,140\",\n    \"lang\": \"en\",\n    \"text\": \"They want to fight.\"\n  },\n  {\n    \"start\": \"00:00:08,002\",\n    \"end\": \"00:00:09,982\",\n    \"lang\": \"zh\",\n    \"text\": \"哇哇哇哇\"\n  },\n  {\n    \"start\": \"00:00:15,142\",\n    \"end\": \"00:00:16,242\",\n    \"lang\": \"zh\",\n    \"text\": \"這是菜市場\"\n  },\n  {\n    \"start\": \"00:00:16,866\",\n    \"end\": \"00:00:18,206\",\n    \"lang\": \"en\",\n    \"text\": \"Bismillah!\"\n  },\n  {\n    \"start\": \"00:00:22,850\",\n    \"end\": \"00:00:25,330\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬は可愛いです\"\n  },\n  {\n    \"start\": \"00:00:26,090\",\n    \"end\": \"00:00:28,070\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬は小さいです\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,700",
+            "end": "00:00:02,480",
+            "en": "Let's do this.",
+            "zh": "让我们开始吧。",
+            "ar": "هيا نفعل هذا."
+        },
+        {
+            "start": "00:00:03,460",
+            "end": "00:00:04,740",
+            "en": "Gonna have a fight.",
+            "zh": "要开始打架了。",
+            "ar": "سنخوض قتالاً."
+        },
+        {
+            "start": "00:00:05,440",
+            "end": "00:00:06,200",
+            "en": "Go, go, go.",
+            "zh": "去，去，去。",
+            "ar": "اذهب، اذهب، اذهب."
+        },
+        {
+            "start": "00:00:06,520",
+            "end": "00:00:07,140",
+            "en": "They want to fight.",
+            "zh": "他们想要打架。",
+            "ar": "يريدون القتال."
+        },
+        {
+            "start": "00:00:08,002",
+            "end": "00:00:09,982",
+            "en": "Wow, wow, wow, wow",
+            "zh": "哇哇哇哇",
+            "ar": "واو، واو، واو، واو"
+        },
+        {
+            "start": "00:00:15,142",
+            "end": "00:00:16,242",
+            "en": "This is a market.",
+            "zh": "這是菜市場",
+            "ar": "هذا سوق."
+        },
+        {
+            "start": "00:00:16,866",
+            "end": "00:00:18,206",
+            "en": "Bismillah!",
+            "zh": "以真主之名！",
+            "ar": "بسم الله!"
+        },
+        {
+            "start": "00:00:22,850",
+            "end": "00:00:25,330",
+            "en": "This dog is cute.",
+            "zh": "这条狗很可爱",
+            "ja": "この犬は可愛いです",
+            "ar": "هذا الكلب لطيف."
+        },
+        {
+            "start": "00:00:26,090",
+            "end": "00:00:28,070",
+            "en": "This dog is small.",
+            "zh": "这条狗很小",
+            "ja": "この犬は小さいです",
+            "ar": "هذا الكلب صغير."
+        }
+    ]
+}

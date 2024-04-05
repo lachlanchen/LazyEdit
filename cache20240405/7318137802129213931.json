@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,350\",\n    \"end\": \"00:01:06,930\",\n    \"lang\": \"en\",\n    \"text\": \"But now I think that is wrong.\"\n  },\n  {\n    \"start\": \"00:01:08,910\",\n    \"end\": \"00:01:10,610\",\n    \"lang\": \"en\",\n    \"text\": \"I can never wait for that moment.\"\n  },\n  {\n    \"start\": \"00:01:11,910\",\n    \"end\": \"00:01:14,210\",\n    \"lang\": \"en\",\n    \"text\": \"Just present yourself to the world,\"\n  },\n  {\n    \"start\": \"00:01:14,550\",\n    \"end\": \"00:01:15,610\",\n    \"lang\": \"en\",\n    \"text\": \"show yourself to the world,\"\n  },\n  {\n    \"start\": \"00:01:15,610\",\n    \"end\": \"00:01:16,850\",\n    \"lang\": \"en\",\n    \"text\": \"being transparent.\"\n  },\n  {\n    \"start\": \"00:01:27,570\",\n    \"end\": \"00:01:28,290\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm.\"\n  },\n  {\n    \"start\": \"00:01:29,410\",\n    \"end\": \"00:01:32,450\",\n    \"lang\": \"en\",\n    \"text\": \"Kendrick Lamar – Do It.\"\n  },\n  {\n    \"start\": \"00:01:33,666\",\n    \"end\": \"00:01:34,186\",\n    \"lang\": \"zh\",\n    \"text\": \"再聽\"\n  },\n  {\n    \"start\": \"00:01:40,162\",\n    \"end\": \"00:01:49,182\",\n    \"lang\": \"en\",\n    \"text\": \"I used to use the knowledge as an escape from reality,\"\n  },\n  {\n    \"start\": \"00:01:49,182\",\n    \"end\": \"00:01:54,062\",\n    \"lang\": \"en\",\n    \"text\": \"to escape the fact that I'm nobody,\"\n  },\n  {\n    \"start\": \"00:01:54,302\",\n    \"end\": \"00:01:54,862\",\n    \"lang\": \"en\",\n    \"text\": \"I'm nothing.\"\n  },\n  {\n    \"start\": \"00:01:54,862\",\n    \"end\": \"00:02:02,362\",\n    \"lang\": \"en\",\n    \"text\": \"But I finally realized that I didn't need to worry about it.\"\n  },\n  {\n    \"start\": \"00:02:02,362\",\n    \"end\": \"00:02:03,782\",\n    \"lang\": \"en\",\n    \"text\": \"So no matter\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,350",
+            "end": "00:01:06,930",
+            "ko": "하지만 이제 그게 틀렸다고 생각해."
+        },
+        {
+            "start": "00:01:08,910",
+            "end": "00:01:10,610",
+            "ko": "그 순간을 절대 기다릴 수 없어."
+        },
+        {
+            "start": "00:01:11,910",
+            "end": "00:01:14,210",
+            "ko": "세상 앞에 당당히 나서,"
+        },
+        {
+            "start": "00:01:14,550",
+            "end": "00:01:15,610",
+            "ko": "세상에 자신을 보여줘,"
+        },
+        {
+            "start": "00:01:15,610",
+            "end": "00:01:16,850",
+            "ko": "투명하게."
+        },
+        {
+            "start": "00:01:27,570",
+            "end": "00:01:28,290",
+            "ko": "음."
+        },
+        {
+            "start": "00:01:29,410",
+            "end": "00:01:32,450",
+            "ko": "켄드릭 라마 - 해내."
+        },
+        {
+            "start": "00:01:33,666",
+            "end": "00:01:34,186",
+            "ko": "다시 듣다"
+        },
+        {
+            "start": "00:01:40,162",
+            "end": "00:01:49,182",
+            "ko": "나는 지식을 현실에서 탈출하는 수단으로 사용했었어,"
+        },
+        {
+            "start": "00:01:49,182",
+            "end": "00:01:54,062",
+            "ko": "나는 아무것도 아닌 사실에서 탈출하기 위해,"
+        },
+        {
+            "start": "00:01:54,302",
+            "end": "00:01:54,862",
+            "ko": "나는 아무것도 아니야."
+        },
+        {
+            "start": "00:01:54,862",
+            "end": "00:02:02,362",
+            "ko": "하지만 결국 그것에 대해 걱정할 필요가 없다는 걸 깨달았어."
+        },
+        {
+            "start": "00:02:02,362",
+            "end": "00:02:03,782",
+            "ko": "그래서 상관없어"
+        }
+    ]
+}

@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"My sister makes these beautiful notebooks.\"\n  },\n  {\n    \"start\": \"00:00:05,500\",\n    \"end\": \"00:00:08,600\",\n    \"lang\": \"en\",\n    \"text\": \"But she thinks it's mediocre and not good.\"\n  },\n  {\n    \"start\": \"00:00:09,340\",\n    \"end\": \"00:00:16,040\",\n    \"lang\": \"en\",\n    \"text\": \"So I want to convince her that her product is great.\"\n  },\n  {\n    \"start\": \"00:00:16,200\",\n    \"end\": \"00:00:18,840\",\n    \"lang\": \"en\",\n    \"text\": \"I use it every day to write notes,\"\n  },\n  {\n    \"start\": \"00:00:18,840\",\n    \"end\": \"00:00:22,280\",\n    \"lang\": \"en\",\n    \"text\": \"to write every thought that pops up in my mind,\"\n  },\n  {\n    \"start\": \"00:00:22,280\",\n    \"end\": \"00:00:23,640\",\n    \"lang\": \"en\",\n    \"text\": \"make plans.\"\n  },\n  {\n    \"start\": \"00:00:23,640\",\n    \"end\": \"00:00:27,520\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this notebook is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:27,840\",\n    \"end\": \"00:00:29,680\",\n    \"lang\": \"en\",\n    \"text\": \"Every day when I see this cover,\"\n  },\n  {\n    \"start\": \"00:00:29,680\",\n    \"end\": \"00:00:33,100\",\n    \"lang\": \"en\",\n    \"text\": \"I have this desire to use it,\"\n  },\n  {\n    \"start\": \"00:00:33,100\",\n    \"end\": \"00:00:34,220\",\n    \"lang\": \"en\",\n    \"text\": \"to open it.\"\n  },\n  {\n    \"start\": \"00:00:34,720\",\n    \"end\": \"00:00:37,420\",\n    \"lang\": \"en\",\n    \"text\": \"But she dare not try.\"\n  },\n  {\n    \"start\": \"00:00:38,520\",\n    \"end\": \"00:00:51,120\",\n    \"lang\": \"en\",\n    \"text\": \"So I want to persuade her that she can present her work to the world on YouTube or Facebook.\"\n  },\n  {\n    \"start\": \"00:00:52,120\",\n    \"end\": \"00:00:55,900\",\n    \"lang\": \"en\",\n    \"text\": \"And also she can speak French.\"\n  },\n  {\n    \"start\": \"00:00:57,160\",\n    \"end\": \"00:01:10,180\",\n    \"lang\": \"en\",\n    \"text\": \"Maybe I want to help her to build a brand that can sell to France to connect with potential French customers.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,000",
+            "es": "Mi hermana hace estos hermosos cuadernos.",
+            "fr": "Ma soeur fabrique ces magnifiques cahiers.",
+            "uk": "Моя сестра робить ці чудові нотатники."
+        },
+        {
+            "start": "00:00:05,500",
+            "end": "00:00:08,600",
+            "es": "Pero ella piensa que es mediocre y no es bueno.",
+            "fr": "Mais elle pense que c'est médiocre et pas bon.",
+            "uk": "Але вона думає, що це посереднє і не добре."
+        },
+        {
+            "start": "00:00:09,340",
+            "end": "00:00:16,040",
+            "es": "Así que quiero convencerla de que su producto es genial.",
+            "fr": "Donc, je veux la convaincre que son produit est génial.",
+            "uk": "Отже, я хочу переконати її, що її продукт чудовий."
+        },
+        {
+            "start": "00:00:16,200",
+            "end": "00:00:18,840",
+            "es": "Lo uso todos los días para escribir notas,",
+            "fr": "Je l'utilise tous les jours pour écrire des notes,",
+            "uk": "Я використовую його щодня для запису нотаток,"
+        },
+        {
+            "start": "00:00:18,840",
+            "end": "00:00:22,280",
+            "es": "para escribir cada pensamiento que surge en mi mente,",
+            "fr": "pour écrire chaque pensée qui me vient à l'esprit,",
+            "uk": "щоб записувати кожну думку, яка спадає на думку,"
+        },
+        {
+            "start": "00:00:22,280",
+            "end": "00:00:23,640",
+            "es": "hacer planes.",
+            "fr": "faire des plans.",
+            "uk": "робити плани."
+        },
+        {
+            "start": "00:00:23,640",
+            "end": "00:00:27,520",
+            "es": "Creo que este cuaderno es precioso.",
+            "fr": "Je crois que ce cahier est magnifique.",
+            "uk": "Я вважаю, що цей нотатник прекрасний."
+        },
+        {
+            "start": "00:00:27,840",
+            "end": "00:00:29,680",
+            "es": "Todos los días, cuando veo esta portada,",
+            "fr": "Chaque jour, quand je vois cette couverture,",
+            "uk": "Щодня, коли я бачу цю обкладинку,"
+        },
+        {
+            "start": "00:00:29,680",
+            "end": "00:00:33,100",
+            "es": "tengo este deseo de usarlo,",
+            "fr": "j'ai ce désir de l'utiliser,",
+            "uk": "в мене виникає бажання використовувати його,"
+        },
+        {
+            "start": "00:00:33,100",
+            "end": "00:00:34,220",
+            "es": "de abrirlo.",
+            "fr": "de l'ouvrir.",
+            "uk": "відкрити його."
+        },
+        {
+            "start": "00:00:34,720",
+            "end": "00:00:37,420",
+            "es": "Pero ella no se atreve a probar.",
+            "fr": "Mais elle n'ose pas essayer.",
+            "uk": "Але вона не наважується спробувати."
+        },
+        {
+            "start": "00:00:38,520",
+            "end": "00:00:51,120",
+            "es": "Así que quiero persuadirla de que puede presentar su trabajo al mundo en YouTube o Facebook.",
+            "fr": "Donc, je veux la persuader qu'elle peut présenter son travail au monde sur YouTube ou Facebook.",
+            "uk": "Отже, я хочу переконати її, що вона може представити свою роботу світові на YouTube або Facebook."
+        },
+        {
+            "start": "00:00:52,120",
+            "end": "00:00:55,900",
+            "es": "Y también ella puede hablar francés.",
+            "fr": "Et aussi, elle peut parler français.",
+            "uk": "І також вона може розмовляти французькою."
+        },
+        {
+            "start": "00:00:57,160",
+            "end": "00:01:10,180",
+            "es": "Quizás quiero ayudarla a construir una marca que pueda venderse en Francia para conectar con posibles clientes franceses.",
+            "fr": "Peut-être que je veux l'aider à construire une marque qui peut se vendre en France pour se connecter avec des clients français potentiels.",
+            "uk": "Можливо, я хочу допомогти їй створити бренд, який можна продавати у Франції, щоб зв'язатися з потенційними французькими клієнтами."
+        }
+    ]
+}

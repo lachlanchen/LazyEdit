@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,220\",\n    \"lang\": \"zh\",\n    \"text\": \"这里还有\"\n  },\n  {\n    \"start\": \"00:00:02,050\",\n    \"end\": \"00:00:02,890\",\n    \"lang\": \"en\",\n    \"text\": \"too many restrictions.\"\n  },\n  {\n    \"start\": \"00:00:03,970\",\n    \"end\": \"00:00:08,470\",\n    \"lang\": \"en\",\n    \"text\": \"So we will never have really scientific breakthrough\"\n  },\n  {\n    \"start\": \"00:00:08,830\",\n    \"end\": \"00:00:10,630\",\n    \"lang\": \"en\",\n    \"text\": \"or create some great art,\"\n  },\n  {\n    \"start\": \"00:00:10,630\",\n    \"end\": \"00:00:11,550\",\n    \"lang\": \"en\",\n    \"text\": \"never.\"\n  },\n  {\n    \"start\": \"00:00:14,990\",\n    \"end\": \"00:00:20,650\",\n    \"lang\": \"en\",\n    \"text\": \"If we want to embrace some real great stuff,\"\n  },\n  {\n    \"start\": \"00:00:21,670\",\n    \"end\": \"00:00:24,590\",\n    \"lang\": \"en\",\n    \"text\": \"and the first thing we should remove is restrictions,\"\n  },\n  {\n    \"start\": \"00:00:24,830\",\n    \"end\": \"00:00:27,710\",\n    \"lang\": \"en\",\n    \"text\": \"but keep some basic principles.\"\n  },\n  {\n    \"start\": \"00:00:27,710\",\n    \"end\": \"00:00:36,710\",\n    \"lang\": \"en\",\n    \"text\": \"And if we have so many restrictions,\"\n  },\n  {\n    \"start\": \"00:00:41,470\",\n    \"end\": \"00:00:47,090\",\n    \"lang\": \"en\",\n    \"text\": \"we can never expect people truly being creative.\"\n  },\n  {\n    \"start\": \"00:00:51,790\",\n    \"end\": \"00:00:52,990\",\n    \"lang\": \"en\",\n    \"text\": \"That's what I think.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,220",
+            "vi": "Ở đây còn có"
+        },
+        {
+            "start": "00:00:02,050",
+            "end": "00:00:02,890",
+            "vi": "quá nhiều hạn chế."
+        },
+        {
+            "start": "00:00:03,970",
+            "end": "00:00:08,470",
+            "vi": "Vì vậy chúng ta sẽ không bao giờ có những đột phá khoa học thực sự"
+        },
+        {
+            "start": "00:00:08,830",
+            "end": "00:00:10,630",
+            "vi": "hoặc tạo ra một số tác phẩm nghệ thuật vĩ đại,"
+        },
+        {
+            "start": "00:00:10,630",
+            "end": "00:00:11,550",
+            "vi": "không bao giờ."
+        },
+        {
+            "start": "00:00:14,990",
+            "end": "00:00:20,650",
+            "vi": "Nếu chúng ta muốn đón nhận một số thứ thực sự tuyệt vời,"
+        },
+        {
+            "start": "00:00:21,670",
+            "end": "00:00:24,590",
+            "vi": "và điều đầu tiên chúng ta nên loại bỏ là hạn chế,"
+        },
+        {
+            "start": "00:00:24,830",
+            "end": "00:00:27,710",
+            "vi": "nhưng giữ lại một số nguyên tắc cơ bản."
+        },
+        {
+            "start": "00:00:27,710",
+            "end": "00:00:36,710",
+            "vi": "Và nếu chúng ta có quá nhiều hạn chế,"
+        },
+        {
+            "start": "00:00:41,470",
+            "end": "00:00:47,090",
+            "vi": "chúng ta không bao giờ có thể mong đợi mọi người thực sự sáng tạo."
+        },
+        {
+            "start": "00:00:51,790",
+            "end": "00:00:52,990",
+            "vi": "Đó là những gì tôi nghĩ."
+        }
+    ]
+}

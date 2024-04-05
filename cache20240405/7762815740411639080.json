@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,280\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:01,282\",\n    \"end\": \"00:00:02,021\",\n    \"lang\": \"zh\",\n    \"text\": \"这是狐狸犬\"\n  },\n  {\n    \"start\": \"00:00:07,074\",\n    \"end\": \"00:00:07,914\",\n    \"lang\": \"en\",\n    \"text\": \"Oh I will have to once a week just to hammer in some nuts.\"\n  },\n  {\n    \"start\": \"00:00:07,914\",\n    \"end\": \"00:00:08,654\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,280",
+            "vi": "Được."
+        },
+        {
+            "start": "00:00:01,282",
+            "end": "00:00:02,021",
+            "vi": "Đây là chó săn cáo"
+        },
+        {
+            "start": "00:00:07,074",
+            "end": "00:00:07,914",
+            "vi": "Ồ, tôi sẽ phải làm việc này một lần mỗi tuần để đóng vào một số hạt."
+        },
+        {
+            "start": "00:00:07,914",
+            "end": "00:00:08,654",
+            "vi": "bạn"
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:01,546\",\n    \"end\": \"00:02:06,746\",\n    \"lang\": \"en\",\n    \"text\": \"So it's not important that you understand or not\"\n  },\n  {\n    \"start\": \"00:02:06,746\",\n    \"end\": \"00:02:07,906\",\n    \"lang\": \"en\",\n    \"text\": \"But you better understand\"\n  },\n  {\n    \"start\": \"00:02:12,226\",\n    \"end\": \"00:02:13,046\",\n    \"lang\": \"en\",\n    \"text\": \"If you don't understand,\"\n  },\n  {\n    \"start\": \"00:02:13,046\",\n    \"end\": \"00:02:13,346\",\n    \"lang\": \"en\",\n    \"text\": \"you're just a piece of shit\"\n  },\n  {\n    \"start\": \"00:02:13,385\",\n    \"end\": \"00:02:15,445\",\n    \"lang\": \"en\",\n    \"text\": \"If you don't do it,\"\n  },\n  {\n    \"start\": \"00:02:15,445\",\n    \"end\": \"00:02:16,525\",\n    \"lang\": \"en\",\n    \"text\": \"you're a loser.\"\n  },\n  {\n    \"start\": \"00:02:16,546\",\n    \"end\": \"00:02:16,866\",\n    \"lang\": \"en\",\n    \"text\": \"Nowadays,\"\n  },\n  {\n    \"start\": \"00:02:16,866\",\n    \"end\": \"00:02:19,506\",\n    \"lang\": \"en\",\n    \"text\": \"the things are still okay.\"\n  },\n  {\n    \"start\": \"00:02:21,806\",\n    \"end\": \"00:02:23,566\",\n    \"lang\": \"en\",\n    \"text\": \"It's not a problem.\"\n  },\n  {\n    \"start\": \"00:02:26,026\",\n    \"end\": \"00:02:26,386\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:02:28,586\",\n    \"end\": \"00:02:29,166\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:01,546",
+            "end": "00:02:06,746",
+            "en": "So it's not important that you understand or not",
+            "zh": "所以你是否理解并不重要",
+            "ar": "إذًا ليس من المهم أن تفهم أم لا"
+        },
+        {
+            "start": "00:02:06,746",
+            "end": "00:02:07,906",
+            "en": "But you better understand",
+            "zh": "但你最好理解",
+            "ar": "لكن من الأفضل أن تفهم"
+        },
+        {
+            "start": "00:02:12,226",
+            "end": "00:02:13,346",
+            "en": "If you don't understand, you're just a piece of shit",
+            "zh": "如果你不理解，你就只是一块屎",
+            "ar": "إذا لم تفهم، أنت مجرد قطعة من القرف"
+        },
+        {
+            "start": "00:02:13,385",
+            "end": "00:02:16,525",
+            "en": "If you don't do it, you're a loser.",
+            "zh": "如果你不这样做，你就是个输家。",
+            "ar": "إذا لم تفعل ذلك، أنت خاسر."
+        },
+        {
+            "start": "00:02:16,546",
+            "end": "00:02:19,506",
+            "en": "Nowadays, the things are still okay.",
+            "zh": "如今，事情还算可以。",
+            "ar": "في الوقت الحالي، الأمور لا تزال على ما يرام."
+        },
+        {
+            "start": "00:02:21,806",
+            "end": "00:02:23,566",
+            "en": "It's not a problem.",
+            "zh": "这不是问题。",
+            "ar": "هذا ليس مشكلة."
+        },
+        {
+            "start": "00:02:26,026",
+            "end": "00:02:26,386",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:02:28,586",
+            "end": "00:02:29,166",
+            "en": "See you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقًا."
+        }
+    ]
+}

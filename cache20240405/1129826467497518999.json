@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:05,446\",\n    \"end\": \"00:03:06,566\",\n    \"lang\": \"en\",\n    \"text\": \"education concepts.\"\n  },\n  {\n    \"start\": \"00:03:07,746\",\n    \"end\": \"00:03:08,186\",\n    \"lang\": \"ja\",\n    \"text\": \"コンセプト\"\n  },\n  {\n    \"start\": \"00:03:10,082\",\n    \"end\": \"00:03:12,602\",\n    \"lang\": \"en\",\n    \"text\": \"So firstly,\"\n  },\n  {\n    \"start\": \"00:03:12,602\",\n    \"end\": \"00:03:15,182\",\n    \"lang\": \"en\",\n    \"text\": \"when I learn guitar,\"\n  },\n  {\n    \"start\": \"00:03:15,182\",\n    \"end\": \"00:03:17,922\",\n    \"lang\": \"en\",\n    \"text\": \"I focus on repetition.\"\n  },\n  {\n    \"start\": \"00:03:18,462\",\n    \"end\": \"00:03:27,882\",\n    \"lang\": \"en\",\n    \"text\": \"So I just repetitively practice the skill until I can\"\n  },\n  {\n    \"start\": \"00:03:32,642\",\n    \"end\": \"00:03:34,502\",\n    \"lang\": \"zh\",\n    \"text\": \"愛看順死人啊\"\n  },\n  {\n    \"start\": \"00:03:37,442\",\n    \"end\": \"00:03:38,162\",\n    \"lang\": \"en\",\n    \"text\": \"the art.\"\n  },\n  {\n    \"start\": \"00:03:40,542\",\n    \"end\": \"00:03:42,802\",\n    \"lang\": \"en\",\n    \"text\": \"It's hard for me to explain this.\"\n  },\n  {\n    \"start\": \"00:03:51,962\",\n    \"end\": \"00:03:53,082\",\n    \"lang\": \"en\",\n    \"text\": \"It's wrong.\"\n  },\n  {\n    \"start\": \"00:03:53,582\",\n    \"end\": \"00:03:54,002\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:03:54,982\",\n    \"end\": \"00:03:55,302\",\n    \"lang\": \"en\",\n    \"text\": \"It's wrong.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:05,446",
+            "end": "00:03:06,566",
+            "ja": "教育のコンセプト。"
+        },
+        {
+            "start": "00:03:07,746",
+            "end": "00:03:08,186",
+            "ja": "コンセプト。"
+        },
+        {
+            "start": "00:03:10,082",
+            "end": "00:03:12,602",
+            "ja": "まず初めに、"
+        },
+        {
+            "start": "00:03:12,602",
+            "end": "00:03:15,182",
+            "ja": "ギターを習う時、"
+        },
+        {
+            "start": "00:03:15,182",
+            "end": "00:03:17,922",
+            "ja": "繰り返しに注目します。"
+        },
+        {
+            "start": "00:03:18,462",
+            "end": "00:03:27,882",
+            "ja": "だから私はただスキルの練習を繰り返し、"
+        },
+        {
+            "start": "00:03:32,642",
+            "end": "00:03:34,502",
+            "ja": "芸術を理解できます。"
+        },
+        {
+            "start": "00:03:37,442",
+            "end": "00:03:38,162",
+            "ja": "芸術。"
+        },
+        {
+            "start": "00:03:40,542",
+            "end": "00:03:42,802",
+            "ja": "これを説明するのは難しいです。"
+        },
+        {
+            "start": "00:03:51,962",
+            "end": "00:03:53,082",
+            "ja": "それは間違っています。"
+        },
+        {
+            "start": "00:03:53,582",
+            "end": "00:03:54,002",
+            "ja": "ごめんなさい。"
+        },
+        {
+            "start": "00:03:54,982",
+            "end": "00:03:55,302",
+            "ja": "それは間違っています。"
+        }
+    ]
+}

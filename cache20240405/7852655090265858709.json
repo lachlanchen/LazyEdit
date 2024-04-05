@@ -1,0 +1,41 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es) and French (fr) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other language. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,960\",\n    \"lang\": \"zh\",\n    \"text\": \"還是退檢檢查\"\n  },\n  {\n    \"start\": \"00:00:01,762\",\n    \"end\": \"00:00:03,282\",\n    \"lang\": \"en\",\n    \"text\": \"So many hunters and dogs.\"\n  },\n  {\n    \"start\": \"00:00:04,290\",\n    \"end\": \"00:00:04,510\",\n    \"lang\": \"zh\",\n    \"text\": \"好\"\n  },\n  {\n    \"start\": \"00:00:06,946\",\n    \"end\": \"00:00:07,146\",\n    \"lang\": \"en\",\n    \"text\": \"said\"\n  },\n  {\n    \"start\": \"00:00:21,666\",\n    \"end\": \"00:00:22,186\",\n    \"lang\": \"ja\",\n    \"text\": \"ご飯です\"\n  },\n  {\n    \"start\": \"00:00:23,306\",\n    \"end\": \"00:00:23,946\",\n    \"lang\": \"ja\",\n    \"text\": \"可愛いです\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,960",
+            "es": "Mejor revisemos de nuevo",
+            "fr": "Mieux vaut vérifier à nouveau"
+        },
+        {
+            "start": "00:00:01,762",
+            "end": "00:00:03,282",
+            "es": "Tantos cazadores y perros.",
+            "fr": "Tant de chasseurs et de chiens."
+        },
+        {
+            "start": "00:00:04,290",
+            "end": "00:00:04,510",
+            "es": "Bien",
+            "fr": "Bien"
+        },
+        {
+            "start": "00:00:06,946",
+            "end": "00:00:07,146",
+            "es": "dijo",
+            "fr": "a dit"
+        },
+        {
+            "start": "00:00:21,666",
+            "end": "00:00:22,186",
+            "es": "Es hora de comer",
+            "fr": "C'est l'heure de manger"
+        },
+        {
+            "start": "00:00:23,306",
+            "end": "00:00:23,946",
+            "es": "Qué lindo",
+            "fr": "Quel mignon"
+        }
+    ]
+}

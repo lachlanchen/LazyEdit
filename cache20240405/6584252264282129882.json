@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,480\",\n    \"lang\": \"en\",\n    \"text\": \"I have two little sisters and I believe they...\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:06,294\",\n    \"lang\": \"zh\",\n    \"text\": \"不死人\"\n  },\n  {\n    \"start\": \"00:00:06,850\",\n    \"end\": \"00:00:07,310\",\n    \"lang\": \"en\",\n    \"text\": \"genius.\"\n  },\n  {\n    \"start\": \"00:00:07,310\",\n    \"end\": \"00:00:11,270\",\n    \"lang\": \"en\",\n    \"text\": \"So one made this great cake,\"\n  },\n  {\n    \"start\": \"00:00:11,270\",\n    \"end\": \"00:00:17,170\",\n    \"lang\": \"en\",\n    \"text\": \"and another made this great handcraft.\"\n  },\n  {\n    \"start\": \"00:00:17,170\",\n    \"end\": \"00:00:19,010\",\n    \"lang\": \"en\",\n    \"text\": \"This cake,\"\n  },\n  {\n    \"start\": \"00:00:19,010\",\n    \"end\": \"00:00:19,350\",\n    \"lang\": \"en\",\n    \"text\": \"this\"\n  },\n  {\n    \"start\": \"00:00:19,350\",\n    \"end\": \"00:00:21,330\",\n    \"lang\": \"en\",\n    \"text\": \"is white strawberry.\"\n  },\n  {\n    \"start\": \"00:00:21,330\",\n    \"end\": \"00:00:24,170\",\n    \"lang\": \"en\",\n    \"text\": \"This is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:24,170\",\n    \"end\": \"00:00:28,130\",\n    \"lang\": \"en\",\n    \"text\": \"This is the best cake I've ever seen.\"\n  },\n  {\n    \"start\": \"00:00:28,130\",\n    \"end\": \"00:00:29,750\",\n    \"lang\": \"en\",\n    \"text\": \"And I know\"\n  },\n  {\n    \"start\": \"00:00:29,750\",\n    \"end\": \"00:00:32,130\",\n    \"lang\": \"en\",\n    \"text\": \"it must taste the best.\"\n  },\n  {\n    \"start\": \"00:00:32,130\",\n    \"end\": \"00:00:39,350\",\n    \"lang\": \"en\",\n    \"text\": \"Because I had tasted the cooking of my little sister.\"\n  },\n  {\n    \"start\": \"00:00:41,730\",\n    \"end\": \"00:00:42,570\",\n    \"lang\": \"ja\",\n    \"text\": \"美しい\"\n  },\n  {\n    \"start\": \"00:00:44,098\",\n    \"end\": \"00:00:48,918\",\n    \"lang\": \"en\",\n    \"text\": \"It's a pastry dessert and a bakery.\"\n  },\n  {\n    \"start\": \"00:00:50,938\",\n    \"end\": \"00:00:51,618\",\n    \"lang\": \"en\",\n    \"text\": \"OK.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,480",
+            "vi": "Tôi có hai em gái nhỏ và tôi tin rằng họ..."
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:06,294",
+            "vi": "thiên tài."
+        },
+        {
+            "start": "00:00:06,850",
+            "end": "00:00:07,310",
+            "vi": "thiên tài."
+        },
+        {
+            "start": "00:00:07,310",
+            "end": "00:00:11,270",
+            "vi": "Vậy một người đã làm ra chiếc bánh tuyệt vời này,"
+        },
+        {
+            "start": "00:00:11,270",
+            "end": "00:00:17,170",
+            "vi": "và người kia đã làm ra thứ đồ thủ công tuyệt vời này."
+        },
+        {
+            "start": "00:00:17,170",
+            "end": "00:00:19,010",
+            "vi": "Chiếc bánh này,"
+        },
+        {
+            "start": "00:00:19,010",
+            "end": "00:00:19,350",
+            "vi": "này"
+        },
+        {
+            "start": "00:00:19,350",
+            "end": "00:00:21,330",
+            "vi": "là bánh dâu trắng."
+        },
+        {
+            "start": "00:00:21,330",
+            "end": "00:00:24,170",
+            "vi": "Thật tuyệt vời."
+        },
+        {
+            "start": "00:00:24,170",
+            "end": "00:00:28,130",
+            "vi": "Đây là chiếc bánh đẹp nhất mà tôi từng thấy."
+        },
+        {
+            "start": "00:00:28,130",
+            "end": "00:00:29,750",
+            "vi": "Và tôi biết"
+        },
+        {
+            "start": "00:00:29,750",
+            "end": "00:00:32,130",
+            "vi": "nó chắc chắn có vị ngon nhất."
+        },
+        {
+            "start": "00:00:32,130",
+            "end": "00:00:39,350",
+            "vi": "Bởi vì tôi đã từng nếm thử món nấu của em gái."
+        },
+        {
+            "start": "00:00:41,730",
+            "end": "00:00:42,570",
+            "vi": "Đẹp"
+        },
+        {
+            "start": "00:00:44,098",
+            "end": "00:00:48,918",
+            "vi": "Đó là một món tráng miệng làm từ bánh ngọt và tiệm bánh."
+        },
+        {
+            "start": "00:00:50,938",
+            "end": "00:00:51,618",
+            "vi": "Được."
+        }
+    ]
+}

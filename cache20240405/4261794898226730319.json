@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,578\",\n    \"end\": \"00:01:03,398\",\n    \"lang\": \"en\",\n    \"text\": \"So we have tamago,\"\n  },\n  {\n    \"start\": \"00:01:03,398\",\n    \"end\": \"00:01:04,697\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:01:04,697\",\n    \"end\": \"00:01:05,678\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:01:05,678\",\n    \"end\": \"00:01:07,918\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:01:07,918\",\n    \"end\": \"00:01:10,958\",\n    \"lang\": \"en\",\n    \"text\": \"and sweet potato,\"\n  },\n  {\n    \"start\": \"00:01:10,958\",\n    \"end\": \"00:01:12,178\",\n    \"lang\": \"en\",\n    \"text\": \"and peach.\"\n  },\n  {\n    \"start\": \"00:01:13,958\",\n    \"end\": \"00:01:14,358\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:14,358\",\n    \"end\": \"00:01:15,298\",\n    \"lang\": \"en\",\n    \"text\": \"see you!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,578",
+            "end": "00:01:03,398",
+            "ko": "그래서 우리는 타마고가 있고,"
+        },
+        {
+            "start": "00:01:03,398",
+            "end": "00:01:04,697",
+            "ko": "블루베리,"
+        },
+        {
+            "start": "00:01:04,697",
+            "end": "00:01:05,678",
+            "ko": "딸기,"
+        },
+        {
+            "start": "00:01:05,678",
+            "end": "00:01:07,918",
+            "ko": "밤,"
+        },
+        {
+            "start": "00:01:07,918",
+            "end": "00:01:10,958",
+            "ko": "그리고 고구마,"
+        },
+        {
+            "start": "00:01:10,958",
+            "end": "00:01:12,178",
+            "ko": "그리고 복숭아."
+        },
+        {
+            "start": "00:01:13,958",
+            "end": "00:01:14,358",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:01:14,358",
+            "end": "00:01:15,298",
+            "ko": "안녕!"
+        }
+    ]
+}

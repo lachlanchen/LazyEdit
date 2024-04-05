@@ -1,0 +1,168 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,480\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます。\"\n  },\n  {\n    \"start\": \"00:00:02,146\",\n    \"end\": \"00:00:04,026\",\n    \"lang\": \"en\",\n    \"text\": \"I found a way to learn Japanese.\"\n  },\n  {\n    \"start\": \"00:00:04,930\",\n    \"end\": \"00:00:05,170\",\n    \"lang\": \"ar\",\n    \"text\": \"شكرا\"\n  },\n  {\n    \"start\": \"00:00:05,442\",\n    \"end\": \"00:00:07,202\",\n    \"lang\": \"en\",\n    \"text\": \"Every day I repeat,\"\n  },\n  {\n    \"start\": \"00:00:07,202\",\n    \"end\": \"00:00:14,842\",\n    \"lang\": \"en\",\n    \"text\": \"I find a page that there is a word that I still don't know.\"\n  },\n  {\n    \"start\": \"00:00:15,802\",\n    \"end\": \"00:00:16,582\",\n    \"lang\": \"en\",\n    \"text\": \"So for example,\"\n  },\n  {\n    \"start\": \"00:00:16,962\",\n    \"end\": \"00:00:17,802\",\n    \"lang\": \"ja\",\n    \"text\": \"私は\"\n  },\n  {\n    \"start\": \"00:00:18,831\",\n    \"end\": \"00:00:20,242\",\n    \"lang\": \"ja\",\n    \"text\": \"私はカゴ\"\n  },\n  {\n    \"start\": \"00:00:21,026\",\n    \"end\": \"00:00:21,406\",\n    \"lang\": \"en\",\n    \"text\": \"What now?\"\n  },\n  {\n    \"start\": \"00:00:21,794\",\n    \"end\": \"00:00:22,494\",\n    \"lang\": \"ja\",\n    \"text\": \"ていません\"\n  },\n  {\n    \"start\": \"00:00:23,993\",\n    \"end\": \"00:00:26,494\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a variation of this\"\n  },\n  {\n    \"start\": \"00:00:26,854\",\n    \"end\": \"00:00:27,614\",\n    \"lang\": \"en\",\n    \"text\": \"女の子は\"\n  },\n  {\n    \"start\": \"00:00:27,970\",\n    \"end\": \"00:00:28,430\",\n    \"lang\": \"zh\",\n    \"text\": \"看我\"\n  },\n  {\n    \"start\": \"00:00:30,178\",\n    \"end\": \"00:00:31,098\",\n    \"lang\": \"zh\",\n    \"text\": \"他摸我,\"\n  },\n  {\n    \"start\": \"00:00:31,098\",\n    \"end\": \"00:00:31,918\",\n    \"lang\": \"zh\",\n    \"text\": \"我拿\"\n  },\n  {\n    \"start\": \"00:00:32,418\",\n    \"end\": \"00:00:33,238\",\n    \"lang\": \"ja\",\n    \"text\": \"ています\"\n  },\n  {\n    \"start\": \"00:00:33,238\",\n    \"end\": \"00:00:35,958\",\n    \"lang\": \"ja\",\n    \"text\": \"私は顔を\"\n  },\n  {\n    \"start\": \"00:00:36,938\",\n    \"end\": \"00:00:38,818\",\n    \"lang\": \"ja\",\n    \"text\": \"私は顔を\"\n  },\n  {\n    \"start\": \"00:00:39,042\",\n    \"end\": \"00:00:39,382\",\n    \"lang\": \"zh\",\n    \"text\": \"晚安\"\n  },\n  {\n    \"start\": \"00:00:39,906\",\n    \"end\": \"00:00:40,626\",\n    \"lang\": \"ja\",\n    \"text\": \"ていません\"\n  },\n  {\n    \"start\": \"00:00:41,730\",\n    \"end\": \"00:00:42,490\",\n    \"lang\": \"en\",\n    \"text\": \"이ect\"\n  },\n  {\n    \"start\": \"00:00:49,690\",\n    \"end\": \"00:00:50,510\",\n    \"lang\": \"en\",\n    \"text\": \"그럼 자 neigh\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,480",
+            "en": "Good morning.",
+            "zh": "早上好。",
+            "ar": "صباح الخير."
+        },
+        {
+            "start": "00:00:02,146",
+            "end": "00:00:04,026",
+            "en": "I found a way to learn Japanese.",
+            "zh": "我找到了一种学习日语的方法。",
+            "ar": "لقد وجدت طريقة لتعلم اليابانية."
+        },
+        {
+            "start": "00:00:04,930",
+            "end": "00:00:05,170",
+            "en": "Thank you",
+            "zh": "谢谢",
+            "ar": "شكرا"
+        },
+        {
+            "start": "00:00:05,442",
+            "end": "00:00:07,202",
+            "en": "Every day I repeat,",
+            "zh": "我每天重复，",
+            "ar": "كل يوم أكرر,"
+        },
+        {
+            "start": "00:00:07,202",
+            "end": "00:00:14,842",
+            "en": "I find a page that there is a word that I still don't know.",
+            "zh": "我找到了一个页面，上面有我还不知道的单词。",
+            "ar": "أجد صفحة فيها كلمة لا أعرفها بعد."
+        },
+        {
+            "start": "00:00:15,802",
+            "end": "00:00:16,582",
+            "en": "So for example,",
+            "zh": "所以举个例子，",
+            "ar": "لذا على سبيل المثال،"
+        },
+        {
+            "start": "00:00:16,962",
+            "end": "00:00:17,802",
+            "en": "I",
+            "zh": "我",
+            "ar": "أنا",
+            "ja": "私は"
+        },
+        {
+            "start": "00:00:18,831",
+            "end": "00:00:20,242",
+            "en": "I basket",
+            "zh": "我篮子",
+            "ar": "أنا سلة",
+            "ja": "私はカゴ"
+        },
+        {
+            "start": "00:00:21,026",
+            "end": "00:00:21,406",
+            "en": "What now?",
+            "zh": "现在怎么办？",
+            "ar": "ماذا الآن؟"
+        },
+        {
+            "start": "00:00:21,794",
+            "end": "00:00:22,494",
+            "en": "Not include",
+            "zh": "不包括",
+            "ar": "لا تشمل",
+            "ja": "ていません"
+        },
+        {
+            "start": "00:00:23,993",
+            "end": "00:00:26,494",
+            "en": "So this is a variation of this",
+            "zh": "所以这是这个的一个变体",
+            "ar": "إذن هذه هي تغيير لهذا"
+        },
+        {
+            "start": "00:00:26,854",
+            "end": "00:00:27,614",
+            "en": "The girl is",
+            "zh": "这个女孩是",
+            "ar": "الفتاة هي"
+        },
+        {
+            "start": "00:00:27,970",
+            "end": "00:00:28,430",
+            "en": "Look at me",
+            "zh": "看我",
+            "ar": "انظر إلي"
+        },
+        {
+            "start": "00:00:30,178",
+            "end": "00:00:31,098",
+            "en": "He touched me,",
+            "zh": "他摸我,",
+            "ar": "لقد لمسني،"
+        },
+        {
+            "start": "00:00:31,098",
+            "end": "00:00:31,918",
+            "en": "I take",
+            "zh": "我拿",
+            "ar": "أنا أخذ"
+        },
+        {
+            "start": "00:00:32,418",
+            "end": "00:00:33,238",
+            "en": "Are included",
+            "zh": "都包括",
+            "ar": "تتضمن",
+            "ja": "ています"
+        },
+        {
+            "start": "00:00:33,238",
+            "end": "00:00:35,958",
+            "en": "I am facing",
+            "zh": "我面对",
+            "ar": "أنا أواجه",
+            "ja": "私は顔を"
+        },
+        {
+            "start": "00:00:36,938",
+            "end": "00:00:38,818",
+            "en": "I am facing",
+            "zh": "我面对",
+            "ar": "أنا أواجه",
+            "ja": "私は顔を"
+        },
+        {
+            "start": "00:00:39,042",
+            "end": "00:00:39,382",
+            "en": "Good night",
+            "zh": "晚安",
+            "ar": "تصبح على خير"
+        },
+        {
+            "start": "00:00:39,906",
+            "end": "00:00:40,626",
+            "en": "Not include",
+            "zh": "不包括",
+            "ar": "لا تشمل",
+            "ja": "ていません"
+        },
+        {
+            "start": "00:00:41,730",
+            "end": "00:00:42,490",
+            "en": "Incorrect",
+            "zh": "不正确",
+            "ar": "غير صحيح",
+            "ko": "이ect"
+        },
+        {
+            "start": "00:00:49,690",
+            "end": "00:00:50,510",
+            "en": "Then, good night",
+            "zh": "那么，晚安",
+            "ar": "إذن، تصبح على خير",
+            "ko": "그럼 자 neigh"
+        }
+    ]
+}

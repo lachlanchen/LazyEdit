@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,300\",\n    \"lang\": \"zh\",\n    \"text\": \"这是一个芋头\"\n  },\n  {\n    \"start\": \"00:00:02,339\",\n    \"end\": \"00:00:05,820\",\n    \"lang\": \"zh\",\n    \"text\": \"中文名叫卤笋 我从来没吃过\"\n  },\n  {\n    \"start\": \"00:00:05,820\",\n    \"end\": \"00:00:07,420\",\n    \"lang\": \"zh\",\n    \"text\": \"卤是卤味道的卤\"\n  },\n  {\n    \"start\": \"00:00:07,720\",\n    \"end\": \"00:00:08,840\",\n    \"lang\": \"zh\",\n    \"text\": \"笋是煮笋的笋\"\n  },\n  {\n    \"start\": \"00:00:10,139\",\n    \"end\": \"00:00:11,260\",\n    \"lang\": \"zh\",\n    \"text\": \"看一下这个怎么样\"\n  },\n  {\n    \"start\": \"00:00:13,180\",\n    \"end\": \"00:00:14,560\",\n    \"lang\": \"zh\",\n    \"text\": \"做一个鸡肉\"\n  },\n  {\n    \"start\": \"00:00:14,740\",\n    \"end\": \"00:00:15,320\",\n    \"lang\": \"zh\",\n    \"text\": \"鸡翅面\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,300",
+            "es": "Esto es un taro",
+            "fr": "Ceci est un taro",
+            "uk": "Це таро"
+        },
+        {
+            "start": "00:00:02,339",
+            "end": "00:00:05,820",
+            "es": "Su nombre en chino es lùsǔn, nunca lo he comido",
+            "fr": "Son nom en chinois est lùsǔn, je ne l'ai jamais mangé",
+            "uk": "На китайській мові це називається lùsǔn, я ніколи це не їв"
+        },
+        {
+            "start": "00:00:05,820",
+            "end": "00:00:07,420",
+            "es": "Lù es el lù de sabor de lù",
+            "fr": "Lù est le lù de goût de lù",
+            "uk": "Lù це lù смаку lù"
+        },
+        {
+            "start": "00:00:07,720",
+            "end": "00:00:08,840",
+            "es": "Sǔn es el sǔn de cocinar sǔn",
+            "fr": "Sǔn est le sǔn de cuisiner sǔn",
+            "uk": "Sǔn це sǔn варіння sǔn"
+        },
+        {
+            "start": "00:00:10,139",
+            "end": "00:00:11,260",
+            "es": "Veamos cómo es esto",
+            "fr": "Voyons à quoi cela ressemble",
+            "uk": "Подивимось, що це таке"
+        },
+        {
+            "start": "00:00:13,180",
+            "end": "00:00:14,560",
+            "es": "Hacer un pollo",
+            "fr": "Faire un poulet",
+            "uk": "Зробити курку"
+        },
+        {
+            "start": "00:00:14,740",
+            "end": "00:00:15,320",
+            "es": "Sopa de alitas de pollo",
+            "fr": "Soupe d'ailes de poulet",
+            "uk": "Суп з курячих крилець"
+        }
+    ]
+}

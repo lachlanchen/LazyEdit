@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,980\",\n    \"lang\": \"en\",\n    \"text\": \"There is an inevitable discrimination chain.\"\n  },\n  {\n    \"start\": \"00:00:06,900\",\n    \"end\": \"00:00:17,180\",\n    \"lang\": \"en\",\n    \"text\": \"Like the French think English pronunciation is vascular.\"\n  },\n  {\n    \"start\": \"00:00:17,580\",\n    \"end\": \"00:00:22,380\",\n    \"lang\": \"en\",\n    \"text\": \"And the British think American accent is vascular.\"\n  },\n  {\n    \"start\": \"00:00:23,620\",\n    \"end\": \"00:00:24,620\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:24,620\",\n    \"end\": \"00:00:25,940\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:00:25,940\",\n    \"end\": \"00:00:26,860\",\n    \"lang\": \"en\",\n    \"text\": \"it's not vascular,\"\n  },\n  {\n    \"start\": \"00:00:26,860\",\n    \"end\": \"00:00:27,620\",\n    \"lang\": \"en\",\n    \"text\": \"it's wasp-cule.\"\n  },\n  {\n    \"start\": \"00:00:30,020\",\n    \"end\": \"00:00:31,020\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway...\"\n  },\n  {\n    \"start\": \"00:00:34,320\",\n    \"end\": \"00:00:34,820\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway...\"\n  },\n  {\n    \"start\": \"00:00:36,960\",\n    \"end\": \"00:00:37,960\",\n    \"lang\": \"en\",\n    \"text\": \"So...\"\n  },\n  {\n    \"start\": \"00:00:38,620\",\n    \"end\": \"00:00:42,700\",\n    \"lang\": \"en\",\n    \"text\": \"I think you cannot avoid this discrimination from others.\"\n  },\n  {\n    \"start\": \"00:00:44,100\",\n    \"end\": \"00:00:50,820\",\n    \"lang\": \"en\",\n    \"text\": \"We all have the right to discriminate others and to be discriminated.\"\n  },\n  {\n    \"start\": \"00:00:50,820\",\n    \"end\": \"00:00:58,660\",\n    \"lang\": \"en\",\n    \"text\": \"I think the best part of the US is that you can discriminate,\"\n  },\n  {\n    \"start\": \"00:00:58,660\",\n    \"end\": \"00:01:07,560\",\n    \"lang\": \"en\",\n    \"text\": \"but you can never harm my benefits.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,980",
+            "en": "There is an inevitable discrimination chain.",
+            "zh": "存在一个不可避免的歧视链。",
+            "ar": "هناك سلسلة تمييز لا مفر منها."
+        },
+        {
+            "start": "00:00:06,900",
+            "end": "00:00:17,180",
+            "en": "Like the French think English pronunciation is wasp-cule.",
+            "zh": "就像法国人认为英语发音是wasp-cule。",
+            "ar": "مثل أن الفرنسيين يعتقدون أن نطق الإنجليزية هو وسب-كول."
+        },
+        {
+            "start": "00:00:17,580",
+            "end": "00:00:22,380",
+            "en": "And the British think American accent is wasp-cule.",
+            "zh": "而英国人认为美国口音是wasp-cule。",
+            "ar": "والبريطانيون يعتقدون أن اللكنة الأمريكية هي وسب-كول."
+        },
+        {
+            "start": "00:00:23,620",
+            "end": "00:00:24,620",
+            "en": "And...",
+            "zh": "而且...",
+            "ar": "و..."
+        },
+        {
+            "start": "00:00:24,620",
+            "end": "00:00:25,940",
+            "en": "Sorry,",
+            "zh": "对不起，",
+            "ar": "آسف،"
+        },
+        {
+            "start": "00:00:25,940",
+            "end": "00:00:26,860",
+            "en": "it's not wasp-cule,",
+            "zh": "不是wasp-cule，",
+            "ar": "ليس وسب-كول،"
+        },
+        {
+            "start": "00:00:26,860",
+            "end": "00:00:27,620",
+            "en": "it's wasculine.",
+            "zh": "是wasp-cule的错误表达。",
+            "ar": "إنها وسب-كول."
+        },
+        {
+            "start": "00:00:30,020",
+            "end": "00:00:31,020",
+            "en": "Anyway...",
+            "zh": "无论如何...",
+            "ar": "على أي حال..."
+        },
+        {
+            "start": "00:00:34,320",
+            "end": "00:00:34,820",
+            "en": "Anyway...",
+            "zh": "无论如何...",
+            "ar": "على أي حال..."
+        },
+        {
+            "start": "00:00:36,960",
+            "end": "00:00:37,960",
+            "en": "So...",
+            "zh": "所以...",
+            "ar": "إذا..."
+        },
+        {
+            "start": "00:00:38,620",
+            "end": "00:00:42,700",
+            "en": "I think you cannot avoid this discrimination from others.",
+            "zh": "我认为你无法避免来自他人的歧视。",
+            "ar": "أعتقد أنك لا يمكنك تجنب هذا التمييز من الآخرين."
+        },
+        {
+            "start": "00:00:44,100",
+            "end": "00:00:50,820",
+            "en": "We all have the right to discriminate others and to be discriminated.",
+            "zh": "我们都有权利歧视他人和被歧视。",
+            "ar": "لدينا جميعًا الحق في التمييز ضد الآخرين وأن نتعرض للتمييز."
+        },
+        {
+            "start": "00:00:50,820",
+            "end": "00:00:58,660",
+            "en": "I think the best part of the US is that you can discriminate,",
+            "zh": "我认为美国最好的部分是你可以歧视，",
+            "ar": "أعتقد أن أفضل جزء في الولايات المتحدة هو أن بإمكانك التمييز،"
+        },
+        {
+            "start": "00:00:58,660",
+            "end": "00:01:07,560",
+            "en": "but you can never harm my benefits.",
+            "zh": "但你永远不能伤害我的利益。",
+            "ar": "لكنك لن تتمكن أبدًا من الإضرار بمصالحي."
+        }
+    ]
+}

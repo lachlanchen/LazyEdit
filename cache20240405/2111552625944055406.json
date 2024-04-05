@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,717\",\n    \"end\": \"00:01:04,018\",\n    \"lang\": \"en\",\n    \"text\": \"It's played glass\"\n  },\n  {\n    \"start\": \"00:01:04,018\",\n    \"end\": \"00:01:04,498\",\n    \"lang\": \"en\",\n    \"text\": \"Into\"\n  },\n  {\n    \"start\": \"00:01:11,202\",\n    \"end\": \"00:01:14,202\",\n    \"lang\": \"zh\",\n    \"text\": \"没有输高\"\n  },\n  {\n    \"start\": \"00:01:14,202\",\n    \"end\": \"00:01:16,882\",\n    \"lang\": \"zh\",\n    \"text\": \"没有傲嬌\"\n  },\n  {\n    \"start\": \"00:01:16,882\",\n    \"end\": \"00:01:19,702\",\n    \"lang\": \"zh\",\n    \"text\": \"没有输高\"\n  },\n  {\n    \"start\": \"00:01:19,702\",\n    \"end\": \"00:01:22,222\",\n    \"lang\": \"zh\",\n    \"text\": \"没有傲嬌\"\n  },\n  {\n    \"start\": \"00:01:22,222\",\n    \"end\": \"00:01:24,822\",\n    \"lang\": \"zh\",\n    \"text\": \"没有输高\"\n  },\n  {\n    \"start\": \"00:01:24,822\",\n    \"end\": \"00:01:27,122\",\n    \"lang\": \"zh\",\n    \"text\": \"没有傲嬌\"\n  },\n  {\n    \"start\": \"00:01:27,122\",\n    \"end\": \"00:01:29,862\",\n    \"lang\": \"zh\",\n    \"text\": \"没有输高\"\n  },\n  {\n    \"start\": \"00:01:29,862\",\n    \"end\": \"00:01:31,982\",\n    \"lang\": \"zh\",\n    \"text\": \"我是一个唯一不全的人\"\n  },\n  {\n    \"start\": \"00:01:33,782\",\n    \"end\": \"00:01:36,522\",\n    \"lang\": \"zh\",\n    \"text\": \"每天一点小成就我已经很开心了\"\n  },\n  {\n    \"start\": \"00:02:01,022\",\n    \"end\": \"00:02:03,722\",\n    \"lang\": \"zh\",\n    \"text\": \"谢谢观看\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,717",
+            "end": "00:01:04,018",
+            "vi": "Nó là thủy tinh"
+        },
+        {
+            "start": "00:01:04,018",
+            "end": "00:01:04,498",
+            "vi": "Trong"
+        },
+        {
+            "start": "00:01:11,202",
+            "end": "00:01:14,202",
+            "vi": "Không có sự cao ngạo"
+        },
+        {
+            "start": "00:01:14,202",
+            "end": "00:01:16,882",
+            "vi": "Không kiêu ngạo"
+        },
+        {
+            "start": "00:01:16,882",
+            "end": "00:01:19,702",
+            "vi": "Không có sự cao ngạo"
+        },
+        {
+            "start": "00:01:19,702",
+            "end": "00:01:22,222",
+            "vi": "Không kiêu ngạo"
+        },
+        {
+            "start": "00:01:22,222",
+            "end": "00:01:24,822",
+            "vi": "Không có sự cao ngạo"
+        },
+        {
+            "start": "00:01:24,822",
+            "end": "00:01:27,122",
+            "vi": "Không kiêu ngạo"
+        },
+        {
+            "start": "00:01:27,122",
+            "end": "00:01:29,862",
+            "vi": "Không có sự cao ngạo"
+        },
+        {
+            "start": "00:01:29,862",
+            "end": "00:01:31,982",
+            "vi": "Tôi là người duy nhất không hoàn hảo"
+        },
+        {
+            "start": "00:01:33,782",
+            "end": "00:01:36,522",
+            "vi": "Mỗi ngày một chút thành tựu, tôi đã rất hạnh phúc"
+        },
+        {
+            "start": "00:02:01,022",
+            "end": "00:02:03,722",
+            "vi": "Cảm ơn đã xem"
+        }
+    ]
+}

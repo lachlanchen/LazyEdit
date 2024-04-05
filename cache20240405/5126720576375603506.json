@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,560\",\n    \"lang\": \"en\",\n    \"text\": \"Now we have this fried chicken,\"\n  },\n  {\n    \"start\": \"00:00:05,560\",\n    \"end\": \"00:00:11,120\",\n    \"lang\": \"en\",\n    \"text\": \"and then it's bean sprouts and spinach.\"\n  },\n  {\n    \"start\": \"00:00:11,960\",\n    \"end\": \"00:00:15,880\",\n    \"lang\": \"en\",\n    \"text\": \"And I put this with our instant noodles.\"\n  },\n  {\n    \"start\": \"00:00:17,939\",\n    \"end\": \"00:00:22,940\",\n    \"lang\": \"en\",\n    \"text\": \"Together with this is coriander.\"\n  },\n  {\n    \"start\": \"00:00:24,040\",\n    \"end\": \"00:00:25,020\",\n    \"lang\": \"en\",\n    \"text\": \"Coriander.\"\n  },\n  {\n    \"start\": \"00:00:30,200\",\n    \"end\": \"00:00:31,140\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:37,960\",\n    \"end\": \"00:00:38,900\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:38,900\",\n    \"end\": \"00:00:42,740\",\n    \"lang\": \"en\",\n    \"text\": \"I think it's time to put this in together.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,560",
+            "vi": "Bây giờ chúng ta có gà rán này,"
+        },
+        {
+            "start": "00:00:05,560",
+            "end": "00:00:11,120",
+            "vi": "và sau đó là giá đỗ và rau bina."
+        },
+        {
+            "start": "00:00:11,960",
+            "end": "00:00:15,880",
+            "vi": "Và tôi cho nó cùng với mì gói của chúng ta."
+        },
+        {
+            "start": "00:00:17,939",
+            "end": "00:00:22,940",
+            "vi": "Cùng với đó là rau mùi."
+        },
+        {
+            "start": "00:00:24,040",
+            "end": "00:00:25,020",
+            "vi": "Rau mùi."
+        },
+        {
+            "start": "00:00:30,200",
+            "end": "00:00:31,140",
+            "vi": "Được."
+        },
+        {
+            "start": "00:00:37,960",
+            "end": "00:00:38,900",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:38,900",
+            "end": "00:00:42,740",
+            "vi": "Tôi nghĩ đã đến lúc cho tất cả vào cùng nhau."
+        }
+    ]
+}

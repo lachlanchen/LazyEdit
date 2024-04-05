@@ -1,0 +1,120 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:05,398\",\n    \"end\": \"00:04:07,578\",\n    \"lang\": \"en\",\n    \"text\": \"you are everything,\"\n  },\n  {\n    \"start\": \"00:04:07,578\",\n    \"end\": \"00:04:14,918\",\n    \"lang\": \"en\",\n    \"text\": \"but in fact no matter how\"\n  },\n  {\n    \"start\": \"00:04:14,918\",\n    \"end\": \"00:04:16,017\",\n    \"lang\": \"en\",\n    \"text\": \"much you learn,\"\n  },\n  {\n    \"start\": \"00:04:16,017\",\n    \"end\": \"00:04:19,317\",\n    \"lang\": \"en\",\n    \"text\": \"you still you are ignored,\"\n  },\n  {\n    \"start\": \"00:04:19,317\",\n    \"end\": \"00:04:20,178\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:04:20,178\",\n    \"end\": \"00:04:25,058\",\n    \"lang\": \"en\",\n    \"text\": \"We are still...\"\n  },\n  {\n    \"start\": \"00:04:27,010\",\n    \"end\": \"00:04:27,950\",\n    \"lang\": \"ja\",\n    \"text\": \"ちゃってー\"\n  },\n  {\n    \"start\": \"00:04:29,698\",\n    \"end\": \"00:04:32,278\",\n    \"lang\": \"en\",\n    \"text\": \"obsessed in our own illusion,\"\n  },\n  {\n    \"start\": \"00:04:32,278\",\n    \"end\": \"00:04:35,618\",\n    \"lang\": \"en\",\n    \"text\": \"our own imagination,\"\n  },\n  {\n    \"start\": \"00:04:35,618\",\n    \"end\": \"00:04:38,938\",\n    \"lang\": \"en\",\n    \"text\": \"that we understand the world,\"\n  },\n  {\n    \"start\": \"00:04:38,938\",\n    \"end\": \"00:04:39,778\",\n    \"lang\": \"en\",\n    \"text\": \"understand the\"\n  },\n  {\n    \"start\": \"00:04:39,778\",\n    \"end\": \"00:04:40,138\",\n    \"lang\": \"en\",\n    \"text\": \"universe.\"\n  },\n  {\n    \"start\": \"00:04:40,138\",\n    \"end\": \"00:04:41,298\",\n    \"lang\": \"en\",\n    \"text\": \"But it's a fact,\"\n  },\n  {\n    \"start\": \"00:04:41,298\",\n    \"end\": \"00:04:41,898\",\n    \"lang\": \"en\",\n    \"text\": \"it's not.\"\n  },\n  {\n    \"start\": \"00:04:41,898\",\n    \"end\": \"00:04:43,898\",\n    \"lang\": \"en\",\n    \"text\": \"No matter how much you learn,\"\n  },\n  {\n    \"start\": \"00:04:43,898\",\n    \"end\": \"00:04:45,498\",\n    \"lang\": \"en\",\n    \"text\": \"you are a physicist,\"\n  },\n  {\n    \"start\": \"00:04:45,498\",\n    \"end\": \"00:04:46,858\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  },\n  {\n    \"start\": \"00:04:46,858\",\n    \"end\": \"00:04:49,278\",\n    \"lang\": \"en\",\n    \"text\": \"are a Nobel Prize laureate,\"\n  },\n  {\n    \"start\": \"00:04:49,278\",\n    \"end\": \"00:04:51,818\",\n    \"lang\": \"en\",\n    \"text\": \"it's useless.\"\n  },\n  {\n    \"start\": \"00:04:51,818\",\n    \"end\": \"00:04:57,518\",\n    \"lang\": \"en\",\n    \"text\": \"It still can't solve the core problem that\"\n  },\n  {\n    \"start\": \"00:04:58,466\",\n    \"end\": \"00:04:58,886\",\n    \"lang\": \"ja\",\n    \"text\": \"We are\"\n  },\n  {\n    \"start\": \"00:04:58,926\",\n    \"end\": \"00:04:59,406\",\n    \"lang\": \"ja\",\n    \"text\": \"勇猛なって\"\n  },\n  {\n    \"start\": \"00:05:01,218\",\n    \"end\": \"00:05:04,698\",\n    \"lang\": \"en\",\n    \"text\": \"So just enjoy life everyday.\"\n  },\n  {\n    \"start\": \"00:05:04,698\",\n    \"end\": \"00:05:06,118\",\n    \"lang\": \"en\",\n    \"text\": \"Enjoy life,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:04:05,398",
+            "end": "00:04:07,578",
+            "vi": "bạn là tất cả,"
+        },
+        {
+            "start": "00:04:07,578",
+            "end": "00:04:14,918",
+            "vi": "nhưng thực tế dù bạn học hỏi bao nhiêu"
+        },
+        {
+            "start": "00:04:14,918",
+            "end": "00:04:16,017",
+            "vi": "thì bạn vẫn bị lờ đi,"
+        },
+        {
+            "start": "00:04:16,017",
+            "end": "00:04:19,317",
+            "vi": "đúng không?"
+        },
+        {
+            "start": "00:04:19,317",
+            "end": "00:04:20,178",
+            "vi": "Chúng ta vẫn..."
+        },
+        {
+            "start": "00:04:27,010",
+            "end": "00:04:27,950",
+            "vi": "chìm đắm trong ảo tưởng của mình,"
+        },
+        {
+            "start": "00:04:29,698",
+            "end": "00:04:32,278",
+            "vi": "trong trí tưởng tượng của chính mình,"
+        },
+        {
+            "start": "00:04:32,278",
+            "end": "00:04:35,618",
+            "vi": "rằng chúng ta hiểu được thế giới,"
+        },
+        {
+            "start": "00:04:35,618",
+            "end": "00:04:38,938",
+            "vi": "hiểu được vũ trụ."
+        },
+        {
+            "start": "00:04:38,938",
+            "end": "00:04:39,778",
+            "vi": "Nhưng đó là sự thật,"
+        },
+        {
+            "start": "00:04:39,778",
+            "end": "00:04:40,138",
+            "vi": "nó không phải."
+        },
+        {
+            "start": "00:04:40,138",
+            "end": "00:04:41,298",
+            "vi": "Dù bạn học hỏi bao nhiêu đi chăng nữa,"
+        },
+        {
+            "start": "00:04:41,298",
+            "end": "00:04:41,898",
+            "vi": "bạn là một nhà vật lý,"
+        },
+        {
+            "start": "00:04:41,898",
+            "end": "00:04:43,898",
+            "vi": "là một người đoạt giải Nobel,"
+        },
+        {
+            "start": "00:04:43,898",
+            "end": "00:04:45,498",
+            "vi": "đó là vô ích."
+        },
+        {
+            "start": "00:04:45,498",
+            "end": "00:04:46,858",
+            "vi": "Nó vẫn không thể giải quyết được vấn đề cốt lõi mà"
+        },
+        {
+            "start": "00:04:46,858",
+            "end": "00:04:49,278",
+            "vi": "chúng ta đang đối mặt,"
+        },
+        {
+            "start": "00:04:49,278",
+            "end": "00:04:51,818",
+            "vi": "Vậy nên hãy tận hưởng cuộc sống mỗi ngày."
+        },
+        {
+            "start": "00:04:51,818",
+            "end": "00:04:57,518",
+            "vi": "Tận hưởng cuộc sống,"
+        },
+        {
+            "start": "00:04:58,466",
+            "end": "00:04:58,886",
+            "vi": "Với lòng dũng cảm."
+        },
+        {
+            "start": "00:04:58,926",
+            "end": "00:04:59,406",
+            "vi": "Và sự mạnh mẽ."
+        },
+        {
+            "start": "00:05:01,218",
+            "end": "00:05:04,698",
+            "vi": "Vậy nên hãy tận hưởng cuộc sống mỗi ngày."
+        },
+        {
+            "start": "00:05:04,698",
+            "end": "00:05:06,118",
+            "vi": "Tận hưởng cuộc sống,"
+        }
+    ]
+}

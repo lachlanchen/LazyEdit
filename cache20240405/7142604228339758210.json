@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,699\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"zh\",\n    \"text\": \"这个兵力拳咋说呢?\"\n  },\n  {\n    \"start\": \"00:00:02,240\",\n    \"end\": \"00:00:02,860\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力拳\"\n  },\n  {\n    \"start\": \"00:00:04,580\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力\"\n  },\n  {\n    \"start\": \"00:00:09,660\",\n    \"end\": \"00:00:10,020\",\n    \"lang\": \"zh\",\n    \"text\": \"哇,\"\n  },\n  {\n    \"start\": \"00:00:10,020\",\n    \"end\": \"00:00:12,200\",\n    \"lang\": \"zh\",\n    \"text\": \"那个黑狗很可爱\"\n  },\n  {\n    \"start\": \"00:00:16,420\",\n    \"end\": \"00:00:16,920\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力,\"\n  },\n  {\n    \"start\": \"00:00:16,920\",\n    \"end\": \"00:00:17,820\",\n    \"lang\": \"zh\",\n    \"text\": \"还有什么呢这\"\n  },\n  {\n    \"start\": \"00:00:18,380\",\n    \"end\": \"00:00:18,740\",\n    \"lang\": \"zh\",\n    \"text\": \"哦,\"\n  },\n  {\n    \"start\": \"00:00:18,740\",\n    \"end\": \"00:00:19,180\",\n    \"lang\": \"zh\",\n    \"text\": \"贵兵,\"\n  },\n  {\n    \"start\": \"00:00:19,180\",\n    \"end\": \"00:00:20,460\",\n    \"lang\": \"zh\",\n    \"text\": \"贵兵拳\"\n  },\n  {\n    \"start\": \"00:00:21,100\",\n    \"end\": \"00:00:21,620\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力,\"\n  },\n  {\n    \"start\": \"00:00:21,620\",\n    \"end\": \"00:00:22,880\",\n    \"lang\": \"zh\",\n    \"text\": \"我说的说些啥\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,699",
+            "end": "00:00:02,240",
+            "vi": "Cái quyền lực quân sự này phải nói như thế nào nhỉ?"
+        },
+        {
+            "start": "00:00:02,240",
+            "end": "00:00:02,860",
+            "vi": "Quyền lực quân sự"
+        },
+        {
+            "start": "00:00:04,580",
+            "end": "00:00:05,140",
+            "vi": "Quân lực"
+        },
+        {
+            "start": "00:00:09,660",
+            "end": "00:00:10,020",
+            "vi": "Wow,"
+        },
+        {
+            "start": "00:00:10,020",
+            "end": "00:00:12,200",
+            "vi": "Con chó đen thật dễ thương"
+        },
+        {
+            "start": "00:00:16,420",
+            "end": "00:00:16,920",
+            "vi": "Quân lực,"
+        },
+        {
+            "start": "00:00:16,920",
+            "end": "00:00:17,820",
+            "vi": "Còn gì nữa đã như thế này"
+        },
+        {
+            "start": "00:00:18,380",
+            "end": "00:00:18,740",
+            "vi": "Ồ,"
+        },
+        {
+            "start": "00:00:18,740",
+            "end": "00:00:19,180",
+            "vi": "Quân lực quý giá,"
+        },
+        {
+            "start": "00:00:19,180",
+            "end": "00:00:20,460",
+            "vi": "Quyền quân lực quý giá"
+        },
+        {
+            "start": "00:00:21,100",
+            "end": "00:00:21,620",
+            "vi": "Quân lực,"
+        },
+        {
+            "start": "00:00:21,620",
+            "end": "00:00:22,880",
+            "vi": "Tôi nói đến cái gì nhỉ?"
+        }
+    ]
+}

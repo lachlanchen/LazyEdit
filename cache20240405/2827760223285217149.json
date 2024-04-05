@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"This is our special Chongqing flavor,\"\n  },\n  {\n    \"start\": \"00:00:03,580\",\n    \"end\": \"00:00:06,640\",\n    \"lang\": \"en\",\n    \"text\": \"beef and potato.\"\n  },\n  {\n    \"start\": \"00:00:08,582\",\n    \"end\": \"00:00:09,082\",\n    \"lang\": \"en\",\n    \"text\": \"Beep.\"\n  },\n  {\n    \"start\": \"00:00:09,506\",\n    \"end\": \"00:00:12,206\",\n    \"lang\": \"en\",\n    \"text\": \"So let me check this.\"\n  },\n  {\n    \"start\": \"00:00:14,396\",\n    \"end\": \"00:00:15,206\",\n    \"lang\": \"en\",\n    \"text\": \"This potato,\"\n  },\n  {\n    \"start\": \"00:00:15,206\",\n    \"end\": \"00:00:20,186\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't make it as potato crumb.\"\n  },\n  {\n    \"start\": \"00:00:20,906\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to say it,\"\n  },\n  {\n    \"start\": \"00:00:22,146\",\n    \"end\": \"00:00:22,566\",\n    \"lang\": \"en\",\n    \"text\": \"toodoli.\"\n  },\n  {\n    \"start\": \"00:00:23,486\",\n    \"end\": \"00:00:30,626\",\n    \"lang\": \"en\",\n    \"text\": \"So I believe these small fragments will build a balance between flavor,\"\n  },\n  {\n    \"start\": \"00:00:30,626\",\n    \"end\": \"00:00:34,606\",\n    \"lang\": \"en\",\n    \"text\": \"so that is a combination\"\n  },\n  {\n    \"start\": \"00:00:34,606\",\n    \"end\": \"00:00:35,586\",\n    \"lang\": \"en\",\n    \"text\": \"that is a flavor,\"\n  },\n  {\n    \"start\": \"00:00:35,586\",\n    \"end\": \"00:00:40,326\",\n    \"lang\": \"en\",\n    \"text\": \"and the inner core without flavor.\"\n  },\n  {\n    \"start\": \"00:00:40,746\",\n    \"end\": \"00:00:44,746\",\n    \"lang\": \"en\",\n    \"text\": \"It will produce a perfect combination.\"\n  },\n  {\n    \"start\": \"00:00:46,086\",\n    \"end\": \"00:00:47,386\",\n    \"lang\": \"en\",\n    \"text\": \"It will blend in.\"\n  },\n  {\n    \"start\": \"00:00:47,946\",\n    \"end\": \"00:00:50,666\",\n    \"lang\": \"en\",\n    \"text\": \"If it's potato crumb,\"\n  },\n  {\n    \"start\": \"00:00:50,666\",\n    \"end\": \"00:00:54,046\",\n    \"lang\": \"en\",\n    \"text\": \"it will be over flavored.\"\n  },\n  {\n    \"start\": \"00:00:55,966\",\n    \"end\": \"00:00:57,686\",\n    \"lang\": \"en\",\n    \"text\": \"I like this crisp stuff.\"\n  },\n  {\n    \"start\": \"00:00:59,046\",\n    \"end\": \"00:00:59,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "es": "Este es nuestro especial sabor de Chongqing,",
+            "fr": "Ceci est notre saveur spéciale de Chongqing,",
+            "uk": "Це наш особливий смак Чунціна,"
+        },
+        {
+            "start": "00:00:03,580",
+            "end": "00:00:06,640",
+            "es": "ternera y patata.",
+            "fr": "boeuf et pomme de terre.",
+            "uk": "яловичина та картопля."
+        },
+        {
+            "start": "00:00:08,582",
+            "end": "00:00:09,082",
+            "es": "Bip.",
+            "fr": "Bip.",
+            "uk": "Біп."
+        },
+        {
+            "start": "00:00:09,506",
+            "end": "00:00:12,206",
+            "es": "Así que déjame comprobar esto.",
+            "fr": "Alors, permettez-moi de vérifier cela.",
+            "uk": "Отже, дозвольте мені перевірити це."
+        },
+        {
+            "start": "00:00:14,396",
+            "end": "00:00:15,206",
+            "es": "Esta patata,",
+            "fr": "Cette pomme de terre,",
+            "uk": "Ця картопля,"
+        },
+        {
+            "start": "00:00:15,206",
+            "end": "00:00:20,186",
+            "es": "no la hice como migaja de patata.",
+            "fr": "je ne l'ai pas fait comme une miette de pomme de terre.",
+            "uk": "я не зробив це як картопляну крихту."
+        },
+        {
+            "start": "00:00:20,906",
+            "end": "00:00:22,146",
+            "es": "No sé cómo decirlo,",
+            "fr": "Je ne sais pas comment le dire,",
+            "uk": "Я не знаю, як сказати,"
+        },
+        {
+            "start": "00:00:22,146",
+            "end": "00:00:22,566",
+            "es": "trozos pequeños.",
+            "fr": "petits morceaux.",
+            "uk": "дрібні шматочки."
+        },
+        {
+            "start": "00:00:23,486",
+            "end": "00:00:30,626",
+            "es": "Así que creo que estos pequeños fragmentos crearán un equilibrio entre el sabor,",
+            "fr": "Donc, je crois que ces petits fragments vont créer un équilibre de saveur,",
+            "uk": "Отже, я вважаю, що ці маленькі фрагменти створять баланс між смаком,"
+        },
+        {
+            "start": "00:00:30,626",
+            "end": "00:00:34,606",
+            "es": "así que es una combinación",
+            "fr": "c'est donc une combinaison",
+            "uk": "так це комбінація"
+        },
+        {
+            "start": "00:00:34,606",
+            "end": "00:00:35,586",
+            "es": "que es un sabor,",
+            "fr": "qui est une saveur,",
+            "uk": "що є смаком,"
+        },
+        {
+            "start": "00:00:35,586",
+            "end": "00:00:40,326",
+            "es": "y el núcleo interno sin sabor.",
+            "fr": "et le noyau interne sans saveur.",
+            "uk": "і внутрішнє ядро без смаку."
+        },
+        {
+            "start": "00:00:40,746",
+            "end": "00:00:44,746",
+            "es": "Producirá una combinación perfecta.",
+            "fr": "Cela produira une combinaison parfaite.",
+            "uk": "Це створить ідеальне поєднання."
+        },
+        {
+            "start": "00:00:46,086",
+            "end": "00:00:47,386",
+            "es": "Se mezclará.",
+            "fr": "Cela se mélangera.",
+            "uk": "Це змішається."
+        },
+        {
+            "start": "00:00:47,946",
+            "end": "00:00:50,666",
+            "es": "Si es migaja de patata,",
+            "fr": "Si c'était de la miette de pomme de terre,",
+            "uk": "Якщо це картопляна крихта,"
+        },
+        {
+            "start": "00:00:50,666",
+            "end": "00:00:54,046",
+            "es": "estaríamos sobrepasando el sabor.",
+            "fr": "nous serions en excès de saveur.",
+            "uk": "ми б переборщили зі смаком."
+        },
+        {
+            "start": "00:00:55,966",
+            "end": "00:00:57,686",
+            "es": "Me gusta este crujiente.",
+            "fr": "J'aime ce croustillant.",
+            "uk": "Мені подобається ця хрускіт."
+        },
+        {
+            "start": "00:00:59,046",
+            "end": "00:00:59,686",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        }
+    ]
+}

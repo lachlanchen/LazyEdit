@@ -1,0 +1,26 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:09,060\",\n    \"lang\": \"en\",\n    \"text\": \"so that means it's a I think it's a cool with the 19 oh the simple is a quite\"\n  },\n  {\n    \"start\": \"00:00:09,060\",\n    \"end\": \"00:00:19,220\",\n    \"lang\": \"en\",\n    \"text\": \"a similar you almost killed me so this is the second time recur right recur\"\n  },\n  {\n    \"start\": \"00:00:20,380\",\n    \"end\": \"00:00:21,620\",\n    \"lang\": \"en\",\n    \"text\": \"okay see you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:09,060",
+            "en": "so that means it's a I think it's a cool with the 19 oh the simple is a quite",
+            "zh": "所以这意味着我认为这是一件与19有关的很酷的事情，哦，简单来说是相当",
+            "ar": "لذا هذا يعني أنه أعتقد أنه أمر رائع مع ال ١٩ أوه البسيط هو القليل"
+        },
+        {
+            "start": "00:00:09,060",
+            "end": "00:00:19,220",
+            "en": "a similar you almost killed me so this is the second time recur right recur",
+            "zh": "一个类似的你差点杀了我所以这是第二次复发，对，复发",
+            "ar": "شيء مماثل، كدت تقتلني، إذاً هذه هي المرة الثانية تتكرر، صحيح، تتكرر"
+        },
+        {
+            "start": "00:00:20,380",
+            "end": "00:00:21,620",
+            "en": "okay see you",
+            "zh": "好的，再见",
+            "ar": "حسنًا، إلى اللقاء"
+        }
+    ]
+}

@@ -1,0 +1,36 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,140\",\n    \"lang\": \"ja\",\n    \"text\": \"このフルーテンを走りました\"\n  },\n  {\n    \"start\": \"00:00:03,746\",\n    \"end\": \"00:00:04,586\",\n    \"lang\": \"en\",\n    \"text\": \"As I\"\n  },\n  {\n    \"start\": \"00:00:05,506\",\n    \"end\": \"00:00:07,386\",\n    \"lang\": \"ja\",\n    \"text\": \"子供の歌、\"\n  },\n  {\n    \"start\": \"00:00:07,386\",\n    \"end\": \"00:00:08,326\",\n    \"lang\": \"ja\",\n    \"text\": \"書いています\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,140",
+            "en": "I ran through this flute",
+            "zh": "我跑过这支长笛",
+            "ar": "لقد ركضت عبر هذه الناي",
+            "ja": "このフルーテンを走りました"
+        },
+        {
+            "start": "00:00:03,746",
+            "end": "00:00:04,586",
+            "en": "As I",
+            "zh": "当我",
+            "ar": "بينما أنا"
+        },
+        {
+            "start": "00:00:05,506",
+            "end": "00:00:07,386",
+            "en": "Child's Song,",
+            "zh": "儿童之歌，",
+            "ar": "أغنية الطفل،",
+            "ja": "子供の歌、"
+        },
+        {
+            "start": "00:00:07,386",
+            "end": "00:00:08,326",
+            "en": "I am writing",
+            "zh": "我在写",
+            "ar": "أنا أكتب",
+            "ja": "書いています"
+        }
+    ]
+}

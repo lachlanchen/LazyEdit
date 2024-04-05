@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,520\",\n    \"lang\": \"en\",\n    \"text\": \"So record my guitar improvement,\"\n  },\n  {\n    \"start\": \"00:00:03,520\",\n    \"end\": \"00:00:04,560\",\n    \"lang\": \"en\",\n    \"text\": \"small progress.\"\n  },\n  {\n    \"start\": \"00:00:28,360\",\n    \"end\": \"00:00:29,760\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:00:29,760\",\n    \"end\": \"00:00:34,540\",\n    \"lang\": \"en\",\n    \"text\": \"so let's play the last part.\"\n  },\n  {\n    \"start\": \"00:00:34,560\",\n    \"end\": \"00:00:35,860\",\n    \"lang\": \"en\",\n    \"text\": \"May I sing?\"\n  },\n  {\n    \"start\": \"00:00:57,474\",\n    \"end\": \"00:00:58,614\",\n    \"lang\": \"zh\",\n    \"text\": \"長年\"\n  },\n  {\n    \"start\": \"00:00:59,954\",\n    \"end\": \"00:01:01,874\",\n    \"lang\": \"zh\",\n    \"text\": \"長未来\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,520",
+            "en": "So record my guitar improvement,",
+            "zh": "所以记录一下我的吉他进步，",
+            "ar": "لذا سجل تحسن غيتاري،"
+        },
+        {
+            "start": "00:00:03,520",
+            "end": "00:00:04,560",
+            "en": "small progress.",
+            "zh": "小小的进步。",
+            "ar": "تقدم صغير."
+        },
+        {
+            "start": "00:00:28,360",
+            "end": "00:00:29,760",
+            "en": "Ok,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:29,760",
+            "end": "00:00:34,540",
+            "en": "so let's play the last part.",
+            "zh": "那么我们来弹奏最后一部分。",
+            "ar": "لذا دعونا نعزف الجزء الأخير."
+        },
+        {
+            "start": "00:00:34,560",
+            "end": "00:00:35,860",
+            "en": "May I sing?",
+            "zh": "我可以唱吗？",
+            "ar": "هل يمكنني الغناء؟"
+        },
+        {
+            "start": "00:00:57,474",
+            "end": "00:00:58,614",
+            "en": "Over the years",
+            "zh": "長年",
+            "ar": "على مر السنين"
+        },
+        {
+            "start": "00:00:59,954",
+            "end": "00:01:01,874",
+            "en": "Long future",
+            "zh": "長未来",
+            "ar": "مستقبل طويل"
+        }
+    ]
+}

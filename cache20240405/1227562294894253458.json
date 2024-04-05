@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,640\",\n    \"lang\": \"en\",\n    \"text\": \"So I will share a method to remember this Arabic letter.\"\n  },\n  {\n    \"start\": \"00:00:04,440\",\n    \"end\": \"00:00:05,540\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a sword.\"\n  },\n  {\n    \"start\": \"00:00:07,100\",\n    \"end\": \"00:00:10,920\",\n    \"lang\": \"en\",\n    \"text\": \"This is a man with this big belly.\"\n  },\n  {\n    \"start\": \"00:00:11,760\",\n    \"end\": \"00:00:12,940\",\n    \"lang\": \"en\",\n    \"text\": \"So that's the reason.\"\n  },\n  {\n    \"start\": \"00:00:13,954\",\n    \"end\": \"00:00:14,694\",\n    \"lang\": \"zh\",\n    \"text\": \"那些黑子\"\n  },\n  {\n    \"start\": \"00:00:15,106\",\n    \"end\": \"00:00:15,506\",\n    \"lang\": \"en\",\n    \"text\": \"side.\"\n  },\n  {\n    \"start\": \"00:00:15,506\",\n    \"end\": \"00:00:20,246\",\n    \"lang\": \"en\",\n    \"text\": \"So this is how I remember this matter.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,640",
+            "es": "Así que compartiré un método para recordar esta letra árabe.",
+            "fr": "Donc, je vais partager une méthode pour se souvenir de cette lettre arabe.",
+            "uk": "Отже, я поділюся методом запам'ятовування цієї арабської літери."
+        },
+        {
+            "start": "00:00:04,440",
+            "end": "00:00:05,540",
+            "es": "Así que esto es una espada.",
+            "fr": "Donc, ceci est une épée.",
+            "uk": "Отже, це меч."
+        },
+        {
+            "start": "00:00:07,100",
+            "end": "00:00:10,920",
+            "es": "Esto es un hombre con este gran vientre.",
+            "fr": "Ceci est un homme avec ce gros ventre.",
+            "uk": "Це чоловік з великим животом."
+        },
+        {
+            "start": "00:00:11,760",
+            "end": "00:00:12,940",
+            "es": "Así que esa es la razón.",
+            "fr": "Donc, c'est la raison.",
+            "uk": "Отже, ось чому."
+        },
+        {
+            "start": "00:00:13,954",
+            "end": "00:00:14,694",
+            "es": "Esos detractores",
+            "fr": "Ces détracteurs",
+            "uk": "Ті хейтери"
+        },
+        {
+            "start": "00:00:15,106",
+            "end": "00:00:15,506",
+            "es": "lado.",
+            "fr": "côté.",
+            "uk": "бік."
+        },
+        {
+            "start": "00:00:15,506",
+            "end": "00:00:20,246",
+            "es": "Así es como recuerdo este asunto.",
+            "fr": "C'est ainsi que je me souviens de cette affaire.",
+            "uk": "Отже, ось як я пам'ятаю цю справу."
+        }
+    ]
+}

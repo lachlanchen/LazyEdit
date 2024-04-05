@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,660\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:00,660\",\n    \"end\": \"00:00:02,360\",\n    \"lang\": \"en\",\n    \"text\": \"learning is just a repetition.\"\n  },\n  {\n    \"start\": \"00:00:02,360\",\n    \"end\": \"00:00:03,960\",\n    \"lang\": \"en\",\n    \"text\": \"Better without pressure.\"\n  },\n  {\n    \"start\": \"00:00:04,660\",\n    \"end\": \"00:00:05,340\",\n    \"lang\": \"en\",\n    \"text\": \"I don't have pressure.\"\n  },\n  {\n    \"start\": \"00:00:05,698\",\n    \"end\": \"00:00:07,178\",\n    \"lang\": \"zh\",\n    \"text\": \"我可以一直听到晚上,\"\n  },\n  {\n    \"start\": \"00:00:07,178\",\n    \"end\": \"00:00:08,738\",\n    \"lang\": \"zh\",\n    \"text\": \"直到我终于听懂了\"\n  },\n  {\n    \"start\": \"00:00:11,597\",\n    \"end\": \"00:00:14,338\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:15,298\",\n    \"end\": \"00:00:17,618\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:00:36,034\",\n    \"end\": \"00:00:36,334\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:36,334\",\n    \"end\": \"00:00:38,054\",\n    \"lang\": \"en\",\n    \"text\": \"another one.\"\n  },\n  {\n    \"start\": \"00:00:40,642\",\n    \"end\": \"00:00:42,682\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:43,602\",\n    \"end\": \"00:00:45,802\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树梢\"\n  },\n  {\n    \"start\": \"00:00:46,882\",\n    \"end\": \"00:00:47,462\",\n    \"lang\": \"en\",\n    \"text\": \"not correct.\"\n  },\n  {\n    \"start\": \"00:00:52,194\",\n    \"end\": \"00:00:54,154\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,660",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:00,660",
+            "end": "00:00:02,360",
+            "vi": "việc học chỉ là sự lặp lại."
+        },
+        {
+            "start": "00:00:02,360",
+            "end": "00:00:03,960",
+            "vi": "Tốt hơn khi không có áp lực."
+        },
+        {
+            "start": "00:00:04,660",
+            "end": "00:00:05,340",
+            "vi": "Tôi không có áp lực."
+        },
+        {
+            "start": "00:00:05,698",
+            "end": "00:00:07,178",
+            "vi": "Tôi có thể nghe mãi cho đến tối,"
+        },
+        {
+            "start": "00:00:07,178",
+            "end": "00:00:08,738",
+            "vi": "cho đến khi cuối cùng tôi hiểu ra"
+        },
+        {
+            "start": "00:00:11,597",
+            "end": "00:00:14,338",
+            "vi": "Không có mùi hương của hoa"
+        },
+        {
+            "start": "00:00:15,298",
+            "end": "00:00:17,618",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:00:36,034",
+            "end": "00:00:36,334",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:36,334",
+            "end": "00:00:38,054",
+            "vi": "một cái khác."
+        },
+        {
+            "start": "00:00:40,642",
+            "end": "00:00:42,682",
+            "vi": "Không có mùi hương của hoa"
+        },
+        {
+            "start": "00:00:43,602",
+            "end": "00:00:45,802",
+            "vi": "Không có ngọn cây"
+        },
+        {
+            "start": "00:00:46,882",
+            "end": "00:00:47,462",
+            "vi": "không đúng."
+        },
+        {
+            "start": "00:00:52,194",
+            "end": "00:00:54,154",
+            "vi": "Không có mùi hương của hoa"
+        }
+    ]
+}

@@ -1,0 +1,271 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,020\",\n    \"lang\": \"en\",\n    \"text\": \"I'm gonna put the bandana on your lower body.\"\n  },\n  {\n    \"start\": \"00:00:01,420\",\n    \"end\": \"00:00:02,320\",\n    \"lang\": \"en\",\n    \"text\": \"What do you have to do?\"\n  },\n  {\n    \"start\": \"00:00:03,020\",\n    \"end\": \"00:00:03,600\",\n    \"lang\": \"en\",\n    \"text\": \"All right,\"\n  },\n  {\n    \"start\": \"00:00:03,600\",\n    \"end\": \"00:00:05,520\",\n    \"lang\": \"en\",\n    \"text\": \"one more forward.\"\n  },\n  {\n    \"start\": \"00:00:06,000\",\n    \"end\": \"00:00:06,960\",\n    \"lang\": \"en\",\n    \"text\": \"I would love your music,\"\n  },\n  {\n    \"start\": \"00:00:06,960\",\n    \"end\": \"00:00:07,360\",\n    \"lang\": \"en\",\n    \"text\": \"Geneva.\"\n  },\n  {\n    \"start\": \"00:00:08,400\",\n    \"end\": \"00:00:08,880\",\n    \"lang\": \"en\",\n    \"text\": \"Good boy,\"\n  },\n  {\n    \"start\": \"00:00:08,880\",\n    \"end\": \"00:00:09,240\",\n    \"lang\": \"en\",\n    \"text\": \"yeah!\"\n  },\n  {\n    \"start\": \"00:00:09,560\",\n    \"end\": \"00:00:10,140\",\n    \"lang\": \"en\",\n    \"text\": \"I'm gonna have you closer.\"\n  },\n  {\n    \"start\": \"00:00:11,260\",\n    \"end\": \"00:00:11,740\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:11,740\",\n    \"end\": \"00:00:13,600\",\n    \"lang\": \"en\",\n    \"text\": \"this is gonna be your next.\"\n  },\n  {\n    \"start\": \"00:00:14,020\",\n    \"end\": \"00:00:14,700\",\n    \"lang\": \"en\",\n    \"text\": \"We are ready.\"\n  },\n  {\n    \"start\": \"00:00:16,219\",\n    \"end\": \"00:00:16,700\",\n    \"lang\": \"en\",\n    \"text\": \"Five.\"\n  },\n  {\n    \"start\": \"00:00:18,740\",\n    \"end\": \"00:00:19,220\",\n    \"lang\": \"en\",\n    \"text\": \"Ready,\"\n  },\n  {\n    \"start\": \"00:00:19,220\",\n    \"end\": \"00:00:20,300\",\n    \"lang\": \"en\",\n    \"text\": \"one,\"\n  },\n  {\n    \"start\": \"00:00:20,300\",\n    \"end\": \"00:00:20,760\",\n    \"lang\": \"en\",\n    \"text\": \"two,\"\n  },\n  {\n    \"start\": \"00:00:20,760\",\n    \"end\": \"00:00:21,520\",\n    \"lang\": \"en\",\n    \"text\": \"three,\"\n  },\n  {\n    \"start\": \"00:00:21,520\",\n    \"end\": \"00:00:21,620\",\n    \"lang\": \"en\",\n    \"text\": \"go.\"\n  },\n  {\n    \"start\": \"00:00:22,160\",\n    \"end\": \"00:00:23,500\",\n    \"lang\": \"en\",\n    \"text\": \"♪ I'm on a rave,\"\n  },\n  {\n    \"start\": \"00:00:23,500\",\n    \"end\": \"00:00:25,000\",\n    \"lang\": \"en\",\n    \"text\": \"I'm on a rave ♪\"\n  },\n  {\n    \"start\": \"00:00:25,000\",\n    \"end\": \"00:00:25,740\",\n    \"lang\": \"en\",\n    \"text\": \"♪ I'm dancing,\"\n  },\n  {\n    \"start\": \"00:00:25,740\",\n    \"end\": \"00:00:27,040\",\n    \"lang\": \"en\",\n    \"text\": \"I'm on a rave,\"\n  },\n  {\n    \"start\": \"00:00:27,040\",\n    \"end\": \"00:00:27,400\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:27,400\",\n    \"end\": \"00:00:27,920\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:27,920\",\n    \"end\": \"00:00:28,840\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:28,840\",\n    \"end\": \"00:00:29,060\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:29,060\",\n    \"end\": \"00:00:29,860\",\n    \"lang\": \"en\",\n    \"text\": \"yeah ♪\"\n  },\n  {\n    \"start\": \"00:00:29,860\",\n    \"end\": \"00:00:30,000\",\n    \"lang\": \"en\",\n    \"text\": \"♪ I'm sexy,\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:32,299\",\n    \"lang\": \"en\",\n    \"text\": \"just a bunch of ladies,\"\n  },\n  {\n    \"start\": \"00:00:32,299\",\n    \"end\": \"00:00:34,740\",\n    \"lang\": \"en\",\n    \"text\": \"you say I'm sexy ♪\"\n  },\n  {\n    \"start\": \"00:00:34,740\",\n    \"end\": \"00:00:36,240\",\n    \"lang\": \"en\",\n    \"text\": \"♪ So I need to go rest,\"\n  },\n  {\n    \"start\": \"00:00:36,240\",\n    \"end\": \"00:00:36,540\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:36,540\",\n    \"end\": \"00:00:38,120\",\n    \"lang\": \"en\",\n    \"text\": \"you can't help me,\"\n  },\n  {\n    \"start\": \"00:00:38,120\",\n    \"end\": \"00:00:38,580\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:38,580\",\n    \"end\": \"00:00:39,040\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:39,040\",\n    \"end\": \"00:00:39,340\",\n    \"lang\": \"en\",\n    \"text\": \"yeah ♪\"\n  },\n  {\n    \"start\": \"00:00:39,340\",\n    \"end\": \"00:00:40,100\",\n    \"lang\": \"en\",\n    \"text\": \"♪ Talkin'\"\n  },\n  {\n    \"start\": \"00:00:40,300\",\n    \"end\": \"00:00:41,620\",\n    \"lang\": \"en\",\n    \"text\": \"bout it ♪\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,020",
+            "en": "I'm gonna put the bandana on your lower body.",
+            "zh": "我要把头巾系在你的下半身。",
+            "ar": "سأضع الباندانا على الجزء السفلي من جسدك."
+        },
+        {
+            "start": "00:00:01,420",
+            "end": "00:00:02,320",
+            "en": "What do you have to do?",
+            "zh": "你需要做什么？",
+            "ar": "ما الذي يجب عليك فعله؟"
+        },
+        {
+            "start": "00:00:03,020",
+            "end": "00:00:03,600",
+            "en": "All right,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:03,600",
+            "end": "00:00:05,520",
+            "en": "one more forward.",
+            "zh": "再向前一步。",
+            "ar": "خطوة واحدة إلى الأمام."
+        },
+        {
+            "start": "00:00:06,000",
+            "end": "00:00:06,960",
+            "en": "I would love your music,",
+            "zh": "我会喜欢你的音乐，",
+            "ar": "سأحب موسيقاك،"
+        },
+        {
+            "start": "00:00:06,960",
+            "end": "00:00:07,360",
+            "en": "Geneva.",
+            "zh": "日内瓦。",
+            "ar": "جنيف."
+        },
+        {
+            "start": "00:00:08,400",
+            "end": "00:00:08,880",
+            "en": "Good boy,",
+            "zh": "乖孩子，",
+            "ar": "صبي جيد،"
+        },
+        {
+            "start": "00:00:08,880",
+            "end": "00:00:09,240",
+            "en": "yeah!",
+            "zh": "耶！",
+            "ar": "نعم!"
+        },
+        {
+            "start": "00:00:09,560",
+            "end": "00:00:10,140",
+            "en": "I'm gonna have you closer.",
+            "zh": "我要让你靠近些。",
+            "ar": "سأجعلك أقرب."
+        },
+        {
+            "start": "00:00:11,260",
+            "end": "00:00:11,740",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:00:11,740",
+            "end": "00:00:13,600",
+            "en": "this is gonna be your next.",
+            "zh": "这将是你的下一个。",
+            "ar": "هذا سيكون التالي لك."
+        },
+        {
+            "start": "00:00:14,020",
+            "end": "00:00:14,700",
+            "en": "We are ready.",
+            "zh": "我们准备好了。",
+            "ar": "نحن جاهزون."
+        },
+        {
+            "start": "00:00:16,219",
+            "end": "00:00:16,700",
+            "en": "Five.",
+            "zh": "五。",
+            "ar": "خمسة."
+        },
+        {
+            "start": "00:00:18,740",
+            "end": "00:00:19,220",
+            "en": "Ready,",
+            "zh": "准备，",
+            "ar": "جاهز،"
+        },
+        {
+            "start": "00:00:19,220",
+            "end": "00:00:20,300",
+            "en": "one,",
+            "zh": "一，",
+            "ar": "واحد،"
+        },
+        {
+            "start": "00:00:20,300",
+            "end": "00:00:20,760",
+            "en": "two,",
+            "zh": "二，",
+            "ar": "اثنين،"
+        },
+        {
+            "start": "00:00:20,760",
+            "end": "00:00:21,520",
+            "en": "three,",
+            "zh": "三，",
+            "ar": "ثلاثة،"
+        },
+        {
+            "start": "00:00:21,520",
+            "end": "00:00:21,620",
+            "en": "go.",
+            "zh": "开始。",
+            "ar": "اذهب."
+        },
+        {
+            "start": "00:00:22,160",
+            "end": "00:00:23,500",
+            "en": "♪ I'm on a rave,",
+            "zh": "♪ 我在参加狂欢，",
+            "ar": "♪ أنا في حفلة ريف،"
+        },
+        {
+            "start": "00:00:23,500",
+            "end": "00:00:25,000",
+            "en": "I'm on a rave ♪",
+            "zh": "我在参加狂欢 ♪",
+            "ar": "أنا في حفلة ريف ♪"
+        },
+        {
+            "start": "00:00:25,000",
+            "end": "00:00:25,740",
+            "en": "♪ I'm dancing,",
+            "zh": "♪ 我在跳舞，",
+            "ar": "♪ أنا أرقص،"
+        },
+        {
+            "start": "00:00:25,740",
+            "end": "00:00:27,040",
+            "en": "I'm on a rave,",
+            "zh": "我在参加狂欢，",
+            "ar": "أنا في حفلة ريف،"
+        },
+        {
+            "start": "00:00:27,040",
+            "end": "00:00:27,400",
+            "en": "yeah,",
+            "zh": "耶，",
+            "ar": "نعم،"
+        },
+        {
+            "start": "00:00:27,400",
+            "end": "00:00:27,920",
+            "en": "yeah,",
+            "zh": "耶，",
+            "ar": "نعم،"
+        },
+        {
+            "start": "00:00:27,920",
+            "end": "00:00:28,840",
+            "en": "yeah,",
+            "zh": "耶，",
+            "ar": "نعم،"
+        },
+        {
+            "start": "00:00:28,840",
+            "end": "00:00:29,060",
+            "en": "yeah,",
+            "zh": "耶，",
+            "ar": "نعم،"
+        },
+        {
+            "start": "00:00:29,060",
+            "end": "00:00:29,860",
+            "en": "yeah ♪",
+            "zh": "耶 ♪",
+            "ar": "نعم ♪"
+        },
+        {
+            "start": "00:00:29,860",
+            "end": "00:00:30,000",
+            "en": "♪ I'm sexy,",
+            "zh": "♪ 我很性感，",
+            "ar": "♪ أنا جذاب،"
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:32,299",
+            "en": "just a bunch of ladies,",
+            "zh": "只是一群女士，",
+            "ar": "مجرد مجموعة من السيدات،"
+        },
+        {
+            "start": "00:00:32,299",
+            "end": "00:00:34,740",
+            "en": "you say I'm sexy ♪",
+            "zh": "你说我很性感 ♪",
+            "ar": "تقول إنني جذاب ♪"
+        },
+        {
+            "start": "00:00:34,740",
+            "end": "00:00:36,240",
+            "en": "♪ So I need to go rest,",
+            "zh": "♪ 所以我需要去休息，",
+            "ar": "♪ لذا أنا بحاجة للذهاب للراحة،"
+        },
+        {
+            "start": "00:00:36,240",
+            "end": "00:00:36,540",
+            "en": "yeah,",
+            "zh": "耶，",
+            "ar": "نعم،"
+        },
+        {
+            "start": "00:00:36,540",
+            "end": "00:00:38,120",
+            "en": "you can't help me,",
+            "zh": "你帮不了我，",
+            "ar": "لا يمكنك مساعدتي،"
+        },
+        {
+            "start": "00:00:38,120",
+            "end": "00:00:38,580",
+            "en": "yeah,",
+            "zh": "耶，",
+            "ar": "نعم،"
+        },
+        {
+            "start": "00:00:38,580",
+            "end": "00:00:39,040",
+            "en": "yeah,",
+            "zh": "耶，",
+            "ar": "نعم،"
+        },
+        {
+            "start": "00:00:39,040",
+            "end": "00:00:39,340",
+            "en": "yeah ♪",
+            "zh": "耶 ♪",
+            "ar": "نعم ♪"
+        },
+        {
+            "start": "00:00:39,340",
+            "end": "00:00:40,100",
+            "en": "♪ Talkin'",
+            "zh": "♪ 谈论",
+            "ar": "♪ الحديث"
+        },
+        {
+            "start": "00:00:40,300",
+            "end": "00:00:41,620",
+            "en": "bout it ♪",
+            "zh": "论它 ♪",
+            "ar": "عن ذلك ♪"
+        }
+    ]
+}

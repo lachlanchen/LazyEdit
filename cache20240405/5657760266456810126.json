@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:25,570\",\n    \"end\": \"00:04:26,530\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  },\n  {\n    \"start\": \"00:04:28,570\",\n    \"end\": \"00:04:29,050\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:04:29,050\",\n    \"end\": \"00:04:29,370\",\n    \"lang\": \"en\",\n    \"text\": \"okay,\"\n  },\n  {\n    \"start\": \"00:04:29,370\",\n    \"end\": \"00:04:29,690\",\n    \"lang\": \"en\",\n    \"text\": \"see you,\"\n  },\n  {\n    \"start\": \"00:04:29,690\",\n    \"end\": \"00:04:30,070\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  },\n  {\n    \"start\": \"00:04:35,370\",\n    \"end\": \"00:04:36,330\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  },\n  {\n    \"start\": \"00:04:37,470\",\n    \"end\": \"00:04:37,950\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:04:37,950\",\n    \"end\": \"00:04:38,290\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:04:38,290\",\n    \"end\": \"00:04:38,950\",\n    \"lang\": \"en\",\n    \"text\": \"it's wrong.\"\n  },\n  {\n    \"start\": \"00:04:38,950\",\n    \"end\": \"00:04:41,130\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  },\n  {\n    \"start\": \"00:04:41,154\",\n    \"end\": \"00:04:43,334\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花花江\"\n  },\n  {\n    \"start\": \"00:04:43,334\",\n    \"end\": \"00:04:45,834\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树根\"\n  },\n  {\n    \"start\": \"00:04:46,014\",\n    \"end\": \"00:04:48,514\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花钱\"\n  },\n  {\n    \"start\": \"00:04:48,514\",\n    \"end\": \"00:04:50,974\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书歌\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:04:25,570",
+            "end": "00:04:26,530",
+            "es": "🎵Música de guitarra🎵",
+            "fr": "🎵Musique de guitare🎵",
+            "uk": "🎵Гітарна музика🎵"
+        },
+        {
+            "start": "00:04:28,570",
+            "end": "00:04:29,050",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:04:29,050",
+            "end": "00:04:29,370",
+            "es": "vale,",
+            "fr": "d'accord,",
+            "uk": "добре,"
+        },
+        {
+            "start": "00:04:29,370",
+            "end": "00:04:29,690",
+            "es": "nos vemos,",
+            "fr": "à bientôt,",
+            "uk": "бачимось,"
+        },
+        {
+            "start": "00:04:29,690",
+            "end": "00:04:30,070",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "uk": "бачимось."
+        },
+        {
+            "start": "00:04:35,370",
+            "end": "00:04:36,330",
+            "es": "🎵Música de guitarra🎵",
+            "fr": "🎵Musique de guitare🎵",
+            "uk": "🎵Гітарна музика🎵"
+        },
+        {
+            "start": "00:04:37,470",
+            "end": "00:04:37,950",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        },
+        {
+            "start": "00:04:37,950",
+            "end": "00:04:38,290",
+            "es": "lo siento,",
+            "fr": "désolé,",
+            "uk": "вибач,"
+        },
+        {
+            "start": "00:04:38,290",
+            "end": "00:04:38,950",
+            "es": "es un error.",
+            "fr": "c'est une erreur.",
+            "uk": "це помилка."
+        },
+        {
+            "start": "00:04:38,950",
+            "end": "00:04:41,130",
+            "es": "🎵Música de guitarra🎵",
+            "fr": "🎵Musique de guitare🎵",
+            "uk": "🎵Гітарна музика🎵"
+        },
+        {
+            "start": "00:04:41,154",
+            "end": "00:04:43,334",
+            "es": "Sin ríos floridos",
+            "fr": "Sans rivières fleuries",
+            "uk": "Без квітучих річок"
+        },
+        {
+            "start": "00:04:43,334",
+            "end": "00:04:45,834",
+            "es": "Sin raíces",
+            "fr": "Sans racines",
+            "uk": "Без коріння"
+        },
+        {
+            "start": "00:04:46,014",
+            "end": "00:04:48,514",
+            "es": "Sin dinero para flores",
+            "fr": "Sans argent pour les fleurs",
+            "uk": "Без грошей на квіти"
+        },
+        {
+            "start": "00:04:48,514",
+            "end": "00:04:50,974",
+            "es": "Sin canciones de libros",
+            "fr": "Sans chansons de livres",
+            "uk": "Без пісень з книг"
+        }
+    ]
+}

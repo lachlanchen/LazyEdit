@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:06,610\",\n    \"end\": \"00:02:09,050\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:10,130\",\n    \"end\": \"00:02:12,230\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:13,070\",\n    \"end\": \"00:02:15,750\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树岗\"\n  },\n  {\n    \"start\": \"00:02:47,382\",\n    \"end\": \"00:02:50,182\",\n    \"lang\": \"en\",\n    \"text\": \"once around\"\n  },\n  {\n    \"start\": \"00:02:50,182\",\n    \"end\": \"00:02:54,382\",\n    \"lang\": \"en\",\n    \"text\": \"And I wish the guitar company to correct me.\"\n  },\n  {\n    \"start\": \"00:02:55,982\",\n    \"end\": \"00:02:56,762\",\n    \"lang\": \"en\",\n    \"text\": \"First night.\"\n  },\n  {\n    \"start\": \"00:02:58,562\",\n    \"end\": \"00:03:00,782\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:00,782\",\n    \"end\": \"00:03:03,502\",\n    \"lang\": \"zh\",\n    \"text\": \"没有双钢\"\n  },\n  {\n    \"start\": \"00:03:03,502\",\n    \"end\": \"00:03:06,182\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:06,182\",\n    \"end\": \"00:03:07,362\",\n    \"lang\": \"zh\",\n    \"text\": \"没有双钢\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:06,610",
+            "end": "00:02:09,050",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا عطر للزهور"
+        },
+        {
+            "start": "00:02:10,130",
+            "end": "00:02:12,230",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا عطر للزهور"
+        },
+        {
+            "start": "00:02:13,070",
+            "end": "00:02:15,750",
+            "en": "No shade of trees",
+            "zh": "没有树岗",
+            "ar": "لا ظل للأشجار"
+        },
+        {
+            "start": "00:02:47,382",
+            "end": "00:02:50,182",
+            "en": "Once around",
+            "zh": "环游一圈",
+            "ar": "جولة واحدة"
+        },
+        {
+            "start": "00:02:50,182",
+            "end": "00:02:54,382",
+            "en": "And I wish the guitar company would correct me.",
+            "zh": "我希望吉他公司能纠正我。",
+            "ar": "وأتمنى أن تصححني شركة الجيتار."
+        },
+        {
+            "start": "00:02:55,982",
+            "end": "00:02:56,762",
+            "en": "First night.",
+            "zh": "第一夜。",
+            "ar": "الليلة الأولى."
+        },
+        {
+            "start": "00:02:58,562",
+            "end": "00:03:00,782",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا عطر للزهور"
+        },
+        {
+            "start": "00:03:00,782",
+            "end": "00:03:03,502",
+            "en": "No coolness of double steels",
+            "zh": "没有双钢之凉",
+            "ar": "لا برودة للفولاذ المزدوج"
+        },
+        {
+            "start": "00:03:03,502",
+            "end": "00:03:06,182",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا عطر للزهور"
+        },
+        {
+            "start": "00:03:06,182",
+            "end": "00:03:07,362",
+            "en": "No coolness of double steels",
+            "zh": "没有双钢之凉",
+            "ar": "لا برودة للفولاذ المزدوج"
+        }
+    ]
+}

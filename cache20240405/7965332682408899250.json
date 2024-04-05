@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,025\",\n    \"end\": \"00:01:01,606\",\n    \"lang\": \"en\",\n    \"text\": \"there might be an advantage\"\n  },\n  {\n    \"start\": \"00:01:02,886\",\n    \"end\": \"00:01:04,006\",\n    \"lang\": \"en\",\n    \"text\": \"that is\"\n  },\n  {\n    \"start\": \"00:01:05,826\",\n    \"end\": \"00:01:06,986\",\n    \"lang\": \"en\",\n    \"text\": \"you can\"\n  },\n  {\n    \"start\": \"00:01:06,986\",\n    \"end\": \"00:01:08,306\",\n    \"lang\": \"en\",\n    \"text\": \"learn multiple languages\"\n  },\n  {\n    \"start\": \"00:01:08,306\",\n    \"end\": \"00:01:10,046\",\n    \"lang\": \"en\",\n    \"text\": \"so that you can\"\n  },\n  {\n    \"start\": \"00:01:10,046\",\n    \"end\": \"00:01:12,146\",\n    \"lang\": \"en\",\n    \"text\": \"find\"\n  },\n  {\n    \"start\": \"00:01:12,146\",\n    \"end\": \"00:01:14,406\",\n    \"lang\": \"en\",\n    \"text\": \"your soulmate\"\n  },\n  {\n    \"start\": \"00:01:15,546\",\n    \"end\": \"00:01:16,746\",\n    \"lang\": \"en\",\n    \"text\": \"in different\"\n  },\n  {\n    \"start\": \"00:01:16,746\",\n    \"end\": \"00:01:18,146\",\n    \"lang\": \"en\",\n    \"text\": \"countries\"\n  },\n  {\n    \"start\": \"00:01:18,146\",\n    \"end\": \"00:01:19,766\",\n    \"lang\": \"en\",\n    \"text\": \"not limited to your\"\n  },\n  {\n    \"start\": \"00:01:19,766\",\n    \"end\": \"00:01:21,026\",\n    \"lang\": \"en\",\n    \"text\": \"homeland\"\n  },\n  {\n    \"start\": \"00:01:30,206\",\n    \"end\": \"00:01:32,326\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that's an advantage\"\n  },\n  {\n    \"start\": \"00:01:32,326\",\n    \"end\": \"00:01:33,326\",\n    \"lang\": \"en\",\n    \"text\": \"you can meet here\"\n  },\n  {\n    \"start\": \"00:01:35,066\",\n    \"end\": \"00:01:35,786\",\n    \"lang\": \"en\",\n    \"text\": \"anyone\"\n  },\n  {\n    \"start\": \"00:01:36,306\",\n    \"end\": \"00:01:37,566\",\n    \"lang\": \"en\",\n    \"text\": \"on this planet\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:00,025",
+            "end": "00:01:01,606",
+            "en": "there might be an advantage",
+            "zh": "这可能是一个优势",
+            "ar": "قد يكون هناك ميزة"
+        },
+        {
+            "start": "00:01:02,886",
+            "end": "00:01:04,006",
+            "en": "that is",
+            "zh": "那就是",
+            "ar": "هذا هو"
+        },
+        {
+            "start": "00:01:05,826",
+            "end": "00:01:06,986",
+            "en": "you can",
+            "zh": "你可以",
+            "ar": "يمكنك"
+        },
+        {
+            "start": "00:01:06,986",
+            "end": "00:01:08,306",
+            "en": "learn multiple languages",
+            "zh": "学习多种语言",
+            "ar": "تعلم لغات متعددة"
+        },
+        {
+            "start": "00:01:08,306",
+            "end": "00:01:10,046",
+            "en": "so that you can",
+            "zh": "以便你可以",
+            "ar": "حتى تتمكن"
+        },
+        {
+            "start": "00:01:10,046",
+            "end": "00:01:12,146",
+            "en": "find",
+            "zh": "找到",
+            "ar": "تجد"
+        },
+        {
+            "start": "00:01:12,146",
+            "end": "00:01:14,406",
+            "en": "your soulmate",
+            "zh": "你的灵魂伴侣",
+            "ar": "شريك حياتك"
+        },
+        {
+            "start": "00:01:15,546",
+            "end": "00:01:16,746",
+            "en": "in different",
+            "zh": "在不同",
+            "ar": "في مختلف"
+        },
+        {
+            "start": "00:01:16,746",
+            "end": "00:01:18,146",
+            "en": "countries",
+            "zh": "国家",
+            "ar": "البلدان"
+        },
+        {
+            "start": "00:01:18,146",
+            "end": "00:01:19,766",
+            "en": "not limited to your",
+            "zh": "不仅限于你的",
+            "ar": "ليس محصورًا في"
+        },
+        {
+            "start": "00:01:19,766",
+            "end": "00:01:21,026",
+            "en": "homeland",
+            "zh": "祖国",
+            "ar": "وطنك"
+        },
+        {
+            "start": "00:01:30,206",
+            "end": "00:01:32,326",
+            "en": "I believe that's an advantage",
+            "zh": "我相信这是一个优势",
+            "ar": "أعتقد أن هذه ميزة"
+        },
+        {
+            "start": "00:01:32,326",
+            "end": "00:01:33,326",
+            "en": "you can meet here",
+            "zh": "你可以在这里见面",
+            "ar": "يمكنك اللقاء هنا"
+        },
+        {
+            "start": "00:01:35,066",
+            "end": "00:01:35,786",
+            "en": "anyone",
+            "zh": "任何人",
+            "ar": "أي شخص"
+        },
+        {
+            "start": "00:01:36,306",
+            "end": "00:01:37,566",
+            "en": "on this planet",
+            "zh": "在这个星球上",
+            "ar": "على هذا الكوكب"
+        }
+    ]
+}

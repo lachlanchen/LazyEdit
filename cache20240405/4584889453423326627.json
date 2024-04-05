@@ -1,0 +1,110 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,778\",\n    \"end\": \"00:01:08,818\",\n    \"lang\": \"en\",\n    \"text\": \"and put his key into this box.\"\n  },\n  {\n    \"start\": \"00:01:09,718\",\n    \"end\": \"00:01:09,878\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:09,878\",\n    \"end\": \"00:01:11,298\",\n    \"lang\": \"en\",\n    \"text\": \"however,\"\n  },\n  {\n    \"start\": \"00:01:12,338\",\n    \"end\": \"00:01:14,158\",\n    \"lang\": \"en\",\n    \"text\": \"Professor Guttner noticed that\"\n  },\n  {\n    \"start\": \"00:01:14,578\",\n    \"end\": \"00:01:16,698\",\n    \"lang\": \"en\",\n    \"text\": \"this is the difference between\"\n  },\n  {\n    \"start\": \"00:01:18,378\",\n    \"end\": \"00:01:21,978\",\n    \"lang\": \"en\",\n    \"text\": \"Western and Eastern education,\"\n  },\n  {\n    \"start\": \"00:01:22,378\",\n    \"end\": \"00:01:26,578\",\n    \"lang\": \"en\",\n    \"text\": \"especially American and Chinese education.\"\n  },\n  {\n    \"start\": \"00:01:29,118\",\n    \"end\": \"00:01:31,338\",\n    \"lang\": \"en\",\n    \"text\": \"It is said that\"\n  },\n  {\n    \"start\": \"00:01:31,338\",\n    \"end\": \"00:01:33,478\",\n    \"lang\": \"en\",\n    \"text\": \"the US education\"\n  },\n  {\n    \"start\": \"00:01:33,478\",\n    \"end\": \"00:01:36,298\",\n    \"lang\": \"en\",\n    \"text\": \"emphasizes innovation\"\n  },\n  {\n    \"start\": \"00:01:36,298\",\n    \"end\": \"00:01:37,698\",\n    \"lang\": \"en\",\n    \"text\": \"so that the child,\"\n  },\n  {\n    \"start\": \"00:01:37,698\",\n    \"end\": \"00:01:38,318\",\n    \"lang\": \"en\",\n    \"text\": \"the children,\"\n  },\n  {\n    \"start\": \"00:01:39,058\",\n    \"end\": \"00:01:41,278\",\n    \"lang\": \"en\",\n    \"text\": \"develop this skill themselves.\"\n  },\n  {\n    \"start\": \"00:01:41,898\",\n    \"end\": \"00:01:43,618\",\n    \"lang\": \"en\",\n    \"text\": \"And in the Chinese culture,\"\n  },\n  {\n    \"start\": \"00:01:44,978\",\n    \"end\": \"00:01:47,118\",\n    \"lang\": \"en\",\n    \"text\": \"it has this\"\n  },\n  {\n    \"start\": \"00:01:52,878\",\n    \"end\": \"00:01:53,838\",\n    \"lang\": \"en\",\n    \"text\": \"principle,\"\n  },\n  {\n    \"start\": \"00:01:54,078\",\n    \"end\": \"00:01:54,978\",\n    \"lang\": \"en\",\n    \"text\": \"this thing,\"\n  },\n  {\n    \"start\": \"00:01:55,058\",\n    \"end\": \"00:01:56,298\",\n    \"lang\": \"en\",\n    \"text\": \"this thing combines\"\n  },\n  {\n    \"start\": \"00:01:56,298\",\n    \"end\": \"00:01:57,978\",\n    \"lang\": \"en\",\n    \"text\": \"the children,\"\n  },\n  {\n    \"start\": \"00:01:58,198\",\n    \"end\": \"00:02:01,538\",\n    \"lang\": \"en\",\n    \"text\": \"the failure of the children is not useful.\"\n  },\n  {\n    \"start\": \"00:02:02,238\",\n    \"end\": \"00:02:02,418\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:02,418\",\n    \"end\": \"00:02:03,738\",\n    \"lang\": \"en\",\n    \"text\": \"Western way,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,778",
+            "end": "00:01:08,818",
+            "ja": "そして彼は鍵をこの箱に入れました。"
+        },
+        {
+            "start": "00:01:09,718",
+            "end": "00:01:09,878",
+            "ja": "だから、"
+        },
+        {
+            "start": "00:01:09,878",
+            "end": "00:01:11,298",
+            "ja": "しかし、"
+        },
+        {
+            "start": "00:01:12,338",
+            "end": "00:01:14,158",
+            "ja": "グットナー教授は気づきました、"
+        },
+        {
+            "start": "00:01:14,578",
+            "end": "00:01:16,698",
+            "ja": "これが西洋と東洋の教育の違いであると"
+        },
+        {
+            "start": "00:01:18,378",
+            "end": "00:01:21,978",
+            "ja": "特にアメリカと中国の教育の違いです。"
+        },
+        {
+            "start": "00:01:22,378",
+            "end": "00:01:26,578",
+            "ja": "言われています、"
+        },
+        {
+            "start": "00:01:29,118",
+            "end": "00:01:31,338",
+            "ja": "アメリカの教育は"
+        },
+        {
+            "start": "00:01:31,338",
+            "end": "00:01:33,478",
+            "ja": "イノベーションを重視しており、"
+        },
+        {
+            "start": "00:01:33,478",
+            "end": "00:01:36,298",
+            "ja": "その結果、子どもたちは"
+        },
+        {
+            "start": "00:01:36,298",
+            "end": "00:01:37,698",
+            "ja": "このスキルを自分で"
+        },
+        {
+            "start": "00:01:37,698",
+            "end": "00:01:38,318",
+            "ja": "身につけることになります。"
+        },
+        {
+            "start": "00:01:39,058",
+            "end": "00:01:41,278",
+            "ja": "そして中国文化では、"
+        },
+        {
+            "start": "00:01:44,978",
+            "end": "00:01:47,118",
+            "ja": "この原則があります、"
+        },
+        {
+            "start": "00:01:52,878",
+            "end": "00:01:53,838",
+            "ja": "この事柄、"
+        },
+        {
+            "start": "00:01:54,078",
+            "end": "00:01:54,978",
+            "ja": "この事柄が組み合わされ、"
+        },
+        {
+            "start": "00:01:55,058",
+            "end": "00:01:56,298",
+            "ja": "子どもたちを"
+        },
+        {
+            "start": "00:01:56,298",
+            "end": "00:01:57,978",
+            "ja": "統合します、"
+        },
+        {
+            "start": "00:01:58,198",
+            "end": "00:02:01,538",
+            "ja": "子どもたちの失敗は役に立たないとされます。"
+        },
+        {
+            "start": "00:02:02,238",
+            "end": "00:02:02,418",
+            "ja": "だから、"
+        },
+        {
+            "start": "00:02:02,418",
+            "end": "00:02:03,738",
+            "ja": "西洋的な方法では、"
+        }
+    ]
+}

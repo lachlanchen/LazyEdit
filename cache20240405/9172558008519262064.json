@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,080\",\n    \"lang\": \"en\",\n    \"text\": \"Can you see the fork?\"\n  },\n  {\n    \"start\": \"00:00:02,580\",\n    \"end\": \"00:00:07,440\",\n    \"lang\": \"en\",\n    \"text\": \"So this is the rice noodles\"\n  },\n  {\n    \"start\": \"00:00:08,800\",\n    \"end\": \"00:00:11,920\",\n    \"lang\": \"en\",\n    \"text\": \"with a special recipe and\"\n  },\n  {\n    \"start\": \"00:00:13,060\",\n    \"end\": \"00:00:15,580\",\n    \"lang\": \"en\",\n    \"text\": \"Coriander and spinach\"\n  },\n  {\n    \"start\": \"00:00:16,720\",\n    \"end\": \"00:00:17,280\",\n    \"lang\": \"en\",\n    \"text\": \"sprouts\"\n  },\n  {\n    \"start\": \"00:00:18,660\",\n    \"end\": \"00:00:23,140\",\n    \"lang\": \"en\",\n    \"text\": \"I decided not to use the flavor bag it provided.\"\n  },\n  {\n    \"start\": \"00:00:23,140\",\n    \"end\": \"00:00:25,400\",\n    \"lang\": \"en\",\n    \"text\": \"I use my own flavor\"\n  },\n  {\n    \"start\": \"00:00:26,400\",\n    \"end\": \"00:00:26,900\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,080",
+            "ja": "フォークが見えますか？"
+        },
+        {
+            "start": "00:00:02,580",
+            "end": "00:00:07,440",
+            "ja": "これがライスヌードルです"
+        },
+        {
+            "start": "00:00:08,800",
+            "end": "00:00:11,920",
+            "ja": "特別なレシピで"
+        },
+        {
+            "start": "00:00:13,060",
+            "end": "00:00:15,580",
+            "ja": "コリアンダーとほうれん草"
+        },
+        {
+            "start": "00:00:16,720",
+            "end": "00:00:17,280",
+            "ja": "の芽"
+        },
+        {
+            "start": "00:00:18,660",
+            "end": "00:00:23,140",
+            "ja": "提供されたフレーバーパックは使わないことにしました。"
+        },
+        {
+            "start": "00:00:23,140",
+            "end": "00:00:25,400",
+            "ja": "私自身のフレーバーを使います"
+        },
+        {
+            "start": "00:00:26,400",
+            "end": "00:00:26,900",
+            "ja": "オーケー"
+        }
+    ]
+}

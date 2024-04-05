@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"en\",\n    \"text\": \"Welcome back to the dog club.\"\n  },\n  {\n    \"start\": \"00:00:04,680\",\n    \"end\": \"00:00:07,820\",\n    \"lang\": \"en\",\n    \"text\": \"They are so cute and so happy.\"\n  },\n  {\n    \"start\": \"00:00:11,234\",\n    \"end\": \"00:00:12,454\",\n    \"lang\": \"zh\",\n    \"text\": \"咱去狗顿那吃一碗\"\n  },\n  {\n    \"start\": \"00:00:13,174\",\n    \"end\": \"00:00:13,454\",\n    \"lang\": \"zh\",\n    \"text\": \"好\"\n  },\n  {\n    \"start\": \"00:00:16,482\",\n    \"end\": \"00:00:18,002\",\n    \"lang\": \"en\",\n    \"text\": \"It's a dog club.\"\n  },\n  {\n    \"start\": \"00:00:18,802\",\n    \"end\": \"00:00:20,552\",\n    \"lang\": \"en\",\n    \"text\": \"They are making friends with each other.\"\n  },\n  {\n    \"start\": \"00:00:23,852\",\n    \"end\": \"00:00:24,662\",\n    \"lang\": \"en\",\n    \"text\": \"So gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:25,282\",\n    \"end\": \"00:00:25,802\",\n    \"lang\": \"en\",\n    \"text\": \"Fabulous.\"\n  },\n  {\n    \"start\": \"00:00:28,098\",\n    \"end\": \"00:00:28,658\",\n    \"lang\": \"zh\",\n    \"text\": \"走到那边去\"\n  },\n  {\n    \"start\": \"00:00:32,218\",\n    \"end\": \"00:00:32,778\",\n    \"lang\": \"zh\",\n    \"text\": \"这个叫\"\n  },\n  {\n    \"start\": \"00:00:33,957\",\n    \"end\": \"00:00:34,238\",\n    \"lang\": \"zh\",\n    \"text\": \"这个叫\"\n  },\n  {\n    \"start\": \"00:00:34,274\",\n    \"end\": \"00:00:36,594\",\n    \"lang\": \"en\",\n    \"text\": \"here's a bee nime\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,060",
+            "en": "Welcome back to the dog club.",
+            "zh": "欢迎回到狗俱乐部。",
+            "ar": "مرحبًا بعودتك إلى نادي الكلاب."
+        },
+        {
+            "start": "00:00:04,680",
+            "end": "00:00:07,820",
+            "en": "They are so cute and so happy.",
+            "zh": "它们太可爱了，太开心了。",
+            "ar": "إنهم لطيفون جدا وسعداء جدا."
+        },
+        {
+            "start": "00:00:11,234",
+            "end": "00:00:12,454",
+            "zh": "咱去狗顿那吃一碗",
+            "en": "Let's go to Dogton for a bowl.",
+            "ar": "دعنا نذهب إلى دوغتون لتناول وعاء."
+        },
+        {
+            "start": "00:00:13,174",
+            "end": "00:00:13,454",
+            "zh": "好",
+            "en": "Okay.",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:16,482",
+            "end": "00:00:18,002",
+            "en": "It's a dog club.",
+            "zh": "这是一个狗俱乐部。",
+            "ar": "إنه نادي الكلاب."
+        },
+        {
+            "start": "00:00:18,802",
+            "end": "00:00:20,552",
+            "en": "They are making friends with each other.",
+            "zh": "它们在互相交朋友。",
+            "ar": "إنهم يصنعون أصدقاء مع بعضهم البعض."
+        },
+        {
+            "start": "00:00:23,852",
+            "end": "00:00:24,662",
+            "en": "So gorgeous.",
+            "zh": "太漂亮了。",
+            "ar": "جميل جدا."
+        },
+        {
+            "start": "00:00:25,282",
+            "end": "00:00:25,802",
+            "en": "Fabulous.",
+            "zh": "极好的。",
+            "ar": "رائع."
+        },
+        {
+            "start": "00:00:28,098",
+            "end": "00:00:28,658",
+            "zh": "走到那边去",
+            "en": "Go over there.",
+            "ar": "اذهب إلى هناك."
+        },
+        {
+            "start": "00:00:33,957",
+            "end": "00:00:34,238",
+            "zh": "这个叫",
+            "en": "This is called",
+            "ar": "هذا يسمى"
+        },
+        {
+            "start": "00:00:34,274",
+            "end": "00:00:36,594",
+            "en": "Here's a bee name",
+            "zh": "这是一个蜜蜂的名字",
+            "ar": "هذا اسم نحلة"
+        }
+    ]
+}

@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:02,540\",\n    \"end\": \"00:00:03,620\",\n    \"lang\": \"en\",\n    \"text\": \"Hey guys,\"\n  },\n  {\n    \"start\": \"00:00:03,620\",\n    \"end\": \"00:00:04,260\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:04,674\",\n    \"end\": \"00:00:06,574\",\n    \"lang\": \"ja\",\n    \"text\": \"質問したいです\"\n  },\n  {\n    \"start\": \"00:00:08,846\",\n    \"end\": \"00:00:15,246\",\n    \"lang\": \"ja\",\n    \"text\": \"こちらの音はセンサーのギターの音です声は\"\n  },\n  {\n    \"start\": \"00:00:15,246\",\n    \"end\": \"00:00:16,226\",\n    \"lang\": \"ja\",\n    \"text\": \"ドリンクと輸出をつけているといこと\"\n  },\n  {\n    \"start\": \"00:00:16,226\",\n    \"end\": \"00:00:16,286\",\n    \"lang\": \"ja\",\n    \"text\": \"謝れ\"\n  },\n  {\n    \"start\": \"00:00:16,642\",\n    \"end\": \"00:00:17,882\",\n    \"lang\": \"zh\",\n    \"text\": \"一起库尔\"\n  },\n  {\n    \"start\": \"00:00:18,722\",\n    \"end\": \"00:00:23,862\",\n    \"lang\": \"en\",\n    \"text\": \"so how many strings are needed to play this chord?\"\n  },\n  {\n    \"start\": \"00:00:24,362\",\n    \"end\": \"00:00:27,882\",\n    \"lang\": \"en\",\n    \"text\": \"so I asked ChetGBT that he said\"\n  },\n  {\n    \"start\": \"00:00:28,872\",\n    \"end\": \"00:00:35,722\",\n    \"lang\": \"en\",\n    \"text\": \"if for 4 over 4 time signature that it will be this\"\n  },\n  {\n    \"start\": \"00:00:37,332\",\n    \"end\": \"00:00:43,042\",\n    \"lang\": \"en\",\n    \"text\": \"first is a down-strong and then it's a down-up-strong for the second beat and\"\n  },\n  {\n    \"start\": \"00:00:43,042\",\n    \"end\": \"00:00:47,982\",\n    \"lang\": \"en\",\n    \"text\": \"then it's up-down-up-strong for the last two beats\"\n  },\n  {\n    \"start\": \"00:00:48,582\",\n    \"end\": \"00:00:50,602\",\n    \"lang\": \"en\",\n    \"text\": \"so is this correct?\"\n  },\n  {\n    \"start\": \"00:00:51,142\",\n    \"end\": \"00:00:56,782\",\n    \"lang\": \"en\",\n    \"text\": \"so I just put my right hand\"\n  },\n  {\n    \"start\": \"00:00:56,782\",\n    \"end\": \"00:00:57,702\",\n    \"lang\": \"en\",\n    \"text\": \"I put it\"\n  },\n  {\n    \"start\": \"00:00:59,394\",\n    \"end\": \"00:01:00,194\",\n    \"lang\": \"en\",\n    \"text\": \"6th,\"\n  },\n  {\n    \"start\": \"00:01:00,194\",\n    \"end\": \"00:01:00,894\",\n    \"lang\": \"en\",\n    \"text\": \"6th times.\"\n  },\n  {\n    \"start\": \"00:01:01,214\",\n    \"end\": \"00:01:01,794\",\n    \"lang\": \"en\",\n    \"text\": \"on these\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:02,540",
+            "end": "00:00:03,620",
+            "es": "Hola chicos,",
+            "fr": "Salut les gars,",
+            "uk": "Привіт, хлопці,"
+        },
+        {
+            "start": "00:00:03,620",
+            "end": "00:00:04,260",
+            "es": "así que",
+            "fr": "alors",
+            "uk": "отже"
+        },
+        {
+            "start": "00:00:04,674",
+            "end": "00:00:06,574",
+            "es": "Quiero hacer una pregunta",
+            "fr": "Je veux poser une question",
+            "uk": "Я хочу задати питання"
+        },
+        {
+            "start": "00:00:08,846",
+            "end": "00:00:15,246",
+            "es": "Este sonido es el sonido de una guitarra con sensor, la voz es",
+            "fr": "Ce son est celui d'une guitare avec capteur, la voix est",
+            "uk": "Цей звук є звуком гітари з сенсором, голос є"
+        },
+        {
+            "start": "00:00:15,246",
+            "end": "00:00:16,226",
+            "es": "algo de bebida y exportación",
+            "fr": "quelque chose à boire et à exporter",
+            "uk": "щось про пиття та експорт"
+        },
+        {
+            "start": "00:00:16,226",
+            "end": "00:00:16,286",
+            "es": "Lo siento",
+            "fr": "Désolé",
+            "uk": "Вибачте"
+        },
+        {
+            "start": "00:00:16,642",
+            "end": "00:00:17,882",
+            "es": "Hagámoslo juntos",
+            "fr": "Faisons-le ensemble",
+            "uk": "Зробімо це разом"
+        },
+        {
+            "start": "00:00:18,722",
+            "end": "00:00:23,862",
+            "es": "¿Cuántas cuerdas se necesitan para tocar este acorde?",
+            "fr": "Combien de cordes sont nécessaires pour jouer cet accord ?",
+            "uk": "Скільки струн потрібно для гри цим акордом?"
+        },
+        {
+            "start": "00:00:24,362",
+            "end": "00:00:27,882",
+            "es": "así que pregunté a ChetGBT que dijo",
+            "fr": "j'ai donc demandé à ChetGBT qui a dit",
+            "uk": "отже я запитав у ChetGBT, що він сказав"
+        },
+        {
+            "start": "00:00:28,872",
+            "end": "00:00:35,722",
+            "es": "que para la fórmula de compás 4/4 sería esto",
+            "fr": "que pour la mesure 4/4, ce serait cela",
+            "uk": "що для розміру 4/4 часу це буде ось це"
+        },
+        {
+            "start": "00:00:37,332",
+            "end": "00:00:43,042",
+            "es": "primero es un golpe hacia abajo y luego es un golpe hacia abajo y hacia arriba para el segundo tiempo y",
+            "fr": "d'abord c'est un coup vers le bas puis c'est un coup vers le bas et vers le haut pour le deuxième temps et",
+            "uk": "спочатку це удар вниз, а потім це удар вниз-вгору для другого такту і"
+        },
+        {
+            "start": "00:00:43,042",
+            "end": "00:00:47,982",
+            "es": "luego es un golpe hacia arriba, abajo, arriba para los dos últimos tiempos",
+            "fr": "puis c'est un coup vers le haut, vers le bas, vers le haut pour les deux derniers temps",
+            "uk": "потім це удар вгору-вниз-вгору для останніх двох тактів"
+        },
+        {
+            "start": "00:00:48,582",
+            "end": "00:00:50,602",
+            "es": "¿esto es correcto?",
+            "fr": "est-ce correct ?",
+            "uk": "це правильно?"
+        },
+        {
+            "start": "00:00:51,142",
+            "end": "00:00:56,782",
+            "es": "así que solo puse mi mano derecha",
+            "fr": "donc j'ai juste mis ma main droite",
+            "uk": "отже я просто поклав свою праву руку"
+        },
+        {
+            "start": "00:00:56,782",
+            "end": "00:00:57,702",
+            "es": "lo puse",
+            "fr": "je l'ai mise",
+            "uk": "я поклав її"
+        },
+        {
+            "start": "00:00:59,394",
+            "end": "00:01:00,194",
+            "es": "la 6ta,",
+            "fr": "la 6ème,",
+            "uk": "6-ту,"
+        },
+        {
+            "start": "00:01:00,194",
+            "end": "00:01:00,894",
+            "es": "6 veces.",
+            "fr": "6 fois.",
+            "uk": "6 разів."
+        },
+        {
+            "start": "00:01:01,214",
+            "end": "00:01:01,794",
+            "es": "en estos",
+            "fr": "sur ceux-ci",
+            "uk": "на ці"
+        }
+    ]
+}

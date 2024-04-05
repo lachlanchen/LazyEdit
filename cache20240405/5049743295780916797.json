@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,020\",\n    \"lang\": \"ar\",\n    \"text\": \"كوبانوة\"\n  },\n  {\n    \"start\": \"00:00:04,098\",\n    \"end\": \"00:00:06,998\",\n    \"lang\": \"en\",\n    \"text\": \"So this is my dinner.\"\n  },\n  {\n    \"start\": \"00:00:08,058\",\n    \"end\": \"00:00:08,838\",\n    \"lang\": \"en\",\n    \"text\": \"Crushed chili,\"\n  },\n  {\n    \"start\": \"00:00:08,838\",\n    \"end\": \"00:00:09,958\",\n    \"lang\": \"en\",\n    \"text\": \"ginger,\"\n  },\n  {\n    \"start\": \"00:00:09,958\",\n    \"end\": \"00:00:10,638\",\n    \"lang\": \"en\",\n    \"text\": \"and garlic.\"\n  },\n  {\n    \"start\": \"00:00:12,078\",\n    \"end\": \"00:00:17,558\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if this will deteriorate my cold symptoms\"\n  },\n  {\n    \"start\": \"00:00:18,638\",\n    \"end\": \"00:00:21,478\",\n    \"lang\": \"en\",\n    \"text\": \"or benefit my health,\"\n  },\n  {\n    \"start\": \"00:00:22,658\",\n    \"end\": \"00:00:24,638\",\n    \"lang\": \"en\",\n    \"text\": \"but it's in my body,\"\n  },\n  {\n    \"start\": \"00:00:24,638\",\n    \"end\": \"00:00:26,098\",\n    \"lang\": \"en\",\n    \"text\": \"I want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:27,918\",\n    \"end\": \"00:00:28,298\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:28,298\",\n    \"end\": \"00:00:29,938\",\n    \"lang\": \"en\",\n    \"text\": \"it's so spicy.\"\n  },\n  {\n    \"start\": \"00:00:36,878\",\n    \"end\": \"00:00:39,378\",\n    \"lang\": \"en\",\n    \"text\": \"I put too much pepper.\"\n  },\n  {\n    \"start\": \"00:00:40,618\",\n    \"end\": \"00:00:41,778\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot hold this.\"\n  },\n  {\n    \"start\": \"00:00:43,106\",\n    \"end\": \"00:00:44,306\",\n    \"lang\": \"ar\",\n    \"text\": \"لا أستطيع أن أخذ هذا الزيت\"\n  },\n  {\n    \"start\": \"00:00:46,978\",\n    \"end\": \"00:00:47,998\",\n    \"lang\": \"en\",\n    \"text\": \"I need more salt.\"\n  },\n  {\n    \"start\": \"00:00:47,998\",\n    \"end\": \"00:00:54,158\",\n    \"lang\": \"en\",\n    \"text\": \"Salt can soften the spicy.\"\n  },\n  {\n    \"start\": \"00:00:55,398\",\n    \"end\": \"00:00:55,838\",\n    \"lang\": \"en\",\n    \"text\": \"Yes,\"\n  },\n  {\n    \"start\": \"00:00:55,838\",\n    \"end\": \"00:00:56,478\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,020",
+            "en": "Cuban coffee",
+            "zh": "古巴咖啡",
+            "ar": "كوبانوة"
+        },
+        {
+            "start": "00:00:04,098",
+            "end": "00:00:06,998",
+            "en": "So this is my dinner.",
+            "zh": "所以这是我的晚餐。",
+            "ar": "لذا هذا هو عشائي."
+        },
+        {
+            "start": "00:00:08,058",
+            "end": "00:00:09,958",
+            "en": "Crushed chili, ginger,",
+            "zh": "辣椒碎，生姜，",
+            "ar": "الفلفل المجروش، الزنجبيل،"
+        },
+        {
+            "start": "00:00:09,958",
+            "end": "00:00:10,638",
+            "en": "and garlic.",
+            "zh": "和大蒜。",
+            "ar": "والثوم."
+        },
+        {
+            "start": "00:00:12,078",
+            "end": "00:00:17,558",
+            "en": "I don't know if this will deteriorate my cold symptoms",
+            "zh": "我不知道这会不会让我的感冒症状恶化",
+            "ar": "لا أعرف إذا كان هذا سيزيد من أعراض البرد لدي"
+        },
+        {
+            "start": "00:00:18,638",
+            "end": "00:00:24,638",
+            "en": "or benefit my health, but it's in my body, I want to eat it.",
+            "zh": "或者对我的健康有益，但它在我的身体里，我想吃它。",
+            "ar": "أو يفيد صحتي، لكنه في جسدي، أريد أن آكله."
+        },
+        {
+            "start": "00:00:27,918",
+            "end": "00:00:29,938",
+            "en": "Wow, it's so spicy.",
+            "zh": "哇，它非常辣。",
+            "ar": "واو، إنه حار جداً."
+        },
+        {
+            "start": "00:00:36,878",
+            "end": "00:00:39,378",
+            "en": "I put too much pepper.",
+            "zh": "我放了太多胡椒。",
+            "ar": "لقد وضعت الكثير من الفلفل."
+        },
+        {
+            "start": "00:00:40,618",
+            "end": "00:00:44,306",
+            "en": "I cannot hold this.",
+            "zh": "我拿不住这个。",
+            "ar": "لا أستطيع أن أخذ هذا الزيت"
+        },
+        {
+            "start": "00:00:46,978",
+            "end": "00:00:54,158",
+            "en": "I need more salt. Salt can soften the spicy.",
+            "zh": "我需要更多盐。盐可以减轻辣味。",
+            "ar": "أحتاج إلى المزيد من الملح. الملح يمكن أن يخفف من الحرارة."
+        },
+        {
+            "start": "00:00:55,398",
+            "end": "00:00:56,478",
+            "en": "Yes, okay.",
+            "zh": "是的，好的。",
+            "ar": "نعم، حسنًا."
+        }
+    ]
+}

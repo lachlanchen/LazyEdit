@@ -1,0 +1,105 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,254\",\n    \"end\": \"00:01:05,874\",\n    \"lang\": \"en\",\n    \"text\": \"This is a Lai Koon-en's\"\n  },\n  {\n    \"start\": \"00:01:07,154\",\n    \"end\": \"00:01:08,374\",\n    \"lang\": \"en\",\n    \"text\": \"Crispy potato\"\n  },\n  {\n    \"start\": \"00:01:09,294\",\n    \"end\": \"00:01:13,574\",\n    \"lang\": \"en\",\n    \"text\": \"Lai Koon-en Chen's potato\"\n  },\n  {\n    \"start\": \"00:01:15,734\",\n    \"end\": \"00:01:17,534\",\n    \"lang\": \"en\",\n    \"text\": \"This is Lai Koon-en Chen\"\n  },\n  {\n    \"start\": \"00:01:19,454\",\n    \"end\": \"00:01:21,694\",\n    \"lang\": \"en\",\n    \"text\": \"Lai Koon-en Chen's potato\"\n  },\n  {\n    \"start\": \"00:01:21,694\",\n    \"end\": \"00:01:21,854\",\n    \"lang\": \"en\",\n    \"text\": \"Lai Koon-en Chen's potato\"\n  },\n  {\n    \"start\": \"00:01:21,854\",\n    \"end\": \"00:01:25,354\",\n    \"lang\": \"en\",\n    \"text\": \"L-A-C-H-L-A-N\"\n  },\n  {\n    \"start\": \"00:01:25,354\",\n    \"end\": \"00:01:27,194\",\n    \"lang\": \"en\",\n    \"text\": \"Lai Koon-en Chen's potato\"\n  },\n  {\n    \"start\": \"00:01:27,194\",\n    \"end\": \"00:01:28,134\",\n    \"lang\": \"en\",\n    \"text\": \"Lai Koon-en Chen's potato\"\n  },\n  {\n    \"start\": \"00:01:29,474\",\n    \"end\": \"00:01:29,974\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:29,974\",\n    \"end\": \"00:01:30,354\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  },\n  {\n    \"start\": \"00:01:31,534\",\n    \"end\": \"00:01:32,614\",\n    \"lang\": \"en\",\n    \"text\": \"I hope that\"\n  },\n  {\n    \"start\": \"00:01:38,874\",\n    \"end\": \"00:01:41,414\",\n    \"lang\": \"en\",\n    \"text\": \"This is so hot\"\n  },\n  {\n    \"start\": \"00:01:42,054\",\n    \"end\": \"00:01:43,214\",\n    \"lang\": \"en\",\n    \"text\": \"This is medium\"\n  },\n  {\n    \"start\": \"00:01:45,894\",\n    \"end\": \"00:01:49,214\",\n    \"lang\": \"en\",\n    \"text\": \"If you eat food that is too hot\"\n  },\n  {\n    \"start\": \"00:01:49,214\",\n    \"end\": \"00:01:51,194\",\n    \"lang\": \"en\",\n    \"text\": \"It tends to\"\n  },\n  {\n    \"start\": \"00:01:52,534\",\n    \"end\": \"00:01:56,794\",\n    \"lang\": \"en\",\n    \"text\": \"With a high probability to get cancer\"\n  },\n  {\n    \"start\": \"00:01:58,614\",\n    \"end\": \"00:01:59,934\",\n    \"lang\": \"en\",\n    \"text\": \"Gastro cancer,\"\n  },\n  {\n    \"start\": \"00:01:59,934\",\n    \"end\": \"00:02:00,414\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:02:02,974\",\n    \"end\": \"00:02:05,414\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot say the full name of the cancer\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,254",
+            "end": "00:01:05,874",
+            "ko": "이것은 라이 쿤엔의"
+        },
+        {
+            "start": "00:01:07,154",
+            "end": "00:01:08,374",
+            "ko": "바삭한 감자"
+        },
+        {
+            "start": "00:01:09,294",
+            "end": "00:01:13,574",
+            "ko": "라이 쿤엔 첸의 감자"
+        },
+        {
+            "start": "00:01:15,734",
+            "end": "00:01:17,534",
+            "ko": "이것은 라이 쿤엔 첸"
+        },
+        {
+            "start": "00:01:19,454",
+            "end": "00:01:21,694",
+            "ko": "라이 쿤엔 첸의 감자"
+        },
+        {
+            "start": "00:01:21,694",
+            "end": "00:01:21,854",
+            "ko": "라이 쿤엔 첸의 감자"
+        },
+        {
+            "start": "00:01:21,854",
+            "end": "00:01:25,354",
+            "ko": "L-A-C-H-L-A-N"
+        },
+        {
+            "start": "00:01:25,354",
+            "end": "00:01:27,194",
+            "ko": "라이 쿤엔 첸의 감자"
+        },
+        {
+            "start": "00:01:27,194",
+            "end": "00:01:28,134",
+            "ko": "라이 쿤엔 첸의 감자"
+        },
+        {
+            "start": "00:01:29,474",
+            "end": "00:01:29,974",
+            "ko": "예,"
+        },
+        {
+            "start": "00:01:29,974",
+            "end": "00:01:30,354",
+            "ko": "알았어"
+        },
+        {
+            "start": "00:01:31,534",
+            "end": "00:01:32,614",
+            "ko": "나는 바란다"
+        },
+        {
+            "start": "00:01:38,874",
+            "end": "00:01:41,414",
+            "ko": "이거 너무 뜨거워요"
+        },
+        {
+            "start": "00:01:42,054",
+            "end": "00:01:43,214",
+            "ko": "이것은 중간이에요"
+        },
+        {
+            "start": "00:01:45,894",
+            "end": "00:01:49,214",
+            "ko": "너무 뜨거운 음식을 먹으면"
+        },
+        {
+            "start": "00:01:49,214",
+            "end": "00:01:51,194",
+            "ko": "그것은 경향이 있다"
+        },
+        {
+            "start": "00:01:52,534",
+            "end": "00:01:56,794",
+            "ko": "높은 확률로 암에 걸리게 한다"
+        },
+        {
+            "start": "00:01:58,614",
+            "end": "00:01:59,934",
+            "ko": "위암,"
+        },
+        {
+            "start": "00:01:59,934",
+            "end": "00:02:00,414",
+            "ko": "맞죠?"
+        },
+        {
+            "start": "00:02:02,974",
+            "end": "00:02:05,414",
+            "ko": "암의 전체 이름을 말할 수 없습니다"
+        }
+    ]
+}

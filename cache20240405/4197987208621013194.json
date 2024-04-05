@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,640\",\n    \"lang\": \"en\",\n    \"text\": \"So this is my dinner today.\"\n  },\n  {\n    \"start\": \"00:00:02,640\",\n    \"end\": \"00:00:04,180\",\n    \"lang\": \"en\",\n    \"text\": \"Four more dinners.\"\n  },\n  {\n    \"start\": \"00:00:04,180\",\n    \"end\": \"00:00:05,980\",\n    \"lang\": \"en\",\n    \"text\": \"Four more.\"\n  },\n  {\n    \"start\": \"00:00:07,680\",\n    \"end\": \"00:00:15,980\",\n    \"lang\": \"en\",\n    \"text\": \"So fight poison with poison to help me recover from this COVID symptom.\"\n  },\n  {\n    \"start\": \"00:00:18,420\",\n    \"end\": \"00:00:21,060\",\n    \"lang\": \"en\",\n    \"text\": \"I usually don't have dinner,\"\n  },\n  {\n    \"start\": \"00:00:21,060\",\n    \"end\": \"00:00:24,020\",\n    \"lang\": \"en\",\n    \"text\": \"so when I cook this,\"\n  },\n  {\n    \"start\": \"00:00:24,020\",\n    \"end\": \"00:00:27,580\",\n    \"lang\": \"en\",\n    \"text\": \"I don't have the appetite.\"\n  },\n  {\n    \"start\": \"00:00:28,520\",\n    \"end\": \"00:00:29,700\",\n    \"lang\": \"en\",\n    \"text\": \"But the smell is good,\"\n  },\n  {\n    \"start\": \"00:00:29,700\",\n    \"end\": \"00:00:31,240\",\n    \"lang\": \"en\",\n    \"text\": \"so I can eat it anyway.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,640",
+            "vi": "Vậy đây là bữa tối của tôi hôm nay."
+        },
+        {
+            "start": "00:00:02,640",
+            "end": "00:00:04,180",
+            "vi": "Thêm bốn bữa tối nữa."
+        },
+        {
+            "start": "00:00:04,180",
+            "end": "00:00:05,980",
+            "vi": "Thêm bốn."
+        },
+        {
+            "start": "00:00:07,680",
+            "end": "00:00:15,980",
+            "vi": "Vậy nên hãy dùng độc trị độc để giúp tôi hồi phục từ triệu chứng COVID này."
+        },
+        {
+            "start": "00:00:18,420",
+            "end": "00:00:21,060",
+            "vi": "Tôi thường không ăn tối,"
+        },
+        {
+            "start": "00:00:21,060",
+            "end": "00:00:24,020",
+            "vi": "nên khi tôi nấu cái này,"
+        },
+        {
+            "start": "00:00:24,020",
+            "end": "00:00:27,580",
+            "vi": "tôi không có cảm giác thèm ăn."
+        },
+        {
+            "start": "00:00:28,520",
+            "end": "00:00:29,700",
+            "vi": "Nhưng mùi nó thì thơm,"
+        },
+        {
+            "start": "00:00:29,700",
+            "end": "00:00:31,240",
+            "vi": "nên tôi vẫn có thể ăn được."
+        }
+    ]
+}

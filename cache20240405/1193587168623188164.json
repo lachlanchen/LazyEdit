@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,000\",\n    \"lang\": \"en\",\n    \"text\": \"Nice.\"\n  },\n  {\n    \"start\": \"00:00:02,940\",\n    \"end\": \"00:00:03,640\",\n    \"lang\": \"en\",\n    \"text\": \"All right.\"\n  },\n  {\n    \"start\": \"00:00:04,860\",\n    \"end\": \"00:00:05,400\",\n    \"lang\": \"en\",\n    \"text\": \"Yeah.\"\n  },\n  {\n    \"start\": \"00:00:06,160\",\n    \"end\": \"00:00:06,580\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,000",
+            "ja": "いいね。"
+        },
+        {
+            "start": "00:00:02,940",
+            "end": "00:00:03,640",
+            "ja": "わかった。"
+        },
+        {
+            "start": "00:00:04,860",
+            "end": "00:00:05,400",
+            "ja": "うん。"
+        },
+        {
+            "start": "00:00:06,160",
+            "end": "00:00:06,580",
+            "ja": "オーケー。"
+        }
+    ]
+}

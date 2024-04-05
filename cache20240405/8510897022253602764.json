@@ -1,0 +1,92 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:08,214\",\n    \"end\": \"00:02:08,834\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:02:08,834\",\n    \"end\": \"00:02:11,274\",\n    \"lang\": \"en\",\n    \"text\": \"the taste is really worse.\"\n  },\n  {\n    \"start\": \"00:02:17,394\",\n    \"end\": \"00:02:18,314\",\n    \"lang\": \"en\",\n    \"text\": \"Is it chicken?\"\n  },\n  {\n    \"start\": \"00:02:23,170\",\n    \"end\": \"00:02:25,630\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの出馬咲き麺大好きです\"\n  },\n  {\n    \"start\": \"00:02:26,750\",\n    \"end\": \"00:02:27,229\",\n    \"lang\": \"ja\",\n    \"text\": \"あい、\"\n  },\n  {\n    \"start\": \"00:02:27,229\",\n    \"end\": \"00:02:27,830\",\n    \"lang\": \"ja\",\n    \"text\": \"あいです\"\n  },\n  {\n    \"start\": \"00:02:28,270\",\n    \"end\": \"00:02:29,450\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの出馬咲き、\"\n  },\n  {\n    \"start\": \"00:02:29,450\",\n    \"end\": \"00:02:30,050\",\n    \"lang\": \"ja\",\n    \"text\": \"あいです\"\n  },\n  {\n    \"start\": \"00:02:43,078\",\n    \"end\": \"00:02:44,498\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a spinach.\"\n  },\n  {\n    \"start\": \"00:02:44,758\",\n    \"end\": \"00:02:45,638\",\n    \"lang\": \"en\",\n    \"text\": \"I learned a history.\"\n  },\n  {\n    \"start\": \"00:02:46,118\",\n    \"end\": \"00:02:46,638\",\n    \"lang\": \"en\",\n    \"text\": \"About spinach.\"\n  },\n  {\n    \"start\": \"00:02:48,034\",\n    \"end\": \"00:02:48,394\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜\"\n  },\n  {\n    \"start\": \"00:02:48,953\",\n    \"end\": \"00:02:49,174\",\n    \"lang\": \"zh\",\n    \"text\": \"對不起\"\n  },\n  {\n    \"start\": \"00:02:49,254\",\n    \"end\": \"00:02:55,274\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to pronounce it,\"\n  },\n  {\n    \"start\": \"00:02:55,274\",\n    \"end\": \"00:02:58,094\",\n    \"lang\": \"en\",\n    \"text\": \"but I guess it's almost correct.\"\n  },\n  {\n    \"start\": \"00:03:02,754\",\n    \"end\": \"00:03:07,714\",\n    \"lang\": \"en\",\n    \"text\": \"This noodle is really really top-notch.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:08,214",
+            "end": "00:02:08,834",
+            "en": "Wow,",
+            "zh": "哇，",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:02:08,834",
+            "end": "00:02:11,274",
+            "en": "the taste is really worse.",
+            "zh": "味道确实更糟。",
+            "ar": "الطعم فعلا سيء."
+        },
+        {
+            "start": "00:02:17,394",
+            "end": "00:02:18,314",
+            "en": "Is it chicken?",
+            "zh": "这是鸡肉吗？",
+            "ar": "هل هذا دجاج؟"
+        },
+        {
+            "start": "00:02:23,170",
+            "end": "00:02:25,630",
+            "en": "I love this Sakura Men.",
+            "zh": "我爱这个樱花面。",
+            "ar": "أنا أحب هذا الساكورا من.",
+            "ja": "私はこの出馬咲き麺大好きです"
+        },
+        {
+            "start": "00:02:26,750",
+            "end": "00:02:27,830",
+            "en": "Yes, it is.",
+            "zh": "是的，它是。",
+            "ar": "نعم هو كذلك.",
+            "ja": "あい、あいです"
+        },
+        {
+            "start": "00:02:28,270",
+            "end": "00:02:30,050",
+            "en": "I love this Sakura, yes it is.",
+            "zh": "我爱这个樱花，是的，它是。",
+            "ar": "أنا أحب هذا الساكورا، نعم هو كذلك.",
+            "ja": "私はこの出馬咲き、あいです"
+        },
+        {
+            "start": "00:02:43,078",
+            "end": "00:02:44,498",
+            "en": "So this is a spinach.",
+            "zh": "所以这是一个菠菜。",
+            "ar": "إذن هذا سبانخ."
+        },
+        {
+            "start": "00:02:44,758",
+            "end": "00:02:46,638",
+            "en": "I learned a history about spinach.",
+            "zh": "我学到了一段关于菠菜的历史。",
+            "ar": "تعلمت تاريخاً عن السبانخ."
+        },
+        {
+            "start": "00:02:48,034",
+            "end": "00:02:48,394",
+            "en": "Spinach",
+            "zh": "菠菜",
+            "ar": "سبانخ"
+        },
+        {
+            "start": "00:02:48,953",
+            "end": "00:02:49,174",
+            "en": "Sorry",
+            "zh": "对不起",
+            "ar": "آسف"
+        },
+        {
+            "start": "00:02:49,254",
+            "end": "00:02:58,094",
+            "en": "I don't know how to pronounce it, but I guess it's almost correct.",
+            "zh": "我不知道怎么发音，但我猜这几乎是对的。",
+            "ar": "لا أعرف كيفية نطقها، لكن أعتقد أنها تقريباً صحيحة."
+        },
+        {
+            "start": "00:03:02,754",
+            "end": "00:03:07,714",
+            "en": "This noodle is really really top-notch.",
+            "zh": "这个面真的非常顶级。",
+            "ar": "هذا النودل حقاً رائع."
+        }
+    ]
+}

@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,300\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:02,480\",\n    \"end\": \"00:00:05,260\",\n    \"lang\": \"ja\",\n    \"text\": \"私の朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:07,490\",\n    \"end\": \"00:00:09,110\",\n    \"lang\": \"en\",\n    \"text\": \"Recently I found a thing,\"\n  },\n  {\n    \"start\": \"00:00:09,110\",\n    \"end\": \"00:00:11,490\",\n    \"lang\": \"en\",\n    \"text\": \"the SK-II,\"\n  },\n  {\n    \"start\": \"00:00:11,490\",\n    \"end\": \"00:00:17,670\",\n    \"lang\": \"en\",\n    \"text\": \"it kind of cause harm to my skin.\"\n  },\n  {\n    \"start\": \"00:00:18,670\",\n    \"end\": \"00:00:19,930\",\n    \"lang\": \"en\",\n    \"text\": \"Because when I use it,\"\n  },\n  {\n    \"start\": \"00:00:19,930\",\n    \"end\": \"00:00:23,290\",\n    \"lang\": \"en\",\n    \"text\": \"I play guitar,\"\n  },\n  {\n    \"start\": \"00:00:23,290\",\n    \"end\": \"00:00:26,310\",\n    \"lang\": \"en\",\n    \"text\": \"and the finger tip,\"\n  },\n  {\n    \"start\": \"00:00:26,710\",\n    \"end\": \"00:00:26,910\",\n    \"lang\": \"en\",\n    \"text\": \"it's like...\"\n  },\n  {\n    \"start\": \"00:00:26,946\",\n    \"end\": \"00:00:27,446\",\n    \"lang\": \"ja\",\n    \"text\": \"ごめんね\"\n  },\n  {\n    \"start\": \"00:00:28,098\",\n    \"end\": \"00:00:28,858\",\n    \"lang\": \"en\",\n    \"text\": \"It hurts.\"\n  },\n  {\n    \"start\": \"00:00:29,918\",\n    \"end\": \"00:00:36,858\",\n    \"lang\": \"en\",\n    \"text\": \"So I guess it's because the ingredients in SQ2,\"\n  },\n  {\n    \"start\": \"00:00:36,858\",\n    \"end\": \"00:00:40,598\",\n    \"lang\": \"en\",\n    \"text\": \"it has this erosion effect.\"\n  },\n  {\n    \"start\": \"00:00:41,838\",\n    \"end\": \"00:00:53,898\",\n    \"lang\": \"en\",\n    \"text\": \"So please,\"\n  },\n  {\n    \"start\": \"00:00:53,898\",\n    \"end\": \"00:00:54,858\",\n    \"lang\": \"en\",\n    \"text\": \"SQ2,\"\n  },\n  {\n    \"start\": \"00:00:54,858\",\n    \"end\": \"00:00:58,078\",\n    \"lang\": \"en\",\n    \"text\": \"don't prosecute me.\"\n  },\n  {\n    \"start\": \"00:00:58,078\",\n    \"end\": \"00:01:11,318\",\n    \"lang\": \"en\",\n    \"text\": \"I just want to share some thoughts and some hypothesis.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,300",
+            "ko": "좋은 아침입니다"
+        },
+        {
+            "start": "00:00:02,480",
+            "end": "00:00:05,260",
+            "ko": "제 아침을 먹고 있어요"
+        },
+        {
+            "start": "00:00:07,490",
+            "end": "00:00:09,110",
+            "ko": "최근에 저는 무언가를 발견했어요,"
+        },
+        {
+            "start": "00:00:09,110",
+            "end": "00:00:11,490",
+            "ko": "SK-II를,"
+        },
+        {
+            "start": "00:00:11,490",
+            "end": "00:00:17,670",
+            "ko": "제 피부에 해를 끼치는 것 같아요."
+        },
+        {
+            "start": "00:00:18,670",
+            "end": "00:00:19,930",
+            "ko": "사용할 때마다,"
+        },
+        {
+            "start": "00:00:19,930",
+            "end": "00:00:23,290",
+            "ko": "기타를 치는데,"
+        },
+        {
+            "start": "00:00:23,290",
+            "end": "00:00:26,310",
+            "ko": "손끝이,"
+        },
+        {
+            "start": "00:00:26,710",
+            "end": "00:00:26,910",
+            "ko": "마치..."
+        },
+        {
+            "start": "00:00:26,946",
+            "end": "00:00:27,446",
+            "ko": "미안해요"
+        },
+        {
+            "start": "00:00:28,098",
+            "end": "00:00:28,858",
+            "ko": "아파요."
+        },
+        {
+            "start": "00:00:29,918",
+            "end": "00:00:36,858",
+            "ko": "그래서 SQ2의 성분 때문인 것 같아요,"
+        },
+        {
+            "start": "00:00:36,858",
+            "end": "00:00:40,598",
+            "ko": "그것이 침식 효과가 있는 것 같아요."
+        },
+        {
+            "start": "00:00:41,838",
+            "end": "00:00:53,898",
+            "ko": "그러니 제발,"
+        },
+        {
+            "start": "00:00:53,898",
+            "end": "00:00:54,858",
+            "ko": "SQ2,"
+        },
+        {
+            "start": "00:00:54,858",
+            "end": "00:00:58,078",
+            "ko": "저를 고소하지 말아주세요."
+        },
+        {
+            "start": "00:00:58,078",
+            "end": "00:01:11,318",
+            "ko": "저는 그저 몇 가지 생각과 가설을 공유하고 싶을 뿐이에요."
+        }
+    ]
+}

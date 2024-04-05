@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,220\",\n    \"lang\": \"zh\",\n    \"text\": \"这里还有\"\n  },\n  {\n    \"start\": \"00:00:02,050\",\n    \"end\": \"00:00:02,890\",\n    \"lang\": \"en\",\n    \"text\": \"too many restrictions.\"\n  },\n  {\n    \"start\": \"00:00:03,970\",\n    \"end\": \"00:00:08,470\",\n    \"lang\": \"en\",\n    \"text\": \"So we will never have really scientific breakthrough\"\n  },\n  {\n    \"start\": \"00:00:08,830\",\n    \"end\": \"00:00:10,630\",\n    \"lang\": \"en\",\n    \"text\": \"or create some great art,\"\n  },\n  {\n    \"start\": \"00:00:10,630\",\n    \"end\": \"00:00:11,550\",\n    \"lang\": \"en\",\n    \"text\": \"never.\"\n  },\n  {\n    \"start\": \"00:00:14,990\",\n    \"end\": \"00:00:20,650\",\n    \"lang\": \"en\",\n    \"text\": \"If we want to embrace some real great stuff,\"\n  },\n  {\n    \"start\": \"00:00:21,670\",\n    \"end\": \"00:00:24,590\",\n    \"lang\": \"en\",\n    \"text\": \"and the first thing we should remove is restrictions,\"\n  },\n  {\n    \"start\": \"00:00:24,830\",\n    \"end\": \"00:00:27,710\",\n    \"lang\": \"en\",\n    \"text\": \"but keep some basic principles.\"\n  },\n  {\n    \"start\": \"00:00:27,710\",\n    \"end\": \"00:00:36,710\",\n    \"lang\": \"en\",\n    \"text\": \"And if we have so many restrictions,\"\n  },\n  {\n    \"start\": \"00:00:41,470\",\n    \"end\": \"00:00:47,090\",\n    \"lang\": \"en\",\n    \"text\": \"we can never expect people truly being creative.\"\n  },\n  {\n    \"start\": \"00:00:51,790\",\n    \"end\": \"00:00:52,990\",\n    \"lang\": \"en\",\n    \"text\": \"That's what I think.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,220",
+            "en": "There are still",
+            "zh": "这里还有",
+            "ar": "لا يزال هناك"
+        },
+        {
+            "start": "00:00:02,050",
+            "end": "00:00:02,890",
+            "en": "too many restrictions.",
+            "zh": "限制太多。",
+            "ar": "الكثير من القيود."
+        },
+        {
+            "start": "00:00:03,970",
+            "end": "00:00:08,470",
+            "en": "So we will never have really scientific breakthrough",
+            "zh": "所以我们永远不会有真正的科学突破",
+            "ar": "لذلك لن نحقق أبدًا اختراقًا علميًا حقيقيًا"
+        },
+        {
+            "start": "00:00:08,830",
+            "end": "00:00:10,630",
+            "en": "or create some great art,",
+            "zh": "或创造一些伟大的艺术，",
+            "ar": "أو خلق بعض الفن العظيم،"
+        },
+        {
+            "start": "00:00:10,630",
+            "end": "00:00:11,550",
+            "en": "never.",
+            "zh": "永远不会。",
+            "ar": "أبدا."
+        },
+        {
+            "start": "00:00:14,990",
+            "end": "00:00:20,650",
+            "en": "If we want to embrace some real great stuff,",
+            "zh": "如果我们想拥抱一些真正伟大的东西，",
+            "ar": "إذا أردنا أن نحتضن بعض الأشياء العظيمة حقًا،"
+        },
+        {
+            "start": "00:00:21,670",
+            "end": "00:00:24,590",
+            "en": "and the first thing we should remove is restrictions,",
+            "zh": "而我们应该去除的第一件事是限制，",
+            "ar": "وأول شيء يجب أن نزيله هو القيود،"
+        },
+        {
+            "start": "00:00:24,830",
+            "end": "00:00:27,710",
+            "en": "but keep some basic principles.",
+            "zh": "但保留一些基本原则。",
+            "ar": "لكن يحتفظ ببعض المبادئ الأساسية."
+        },
+        {
+            "start": "00:00:27,710",
+            "end": "00:00:36,710",
+            "en": "And if we have so many restrictions,",
+            "zh": "如果我们有这么多的限制，",
+            "ar": "وإذا كان لدينا الكثير من القيود،"
+        },
+        {
+            "start": "00:00:41,470",
+            "end": "00:00:47,090",
+            "en": "we can never expect people truly being creative.",
+            "zh": "我们永远不能指望人们真正有创造力。",
+            "ar": "لا يمكننا أبدًا توقع أن يكون الناس مبدعين حقًا."
+        },
+        {
+            "start": "00:00:51,790",
+            "end": "00:00:52,990",
+            "en": "That's what I think.",
+            "zh": "这是我的想法。",
+            "ar": "هذا رأيي."
+        }
+    ]
+}

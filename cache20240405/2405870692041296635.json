@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,280\",\n    \"lang\": \"ja\",\n    \"text\": \"ここにしのい犬が\"\n  },\n  {\n    \"start\": \"00:00:03,234\",\n    \"end\": \"00:00:04,034\",\n    \"lang\": \"zh\",\n    \"text\": \"你屁\"\n  },\n  {\n    \"start\": \"00:00:04,354\",\n    \"end\": \"00:00:04,574\",\n    \"lang\": \"ja\",\n    \"text\": \"いぴき、\"\n  },\n  {\n    \"start\": \"00:00:04,574\",\n    \"end\": \"00:00:05,654\",\n    \"lang\": \"ja\",\n    \"text\": \"いぴき、\"\n  },\n  {\n    \"start\": \"00:00:05,654\",\n    \"end\": \"00:00:06,774\",\n    \"lang\": \"ja\",\n    \"text\": \"います\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,280",
+            "ko": "여기 그늘에 있는 개가"
+        },
+        {
+            "start": "00:00:03,234",
+            "end": "00:00:04,034",
+            "ko": "너 방귀"
+        },
+        {
+            "start": "00:00:04,354",
+            "end": "00:00:04,574",
+            "ko": "코골이,"
+        },
+        {
+            "start": "00:00:04,574",
+            "end": "00:00:05,654",
+            "ko": "코골이,"
+        },
+        {
+            "start": "00:00:05,654",
+            "end": "00:00:06,774",
+            "ko": "합니다"
+        }
+    ]
+}

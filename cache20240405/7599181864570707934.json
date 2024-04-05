@@ -1,0 +1,161 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es) and French (fr) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other language. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,019\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:02,760\",\n    \"end\": \"00:00:03,820\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:05,620\",\n    \"end\": \"00:00:07,220\",\n    \"lang\": \"ja\",\n    \"text\": \"私の\"\n  },\n  {\n    \"start\": \"00:00:07,220\",\n    \"end\": \"00:00:08,100\",\n    \"lang\": \"ja\",\n    \"text\": \"この私の\"\n  },\n  {\n    \"start\": \"00:00:08,100\",\n    \"end\": \"00:00:09,200\",\n    \"lang\": \"ja\",\n    \"text\": \"朝ごはんです\"\n  },\n  {\n    \"start\": \"00:00:10,178\",\n    \"end\": \"00:00:10,798\",\n    \"lang\": \"zh\",\n    \"text\": \"危機孩子\"\n  },\n  {\n    \"start\": \"00:00:11,650\",\n    \"end\": \"00:00:12,050\",\n    \"lang\": \"en\",\n    \"text\": \"bread,\"\n  },\n  {\n    \"start\": \"00:00:12,050\",\n    \"end\": \"00:00:13,250\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:13,250\",\n    \"end\": \"00:00:14,330\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:00:14,330\",\n    \"end\": \"00:00:15,190\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:00:15,190\",\n    \"end\": \"00:00:15,669\",\n    \"lang\": \"en\",\n    \"text\": \"egg.\"\n  },\n  {\n    \"start\": \"00:00:16,386\",\n    \"end\": \"00:00:18,166\",\n    \"lang\": \"en\",\n    \"text\": \"Eggs and sweet potato.\"\n  },\n  {\n    \"start\": \"00:00:22,658\",\n    \"end\": \"00:00:23,578\",\n    \"lang\": \"en\",\n    \"text\": \"and bean juice.\"\n  },\n  {\n    \"start\": \"00:00:25,118\",\n    \"end\": \"00:00:25,358\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:26,358\",\n    \"end\": \"00:00:27,918\",\n    \"lang\": \"en\",\n    \"text\": \"And also some\"\n  },\n  {\n    \"start\": \"00:00:31,037\",\n    \"end\": \"00:00:32,558\",\n    \"lang\": \"en\",\n    \"text\": \"unsalted nuts.\"\n  },\n  {\n    \"start\": \"00:00:36,518\",\n    \"end\": \"00:00:36,898\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:36,898\",\n    \"end\": \"00:00:37,998\",\n    \"lang\": \"en\",\n    \"text\": \"put it in here.\"\n  },\n  {\n    \"start\": \"00:00:45,098\",\n    \"end\": \"00:00:45,478\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:45,478\",\n    \"end\": \"00:00:45,958\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:47,998\",\n    \"end\": \"00:00:50,138\",\n    \"lang\": \"en\",\n    \"text\": \"the major update is\"\n  },\n  {\n    \"start\": \"00:00:50,748\",\n    \"end\": \"00:00:53,558\",\n    \"lang\": \"en\",\n    \"text\": \"I added this Vietnamese,\"\n  },\n  {\n    \"start\": \"00:00:53,558\",\n    \"end\": \"00:00:54,738\",\n    \"lang\": \"en\",\n    \"text\": \"Korean,\"\n  },\n  {\n    \"start\": \"00:00:55,137\",\n    \"end\": \"00:00:57,638\",\n    \"lang\": \"en\",\n    \"text\": \"and Spanish and French subtitles.\"\n  },\n  {\n    \"start\": \"00:00:58,858\",\n    \"end\": \"00:00:59,038\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:59,038\",\n    \"end\": \"00:00:59,578\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,019",
+            "es": "Buenos días",
+            "fr": "Bonjour"
+        },
+        {
+            "start": "00:00:02,760",
+            "end": "00:00:03,820",
+            "es": "Buenos días",
+            "fr": "Bonjour"
+        },
+        {
+            "start": "00:00:05,620",
+            "end": "00:00:07,220",
+            "es": "Mi",
+            "fr": "Mon"
+        },
+        {
+            "start": "00:00:07,220",
+            "end": "00:00:08,100",
+            "es": "Este es mi",
+            "fr": "Ceci est mon"
+        },
+        {
+            "start": "00:00:08,100",
+            "end": "00:00:09,200",
+            "es": "desayuno",
+            "fr": "petit-déjeuner"
+        },
+        {
+            "start": "00:00:10,178",
+            "end": "00:00:10,798",
+            "es": "Crisis niño",
+            "fr": "Crise enfant"
+        },
+        {
+            "start": "00:00:11,650",
+            "end": "00:00:12,050",
+            "es": "pan,",
+            "fr": "pain,"
+        },
+        {
+            "start": "00:00:12,050",
+            "end": "00:00:13,250",
+            "es": "arándano,",
+            "fr": "myrtille,"
+        },
+        {
+            "start": "00:00:13,250",
+            "end": "00:00:14,330",
+            "es": "fresa,",
+            "fr": "fraise,"
+        },
+        {
+            "start": "00:00:14,330",
+            "end": "00:00:15,190",
+            "es": "castaña,",
+            "fr": "châtaigne,"
+        },
+        {
+            "start": "00:00:15,190",
+            "end": "00:00:15,669",
+            "es": "huevo.",
+            "fr": "œuf."
+        },
+        {
+            "start": "00:00:16,386",
+            "end": "00:00:18,166",
+            "es": "Huevos y batata.",
+            "fr": "Œufs et patate douce."
+        },
+        {
+            "start": "00:00:22,658",
+            "end": "00:00:23,578",
+            "es": "y jugo de frijol.",
+            "fr": "et jus de haricots."
+        },
+        {
+            "start": "00:00:25,118",
+            "end": "00:00:25,358",
+            "es": "Vale.",
+            "fr": "D'accord."
+        },
+        {
+            "start": "00:00:26,358",
+            "end": "00:00:27,918",
+            "es": "Y también algunos",
+            "fr": "Et aussi quelques"
+        },
+        {
+            "start": "00:00:31,037",
+            "end": "00:00:32,558",
+            "es": "frutos secos sin sal.",
+            "fr": "noix non salées."
+        },
+        {
+            "start": "00:00:36,518",
+            "end": "00:00:36,898",
+            "es": "Vale,",
+            "fr": "D'accord,"
+        },
+        {
+            "start": "00:00:36,898",
+            "end": "00:00:37,998",
+            "es": "pónlo aquí.",
+            "fr": "mettez-le ici."
+        },
+        {
+            "start": "00:00:45,098",
+            "end": "00:00:45,478",
+            "es": "Vale,",
+            "fr": "D'accord,"
+        },
+        {
+            "start": "00:00:45,478",
+            "end": "00:00:45,958",
+            "es": "entonces",
+            "fr": "alors"
+        },
+        {
+            "start": "00:00:47,998",
+            "end": "00:00:50,138",
+            "es": "la actualización principal es",
+            "fr": "la mise à jour principale est"
+        },
+        {
+            "start": "00:00:50,748",
+            "end": "00:00:53,558",
+            "es": "que añadí estos subtítulos vietnamitas,",
+            "fr": "j’ai ajouté ces sous-titres vietnamiens,"
+        },
+        {
+            "start": "00:00:53,558",
+            "end": "00:00:54,738",
+            "es": "coreanos,",
+            "fr": "coréens,"
+        },
+        {
+            "start": "00:00:55,137",
+            "end": "00:00:57,638",
+            "es": "y también subtítulos en español y francés.",
+            "fr": "et aussi des sous-titres espagnols et français."
+        },
+        {
+            "start": "00:00:58,858",
+            "end": "00:00:59,038",
+            "es": "Así que,",
+            "fr": "Alors,"
+        },
+        {
+            "start": "00:00:59,038",
+            "end": "00:00:59,578",
+            "es": "vale.",
+            "fr": "d'accord."
+        }
+    ]
+}

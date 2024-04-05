@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,720\",\n    \"lang\": \"zh\",\n    \"text\": \"露出了\"\n  },\n  {\n    \"start\": \"00:00:08,440\",\n    \"end\": \"00:00:09,940\",\n    \"lang\": \"zh\",\n    \"text\": \"太厉害了\"\n  },\n  {\n    \"start\": \"00:00:09,940\",\n    \"end\": \"00:00:10,520\",\n    \"lang\": \"en\",\n    \"text\": \"看 nice\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:16,000\",\n    \"lang\": \"zh\",\n    \"text\": \"好可爱\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,720",
+            "en": "Exposed",
+            "zh": "露出了",
+            "ar": "تم الكشف"
+        },
+        {
+            "start": "00:00:08,440",
+            "end": "00:00:09,940",
+            "en": "So amazing",
+            "zh": "太厉害了",
+            "ar": "مدهش جدا"
+        },
+        {
+            "start": "00:00:09,940",
+            "end": "00:00:10,520",
+            "en": "Looks nice",
+            "zh": "看 nice",
+            "ar": "يبدو جميلا"
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:16,000",
+            "en": "So cute",
+            "zh": "好可爱",
+            "ar": "جدا محبوب"
+        }
+    ]
+}

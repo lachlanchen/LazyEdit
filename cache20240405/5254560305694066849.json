@@ -1,0 +1,105 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,600\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは こんにちは\"\n  },\n  {\n    \"start\": \"00:00:03,259\",\n    \"end\": \"00:00:04,720\",\n    \"lang\": \"ja\",\n    \"text\": \"This is our breakfast\"\n  },\n  {\n    \"start\": \"00:00:04,840\",\n    \"end\": \"00:00:07,140\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:08,450\",\n    \"end\": \"00:00:09,370\",\n    \"lang\": \"en\",\n    \"text\": \"They not me.\"\n  },\n  {\n    \"start\": \"00:00:10,690\",\n    \"end\": \"00:00:12,590\",\n    \"lang\": \"ja\",\n    \"text\": \"これはヴィルナミドのパンです\"\n  },\n  {\n    \"start\": \"00:00:12,590\",\n    \"end\": \"00:00:14,490\",\n    \"lang\": \"ja\",\n    \"text\": \"ヴィルナミドはヴィルナ本名です\"\n  },\n  {\n    \"start\": \"00:00:14,754\",\n    \"end\": \"00:00:16,014\",\n    \"lang\": \"en\",\n    \"text\": \"Can you talk about this?\"\n  },\n  {\n    \"start\": \"00:00:16,033\",\n    \"end\": \"00:00:17,294\",\n    \"lang\": \"ja\",\n    \"text\": \"この絵はパンです\"\n  },\n  {\n    \"start\": \"00:00:18,274\",\n    \"end\": \"00:00:19,754\",\n    \"lang\": \"en\",\n    \"text\": \"In Japanese it's palm,\"\n  },\n  {\n    \"start\": \"00:00:19,754\",\n    \"end\": \"00:00:20,734\",\n    \"lang\": \"en\",\n    \"text\": \"and blueberry,\"\n  },\n  {\n    \"start\": \"00:00:20,734\",\n    \"end\": \"00:00:21,454\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:00:21,454\",\n    \"end\": \"00:00:22,774\",\n    \"lang\": \"en\",\n    \"text\": \"and...\"\n  },\n  {\n    \"start\": \"00:00:23,490\",\n    \"end\": \"00:00:26,110\",\n    \"lang\": \"ja\",\n    \"text\": \"この骨は卵です\"\n  },\n  {\n    \"start\": \"00:00:26,754\",\n    \"end\": \"00:00:29,574\",\n    \"lang\": \"en\",\n    \"text\": \"and cheese renat and sweet potato.\"\n  },\n  {\n    \"start\": \"00:00:30,494\",\n    \"end\": \"00:00:31,954\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our breakfast.\"\n  },\n  {\n    \"start\": \"00:00:33,454\",\n    \"end\": \"00:00:34,534\",\n    \"lang\": \"en\",\n    \"text\": \"Let me...\"\n  },\n  {\n    \"start\": \"00:00:45,666\",\n    \"end\": \"00:00:48,326\",\n    \"lang\": \"ja\",\n    \"text\": \"私はビールジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:00:51,330\",\n    \"end\": \"00:00:52,770\",\n    \"lang\": \"en\",\n    \"text\": \"So this bread,\"\n  },\n  {\n    \"start\": \"00:00:52,770\",\n    \"end\": \"00:00:54,630\",\n    \"lang\": \"en\",\n    \"text\": \"let me try this.\"\n  },\n  {\n    \"start\": \"00:00:55,510\",\n    \"end\": \"00:00:56,430\",\n    \"lang\": \"en\",\n    \"text\": \"It's great.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,600",
+            "vi": "Xin chào, xin chào"
+        },
+        {
+            "start": "00:00:03,259",
+            "end": "00:00:04,720",
+            "vi": "Đây là bữa sáng của chúng tôi"
+        },
+        {
+            "start": "00:00:04,840",
+            "end": "00:00:07,140",
+            "vi": "Tôi đang ăn bữa sáng này"
+        },
+        {
+            "start": "00:00:08,450",
+            "end": "00:00:09,370",
+            "vi": "Họ, không phải tôi."
+        },
+        {
+            "start": "00:00:10,690",
+            "end": "00:00:12,590",
+            "vi": "Đây là bánh mì Vilnamid"
+        },
+        {
+            "start": "00:00:12,590",
+            "end": "00:00:14,490",
+            "vi": "Vilnamid là tên thật của Vilna"
+        },
+        {
+            "start": "00:00:14,754",
+            "end": "00:00:16,014",
+            "vi": "Bạn có thể nói về điều này không?"
+        },
+        {
+            "start": "00:00:16,033",
+            "end": "00:00:17,294",
+            "vi": "Bức tranh này là về bánh mì"
+        },
+        {
+            "start": "00:00:18,274",
+            "end": "00:00:19,754",
+            "vi": "Trong tiếng Nhật, đó là 'pan',"
+        },
+        {
+            "start": "00:00:19,754",
+            "end": "00:00:20,734",
+            "vi": "và quả việt quất,"
+        },
+        {
+            "start": "00:00:20,734",
+            "end": "00:00:21,454",
+            "vi": "dâu tây,"
+        },
+        {
+            "start": "00:00:21,454",
+            "end": "00:00:22,774",
+            "vi": "và..."
+        },
+        {
+            "start": "00:00:23,490",
+            "end": "00:00:26,110",
+            "vi": "Cái này là quả trứng"
+        },
+        {
+            "start": "00:00:26,754",
+            "end": "00:00:29,574",
+            "vi": "và pho mát renat và khoai lang."
+        },
+        {
+            "start": "00:00:30,494",
+            "end": "00:00:31,954",
+            "vi": "Vậy đây là bữa sáng của chúng tôi."
+        },
+        {
+            "start": "00:00:33,454",
+            "end": "00:00:34,534",
+            "vi": "Để tôi..."
+        },
+        {
+            "start": "00:00:45,666",
+            "end": "00:00:48,326",
+            "vi": "Tôi đang uống nước ép bia"
+        },
+        {
+            "start": "00:00:51,330",
+            "end": "00:00:52,770",
+            "vi": "Vậy đây là bánh mì,"
+        },
+        {
+            "start": "00:00:52,770",
+            "end": "00:00:54,630",
+            "vi": "để tôi thử nó."
+        },
+        {
+            "start": "00:00:55,510",
+            "end": "00:00:56,430",
+            "vi": "Nó rất ngon."
+        }
+    ]
+}

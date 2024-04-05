@@ -1,0 +1,10 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,799\",\n    \"end\": \"00:00:02,860\",\n    \"lang\": \"ja\",\n    \"text\": \"これはひぬご飯を終わります\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,799",
+            "end": "00:00:02,860",
+            "vi": "Đây là bữa ăn cuối cùng của chúng tôi"
+        }
+    ]
+}

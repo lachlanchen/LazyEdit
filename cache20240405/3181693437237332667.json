@@ -1,0 +1,25 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,920\",\n    \"ja\": \"この<氷点下>[]の<犬>[]はできる\"\n  },\n  {\n    \"start\": \"00:00:01,920\",\n    \"end\": \"00:00:03,400\",\n    \"ja\": \"<氷点下>[]の<プードル>[]\"\n  },\n  {\n    \"start\": \"00:00:03,400\",\n    \"end\": \"00:00:05,480\",\n    \"ja\": \"<一日中彼>[]は<氷点下>[]の<犬>[]だった\"\n  },\n  {\n    \"start\": \"00:00:05,480\",\n    \"end\": \"00:00:07,220\",\n    \"ja\": \"OMGそれはとても<危険>[]だ\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,920",
+            "ja": "この<氷点下>[ひょうてんか]の<犬>[いぬ]はできる"
+        },
+        {
+            "start": "00:00:01,920",
+            "end": "00:00:03,400",
+            "ja": "<氷点下>[ひょうてんか]の<プードル>[]"
+        },
+        {
+            "start": "00:00:03,400",
+            "end": "00:00:05,480",
+            "ja": "<一日中>[いちにちじゅう]<彼>[かれ]は<氷点下>[ひょうてんか]の<犬>[いぬ]だった"
+        },
+        {
+            "start": "00:00:05,480",
+            "end": "00:00:07,220",
+            "ja": "OMGそれはとても<危険>[きけん]だ"
+        }
+    ]
+}

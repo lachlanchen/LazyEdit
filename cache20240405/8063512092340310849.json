@@ -1,0 +1,49 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,960\",\n    \"lang\": \"zh\",\n    \"text\": \"還是退檢檢查\"\n  },\n  {\n    \"start\": \"00:00:01,762\",\n    \"end\": \"00:00:03,282\",\n    \"lang\": \"en\",\n    \"text\": \"So many hunters and dogs.\"\n  },\n  {\n    \"start\": \"00:00:04,290\",\n    \"end\": \"00:00:04,510\",\n    \"lang\": \"zh\",\n    \"text\": \"好\"\n  },\n  {\n    \"start\": \"00:00:06,946\",\n    \"end\": \"00:00:07,146\",\n    \"lang\": \"en\",\n    \"text\": \"said\"\n  },\n  {\n    \"start\": \"00:00:21,666\",\n    \"end\": \"00:00:22,186\",\n    \"lang\": \"ja\",\n    \"text\": \"ご飯です\"\n  },\n  {\n    \"start\": \"00:00:23,306\",\n    \"end\": \"00:00:23,946\",\n    \"lang\": \"ja\",\n    \"text\": \"可愛いです\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,960",
+            "en": "Still retire and check",
+            "zh": "還是退檢檢查",
+            "ar": "ما زلت أتقاعد وأفحص"
+        },
+        {
+            "start": "00:00:01,762",
+            "end": "00:00:03,282",
+            "en": "So many hunters and dogs.",
+            "zh": "很多猎人和狗。",
+            "ar": "الكثير من الصيادين والكلاب."
+        },
+        {
+            "start": "00:00:04,290",
+            "end": "00:00:04,510",
+            "en": "Good",
+            "zh": "好",
+            "ar": "جيد"
+        },
+        {
+            "start": "00:00:06,946",
+            "end": "00:00:07,146",
+            "en": "said",
+            "zh": "说",
+            "ar": "قال"
+        },
+        {
+            "start": "00:00:21,666",
+            "end": "00:00:22,186",
+            "en": "It's mealtime",
+            "zh": "是吃饭的时间",
+            "ar": "حان وقت الوجبة",
+            "ja": "ご飯です"
+        },
+        {
+            "start": "00:00:23,306",
+            "end": "00:00:23,946",
+            "en": "It's cute",
+            "zh": "很可爱",
+            "ar": "إنها لطيفة",
+            "ja": "可愛いです"
+        }
+    ]
+}

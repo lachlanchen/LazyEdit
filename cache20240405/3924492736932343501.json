@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,520\",\n    \"lang\": \"en\",\n    \"text\": \"happiness doesn't have an if condition.\"\n  },\n  {\n    \"start\": \"00:00:05,420\",\n    \"end\": \"00:00:09,340\",\n    \"lang\": \"en\",\n    \"text\": \"If your happiness doesn't have an if condition,\"\n  },\n  {\n    \"start\": \"00:00:10,440\",\n    \"end\": \"00:00:12,480\",\n    \"lang\": \"en\",\n    \"text\": \"it can never be true happiness.\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:21,540\",\n    \"lang\": \"en\",\n    \"text\": \"Because no matter how you match this if condition,\"\n  },\n  {\n    \"start\": \"00:00:23,580\",\n    \"end\": \"00:00:28,780\",\n    \"lang\": \"en\",\n    \"text\": \"you will never find another if that's still unmatched.\"\n  },\n  {\n    \"start\": \"00:00:30,320\",\n    \"end\": \"00:00:31,180\",\n    \"lang\": \"en\",\n    \"text\": \"That's what I think.\"\n  },\n  {\n    \"start\": \"00:00:31,180\",\n    \"end\": \"00:00:31,620\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,520",
+            "en": "happiness doesn't have an if condition.",
+            "zh": "幸福没有如果。",
+            "ar": "السعادة لا تعتمد على شرط محدد."
+        },
+        {
+            "start": "00:00:05,420",
+            "end": "00:00:09,340",
+            "en": "If your happiness doesn't have an if condition,",
+            "zh": "如果你的幸福没有如果，",
+            "ar": "إذا كانت سعادتك لا تعتمد على شرط محدد،"
+        },
+        {
+            "start": "00:00:10,440",
+            "end": "00:00:12,480",
+            "en": "it can never be true happiness.",
+            "zh": "那它永远不会是真正的幸福。",
+            "ar": "فهي لن تكون السعادة الحقيقية أبدًا."
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:21,540",
+            "en": "Because no matter how you match this if condition,",
+            "zh": "因为无论你如何匹配这个如果条件，",
+            "ar": "لأنه بغض النظر عن كيفية تطابقك لهذا الشرط،"
+        },
+        {
+            "start": "00:00:23,580",
+            "end": "00:00:28,780",
+            "en": "you will never find another if that's still unmatched.",
+            "zh": "你永远不会找到另一个仍然不相匹配的如果。",
+            "ar": "لن تجد شرطًا آخر لا يزال غير مطابق."
+        },
+        {
+            "start": "00:00:30,320",
+            "end": "00:00:31,180",
+            "en": "That's what I think.",
+            "zh": "这是我的想法。",
+            "ar": "هذا ما أعتقده."
+        },
+        {
+            "start": "00:00:31,180",
+            "end": "00:00:31,620",
+            "en": "See you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقًا."
+        }
+    ]
+}

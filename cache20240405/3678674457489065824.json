@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:08,214\",\n    \"end\": \"00:02:08,834\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:02:08,834\",\n    \"end\": \"00:02:11,274\",\n    \"lang\": \"en\",\n    \"text\": \"the taste is really worse.\"\n  },\n  {\n    \"start\": \"00:02:17,394\",\n    \"end\": \"00:02:18,314\",\n    \"lang\": \"en\",\n    \"text\": \"Is it chicken?\"\n  },\n  {\n    \"start\": \"00:02:23,170\",\n    \"end\": \"00:02:25,630\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの出馬咲き麺大好きです\"\n  },\n  {\n    \"start\": \"00:02:26,750\",\n    \"end\": \"00:02:27,229\",\n    \"lang\": \"ja\",\n    \"text\": \"あい、\"\n  },\n  {\n    \"start\": \"00:02:27,229\",\n    \"end\": \"00:02:27,830\",\n    \"lang\": \"ja\",\n    \"text\": \"あいです\"\n  },\n  {\n    \"start\": \"00:02:28,270\",\n    \"end\": \"00:02:29,450\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの出馬咲き、\"\n  },\n  {\n    \"start\": \"00:02:29,450\",\n    \"end\": \"00:02:30,050\",\n    \"lang\": \"ja\",\n    \"text\": \"あいです\"\n  },\n  {\n    \"start\": \"00:02:43,078\",\n    \"end\": \"00:02:44,498\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a spinach.\"\n  },\n  {\n    \"start\": \"00:02:44,758\",\n    \"end\": \"00:02:45,638\",\n    \"lang\": \"en\",\n    \"text\": \"I learned a history.\"\n  },\n  {\n    \"start\": \"00:02:46,118\",\n    \"end\": \"00:02:46,638\",\n    \"lang\": \"en\",\n    \"text\": \"About spinach.\"\n  },\n  {\n    \"start\": \"00:02:48,034\",\n    \"end\": \"00:02:48,394\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜\"\n  },\n  {\n    \"start\": \"00:02:48,953\",\n    \"end\": \"00:02:49,174\",\n    \"lang\": \"zh\",\n    \"text\": \"對不起\"\n  },\n  {\n    \"start\": \"00:02:49,254\",\n    \"end\": \"00:02:55,274\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to pronounce it,\"\n  },\n  {\n    \"start\": \"00:02:55,274\",\n    \"end\": \"00:02:58,094\",\n    \"lang\": \"en\",\n    \"text\": \"but I guess it's almost correct.\"\n  },\n  {\n    \"start\": \"00:03:02,754\",\n    \"end\": \"00:03:07,714\",\n    \"lang\": \"en\",\n    \"text\": \"This noodle is really really top-notch.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:08,214",
+            "end": "00:02:08,834",
+            "ja": "わぁ、"
+        },
+        {
+            "start": "00:02:08,834",
+            "end": "00:02:11,274",
+            "ja": "この味は本当に最悪です。"
+        },
+        {
+            "start": "00:02:17,394",
+            "end": "00:02:18,314",
+            "ja": "これは鶏ですか？"
+        },
+        {
+            "start": "00:02:23,170",
+            "end": "00:02:25,630",
+            "ja": "私はこの花咲き麺が大好きです"
+        },
+        {
+            "start": "00:02:26,750",
+            "end": "00:02:27,229",
+            "ja": "はい、"
+        },
+        {
+            "start": "00:02:27,229",
+            "end": "00:02:27,830",
+            "ja": "愛です"
+        },
+        {
+            "start": "00:02:28,270",
+            "end": "00:02:29,450",
+            "ja": "私はこの花咲き、"
+        },
+        {
+            "start": "00:02:29,450",
+            "end": "00:02:30,050",
+            "ja": "愛です"
+        },
+        {
+            "start": "00:02:43,078",
+            "end": "00:02:44,498",
+            "ja": "これはほうれん草です。"
+        },
+        {
+            "start": "00:02:44,758",
+            "end": "00:02:45,638",
+            "ja": "ほうれん草の歴史を学びました。"
+        },
+        {
+            "start": "00:02:46,118",
+            "end": "00:02:46,638",
+            "ja": "ほうれん草について。"
+        },
+        {
+            "start": "00:02:48,034",
+            "end": "00:02:48,394",
+            "ja": "ほうれん草"
+        },
+        {
+            "start": "00:02:48,953",
+            "end": "00:02:49,174",
+            "ja": "ごめんなさい"
+        },
+        {
+            "start": "00:02:49,254",
+            "end": "00:02:55,274",
+            "ja": "発音の仕方がわかりません、"
+        },
+        {
+            "start": "00:02:55,274",
+            "end": "00:02:58,094",
+            "ja": "でも、ほぼ正しいと思います。"
+        },
+        {
+            "start": "00:03:02,754",
+            "end": "00:03:07,714",
+            "ja": "この麺は本当に最高です。"
+        }
+    ]
+}

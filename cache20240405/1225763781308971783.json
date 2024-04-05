@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,420\",\n    \"lang\": \"ja\",\n    \"text\": \"私の妹がこのケーキを作りました。\"\n  },\n  {\n    \"start\": \"00:00:07,010\",\n    \"end\": \"00:00:09,190\",\n    \"lang\": \"en\",\n    \"text\": \"So this kick is awesome.\"\n  },\n  {\n    \"start\": \"00:00:10,274\",\n    \"end\": \"00:00:10,894\",\n    \"lang\": \"en\",\n    \"text\": \"It's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:11,634\",\n    \"end\": \"00:00:12,894\",\n    \"lang\": \"en\",\n    \"text\": \"And next is...\"\n  },\n  {\n    \"start\": \"00:00:13,858\",\n    \"end\": \"00:00:16,538\",\n    \"lang\": \"en\",\n    \"text\": \"It seems it's a white strawberry,\"\n  },\n  {\n    \"start\": \"00:00:16,538\",\n    \"end\": \"00:00:18,478\",\n    \"lang\": \"en\",\n    \"text\": \"but in my hometown,\"\n  },\n  {\n    \"start\": \"00:00:18,478\",\n    \"end\": \"00:00:23,178\",\n    \"lang\": \"en\",\n    \"text\": \"we have this local species.\"\n  },\n  {\n    \"start\": \"00:00:26,588\",\n    \"end\": \"00:00:29,178\",\n    \"lang\": \"en\",\n    \"text\": \"It is similar to strawberry,\"\n  },\n  {\n    \"start\": \"00:00:29,178\",\n    \"end\": \"00:00:30,438\",\n    \"lang\": \"en\",\n    \"text\": \"but it's not strawberry.\"\n  },\n  {\n    \"start\": \"00:00:30,718\",\n    \"end\": \"00:00:33,078\",\n    \"lang\": \"en\",\n    \"text\": \"And it also tastes gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:33,818\",\n    \"end\": \"00:00:36,838\",\n    \"lang\": \"en\",\n    \"text\": \"It's the best taste I've ever had.\"\n  },\n  {\n    \"start\": \"00:00:36,866\",\n    \"end\": \"00:00:38,546\",\n    \"lang\": \"zh\",\n    \"text\": \"我記憶中有\"\n  },\n  {\n    \"start\": \"00:00:41,314\",\n    \"end\": \"00:00:44,514\",\n    \"lang\": \"en\",\n    \"text\": \"This work is great.\"\n  },\n  {\n    \"start\": \"00:00:45,394\",\n    \"end\": \"00:00:48,234\",\n    \"lang\": \"en\",\n    \"text\": \"And I have another sister,\"\n  },\n  {\n    \"start\": \"00:00:48,234\",\n    \"end\": \"00:00:48,854\",\n    \"lang\": \"en\",\n    \"text\": \"little sister.\"\n  },\n  {\n    \"start\": \"00:00:50,193\",\n    \"end\": \"00:00:54,274\",\n    \"lang\": \"en\",\n    \"text\": \"She also can make this great handcraft.\"\n  },\n  {\n    \"start\": \"00:00:55,254\",\n    \"end\": \"00:01:00,054\",\n    \"lang\": \"en\",\n    \"text\": \"And I have the best little sister ever.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,420",
+            "vi": "Em gái của tôi đã làm chiếc bánh này."
+        },
+        {
+            "start": "00:00:07,010",
+            "end": "00:00:09,190",
+            "vi": "Vậy nên chiếc bánh này thật tuyệt vời."
+        },
+        {
+            "start": "00:00:10,274",
+            "end": "00:00:10,894",
+            "vi": "Nó thật lộng lẫy."
+        },
+        {
+            "start": "00:00:11,634",
+            "end": "00:00:12,894",
+            "vi": "Và tiếp theo là..."
+        },
+        {
+            "start": "00:00:13,858",
+            "end": "00:00:16,538",
+            "vi": "Có vẻ đó là dâu trắng,"
+        },
+        {
+            "start": "00:00:16,538",
+            "end": "00:00:18,478",
+            "vi": "nhưng ở quê tôi,"
+        },
+        {
+            "start": "00:00:18,478",
+            "end": "00:00:23,178",
+            "vi": "chúng tôi có loài đặc sản địa phương này."
+        },
+        {
+            "start": "00:00:26,588",
+            "end": "00:00:29,178",
+            "vi": "Nó tương tự như dâu tây,"
+        },
+        {
+            "start": "00:00:29,178",
+            "end": "00:00:30,438",
+            "vi": "nhưng nó không phải là dâu tây."
+        },
+        {
+            "start": "00:00:30,718",
+            "end": "00:00:33,078",
+            "vi": "Và nó cũng có hương vị lộng lẫy."
+        },
+        {
+            "start": "00:00:33,818",
+            "end": "00:00:36,838",
+            "vi": "Đó là hương vị tuyệt vời nhất mà tôi từng thử."
+        },
+        {
+            "start": "00:00:36,866",
+            "end": "00:00:38,546",
+            "vi": "Trong ký ức của tôi có"
+        },
+        {
+            "start": "00:00:41,314",
+            "end": "00:00:44,514",
+            "vi": "Công việc này thật tuyệt vời."
+        },
+        {
+            "start": "00:00:45,394",
+            "end": "00:00:48,234",
+            "vi": "Và tôi còn có một em gái nữa,"
+        },
+        {
+            "start": "00:00:48,234",
+            "end": "00:00:48,854",
+            "vi": "em gái út."
+        },
+        {
+            "start": "00:00:50,193",
+            "end": "00:00:54,274",
+            "vi": "Cô ấy cũng có thể tạo ra những tác phẩm thủ công tuyệt vời này."
+        },
+        {
+            "start": "00:00:55,254",
+            "end": "00:01:00,054",
+            "vi": "Và tôi có em gái út tuyệt vời nhất."
+        }
+    ]
+}

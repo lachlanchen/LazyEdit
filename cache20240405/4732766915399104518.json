@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,120\",\n    \"end\": \"00:00:07,160\",\n    \"lang\": \"en\",\n    \"text\": \"So this morning I regret that I didn't take a video of this kite dog.\"\n  },\n  {\n    \"start\": \"00:00:07,880\",\n    \"end\": \"00:00:12,480\",\n    \"lang\": \"en\",\n    \"text\": \"This dog that he climbed on this kind of height.\"\n  },\n  {\n    \"start\": \"00:00:14,210\",\n    \"end\": \"00:00:14,510\",\n    \"lang\": \"ar\",\n    \"text\": \"فنت\"\n  },\n  {\n    \"start\": \"00:00:15,266\",\n    \"end\": \"00:00:16,265\",\n    \"lang\": \"en\",\n    \"text\": \"in Fins,\"\n  },\n  {\n    \"start\": \"00:00:16,265\",\n    \"end\": \"00:00:16,586\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:00:16,586\",\n    \"end\": \"00:00:17,006\",\n    \"lang\": \"en\",\n    \"text\": \"Fins.\"\n  },\n  {\n    \"start\": \"00:00:17,666\",\n    \"end\": \"00:00:18,686\",\n    \"lang\": \"en\",\n    \"text\": \"in one jump,\"\n  },\n  {\n    \"start\": \"00:00:18,686\",\n    \"end\": \"00:00:19,906\",\n    \"lang\": \"en\",\n    \"text\": \"in a single jump.\"\n  },\n  {\n    \"start\": \"00:00:20,686\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"So he's so agile.\"\n  },\n  {\n    \"start\": \"00:00:23,106\",\n    \"end\": \"00:00:25,666\",\n    \"lang\": \"en\",\n    \"text\": \"I regret that I didn't take a photo,\"\n  },\n  {\n    \"start\": \"00:00:25,666\",\n    \"end\": \"00:00:28,246\",\n    \"lang\": \"en\",\n    \"text\": \"take a video for it.\"\n  },\n  {\n    \"start\": \"00:00:29,066\",\n    \"end\": \"00:00:34,216\",\n    \"lang\": \"en\",\n    \"text\": \"But I comfort myself.\"\n  },\n  {\n    \"start\": \"00:00:36,994\",\n    \"end\": \"00:00:37,594\",\n    \"lang\": \"zh\",\n    \"text\": \"又一定要停\"\n  },\n  {\n    \"start\": \"00:00:38,786\",\n    \"end\": \"00:00:42,926\",\n    \"lang\": \"en\",\n    \"text\": \"The past has passed and the future has not yet come.\"\n  },\n  {\n    \"start\": \"00:00:43,966\",\n    \"end\": \"00:00:46,886\",\n    \"lang\": \"en\",\n    \"text\": \"So even I regret it.\"\n  },\n  {\n    \"start\": \"00:00:50,446\",\n    \"end\": \"00:00:54,266\",\n    \"lang\": \"en\",\n    \"text\": \"There is this Eustrohitch sentence,\"\n  },\n  {\n    \"start\": \"00:00:54,266\",\n    \"end\": \"00:00:55,946\",\n    \"lang\": \"en\",\n    \"text\": \"that live in the present.\"\n  },\n  {\n    \"start\": \"00:00:58,006\",\n    \"end\": \"00:00:59,946\",\n    \"lang\": \"en\",\n    \"text\": \"It's not that this is wrong,\"\n  },\n  {\n    \"start\": \"00:00:59,946\",\n    \"end\": \"00:01:04,385\",\n    \"lang\": \"en\",\n    \"text\": \"because it's just only present you can live.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,120",
+            "end": "00:00:07,160",
+            "es": "Así que esta mañana lamento no haber grabado un video de este perro cometa.",
+            "fr": "Ce matin, je regrette de ne pas avoir pris une vidéo de ce chien cerf-volant.",
+            "uk": "Отже, сьогодні вранці я шкодую, що не зняв відео з цією повітряною собакою."
+        },
+        {
+            "start": "00:00:07,880",
+            "end": "00:00:12,480",
+            "es": "Este perro que escaló este tipo de altura.",
+            "fr": "Ce chien qui a grimpé à cette sorte de hauteur.",
+            "uk": "Ця собака, яка забралася на цей вид висоти."
+        },
+        {
+            "start": "00:00:14,210",
+            "end": "00:00:14,510",
+            "es": "Arte",
+            "fr": "Art",
+            "uk": "Мистецтво"
+        },
+        {
+            "start": "00:00:15,266",
+            "end": "00:00:16,265",
+            "es": "en Aletas,",
+            "fr": "en Palmes,",
+            "uk": "в Плавниках,"
+        },
+        {
+            "start": "00:00:16,265",
+            "end": "00:00:16,586",
+            "es": "perdón,",
+            "fr": "désolé,",
+            "uk": "вибачте,"
+        },
+        {
+            "start": "00:00:16,586",
+            "end": "00:00:17,006",
+            "es": "Aletas.",
+            "fr": "Palmes.",
+            "uk": "Плавники."
+        },
+        {
+            "start": "00:00:17,666",
+            "end": "00:00:18,686",
+            "es": "de un salto,",
+            "fr": "d'un saut,",
+            "uk": "одним стрибком,"
+        },
+        {
+            "start": "00:00:18,686",
+            "end": "00:00:19,906",
+            "es": "en un solo salto.",
+            "fr": "en un seul saut.",
+            "uk": "одним стрибком."
+        },
+        {
+            "start": "00:00:20,686",
+            "end": "00:00:22,146",
+            "es": "Así que es muy ágil.",
+            "fr": "Donc, il est très agile.",
+            "uk": "Отже, він дуже спритний."
+        },
+        {
+            "start": "00:00:23,106",
+            "end": "00:00:25,666",
+            "es": "Lamento no haber tomado una foto,",
+            "fr": "Je regrette de ne pas avoir pris une photo,",
+            "uk": "Шкодую, що не зробив фото,"
+        },
+        {
+            "start": "00:00:25,666",
+            "end": "00:00:28,246",
+            "es": "grabar un video de ello.",
+            "fr": "prendre une vidéo pour ça.",
+            "uk": "зняти відео для цього."
+        },
+        {
+            "start": "00:00:29,066",
+            "end": "00:00:34,216",
+            "es": "Pero me consuelo.",
+            "fr": "Mais je me console.",
+            "uk": "Але я втішаю себе."
+        },
+        {
+            "start": "00:00:36,994",
+            "end": "00:00:37,594",
+            "es": "Debes detenerte de nuevo",
+            "fr": "Vous devez vous arrêter à nouveau",
+            "uk": "Треба знову зупинитися"
+        },
+        {
+            "start": "00:00:38,786",
+            "end": "00:00:42,926",
+            "es": "El pasado ha pasado y el futuro aún no ha llegado.",
+            "fr": "Le passé est passé et l'avenir n'est pas encore arrivé.",
+            "uk": "Минуле минуло і майбутнє ще не настало."
+        },
+        {
+            "start": "00:00:43,966",
+            "end": "00:00:46,886",
+            "es": "Así que incluso si lo lamento.",
+            "fr": "Donc même si je le regrette.",
+            "uk": "Отже, навіть якщо я цього шкодую."
+        },
+        {
+            "start": "00:00:50,446",
+            "end": "00:00:54,266",
+            "es": "Hay esta frase de Eustrohitch,",
+            "fr": "Il y a cette phrase de Eustrohitch,",
+            "uk": "Є це речення від Еустрохітч,"
+        },
+        {
+            "start": "00:00:54,266",
+            "end": "00:00:55,946",
+            "es": "que vive en el presente.",
+            "fr": "qui vit dans le présent.",
+            "uk": "яке живе в теперішньому."
+        },
+        {
+            "start": "00:00:58,006",
+            "end": "00:00:59,946",
+            "es": "No es que esto esté mal,",
+            "fr": "Ce n'est pas que cela soit mauvais,",
+            "uk": "Не те щоб це було погано,"
+        },
+        {
+            "start": "00:00:59,946",
+            "end": "00:01:04,385",
+            "es": "porque es solo en el presente donde puedes vivir.",
+            "fr": "parce que c'est seulement dans le présent que vous pouvez vivre.",
+            "uk": "бо це лише в теперішньому ви можете жити."
+        }
+    ]
+}

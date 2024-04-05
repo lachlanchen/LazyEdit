@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,920\",\n    \"lang\": \"zh\",\n    \"text\": \"这个冰滴犬可以\"\n  },\n  {\n    \"start\": \"00:00:01,920\",\n    \"end\": \"00:00:03,400\",\n    \"lang\": \"zh\",\n    \"text\": \"有冰滴犬的贵宾犬\"\n  },\n  {\n    \"start\": \"00:00:03,400\",\n    \"end\": \"00:00:05,480\",\n    \"lang\": \"zh\",\n    \"text\": \"说了一天他冰滴犬了\"\n  },\n  {\n    \"start\": \"00:00:05,480\",\n    \"end\": \"00:00:07,220\",\n    \"lang\": \"zh\",\n    \"text\": \"OMG 那个好不加危险\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,920",
+            "es": "Este perro con gotas de hielo puede",
+            "fr": "Ce chien avec des gouttes de glace peut",
+            "uk": "Цей собака з краплями льоду може"
+        },
+        {
+            "start": "00:00:01,920",
+            "end": "00:00:03,400",
+            "es": "tener un caniche con gotas de hielo",
+            "fr": "avoir un caniche avec des gouttes de glace",
+            "uk": "мати пуделя з краплями льоду"
+        },
+        {
+            "start": "00:00:03,400",
+            "end": "00:00:05,480",
+            "es": "habló todo el día de su caniche con gotas de hielo",
+            "fr": "il a parlé toute la journée de son caniche avec des gouttes de glace",
+            "uk": "цілий день говорив про свого пуделя з краплями льоду"
+        },
+        {
+            "start": "00:00:05,480",
+            "end": "00:00:07,220",
+            "es": "OMG, eso es tan peligroso",
+            "fr": "OMG, c'est tellement dangereux",
+            "uk": "ОМГ, це так небезпечно"
+        }
+    ]
+}

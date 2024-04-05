@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,620\",\n    \"lang\": \"ja\",\n    \"text\": \"私は天体\"\n  },\n  {\n    \"start\": \"00:00:03,042\",\n    \"end\": \"00:00:04,642\",\n    \"lang\": \"ja\",\n    \"text\": \"とにかく大好きです\"\n  },\n  {\n    \"start\": \"00:00:05,922\",\n    \"end\": \"00:00:06,842\",\n    \"lang\": \"en\",\n    \"text\": \"I love this world.\"\n  },\n  {\n    \"start\": \"00:00:07,622\",\n    \"end\": \"00:00:08,962\",\n    \"lang\": \"en\",\n    \"text\": \"I love astrophysics.\"\n  },\n  {\n    \"start\": \"00:00:10,982\",\n    \"end\": \"00:00:14,442\",\n    \"lang\": \"en\",\n    \"text\": \"And also encryption and this world.\"\n  },\n  {\n    \"start\": \"00:00:14,978\",\n    \"end\": \"00:00:16,058\",\n    \"lang\": \"ja\",\n    \"text\": \"私は\"\n  },\n  {\n    \"start\": \"00:00:17,458\",\n    \"end\": \"00:00:18,318\",\n    \"lang\": \"ja\",\n    \"text\": \"私は\"\n  },\n  {\n    \"start\": \"00:00:19,426\",\n    \"end\": \"00:00:20,566\",\n    \"lang\": \"en\",\n    \"text\": \"I'm cool.\"\n  },\n  {\n    \"start\": \"00:00:21,090\",\n    \"end\": \"00:00:23,610\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあんこが\"\n  },\n  {\n    \"start\": \"00:00:23,610\",\n    \"end\": \"00:00:25,390\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあんこが\"\n  },\n  {\n    \"start\": \"00:00:26,369\",\n    \"end\": \"00:00:27,730\",\n    \"lang\": \"ja\",\n    \"text\": \"愛しです\"\n  },\n  {\n    \"start\": \"00:00:27,730\",\n    \"end\": \"00:00:28,390\",\n    \"lang\": \"ja\",\n    \"text\": \"愛します\"\n  },\n  {\n    \"start\": \"00:00:29,329\",\n    \"end\": \"00:00:31,270\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあんこが\"\n  },\n  {\n    \"start\": \"00:00:31,270\",\n    \"end\": \"00:00:31,990\",\n    \"lang\": \"ja\",\n    \"text\": \"愛します\"\n  },\n  {\n    \"start\": \"00:00:33,890\",\n    \"end\": \"00:00:38,090\",\n    \"lang\": \"en\",\n    \"text\": \"Do you remember this Arabic letter?\"\n  },\n  {\n    \"start\": \"00:00:38,890\",\n    \"end\": \"00:00:41,510\",\n    \"lang\": \"en\",\n    \"text\": \"We say it's similar to this door.\"\n  },\n  {\n    \"start\": \"00:00:42,370\",\n    \"end\": \"00:00:44,330\",\n    \"lang\": \"en\",\n    \"text\": \"So the pronunciation is door,\"\n  },\n  {\n    \"start\": \"00:00:44,330\",\n    \"end\": \"00:00:45,390\",\n    \"lang\": \"en\",\n    \"text\": \"D-A-L.\"\n  },\n  {\n    \"start\": \"00:00:45,970\",\n    \"end\": \"00:00:47,270\",\n    \"lang\": \"en\",\n    \"text\": \"This is Arabic letter.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,620",
+            "en": "I am a celestial body",
+            "zh": "我是天体",
+            "ar": "أنا جسم سماوي"
+        },
+        {
+            "start": "00:00:03,042",
+            "end": "00:00:04,642",
+            "en": "I love it anyway",
+            "zh": "无论如何我都爱它",
+            "ar": "أنا أحبه على أي حال"
+        },
+        {
+            "start": "00:00:05,922",
+            "end": "00:00:06,842",
+            "en": "I love this world.",
+            "zh": "我爱这个世界。",
+            "ar": "أنا أحب هذا العالم."
+        },
+        {
+            "start": "00:00:07,622",
+            "end": "00:00:08,962",
+            "en": "I love astrophysics.",
+            "zh": "我爱天体物理学。",
+            "ar": "أحب علم الفلك."
+        },
+        {
+            "start": "00:00:10,982",
+            "end": "00:00:14,442",
+            "en": "And also encryption and this world.",
+            "zh": "还有加密技术和这个世界。",
+            "ar": "وكذلك التشفير وهذا العالم."
+        },
+        {
+            "start": "00:00:14,978",
+            "end": "00:00:16,058",
+            "en": "I am",
+            "zh": "我是",
+            "ar": "أنا"
+        },
+        {
+            "start": "00:00:17,458",
+            "end": "00:00:18,318",
+            "en": "I am",
+            "zh": "我是",
+            "ar": "أنا"
+        },
+        {
+            "start": "00:00:19,426",
+            "end": "00:00:20,566",
+            "en": "I'm cool.",
+            "zh": "我很酷。",
+            "ar": "أنا رائع."
+        },
+        {
+            "start": "00:00:21,090",
+            "end": "00:00:25,390",
+            "en": "I love red bean paste",
+            "zh": "我爱红豆沙",
+            "ar": "أنا أحب عجينة الفول الأحمر"
+        },
+        {
+            "start": "00:00:26,369",
+            "end": "00:00:28,390",
+            "en": "I love it",
+            "zh": "我爱它",
+            "ar": "انا احبها"
+        },
+        {
+            "start": "00:00:29,329",
+            "end": "00:00:31,990",
+            "en": "I love red bean paste",
+            "zh": "我爱红豆沙",
+            "ar": "أنا أحب عجينة الفول الأحمر"
+        },
+        {
+            "start": "00:00:33,890",
+            "end": "00:00:38,090",
+            "en": "Do you remember this Arabic letter?",
+            "zh": "你还记得这个阿拉伯字母吗？",
+            "ar": "هل تتذكر هذه الحرف العربي؟"
+        },
+        {
+            "start": "00:00:38,890",
+            "end": "00:00:41,510",
+            "en": "We say it's similar to this door.",
+            "zh": "我们说它类似于这扇门。",
+            "ar": "نقول أنه مشابه لهذا الباب."
+        },
+        {
+            "start": "00:00:42,370",
+            "end": "00:00:44,330",
+            "en": "So the pronunciation is door,",
+            "zh": "所以发音是门，",
+            "ar": "فإن النطق هو باب,"
+        },
+        {
+            "start": "00:00:44,330",
+            "end": "00:00:45,390",
+            "en": "D-A-L.",
+            "zh": "达尔。",
+            "ar": "د-ا-ل."
+        },
+        {
+            "start": "00:00:45,970",
+            "end": "00:00:47,270",
+            "en": "This is Arabic letter.",
+            "zh": "这是阿拉伯字母。",
+            "ar": "هذه حرف عربي."
+        }
+    ]
+}

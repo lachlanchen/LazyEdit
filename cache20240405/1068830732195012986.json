@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,260\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,260\",\n    \"end\": \"00:00:04,340\",\n    \"lang\": \"en\",\n    \"text\": \"let's check what I have bought on Hong Kong QA Mall.\"\n  },\n  {\n    \"start\": \"00:00:05,340\",\n    \"end\": \"00:00:10,880\",\n    \"lang\": \"en\",\n    \"text\": \"And this is a bath gel and shampoo.\"\n  },\n  {\n    \"start\": \"00:00:12,380\",\n    \"end\": \"00:00:13,340\",\n    \"lang\": \"en\",\n    \"text\": \"Thickening shampoo.\"\n  },\n  {\n    \"start\": \"00:00:15,040\",\n    \"end\": \"00:00:16,120\",\n    \"lang\": \"en\",\n    \"text\": \"I don't believe it.\"\n  },\n  {\n    \"start\": \"00:00:17,200\",\n    \"end\": \"00:00:22,260\",\n    \"lang\": \"en\",\n    \"text\": \"It can energize scalp and thicker for hair.\"\n  },\n  {\n    \"start\": \"00:00:24,738\",\n    \"end\": \"00:00:25,578\",\n    \"lang\": \"en\",\n    \"text\": \"I think you can eat this\"\n  },\n  {\n    \"start\": \"00:00:28,138\",\n    \"end\": \"00:00:28,418\",\n    \"lang\": \"en\",\n    \"text\": \"Yeah\"\n  },\n  {\n    \"start\": \"00:00:30,977\",\n    \"end\": \"00:00:32,558\",\n    \"lang\": \"en\",\n    \"text\": \"How to say this?\"\n  },\n  {\n    \"start\": \"00:00:33,938\",\n    \"end\": \"00:00:35,498\",\n    \"lang\": \"en\",\n    \"text\": \"This is a data card\"\n  },\n  {\n    \"start\": \"00:00:36,497\",\n    \"end\": \"00:00:37,398\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:37,398\",\n    \"end\": \"00:00:39,258\",\n    \"lang\": \"en\",\n    \"text\": \"data card\"\n  },\n  {\n    \"start\": \"00:00:40,018\",\n    \"end\": \"00:00:42,638\",\n    \"lang\": \"en\",\n    \"text\": \"The 4th generation data card\"\n  },\n  {\n    \"start\": \"00:00:42,638\",\n    \"end\": \"00:00:44,478\",\n    \"lang\": \"en\",\n    \"text\": \"And what's this?\"\n  },\n  {\n    \"start\": \"00:00:46,138\",\n    \"end\": \"00:00:47,658\",\n    \"lang\": \"en\",\n    \"text\": \"This is...\"\n  },\n  {\n    \"start\": \"00:00:48,838\",\n    \"end\": \"00:00:50,118\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know\"\n  },\n  {\n    \"start\": \"00:00:59,554\",\n    \"end\": \"00:00:59,994\",\n    \"lang\": \"en\",\n    \"text\": \"For me,\"\n  },\n  {\n    \"start\": \"00:00:59,994\",\n    \"end\": \"00:01:01,454\",\n    \"lang\": \"en\",\n    \"text\": \"learning languages,\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,260",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:00,260",
+            "end": "00:00:04,340",
+            "es": "vamos a ver qué he comprado en Hong Kong QA Mall.",
+            "fr": "voyons ce que j'ai acheté au Hong Kong QA Mall.",
+            "uk": "давайте перевіримо, що я купив у Hong Kong QA Mall."
+        },
+        {
+            "start": "00:00:05,340",
+            "end": "00:00:10,880",
+            "es": "Y esto es un gel de baño y champú.",
+            "fr": "Et ceci est un gel douche et shampoing.",
+            "uk": "І це гель для душу та шампунь."
+        },
+        {
+            "start": "00:00:12,380",
+            "end": "00:00:13,340",
+            "es": "Champú espesante.",
+            "fr": "Shampooing épaississant.",
+            "uk": "Згущувальний шампунь."
+        },
+        {
+            "start": "00:00:15,040",
+            "end": "00:00:16,120",
+            "es": "No lo creo.",
+            "fr": "Je ne le crois pas.",
+            "uk": "Я в це не вірю."
+        },
+        {
+            "start": "00:00:17,200",
+            "end": "00:00:22,260",
+            "es": "Puede energizar el cuero cabelludo y engrosar el cabello.",
+            "fr": "Il peut dynamiser le cuir chevelu et épaissir les cheveux.",
+            "uk": "Може енергізувати шкіру голови та зробити волосся гущішим."
+        },
+        {
+            "start": "00:00:24,738",
+            "end": "00:00:25,578",
+            "es": "Creo que puedes comer esto",
+            "fr": "Je pense que tu peux manger ça",
+            "uk": "Я думаю, це можна з'їсти"
+        },
+        {
+            "start": "00:00:28,138",
+            "end": "00:00:28,418",
+            "es": "Sí",
+            "fr": "Oui",
+            "uk": "Так"
+        },
+        {
+            "start": "00:00:30,977",
+            "end": "00:00:32,558",
+            "es": "¿Cómo se dice esto?",
+            "fr": "Comment dit-on cela ?",
+            "uk": "Як це сказати?"
+        },
+        {
+            "start": "00:00:33,938",
+            "end": "00:00:35,498",
+            "es": "Esto es una tarjeta de datos",
+            "fr": "Ceci est une carte de données",
+            "uk": "Це картка даних"
+        },
+        {
+            "start": "00:00:36,497",
+            "end": "00:00:37,398",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "О,"
+        },
+        {
+            "start": "00:00:37,398",
+            "end": "00:00:39,258",
+            "es": "tarjeta de datos",
+            "fr": "carte de données",
+            "uk": "картка даних"
+        },
+        {
+            "start": "00:00:40,018",
+            "end": "00:00:42,638",
+            "es": "La tarjeta de datos de cuarta generación",
+            "fr": "La carte de données de quatrième génération",
+            "uk": "Картка даних четвертого покоління"
+        },
+        {
+            "start": "00:00:42,638",
+            "end": "00:00:44,478",
+            "es": "¿Y qué es esto?",
+            "fr": "Et qu'est-ce que c'est ?",
+            "uk": "А що це?"
+        },
+        {
+            "start": "00:00:46,138",
+            "end": "00:00:47,658",
+            "es": "Esto es...",
+            "fr": "C'est...",
+            "uk": "Це..."
+        },
+        {
+            "start": "00:00:48,838",
+            "end": "00:00:50,118",
+            "es": "No sé",
+            "fr": "Je ne sais pas",
+            "uk": "Я не знаю"
+        },
+        {
+            "start": "00:00:59,554",
+            "end": "00:00:59,994",
+            "es": "Para mí,",
+            "fr": "Pour moi,",
+            "uk": "Для мене,"
+        },
+        {
+            "start": "00:00:59,994",
+            "end": "00:01:01,454",
+            "es": "aprender idiomas,",
+            "fr": "apprendre des langues,",
+            "uk": "вивчення мов,"
+        }
+    ]
+}

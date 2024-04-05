@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,600\",\n    \"lang\": \"ja\",\n    \"text\": \"これが私たちのコネワン手羽先レスメンです。\"\n  },\n  {\n    \"start\": \"00:00:04,770\",\n    \"end\": \"00:00:05,870\",\n    \"lang\": \"ja\",\n    \"text\": \"ライス&ヌードルです\"\n  },\n  {\n    \"start\": \"00:00:08,194\",\n    \"end\": \"00:00:10,974\",\n    \"lang\": \"en\",\n    \"text\": \"So it's delicious,\"\n  },\n  {\n    \"start\": \"00:00:10,974\",\n    \"end\": \"00:00:12,614\",\n    \"lang\": \"en\",\n    \"text\": \"it's many,\"\n  },\n  {\n    \"start\": \"00:00:12,614\",\n    \"end\": \"00:00:15,014\",\n    \"lang\": \"en\",\n    \"text\": \"and can I say.\"\n  },\n  {\n    \"start\": \"00:00:17,194\",\n    \"end\": \"00:00:18,034\",\n    \"lang\": \"en\",\n    \"text\": \"It's chicken wing,\"\n  },\n  {\n    \"start\": \"00:00:18,034\",\n    \"end\": \"00:00:20,314\",\n    \"lang\": \"en\",\n    \"text\": \"it's fried chicken wing.\"\n  },\n  {\n    \"start\": \"00:00:20,774\",\n    \"end\": \"00:00:21,974\",\n    \"lang\": \"en\",\n    \"text\": \"It's delicious,\"\n  },\n  {\n    \"start\": \"00:00:21,974\",\n    \"end\": \"00:00:23,054\",\n    \"lang\": \"en\",\n    \"text\": \"extremely delicious.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,600",
+            "es": "Este es nuestro Kone Wan ala de pollo ramen.",
+            "fr": "Ceci est notre Kone Wan aile de poulet ramen.",
+            "uk": "Це наш Kone Wan рамен з курячим крилом."
+        },
+        {
+            "start": "00:00:04,770",
+            "end": "00:00:05,870",
+            "es": "Es arroz y fideos.",
+            "fr": "C'est riz et nouilles.",
+            "uk": "Це рис і локшина."
+        },
+        {
+            "start": "00:00:08,194",
+            "end": "00:00:10,974",
+            "es": "Así que es delicioso,",
+            "fr": "Donc c'est délicieux,",
+            "uk": "Отже, це смачно,"
+        },
+        {
+            "start": "00:00:10,974",
+            "end": "00:00:12,614",
+            "es": "es mucho,",
+            "fr": "c'est beaucoup,",
+            "uk": "це багато,"
+        },
+        {
+            "start": "00:00:12,614",
+            "end": "00:00:15,014",
+            "es": "y puedo decir.",
+            "fr": "et je peux dire.",
+            "uk": "і я можу сказати."
+        },
+        {
+            "start": "00:00:17,194",
+            "end": "00:00:18,034",
+            "es": "Es ala de pollo,",
+            "fr": "C'est aile de poulet,",
+            "uk": "Це куряче крило,"
+        },
+        {
+            "start": "00:00:18,034",
+            "end": "00:00:20,314",
+            "es": "es ala de pollo frita.",
+            "fr": "c'est aile de poulet frite.",
+            "uk": "це смажене куряче крило."
+        },
+        {
+            "start": "00:00:20,774",
+            "end": "00:00:21,974",
+            "es": "Es delicioso,",
+            "fr": "C'est délicieux,",
+            "uk": "Це смачно,"
+        },
+        {
+            "start": "00:00:21,974",
+            "end": "00:00:23,054",
+            "es": "extremadamente delicioso.",
+            "fr": "extrêmement délicieux.",
+            "uk": "надзвичайно смачно."
+        }
+    ]
+}

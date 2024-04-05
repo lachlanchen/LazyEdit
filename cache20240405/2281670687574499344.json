@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,100\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our most recommended.\"\n  },\n  {\n    \"start\": \"00:00:08,480\",\n    \"end\": \"00:00:09,880\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:11,640\",\n    \"end\": \"00:00:12,580\",\n    \"lang\": \"en\",\n    \"text\": \"Put here.\"\n  },\n  {\n    \"start\": \"00:00:46,800\",\n    \"end\": \"00:00:48,200\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:49,860\",\n    \"end\": \"00:00:51,260\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:58,580\",\n    \"end\": \"00:00:59,980\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,100",
+            "es": "Entonces, este es nuestro más recomendado.",
+            "fr": "Alors, ceci est le plus recommandé de notre part.",
+            "uk": "Отже, це наш найрекомендованіший."
+        },
+        {
+            "start": "00:00:08,480",
+            "end": "00:00:09,880",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        },
+        {
+            "start": "00:00:11,640",
+            "end": "00:00:12,580",
+            "es": "Ponlo aquí.",
+            "fr": "Mettez-le ici.",
+            "uk": "Покладіть сюди."
+        },
+        {
+            "start": "00:00:46,800",
+            "end": "00:00:48,200",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        },
+        {
+            "start": "00:00:49,860",
+            "end": "00:00:51,260",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        },
+        {
+            "start": "00:00:58,580",
+            "end": "00:00:59,980",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        }
+    ]
+}

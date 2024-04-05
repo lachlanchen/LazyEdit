@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,660\",\n    \"end\": \"00:00:02,020\",\n    \"lang\": \"zh\",\n    \"text\": \"你这婆婆那个\"\n  },\n  {\n    \"start\": \"00:00:02,020\",\n    \"end\": \"00:00:04,460\",\n    \"lang\": \"zh\",\n    \"text\": \"我也不煮煮是煮盘子吗那个\"\n  },\n  {\n    \"start\": \"00:00:05,080\",\n    \"end\": \"00:00:07,240\",\n    \"lang\": \"zh\",\n    \"text\": \"那个就是没洗干净那个\"\n  },\n  {\n    \"start\": \"00:00:07,240\",\n    \"end\": \"00:00:09,740\",\n    \"lang\": \"zh\",\n    \"text\": \"那好的黑的干不干净哦\"\n  },\n  {\n    \"start\": \"00:00:10,800\",\n    \"end\": \"00:00:13,820\",\n    \"lang\": \"zh\",\n    \"text\": \"我口里有不好说的那个没洗干净\"\n  },\n  {\n    \"start\": \"00:00:17,800\",\n    \"end\": \"00:00:21,060\",\n    \"lang\": \"zh\",\n    \"text\": \"他就是那么切切的沾酱油去\"\n  },\n  {\n    \"start\": \"00:00:22,280\",\n    \"end\": \"00:00:24,620\",\n    \"lang\": \"zh\",\n    \"text\": \"你干不干净哦那个人的观念\"\n  },\n  {\n    \"start\": \"00:00:31,280\",\n    \"end\": \"00:00:33,120\",\n    \"lang\": \"zh\",\n    \"text\": \"那么紧那么熟那个\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,660",
+            "end": "00:00:02,020",
+            "vi": "Bà chẳng qua là"
+        },
+        {
+            "start": "00:00:02,020",
+            "end": "00:00:04,460",
+            "vi": "Tôi cũng không nấu, cái chảo đó sao á"
+        },
+        {
+            "start": "00:00:05,080",
+            "end": "00:00:07,240",
+            "vi": "Cái đó là chưa rửa sạch á"
+        },
+        {
+            "start": "00:00:07,240",
+            "end": "00:00:09,740",
+            "vi": "Ừ, cái bẩn đó có sạch không?"
+        },
+        {
+            "start": "00:00:10,800",
+            "end": "00:00:13,820",
+            "vi": "Tôi có cái không thể nói, cái chưa rửa sạch đó"
+        },
+        {
+            "start": "00:00:17,800",
+            "end": "00:00:21,060",
+            "vi": "Anh ta chỉ là một cách thô bạo nhúng vào nước tương"
+        },
+        {
+            "start": "00:00:22,280",
+            "end": "00:00:24,620",
+            "vi": "Cá nhân bạn có sạch không, quan niệm đó"
+        },
+        {
+            "start": "00:00:31,280",
+            "end": "00:00:33,120",
+            "vi": "Nó chặt chẽ, nó chín, cái đó"
+        }
+    ]
+}

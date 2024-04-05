@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,300\",\n    \"lang\": \"zh\",\n    \"text\": \"根本就没有先苦后甜这一回事\"\n  },\n  {\n    \"start\": \"00:00:05,119\",\n    \"end\": \"00:00:06,340\",\n    \"lang\": \"zh\",\n    \"text\": \"如果你有句话叫\"\n  },\n  {\n    \"start\": \"00:00:06,899\",\n    \"end\": \"00:00:08,860\",\n    \"lang\": \"zh\",\n    \"text\": \"会玩的玩一辈子\"\n  },\n  {\n    \"start\": \"00:00:08,860\",\n    \"end\": \"00:00:10,080\",\n    \"lang\": \"zh\",\n    \"text\": \"会做的做一辈子\"\n  },\n  {\n    \"start\": \"00:00:11,458\",\n    \"end\": \"00:00:13,278\",\n    \"lang\": \"en\",\n    \"text\": \"So if you suffer,\"\n  },\n  {\n    \"start\": \"00:00:13,278\",\n    \"end\": \"00:00:19,298\",\n    \"lang\": \"en\",\n    \"text\": \"you keep suffering until you finally decide that you enjoy the life.\"\n  },\n  {\n    \"start\": \"00:00:21,318\",\n    \"end\": \"00:00:22,178\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,300",
+            "vi": "Chẳng có cái gọi là khổ trước sướng sau"
+        },
+        {
+            "start": "00:00:05,119",
+            "end": "00:00:06,340",
+            "vi": "Nếu bạn nghĩ mình có thể"
+        },
+        {
+            "start": "00:00:06,899",
+            "end": "00:00:08,860",
+            "vi": "chơi cả đời"
+        },
+        {
+            "start": "00:00:08,860",
+            "end": "00:00:10,080",
+            "vi": "làm việc cả đời"
+        },
+        {
+            "start": "00:00:11,458",
+            "end": "00:00:13,278",
+            "vi": "Nên nếu bạn khổ,"
+        },
+        {
+            "start": "00:00:13,278",
+            "end": "00:00:19,298",
+            "vi": "bạn sẽ cứ khổ cho tới khi bạn quyết định mình thực sự tận hưởng cuộc sống."
+        },
+        {
+            "start": "00:00:21,318",
+            "end": "00:00:22,178",
+            "vi": "Được."
+        }
+    ]
+}

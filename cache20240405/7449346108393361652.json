@@ -1,0 +1,169 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,074\",\n    \"end\": \"00:01:03,514\",\n    \"lang\": \"en\",\n    \"text\": \"work,\"\n  },\n  {\n    \"start\": \"00:01:03,514\",\n    \"end\": \"00:01:04,414\",\n    \"lang\": \"en\",\n    \"text\": \"product,\"\n  },\n  {\n    \"start\": \"00:01:04,414\",\n    \"end\": \"00:01:07,054\",\n    \"lang\": \"en\",\n    \"text\": \"or just a normal life.\"\n  },\n  {\n    \"start\": \"00:01:08,754\",\n    \"end\": \"00:01:10,994\",\n    \"lang\": \"en\",\n    \"text\": \"Then with this work,\"\n  },\n  {\n    \"start\": \"00:01:10,994\",\n    \"end\": \"00:01:11,934\",\n    \"lang\": \"en\",\n    \"text\": \"product,\"\n  },\n  {\n    \"start\": \"00:01:11,934\",\n    \"end\": \"00:01:12,994\",\n    \"lang\": \"en\",\n    \"text\": \"life,\"\n  },\n  {\n    \"start\": \"00:01:13,914\",\n    \"end\": \"00:01:19,114\",\n    \"lang\": \"en\",\n    \"text\": \"it will find an audience by itself.\"\n  },\n  {\n    \"start\": \"00:01:21,254\",\n    \"end\": \"00:01:24,834\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that's a more reasonable solution,\"\n  },\n  {\n    \"start\": \"00:01:25,454\",\n    \"end\": \"00:01:28,834\",\n    \"lang\": \"en\",\n    \"text\": \"reasonable approach for content creating,\"\n  },\n  {\n    \"start\": \"00:01:29,834\",\n    \"end\": \"00:01:31,734\",\n    \"lang\": \"en\",\n    \"text\": \"rather than this cannibate,\"\n  },\n  {\n    \"start\": \"00:01:32,574\",\n    \"end\": \"00:01:33,334\",\n    \"lang\": \"en\",\n    \"text\": \"this fake,\"\n  },\n  {\n    \"start\": \"00:01:33,334\",\n    \"end\": \"00:01:35,934\",\n    \"lang\": \"en\",\n    \"text\": \"this make-up,\"\n  },\n  {\n    \"start\": \"00:01:35,934\",\n    \"end\": \"00:01:37,694\",\n    \"lang\": \"en\",\n    \"text\": \"this fake story.\"\n  },\n  {\n    \"start\": \"00:01:43,522\",\n    \"end\": \"00:01:45,022\",\n    \"lang\": \"ja\",\n    \"text\": \"次のゲームプレイはまた見ます\"\n  },\n  {\n    \"start\": \"00:01:45,826\",\n    \"end\": \"00:01:47,846\",\n    \"lang\": \"en\",\n    \"text\": \"May all sick men...\"\n  },\n  {\n    \"start\": \"00:01:49,954\",\n    \"end\": \"00:01:54,934\",\n    \"lang\": \"ja\",\n    \"text\": \"なな ななとひな ななに\"\n  },\n  {\n    \"start\": \"00:01:54,934\",\n    \"end\": \"00:01:55,754\",\n    \"lang\": \"ja\",\n    \"text\": \"ん?\"\n  },\n  {\n    \"start\": \"00:01:56,258\",\n    \"end\": \"00:01:56,558\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:01:56,978\",\n    \"end\": \"00:01:57,798\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi,\"\n  },\n  {\n    \"start\": \"00:01:57,798\",\n    \"end\": \"00:01:58,998\",\n    \"lang\": \"en\",\n    \"text\": \"re mi,\"\n  },\n  {\n    \"start\": \"00:01:58,998\",\n    \"end\": \"00:02:01,478\",\n    \"lang\": \"en\",\n    \"text\": \"na na to hi na,\"\n  },\n  {\n    \"start\": \"00:02:01,478\",\n    \"end\": \"00:02:03,018\",\n    \"lang\": \"en\",\n    \"text\": \"na na mi,\"\n  },\n  {\n    \"start\": \"00:02:03,018\",\n    \"end\": \"00:02:04,297\",\n    \"lang\": \"en\",\n    \"text\": \"re mi,\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:03,074",
+            "end": "00:01:03,514",
+            "en": "work,",
+            "zh": "工作，",
+            "ar": "عمل،"
+        },
+        {
+            "start": "00:01:03,514",
+            "end": "00:01:04,414",
+            "en": "product,",
+            "zh": "产品，",
+            "ar": "منتج،"
+        },
+        {
+            "start": "00:01:04,414",
+            "end": "00:01:07,054",
+            "en": "or just a normal life.",
+            "zh": "或者只是普通的生活。",
+            "ar": "أو مجرد حياة عادية."
+        },
+        {
+            "start": "00:01:08,754",
+            "end": "00:01:10,994",
+            "en": "Then with this work,",
+            "zh": "那么有了这个工作，",
+            "ar": "ثم مع هذا العمل،"
+        },
+        {
+            "start": "00:01:10,994",
+            "end": "00:01:11,934",
+            "en": "product,",
+            "zh": "产品，",
+            "ar": "منتج،"
+        },
+        {
+            "start": "00:01:11,934",
+            "end": "00:01:12,994",
+            "en": "life,",
+            "zh": "生活，",
+            "ar": "حياة،"
+        },
+        {
+            "start": "00:01:13,914",
+            "end": "00:01:19,114",
+            "en": "it will find an audience by itself.",
+            "zh": "它会自己找到观众。",
+            "ar": "سوف يجد جمهوره بنفسه."
+        },
+        {
+            "start": "00:01:21,254",
+            "end": "00:01:24,834",
+            "en": "I believe that's a more reasonable solution,",
+            "zh": "我认为这是一个更合理的解决方案，",
+            "ar": "أعتقد أن هذا حل أكثر معقولية،"
+        },
+        {
+            "start": "00:01:25,454",
+            "end": "00:01:28,834",
+            "en": "reasonable approach for content creating,",
+            "zh": "合理的内容创建方法，",
+            "ar": "نهج معقول لإنشاء المحتوى،"
+        },
+        {
+            "start": "00:01:29,834",
+            "end": "00:01:31,734",
+            "en": "rather than this cannibate,",
+            "zh": "而不是这种自相残杀，",
+            "ar": "بدلاً من هذه الأنانية،"
+        },
+        {
+            "start": "00:01:32,574",
+            "end": "00:01:33,334",
+            "en": "this fake,",
+            "zh": "这种假象，",
+            "ar": "هذا الزائف،"
+        },
+        {
+            "start": "00:01:33,334",
+            "end": "00:01:35,934",
+            "en": "this make-up,",
+            "zh": "这种化妆，",
+            "ar": "هذا المكياج،"
+        },
+        {
+            "start": "00:01:35,934",
+            "end": "00:01:37,694",
+            "en": "this fake story.",
+            "zh": "这种虚假的故事。",
+            "ar": "هذه القصة المزيفة."
+        },
+        {
+            "start": "00:01:43,522",
+            "end": "00:01:45,022",
+            "en": "See you in the next gameplay.",
+            "zh": "在下一个游戏玩法中见。",
+            "ar": "أراك في اللعبة التالية.",
+            "ja": "次のゲームプレイはまた見ます"
+        },
+        {
+            "start": "00:01:45,826",
+            "end": "00:01:47,846",
+            "en": "May all sick men...",
+            "zh": "愿所有病人...",
+            "ar": "ليتعافى كل مرضى..."
+        },
+        {
+            "start": "00:01:49,954",
+            "end": "00:01:54,934",
+            "en": "Na na na and Hina, na na by",
+            "zh": "娜娜和希娜，娜娜由",
+            "ar": "نا نا وهينا، نا نا بواسطة",
+            "ja": "なな ななとひな ななに"
+        },
+        {
+            "start": "00:01:54,934",
+            "end": "00:01:55,754",
+            "en": "Hmm?",
+            "zh": "嗯？",
+            "ar": "همم؟",
+            "ja": "ん?"
+        },
+        {
+            "start": "00:01:56,258",
+            "end": "00:01:56,558",
+            "en": "Sorry.",
+            "zh": "对不起。",
+            "ar": "آسف."
+        },
+        {
+            "start": "00:01:56,978",
+            "end": "00:01:57,798",
+            "en": "Na na mi,",
+            "zh": "娜娜米，",
+            "ar": "نا نا مي،"
+        },
+        {
+            "start": "00:01:57,798",
+            "end": "00:01:58,998",
+            "en": "re mi,",
+            "zh": "雷米，",
+            "ar": "ري مي،"
+        },
+        {
+            "start": "00:01:58,998",
+            "end": "00:02:01,478",
+            "en": "na na to hi na,",
+            "zh": "娜娜到希娜，",
+            "ar": "نا نا إلى هي نا،"
+        },
+        {
+            "start": "00:02:01,478",
+            "end": "00:02:03,018",
+            "en": "na na mi,",
+            "zh": "娜娜米，",
+            "ar": "نا نا مي،"
+        },
+        {
+            "start": "00:02:03,018",
+            "end": "00:02:04,297",
+            "en": "re mi,",
+            "zh": "雷米，",
+            "ar": "ري مي،"
+        }
+    ]
+}

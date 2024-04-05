@@ -1,0 +1,90 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,906\",\n    \"end\": \"00:01:02,766\",\n    \"lang\": \"en\",\n    \"text\": \"juicy,\"\n  },\n  {\n    \"start\": \"00:01:02,766\",\n    \"end\": \"00:01:04,506\",\n    \"lang\": \"en\",\n    \"text\": \"and spicy.\"\n  },\n  {\n    \"start\": \"00:01:10,114\",\n    \"end\": \"00:01:10,574\",\n    \"lang\": \"ja\",\n    \"text\": \"美味しい\"\n  },\n  {\n    \"start\": \"00:01:11,170\",\n    \"end\": \"00:01:12,330\",\n    \"lang\": \"en\",\n    \"text\": \"Let's eat it\"\n  },\n  {\n    \"start\": \"00:01:17,089\",\n    \"end\": \"00:01:17,690\",\n    \"lang\": \"en\",\n    \"text\": \"Wow\"\n  },\n  {\n    \"start\": \"00:01:24,089\",\n    \"end\": \"00:01:27,050\",\n    \"lang\": \"en\",\n    \"text\": \"Please put this as a teaser and a cover\"\n  },\n  {\n    \"start\": \"00:01:27,769\",\n    \"end\": \"00:01:28,990\",\n    \"lang\": \"en\",\n    \"text\": \"This is delicious\"\n  },\n  {\n    \"start\": \"00:01:30,269\",\n    \"end\": \"00:01:31,210\",\n    \"lang\": \"en\",\n    \"text\": \"It's juicy,\"\n  },\n  {\n    \"start\": \"00:01:31,210\",\n    \"end\": \"00:01:32,590\",\n    \"lang\": \"en\",\n    \"text\": \"really juicy\"\n  },\n  {\n    \"start\": \"00:01:39,149\",\n    \"end\": \"00:01:41,330\",\n    \"lang\": \"en\",\n    \"text\": \"This is the best chicken wing ever\"\n  },\n  {\n    \"start\": \"00:01:45,229\",\n    \"end\": \"00:01:45,950\",\n    \"lang\": \"en\",\n    \"text\": \"I need to go\"\n  },\n  {\n    \"start\": \"00:01:48,409\",\n    \"end\": \"00:01:48,830\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:01,906",
+            "end": "00:01:02,766",
+            "en": "juicy,",
+            "zh": "多汁，",
+            "ar": "عصير،"
+        },
+        {
+            "start": "00:01:02,766",
+            "end": "00:01:04,506",
+            "en": "and spicy.",
+            "zh": "且辣。",
+            "ar": "وحار."
+        },
+        {
+            "start": "00:01:10,114",
+            "end": "00:01:10,574",
+            "en": "Delicious",
+            "zh": "美味的",
+            "ar": "لذيذ",
+            "ja": "美味しい"
+        },
+        {
+            "start": "00:01:11,170",
+            "end": "00:01:12,330",
+            "en": "Let's eat it",
+            "zh": "我们吃吧",
+            "ar": "دعونا نأكله"
+        },
+        {
+            "start": "00:01:17,089",
+            "end": "00:01:17,690",
+            "en": "Wow",
+            "zh": "哇",
+            "ar": "واو"
+        },
+        {
+            "start": "00:01:24,089",
+            "end": "00:01:27,050",
+            "en": "Please put this as a teaser and a cover",
+            "zh": "请将此作为预告片和封面",
+            "ar": "يرجى وضع هذا كمقدمة وغلاف"
+        },
+        {
+            "start": "00:01:27,769",
+            "end": "00:01:28,990",
+            "en": "This is delicious",
+            "zh": "这很好吃",
+            "ar": "هذا لذيذ"
+        },
+        {
+            "start": "00:01:30,269",
+            "end": "00:01:31,210",
+            "en": "It's juicy,",
+            "zh": "它很多汁，",
+            "ar": "إنه عصير،"
+        },
+        {
+            "start": "00:01:31,210",
+            "end": "00:01:32,590",
+            "en": "really juicy",
+            "zh": "真的很多汁",
+            "ar": "عصير جدا"
+        },
+        {
+            "start": "00:01:39,149",
+            "end": "00:01:41,330",
+            "en": "This is the best chicken wing ever",
+            "zh": "这是有史以来最好的鸡翅",
+            "ar": "هذه هي أفضل جناح دجاج على الإطلاق"
+        },
+        {
+            "start": "00:01:45,229",
+            "end": "00:01:45,950",
+            "en": "I need to go",
+            "zh": "我需要走了",
+            "ar": "أحتاج إلى الذهاب"
+        },
+        {
+            "start": "00:01:48,409",
+            "end": "00:01:48,830",
+            "en": "See you",
+            "zh": "再见",
+            "ar": "أراك لاحقاً"
+        }
+    ]
+}

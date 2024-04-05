@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:06,610\",\n    \"end\": \"00:02:09,050\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:10,130\",\n    \"end\": \"00:02:12,230\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:13,070\",\n    \"end\": \"00:02:15,750\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树岗\"\n  },\n  {\n    \"start\": \"00:02:47,382\",\n    \"end\": \"00:02:50,182\",\n    \"lang\": \"en\",\n    \"text\": \"once around\"\n  },\n  {\n    \"start\": \"00:02:50,182\",\n    \"end\": \"00:02:54,382\",\n    \"lang\": \"en\",\n    \"text\": \"And I wish the guitar company to correct me.\"\n  },\n  {\n    \"start\": \"00:02:55,982\",\n    \"end\": \"00:02:56,762\",\n    \"lang\": \"en\",\n    \"text\": \"First night.\"\n  },\n  {\n    \"start\": \"00:02:58,562\",\n    \"end\": \"00:03:00,782\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:00,782\",\n    \"end\": \"00:03:03,502\",\n    \"lang\": \"zh\",\n    \"text\": \"没有双钢\"\n  },\n  {\n    \"start\": \"00:03:03,502\",\n    \"end\": \"00:03:06,182\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:06,182\",\n    \"end\": \"00:03:07,362\",\n    \"lang\": \"zh\",\n    \"text\": \"没有双钢\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:06,610",
+            "end": "00:02:09,050",
+            "es": "No hay aroma de flores",
+            "fr": "Il n'y a pas de parfum de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:02:10,130",
+            "end": "00:02:12,230",
+            "es": "No hay aroma de flores",
+            "fr": "Il n'y a pas de parfum de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:02:13,070",
+            "end": "00:02:15,750",
+            "es": "No hay árboles",
+            "fr": "Il n'y a pas d'arbres",
+            "uk": "Немає дерев"
+        },
+        {
+            "start": "00:02:47,382",
+            "end": "00:02:50,182",
+            "es": "una vuelta",
+            "fr": "un tour",
+            "uk": "один оберт"
+        },
+        {
+            "start": "00:02:50,182",
+            "end": "00:02:54,382",
+            "es": "Y deseo que la compañía de guitarras me corrija.",
+            "fr": "Et je souhaite que la compagnie de guitares me corrige.",
+            "uk": "І я хотів би, щоб компанія гітар мене виправила."
+        },
+        {
+            "start": "00:02:55,982",
+            "end": "00:02:56,762",
+            "es": "Primera noche.",
+            "fr": "Première nuit.",
+            "uk": "Перший вечір."
+        },
+        {
+            "start": "00:02:58,562",
+            "end": "00:03:00,782",
+            "es": "No hay aroma de flores",
+            "fr": "Il n'y a pas de parfum de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:03:00,782",
+            "end": "00:03:03,502",
+            "es": "No hay campanas",
+            "fr": "Il n'y a pas de cloches",
+            "uk": "Немає дзвонів"
+        },
+        {
+            "start": "00:03:03,502",
+            "end": "00:03:06,182",
+            "es": "No hay aroma de flores",
+            "fr": "Il n'y a pas de parfum de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:03:06,182",
+            "end": "00:03:07,362",
+            "es": "No hay campanas",
+            "fr": "Il n'y a pas de cloches",
+            "uk": "Немає дзвонів"
+        }
+    ]
+}

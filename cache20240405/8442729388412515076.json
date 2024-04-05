@@ -1,0 +1,48 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,000\",\n    \"lang\": \"zh\",\n    \"text\": \"这个写的很有趣\"\n  },\n  {\n    \"start\": \"00:00:01,499\",\n    \"end\": \"00:00:03,460\",\n    \"lang\": \"zh\",\n    \"text\": \"超自然现象有防御局\"\n  },\n  {\n    \"start\": \"00:00:04,322\",\n    \"end\": \"00:00:04,722\",\n    \"lang\": \"ja\",\n    \"text\": \"を迈 Staff\"\n  },\n  {\n    \"start\": \"00:00:04,902\",\n    \"end\": \"00:00:06,282\",\n    \"lang\": \"zh\",\n    \"text\": \"这个写的很有趣\"\n  },\n  {\n    \"start\": \"00:00:06,781\",\n    \"end\": \"00:00:08,722\",\n    \"lang\": \"zh\",\n    \"text\": \"超自然现象与防御局\"\n  },\n  {\n    \"start\": \"00:00:09,570\",\n    \"end\": \"00:00:10,070\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,000",
+            "en": "This is very interesting",
+            "zh": "这个写的很有趣",
+            "ar": "هذا مثير للاهتمام جدًا"
+        },
+        {
+            "start": "00:00:01,499",
+            "end": "00:00:03,460",
+            "en": "There's a defense against supernatural phenomena",
+            "zh": "超自然现象有防御局",
+            "ar": "هناك دفاع ضد الظواهر الخارقة للطبيعة"
+        },
+        {
+            "start": "00:00:04,322",
+            "end": "00:00:04,722",
+            "en": "Crossing the threshold",
+            "zh": "跨过门槛",
+            "ar": "تجاوز العتبة",
+            "ja": "を迈 Staff"
+        },
+        {
+            "start": "00:00:04,902",
+            "end": "00:00:06,282",
+            "en": "This is very interesting",
+            "zh": "这个写的很有趣",
+            "ar": "هذا مثير للاهتمام جدًا"
+        },
+        {
+            "start": "00:00:06,781",
+            "end": "00:00:08,722",
+            "en": "Supernatural phenomena and the defense bureau",
+            "zh": "超自然现象与防御局",
+            "ar": "الظواهر الخارقة ومكتب الدفاع"
+        },
+        {
+            "start": "00:00:09,570",
+            "end": "00:00:10,070",
+            "en": "Oh my goodness.",
+            "zh": "哦，我的天哪。",
+            "ar": "يا له من جمال."
+        }
+    ]
+}

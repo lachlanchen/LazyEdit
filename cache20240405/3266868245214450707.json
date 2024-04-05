@@ -1,0 +1,20 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,900\",\n    \"ja\": \"<私>[]は<仕事>[]に<行>[]きます\"\n  },\n  {\n    \"start\": \"00:00:03,360\",\n    \"end\": \"00:00:03,900\",\n    \"ja\": \"<了解>[]です\"\n  },\n  {\n    \"start\": \"00:00:04,080\",\n    \"end\": \"00:00:06,340\",\n    \"ja\": \"<私>[]は<学校>[]に<行>[]きます\"\n  }\n]\n\nPRESERVE the original timestamps. \n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,900",
+            "ja": "<私[わたし]>は<仕事[しごと]>に<行[い]>きます"
+        },
+        {
+            "start": "00:00:03,360",
+            "end": "00:00:03,900",
+            "ja": "<了解[りょうかい]>です"
+        },
+        {
+            "start": "00:00:04,080",
+            "end": "00:00:06,340",
+            "ja": "<私[わたし]>は<学校[がっこう]>に<行[い]>きます"
+        }
+    ]
+}

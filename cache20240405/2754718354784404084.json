@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:09,774\",\n    \"end\": \"00:01:10,694\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:01:10,694\",\n    \"end\": \"00:01:12,334\",\n    \"lang\": \"en\",\n    \"text\": \"Years ago,\"\n  },\n  {\n    \"start\": \"00:01:12,334\",\n    \"end\": \"00:01:18,034\",\n    \"lang\": \"en\",\n    \"text\": \"I learned from a Tibetan psychologist in Sichuan University.\"\n  },\n  {\n    \"start\": \"00:01:18,034\",\n    \"end\": \"00:01:19,494\",\n    \"lang\": \"en\",\n    \"text\": \"And he\"\n  },\n  {\n    \"start\": \"00:01:19,494\",\n    \"end\": \"00:01:25,134\",\n    \"lang\": \"en\",\n    \"text\": \"shared that if you eat food with your bare hands,\"\n  },\n  {\n    \"start\": \"00:01:25,134\",\n    \"end\": \"00:01:30,954\",\n    \"lang\": \"en\",\n    \"text\": \"that will help you digest,\"\n  },\n  {\n    \"start\": \"00:01:30,954\",\n    \"end\": \"00:01:33,234\",\n    \"lang\": \"en\",\n    \"text\": \"not help\"\n  },\n  {\n    \"start\": \"00:01:33,234\",\n    \"end\": \"00:01:33,634\",\n    \"lang\": \"en\",\n    \"text\": \"you digest,\"\n  },\n  {\n    \"start\": \"00:01:33,634\",\n    \"end\": \"00:01:35,774\",\n    \"lang\": \"en\",\n    \"text\": \"but make you be more happy.\"\n  },\n  {\n    \"start\": \"00:01:35,774\",\n    \"end\": \"00:01:39,134\",\n    \"lang\": \"en\",\n    \"text\": \"I forget why.\"\n  },\n  {\n    \"start\": \"00:01:39,134\",\n    \"end\": \"00:01:46,954\",\n    \"lang\": \"en\",\n    \"text\": \"I don't accept this theory.\"\n  },\n  {\n    \"start\": \"00:01:46,954\",\n    \"end\": \"00:01:47,334\",\n    \"lang\": \"en\",\n    \"text\": \"I\"\n  },\n  {\n    \"start\": \"00:01:47,334\",\n    \"end\": \"00:01:47,854\",\n    \"lang\": \"en\",\n    \"text\": \"accept it.\"\n  },\n  {\n    \"start\": \"00:01:47,854\",\n    \"end\": \"00:01:51,794\",\n    \"lang\": \"en\",\n    \"text\": \"I don't believe or trust it,\"\n  },\n  {\n    \"start\": \"00:01:51,794\",\n    \"end\": \"00:01:53,234\",\n    \"lang\": \"en\",\n    \"text\": \"but I accept it.\"\n  },\n  {\n    \"start\": \"00:01:53,234\",\n    \"end\": \"00:01:56,334\",\n    \"lang\": \"en\",\n    \"text\": \"I just take it granted.\"\n  },\n  {\n    \"start\": \"00:01:56,334\",\n    \"end\": \"00:02:04,314\",\n    \"lang\": \"en\",\n    \"text\": \"Letting\"\n  },\n  {\n    \"start\": \"00:02:05,114\",\n    \"end\": \"00:02:09,693\",\n    \"lang\": \"en\",\n    \"text\": \"you use your hands to enjoy your food is much better.\"\n  },\n  {\n    \"start\": \"00:02:09,693\",\n    \"end\": \"00:02:11,394\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:09,774",
+            "end": "00:01:10,694",
+            "en": "Sorry.",
+            "zh": "对不起。",
+            "ar": "آسف."
+        },
+        {
+            "start": "00:01:10,694",
+            "end": "00:01:12,334",
+            "en": "Years ago,",
+            "zh": "多年前，",
+            "ar": "منذ سنوات،"
+        },
+        {
+            "start": "00:01:12,334",
+            "end": "00:01:18,034",
+            "en": "I learned from a Tibetan psychologist in Sichuan University.",
+            "zh": "我向四川大学的一位藏族心理学家学习。",
+            "ar": "تعلمت من عالم نفس تبتي في جامعة سيتشوان."
+        },
+        {
+            "start": "00:01:18,034",
+            "end": "00:01:19,494",
+            "en": "And he",
+            "zh": "他",
+            "ar": "وهو"
+        },
+        {
+            "start": "00:01:19,494",
+            "end": "00:01:25,134",
+            "en": "shared that if you eat food with your bare hands,",
+            "zh": "分享如果你用手吃东西，",
+            "ar": "شارك أنه إذا أكلت الطعام بيديك العاريتين،"
+        },
+        {
+            "start": "00:01:25,134",
+            "end": "00:01:30,954",
+            "en": "that will help you digest,",
+            "zh": "那将帮助你消化，",
+            "ar": "ذلك سيساعدك على الهضم،"
+        },
+        {
+            "start": "00:01:30,954",
+            "end": "00:01:33,234",
+            "en": "not help",
+            "zh": "不仅仅是帮助",
+            "ar": "ليس مجرد مساعدة"
+        },
+        {
+            "start": "00:01:33,234",
+            "end": "00:01:33,634",
+            "en": "you digest,",
+            "zh": "你消化，",
+            "ar": "أنت تهضم،"
+        },
+        {
+            "start": "00:01:33,634",
+            "end": "00:01:35,774",
+            "en": "but make you be more happy.",
+            "zh": "而是让你更开心。",
+            "ar": "لكن يجعلك أكثر سعادة."
+        },
+        {
+            "start": "00:01:35,774",
+            "end": "00:01:39,134",
+            "en": "I forget why.",
+            "zh": "我忘了为什么。",
+            "ar": "نسيت لماذا."
+        },
+        {
+            "start": "00:01:39,134",
+            "end": "00:01:46,954",
+            "en": "I don't accept this theory.",
+            "zh": "我不接受这个理论。",
+            "ar": "لا أقبل هذه النظرية."
+        },
+        {
+            "start": "00:01:46,954",
+            "end": "00:01:47,334",
+            "en": "I",
+            "zh": "我",
+            "ar": "أنا"
+        },
+        {
+            "start": "00:01:47,334",
+            "end": "00:01:47,854",
+            "en": "accept it.",
+            "zh": "接受它。",
+            "ar": "أقبله."
+        },
+        {
+            "start": "00:01:47,854",
+            "end": "00:01:51,794",
+            "en": "I don't believe or trust it,",
+            "zh": "我不相信或信任它，",
+            "ar": "لا أؤمن به أو أثق به،"
+        },
+        {
+            "start": "00:01:51,794",
+            "end": "00:01:53,234",
+            "en": "but I accept it.",
+            "zh": "但我接受它。",
+            "ar": "لكني أقبله."
+        },
+        {
+            "start": "00:01:53,234",
+            "end": "00:01:56,334",
+            "en": "I just take it granted.",
+            "zh": "我只是理所当然地接受它。",
+            "ar": "أنا فقط أعتبره مسلما به."
+        },
+        {
+            "start": "00:01:56,334",
+            "end": "00:02:04,314",
+            "en": "Letting",
+            "zh": "让",
+            "ar": "السماح"
+        },
+        {
+            "start": "00:02:05,114",
+            "end": "00:02:09,693",
+            "en": "you use your hands to enjoy your food is much better.",
+            "zh": "用手吃饭更好。",
+            "ar": "استخدام يديك للاستمتاع بطعامك أفضل بكثير."
+        },
+        {
+            "start": "00:02:09,693",
+            "end": "00:02:11,394",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسناً،"
+        }
+    ]
+}

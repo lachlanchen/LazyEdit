@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,660\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:00,660\",\n    \"end\": \"00:00:02,360\",\n    \"lang\": \"en\",\n    \"text\": \"learning is just a repetition.\"\n  },\n  {\n    \"start\": \"00:00:02,360\",\n    \"end\": \"00:00:03,960\",\n    \"lang\": \"en\",\n    \"text\": \"Better without pressure.\"\n  },\n  {\n    \"start\": \"00:00:04,660\",\n    \"end\": \"00:00:05,340\",\n    \"lang\": \"en\",\n    \"text\": \"I don't have pressure.\"\n  },\n  {\n    \"start\": \"00:00:05,698\",\n    \"end\": \"00:00:07,178\",\n    \"lang\": \"zh\",\n    \"text\": \"我可以一直听到晚上,\"\n  },\n  {\n    \"start\": \"00:00:07,178\",\n    \"end\": \"00:00:08,738\",\n    \"lang\": \"zh\",\n    \"text\": \"直到我终于听懂了\"\n  },\n  {\n    \"start\": \"00:00:11,597\",\n    \"end\": \"00:00:14,338\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:15,298\",\n    \"end\": \"00:00:17,618\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:00:36,034\",\n    \"end\": \"00:00:36,334\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:36,334\",\n    \"end\": \"00:00:38,054\",\n    \"lang\": \"en\",\n    \"text\": \"another one.\"\n  },\n  {\n    \"start\": \"00:00:40,642\",\n    \"end\": \"00:00:42,682\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:43,602\",\n    \"end\": \"00:00:45,802\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树梢\"\n  },\n  {\n    \"start\": \"00:00:46,882\",\n    \"end\": \"00:00:47,462\",\n    \"lang\": \"en\",\n    \"text\": \"not correct.\"\n  },\n  {\n    \"start\": \"00:00:52,194\",\n    \"end\": \"00:00:54,154\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,660",
+            "en": "OK,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:00,660",
+            "end": "00:00:02,360",
+            "en": "learning is just a repetition.",
+            "zh": "学习就是重复。",
+            "ar": "التعلم هو مجرد تكرار."
+        },
+        {
+            "start": "00:00:02,360",
+            "end": "00:00:03,960",
+            "en": "Better without pressure.",
+            "zh": "没有压力会更好。",
+            "ar": "الأفضل بدون ضغط."
+        },
+        {
+            "start": "00:00:04,660",
+            "end": "00:00:05,340",
+            "en": "I don't have pressure.",
+            "zh": "我没有压力。",
+            "ar": "ليس لدي ضغط."
+        },
+        {
+            "start": "00:00:05,698",
+            "end": "00:00:07,178",
+            "en": "I can keep listening until night,",
+            "zh": "我可以一直听到晚上,",
+            "ar": "يمكنني الاستماع حتى الليل،"
+        },
+        {
+            "start": "00:00:07,178",
+            "end": "00:00:08,738",
+            "en": "until I finally understand.",
+            "zh": "直到我终于听懂了",
+            "ar": "حتى أفهم أخيرًا."
+        },
+        {
+            "start": "00:00:11,597",
+            "end": "00:00:14,338",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا عطر للزهور"
+        },
+        {
+            "start": "00:00:15,298",
+            "end": "00:00:17,618",
+            "en": "No tall trees",
+            "zh": "没有树高",
+            "ar": "لا أشجار عالية"
+        },
+        {
+            "start": "00:00:36,034",
+            "end": "00:00:36,334",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:36,334",
+            "end": "00:00:38,054",
+            "en": "another one.",
+            "zh": "再来一个。",
+            "ar": "واحد آخر."
+        },
+        {
+            "start": "00:00:40,642",
+            "end": "00:00:42,682",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا عطر للزهور"
+        },
+        {
+            "start": "00:00:43,602",
+            "end": "00:00:45,802",
+            "en": "No treetops",
+            "zh": "没有树梢",
+            "ar": "لا قمم للأشجار"
+        },
+        {
+            "start": "00:00:46,882",
+            "end": "00:00:47,462",
+            "en": "not correct.",
+            "zh": "不正确。",
+            "ar": "غير صحيح."
+        },
+        {
+            "start": "00:00:52,194",
+            "end": "00:00:54,154",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا عطر للزهور"
+        }
+    ]
+}

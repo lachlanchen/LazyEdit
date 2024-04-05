@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,960\",\n    \"lang\": \"en\",\n    \"text\": \"This is our beer friend.\"\n  },\n  {\n    \"start\": \"00:00:01,858\",\n    \"end\": \"00:00:02,598\",\n    \"lang\": \"zh\",\n    \"text\": \"我們的雄筏\"\n  },\n  {\n    \"start\": \"00:00:03,698\",\n    \"end\": \"00:00:04,338\",\n    \"lang\": \"zh\",\n    \"text\": \"第二條竿\"\n  },\n  {\n    \"start\": \"00:00:05,557\",\n    \"end\": \"00:00:06,518\",\n    \"lang\": \"zh\",\n    \"text\": \"好 漂亮\"\n  },\n  {\n    \"start\": \"00:00:09,026\",\n    \"end\": \"00:00:09,226\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks man.\"\n  },\n  {\n    \"start\": \"00:00:10,082\",\n    \"end\": \"00:00:11,882\",\n    \"lang\": \"zh\",\n    \"text\": \"看这些枯枯的地啊\"\n  },\n  {\n    \"start\": \"00:00:13,954\",\n    \"end\": \"00:00:14,134\",\n    \"lang\": \"en\",\n    \"text\": \"junk\"\n  },\n  {\n    \"start\": \"00:00:16,001\",\n    \"end\": \"00:00:16,762\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます。\"\n  },\n  {\n    \"start\": \"00:00:16,762\",\n    \"end\": \"00:00:18,002\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは。\"\n  },\n  {\n    \"start\": \"00:00:18,962\",\n    \"end\": \"00:00:19,242\",\n    \"lang\": \"ja\",\n    \"text\": \"ああ、\"\n  },\n  {\n    \"start\": \"00:00:19,242\",\n    \"end\": \"00:00:19,862\",\n    \"lang\": \"ja\",\n    \"text\": \"おやすみなさい。\"\n  },\n  {\n    \"start\": \"00:00:28,326\",\n    \"end\": \"00:00:29,346\",\n    \"lang\": \"en\",\n    \"text\": \"She's so happy\"\n  },\n  {\n    \"start\": \"00:00:30,850\",\n    \"end\": \"00:00:31,010\",\n    \"lang\": \"ja\",\n    \"text\": \"あれ\"\n  },\n  {\n    \"start\": \"00:00:32,706\",\n    \"end\": \"00:00:33,546\",\n    \"lang\": \"ja\",\n    \"text\": \"かわいいです\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,960",
+            "ja": "これは私たちのビールの友達です。"
+        },
+        {
+            "start": "00:00:01,858",
+            "end": "00:00:02,598",
+            "ja": "私たちのハリセンボン"
+        },
+        {
+            "start": "00:00:03,698",
+            "end": "00:00:04,338",
+            "ja": "2本目の釣り竿"
+        },
+        {
+            "start": "00:00:05,557",
+            "end": "00:00:06,518",
+            "ja": "なんて綺麗なんでしょう"
+        },
+        {
+            "start": "00:00:09,026",
+            "end": "00:00:09,226",
+            "ja": "ありがとう、友よ。"
+        },
+        {
+            "start": "00:00:10,082",
+            "end": "00:00:11,882",
+            "ja": "この枯れた土地を見てください"
+        },
+        {
+            "start": "00:00:13,954",
+            "end": "00:00:14,134",
+            "ja": "ごみ"
+        },
+        {
+            "start": "00:00:16,001",
+            "end": "00:00:16,762",
+            "ja": "おはようございます。"
+        },
+        {
+            "start": "00:00:16,762",
+            "end": "00:00:18,002",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:18,962",
+            "end": "00:00:19,242",
+            "ja": "ああ、"
+        },
+        {
+            "start": "00:00:19,242",
+            "end": "00:00:19,862",
+            "ja": "おやすみなさい。"
+        },
+        {
+            "start": "00:00:28,326",
+            "end": "00:00:29,346",
+            "ja": "彼女はとても幸せです"
+        },
+        {
+            "start": "00:00:30,850",
+            "end": "00:00:31,010",
+            "ja": "あれ"
+        },
+        {
+            "start": "00:00:32,706",
+            "end": "00:00:33,546",
+            "ja": "かわいいですね"
+        }
+    ]
+}

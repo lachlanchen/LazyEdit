@@ -1,0 +1,101 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,960\",\n    \"lang\": \"en\",\n    \"text\": \"This is our beer friend.\"\n  },\n  {\n    \"start\": \"00:00:01,858\",\n    \"end\": \"00:00:02,598\",\n    \"lang\": \"zh\",\n    \"text\": \"我們的雄筏\"\n  },\n  {\n    \"start\": \"00:00:03,698\",\n    \"end\": \"00:00:04,338\",\n    \"lang\": \"zh\",\n    \"text\": \"第二條竿\"\n  },\n  {\n    \"start\": \"00:00:05,557\",\n    \"end\": \"00:00:06,518\",\n    \"lang\": \"zh\",\n    \"text\": \"好 漂亮\"\n  },\n  {\n    \"start\": \"00:00:09,026\",\n    \"end\": \"00:00:09,226\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks man.\"\n  },\n  {\n    \"start\": \"00:00:10,082\",\n    \"end\": \"00:00:11,882\",\n    \"lang\": \"zh\",\n    \"text\": \"看这些枯枯的地啊\"\n  },\n  {\n    \"start\": \"00:00:13,954\",\n    \"end\": \"00:00:14,134\",\n    \"lang\": \"en\",\n    \"text\": \"junk\"\n  },\n  {\n    \"start\": \"00:00:16,001\",\n    \"end\": \"00:00:16,762\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます。\"\n  },\n  {\n    \"start\": \"00:00:16,762\",\n    \"end\": \"00:00:18,002\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは。\"\n  },\n  {\n    \"start\": \"00:00:18,962\",\n    \"end\": \"00:00:19,242\",\n    \"lang\": \"ja\",\n    \"text\": \"ああ、\"\n  },\n  {\n    \"start\": \"00:00:19,242\",\n    \"end\": \"00:00:19,862\",\n    \"lang\": \"ja\",\n    \"text\": \"おやすみなさい。\"\n  },\n  {\n    \"start\": \"00:00:28,326\",\n    \"end\": \"00:00:29,346\",\n    \"lang\": \"en\",\n    \"text\": \"She's so happy\"\n  },\n  {\n    \"start\": \"00:00:30,850\",\n    \"end\": \"00:00:31,010\",\n    \"lang\": \"ja\",\n    \"text\": \"あれ\"\n  },\n  {\n    \"start\": \"00:00:32,706\",\n    \"end\": \"00:00:33,546\",\n    \"lang\": \"ja\",\n    \"text\": \"かわいいです\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,960",
+            "en": "This is our beer friend.",
+            "zh": "这是我们的啤酒朋友。",
+            "ar": "هذا صديقنا بير."
+        },
+        {
+            "start": "00:00:01,858",
+            "end": "00:00:02,598",
+            "en": "This is our male raft",
+            "zh": "我們的雄筏",
+            "ar": "هذه هي طوفنا الذكر"
+        },
+        {
+            "start": "00:00:03,698",
+            "end": "00:00:04,338",
+            "en": "The second pole",
+            "zh": "第二條竿",
+            "ar": "العمود الثاني"
+        },
+        {
+            "start": "00:00:05,557",
+            "end": "00:00:06,518",
+            "en": "So beautiful",
+            "zh": "好 漂亮",
+            "ar": "جميلة جدا"
+        },
+        {
+            "start": "00:00:09,026",
+            "end": "00:00:09,226",
+            "en": "Thanks, man.",
+            "zh": "谢谢，兄弟。",
+            "ar": "شكراً يا رجل."
+        },
+        {
+            "start": "00:00:10,082",
+            "end": "00:00:11,882",
+            "en": "Look at these dry lands",
+            "zh": "看这些枯枯的地啊",
+            "ar": "انظر إلى هذه الأراضي الجافة"
+        },
+        {
+            "start": "00:00:13,954",
+            "end": "00:00:14,134",
+            "en": "Junk",
+            "zh": "垃圾",
+            "ar": "خردة"
+        },
+        {
+            "start": "00:00:16,001",
+            "end": "00:00:16,762",
+            "en": "Good morning.",
+            "zh": "早上好。",
+            "ar": "صباح الخير.",
+            "ja": "おはようございます。"
+        },
+        {
+            "start": "00:00:16,762",
+            "end": "00:00:18,002",
+            "en": "Good afternoon.",
+            "zh": "下午好。",
+            "ar": "مساء الخير.",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:18,962",
+            "end": "00:00:19,862",
+            "en": "Ah, good night.",
+            "zh": "啊，晚安。",
+            "ar": "آه، تصبح على خير.",
+            "ja": "ああ、おやすみなさい。"
+        },
+        {
+            "start": "00:00:28,326",
+            "end": "00:00:29,346",
+            "en": "She's so happy",
+            "zh": "她很开心",
+            "ar": "هي سعيدة جدا"
+        },
+        {
+            "start": "00:00:30,850",
+            "end": "00:00:31,010",
+            "en": "There",
+            "zh": "那里",
+            "ar": "هناك",
+            "ja": "あれ"
+        },
+        {
+            "start": "00:00:32,706",
+            "end": "00:00:33,546",
+            "en": "It's cute",
+            "zh": "好可爱",
+            "ar": "إنها لطيفة",
+            "ja": "かわいいです"
+        }
+    ]
+}

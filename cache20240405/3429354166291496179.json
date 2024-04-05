@@ -1,0 +1,153 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,900\",\n    \"lang\": \"en\",\n    \"text\": \"So before our morning run,\"\n  },\n  {\n    \"start\": \"00:00:02,900\",\n    \"end\": \"00:00:06,800\",\n    \"lang\": \"en\",\n    \"text\": \"let me record this progress,\"\n  },\n  {\n    \"start\": \"00:00:06,800\",\n    \"end\": \"00:00:07,920\",\n    \"lang\": \"en\",\n    \"text\": \"small progress.\"\n  },\n  {\n    \"start\": \"00:00:09,890\",\n    \"end\": \"00:00:11,370\",\n    \"lang\": \"ja\",\n    \"text\": \"ななとひな\"\n  },\n  {\n    \"start\": \"00:00:11,394\",\n    \"end\": \"00:00:12,434\",\n    \"lang\": \"en\",\n    \"text\": \"nnh,\"\n  },\n  {\n    \"start\": \"00:00:12,434\",\n    \"end\": \"00:00:13,574\",\n    \"lang\": \"en\",\n    \"text\": \"inhhh,\"\n  },\n  {\n    \"start\": \"00:00:13,574\",\n    \"end\": \"00:00:14,394\",\n    \"lang\": \"en\",\n    \"text\": \"up,\"\n  },\n  {\n    \"start\": \"00:00:14,394\",\n    \"end\": \"00:00:14,454\",\n    \"lang\": \"en\",\n    \"text\": \"innh\"\n  },\n  {\n    \"start\": \"00:00:14,454\",\n    \"end\": \"00:00:14,574\",\n    \"lang\": \"en\",\n    \"text\": \"Inh,\"\n  },\n  {\n    \"start\": \"00:00:14,574\",\n    \"end\": \"00:00:14,914\",\n    \"lang\": \"en\",\n    \"text\": \"inhale,\"\n  },\n  {\n    \"start\": \"00:00:14,914\",\n    \"end\": \"00:00:15,594\",\n    \"lang\": \"en\",\n    \"text\": \"exhale\"\n  },\n  {\n    \"start\": \"00:00:15,594\",\n    \"end\": \"00:00:16,754\",\n    \"lang\": \"en\",\n    \"text\": \"Inhale Out,\"\n  },\n  {\n    \"start\": \"00:00:16,754\",\n    \"end\": \"00:00:17,174\",\n    \"lang\": \"en\",\n    \"text\": \"Professor\"\n  },\n  {\n    \"start\": \"00:00:19,154\",\n    \"end\": \"00:00:19,174\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:19,174\",\n    \"end\": \"00:00:20,134\",\n    \"lang\": \"en\",\n    \"text\": \"is that it?\"\n  },\n  {\n    \"start\": \"00:00:20,134\",\n    \"end\": \"00:00:20,374\",\n    \"lang\": \"en\",\n    \"text\": \"Correct?\"\n  },\n  {\n    \"start\": \"00:00:20,674\",\n    \"end\": \"00:00:21,014\",\n    \"lang\": \"en\",\n    \"text\": \"What here?\"\n  },\n  {\n    \"start\": \"00:00:22,494\",\n    \"end\": \"00:00:23,114\",\n    \"lang\": \"en\",\n    \"text\": \"None\"\n  },\n  {\n    \"start\": \"00:00:44,802\",\n    \"end\": \"00:00:50,802\",\n    \"lang\": \"en\",\n    \"text\": \"I promise I play this guitar far much better when I play alone.\"\n  },\n  {\n    \"start\": \"00:00:53,122\",\n    \"end\": \"00:00:57,142\",\n    \"lang\": \"en\",\n    \"text\": \"Even though this video recording didn't give me any pressure,\"\n  },\n  {\n    \"start\": \"00:00:57,142\",\n    \"end\": \"00:00:57,582\",\n    \"lang\": \"en\",\n    \"text\": \"I believe.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,900",
+            "en": "So before our morning run,",
+            "zh": "所以，在我们早上跑步之前，",
+            "ar": "إذًا قبل جرينا الصباحي،"
+        },
+        {
+            "start": "00:00:02,900",
+            "end": "00:00:06,800",
+            "en": "let me record this progress,",
+            "zh": "让我记录这个进展，",
+            "ar": "دعني أسجل هذا التقدم،"
+        },
+        {
+            "start": "00:00:06,800",
+            "end": "00:00:07,920",
+            "en": "small progress.",
+            "zh": "小小的进步。",
+            "ar": "تقدم صغير."
+        },
+        {
+            "start": "00:00:09,890",
+            "end": "00:00:11,370",
+            "en": "nnh,",
+            "zh": "嗯，",
+            "ar": "نه،",
+            "ja": "ななとひな"
+        },
+        {
+            "start": "00:00:11,394",
+            "end": "00:00:12,434",
+            "en": "nnh,",
+            "zh": "嗯，",
+            "ar": "نه،"
+        },
+        {
+            "start": "00:00:12,434",
+            "end": "00:00:13,574",
+            "en": "inhhh,",
+            "zh": "吸气，",
+            "ar": "انه،"
+        },
+        {
+            "start": "00:00:13,574",
+            "end": "00:00:14,394",
+            "en": "up,",
+            "zh": "上，",
+            "ar": "فوق،"
+        },
+        {
+            "start": "00:00:14,394",
+            "end": "00:00:14,454",
+            "en": "innh",
+            "zh": "吸，",
+            "ar": "انه"
+        },
+        {
+            "start": "00:00:14,454",
+            "end": "00:00:14,574",
+            "en": "Inh,",
+            "zh": "吸，",
+            "ar": "استنشق،"
+        },
+        {
+            "start": "00:00:14,574",
+            "end": "00:00:14,914",
+            "en": "inhale,",
+            "zh": "吸气，",
+            "ar": "استنشاق،"
+        },
+        {
+            "start": "00:00:14,914",
+            "end": "00:00:15,594",
+            "en": "exhale",
+            "zh": "呼气",
+            "ar": "زفير"
+        },
+        {
+            "start": "00:00:15,594",
+            "end": "00:00:16,754",
+            "en": "Inhale Out,",
+            "zh": "吸气出，",
+            "ar": "استنشق الخارج،"
+        },
+        {
+            "start": "00:00:16,754",
+            "end": "00:00:17,174",
+            "en": "Professor",
+            "zh": "教授",
+            "ar": "الأستاذ"
+        },
+        {
+            "start": "00:00:19,154",
+            "end": "00:00:19,174",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:00:19,174",
+            "end": "00:00:20,134",
+            "en": "is that it?",
+            "zh": "就这样了吗？",
+            "ar": "هل هذا هو؟"
+        },
+        {
+            "start": "00:00:20,134",
+            "end": "00:00:20,374",
+            "en": "Correct?",
+            "zh": "对吗？",
+            "ar": "صحيح؟"
+        },
+        {
+            "start": "00:00:20,674",
+            "end": "00:00:21,014",
+            "en": "What here?",
+            "zh": "这里做什么？",
+            "ar": "ما الذي هنا؟"
+        },
+        {
+            "start": "00:00:22,494",
+            "end": "00:00:23,114",
+            "en": "None",
+            "zh": "无",
+            "ar": "لا شيء"
+        },
+        {
+            "start": "00:00:44,802",
+            "end": "00:00:50,802",
+            "en": "I promise I play this guitar far much better when I play alone.",
+            "zh": "我保证我一个人弹吉他时弹得更好。",
+            "ar": "أعدكم، أنا أعزف على هذه الغيتار بشكل أفضل بكثير عندما أعزف وحدي."
+        },
+        {
+            "start": "00:00:53,122",
+            "end": "00:00:57,142",
+            "en": "Even though this video recording didn't give me any pressure,",
+            "zh": "尽管这个视频录制没有给我任何压力，",
+            "ar": "على الرغم من أن تسجيل هذا الفيديو لم يضع علي أي ضغط،"
+        },
+        {
+            "start": "00:00:57,142",
+            "end": "00:00:57,582",
+            "en": "I believe.",
+            "zh": "我相信。",
+            "ar": "أعتقد."
+        }
+    ]
+}

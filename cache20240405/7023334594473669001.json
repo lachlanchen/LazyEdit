@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,399\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"ja\",\n    \"text\": \"私はクスニット\"\n  },\n  {\n    \"start\": \"00:00:03,874\",\n    \"end\": \"00:00:06,994\",\n    \"lang\": \"ja\",\n    \"text\": \"果物を買っています\"\n  },\n  {\n    \"start\": \"00:00:08,002\",\n    \"end\": \"00:00:10,042\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot take this disease anymore.\"\n  },\n  {\n    \"start\": \"00:00:10,822\",\n    \"end\": \"00:00:14,642\",\n    \"lang\": \"en\",\n    \"text\": \"I have to buy some drugs to help me.\"\n  },\n  {\n    \"start\": \"00:00:15,762\",\n    \"end\": \"00:00:19,062\",\n    \"lang\": \"en\",\n    \"text\": \"My own immune system cannot handle it anymore.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,399",
+            "end": "00:00:03,060",
+            "vi": "Tôi là Kusnit"
+        },
+        {
+            "start": "00:00:03,874",
+            "end": "00:00:06,994",
+            "vi": "Tôi đang mua trái cây"
+        },
+        {
+            "start": "00:00:08,002",
+            "end": "00:00:10,042",
+            "vi": "Tôi không chịu đựng được căn bệnh này nữa."
+        },
+        {
+            "start": "00:00:10,822",
+            "end": "00:00:14,642",
+            "vi": "Tôi phải mua một số thuốc để giúp tôi."
+        },
+        {
+            "start": "00:00:15,762",
+            "end": "00:00:19,062",
+            "vi": "Hệ miễn dịch của tôi không thể đối phó được nữa."
+        }
+    ]
+}

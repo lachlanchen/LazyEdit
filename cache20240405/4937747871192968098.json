@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:14,214\",\n    \"end\": \"00:02:14,574\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:02:17,154\",\n    \"end\": \"00:02:18,514\",\n    \"lang\": \"en\",\n    \"text\": \"Yes.\"\n  },\n  {\n    \"start\": \"00:02:21,954\",\n    \"end\": \"00:02:29,494\",\n    \"lang\": \"en\",\n    \"text\": \"I found that I gradually become better at speaking English daily.\"\n  },\n  {\n    \"start\": \"00:02:35,013\",\n    \"end\": \"00:02:36,414\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:36,414\",\n    \"end\": \"00:02:48,454\",\n    \"lang\": \"en\",\n    \"text\": \"I think I found my talent that belongs to me.\"\n  },\n  {\n    \"start\": \"00:02:49,314\",\n    \"end\": \"00:02:50,534\",\n    \"lang\": \"ja\",\n    \"text\": \"今更にセスティアム\"\n  },\n  {\n    \"start\": \"00:02:51,106\",\n    \"end\": \"00:02:58,106\",\n    \"lang\": \"en\",\n    \"text\": \"obscure or vague but it gradually becomes crystal clear.\"\n  },\n  {\n    \"start\": \"00:03:08,506\",\n    \"end\": \"00:03:12,526\",\n    \"lang\": \"en\",\n    \"text\": \"So I have a unique journey in science.\"\n  },\n  {\n    \"start\": \"00:03:13,186\",\n    \"end\": \"00:03:19,926\",\n    \"lang\": \"en\",\n    \"text\": \"Also programming and multidisciplinary.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:14,214",
+            "end": "00:02:14,574",
+            "vi": "Đúng chứ?"
+        },
+        {
+            "start": "00:02:17,154",
+            "end": "00:02:18,514",
+            "vi": "Đúng."
+        },
+        {
+            "start": "00:02:21,954",
+            "end": "00:02:29,494",
+            "vi": "Tôi phát hiện ra rằng mình dần dần trở nên giỏi hơn trong việc nói tiếng Anh hàng ngày."
+        },
+        {
+            "start": "00:02:35,013",
+            "end": "00:02:36,414",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:02:36,414",
+            "end": "00:02:48,454",
+            "vi": "Tôi nghĩ mình đã tìm ra tài năng thuộc về bản thân mình."
+        },
+        {
+            "start": "00:02:49,314",
+            "end": "00:02:50,534",
+            "vi": "Mọi thứ đều trở nên rõ ràng hơn."
+        },
+        {
+            "start": "00:02:51,106",
+            "end": "00:02:58,106",
+            "vi": "Mặc dù ban đầu mơ hồ và khó hiểu nhưng dần dần trở nên rõ ràng tựa như pha lê."
+        },
+        {
+            "start": "00:03:08,506",
+            "end": "00:03:12,526",
+            "vi": "Vì vậy, tôi có một hành trình độc đáo trong khoa học."
+        },
+        {
+            "start": "00:03:13,186",
+            "end": "00:03:19,926",
+            "vi": "Cũng như trong lập trình và tính đa ngành."
+        }
+    ]
+}

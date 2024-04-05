@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,660\",\n    \"lang\": \"zh\",\n    \"text\": \"还是先看看路面吧\"\n  },\n  {\n    \"start\": \"00:00:05,660\",\n    \"end\": \"00:00:08,900\",\n    \"lang\": \"zh\",\n    \"text\": \"她指 윤洋\"\n  },\n  {\n    \"start\": \"00:00:08,900\",\n    \"end\": \"00:00:10,040\",\n    \"lang\": \"zh\",\n    \"text\": \"下次见\"\n  },\n  {\n    \"start\": \"00:00:10,040\",\n    \"end\": \"00:00:11,080\",\n    \"lang\": \"zh\",\n    \"text\": \"怎么不牵一下\"\n  },\n  {\n    \"start\": \"00:00:13,346\",\n    \"end\": \"00:00:14,526\",\n    \"lang\": \"en\",\n    \"text\": \"'est mon monbeau foufou.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,660",
+            "vi": "Hãy nhìn xuống lối đi trước"
+        },
+        {
+            "start": "00:00:05,660",
+            "end": "00:00:08,900",
+            "vi": "Cô ấy chỉ Yoon Yang"
+        },
+        {
+            "start": "00:00:08,900",
+            "end": "00:00:10,040",
+            "vi": "Hẹn gặp lại"
+        },
+        {
+            "start": "00:00:10,040",
+            "end": "00:00:11,080",
+            "vi": "Sao không nắm tay một cái"
+        },
+        {
+            "start": "00:00:13,346",
+            "end": "00:00:14,526",
+            "vi": "'est mon monbeau foufou."
+        }
+    ]
+}

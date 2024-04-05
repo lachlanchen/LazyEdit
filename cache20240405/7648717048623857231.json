@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,660\",\n    \"lang\": \"en\",\n    \"text\": \"I used to use knowledge as an escape from reality.\"\n  },\n  {\n    \"start\": \"00:00:05,140\",\n    \"end\": \"00:00:06,900\",\n    \"lang\": \"en\",\n    \"text\": \"The reality that I'm nobody,\"\n  },\n  {\n    \"start\": \"00:00:06,900\",\n    \"end\": \"00:00:07,780\",\n    \"lang\": \"en\",\n    \"text\": \"I'm nothing.\"\n  },\n  {\n    \"start\": \"00:00:09,940\",\n    \"end\": \"00:00:13,880\",\n    \"lang\": \"en\",\n    \"text\": \"But I finally accepted myself to be nothing,\"\n  },\n  {\n    \"start\": \"00:00:13,880\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"to be nobody.\"\n  },\n  {\n    \"start\": \"00:00:17,320\",\n    \"end\": \"00:00:18,660\",\n    \"lang\": \"en\",\n    \"text\": \"And the feeling is great.\"\n  },\n  {\n    \"start\": \"00:00:20,260\",\n    \"end\": \"00:00:23,980\",\n    \"lang\": \"en\",\n    \"text\": \"I don't need to be successful.\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:32,700\",\n    \"lang\": \"en\",\n    \"text\": \"To have some achievement.\"\n  },\n  {\n    \"start\": \"00:00:39,200\",\n    \"end\": \"00:00:40,280\",\n    \"lang\": \"en\",\n    \"text\": \"Before,\"\n  },\n  {\n    \"start\": \"00:00:40,280\",\n    \"end\": \"00:00:43,280\",\n    \"lang\": \"en\",\n    \"text\": \"I always learned new stuff.\"\n  },\n  {\n    \"start\": \"00:00:44,220\",\n    \"end\": \"00:00:48,940\",\n    \"lang\": \"en\",\n    \"text\": \"I think I can escape from the ignorance.\"\n  },\n  {\n    \"start\": \"00:00:50,160\",\n    \"end\": \"00:00:51,460\",\n    \"lang\": \"en\",\n    \"text\": \"To build,\"\n  },\n  {\n    \"start\": \"00:00:51,460\",\n    \"end\": \"00:00:55,140\",\n    \"lang\": \"en\",\n    \"text\": \"to live this imaginary world.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,660",
+            "vi": "Tôi đã từng sử dụng kiến thức như một phương tiện để thoát khỏi hiện thực."
+        },
+        {
+            "start": "00:00:05,140",
+            "end": "00:00:06,900",
+            "vi": "Hiện thực rằng tôi là không ai cả,"
+        },
+        {
+            "start": "00:00:06,900",
+            "end": "00:00:07,780",
+            "vi": "tôi là không gì cả."
+        },
+        {
+            "start": "00:00:09,940",
+            "end": "00:00:13,880",
+            "vi": "Nhưng cuối cùng tôi đã chấp nhận bản thân là không gì cả,"
+        },
+        {
+            "start": "00:00:13,880",
+            "end": "00:00:15,380",
+            "vi": "là không ai cả."
+        },
+        {
+            "start": "00:00:17,320",
+            "end": "00:00:18,660",
+            "vi": "Và cảm giác đó thật tuyệt."
+        },
+        {
+            "start": "00:00:20,260",
+            "end": "00:00:23,980",
+            "vi": "Tôi không cần phải thành công."
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:32,700",
+            "vi": "Để có được một số thành tựu."
+        },
+        {
+            "start": "00:00:39,200",
+            "end": "00:00:40,280",
+            "vi": "Trước đây,"
+        },
+        {
+            "start": "00:00:40,280",
+            "end": "00:00:43,280",
+            "vi": "tôi luôn học những điều mới."
+        },
+        {
+            "start": "00:00:44,220",
+            "end": "00:00:48,940",
+            "vi": "Tôi nghĩ mình có thể thoát khỏi sự ngu dốt."
+        },
+        {
+            "start": "00:00:50,160",
+            "end": "00:00:51,460",
+            "vi": "Để xây dựng,"
+        },
+        {
+            "start": "00:00:51,460",
+            "end": "00:00:55,140",
+            "vi": "để sống trong một thế giới tưởng tượng."
+        }
+    ]
+}

@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,738\",\n    \"end\": \"00:01:03,678\",\n    \"lang\": \"en\",\n    \"text\": \"but the taste is really good.\"\n  },\n  {\n    \"start\": \"00:01:05,117\",\n    \"end\": \"00:01:07,498\",\n    \"lang\": \"en\",\n    \"text\": \"I don't have the necessity to lie.\"\n  },\n  {\n    \"start\": \"00:01:09,538\",\n    \"end\": \"00:01:11,918\",\n    \"lang\": \"ja\",\n    \"text\": \"今夜は必要ない\"\n  },\n  {\n    \"start\": \"00:01:14,850\",\n    \"end\": \"00:01:15,230\",\n    \"lang\": \"en\",\n    \"text\": \"Wow.\"\n  },\n  {\n    \"start\": \"00:01:20,840\",\n    \"end\": \"00:01:22,410\",\n    \"lang\": \"en\",\n    \"text\": \"This is really the best thing.\"\n  },\n  {\n    \"start\": \"00:01:23,610\",\n    \"end\": \"00:01:24,670\",\n    \"lang\": \"en\",\n    \"text\": \"The best chicken noodles.\"\n  },\n  {\n    \"start\": \"00:01:31,554\",\n    \"end\": \"00:01:34,494\",\n    \"lang\": \"ja\",\n    \"text\": \"私はピンクジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:01:39,234\",\n    \"end\": \"00:01:48,614\",\n    \"lang\": \"en\",\n    \"text\": \"I have this lactose intolerance and gluten intolerance.\"\n  },\n  {\n    \"start\": \"00:01:49,314\",\n    \"end\": \"00:01:55,434\",\n    \"lang\": \"en\",\n    \"text\": \"So I only drink bean juice and I don't like eating bread.\"\n  },\n  {\n    \"start\": \"00:01:56,334\",\n    \"end\": \"00:01:58,634\",\n    \"lang\": \"en\",\n    \"text\": \"And I also have...\"\n  },\n  {\n    \"start\": \"00:01:58,634\",\n    \"end\": \"00:02:02,614\",\n    \"lang\": \"en\",\n    \"text\": \"I'm intolerant to fruity sugar.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,738",
+            "end": "00:01:03,678",
+            "ko": "맛은 정말 좋아요."
+        },
+        {
+            "start": "00:01:05,117",
+            "end": "00:01:07,498",
+            "ko": "거짓말할 필요가 없어요."
+        },
+        {
+            "start": "00:01:09,538",
+            "end": "00:01:11,918",
+            "ko": "오늘밤은 필요 없어요"
+        },
+        {
+            "start": "00:01:14,850",
+            "end": "00:01:15,230",
+            "ko": "와."
+        },
+        {
+            "start": "00:01:20,840",
+            "end": "00:01:22,410",
+            "ko": "이게 정말 최고예요."
+        },
+        {
+            "start": "00:01:23,610",
+            "end": "00:01:24,670",
+            "ko": "최고의 치킨 누들이에요."
+        },
+        {
+            "start": "00:01:31,554",
+            "end": "00:01:34,494",
+            "ko": "저는 핑크 주스를 마시고 있어요"
+        },
+        {
+            "start": "00:01:39,234",
+            "end": "00:01:48,614",
+            "ko": "저는 유당불내증과 글루텐 불내증이 있어요."
+        },
+        {
+            "start": "00:01:49,314",
+            "end": "00:01:55,434",
+            "ko": "그래서 콩 주스만 마시고 빵은 먹기 싫어해요."
+        },
+        {
+            "start": "00:01:56,334",
+            "end": "00:01:58,634",
+            "ko": "그리고 저는 또..."
+        },
+        {
+            "start": "00:01:58,634",
+            "end": "00:02:02,614",
+            "ko": "과당에도 불내증이 있어요."
+        }
+    ]
+}

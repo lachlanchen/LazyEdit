@@ -1,0 +1,208 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,780\",\n    \"lang\": \"en\",\n    \"text\": \"Shepherd dog.\"\n  },\n  {\n    \"start\": \"00:00:00,780\",\n    \"end\": \"00:00:02,020\",\n    \"lang\": \"en\",\n    \"text\": \"Shepherd.\"\n  },\n  {\n    \"start\": \"00:00:03,234\",\n    \"end\": \"00:00:04,834\",\n    \"lang\": \"zh\",\n    \"text\": \"来学习一下狗的单词吧\"\n  },\n  {\n    \"start\": \"00:00:04,834\",\n    \"end\": \"00:00:06,174\",\n    \"lang\": \"zh\",\n    \"text\": \"牧羊犬科技\"\n  },\n  {\n    \"start\": \"00:00:06,254\",\n    \"end\": \"00:00:07,054\",\n    \"lang\": \"en\",\n    \"text\": \"Cookie\"\n  },\n  {\n    \"start\": \"00:00:07,054\",\n    \"end\": \"00:00:07,994\",\n    \"lang\": \"en\",\n    \"text\": \"Husky\"\n  },\n  {\n    \"start\": \"00:00:07,994\",\n    \"end\": \"00:00:08,494\",\n    \"lang\": \"en\",\n    \"text\": \"Hud\"\n  },\n  {\n    \"start\": \"00:00:08,494\",\n    \"end\": \"00:00:09,394\",\n    \"lang\": \"en\",\n    \"text\": \"Husky\"\n  },\n  {\n    \"start\": \"00:00:10,043\",\n    \"end\": \"00:00:11,254\",\n    \"lang\": \"en\",\n    \"text\": \"还有Golden Retriever\"\n  },\n  {\n    \"start\": \"00:00:11,914\",\n    \"end\": \"00:00:13,094\",\n    \"lang\": \"zh\",\n    \"text\": \"金毛熊灰犬\"\n  },\n  {\n    \"start\": \"00:00:13,094\",\n    \"end\": \"00:00:15,274\",\n    \"lang\": \"zh\",\n    \"text\": \"然后还有博美\"\n  },\n  {\n    \"start\": \"00:00:15,274\",\n    \"end\": \"00:00:16,994\",\n    \"lang\": \"zh\",\n    \"text\": \"博美不知道\"\n  },\n  {\n    \"start\": \"00:00:16,994\",\n    \"end\": \"00:00:19,854\",\n    \"lang\": \"zh\",\n    \"text\": \"还有贵宾犬\"\n  },\n  {\n    \"start\": \"00:00:19,854\",\n    \"end\": \"00:00:21,094\",\n    \"lang\": \"zh\",\n    \"text\": \"贵宾犬\"\n  },\n  {\n    \"start\": \"00:00:21,094\",\n    \"end\": \"00:00:21,594\",\n    \"lang\": \"zh\",\n    \"text\": \"泰迪\"\n  },\n  {\n    \"start\": \"00:00:22,214\",\n    \"end\": \"00:00:22,794\",\n    \"lang\": \"zh\",\n    \"text\": \"泰迪\"\n  },\n  {\n    \"start\": \"00:00:25,026\",\n    \"end\": \"00:00:25,266\",\n    \"lang\": \"en\",\n    \"text\": \"Ok.\"\n  },\n  {\n    \"start\": \"00:00:27,546\",\n    \"end\": \"00:00:27,806\",\n    \"lang\": \"en\",\n    \"text\": \"Allez,\"\n  },\n  {\n    \"start\": \"00:00:27,806\",\n    \"end\": \"00:00:28,326\",\n    \"lang\": \"en\",\n    \"text\": \"on se montre derrière.\"\n  },\n  {\n    \"start\": \"00:00:30,178\",\n    \"end\": \"00:00:32,177\",\n    \"lang\": \"zh\",\n    \"text\": \"这个可以挺快的\"\n  },\n  {\n    \"start\": \"00:00:33,598\",\n    \"end\": \"00:00:33,958\",\n    \"lang\": \"zh\",\n    \"text\": \"还有\"\n  },\n  {\n    \"start\": \"00:00:35,398\",\n    \"end\": \"00:00:35,918\",\n    \"lang\": \"zh\",\n    \"text\": \"不知道\"\n  },\n  {\n    \"start\": \"00:00:36,138\",\n    \"end\": \"00:00:36,958\",\n    \"lang\": \"zh\",\n    \"text\": \"动流群\"\n  },\n  {\n    \"start\": \"00:00:40,318\",\n    \"end\": \"00:00:42,558\",\n    \"lang\": \"zh\",\n    \"text\": \"不是动流群 是巴洞群\"\n  },\n  {\n    \"start\": \"00:00:42,558\",\n    \"end\": \"00:00:43,758\",\n    \"lang\": \"zh\",\n    \"text\": \"巴洞群 OK\"\n  },\n  {\n    \"start\": \"00:00:46,081\",\n    \"end\": \"00:00:51,541\",\n    \"lang\": \"en\",\n    \"text\": \"I forgot the words of the dogs anyway in there today\"\n  },\n  {\n    \"start\": \"00:00:52,741\",\n    \"end\": \"00:00:54,461\",\n    \"lang\": \"en\",\n    \"text\": \"Golden Retriever,\"\n  },\n  {\n    \"start\": \"00:00:54,461\",\n    \"end\": \"00:00:55,981\",\n    \"lang\": \"en\",\n    \"text\": \"Shiffer,\"\n  },\n  {\n    \"start\": \"00:00:55,981\",\n    \"end\": \"00:00:57,461\",\n    \"lang\": \"en\",\n    \"text\": \"Husky,\"\n  },\n  {\n    \"start\": \"00:00:57,461\",\n    \"end\": \"00:01:03,041\",\n    \"lang\": \"en\",\n    \"text\": \"Coogie and the Bad Dog\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,780",
+            "en": "Shepherd dog",
+            "zh": "牧羊犬",
+            "ar": "كلب الراعي"
+        },
+        {
+            "start": "00:00:00,780",
+            "end": "00:00:02,020",
+            "en": "Shepherd",
+            "zh": "牧羊犬",
+            "ar": "الراعي"
+        },
+        {
+            "start": "00:00:03,234",
+            "end": "00:00:04,834",
+            "en": "Let's learn the words for dogs",
+            "zh": "来学习一下狗的单词吧",
+            "ar": "دعونا نتعلم كلمات عن الكلاب"
+        },
+        {
+            "start": "00:00:04,834",
+            "end": "00:00:06,174",
+            "en": "Shepherd dog technology",
+            "zh": "牧羊犬科技",
+            "ar": "تكنولوجيا كلب الراعي"
+        },
+        {
+            "start": "00:00:06,254",
+            "end": "00:00:07,054",
+            "en": "Cookie",
+            "zh": "饼干",
+            "ar": "كوكي"
+        },
+        {
+            "start": "00:00:07,054",
+            "end": "00:00:07,994",
+            "en": "Husky",
+            "zh": "哈士奇",
+            "ar": "هاسكي"
+        },
+        {
+            "start": "00:00:07,994",
+            "end": "00:00:08,494",
+            "en": "Husky",
+            "zh": "哈士奇",
+            "ar": "هاسكي"
+        },
+        {
+            "start": "00:00:08,494",
+            "end": "00:00:09,394",
+            "en": "Husky",
+            "zh": "哈士奇",
+            "ar": "هاسكي"
+        },
+        {
+            "start": "00:00:10,043",
+            "end": "00:00:11,254",
+            "en": "And also Golden Retriever",
+            "zh": "还有金毛寻回犬",
+            "ar": "وكذلك جولدن ريتريفر"
+        },
+        {
+            "start": "00:00:11,914",
+            "end": "00:00:13,094",
+            "en": "Golden Retriever",
+            "zh": "金毛寻回犬",
+            "ar": "جولدن ريتريفر"
+        },
+        {
+            "start": "00:00:13,094",
+            "end": "00:00:15,274",
+            "en": "And then also Pomeranian",
+            "zh": "然后还有博美",
+            "ar": "وبعدها البوميرانيان أيضا"
+        },
+        {
+            "start": "00:00:15,274",
+            "end": "00:00:16,994",
+            "en": "I don't know about Pomeranian",
+            "zh": "博美不知道",
+            "ar": "لا أعرف عن البوميرانيان"
+        },
+        {
+            "start": "00:00:16,994",
+            "end": "00:00:19,854",
+            "en": "And also Poodle",
+            "zh": "还有贵宾犬",
+            "ar": "وكذلك البودل"
+        },
+        {
+            "start": "00:00:19,854",
+            "end": "00:00:21,094",
+            "en": "Poodle",
+            "zh": "贵宾犬",
+            "ar": "البودل"
+        },
+        {
+            "start": "00:00:21,094",
+            "end": "00:00:21,594",
+            "en": "Teddy",
+            "zh": "泰迪",
+            "ar": "تيدي"
+        },
+        {
+            "start": "00:00:22,214",
+            "end": "00:00:22,794",
+            "en": "Teddy",
+            "zh": "泰迪",
+            "ar": "تيدي"
+        },
+        {
+            "start": "00:00:25,026",
+            "end": "00:00:25,266",
+            "en": "Ok.",
+            "zh": "好的",
+            "ar": "حسناً."
+        },
+        {
+            "start": "00:00:27,546",
+            "end": "00:00:28,326",
+            "en": "Let's go, show ourselves from behind.",
+            "zh": "走吧，从后面展示自己。",
+            "ar": "هيا، نظهر من الخلف."
+        },
+        {
+            "start": "00:00:30,178",
+            "end": "00:00:32,177",
+            "en": "This can be quite quick",
+            "zh": "这个可以挺快的",
+            "ar": "يمكن أن يكون ذلك سريعًا جدًا"
+        },
+        {
+            "start": "00:00:33,598",
+            "end": "00:00:33,958",
+            "en": "Also",
+            "zh": "还有",
+            "ar": "أيضًا"
+        },
+        {
+            "start": "00:00:35,398",
+            "end": "00:00:35,918",
+            "en": "I don't know",
+            "zh": "不知道",
+            "ar": "لا أعلم"
+        },
+        {
+            "start": "00:00:36,138",
+            "end": "00:00:36,958",
+            "en": "Animal flow group",
+            "zh": "动流群",
+            "ar": "مجموعة تدفق الحيوان"
+        },
+        {
+            "start": "00:00:40,318",
+            "end": "00:00:42,558",
+            "en": "Not animal flow group, it's Padong group",
+            "zh": "不是动流群 是巴洞群",
+            "ar": "ليست مجموعة تدفق الحيوان، بل مجموعة بادونج"
+        },
+        {
+            "start": "00:00:42,558",
+            "end": "00:00:43,758",
+            "en": "Padong group OK",
+            "zh": "巴洞群 OK",
+            "ar": "مجموعة بادونج حسنًا"
+        },
+        {
+            "start": "00:00:46,081",
+            "end": "00:00:51,541",
+            "en": "I forgot the words of the dogs anyway in there today",
+            "zh": "不管怎样，今天我忘了那些狗的单词",
+            "ar": "على أي حال نسيت كلمات الكلاب الموجودة هناك اليوم"
+        },
+        {
+            "start": "00:00:52,741",
+            "end": "00:00:54,461",
+            "en": "Golden Retriever,",
+            "zh": "金毛寻回犬，",
+            "ar": "جولدن ريتريفر،"
+        },
+        {
+            "start": "00:00:54,461",
+            "end": "00:00:55,981",
+            "en": "Shepherd,",
+            "zh": "牧羊犬，",
+            "ar": "الراعي،"
+        },
+        {
+            "start": "00:00:55,981",
+            "end": "00:00:57,461",
+            "en": "Husky,",
+            "zh": "哈士奇，",
+            "ar": "هاسكي،"
+        },
+        {
+            "start": "00:00:57,461",
+            "end": "00:01:03,041",
+            "en": "Cookie and the Bad Dog",
+            "zh": "饼干和坏狗",
+            "ar": "كوكي والكلب الشرير"
+        }
+    ]
+}

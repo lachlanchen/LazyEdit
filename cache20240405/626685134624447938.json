@@ -1,0 +1,48 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,100\",\n    \"lang\": \"zh\",\n    \"text\": \"哇\"\n  },\n  {\n    \"start\": \"00:00:00,200\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"zh\",\n    \"text\": \"这里好多狗\"\n  },\n  {\n    \"start\": \"00:00:01,979\",\n    \"end\": \"00:00:03,300\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是柴犬呢\"\n  },\n  {\n    \"start\": \"00:00:03,300\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"zh\",\n    \"text\": \"喜棒\"\n  },\n  {\n    \"start\": \"00:00:04,460\",\n    \"end\": \"00:00:04,860\",\n    \"lang\": \"zh\",\n    \"text\": \"狗狗\"\n  },\n  {\n    \"start\": \"00:00:04,898\",\n    \"end\": \"00:00:06,158\",\n    \"lang\": \"ja\",\n    \"text\": \"この芝は可愛いです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,100",
+            "en": "Wow",
+            "zh": "哇",
+            "ar": "واو"
+        },
+        {
+            "start": "00:00:00,200",
+            "end": "00:00:01,460",
+            "en": "There are so many dogs here",
+            "zh": "这里好多狗",
+            "ar": "هناك الكثير من الكلاب هنا"
+        },
+        {
+            "start": "00:00:01,979",
+            "end": "00:00:03,300",
+            "en": "This is a Shiba Inu",
+            "zh": "这个是柴犬呢",
+            "ar": "هذا هو شيبا إينو"
+        },
+        {
+            "start": "00:00:03,300",
+            "end": "00:00:03,780",
+            "en": "Adorable",
+            "zh": "喜棒",
+            "ar": "رائع"
+        },
+        {
+            "start": "00:00:04,460",
+            "end": "00:00:04,860",
+            "en": "Puppy",
+            "zh": "狗狗",
+            "ar": "جرو"
+        },
+        {
+            "start": "00:00:04,898",
+            "end": "00:00:06,158",
+            "en": "This grass is cute",
+            "zh": "这草很可爱",
+            "ar": "هذا العشب لطيف",
+            "ja": "この芝は可愛いです"
+        }
+    ]
+}

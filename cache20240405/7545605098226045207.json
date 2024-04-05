@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,960\",\n    \"lang\": \"en\",\n    \"text\": \"I'll share another trick to remember this Arabic letter,\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"en\",\n    \"text\": \"do,\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:06,100\",\n    \"lang\": \"en\",\n    \"text\": \"d-a-l.\"\n  },\n  {\n    \"start\": \"00:00:06,660\",\n    \"end\": \"00:00:09,200\",\n    \"lang\": \"en\",\n    \"text\": \"So this is quite looks like this.\"\n  },\n  {\n    \"start\": \"00:00:09,666\",\n    \"end\": \"00:00:10,046\",\n    \"lang\": \"ja\",\n    \"text\": \"これは\"\n  },\n  {\n    \"start\": \"00:00:11,618\",\n    \"end\": \"00:00:12,598\",\n    \"lang\": \"zh\",\n    \"text\": \"那些是在動啊\"\n  },\n  {\n    \"start\": \"00:00:12,834\",\n    \"end\": \"00:00:15,434\",\n    \"lang\": \"en\",\n    \"text\": \"door handler so this is a door\"\n  },\n  {\n    \"start\": \"00:00:16,073\",\n    \"end\": \"00:00:17,794\",\n    \"lang\": \"en\",\n    \"text\": \"door door\"\n  },\n  {\n    \"start\": \"00:00:19,073\",\n    \"end\": \"00:00:20,194\",\n    \"lang\": \"en\",\n    \"text\": \"is that similar?\"\n  },\n  {\n    \"start\": \"00:00:20,194\",\n    \"end\": \"00:00:21,414\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,960",
+            "ko": "이 아랍 문자를 기억하는 또 다른 방법을 공유할게요,"
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:04,540",
+            "ko": "이건,"
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:06,100",
+            "ko": "달(d-a-l)이에요."
+        },
+        {
+            "start": "00:00:06,660",
+            "end": "00:00:09,200",
+            "ko": "그러니까 이건 이렇게 생겼어요."
+        },
+        {
+            "start": "00:00:09,666",
+            "end": "00:00:10,046",
+            "ko": "이것은"
+        },
+        {
+            "start": "00:00:11,618",
+            "end": "00:00:12,598",
+            "ko": "저것들은 움직이고 있어요"
+        },
+        {
+            "start": "00:00:12,834",
+            "end": "00:00:15,434",
+            "ko": "문 손잡이니까, 이건 문이에요"
+        },
+        {
+            "start": "00:00:16,073",
+            "end": "00:00:17,794",
+            "ko": "문, 문"
+        },
+        {
+            "start": "00:00:19,073",
+            "end": "00:00:20,194",
+            "ko": "비슷한가요?"
+        },
+        {
+            "start": "00:00:20,194",
+            "end": "00:00:21,414",
+            "ko": "알겠어요"
+        }
+    ]
+}

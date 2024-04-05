@@ -1,0 +1,170 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,800\",\n    \"lang\": \"zh\",\n    \"text\": \"去傻哈\"\n  },\n  {\n    \"start\": \"00:00:01,379\",\n    \"end\": \"00:00:03,000\",\n    \"lang\": \"zh\",\n    \"text\": \"學一點新單詞\"\n  },\n  {\n    \"start\": \"00:00:03,746\",\n    \"end\": \"00:00:09,246\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a banana and chestnut and a banana.\"\n  },\n  {\n    \"start\": \"00:00:09,282\",\n    \"end\": \"00:00:10,022\",\n    \"lang\": \"en\",\n    \"text\": \"Then the pinches.\"\n  },\n  {\n    \"start\": \"00:00:11,262\",\n    \"end\": \"00:00:12,802\",\n    \"lang\": \"en\",\n    \"text\": \"And then...\"\n  },\n  {\n    \"start\": \"00:00:13,314\",\n    \"end\": \"00:00:13,794\",\n    \"lang\": \"en\",\n    \"text\": \"pepper\"\n  },\n  {\n    \"start\": \"00:00:16,673\",\n    \"end\": \"00:00:19,874\",\n    \"lang\": \"en\",\n    \"text\": \"another bag of chestnuts\"\n  },\n  {\n    \"start\": \"00:00:19,874\",\n    \"end\": \"00:00:21,274\",\n    \"lang\": \"en\",\n    \"text\": \"and this is\"\n  },\n  {\n    \"start\": \"00:00:21,974\",\n    \"end\": \"00:00:23,334\",\n    \"lang\": \"en\",\n    \"text\": \"this is\"\n  },\n  {\n    \"start\": \"00:00:24,162\",\n    \"end\": \"00:00:24,662\",\n    \"lang\": \"zh\",\n    \"text\": \"香菜\"\n  },\n  {\n    \"start\": \"00:00:25,352\",\n    \"end\": \"00:00:25,622\",\n    \"lang\": \"zh\",\n    \"text\": \"好的,\"\n  },\n  {\n    \"start\": \"00:00:25,622\",\n    \"end\": \"00:00:25,882\",\n    \"lang\": \"zh\",\n    \"text\": \"謝謝\"\n  },\n  {\n    \"start\": \"00:00:26,372\",\n    \"end\": \"00:00:26,802\",\n    \"lang\": \"zh\",\n    \"text\": \"香菜\"\n  },\n  {\n    \"start\": \"00:00:27,842\",\n    \"end\": \"00:00:28,482\",\n    \"lang\": \"ja\",\n    \"text\": \"くらんだ、\"\n  },\n  {\n    \"start\": \"00:00:28,482\",\n    \"end\": \"00:00:29,382\",\n    \"lang\": \"ja\",\n    \"text\": \"くらんだ\"\n  },\n  {\n    \"start\": \"00:00:30,498\",\n    \"end\": \"00:00:31,118\",\n    \"lang\": \"en\",\n    \"text\": \"and uhm,\"\n  },\n  {\n    \"start\": \"00:00:31,118\",\n    \"end\": \"00:00:32,357\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry\"\n  },\n  {\n    \"start\": \"00:00:32,357\",\n    \"end\": \"00:00:32,858\",\n    \"lang\": \"en\",\n    \"text\": \"..\"\n  },\n  {\n    \"start\": \"00:00:32,858\",\n    \"end\": \"00:00:34,358\",\n    \"lang\": \"en\",\n    \"text\": \".strawberry\"\n  },\n  {\n    \"start\": \"00:00:36,706\",\n    \"end\": \"00:00:37,226\",\n    \"lang\": \"zh\",\n    \"text\": \"好美喔\"\n  },\n  {\n    \"start\": \"00:00:37,794\",\n    \"end\": \"00:00:39,134\",\n    \"lang\": \"en\",\n    \"text\": \"and red pepper\"\n  },\n  {\n    \"start\": \"00:00:39,694\",\n    \"end\": \"00:00:40,874\",\n    \"lang\": \"en\",\n    \"text\": \"and bread,\"\n  },\n  {\n    \"start\": \"00:00:40,874\",\n    \"end\": \"00:00:41,354\",\n    \"lang\": \"en\",\n    \"text\": \"ok,\"\n  },\n  {\n    \"start\": \"00:00:41,354\",\n    \"end\": \"00:00:42,014\",\n    \"lang\": \"en\",\n    \"text\": \"this is bread\"\n  },\n  {\n    \"start\": \"00:00:42,014\",\n    \"end\": \"00:00:43,534\",\n    \"lang\": \"en\",\n    \"text\": \"delicious\"\n  },\n  {\n    \"start\": \"00:00:43,534\",\n    \"end\": \"00:00:46,174\",\n    \"lang\": \"en\",\n    \"text\": \"and blueberries\"\n  },\n  {\n    \"start\": \"00:00:46,174\",\n    \"end\": \"00:00:48,054\",\n    \"lang\": \"en\",\n    \"text\": \"and apple\"\n  },\n  {\n    \"start\": \"00:00:48,054\",\n    \"end\": \"00:00:49,874\",\n    \"lang\": \"en\",\n    \"text\": \"and lemon\"\n  },\n  {\n    \"start\": \"00:00:49,874\",\n    \"end\": \"00:00:50,594\",\n    \"lang\": \"en\",\n    \"text\": \"lemon\"\n  },\n  {\n    \"start\": \"00:00:51,414\",\n    \"end\": \"00:00:52,434\",\n    \"lang\": \"en\",\n    \"text\": \"what is this?\"\n  },\n  {\n    \"start\": \"00:00:52,814\",\n    \"end\": \"00:00:55,494\",\n    \"lang\": \"en\",\n    \"text\": \"this is non-vegetable\"\n  },\n  {\n    \"start\": \"00:00:57,314\",\n    \"end\": \"00:00:57,814\",\n    \"lang\": \"en\",\n    \"text\": \"ok,\"\n  },\n  {\n    \"start\": \"00:00:57,814\",\n    \"end\": \"00:01:00,514\",\n    \"lang\": \"en\",\n    \"text\": \"it doesn't have a name on it\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,800",
+            "vi": "Đi đi nào"
+        },
+        {
+            "start": "00:00:01,379",
+            "end": "00:00:03,000",
+            "vi": "Học một vài từ mới"
+        },
+        {
+            "start": "00:00:03,746",
+            "end": "00:00:09,246",
+            "vi": "Đây là một quả chuối và hạt dẻ và một quả chuối nữa."
+        },
+        {
+            "start": "00:00:09,282",
+            "end": "00:00:10,022",
+            "vi": "Sau đó là tỏi."
+        },
+        {
+            "start": "00:00:11,262",
+            "end": "00:00:12,802",
+            "vi": "Và sau đó là..."
+        },
+        {
+            "start": "00:00:13,314",
+            "end": "00:00:13,794",
+            "vi": "tiêu"
+        },
+        {
+            "start": "00:00:16,673",
+            "end": "00:00:19,874",
+            "vi": "một túi hạt dẻ khác"
+        },
+        {
+            "start": "00:00:19,874",
+            "end": "00:00:21,274",
+            "vi": "và đây là"
+        },
+        {
+            "start": "00:00:21,974",
+            "end": "00:00:23,334",
+            "vi": "đây là"
+        },
+        {
+            "start": "00:00:24,162",
+            "end": "00:00:24,662",
+            "vi": "rau mùi"
+        },
+        {
+            "start": "00:00:25,352",
+            "end": "00:00:25,622",
+            "vi": "Ok,"
+        },
+        {
+            "start": "00:00:25,622",
+            "end": "00:00:25,882",
+            "vi": "Cảm ơn"
+        },
+        {
+            "start": "00:00:26,372",
+            "end": "00:00:26,802",
+            "vi": "rau mùi"
+        },
+        {
+            "start": "00:00:27,842",
+            "end": "00:00:28,482",
+            "vi": "giận dữ,"
+        },
+        {
+            "start": "00:00:28,482",
+            "end": "00:00:29,382",
+            "vi": "giận dữ"
+        },
+        {
+            "start": "00:00:30,498",
+            "end": "00:00:31,118",
+            "vi": "và ưm,"
+        },
+        {
+            "start": "00:00:31,118",
+            "end": "00:00:32,357",
+            "vi": "dâu tây"
+        },
+        {
+            "start": "00:00:32,357",
+            "end": "00:00:32,858",
+            "vi": ".."
+        },
+        {
+            "start": "00:00:32,858",
+            "end": "00:00:34,358",
+            "vi": ".dâu tây"
+        },
+        {
+            "start": "00:00:36,706",
+            "end": "00:00:37,226",
+            "vi": "Thật đẹp nhỉ"
+        },
+        {
+            "start": "00:00:37,794",
+            "end": "00:00:39,134",
+            "vi": "và ớt đỏ"
+        },
+        {
+            "start": "00:00:39,694",
+            "end": "00:00:40,874",
+            "vi": "và bánh mỳ,"
+        },
+        {
+            "start": "00:00:40,874",
+            "end": "00:00:41,354",
+            "vi": "ok,"
+        },
+        {
+            "start": "00:00:41,354",
+            "end": "00:00:42,014",
+            "vi": "đây là bánh mỳ"
+        },
+        {
+            "start": "00:00:42,014",
+            "end": "00:00:43,534",
+            "vi": "ngon"
+        },
+        {
+            "start": "00:00:43,534",
+            "end": "00:00:46,174",
+            "vi": "và việt quất"
+        },
+        {
+            "start": "00:00:46,174",
+            "end": "00:00:48,054",
+            "vi": "và táo"
+        },
+        {
+            "start": "00:00:48,054",
+            "end": "00:00:49,874",
+            "vi": "và chanh"
+        },
+        {
+            "start": "00:00:49,874",
+            "end": "00:00:50,594",
+            "vi": "chanh"
+        },
+        {
+            "start": "00:00:51,414",
+            "end": "00:00:52,434",
+            "vi": "cái này là cái gì?"
+        },
+        {
+            "start": "00:00:52,814",
+            "end": "00:00:55,494",
+            "vi": "đây không phải là rau củ"
+        },
+        {
+            "start": "00:00:57,314",
+            "end": "00:00:57,814",
+            "vi": "ok,"
+        },
+        {
+            "start": "00:00:57,814",
+            "end": "00:01:00,514",
+            "vi": "nó không có tên trên đó"
+        }
+    ]
+}

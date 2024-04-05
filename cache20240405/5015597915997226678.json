@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,400\",\n    \"lang\": \"ja\",\n    \"text\": \"3匹の犬と戦っています。\"\n  },\n  {\n    \"start\": \"00:00:07,554\",\n    \"end\": \"00:00:09,054\",\n    \"lang\": \"ja\",\n    \"text\": \"かなり危険です\"\n  },\n  {\n    \"start\": \"00:00:17,221\",\n    \"end\": \"00:00:18,182\",\n    \"lang\": \"ja\",\n    \"text\": \"ご視聴ありがとうございました\"\n  },\n  {\n    \"start\": \"00:00:26,501\",\n    \"end\": \"00:00:27,561\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know what to do.\"\n  },\n  {\n    \"start\": \"00:00:27,561\",\n    \"end\": \"00:00:28,921\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know what to do.\"\n  },\n  {\n    \"start\": \"00:00:29,001\",\n    \"end\": \"00:00:30,241\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know what to do.\"\n  },\n  {\n    \"start\": \"00:00:30,421\",\n    \"end\": \"00:00:31,261\",\n    \"lang\": \"en\",\n    \"text\": \"It's so...\"\n  },\n  {\n    \"start\": \"00:00:37,701\",\n    \"end\": \"00:00:38,821\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god.\"\n  },\n  {\n    \"start\": \"00:00:44,961\",\n    \"end\": \"00:00:47,761\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,400",
+            "es": "Estoy luchando con tres perros.",
+            "fr": "Je me bats avec trois chiens.",
+            "uk": "Я б'юся з трьома собаками."
+        },
+        {
+            "start": "00:00:07,554",
+            "end": "00:00:09,054",
+            "es": "Es bastante peligroso.",
+            "fr": "C'est assez dangereux.",
+            "uk": "Це досить небезпечно."
+        },
+        {
+            "start": "00:00:17,221",
+            "end": "00:00:18,182",
+            "es": "Gracias por ver.",
+            "fr": "Merci d'avoir regardé.",
+            "uk": "Дякую, що дивились."
+        },
+        {
+            "start": "00:00:26,501",
+            "end": "00:00:27,561",
+            "es": "No sé qué hacer.",
+            "fr": "Je ne sais pas quoi faire.",
+            "uk": "Я не знаю, що робити."
+        },
+        {
+            "start": "00:00:27,561",
+            "end": "00:00:28,921",
+            "es": "No sé qué hacer.",
+            "fr": "Je ne sais pas quoi faire.",
+            "uk": "Я не знаю, що робити."
+        },
+        {
+            "start": "00:00:29,001",
+            "end": "00:00:30,241",
+            "es": "No sé qué hacer.",
+            "fr": "Je ne sais pas quoi faire.",
+            "uk": "Я не знаю, що робити."
+        },
+        {
+            "start": "00:00:30,421",
+            "end": "00:00:31,261",
+            "es": "Es tan...",
+            "fr": "C'est tellement...",
+            "uk": "Це так..."
+        },
+        {
+            "start": "00:00:37,701",
+            "end": "00:00:38,821",
+            "es": "Dios mío.",
+            "fr": "Mon Dieu.",
+            "uk": "О мій Боже."
+        },
+        {
+            "start": "00:00:44,961",
+            "end": "00:00:47,761",
+            "es": "Dios mío.",
+            "fr": "Mon Dieu.",
+            "uk": "О мій Боже."
+        }
+    ]
+}

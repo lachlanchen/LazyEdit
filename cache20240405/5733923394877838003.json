@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,400\",\n    \"lang\": \"ja\",\n    \"text\": \"影の線を走りました\"\n  },\n  {\n    \"start\": \"00:00:02,146\",\n    \"end\": \"00:00:03,206\",\n    \"lang\": \"en\",\n    \"text\": \"This is what I bought,\"\n  },\n  {\n    \"start\": \"00:00:03,206\",\n    \"end\": \"00:00:03,826\",\n    \"lang\": \"en\",\n    \"text\": \"banana,\"\n  },\n  {\n    \"start\": \"00:00:03,826\",\n    \"end\": \"00:00:04,706\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:00:04,706\",\n    \"end\": \"00:00:05,726\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:05,726\",\n    \"end\": \"00:00:07,266\",\n    \"lang\": \"en\",\n    \"text\": \"bean juice,\"\n  },\n  {\n    \"start\": \"00:00:07,266\",\n    \"end\": \"00:00:12,166\",\n    \"lang\": \"en\",\n    \"text\": \"and various kinds of vegetables.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,400",
+            "vi": "Tôi đã chạy dọc theo vạch của bóng"
+        },
+        {
+            "start": "00:00:02,146",
+            "end": "00:00:03,206",
+            "vi": "Đây là những gì tôi đã mua,"
+        },
+        {
+            "start": "00:00:03,206",
+            "end": "00:00:03,826",
+            "vi": "chuối,"
+        },
+        {
+            "start": "00:00:03,826",
+            "end": "00:00:04,706",
+            "vi": "hạt dẻ,"
+        },
+        {
+            "start": "00:00:04,706",
+            "end": "00:00:05,726",
+            "vi": "việt quất,"
+        },
+        {
+            "start": "00:00:05,726",
+            "end": "00:00:07,266",
+            "vi": "nước đậu,"
+        },
+        {
+            "start": "00:00:07,266",
+            "end": "00:00:12,166",
+            "vi": "và các loại rau củ khác nhau."
+        }
+    ]
+}

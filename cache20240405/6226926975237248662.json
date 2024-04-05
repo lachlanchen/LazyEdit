@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,520\",\n    \"lang\": \"en\",\n    \"text\": \"So record my guitar improvement,\"\n  },\n  {\n    \"start\": \"00:00:03,520\",\n    \"end\": \"00:00:04,560\",\n    \"lang\": \"en\",\n    \"text\": \"small progress.\"\n  },\n  {\n    \"start\": \"00:00:28,360\",\n    \"end\": \"00:00:29,760\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:00:29,760\",\n    \"end\": \"00:00:34,540\",\n    \"lang\": \"en\",\n    \"text\": \"so let's play the last part.\"\n  },\n  {\n    \"start\": \"00:00:34,560\",\n    \"end\": \"00:00:35,860\",\n    \"lang\": \"en\",\n    \"text\": \"May I sing?\"\n  },\n  {\n    \"start\": \"00:00:57,474\",\n    \"end\": \"00:00:58,614\",\n    \"lang\": \"zh\",\n    \"text\": \"長年\"\n  },\n  {\n    \"start\": \"00:00:59,954\",\n    \"end\": \"00:01:01,874\",\n    \"lang\": \"zh\",\n    \"text\": \"長未来\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,520",
+            "es": "Así que graba mi progreso con la guitarra,",
+            "fr": "Alors, enregistre mon progrès à la guitare,",
+            "uk": "Отже, записуй мій прогрес у грі на гітарі,"
+        },
+        {
+            "start": "00:00:03,520",
+            "end": "00:00:04,560",
+            "es": "pequeño progreso.",
+            "fr": "petit progrès.",
+            "uk": "невеликий прогрес."
+        },
+        {
+            "start": "00:00:28,360",
+            "end": "00:00:29,760",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:29,760",
+            "end": "00:00:34,540",
+            "es": "así que toquemos la última parte.",
+            "fr": "alors jouons la dernière partie.",
+            "uk": "тож граймо останню частину."
+        },
+        {
+            "start": "00:00:34,560",
+            "end": "00:00:35,860",
+            "es": "¿Puedo cantar?",
+            "fr": "Puis-je chanter ?",
+            "uk": "Чи можу я співати?"
+        },
+        {
+            "start": "00:00:57,474",
+            "end": "00:00:58,614",
+            "es": "Años",
+            "fr": "Des années",
+            "uk": "Роки"
+        },
+        {
+            "start": "00:00:59,954",
+            "end": "00:01:01,874",
+            "es": "Largo futuro",
+            "fr": "Long futur",
+            "uk": "Довге майбутнє"
+        }
+    ]
+}

@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,760\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sure that I already catch the coronavirus,\"\n  },\n  {\n    \"start\": \"00:00:03,760\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"the COVID.\"\n  },\n  {\n    \"start\": \"00:00:06,740\",\n    \"end\": \"00:00:06,960\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:06,960\",\n    \"end\": \"00:00:12,820\",\n    \"lang\": \"en\",\n    \"text\": \"this muscle pain and sore throat.\"\n  },\n  {\n    \"start\": \"00:00:14,120\",\n    \"end\": \"00:00:15,220\",\n    \"lang\": \"en\",\n    \"text\": \"It's terrible,\"\n  },\n  {\n    \"start\": \"00:00:15,220\",\n    \"end\": \"00:00:15,740\",\n    \"lang\": \"en\",\n    \"text\": \"it's a fear.\"\n  },\n  {\n    \"start\": \"00:00:17,760\",\n    \"end\": \"00:00:19,140\",\n    \"lang\": \"en\",\n    \"text\": \"I don't like it.\"\n  },\n  {\n    \"start\": \"00:00:26,220\",\n    \"end\": \"00:00:27,280\",\n    \"lang\": \"en\",\n    \"text\": \"These noodles,\"\n  },\n  {\n    \"start\": \"00:00:27,280\",\n    \"end\": \"00:00:29,200\",\n    \"lang\": \"en\",\n    \"text\": \"it's gorgeous,\"\n  },\n  {\n    \"start\": \"00:00:29,200\",\n    \"end\": \"00:00:31,360\",\n    \"lang\": \"en\",\n    \"text\": \"but I don't have very much appetite.\"\n  },\n  {\n    \"start\": \"00:00:32,720\",\n    \"end\": \"00:00:33,160\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:33,160\",\n    \"end\": \"00:00:34,080\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,760",
+            "es": "Estoy seguro de que ya me contagié del coronavirus,",
+            "fr": "Je suis sûr que j'ai déjà attrapé le coronavirus,",
+            "uk": "Я впевнений, що я вже заразився коронавірусом,"
+        },
+        {
+            "start": "00:00:03,760",
+            "end": "00:00:05,140",
+            "es": "el COVID.",
+            "fr": "le COVID.",
+            "uk": "COVID."
+        },
+        {
+            "start": "00:00:06,740",
+            "end": "00:00:06,960",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "Ой,"
+        },
+        {
+            "start": "00:00:06,960",
+            "end": "00:00:12,820",
+            "es": "este dolor muscular y dolor de garganta.",
+            "fr": "cette douleur musculaire et mal de gorge.",
+            "uk": "цей м'язовий біль та біль у горлі."
+        },
+        {
+            "start": "00:00:14,120",
+            "end": "00:00:15,220",
+            "es": "Es terrible,",
+            "fr": "C'est terrible,",
+            "uk": "Це жахливо,"
+        },
+        {
+            "start": "00:00:15,220",
+            "end": "00:00:15,740",
+            "es": "es un miedo.",
+            "fr": "c'est une peur.",
+            "uk": "це страх."
+        },
+        {
+            "start": "00:00:17,760",
+            "end": "00:00:19,140",
+            "es": "No me gusta.",
+            "fr": "Je n'aime pas ça.",
+            "uk": "Мені це не подобається."
+        },
+        {
+            "start": "00:00:26,220",
+            "end": "00:00:27,280",
+            "es": "Estos fideos,",
+            "fr": "Ces nouilles,",
+            "uk": "Ці локшини,"
+        },
+        {
+            "start": "00:00:27,280",
+            "end": "00:00:29,200",
+            "es": "son magníficos,",
+            "fr": "c'est magnifique,",
+            "uk": "це чудово,"
+        },
+        {
+            "start": "00:00:29,200",
+            "end": "00:00:31,360",
+            "es": "pero no tengo mucho apetito.",
+            "fr": "mais je n'ai pas très faim.",
+            "uk": "але у мене немає особливого апетиту."
+        },
+        {
+            "start": "00:00:32,720",
+            "end": "00:00:33,160",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:33,160",
+            "end": "00:00:34,080",
+            "es": "nos vemos.",
+            "fr": "au revoir.",
+            "uk": "бувай."
+        }
+    ]
+}

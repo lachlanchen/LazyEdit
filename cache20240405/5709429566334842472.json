@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,320\",\n    \"lang\": \"zh\",\n    \"text\": \"邊行車台\"\n  },\n  {\n    \"start\": \"00:00:02,320\",\n    \"end\": \"00:00:02,420\",\n    \"lang\": \"zh\",\n    \"text\": \"經過富士山\"\n  },\n  {\n    \"start\": \"00:00:02,420\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"zh\",\n    \"text\": \"有金毛巨itis\"\n  },\n  {\n    \"start\": \"00:00:06,114\",\n    \"end\": \"00:00:07,014\",\n    \"lang\": \"en\",\n    \"text\": \"Not bad,\"\n  },\n  {\n    \"start\": \"00:00:07,014\",\n    \"end\": \"00:00:07,294\",\n    \"lang\": \"en\",\n    \"text\": \"not bad at all.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,320",
+            "en": "Driving by the side",
+            "zh": "邊行車台",
+            "ar": "القيادة على الجانب"
+        },
+        {
+            "start": "00:00:02,320",
+            "end": "00:00:02,420",
+            "en": "Passing by Mount Fuji",
+            "zh": "經過富士山",
+            "ar": "مرورا بجبل فوجي"
+        },
+        {
+            "start": "00:00:02,420",
+            "end": "00:00:03,060",
+            "en": "Seeing a Golden Retriever",
+            "zh": "看到一隻金毛",
+            "ar": "رؤية جولدن ريتريفر"
+        },
+        {
+            "start": "00:00:06,114",
+            "end": "00:00:07,014",
+            "en": "Not bad,",
+            "zh": "不錯，",
+            "ar": "ليس سيئا،"
+        },
+        {
+            "start": "00:00:07,014",
+            "end": "00:00:07,294",
+            "en": "not bad at all.",
+            "zh": "一點也不錯。",
+            "ar": "ليس سيئا على الإطلاق."
+        }
+    ]
+}

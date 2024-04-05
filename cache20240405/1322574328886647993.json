@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,640\",\n    \"lang\": \"en\",\n    \"text\": \"In Chinese,\"\n  },\n  {\n    \"start\": \"00:00:01,640\",\n    \"end\": \"00:00:03,080\",\n    \"lang\": \"en\",\n    \"text\": \"there is a...\"\n  },\n  {\n    \"start\": \"00:00:03,874\",\n    \"end\": \"00:00:06,494\",\n    \"lang\": \"zh\",\n    \"text\": \"有一個成語叫先苦後甜\"\n  },\n  {\n    \"start\": \"00:00:07,154\",\n    \"end\": \"00:00:08,774\",\n    \"lang\": \"zh\",\n    \"text\": \"還有吃得苦中苦\"\n  },\n  {\n    \"start\": \"00:00:08,774\",\n    \"end\": \"00:00:09,994\",\n    \"lang\": \"zh\",\n    \"text\": \"方為人上人\"\n  },\n  {\n    \"start\": \"00:00:11,170\",\n    \"end\": \"00:00:16,170\",\n    \"lang\": \"en\",\n    \"text\": \"which means that sweetness after bittering,\"\n  },\n  {\n    \"start\": \"00:00:16,950\",\n    \"end\": \"00:00:17,310\",\n    \"lang\": \"en\",\n    \"text\": \"sweetness,\"\n  },\n  {\n    \"start\": \"00:00:17,310\",\n    \"end\": \"00:00:18,910\",\n    \"lang\": \"en\",\n    \"text\": \"happiness after pain.\"\n  },\n  {\n    \"start\": \"00:00:19,890\",\n    \"end\": \"00:00:23,270\",\n    \"lang\": \"en\",\n    \"text\": \"And if you suffer more,\"\n  },\n  {\n    \"start\": \"00:00:23,530\",\n    \"end\": \"00:00:25,590\",\n    \"lang\": \"en\",\n    \"text\": \"that you will get high.\"\n  },\n  {\n    \"start\": \"00:00:26,050\",\n    \"end\": \"00:00:28,730\",\n    \"lang\": \"en\",\n    \"text\": \"I hated the two phrases.\"\n  },\n  {\n    \"start\": \"00:00:29,310\",\n    \"end\": \"00:00:31,250\",\n    \"lang\": \"en\",\n    \"text\": \"So both are wrong.\"\n  },\n  {\n    \"start\": \"00:00:32,490\",\n    \"end\": \"00:00:36,750\",\n    \"lang\": \"en\",\n    \"text\": \"So if you cannot enjoy your life now,\"\n  },\n  {\n    \"start\": \"00:00:36,970\",\n    \"end\": \"00:00:39,630\",\n    \"lang\": \"en\",\n    \"text\": \"that you still cannot enjoy it\"\n  },\n  {\n    \"start\": \"00:00:39,630\",\n    \"end\": \"00:00:41,970\",\n    \"lang\": \"en\",\n    \"text\": \"until you can enjoy it.\"\n  },\n  {\n    \"start\": \"00:00:48,290\",\n    \"end\": \"00:00:53,230\",\n    \"lang\": \"en\",\n    \"text\": \"And then if you suffer more,\"\n  },\n  {\n    \"start\": \"00:00:53,350\",\n    \"end\": \"00:00:56,630\",\n    \"lang\": \"en\",\n    \"text\": \"you get higher over people.\"\n  },\n  {\n    \"start\": \"00:00:56,930\",\n    \"end\": \"00:00:58,430\",\n    \"lang\": \"en\",\n    \"text\": \"You can get people over people.\"\n  },\n  {\n    \"start\": \"00:00:59,350\",\n    \"end\": \"00:01:01,130\",\n    \"lang\": \"en\",\n    \"text\": \"You can get a higher position.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,640",
+            "vi": "Trong tiếng Trung,"
+        },
+        {
+            "start": "00:00:01,640",
+            "end": "00:00:03,080",
+            "vi": "có một..."
+        },
+        {
+            "start": "00:00:03,874",
+            "end": "00:00:06,494",
+            "vi": "có một thành ngữ gọi là trước khổ sau ngọt"
+        },
+        {
+            "start": "00:00:07,154",
+            "end": "00:00:08,774",
+            "vi": "còn có ăn chịu khổ giữa khổ"
+        },
+        {
+            "start": "00:00:08,774",
+            "end": "00:00:09,994",
+            "vi": "mới là người ưu tú"
+        },
+        {
+            "start": "00:00:11,170",
+            "end": "00:00:16,170",
+            "vi": "nghĩa là sự ngọt ngào sau khi chịu đựng,"
+        },
+        {
+            "start": "00:00:16,950",
+            "end": "00:00:17,310",
+            "vi": "sự ngọt ngào,"
+        },
+        {
+            "start": "00:00:17,310",
+            "end": "00:00:18,910",
+            "vi": "hạnh phúc sau nỗi đau."
+        },
+        {
+            "start": "00:00:19,890",
+            "end": "00:00:23,270",
+            "vi": "Và nếu bạn chịu đựng nhiều hơn,"
+        },
+        {
+            "start": "00:00:23,530",
+            "end": "00:00:25,590",
+            "vi": "bạn sẽ đạt được điều cao xa."
+        },
+        {
+            "start": "00:00:26,050",
+            "end": "00:00:28,730",
+            "vi": "Tôi ghét hai cụm từ đó."
+        },
+        {
+            "start": "00:00:29,310",
+            "end": "00:00:31,250",
+            "vi": "Vì vậy, cả hai đều sai."
+        },
+        {
+            "start": "00:00:32,490",
+            "end": "00:00:36,750",
+            "vi": "Vậy nếu bạn không thể tận hưởng cuộc sống bây giờ,"
+        },
+        {
+            "start": "00:00:36,970",
+            "end": "00:00:39,630",
+            "vi": "bạn vẫn không thể tận hưởng nó"
+        },
+        {
+            "start": "00:00:39,630",
+            "end": "00:00:41,970",
+            "vi": "cho đến khi bạn có thể tận hưởng nó."
+        },
+        {
+            "start": "00:00:48,290",
+            "end": "00:00:53,230",
+            "vi": "Và sau đó, nếu bạn chịu đựng nhiều hơn,"
+        },
+        {
+            "start": "00:00:53,350",
+            "end": "00:00:56,630",
+            "vi": "bạn sẽ cao hơn người khác."
+        },
+        {
+            "start": "00:00:56,930",
+            "end": "00:00:58,430",
+            "vi": "Bạn có thể vượt qua người khác."
+        },
+        {
+            "start": "00:00:59,350",
+            "end": "00:01:01,130",
+            "vi": "Bạn có thể đạt được vị trí cao hơn."
+        }
+    ]
+}

@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,440\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,440\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"en\",\n    \"text\": \"so first,\"\n  },\n  {\n    \"start\": \"00:00:01,460\",\n    \"end\": \"00:00:03,860\",\n    \"lang\": \"en\",\n    \"text\": \"let me put this on.\"\n  },\n  {\n    \"start\": \"00:00:05,600\",\n    \"end\": \"00:00:06,380\",\n    \"lang\": \"en\",\n    \"text\": \"One more.\"\n  },\n  {\n    \"start\": \"00:00:08,194\",\n    \"end\": \"00:00:09,514\",\n    \"lang\": \"zh\",\n    \"text\": \"木瓜油\"\n  },\n  {\n    \"start\": \"00:00:09,514\",\n    \"end\": \"00:00:12,314\",\n    \"lang\": \"en\",\n    \"text\": \"还burger\"\n  },\n  {\n    \"start\": \"00:00:16,738\",\n    \"end\": \"00:00:16,938\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:18,917\",\n    \"end\": \"00:00:20,478\",\n    \"lang\": \"en\",\n    \"text\": \"this is our\"\n  },\n  {\n    \"start\": \"00:00:20,478\",\n    \"end\": \"00:00:21,438\",\n    \"lang\": \"en\",\n    \"text\": \"flavor\"\n  },\n  {\n    \"start\": \"00:00:38,568\",\n    \"end\": \"00:00:40,218\",\n    \"lang\": \"en\",\n    \"text\": \"and our chicken\"\n  },\n  {\n    \"start\": \"00:00:52,678\",\n    \"end\": \"00:00:56,038\",\n    \"lang\": \"en\",\n    \"text\": \"now we add tarragon\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,440",
+            "ko": "좋아,"
+        },
+        {
+            "start": "00:00:00,440",
+            "end": "00:00:01,460",
+            "ko": "먼저,"
+        },
+        {
+            "start": "00:00:01,460",
+            "end": "00:00:03,860",
+            "ko": "이것부터 착용하겠습니다."
+        },
+        {
+            "start": "00:00:05,600",
+            "end": "00:00:06,380",
+            "ko": "하나 더."
+        },
+        {
+            "start": "00:00:08,194",
+            "end": "00:00:09,514",
+            "ko": "파파야 오일"
+        },
+        {
+            "start": "00:00:09,514",
+            "end": "00:00:12,314",
+            "ko": "그리고 버거"
+        },
+        {
+            "start": "00:00:16,738",
+            "end": "00:00:16,938",
+            "ko": "그래서"
+        },
+        {
+            "start": "00:00:18,917",
+            "end": "00:00:20,478",
+            "ko": "이것이 우리의"
+        },
+        {
+            "start": "00:00:20,478",
+            "end": "00:00:21,438",
+            "ko": "향"
+        },
+        {
+            "start": "00:00:38,568",
+            "end": "00:00:40,218",
+            "ko": "그리고 우리 치킨"
+        },
+        {
+            "start": "00:00:52,678",
+            "end": "00:00:56,038",
+            "ko": "이제 타라곤을 추가합니다"
+        }
+    ]
+}

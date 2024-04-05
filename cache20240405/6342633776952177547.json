@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,040\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:02,040\",\n    \"end\": \"00:00:03,600\",\n    \"lang\": \"en\",\n    \"text\": \"Konnichiwa.\"\n  },\n  {\n    \"start\": \"00:00:03,600\",\n    \"end\": \"00:00:10,220\",\n    \"lang\": \"en\",\n    \"text\": \"It takes about one hour to cook these fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:11,670\",\n    \"end\": \"00:00:14,560\",\n    \"lang\": \"en\",\n    \"text\": \"This is snow fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:14,560\",\n    \"end\": \"00:00:17,340\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:00:18,670\",\n    \"end\": \"00:00:27,200\",\n    \"lang\": \"en\",\n    \"text\": \"Another thing that has this duality of slowness and fastness is my YouTube channel.\"\n  },\n  {\n    \"start\": \"00:00:27,200\",\n    \"end\": \"00:00:33,720\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks for the guy that now it surpassed 50.\"\n  },\n  {\n    \"start\": \"00:00:34,340\",\n    \"end\": \"00:00:36,180\",\n    \"lang\": \"en\",\n    \"text\": \"When I say 50,\"\n  },\n  {\n    \"start\": \"00:00:36,180\",\n    \"end\": \"00:00:37,720\",\n    \"lang\": \"en\",\n    \"text\": \"I don't mean it's half a million.\"\n  },\n  {\n    \"start\": \"00:00:37,720\",\n    \"end\": \"00:00:39,040\",\n    \"lang\": \"en\",\n    \"text\": \"It's really 50.\"\n  },\n  {\n    \"start\": \"00:00:39,040\",\n    \"end\": \"00:00:40,620\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks.\"\n  },\n  {\n    \"start\": \"00:00:42,080\",\n    \"end\": \"00:00:43,500\",\n    \"lang\": \"en\",\n    \"text\": \"I believe 50 is enough.\"\n  },\n  {\n    \"start\": \"00:00:43,500\",\n    \"end\": \"00:00:44,860\",\n    \"lang\": \"en\",\n    \"text\": \"If I serve this,\"\n  },\n  {\n    \"start\": \"00:00:44,860\",\n    \"end\": \"00:00:46,020\",\n    \"lang\": \"en\",\n    \"text\": \"50 people will.\"\n  },\n  {\n    \"start\": \"00:00:46,020\",\n    \"end\": \"00:00:47,520\",\n    \"lang\": \"en\",\n    \"text\": \"It's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:52,039\",\n    \"end\": \"00:00:56,800\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this guy,\"\n  },\n  {\n    \"start\": \"00:00:56,800\",\n    \"end\": \"00:00:59,280\",\n    \"lang\": \"en\",\n    \"text\": \"someone that followed me,\"\n  },\n  {\n    \"start\": \"00:00:59,280\",\n    \"end\": \"00:01:00,400\",\n    \"lang\": \"en\",\n    \"text\": \"subscribed my channel.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,040",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:00:02,040",
+            "end": "00:00:03,600",
+            "es": "Konnichiwa.",
+            "fr": "Konnichiwa.",
+            "uk": "Konnichiwa."
+        },
+        {
+            "start": "00:00:03,600",
+            "end": "00:00:10,220",
+            "es": "Se tarda aproximadamente una hora en cocinar estos fideos rápidos.",
+            "fr": "Il faut environ une heure pour cuisiner ces nouilles rapides.",
+            "uk": "Приготування цих швидких локшин займає близько години."
+        },
+        {
+            "start": "00:00:11,670",
+            "end": "00:00:14,560",
+            "es": "Estos son fideos rápidos de nieve.",
+            "fr": "Ce sont des nouilles rapides de neige.",
+            "uk": "Це швидкі локшини зі снігу."
+        },
+        {
+            "start": "00:00:14,560",
+            "end": "00:00:17,340",
+            "es": "Perdón.",
+            "fr": "Pardon.",
+            "uk": "Вибачте."
+        },
+        {
+            "start": "00:00:18,670",
+            "end": "00:00:27,200",
+            "es": "Otra cosa que tiene esta dualidad de lentitud y rapidez es mi canal de YouTube.",
+            "fr": "Une autre chose qui a cette dualité de lenteur et de rapidité est ma chaîne YouTube.",
+            "uk": "Ще одна річ, яка має цю двойстість повільності та швидкості, - це мій YouTube-канал."
+        },
+        {
+            "start": "00:00:27,200",
+            "end": "00:00:33,720",
+            "es": "Gracias al chico que ahora superó los 50.",
+            "fr": "Merci au garçon qui a maintenant dépassé les 50.",
+            "uk": "Дякую хлопцю, який тепер перевищив 50."
+        },
+        {
+            "start": "00:00:34,340",
+            "end": "00:00:36,180",
+            "es": "Cuando digo 50,",
+            "fr": "Quand je dis 50,",
+            "uk": "Коли я кажу 50,"
+        },
+        {
+            "start": "00:00:36,180",
+            "end": "00:00:37,720",
+            "es": "no me refiero a que sea medio millón.",
+            "fr": "je ne veux pas dire que c'est un demi-million.",
+            "uk": "я не маю на увазі, що це півмільйона."
+        },
+        {
+            "start": "00:00:37,720",
+            "end": "00:00:39,040",
+            "es": "Realmente son 50.",
+            "fr": "C'est vraiment 50.",
+            "uk": "Це справді 50."
+        },
+        {
+            "start": "00:00:39,040",
+            "end": "00:00:40,620",
+            "es": "Gracias.",
+            "fr": "Merci.",
+            "uk": "Дякую."
+        },
+        {
+            "start": "00:00:42,080",
+            "end": "00:00:43,500",
+            "es": "Creo que 50 es suficiente.",
+            "fr": "Je pense que 50 c'est suffisant.",
+            "uk": "Я вважаю, що 50 достатньо."
+        },
+        {
+            "start": "00:00:43,500",
+            "end": "00:00:44,860",
+            "es": "Si sirvo esto,",
+            "fr": "Si je sers ceci,",
+            "uk": "Якщо я подам це,"
+        },
+        {
+            "start": "00:00:44,860",
+            "end": "00:00:46,020",
+            "es": "50 personas lo harán.",
+            "fr": "50 personnes le feront.",
+            "uk": "50 людей це зроблять."
+        },
+        {
+            "start": "00:00:46,020",
+            "end": "00:00:47,520",
+            "es": "Es magnífico.",
+            "fr": "C'est magnifique.",
+            "uk": "Це чудово."
+        },
+        {
+            "start": "00:00:52,039",
+            "end": "00:00:56,800",
+            "es": "Creo que este chico,",
+            "fr": "Je crois que ce gars,",
+            "uk": "Я вважаю, що цей хлопець,"
+        },
+        {
+            "start": "00:00:56,800",
+            "end": "00:00:59,280",
+            "es": "alguien que me siguió,",
+            "fr": "quelqu'un qui m'a suivi,",
+            "uk": "хтось, хто мене слідкував,"
+        },
+        {
+            "start": "00:00:59,280",
+            "end": "00:01:00,400",
+            "es": "se suscribió a mi canal.",
+            "fr": "s'est abonné à ma chaîne.",
+            "uk": "підписався на мій канал."
+        }
+    ]
+}

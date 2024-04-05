@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,700\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:01,700\",\n    \"end\": \"00:00:02,720\",\n    \"lang\": \"en\",\n    \"text\": \"so...\"\n  },\n  {\n    \"start\": \"00:00:03,682\",\n    \"end\": \"00:00:04,682\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます\"\n  },\n  {\n    \"start\": \"00:00:07,042\",\n    \"end\": \"00:00:07,642\",\n    \"lang\": \"zh\",\n    \"text\": \"那今天影片到這裡\"\n  },\n  {\n    \"start\": \"00:00:08,930\",\n    \"end\": \"00:00:10,890\",\n    \"lang\": \"en\",\n    \"text\": \"Have this breakfast.\"\n  },\n  {\n    \"start\": \"00:00:12,002\",\n    \"end\": \"00:00:12,502\",\n    \"lang\": \"zh\",\n    \"text\": \"下午茶\"\n  },\n  {\n    \"start\": \"00:00:18,242\",\n    \"end\": \"00:00:23,682\",\n    \"lang\": \"en\",\n    \"text\": \"I might be the first person that uses chopsticks to eat bread.\"\n  },\n  {\n    \"start\": \"00:00:26,754\",\n    \"end\": \"00:00:27,854\",\n    \"lang\": \"ja\",\n    \"text\": \"ごちそうさまでした\"\n  },\n  {\n    \"start\": \"00:00:27,874\",\n    \"end\": \"00:00:30,794\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you for watching!\"\n  },\n  {\n    \"start\": \"00:00:32,509\",\n    \"end\": \"00:00:33,769\",\n    \"lang\": \"ja\",\n    \"text\": \"ご視聴ありがとうございました。\"\n  },\n  {\n    \"start\": \"00:00:34,146\",\n    \"end\": \"00:00:34,546\",\n    \"lang\": \"zh\",\n    \"text\": \"不要打完\"\n  },\n  {\n    \"start\": \"00:00:35,906\",\n    \"end\": \"00:00:36,906\",\n    \"lang\": \"en\",\n    \"text\": \"getting your forehand down.\"\n  },\n  {\n    \"start\": \"00:00:37,954\",\n    \"end\": \"00:00:38,894\",\n    \"lang\": \"ja\",\n    \"text\": \"5分でコーヒーになる\"\n  },\n  {\n    \"start\": \"00:00:57,490\",\n    \"end\": \"00:00:57,930\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:57,930\",\n    \"end\": \"00:00:58,410\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,700",
+            "ja": "オーケー、"
+        },
+        {
+            "start": "00:00:01,700",
+            "end": "00:00:02,720",
+            "ja": "それで…"
+        },
+        {
+            "start": "00:00:03,682",
+            "end": "00:00:04,682",
+            "ja": "ありがとうございます"
+        },
+        {
+            "start": "00:00:07,042",
+            "end": "00:00:07,642",
+            "ja": "それでは、今日の動画はここまでです"
+        },
+        {
+            "start": "00:00:08,930",
+            "end": "00:00:10,890",
+            "ja": "この朝食をどうぞ。"
+        },
+        {
+            "start": "00:00:12,002",
+            "end": "00:00:12,502",
+            "ja": "アフタヌーンティー"
+        },
+        {
+            "start": "00:00:18,242",
+            "end": "00:00:23,682",
+            "ja": "私がパンを箸で食べる最初の人かもしれません。"
+        },
+        {
+            "start": "00:00:26,754",
+            "end": "00:00:27,854",
+            "ja": "ごちそうさまでした"
+        },
+        {
+            "start": "00:00:27,874",
+            "end": "00:00:30,794",
+            "ja": "ご視聴いただき、ありがとうございます！"
+        },
+        {
+            "start": "00:00:32,509",
+            "end": "00:00:33,769",
+            "ja": "ご視聴ありがとうございました。"
+        },
+        {
+            "start": "00:00:34,146",
+            "end": "00:00:34,546",
+            "ja": "終わらないでください"
+        },
+        {
+            "start": "00:00:35,906",
+            "end": "00:00:36,906",
+            "ja": "フォアハンドをマスターしよう。"
+        },
+        {
+            "start": "00:00:37,954",
+            "end": "00:00:38,894",
+            "ja": "5分でコーヒーが完成します"
+        },
+        {
+            "start": "00:00:57,490",
+            "end": "00:00:57,930",
+            "ja": "オーケー、"
+        },
+        {
+            "start": "00:00:57,930",
+            "end": "00:00:58,410",
+            "ja": "またね。"
+        }
+    ]
+}

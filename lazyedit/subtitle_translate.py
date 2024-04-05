@@ -144,6 +144,10 @@ class SubtitlesTranslator(OpenAIRequestBase):
         """Determine if the video is landscape or portrait based on class variables."""
         return self.video_width > self.video_height
 
+    def get_filename(self, lang="ja", idx=0):
+        base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
+        datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        return f"{self.translation_log_folder}/{base_filename}-part{idx}-{lang}-{datetime_str}.json"
     
 
 
@@ -390,7 +394,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             prompt, 
             system_content=system_content, 
             sample_json=sample_json_structure,
-            filename=f"{self.base_filename}-part{idx}-major-{self.datetime_str}.json"
+            filename=self.get_filename(lang="major", idx=idx)
         )
 
         print("Translated subtitles (Major): \n")
@@ -474,7 +478,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             prompt,
             system_content=system_content,
             sample_json=sample_json_structure,
-            filename=f"{self.base_filename}-part{idx}-{lang_str}-{self.datetime_str}.json"
+            filename=self.get_filename(lang=lang_str, idx=idx)
         )
 
         print("Translated subtitles (Specified Languages): \n")
@@ -544,7 +548,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             prompt,
             system_content=system_content,
             sample_json=sample_json_structure,
-            filename=f"{self.base_filename}-part{idx}-ja-{self.datetime_str}.json"
+            filename=self.get_filename(lang="ja", idx=idx)
         )
 
 
@@ -599,7 +603,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             prompt,
             system_content=system_content,
             sample_json=sample_json_structure,
-            filename=f"{self.base_filename}-part{idx}-furigana-{self.datetime_str}.json"
+            filename=self.get_filename(lang="furigana", idx=idx)
         )
 
         print("Translated subtitles (Japanese with furigana): \n")
@@ -650,7 +654,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             prompt,
             system_content=system_content,
             sample_json=sample_json_structure,
-            filename=f"{self.base_filename}-part{idx}-ko-{self.datetime_str}.json"
+            filename=self.get_filename(lang="ko", idx=idx)
         )
 
         # Here, you might add any specific post-processing for Korean subtitles if necessary
@@ -730,7 +734,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             prompt,
             system_content=system_content,
             sample_json=sample_json_structure,
-            filename=f"{self.base_filename}-part{idx}-hanja-{self.datetime_str}.json"
+            filename=self.get_filename(lang="hanja", idx=idx)
         )
             # Assume response is structured correctly
             annotated_text = response.get("korean_with_annotation", "")
@@ -809,7 +813,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             prompt,
             system_content=system_content,
             sample_json=sample_json_structure,
-            filename=f"{self.base_filename}-part{idx}-vi-{self.datetime_str}.json"
+            filename=self.get_filename(lang="vi", idx=idx)
         )
 
         translated_subtitles = self.replace_viet_with_chuhan(translated_subtitles, idx)
@@ -878,7 +882,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             prompt,
             system_content=system_content,
             sample_json=sample_json_structure,
-            filename=f"{self.base_filename}-part{idx}-chuhan-{self.datetime_str}.json"
+            filename=self.get_filename(lang="chuhan", idx=idx)
         )
             annotated_text = response.get("viet_with_annotation", "")
             chuhan_pairs = response.get("viet_chuhan_pairs", [])

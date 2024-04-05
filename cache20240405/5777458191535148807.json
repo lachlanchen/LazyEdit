@@ -1,0 +1,15 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,280\",\n    \"lang\": \"ja\",\n    \"text\": \"私は開業して初めました\"\n  },\n  {\n    \"start\": \"00:00:03,778\",\n    \"end\": \"00:00:07,358\",\n    \"lang\": \"en\",\n    \"text\": \"and uh okay see you\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,280",
+            "ko": "제가 개업해서 처음으로 시작했습니다"
+        },
+        {
+            "start": "00:00:03,778",
+            "end": "00:00:07,358",
+            "ko": "그, 알겠어요, 안녕히 계세요"
+        }
+    ]
+}

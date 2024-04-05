@@ -1,0 +1,110 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:24,485\",\n    \"end\": \"00:02:26,826\",\n    \"lang\": \"en\",\n    \"text\": \"let's have some nuts\"\n  },\n  {\n    \"start\": \"00:02:29,045\",\n    \"end\": \"00:02:30,426\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's good\"\n  },\n  {\n    \"start\": \"00:02:30,426\",\n    \"end\": \"00:02:32,646\",\n    \"lang\": \"en\",\n    \"text\": \"I just eat the orange\"\n  },\n  {\n    \"start\": \"00:02:32,646\",\n    \"end\": \"00:02:34,126\",\n    \"lang\": \"en\",\n    \"text\": \"and I have the nuts\"\n  },\n  {\n    \"start\": \"00:02:34,126\",\n    \"end\": \"00:02:34,486\",\n    \"lang\": \"en\",\n    \"text\": \"because\"\n  },\n  {\n    \"start\": \"00:02:38,466\",\n    \"end\": \"00:02:39,906\",\n    \"lang\": \"en\",\n    \"text\": \"the acid\"\n  },\n  {\n    \"start\": \"00:02:40,146\",\n    \"end\": \"00:02:40,506\",\n    \"lang\": \"en\",\n    \"text\": \"can\"\n  },\n  {\n    \"start\": \"00:02:42,106\",\n    \"end\": \"00:02:43,506\",\n    \"lang\": \"en\",\n    \"text\": \"soften my teeth\"\n  },\n  {\n    \"start\": \"00:02:43,506\",\n    \"end\": \"00:02:45,705\",\n    \"lang\": \"en\",\n    \"text\": \"and I eat the hard nuts\"\n  },\n  {\n    \"start\": \"00:02:46,426\",\n    \"end\": \"00:02:47,306\",\n    \"lang\": \"en\",\n    \"text\": \"so it\"\n  },\n  {\n    \"start\": \"00:02:48,566\",\n    \"end\": \"00:02:50,806\",\n    \"lang\": \"en\",\n    \"text\": \"will damage my teeth\"\n  },\n  {\n    \"start\": \"00:03:01,386\",\n    \"end\": \"00:03:02,086\",\n    \"lang\": \"en\",\n    \"text\": \"ok\"\n  },\n  {\n    \"start\": \"00:03:02,826\",\n    \"end\": \"00:03:03,706\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  },\n  {\n    \"start\": \"00:03:04,886\",\n    \"end\": \"00:03:07,366\",\n    \"lang\": \"en\",\n    \"text\": \"by the way\"\n  },\n  {\n    \"start\": \"00:03:11,126\",\n    \"end\": \"00:03:12,766\",\n    \"lang\": \"en\",\n    \"text\": \"by the way\"\n  },\n  {\n    \"start\": \"00:03:12,766\",\n    \"end\": \"00:03:13,446\",\n    \"lang\": \"en\",\n    \"text\": \"I added\"\n  },\n  {\n    \"start\": \"00:03:13,446\",\n    \"end\": \"00:03:16,106\",\n    \"lang\": \"en\",\n    \"text\": \"a microphone\"\n  },\n  {\n    \"start\": \"00:03:16,806\",\n    \"end\": \"00:03:19,226\",\n    \"lang\": \"en\",\n    \"text\": \"a microphone symbol\"\n  },\n  {\n    \"start\": \"00:03:19,226\",\n    \"end\": \"00:03:21,406\",\n    \"lang\": \"en\",\n    \"text\": \"and a subtitle\"\n  },\n  {\n    \"start\": \"00:03:21,406\",\n    \"end\": \"00:03:23,246\",\n    \"lang\": \"en\",\n    \"text\": \"that corresponds to\"\n  },\n  {\n    \"start\": \"00:03:23,246\",\n    \"end\": \"00:03:23,846\",\n    \"lang\": \"en\",\n    \"text\": \"the real\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:24,485",
+            "end": "00:02:26,826",
+            "vi": "hãy ăn một ít hạt"
+        },
+        {
+            "start": "00:02:29,045",
+            "end": "00:02:30,426",
+            "vi": "tôi không biết nó có tốt không"
+        },
+        {
+            "start": "00:02:30,426",
+            "end": "00:02:32,646",
+            "vi": "tôi chỉ ăn quả cam"
+        },
+        {
+            "start": "00:02:32,646",
+            "end": "00:02:34,126",
+            "vi": "và tôi ăn hạt"
+        },
+        {
+            "start": "00:02:34,126",
+            "end": "00:02:34,486",
+            "vi": "vì"
+        },
+        {
+            "start": "00:02:38,466",
+            "end": "00:02:39,906",
+            "vi": "axit"
+        },
+        {
+            "start": "00:02:40,146",
+            "end": "00:02:40,506",
+            "vi": "có thể"
+        },
+        {
+            "start": "00:02:42,106",
+            "end": "00:02:43,506",
+            "vi": "làm mềm răng tôi"
+        },
+        {
+            "start": "00:02:43,506",
+            "end": "00:02:45,705",
+            "vi": "và tôi ăn hạt cứng"
+        },
+        {
+            "start": "00:02:46,426",
+            "end": "00:02:47,306",
+            "vi": "vì vậy nó"
+        },
+        {
+            "start": "00:02:48,566",
+            "end": "00:02:50,806",
+            "vi": "sẽ làm hại răng tôi"
+        },
+        {
+            "start": "00:03:01,386",
+            "end": "00:03:02,086",
+            "vi": "được"
+        },
+        {
+            "start": "00:03:02,826",
+            "end": "00:03:03,706",
+            "vi": "hẹn gặp lại"
+        },
+        {
+            "start": "00:03:04,886",
+            "end": "00:03:07,366",
+            "vi": "nhân tiện"
+        },
+        {
+            "start": "00:03:11,126",
+            "end": "00:03:12,766",
+            "vi": "nhân tiện"
+        },
+        {
+            "start": "00:03:12,766",
+            "end": "00:03:13,446",
+            "vi": "tôi đã thêm"
+        },
+        {
+            "start": "00:03:13,446",
+            "end": "00:03:16,106",
+            "vi": "một microphone"
+        },
+        {
+            "start": "00:03:16,806",
+            "end": "00:03:19,226",
+            "vi": "biểu tượng microphone"
+        },
+        {
+            "start": "00:03:19,226",
+            "end": "00:03:21,406",
+            "vi": "và phụ đề"
+        },
+        {
+            "start": "00:03:21,406",
+            "end": "00:03:23,246",
+            "vi": "tương ứng với"
+        },
+        {
+            "start": "00:03:23,246",
+            "end": "00:03:23,846",
+            "vi": "cái thực tế"
+        }
+    ]
+}

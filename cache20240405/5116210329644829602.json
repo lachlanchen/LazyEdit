@@ -1,0 +1,271 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,020\",\n    \"lang\": \"en\",\n    \"text\": \"I'm gonna put the bandana on your lower body.\"\n  },\n  {\n    \"start\": \"00:00:01,420\",\n    \"end\": \"00:00:02,320\",\n    \"lang\": \"en\",\n    \"text\": \"What do you have to do?\"\n  },\n  {\n    \"start\": \"00:00:03,020\",\n    \"end\": \"00:00:03,600\",\n    \"lang\": \"en\",\n    \"text\": \"All right,\"\n  },\n  {\n    \"start\": \"00:00:03,600\",\n    \"end\": \"00:00:05,520\",\n    \"lang\": \"en\",\n    \"text\": \"one more forward.\"\n  },\n  {\n    \"start\": \"00:00:06,000\",\n    \"end\": \"00:00:06,960\",\n    \"lang\": \"en\",\n    \"text\": \"I would love your music,\"\n  },\n  {\n    \"start\": \"00:00:06,960\",\n    \"end\": \"00:00:07,360\",\n    \"lang\": \"en\",\n    \"text\": \"Geneva.\"\n  },\n  {\n    \"start\": \"00:00:08,400\",\n    \"end\": \"00:00:08,880\",\n    \"lang\": \"en\",\n    \"text\": \"Good boy,\"\n  },\n  {\n    \"start\": \"00:00:08,880\",\n    \"end\": \"00:00:09,240\",\n    \"lang\": \"en\",\n    \"text\": \"yeah!\"\n  },\n  {\n    \"start\": \"00:00:09,560\",\n    \"end\": \"00:00:10,140\",\n    \"lang\": \"en\",\n    \"text\": \"I'm gonna have you closer.\"\n  },\n  {\n    \"start\": \"00:00:11,260\",\n    \"end\": \"00:00:11,740\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:11,740\",\n    \"end\": \"00:00:13,600\",\n    \"lang\": \"en\",\n    \"text\": \"this is gonna be your next.\"\n  },\n  {\n    \"start\": \"00:00:14,020\",\n    \"end\": \"00:00:14,700\",\n    \"lang\": \"en\",\n    \"text\": \"We are ready.\"\n  },\n  {\n    \"start\": \"00:00:16,219\",\n    \"end\": \"00:00:16,700\",\n    \"lang\": \"en\",\n    \"text\": \"Five.\"\n  },\n  {\n    \"start\": \"00:00:18,740\",\n    \"end\": \"00:00:19,220\",\n    \"lang\": \"en\",\n    \"text\": \"Ready,\"\n  },\n  {\n    \"start\": \"00:00:19,220\",\n    \"end\": \"00:00:20,300\",\n    \"lang\": \"en\",\n    \"text\": \"one,\"\n  },\n  {\n    \"start\": \"00:00:20,300\",\n    \"end\": \"00:00:20,760\",\n    \"lang\": \"en\",\n    \"text\": \"two,\"\n  },\n  {\n    \"start\": \"00:00:20,760\",\n    \"end\": \"00:00:21,520\",\n    \"lang\": \"en\",\n    \"text\": \"three,\"\n  },\n  {\n    \"start\": \"00:00:21,520\",\n    \"end\": \"00:00:21,620\",\n    \"lang\": \"en\",\n    \"text\": \"go.\"\n  },\n  {\n    \"start\": \"00:00:22,160\",\n    \"end\": \"00:00:23,500\",\n    \"lang\": \"en\",\n    \"text\": \"♪ I'm on a rave,\"\n  },\n  {\n    \"start\": \"00:00:23,500\",\n    \"end\": \"00:00:25,000\",\n    \"lang\": \"en\",\n    \"text\": \"I'm on a rave ♪\"\n  },\n  {\n    \"start\": \"00:00:25,000\",\n    \"end\": \"00:00:25,740\",\n    \"lang\": \"en\",\n    \"text\": \"♪ I'm dancing,\"\n  },\n  {\n    \"start\": \"00:00:25,740\",\n    \"end\": \"00:00:27,040\",\n    \"lang\": \"en\",\n    \"text\": \"I'm on a rave,\"\n  },\n  {\n    \"start\": \"00:00:27,040\",\n    \"end\": \"00:00:27,400\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:27,400\",\n    \"end\": \"00:00:27,920\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:27,920\",\n    \"end\": \"00:00:28,840\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:28,840\",\n    \"end\": \"00:00:29,060\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:29,060\",\n    \"end\": \"00:00:29,860\",\n    \"lang\": \"en\",\n    \"text\": \"yeah ♪\"\n  },\n  {\n    \"start\": \"00:00:29,860\",\n    \"end\": \"00:00:30,000\",\n    \"lang\": \"en\",\n    \"text\": \"♪ I'm sexy,\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:32,299\",\n    \"lang\": \"en\",\n    \"text\": \"just a bunch of ladies,\"\n  },\n  {\n    \"start\": \"00:00:32,299\",\n    \"end\": \"00:00:34,740\",\n    \"lang\": \"en\",\n    \"text\": \"you say I'm sexy ♪\"\n  },\n  {\n    \"start\": \"00:00:34,740\",\n    \"end\": \"00:00:36,240\",\n    \"lang\": \"en\",\n    \"text\": \"♪ So I need to go rest,\"\n  },\n  {\n    \"start\": \"00:00:36,240\",\n    \"end\": \"00:00:36,540\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:36,540\",\n    \"end\": \"00:00:38,120\",\n    \"lang\": \"en\",\n    \"text\": \"you can't help me,\"\n  },\n  {\n    \"start\": \"00:00:38,120\",\n    \"end\": \"00:00:38,580\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:38,580\",\n    \"end\": \"00:00:39,040\",\n    \"lang\": \"en\",\n    \"text\": \"yeah,\"\n  },\n  {\n    \"start\": \"00:00:39,040\",\n    \"end\": \"00:00:39,340\",\n    \"lang\": \"en\",\n    \"text\": \"yeah ♪\"\n  },\n  {\n    \"start\": \"00:00:39,340\",\n    \"end\": \"00:00:40,100\",\n    \"lang\": \"en\",\n    \"text\": \"♪ Talkin'\"\n  },\n  {\n    \"start\": \"00:00:40,300\",\n    \"end\": \"00:00:41,620\",\n    \"lang\": \"en\",\n    \"text\": \"bout it ♪\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,020",
+            "es": "Voy a poner el pañuelo en tu parte inferior.",
+            "fr": "Je vais mettre le bandana sur ta partie inférieure.",
+            "uk": "Я поставлю бандану на твою нижню частину."
+        },
+        {
+            "start": "00:00:01,420",
+            "end": "00:00:02,320",
+            "es": "¿Qué tienes que hacer?",
+            "fr": "Que dois-tu faire ?",
+            "uk": "Що тобі потрібно робити?"
+        },
+        {
+            "start": "00:00:03,020",
+            "end": "00:00:03,600",
+            "es": "Está bien,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:03,600",
+            "end": "00:00:05,520",
+            "es": "uno más hacia adelante.",
+            "fr": "un de plus vers l'avant.",
+            "uk": "ще один вперед."
+        },
+        {
+            "start": "00:00:06,000",
+            "end": "00:00:06,960",
+            "es": "Me encantaría tu música,",
+            "fr": "J'adorerais ta musique,",
+            "uk": "Мені б сподобалася твоя музика,"
+        },
+        {
+            "start": "00:00:06,960",
+            "end": "00:00:07,360",
+            "es": "Ginebra.",
+            "fr": "Genève.",
+            "uk": "Женева."
+        },
+        {
+            "start": "00:00:08,400",
+            "end": "00:00:08,880",
+            "es": "Buen chico,",
+            "fr": "Bon garçon,",
+            "uk": "Гарний хлопче,"
+        },
+        {
+            "start": "00:00:08,880",
+            "end": "00:00:09,240",
+            "es": "¡sí!",
+            "fr": "oui !",
+            "uk": "так!"
+        },
+        {
+            "start": "00:00:09,560",
+            "end": "00:00:10,140",
+            "es": "Voy a acercarte.",
+            "fr": "Je vais te rapprocher.",
+            "uk": "Я підійду ближче до тебе."
+        },
+        {
+            "start": "00:00:11,260",
+            "end": "00:00:11,740",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:11,740",
+            "end": "00:00:13,600",
+            "es": "esto va a ser lo siguiente.",
+            "fr": "ce sera la prochaine chose.",
+            "uk": "це буде наступним."
+        },
+        {
+            "start": "00:00:14,020",
+            "end": "00:00:14,700",
+            "es": "Estamos listos.",
+            "fr": "Nous sommes prêts.",
+            "uk": "Ми готові."
+        },
+        {
+            "start": "00:00:16,219",
+            "end": "00:00:16,700",
+            "es": "Cinco.",
+            "fr": "Cinq.",
+            "uk": "П'ять."
+        },
+        {
+            "start": "00:00:18,740",
+            "end": "00:00:19,220",
+            "es": "Listo,",
+            "fr": "Prêt,",
+            "uk": "Готово,"
+        },
+        {
+            "start": "00:00:19,220",
+            "end": "00:00:20,300",
+            "es": "uno,",
+            "fr": "un,",
+            "uk": "один,"
+        },
+        {
+            "start": "00:00:20,300",
+            "end": "00:00:20,760",
+            "es": "dos,",
+            "fr": "deux,",
+            "uk": "два,"
+        },
+        {
+            "start": "00:00:20,760",
+            "end": "00:00:21,520",
+            "es": "tres,",
+            "fr": "trois,",
+            "uk": "три,"
+        },
+        {
+            "start": "00:00:21,520",
+            "end": "00:00:21,620",
+            "es": "ya.",
+            "fr": "allez.",
+            "uk": "йди."
+        },
+        {
+            "start": "00:00:22,160",
+            "end": "00:00:23,500",
+            "es": "♪ Estoy en un rave,",
+            "fr": "♪ Je suis à un rave,",
+            "uk": "♪ Я на рейві,"
+        },
+        {
+            "start": "00:00:23,500",
+            "end": "00:00:25,000",
+            "es": "estoy en un rave ♪",
+            "fr": "je suis à un rave ♪",
+            "uk": "я на рейві ♪"
+        },
+        {
+            "start": "00:00:25,000",
+            "end": "00:00:25,740",
+            "es": "♪ Estoy bailando,",
+            "fr": "♪ Je danse,",
+            "uk": "♪ Я танцюю,"
+        },
+        {
+            "start": "00:00:25,740",
+            "end": "00:00:27,040",
+            "es": "estoy en un rave,",
+            "fr": "je suis à un rave,",
+            "uk": "я на рейві,"
+        },
+        {
+            "start": "00:00:27,040",
+            "end": "00:00:27,400",
+            "es": "sí,",
+            "fr": "oui,",
+            "uk": "так,"
+        },
+        {
+            "start": "00:00:27,400",
+            "end": "00:00:27,920",
+            "es": "sí,",
+            "fr": "oui,",
+            "uk": "так,"
+        },
+        {
+            "start": "00:00:27,920",
+            "end": "00:00:28,840",
+            "es": "sí,",
+            "fr": "oui,",
+            "uk": "так,"
+        },
+        {
+            "start": "00:00:28,840",
+            "end": "00:00:29,060",
+            "es": "sí,",
+            "fr": "oui,",
+            "uk": "так,"
+        },
+        {
+            "start": "00:00:29,060",
+            "end": "00:00:29,860",
+            "es": "sí ♪",
+            "fr": "oui ♪",
+            "uk": "так ♪"
+        },
+        {
+            "start": "00:00:29,860",
+            "end": "00:00:30,000",
+            "es": "♪ Soy sexy,",
+            "fr": "♪ Je suis sexy,",
+            "uk": "♪ Я сексуальний,"
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:32,299",
+            "es": "solo un montón de damas,",
+            "fr": "juste un tas de dames,",
+            "uk": "просто купа дам,"
+        },
+        {
+            "start": "00:00:32,299",
+            "end": "00:00:34,740",
+            "es": "dices que soy sexy ♪",
+            "fr": "tu dis que je suis sexy ♪",
+            "uk": "ти кажеш, що я сексуальний ♪"
+        },
+        {
+            "start": "00:00:34,740",
+            "end": "00:00:36,240",
+            "es": "♪ Así que necesito descansar,",
+            "fr": "♪ Donc, je dois me reposer,",
+            "uk": "♪ Отже, мені потрібно відпочити,"
+        },
+        {
+            "start": "00:00:36,240",
+            "end": "00:00:36,540",
+            "es": "sí,",
+            "fr": "oui,",
+            "uk": "так,"
+        },
+        {
+            "start": "00:00:36,540",
+            "end": "00:00:38,120",
+            "es": "no puedes ayudarme,",
+            "fr": "tu ne peux pas m'aider,",
+            "uk": "ти не можеш мені допомогти,"
+        },
+        {
+            "start": "00:00:38,120",
+            "end": "00:00:38,580",
+            "es": "sí,",
+            "fr": "oui,",
+            "uk": "так,"
+        },
+        {
+            "start": "00:00:38,580",
+            "end": "00:00:39,040",
+            "es": "sí,",
+            "fr": "oui,",
+            "uk": "так,"
+        },
+        {
+            "start": "00:00:39,040",
+            "end": "00:00:39,340",
+            "es": "sí ♪",
+            "fr": "oui ♪",
+            "uk": "так ♪"
+        },
+        {
+            "start": "00:00:39,340",
+            "end": "00:00:40,100",
+            "es": "♪ Hablando",
+            "fr": "♪ Parlant",
+            "uk": "♪ Розмовляючи"
+        },
+        {
+            "start": "00:00:40,300",
+            "end": "00:00:41,620",
+            "es": "de ello ♪",
+            "fr": "à ce sujet ♪",
+            "uk": "про це ♪"
+        }
+    ]
+}

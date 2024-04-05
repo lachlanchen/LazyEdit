@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,660\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,362\",\n    \"end\": \"00:00:06,302\",\n    \"lang\": \"en\",\n    \"text\": \"After taking the medicine,\"\n  },\n  {\n    \"start\": \"00:00:06,302\",\n    \"end\": \"00:00:10,882\",\n    \"lang\": \"en\",\n    \"text\": \"I started recovering.\"\n  },\n  {\n    \"start\": \"00:00:12,902\",\n    \"end\": \"00:00:17,122\",\n    \"lang\": \"en\",\n    \"text\": \"So now the sore throat is relieved.\"\n  },\n  {\n    \"start\": \"00:00:19,421\",\n    \"end\": \"00:00:19,762\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:00:21,882\",\n    \"end\": \"00:00:24,862\",\n    \"lang\": \"en\",\n    \"text\": \"So now I can eat stuff.\"\n  },\n  {\n    \"start\": \"00:00:25,202\",\n    \"end\": \"00:00:25,642\",\n    \"lang\": \"en\",\n    \"text\": \"You can see.\"\n  },\n  {\n    \"start\": \"00:00:42,622\",\n    \"end\": \"00:00:45,162\",\n    \"lang\": \"en\",\n    \"text\": \"Health is the most important thing.\"\n  },\n  {\n    \"start\": \"00:00:46,442\",\n    \"end\": \"00:00:58,202\",\n    \"lang\": \"en\",\n    \"text\": \"So I just want to help myself and everyone.\"\n  },\n  {\n    \"start\": \"00:00:58,202\",\n    \"end\": \"00:01:04,342\",\n    \"lang\": \"en\",\n    \"text\": \"So when you are alive,\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,660",
+            "ko": "좋은 아침입니다"
+        },
+        {
+            "start": "00:00:03,362",
+            "end": "00:00:06,302",
+            "ko": "약을 먹은 후에,"
+        },
+        {
+            "start": "00:00:06,302",
+            "end": "00:00:10,882",
+            "ko": "난 회복하기 시작했다."
+        },
+        {
+            "start": "00:00:12,902",
+            "end": "00:00:17,122",
+            "ko": "그래서 이제 목 아픔이 완화됐어."
+        },
+        {
+            "start": "00:00:19,421",
+            "end": "00:00:19,762",
+            "ko": "맞지?"
+        },
+        {
+            "start": "00:00:21,882",
+            "end": "00:00:24,862",
+            "ko": "그래서 이제 먹을 수 있어."
+        },
+        {
+            "start": "00:00:25,202",
+            "end": "00:00:25,642",
+            "ko": "보이시죠."
+        },
+        {
+            "start": "00:00:42,622",
+            "end": "00:00:45,162",
+            "ko": "건강이 가장 중요한 것이다."
+        },
+        {
+            "start": "00:00:46,442",
+            "end": "00:00:58,202",
+            "ko": "그래서 나는 나 자신과 모두를 돕고 싶어."
+        },
+        {
+            "start": "00:00:58,202",
+            "end": "00:01:04,342",
+            "ko": "그러니까 살아있을 때,"
+        }
+    ]
+}

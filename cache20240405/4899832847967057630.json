@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:04,342\",\n    \"end\": \"00:01:13,622\",\n    \"lang\": \"en\",\n    \"text\": \"the most important thing is that you have food.\"\n  },\n  {\n    \"start\": \"00:01:15,121\",\n    \"end\": \"00:01:16,422\",\n    \"lang\": \"en\",\n    \"text\": \"Don't get cold.\"\n  },\n  {\n    \"start\": \"00:01:17,442\",\n    \"end\": \"00:01:19,002\",\n    \"lang\": \"en\",\n    \"text\": \"And when you die,\"\n  },\n  {\n    \"start\": \"00:01:19,002\",\n    \"end\": \"00:01:19,922\",\n    \"lang\": \"en\",\n    \"text\": \"die peacefully.\"\n  },\n  {\n    \"start\": \"00:01:21,378\",\n    \"end\": \"00:01:22,898\",\n    \"lang\": \"ar\",\n    \"text\": \"هذا هو المسجد\"\n  },\n  {\n    \"start\": \"00:01:23,586\",\n    \"end\": \"00:01:24,886\",\n    \"lang\": \"en\",\n    \"text\": \"Two or three important things.\"\n  },\n  {\n    \"start\": \"00:01:25,326\",\n    \"end\": \"00:01:25,646\",\n    \"lang\": \"en\",\n    \"text\": \"Food,\"\n  },\n  {\n    \"start\": \"00:01:25,646\",\n    \"end\": \"00:01:27,166\",\n    \"lang\": \"en\",\n    \"text\": \"die peacefully.\"\n  },\n  {\n    \"start\": \"00:01:28,566\",\n    \"end\": \"00:01:32,866\",\n    \"lang\": \"en\",\n    \"text\": \"Don't die from cancer.\"\n  },\n  {\n    \"start\": \"00:01:38,498\",\n    \"end\": \"00:01:39,338\",\n    \"lang\": \"zh\",\n    \"text\": \"大家可以試試看\"\n  },\n  {\n    \"start\": \"00:01:47,250\",\n    \"end\": \"00:01:47,950\",\n    \"lang\": \"en\",\n    \"text\": \"OK\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:04,342",
+            "end": "00:01:13,622",
+            "en": "the most important thing is that you have food.",
+            "zh": "最重要的是你有食物。",
+            "ar": "الشيء الأكثر أهمية هو أن يكون لديك طعام."
+        },
+        {
+            "start": "00:01:15,121",
+            "end": "00:01:16,422",
+            "en": "Don't get cold.",
+            "zh": "不要感冒。",
+            "ar": "لا تبرد."
+        },
+        {
+            "start": "00:01:17,442",
+            "end": "00:01:19,002",
+            "en": "And when you die,",
+            "zh": "当你死的时候，",
+            "ar": "وعندما تموت،"
+        },
+        {
+            "start": "00:01:19,002",
+            "end": "00:01:19,922",
+            "en": "die peacefully.",
+            "zh": "要平静地死去。",
+            "ar": "تموت بسلام."
+        },
+        {
+            "start": "00:01:21,378",
+            "end": "00:01:22,898",
+            "en": "This is the mosque.",
+            "zh": "这是清真寺。",
+            "ar": "هذا هو المسجد"
+        },
+        {
+            "start": "00:01:23,586",
+            "end": "00:01:24,886",
+            "en": "Two or three important things.",
+            "zh": "两三件重要的事。",
+            "ar": "اثنان أو ثلاثة أشياء مهمة."
+        },
+        {
+            "start": "00:01:25,326",
+            "end": "00:01:25,646",
+            "en": "Food,",
+            "zh": "食物，",
+            "ar": "طعام،"
+        },
+        {
+            "start": "00:01:25,646",
+            "end": "00:01:27,166",
+            "en": "die peacefully.",
+            "zh": "要平静地死去。",
+            "ar": "تموت بسلام."
+        },
+        {
+            "start": "00:01:28,566",
+            "end": "00:01:32,866",
+            "en": "Don't die from cancer.",
+            "zh": "不要死于癌症。",
+            "ar": "لا تموت من السرطان."
+        },
+        {
+            "start": "00:01:38,498",
+            "end": "00:01:39,338",
+            "en": "You all can try it.",
+            "zh": "大家可以試試看",
+            "ar": "يمكنكم جميعًا تجربته."
+        },
+        {
+            "start": "00:01:47,250",
+            "end": "00:01:47,950",
+            "en": "OK",
+            "zh": "好的",
+            "ar": "حسنًا"
+        }
+    ]
+}

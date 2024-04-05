@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"My sister makes these beautiful notebooks.\"\n  },\n  {\n    \"start\": \"00:00:05,500\",\n    \"end\": \"00:00:08,600\",\n    \"lang\": \"en\",\n    \"text\": \"But she thinks it's mediocre and not good.\"\n  },\n  {\n    \"start\": \"00:00:09,340\",\n    \"end\": \"00:00:16,040\",\n    \"lang\": \"en\",\n    \"text\": \"So I want to convince her that her product is great.\"\n  },\n  {\n    \"start\": \"00:00:16,200\",\n    \"end\": \"00:00:18,840\",\n    \"lang\": \"en\",\n    \"text\": \"I use it every day to write notes,\"\n  },\n  {\n    \"start\": \"00:00:18,840\",\n    \"end\": \"00:00:22,280\",\n    \"lang\": \"en\",\n    \"text\": \"to write every thought that pops up in my mind,\"\n  },\n  {\n    \"start\": \"00:00:22,280\",\n    \"end\": \"00:00:23,640\",\n    \"lang\": \"en\",\n    \"text\": \"make plans.\"\n  },\n  {\n    \"start\": \"00:00:23,640\",\n    \"end\": \"00:00:27,520\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this notebook is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:27,840\",\n    \"end\": \"00:00:29,680\",\n    \"lang\": \"en\",\n    \"text\": \"Every day when I see this cover,\"\n  },\n  {\n    \"start\": \"00:00:29,680\",\n    \"end\": \"00:00:33,100\",\n    \"lang\": \"en\",\n    \"text\": \"I have this desire to use it,\"\n  },\n  {\n    \"start\": \"00:00:33,100\",\n    \"end\": \"00:00:34,220\",\n    \"lang\": \"en\",\n    \"text\": \"to open it.\"\n  },\n  {\n    \"start\": \"00:00:34,720\",\n    \"end\": \"00:00:37,420\",\n    \"lang\": \"en\",\n    \"text\": \"But she dare not try.\"\n  },\n  {\n    \"start\": \"00:00:38,520\",\n    \"end\": \"00:00:51,120\",\n    \"lang\": \"en\",\n    \"text\": \"So I want to persuade her that she can present her work to the world on YouTube or Facebook.\"\n  },\n  {\n    \"start\": \"00:00:52,120\",\n    \"end\": \"00:00:55,900\",\n    \"lang\": \"en\",\n    \"text\": \"And also she can speak French.\"\n  },\n  {\n    \"start\": \"00:00:57,160\",\n    \"end\": \"00:01:10,180\",\n    \"lang\": \"en\",\n    \"text\": \"Maybe I want to help her to build a brand that can sell to France to connect with potential French customers.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,000",
+            "ko": "제 여동생은 이런 멋진 노트북을 만들어요."
+        },
+        {
+            "start": "00:00:05,500",
+            "end": "00:00:08,600",
+            "ko": "하지만 그녀는 그것이 평범하고 별로라고 생각해요."
+        },
+        {
+            "start": "00:00:09,340",
+            "end": "00:00:16,040",
+            "ko": "그래서 저는 그녀의 제품이 훌륭하다고 설득하고 싶어요."
+        },
+        {
+            "start": "00:00:16,200",
+            "end": "00:00:18,840",
+            "ko": "저는 매일 그것을 사용해서 메모를 해요,"
+        },
+        {
+            "start": "00:00:18,840",
+            "end": "00:00:22,280",
+            "ko": "머릿속에 떠오르는 모든 생각을 적고,"
+        },
+        {
+            "start": "00:00:22,280",
+            "end": "00:00:23,640",
+            "ko": "계획을 세워요."
+        },
+        {
+            "start": "00:00:23,640",
+            "end": "00:00:27,520",
+            "ko": "저는 이 노트북이 정말 멋지다고 생각해요."
+        },
+        {
+            "start": "00:00:27,840",
+            "end": "00:00:29,680",
+            "ko": "이 표지를 매일 볼 때마다,"
+        },
+        {
+            "start": "00:00:29,680",
+            "end": "00:00:33,100",
+            "ko": "그것을 사용하고 싶다는 욕구가 생겨요,"
+        },
+        {
+            "start": "00:00:33,100",
+            "end": "00:00:34,220",
+            "ko": "열어보고 싶어요."
+        },
+        {
+            "start": "00:00:34,720",
+            "end": "00:00:37,420",
+            "ko": "하지만 그녀는 시도조차 하지 않겠어요."
+        },
+        {
+            "start": "00:00:38,520",
+            "end": "00:00:51,120",
+            "ko": "그래서 저는 그녀가 YouTube나 Facebook에 그녀의 작품을 세상에 선보일 수 있다고 설득하고 싶어요."
+        },
+        {
+            "start": "00:00:52,120",
+            "end": "00:00:55,900",
+            "ko": "그리고 그녀는 프랑스어도 할 수 있어요."
+        },
+        {
+            "start": "00:00:57,160",
+            "end": "00:01:10,180",
+            "ko": "아마도 저는 그녀가 프랑스 시장에 판매할 수 있는 브랜드를 구축하도록 도우며 프랑스의 잠재 고객과 연결할 수 있게 하고 싶어요."
+        }
+    ]
+}

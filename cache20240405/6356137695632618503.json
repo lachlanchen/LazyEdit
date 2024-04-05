@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,500\",\n    \"lang\": \"zh\",\n    \"text\": \"全是老板的机器\"\n  },\n  {\n    \"start\": \"00:00:02,160\",\n    \"end\": \"00:00:03,680\",\n    \"lang\": \"zh\",\n    \"text\": \"老板说把我当嫁衣人\"\n  },\n  {\n    \"start\": \"00:00:03,680\",\n    \"end\": \"00:00:04,520\",\n    \"lang\": \"zh\",\n    \"text\": \"就是实话\"\n  },\n  {\n    \"start\": \"00:00:04,520\",\n    \"end\": \"00:00:05,780\",\n    \"lang\": \"zh\",\n    \"text\": \"你们其他人不用当\"\n  },\n  {\n    \"start\": \"00:00:05,780\",\n    \"end\": \"00:00:06,440\",\n    \"lang\": \"zh\",\n    \"text\": \"就是\"\n  },\n  {\n    \"start\": \"00:00:08,119\",\n    \"end\": \"00:00:09,840\",\n    \"lang\": \"zh\",\n    \"text\": \"他们还嫌另间区麻烦\"\n  },\n  {\n    \"start\": \"00:00:09,840\",\n    \"end\": \"00:00:11,320\",\n    \"lang\": \"zh\",\n    \"text\": \"直接把我搭到了他们的家庭\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,500",
+            "es": "Todas son máquinas del jefe",
+            "fr": "Ce sont toutes des machines du patron",
+            "uk": "Все це машини боса"
+        },
+        {
+            "start": "00:00:02,160",
+            "end": "00:00:03,680",
+            "es": "El jefe dijo que me trata como a una persona de la familia",
+            "fr": "Le patron a dit qu'il me traite comme un membre de la famille",
+            "uk": "Бос сказав, що ставиться до мене як до члена сім'ї"
+        },
+        {
+            "start": "00:00:03,680",
+            "end": "00:00:04,520",
+            "es": "Eso es la verdad",
+            "fr": "C'est la vérité",
+            "uk": "Це правда"
+        },
+        {
+            "start": "00:00:04,520",
+            "end": "00:00:05,780",
+            "es": "Los demás no necesitáis hacerlo",
+            "fr": "Les autres n'ont pas besoin de le faire",
+            "uk": "Іншим це не потрібно робити"
+        },
+        {
+            "start": "00:00:05,780",
+            "end": "00:00:06,440",
+            "es": "Eso es",
+            "fr": "C'est ça",
+            "uk": "Саме так"
+        },
+        {
+            "start": "00:00:08,119",
+            "end": "00:00:09,840",
+            "es": "También piensan que otra área es problemática",
+            "fr": "Ils trouvent aussi qu'un autre domaine pose problème",
+            "uk": "Вони також вважають, що інша область проблематична"
+        },
+        {
+            "start": "00:00:09,840",
+            "end": "00:00:11,320",
+            "es": "Directamente me llevaron a su familia",
+            "fr": "Ils m'ont directement amené dans leur famille",
+            "uk": "Вони прямо забрали мене до своєї сім'ї"
+        }
+    ]
+}

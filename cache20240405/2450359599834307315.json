@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,170\",\n    \"end\": \"00:01:03,930\",\n    \"lang\": \"en\",\n    \"text\": \"on the stream,\"\n  },\n  {\n    \"start\": \"00:01:03,930\",\n    \"end\": \"00:01:06,230\",\n    \"lang\": \"en\",\n    \"text\": \"so is this correct?\"\n  },\n  {\n    \"start\": \"00:01:07,650\",\n    \"end\": \"00:01:14,230\",\n    \"lang\": \"en\",\n    \"text\": \"So this is 4 over 4 times sine nature.\"\n  },\n  {\n    \"start\": \"00:01:15,570\",\n    \"end\": \"00:01:16,170\",\n    \"lang\": \"en\",\n    \"text\": \"Actually,\"\n  },\n  {\n    \"start\": \"00:01:16,170\",\n    \"end\": \"00:01:18,450\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's 4 over 4.\"\n  },\n  {\n    \"start\": \"00:01:19,170\",\n    \"end\": \"00:01:23,510\",\n    \"lang\": \"en\",\n    \"text\": \"I'm quite naive and stupid in music.\"\n  },\n  {\n    \"start\": \"00:01:24,650\",\n    \"end\": \"00:01:24,970\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:24,970\",\n    \"end\": \"00:01:25,450\",\n    \"lang\": \"en\",\n    \"text\": \"thank you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,170",
+            "end": "00:01:03,930",
+            "vi": "trên dòng,"
+        },
+        {
+            "start": "00:01:03,930",
+            "end": "00:01:06,230",
+            "vi": "vậy đúng không?"
+        },
+        {
+            "start": "00:01:07,650",
+            "end": "00:01:14,230",
+            "vi": "Vậy đây là 4 trên 4 nhân sin nghiêng."
+        },
+        {
+            "start": "00:01:15,570",
+            "end": "00:01:16,170",
+            "vi": "Thật ra,"
+        },
+        {
+            "start": "00:01:16,170",
+            "end": "00:01:18,450",
+            "vi": "tôi không biết nó là 4 trên 4."
+        },
+        {
+            "start": "00:01:19,170",
+            "end": "00:01:23,510",
+            "vi": "Tôi khá là ngốc nghếch và dại dột trong âm nhạc."
+        },
+        {
+            "start": "00:01:24,650",
+            "end": "00:01:24,970",
+            "vi": "Okay,"
+        },
+        {
+            "start": "00:01:24,970",
+            "end": "00:01:25,450",
+            "vi": "cảm ơn."
+        }
+    ]
+}

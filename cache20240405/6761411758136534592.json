@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,940\",\n    \"lang\": \"en\",\n    \"text\": \"This is my breakfast today.\"\n  },\n  {\n    \"start\": \"00:00:05,780\",\n    \"end\": \"00:00:08,340\",\n    \"lang\": \"en\",\n    \"text\": \"And two buns.\"\n  },\n  {\n    \"start\": \"00:00:12,034\",\n    \"end\": \"00:00:12,314\",\n    \"lang\": \"zh\",\n    \"text\": \"拜拜\"\n  },\n  {\n    \"start\": \"00:00:14,562\",\n    \"end\": \"00:00:14,842\",\n    \"lang\": \"en\",\n    \"text\": \"One,\"\n  },\n  {\n    \"start\": \"00:00:14,842\",\n    \"end\": \"00:00:15,962\",\n    \"lang\": \"en\",\n    \"text\": \"how to say one,\"\n  },\n  {\n    \"start\": \"00:00:15,962\",\n    \"end\": \"00:00:17,082\",\n    \"lang\": \"en\",\n    \"text\": \"one this.\"\n  },\n  {\n    \"start\": \"00:00:18,662\",\n    \"end\": \"00:00:19,702\",\n    \"lang\": \"en\",\n    \"text\": \"One bottle of this.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,940",
+            "es": "Este es mi desayuno de hoy.",
+            "fr": "Ceci est mon petit-déjeuner aujourd'hui.",
+            "uk": "Це мій сніданок сьогодні."
+        },
+        {
+            "start": "00:00:05,780",
+            "end": "00:00:08,340",
+            "es": "Y dos bollos.",
+            "fr": "Et deux petits pains.",
+            "uk": "І дві булочки."
+        },
+        {
+            "start": "00:00:12,034",
+            "end": "00:00:12,314",
+            "es": "Adiós",
+            "fr": "Au revoir",
+            "uk": "Бувай"
+        },
+        {
+            "start": "00:00:14,562",
+            "end": "00:00:14,842",
+            "es": "Uno,",
+            "fr": "Un,",
+            "uk": "Один,"
+        },
+        {
+            "start": "00:00:14,842",
+            "end": "00:00:15,962",
+            "es": "cómo decir uno,",
+            "fr": "comment dire un,",
+            "uk": "як сказати один,"
+        },
+        {
+            "start": "00:00:15,962",
+            "end": "00:00:17,082",
+            "es": "uno esto.",
+            "fr": "un ceci.",
+            "uk": "один це."
+        },
+        {
+            "start": "00:00:18,662",
+            "end": "00:00:19,702",
+            "es": "Una botella de esto.",
+            "fr": "Une bouteille de ceci.",
+            "uk": "Одна пляшка цього."
+        }
+    ]
+}

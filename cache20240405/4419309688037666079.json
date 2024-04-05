@@ -1,0 +1,147 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,480\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,480\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"en\",\n    \"text\": \"konnichiwa.\"\n  },\n  {\n    \"start\": \"00:00:01,980\",\n    \"end\": \"00:00:06,000\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our North rice noodles.\"\n  },\n  {\n    \"start\": \"00:00:06,594\",\n    \"end\": \"00:00:07,214\",\n    \"lang\": \"zh\",\n    \"text\": \"螺螄粉\"\n  },\n  {\n    \"start\": \"00:00:08,034\",\n    \"end\": \"00:00:08,494\",\n    \"lang\": \"zh\",\n    \"text\": \"这是\"\n  },\n  {\n    \"start\": \"00:00:10,413\",\n    \"end\": \"00:00:11,374\",\n    \"lang\": \"zh\",\n    \"text\": \"这是我们\"\n  },\n  {\n    \"start\": \"00:00:12,254\",\n    \"end\": \"00:00:14,014\",\n    \"lang\": \"zh\",\n    \"text\": \"最好吃的螺螄粉\"\n  },\n  {\n    \"start\": \"00:00:14,593\",\n    \"end\": \"00:00:15,774\",\n    \"lang\": \"zh\",\n    \"text\": \"来尝一下\"\n  },\n  {\n    \"start\": \"00:00:17,570\",\n    \"end\": \"00:00:18,210\",\n    \"lang\": \"en\",\n    \"text\": \"It's tasty.\"\n  },\n  {\n    \"start\": \"00:00:21,538\",\n    \"end\": \"00:00:22,958\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの\"\n  },\n  {\n    \"start\": \"00:00:25,938\",\n    \"end\": \"00:00:28,438\",\n    \"lang\": \"ja\",\n    \"text\": \"このノースレスルース\"\n  },\n  {\n    \"start\": \"00:00:30,690\",\n    \"end\": \"00:00:32,110\",\n    \"lang\": \"zh\",\n    \"text\": \"嘗一下用日語咋說的\"\n  },\n  {\n    \"start\": \"00:00:32,110\",\n    \"end\": \"00:00:33,550\",\n    \"lang\": \"zh\",\n    \"text\": \"我怎麼突然想不起來呢\"\n  },\n  {\n    \"start\": \"00:00:34,146\",\n    \"end\": \"00:00:37,946\",\n    \"lang\": \"en\",\n    \"text\": \"I just can't remember how to say...\"\n  },\n  {\n    \"start\": \"00:00:40,130\",\n    \"end\": \"00:00:40,630\",\n    \"lang\": \"zh\",\n    \"text\": \"嚐了一下\"\n  },\n  {\n    \"start\": \"00:00:42,306\",\n    \"end\": \"00:00:43,786\",\n    \"lang\": \"en\",\n    \"text\": \"taste it in Japanese.\"\n  },\n  {\n    \"start\": \"00:00:47,806\",\n    \"end\": \"00:00:48,606\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:48,606\",\n    \"end\": \"00:00:51,126\",\n    \"lang\": \"en\",\n    \"text\": \"this taste is,\"\n  },\n  {\n    \"start\": \"00:00:51,126\",\n    \"end\": \"00:00:52,786\",\n    \"lang\": \"en\",\n    \"text\": \"I think,\"\n  },\n  {\n    \"start\": \"00:00:52,786\",\n    \"end\": \"00:01:00,566\",\n    \"lang\": \"en\",\n    \"text\": \"is not just the flavor bag of this instant rice noodles.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,480",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:00,480",
+            "end": "00:00:01,980",
+            "en": "Hello.",
+            "zh": "你好。",
+            "ar": "مرحبا."
+        },
+        {
+            "start": "00:00:01,980",
+            "end": "00:00:06,000",
+            "en": "So this is our North rice noodles.",
+            "zh": "所以这是我们的北方米线。",
+            "ar": "إذًا، هذه هي شعيرية الأرز الشمالية لدينا."
+        },
+        {
+            "start": "00:00:06,594",
+            "end": "00:00:07,214",
+            "en": "Snail noodle soup,",
+            "zh": "螺蛳粉，",
+            "ar": "حساء شعيرية الحلزون،"
+        },
+        {
+            "start": "00:00:08,034",
+            "end": "00:00:08,494",
+            "en": "this is",
+            "zh": "这是",
+            "ar": "هذه هي"
+        },
+        {
+            "start": "00:00:10,413",
+            "end": "00:00:11,374",
+            "en": "this is our",
+            "zh": "这是我们",
+            "ar": "هذه هي لنا"
+        },
+        {
+            "start": "00:00:12,254",
+            "end": "00:00:14,014",
+            "en": "the tastiest snail noodle soup.",
+            "zh": "最好吃的螺蛳粉。",
+            "ar": "شوربة الشعيرية بالحلزون الألذ."
+        },
+        {
+            "start": "00:00:14,593",
+            "end": "00:00:15,774",
+            "en": "Take a taste.",
+            "zh": "来尝一下。",
+            "ar": "تذوقه."
+        },
+        {
+            "start": "00:00:17,570",
+            "end": "00:00:18,210",
+            "en": "It's tasty.",
+            "zh": "它很美味。",
+            "ar": "إنه لذيذ."
+        },
+        {
+            "start": "00:00:21,538",
+            "end": "00:00:22,958",
+            "en": "I",
+            "zh": "我",
+            "ar": "أنا",
+            "ja": "私はこの"
+        },
+        {
+            "start": "00:00:25,938",
+            "end": "00:00:28,438",
+            "en": "these North rice noodles",
+            "zh": "这些北方米线",
+            "ar": "هذه شعيرية الأرز الشمالية",
+            "ja": "このノースレスルース"
+        },
+        {
+            "start": "00:00:30,690",
+            "end": "00:00:32,110",
+            "en": "How do you say 'try it' in Japanese?",
+            "zh": "嘗一下用日語怎麼說?",
+            "ar": "كيف تقول 'جربه' باليابانية؟"
+        },
+        {
+            "start": "00:00:32,110",
+            "end": "00:00:33,550",
+            "en": "Why can't I suddenly remember?",
+            "zh": "我怎麼突然想不起來呢?",
+            "ar": "لماذا لا أستطيع أن أتذكر فجأة؟"
+        },
+        {
+            "start": "00:00:34,146",
+            "end": "00:00:37,946",
+            "en": "I just can't remember how to say...",
+            "zh": "我就是想不起来怎么说...",
+            "ar": "أنا فقط لا أستطيع تذكر كيف أقول..."
+        },
+        {
+            "start": "00:00:40,130",
+            "end": "00:00:40,630",
+            "en": "Tried it a bit,",
+            "zh": "试了一下，",
+            "ar": "جربته قليلاً،"
+        },
+        {
+            "start": "00:00:42,306",
+            "end": "00:00:43,786",
+            "en": "taste it in Japanese.",
+            "zh": "用日语来尝尝。",
+            "ar": "تذوقه باليابانية."
+        },
+        {
+            "start": "00:00:47,806",
+            "end": "00:00:48,606",
+            "en": "Wow,",
+            "zh": "哇，",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:00:48,606",
+            "end": "00:00:51,126",
+            "en": "this taste is,",
+            "zh": "这个味道是，",
+            "ar": "هذا الطعم هو،"
+        },
+        {
+            "start": "00:00:51,126",
+            "end": "00:00:52,786",
+            "en": "I think,",
+            "zh": "我认为，",
+            "ar": "أعتقد،"
+        },
+        {
+            "start": "00:00:52,786",
+            "end": "00:01:00,566",
+            "en": "is not just the flavor pack of these instant rice noodles.",
+            "zh": "不仅仅是这些即食米线的调料包。",
+            "ar": "ليس مجرد حزمة نكهة هذه شعيرية الأرز الفورية."
+        }
+    ]
+}

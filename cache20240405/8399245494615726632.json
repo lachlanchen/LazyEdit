@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:10,626\",\n    \"end\": \"00:01:11,166\",\n    \"lang\": \"zh\",\n    \"text\": \"多汁\"\n  },\n  {\n    \"start\": \"00:01:11,366\",\n    \"end\": \"00:01:11,666\",\n    \"lang\": \"zh\",\n    \"text\": \"多味\"\n  },\n  {\n    \"start\": \"00:01:11,786\",\n    \"end\": \"00:01:12,186\",\n    \"lang\": \"zh\",\n    \"text\": \"麻辣的一碗\"\n  },\n  {\n    \"start\": \"00:01:19,682\",\n    \"end\": \"00:01:19,902\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:19,902\",\n    \"end\": \"00:01:20,322\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:10,626",
+            "end": "00:01:11,166",
+            "en": "Juicy",
+            "zh": "多汁",
+            "ar": "العصير"
+        },
+        {
+            "start": "00:01:11,366",
+            "end": "00:01:11,666",
+            "en": "Flavorful",
+            "zh": "多味",
+            "ar": "مليء بالنكهات"
+        },
+        {
+            "start": "00:01:11,786",
+            "end": "00:01:12,186",
+            "en": "A spicy bowl",
+            "zh": "麻辣的一碗",
+            "ar": "وعاء حار"
+        },
+        {
+            "start": "00:01:19,682",
+            "end": "00:01:19,902",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:01:19,902",
+            "end": "00:01:20,322",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقًا."
+        }
+    ]
+}

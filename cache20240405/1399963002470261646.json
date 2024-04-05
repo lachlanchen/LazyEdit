@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,100\",\n    \"lang\": \"zh\",\n    \"text\": \"哇\"\n  },\n  {\n    \"start\": \"00:00:00,200\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"zh\",\n    \"text\": \"这里好多狗\"\n  },\n  {\n    \"start\": \"00:00:01,979\",\n    \"end\": \"00:00:03,300\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是柴犬呢\"\n  },\n  {\n    \"start\": \"00:00:03,300\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"zh\",\n    \"text\": \"喜棒\"\n  },\n  {\n    \"start\": \"00:00:04,460\",\n    \"end\": \"00:00:04,860\",\n    \"lang\": \"zh\",\n    \"text\": \"狗狗\"\n  },\n  {\n    \"start\": \"00:00:04,898\",\n    \"end\": \"00:00:06,158\",\n    \"lang\": \"ja\",\n    \"text\": \"この芝は可愛いです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,100",
+            "vi": "Wow"
+        },
+        {
+            "start": "00:00:00,200",
+            "end": "00:00:01,460",
+            "vi": "Ở đây có nhiều chó quá"
+        },
+        {
+            "start": "00:00:01,979",
+            "end": "00:00:03,300",
+            "vi": "Đây là chó Shiba đấy"
+        },
+        {
+            "start": "00:00:03,300",
+            "end": "00:00:03,780",
+            "vi": "Tuyệt vời"
+        },
+        {
+            "start": "00:00:04,460",
+            "end": "00:00:04,860",
+            "vi": "Chó con"
+        },
+        {
+            "start": "00:00:04,898",
+            "end": "00:00:06,158",
+            "vi": "Bãi cỏ này đáng yêu quá"
+        }
+    ]
+}

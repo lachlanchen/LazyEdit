@@ -1,0 +1,125 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,440\",\n    \"end\": \"00:01:01,720\",\n    \"lang\": \"en\",\n    \"text\": \"Actually,\"\n  },\n  {\n    \"start\": \"00:01:01,720\",\n    \"end\": \"00:01:02,280\",\n    \"lang\": \"en\",\n    \"text\": \"I believe.\"\n  },\n  {\n    \"start\": \"00:01:02,280\",\n    \"end\": \"00:01:06,240\",\n    \"lang\": \"en\",\n    \"text\": \"I can't give the same as they expected to them.\"\n  },\n  {\n    \"start\": \"00:01:06,240\",\n    \"end\": \"00:01:08,860\",\n    \"lang\": \"en\",\n    \"text\": \"Because...\"\n  },\n  {\n    \"start\": \"00:01:10,434\",\n    \"end\": \"00:01:10,694\",\n    \"lang\": \"ja\",\n    \"text\": \"はい、\"\n  },\n  {\n    \"start\": \"00:01:10,694\",\n    \"end\": \"00:01:10,934\",\n    \"lang\": \"ja\",\n    \"text\": \"じゃあ、\"\n  },\n  {\n    \"start\": \"00:01:10,934\",\n    \"end\": \"00:01:11,414\",\n    \"lang\": \"ja\",\n    \"text\": \"スティーブ\"\n  },\n  {\n    \"start\": \"00:01:12,482\",\n    \"end\": \"00:01:14,462\",\n    \"lang\": \"en\",\n    \"text\": \"is casually be myself.\"\n  },\n  {\n    \"start\": \"00:01:15,282\",\n    \"end\": \"00:01:20,122\",\n    \"lang\": \"en\",\n    \"text\": \"So accidentally I can provide some value for some people,\"\n  },\n  {\n    \"start\": \"00:01:20,342\",\n    \"end\": \"00:01:21,842\",\n    \"lang\": \"en\",\n    \"text\": \"but not any much more.\"\n  },\n  {\n    \"start\": \"00:01:24,962\",\n    \"end\": \"00:01:26,822\",\n    \"lang\": \"en\",\n    \"text\": \"And so I,\"\n  },\n  {\n    \"start\": \"00:01:26,822\",\n    \"end\": \"00:01:30,522\",\n    \"lang\": \"en\",\n    \"text\": \"freedom is quite an important element in my life.\"\n  },\n  {\n    \"start\": \"00:01:31,262\",\n    \"end\": \"00:01:32,182\",\n    \"lang\": \"en\",\n    \"text\": \"Financial freedom,\"\n  },\n  {\n    \"start\": \"00:01:32,182\",\n    \"end\": \"00:01:32,762\",\n    \"lang\": \"en\",\n    \"text\": \"sex,\"\n  },\n  {\n    \"start\": \"00:01:32,762\",\n    \"end\": \"00:01:33,442\",\n    \"lang\": \"en\",\n    \"text\": \"love,\"\n  },\n  {\n    \"start\": \"00:01:33,442\",\n    \"end\": \"00:01:34,211\",\n    \"lang\": \"en\",\n    \"text\": \"and what?\"\n  },\n  {\n    \"start\": \"00:01:38,202\",\n    \"end\": \"00:01:39,682\",\n    \"lang\": \"en\",\n    \"text\": \"And thinking,\"\n  },\n  {\n    \"start\": \"00:01:39,682\",\n    \"end\": \"00:01:41,842\",\n    \"lang\": \"en\",\n    \"text\": \"thinking freely and,\"\n  },\n  {\n    \"start\": \"00:01:42,482\",\n    \"end\": \"00:01:46,802\",\n    \"lang\": \"en\",\n    \"text\": \"thinking freely and also research freedom.\"\n  },\n  {\n    \"start\": \"00:01:53,721\",\n    \"end\": \"00:01:54,202\",\n    \"lang\": \"en\",\n    \"text\": \"This is,\"\n  },\n  {\n    \"start\": \"00:01:54,202\",\n    \"end\": \"00:01:55,142\",\n    \"lang\": \"en\",\n    \"text\": \"this is tasty,\"\n  },\n  {\n    \"start\": \"00:01:55,142\",\n    \"end\": \"00:01:56,302\",\n    \"lang\": \"en\",\n    \"text\": \"gorgeous really.\"\n  },\n  {\n    \"start\": \"00:01:57,782\",\n    \"end\": \"00:01:59,242\",\n    \"lang\": \"en\",\n    \"text\": \"So what is a freedom?\"\n  },\n  {\n    \"start\": \"00:02:00,502\",\n    \"end\": \"00:02:01,782\",\n    \"lang\": \"en\",\n    \"text\": \"But a freedom is not a,\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,440",
+            "end": "00:01:01,720",
+            "ko": "사실은,"
+        },
+        {
+            "start": "00:01:01,720",
+            "end": "00:01:02,280",
+            "ko": "내 생각에는."
+        },
+        {
+            "start": "00:01:02,280",
+            "end": "00:01:06,240",
+            "ko": "그들이 기대한 것처럼 할 수 없어요."
+        },
+        {
+            "start": "00:01:06,240",
+            "end": "00:01:08,860",
+            "ko": "왜냐하면..."
+        },
+        {
+            "start": "00:01:10,434",
+            "end": "00:01:10,694",
+            "ko": "네,"
+        },
+        {
+            "start": "00:01:10,694",
+            "end": "00:01:10,934",
+            "ko": "그럼,"
+        },
+        {
+            "start": "00:01:10,934",
+            "end": "00:01:11,414",
+            "ko": "스티브"
+        },
+        {
+            "start": "00:01:12,482",
+            "end": "00:01:14,462",
+            "ko": "그냥 나답게 행동하는 거야."
+        },
+        {
+            "start": "00:01:15,282",
+            "end": "00:01:20,122",
+            "ko": "그래서 우연히 몇몇 사람들에게 가치를 줄 수 있어,"
+        },
+        {
+            "start": "00:01:20,342",
+            "end": "00:01:21,842",
+            "ko": "하지만 그 이상은 아니야."
+        },
+        {
+            "start": "00:01:24,962",
+            "end": "00:01:26,822",
+            "ko": "그래서 나는,"
+        },
+        {
+            "start": "00:01:26,822",
+            "end": "00:01:30,522",
+            "ko": "자유는 내 삶에서 굉장히 중요한 요소야."
+        },
+        {
+            "start": "00:01:31,262",
+            "end": "00:01:32,182",
+            "ko": "재정적 자유,"
+        },
+        {
+            "start": "00:01:32,182",
+            "end": "00:01:32,762",
+            "ko": "섹스,"
+        },
+        {
+            "start": "00:01:32,762",
+            "end": "00:01:33,442",
+            "ko": "사랑,"
+        },
+        {
+            "start": "00:01:33,442",
+            "end": "00:01:34,211",
+            "ko": "그리고 뭐?"
+        },
+        {
+            "start": "00:01:38,202",
+            "end": "00:01:39,682",
+            "ko": "그리고 생각하는 거,"
+        },
+        {
+            "start": "00:01:39,682",
+            "end": "00:01:41,842",
+            "ko": "자유롭게 생각하고,"
+        },
+        {
+            "start": "00:01:42,482",
+            "end": "00:01:46,802",
+            "ko": "자유롭게 생각하고 또한 연구의 자유."
+        },
+        {
+            "start": "00:01:53,721",
+            "end": "00:01:54,202",
+            "ko": "이것은,"
+        },
+        {
+            "start": "00:01:54,202",
+            "end": "00:01:55,142",
+            "ko": "이거 맛있어요,"
+        },
+        {
+            "start": "00:01:55,142",
+            "end": "00:01:56,302",
+            "ko": "정말 환상적이야."
+        },
+        {
+            "start": "00:01:57,782",
+            "end": "00:01:59,242",
+            "ko": "그렇다면 자유란 무엇인가?"
+        },
+        {
+            "start": "00:02:00,502",
+            "end": "00:02:01,782",
+            "ko": "하지만 자유는,"
+        }
+    ]
+}

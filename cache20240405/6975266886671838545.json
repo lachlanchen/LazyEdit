@@ -1,0 +1,152 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:24,485\",\n    \"end\": \"00:02:26,826\",\n    \"lang\": \"en\",\n    \"text\": \"let's have some nuts\"\n  },\n  {\n    \"start\": \"00:02:29,045\",\n    \"end\": \"00:02:30,426\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's good\"\n  },\n  {\n    \"start\": \"00:02:30,426\",\n    \"end\": \"00:02:32,646\",\n    \"lang\": \"en\",\n    \"text\": \"I just eat the orange\"\n  },\n  {\n    \"start\": \"00:02:32,646\",\n    \"end\": \"00:02:34,126\",\n    \"lang\": \"en\",\n    \"text\": \"and I have the nuts\"\n  },\n  {\n    \"start\": \"00:02:34,126\",\n    \"end\": \"00:02:34,486\",\n    \"lang\": \"en\",\n    \"text\": \"because\"\n  },\n  {\n    \"start\": \"00:02:38,466\",\n    \"end\": \"00:02:39,906\",\n    \"lang\": \"en\",\n    \"text\": \"the acid\"\n  },\n  {\n    \"start\": \"00:02:40,146\",\n    \"end\": \"00:02:40,506\",\n    \"lang\": \"en\",\n    \"text\": \"can\"\n  },\n  {\n    \"start\": \"00:02:42,106\",\n    \"end\": \"00:02:43,506\",\n    \"lang\": \"en\",\n    \"text\": \"soften my teeth\"\n  },\n  {\n    \"start\": \"00:02:43,506\",\n    \"end\": \"00:02:45,705\",\n    \"lang\": \"en\",\n    \"text\": \"and I eat the hard nuts\"\n  },\n  {\n    \"start\": \"00:02:46,426\",\n    \"end\": \"00:02:47,306\",\n    \"lang\": \"en\",\n    \"text\": \"so it\"\n  },\n  {\n    \"start\": \"00:02:48,566\",\n    \"end\": \"00:02:50,806\",\n    \"lang\": \"en\",\n    \"text\": \"will damage my teeth\"\n  },\n  {\n    \"start\": \"00:03:01,386\",\n    \"end\": \"00:03:02,086\",\n    \"lang\": \"en\",\n    \"text\": \"ok\"\n  },\n  {\n    \"start\": \"00:03:02,826\",\n    \"end\": \"00:03:03,706\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  },\n  {\n    \"start\": \"00:03:04,886\",\n    \"end\": \"00:03:07,366\",\n    \"lang\": \"en\",\n    \"text\": \"by the way\"\n  },\n  {\n    \"start\": \"00:03:11,126\",\n    \"end\": \"00:03:12,766\",\n    \"lang\": \"en\",\n    \"text\": \"by the way\"\n  },\n  {\n    \"start\": \"00:03:12,766\",\n    \"end\": \"00:03:13,446\",\n    \"lang\": \"en\",\n    \"text\": \"I added\"\n  },\n  {\n    \"start\": \"00:03:13,446\",\n    \"end\": \"00:03:16,106\",\n    \"lang\": \"en\",\n    \"text\": \"a microphone\"\n  },\n  {\n    \"start\": \"00:03:16,806\",\n    \"end\": \"00:03:19,226\",\n    \"lang\": \"en\",\n    \"text\": \"a microphone symbol\"\n  },\n  {\n    \"start\": \"00:03:19,226\",\n    \"end\": \"00:03:21,406\",\n    \"lang\": \"en\",\n    \"text\": \"and a subtitle\"\n  },\n  {\n    \"start\": \"00:03:21,406\",\n    \"end\": \"00:03:23,246\",\n    \"lang\": \"en\",\n    \"text\": \"that corresponds to\"\n  },\n  {\n    \"start\": \"00:03:23,246\",\n    \"end\": \"00:03:23,846\",\n    \"lang\": \"en\",\n    \"text\": \"the real\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:24,485",
+            "end": "00:02:26,826",
+            "es": "vamos a comer algunos frutos secos",
+            "fr": "prenons quelques noix",
+            "uk": "давайте їсти деякі горішки"
+        },
+        {
+            "start": "00:02:29,045",
+            "end": "00:02:30,426",
+            "es": "no sé si es bueno",
+            "fr": "je ne sais pas si c'est bon",
+            "uk": "не знаю, чи це добре"
+        },
+        {
+            "start": "00:02:30,426",
+            "end": "00:02:32,646",
+            "es": "solo como la naranja",
+            "fr": "je mange juste l'orange",
+            "uk": "я просто їм апельсин"
+        },
+        {
+            "start": "00:02:32,646",
+            "end": "00:02:34,126",
+            "es": "y tengo los frutos secos",
+            "fr": "et j'ai les noix",
+            "uk": "і в мене є горішки"
+        },
+        {
+            "start": "00:02:34,126",
+            "end": "00:02:34,486",
+            "es": "porque",
+            "fr": "parce que",
+            "uk": "бо"
+        },
+        {
+            "start": "00:02:38,466",
+            "end": "00:02:39,906",
+            "es": "el ácido",
+            "fr": "l'acide",
+            "uk": "кислота"
+        },
+        {
+            "start": "00:02:40,146",
+            "end": "00:02:40,506",
+            "es": "puede",
+            "fr": "peut",
+            "uk": "може"
+        },
+        {
+            "start": "00:02:42,106",
+            "end": "00:02:43,506",
+            "es": "suavizar mis dientes",
+            "fr": "ramollir mes dents",
+            "uk": "розм'якшити мої зуби"
+        },
+        {
+            "start": "00:02:43,506",
+            "end": "00:02:45,705",
+            "es": "y yo como los frutos secos duros",
+            "fr": "et je mange les noix dures",
+            "uk": "і я їм тверді горішки"
+        },
+        {
+            "start": "00:02:46,426",
+            "end": "00:02:47,306",
+            "es": "así que",
+            "fr": "alors ça",
+            "uk": "тож це"
+        },
+        {
+            "start": "00:02:48,566",
+            "end": "00:02:50,806",
+            "es": "dañará mis dientes",
+            "fr": "va endommager mes dents",
+            "uk": "пошкодить мої зуби"
+        },
+        {
+            "start": "00:03:01,386",
+            "end": "00:03:02,086",
+            "es": "vale",
+            "fr": "d'accord",
+            "uk": "добре"
+        },
+        {
+            "start": "00:03:02,826",
+            "end": "00:03:03,706",
+            "es": "nos vemos",
+            "fr": "à bientôt",
+            "uk": "до зустрічі"
+        },
+        {
+            "start": "00:03:04,886",
+            "end": "00:03:07,366",
+            "es": "por cierto",
+            "fr": "au fait",
+            "uk": "до речі"
+        },
+        {
+            "start": "00:03:11,126",
+            "end": "00:03:12,766",
+            "es": "a propósito",
+            "fr": "en passant",
+            "uk": "між іншим"
+        },
+        {
+            "start": "00:03:12,766",
+            "end": "00:03:13,446",
+            "es": "he añadido",
+            "fr": "j'ai ajouté",
+            "uk": "я додав"
+        },
+        {
+            "start": "00:03:13,446",
+            "end": "00:03:16,106",
+            "es": "un micrófono",
+            "fr": "un microphone",
+            "uk": "мікрофон"
+        },
+        {
+            "start": "00:03:16,806",
+            "end": "00:03:19,226",
+            "es": "un símbolo de micrófono",
+            "fr": "un symbole de microphone",
+            "uk": "символ мікрофона"
+        },
+        {
+            "start": "00:03:19,226",
+            "end": "00:03:21,406",
+            "es": "y un subtítulo",
+            "fr": "et un sous-titre",
+            "uk": "і субтитр"
+        },
+        {
+            "start": "00:03:21,406",
+            "end": "00:03:23,246",
+            "es": "que corresponde a",
+            "fr": "qui correspond à",
+            "uk": "що відповідає"
+        },
+        {
+            "start": "00:03:23,246",
+            "end": "00:03:23,846",
+            "es": "lo real",
+            "fr": "le réel",
+            "uk": "справжньому"
+        }
+    ]
+}

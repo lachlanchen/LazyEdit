@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:03,782\",\n    \"end\": \"00:02:04,642\",\n    \"lang\": \"en\",\n    \"text\": \"who you are,\"\n  },\n  {\n    \"start\": \"00:02:04,642\",\n    \"end\": \"00:02:05,882\",\n    \"lang\": \"en\",\n    \"text\": \"what's your achievement,\"\n  },\n  {\n    \"start\": \"00:02:05,882\",\n    \"end\": \"00:02:11,182\",\n    \"lang\": \"en\",\n    \"text\": \"at the end we will become dust.\"\n  },\n  {\n    \"start\": \"00:02:11,182\",\n    \"end\": \"00:02:16,922\",\n    \"lang\": \"en\",\n    \"text\": \"We will return everything\"\n  },\n  {\n    \"start\": \"00:02:16,922\",\n    \"end\": \"00:02:18,942\",\n    \"lang\": \"en\",\n    \"text\": \"that we have to the universe.\"\n  },\n  {\n    \"start\": \"00:02:18,942\",\n    \"end\": \"00:02:29,542\",\n    \"lang\": \"en\",\n    \"text\": \"So enjoy the experience in this journey and make it better.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:03,782",
+            "end": "00:02:04,642",
+            "ko": "당신이 누구든,"
+        },
+        {
+            "start": "00:02:04,642",
+            "end": "00:02:05,882",
+            "ko": "당신의 성취가 무엇이든,"
+        },
+        {
+            "start": "00:02:05,882",
+            "end": "00:02:11,182",
+            "ko": "결국 우리는 모두 먼지가 될 것입니다."
+        },
+        {
+            "start": "00:02:11,182",
+            "end": "00:02:16,922",
+            "ko": "우리는 모든 것을"
+        },
+        {
+            "start": "00:02:16,922",
+            "end": "00:02:18,942",
+            "ko": "우주에 돌려줄 것입니다."
+        },
+        {
+            "start": "00:02:18,942",
+            "end": "00:02:29,542",
+            "ko": "그러니 이 여정에서 경험을 즐기고 더 나은 것을 만드세요."
+        }
+    ]
+}

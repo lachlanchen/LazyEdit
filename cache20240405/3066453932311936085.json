@@ -1,0 +1,140 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:04,318\",\n    \"end\": \"00:02:05,778\",\n    \"lang\": \"en\",\n    \"text\": \"lead them\"\n  },\n  {\n    \"start\": \"00:02:07,398\",\n    \"end\": \"00:02:10,638\",\n    \"lang\": \"en\",\n    \"text\": \"until they finally can figure out themselves.\"\n  },\n  {\n    \"start\": \"00:02:11,578\",\n    \"end\": \"00:02:11,798\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:13,138\",\n    \"end\": \"00:02:14,518\",\n    \"lang\": \"en\",\n    \"text\": \"Professor Guttner didn't\"\n  },\n  {\n    \"start\": \"00:02:16,148\",\n    \"end\": \"00:02:19,438\",\n    \"lang\": \"en\",\n    \"text\": \"put any comments on which education system is,\"\n  },\n  {\n    \"start\": \"00:02:19,978\",\n    \"end\": \"00:02:22,878\",\n    \"lang\": \"en\",\n    \"text\": \"which method is better or worse.\"\n  },\n  {\n    \"start\": \"00:02:23,878\",\n    \"end\": \"00:02:26,138\",\n    \"lang\": \"en\",\n    \"text\": \"Both have its advantages.\"\n  },\n  {\n    \"start\": \"00:02:27,018\",\n    \"end\": \"00:02:29,238\",\n    \"lang\": \"en\",\n    \"text\": \"Like in learning art,\"\n  },\n  {\n    \"start\": \"00:02:31,938\",\n    \"end\": \"00:02:34,598\",\n    \"lang\": \"en\",\n    \"text\": \"before I learned calligraphy,\"\n  },\n  {\n    \"start\": \"00:02:34,818\",\n    \"end\": \"00:02:35,918\",\n    \"lang\": \"en\",\n    \"text\": \"that is a teacher had said,\"\n  },\n  {\n    \"start\": \"00:02:36,838\",\n    \"end\": \"00:02:38,938\",\n    \"lang\": \"en\",\n    \"text\": \"even though calligraphy is art,\"\n  },\n  {\n    \"start\": \"00:02:39,738\",\n    \"end\": \"00:02:40,658\",\n    \"lang\": \"en\",\n    \"text\": \"but firstly,\"\n  },\n  {\n    \"start\": \"00:02:41,474\",\n    \"end\": \"00:02:42,414\",\n    \"lang\": \"ja\",\n    \"text\": \"いつも好きよ\"\n  },\n  {\n    \"start\": \"00:02:43,106\",\n    \"end\": \"00:02:44,886\",\n    \"lang\": \"en\",\n    \"text\": \"So you first need to...\"\n  },\n  {\n    \"start\": \"00:02:45,890\",\n    \"end\": \"00:02:47,070\",\n    \"lang\": \"ja\",\n    \"text\": \"マスターズ好きよ!\"\n  },\n  {\n    \"start\": \"00:02:48,098\",\n    \"end\": \"00:02:50,578\",\n    \"lang\": \"en\",\n    \"text\": \"then you can talk about art.\"\n  },\n  {\n    \"start\": \"00:02:51,198\",\n    \"end\": \"00:02:51,778\",\n    \"lang\": \"en\",\n    \"text\": \"So...\"\n  },\n  {\n    \"start\": \"00:02:52,994\",\n    \"end\": \"00:02:55,174\",\n    \"lang\": \"zh\",\n    \"text\": \"但我我有点..\"\n  },\n  {\n    \"start\": \"00:02:57,986\",\n    \"end\": \"00:03:05,446\",\n    \"lang\": \"en\",\n    \"text\": \"I'm a combination of these various different education concepts,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:04,318",
+            "end": "00:02:05,778",
+            "en": "lead them",
+            "zh": "引导他们",
+            "ar": "قيادتهم"
+        },
+        {
+            "start": "00:02:07,398",
+            "end": "00:02:10,638",
+            "en": "until they finally can figure out themselves.",
+            "zh": "直到他们最终能够自己弄明白。",
+            "ar": "حتى يتمكنوا أخيرًا من فهم أنفسهم."
+        },
+        {
+            "start": "00:02:11,578",
+            "end": "00:02:11,798",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذا،"
+        },
+        {
+            "start": "00:02:13,138",
+            "end": "00:02:14,518",
+            "en": "Professor Guttner didn't",
+            "zh": "古特纳教授没有",
+            "ar": "الأستاذ جوتنر لم"
+        },
+        {
+            "start": "00:02:16,148",
+            "end": "00:02:19,438",
+            "en": "put any comments on which education system is,",
+            "zh": "对哪种教育系统进行任何评论，",
+            "ar": "لم يعلق على أي نظام تعليمي،"
+        },
+        {
+            "start": "00:02:19,978",
+            "end": "00:02:22,878",
+            "en": "which method is better or worse.",
+            "zh": "哪种方法更好或更差。",
+            "ar": "أي الأساليب أفضل أو أسوأ."
+        },
+        {
+            "start": "00:02:23,878",
+            "end": "00:02:26,138",
+            "en": "Both have its advantages.",
+            "zh": "两者都有其优点。",
+            "ar": "كلاهما له مزاياه."
+        },
+        {
+            "start": "00:02:27,018",
+            "end": "00:02:29,238",
+            "en": "Like in learning art,",
+            "zh": "就像在学习艺术中，",
+            "ar": "مثل في تعلم الفن،"
+        },
+        {
+            "start": "00:02:31,938",
+            "end": "00:02:34,598",
+            "en": "before I learned calligraphy,",
+            "zh": "在我学习书法之前，",
+            "ar": "قبل أن أتعلم الخط،"
+        },
+        {
+            "start": "00:02:34,818",
+            "end": "00:02:35,918",
+            "en": "that is a teacher had said,",
+            "zh": "那是一位老师曾经说过，",
+            "ar": "هذا ما قاله معلم،"
+        },
+        {
+            "start": "00:02:36,838",
+            "end": "00:02:38,938",
+            "en": "even though calligraphy is art,",
+            "zh": "尽管书法是艺术，",
+            "ar": "على الرغم من أن الخط هو فن،"
+        },
+        {
+            "start": "00:02:39,738",
+            "end": "00:02:40,658",
+            "en": "but firstly,",
+            "zh": "但首先，",
+            "ar": "ولكن أولاً،"
+        },
+        {
+            "start": "00:02:41,474",
+            "end": "00:02:42,414",
+            "en": "I always like it",
+            "zh": "我总是喜欢它",
+            "ar": "أنا دائمًا أحبه",
+            "ja": "いつも好きよ"
+        },
+        {
+            "start": "00:02:43,106",
+            "end": "00:02:44,886",
+            "en": "So you first need to...",
+            "zh": "所以你首先需要...",
+            "ar": "لذا عليك أولا أن..."
+        },
+        {
+            "start": "00:02:45,890",
+            "end": "00:02:47,070",
+            "en": "Like masters",
+            "zh": "喜欢大师",
+            "ar": "مثل الماجستير",
+            "ja": "マスターズ好きよ!"
+        },
+        {
+            "start": "00:02:48,098",
+            "end": "00:02:50,578",
+            "en": "then you can talk about art.",
+            "zh": "然后你可以谈谈艺术。",
+            "ar": "ثم يمكنك الحديث عن الفن."
+        },
+        {
+            "start": "00:02:51,198",
+            "end": "00:02:51,778",
+            "en": "So...",
+            "zh": "所以...",
+            "ar": "إذا..."
+        },
+        {
+            "start": "00:02:52,994",
+            "end": "00:02:55,174",
+            "en": "But I'm a bit...",
+            "zh": "但我我有点..",
+            "ar": "لكني قليلا..."
+        },
+        {
+            "start": "00:02:57,986",
+            "end": "00:03:05,446",
+            "en": "I'm a combination of these various different education concepts,",
+            "zh": "我是这些各种不同教育概念的结合体，",
+            "ar": "أنا مزيج من هذه المفاهيم التعليمية المختلفة المتنوعة،"
+        }
+    ]
+}

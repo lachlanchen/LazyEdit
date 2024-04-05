@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,460\",\n    \"lang\": \"en\",\n    \"text\": \"interesting.\"\n  },\n  {\n    \"start\": \"00:00:00,460\",\n    \"end\": \"00:00:06,460\",\n    \"lang\": \"en\",\n    \"text\": \"This is a chicken with noodle and our first card pop up is chicken.\"\n  },\n  {\n    \"start\": \"00:00:06,460\",\n    \"end\": \"00:00:07,600\",\n    \"lang\": \"en\",\n    \"text\": \"It's\"\n  },\n  {\n    \"start\": \"00:00:07,600\",\n    \"end\": \"00:00:09,660\",\n    \"lang\": \"en\",\n    \"text\": \"a quite good coincidence.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,460",
+            "es": "interesante.",
+            "fr": "intéressant.",
+            "uk": "цікаво."
+        },
+        {
+            "start": "00:00:00,460",
+            "end": "00:00:06,460",
+            "es": "Esto es un pollo con noodle y nuestra primera tarjeta emergente es pollo.",
+            "fr": "Ceci est un poulet avec nouille et notre première carte apparaissant est le poulet.",
+            "uk": "Це курка з локшиною, і наша перша випливаюча картка - курка."
+        },
+        {
+            "start": "00:00:06,460",
+            "end": "00:00:07,600",
+            "es": "Es",
+            "fr": "C'est",
+            "uk": "Це"
+        },
+        {
+            "start": "00:00:07,600",
+            "end": "00:00:09,660",
+            "es": "una coincidencia bastante buena.",
+            "fr": "une assez bonne coïncidence.",
+            "uk": "досить гарна збіг."
+        }
+    ]
+}

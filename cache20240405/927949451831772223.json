@@ -1,0 +1,15 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,660\",\n    \"ja\": \"これが<私>[]の<夕食>[]です,\"\n  },\n  {\n    \"start\": \"00:00:01,660\",\n    \"end\": \"00:00:03,040\",\n    \"ja\": \"<毒>[]をもって<毒>[]を<制>[]す。\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,660",
+            "ja": "これが<私>[わたし]の<夕食>[ゆうしょく]です,"
+        },
+        {
+            "start": "00:00:01,660",
+            "end": "00:00:03,040",
+            "ja": "<毒>[どく]をもって<毒>[どく]を<制>[せい]す。"
+        }
+    ]
+}

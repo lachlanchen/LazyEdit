@@ -1,0 +1,40 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,240\",\n    \"ja\": \"<私>[]のじゃがいも<欲>[]しい？\"\n  },\n  {\n    \"start\": \"00:00:05,730\",\n    \"end\": \"00:00:06,270\",\n    \"ja\": \"<クッカー>[]だ\"\n  },\n  {\n    \"start\": \"00:00:07,682\",\n    \"end\": \"00:00:11,122\",\n    \"ja\": \"ただ、この2<ピース>[]は<大丈夫>[]だと<思>[]う。\"\n  },\n  {\n    \"start\": \"00:00:14,262\",\n    \"end\": \"00:00:17,562\",\n    \"ja\": \"これ、<食>[]べられるかどうか<分>[]からない。\"\n  },\n  {\n    \"start\": \"00:00:22,850\",\n    \"end\": \"00:00:23,530\",\n    \"ja\": \"おまえっぽだね、\"\n  },\n  {\n    \"start\": \"00:00:23,530\",\n    \"end\": \"00:00:24,590\",\n    \"ja\": \"そう\"\n  },\n  {\n    \"start\": \"00:00:29,666\",\n    \"end\": \"00:00:33,106\",\n    \"ja\": \"そして、<エビ>[]もあります\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,240",
+            "ja": "<私>[わたし]のじゃがいも<欲>[ほっ]しい？"
+        },
+        {
+            "start": "00:00:05,730",
+            "end": "00:00:06,270",
+            "ja": "<クッカー>[]だ"
+        },
+        {
+            "start": "00:00:07,682",
+            "end": "00:00:11,122",
+            "ja": "ただ、この2<ピース>[]は<大丈夫>[だいじょうぶ]だと<思>[おも]う。"
+        },
+        {
+            "start": "00:00:14,262",
+            "end": "00:00:17,562",
+            "ja": "これ、<食>[た]べられるかどうか<分>[わ]からない。"
+        },
+        {
+            "start": "00:00:22,850",
+            "end": "00:00:23,530",
+            "ja": "おまえっぽだね、"
+        },
+        {
+            "start": "00:00:23,530",
+            "end": "00:00:24,590",
+            "ja": "そう"
+        },
+        {
+            "start": "00:00:29,666",
+            "end": "00:00:33,106",
+            "ja": "そして、<エビ>[]もあります"
+        }
+    ]
+}

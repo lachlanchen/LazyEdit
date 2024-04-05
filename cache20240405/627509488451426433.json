@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,282\",\n    \"end\": \"00:01:03,282\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:04,361\",\n    \"end\": \"00:01:07,162\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:01:27,473\",\n    \"end\": \"00:01:28,374\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's right here.\"\n  },\n  {\n    \"start\": \"00:01:30,978\",\n    \"end\": \"00:01:35,618\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香 沒有樹高\"\n  },\n  {\n    \"start\": \"00:01:36,618\",\n    \"end\": \"00:01:39,158\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香\"\n  },\n  {\n    \"start\": \"00:01:39,718\",\n    \"end\": \"00:01:42,398\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有樹高\"\n  },\n  {\n    \"start\": \"00:01:42,398\",\n    \"end\": \"00:01:45,038\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香\"\n  },\n  {\n    \"start\": \"00:01:45,858\",\n    \"end\": \"00:01:48,138\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有樹高\"\n  },\n  {\n    \"start\": \"00:01:49,778\",\n    \"end\": \"00:01:55,338\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香 沒有樹高\"\n  }\n]\n\nONlY and MUST output JSON format:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,282",
+            "end": "00:01:03,282",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:01:04,361",
+            "end": "00:01:07,162",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:01:27,473",
+            "end": "00:01:28,374",
+            "vi": "Tôi không biết liệu mình có đang ở đúng chỗ không."
+        },
+        {
+            "start": "00:01:30,978",
+            "end": "00:01:35,618",
+            "vi": "Không có mùi hoa không có cây cao"
+        },
+        {
+            "start": "00:01:36,618",
+            "end": "00:01:39,158",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:01:39,718",
+            "end": "00:01:42,398",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:01:42,398",
+            "end": "00:01:45,038",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:01:45,858",
+            "end": "00:01:48,138",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:01:49,778",
+            "end": "00:01:55,338",
+            "vi": "Không có mùi hoa không có cây cao"
+        }
+    ]
+}

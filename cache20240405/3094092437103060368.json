@@ -1,0 +1,159 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,499\",\n    \"end\": \"00:00:01,820\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは\"\n  },\n  {\n    \"start\": \"00:00:03,599\",\n    \"end\": \"00:00:05,100\",\n    \"lang\": \"ja\",\n    \"text\": \"これは私の朝\"\n  },\n  {\n    \"start\": \"00:00:05,500\",\n    \"end\": \"00:00:06,720\",\n    \"lang\": \"ja\",\n    \"text\": \"ヘルコハンを食べている\"\n  },\n  {\n    \"start\": \"00:00:06,720\",\n    \"end\": \"00:00:07,540\",\n    \"lang\": \"ja\",\n    \"text\": \"ヘルコハンを\"\n  },\n  {\n    \"start\": \"00:00:08,039\",\n    \"end\": \"00:00:09,100\",\n    \"lang\": \"ja\",\n    \"text\": \"ヘルコハンです\"\n  },\n  {\n    \"start\": \"00:00:10,500\",\n    \"end\": \"00:00:12,360\",\n    \"lang\": \"ja\",\n    \"text\": \"これは私のヘルコハンです\"\n  },\n  {\n    \"start\": \"00:00:13,399\",\n    \"end\": \"00:00:16,379\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこのヘルコハンを食べています\"\n  },\n  {\n    \"start\": \"00:00:18,242\",\n    \"end\": \"00:00:21,582\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our Chongqing flavor potato.\"\n  },\n  {\n    \"start\": \"00:00:22,102\",\n    \"end\": \"00:00:24,142\",\n    \"lang\": \"en\",\n    \"text\": \"It's crispy flavor.\"\n  },\n  {\n    \"start\": \"00:00:26,762\",\n    \"end\": \"00:00:27,142\",\n    \"lang\": \"en\",\n    \"text\": \"Wow.\"\n  },\n  {\n    \"start\": \"00:00:29,882\",\n    \"end\": \"00:00:30,582\",\n    \"lang\": \"en\",\n    \"text\": \"Though it is sounds,\"\n  },\n  {\n    \"start\": \"00:00:30,582\",\n    \"end\": \"00:00:32,882\",\n    \"lang\": \"en\",\n    \"text\": \"it looks like a fake organism.\"\n  },\n  {\n    \"start\": \"00:00:33,698\",\n    \"end\": \"00:00:34,938\",\n    \"lang\": \"ar\",\n    \"text\": \"فك و وقتا\"\n  },\n  {\n    \"start\": \"00:00:35,714\",\n    \"end\": \"00:00:37,294\",\n    \"lang\": \"en\",\n    \"text\": \"But it's really delicious\"\n  },\n  {\n    \"start\": \"00:00:39,654\",\n    \"end\": \"00:00:40,074\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:00:41,434\",\n    \"end\": \"00:00:41,934\",\n    \"lang\": \"en\",\n    \"text\": \"Wokazan\"\n  },\n  {\n    \"start\": \"00:00:41,934\",\n    \"end\": \"00:00:44,234\",\n    \"lang\": \"en\",\n    \"text\": \"O-R-G-A-S-A-N\"\n  },\n  {\n    \"start\": \"00:00:46,494\",\n    \"end\": \"00:00:46,914\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  },\n  {\n    \"start\": \"00:00:48,094\",\n    \"end\": \"00:00:48,514\",\n    \"lang\": \"en\",\n    \"text\": \"Wow\"\n  },\n  {\n    \"start\": \"00:00:52,002\",\n    \"end\": \"00:00:52,722\",\n    \"lang\": \"ja\",\n    \"text\": \"やめやめ\"\n  },\n  {\n    \"start\": \"00:00:52,722\",\n    \"end\": \"00:00:53,242\",\n    \"lang\": \"ja\",\n    \"text\": \"これ、\"\n  },\n  {\n    \"start\": \"00:00:53,242\",\n    \"end\": \"00:00:55,562\",\n    \"lang\": \"ja\",\n    \"text\": \"犬ご飯は美味しいです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,499",
+            "end": "00:00:01,820",
+            "en": "Hello",
+            "zh": "你好",
+            "ar": "مرحبا"
+        },
+        {
+            "start": "00:00:03,599",
+            "end": "00:00:05,100",
+            "en": "This is my morning",
+            "zh": "这是我的早晨",
+            "ar": "هذا صباحي"
+        },
+        {
+            "start": "00:00:05,500",
+            "end": "00:00:06,720",
+            "en": "Eating Helkohan",
+            "zh": "吃着Helkohan",
+            "ar": "أتناول Helkohan"
+        },
+        {
+            "start": "00:00:06,720",
+            "end": "00:00:07,540",
+            "en": "The Helkohan",
+            "zh": "Helkohan",
+            "ar": "الHelkohan"
+        },
+        {
+            "start": "00:00:08,039",
+            "end": "00:00:09,100",
+            "en": "It's Helkohan",
+            "zh": "这是Helkohan",
+            "ar": "إنه Helkohan"
+        },
+        {
+            "start": "00:00:10,500",
+            "end": "00:00:12,360",
+            "en": "This is my Helkohan",
+            "zh": "这是我的Helkohan",
+            "ar": "هذا هو Helkohan الخاص بي"
+        },
+        {
+            "start": "00:00:13,399",
+            "end": "00:00:16,379",
+            "en": "I am eating this Helkohan",
+            "zh": "我正在吃这个Helkohan",
+            "ar": "أنا آكل هذا Helkohan"
+        },
+        {
+            "start": "00:00:18,242",
+            "end": "00:00:21,582",
+            "en": "So this is our Chongqing flavor potato.",
+            "zh": "所以这是我们的重庆风味土豆。",
+            "ar": "فهذه هي بطاطا نكهة تشونغتشينغ لدينا."
+        },
+        {
+            "start": "00:00:22,102",
+            "end": "00:00:24,142",
+            "en": "It's crispy flavor.",
+            "zh": "它的味道酥脆。",
+            "ar": "إنه نكهة مقرمشة."
+        },
+        {
+            "start": "00:00:26,762",
+            "end": "00:00:27,142",
+            "en": "Wow.",
+            "zh": "哇。",
+            "ar": "واو."
+        },
+        {
+            "start": "00:00:29,882",
+            "end": "00:00:30,582",
+            "en": "Though it is sounds,",
+            "zh": "虽然它听起来，",
+            "ar": "على الرغم من أنها أصوات،"
+        },
+        {
+            "start": "00:00:30,582",
+            "end": "00:00:32,882",
+            "en": "it looks like a fake organism.",
+            "zh": "它看起来像一个假的生物。",
+            "ar": "تبدو ككائن مزيف."
+        },
+        {
+            "start": "00:00:33,698",
+            "end": "00:00:34,938",
+            "en": "Exciting and time.",
+            "zh": "令人兴奋和时间。",
+            "ar": "فك و وقتا"
+        },
+        {
+            "start": "00:00:35,714",
+            "end": "00:00:37,294",
+            "en": "But it's really delicious",
+            "zh": "但它真的很美味",
+            "ar": "لكنها لذيذة حقا"
+        },
+        {
+            "start": "00:00:39,654",
+            "end": "00:00:40,074",
+            "en": "Right?",
+            "zh": "对吧？",
+            "ar": "أليس كذلك؟"
+        },
+        {
+            "start": "00:00:41,434",
+            "end": "00:00:41,934",
+            "en": "Wokazan",
+            "zh": "Wokazan",
+            "ar": "Wokazan"
+        },
+        {
+            "start": "00:00:41,934",
+            "end": "00:00:44,234",
+            "en": "O-R-G-A-S-A-N",
+            "zh": "O-R-G-A-S-A-N",
+            "ar": "O-R-G-A-S-A-N"
+        },
+        {
+            "start": "00:00:46,494",
+            "end": "00:00:46,914",
+            "en": "Okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:00:48,094",
+            "end": "00:00:48,514",
+            "en": "Wow",
+            "zh": "哇",
+            "ar": "واو"
+        },
+        {
+            "start": "00:00:52,002",
+            "end": "00:00:52,722",
+            "en": "Stop, stop",
+            "zh": "停，停",
+            "ar": "توقف، توقف"
+        },
+        {
+            "start": "00:00:52,722",
+            "end": "00:00:53,242",
+            "en": "This,",
+            "zh": "这，",
+            "ar": "هذا،"
+        },
+        {
+            "start": "00:00:53,242",
+            "end": "00:00:55,562",
+            "en": "Dog food is delicious",
+            "zh": "狗食很好吃",
+            "ar": "طعام الكلاب لذيذ"
+        }
+    ]
+}

@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:15,699\",\n    \"end\": \"00:01:17,100\",\n    \"lang\": \"en\",\n    \"text\": \"Oh\"\n  },\n  {\n    \"start\": \"00:01:17,100\",\n    \"end\": \"00:01:19,720\",\n    \"lang\": \"en\",\n    \"text\": \"ah\"\n  },\n  {\n    \"start\": \"00:01:37,660\",\n    \"end\": \"00:01:39,820\",\n    \"lang\": \"en\",\n    \"text\": \"This is gorgeous.\"\n  },\n  {\n    \"start\": \"00:01:45,700\",\n    \"end\": \"00:01:47,640\",\n    \"lang\": \"en\",\n    \"text\": \"How to use it?\"\n  },\n  {\n    \"start\": \"00:01:52,800\",\n    \"end\": \"00:01:54,200\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:54,200\",\n    \"end\": \"00:01:54,320\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:54,320\",\n    \"end\": \"00:01:54,400\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:02:11,899\",\n    \"end\": \"00:02:16,040\",\n    \"lang\": \"en\",\n    \"text\": \"I missed one...\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:15,699",
+            "end": "00:01:17,100",
+            "ko": "오"
+        },
+        {
+            "start": "00:01:17,100",
+            "end": "00:01:19,720",
+            "ko": "아"
+        },
+        {
+            "start": "00:01:37,660",
+            "end": "00:01:39,820",
+            "ko": "정말 멋지다."
+        },
+        {
+            "start": "00:01:45,700",
+            "end": "00:01:47,640",
+            "ko": "어떻게 사용하죠?"
+        },
+        {
+            "start": "00:01:52,800",
+            "end": "00:01:54,200",
+            "ko": "알겠어요."
+        },
+        {
+            "start": "00:01:54,200",
+            "end": "00:01:54,320",
+            "ko": "알겠어요."
+        },
+        {
+            "start": "00:01:54,320",
+            "end": "00:01:54,400",
+            "ko": "알겠어요."
+        },
+        {
+            "start": "00:02:11,899",
+            "end": "00:02:16,040",
+            "ko": "하나 놓쳤어..."
+        }
+    ]
+}

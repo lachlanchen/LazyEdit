@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,840\",\n    \"lang\": \"en\",\n    \"text\": \"Another ordinary day with some little progress,\"\n  },\n  {\n    \"start\": \"00:00:04,840\",\n    \"end\": \"00:00:06,000\",\n    \"lang\": \"en\",\n    \"text\": \"little improvement\"\n  },\n  {\n    \"start\": \"00:00:15,520\",\n    \"end\": \"00:00:16,100\",\n    \"lang\": \"en\",\n    \"text\": \"It's very good\"\n  },\n  {\n    \"start\": \"00:00:16,129\",\n    \"end\": \"00:00:16,810\",\n    \"lang\": \"zh\",\n    \"text\": \"小鱼死鱼飞\"\n  },\n  {\n    \"start\": \"00:00:17,698\",\n    \"end\": \"00:00:18,498\",\n    \"lang\": \"en\",\n    \"text\": \"in her grasp\"\n  },\n  {\n    \"start\": \"00:00:30,377\",\n    \"end\": \"00:00:31,217\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:31,217\",\n    \"end\": \"00:00:33,258\",\n    \"lang\": \"en\",\n    \"text\": \"let's get it perfectly wrong,\"\n  },\n  {\n    \"start\": \"00:00:33,258\",\n    \"end\": \"00:00:34,598\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  },\n  {\n    \"start\": \"00:00:54,338\",\n    \"end\": \"00:00:57,118\",\n    \"lang\": \"en\",\n    \"text\": \"Okay this around a the perfect,\"\n  },\n  {\n    \"start\": \"00:00:57,118\",\n    \"end\": \"00:00:58,858\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,840",
+            "vi": "Một ngày bình thường với một chút tiến triển,"
+        },
+        {
+            "start": "00:00:04,840",
+            "end": "00:00:06,000",
+            "vi": "một chút cải thiện"
+        },
+        {
+            "start": "00:00:15,520",
+            "end": "00:00:16,100",
+            "vi": "Rất tốt"
+        },
+        {
+            "start": "00:00:16,129",
+            "end": "00:00:16,810",
+            "vi": "cá nhỏ bay lượn"
+        },
+        {
+            "start": "00:00:17,698",
+            "end": "00:00:18,498",
+            "vi": "trong tầm tay cô ấy"
+        },
+        {
+            "start": "00:00:30,377",
+            "end": "00:00:31,217",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:31,217",
+            "end": "00:00:33,258",
+            "vi": "hãy làm cho nó hoàn toàn sai,"
+        },
+        {
+            "start": "00:00:33,258",
+            "end": "00:00:34,598",
+            "vi": "được"
+        },
+        {
+            "start": "00:00:54,338",
+            "end": "00:00:57,118",
+            "vi": "Được, lần này hoàn hảo,"
+        },
+        {
+            "start": "00:00:57,118",
+            "end": "00:00:58,858",
+            "vi": "được"
+        }
+    ]
+}

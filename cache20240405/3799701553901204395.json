@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,860\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは\"\n  },\n  {\n    \"start\": \"00:00:04,290\",\n    \"end\": \"00:00:10,630\",\n    \"lang\": \"en\",\n    \"text\": \"This is our special Chongqing flavored potato.\"\n  },\n  {\n    \"start\": \"00:00:12,130\",\n    \"end\": \"00:00:12,770\",\n    \"lang\": \"en\",\n    \"text\": \"The taste,\"\n  },\n  {\n    \"start\": \"00:00:12,770\",\n    \"end\": \"00:00:13,650\",\n    \"lang\": \"en\",\n    \"text\": \"the smell,\"\n  },\n  {\n    \"start\": \"00:00:13,650\",\n    \"end\": \"00:00:17,530\",\n    \"lang\": \"en\",\n    \"text\": \"the water factory sense,\"\n  },\n  {\n    \"start\": \"00:00:18,450\",\n    \"end\": \"00:00:19,250\",\n    \"lang\": \"en\",\n    \"text\": \"experience,\"\n  },\n  {\n    \"start\": \"00:00:19,250\",\n    \"end\": \"00:00:20,850\",\n    \"lang\": \"en\",\n    \"text\": \"water factory,\"\n  },\n  {\n    \"start\": \"00:00:20,850\",\n    \"end\": \"00:00:21,630\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:00:22,970\",\n    \"end\": \"00:00:23,310\",\n    \"lang\": \"en\",\n    \"text\": \"Water,\"\n  },\n  {\n    \"start\": \"00:00:23,310\",\n    \"end\": \"00:00:24,370\",\n    \"lang\": \"en\",\n    \"text\": \"water factory.\"\n  },\n  {\n    \"start\": \"00:00:28,990\",\n    \"end\": \"00:00:29,790\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:29,790\",\n    \"end\": \"00:00:31,230\",\n    \"lang\": \"en\",\n    \"text\": \"let me taste it.\"\n  },\n  {\n    \"start\": \"00:00:36,569\",\n    \"end\": \"00:00:37,370\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:37,370\",\n    \"end\": \"00:00:38,730\",\n    \"lang\": \"en\",\n    \"text\": \"this is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:48,270\",\n    \"end\": \"00:00:48,670\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:48,670\",\n    \"end\": \"00:00:51,250\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't make potato crab.\"\n  },\n  {\n    \"start\": \"00:00:52,770\",\n    \"end\": \"00:00:54,070\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道土豆泥怎么说\"\n  },\n  {\n    \"start\": \"00:00:55,266\",\n    \"end\": \"00:01:06,586\",\n    \"lang\": \"en\",\n    \"text\": \"So I only make this fragment because I believe if it's a potato crumb,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,860",
+            "es": "Hola",
+            "fr": "Bonjour",
+            "uk": "Привіт"
+        },
+        {
+            "start": "00:00:04,290",
+            "end": "00:00:10,630",
+            "es": "Esta es nuestra especial papa con sabor a Chongqing.",
+            "fr": "Ceci est notre pomme de terre spéciale goût Chongqing.",
+            "uk": "Це наш особливий картопляний виріб із смаком Чунціна."
+        },
+        {
+            "start": "00:00:12,130",
+            "end": "00:00:12,770",
+            "es": "El sabor,",
+            "fr": "Le goût,",
+            "uk": "Смак,"
+        },
+        {
+            "start": "00:00:12,770",
+            "end": "00:00:13,650",
+            "es": "el olor,",
+            "fr": "l'odeur,",
+            "uk": "запах,"
+        },
+        {
+            "start": "00:00:13,650",
+            "end": "00:00:17,530",
+            "es": "la sensación de la fábrica de agua,",
+            "fr": "la sensation de l'usine d'eau,",
+            "uk": "відчуття водної фабрики,"
+        },
+        {
+            "start": "00:00:18,450",
+            "end": "00:00:19,250",
+            "es": "experiencia,",
+            "fr": "expérience,",
+            "uk": "досвід,"
+        },
+        {
+            "start": "00:00:19,250",
+            "end": "00:00:20,850",
+            "es": "fábrica de agua,",
+            "fr": "usine d'eau,",
+            "uk": "водна фабрика,"
+        },
+        {
+            "start": "00:00:20,850",
+            "end": "00:00:21,630",
+            "es": "¿verdad?",
+            "fr": "n'est-ce pas ?",
+            "uk": "правильно?"
+        },
+        {
+            "start": "00:00:22,970",
+            "end": "00:00:23,310",
+            "es": "Agua,",
+            "fr": "Eau,",
+            "uk": "Вода,"
+        },
+        {
+            "start": "00:00:23,310",
+            "end": "00:00:24,370",
+            "es": "fábrica de agua.",
+            "fr": "usine d'eau.",
+            "uk": "водна фабрика."
+        },
+        {
+            "start": "00:00:28,990",
+            "end": "00:00:29,790",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:29,790",
+            "end": "00:00:31,230",
+            "es": "déjame probarlo.",
+            "fr": "laissez-moi goûter.",
+            "uk": "дозвольте мені спробувати."
+        },
+        {
+            "start": "00:00:36,569",
+            "end": "00:00:37,370",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "О,"
+        },
+        {
+            "start": "00:00:37,370",
+            "end": "00:00:38,730",
+            "es": "esto es magnífico.",
+            "fr": "c'est magnifique.",
+            "uk": "це чудово."
+        },
+        {
+            "start": "00:00:48,270",
+            "end": "00:00:48,670",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:48,670",
+            "end": "00:00:51,250",
+            "es": "no hice cangrejo de papa.",
+            "fr": "je n'ai pas fait de crabe de pomme de terre.",
+            "uk": "я не зробив краба з картоплі."
+        },
+        {
+            "start": "00:00:52,770",
+            "end": "00:00:54,070",
+            "es": "No sé cómo decir puré de patatas",
+            "fr": "Je ne sais pas comment dire purée de pommes de terre",
+            "uk": "Я не знаю, як сказати картопляне пюре"
+        },
+        {
+            "start": "00:00:55,266",
+            "end": "00:01:06,586",
+            "es": "Así que solo hago este fragmento porque creo que si es una migaja de papa,",
+            "fr": "Donc, je ne fais que ce fragment parce que je crois que si c'est une miette de pomme de terre,",
+            "uk": "Тому я зробив лише цей фрагмент, бо вірю, що якщо це картопляна крихта,"
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,100\",\n    \"lang\": \"zh\",\n    \"text\": \"哇\"\n  },\n  {\n    \"start\": \"00:00:00,200\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"zh\",\n    \"text\": \"这里好多狗\"\n  },\n  {\n    \"start\": \"00:00:01,979\",\n    \"end\": \"00:00:03,300\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是柴犬呢\"\n  },\n  {\n    \"start\": \"00:00:03,300\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"zh\",\n    \"text\": \"喜棒\"\n  },\n  {\n    \"start\": \"00:00:04,460\",\n    \"end\": \"00:00:04,860\",\n    \"lang\": \"zh\",\n    \"text\": \"狗狗\"\n  },\n  {\n    \"start\": \"00:00:04,898\",\n    \"end\": \"00:00:06,158\",\n    \"lang\": \"ja\",\n    \"text\": \"この芝は可愛いです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,100",
+            "ko": "와"
+        },
+        {
+            "start": "00:00:00,200",
+            "end": "00:00:01,460",
+            "ko": "여기 너무 많은 강아지가 있어"
+        },
+        {
+            "start": "00:00:01,979",
+            "end": "00:00:03,300",
+            "ko": "이건 시바견이네"
+        },
+        {
+            "start": "00:00:03,300",
+            "end": "00:00:03,780",
+            "ko": "멋져"
+        },
+        {
+            "start": "00:00:04,460",
+            "end": "00:00:04,860",
+            "ko": "강아지"
+        },
+        {
+            "start": "00:00:04,898",
+            "end": "00:00:06,158",
+            "ko": "이 잔디는 귀여워요"
+        }
+    ]
+}

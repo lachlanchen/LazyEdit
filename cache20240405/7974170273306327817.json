@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,540\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this is a paradise for these dogs.\"\n  },\n  {\n    \"start\": \"00:00:04,460\",\n    \"end\": \"00:00:08,620\",\n    \"lang\": \"en\",\n    \"text\": \"You can make friends here at this dog club.\"\n  },\n  {\n    \"start\": \"00:00:09,600\",\n    \"end\": \"00:00:11,080\",\n    \"lang\": \"en\",\n    \"text\": \"This is their arena.\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:13,300\",\n    \"lang\": \"en\",\n    \"text\": \"You can fight,\"\n  },\n  {\n    \"start\": \"00:00:13,300\",\n    \"end\": \"00:00:15,080\",\n    \"lang\": \"en\",\n    \"text\": \"make friends.\"\n  },\n  {\n    \"start\": \"00:00:16,340\",\n    \"end\": \"00:00:17,500\",\n    \"lang\": \"en\",\n    \"text\": \"This is a paradise.\"\n  },\n  {\n    \"start\": \"00:00:19,860\",\n    \"end\": \"00:00:21,260\",\n    \"lang\": \"en\",\n    \"text\": \"So many dogs.\"\n  },\n  {\n    \"start\": \"00:00:24,500\",\n    \"end\": \"00:00:25,900\",\n    \"lang\": \"en\",\n    \"text\": \"Husky,\"\n  },\n  {\n    \"start\": \"00:00:25,900\",\n    \"end\": \"00:00:30,080\",\n    \"lang\": \"en\",\n    \"text\": \"Cookie and Goodyear Trailer.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,540",
+            "es": "Creo que esto es un paraíso para estos perros.",
+            "fr": "Je crois que c'est un paradis pour ces chiens.",
+            "uk": "Я вважаю це райським місцем для цих собак."
+        },
+        {
+            "start": "00:00:04,460",
+            "end": "00:00:08,620",
+            "es": "Puedes hacer amigos aquí en este club de perros.",
+            "fr": "Vous pouvez vous faire des amis ici dans ce club de chiens.",
+            "uk": "Тут, у цьому клубі собак, ти можеш знайти друзів."
+        },
+        {
+            "start": "00:00:09,600",
+            "end": "00:00:11,080",
+            "es": "Esta es su arena.",
+            "fr": "Ceci est leur arène.",
+            "uk": "Це їхня арена."
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:13,300",
+            "es": "Puedes luchar,",
+            "fr": "Vous pouvez vous battre,",
+            "uk": "Ти можеш боротися,"
+        },
+        {
+            "start": "00:00:13,300",
+            "end": "00:00:15,080",
+            "es": "hacer amigos.",
+            "fr": "vous faire des amis.",
+            "uk": "заводити друзів."
+        },
+        {
+            "start": "00:00:16,340",
+            "end": "00:00:17,500",
+            "es": "Esto es un paraíso.",
+            "fr": "C'est un paradis.",
+            "uk": "Це рай."
+        },
+        {
+            "start": "00:00:19,860",
+            "end": "00:00:21,260",
+            "es": "Tantos perros.",
+            "fr": "Tant de chiens.",
+            "uk": "Так багато собак."
+        },
+        {
+            "start": "00:00:24,500",
+            "end": "00:00:25,900",
+            "es": "Husky,",
+            "fr": "Husky,",
+            "uk": "Хаскі,"
+        },
+        {
+            "start": "00:00:25,900",
+            "end": "00:00:30,080",
+            "es": "Cookie y Tráiler de Goodyear.",
+            "fr": "Cookie et Remorque de Goodyear.",
+            "uk": "Кукі та причіп Goodyear."
+        }
+    ]
+}

@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,440\",\n    \"lang\": \"en\",\n    \"text\": \"It has a new word,\"\n  },\n  {\n    \"start\": \"00:00:01,440\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"en\",\n    \"text\": \"veto.\"\n  },\n  {\n    \"start\": \"00:00:03,480\",\n    \"end\": \"00:00:06,820\",\n    \"lang\": \"en\",\n    \"text\": \"I believe the meaning is similar to idiot,\"\n  },\n  {\n    \"start\": \"00:00:06,820\",\n    \"end\": \"00:00:11,420\",\n    \"lang\": \"en\",\n    \"text\": \"but it specifically refers to how to use a\"\n  },\n  {\n    \"start\": \"00:00:11,458\",\n    \"end\": \"00:00:12,058\",\n    \"lang\": \"ar\",\n    \"text\": \"زوجي\"\n  },\n  {\n    \"start\": \"00:00:14,402\",\n    \"end\": \"00:00:21,082\",\n    \"lang\": \"en\",\n    \"text\": \"know his wife is between him and then annoyed.\"\n  },\n  {\n    \"start\": \"00:00:22,142\",\n    \"end\": \"00:00:22,262\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:22,262\",\n    \"end\": \"00:00:24,162\",\n    \"lang\": \"en\",\n    \"text\": \"totally annoyed.\"\n  },\n  {\n    \"start\": \"00:00:24,194\",\n    \"end\": \"00:00:24,974\",\n    \"lang\": \"zh\",\n    \"text\": \"空间展示了\"\n  },\n  {\n    \"start\": \"00:00:25,154\",\n    \"end\": \"00:00:25,474\",\n    \"lang\": \"en\",\n    \"text\": \"Foo good.\"\n  },\n  {\n    \"start\": \"00:00:25,954\",\n    \"end\": \"00:00:27,434\",\n    \"lang\": \"zh\",\n    \"text\": \"就是他老婆出軌了\"\n  },\n  {\n    \"start\": \"00:00:27,854\",\n    \"end\": \"00:00:29,254\",\n    \"lang\": \"zh\",\n    \"text\": \"但是這個丈夫他依然\"\n  },\n  {\n    \"start\": \"00:00:30,193\",\n    \"end\": \"00:00:31,394\",\n    \"lang\": \"zh\",\n    \"text\": \"容許這件事情\"\n  },\n  {\n    \"start\": \"00:00:32,454\",\n    \"end\": \"00:00:33,954\",\n    \"lang\": \"zh\",\n    \"text\": \"這就稱之為傻瓜\"\n  },\n  {\n    \"start\": \"00:00:34,978\",\n    \"end\": \"00:00:35,318\",\n    \"lang\": \"en\",\n    \"text\": \"Vita.\"\n  },\n  {\n    \"start\": \"00:00:36,578\",\n    \"end\": \"00:00:38,078\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a Vita.\"\n  },\n  {\n    \"start\": \"00:00:38,298\",\n    \"end\": \"00:00:38,658\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you.\"\n  },\n  {\n    \"start\": \"00:00:38,690\",\n    \"end\": \"00:00:39,030\",\n    \"lang\": \"zh\",\n    \"text\": \"空间\"\n  },\n  {\n    \"start\": \"00:00:39,470\",\n    \"end\": \"00:00:41,390\",\n    \"lang\": \"zh\",\n    \"text\": \"空间这个我怎么突然想不起来了\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,440",
+            "en": "It has a new word,",
+            "zh": "这里有一个新词，",
+            "ar": "لديها كلمة جديدة،"
+        },
+        {
+            "start": "00:00:01,440",
+            "end": "00:00:02,240",
+            "en": "veto.",
+            "zh": "否决。",
+            "ar": "الفيتو."
+        },
+        {
+            "start": "00:00:03,480",
+            "end": "00:00:06,820",
+            "en": "I believe the meaning is similar to idiot,",
+            "zh": "我认为这个意思类似于白痴，",
+            "ar": "أعتقد أن المعنى مشابه لكلمة أحمق،"
+        },
+        {
+            "start": "00:00:06,820",
+            "end": "00:00:11,420",
+            "en": "but it specifically refers to how to use a",
+            "zh": "但它特指如何使用",
+            "ar": "لكنها تشير خصيصًا إلى كيفية استخدام"
+        },
+        {
+            "start": "00:00:11,458",
+            "end": "00:00:12,058",
+            "en": "how a husband",
+            "zh": "一个丈夫如何",
+            "ar": "كيف زوج"
+        },
+        {
+            "start": "00:00:14,402",
+            "end": "00:00:21,082",
+            "en": "knows his wife is unfaithful to him and then feels annoyed.",
+            "zh": "知道他的妻子对他不忠，然后感到恼怒。",
+            "ar": "يعلم أن زوجته غير مخلصة له ثم يشعر بالانزعاج."
+        },
+        {
+            "start": "00:00:22,142",
+            "end": "00:00:22,262",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:00:22,262",
+            "end": "00:00:24,162",
+            "en": "totally annoyed.",
+            "zh": "完全感到恼怒。",
+            "ar": "منزعج تمامًا."
+        },
+        {
+            "start": "00:00:24,194",
+            "end": "00:00:24,974",
+            "en": "The space shows",
+            "zh": "空间展示了",
+            "ar": "المساحة تظهر"
+        },
+        {
+            "start": "00:00:25,154",
+            "end": "00:00:25,474",
+            "en": "So good.",
+            "zh": "太好了。",
+            "ar": "جيد جدًا."
+        },
+        {
+            "start": "00:00:25,954",
+            "end": "00:00:27,434",
+            "en": "It means his wife cheated on him,",
+            "zh": "就是他老婆出轨了",
+            "ar": "هذا يعني أن زوجته خانته،"
+        },
+        {
+            "start": "00:00:27,854",
+            "end": "00:00:29,254",
+            "en": "but the husband still",
+            "zh": "但是这个丈夫他依然",
+            "ar": "لكن الزوج لا يزال"
+        },
+        {
+            "start": "00:00:30,193",
+            "end": "00:00:31,394",
+            "en": "allows this to happen.",
+            "zh": "容许这件事情。",
+            "ar": "يسمح بحدوث هذا."
+        },
+        {
+            "start": "00:00:32,454",
+            "end": "00:00:33,954",
+            "en": "This is called a fool.",
+            "zh": "这就称之为傻瓜。",
+            "ar": "هذا يسمى أحمق."
+        },
+        {
+            "start": "00:00:34,978",
+            "end": "00:00:35,318",
+            "en": "Veto.",
+            "zh": "否决。",
+            "ar": "الفيتو."
+        },
+        {
+            "start": "00:00:36,578",
+            "end": "00:00:38,078",
+            "en": "So this is a Veto.",
+            "zh": "所以这就是一个否决。",
+            "ar": "إذن هذا هو الفيتو."
+        },
+        {
+            "start": "00:00:38,298",
+            "end": "00:00:38,658",
+            "en": "Thank you.",
+            "zh": "谢谢。",
+            "ar": "شكرا."
+        },
+        {
+            "start": "00:00:38,690",
+            "end": "00:00:39,030",
+            "en": "The space",
+            "zh": "空间",
+            "ar": "المساحة"
+        },
+        {
+            "start": "00:00:39,470",
+            "end": "00:00:41,390",
+            "en": "I suddenly can't remember this space.",
+            "zh": "我突然想不起这个空间了",
+            "ar": "فجأة لا أستطيع تذكر هذه المساحة."
+        }
+    ]
+}

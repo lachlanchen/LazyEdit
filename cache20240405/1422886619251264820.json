@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:07,360\",\n    \"lang\": \"en\",\n    \"text\": \"let me taste this crushed chili crushed chili crushed pepper\"\n  },\n  {\n    \"start\": \"00:00:09,040\",\n    \"end\": \"00:00:10,040\",\n    \"lang\": \"en\",\n    \"text\": \"Wow\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:14,960\",\n    \"lang\": \"en\",\n    \"text\": \"Wow so spicy so strong\"\n  },\n  {\n    \"start\": \"00:00:17,960\",\n    \"end\": \"00:00:18,960\",\n    \"lang\": \"en\",\n    \"text\": \"Wow\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:33,900\",\n    \"lang\": \"en\",\n    \"text\": \"it's spicy but delicious\"\n  },\n  {\n    \"start\": \"00:00:40,900\",\n    \"end\": \"00:00:49,580\",\n    \"lang\": \"en\",\n    \"text\": \"hopefully it can help me I leave the covid symptom okay\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:07,360",
+            "vi": "để tôi thử cái này ớt băm nát ớt băm nát ớt băm nát"
+        },
+        {
+            "start": "00:00:09,040",
+            "end": "00:00:10,040",
+            "vi": "Wow"
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:14,960",
+            "vi": "Wow cay quá mạnh quá"
+        },
+        {
+            "start": "00:00:17,960",
+            "end": "00:00:18,960",
+            "vi": "Wow"
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:33,900",
+            "vi": "nó cay nhưng ngon"
+        },
+        {
+            "start": "00:00:40,900",
+            "end": "00:00:49,580",
+            "vi": "hy vọng nó có thể giúp tôi tôi để lại triệu chứng covid được không"
+        }
+    ]
+}

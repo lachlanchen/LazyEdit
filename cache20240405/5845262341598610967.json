@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"en\",\n    \"text\": \"So never wait for this perfect moment,\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:06,180\",\n    \"lang\": \"en\",\n    \"text\": \"that everything is prepared,\"\n  },\n  {\n    \"start\": \"00:00:06,180\",\n    \"end\": \"00:00:08,360\",\n    \"lang\": \"en\",\n    \"text\": \"because it will never come.\"\n  },\n  {\n    \"start\": \"00:00:12,360\",\n    \"end\": \"00:00:16,900\",\n    \"lang\": \"en\",\n    \"text\": \"So you will find yourself in this journey,\"\n  },\n  {\n    \"start\": \"00:00:16,900\",\n    \"end\": \"00:00:19,660\",\n    \"lang\": \"en\",\n    \"text\": \"that being attacked,\"\n  },\n  {\n    \"start\": \"00:00:19,660\",\n    \"end\": \"00:00:20,860\",\n    \"lang\": \"en\",\n    \"text\": \"being criticized,\"\n  },\n  {\n    \"start\": \"00:00:20,860\",\n    \"end\": \"00:00:22,880\",\n    \"lang\": \"en\",\n    \"text\": \"being humiliated,\"\n  },\n  {\n    \"start\": \"00:00:22,880\",\n    \"end\": \"00:00:27,560\",\n    \"lang\": \"en\",\n    \"text\": \"being imperfect.\"\n  },\n  {\n    \"start\": \"00:00:30,439\",\n    \"end\": \"00:00:32,360\",\n    \"lang\": \"en\",\n    \"text\": \"Present yourself to the world.\"\n  },\n  {\n    \"start\": \"00:00:33,442\",\n    \"end\": \"00:00:33,842\",\n    \"lang\": \"ja\",\n    \"text\": \"しゅい\"\n  },\n  {\n    \"start\": \"00:00:44,098\",\n    \"end\": \"00:00:45,458\",\n    \"lang\": \"en\",\n    \"text\": \"Allow yourself to fail,\"\n  },\n  {\n    \"start\": \"00:00:45,458\",\n    \"end\": \"00:00:48,378\",\n    \"lang\": \"en\",\n    \"text\": \"to be imperfect.\"\n  },\n  {\n    \"start\": \"00:00:52,978\",\n    \"end\": \"00:00:55,798\",\n    \"lang\": \"en\",\n    \"text\": \"The world will end in dust.\"\n  },\n  {\n    \"start\": \"00:00:56,618\",\n    \"end\": \"00:00:57,658\",\n    \"lang\": \"en\",\n    \"text\": \"Nothing is important.\"\n  },\n  {\n    \"start\": \"00:00:57,658\",\n    \"end\": \"00:00:59,578\",\n    \"lang\": \"en\",\n    \"text\": \"Everything is meaningless.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,780",
+            "vi": "Vậy nên đừng bao giờ chờ đợi khoảnh khắc hoàn hảo,"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:06,180",
+            "vi": "khi mọi thứ đều được chuẩn bị,"
+        },
+        {
+            "start": "00:00:06,180",
+            "end": "00:00:08,360",
+            "vi": "bởi vì nó sẽ không bao giờ đến."
+        },
+        {
+            "start": "00:00:12,360",
+            "end": "00:00:16,900",
+            "vi": "Vậy bạn sẽ thấy mình trong hành trình này,"
+        },
+        {
+            "start": "00:00:16,900",
+            "end": "00:00:19,660",
+            "vi": "bị tấn công,"
+        },
+        {
+            "start": "00:00:19,660",
+            "end": "00:00:20,860",
+            "vi": "bị chỉ trích,"
+        },
+        {
+            "start": "00:00:20,860",
+            "end": "00:00:22,880",
+            "vi": "bị làm nhục,"
+        },
+        {
+            "start": "00:00:22,880",
+            "end": "00:00:27,560",
+            "vi": "và không hoàn hảo."
+        },
+        {
+            "start": "00:00:30,439",
+            "end": "00:00:32,360",
+            "vi": "Hãy tự mình đối diện với thế giới."
+        },
+        {
+            "start": "00:00:33,442",
+            "end": "00:00:33,842",
+            "vi": "Hãy"
+        },
+        {
+            "start": "00:00:44,098",
+            "end": "00:00:45,458",
+            "vi": "Cho phép mình được thất bại,"
+        },
+        {
+            "start": "00:00:45,458",
+            "end": "00:00:48,378",
+            "vi": "được không hoàn hảo."
+        },
+        {
+            "start": "00:00:52,978",
+            "end": "00:00:55,798",
+            "vi": "Thế giới sẽ kết thúc trong bụi đất."
+        },
+        {
+            "start": "00:00:56,618",
+            "end": "00:00:57,658",
+            "vi": "Không có gì là quan trọng cả."
+        },
+        {
+            "start": "00:00:57,658",
+            "end": "00:00:59,578",
+            "vi": "Mọi thứ đều vô nghĩa."
+        }
+    ]
+}

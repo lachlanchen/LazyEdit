@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,460\",\n    \"lang\": \"ja\",\n    \"text\": \"あの\"\n  },\n  {\n    \"start\": \"00:00:02,600\",\n    \"end\": \"00:00:03,080\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは\"\n  },\n  {\n    \"start\": \"00:00:05,666\",\n    \"end\": \"00:00:06,966\",\n    \"lang\": \"en\",\n    \"text\": \"This dog is so cute.\"\n  },\n  {\n    \"start\": \"00:00:08,194\",\n    \"end\": \"00:00:10,414\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬は小さいです\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,460",
+            "ko": "저기"
+        },
+        {
+            "start": "00:00:02,600",
+            "end": "00:00:03,080",
+            "ko": "안녕하세요"
+        },
+        {
+            "start": "00:00:05,666",
+            "end": "00:00:06,966",
+            "ko": "이 강아지 너무 귀여워."
+        },
+        {
+            "start": "00:00:08,194",
+            "end": "00:00:10,414",
+            "ko": "이 강아지가 작아요"
+        }
+    ]
+}

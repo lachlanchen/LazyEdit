@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,120\",\n    \"lang\": \"en\",\n    \"text\": \"so this is our crispy potato\"\n  },\n  {\n    \"start\": \"00:00:04,470\",\n    \"end\": \"00:00:06,440\",\n    \"lang\": \"en\",\n    \"text\": \"this is crispy\"\n  },\n  {\n    \"start\": \"00:00:13,220\",\n    \"end\": \"00:00:16,960\",\n    \"lang\": \"en\",\n    \"text\": \"crispy and Chongqing flavor potato\"\n  },\n  {\n    \"start\": \"00:00:31,640\",\n    \"end\": \"00:00:38,100\",\n    \"lang\": \"en\",\n    \"text\": \"so an advantage of this is that you don't need to clean the cooker,\"\n  },\n  {\n    \"start\": \"00:00:38,100\",\n    \"end\": \"00:00:39,140\",\n    \"lang\": \"en\",\n    \"text\": \"the pot\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,120",
+            "en": "so this is our crispy potato",
+            "zh": "所以这是我们的脆皮土豆",
+            "ar": "إذًا هذه هي بطاطسنا المقرمشة"
+        },
+        {
+            "start": "00:00:04,470",
+            "end": "00:00:06,440",
+            "en": "this is crispy",
+            "zh": "这是脆的",
+            "ar": "هذا مقرمش"
+        },
+        {
+            "start": "00:00:13,220",
+            "end": "00:00:16,960",
+            "en": "crispy and Chongqing flavor potato",
+            "zh": "脆皮和重庆风味的土豆",
+            "ar": "بطاطس مقرمشة بنكهة تشونغتشينغ"
+        },
+        {
+            "start": "00:00:31,640",
+            "end": "00:00:38,100",
+            "en": "so an advantage of this is that you don't need to clean the cooker,",
+            "zh": "所以这样做的一个好处是你不需要清洁炊具，",
+            "ar": "إذًا ميزة هذا أنك لا تحتاج إلى تنظيف الطباخ،"
+        },
+        {
+            "start": "00:00:38,100",
+            "end": "00:00:39,140",
+            "en": "the pot",
+            "zh": "锅",
+            "ar": "القدر"
+        }
+    ]
+}

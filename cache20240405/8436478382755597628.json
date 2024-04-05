@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"en\",\n    \"text\": \"I cooked this fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:03,700\",\n    \"end\": \"00:00:06,560\",\n    \"lang\": \"en\",\n    \"text\": \"It takes about an hour.\"\n  },\n  {\n    \"start\": \"00:00:07,020\",\n    \"end\": \"00:00:09,700\",\n    \"lang\": \"en\",\n    \"text\": \"So this fast food is kind of slow.\"\n  },\n  {\n    \"start\": \"00:00:11,220\",\n    \"end\": \"00:00:11,460\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:11,460\",\n    \"end\": \"00:00:13,520\",\n    \"lang\": \"en\",\n    \"text\": \"it smells so good.\"\n  },\n  {\n    \"start\": \"00:00:14,600\",\n    \"end\": \"00:00:16,420\",\n    \"lang\": \"en\",\n    \"text\": \"And with this chicken wing.\"\n  },\n  {\n    \"start\": \"00:00:17,666\",\n    \"end\": \"00:00:19,326\",\n    \"lang\": \"ja\",\n    \"text\": \"この手羽先面を\"\n  },\n  {\n    \"start\": \"00:00:20,514\",\n    \"end\": \"00:00:20,654\",\n    \"lang\": \"en\",\n    \"text\": \"Bye.\"\n  },\n  {\n    \"start\": \"00:00:20,962\",\n    \"end\": \"00:00:22,402\",\n    \"lang\": \"ja\",\n    \"text\": \"私は食べています\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,980",
+            "es": "Hice estos fideos rápidos.",
+            "fr": "J'ai cuisiné ces nouilles rapides.",
+            "uk": "Я приготував ці швидкі локшини."
+        },
+        {
+            "start": "00:00:03,700",
+            "end": "00:00:06,560",
+            "es": "Tarda aproximadamente una hora.",
+            "fr": "Cela prend environ une heure.",
+            "uk": "Це займає близько години."
+        },
+        {
+            "start": "00:00:07,020",
+            "end": "00:00:09,700",
+            "es": "Así que esta comida rápida es algo lenta.",
+            "fr": "Donc cette restauration rapide est plutôt lente.",
+            "uk": "Отже, ця швидка їжа насправді повільна."
+        },
+        {
+            "start": "00:00:11,220",
+            "end": "00:00:11,460",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "Ох,"
+        },
+        {
+            "start": "00:00:11,460",
+            "end": "00:00:13,520",
+            "es": "huele tan bien.",
+            "fr": "ça sent si bon.",
+            "uk": "це так добре пахне."
+        },
+        {
+            "start": "00:00:14,600",
+            "end": "00:00:16,420",
+            "es": "Y con esta ala de pollo.",
+            "fr": "Et avec cette aile de poulet.",
+            "uk": "І з цим курячим крилом."
+        },
+        {
+            "start": "00:00:17,666",
+            "end": "00:00:19,326",
+            "es": "Con este ala de pollo.",
+            "fr": "Avec cette aile de poulet.",
+            "uk": "З цим курячим крилом."
+        },
+        {
+            "start": "00:00:20,514",
+            "end": "00:00:20,654",
+            "es": "Adiós.",
+            "fr": "Au revoir.",
+            "uk": "Бувай."
+        },
+        {
+            "start": "00:00:20,962",
+            "end": "00:00:22,402",
+            "es": "Estoy comiendo.",
+            "fr": "Je suis en train de manger.",
+            "uk": "Я їм."
+        }
+    ]
+}

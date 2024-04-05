@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,960\",\n    \"lang\": \"ja\",\n    \"text\": \"3世代のビジネスです\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:06,780\",\n    \"lang\": \"ja\",\n    \"text\": \"なので生きていけば3世代です\"\n  },\n  {\n    \"start\": \"00:00:07,746\",\n    \"end\": \"00:00:11,866\",\n    \"lang\": \"en\",\n    \"text\": \"So this give us some insight in entrepreneurship.\"\n  },\n  {\n    \"start\": \"00:00:12,886\",\n    \"end\": \"00:00:15,946\",\n    \"lang\": \"en\",\n    \"text\": \"And it needn't to be very big business.\"\n  },\n  {\n    \"start\": \"00:00:16,566\",\n    \"end\": \"00:00:17,606\",\n    \"lang\": \"en\",\n    \"text\": \"Any small business,\"\n  },\n  {\n    \"start\": \"00:00:17,606\",\n    \"end\": \"00:00:21,406\",\n    \"lang\": \"en\",\n    \"text\": \"it can be successful business\"\n  },\n  {\n    \"start\": \"00:00:21,696\",\n    \"end\": \"00:00:24,486\",\n    \"lang\": \"en\",\n    \"text\": \"as long as you have some value.\"\n  },\n  {\n    \"start\": \"00:00:25,126\",\n    \"end\": \"00:00:27,706\",\n    \"lang\": \"en\",\n    \"text\": \"So they sell this Bo Zai Gao.\"\n  },\n  {\n    \"start\": \"00:00:29,746\",\n    \"end\": \"00:00:32,766\",\n    \"lang\": \"en\",\n    \"text\": \"And as long as you can provide value,\"\n  },\n  {\n    \"start\": \"00:00:32,986\",\n    \"end\": \"00:00:34,986\",\n    \"lang\": \"en\",\n    \"text\": \"and you do it repeatedly,\"\n  },\n  {\n    \"start\": \"00:00:38,446\",\n    \"end\": \"00:00:39,186\",\n    \"lang\": \"en\",\n    \"text\": \"repeatedly,\"\n  },\n  {\n    \"start\": \"00:00:39,186\",\n    \"end\": \"00:00:39,926\",\n    \"lang\": \"en\",\n    \"text\": \"so.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,960",
+            "es": "Es un negocio de tres generaciones",
+            "fr": "C'est une entreprise de trois générations",
+            "uk": "Це бізнес трьох поколінь"
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:06,780",
+            "es": "Así que si vivimos, son tres generaciones",
+            "fr": "Donc, si nous vivons, cela fait trois générations",
+            "uk": "Отже, якщо ми живемо, це три покоління"
+        },
+        {
+            "start": "00:00:07,746",
+            "end": "00:00:11,866",
+            "es": "Así que esto nos da una idea sobre el emprendimiento.",
+            "fr": "Cela nous donne donc un aperçu de l'entrepreneuriat.",
+            "uk": "Отже, це дає нам уявлення про підприємництво."
+        },
+        {
+            "start": "00:00:12,886",
+            "end": "00:00:15,946",
+            "es": "Y no necesita ser un gran negocio.",
+            "fr": "Et il n'a pas besoin d'être une grande entreprise.",
+            "uk": "І воно не повинно бути великим бізнесом."
+        },
+        {
+            "start": "00:00:16,566",
+            "end": "00:00:17,606",
+            "es": "Cualquier pequeño negocio,",
+            "fr": "Toute petite entreprise,",
+            "uk": "Будь-який малий бізнес,"
+        },
+        {
+            "start": "00:00:17,606",
+            "end": "00:00:21,406",
+            "es": "puede ser un negocio exitoso",
+            "fr": "peut être une entreprise prospère",
+            "uk": "може бути успішним бізнесом"
+        },
+        {
+            "start": "00:00:21,696",
+            "end": "00:00:24,486",
+            "es": "siempre que tengas algún valor.",
+            "fr": "tant que vous avez une certaine valeur.",
+            "uk": "доки у вас є якась цінність."
+        },
+        {
+            "start": "00:00:25,126",
+            "end": "00:00:27,706",
+            "es": "Entonces ellos venden este Bo Zai Gao.",
+            "fr": "Donc, ils vendent ce Bo Zai Gao.",
+            "uk": "Отже, вони продають цей Bo Zai Gao."
+        },
+        {
+            "start": "00:00:29,746",
+            "end": "00:00:32,766",
+            "es": "Y mientras puedas proporcionar valor,",
+            "fr": "Et tant que vous pouvez fournir de la valeur,",
+            "uk": "І доки ви можете надавати цінність,"
+        },
+        {
+            "start": "00:00:32,986",
+            "end": "00:00:34,986",
+            "es": "y lo hagas repetidamente,",
+            "fr": "et que vous le faites à plusieurs reprises,",
+            "uk": "і робите це знову і знову,"
+        },
+        {
+            "start": "00:00:38,446",
+            "end": "00:00:39,186",
+            "es": "repetidamente,",
+            "fr": "à plusieurs reprises,",
+            "uk": "знову і знову,"
+        },
+        {
+            "start": "00:00:39,186",
+            "end": "00:00:39,926",
+            "es": "así.",
+            "fr": "ainsi.",
+            "uk": "отак."
+        }
+    ]
+}

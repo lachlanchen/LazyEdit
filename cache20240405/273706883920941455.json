@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:05,478\",\n    \"end\": \"00:03:09,138\",\n    \"lang\": \"en\",\n    \"text\": \"It's far more fluent than before.\"\n  },\n  {\n    \"start\": \"00:03:09,998\",\n    \"end\": \"00:03:10,718\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:03:10,718\",\n    \"end\": \"00:03:14,018\",\n    \"lang\": \"en\",\n    \"text\": \"I like it.\"\n  },\n  {\n    \"start\": \"00:03:14,078\",\n    \"end\": \"00:03:15,438\",\n    \"lang\": \"en\",\n    \"text\": \"I like the small progress.\"\n  },\n  {\n    \"start\": \"00:03:15,938\",\n    \"end\": \"00:03:18,018\",\n    \"lang\": \"en\",\n    \"text\": \"I'm glad I can finally handle it.\"\n  },\n  {\n    \"start\": \"00:03:19,578\",\n    \"end\": \"00:03:20,298\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:03:20,298\",\n    \"end\": \"00:03:20,478\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:03:21,078\",\n    \"end\": \"00:03:21,338\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:03:05,478",
+            "end": "00:03:09,138",
+            "en": "It's far more fluent than before.",
+            "zh": "比以前流利多了。",
+            "ar": "إنها أكثر طلاقة من قبل."
+        },
+        {
+            "start": "00:03:09,998",
+            "end": "00:03:10,718",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:03:10,718",
+            "end": "00:03:14,018",
+            "en": "I like it.",
+            "zh": "我喜欢它。",
+            "ar": "أنا أحب ذلك."
+        },
+        {
+            "start": "00:03:14,078",
+            "end": "00:03:15,438",
+            "en": "I like the small progress.",
+            "zh": "我喜欢这些小进步。",
+            "ar": "أنا أحب التقدم الصغير."
+        },
+        {
+            "start": "00:03:15,938",
+            "end": "00:03:18,018",
+            "en": "I'm glad I can finally handle it.",
+            "zh": "我很高兴我终于可以处理它了。",
+            "ar": "أنا سعيد لأني أستطيع التعامل معها أخيرًا."
+        },
+        {
+            "start": "00:03:19,578",
+            "end": "00:03:20,298",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:03:20,298",
+            "end": "00:03:20,478",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:03:21,078",
+            "end": "00:03:21,338",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

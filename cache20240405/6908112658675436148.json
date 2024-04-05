@@ -1,0 +1,35 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,180\",\n    \"ja\": \"これは<手羽先>[]と\"\n  },\n  {\n    \"start\": \"00:00:03,202\",\n    \"end\": \"00:00:05,002\",\n    \"ja\": \"<パピルス>[]と<ニンジン>[]です。\"\n  },\n  {\n    \"start\": \"00:00:05,902\",\n    \"end\": \"00:00:06,862\",\n    \"ja\": \"これは。\"\n  },\n  {\n    \"start\": \"00:00:08,738\",\n    \"end\": \"00:00:09,458\",\n    \"ja\": \"[<聞>[]き<取>[]れない]\"\n  },\n  {\n    \"start\": \"00:00:11,970\",\n    \"end\": \"00:00:13,330\",\n    \"ja\": \"<次>[]の<ステージ>[]は、\"\n  },\n  {\n    \"start\": \"00:00:13,330\",\n    \"end\": \"00:00:15,110\",\n    \"ja\": \"<福建武道館>[]です。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,180",
+            "ja": "これは<手羽先>[てばさき]と"
+        },
+        {
+            "start": "00:00:03,202",
+            "end": "00:00:05,002",
+            "ja": "<パピルス>[]と<ニンジン>[にんじん]です。"
+        },
+        {
+            "start": "00:00:05,902",
+            "end": "00:00:06,862",
+            "ja": "これは。"
+        },
+        {
+            "start": "00:00:08,738",
+            "end": "00:00:09,458",
+            "ja": "<聞>[き]き<取>[と]れない"
+        },
+        {
+            "start": "00:00:11,970",
+            "end": "00:00:13,330",
+            "ja": "<次>[つぎ]の<ステージ>[]は、"
+        },
+        {
+            "start": "00:00:13,330",
+            "end": "00:00:15,110",
+            "ja": "<福建武道館>[ふっけんぶどうかん]です。"
+        }
+    ]
+}

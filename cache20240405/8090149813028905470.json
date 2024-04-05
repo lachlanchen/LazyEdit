@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,860\",\n    \"lang\": \"en\",\n    \"text\": \"The Advices For Self Improvement\"\n  },\n  {\n    \"start\": \"00:00:01,186\",\n    \"end\": \"00:00:03,406\",\n    \"lang\": \"zh\",\n    \"text\": \"看这是不是斗牛桥 我也不太懂\"\n  },\n  {\n    \"start\": \"00:00:04,285\",\n    \"end\": \"00:00:05,006\",\n    \"lang\": \"zh\",\n    \"text\": \"斗牛桥\"\n  },\n  {\n    \"start\": \"00:00:05,106\",\n    \"end\": \"00:00:05,446\",\n    \"lang\": \"zh\",\n    \"text\": \"巴豆\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,860",
+            "en": "The Advice for Self-Improvement",
+            "zh": "自我提升的建议",
+            "ar": "النصائح للتحسين الذاتي"
+        },
+        {
+            "start": "00:00:01,186",
+            "end": "00:00:03,406",
+            "en": "Not sure if this is the Bullfighting Bridge, I don't quite understand",
+            "zh": "看这是不是斗牛桥 我也不太懂",
+            "ar": "غير متأكد إذا كان هذا هو جسر المصارعة، لا أفهم جيداً"
+        },
+        {
+            "start": "00:00:04,285",
+            "end": "00:00:05,006",
+            "en": "Bullfighting Bridge",
+            "zh": "斗牛桥",
+            "ar": "جسر المصارعة"
+        },
+        {
+            "start": "00:00:05,106",
+            "end": "00:00:05,446",
+            "en": "Poinciana",
+            "zh": "巴豆",
+            "ar": "بوينسيانا"
+        }
+    ]
+}

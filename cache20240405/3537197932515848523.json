@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:02,360\",\n    \"end\": \"00:00:08,460\",\n    \"lang\": \"en\",\n    \"text\": \"Let's solidify this small progress by this video.\"\n  },\n  {\n    \"start\": \"00:00:11,020\",\n    \"end\": \"00:00:13,080\",\n    \"lang\": \"en\",\n    \"text\": \"Na na so...fuck.\"\n  },\n  {\n    \"start\": \"00:00:16,160\",\n    \"end\": \"00:00:19,340\",\n    \"lang\": \"en\",\n    \"text\": \"Na na na na ni na ni.\"\n  },\n  {\n    \"start\": \"00:00:20,540\",\n    \"end\": \"00:00:21,340\",\n    \"lang\": \"en\",\n    \"text\": \"It's all wrong.\"\n  },\n  {\n    \"start\": \"00:00:23,880\",\n    \"end\": \"00:00:25,080\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:25,080\",\n    \"end\": \"00:00:25,140\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:27,640\",\n    \"end\": \"00:00:35,060\",\n    \"lang\": \"en\",\n    \"text\": \"Na na na na toshi na na na ni re mi.\"\n  },\n  {\n    \"start\": \"00:00:35,840\",\n    \"end\": \"00:00:40,240\",\n    \"lang\": \"en\",\n    \"text\": \"Na na toshi na na ni re mi.\"\n  },\n  {\n    \"start\": \"00:00:41,220\",\n    \"end\": \"00:00:43,600\",\n    \"lang\": \"en\",\n    \"text\": \"Mi mi so mi re re.\"\n  },\n  {\n    \"start\": \"00:00:44,620\",\n    \"end\": \"00:00:47,200\",\n    \"lang\": \"en\",\n    \"text\": \"Mi mi so mi re re.\"\n  },\n  {\n    \"start\": \"00:00:47,960\",\n    \"end\": \"00:00:49,300\",\n    \"lang\": \"en\",\n    \"text\": \"Something is incorrect.\"\n  },\n  {\n    \"start\": \"00:00:50,300\",\n    \"end\": \"00:00:55,480\",\n    \"lang\": \"en\",\n    \"text\": \"Mi mi so mi re re.\"\n  },\n  {\n    \"start\": \"00:00:55,700\",\n    \"end\": \"00:00:57,940\",\n    \"lang\": \"en\",\n    \"text\": \"Toshi na so mi.\"\n  },\n  {\n    \"start\": \"00:00:58,580\",\n    \"end\": \"00:01:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"Mi mi so mi re re.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:02,360",
+            "end": "00:00:08,460",
+            "en": "Let's solidify this small progress by this video.",
+            "zh": "让我们通过这个视频巩固这一小步进展。",
+            "ar": "لنُرسخ هذا التقدم الصغير بهذا الفيديو."
+        },
+        {
+            "start": "00:00:11,020",
+            "end": "00:00:13,080",
+            "en": "Na na so...fuck.",
+            "zh": "呐 呐 所...去他的。",
+            "ar": "نا نا كذا...اللعنة."
+        },
+        {
+            "start": "00:00:16,160",
+            "end": "00:00:19,340",
+            "en": "Na na na na ni na ni.",
+            "zh": "呐 呐 呐 呐 呢 呐 呢。",
+            "ar": "نا نا نا نا ني نا ني."
+        },
+        {
+            "start": "00:00:20,540",
+            "end": "00:00:21,340",
+            "en": "It's all wrong.",
+            "zh": "都错了。",
+            "ar": "كل شيء خطأ."
+        },
+        {
+            "start": "00:00:23,880",
+            "end": "00:00:25,080",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسناً."
+        },
+        {
+            "start": "00:00:25,080",
+            "end": "00:00:25,140",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسناً."
+        },
+        {
+            "start": "00:00:27,640",
+            "end": "00:00:35,060",
+            "en": "Na na na na toshi na na na ni re mi.",
+            "zh": "呐 呐 呐 呐 令 呐 呐 呐 呢 令 米。",
+            "ar": "نا نا نا نا توشي نا نا نا ني ري مي."
+        },
+        {
+            "start": "00:00:35,840",
+            "end": "00:00:40,240",
+            "en": "Na na toshi na na ni re mi.",
+            "zh": "呐 呐 令 呐 呐 呢 令 米。",
+            "ar": "نا نا توشي نا نا ني ري مي."
+        },
+        {
+            "start": "00:00:41,220",
+            "end": "00:00:43,600",
+            "en": "Mi mi so mi re re.",
+            "zh": "米 米 所 米 令 令。",
+            "ar": "مي مي سو مي ري ري."
+        },
+        {
+            "start": "00:00:44,620",
+            "end": "00:00:47,200",
+            "en": "Mi mi so mi re re.",
+            "zh": "米 米 所 米 令 令。",
+            "ar": "مي مي سو مي ري ري."
+        },
+        {
+            "start": "00:00:47,960",
+            "end": "00:00:49,300",
+            "en": "Something is incorrect.",
+            "zh": "有些不对劲。",
+            "ar": "هناك شيء غير صحيح."
+        },
+        {
+            "start": "00:00:50,300",
+            "end": "00:00:55,480",
+            "en": "Mi mi so mi re re.",
+            "zh": "米 米 所 米 令 令。",
+            "ar": "مي مي سو مي ري ري."
+        },
+        {
+            "start": "00:00:55,700",
+            "end": "00:00:57,940",
+            "en": "Toshi na so mi.",
+            "zh": "令 呐 所 米。",
+            "ar": "توشي نا سو مي."
+        },
+        {
+            "start": "00:00:58,580",
+            "end": "00:01:05,000",
+            "en": "Mi mi so mi re re.",
+            "zh": "米 米 所 米 令 令。",
+            "ar": "مي مي سو مي ري ري."
+        }
+    ]
+}

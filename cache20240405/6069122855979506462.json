@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,906\",\n    \"end\": \"00:01:02,766\",\n    \"lang\": \"en\",\n    \"text\": \"juicy,\"\n  },\n  {\n    \"start\": \"00:01:02,766\",\n    \"end\": \"00:01:04,506\",\n    \"lang\": \"en\",\n    \"text\": \"and spicy.\"\n  },\n  {\n    \"start\": \"00:01:10,114\",\n    \"end\": \"00:01:10,574\",\n    \"lang\": \"ja\",\n    \"text\": \"美味しい\"\n  },\n  {\n    \"start\": \"00:01:11,170\",\n    \"end\": \"00:01:12,330\",\n    \"lang\": \"en\",\n    \"text\": \"Let's eat it\"\n  },\n  {\n    \"start\": \"00:01:17,089\",\n    \"end\": \"00:01:17,690\",\n    \"lang\": \"en\",\n    \"text\": \"Wow\"\n  },\n  {\n    \"start\": \"00:01:24,089\",\n    \"end\": \"00:01:27,050\",\n    \"lang\": \"en\",\n    \"text\": \"Please put this as a teaser and a cover\"\n  },\n  {\n    \"start\": \"00:01:27,769\",\n    \"end\": \"00:01:28,990\",\n    \"lang\": \"en\",\n    \"text\": \"This is delicious\"\n  },\n  {\n    \"start\": \"00:01:30,269\",\n    \"end\": \"00:01:31,210\",\n    \"lang\": \"en\",\n    \"text\": \"It's juicy,\"\n  },\n  {\n    \"start\": \"00:01:31,210\",\n    \"end\": \"00:01:32,590\",\n    \"lang\": \"en\",\n    \"text\": \"really juicy\"\n  },\n  {\n    \"start\": \"00:01:39,149\",\n    \"end\": \"00:01:41,330\",\n    \"lang\": \"en\",\n    \"text\": \"This is the best chicken wing ever\"\n  },\n  {\n    \"start\": \"00:01:45,229\",\n    \"end\": \"00:01:45,950\",\n    \"lang\": \"en\",\n    \"text\": \"I need to go\"\n  },\n  {\n    \"start\": \"00:01:48,409\",\n    \"end\": \"00:01:48,830\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,906",
+            "end": "00:01:02,766",
+            "es": "jugoso,",
+            "fr": "juteux,",
+            "uk": "соковитий,"
+        },
+        {
+            "start": "00:01:02,766",
+            "end": "00:01:04,506",
+            "es": "y picante.",
+            "fr": "et épicé.",
+            "uk": "та гострий."
+        },
+        {
+            "start": "00:01:10,114",
+            "end": "00:01:10,574",
+            "es": "Delicioso",
+            "fr": "Délicieux",
+            "uk": "Смачно"
+        },
+        {
+            "start": "00:01:11,170",
+            "end": "00:01:12,330",
+            "es": "Vamos a comerlo",
+            "fr": "Mangeons-le",
+            "uk": "Давайте їсти"
+        },
+        {
+            "start": "00:01:17,089",
+            "end": "00:01:17,690",
+            "es": "Guau",
+            "fr": "Waouh",
+            "uk": "Вау"
+        },
+        {
+            "start": "00:01:24,089",
+            "end": "00:01:27,050",
+            "es": "Por favor, pon esto como un adelanto y una portada",
+            "fr": "Merci de mettre ceci comme un teaser et une couverture",
+            "uk": "Будь ласка, постав це як тизер і обкладинку"
+        },
+        {
+            "start": "00:01:27,769",
+            "end": "00:01:28,990",
+            "es": "Esto está delicioso",
+            "fr": "C'est délicieux",
+            "uk": "Це смачно"
+        },
+        {
+            "start": "00:01:30,269",
+            "end": "00:01:31,210",
+            "es": "Es jugoso,",
+            "fr": "C'est juteux,",
+            "uk": "Це соковито,"
+        },
+        {
+            "start": "00:01:31,210",
+            "end": "00:01:32,590",
+            "es": "realmente jugoso",
+            "fr": "vraiment juteux",
+            "uk": "дійсно соковитий"
+        },
+        {
+            "start": "00:01:39,149",
+            "end": "00:01:41,330",
+            "es": "Este es el mejor ala de pollo jamás",
+            "fr": "C'est le meilleur aileron de poulet de tous les temps",
+            "uk": "Це найкраще куряче крило за все життя"
+        },
+        {
+            "start": "00:01:45,229",
+            "end": "00:01:45,950",
+            "es": "Necesito irme",
+            "fr": "Je dois y aller",
+            "uk": "Мені потрібно йти"
+        },
+        {
+            "start": "00:01:48,409",
+            "end": "00:01:48,830",
+            "es": "Nos vemos",
+            "fr": "À bientôt",
+            "uk": "Бачимось"
+        }
+    ]
+}

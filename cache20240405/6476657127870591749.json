@@ -1,0 +1,115 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,840\",\n    \"end\": \"00:01:03,490\",\n    \"lang\": \"en\",\n    \"text\": \"Do you hear the crispy sound?\"\n  },\n  {\n    \"start\": \"00:01:07,470\",\n    \"end\": \"00:01:08,550\",\n    \"lang\": \"en\",\n    \"text\": \"It's too crispy\"\n  },\n  {\n    \"start\": \"00:01:12,590\",\n    \"end\": \"00:01:13,290\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:13,290\",\n    \"end\": \"00:01:14,250\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  },\n  {\n    \"start\": \"00:01:16,030\",\n    \"end\": \"00:01:17,110\",\n    \"lang\": \"en\",\n    \"text\": \"This means,\"\n  },\n  {\n    \"start\": \"00:01:17,110\",\n    \"end\": \"00:01:18,490\",\n    \"lang\": \"en\",\n    \"text\": \"it has some meaning,\"\n  },\n  {\n    \"start\": \"00:01:18,490\",\n    \"end\": \"00:01:19,090\",\n    \"lang\": \"en\",\n    \"text\": \"some insight\"\n  },\n  {\n    \"start\": \"00:01:20,050\",\n    \"end\": \"00:01:20,690\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:20,690\",\n    \"end\": \"00:01:21,870\",\n    \"lang\": \"en\",\n    \"text\": \"everything,\"\n  },\n  {\n    \"start\": \"00:01:21,870\",\n    \"end\": \"00:01:24,470\",\n    \"lang\": \"en\",\n    \"text\": \"every situation is a situation\"\n  },\n  {\n    \"start\": \"00:01:24,470\",\n    \"end\": \"00:01:26,790\",\n    \"lang\": \"en\",\n    \"text\": \"It could be not a problem\"\n  },\n  {\n    \"start\": \"00:01:26,790\",\n    \"end\": \"00:01:27,530\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:27,530\",\n    \"end\": \"00:01:29,090\",\n    \"lang\": \"en\",\n    \"text\": \"every occasion\"\n  },\n  {\n    \"start\": \"00:01:31,620\",\n    \"end\": \"00:01:34,230\",\n    \"lang\": \"en\",\n    \"text\": \"Every situation you encounter\"\n  },\n  {\n    \"start\": \"00:01:35,060\",\n    \"end\": \"00:01:36,670\",\n    \"lang\": \"en\",\n    \"text\": \"can be transformed into\"\n  },\n  {\n    \"start\": \"00:01:38,160\",\n    \"end\": \"00:01:39,430\",\n    \"lang\": \"en\",\n    \"text\": \"either good or bad\"\n  },\n  {\n    \"start\": \"00:01:39,430\",\n    \"end\": \"00:01:42,990\",\n    \"lang\": \"en\",\n    \"text\": \"It depends on your\"\n  },\n  {\n    \"start\": \"00:01:42,990\",\n    \"end\": \"00:01:43,250\",\n    \"lang\": \"en\",\n    \"text\": \"your\"\n  },\n  {\n    \"start\": \"00:01:45,420\",\n    \"end\": \"00:01:47,830\",\n    \"lang\": \"en\",\n    \"text\": \"your moment and action\"\n  },\n  {\n    \"start\": \"00:01:47,830\",\n    \"end\": \"00:01:51,690\",\n    \"lang\": \"en\",\n    \"text\": \"and your mindset\"\n  },\n  {\n    \"start\": \"00:01:51,690\",\n    \"end\": \"00:01:52,870\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:52,870\",\n    \"end\": \"00:01:53,690\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,840",
+            "end": "00:01:03,490",
+            "ja": "パリパリという音が聞こえますか？"
+        },
+        {
+            "start": "00:01:07,470",
+            "end": "00:01:08,550",
+            "ja": "とてもカリカリしています"
+        },
+        {
+            "start": "00:01:12,590",
+            "end": "00:01:13,290",
+            "ja": "わかりました、"
+        },
+        {
+            "start": "00:01:13,290",
+            "end": "00:01:14,250",
+            "ja": "じゃあね"
+        },
+        {
+            "start": "00:01:16,030",
+            "end": "00:01:17,110",
+            "ja": "これは、"
+        },
+        {
+            "start": "00:01:17,110",
+            "end": "00:01:18,490",
+            "ja": "何か意味があり、"
+        },
+        {
+            "start": "00:01:18,490",
+            "end": "00:01:19,090",
+            "ja": "何か洞察がある"
+        },
+        {
+            "start": "00:01:20,050",
+            "end": "00:01:20,690",
+            "ja": "だから、"
+        },
+        {
+            "start": "00:01:20,690",
+            "end": "00:01:21,870",
+            "ja": "全ての、"
+        },
+        {
+            "start": "00:01:21,870",
+            "end": "00:01:24,470",
+            "ja": "全ての状況は状況です"
+        },
+        {
+            "start": "00:01:24,470",
+            "end": "00:01:26,790",
+            "ja": "問題ではないかもしれません"
+        },
+        {
+            "start": "00:01:26,790",
+            "end": "00:01:27,530",
+            "ja": "だから、"
+        },
+        {
+            "start": "00:01:27,530",
+            "end": "00:01:29,090",
+            "ja": "あらゆる機会"
+        },
+        {
+            "start": "00:01:31,620",
+            "end": "00:01:34,230",
+            "ja": "遭遇する全ての状況"
+        },
+        {
+            "start": "00:01:35,060",
+            "end": "00:01:36,670",
+            "ja": "良いものか悪いものかに"
+        },
+        {
+            "start": "00:01:38,160",
+            "end": "00:01:39,430",
+            "ja": "変えることができます"
+        },
+        {
+            "start": "00:01:39,430",
+            "end": "00:01:42,990",
+            "ja": "それはあなたの"
+        },
+        {
+            "start": "00:01:42,990",
+            "end": "00:01:43,250",
+            "ja": "あなたの"
+        },
+        {
+            "start": "00:01:45,420",
+            "end": "00:01:47,830",
+            "ja": "あなたの瞬間と行動"
+        },
+        {
+            "start": "00:01:47,830",
+            "end": "00:01:51,690",
+            "ja": "そしてあなたの心構えによります"
+        },
+        {
+            "start": "00:01:51,690",
+            "end": "00:01:52,870",
+            "ja": "わかりました、"
+        },
+        {
+            "start": "00:01:52,870",
+            "end": "00:01:53,690",
+            "ja": "じゃあね"
+        }
+    ]
+}

@@ -1,0 +1,173 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,699\",\n    \"end\": \"00:00:01,380\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:01,380\",\n    \"end\": \"00:00:01,820\",\n    \"lang\": \"en\",\n    \"text\": \"so,\"\n  },\n  {\n    \"start\": \"00:00:01,820\",\n    \"end\": \"00:00:05,380\",\n    \"lang\": \"en\",\n    \"text\": \"do our morning running and we record this small progress.\"\n  },\n  {\n    \"start\": \"00:00:07,714\",\n    \"end\": \"00:00:09,014\",\n    \"lang\": \"zh\",\n    \"text\": \"向前行\"\n  },\n  {\n    \"start\": \"00:00:10,294\",\n    \"end\": \"00:00:11,514\",\n    \"lang\": \"zh\",\n    \"text\": \"向后 From beyond\"\n  },\n  {\n    \"start\": \"00:00:11,514\",\n    \"end\": \"00:00:13,674\",\n    \"lang\": \"zh\",\n    \"text\": \"你来ortion\"\n  },\n  {\n    \"start\": \"00:00:15,538\",\n    \"end\": \"00:00:17,538\",\n    \"lang\": \"en\",\n    \"text\": \"is correct\"\n  },\n  {\n    \"start\": \"00:00:29,794\",\n    \"end\": \"00:00:30,654\",\n    \"lang\": \"zh\",\n    \"text\": \"多謝您啊\"\n  },\n  {\n    \"start\": \"00:00:32,034\",\n    \"end\": \"00:00:34,394\",\n    \"lang\": \"ja\",\n    \"text\": \"まだ未来に\"\n  },\n  {\n    \"start\": \"00:00:34,394\",\n    \"end\": \"00:00:35,394\",\n    \"lang\": \"ja\",\n    \"text\": \"見えない\"\n  },\n  {\n    \"start\": \"00:00:35,426\",\n    \"end\": \"00:00:36,046\",\n    \"lang\": \"en\",\n    \"text\": \"So me.\"\n  },\n  {\n    \"start\": \"00:00:36,706\",\n    \"end\": \"00:00:38,906\",\n    \"lang\": \"zh\",\n    \"text\": \"快樂都行啊\"\n  },\n  {\n    \"start\": \"00:00:39,106\",\n    \"end\": \"00:00:40,226\",\n    \"lang\": \"zh\",\n    \"text\": \"送你\"\n  },\n  {\n    \"start\": \"00:00:41,206\",\n    \"end\": \"00:00:43,546\",\n    \"lang\": \"zh\",\n    \"text\": \"娜娜都行啊\"\n  },\n  {\n    \"start\": \"00:00:43,646\",\n    \"end\": \"00:00:45,206\",\n    \"lang\": \"zh\",\n    \"text\": \"娜娜咪咪\"\n  },\n  {\n    \"start\": \"00:00:45,206\",\n    \"end\": \"00:00:47,026\",\n    \"lang\": \"zh\",\n    \"text\": \"咪咪都送你\"\n  },\n  {\n    \"start\": \"00:00:47,026\",\n    \"end\": \"00:00:48,566\",\n    \"lang\": \"zh\",\n    \"text\": \"快樂都行啊\"\n  },\n  {\n    \"start\": \"00:00:48,726\",\n    \"end\": \"00:00:50,106\",\n    \"lang\": \"zh\",\n    \"text\": \"送你\"\n  },\n  {\n    \"start\": \"00:00:50,966\",\n    \"end\": \"00:00:53,346\",\n    \"lang\": \"zh\",\n    \"text\": \"娜娜都行啊\"\n  },\n  {\n    \"start\": \"00:00:53,706\",\n    \"end\": \"00:00:54,286\",\n    \"lang\": \"zh\",\n    \"text\": \"娜娜咪咪\"\n  },\n  {\n    \"start\": \"00:00:54,306\",\n    \"end\": \"00:00:55,126\",\n    \"lang\": \"en\",\n    \"text\": \"Be ready,\"\n  },\n  {\n    \"start\": \"00:00:55,126\",\n    \"end\": \"00:00:56,866\",\n    \"lang\": \"en\",\n    \"text\": \"be ready\"\n  },\n  {\n    \"start\": \"00:00:56,898\",\n    \"end\": \"00:00:58,698\",\n    \"lang\": \"zh\",\n    \"text\": \"你生日快樂\"\n  },\n  {\n    \"start\": \"00:00:59,878\",\n    \"end\": \"00:01:02,278\",\n    \"lang\": \"zh\",\n    \"text\": \"祝你生日快樂\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,699",
+            "end": "00:00:01,380",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:00:01,380",
+            "end": "00:00:01,820",
+            "es": "entonces,",
+            "fr": "alors,",
+            "uk": "отже,"
+        },
+        {
+            "start": "00:00:01,820",
+            "end": "00:00:05,380",
+            "es": "hagamos nuestra carrera matutina y registremos este pequeño progreso.",
+            "fr": "faisons notre course matinale et enregistrons ce petit progrès.",
+            "uk": "робимо наш ранковий біг і записуємо цей невеликий прогрес."
+        },
+        {
+            "start": "00:00:07,714",
+            "end": "00:00:09,014",
+            "es": "Avanza",
+            "fr": "Avance",
+            "uk": "Рухайтеся вперед"
+        },
+        {
+            "start": "00:00:10,294",
+            "end": "00:00:11,514",
+            "es": "Hacia atrás Desde más allá",
+            "fr": "Vers l'arrière Depuis l'au-delà",
+            "uk": "Назад Зза меж"
+        },
+        {
+            "start": "00:00:11,514",
+            "end": "00:00:13,674",
+            "es": "vienes",
+            "fr": "tu viens",
+            "uk": "ти приходиш"
+        },
+        {
+            "start": "00:00:15,538",
+            "end": "00:00:17,538",
+            "es": "es correcto",
+            "fr": "c'est correct",
+            "uk": "це правильно"
+        },
+        {
+            "start": "00:00:29,794",
+            "end": "00:00:30,654",
+            "es": "Muchas gracias",
+            "fr": "Merci beaucoup",
+            "uk": "Дуже вам дякую"
+        },
+        {
+            "start": "00:00:32,034",
+            "end": "00:00:34,394",
+            "es": "todavía en el futuro",
+            "fr": "encore dans le futur",
+            "uk": "ще в майбутньому"
+        },
+        {
+            "start": "00:00:34,394",
+            "end": "00:00:35,394",
+            "es": "invisble",
+            "fr": "invisible",
+            "uk": "невидимий"
+        },
+        {
+            "start": "00:00:35,426",
+            "end": "00:00:36,046",
+            "es": "Así que yo.",
+            "fr": "Alors moi.",
+            "uk": "Отже я."
+        },
+        {
+            "start": "00:00:36,706",
+            "end": "00:00:38,906",
+            "es": "la felicidad está bien",
+            "fr": "le bonheur va bien",
+            "uk": "щастя нормально"
+        },
+        {
+            "start": "00:00:39,106",
+            "end": "00:00:40,226",
+            "es": "para ti",
+            "fr": "pour toi",
+            "uk": "для тебе"
+        },
+        {
+            "start": "00:00:41,206",
+            "end": "00:00:43,546",
+            "es": "Nana está bien",
+            "fr": "Nana va bien",
+            "uk": "Нана нормально"
+        },
+        {
+            "start": "00:00:43,646",
+            "end": "00:00:45,206",
+            "es": "Nana Mimi",
+            "fr": "Nana Mimi",
+            "uk": "Нана Мімі"
+        },
+        {
+            "start": "00:00:45,206",
+            "end": "00:00:47,026",
+            "es": "Mimi también para ti",
+            "fr": "Mimi aussi pour toi",
+            "uk": "Мімі теж для тебе"
+        },
+        {
+            "start": "00:00:47,026",
+            "end": "00:00:48,566",
+            "es": "la felicidad está bien",
+            "fr": "le bonheur va bien",
+            "uk": "щастя нормально"
+        },
+        {
+            "start": "00:00:48,726",
+            "end": "00:00:50,106",
+            "es": "para ti",
+            "fr": "pour toi",
+            "uk": "для тебе"
+        },
+        {
+            "start": "00:00:50,966",
+            "end": "00:00:53,346",
+            "es": "Nana está bien",
+            "fr": "Nana va bien",
+            "uk": "Нана нормально"
+        },
+        {
+            "start": "00:00:53,706",
+            "end": "00:00:54,286",
+            "es": "Nana Mimi",
+            "fr": "Nana Mimi",
+            "uk": "Нана Мімі"
+        },
+        {
+            "start": "00:00:54,306",
+            "end": "00:00:55,126",
+            "es": "Prepárate,",
+            "fr": "Sois prêt,",
+            "uk": "Будь готовий,"
+        },
+        {
+            "start": "00:00:55,126",
+            "end": "00:00:56,866",
+            "es": "prepárate",
+            "fr": "sois prêt",
+            "uk": "будь готовий"
+        },
+        {
+            "start": "00:00:56,898",
+            "end": "00:00:58,698",
+            "es": "Feliz cumpleaños",
+            "fr": "Joyeux anniversaire",
+            "uk": "З Днем Народження"
+        },
+        {
+            "start": "00:00:59,878",
+            "end": "00:01:02,278",
+            "es": "Te deseo un feliz cumpleaños",
+            "fr": "Je te souhaite un joyeux anniversaire",
+            "uk": "Бажаю тобі з Днем Народження"
+        }
+    ]
+}

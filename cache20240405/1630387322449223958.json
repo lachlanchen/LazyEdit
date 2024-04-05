@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:13,960\",\n    \"end\": \"00:01:15,180\",\n    \"lang\": \"en\",\n    \"text\": \"That's my hope,\"\n  },\n  {\n    \"start\": \"00:01:15,180\",\n    \"end\": \"00:01:16,000\",\n    \"lang\": \"en\",\n    \"text\": \"my dream.\"\n  },\n  {\n    \"start\": \"00:01:16,000\",\n    \"end\": \"00:01:22,420\",\n    \"lang\": \"en\",\n    \"text\": \"But my dream is a thing I want to do.\"\n  },\n  {\n    \"start\": \"00:01:24,540\",\n    \"end\": \"00:01:28,460\",\n    \"lang\": \"en\",\n    \"text\": \"Interesting is that today all my food is in profit.\"\n  },\n  {\n    \"start\": \"00:01:29,460\",\n    \"end\": \"00:01:33,360\",\n    \"lang\": \"en\",\n    \"text\": \"Sweet potato and eggs were exploded.\"\n  },\n  {\n    \"start\": \"00:01:34,400\",\n    \"end\": \"00:01:37,620\",\n    \"lang\": \"en\",\n    \"text\": \"It's kind of explosion day today.\"\n  },\n  {\n    \"start\": \"00:01:38,640\",\n    \"end\": \"00:01:40,560\",\n    \"lang\": \"en\",\n    \"text\": \"Everything is going to be explosive.\"\n  },\n  {\n    \"start\": \"00:01:43,020\",\n    \"end\": \"00:01:44,300\",\n    \"lang\": \"en\",\n    \"text\": \"Explosive growth.\"\n  },\n  {\n    \"start\": \"00:01:46,540\",\n    \"end\": \"00:01:47,060\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:47,060\",\n    \"end\": \"00:01:48,640\",\n    \"lang\": \"en\",\n    \"text\": \"let's try.\"\n  },\n  {\n    \"start\": \"00:01:49,120\",\n    \"end\": \"00:01:59,900\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this is just interesting.\"\n  },\n  {\n    \"start\": \"00:02:03,560\",\n    \"end\": \"00:02:04,960\",\n    \"lang\": \"en\",\n    \"text\": \"It's clever.\"\n  },\n  {\n    \"start\": \"00:02:06,779\",\n    \"end\": \"00:02:07,820\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:07,820\",\n    \"end\": \"00:02:09,039\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  },\n  {\n    \"start\": \"00:02:12,920\",\n    \"end\": \"00:02:13,960\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:02:13,960\",\n    \"end\": \"00:02:14,420\",\n    \"lang\": \"en\",\n    \"text\": \"sorry.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:13,960",
+            "end": "00:01:15,180",
+            "ko": "그게 내 희망이에요,"
+        },
+        {
+            "start": "00:01:15,180",
+            "end": "00:01:16,000",
+            "ko": "내 꿈."
+        },
+        {
+            "start": "00:01:16,000",
+            "end": "00:01:22,420",
+            "ko": "하지만 내 꿈은 내가 하고 싶은 것입니다."
+        },
+        {
+            "start": "00:01:24,540",
+            "end": "00:01:28,460",
+            "ko": "오늘 재미있는 점은 내 모든 음식이 이익이라는 거예요."
+        },
+        {
+            "start": "00:01:29,460",
+            "end": "00:01:33,360",
+            "ko": "고구마와 달걀이 터졌어요."
+        },
+        {
+            "start": "00:01:34,400",
+            "end": "00:01:37,620",
+            "ko": "오늘은 종류의 폭발하는 날이에요."
+        },
+        {
+            "start": "00:01:38,640",
+            "end": "00:01:40,560",
+            "ko": "모든 것이 폭발적일 거에요."
+        },
+        {
+            "start": "00:01:43,020",
+            "end": "00:01:44,300",
+            "ko": "폭발적 성장."
+        },
+        {
+            "start": "00:01:46,540",
+            "end": "00:01:47,060",
+            "ko": "좋아요,"
+        },
+        {
+            "start": "00:01:47,060",
+            "end": "00:01:48,640",
+            "ko": "해봅시다."
+        },
+        {
+            "start": "00:01:49,120",
+            "end": "00:01:59,900",
+            "ko": "이것은 그저 재미있는 것 같아요."
+        },
+        {
+            "start": "00:02:03,560",
+            "end": "00:02:04,960",
+            "ko": "영리해요."
+        },
+        {
+            "start": "00:02:06,779",
+            "end": "00:02:07,820",
+            "ko": "좋아요,"
+        },
+        {
+            "start": "00:02:07,820",
+            "end": "00:02:09,039",
+            "ko": "안녕."
+        },
+        {
+            "start": "00:02:12,920",
+            "end": "00:02:13,960",
+            "ko": "미안해요,"
+        },
+        {
+            "start": "00:02:13,960",
+            "end": "00:02:14,420",
+            "ko": "미안해요."
+        }
+    ]
+}

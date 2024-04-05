@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,606\",\n    \"end\": \"00:01:04,806\",\n    \"lang\": \"en\",\n    \"text\": \"So my own flavor also contribute a lot.\"\n  },\n  {\n    \"start\": \"00:01:04,806\",\n    \"end\": \"00:01:05,746\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:05,746\",\n    \"end\": \"00:01:13,526\",\n    \"lang\": \"en\",\n    \"text\": \"this flavor that they blend together create this unique flavor.\"\n  },\n  {\n    \"start\": \"00:01:20,956\",\n    \"end\": \"00:01:23,006\",\n    \"lang\": \"en\",\n    \"text\": \"I have this intuition.\"\n  },\n  {\n    \"start\": \"00:01:24,036\",\n    \"end\": \"00:01:30,906\",\n    \"lang\": \"en\",\n    \"text\": \"What kind of flavor that they can work together.\"\n  },\n  {\n    \"start\": \"00:01:31,446\",\n    \"end\": \"00:01:39,966\",\n    \"lang\": \"en\",\n    \"text\": \"So I discard two flavor bags that I think is not appropriate and use my own flavor.\"\n  },\n  {\n    \"start\": \"00:01:42,286\",\n    \"end\": \"00:01:43,566\",\n    \"lang\": \"en\",\n    \"text\": \"So it's like a music.\"\n  },\n  {\n    \"start\": \"00:01:44,606\",\n    \"end\": \"00:01:46,186\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this is my talent.\"\n  },\n  {\n    \"start\": \"00:01:46,426\",\n    \"end\": \"00:01:47,706\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not humble on this.\"\n  },\n  {\n    \"start\": \"00:01:48,886\",\n    \"end\": \"00:01:53,266\",\n    \"lang\": \"en\",\n    \"text\": \"I'm quite confident and I'm sure I have this capability.\"\n  },\n  {\n    \"start\": \"00:01:53,266\",\n    \"end\": \"00:01:57,486\",\n    \"lang\": \"en\",\n    \"text\": \"Whenever I taste some food,\"\n  },\n  {\n    \"start\": \"00:01:57,486\",\n    \"end\": \"00:02:05,606\",\n    \"lang\": \"en\",\n    \"text\": \"I can copy that taste and also to refine it based on the taste.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:01,606",
+            "end": "00:01:04,806",
+            "en": "So my own flavor also contributes a lot.",
+            "zh": "所以我的独特风味也贡献良多。",
+            "ar": "لذلك، نكهتي الخاصة تساهم أيضًا بشكل كبير."
+        },
+        {
+            "start": "00:01:04,806",
+            "end": "00:01:05,746",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذاً,"
+        },
+        {
+            "start": "00:01:05,746",
+            "end": "00:01:13,526",
+            "en": "this flavor that they blend together creates this unique flavor.",
+            "zh": "它们混合在一起的这种风味创造了这种独特的味道。",
+            "ar": "هذه النكهة التي يمزجونها معًا تخلق هذا الطعم الفريد."
+        },
+        {
+            "start": "00:01:20,956",
+            "end": "00:01:23,006",
+            "en": "I have this intuition.",
+            "zh": "我有这种直觉。",
+            "ar": "لدي هذه الحدس."
+        },
+        {
+            "start": "00:01:24,036",
+            "end": "00:01:30,906",
+            "en": "What kind of flavor they can work together.",
+            "zh": "它们可以共同作用的是什么样的风味。",
+            "ar": "أي نوع من النكهات يمكن أن تعمل معا."
+        },
+        {
+            "start": "00:01:31,446",
+            "end": "00:01:39,966",
+            "en": "So I discard two flavor bags that I think are not appropriate and use my own flavor.",
+            "zh": "所以我丢弃了我认为不合适的两种调味袋，使用我自己的风味。",
+            "ar": "لذلك أتخلى عن حقيبتين من النكهات التي أعتقد أنها غير مناسبة وأستخدم نكهتي الخاصة."
+        },
+        {
+            "start": "00:01:42,286",
+            "end": "00:01:43,566",
+            "en": "So it's like a music.",
+            "zh": "所以这就像是音乐。",
+            "ar": "إذن هو مثل الموسيقى."
+        },
+        {
+            "start": "00:01:44,606",
+            "end": "00:01:46,186",
+            "en": "I believe this is my talent.",
+            "zh": "我相信这是我的才华。",
+            "ar": "أعتقد أن هذه موهبتي."
+        },
+        {
+            "start": "00:01:46,426",
+            "end": "00:01:47,706",
+            "en": "I'm not humble about this.",
+            "zh": "对此我不谦虚。",
+            "ar": "أنا لست متواضعا بشأن هذا."
+        },
+        {
+            "start": "00:01:48,886",
+            "end": "00:01:53,266",
+            "en": "I'm quite confident and I'm sure I have this capability.",
+            "zh": "我非常自信，我确信我有这种能力。",
+            "ar": "أنا واثق جدًا ومتأكد من أن لدي هذه القدرة."
+        },
+        {
+            "start": "00:01:53,266",
+            "end": "00:01:57,486",
+            "en": "Whenever I taste some food,",
+            "zh": "每当我品尝一些食物，",
+            "ar": "كلما ذقت بعض الطعام،"
+        },
+        {
+            "start": "00:01:57,486",
+            "end": "00:02:05,606",
+            "en": "I can copy that taste and also refine it based on the taste.",
+            "zh": "我可以复制那种味道，也可以根据味道来改进它。",
+            "ar": "يمكنني أن أنسخ هذا الطعم وأيضًا أن أصقله بناءً على الطعم."
+        }
+    ]
+}

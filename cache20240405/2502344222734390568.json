@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:05,641\",\n    \"end\": \"00:02:06,461\",\n    \"lang\": \"zh\",\n    \"text\": \"放心哦\"\n  },\n  {\n    \"start\": \"00:02:07,266\",\n    \"end\": \"00:02:08,086\",\n    \"lang\": \"en\",\n    \"text\": \"different flavor\"\n  },\n  {\n    \"start\": \"00:02:12,446\",\n    \"end\": \"00:02:15,066\",\n    \"lang\": \"en\",\n    \"text\": \"So that's my talent\"\n  },\n  {\n    \"start\": \"00:02:16,002\",\n    \"end\": \"00:02:16,342\",\n    \"lang\": \"en\",\n    \"text\": \"ir Vera\"\n  },\n  {\n    \"start\": \"00:02:26,498\",\n    \"end\": \"00:02:28,498\",\n    \"lang\": \"zh\",\n    \"text\": \"我现在在烹饪\"\n  },\n  {\n    \"start\": \"00:02:29,218\",\n    \"end\": \"00:02:30,738\",\n    \"lang\": \"en\",\n    \"text\": \"This is really delicious.\"\n  },\n  {\n    \"start\": \"00:02:32,078\",\n    \"end\": \"00:02:38,838\",\n    \"lang\": \"en\",\n    \"text\": \"How about I put this rice and the baozi that I left in this morning?\"\n  },\n  {\n    \"start\": \"00:02:40,438\",\n    \"end\": \"00:02:42,358\",\n    \"lang\": \"en\",\n    \"text\": \"Maybe temporarily not at the end,\"\n  },\n  {\n    \"start\": \"00:02:42,358\",\n    \"end\": \"00:02:43,078\",\n    \"lang\": \"en\",\n    \"text\": \"I might try that.\"\n  },\n  {\n    \"start\": \"00:02:43,478\",\n    \"end\": \"00:02:43,698\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:05,641",
+            "end": "00:02:06,461",
+            "vi": "Cứ yên tâm nhé"
+        },
+        {
+            "start": "00:02:07,266",
+            "end": "00:02:08,086",
+            "vi": "hương vị khác biệt"
+        },
+        {
+            "start": "00:02:12,446",
+            "end": "00:02:15,066",
+            "vi": "Vậy đó là tài năng của tôi"
+        },
+        {
+            "start": "00:02:16,002",
+            "end": "00:02:16,342",
+            "vi": "chị Vera"
+        },
+        {
+            "start": "00:02:26,498",
+            "end": "00:02:28,498",
+            "vi": "Tôi đang nấu ăn"
+        },
+        {
+            "start": "00:02:29,218",
+            "end": "00:02:30,738",
+            "vi": "Món này thực sự rất ngon."
+        },
+        {
+            "start": "00:02:32,078",
+            "end": "00:02:38,838",
+            "vi": "Nếu tôi cho cơm này và bánh bao tôi để từ sáng nay vào thế nào?"
+        },
+        {
+            "start": "00:02:40,438",
+            "end": "00:02:42,358",
+            "vi": "Có lẽ tạm thời không phải lúc này,"
+        },
+        {
+            "start": "00:02:42,358",
+            "end": "00:02:43,078",
+            "vi": "tôi có thể sẽ thử."
+        },
+        {
+            "start": "00:02:43,478",
+            "end": "00:02:43,698",
+            "vi": "Được."
+        }
+    ]
+}

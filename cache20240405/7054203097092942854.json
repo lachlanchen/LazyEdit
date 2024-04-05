@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,500\",\n    \"lang\": \"en\",\n    \"text\": \"I have fans asking my age.\"\n  },\n  {\n    \"start\": \"00:00:05,500\",\n    \"end\": \"00:00:13,800\",\n    \"lang\": \"en\",\n    \"text\": \"Age is quite a relative thing.\"\n  },\n  {\n    \"start\": \"00:00:14,800\",\n    \"end\": \"00:00:15,300\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:15,300\",\n    \"end\": \"00:00:17,060\",\n    \"lang\": \"en\",\n    \"text\": \"like 40 years old,\"\n  },\n  {\n    \"start\": \"00:00:17,060\",\n    \"end\": \"00:00:23,380\",\n    \"lang\": \"en\",\n    \"text\": \"it could be the start for some people.\"\n  },\n  {\n    \"start\": \"00:00:23,980\",\n    \"end\": \"00:00:31,060\",\n    \"lang\": \"en\",\n    \"text\": \"It could be the start of your life,\"\n  },\n  {\n    \"start\": \"00:00:31,060\",\n    \"end\": \"00:00:32,780\",\n    \"lang\": \"en\",\n    \"text\": \"start of your career.\"\n  },\n  {\n    \"start\": \"00:00:35,300\",\n    \"end\": \"00:00:38,920\",\n    \"lang\": \"en\",\n    \"text\": \"And it could also be the end of some people.\"\n  },\n  {\n    \"start\": \"00:00:39,960\",\n    \"end\": \"00:00:40,600\",\n    \"lang\": \"en\",\n    \"text\": \"As someone,\"\n  },\n  {\n    \"start\": \"00:00:40,600\",\n    \"end\": \"00:00:42,800\",\n    \"lang\": \"en\",\n    \"text\": \"though they are alive,\"\n  },\n  {\n    \"start\": \"00:00:42,800\",\n    \"end\": \"00:00:46,860\",\n    \"lang\": \"en\",\n    \"text\": \"but they died at their 20s and 30s.\"\n  },\n  {\n    \"start\": \"00:00:47,440\",\n    \"end\": \"00:00:47,500\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:47,500\",\n    \"end\": \"00:00:56,980\",\n    \"lang\": \"en\",\n    \"text\": \"their rest of life is just a repetition of their original inertia.\"\n  },\n  {\n    \"start\": \"00:00:59,260\",\n    \"end\": \"00:01:02,300\",\n    \"lang\": \"en\",\n    \"text\": \"Age is not an important thing.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,500",
+            "es": "Tengo fans preguntando mi edad.",
+            "fr": "J'ai des fans qui demandent mon âge.",
+            "uk": "У мене питають фани, скільки мені років."
+        },
+        {
+            "start": "00:00:05,500",
+            "end": "00:00:13,800",
+            "es": "La edad es algo bastante relativo.",
+            "fr": "L'âge est quelque chose de assez relatif.",
+            "uk": "Вік - це досить відносне поняття."
+        },
+        {
+            "start": "00:00:14,800",
+            "end": "00:00:15,300",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:15,300",
+            "end": "00:00:17,060",
+            "es": "como 40 años,",
+            "fr": "comme 40 ans,",
+            "uk": "як 40 років,"
+        },
+        {
+            "start": "00:00:17,060",
+            "end": "00:00:23,380",
+            "es": "podría ser el inicio para algunas personas.",
+            "fr": "cela pourrait être le début pour certaines personnes.",
+            "uk": "це може бути початок для деяких людей."
+        },
+        {
+            "start": "00:00:23,980",
+            "end": "00:00:31,060",
+            "es": "Podría ser el inicio de tu vida,",
+            "fr": "Cela pourrait être le début de votre vie,",
+            "uk": "Це може бути початок вашого життя,"
+        },
+        {
+            "start": "00:00:31,060",
+            "end": "00:00:32,780",
+            "es": "inicio de tu carrera.",
+            "fr": "début de votre carrière.",
+            "uk": "початок вашої кар'єри."
+        },
+        {
+            "start": "00:00:35,300",
+            "end": "00:00:38,920",
+            "es": "Y también podría ser el fin para algunas personas.",
+            "fr": "Et cela pourrait aussi être la fin pour certaines personnes.",
+            "uk": "І це також може бути кінець для деяких людей."
+        },
+        {
+            "start": "00:00:39,960",
+            "end": "00:00:40,600",
+            "es": "Como alguien,",
+            "fr": "Comme quelqu'un,",
+            "uk": "Як хтось,"
+        },
+        {
+            "start": "00:00:40,600",
+            "end": "00:00:42,800",
+            "es": "aunque estén vivos,",
+            "fr": "bien qu'ils soient vivants,",
+            "uk": "хоч вони й живі,"
+        },
+        {
+            "start": "00:00:42,800",
+            "end": "00:00:46,860",
+            "es": "pero murieron en sus 20 y 30 años.",
+            "fr": "mais ils sont morts à leurs 20 et 30 ans.",
+            "uk": "але вони померли у свої 20 та 30 років."
+        },
+        {
+            "start": "00:00:47,440",
+            "end": "00:00:47,500",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:47,500",
+            "end": "00:00:56,980",
+            "es": "el resto de su vida es solo una repetición de su inercia original.",
+            "fr": "le reste de leur vie est juste une répétition de leur inertie originale.",
+            "uk": "решта їхнього життя - це просто повторення їхньої первісної інерції."
+        },
+        {
+            "start": "00:00:59,260",
+            "end": "00:01:02,300",
+            "es": "La edad no es importante.",
+            "fr": "L'âge n'est pas important.",
+            "uk": "Вік не важливий."
+        }
+    ]
+}

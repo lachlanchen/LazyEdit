@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:05,020\",\n    \"end\": \"00:02:08,539\",\n    \"lang\": \"en\",\n    \"text\": \"No matter what you need,\"\n  },\n  {\n    \"start\": \"00:02:10,018\",\n    \"end\": \"00:02:11,418\",\n    \"lang\": \"zh\",\n    \"text\": \"一定有包天野的色的\"\n  },\n  {\n    \"start\": \"00:02:12,866\",\n    \"end\": \"00:02:16,386\",\n    \"lang\": \"en\",\n    \"text\": \"No more than 100 years everything will go to dust.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:05,020",
+            "end": "00:02:08,539",
+            "ja": "何が必要でも、"
+        },
+        {
+            "start": "00:02:10,018",
+            "end": "00:02:11,418",
+            "ja": "必ず何かの方法があるはずだ"
+        },
+        {
+            "start": "00:02:12,866",
+            "end": "00:02:16,386",
+            "ja": "100年もすれば、すべてが塵と化す。"
+        }
+    ]
+}

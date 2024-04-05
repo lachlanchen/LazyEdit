@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:18,220\",\n    \"end\": \"00:02:19,540\",\n    \"lang\": \"en\",\n    \"text\": \"One nozzle already.\"\n  },\n  {\n    \"start\": \"00:02:19,820\",\n    \"end\": \"00:02:20,240\",\n    \"lang\": \"en\",\n    \"text\": \"One nozzle.\"\n  },\n  {\n    \"start\": \"00:02:20,240\",\n    \"end\": \"00:02:20,300\",\n    \"lang\": \"en\",\n    \"text\": \"Nozzle.\"\n  },\n  {\n    \"start\": \"00:02:23,778\",\n    \"end\": \"00:02:25,858\",\n    \"lang\": \"ar\",\n    \"text\": \"وانوزه وانوزه هو\"\n  },\n  {\n    \"start\": \"00:02:29,058\",\n    \"end\": \"00:02:30,418\",\n    \"lang\": \"en\",\n    \"text\": \"there are five times\"\n  },\n  {\n    \"start\": \"00:02:46,658\",\n    \"end\": \"00:02:47,538\",\n    \"lang\": \"en\",\n    \"text\": \"oh my goodness,\"\n  },\n  {\n    \"start\": \"00:02:47,538\",\n    \"end\": \"00:02:48,458\",\n    \"lang\": \"en\",\n    \"text\": \"I made a mistake\"\n  },\n  {\n    \"start\": \"00:02:52,278\",\n    \"end\": \"00:02:54,298\",\n    \"lang\": \"en\",\n    \"text\": \"this is not the way how to use it\"\n  },\n  {\n    \"start\": \"00:02:54,818\",\n    \"end\": \"00:02:55,198\",\n    \"lang\": \"zh\",\n    \"text\": \"烤铁丸\"\n  },\n  {\n    \"start\": \"00:02:55,810\",\n    \"end\": \"00:02:56,070\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:18,220",
+            "end": "00:02:19,540",
+            "es": "Una boquilla ya.",
+            "fr": "Une buse déjà.",
+            "uk": "Одна форсунка вже."
+        },
+        {
+            "start": "00:02:19,820",
+            "end": "00:02:20,240",
+            "es": "Una boquilla.",
+            "fr": "Une buse.",
+            "uk": "Одна форсунка."
+        },
+        {
+            "start": "00:02:20,240",
+            "end": "00:02:20,300",
+            "es": "Boquilla.",
+            "fr": "Buse.",
+            "uk": "Форсунка."
+        },
+        {
+            "start": "00:02:23,778",
+            "end": "00:02:25,858",
+            "es": "وانوزه وانوزه هو",
+            "fr": "وانوزه وانوزه هو",
+            "uk": "وانوزه وانوزه هو"
+        },
+        {
+            "start": "00:02:29,058",
+            "end": "00:02:30,418",
+            "es": "hay cinco veces",
+            "fr": "il y a cinq fois",
+            "uk": "є пʼять разів"
+        },
+        {
+            "start": "00:02:46,658",
+            "end": "00:02:47,538",
+            "es": "oh, Dios mío,",
+            "fr": "oh mon dieu,",
+            "uk": "о, мій Боже,"
+        },
+        {
+            "start": "00:02:47,538",
+            "end": "00:02:48,458",
+            "es": "cometí un error",
+            "fr": "j'ai fait une erreur",
+            "uk": "я зробив помилку"
+        },
+        {
+            "start": "00:02:52,278",
+            "end": "00:02:54,298",
+            "es": "esta no es la forma de usarlo",
+            "fr": "ce n'est pas la façon de l'utiliser",
+            "uk": "це не той спосіб використання"
+        },
+        {
+            "start": "00:02:54,818",
+            "end": "00:02:55,198",
+            "es": "烤铁丸",
+            "fr": "烤铁丸",
+            "uk": "烤铁丸"
+        },
+        {
+            "start": "00:02:55,810",
+            "end": "00:02:56,070",
+            "es": "Nos vemos.",
+            "fr": "À bientôt.",
+            "uk": "До побачення."
+        }
+    ]
+}

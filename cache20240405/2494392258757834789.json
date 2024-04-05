@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,020\",\n    \"lang\": \"ar\",\n    \"text\": \"كوبانوة\"\n  },\n  {\n    \"start\": \"00:00:04,098\",\n    \"end\": \"00:00:06,998\",\n    \"lang\": \"en\",\n    \"text\": \"So this is my dinner.\"\n  },\n  {\n    \"start\": \"00:00:08,058\",\n    \"end\": \"00:00:08,838\",\n    \"lang\": \"en\",\n    \"text\": \"Crushed chili,\"\n  },\n  {\n    \"start\": \"00:00:08,838\",\n    \"end\": \"00:00:09,958\",\n    \"lang\": \"en\",\n    \"text\": \"ginger,\"\n  },\n  {\n    \"start\": \"00:00:09,958\",\n    \"end\": \"00:00:10,638\",\n    \"lang\": \"en\",\n    \"text\": \"and garlic.\"\n  },\n  {\n    \"start\": \"00:00:12,078\",\n    \"end\": \"00:00:17,558\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if this will deteriorate my cold symptoms\"\n  },\n  {\n    \"start\": \"00:00:18,638\",\n    \"end\": \"00:00:21,478\",\n    \"lang\": \"en\",\n    \"text\": \"or benefit my health,\"\n  },\n  {\n    \"start\": \"00:00:22,658\",\n    \"end\": \"00:00:24,638\",\n    \"lang\": \"en\",\n    \"text\": \"but it's in my body,\"\n  },\n  {\n    \"start\": \"00:00:24,638\",\n    \"end\": \"00:00:26,098\",\n    \"lang\": \"en\",\n    \"text\": \"I want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:27,918\",\n    \"end\": \"00:00:28,298\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:28,298\",\n    \"end\": \"00:00:29,938\",\n    \"lang\": \"en\",\n    \"text\": \"it's so spicy.\"\n  },\n  {\n    \"start\": \"00:00:36,878\",\n    \"end\": \"00:00:39,378\",\n    \"lang\": \"en\",\n    \"text\": \"I put too much pepper.\"\n  },\n  {\n    \"start\": \"00:00:40,618\",\n    \"end\": \"00:00:41,778\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot hold this.\"\n  },\n  {\n    \"start\": \"00:00:43,106\",\n    \"end\": \"00:00:44,306\",\n    \"lang\": \"ar\",\n    \"text\": \"لا أستطيع أن أخذ هذا الزيت\"\n  },\n  {\n    \"start\": \"00:00:46,978\",\n    \"end\": \"00:00:47,998\",\n    \"lang\": \"en\",\n    \"text\": \"I need more salt.\"\n  },\n  {\n    \"start\": \"00:00:47,998\",\n    \"end\": \"00:00:54,158\",\n    \"lang\": \"en\",\n    \"text\": \"Salt can soften the spicy.\"\n  },\n  {\n    \"start\": \"00:00:55,398\",\n    \"end\": \"00:00:55,838\",\n    \"lang\": \"en\",\n    \"text\": \"Yes,\"\n  },\n  {\n    \"start\": \"00:00:55,838\",\n    \"end\": \"00:00:56,478\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,020",
+            "es": "Curiosidad",
+            "fr": "Curiosité",
+            "uk": "Цікавість"
+        },
+        {
+            "start": "00:00:04,098",
+            "end": "00:00:06,998",
+            "es": "Así que esta es mi cena.",
+            "fr": "Donc, ceci est mon dîner.",
+            "uk": "Отже, це моя вечеря."
+        },
+        {
+            "start": "00:00:08,058",
+            "end": "00:00:08,838",
+            "es": "Chile triturado,",
+            "fr": "Piment écrasé,",
+            "uk": "Розтовчений чилі,"
+        },
+        {
+            "start": "00:00:08,838",
+            "end": "00:00:09,958",
+            "es": "jengibre,",
+            "fr": "gingembre,",
+            "uk": "імбир,"
+        },
+        {
+            "start": "00:00:09,958",
+            "end": "00:00:10,638",
+            "es": "y ajo.",
+            "fr": "et ail.",
+            "uk": "та часник."
+        },
+        {
+            "start": "00:00:12,078",
+            "end": "00:00:17,558",
+            "es": "No sé si esto deteriorará los síntomas de mi resfriado",
+            "fr": "Je ne sais pas si cela va détériorer les symptômes de mon rhume",
+            "uk": "Не знаю, чи погіршить це симптоми мого застуди"
+        },
+        {
+            "start": "00:00:18,638",
+            "end": "00:00:21,478",
+            "es": "o beneficiará mi salud,",
+            "fr": "ou bénéficiera à ma santé,",
+            "uk": "чи принесе користь моєму здоров'ю,"
+        },
+        {
+            "start": "00:00:22,658",
+            "end": "00:00:24,638",
+            "es": "pero está en mi cuerpo,",
+            "fr": "mais c'est dans mon corps,",
+            "uk": "але воно в моєму тілі,"
+        },
+        {
+            "start": "00:00:24,638",
+            "end": "00:00:26,098",
+            "es": "quiero comerlo.",
+            "fr": "je veux le manger.",
+            "uk": "я хочу його з'їсти."
+        },
+        {
+            "start": "00:00:27,918",
+            "end": "00:00:28,298",
+            "es": "Wow,",
+            "fr": "Wow,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:28,298",
+            "end": "00:00:29,938",
+            "es": "es tan picante.",
+            "fr": "c'est si épicé.",
+            "uk": "це так гостро."
+        },
+        {
+            "start": "00:00:36,878",
+            "end": "00:00:39,378",
+            "es": "Puse demasiada pimienta.",
+            "fr": "J'ai mis trop de poivre.",
+            "uk": "Я поклав забагато перцю."
+        },
+        {
+            "start": "00:00:40,618",
+            "end": "00:00:41,778",
+            "es": "No puedo soportar esto.",
+            "fr": "Je ne peux pas supporter ça.",
+            "uk": "Я не можу це витримати."
+        },
+        {
+            "start": "00:00:43,106",
+            "end": "00:00:44,306",
+            "es": "No puedo coger este aceite",
+            "fr": "Je ne peux pas prendre cette huile",
+            "uk": "Я не можу взяти цю олію"
+        },
+        {
+            "start": "00:00:46,978",
+            "end": "00:00:47,998",
+            "es": "Necesito más sal.",
+            "fr": "J'ai besoin de plus de sel.",
+            "uk": "Мені потрібно більше солі."
+        },
+        {
+            "start": "00:00:47,998",
+            "end": "00:00:54,158",
+            "es": "La sal puede suavizar lo picante.",
+            "fr": "Le sel peut adoucir l'épice.",
+            "uk": "Сіль може пом'якшити гостроту."
+        },
+        {
+            "start": "00:00:55,398",
+            "end": "00:00:55,838",
+            "es": "Sí,",
+            "fr": "Oui,",
+            "uk": "Так,"
+        },
+        {
+            "start": "00:00:55,838",
+            "end": "00:00:56,478",
+            "es": "okay.",
+            "fr": "d'accord.",
+            "uk": "добре."
+        }
+    ]
+}

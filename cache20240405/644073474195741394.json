@@ -1,0 +1,57 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,240\",\n    \"lang\": \"en\",\n    \"text\": \"Want my potato?\"\n  },\n  {\n    \"start\": \"00:00:05,730\",\n    \"end\": \"00:00:06,270\",\n    \"lang\": \"ja\",\n    \"text\": \"クッカーだ\"\n  },\n  {\n    \"start\": \"00:00:07,682\",\n    \"end\": \"00:00:11,122\",\n    \"lang\": \"en\",\n    \"text\": \"Except this two piece is okay.\"\n  },\n  {\n    \"start\": \"00:00:14,262\",\n    \"end\": \"00:00:17,562\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if this is eatable.\"\n  },\n  {\n    \"start\": \"00:00:22,850\",\n    \"end\": \"00:00:23,530\",\n    \"lang\": \"ja\",\n    \"text\": \"おまえっぽだね、\"\n  },\n  {\n    \"start\": \"00:00:23,530\",\n    \"end\": \"00:00:24,590\",\n    \"lang\": \"ja\",\n    \"text\": \"そう\"\n  },\n  {\n    \"start\": \"00:00:29,666\",\n    \"end\": \"00:00:33,106\",\n    \"lang\": \"en\",\n    \"text\": \"and we also have prawns\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,240",
+            "en": "Want my potato?",
+            "zh": "要我的土豆吗？",
+            "ar": "هل تريد بطاطتي؟"
+        },
+        {
+            "start": "00:00:05,730",
+            "end": "00:00:06,270",
+            "en": "It's a cooker",
+            "zh": "是个炊具",
+            "ar": "إنه طباخ",
+            "ja": "クッカーだ"
+        },
+        {
+            "start": "00:00:07,682",
+            "end": "00:00:11,122",
+            "en": "Except this two piece is okay.",
+            "zh": "除了这两件都可以。",
+            "ar": "ما عدا هذين القطعتين فهما بخير."
+        },
+        {
+            "start": "00:00:14,262",
+            "end": "00:00:17,562",
+            "en": "I don't know if this is eatable.",
+            "zh": "我不知道这个能不能吃。",
+            "ar": "لا أعلم إذا كان هذا صالحًا للأكل."
+        },
+        {
+            "start": "00:00:22,850",
+            "end": "00:00:23,530",
+            "en": "It's just like you,",
+            "zh": "就像你一样，",
+            "ar": "انه مثلك،",
+            "ja": "おまえっぽだね、"
+        },
+        {
+            "start": "00:00:23,530",
+            "end": "00:00:24,590",
+            "en": "exactly",
+            "zh": "完全",
+            "ar": "بالضبط",
+            "ja": "そう"
+        },
+        {
+            "start": "00:00:29,666",
+            "end": "00:00:33,106",
+            "en": "and we also have prawns",
+            "zh": "我们还有虾",
+            "ar": "ولدينا أيضًا جمبري"
+        }
+    ]
+}

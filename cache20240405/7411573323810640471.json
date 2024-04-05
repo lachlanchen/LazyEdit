@@ -1,0 +1,208 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,440\",\n    \"lang\": \"ar\",\n    \"text\": \"هذا فيديو\"\n  },\n  {\n    \"start\": \"00:00:01,922\",\n    \"end\": \"00:00:05,222\",\n    \"lang\": \"en\",\n    \"text\": \"story of Harvard.\"\n  },\n  {\n    \"start\": \"00:00:05,922\",\n    \"end\": \"00:00:07,142\",\n    \"lang\": \"ar\",\n    \"text\": \"ناتحدّد\"\n  },\n  {\n    \"start\": \"00:00:07,170\",\n    \"end\": \"00:00:07,530\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:07,530\",\n    \"end\": \"00:00:08,290\",\n    \"lang\": \"en\",\n    \"text\": \"um...\"\n  },\n  {\n    \"start\": \"00:00:09,186\",\n    \"end\": \"00:00:09,706\",\n    \"lang\": \"ar\",\n    \"text\": \"فیدو\"\n  },\n  {\n    \"start\": \"00:00:11,490\",\n    \"end\": \"00:00:14,010\",\n    \"lang\": \"en\",\n    \"text\": \"He is an education expert.\"\n  },\n  {\n    \"start\": \"00:00:14,650\",\n    \"end\": \"00:00:18,150\",\n    \"lang\": \"en\",\n    \"text\": \"So when he was in China,\"\n  },\n  {\n    \"start\": \"00:00:18,150\",\n    \"end\": \"00:00:19,790\",\n    \"lang\": \"en\",\n    \"text\": \"he met...\"\n  },\n  {\n    \"start\": \"00:00:20,418\",\n    \"end\": \"00:00:20,798\",\n    \"lang\": \"zh\",\n    \"text\": \"意思是,\"\n  },\n  {\n    \"start\": \"00:00:20,798\",\n    \"end\": \"00:00:21,278\",\n    \"lang\": \"zh\",\n    \"text\": \"意思是,\"\n  },\n  {\n    \"start\": \"00:00:21,278\",\n    \"end\": \"00:00:22,018\",\n    \"lang\": \"zh\",\n    \"text\": \"南京\"\n  },\n  {\n    \"start\": \"00:00:22,722\",\n    \"end\": \"00:00:23,222\",\n    \"lang\": \"en\",\n    \"text\": \"It's money.\"\n  },\n  {\n    \"start\": \"00:00:24,082\",\n    \"end\": \"00:00:24,442\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:24,442\",\n    \"end\": \"00:00:28,362\",\n    \"lang\": \"en\",\n    \"text\": \"they live in a hotel.\"\n  },\n  {\n    \"start\": \"00:00:30,050\",\n    \"end\": \"00:00:30,310\",\n    \"lang\": \"en\",\n    \"text\": \"style\"\n  },\n  {\n    \"start\": \"00:00:32,418\",\n    \"end\": \"00:00:33,618\",\n    \"lang\": \"en\",\n    \"text\": \"There are some binging.\"\n  },\n  {\n    \"start\": \"00:00:34,530\",\n    \"end\": \"00:00:35,070\",\n    \"lang\": \"zh\",\n    \"text\": \"再聽一\"\n  },\n  {\n    \"start\": \"00:00:35,938\",\n    \"end\": \"00:00:39,418\",\n    \"lang\": \"en\",\n    \"text\": \"when they check out from the hotel,\"\n  },\n  {\n    \"start\": \"00:00:39,418\",\n    \"end\": \"00:00:40,118\",\n    \"lang\": \"en\",\n    \"text\": \"not check out,\"\n  },\n  {\n    \"start\": \"00:00:40,118\",\n    \"end\": \"00:00:41,378\",\n    \"lang\": \"en\",\n    \"text\": \"just leave the hotel,\"\n  },\n  {\n    \"start\": \"00:00:41,538\",\n    \"end\": \"00:00:44,738\",\n    \"lang\": \"en\",\n    \"text\": \"they should put the key in a box.\"\n  },\n  {\n    \"start\": \"00:00:45,518\",\n    \"end\": \"00:00:45,798\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:48,038\",\n    \"end\": \"00:00:48,798\",\n    \"lang\": \"en\",\n    \"text\": \"however,\"\n  },\n  {\n    \"start\": \"00:00:49,698\",\n    \"end\": \"00:00:50,818\",\n    \"lang\": \"en\",\n    \"text\": \"noticed that\"\n  },\n  {\n    \"start\": \"00:00:52,778\",\n    \"end\": \"00:00:54,958\",\n    \"lang\": \"en\",\n    \"text\": \"the servant of the hotel\"\n  },\n  {\n    \"start\": \"00:00:54,958\",\n    \"end\": \"00:00:57,498\",\n    \"lang\": \"en\",\n    \"text\": \"will help their child,\"\n  },\n  {\n    \"start\": \"00:00:57,498\",\n    \"end\": \"00:00:58,278\",\n    \"lang\": \"en\",\n    \"text\": \"Benjamin,\"\n  },\n  {\n    \"start\": \"00:00:58,778\",\n    \"end\": \"00:01:03,778\",\n    \"lang\": \"en\",\n    \"text\": \"to pick up his hand\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,440",
+            "es": "Este es un video",
+            "fr": "Ceci est une vidéo",
+            "uk": "Це відео"
+        },
+        {
+            "start": "00:00:01,922",
+            "end": "00:00:05,222",
+            "es": "historia de Harvard.",
+            "fr": "l'histoire d'Harvard.",
+            "uk": "історія Гарварду."
+        },
+        {
+            "start": "00:00:05,922",
+            "end": "00:00:07,142",
+            "es": "Determinemos",
+            "fr": "Déterminons",
+            "uk": "Визначимо"
+        },
+        {
+            "start": "00:00:07,170",
+            "end": "00:00:07,530",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:07,530",
+            "end": "00:00:08,290",
+            "es": "um...",
+            "fr": "euh...",
+            "uk": "ем..."
+        },
+        {
+            "start": "00:00:09,186",
+            "end": "00:00:09,706",
+            "es": "vídeo",
+            "fr": "vidéo",
+            "uk": "відео"
+        },
+        {
+            "start": "00:00:11,490",
+            "end": "00:00:14,010",
+            "es": "Él es un experto en educación.",
+            "fr": "Il est un expert en éducation.",
+            "uk": "Він експерт з освіти."
+        },
+        {
+            "start": "00:00:14,650",
+            "end": "00:00:18,150",
+            "es": "Así que cuando estaba en China,",
+            "fr": "Donc, lorsqu'il était en Chine,",
+            "uk": "Отже, коли він був у Китаї,"
+        },
+        {
+            "start": "00:00:18,150",
+            "end": "00:00:19,790",
+            "es": "conoció...",
+            "fr": "il a rencontré...",
+            "uk": "він зустрів..."
+        },
+        {
+            "start": "00:00:20,418",
+            "end": "00:00:20,798",
+            "es": "es decir,",
+            "fr": "c'est-à-dire,",
+            "uk": "тобто,"
+        },
+        {
+            "start": "00:00:20,798",
+            "end": "00:00:21,278",
+            "es": "es decir,",
+            "fr": "c'est-à-dire,",
+            "uk": "тобто,"
+        },
+        {
+            "start": "00:00:21,278",
+            "end": "00:00:22,018",
+            "es": "Nankín",
+            "fr": "Nanjing",
+            "uk": "Нанкін"
+        },
+        {
+            "start": "00:00:22,722",
+            "end": "00:00:23,222",
+            "es": "Es dinero.",
+            "fr": "C'est de l'argent.",
+            "uk": "Це гроші."
+        },
+        {
+            "start": "00:00:24,082",
+            "end": "00:00:24,442",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:24,442",
+            "end": "00:00:28,362",
+            "es": "viven en un hotel.",
+            "fr": "ils vivent dans un hôtel.",
+            "uk": "вони живуть у готелі."
+        },
+        {
+            "start": "00:00:30,050",
+            "end": "00:00:30,310",
+            "es": "estilo",
+            "fr": "style",
+            "uk": "стиль"
+        },
+        {
+            "start": "00:00:32,418",
+            "end": "00:00:33,618",
+            "es": "Hay algo de atracón.",
+            "fr": "Il y a un peu de frénésie.",
+            "uk": "Є певне захоплення."
+        },
+        {
+            "start": "00:00:34,530",
+            "end": "00:00:35,070",
+            "es": "Escucha otra vez",
+            "fr": "Écoute encore une fois",
+            "uk": "Послухайте ще раз"
+        },
+        {
+            "start": "00:00:35,938",
+            "end": "00:00:39,418",
+            "es": "cuando salen del hotel,",
+            "fr": "quand ils partent de l'hôtel,",
+            "uk": "коли вони виходять з готелю,"
+        },
+        {
+            "start": "00:00:39,418",
+            "end": "00:00:40,118",
+            "es": "no hacen el checkout,",
+            "fr": "pas de départ,",
+            "uk": "не виписуються,"
+        },
+        {
+            "start": "00:00:40,118",
+            "end": "00:00:41,378",
+            "es": "simplemente dejan el hotel,",
+            "fr": "juste quittent l'hôtel,",
+            "uk": "просто залишають готель,"
+        },
+        {
+            "start": "00:00:41,538",
+            "end": "00:00:44,738",
+            "es": "deben poner la llave en una caja.",
+            "fr": "ils doivent mettre la clé dans une boîte.",
+            "uk": "вони повинні покласти ключ у скриньку."
+        },
+        {
+            "start": "00:00:45,518",
+            "end": "00:00:45,798",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:48,038",
+            "end": "00:00:48,798",
+            "es": "sin embargo,",
+            "fr": "cependant,",
+            "uk": "однак,"
+        },
+        {
+            "start": "00:00:49,698",
+            "end": "00:00:50,818",
+            "es": "se dieron cuenta de que",
+            "fr": "ils ont remarqué que",
+            "uk": "вони помітили, що"
+        },
+        {
+            "start": "00:00:52,778",
+            "end": "00:00:54,958",
+            "es": "el sirviente del hotel",
+            "fr": "le serviteur de l'hôtel",
+            "uk": "слуга готелю"
+        },
+        {
+            "start": "00:00:54,958",
+            "end": "00:00:57,498",
+            "es": "ayudará a su hijo,",
+            "fr": "aidera leur enfant,",
+            "uk": "допоможе їхній дитині,"
+        },
+        {
+            "start": "00:00:57,498",
+            "end": "00:00:58,278",
+            "es": "Benjamín,",
+            "fr": "Benjamin,",
+            "uk": "Бенджамін,"
+        },
+        {
+            "start": "00:00:58,778",
+            "end": "00:01:03,778",
+            "es": "a recoger su mano",
+            "fr": "à lever sa main",
+            "uk": "підняти його руку"
+        }
+    ]
+}

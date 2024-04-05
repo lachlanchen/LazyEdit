@@ -1,0 +1,56 @@
+{
+    "prompt": "For words that have etymological Chu-Han alternative (due to their Sino-Vietnamese origin), I want to find the corresponding Chinese origin to replace the Viet WORDS (provide consecutive words if exist). However, it's crucial that the Viet in parenthesis followed by these traditional Chu-Han are put in brackets to maintain clarity. Like this example: (viet)[chuhan].\n\nVietnamese to be annotated: nhưng đó không phải là thứ để bạn trốn chạy từ thực tại.\n\nI don't need step by step explanation. PLEASE ONLY output the JSON:\n```json\n{\n  \"viet_with_annotation\": \"\",\n  \"viet_chuhan_pairs\": [\n    {\n      \"viet_part\": \"\",\n      \"chuhan\": \"\"\n    }\n  ]\n}\n```",
+    "response": {
+        "viet_with_annotation": "nhưng(但) đó(那) không(不) phải(是) là(是) thứ(物) để(以) bạn(你) trốn(遁) chạy(奔) từ(自) thực tại(實在).",
+        "viet_chuhan_pairs": [
+            {
+                "viet_part": "nhưng",
+                "chuhan": "但"
+            },
+            {
+                "viet_part": "đó",
+                "chuhan": "那"
+            },
+            {
+                "viet_part": "không",
+                "chuhan": "不"
+            },
+            {
+                "viet_part": "phải",
+                "chuhan": "是"
+            },
+            {
+                "viet_part": "là",
+                "chuhan": "是"
+            },
+            {
+                "viet_part": "thứ",
+                "chuhan": "物"
+            },
+            {
+                "viet_part": "để",
+                "chuhan": "以"
+            },
+            {
+                "viet_part": "bạn",
+                "chuhan": "你"
+            },
+            {
+                "viet_part": "trốn",
+                "chuhan": "遁"
+            },
+            {
+                "viet_part": "chạy",
+                "chuhan": "奔"
+            },
+            {
+                "viet_part": "từ",
+                "chuhan": "自"
+            },
+            {
+                "viet_part": "thực tại",
+                "chuhan": "實在"
+            }
+        ]
+    }
+}

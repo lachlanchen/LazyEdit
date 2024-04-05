@@ -1,0 +1,20 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,540\",\n    \"ja\": \"これは<悪>[]くない<朝食>[]だけど、\"\n  },\n  {\n    \"start\": \"00:00:02,540\",\n    \"end\": \"00:00:06,680\",\n    \"ja\": \"でも<一口>[]ごとに<痛>[]みがある。\"\n  },\n  {\n    \"start\": \"00:00:07,240\",\n    \"end\": \"00:00:07,860\",\n    \"ja\": \"おやおや。\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,540",
+            "ja": "これは<悪>[わる]くない<朝食>[ちょうしょく]だけど、"
+        },
+        {
+            "start": "00:00:02,540",
+            "end": "00:00:06,680",
+            "ja": "でも<一口>[ひとくち]ごとに<痛>[いた]みがある。"
+        },
+        {
+            "start": "00:00:07,240",
+            "end": "00:00:07,860",
+            "ja": "おやおや。"
+        }
+    ]
+}

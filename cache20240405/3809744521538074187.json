@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"This is our special Chongqing flavor,\"\n  },\n  {\n    \"start\": \"00:00:03,580\",\n    \"end\": \"00:00:06,640\",\n    \"lang\": \"en\",\n    \"text\": \"beef and potato.\"\n  },\n  {\n    \"start\": \"00:00:08,582\",\n    \"end\": \"00:00:09,082\",\n    \"lang\": \"en\",\n    \"text\": \"Beep.\"\n  },\n  {\n    \"start\": \"00:00:09,506\",\n    \"end\": \"00:00:12,206\",\n    \"lang\": \"en\",\n    \"text\": \"So let me check this.\"\n  },\n  {\n    \"start\": \"00:00:14,396\",\n    \"end\": \"00:00:15,206\",\n    \"lang\": \"en\",\n    \"text\": \"This potato,\"\n  },\n  {\n    \"start\": \"00:00:15,206\",\n    \"end\": \"00:00:20,186\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't make it as potato crumb.\"\n  },\n  {\n    \"start\": \"00:00:20,906\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to say it,\"\n  },\n  {\n    \"start\": \"00:00:22,146\",\n    \"end\": \"00:00:22,566\",\n    \"lang\": \"en\",\n    \"text\": \"toodoli.\"\n  },\n  {\n    \"start\": \"00:00:23,486\",\n    \"end\": \"00:00:30,626\",\n    \"lang\": \"en\",\n    \"text\": \"So I believe these small fragments will build a balance between flavor,\"\n  },\n  {\n    \"start\": \"00:00:30,626\",\n    \"end\": \"00:00:34,606\",\n    \"lang\": \"en\",\n    \"text\": \"so that is a combination\"\n  },\n  {\n    \"start\": \"00:00:34,606\",\n    \"end\": \"00:00:35,586\",\n    \"lang\": \"en\",\n    \"text\": \"that is a flavor,\"\n  },\n  {\n    \"start\": \"00:00:35,586\",\n    \"end\": \"00:00:40,326\",\n    \"lang\": \"en\",\n    \"text\": \"and the inner core without flavor.\"\n  },\n  {\n    \"start\": \"00:00:40,746\",\n    \"end\": \"00:00:44,746\",\n    \"lang\": \"en\",\n    \"text\": \"It will produce a perfect combination.\"\n  },\n  {\n    \"start\": \"00:00:46,086\",\n    \"end\": \"00:00:47,386\",\n    \"lang\": \"en\",\n    \"text\": \"It will blend in.\"\n  },\n  {\n    \"start\": \"00:00:47,946\",\n    \"end\": \"00:00:50,666\",\n    \"lang\": \"en\",\n    \"text\": \"If it's potato crumb,\"\n  },\n  {\n    \"start\": \"00:00:50,666\",\n    \"end\": \"00:00:54,046\",\n    \"lang\": \"en\",\n    \"text\": \"it will be over flavored.\"\n  },\n  {\n    \"start\": \"00:00:55,966\",\n    \"end\": \"00:00:57,686\",\n    \"lang\": \"en\",\n    \"text\": \"I like this crisp stuff.\"\n  },\n  {\n    \"start\": \"00:00:59,046\",\n    \"end\": \"00:00:59,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "ko": "이것은 우리의 특별한 중경(Chongqing) 맛이에요,"
+        },
+        {
+            "start": "00:00:03,580",
+            "end": "00:00:06,640",
+            "ko": "소고기와 감자."
+        },
+        {
+            "start": "00:00:08,582",
+            "end": "00:00:09,082",
+            "ko": "삑."
+        },
+        {
+            "start": "00:00:09,506",
+            "end": "00:00:12,206",
+            "ko": "그럼 이것 좀 확인해볼게요."
+        },
+        {
+            "start": "00:00:14,396",
+            "end": "00:00:15,206",
+            "ko": "이 감자는,"
+        },
+        {
+            "start": "00:00:15,206",
+            "end": "00:00:20,186",
+            "ko": "감자 부스러기로 만들지 않았어요."
+        },
+        {
+            "start": "00:00:20,906",
+            "end": "00:00:22,146",
+            "ko": "어떻게 말해야 할지 모르겠네요,"
+        },
+        {
+            "start": "00:00:22,146",
+            "end": "00:00:22,566",
+            "ko": "투덜이."
+        },
+        {
+            "start": "00:00:23,486",
+            "end": "00:00:30,626",
+            "ko": "그래서 이 작은 조각들이 맛 사이의 균형을 만들 것이라고 믿어요,"
+        },
+        {
+            "start": "00:00:30,626",
+            "end": "00:00:34,606",
+            "ko": "즉, 그것은 조합입니다"
+        },
+        {
+            "start": "00:00:34,606",
+            "end": "00:00:35,586",
+            "ko": "그것은 맛이고,"
+        },
+        {
+            "start": "00:00:35,586",
+            "end": "00:00:40,326",
+            "ko": "그리고 맛이 없는 내부 핵심입니다."
+        },
+        {
+            "start": "00:00:40,746",
+            "end": "00:00:44,746",
+            "ko": "완벽한 조합을 만들어낼 겁니다."
+        },
+        {
+            "start": "00:00:46,086",
+            "end": "00:00:47,386",
+            "ko": "잘 어우러질 거예요."
+        },
+        {
+            "start": "00:00:47,946",
+            "end": "00:00:50,666",
+            "ko": "감자 부스러기라면,"
+        },
+        {
+            "start": "00:00:50,666",
+            "end": "00:00:54,046",
+            "ko": "맛이 너무 강해질 거예요."
+        },
+        {
+            "start": "00:00:55,966",
+            "end": "00:00:57,686",
+            "ko": "저는 이 바삭한 거 좋아해요."
+        },
+        {
+            "start": "00:00:59,046",
+            "end": "00:00:59,686",
+            "ko": "좋아요."
+        }
+    ]
+}

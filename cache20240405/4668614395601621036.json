@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,300\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:02,480\",\n    \"end\": \"00:00:05,260\",\n    \"lang\": \"ja\",\n    \"text\": \"私の朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:07,490\",\n    \"end\": \"00:00:09,110\",\n    \"lang\": \"en\",\n    \"text\": \"Recently I found a thing,\"\n  },\n  {\n    \"start\": \"00:00:09,110\",\n    \"end\": \"00:00:11,490\",\n    \"lang\": \"en\",\n    \"text\": \"the SK-II,\"\n  },\n  {\n    \"start\": \"00:00:11,490\",\n    \"end\": \"00:00:17,670\",\n    \"lang\": \"en\",\n    \"text\": \"it kind of cause harm to my skin.\"\n  },\n  {\n    \"start\": \"00:00:18,670\",\n    \"end\": \"00:00:19,930\",\n    \"lang\": \"en\",\n    \"text\": \"Because when I use it,\"\n  },\n  {\n    \"start\": \"00:00:19,930\",\n    \"end\": \"00:00:23,290\",\n    \"lang\": \"en\",\n    \"text\": \"I play guitar,\"\n  },\n  {\n    \"start\": \"00:00:23,290\",\n    \"end\": \"00:00:26,310\",\n    \"lang\": \"en\",\n    \"text\": \"and the finger tip,\"\n  },\n  {\n    \"start\": \"00:00:26,710\",\n    \"end\": \"00:00:26,910\",\n    \"lang\": \"en\",\n    \"text\": \"it's like...\"\n  },\n  {\n    \"start\": \"00:00:26,946\",\n    \"end\": \"00:00:27,446\",\n    \"lang\": \"ja\",\n    \"text\": \"ごめんね\"\n  },\n  {\n    \"start\": \"00:00:28,098\",\n    \"end\": \"00:00:28,858\",\n    \"lang\": \"en\",\n    \"text\": \"It hurts.\"\n  },\n  {\n    \"start\": \"00:00:29,918\",\n    \"end\": \"00:00:36,858\",\n    \"lang\": \"en\",\n    \"text\": \"So I guess it's because the ingredients in SQ2,\"\n  },\n  {\n    \"start\": \"00:00:36,858\",\n    \"end\": \"00:00:40,598\",\n    \"lang\": \"en\",\n    \"text\": \"it has this erosion effect.\"\n  },\n  {\n    \"start\": \"00:00:41,838\",\n    \"end\": \"00:00:53,898\",\n    \"lang\": \"en\",\n    \"text\": \"So please,\"\n  },\n  {\n    \"start\": \"00:00:53,898\",\n    \"end\": \"00:00:54,858\",\n    \"lang\": \"en\",\n    \"text\": \"SQ2,\"\n  },\n  {\n    \"start\": \"00:00:54,858\",\n    \"end\": \"00:00:58,078\",\n    \"lang\": \"en\",\n    \"text\": \"don't prosecute me.\"\n  },\n  {\n    \"start\": \"00:00:58,078\",\n    \"end\": \"00:01:11,318\",\n    \"lang\": \"en\",\n    \"text\": \"I just want to share some thoughts and some hypothesis.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,300",
+            "ja": "おはようございます"
+        },
+        {
+            "start": "00:00:02,480",
+            "end": "00:00:05,260",
+            "ja": "私の朝ごはんを食べています"
+        },
+        {
+            "start": "00:00:07,490",
+            "end": "00:00:09,110",
+            "ja": "最近、あるものを見つけました"
+        },
+        {
+            "start": "00:00:09,110",
+            "end": "00:00:11,490",
+            "ja": "それはSK-IIです"
+        },
+        {
+            "start": "00:00:11,490",
+            "end": "00:00:17,670",
+            "ja": "それが私の肌に害を与えるようなのです"
+        },
+        {
+            "start": "00:00:18,670",
+            "end": "00:00:19,930",
+            "ja": "それを使うとき、"
+        },
+        {
+            "start": "00:00:19,930",
+            "end": "00:00:23,290",
+            "ja": "私はギターを弾きます"
+        },
+        {
+            "start": "00:00:23,290",
+            "end": "00:00:26,310",
+            "ja": "そして指の先が、"
+        },
+        {
+            "start": "00:00:26,710",
+            "end": "00:00:26,910",
+            "ja": "それは･･･"
+        },
+        {
+            "start": "00:00:26,946",
+            "end": "00:00:27,446",
+            "ja": "ごめんね"
+        },
+        {
+            "start": "00:00:28,098",
+            "end": "00:00:28,858",
+            "ja": "痛いんです。"
+        },
+        {
+            "start": "00:00:29,918",
+            "end": "00:00:36,858",
+            "ja": "だから、SQ2の中の成分が原因だと思います"
+        },
+        {
+            "start": "00:00:36,858",
+            "end": "00:00:40,598",
+            "ja": "それには侵食効果があるからです。"
+        },
+        {
+            "start": "00:00:41,838",
+            "end": "00:00:53,898",
+            "ja": "ですので、お願いです"
+        },
+        {
+            "start": "00:00:53,898",
+            "end": "00:00:54,858",
+            "ja": "SQ2よ、"
+        },
+        {
+            "start": "00:00:54,858",
+            "end": "00:00:58,078",
+            "ja": "私を訴えないでください。"
+        },
+        {
+            "start": "00:00:58,078",
+            "end": "00:01:11,318",
+            "ja": "私はただ、いくつかの考えや仮説を共有したいだけなのです。"
+        }
+    ]
+}

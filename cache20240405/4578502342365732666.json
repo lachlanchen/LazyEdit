@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,320\",\n    \"lang\": \"zh\",\n    \"text\": \"一副Normal Music太难听\"\n  },\n  {\n    \"start\": \"00:00:03,458\",\n    \"end\": \"00:00:06,458\",\n    \"lang\": \"en\",\n    \"text\": \"at 1 to 100 scale.\"\n  },\n  {\n    \"start\": \"00:00:06,458\",\n    \"end\": \"00:00:10,378\",\n    \"lang\": \"en\",\n    \"text\": \"I must be negative 100.\"\n  },\n  {\n    \"start\": \"00:00:10,378\",\n    \"end\": \"00:00:13,878\",\n    \"lang\": \"en\",\n    \"text\": \"So I cannot sing,\"\n  },\n  {\n    \"start\": \"00:00:13,878\",\n    \"end\": \"00:00:15,358\",\n    \"lang\": \"en\",\n    \"text\": \"cannot catch the tone,\"\n  },\n  {\n    \"start\": \"00:00:15,358\",\n    \"end\": \"00:00:18,498\",\n    \"lang\": \"en\",\n    \"text\": \"cannot\"\n  },\n  {\n    \"start\": \"00:00:48,498\",\n    \"end\": \"00:00:49,178\",\n    \"lang\": \"en\",\n    \"text\": \"sing.\"\n  },\n  {\n    \"start\": \"00:00:49,178\",\n    \"end\": \"00:00:50,778\",\n    \"lang\": \"en\",\n    \"text\": \"Not perfectly 100,\"\n  },\n  {\n    \"start\": \"00:00:50,778\",\n    \"end\": \"00:00:57,358\",\n    \"lang\": \"en\",\n    \"text\": \"but just I will sing 100.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,320",
+            "en": "A piece of Normal Music is too hard to listen to",
+            "zh": "一副Normal Music太难听",
+            "ar": "قطعة من الموسيقى العادية صعبة الاستماع إليها"
+        },
+        {
+            "start": "00:00:03,458",
+            "end": "00:00:06,458",
+            "en": "at 1 to 100 scale.",
+            "zh": "在1到100的尺度上。",
+            "ar": "على مقياس من 1 إلى 100."
+        },
+        {
+            "start": "00:00:06,458",
+            "end": "00:00:10,378",
+            "en": "I must be negative 100.",
+            "zh": "我一定是负100。",
+            "ar": "يجب أن أكون سالب 100."
+        },
+        {
+            "start": "00:00:10,378",
+            "end": "00:00:13,878",
+            "en": "So I cannot sing,",
+            "zh": "所以我不能唱，",
+            "ar": "لذا لا أستطيع الغناء،"
+        },
+        {
+            "start": "00:00:13,878",
+            "end": "00:00:15,358",
+            "en": "cannot catch the tone,",
+            "zh": "抓不到音调，",
+            "ar": "لا أستطيع أن أمسك باللحن،"
+        },
+        {
+            "start": "00:00:15,358",
+            "end": "00:00:18,498",
+            "en": "cannot",
+            "zh": "不能",
+            "ar": "لا يمكن"
+        },
+        {
+            "start": "00:00:48,498",
+            "end": "00:00:49,178",
+            "en": "sing.",
+            "zh": "唱。",
+            "ar": "غني."
+        },
+        {
+            "start": "00:00:49,178",
+            "end": "00:00:50,778",
+            "en": "Not perfectly 100,",
+            "zh": "不是完美的100，",
+            "ar": "ليس بشكل مثالي 100،"
+        },
+        {
+            "start": "00:00:50,778",
+            "end": "00:00:57,358",
+            "en": "but just I will sing 100.",
+            "zh": "但我只会唱100。",
+            "ar": "لكنني سأغني 100 فقط."
+        }
+    ]
+}

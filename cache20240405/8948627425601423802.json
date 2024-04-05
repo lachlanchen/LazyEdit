@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,160\",\n    \"lang\": \"ja\",\n    \"text\": \"私は包丁を食べています\"\n  },\n  {\n    \"start\": \"00:00:07,490\",\n    \"end\": \"00:00:07,890\",\n    \"lang\": \"ar\",\n    \"text\": \"هن أ그� به\"\n  },\n  {\n    \"start\": \"00:00:07,890\",\n    \"end\": \"00:00:08,050\",\n    \"lang\": \"en\",\n    \"text\": \"voll\"\n  },\n  {\n    \"start\": \"00:00:08,050\",\n    \"end\": \"00:00:08,450\",\n    \"lang\": \"en\",\n    \"text\": \"tomato\"\n  },\n  {\n    \"start\": \"00:00:08,450\",\n    \"end\": \"00:00:08,750\",\n    \"lang\": \"ar\",\n    \"text\": \"سمر\"\n  },\n  {\n    \"start\": \"00:00:08,750\",\n    \"end\": \"00:00:08,770\",\n    \"lang\": \"ar\",\n    \"text\": \"وإذا كنتم ترغبون في تحديد الموضوع فاستعرضوا لنا رسالة لكم\"\n  },\n  {\n    \"start\": \"00:00:08,802\",\n    \"end\": \"00:00:09,682\",\n    \"lang\": \"ja\",\n    \"text\": \"コネはコネ\"\n  },\n  {\n    \"start\": \"00:00:11,138\",\n    \"end\": \"00:00:11,938\",\n    \"lang\": \"zh\",\n    \"text\": \"我来包子吧\"\n  },\n  {\n    \"start\": \"00:00:13,890\",\n    \"end\": \"00:00:15,110\",\n    \"lang\": \"ja\",\n    \"text\": \"美味しいです\"\n  },\n  {\n    \"start\": \"00:00:15,110\",\n    \"end\": \"00:00:16,550\",\n    \"lang\": \"ja\",\n    \"text\": \"私は\"\n  },\n  {\n    \"start\": \"00:00:17,509\",\n    \"end\": \"00:00:20,110\",\n    \"lang\": \"ja\",\n    \"text\": \"ピンクジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:00:30,458\",\n    \"end\": \"00:00:31,858\",\n    \"lang\": \"en\",\n    \"text\": \"치 Bismillah按구비\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,160",
+            "es": "Estoy comiendo un cuchillo",
+            "fr": "Je mange un couteau",
+            "uk": "Я їм ніж"
+        },
+        {
+            "start": "00:00:07,490",
+            "end": "00:00:07,890",
+            "es": "ellas",
+            "fr": "elles",
+            "uk": "вони (жіночий рід)"
+        },
+        {
+            "start": "00:00:07,890",
+            "end": "00:00:08,050",
+            "es": "lleno",
+            "fr": "plein",
+            "uk": "повний"
+        },
+        {
+            "start": "00:00:08,050",
+            "end": "00:00:08,450",
+            "es": "tomate",
+            "fr": "tomate",
+            "uk": "помідор"
+        },
+        {
+            "start": "00:00:08,450",
+            "end": "00:00:08,750",
+            "es": "verano",
+            "fr": "été",
+            "uk": "літо"
+        },
+        {
+            "start": "00:00:08,750",
+            "end": "00:00:08,770",
+            "es": "Y si desean elegir el tema, envíennos un mensaje",
+            "fr": "Et si vous souhaitez choisir le sujet, envoyez-nous un message",
+            "uk": "І якщо ви хочете обрати тему, надішліть нам повідомлення"
+        },
+        {
+            "start": "00:00:08,802",
+            "end": "00:00:09,682",
+            "es": "La conexión es la conexión",
+            "fr": "La connexion est la connexion",
+            "uk": "Зв'язок є зв'язок"
+        },
+        {
+            "start": "00:00:11,138",
+            "end": "00:00:11,938",
+            "es": "Voy a hacer baozi",
+            "fr": "Je vais faire des baozi",
+            "uk": "Я зроблю баоцзі"
+        },
+        {
+            "start": "00:00:13,890",
+            "end": "00:00:15,110",
+            "es": "Es delicioso",
+            "fr": "C'est délicieux",
+            "uk": "Це смачно"
+        },
+        {
+            "start": "00:00:15,110",
+            "end": "00:00:16,550",
+            "es": "Yo soy",
+            "fr": "Je suis",
+            "uk": "Я є"
+        },
+        {
+            "start": "00:00:17,509",
+            "end": "00:00:20,110",
+            "es": "Estoy bebiendo jugo de rosa",
+            "fr": "Je bois du jus rose",
+            "uk": "Я п'ю рожевий сік"
+        },
+        {
+            "start": "00:00:30,458",
+            "end": "00:00:31,858",
+            "es": "En el nombre de Dios, inicio",
+            "fr": "Au nom de Dieu, je commence",
+            "uk": "В ім'я Бога, починаю"
+        }
+    ]
+}

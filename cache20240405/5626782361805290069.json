@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:08,214\",\n    \"end\": \"00:02:08,834\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:02:08,834\",\n    \"end\": \"00:02:11,274\",\n    \"lang\": \"en\",\n    \"text\": \"the taste is really worse.\"\n  },\n  {\n    \"start\": \"00:02:17,394\",\n    \"end\": \"00:02:18,314\",\n    \"lang\": \"en\",\n    \"text\": \"Is it chicken?\"\n  },\n  {\n    \"start\": \"00:02:23,170\",\n    \"end\": \"00:02:25,630\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの出馬咲き麺大好きです\"\n  },\n  {\n    \"start\": \"00:02:26,750\",\n    \"end\": \"00:02:27,229\",\n    \"lang\": \"ja\",\n    \"text\": \"あい、\"\n  },\n  {\n    \"start\": \"00:02:27,229\",\n    \"end\": \"00:02:27,830\",\n    \"lang\": \"ja\",\n    \"text\": \"あいです\"\n  },\n  {\n    \"start\": \"00:02:28,270\",\n    \"end\": \"00:02:29,450\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの出馬咲き、\"\n  },\n  {\n    \"start\": \"00:02:29,450\",\n    \"end\": \"00:02:30,050\",\n    \"lang\": \"ja\",\n    \"text\": \"あいです\"\n  },\n  {\n    \"start\": \"00:02:43,078\",\n    \"end\": \"00:02:44,498\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a spinach.\"\n  },\n  {\n    \"start\": \"00:02:44,758\",\n    \"end\": \"00:02:45,638\",\n    \"lang\": \"en\",\n    \"text\": \"I learned a history.\"\n  },\n  {\n    \"start\": \"00:02:46,118\",\n    \"end\": \"00:02:46,638\",\n    \"lang\": \"en\",\n    \"text\": \"About spinach.\"\n  },\n  {\n    \"start\": \"00:02:48,034\",\n    \"end\": \"00:02:48,394\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜\"\n  },\n  {\n    \"start\": \"00:02:48,953\",\n    \"end\": \"00:02:49,174\",\n    \"lang\": \"zh\",\n    \"text\": \"對不起\"\n  },\n  {\n    \"start\": \"00:02:49,254\",\n    \"end\": \"00:02:55,274\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to pronounce it,\"\n  },\n  {\n    \"start\": \"00:02:55,274\",\n    \"end\": \"00:02:58,094\",\n    \"lang\": \"en\",\n    \"text\": \"but I guess it's almost correct.\"\n  },\n  {\n    \"start\": \"00:03:02,754\",\n    \"end\": \"00:03:07,714\",\n    \"lang\": \"en\",\n    \"text\": \"This noodle is really really top-notch.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:08,214",
+            "end": "00:02:08,834",
+            "es": "Guau,",
+            "fr": "Wow,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:02:08,834",
+            "end": "00:02:11,274",
+            "es": "el sabor es realmente peor.",
+            "fr": "le goût est vraiment pire.",
+            "uk": "смак дійсно гірший."
+        },
+        {
+            "start": "00:02:17,394",
+            "end": "00:02:18,314",
+            "es": "¿Es pollo?",
+            "fr": "C'est du poulet ?",
+            "uk": "Це курка?"
+        },
+        {
+            "start": "00:02:23,170",
+            "end": "00:02:25,630",
+            "es": "Me encantan estos fideos de sakura.",
+            "fr": "J'adore ces nouilles sakura.",
+            "uk": "Я обожнюю ці сакурові локшина."
+        },
+        {
+            "start": "00:02:26,750",
+            "end": "00:02:27,229",
+            "es": "Sí,",
+            "fr": "Oui,",
+            "uk": "Так,"
+        },
+        {
+            "start": "00:02:27,229",
+            "end": "00:02:27,830",
+            "es": "es eso.",
+            "fr": "c'est ça.",
+            "uk": "це так."
+        },
+        {
+            "start": "00:02:28,270",
+            "end": "00:02:29,450",
+            "es": "Me encanta esta sakura,",
+            "fr": "J'aime ce sakura,",
+            "uk": "Мені подобається ця сакура,"
+        },
+        {
+            "start": "00:02:29,450",
+            "end": "00:02:30,050",
+            "es": "sí, es eso.",
+            "fr": "oui, c'est ça.",
+            "uk": "так, це так."
+        },
+        {
+            "start": "00:02:43,078",
+            "end": "00:02:44,498",
+            "es": "Así que esto es una espinaca.",
+            "fr": "Donc, ceci est une épinard.",
+            "uk": "Отже, це шпинат."
+        },
+        {
+            "start": "00:02:44,758",
+            "end": "00:02:45,638",
+            "es": "Aprendí una historia.",
+            "fr": "J'ai appris une histoire.",
+            "uk": "Я дізнався історію."
+        },
+        {
+            "start": "00:02:46,118",
+            "end": "00:02:46,638",
+            "es": "Acerca de la espinaca.",
+            "fr": "Sur l'épinard.",
+            "uk": "Про шпинат."
+        },
+        {
+            "start": "00:02:48,034",
+            "end": "00:02:48,394",
+            "es": "Espinaca",
+            "fr": "Épinard",
+            "uk": "Шпинат"
+        },
+        {
+            "start": "00:02:48,953",
+            "end": "00:02:49,174",
+            "es": "Lo siento",
+            "fr": "Désolé",
+            "uk": "Вибачте"
+        },
+        {
+            "start": "00:02:49,254",
+            "end": "00:02:55,274",
+            "es": "No sé cómo pronunciarlo,",
+            "fr": "Je ne sais pas comment le prononcer,",
+            "uk": "Я не знаю, як це вимовляти,"
+        },
+        {
+            "start": "00:02:55,274",
+            "end": "00:02:58,094",
+            "es": "pero supongo que es casi correcto.",
+            "fr": "mais je suppose que c'est presque correct.",
+            "uk": "але я припускаю, що це майже правильно."
+        },
+        {
+            "start": "00:03:02,754",
+            "end": "00:03:07,714",
+            "es": "Esta sopa de fideos es realmente de primera clase.",
+            "fr": "Cette nouille est vraiment de première qualité.",
+            "uk": "Ці локшина дійсно найвищої якості."
+        }
+    ]
+}

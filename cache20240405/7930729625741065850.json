@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"en\",\n    \"text\": \"So never wait for this perfect moment,\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:06,180\",\n    \"lang\": \"en\",\n    \"text\": \"that everything is prepared,\"\n  },\n  {\n    \"start\": \"00:00:06,180\",\n    \"end\": \"00:00:08,360\",\n    \"lang\": \"en\",\n    \"text\": \"because it will never come.\"\n  },\n  {\n    \"start\": \"00:00:12,360\",\n    \"end\": \"00:00:16,900\",\n    \"lang\": \"en\",\n    \"text\": \"So you will find yourself in this journey,\"\n  },\n  {\n    \"start\": \"00:00:16,900\",\n    \"end\": \"00:00:19,660\",\n    \"lang\": \"en\",\n    \"text\": \"that being attacked,\"\n  },\n  {\n    \"start\": \"00:00:19,660\",\n    \"end\": \"00:00:20,860\",\n    \"lang\": \"en\",\n    \"text\": \"being criticized,\"\n  },\n  {\n    \"start\": \"00:00:20,860\",\n    \"end\": \"00:00:22,880\",\n    \"lang\": \"en\",\n    \"text\": \"being humiliated,\"\n  },\n  {\n    \"start\": \"00:00:22,880\",\n    \"end\": \"00:00:27,560\",\n    \"lang\": \"en\",\n    \"text\": \"being imperfect.\"\n  },\n  {\n    \"start\": \"00:00:30,439\",\n    \"end\": \"00:00:32,360\",\n    \"lang\": \"en\",\n    \"text\": \"Present yourself to the world.\"\n  },\n  {\n    \"start\": \"00:00:33,442\",\n    \"end\": \"00:00:33,842\",\n    \"lang\": \"ja\",\n    \"text\": \"しゅい\"\n  },\n  {\n    \"start\": \"00:00:44,098\",\n    \"end\": \"00:00:45,458\",\n    \"lang\": \"en\",\n    \"text\": \"Allow yourself to fail,\"\n  },\n  {\n    \"start\": \"00:00:45,458\",\n    \"end\": \"00:00:48,378\",\n    \"lang\": \"en\",\n    \"text\": \"to be imperfect.\"\n  },\n  {\n    \"start\": \"00:00:52,978\",\n    \"end\": \"00:00:55,798\",\n    \"lang\": \"en\",\n    \"text\": \"The world will end in dust.\"\n  },\n  {\n    \"start\": \"00:00:56,618\",\n    \"end\": \"00:00:57,658\",\n    \"lang\": \"en\",\n    \"text\": \"Nothing is important.\"\n  },\n  {\n    \"start\": \"00:00:57,658\",\n    \"end\": \"00:00:59,578\",\n    \"lang\": \"en\",\n    \"text\": \"Everything is meaningless.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,780",
+            "ko": "그래서 완벽한 순간을 기다리지 마세요,"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:06,180",
+            "ko": "모든 것이 준비됐다고 생각하는 순간은,"
+        },
+        {
+            "start": "00:00:06,180",
+            "end": "00:00:08,360",
+            "ko": "절대 오지 않을 거예요."
+        },
+        {
+            "start": "00:00:12,360",
+            "end": "00:00:16,900",
+            "ko": "그러니 당신은 이 여정에서 자신을 발견할 겁니다,"
+        },
+        {
+            "start": "00:00:16,900",
+            "end": "00:00:19,660",
+            "ko": "공격받는 상황에 처하게 되고,"
+        },
+        {
+            "start": "00:00:19,660",
+            "end": "00:00:20,860",
+            "ko": "비판받게 되고,"
+        },
+        {
+            "start": "00:00:20,860",
+            "end": "00:00:22,880",
+            "ko": "모욕을 당하게 되며,"
+        },
+        {
+            "start": "00:00:22,880",
+            "end": "00:00:27,560",
+            "ko": "완벽하지 못하게 됩니다."
+        },
+        {
+            "start": "00:00:30,439",
+            "end": "00:00:32,360",
+            "ko": "세상에 당신을 드러내세요."
+        },
+        {
+            "start": "00:00:33,442",
+            "end": "00:00:33,842",
+            "ko": "실패하도록 허락하세요."
+        },
+        {
+            "start": "00:00:44,098",
+            "end": "00:00:45,458",
+            "ko": "실패하도록 자신을 허락하세요,"
+        },
+        {
+            "start": "00:00:45,458",
+            "end": "00:00:48,378",
+            "ko": "완벽하지 않도록요."
+        },
+        {
+            "start": "00:00:52,978",
+            "end": "00:00:55,798",
+            "ko": "세상은 결국 먼지로 끝납니다."
+        },
+        {
+            "start": "00:00:56,618",
+            "end": "00:00:57,658",
+            "ko": "아무 것도 중요하지 않아요."
+        },
+        {
+            "start": "00:00:57,658",
+            "end": "00:00:59,578",
+            "ko": "모든 것이 의미 없습니다."
+        }
+    ]
+}

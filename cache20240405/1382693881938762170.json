@@ -1,0 +1,201 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,562\",\n    \"end\": \"00:01:02,062\",\n    \"lang\": \"en\",\n    \"text\": \"Bye.\"\n  },\n  {\n    \"start\": \"00:01:02,082\",\n    \"end\": \"00:01:02,802\",\n    \"lang\": \"ja\",\n    \"text\": \"勝手にもう\"\n  },\n  {\n    \"start\": \"00:01:06,122\",\n    \"end\": \"00:01:07,722\",\n    \"lang\": \"ja\",\n    \"text\": \"さぁ\"\n  },\n  {\n    \"start\": \"00:01:07,722\",\n    \"end\": \"00:01:08,102\",\n    \"lang\": \"ja\",\n    \"text\": \"あ\"\n  },\n  {\n    \"start\": \"00:01:09,142\",\n    \"end\": \"00:01:09,542\",\n    \"lang\": \"ja\",\n    \"text\": \"どうすら良いんですかね\"\n  },\n  {\n    \"start\": \"00:01:09,570\",\n    \"end\": \"00:01:18,690\",\n    \"lang\": \"en\",\n    \"text\": \"Today I recorded this poem.\"\n  },\n  {\n    \"start\": \"00:01:19,746\",\n    \"end\": \"00:01:20,206\",\n    \"lang\": \"zh\",\n    \"text\": \"好耶\"\n  },\n  {\n    \"start\": \"00:01:22,178\",\n    \"end\": \"00:01:22,618\",\n    \"lang\": \"en\",\n    \"text\": \"The Nub.\"\n  },\n  {\n    \"start\": \"00:01:24,838\",\n    \"end\": \"00:01:26,358\",\n    \"lang\": \"en\",\n    \"text\": \"The Nub is a venuble.\"\n  },\n  {\n    \"start\": \"00:01:26,838\",\n    \"end\": \"00:01:27,358\",\n    \"lang\": \"en\",\n    \"text\": \"Nub.\"\n  },\n  {\n    \"start\": \"00:01:27,678\",\n    \"end\": \"00:01:27,918\",\n    \"lang\": \"en\",\n    \"text\": \"Yeah.\"\n  },\n  {\n    \"start\": \"00:01:28,198\",\n    \"end\": \"00:01:28,918\",\n    \"lang\": \"en\",\n    \"text\": \"And the,\"\n  },\n  {\n    \"start\": \"00:01:28,918\",\n    \"end\": \"00:01:30,378\",\n    \"lang\": \"en\",\n    \"text\": \"the...\"\n  },\n  {\n    \"start\": \"00:01:31,650\",\n    \"end\": \"00:01:32,910\",\n    \"lang\": \"zh\",\n    \"text\": \"好今天的视频就到这\"\n  },\n  {\n    \"start\": \"00:01:32,930\",\n    \"end\": \"00:01:33,690\",\n    \"lang\": \"en\",\n    \"text\": \"The knife,\"\n  },\n  {\n    \"start\": \"00:01:33,690\",\n    \"end\": \"00:01:34,450\",\n    \"lang\": \"en\",\n    \"text\": \"the knife,\"\n  },\n  {\n    \"start\": \"00:01:34,450\",\n    \"end\": \"00:01:35,110\",\n    \"lang\": \"en\",\n    \"text\": \"the knife,\"\n  },\n  {\n    \"start\": \"00:01:35,110\",\n    \"end\": \"00:01:36,630\",\n    \"lang\": \"en\",\n    \"text\": \"the knife is in my nipple.\"\n  },\n  {\n    \"start\": \"00:01:37,330\",\n    \"end\": \"00:01:38,930\",\n    \"lang\": \"en\",\n    \"text\": \"But he...\"\n  },\n  {\n    \"start\": \"00:01:40,450\",\n    \"end\": \"00:01:42,230\",\n    \"lang\": \"ja\",\n    \"text\": \"なぁもプレッシャーズ\"\n  },\n  {\n    \"start\": \"00:01:43,150\",\n    \"end\": \"00:01:43,570\",\n    \"lang\": \"ja\",\n    \"text\": \"イブ\"\n  },\n  {\n    \"start\": \"00:01:46,754\",\n    \"end\": \"00:01:47,874\",\n    \"lang\": \"en\",\n    \"text\": \"if...\"\n  },\n  {\n    \"start\": \"00:01:49,073\",\n    \"end\": \"00:01:50,654\",\n    \"lang\": \"en\",\n    \"text\": \"so this is so...\"\n  },\n  {\n    \"start\": \"00:01:51,453\",\n    \"end\": \"00:01:54,534\",\n    \"lang\": \"en\",\n    \"text\": \"so not like a poem\"\n  },\n  {\n    \"start\": \"00:01:55,733\",\n    \"end\": \"00:01:57,374\",\n    \"lang\": \"en\",\n    \"text\": \"so if for freedom\"\n  },\n  {\n    \"start\": \"00:01:57,374\",\n    \"end\": \"00:01:59,054\",\n    \"lang\": \"en\",\n    \"text\": \"what is to say is\"\n  },\n  {\n    \"start\": \"00:01:59,054\",\n    \"end\": \"00:02:00,634\",\n    \"lang\": \"en\",\n    \"text\": \"can they give the up?\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:01,562",
+            "end": "00:01:02,062",
+            "en": "Bye.",
+            "zh": "再见。",
+            "ar": "وداعاً."
+        },
+        {
+            "start": "00:01:02,082",
+            "end": "00:01:02,802",
+            "en": "Do whatever you want.",
+            "zh": "随你便。",
+            "ar": "افعل ما تشاء.",
+            "ja": "勝手にもう"
+        },
+        {
+            "start": "00:01:06,122",
+            "end": "00:01:07,722",
+            "en": "Well then",
+            "zh": "那么",
+            "ar": "حسناً إذاً",
+            "ja": "さぁ"
+        },
+        {
+            "start": "00:01:07,722",
+            "end": "00:01:08,102",
+            "en": "Oh",
+            "zh": "哦",
+            "ar": "آه",
+            "ja": "あ"
+        },
+        {
+            "start": "00:01:09,142",
+            "end": "00:01:09,542",
+            "en": "What should we do?",
+            "zh": "我们该怎么办呢？",
+            "ar": "ماذا يجب أن نفعل؟",
+            "ja": "どうすら良いんですかね"
+        },
+        {
+            "start": "00:01:09,570",
+            "end": "00:01:18,690",
+            "en": "Today I recorded this poem.",
+            "zh": "今天我录制了这首诗。",
+            "ar": "اليوم سجلت هذه القصيدة."
+        },
+        {
+            "start": "00:01:19,746",
+            "end": "00:01:20,206",
+            "en": "Awesome!",
+            "zh": "好耶",
+            "ar": "رائع!"
+        },
+        {
+            "start": "00:01:22,178",
+            "end": "00:01:22,618",
+            "en": "The Nub.",
+            "zh": "核心。",
+            "ar": "الجوهر."
+        },
+        {
+            "start": "00:01:24,838",
+            "end": "00:01:26,358",
+            "en": "The Nub is a venerable.",
+            "zh": "核心是值得尊敬的。",
+            "ar": "الجوهر محترم."
+        },
+        {
+            "start": "00:01:26,838",
+            "end": "00:01:27,358",
+            "en": "Nub.",
+            "zh": "核心。",
+            "ar": "الجوهر."
+        },
+        {
+            "start": "00:01:27,678",
+            "end": "00:01:27,918",
+            "en": "Yeah.",
+            "zh": "是的。",
+            "ar": "نعم."
+        },
+        {
+            "start": "00:01:28,198",
+            "end": "00:01:28,918",
+            "en": "And the,",
+            "zh": "而且，",
+            "ar": "وال،"
+        },
+        {
+            "start": "00:01:28,918",
+            "end": "00:01:30,378",
+            "en": "the...",
+            "zh": "那个...",
+            "ar": "ذا..."
+        },
+        {
+            "start": "00:01:31,650",
+            "end": "00:01:32,910",
+            "en": "That's it for today's video.",
+            "zh": "好今天的视频就到这",
+            "ar": "هذا كل شيء لفيديو اليوم."
+        },
+        {
+            "start": "00:01:32,930",
+            "end": "00:01:33,690",
+            "en": "The knife,",
+            "zh": "刀，",
+            "ar": "السكين،"
+        },
+        {
+            "start": "00:01:33,690",
+            "end": "00:01:34,450",
+            "en": "the knife,",
+            "zh": "刀，",
+            "ar": "السكين،"
+        },
+        {
+            "start": "00:01:34,450",
+            "end": "00:01:35,110",
+            "en": "the knife,",
+            "zh": "刀，",
+            "ar": "السكين،"
+        },
+        {
+            "start": "00:01:35,110",
+            "end": "00:01:36,630",
+            "en": "the knife is in my hand.",
+            "zh": "刀在我手里。",
+            "ar": "السكين في يدي.",
+            "text_correction": "Based on context, 'nipple' should be 'hand' for accuracy and coherence."
+        },
+        {
+            "start": "00:01:37,330",
+            "end": "00:01:38,930",
+            "en": "But he...",
+            "zh": "但是他...",
+            "ar": "لكن هو..."
+        },
+        {
+            "start": "00:01:40,450",
+            "end": "00:01:42,230",
+            "en": "It's a bit pressuring.",
+            "zh": "有点压力。",
+            "ar": "هذا مُجهِد بعض الشيء.",
+            "ja": "なぁもプレッシャーズ"
+        },
+        {
+            "start": "00:01:43,150",
+            "end": "00:01:43,570",
+            "en": "Eve.",
+            "zh": "夜。",
+            "ar": "مساء.",
+            "ja": "イブ"
+        },
+        {
+            "start": "00:01:46,754",
+            "end": "00:01:47,874",
+            "en": "if...",
+            "zh": "如果...",
+            "ar": "إذا..."
+        },
+        {
+            "start": "00:01:49,073",
+            "end": "00:01:50,654",
+            "en": "so this is so...",
+            "zh": "所以这就是...",
+            "ar": "إذن هذا هو..."
+        },
+        {
+            "start": "00:01:51,453",
+            "end": "00:01:54,534",
+            "en": "so not like a poem",
+            "zh": "这并不像一首诗",
+            "ar": "لذا لا يشبه قصيدة"
+        },
+        {
+            "start": "00:01:55,733",
+            "end": "00:01:57,374",
+            "en": "so if for freedom",
+            "zh": "所以如果为了自由",
+            "ar": "إذا كان من أجل الحرية"
+        },
+        {
+            "start": "00:01:57,374",
+            "end": "00:01:59,054",
+            "en": "what is to say is",
+            "zh": "要说的是",
+            "ar": "ما يجب قوله هو"
+        },
+        {
+            "start": "00:01:59,054",
+            "end": "00:02:00,634",
+            "en": "can they give up?",
+            "zh": "他们可以放弃吗？",
+            "ar": "هل يمكنهم الاستسلام؟"
+        }
+    ]
+}

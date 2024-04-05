@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,700\",\n    \"end\": \"00:00:02,480\",\n    \"lang\": \"en\",\n    \"text\": \"Let's do this.\"\n  },\n  {\n    \"start\": \"00:00:03,460\",\n    \"end\": \"00:00:04,740\",\n    \"lang\": \"en\",\n    \"text\": \"Gonna have a fight.\"\n  },\n  {\n    \"start\": \"00:00:05,440\",\n    \"end\": \"00:00:05,500\",\n    \"lang\": \"en\",\n    \"text\": \"Go,\"\n  },\n  {\n    \"start\": \"00:00:05,500\",\n    \"end\": \"00:00:05,800\",\n    \"lang\": \"en\",\n    \"text\": \"go,\"\n  },\n  {\n    \"start\": \"00:00:05,800\",\n    \"end\": \"00:00:06,200\",\n    \"lang\": \"en\",\n    \"text\": \"go.\"\n  },\n  {\n    \"start\": \"00:00:06,520\",\n    \"end\": \"00:00:07,140\",\n    \"lang\": \"en\",\n    \"text\": \"They want to fight.\"\n  },\n  {\n    \"start\": \"00:00:08,002\",\n    \"end\": \"00:00:09,982\",\n    \"lang\": \"zh\",\n    \"text\": \"哇哇哇哇\"\n  },\n  {\n    \"start\": \"00:00:15,142\",\n    \"end\": \"00:00:16,242\",\n    \"lang\": \"zh\",\n    \"text\": \"這是菜市場\"\n  },\n  {\n    \"start\": \"00:00:16,866\",\n    \"end\": \"00:00:18,206\",\n    \"lang\": \"en\",\n    \"text\": \"Bismillah!\"\n  },\n  {\n    \"start\": \"00:00:22,850\",\n    \"end\": \"00:00:25,330\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬は可愛いです\"\n  },\n  {\n    \"start\": \"00:00:26,090\",\n    \"end\": \"00:00:28,070\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬は小さいです\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,700",
+            "end": "00:00:02,480",
+            "es": "Hagámoslo.",
+            "fr": "Faisons-le.",
+            "uk": "Давайте зробимо це."
+        },
+        {
+            "start": "00:00:03,460",
+            "end": "00:00:04,740",
+            "es": "Vamos a tener una pelea.",
+            "fr": "On va se battre.",
+            "uk": "Ми будемо битися."
+        },
+        {
+            "start": "00:00:05,440",
+            "end": "00:00:05,500",
+            "es": "Vamos,",
+            "fr": "Allons-y,",
+            "uk": "Гайда,"
+        },
+        {
+            "start": "00:00:05,500",
+            "end": "00:00:05,800",
+            "es": "vamos,",
+            "fr": "allons-y,",
+            "uk": "гайда,"
+        },
+        {
+            "start": "00:00:05,800",
+            "end": "00:00:06,200",
+            "es": "vamos.",
+            "fr": "allons-y.",
+            "uk": "гайда."
+        },
+        {
+            "start": "00:00:06,520",
+            "end": "00:00:07,140",
+            "es": "Ellos quieren pelear.",
+            "fr": "Ils veulent se battre.",
+            "uk": "Вони хочуть битися."
+        },
+        {
+            "start": "00:00:08,002",
+            "end": "00:00:09,982",
+            "es": "¡Guau guau guau guau!",
+            "fr": "Ouaf ouaf ouaf ouaf!",
+            "uk": "Гав гав гав гав!"
+        },
+        {
+            "start": "00:00:15,142",
+            "end": "00:00:16,242",
+            "es": "Esto es un mercado.",
+            "fr": "C'est un marché.",
+            "uk": "Це ринок."
+        },
+        {
+            "start": "00:00:16,866",
+            "end": "00:00:18,206",
+            "es": "¡Bismillah!",
+            "fr": "Bismillah !",
+            "uk": "Бісміллях!"
+        },
+        {
+            "start": "00:00:22,850",
+            "end": "00:00:25,330",
+            "es": "Este perro es lindo.",
+            "fr": "Ce chien est mignon.",
+            "uk": "Ця собака мила."
+        },
+        {
+            "start": "00:00:26,090",
+            "end": "00:00:28,070",
+            "es": "Este perro es pequeño.",
+            "fr": "Ce chien est petit.",
+            "uk": "Ця собака маленька."
+        }
+    ]
+}

@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,359\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"zh\",\n    \"text\": \"不想回家\"\n  },\n  {\n    \"start\": \"00:00:04,770\",\n    \"end\": \"00:00:05,270\",\n    \"lang\": \"en\",\n    \"text\": \"Good boy,\"\n  },\n  {\n    \"start\": \"00:00:05,270\",\n    \"end\": \"00:00:05,970\",\n    \"lang\": \"en\",\n    \"text\": \"good boy,\"\n  },\n  {\n    \"start\": \"00:00:05,970\",\n    \"end\": \"00:00:06,670\",\n    \"lang\": \"en\",\n    \"text\": \"good boy.\"\n  },\n  {\n    \"start\": \"00:00:07,010\",\n    \"end\": \"00:00:08,450\",\n    \"lang\": \"en\",\n    \"text\": \"He's 15 years old.\"\n  },\n  {\n    \"start\": \"00:00:09,090\",\n    \"end\": \"00:00:09,430\",\n    \"lang\": \"en\",\n    \"text\": \"Yeah,\"\n  },\n  {\n    \"start\": \"00:00:09,430\",\n    \"end\": \"00:00:10,830\",\n    \"lang\": \"en\",\n    \"text\": \"that's a very lazy dog.\"\n  },\n  {\n    \"start\": \"00:00:10,930\",\n    \"end\": \"00:00:11,830\",\n    \"lang\": \"en\",\n    \"text\": \"Very lazy and old.\"\n  },\n  {\n    \"start\": \"00:00:12,570\",\n    \"end\": \"00:00:13,970\",\n    \"lang\": \"en\",\n    \"text\": \"He doesn't want to go home.\"\n  },\n  {\n    \"start\": \"00:00:13,970\",\n    \"end\": \"00:00:15,250\",\n    \"lang\": \"en\",\n    \"text\": \"He wants to go everywhere.\"\n  },\n  {\n    \"start\": \"00:00:15,910\",\n    \"end\": \"00:00:17,410\",\n    \"lang\": \"en\",\n    \"text\": \"This is a 15 years old dog.\"\n  },\n  {\n    \"start\": \"00:00:17,510\",\n    \"end\": \"00:00:18,590\",\n    \"lang\": \"en\",\n    \"text\": \"Come here!\"\n  },\n  {\n    \"start\": \"00:00:19,830\",\n    \"end\": \"00:00:20,630\",\n    \"lang\": \"en\",\n    \"text\": \"Lazy dog.\"\n  },\n  {\n    \"start\": \"00:00:20,630\",\n    \"end\": \"00:00:21,610\",\n    \"lang\": \"en\",\n    \"text\": \"I love it.\"\n  },\n  {\n    \"start\": \"00:00:21,750\",\n    \"end\": \"00:00:22,650\",\n    \"lang\": \"en\",\n    \"text\": \"Come on!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,359",
+            "end": "00:00:02,240",
+            "es": "No quiero volver a casa",
+            "fr": "Je ne veux pas rentrer à la maison",
+            "uk": "Не хочу йти додому"
+        },
+        {
+            "start": "00:00:04,770",
+            "end": "00:00:05,270",
+            "es": "Buen chico,",
+            "fr": "Bon garçon,",
+            "uk": "Гарний хлопчик,"
+        },
+        {
+            "start": "00:00:05,270",
+            "end": "00:00:05,970",
+            "es": "buen chico,",
+            "fr": "bon garçon,",
+            "uk": "гарний хлопчик,"
+        },
+        {
+            "start": "00:00:05,970",
+            "end": "00:00:06,670",
+            "es": "buen chico.",
+            "fr": "bon garçon.",
+            "uk": "гарний хлопчик."
+        },
+        {
+            "start": "00:00:07,010",
+            "end": "00:00:08,450",
+            "es": "Tiene 15 años.",
+            "fr": "Il a 15 ans.",
+            "uk": "Йому 15 років."
+        },
+        {
+            "start": "00:00:09,090",
+            "end": "00:00:09,430",
+            "es": "Sí,",
+            "fr": "Oui,",
+            "uk": "Так,"
+        },
+        {
+            "start": "00:00:09,430",
+            "end": "00:00:10,830",
+            "es": "ese es un perro muy perezoso.",
+            "fr": "c'est un chien très paresseux.",
+            "uk": "це дуже лінивий собака."
+        },
+        {
+            "start": "00:00:10,930",
+            "end": "00:00:11,830",
+            "es": "Muy perezoso y viejo.",
+            "fr": "Très paresseux et vieux.",
+            "uk": "Дуже лінивий і старий."
+        },
+        {
+            "start": "00:00:12,570",
+            "end": "00:00:13,970",
+            "es": "No quiere volver a casa.",
+            "fr": "Il ne veut pas rentrer chez lui.",
+            "uk": "Він не хоче йти додому."
+        },
+        {
+            "start": "00:00:13,970",
+            "end": "00:00:15,250",
+            "es": "Quiere ir a todas partes.",
+            "fr": "Il veut aller partout.",
+            "uk": "Він хоче йти всюди."
+        },
+        {
+            "start": "00:00:15,910",
+            "end": "00:00:17,410",
+            "es": "Este es un perro de 15 años.",
+            "fr": "C'est un chien de 15 ans.",
+            "uk": "Це собака, що має 15 років."
+        },
+        {
+            "start": "00:00:17,510",
+            "end": "00:00:18,590",
+            "es": "¡Ven aquí!",
+            "fr": "Viens ici !",
+            "uk": "Іди сюди!"
+        },
+        {
+            "start": "00:00:19,830",
+            "end": "00:00:20,630",
+            "es": "Perro perezoso.",
+            "fr": "Chien paresseux.",
+            "uk": "Лінивий пес."
+        },
+        {
+            "start": "00:00:20,630",
+            "end": "00:00:21,610",
+            "es": "Me encanta.",
+            "fr": "J'adore ça.",
+            "uk": "Мені це подобається."
+        },
+        {
+            "start": "00:00:21,750",
+            "end": "00:00:22,650",
+            "es": "¡Vamos!",
+            "fr": "Allons-y !",
+            "uk": "Гайда!"
+        }
+    ]
+}

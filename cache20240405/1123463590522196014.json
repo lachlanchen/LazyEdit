@@ -1,0 +1,159 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,778\",\n    \"end\": \"00:01:08,818\",\n    \"lang\": \"en\",\n    \"text\": \"and put his key into this box.\"\n  },\n  {\n    \"start\": \"00:01:09,718\",\n    \"end\": \"00:01:09,878\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:09,878\",\n    \"end\": \"00:01:11,298\",\n    \"lang\": \"en\",\n    \"text\": \"however,\"\n  },\n  {\n    \"start\": \"00:01:12,338\",\n    \"end\": \"00:01:14,158\",\n    \"lang\": \"en\",\n    \"text\": \"Professor Guttner noticed that\"\n  },\n  {\n    \"start\": \"00:01:14,578\",\n    \"end\": \"00:01:16,698\",\n    \"lang\": \"en\",\n    \"text\": \"this is the difference between\"\n  },\n  {\n    \"start\": \"00:01:18,378\",\n    \"end\": \"00:01:21,978\",\n    \"lang\": \"en\",\n    \"text\": \"Western and Eastern education,\"\n  },\n  {\n    \"start\": \"00:01:22,378\",\n    \"end\": \"00:01:26,578\",\n    \"lang\": \"en\",\n    \"text\": \"especially American and Chinese education.\"\n  },\n  {\n    \"start\": \"00:01:29,118\",\n    \"end\": \"00:01:31,338\",\n    \"lang\": \"en\",\n    \"text\": \"It is said that\"\n  },\n  {\n    \"start\": \"00:01:31,338\",\n    \"end\": \"00:01:33,478\",\n    \"lang\": \"en\",\n    \"text\": \"the US education\"\n  },\n  {\n    \"start\": \"00:01:33,478\",\n    \"end\": \"00:01:36,298\",\n    \"lang\": \"en\",\n    \"text\": \"emphasizes innovation\"\n  },\n  {\n    \"start\": \"00:01:36,298\",\n    \"end\": \"00:01:37,698\",\n    \"lang\": \"en\",\n    \"text\": \"so that the child,\"\n  },\n  {\n    \"start\": \"00:01:37,698\",\n    \"end\": \"00:01:38,318\",\n    \"lang\": \"en\",\n    \"text\": \"the children,\"\n  },\n  {\n    \"start\": \"00:01:39,058\",\n    \"end\": \"00:01:41,278\",\n    \"lang\": \"en\",\n    \"text\": \"develop this skill themselves.\"\n  },\n  {\n    \"start\": \"00:01:41,898\",\n    \"end\": \"00:01:43,618\",\n    \"lang\": \"en\",\n    \"text\": \"And in the Chinese culture,\"\n  },\n  {\n    \"start\": \"00:01:44,978\",\n    \"end\": \"00:01:47,118\",\n    \"lang\": \"en\",\n    \"text\": \"it has this\"\n  },\n  {\n    \"start\": \"00:01:52,878\",\n    \"end\": \"00:01:53,838\",\n    \"lang\": \"en\",\n    \"text\": \"principle,\"\n  },\n  {\n    \"start\": \"00:01:54,078\",\n    \"end\": \"00:01:54,978\",\n    \"lang\": \"en\",\n    \"text\": \"this thing,\"\n  },\n  {\n    \"start\": \"00:01:55,058\",\n    \"end\": \"00:01:56,298\",\n    \"lang\": \"en\",\n    \"text\": \"this thing combines\"\n  },\n  {\n    \"start\": \"00:01:56,298\",\n    \"end\": \"00:01:57,978\",\n    \"lang\": \"en\",\n    \"text\": \"the children,\"\n  },\n  {\n    \"start\": \"00:01:58,198\",\n    \"end\": \"00:02:01,538\",\n    \"lang\": \"en\",\n    \"text\": \"the failure of the children is not useful.\"\n  },\n  {\n    \"start\": \"00:02:02,238\",\n    \"end\": \"00:02:02,418\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:02,418\",\n    \"end\": \"00:02:03,738\",\n    \"lang\": \"en\",\n    \"text\": \"Western way,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,778",
+            "end": "00:01:08,818",
+            "es": "y puso su llave en esta caja.",
+            "fr": "et a mis sa clé dans cette boîte.",
+            "uk": "і поклав свій ключ до цієї скриньки."
+        },
+        {
+            "start": "00:01:09,718",
+            "end": "00:01:09,878",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:01:09,878",
+            "end": "00:01:11,298",
+            "es": "sin embargo,",
+            "fr": "cependant,",
+            "uk": "проте,"
+        },
+        {
+            "start": "00:01:12,338",
+            "end": "00:01:14,158",
+            "es": "el profesor Guttner notó que",
+            "fr": "le professeur Guttner a remarqué que",
+            "uk": "професор Гуттнер помітив, що"
+        },
+        {
+            "start": "00:01:14,578",
+            "end": "00:01:16,698",
+            "es": "esta es la diferencia entre",
+            "fr": "c'est la différence entre",
+            "uk": "це різниця між"
+        },
+        {
+            "start": "00:01:18,378",
+            "end": "00:01:21,978",
+            "es": "la educación occidental y oriental,",
+            "fr": "l'éducation occidentale et orientale,",
+            "uk": "західною та східною освітою,"
+        },
+        {
+            "start": "00:01:22,378",
+            "end": "00:01:26,578",
+            "es": "especialmente la educación americana y china.",
+            "fr": "surtout l'éducation américaine et chinoise.",
+            "uk": "особливо американську та китайську освіту."
+        },
+        {
+            "start": "00:01:29,118",
+            "end": "00:01:31,338",
+            "es": "Se dice que",
+            "fr": "On dit que",
+            "uk": "Кажуть, що"
+        },
+        {
+            "start": "00:01:31,338",
+            "end": "00:01:33,478",
+            "es": "la educación en EE. UU.",
+            "fr": "l'éducation aux États-Unis",
+            "uk": "освіта в США"
+        },
+        {
+            "start": "00:01:33,478",
+            "end": "00:01:36,298",
+            "es": "enfatiza la innovación",
+            "fr": "met l'accent sur l'innovation",
+            "uk": "акцентує на інноваціях"
+        },
+        {
+            "start": "00:01:36,298",
+            "end": "00:01:37,698",
+            "es": "para que el niño,",
+            "fr": "de sorte que l'enfant,",
+            "uk": "аби дитина,"
+        },
+        {
+            "start": "00:01:37,698",
+            "end": "00:01:38,318",
+            "es": "los niños,",
+            "fr": "les enfants,",
+            "uk": "діти,"
+        },
+        {
+            "start": "00:01:39,058",
+            "end": "00:01:41,278",
+            "es": "desarrollen esta habilidad por sí mismos.",
+            "fr": "développent cette compétence eux-mêmes.",
+            "uk": "розвивають цю вміння самостійно."
+        },
+        {
+            "start": "00:01:41,898",
+            "end": "00:01:43,618",
+            "es": "Y en la cultura china,",
+            "fr": "Et dans la culture chinoise,",
+            "uk": "А в китайській культурі,"
+        },
+        {
+            "start": "00:01:44,978",
+            "end": "00:01:47,118",
+            "es": "tiene esto",
+            "fr": "il y a cela",
+            "uk": "є це"
+        },
+        {
+            "start": "00:01:52,878",
+            "end": "00:01:53,838",
+            "es": "principio,",
+            "fr": "principe,",
+            "uk": "принцип,"
+        },
+        {
+            "start": "00:01:54,078",
+            "end": "00:01:54,978",
+            "es": "esta cosa,",
+            "fr": "cette chose,",
+            "uk": "ця річ,"
+        },
+        {
+            "start": "00:01:55,058",
+            "end": "00:01:56,298",
+            "es": "esta cosa combina",
+            "fr": "cette chose combine",
+            "uk": "ця річ поєднує"
+        },
+        {
+            "start": "00:01:56,298",
+            "end": "00:01:57,978",
+            "es": "a los niños,",
+            "fr": "les enfants,",
+            "uk": "дітей,"
+        },
+        {
+            "start": "00:01:58,198",
+            "end": "00:02:01,538",
+            "es": "el fracaso de los niños no es útil.",
+            "fr": "l'échec des enfants n'est pas utile.",
+            "uk": "помилки дітей не є корисними."
+        },
+        {
+            "start": "00:02:02,238",
+            "end": "00:02:02,418",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:02:02,418",
+            "end": "00:02:03,738",
+            "es": "la manera occidental,",
+            "fr": "la manière occidentale,",
+            "uk": "західний шлях,"
+        }
+    ]
+}

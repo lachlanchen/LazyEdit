@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,280\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:01,282\",\n    \"end\": \"00:00:02,021\",\n    \"lang\": \"zh\",\n    \"text\": \"这是狐狸犬\"\n  },\n  {\n    \"start\": \"00:00:07,074\",\n    \"end\": \"00:00:07,914\",\n    \"lang\": \"en\",\n    \"text\": \"Oh I will have to once a week just to hammer in some nuts.\"\n  },\n  {\n    \"start\": \"00:00:07,914\",\n    \"end\": \"00:00:08,654\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,280",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:00:01,282",
+            "end": "00:00:02,021",
+            "es": "Este es un foxhound",
+            "fr": "C'est un foxhound",
+            "uk": "Це фоксгаунд"
+        },
+        {
+            "start": "00:00:07,074",
+            "end": "00:00:07,914",
+            "es": "Oh, tendré que hacerlo una vez a la semana solo para martillar algunos frutos secos.",
+            "fr": "Oh, je devrai le faire une fois par semaine juste pour enfoncer quelques noix.",
+            "uk": "Ох, мені доведеться це робити раз на тиждень, просто щоб забити деякі горіхи."
+        },
+        {
+            "start": "00:00:07,914",
+            "end": "00:00:08,654",
+            "es": "tú",
+            "fr": "toi",
+            "uk": "ти"
+        }
+    ]
+}

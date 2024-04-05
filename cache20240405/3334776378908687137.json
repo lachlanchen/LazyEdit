@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:10,826\",\n    \"end\": \"00:01:12,026\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:01:12,026\",\n    \"end\": \"00:01:13,346\",\n    \"lang\": \"en\",\n    \"text\": \"it smells so good.\"\n  },\n  {\n    \"start\": \"00:01:19,166\",\n    \"end\": \"00:01:22,166\",\n    \"lang\": \"en\",\n    \"text\": \"This water factory.\"\n  },\n  {\n    \"start\": \"00:01:23,446\",\n    \"end\": \"00:01:25,146\",\n    \"lang\": \"en\",\n    \"text\": \"It's a water factory.\"\n  },\n  {\n    \"start\": \"00:01:27,866\",\n    \"end\": \"00:01:29,946\",\n    \"lang\": \"en\",\n    \"text\": \"Since it's gorgeous.\"\n  },\n  {\n    \"start\": \"00:01:31,186\",\n    \"end\": \"00:01:31,366\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:32,726\",\n    \"end\": \"00:01:35,466\",\n    \"lang\": \"en\",\n    \"text\": \"So next day is bean juice,\"\n  },\n  {\n    \"start\": \"00:01:35,466\",\n    \"end\": \"00:01:39,586\",\n    \"lang\": \"en\",\n    \"text\": \"and then we finish our lunch.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:10,826",
+            "end": "00:01:12,026",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "О, "
+        },
+        {
+            "start": "00:01:12,026",
+            "end": "00:01:13,346",
+            "es": "huele tan bien.",
+            "fr": "ça sent si bon.",
+            "uk": "так чудово пахне."
+        },
+        {
+            "start": "00:01:19,166",
+            "end": "00:01:22,166",
+            "es": "Esta fábrica de agua.",
+            "fr": "Cette usine à eau.",
+            "uk": "Цей завод води."
+        },
+        {
+            "start": "00:01:23,446",
+            "end": "00:01:25,146",
+            "es": "Es una fábrica de agua.",
+            "fr": "C'est une usine à eau.",
+            "uk": "Це завод води."
+        },
+        {
+            "start": "00:01:27,866",
+            "end": "00:01:29,946",
+            "es": "Dado que es precioso.",
+            "fr": "Puisqu'elle est magnifique.",
+            "uk": "Оскільки це прекрасно."
+        },
+        {
+            "start": "00:01:31,186",
+            "end": "00:01:31,366",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:01:32,726",
+            "end": "00:01:35,466",
+            "es": "Así que al día siguiente es jugo de frijoles,",
+            "fr": "Alors, le jour suivant est le jus de haricots,",
+            "uk": "Отже, наступного дня буде квасоляний сік,"
+        },
+        {
+            "start": "00:01:35,466",
+            "end": "00:01:39,586",
+            "es": "y luego terminamos nuestro almuerzo.",
+            "fr": "et ensuite nous finissons notre déjeuner.",
+            "uk": "а потім ми закінчуємо наш обід."
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,320\",\n    \"end\": \"00:00:05,040\",\n    \"lang\": \"ja\",\n    \"text\": \"私の名前はナイキンヌチェンです。\"\n  },\n  {\n    \"start\": \"00:00:05,740\",\n    \"end\": \"00:00:07,280\",\n    \"lang\": \"ja\",\n    \"text\": \"私は海軍船を走ります。\"\n  },\n  {\n    \"start\": \"00:00:08,290\",\n    \"end\": \"00:00:09,070\",\n    \"lang\": \"en\",\n    \"text\": \"Warsaw\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,320",
+            "end": "00:00:05,040",
+            "ko": "제 이름은 나이킨 누첸입니다."
+        },
+        {
+            "start": "00:00:05,740",
+            "end": "00:00:07,280",
+            "ko": "저는 해군함을 운전합니다."
+        },
+        {
+            "start": "00:00:08,290",
+            "end": "00:00:09,070",
+            "ko": "바르샤바"
+        }
+    ]
+}

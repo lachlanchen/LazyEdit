@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,980\",\n    \"lang\": \"en\",\n    \"text\": \"There is an inevitable discrimination chain.\"\n  },\n  {\n    \"start\": \"00:00:06,900\",\n    \"end\": \"00:00:17,180\",\n    \"lang\": \"en\",\n    \"text\": \"Like the French think English pronunciation is vascular.\"\n  },\n  {\n    \"start\": \"00:00:17,580\",\n    \"end\": \"00:00:22,380\",\n    \"lang\": \"en\",\n    \"text\": \"And the British think American accent is vascular.\"\n  },\n  {\n    \"start\": \"00:00:23,620\",\n    \"end\": \"00:00:24,620\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:24,620\",\n    \"end\": \"00:00:25,940\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:00:25,940\",\n    \"end\": \"00:00:26,860\",\n    \"lang\": \"en\",\n    \"text\": \"it's not vascular,\"\n  },\n  {\n    \"start\": \"00:00:26,860\",\n    \"end\": \"00:00:27,620\",\n    \"lang\": \"en\",\n    \"text\": \"it's wasp-cule.\"\n  },\n  {\n    \"start\": \"00:00:30,020\",\n    \"end\": \"00:00:31,020\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway...\"\n  },\n  {\n    \"start\": \"00:00:34,320\",\n    \"end\": \"00:00:34,820\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway...\"\n  },\n  {\n    \"start\": \"00:00:36,960\",\n    \"end\": \"00:00:37,960\",\n    \"lang\": \"en\",\n    \"text\": \"So...\"\n  },\n  {\n    \"start\": \"00:00:38,620\",\n    \"end\": \"00:00:42,700\",\n    \"lang\": \"en\",\n    \"text\": \"I think you cannot avoid this discrimination from others.\"\n  },\n  {\n    \"start\": \"00:00:44,100\",\n    \"end\": \"00:00:50,820\",\n    \"lang\": \"en\",\n    \"text\": \"We all have the right to discriminate others and to be discriminated.\"\n  },\n  {\n    \"start\": \"00:00:50,820\",\n    \"end\": \"00:00:58,660\",\n    \"lang\": \"en\",\n    \"text\": \"I think the best part of the US is that you can discriminate,\"\n  },\n  {\n    \"start\": \"00:00:58,660\",\n    \"end\": \"00:01:07,560\",\n    \"lang\": \"en\",\n    \"text\": \"but you can never harm my benefits.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,980",
+            "es": "Existe una cadena inevitable de discriminación.",
+            "fr": "Il existe une chaîne inévitable de discrimination.",
+            "uk": "Існує неминучий ланцюг дискримінації."
+        },
+        {
+            "start": "00:00:06,900",
+            "end": "00:00:17,180",
+            "es": "Como los franceses piensan que la pronunciación inglesa es peculiar.",
+            "fr": "Comme les Français pensent que la prononciation anglaise est particulière.",
+            "uk": "Як французи вважають, що англійська вимова є особливою."
+        },
+        {
+            "start": "00:00:17,580",
+            "end": "00:00:22,380",
+            "es": "Y los británicos piensan que el acento americano es peculiar.",
+            "fr": "Et les Britanniques pensent que l'accent américain est particulier.",
+            "uk": "А британці вважають, що американський акцент є особливим."
+        },
+        {
+            "start": "00:00:23,620",
+            "end": "00:00:24,620",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        },
+        {
+            "start": "00:00:24,620",
+            "end": "00:00:25,940",
+            "es": "Perdón,",
+            "fr": "Désolé,",
+            "uk": "Вибачте,"
+        },
+        {
+            "start": "00:00:25,940",
+            "end": "00:00:26,860",
+            "es": "no es vascular,",
+            "fr": "ce n'est pas vasculaire,",
+            "uk": "це не васкулярний,"
+        },
+        {
+            "start": "00:00:26,860",
+            "end": "00:00:27,620",
+            "es": "es peculiar.",
+            "fr": "c'est particulier.",
+            "uk": "це особливо."
+        },
+        {
+            "start": "00:00:30,020",
+            "end": "00:00:31,020",
+            "es": "De todos modos...",
+            "fr": "Quoi qu'il en soit...",
+            "uk": "Так чи інакше..."
+        },
+        {
+            "start": "00:00:34,320",
+            "end": "00:00:34,820",
+            "es": "De todos modos...",
+            "fr": "Quoi qu'il en soit...",
+            "uk": "Так чи інакше..."
+        },
+        {
+            "start": "00:00:36,960",
+            "end": "00:00:37,960",
+            "es": "Entonces...",
+            "fr": "Alors...",
+            "uk": "Отже..."
+        },
+        {
+            "start": "00:00:38,620",
+            "end": "00:00:42,700",
+            "es": "Creo que no puedes evitar esta discriminación de los demás.",
+            "fr": "Je pense que vous ne pouvez pas éviter cette discrimination des autres.",
+            "uk": "Я думаю, ви не можете уникнути цієї дискримінації з боку інших."
+        },
+        {
+            "start": "00:00:44,100",
+            "end": "00:00:50,820",
+            "es": "Todos tenemos el derecho de discriminar a otros y de ser discriminados.",
+            "fr": "Nous avons tous le droit de discriminer les autres et d'être discriminés.",
+            "uk": "Усі ми маємо право дискримінувати інших та бути дискримінованими."
+        },
+        {
+            "start": "00:00:50,820",
+            "end": "00:00:58,660",
+            "es": "Creo que la mejor parte de EE.UU. es que puedes discriminar,",
+            "fr": "Je pense que la meilleure partie des États-Unis, c'est que vous pouvez discriminer,",
+            "uk": "Я думаю, найкраща річ в США полягає в тому, що ви можете дискримінувати,"
+        },
+        {
+            "start": "00:00:58,660",
+            "end": "00:01:07,560",
+            "es": "pero nunca puedes dañar mis beneficios.",
+            "fr": "mais vous ne pouvez jamais nuire à mes avantages.",
+            "uk": "але ви ніколи не можете зашкодити моїм вигодам."
+        }
+    ]
+}

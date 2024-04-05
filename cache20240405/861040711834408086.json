@@ -1,0 +1,166 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,340\",\n    \"end\": \"00:00:01,840\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:05,840\",\n    \"end\": \"00:00:06,340\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:06,340\",\n    \"end\": \"00:00:07,580\",\n    \"lang\": \"en\",\n    \"text\": \"that's the end of the video.\"\n  },\n  {\n    \"start\": \"00:00:08,060\",\n    \"end\": \"00:00:09,040\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't sleep well.\"\n  },\n  {\n    \"start\": \"00:00:11,170\",\n    \"end\": \"00:00:12,950\",\n    \"lang\": \"ar\",\n    \"text\": \"آخرتي كان\"\n  },\n  {\n    \"start\": \"00:00:14,050\",\n    \"end\": \"00:00:14,810\",\n    \"lang\": \"en\",\n    \"text\": \"taking the drugs,\"\n  },\n  {\n    \"start\": \"00:00:14,810\",\n    \"end\": \"00:00:15,830\",\n    \"lang\": \"en\",\n    \"text\": \"taking the medicine,\"\n  },\n  {\n    \"start\": \"00:00:17,130\",\n    \"end\": \"00:00:18,030\",\n    \"lang\": \"en\",\n    \"text\": \"that is the symptom,\"\n  },\n  {\n    \"start\": \"00:00:18,030\",\n    \"end\": \"00:00:21,650\",\n    \"lang\": \"en\",\n    \"text\": \"since I lived there.\"\n  },\n  {\n    \"start\": \"00:00:22,570\",\n    \"end\": \"00:00:24,970\",\n    \"lang\": \"en\",\n    \"text\": \"Since it's here,\"\n  },\n  {\n    \"start\": \"00:00:24,970\",\n    \"end\": \"00:00:26,470\",\n    \"lang\": \"en\",\n    \"text\": \"it's I lived there a little bit.\"\n  },\n  {\n    \"start\": \"00:00:27,298\",\n    \"end\": \"00:00:28,018\",\n    \"lang\": \"en\",\n    \"text\": \"I NEED\"\n  },\n  {\n    \"start\": \"00:00:29,218\",\n    \"end\": \"00:00:30,018\",\n    \"lang\": \"en\",\n    \"text\": \"berry\"\n  },\n  {\n    \"start\": \"00:00:32,994\",\n    \"end\": \"00:00:33,454\",\n    \"lang\": \"en\",\n    \"text\": \"Still,\"\n  },\n  {\n    \"start\": \"00:00:33,454\",\n    \"end\": \"00:00:36,254\",\n    \"lang\": \"en\",\n    \"text\": \"the swan hurts.\"\n  },\n  {\n    \"start\": \"00:00:37,474\",\n    \"end\": \"00:00:38,374\",\n    \"lang\": \"en\",\n    \"text\": \"The swan hurts.\"\n  },\n  {\n    \"start\": \"00:00:40,174\",\n    \"end\": \"00:00:42,214\",\n    \"lang\": \"en\",\n    \"text\": \"And last night I didn't sleep well.\"\n  },\n  {\n    \"start\": \"00:00:47,254\",\n    \"end\": \"00:00:52,354\",\n    \"lang\": \"en\",\n    \"text\": \"So I don't have time to prepare breakfast.\"\n  },\n  {\n    \"start\": \"00:00:54,153\",\n    \"end\": \"00:00:56,074\",\n    \"lang\": \"en\",\n    \"text\": \"Just fruits,\"\n  },\n  {\n    \"start\": \"00:00:56,074\",\n    \"end\": \"00:00:57,074\",\n    \"lang\": \"en\",\n    \"text\": \"vitamins.\"\n  },\n  {\n    \"start\": \"00:00:58,174\",\n    \"end\": \"00:00:58,894\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:58,894\",\n    \"end\": \"00:00:58,994\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:59,314\",\n    \"end\": \"00:00:59,554\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,340",
+            "end": "00:00:01,840",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:05,840",
+            "end": "00:00:06,340",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:00:06,340",
+            "end": "00:00:07,580",
+            "en": "that's the end of the video.",
+            "zh": "这就是视频的结尾。",
+            "ar": "هذه نهاية الفيديو."
+        },
+        {
+            "start": "00:00:08,060",
+            "end": "00:00:09,040",
+            "en": "I didn't sleep well.",
+            "zh": "我没睡好。",
+            "ar": "لم أنم جيدا."
+        },
+        {
+            "start": "00:00:11,170",
+            "end": "00:00:12,950",
+            "en": "The ending was",
+            "zh": "结局是",
+            "ar": "آخرتي كان"
+        },
+        {
+            "start": "00:00:14,050",
+            "end": "00:00:14,810",
+            "en": "taking the drugs,",
+            "zh": "服用药物，",
+            "ar": "أخذ الأدوية،"
+        },
+        {
+            "start": "00:00:14,810",
+            "end": "00:00:15,830",
+            "en": "taking the medicine,",
+            "zh": "吃药，",
+            "ar": "تناول الدواء،"
+        },
+        {
+            "start": "00:00:17,130",
+            "end": "00:00:18,030",
+            "en": "that is the symptom,",
+            "zh": "那是症状，",
+            "ar": "هذه هي الأعراض،"
+        },
+        {
+            "start": "00:00:18,030",
+            "end": "00:00:21,650",
+            "en": "since I lived there.",
+            "zh": "自从我住在那里。",
+            "ar": "منذ أن عشت هناك."
+        },
+        {
+            "start": "00:00:22,570",
+            "end": "00:00:24,970",
+            "en": "Since it's here,",
+            "zh": "既然来了，",
+            "ar": "بما أنها هنا،"
+        },
+        {
+            "start": "00:00:24,970",
+            "end": "00:00:26,470",
+            "en": "it's I lived there a little bit.",
+            "zh": "我在那里住了一小段时间。",
+            "ar": "أنا عشت هناك قليلاً."
+        },
+        {
+            "start": "00:00:27,298",
+            "end": "00:00:28,018",
+            "en": "I NEED",
+            "zh": "我需要",
+            "ar": "أحتاج"
+        },
+        {
+            "start": "00:00:29,218",
+            "end": "00:00:30,018",
+            "en": "berry",
+            "zh": "浆果",
+            "ar": "توت"
+        },
+        {
+            "start": "00:00:32,994",
+            "end": "00:00:33,454",
+            "en": "Still,",
+            "zh": "依然，",
+            "ar": "ما زال،"
+        },
+        {
+            "start": "00:00:33,454",
+            "end": "00:00:36,254",
+            "en": "the swan hurts.",
+            "zh": "天鹅很疼。",
+            "ar": "البجعة تؤلم."
+        },
+        {
+            "start": "00:00:37,474",
+            "end": "00:00:38,374",
+            "en": "The swan hurts.",
+            "zh": "天鹅很疼。",
+            "ar": "البجعة تؤلم."
+        },
+        {
+            "start": "00:00:40,174",
+            "end": "00:00:42,214",
+            "en": "And last night I didn't sleep well.",
+            "zh": "昨晚我没睡好。",
+            "ar": "والليلة الماضية لم أنم جيدا."
+        },
+        {
+            "start": "00:00:47,254",
+            "end": "00:00:52,354",
+            "en": "So I don't have time to prepare breakfast.",
+            "zh": "所以我没有时间准备早餐。",
+            "ar": "لذا ليس لدي وقت لتحضير الإفطار."
+        },
+        {
+            "start": "00:00:54,153",
+            "end": "00:00:56,074",
+            "en": "Just fruits,",
+            "zh": "只吃水果，",
+            "ar": "فقط الفواكه،"
+        },
+        {
+            "start": "00:00:56,074",
+            "end": "00:00:57,074",
+            "en": "vitamins.",
+            "zh": "维生素。",
+            "ar": "الفيتامينات."
+        },
+        {
+            "start": "00:00:58,174",
+            "end": "00:00:58,894",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:58,894",
+            "end": "00:00:58,994",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:59,314",
+            "end": "00:00:59,554",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

@@ -1,0 +1,110 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:24,485\",\n    \"end\": \"00:02:26,826\",\n    \"lang\": \"en\",\n    \"text\": \"let's have some nuts\"\n  },\n  {\n    \"start\": \"00:02:29,045\",\n    \"end\": \"00:02:30,426\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's good\"\n  },\n  {\n    \"start\": \"00:02:30,426\",\n    \"end\": \"00:02:32,646\",\n    \"lang\": \"en\",\n    \"text\": \"I just eat the orange\"\n  },\n  {\n    \"start\": \"00:02:32,646\",\n    \"end\": \"00:02:34,126\",\n    \"lang\": \"en\",\n    \"text\": \"and I have the nuts\"\n  },\n  {\n    \"start\": \"00:02:34,126\",\n    \"end\": \"00:02:34,486\",\n    \"lang\": \"en\",\n    \"text\": \"because\"\n  },\n  {\n    \"start\": \"00:02:38,466\",\n    \"end\": \"00:02:39,906\",\n    \"lang\": \"en\",\n    \"text\": \"the acid\"\n  },\n  {\n    \"start\": \"00:02:40,146\",\n    \"end\": \"00:02:40,506\",\n    \"lang\": \"en\",\n    \"text\": \"can\"\n  },\n  {\n    \"start\": \"00:02:42,106\",\n    \"end\": \"00:02:43,506\",\n    \"lang\": \"en\",\n    \"text\": \"soften my teeth\"\n  },\n  {\n    \"start\": \"00:02:43,506\",\n    \"end\": \"00:02:45,705\",\n    \"lang\": \"en\",\n    \"text\": \"and I eat the hard nuts\"\n  },\n  {\n    \"start\": \"00:02:46,426\",\n    \"end\": \"00:02:47,306\",\n    \"lang\": \"en\",\n    \"text\": \"so it\"\n  },\n  {\n    \"start\": \"00:02:48,566\",\n    \"end\": \"00:02:50,806\",\n    \"lang\": \"en\",\n    \"text\": \"will damage my teeth\"\n  },\n  {\n    \"start\": \"00:03:01,386\",\n    \"end\": \"00:03:02,086\",\n    \"lang\": \"en\",\n    \"text\": \"ok\"\n  },\n  {\n    \"start\": \"00:03:02,826\",\n    \"end\": \"00:03:03,706\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  },\n  {\n    \"start\": \"00:03:04,886\",\n    \"end\": \"00:03:07,366\",\n    \"lang\": \"en\",\n    \"text\": \"by the way\"\n  },\n  {\n    \"start\": \"00:03:11,126\",\n    \"end\": \"00:03:12,766\",\n    \"lang\": \"en\",\n    \"text\": \"by the way\"\n  },\n  {\n    \"start\": \"00:03:12,766\",\n    \"end\": \"00:03:13,446\",\n    \"lang\": \"en\",\n    \"text\": \"I added\"\n  },\n  {\n    \"start\": \"00:03:13,446\",\n    \"end\": \"00:03:16,106\",\n    \"lang\": \"en\",\n    \"text\": \"a microphone\"\n  },\n  {\n    \"start\": \"00:03:16,806\",\n    \"end\": \"00:03:19,226\",\n    \"lang\": \"en\",\n    \"text\": \"a microphone symbol\"\n  },\n  {\n    \"start\": \"00:03:19,226\",\n    \"end\": \"00:03:21,406\",\n    \"lang\": \"en\",\n    \"text\": \"and a subtitle\"\n  },\n  {\n    \"start\": \"00:03:21,406\",\n    \"end\": \"00:03:23,246\",\n    \"lang\": \"en\",\n    \"text\": \"that corresponds to\"\n  },\n  {\n    \"start\": \"00:03:23,246\",\n    \"end\": \"00:03:23,846\",\n    \"lang\": \"en\",\n    \"text\": \"the real\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:24,485",
+            "end": "00:02:26,826",
+            "ko": "견과류 좀 먹읍시다"
+        },
+        {
+            "start": "00:02:29,045",
+            "end": "00:02:30,426",
+            "ko": "이게 좋은 건지 모르겠어"
+        },
+        {
+            "start": "00:02:30,426",
+            "end": "00:02:32,646",
+            "ko": "그냥 오렌지를 먹고"
+        },
+        {
+            "start": "00:02:32,646",
+            "end": "00:02:34,126",
+            "ko": "견과류도 먹어요"
+        },
+        {
+            "start": "00:02:34,126",
+            "end": "00:02:34,486",
+            "ko": "왜냐하면"
+        },
+        {
+            "start": "00:02:38,466",
+            "end": "00:02:39,906",
+            "ko": "산성이"
+        },
+        {
+            "start": "00:02:40,146",
+            "end": "00:02:40,506",
+            "ko": "제"
+        },
+        {
+            "start": "00:02:42,106",
+            "end": "00:02:43,506",
+            "ko": "이를 부드럽게 할 수 있어요"
+        },
+        {
+            "start": "00:02:43,506",
+            "end": "00:02:45,705",
+            "ko": "그래서 단단한 견과류를 먹죠"
+        },
+        {
+            "start": "00:02:46,426",
+            "end": "00:02:47,306",
+            "ko": "그래서 그것이"
+        },
+        {
+            "start": "00:02:48,566",
+            "end": "00:02:50,806",
+            "ko": "제 이를 손상시킬 거예요"
+        },
+        {
+            "start": "00:03:01,386",
+            "end": "00:03:02,086",
+            "ko": "알겠어요"
+        },
+        {
+            "start": "00:03:02,826",
+            "end": "00:03:03,706",
+            "ko": "또 봐요"
+        },
+        {
+            "start": "00:03:04,886",
+            "end": "00:03:07,366",
+            "ko": "아, 그리고"
+        },
+        {
+            "start": "00:03:11,126",
+            "end": "00:03:12,766",
+            "ko": "아, 그리고"
+        },
+        {
+            "start": "00:03:12,766",
+            "end": "00:03:13,446",
+            "ko": "나는 추가했어요"
+        },
+        {
+            "start": "00:03:13,446",
+            "end": "00:03:16,106",
+            "ko": "마이크를"
+        },
+        {
+            "start": "00:03:16,806",
+            "end": "00:03:19,226",
+            "ko": "마이크 심볼을"
+        },
+        {
+            "start": "00:03:19,226",
+            "end": "00:03:21,406",
+            "ko": "그리고 자막을"
+        },
+        {
+            "start": "00:03:21,406",
+            "end": "00:03:23,246",
+            "ko": "실제와"
+        },
+        {
+            "start": "00:03:23,246",
+            "end": "00:03:23,846",
+            "ko": "대응하는"
+        }
+    ]
+}

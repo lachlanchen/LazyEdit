@@ -1,0 +1,222 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"en\",\n    \"text\": \"This is really the best dip by me ever.\"\n  },\n  {\n    \"start\": \"00:00:04,560\",\n    \"end\": \"00:00:04,800\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:04,800\",\n    \"end\": \"00:00:05,380\",\n    \"lang\": \"en\",\n    \"text\": \"for them,\"\n  },\n  {\n    \"start\": \"00:00:05,380\",\n    \"end\": \"00:00:05,760\",\n    \"lang\": \"en\",\n    \"text\": \"I'm happy.\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:06,074\",\n    \"lang\": \"zh\",\n    \"text\": \"点赞\"\n  },\n  {\n    \"start\": \"00:00:06,154\",\n    \"end\": \"00:00:06,234\",\n    \"lang\": \"zh\",\n    \"text\": \"订阅\"\n  },\n  {\n    \"start\": \"00:00:06,594\",\n    \"end\": \"00:00:06,594\",\n    \"lang\": \"zh\",\n    \"text\": \"转发\"\n  },\n  {\n    \"start\": \"00:00:08,134\",\n    \"end\": \"00:00:08,674\",\n    \"lang\": \"zh\",\n    \"text\": \"打赏支持明镜与点点栏目\"\n  },\n  {\n    \"start\": \"00:00:08,706\",\n    \"end\": \"00:00:09,426\",\n    \"lang\": \"ja\",\n    \"text\": \"いざベスク\"\n  },\n  {\n    \"start\": \"00:00:10,914\",\n    \"end\": \"00:00:11,834\",\n    \"lang\": \"en\",\n    \"text\": \"PUN DIS\"\n  },\n  {\n    \"start\": \"00:00:12,914\",\n    \"end\": \"00:00:14,054\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:14,054\",\n    \"end\": \"00:00:14,194\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:16,473\",\n    \"end\": \"00:00:17,654\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:17,654\",\n    \"end\": \"00:00:20,094\",\n    \"lang\": \"en\",\n    \"text\": \"the bakery shop is called\"\n  },\n  {\n    \"start\": \"00:00:20,914\",\n    \"end\": \"00:00:21,854\",\n    \"lang\": \"en\",\n    \"text\": \"childhood\"\n  },\n  {\n    \"start\": \"00:00:22,914\",\n    \"end\": \"00:00:24,014\",\n    \"lang\": \"en\",\n    \"text\": \"bakery\"\n  },\n  {\n    \"start\": \"00:00:24,403\",\n    \"end\": \"00:00:27,014\",\n    \"lang\": \"en\",\n    \"text\": \"so it's help you remember\"\n  },\n  {\n    \"start\": \"00:00:27,014\",\n    \"end\": \"00:00:28,374\",\n    \"lang\": \"en\",\n    \"text\": \"your childhood\"\n  },\n  {\n    \"start\": \"00:00:30,904\",\n    \"end\": \"00:00:32,253\",\n    \"lang\": \"en\",\n    \"text\": \"tasty memory\"\n  },\n  {\n    \"start\": \"00:00:33,573\",\n    \"end\": \"00:00:34,754\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:34,754\",\n    \"end\": \"00:00:35,294\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:35,294\",\n    \"end\": \"00:00:35,954\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:35,954\",\n    \"end\": \"00:00:36,854\",\n    \"lang\": \"en\",\n    \"text\": \"really\"\n  },\n  {\n    \"start\": \"00:00:36,854\",\n    \"end\": \"00:00:38,414\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:45,474\",\n    \"end\": \"00:00:47,134\",\n    \"lang\": \"en\",\n    \"text\": \"it's really\"\n  },\n  {\n    \"start\": \"00:00:47,134\",\n    \"end\": \"00:00:48,834\",\n    \"lang\": \"en\",\n    \"text\": \"delicious\"\n  },\n  {\n    \"start\": \"00:00:48,834\",\n    \"end\": \"00:00:49,934\",\n    \"lang\": \"en\",\n    \"text\": \"it's the cheese\"\n  },\n  {\n    \"start\": \"00:00:49,934\",\n    \"end\": \"00:00:51,094\",\n    \"lang\": \"en\",\n    \"text\": \"years\"\n  },\n  {\n    \"start\": \"00:00:51,094\",\n    \"end\": \"00:00:53,874\",\n    \"lang\": \"en\",\n    \"text\": \"ago\"\n  },\n  {\n    \"start\": \"00:00:53,874\",\n    \"end\": \"00:00:56,734\",\n    \"lang\": \"en\",\n    \"text\": \"I learned from\"\n  },\n  {\n    \"start\": \"00:00:56,734\",\n    \"end\": \"00:00:57,314\",\n    \"lang\": \"en\",\n    \"text\": \"um\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,780",
+            "es": "Este es realmente el mejor dip hecho por mí jamás.",
+            "fr": "C'est vraiment la meilleure trempette que j'ai jamais faite.",
+            "uk": "Це дійсно найкращий соус, який я коли-небудь робив."
+        },
+        {
+            "start": "00:00:04,560",
+            "end": "00:00:04,800",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:04,800",
+            "end": "00:00:05,380",
+            "es": "para ellos,",
+            "fr": "pour eux,",
+            "uk": "для них,"
+        },
+        {
+            "start": "00:00:05,380",
+            "end": "00:00:05,760",
+            "es": "estoy feliz.",
+            "fr": "je suis heureux.",
+            "uk": "я щасливий."
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:06,074",
+            "es": "Dar like",
+            "fr": "Aimer",
+            "uk": "Поставити лайк"
+        },
+        {
+            "start": "00:00:06,154",
+            "end": "00:00:06,234",
+            "es": "Suscribirse",
+            "fr": "S'abonner",
+            "uk": "Підписатися"
+        },
+        {
+            "start": "00:00:06,594",
+            "end": "00:00:06,594",
+            "es": "Compartir",
+            "fr": "Partager",
+            "uk": "Поділитися"
+        },
+        {
+            "start": "00:00:08,134",
+            "end": "00:00:08,674",
+            "es": "Donaciones para apoyar a Mingjing y DianDian",
+            "fr": "Donations pour soutenir Mingjing et DianDian",
+            "uk": "Донати на підтримку Mingjing та DianDian"
+        },
+        {
+            "start": "00:00:08,706",
+            "end": "00:00:09,426",
+            "es": "Al combate",
+            "fr": "Au combat",
+            "uk": "До бою"
+        },
+        {
+            "start": "00:00:10,914",
+            "end": "00:00:11,834",
+            "es": "CASTIGO",
+            "fr": "PUNITION",
+            "uk": "ПОКАРАННЯ"
+        },
+        {
+            "start": "00:00:12,914",
+            "end": "00:00:14,054",
+            "es": "jajaja",
+            "fr": "mdr",
+            "uk": "гг"
+        },
+        {
+            "start": "00:00:14,054",
+            "end": "00:00:14,194",
+            "es": "jajaja",
+            "fr": "mdr",
+            "uk": "гг"
+        },
+        {
+            "start": "00:00:16,473",
+            "end": "00:00:17,654",
+            "es": "entonces",
+            "fr": "donc",
+            "uk": "отже"
+        },
+        {
+            "start": "00:00:17,654",
+            "end": "00:00:20,094",
+            "es": "la panadería se llama",
+            "fr": "la boulangerie s'appelle",
+            "uk": "хлібопекарня називається"
+        },
+        {
+            "start": "00:00:20,914",
+            "end": "00:00:21,854",
+            "es": "infancia",
+            "fr": "enfance",
+            "uk": "дитинство"
+        },
+        {
+            "start": "00:00:22,914",
+            "end": "00:00:24,014",
+            "es": "panadería",
+            "fr": "boulangerie",
+            "uk": "пекарня"
+        },
+        {
+            "start": "00:00:24,403",
+            "end": "00:00:27,014",
+            "es": "así que te ayuda a recordar",
+            "fr": "donc ça vous aide à vous souvenir",
+            "uk": "тож це допомагає тобі згадати"
+        },
+        {
+            "start": "00:00:27,014",
+            "end": "00:00:28,374",
+            "es": "tu infancia",
+            "fr": "votre enfance",
+            "uk": "твоє дитинство"
+        },
+        {
+            "start": "00:00:30,904",
+            "end": "00:00:32,253",
+            "es": "recuerdo delicioso",
+            "fr": "souvenir savoureux",
+            "uk": "смачний спогад"
+        },
+        {
+            "start": "00:00:33,573",
+            "end": "00:00:34,754",
+            "es": "jajaja",
+            "fr": "mdr",
+            "uk": "гг"
+        },
+        {
+            "start": "00:00:34,754",
+            "end": "00:00:35,294",
+            "es": "jajaja",
+            "fr": "mdr",
+            "uk": "гг"
+        },
+        {
+            "start": "00:00:35,294",
+            "end": "00:00:35,954",
+            "es": "jajaja",
+            "fr": "mdr",
+            "uk": "гг"
+        },
+        {
+            "start": "00:00:35,954",
+            "end": "00:00:36,854",
+            "es": "realmente",
+            "fr": "vraiment",
+            "uk": "насправді"
+        },
+        {
+            "start": "00:00:36,854",
+            "end": "00:00:38,414",
+            "es": "entonces",
+            "fr": "donc",
+            "uk": "отже"
+        },
+        {
+            "start": "00:00:45,474",
+            "end": "00:00:47,134",
+            "es": "es realmente",
+            "fr": "c'est vraiment",
+            "uk": "це насправді"
+        },
+        {
+            "start": "00:00:47,134",
+            "end": "00:00:48,834",
+            "es": "delicioso",
+            "fr": "délicieux",
+            "uk": "смачно"
+        },
+        {
+            "start": "00:00:48,834",
+            "end": "00:00:49,934",
+            "es": "es el queso",
+            "fr": "c'est le fromage",
+            "uk": "це сир"
+        },
+        {
+            "start": "00:00:49,934",
+            "end": "00:00:51,094",
+            "es": "años",
+            "fr": "ans",
+            "uk": "роки"
+        },
+        {
+            "start": "00:00:51,094",
+            "end": "00:00:53,874",
+            "es": "atrás",
+            "fr": "il y a",
+            "uk": "тому"
+        },
+        {
+            "start": "00:00:53,874",
+            "end": "00:00:56,734",
+            "es": "aprendí de",
+            "fr": "j'ai appris de",
+            "uk": "я навчився у"
+        },
+        {
+            "start": "00:00:56,734",
+            "end": "00:00:57,314",
+            "es": "eh",
+            "fr": "euh",
+            "uk": "ем"
+        }
+    ]
+}

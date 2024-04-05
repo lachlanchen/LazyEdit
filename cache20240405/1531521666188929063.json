@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"So I share a trick to remember this Arabic letter.\"\n  },\n  {\n    \"start\": \"00:00:04,740\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"Four.\"\n  },\n  {\n    \"start\": \"00:00:05,620\",\n    \"end\": \"00:00:08,740\",\n    \"lang\": \"en\",\n    \"text\": \"So this looks quite like a people that fell down.\"\n  },\n  {\n    \"start\": \"00:00:09,780\",\n    \"end\": \"00:00:13,560\",\n    \"lang\": \"en\",\n    \"text\": \"So it's a four,\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:14,300\",\n    \"lang\": \"en\",\n    \"text\": \"fall down.\"\n  },\n  {\n    \"start\": \"00:00:16,059\",\n    \"end\": \"00:00:16,700\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:00:18,020\",\n    \"end\": \"00:00:18,660\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "es": "Así que comparto un truco para recordar esta letra árabe.",
+            "fr": "Donc, je partage une astuce pour se souvenir de cette lettre arabe.",
+            "uk": "Отже, я поділюся трюком, щоб запам'ятати цю арабську літеру."
+        },
+        {
+            "start": "00:00:04,740",
+            "end": "00:00:05,000",
+            "es": "Cuatro.",
+            "fr": "Quatre.",
+            "uk": "Чотири."
+        },
+        {
+            "start": "00:00:05,620",
+            "end": "00:00:08,740",
+            "es": "Así que esto parece bastante como una persona que se cayó.",
+            "fr": "Donc, cela ressemble assez à une personne qui est tombée.",
+            "uk": "Отже, це виглядає досить як людина, яка впала."
+        },
+        {
+            "start": "00:00:09,780",
+            "end": "00:00:13,560",
+            "es": "Así que es un cuatro,",
+            "fr": "Alors c'est un quatre,",
+            "uk": "Отже, це чотири,"
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:14,300",
+            "es": "se cae.",
+            "fr": "tombe.",
+            "uk": "падає."
+        },
+        {
+            "start": "00:00:16,059",
+            "end": "00:00:16,700",
+            "es": "¿Verdad?",
+            "fr": "N'est-ce pas ?",
+            "uk": "Правда?"
+        },
+        {
+            "start": "00:00:18,020",
+            "end": "00:00:18,660",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        }
+    ]
+}

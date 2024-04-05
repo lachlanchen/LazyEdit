@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,540\",\n    \"end\": \"00:00:02,020\",\n    \"lang\": \"en\",\n    \"text\": \"So that's the first step,\"\n  },\n  {\n    \"start\": \"00:00:02,020\",\n    \"end\": \"00:00:03,460\",\n    \"lang\": \"en\",\n    \"text\": \"main rhythm.\"\n  },\n  {\n    \"start\": \"00:00:05,240\",\n    \"end\": \"00:00:05,760\",\n    \"lang\": \"en\",\n    \"text\": \"Na,\"\n  },\n  {\n    \"start\": \"00:00:05,760\",\n    \"end\": \"00:00:06,260\",\n    \"lang\": \"en\",\n    \"text\": \"Na,\"\n  },\n  {\n    \"start\": \"00:00:06,260\",\n    \"end\": \"00:00:06,660\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:06,660\",\n    \"end\": \"00:00:07,180\",\n    \"lang\": \"en\",\n    \"text\": \"Mi,\"\n  },\n  {\n    \"start\": \"00:00:07,180\",\n    \"end\": \"00:00:07,660\",\n    \"lang\": \"en\",\n    \"text\": \"Na,\"\n  },\n  {\n    \"start\": \"00:00:07,660\",\n    \"end\": \"00:00:08,500\",\n    \"lang\": \"en\",\n    \"text\": \"Na,\"\n  },\n  {\n    \"start\": \"00:00:08,500\",\n    \"end\": \"00:00:09,380\",\n    \"lang\": \"en\",\n    \"text\": \"Mi,\"\n  },\n  {\n    \"start\": \"00:00:09,380\",\n    \"end\": \"00:00:09,760\",\n    \"lang\": \"en\",\n    \"text\": \"Na,\"\n  },\n  {\n    \"start\": \"00:00:09,760\",\n    \"end\": \"00:00:10,480\",\n    \"lang\": \"en\",\n    \"text\": \"Mi.\"\n  },\n  {\n    \"start\": \"00:00:11,700\",\n    \"end\": \"00:00:11,900\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:11,900\",\n    \"end\": \"00:00:12,760\",\n    \"lang\": \"en\",\n    \"text\": \"it's feeling correct.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,540",
+            "end": "00:00:02,020",
+            "es": "Entonces ese es el primer paso,",
+            "fr": "Alors c'est le premier pas,",
+            "uk": "Отже, це перший крок,"
+        },
+        {
+            "start": "00:00:02,020",
+            "end": "00:00:03,460",
+            "es": "ritmo principal.",
+            "fr": "rythme principal.",
+            "uk": "основний ритм."
+        },
+        {
+            "start": "00:00:05,240",
+            "end": "00:00:05,760",
+            "es": "Na,",
+            "fr": "Na,",
+            "uk": "На,"
+        },
+        {
+            "start": "00:00:05,760",
+            "end": "00:00:06,260",
+            "es": "Na,",
+            "fr": "Na,",
+            "uk": "На,"
+        },
+        {
+            "start": "00:00:06,260",
+            "end": "00:00:06,660",
+            "es": "Así,",
+            "fr": "Donc,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:06,660",
+            "end": "00:00:07,180",
+            "es": "Mi,",
+            "fr": "Mi,",
+            "uk": "Мі,"
+        },
+        {
+            "start": "00:00:07,180",
+            "end": "00:00:07,660",
+            "es": "Na,",
+            "fr": "Na,",
+            "uk": "На,"
+        },
+        {
+            "start": "00:00:07,660",
+            "end": "00:00:08,500",
+            "es": "Na,",
+            "fr": "Na,",
+            "uk": "На,"
+        },
+        {
+            "start": "00:00:08,500",
+            "end": "00:00:09,380",
+            "es": "Mi,",
+            "fr": "Mi,",
+            "uk": "Мі,"
+        },
+        {
+            "start": "00:00:09,380",
+            "end": "00:00:09,760",
+            "es": "Na,",
+            "fr": "Na,",
+            "uk": "На,"
+        },
+        {
+            "start": "00:00:09,760",
+            "end": "00:00:10,480",
+            "es": "Mi.",
+            "fr": "Mi.",
+            "uk": "Мі."
+        },
+        {
+            "start": "00:00:11,700",
+            "end": "00:00:11,900",
+            "es": "Así,",
+            "fr": "Donc,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:11,900",
+            "end": "00:00:12,760",
+            "es": "se siente correcto.",
+            "fr": "c'est le bon sentiment.",
+            "uk": "це відчувається правильно."
+        }
+    ]
+}

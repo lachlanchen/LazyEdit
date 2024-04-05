@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,860\",\n    \"lang\": \"en\",\n    \"text\": \"The Advices For Self Improvement\"\n  },\n  {\n    \"start\": \"00:00:01,186\",\n    \"end\": \"00:00:03,406\",\n    \"lang\": \"zh\",\n    \"text\": \"看这是不是斗牛桥 我也不太懂\"\n  },\n  {\n    \"start\": \"00:00:04,285\",\n    \"end\": \"00:00:05,006\",\n    \"lang\": \"zh\",\n    \"text\": \"斗牛桥\"\n  },\n  {\n    \"start\": \"00:00:05,106\",\n    \"end\": \"00:00:05,446\",\n    \"lang\": \"zh\",\n    \"text\": \"巴豆\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,860",
+            "ja": "自己改善のためのアドバイス"
+        },
+        {
+            "start": "00:00:01,186",
+            "end": "00:00:03,406",
+            "ja": "これが闘牛橋かどうか見てます。私もよくわかりません"
+        },
+        {
+            "start": "00:00:04,285",
+            "end": "00:00:05,006",
+            "ja": "闘牛橋"
+        },
+        {
+            "start": "00:00:05,106",
+            "end": "00:00:05,446",
+            "ja": "パト豆"
+        }
+    ]
+}

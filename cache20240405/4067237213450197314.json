@@ -1,0 +1,34 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"Can you see the fork on top of this?\"\n  },\n  {\n    \"start\": \"00:00:06,178\",\n    \"end\": \"00:00:06,858\",\n    \"lang\": \"ja\",\n    \"text\": \"言えません\"\n  },\n  {\n    \"start\": \"00:00:07,842\",\n    \"end\": \"00:00:25,322\",\n    \"lang\": \"en\",\n    \"text\": \"I put this flavor in a freezer compartment so that it can keep the food longer.\"\n  },\n  {\n    \"start\": \"00:00:28,002\",\n    \"end\": \"00:00:29,222\",\n    \"lang\": \"en\",\n    \"text\": \"And that's it.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "en": "Can you see the fork on top of this?",
+            "zh": "你能看到这顶上的叉子吗？",
+            "ar": "هل تستطيع رؤية الشوكة على رأس هذا؟"
+        },
+        {
+            "start": "00:00:06,178",
+            "end": "00:00:06,858",
+            "en": "I cannot say.",
+            "zh": "我无法说。",
+            "ar": "لا أستطيع أن أقول.",
+            "ja": "言えません"
+        },
+        {
+            "start": "00:00:07,842",
+            "end": "00:00:25,322",
+            "en": "I put this flavor in a freezer compartment so that it can keep the food longer.",
+            "zh": "我将这种味道放在冰箱的冷冻室里，以便让食物保存得更久。",
+            "ar": "وضعت هذا النكهة في قسم المجمد حتى يمكن أن يحافظ على الطعام لفترة أطول."
+        },
+        {
+            "start": "00:00:28,002",
+            "end": "00:00:29,222",
+            "en": "And that's it.",
+            "zh": "就是这样。",
+            "ar": "وهذا كل شيء."
+        }
+    ]
+}

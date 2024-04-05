@@ -1,0 +1,69 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:14,214\",\n    \"end\": \"00:02:14,574\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:02:17,154\",\n    \"end\": \"00:02:18,514\",\n    \"lang\": \"en\",\n    \"text\": \"Yes.\"\n  },\n  {\n    \"start\": \"00:02:21,954\",\n    \"end\": \"00:02:29,494\",\n    \"lang\": \"en\",\n    \"text\": \"I found that I gradually become better at speaking English daily.\"\n  },\n  {\n    \"start\": \"00:02:35,013\",\n    \"end\": \"00:02:36,414\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:36,414\",\n    \"end\": \"00:02:48,454\",\n    \"lang\": \"en\",\n    \"text\": \"I think I found my talent that belongs to me.\"\n  },\n  {\n    \"start\": \"00:02:49,314\",\n    \"end\": \"00:02:50,534\",\n    \"lang\": \"ja\",\n    \"text\": \"今更にセスティアム\"\n  },\n  {\n    \"start\": \"00:02:51,106\",\n    \"end\": \"00:02:58,106\",\n    \"lang\": \"en\",\n    \"text\": \"obscure or vague but it gradually becomes crystal clear.\"\n  },\n  {\n    \"start\": \"00:03:08,506\",\n    \"end\": \"00:03:12,526\",\n    \"lang\": \"en\",\n    \"text\": \"So I have a unique journey in science.\"\n  },\n  {\n    \"start\": \"00:03:13,186\",\n    \"end\": \"00:03:19,926\",\n    \"lang\": \"en\",\n    \"text\": \"Also programming and multidisciplinary.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:14,214",
+            "end": "00:02:14,574",
+            "en": "Right?",
+            "zh": "对吗？",
+            "ar": "أليس كذلك؟"
+        },
+        {
+            "start": "00:02:17,154",
+            "end": "00:02:18,514",
+            "en": "Yes.",
+            "zh": "是的。",
+            "ar": "نعم."
+        },
+        {
+            "start": "00:02:21,954",
+            "end": "00:02:29,494",
+            "en": "I found that I gradually become better at speaking English daily.",
+            "zh": "我发现我逐渐在每天讲英语上变得更好。",
+            "ar": "وجدت أنني أصبح تدريجياً أفضل في التحدث بالإنجليزية يومياً."
+        },
+        {
+            "start": "00:02:35,013",
+            "end": "00:02:36,414",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:02:36,414",
+            "end": "00:02:48,454",
+            "en": "I think I found my talent that belongs to me.",
+            "zh": "我认为我找到了属于我的才能。",
+            "ar": "أعتقد أنني وجدت موهبتي التي تخصني."
+        },
+        {
+            "start": "00:02:49,314",
+            "end": "00:02:50,534",
+            "en": "It was initially obscure or vague",
+            "zh": "最初它是模糊或不清楚的",
+            "ar": "كان في البداية غامضًا أو غير واضح",
+            "ja": "今更にセスティアム"
+        },
+        {
+            "start": "00:02:51,106",
+            "end": "00:02:58,106",
+            "en": "but it gradually becomes crystal clear.",
+            "zh": "但它逐渐变得非常清晰。",
+            "ar": "لكنه يصبح تدريجياً واضحاً كالكريستال."
+        },
+        {
+            "start": "00:03:08,506",
+            "end": "00:03:12,526",
+            "en": "So I have a unique journey in science.",
+            "zh": "所以我有一段独特的科学旅程。",
+            "ar": "لذا لدي رحلة فريدة في العلم."
+        },
+        {
+            "start": "00:03:13,186",
+            "end": "00:03:19,926",
+            "en": "Also programming and multidisciplinary.",
+            "zh": "还有编程和多学科。",
+            "ar": "أيضاً البرمجة والمتعدد التخصصات."
+        }
+    ]
+}

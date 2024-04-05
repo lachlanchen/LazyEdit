@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,540\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this is a paradise for these dogs.\"\n  },\n  {\n    \"start\": \"00:00:04,460\",\n    \"end\": \"00:00:08,620\",\n    \"lang\": \"en\",\n    \"text\": \"You can make friends here at this dog club.\"\n  },\n  {\n    \"start\": \"00:00:09,600\",\n    \"end\": \"00:00:11,080\",\n    \"lang\": \"en\",\n    \"text\": \"This is their arena.\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:13,300\",\n    \"lang\": \"en\",\n    \"text\": \"You can fight,\"\n  },\n  {\n    \"start\": \"00:00:13,300\",\n    \"end\": \"00:00:15,080\",\n    \"lang\": \"en\",\n    \"text\": \"make friends.\"\n  },\n  {\n    \"start\": \"00:00:16,340\",\n    \"end\": \"00:00:17,500\",\n    \"lang\": \"en\",\n    \"text\": \"This is a paradise.\"\n  },\n  {\n    \"start\": \"00:00:19,860\",\n    \"end\": \"00:00:21,260\",\n    \"lang\": \"en\",\n    \"text\": \"So many dogs.\"\n  },\n  {\n    \"start\": \"00:00:24,500\",\n    \"end\": \"00:00:25,900\",\n    \"lang\": \"en\",\n    \"text\": \"Husky,\"\n  },\n  {\n    \"start\": \"00:00:25,900\",\n    \"end\": \"00:00:30,080\",\n    \"lang\": \"en\",\n    \"text\": \"Cookie and Goodyear Trailer.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,540",
+            "en": "I believe this is a paradise for these dogs.",
+            "zh": "我相信这里是这些狗的天堂。",
+            "ar": "أعتقد أن هذا جنة لهذه الكلاب."
+        },
+        {
+            "start": "00:00:04,460",
+            "end": "00:00:08,620",
+            "en": "You can make friends here at this dog club.",
+            "zh": "你可以在这个狗俱乐部交到朋友。",
+            "ar": "يمكنك أن تكوين أصدقاء هنا في نادي الكلاب."
+        },
+        {
+            "start": "00:00:09,600",
+            "end": "00:00:11,080",
+            "en": "This is their arena.",
+            "zh": "这是他们的竞技场。",
+            "ar": "هذه هي ساحتهم."
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:13,300",
+            "en": "You can fight,",
+            "zh": "你可以战斗，",
+            "ar": "يمكنك القتال،"
+        },
+        {
+            "start": "00:00:13,300",
+            "end": "00:00:15,080",
+            "en": "make friends.",
+            "zh": "结交朋友。",
+            "ar": "تكوين الأصدقاء."
+        },
+        {
+            "start": "00:00:16,340",
+            "end": "00:00:17,500",
+            "en": "This is a paradise.",
+            "zh": "这是一个天堂。",
+            "ar": "هذه جنة."
+        },
+        {
+            "start": "00:00:19,860",
+            "end": "00:00:21,260",
+            "en": "So many dogs.",
+            "zh": "好多狗。",
+            "ar": "الكثير من الكلاب."
+        },
+        {
+            "start": "00:00:24,500",
+            "end": "00:00:25,900",
+            "en": "Husky,",
+            "zh": "哈士奇，",
+            "ar": "هاسكي،"
+        },
+        {
+            "start": "00:00:25,900",
+            "end": "00:00:30,080",
+            "en": "Cookie and Goodyear Trailer.",
+            "zh": "饼干和固特异拖车。",
+            "ar": "كوكي ومقطورة جوديير."
+        }
+    ]
+}

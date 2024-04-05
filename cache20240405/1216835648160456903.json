@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,700\",\n    \"end\": \"00:00:02,480\",\n    \"lang\": \"en\",\n    \"text\": \"Let's do this.\"\n  },\n  {\n    \"start\": \"00:00:03,460\",\n    \"end\": \"00:00:04,740\",\n    \"lang\": \"en\",\n    \"text\": \"Gonna have a fight.\"\n  },\n  {\n    \"start\": \"00:00:05,440\",\n    \"end\": \"00:00:05,500\",\n    \"lang\": \"en\",\n    \"text\": \"Go,\"\n  },\n  {\n    \"start\": \"00:00:05,500\",\n    \"end\": \"00:00:05,800\",\n    \"lang\": \"en\",\n    \"text\": \"go,\"\n  },\n  {\n    \"start\": \"00:00:05,800\",\n    \"end\": \"00:00:06,200\",\n    \"lang\": \"en\",\n    \"text\": \"go.\"\n  },\n  {\n    \"start\": \"00:00:06,520\",\n    \"end\": \"00:00:07,140\",\n    \"lang\": \"en\",\n    \"text\": \"They want to fight.\"\n  },\n  {\n    \"start\": \"00:00:08,002\",\n    \"end\": \"00:00:09,982\",\n    \"lang\": \"zh\",\n    \"text\": \"哇哇哇哇\"\n  },\n  {\n    \"start\": \"00:00:15,142\",\n    \"end\": \"00:00:16,242\",\n    \"lang\": \"zh\",\n    \"text\": \"這是菜市場\"\n  },\n  {\n    \"start\": \"00:00:16,866\",\n    \"end\": \"00:00:18,206\",\n    \"lang\": \"en\",\n    \"text\": \"Bismillah!\"\n  },\n  {\n    \"start\": \"00:00:22,850\",\n    \"end\": \"00:00:25,330\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬は可愛いです\"\n  },\n  {\n    \"start\": \"00:00:26,090\",\n    \"end\": \"00:00:28,070\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬は小さいです\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,700",
+            "end": "00:00:02,480",
+            "vi": "Hãy làm đi."
+        },
+        {
+            "start": "00:00:03,460",
+            "end": "00:00:04,740",
+            "vi": "Sắp có một trận chiến."
+        },
+        {
+            "start": "00:00:05,440",
+            "end": "00:00:05,500",
+            "vi": "Đi,"
+        },
+        {
+            "start": "00:00:05,500",
+            "end": "00:00:05,800",
+            "vi": "đi,"
+        },
+        {
+            "start": "00:00:05,800",
+            "end": "00:00:06,200",
+            "vi": "đi."
+        },
+        {
+            "start": "00:00:06,520",
+            "end": "00:00:07,140",
+            "vi": "Họ muốn chiến đấu."
+        },
+        {
+            "start": "00:00:08,002",
+            "end": "00:00:09,982",
+            "vi": "Ồ ồ ồ ồ"
+        },
+        {
+            "start": "00:00:15,142",
+            "end": "00:00:16,242",
+            "vi": "Đây là chợ"
+        },
+        {
+            "start": "00:00:16,866",
+            "end": "00:00:18,206",
+            "vi": "Bismillah!"
+        },
+        {
+            "start": "00:00:22,850",
+            "end": "00:00:25,330",
+            "vi": "Con chó này rất dễ thương"
+        },
+        {
+            "start": "00:00:26,090",
+            "end": "00:00:28,070",
+            "vi": "Con chó này rất nhỏ"
+        }
+    ]
+}

@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:25,046\",\n    \"end\": \"00:03:25,746\",\n    \"lang\": \"en\",\n    \"text\": \"the\"\n  },\n  {\n    \"start\": \"00:03:25,746\",\n    \"end\": \"00:03:26,586\",\n    \"lang\": \"en\",\n    \"text\": \"the real\"\n  },\n  {\n    \"start\": \"00:03:26,586\",\n    \"end\": \"00:03:26,606\",\n    \"lang\": \"en\",\n    \"text\": \"the real\"\n  },\n  {\n    \"start\": \"00:03:26,626\",\n    \"end\": \"00:03:30,666\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't see the voice recordings.\"\n  },\n  {\n    \"start\": \"00:03:31,522\",\n    \"end\": \"00:03:35,942\",\n    \"lang\": \"en\",\n    \"text\": \"software recognized the language of this voice\"\n  },\n  {\n    \"start\": \"00:03:35,942\",\n    \"end\": \"00:03:40,142\",\n    \"lang\": \"en\",\n    \"text\": \"so I put a symbol at that language before it\"\n  },\n  {\n    \"start\": \"00:03:40,142\",\n    \"end\": \"00:03:45,222\",\n    \"lang\": \"en\",\n    \"text\": \"so when you see the voice symbol\"\n  },\n  {\n    \"start\": \"00:03:45,222\",\n    \"end\": \"00:03:48,062\",\n    \"lang\": \"en\",\n    \"text\": \"it means this language is\"\n  },\n  {\n    \"start\": \"00:03:50,582\",\n    \"end\": \"00:03:54,162\",\n    \"lang\": \"en\",\n    \"text\": \"automatically recognized software\"\n  },\n  {\n    \"start\": \"00:03:55,742\",\n    \"end\": \"00:03:59,302\",\n    \"lang\": \"en\",\n    \"text\": \"detected language for this line\"\n  },\n  {\n    \"start\": \"00:03:59,302\",\n    \"end\": \"00:04:01,702\",\n    \"lang\": \"en\",\n    \"text\": \"okey\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:25,046",
+            "end": "00:03:25,746",
+            "ja": "その"
+        },
+        {
+            "start": "00:03:25,746",
+            "end": "00:03:26,586",
+            "ja": "本当の"
+        },
+        {
+            "start": "00:03:26,586",
+            "end": "00:03:26,606",
+            "ja": "本当の"
+        },
+        {
+            "start": "00:03:26,626",
+            "end": "00:03:30,666",
+            "ja": "音声記録は見ていなかった。"
+        },
+        {
+            "start": "00:03:31,522",
+            "end": "00:03:35,942",
+            "ja": "ソフトウェアがこの声の言語を認識した"
+        },
+        {
+            "start": "00:03:35,942",
+            "end": "00:03:40,142",
+            "ja": "だから、その言語の前にシンボルを置いた"
+        },
+        {
+            "start": "00:03:40,142",
+            "end": "00:03:45,222",
+            "ja": "ですから、声のシンボルを見たら"
+        },
+        {
+            "start": "00:03:45,222",
+            "end": "00:03:48,062",
+            "ja": "その言語が"
+        },
+        {
+            "start": "00:03:50,582",
+            "end": "00:03:54,162",
+            "ja": "自動認識ソフトウェア"
+        },
+        {
+            "start": "00:03:55,742",
+            "end": "00:03:59,302",
+            "ja": "この行のために言語を検出した"
+        },
+        {
+            "start": "00:03:59,302",
+            "end": "00:04:01,702",
+            "ja": "オーケー"
+        }
+    ]
+}

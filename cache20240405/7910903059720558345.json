@@ -1,0 +1,45 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,300\",\n    \"ja\": \"くそっ。\"\n  },\n  {\n    \"start\": \"00:00:00,738\",\n    \"end\": \"00:00:02,037\",\n    \"ja\": \"<私>[]は<帰還者>[]です\"\n  },\n  {\n    \"start\": \"00:00:02,037\",\n    \"end\": \"00:00:02,418\",\n    \"ja\": \"どういう<独裁>[](どくさい)ですか？\"\n  },\n  {\n    \"start\": \"00:00:03,458\",\n    \"end\": \"00:00:04,078\",\n    \"ja\": \"<散歩>[](さんぽ)しましょうか？\"\n  },\n  {\n    \"start\": \"00:00:06,498\",\n    \"end\": \"00:00:06,878\",\n    \"ja\": \"<クリック>[]して！\"\n  },\n  {\n    \"start\": \"00:00:08,418\",\n    \"end\": \"00:00:08,738\",\n    \"ja\": \"いいですよ。\"\n  },\n  {\n    \"start\": \"00:00:09,158\",\n    \"end\": \"00:00:09,158\",\n    \"ja\": \"はい、\"\n  },\n  {\n    \"start\": \"00:00:09,158\",\n    \"end\": \"00:00:10,258\",\n    \"ja\": \"<僕>[]に<注目>[](ちゅうもく)して。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,300",
+            "ja": "くそっ。"
+        },
+        {
+            "start": "00:00:00,738",
+            "end": "00:00:02,037",
+            "ja": "<私>[わたし]は<帰還者>[きかんしゃ]です"
+        },
+        {
+            "start": "00:00:02,037",
+            "end": "00:00:02,418",
+            "ja": "どういう<独裁>[どくさい]ですか？"
+        },
+        {
+            "start": "00:00:03,458",
+            "end": "00:00:04,078",
+            "ja": "<散歩>[さんぽ]しましょうか？"
+        },
+        {
+            "start": "00:00:06,498",
+            "end": "00:00:06,878",
+            "ja": "<クリック>[くりっく]して！"
+        },
+        {
+            "start": "00:00:08,418",
+            "end": "00:00:08,738",
+            "ja": "いいですよ。"
+        },
+        {
+            "start": "00:00:09,158",
+            "end": "00:00:09,158",
+            "ja": "はい、"
+        },
+        {
+            "start": "00:00:09,158",
+            "end": "00:00:10,258",
+            "ja": "<僕>[ぼく]に<注目>[ちゅうもく]して。"
+        }
+    ]
+}

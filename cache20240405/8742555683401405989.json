@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:08,786\",\n    \"end\": \"00:01:09,986\",\n    \"lang\": \"en\",\n    \"text\": \"It's not necessary,\"\n  },\n  {\n    \"start\": \"00:01:09,986\",\n    \"end\": \"00:01:13,546\",\n    \"lang\": \"en\",\n    \"text\": \"it's unnecessary to regret it for the past.\"\n  },\n  {\n    \"start\": \"00:01:15,234\",\n    \"end\": \"00:01:15,594\",\n    \"lang\": \"zh\",\n    \"text\": \"多謝\"\n  },\n  {\n    \"start\": \"00:01:15,634\",\n    \"end\": \"00:01:15,754\",\n    \"lang\": \"zh\",\n    \"text\": \"思\"\n  },\n  {\n    \"start\": \"00:01:21,314\",\n    \"end\": \"00:01:26,134\",\n    \"lang\": \"en\",\n    \"text\": \"to this imaginary\"\n  },\n  {\n    \"start\": \"00:01:29,378\",\n    \"end\": \"00:01:29,678\",\n    \"lang\": \"zh\",\n    \"text\": \"拼!\"\n  },\n  {\n    \"start\": \"00:01:31,298\",\n    \"end\": \"00:01:31,758\",\n    \"lang\": \"en\",\n    \"text\": \"obsessed\"\n  },\n  {\n    \"start\": \"00:01:34,594\",\n    \"end\": \"00:01:35,574\",\n    \"lang\": \"zh\",\n    \"text\": \"冰淫大警惕\"\n  },\n  {\n    \"start\": \"00:01:35,574\",\n    \"end\": \"00:01:36,754\",\n    \"lang\": \"zh\",\n    \"text\": \"冰淫大警惕應該\"\n  },\n  {\n    \"start\": \"00:01:38,850\",\n    \"end\": \"00:01:39,970\",\n    \"lang\": \"en\",\n    \"text\": \"imaginary or future.\"\n  },\n  {\n    \"start\": \"00:01:40,770\",\n    \"end\": \"00:01:41,010\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:41,010\",\n    \"end\": \"00:01:42,250\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:08,786",
+            "end": "00:01:09,986",
+            "ja": "必要ない、"
+        },
+        {
+            "start": "00:01:09,986",
+            "end": "00:01:13,546",
+            "ja": "過去のことを後悔する必要はない。"
+        },
+        {
+            "start": "00:01:15,234",
+            "end": "00:01:15,594",
+            "ja": "どうもありがとう"
+        },
+        {
+            "start": "00:01:15,634",
+            "end": "00:01:15,754",
+            "ja": "思う"
+        },
+        {
+            "start": "00:01:21,314",
+            "end": "00:01:26,134",
+            "ja": "この想像上の"
+        },
+        {
+            "start": "00:01:29,378",
+            "end": "00:01:29,678",
+            "ja": "頑張れ！"
+        },
+        {
+            "start": "00:01:31,298",
+            "end": "00:01:31,758",
+            "ja": "とりつかれている"
+        },
+        {
+            "start": "00:01:34,594",
+            "end": "00:01:35,574",
+            "ja": "高い警戒を要する"
+        },
+        {
+            "start": "00:01:35,574",
+            "end": "00:01:36,754",
+            "ja": "高い警戒を要するべきだ"
+        },
+        {
+            "start": "00:01:38,850",
+            "end": "00:01:39,970",
+            "ja": "想像上のまたは未来の。"
+        },
+        {
+            "start": "00:01:40,770",
+            "end": "00:01:41,010",
+            "ja": "わかった、"
+        },
+        {
+            "start": "00:01:41,010",
+            "end": "00:01:42,250",
+            "ja": "じゃあね。"
+        }
+    ]
+}

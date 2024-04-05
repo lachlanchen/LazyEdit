@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,900\",\n    \"lang\": \"en\",\n    \"text\": \"And you want to be careful when you have so many things.\"\n  },\n  {\n    \"start\": \"00:00:04,000\",\n    \"end\": \"00:00:06,460\",\n    \"lang\": \"en\",\n    \"text\": \"Of course I know I'm looking at this red.\"\n  },\n  {\n    \"start\": \"00:00:06,920\",\n    \"end\": \"00:00:07,140\",\n    \"lang\": \"en\",\n    \"text\": \"See,\"\n  },\n  {\n    \"start\": \"00:00:07,140\",\n    \"end\": \"00:00:08,860\",\n    \"lang\": \"en\",\n    \"text\": \"everybody knows red is important.\"\n  },\n  {\n    \"start\": \"00:00:09,040\",\n    \"end\": \"00:00:10,660\",\n    \"lang\": \"en\",\n    \"text\": \"So what you're looking at is red.\"\n  },\n  {\n    \"start\": \"00:00:10,800\",\n    \"end\": \"00:00:12,080\",\n    \"lang\": \"en\",\n    \"text\": \"But when I first look at this,\"\n  },\n  {\n    \"start\": \"00:00:13,500\",\n    \"end\": \"00:00:15,760\",\n    \"lang\": \"en\",\n    \"text\": \"a couple of things I don't really know.\"\n  },\n  {\n    \"start\": \"00:00:16,140\",\n    \"end\": \"00:00:16,580\",\n    \"lang\": \"en\",\n    \"text\": \"For example,\"\n  },\n  {\n    \"start\": \"00:00:16,580\",\n    \"end\": \"00:00:18,760\",\n    \"lang\": \"en\",\n    \"text\": \"these tiny arrows.\"\n  },\n  {\n    \"start\": \"00:00:19,320\",\n    \"end\": \"00:00:20,720\",\n    \"lang\": \"en\",\n    \"text\": \"You can't really see.\"\n  },\n  {\n    \"start\": \"00:00:21,720\",\n    \"end\": \"00:00:21,960\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:22,540\",\n    \"end\": \"00:00:24,780\",\n    \"lang\": \"en\",\n    \"text\": \"I actually don't know these are wavefront.\"\n  },\n  {\n    \"start\": \"00:00:27,520\",\n    \"end\": \"00:00:27,880\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:27,880\",\n    \"end\": \"00:00:34,060\",\n    \"lang\": \"en\",\n    \"text\": \"Because what you're trying to say is this is a small slope.\"\n  },\n  {\n    \"start\": \"00:00:34,720\",\n    \"end\": \"00:00:35,620\",\n    \"lang\": \"en\",\n    \"text\": \"These are biggest.\"\n  },\n  {\n    \"start\": \"00:00:35,960\",\n    \"end\": \"00:00:36,840\",\n    \"lang\": \"en\",\n    \"text\": \"These are the biggest.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,900",
+            "en": "And you want to be careful when you have so many things.",
+            "zh": "当你有很多东西时，你想要小心一点。",
+            "ar": "وأنت تريد أن تكون حذرًا عندما يكون لديك الكثير من الأشياء."
+        },
+        {
+            "start": "00:00:04,000",
+            "end": "00:00:06,460",
+            "en": "Of course I know I'm looking at this red.",
+            "zh": "当然我知道我在看这个红色。",
+            "ar": "بالطبع أعلم أنني أنظر إلى هذا الأحمر."
+        },
+        {
+            "start": "00:00:06,920",
+            "end": "00:00:07,140",
+            "en": "See,",
+            "zh": "看，",
+            "ar": "انظر،"
+        },
+        {
+            "start": "00:00:07,140",
+            "end": "00:00:08,860",
+            "en": "everybody knows red is important.",
+            "zh": "每个人都知道红色很重要。",
+            "ar": "الجميع يعلم أن الأحمر مهم."
+        },
+        {
+            "start": "00:00:09,040",
+            "end": "00:00:10,660",
+            "en": "So what you're looking at is red.",
+            "zh": "所以你看到的是红色。",
+            "ar": "إذًا ما تنظر إليه هو الأحمر."
+        },
+        {
+            "start": "00:00:10,800",
+            "end": "00:00:12,080",
+            "en": "But when I first look at this,",
+            "zh": "但当我第一次看到这个，",
+            "ar": "لكن عندما نظرت إليه لأول مرة،"
+        },
+        {
+            "start": "00:00:13,500",
+            "end": "00:00:15,760",
+            "en": "a couple of things I don't really know.",
+            "zh": "有几件事我真的不知道。",
+            "ar": "بعض الأشياء التي لا أعرفها حقًا."
+        },
+        {
+            "start": "00:00:16,140",
+            "end": "00:00:16,580",
+            "en": "For example,",
+            "zh": "例如，",
+            "ar": "على سبيل المثال،"
+        },
+        {
+            "start": "00:00:16,580",
+            "end": "00:00:18,760",
+            "en": "these tiny arrows.",
+            "zh": "这些小箭头。",
+            "ar": "هذه الأسهم الصغيرة."
+        },
+        {
+            "start": "00:00:19,320",
+            "end": "00:00:20,720",
+            "en": "You can't really see.",
+            "zh": "你真的看不见。",
+            "ar": "لا يمكنك أن ترى بالفعل."
+        },
+        {
+            "start": "00:00:21,720",
+            "end": "00:00:21,960",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:22,540",
+            "end": "00:00:24,780",
+            "en": "I actually don't know these are wavefront.",
+            "zh": "我其实不知道这些是波前。",
+            "ar": "في الواقع لا أعرف أن هذه هي الجبهة الموجية."
+        },
+        {
+            "start": "00:00:27,520",
+            "end": "00:00:27,880",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:27,880",
+            "end": "00:00:34,060",
+            "en": "Because what you're trying to say is this is a small slope.",
+            "zh": "因为你想要说的是这是一个小斜坡。",
+            "ar": "لأن ما تحاول قوله هو أن هذا منحدر صغير."
+        },
+        {
+            "start": "00:00:34,720",
+            "end": "00:00:35,620",
+            "en": "These are biggest.",
+            "zh": "这些是最大的。",
+            "ar": "هذه هي الأكبر."
+        },
+        {
+            "start": "00:00:35,960",
+            "end": "00:00:36,840",
+            "en": "These are the biggest.",
+            "zh": "这些是最大的。",
+            "ar": "هذه هي الأكبر."
+        }
+    ]
+}

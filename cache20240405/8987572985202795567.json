@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,360\",\n    \"lang\": \"en\",\n    \"text\": \"Beep,\"\n  },\n  {\n    \"start\": \"00:00:00,360\",\n    \"end\": \"00:00:00,620\",\n    \"lang\": \"en\",\n    \"text\": \"beep,\"\n  },\n  {\n    \"start\": \"00:00:00,620\",\n    \"end\": \"00:00:00,980\",\n    \"lang\": \"en\",\n    \"text\": \"beep,\"\n  },\n  {\n    \"start\": \"00:00:00,980\",\n    \"end\": \"00:00:01,240\",\n    \"lang\": \"en\",\n    \"text\": \"beep,\"\n  },\n  {\n    \"start\": \"00:00:01,240\",\n    \"end\": \"00:00:01,500\",\n    \"lang\": \"en\",\n    \"text\": \"beep.\"\n  },\n  {\n    \"start\": \"00:00:01,960\",\n    \"end\": \"00:00:04,420\",\n    \"lang\": \"en\",\n    \"text\": \"Just called the first floor.\"\n  },\n  {\n    \"start\": \"00:00:06,060\",\n    \"end\": \"00:00:06,780\",\n    \"lang\": \"en\",\n    \"text\": \"Beep,\"\n  },\n  {\n    \"start\": \"00:00:06,780\",\n    \"end\": \"00:00:06,960\",\n    \"lang\": \"en\",\n    \"text\": \"beep,\"\n  },\n  {\n    \"start\": \"00:00:06,960\",\n    \"end\": \"00:00:07,300\",\n    \"lang\": \"en\",\n    \"text\": \"beep,\"\n  },\n  {\n    \"start\": \"00:00:07,300\",\n    \"end\": \"00:00:07,480\",\n    \"lang\": \"en\",\n    \"text\": \"beep,\"\n  },\n  {\n    \"start\": \"00:00:07,480\",\n    \"end\": \"00:00:07,960\",\n    \"lang\": \"en\",\n    \"text\": \"beep.\"\n  },\n  {\n    \"start\": \"00:00:08,140\",\n    \"end\": \"00:00:10,780\",\n    \"lang\": \"en\",\n    \"text\": \"Just called the first floor.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,360",
+            "en": "Beep,",
+            "zh": "滴,",
+            "ar": "بيب،"
+        },
+        {
+            "start": "00:00:00,360",
+            "end": "00:00:00,620",
+            "en": "beep,",
+            "zh": "滴,",
+            "ar": "بيب،"
+        },
+        {
+            "start": "00:00:00,620",
+            "end": "00:00:00,980",
+            "en": "beep,",
+            "zh": "滴,",
+            "ar": "بيب،"
+        },
+        {
+            "start": "00:00:00,980",
+            "end": "00:00:01,240",
+            "en": "beep,",
+            "zh": "滴,",
+            "ar": "بيب،"
+        },
+        {
+            "start": "00:00:01,240",
+            "end": "00:00:01,500",
+            "en": "beep.",
+            "zh": "滴。",
+            "ar": "بيب."
+        },
+        {
+            "start": "00:00:01,960",
+            "end": "00:00:04,420",
+            "en": "Just called the first floor.",
+            "zh": "刚呼叫了一楼。",
+            "ar": "لقد اتصلت للتو بالطابق الأول."
+        },
+        {
+            "start": "00:00:06,060",
+            "end": "00:00:06,780",
+            "en": "Beep,",
+            "zh": "滴,",
+            "ar": "بيب،"
+        },
+        {
+            "start": "00:00:06,780",
+            "end": "00:00:06,960",
+            "en": "beep,",
+            "zh": "滴,",
+            "ar": "بيب،"
+        },
+        {
+            "start": "00:00:06,960",
+            "end": "00:00:07,300",
+            "en": "beep,",
+            "zh": "滴,",
+            "ar": "بيب،"
+        },
+        {
+            "start": "00:00:07,300",
+            "end": "00:00:07,480",
+            "en": "beep,",
+            "zh": "滴,",
+            "ar": "بيب،"
+        },
+        {
+            "start": "00:00:07,480",
+            "end": "00:00:07,960",
+            "en": "beep.",
+            "zh": "滴。",
+            "ar": "بيب."
+        },
+        {
+            "start": "00:00:08,140",
+            "end": "00:00:10,780",
+            "en": "Just called the first floor.",
+            "zh": "刚呼叫了一楼。",
+            "ar": "لقد اتصلت للتو بالطابق الأول."
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,920\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:00,920\",\n    \"end\": \"00:00:02,620\",\n    \"lang\": \"en\",\n    \"text\": \"before our morning running,\"\n  },\n  {\n    \"start\": \"00:00:02,620\",\n    \"end\": \"00:00:04,580\",\n    \"lang\": \"en\",\n    \"text\": \"I think we record this progress.\"\n  },\n  {\n    \"start\": \"00:00:06,540\",\n    \"end\": \"00:00:07,940\",\n    \"lang\": \"en\",\n    \"text\": \"Na na na na.\"\n  },\n  {\n    \"start\": \"00:00:07,970\",\n    \"end\": \"00:00:09,210\",\n    \"lang\": \"en\",\n    \"text\": \"ному totoshin'\"\n  },\n  {\n    \"start\": \"00:00:09,570\",\n    \"end\": \"00:00:09,690\",\n    \"lang\": \"en\",\n    \"text\": \"na\"\n  },\n  {\n    \"start\": \"00:00:10,626\",\n    \"end\": \"00:00:12,766\",\n    \"lang\": \"ja\",\n    \"text\": \"まだ見えぬ\"\n  },\n  {\n    \"start\": \"00:00:17,506\",\n    \"end\": \"00:00:18,466\",\n    \"lang\": \"en\",\n    \"text\": \"That's a recorder again.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,920",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:00,920",
+            "end": "00:00:02,620",
+            "es": "antes de nuestra corrida matutina,",
+            "fr": "avant notre course matinale,",
+            "uk": "перед нашим ранковим бігом,"
+        },
+        {
+            "start": "00:00:02,620",
+            "end": "00:00:04,580",
+            "es": "creo que grabamos este progreso.",
+            "fr": "je pense que nous enregistrons ces progrès.",
+            "uk": "я думаю, ми записуємо цей прогрес."
+        },
+        {
+            "start": "00:00:06,540",
+            "end": "00:00:07,940",
+            "es": "Na na na na.",
+            "fr": "Na na na na.",
+            "uk": "На на на на."
+        },
+        {
+            "start": "00:00:07,970",
+            "end": "00:00:09,210",
+            "es": "ному totoshin'",
+            "fr": "ному totoshin'",
+            "uk": "ному totoshin'"
+        },
+        {
+            "start": "00:00:09,570",
+            "end": "00:00:09,690",
+            "es": "na",
+            "fr": "na",
+            "uk": "на"
+        },
+        {
+            "start": "00:00:10,626",
+            "end": "00:00:12,766",
+            "es": "todavía no visible",
+            "fr": "encore invisible",
+            "uk": "ще не видно"
+        },
+        {
+            "start": "00:00:17,506",
+            "end": "00:00:18,466",
+            "es": "Eso es un grabador de nuevo.",
+            "fr": "C'est un enregistreur à nouveau.",
+            "uk": "Це знову рекордер."
+        }
+    ]
+}

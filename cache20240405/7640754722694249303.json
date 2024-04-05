@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,760\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sure that I already catch the coronavirus,\"\n  },\n  {\n    \"start\": \"00:00:03,760\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"the COVID.\"\n  },\n  {\n    \"start\": \"00:00:06,740\",\n    \"end\": \"00:00:06,960\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:06,960\",\n    \"end\": \"00:00:12,820\",\n    \"lang\": \"en\",\n    \"text\": \"this muscle pain and sore throat.\"\n  },\n  {\n    \"start\": \"00:00:14,120\",\n    \"end\": \"00:00:15,220\",\n    \"lang\": \"en\",\n    \"text\": \"It's terrible,\"\n  },\n  {\n    \"start\": \"00:00:15,220\",\n    \"end\": \"00:00:15,740\",\n    \"lang\": \"en\",\n    \"text\": \"it's a fear.\"\n  },\n  {\n    \"start\": \"00:00:17,760\",\n    \"end\": \"00:00:19,140\",\n    \"lang\": \"en\",\n    \"text\": \"I don't like it.\"\n  },\n  {\n    \"start\": \"00:00:26,220\",\n    \"end\": \"00:00:27,280\",\n    \"lang\": \"en\",\n    \"text\": \"These noodles,\"\n  },\n  {\n    \"start\": \"00:00:27,280\",\n    \"end\": \"00:00:29,200\",\n    \"lang\": \"en\",\n    \"text\": \"it's gorgeous,\"\n  },\n  {\n    \"start\": \"00:00:29,200\",\n    \"end\": \"00:00:31,360\",\n    \"lang\": \"en\",\n    \"text\": \"but I don't have very much appetite.\"\n  },\n  {\n    \"start\": \"00:00:32,720\",\n    \"end\": \"00:00:33,160\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:33,160\",\n    \"end\": \"00:00:34,080\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,760",
+            "vi": "Tôi chắc mình đã nhiễm virus corona,"
+        },
+        {
+            "start": "00:00:03,760",
+            "end": "00:00:05,140",
+            "vi": "cái COVID."
+        },
+        {
+            "start": "00:00:06,740",
+            "end": "00:00:06,960",
+            "vi": "Ồ,"
+        },
+        {
+            "start": "00:00:06,960",
+            "end": "00:00:12,820",
+            "vi": "cảm giác đau cơ này và đau họng."
+        },
+        {
+            "start": "00:00:14,120",
+            "end": "00:00:15,220",
+            "vi": "Nó khủng khiếp,"
+        },
+        {
+            "start": "00:00:15,220",
+            "end": "00:00:15,740",
+            "vi": "nó là nỗi sợ."
+        },
+        {
+            "start": "00:00:17,760",
+            "end": "00:00:19,140",
+            "vi": "Tôi không thích nó."
+        },
+        {
+            "start": "00:00:26,220",
+            "end": "00:00:27,280",
+            "vi": "Những sợi mì này,"
+        },
+        {
+            "start": "00:00:27,280",
+            "end": "00:00:29,200",
+            "vi": "trông thật tuyệt,"
+        },
+        {
+            "start": "00:00:29,200",
+            "end": "00:00:31,360",
+            "vi": "nhưng tôi không có nhiều khẩu vị."
+        },
+        {
+            "start": "00:00:32,720",
+            "end": "00:00:33,160",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:33,160",
+            "end": "00:00:34,080",
+            "vi": "hẹn gặp lại."
+        }
+    ]
+}

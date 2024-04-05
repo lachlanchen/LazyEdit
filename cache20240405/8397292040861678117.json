@@ -1,0 +1,124 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,640\",\n    \"end\": \"00:00:03,880\",\n    \"lang\": \"ja\",\n    \"text\": \"私は靴にをかりました。\"\n  },\n  {\n    \"start\": \"00:00:05,520\",\n    \"end\": \"00:00:07,180\",\n    \"lang\": \"ja\",\n    \"text\": \"靴にをかいています。\"\n  },\n  {\n    \"start\": \"00:00:08,930\",\n    \"end\": \"00:00:10,050\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if this works,\"\n  },\n  {\n    \"start\": \"00:00:10,050\",\n    \"end\": \"00:00:15,170\",\n    \"lang\": \"en\",\n    \"text\": \"but my immune system can't handle this disease anymore.\"\n  },\n  {\n    \"start\": \"00:00:16,329\",\n    \"end\": \"00:00:18,250\",\n    \"lang\": \"en\",\n    \"text\": \"And the fever,\"\n  },\n  {\n    \"start\": \"00:00:18,250\",\n    \"end\": \"00:00:23,350\",\n    \"lang\": \"en\",\n    \"text\": \"the fever that he already,\"\n  },\n  {\n    \"start\": \"00:00:23,350\",\n    \"end\": \"00:00:32,430\",\n    \"lang\": \"en\",\n    \"text\": \"the fever disappeared one day ago,\"\n  },\n  {\n    \"start\": \"00:00:32,430\",\n    \"end\": \"00:00:33,230\",\n    \"lang\": \"en\",\n    \"text\": \"but it\"\n  },\n  {\n    \"start\": \"00:00:38,069\",\n    \"end\": \"00:00:38,510\",\n    \"lang\": \"en\",\n    \"text\": \"recurred.\"\n  },\n  {\n    \"start\": \"00:00:38,510\",\n    \"end\": \"00:00:41,130\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's okay.\"\n  },\n  {\n    \"start\": \"00:00:42,274\",\n    \"end\": \"00:00:43,074\",\n    \"lang\": \"zh\",\n    \"text\": \"又复发了\"\n  },\n  {\n    \"start\": \"00:00:44,453\",\n    \"end\": \"00:00:46,174\",\n    \"lang\": \"zh\",\n    \"text\": \"哎抓不住了\"\n  },\n  {\n    \"start\": \"00:00:46,914\",\n    \"end\": \"00:00:48,434\",\n    \"lang\": \"zh\",\n    \"text\": \"买点药试一试\"\n  },\n  {\n    \"start\": \"00:00:49,194\",\n    \"end\": \"00:00:50,774\",\n    \"lang\": \"zh\",\n    \"text\": \"还有这个COVID test\"\n  },\n  {\n    \"start\": \"00:00:53,674\",\n    \"end\": \"00:00:54,554\",\n    \"lang\": \"zh\",\n    \"text\": \"检测一下\"\n  },\n  {\n    \"start\": \"00:00:55,906\",\n    \"end\": \"00:00:56,266\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:56,266\",\n    \"end\": \"00:00:58,726\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,640",
+            "end": "00:00:03,880",
+            "es": "Me tropecé con el zapato.",
+            "fr": "Je me suis pris les pieds dans la chaussure.",
+            "uk": "Я спіткнувся об взуття."
+        },
+        {
+            "start": "00:00:05,520",
+            "end": "00:00:07,180",
+            "es": "Estoy tropezando con el zapato.",
+            "fr": "Je suis en train de me prendre les pieds dans la chaussure.",
+            "uk": "Я спотикаюся об взуття."
+        },
+        {
+            "start": "00:00:08,930",
+            "end": "00:00:10,050",
+            "es": "No sé si esto funciona,",
+            "fr": "Je ne sais pas si cela fonctionne,",
+            "uk": "Не знаю, чи це працює,"
+        },
+        {
+            "start": "00:00:10,050",
+            "end": "00:00:15,170",
+            "es": "pero mi sistema inmunológico ya no puede manejar esta enfermedad.",
+            "fr": "mais mon système immunitaire ne peut plus gérer cette maladie.",
+            "uk": "але моя імунна система вже не може справлятися з цією хворобою."
+        },
+        {
+            "start": "00:00:16,329",
+            "end": "00:00:18,250",
+            "es": "Y la fiebre,",
+            "fr": "Et la fièvre,",
+            "uk": "І лихоманка,"
+        },
+        {
+            "start": "00:00:18,250",
+            "end": "00:00:23,350",
+            "es": "la fiebre que ya",
+            "fr": "la fièvre qui déjà",
+            "uk": "лихоманка, яка вже"
+        },
+        {
+            "start": "00:00:23,350",
+            "end": "00:00:32,430",
+            "es": "la fiebre desapareció hace un día,",
+            "fr": "la fièvre a disparu il y a un jour,",
+            "uk": "лихоманка зникла один день тому,"
+        },
+        {
+            "start": "00:00:32,430",
+            "end": "00:00:33,230",
+            "es": "pero",
+            "fr": "mais",
+            "uk": "але"
+        },
+        {
+            "start": "00:00:38,069",
+            "end": "00:00:38,510",
+            "es": "recurrió.",
+            "fr": "est revenue.",
+            "uk": "знову з'явилася."
+        },
+        {
+            "start": "00:00:38,510",
+            "end": "00:00:41,130",
+            "es": "No sé si está bien.",
+            "fr": "Je ne sais pas si c'est bien.",
+            "uk": "Не знаю, чи це добре."
+        },
+        {
+            "start": "00:00:42,274",
+            "end": "00:00:43,074",
+            "es": "Ha recidivado",
+            "fr": "Cela a récidivé",
+            "uk": "Це знову з'явилося"
+        },
+        {
+            "start": "00:00:44,453",
+            "end": "00:00:46,174",
+            "es": "Ah, no se puede agarrar",
+            "fr": "Ah, je ne peux pas l'attraper",
+            "uk": "Ах, не можу зловити"
+        },
+        {
+            "start": "00:00:46,914",
+            "end": "00:00:48,434",
+            "es": "Compra algo de medicina para probar",
+            "fr": "Achète des médicaments pour essayer",
+            "uk": "Купи трохи ліків, щоб спробувати"
+        },
+        {
+            "start": "00:00:49,194",
+            "end": "00:00:50,774",
+            "es": "y este test de COVID",
+            "fr": "et ce test de COVID",
+            "uk": "та цей тест на COVID"
+        },
+        {
+            "start": "00:00:53,674",
+            "end": "00:00:54,554",
+            "es": "Hazte la prueba",
+            "fr": "Fais le test",
+            "uk": "Зроби тест"
+        },
+        {
+            "start": "00:00:55,906",
+            "end": "00:00:56,266",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:56,266",
+            "end": "00:00:58,726",
+            "es": "nos vemos.",
+            "fr": "à plus tard.",
+            "uk": "побачимося."
+        }
+    ]
+}

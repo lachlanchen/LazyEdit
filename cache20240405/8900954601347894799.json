@@ -1,0 +1,25 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,460\",\n    \"ja\": \"<海岸線>[]を<歩>[]いています\"\n  },\n  {\n    \"start\": \"00:00:03,394\",\n    \"end\": \"00:00:06,254\",\n    \"ja\": \"<今日>[]は<回復>[]<トレーニング>[]の<日>[]です。\"\n  },\n  {\n    \"start\": \"00:00:06,970\",\n    \"end\": \"00:00:09,470\",\n    \"ja\": \"<海岸線>[]を<歩>[]いています\"\n  },\n  {\n    \"start\": \"00:00:10,370\",\n    \"end\": \"00:00:13,270\",\n    \"ja\": \"<今日>[]は<回復>[]<トレーニング>[]の<日>[]です。\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,460",
+            "ja": "<海岸線>[かいがんせん]を<歩>[ある]いています"
+        },
+        {
+            "start": "00:00:03,394",
+            "end": "00:00:06,254",
+            "ja": "<今日>[きょう]は<回復>[かいふく]<トレーニング>[とれーにんぐ]の<日>[ひ]です。"
+        },
+        {
+            "start": "00:00:06,970",
+            "end": "00:00:09,470",
+            "ja": "<海岸線>[かいがんせん]を<歩>[ある]いています"
+        },
+        {
+            "start": "00:00:10,370",
+            "end": "00:00:13,270",
+            "ja": "<今日>[きょう]は<回復>[かいふく]<トレーニング>[とれーにんぐ]の<日>[ひ]です。"
+        }
+    ]
+}

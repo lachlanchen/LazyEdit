@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:15,699\",\n    \"end\": \"00:01:17,100\",\n    \"lang\": \"en\",\n    \"text\": \"Oh\"\n  },\n  {\n    \"start\": \"00:01:17,100\",\n    \"end\": \"00:01:19,720\",\n    \"lang\": \"en\",\n    \"text\": \"ah\"\n  },\n  {\n    \"start\": \"00:01:37,660\",\n    \"end\": \"00:01:39,820\",\n    \"lang\": \"en\",\n    \"text\": \"This is gorgeous.\"\n  },\n  {\n    \"start\": \"00:01:45,700\",\n    \"end\": \"00:01:47,640\",\n    \"lang\": \"en\",\n    \"text\": \"How to use it?\"\n  },\n  {\n    \"start\": \"00:01:52,800\",\n    \"end\": \"00:01:54,200\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:54,200\",\n    \"end\": \"00:01:54,320\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:54,320\",\n    \"end\": \"00:01:54,400\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:02:11,899\",\n    \"end\": \"00:02:16,040\",\n    \"lang\": \"en\",\n    \"text\": \"I missed one...\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:15,699",
+            "end": "00:01:17,100",
+            "es": "Oh",
+            "fr": "Oh",
+            "uk": "О"
+        },
+        {
+            "start": "00:01:17,100",
+            "end": "00:01:19,720",
+            "es": "ah",
+            "fr": "ah",
+            "uk": "ах"
+        },
+        {
+            "start": "00:01:37,660",
+            "end": "00:01:39,820",
+            "es": "Es hermoso.",
+            "fr": "C'est magnifique.",
+            "uk": "Це чудово."
+        },
+        {
+            "start": "00:01:45,700",
+            "end": "00:01:47,640",
+            "es": "¿Cómo se usa?",
+            "fr": "Comment l'utiliser ?",
+            "uk": "Як цим користуватися?"
+        },
+        {
+            "start": "00:01:52,800",
+            "end": "00:01:54,200",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:01:54,200",
+            "end": "00:01:54,320",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:01:54,320",
+            "end": "00:01:54,400",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:02:11,899",
+            "end": "00:02:16,040",
+            "es": "Me perdí uno...",
+            "fr": "J'en ai raté un...",
+            "uk": "Я пропустив один..."
+        }
+    ]
+}

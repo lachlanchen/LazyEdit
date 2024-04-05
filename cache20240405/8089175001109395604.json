@@ -1,0 +1,40 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,570\",\n    \"end\": \"00:01:04,209\",\n    \"ja\": \"おいしい、\"\n  },\n  {\n    \"start\": \"00:01:04,209\",\n    \"end\": \"00:01:04,530\",\n    \"ja\": \"おいしい。\"\n  },\n  {\n    \"start\": \"00:01:04,530\",\n    \"end\": \"00:01:05,650\",\n    \"ja\": \"とてもおいしい。\"\n  },\n  {\n    \"start\": \"00:01:07,030\",\n    \"end\": \"00:01:08,670\",\n    \"ja\": \"<北方>[]の<ライスヌードル>[]。\"\n  },\n  {\n    \"start\": \"00:01:09,794\",\n    \"end\": \"00:01:10,654\",\n    \"ja\": \"おいしいです\"\n  },\n  {\n    \"start\": \"00:01:16,994\",\n    \"end\": \"00:01:17,214\",\n    \"ja\": \"わかった、\"\n  },\n  {\n    \"start\": \"00:01:17,214\",\n    \"end\": \"00:01:17,614\",\n    \"ja\": \"じゃあね。\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,570",
+            "end": "00:01:04,209",
+            "ja": "おいしい、"
+        },
+        {
+            "start": "00:01:04,209",
+            "end": "00:01:04,530",
+            "ja": "おいしい。"
+        },
+        {
+            "start": "00:01:04,530",
+            "end": "00:01:05,650",
+            "ja": "とてもおいしい。"
+        },
+        {
+            "start": "00:01:07,030",
+            "end": "00:01:08,670",
+            "ja": "<北方>[ほっぽう]の<ライスヌードル>[]。"
+        },
+        {
+            "start": "00:01:09,794",
+            "end": "00:01:10,654",
+            "ja": "おいしいです"
+        },
+        {
+            "start": "00:01:16,994",
+            "end": "00:01:17,214",
+            "ja": "わかった、"
+        },
+        {
+            "start": "00:01:17,214",
+            "end": "00:01:17,614",
+            "ja": "じゃあね。"
+        }
+    ]
+}

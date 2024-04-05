@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:10,494\",\n    \"end\": \"00:02:14,014\",\n    \"lang\": \"ja\",\n    \"text\": \"ななななとじな\"\n  },\n  {\n    \"start\": \"00:02:15,138\",\n    \"end\": \"00:02:15,358\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:15,358\",\n    \"end\": \"00:02:15,778\",\n    \"lang\": \"en\",\n    \"text\": \"anyway,\"\n  },\n  {\n    \"start\": \"00:02:15,778\",\n    \"end\": \"00:02:17,958\",\n    \"lang\": \"en\",\n    \"text\": \"so I told him,\"\n  },\n  {\n    \"start\": \"00:02:19,998\",\n    \"end\": \"00:02:21,218\",\n    \"lang\": \"en\",\n    \"text\": \"it's already a mess,\"\n  },\n  {\n    \"start\": \"00:02:21,218\",\n    \"end\": \"00:02:23,718\",\n    \"lang\": \"en\",\n    \"text\": \"I should take a rest.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:10,494",
+            "end": "00:02:14,014",
+            "ko": "나나나나토지나"
+        },
+        {
+            "start": "00:02:15,138",
+            "end": "00:02:15,358",
+            "ko": "오케이,"
+        },
+        {
+            "start": "00:02:15,358",
+            "end": "00:02:15,778",
+            "ko": "어쨌든,"
+        },
+        {
+            "start": "00:02:15,778",
+            "end": "00:02:17,958",
+            "ko": "그래서 내가 말했어,"
+        },
+        {
+            "start": "00:02:19,998",
+            "end": "00:02:21,218",
+            "ko": "이미 엉망이야,"
+        },
+        {
+            "start": "00:02:21,218",
+            "end": "00:02:23,718",
+            "ko": "쉬는 게 좋겠어."
+        }
+    ]
+}

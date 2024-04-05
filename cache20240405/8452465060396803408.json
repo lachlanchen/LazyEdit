@@ -1,0 +1,71 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,400\",\n    \"lang\": \"ja\",\n    \"text\": \"3匹の犬と戦っています。\"\n  },\n  {\n    \"start\": \"00:00:07,554\",\n    \"end\": \"00:00:09,054\",\n    \"lang\": \"ja\",\n    \"text\": \"かなり危険です\"\n  },\n  {\n    \"start\": \"00:00:17,221\",\n    \"end\": \"00:00:18,182\",\n    \"lang\": \"ja\",\n    \"text\": \"ご視聴ありがとうございました\"\n  },\n  {\n    \"start\": \"00:00:26,501\",\n    \"end\": \"00:00:27,561\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know what to do.\"\n  },\n  {\n    \"start\": \"00:00:27,561\",\n    \"end\": \"00:00:28,921\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know what to do.\"\n  },\n  {\n    \"start\": \"00:00:29,001\",\n    \"end\": \"00:00:30,241\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know what to do.\"\n  },\n  {\n    \"start\": \"00:00:30,421\",\n    \"end\": \"00:00:31,261\",\n    \"lang\": \"en\",\n    \"text\": \"It's so...\"\n  },\n  {\n    \"start\": \"00:00:37,701\",\n    \"end\": \"00:00:38,821\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god.\"\n  },\n  {\n    \"start\": \"00:00:44,961\",\n    \"end\": \"00:00:47,761\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,400",
+            "en": "Fighting with three dogs.",
+            "zh": "和三只狗打架。",
+            "ar": "القتال مع ثلاثة كلاب.",
+            "ja": "3匹の犬と戦っています。"
+        },
+        {
+            "start": "00:00:07,554",
+            "end": "00:00:09,054",
+            "en": "It's quite dangerous.",
+            "zh": "这非常危险。",
+            "ar": "إنه خطير جدا.",
+            "ja": "かなり危険です"
+        },
+        {
+            "start": "00:00:17,221",
+            "end": "00:00:18,182",
+            "en": "Thank you for watching.",
+            "zh": "谢谢观看。",
+            "ar": "شكرا لمشاهدتك.",
+            "ja": "ご視聴ありがとうございました"
+        },
+        {
+            "start": "00:00:26,501",
+            "end": "00:00:27,561",
+            "en": "I don't know what to do.",
+            "zh": "我不知道该怎么办。",
+            "ar": "لا أعرف ماذا أفعل."
+        },
+        {
+            "start": "00:00:27,561",
+            "end": "00:00:28,921",
+            "en": "I don't know what to do.",
+            "zh": "我不知道该怎么办。",
+            "ar": "لا أعرف ماذا أفعل."
+        },
+        {
+            "start": "00:00:29,001",
+            "end": "00:00:30,241",
+            "en": "I don't know what to do.",
+            "zh": "我不知道该怎么办。",
+            "ar": "لا أعرف ماذا أفعل."
+        },
+        {
+            "start": "00:00:30,421",
+            "end": "00:00:31,261",
+            "en": "It's so...",
+            "zh": "这是如此...",
+            "ar": "إنها لذلك..."
+        },
+        {
+            "start": "00:00:37,701",
+            "end": "00:00:38,821",
+            "en": "Oh my god.",
+            "zh": "哦，我的上帝。",
+            "ar": "يا إلهي."
+        },
+        {
+            "start": "00:00:44,961",
+            "end": "00:00:47,761",
+            "en": "Oh my god.",
+            "zh": "哦，我的上帝。",
+            "ar": "يا إلهي."
+        }
+    ]
+}

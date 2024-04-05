@@ -1,0 +1,192 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,019\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:02,760\",\n    \"end\": \"00:00:03,820\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:05,620\",\n    \"end\": \"00:00:07,220\",\n    \"lang\": \"ja\",\n    \"text\": \"私の\"\n  },\n  {\n    \"start\": \"00:00:07,220\",\n    \"end\": \"00:00:08,100\",\n    \"lang\": \"ja\",\n    \"text\": \"この私の\"\n  },\n  {\n    \"start\": \"00:00:08,100\",\n    \"end\": \"00:00:09,200\",\n    \"lang\": \"ja\",\n    \"text\": \"朝ごはんです\"\n  },\n  {\n    \"start\": \"00:00:10,178\",\n    \"end\": \"00:00:10,798\",\n    \"lang\": \"zh\",\n    \"text\": \"危機孩子\"\n  },\n  {\n    \"start\": \"00:00:11,650\",\n    \"end\": \"00:00:12,050\",\n    \"lang\": \"en\",\n    \"text\": \"bread,\"\n  },\n  {\n    \"start\": \"00:00:12,050\",\n    \"end\": \"00:00:13,250\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:13,250\",\n    \"end\": \"00:00:14,330\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:00:14,330\",\n    \"end\": \"00:00:15,190\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:00:15,190\",\n    \"end\": \"00:00:15,669\",\n    \"lang\": \"en\",\n    \"text\": \"egg.\"\n  },\n  {\n    \"start\": \"00:00:16,386\",\n    \"end\": \"00:00:18,166\",\n    \"lang\": \"en\",\n    \"text\": \"Eggs and sweet potato.\"\n  },\n  {\n    \"start\": \"00:00:22,658\",\n    \"end\": \"00:00:23,578\",\n    \"lang\": \"en\",\n    \"text\": \"and bean juice.\"\n  },\n  {\n    \"start\": \"00:00:25,118\",\n    \"end\": \"00:00:25,358\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:26,358\",\n    \"end\": \"00:00:27,918\",\n    \"lang\": \"en\",\n    \"text\": \"And also some\"\n  },\n  {\n    \"start\": \"00:00:31,037\",\n    \"end\": \"00:00:32,558\",\n    \"lang\": \"en\",\n    \"text\": \"unsalted nuts.\"\n  },\n  {\n    \"start\": \"00:00:36,518\",\n    \"end\": \"00:00:36,898\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:36,898\",\n    \"end\": \"00:00:37,998\",\n    \"lang\": \"en\",\n    \"text\": \"put it in here.\"\n  },\n  {\n    \"start\": \"00:00:45,098\",\n    \"end\": \"00:00:45,478\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:45,478\",\n    \"end\": \"00:00:45,958\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:47,998\",\n    \"end\": \"00:00:50,138\",\n    \"lang\": \"en\",\n    \"text\": \"the major update is\"\n  },\n  {\n    \"start\": \"00:00:50,748\",\n    \"end\": \"00:00:53,558\",\n    \"lang\": \"en\",\n    \"text\": \"I added this Vietnamese,\"\n  },\n  {\n    \"start\": \"00:00:53,558\",\n    \"end\": \"00:00:54,738\",\n    \"lang\": \"en\",\n    \"text\": \"Korean,\"\n  },\n  {\n    \"start\": \"00:00:55,137\",\n    \"end\": \"00:00:57,638\",\n    \"lang\": \"en\",\n    \"text\": \"and Spanish and French subtitles.\"\n  },\n  {\n    \"start\": \"00:00:58,858\",\n    \"end\": \"00:00:59,038\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:59,038\",\n    \"end\": \"00:00:59,578\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,019",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير",
+            "ja": "おはようございます"
+        },
+        {
+            "start": "00:00:02,760",
+            "end": "00:00:03,820",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير",
+            "ja": "おはようございます"
+        },
+        {
+            "start": "00:00:05,620",
+            "end": "00:00:07,220",
+            "en": "My",
+            "zh": "我的",
+            "ar": "لي",
+            "ja": "私の"
+        },
+        {
+            "start": "00:00:07,220",
+            "end": "00:00:08,100",
+            "en": "This is my",
+            "zh": "这是我的",
+            "ar": "هذه هي لي",
+            "ja": "この私の"
+        },
+        {
+            "start": "00:00:08,100",
+            "end": "00:00:09,200",
+            "en": "breakfast",
+            "zh": "早餐",
+            "ar": "وجبة الإفطار",
+            "ja": "朝ごはんです"
+        },
+        {
+            "start": "00:00:10,178",
+            "end": "00:00:10,798",
+            "en": "Feed the children",
+            "zh": "危機孩子",
+            "ar": "إطعام الأطفال"
+        },
+        {
+            "start": "00:00:11,650",
+            "end": "00:00:12,050",
+            "en": "bread",
+            "zh": "面包",
+            "ar": "خبز"
+        },
+        {
+            "start": "00:00:12,050",
+            "end": "00:00:13,250",
+            "en": "blueberry",
+            "zh": "蓝莓",
+            "ar": "توت برّي"
+        },
+        {
+            "start": "00:00:13,250",
+            "end": "00:00:14,330",
+            "en": "strawberry",
+            "zh": "草莓",
+            "ar": "فراولة"
+        },
+        {
+            "start": "00:00:14,330",
+            "end": "00:00:15,190",
+            "en": "chestnut",
+            "zh": "栗子",
+            "ar": "كستناء"
+        },
+        {
+            "start": "00:00:15,190",
+            "end": "00:00:15,669",
+            "en": "egg",
+            "zh": "鸡蛋",
+            "ar": "بيض"
+        },
+        {
+            "start": "00:00:16,386",
+            "end": "00:00:18,166",
+            "en": "Eggs and sweet potato",
+            "zh": "鸡蛋和红薯",
+            "ar": "بيض وبطاطا حلوة"
+        },
+        {
+            "start": "00:00:22,658",
+            "end": "00:00:23,578",
+            "en": "and bean juice",
+            "zh": "和豆浆",
+            "ar": "وعصير الفول"
+        },
+        {
+            "start": "00:00:25,118",
+            "end": "00:00:25,358",
+            "en": "Okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:00:26,358",
+            "end": "00:00:27,918",
+            "en": "And also some",
+            "zh": "还有一些",
+            "ar": "وأيضا بعض"
+        },
+        {
+            "start": "00:00:31,037",
+            "end": "00:00:32,558",
+            "en": "unsalted nuts",
+            "zh": "无盐坚果",
+            "ar": "مكسرات غير مملحة"
+        },
+        {
+            "start": "00:00:36,518",
+            "end": "00:00:36,898",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:36,898",
+            "end": "00:00:37,998",
+            "en": "put it in here.",
+            "zh": "放在这里。",
+            "ar": "ضعها هنا."
+        },
+        {
+            "start": "00:00:45,098",
+            "end": "00:00:45,478",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:45,478",
+            "end": "00:00:45,958",
+            "en": "so",
+            "zh": "所以",
+            "ar": "إذًا"
+        },
+        {
+            "start": "00:00:47,998",
+            "end": "00:00:50,138",
+            "en": "the major update is",
+            "zh": "主要更新是",
+            "ar": "التحديث الرئيسي هو"
+        },
+        {
+            "start": "00:00:50,748",
+            "end": "00:00:53,558",
+            "en": "I added this Vietnamese,",
+            "zh": "我添加了越南语，",
+            "ar": "لقد أضفت الفيتنامية،"
+        },
+        {
+            "start": "00:00:53,558",
+            "end": "00:00:54,738",
+            "en": "Korean,",
+            "zh": "韩语，",
+            "ar": "الكورية،"
+        },
+        {
+            "start": "00:00:55,137",
+            "end": "00:00:57,638",
+            "en": "and Spanish and French subtitles.",
+            "zh": "以及西班牙语和法语字幕。",
+            "ar": "وترجمات بالإسبانية والفرنسية."
+        },
+        {
+            "start": "00:00:58,858",
+            "end": "00:00:59,038",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:00:59,038",
+            "end": "00:00:59,578",
+            "en": "okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,300\",\n    \"lang\": \"en\",\n    \"text\": \"This is the first step of our lunch.\"\n  },\n  {\n    \"start\": \"00:00:05,899\",\n    \"end\": \"00:00:07,800\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to say it.\"\n  },\n  {\n    \"start\": \"00:00:10,380\",\n    \"end\": \"00:00:12,400\",\n    \"lang\": \"en\",\n    \"text\": \"Just the vegetables and the chicken.\"\n  },\n  {\n    \"start\": \"00:00:13,780\",\n    \"end\": \"00:00:16,180\",\n    \"lang\": \"en\",\n    \"text\": \"This is the first step.\"\n  },\n  {\n    \"start\": \"00:00:17,160\",\n    \"end\": \"00:00:17,580\",\n    \"lang\": \"en\",\n    \"text\": \"And then,\"\n  },\n  {\n    \"start\": \"00:00:17,580\",\n    \"end\": \"00:00:18,780\",\n    \"lang\": \"en\",\n    \"text\": \"the rice noodles.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,300",
+            "vi": "Đây là bước đầu tiên của bữa trưa chúng ta."
+        },
+        {
+            "start": "00:00:05,899",
+            "end": "00:00:07,800",
+            "vi": "Tôi không biết nói thế nào."
+        },
+        {
+            "start": "00:00:10,380",
+            "end": "00:00:12,400",
+            "vi": "Chỉ có rau cùng với thịt gà."
+        },
+        {
+            "start": "00:00:13,780",
+            "end": "00:00:16,180",
+            "vi": "Đây là bước đầu tiên."
+        },
+        {
+            "start": "00:00:17,160",
+            "end": "00:00:17,580",
+            "vi": "Và sau đó,"
+        },
+        {
+            "start": "00:00:17,580",
+            "end": "00:00:18,780",
+            "vi": "là bún."
+        }
+    ]
+}

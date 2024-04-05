@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,520\",\n    \"end\": \"00:00:03,340\",\n    \"lang\": \"en\",\n    \"text\": \"How can I let the people around the world to know?\"\n  },\n  {\n    \"start\": \"00:00:04,898\",\n    \"end\": \"00:00:05,238\",\n    \"lang\": \"zh\",\n    \"text\": \"这个肉 Christians\"\n  },\n  {\n    \"start\": \"00:00:08,738\",\n    \"end\": \"00:00:10,258\",\n    \"lang\": \"en\",\n    \"text\": \"This is the best potato ever!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,520",
+            "end": "00:00:03,340",
+            "vi": "Làm sao để mọi người trên thế giới biết được?"
+        },
+        {
+            "start": "00:00:04,898",
+            "end": "00:00:05,238",
+            "vi": "Thịt này Christians"
+        },
+        {
+            "start": "00:00:08,738",
+            "end": "00:00:10,258",
+            "vi": "Đây là củ khoai tốt nhất từ trước tới giờ!"
+        }
+    ]
+}

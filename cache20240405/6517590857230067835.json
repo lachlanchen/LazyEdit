@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,620\",\n    \"lang\": \"en\",\n    \"text\": \"I said a wrong word in the previous video.\"\n  },\n  {\n    \"start\": \"00:00:04,940\",\n    \"end\": \"00:00:05,480\",\n    \"lang\": \"en\",\n    \"text\": \"It's vulgar.\"\n  },\n  {\n    \"start\": \"00:00:06,120\",\n    \"end\": \"00:00:07,040\",\n    \"lang\": \"en\",\n    \"text\": \"But in Western culture,\"\n  },\n  {\n    \"start\": \"00:00:07,040\",\n    \"end\": \"00:00:10,960\",\n    \"lang\": \"en\",\n    \"text\": \"vulgar means another vessel.\"\n  },\n  {\n    \"start\": \"00:00:11,640\",\n    \"end\": \"00:00:17,300\",\n    \"lang\": \"en\",\n    \"text\": \"And vulgar means something is not elegant.\"\n  },\n  {\n    \"start\": \"00:00:22,040\",\n    \"end\": \"00:00:28,120\",\n    \"lang\": \"en\",\n    \"text\": \"The French think English is vulgar.\"\n  },\n  {\n    \"start\": \"00:00:28,120\",\n    \"end\": \"00:00:31,520\",\n    \"lang\": \"en\",\n    \"text\": \"And the Britons think the American accent is vulgar.\"\n  },\n  {\n    \"start\": \"00:00:32,439\",\n    \"end\": \"00:00:34,880\",\n    \"lang\": \"en\",\n    \"text\": \"As I watched the video,\"\n  },\n  {\n    \"start\": \"00:00:34,880\",\n    \"end\": \"00:00:45,440\",\n    \"lang\": \"en\",\n    \"text\": \"the Britons use sidewalks instead of pavements.\"\n  },\n  {\n    \"start\": \"00:00:45,700\",\n    \"end\": \"00:00:51,100\",\n    \"lang\": \"en\",\n    \"text\": \"And use paper baskets to represent the bin.\"\n  },\n  {\n    \"start\": \"00:00:51,629\",\n    \"end\": \"00:00:55,160\",\n    \"lang\": \"en\",\n    \"text\": \"And also horseback riding.\"\n  },\n  {\n    \"start\": \"00:00:56,800\",\n    \"end\": \"00:01:02,160\",\n    \"lang\": \"en\",\n    \"text\": \"They change horseback riding from British English to horseback riding.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,620",
+            "es": "Dije una palabra incorrecta en el vídeo anterior.",
+            "fr": "J'ai dit un mauvais mot dans la vidéo précédente.",
+            "uk": "Я сказав неправильне слово у попередньому відео."
+        },
+        {
+            "start": "00:00:04,940",
+            "end": "00:00:05,480",
+            "es": "Es vulgar.",
+            "fr": "C'est vulgaire.",
+            "uk": "Це вульгарно."
+        },
+        {
+            "start": "00:00:06,120",
+            "end": "00:00:07,040",
+            "es": "Pero en la cultura occidental,",
+            "fr": "Mais dans la culture occidentale,",
+            "uk": "Але в західній культурі,"
+        },
+        {
+            "start": "00:00:07,040",
+            "end": "00:00:10,960",
+            "es": "vulgar significa otro recipiente.",
+            "fr": "vulgaire signifie un autre vase.",
+            "uk": "вульгарне означає іншу посудину."
+        },
+        {
+            "start": "00:00:11,640",
+            "end": "00:00:17,300",
+            "es": "Y vulgar significa que algo no es elegante.",
+            "fr": "Et vulgaire signifie que quelque chose n'est pas élégant.",
+            "uk": "І вульгарне означає, що щось не елегантне."
+        },
+        {
+            "start": "00:00:22,040",
+            "end": "00:00:28,120",
+            "es": "Los franceses piensan que el inglés es vulgar.",
+            "fr": "Les Français pensent que l'anglais est vulgaire.",
+            "uk": "Французи вважають, що англійська вульгарна."
+        },
+        {
+            "start": "00:00:28,120",
+            "end": "00:00:31,520",
+            "es": "Y los británicos piensan que el acento americano es vulgar.",
+            "fr": "Et les Britanniques pensent que l'accent américain est vulgaire.",
+            "uk": "А британці вважають, що американський акцент вульгарний."
+        },
+        {
+            "start": "00:00:32,439",
+            "end": "00:00:34,880",
+            "es": "Mientras veía el video,",
+            "fr": "En regardant la vidéo,",
+            "uk": "Дивлячись відео,"
+        },
+        {
+            "start": "00:00:34,880",
+            "end": "00:00:45,440",
+            "es": "los británicos usan aceras en lugar de pavimentos.",
+            "fr": "les Britanniques utilisent les trottoirs au lieu de chaussées.",
+            "uk": "британці використовують тротуари замість павементів."
+        },
+        {
+            "start": "00:00:45,700",
+            "end": "00:00:51,100",
+            "es": "Y usan cestos de papel para representar el bote de basura.",
+            "fr": "Et utilisent des corbeilles à papier pour représenter la poubelle.",
+            "uk": "І використовують кошики для паперу, щоб представити смітник."
+        },
+        {
+            "start": "00:00:51,629",
+            "end": "00:00:55,160",
+            "es": "Y también equitación.",
+            "fr": "Et aussi l'équitation.",
+            "uk": "А також верхова їзда."
+        },
+        {
+            "start": "00:00:56,800",
+            "end": "00:01:02,160",
+            "es": "Cambiaron de montar a caballo en inglés británico a montar a caballo.",
+            "fr": "Ils ont changé l'équitation de l'anglais britannique à l'équitation.",
+            "uk": "Вони змінили верхову їзду з британської англійської на верхову їзду."
+        }
+    ]
+}

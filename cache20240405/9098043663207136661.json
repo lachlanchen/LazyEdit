@@ -1,0 +1,15 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,840\",\n    \"lang\": \"en\",\n    \"text\": \"This bird just get this carrot.\"\n  },\n  {\n    \"start\": \"00:00:04,760\",\n    \"end\": \"00:00:07,860\",\n    \"lang\": \"en\",\n    \"text\": \"She is so beautiful with yellow eyes.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,840",
+            "ko": "이 새가 방금 이 당근을 가져갔어요."
+        },
+        {
+            "start": "00:00:04,760",
+            "end": "00:00:07,860",
+            "ko": "노란 눈을 가진 그녀는 정말 아름다워요."
+        }
+    ]
+}

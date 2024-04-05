@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,359\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"zh\",\n    \"text\": \"不想回家\"\n  },\n  {\n    \"start\": \"00:00:04,770\",\n    \"end\": \"00:00:05,270\",\n    \"lang\": \"en\",\n    \"text\": \"Good boy,\"\n  },\n  {\n    \"start\": \"00:00:05,270\",\n    \"end\": \"00:00:05,970\",\n    \"lang\": \"en\",\n    \"text\": \"good boy,\"\n  },\n  {\n    \"start\": \"00:00:05,970\",\n    \"end\": \"00:00:06,670\",\n    \"lang\": \"en\",\n    \"text\": \"good boy.\"\n  },\n  {\n    \"start\": \"00:00:07,010\",\n    \"end\": \"00:00:08,450\",\n    \"lang\": \"en\",\n    \"text\": \"He's 15 years old.\"\n  },\n  {\n    \"start\": \"00:00:09,090\",\n    \"end\": \"00:00:09,430\",\n    \"lang\": \"en\",\n    \"text\": \"Yeah,\"\n  },\n  {\n    \"start\": \"00:00:09,430\",\n    \"end\": \"00:00:10,830\",\n    \"lang\": \"en\",\n    \"text\": \"that's a very lazy dog.\"\n  },\n  {\n    \"start\": \"00:00:10,930\",\n    \"end\": \"00:00:11,830\",\n    \"lang\": \"en\",\n    \"text\": \"Very lazy and old.\"\n  },\n  {\n    \"start\": \"00:00:12,570\",\n    \"end\": \"00:00:13,970\",\n    \"lang\": \"en\",\n    \"text\": \"He doesn't want to go home.\"\n  },\n  {\n    \"start\": \"00:00:13,970\",\n    \"end\": \"00:00:15,250\",\n    \"lang\": \"en\",\n    \"text\": \"He wants to go everywhere.\"\n  },\n  {\n    \"start\": \"00:00:15,910\",\n    \"end\": \"00:00:17,410\",\n    \"lang\": \"en\",\n    \"text\": \"This is a 15 years old dog.\"\n  },\n  {\n    \"start\": \"00:00:17,510\",\n    \"end\": \"00:00:18,590\",\n    \"lang\": \"en\",\n    \"text\": \"Come here!\"\n  },\n  {\n    \"start\": \"00:00:19,830\",\n    \"end\": \"00:00:20,630\",\n    \"lang\": \"en\",\n    \"text\": \"Lazy dog.\"\n  },\n  {\n    \"start\": \"00:00:20,630\",\n    \"end\": \"00:00:21,610\",\n    \"lang\": \"en\",\n    \"text\": \"I love it.\"\n  },\n  {\n    \"start\": \"00:00:21,750\",\n    \"end\": \"00:00:22,650\",\n    \"lang\": \"en\",\n    \"text\": \"Come on!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,359",
+            "end": "00:00:02,240",
+            "en": "Don't want to go home",
+            "zh": "不想回家",
+            "ar": "لا أريد العودة إلى المنزل"
+        },
+        {
+            "start": "00:00:04,770",
+            "end": "00:00:05,270",
+            "en": "Good boy,",
+            "zh": "好孩子，",
+            "ar": "صبي جيد،"
+        },
+        {
+            "start": "00:00:05,270",
+            "end": "00:00:05,970",
+            "en": "good boy,",
+            "zh": "好孩子，",
+            "ar": "صبي جيد،"
+        },
+        {
+            "start": "00:00:05,970",
+            "end": "00:00:06,670",
+            "en": "good boy.",
+            "zh": "好孩子。",
+            "ar": "صبي جيد."
+        },
+        {
+            "start": "00:00:07,010",
+            "end": "00:00:08,450",
+            "en": "He's 15 years old.",
+            "zh": "他15岁了。",
+            "ar": "عمره 15 عامًا."
+        },
+        {
+            "start": "00:00:09,090",
+            "end": "00:00:09,430",
+            "en": "Yeah,",
+            "zh": "是的，",
+            "ar": "نعم،"
+        },
+        {
+            "start": "00:00:09,430",
+            "end": "00:00:10,830",
+            "en": "that's a very lazy dog.",
+            "zh": "这是一只非常懒的狗。",
+            "ar": "هذا كلب كسول جدا."
+        },
+        {
+            "start": "00:00:10,930",
+            "end": "00:00:11,830",
+            "en": "Very lazy and old.",
+            "zh": "非常懒和老。",
+            "ar": "كسول جدا وقديم."
+        },
+        {
+            "start": "00:00:12,570",
+            "end": "00:00:13,970",
+            "en": "He doesn't want to go home.",
+            "zh": "他不想回家。",
+            "ar": "لا يريد الذهاب إلى المنزل."
+        },
+        {
+            "start": "00:00:13,970",
+            "end": "00:00:15,250",
+            "en": "He wants to go everywhere.",
+            "zh": "他想去任何地方。",
+            "ar": "يريد الذهاب إلى كل مكان."
+        },
+        {
+            "start": "00:00:15,910",
+            "end": "00:00:17,410",
+            "en": "This is a 15 years old dog.",
+            "zh": "这是一只15岁的狗。",
+            "ar": "هذا كلب يبلغ من العمر 15 عامًا."
+        },
+        {
+            "start": "00:00:17,510",
+            "end": "00:00:18,590",
+            "en": "Come here!",
+            "zh": "过来！",
+            "ar": "تعال إلى هنا!"
+        },
+        {
+            "start": "00:00:19,830",
+            "end": "00:00:20,630",
+            "en": "Lazy dog.",
+            "zh": "懒狗。",
+            "ar": "كلب كسول."
+        },
+        {
+            "start": "00:00:20,630",
+            "end": "00:00:21,610",
+            "en": "I love it.",
+            "zh": "我喜欢它。",
+            "ar": "أحب ذلك."
+        },
+        {
+            "start": "00:00:21,750",
+            "end": "00:00:22,650",
+            "en": "Come on!",
+            "zh": "来吧！",
+            "ar": "هيا!"
+        }
+    ]
+}

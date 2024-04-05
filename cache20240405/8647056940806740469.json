@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,260\",\n    \"lang\": \"en\",\n    \"text\": \"I wish I can record that he played guitar,\"\n  },\n  {\n    \"start\": \"00:00:04,260\",\n    \"end\": \"00:00:05,340\",\n    \"lang\": \"en\",\n    \"text\": \"the guitar class,\"\n  },\n  {\n    \"start\": \"00:00:05,340\",\n    \"end\": \"00:00:08,400\",\n    \"lang\": \"en\",\n    \"text\": \"fluently in 1861 time.\"\n  },\n  {\n    \"start\": \"00:00:42,599\",\n    \"end\": \"00:00:43,160\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:00:43,160\",\n    \"end\": \"00:00:44,080\",\n    \"lang\": \"en\",\n    \"text\": \"one more time.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,260",
+            "vi": "Ước gì tôi có thể ghi lại cảnh anh ấy chơi guitar,"
+        },
+        {
+            "start": "00:00:04,260",
+            "end": "00:00:05,340",
+            "vi": "lớp học guitar,"
+        },
+        {
+            "start": "00:00:05,340",
+            "end": "00:00:08,400",
+            "vi": "một cách trôi chảy vào năm 1861."
+        },
+        {
+            "start": "00:00:42,599",
+            "end": "00:00:43,160",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:43,160",
+            "end": "00:00:44,080",
+            "vi": "một lần nữa."
+        }
+    ]
+}

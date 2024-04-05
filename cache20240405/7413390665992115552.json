@@ -1,0 +1,115 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:05:06,118\",\n    \"end\": \"00:05:07,718\",\n    \"lang\": \"en\",\n    \"text\": \"life everyday.\"\n  },\n  {\n    \"start\": \"00:05:08,398\",\n    \"end\": \"00:05:09,578\",\n    \"lang\": \"en\",\n    \"text\": \"And um...\"\n  },\n  {\n    \"start\": \"00:05:10,210\",\n    \"end\": \"00:05:10,930\",\n    \"lang\": \"ja\",\n    \"text\": \"みくねっす、\"\n  },\n  {\n    \"start\": \"00:05:10,930\",\n    \"end\": \"00:05:11,830\",\n    \"lang\": \"ja\",\n    \"text\": \"ほうちゅるり、\"\n  },\n  {\n    \"start\": \"00:05:11,830\",\n    \"end\": \"00:05:12,410\",\n    \"lang\": \"ja\",\n    \"text\": \"ぴー\"\n  },\n  {\n    \"start\": \"00:05:15,746\",\n    \"end\": \"00:05:16,766\",\n    \"lang\": \"en\",\n    \"text\": \"be comprehensive,\"\n  },\n  {\n    \"start\": \"00:05:16,766\",\n    \"end\": \"00:05:19,006\",\n    \"lang\": \"en\",\n    \"text\": \"inclusive,\"\n  },\n  {\n    \"start\": \"00:05:19,006\",\n    \"end\": \"00:05:20,746\",\n    \"lang\": \"en\",\n    \"text\": \"and fantastic.\"\n  },\n  {\n    \"start\": \"00:05:22,986\",\n    \"end\": \"00:05:26,206\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that's the right thing to do.\"\n  },\n  {\n    \"start\": \"00:05:26,506\",\n    \"end\": \"00:05:29,646\",\n    \"lang\": \"en\",\n    \"text\": \"But it doesn't mean that you don't learn,\"\n  },\n  {\n    \"start\": \"00:05:29,646\",\n    \"end\": \"00:05:30,606\",\n    \"lang\": \"en\",\n    \"text\": \"don't study.\"\n  },\n  {\n    \"start\": \"00:05:30,886\",\n    \"end\": \"00:05:31,726\",\n    \"lang\": \"en\",\n    \"text\": \"You can still study,\"\n  },\n  {\n    \"start\": \"00:05:31,726\",\n    \"end\": \"00:05:32,666\",\n    \"lang\": \"en\",\n    \"text\": \"you can still learn.\"\n  },\n  {\n    \"start\": \"00:05:33,386\",\n    \"end\": \"00:05:37,866\",\n    \"lang\": \"en\",\n    \"text\": \"It's a thing that is deep in your mind,\"\n  },\n  {\n    \"start\": \"00:05:39,466\",\n    \"end\": \"00:05:42,426\",\n    \"lang\": \"en\",\n    \"text\": \"for which you are desperate,\"\n  },\n  {\n    \"start\": \"00:05:42,426\",\n    \"end\": \"00:05:43,606\",\n    \"lang\": \"en\",\n    \"text\": \"you are crazy,\"\n  },\n  {\n    \"start\": \"00:05:43,606\",\n    \"end\": \"00:05:44,886\",\n    \"lang\": \"en\",\n    \"text\": \"you are eager.\"\n  },\n  {\n    \"start\": \"00:05:46,265\",\n    \"end\": \"00:05:48,126\",\n    \"lang\": \"en\",\n    \"text\": \"So you can still do it,\"\n  },\n  {\n    \"start\": \"00:05:48,126\",\n    \"end\": \"00:05:51,266\",\n    \"lang\": \"en\",\n    \"text\": \"you can still learn things,\"\n  },\n  {\n    \"start\": \"00:05:51,586\",\n    \"end\": \"00:05:55,746\",\n    \"lang\": \"en\",\n    \"text\": \"but it's not a thing that you escape from reality.\"\n  },\n  {\n    \"start\": \"00:05:56,525\",\n    \"end\": \"00:05:57,046\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:05:57,046\",\n    \"end\": \"00:05:58,706\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:05:06,118",
+            "end": "00:05:07,718",
+            "ja": "日々の生活。"
+        },
+        {
+            "start": "00:05:08,398",
+            "end": "00:05:09,578",
+            "ja": "そしてえーと..."
+        },
+        {
+            "start": "00:05:10,210",
+            "end": "00:05:10,930",
+            "ja": "複雑さ、"
+        },
+        {
+            "start": "00:05:10,930",
+            "end": "00:05:11,830",
+            "ja": "文化的な理解、"
+        },
+        {
+            "start": "00:05:11,830",
+            "end": "00:05:12,410",
+            "ja": "そして平和。"
+        },
+        {
+            "start": "00:05:15,746",
+            "end": "00:05:16,766",
+            "ja": "包括的で、"
+        },
+        {
+            "start": "00:05:16,766",
+            "end": "00:05:19,006",
+            "ja": "包容力があり、"
+        },
+        {
+            "start": "00:05:19,006",
+            "end": "00:05:20,746",
+            "ja": "素晴らしいものであるべきです。"
+        },
+        {
+            "start": "00:05:22,986",
+            "end": "00:05:26,206",
+            "ja": "それが正しいことだと信じています。"
+        },
+        {
+            "start": "00:05:26,506",
+            "end": "00:05:29,646",
+            "ja": "しかし、それはあなたが学ばないことを意味するわけではありません、"
+        },
+        {
+            "start": "00:05:29,646",
+            "end": "00:05:30,606",
+            "ja": "勉強しないことを意味するわけではありません。"
+        },
+        {
+            "start": "00:05:30,886",
+            "end": "00:05:31,726",
+            "ja": "まだ勉強することができます、"
+        },
+        {
+            "start": "00:05:31,726",
+            "end": "00:05:32,666",
+            "ja": "まだ学ぶことができます。"
+        },
+        {
+            "start": "00:05:33,386",
+            "end": "00:05:37,866",
+            "ja": "それはあなたの心の奥深くにあるものです、"
+        },
+        {
+            "start": "00:05:39,466",
+            "end": "00:05:42,426",
+            "ja": "あなたが切望しているもの、"
+        },
+        {
+            "start": "00:05:42,426",
+            "end": "00:05:43,606",
+            "ja": "あなたが狂っているもの、"
+        },
+        {
+            "start": "00:05:43,606",
+            "end": "00:05:44,886",
+            "ja": "あなたが熱望しているもの。"
+        },
+        {
+            "start": "00:05:46,265",
+            "end": "00:05:48,126",
+            "ja": "だから、まだそれをすることができます、"
+        },
+        {
+            "start": "00:05:48,126",
+            "end": "00:05:51,266",
+            "ja": "まだ物事を学ぶことができます、"
+        },
+        {
+            "start": "00:05:51,586",
+            "end": "00:05:55,746",
+            "ja": "しかし、それは現実から逃げるものではありません。"
+        },
+        {
+            "start": "00:05:56,525",
+            "end": "00:05:57,046",
+            "ja": "わかりました、"
+        },
+        {
+            "start": "00:05:57,046",
+            "end": "00:05:58,706",
+            "ja": "さようなら。"
+        }
+    ]
+}

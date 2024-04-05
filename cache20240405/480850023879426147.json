@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,260\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,260\",\n    \"end\": \"00:00:02,820\",\n    \"lang\": \"en\",\n    \"text\": \"so I found that this failed launch,\"\n  },\n  {\n    \"start\": \"00:00:02,820\",\n    \"end\": \"00:00:03,520\",\n    \"lang\": \"en\",\n    \"text\": \"launch,\"\n  },\n  {\n    \"start\": \"00:00:03,520\",\n    \"end\": \"00:00:05,320\",\n    \"lang\": \"en\",\n    \"text\": \"that it had some,\"\n  },\n  {\n    \"start\": \"00:00:05,320\",\n    \"end\": \"00:00:07,200\",\n    \"lang\": \"en\",\n    \"text\": \"something that is\"\n  },\n  {\n    \"start\": \"00:00:07,200\",\n    \"end\": \"00:00:07,940\",\n    \"lang\": \"en\",\n    \"text\": \"successful.\"\n  },\n  {\n    \"start\": \"00:00:07,940\",\n    \"end\": \"00:00:09,740\",\n    \"lang\": \"en\",\n    \"text\": \"So the potato is,\"\n  },\n  {\n    \"start\": \"00:00:09,740\",\n    \"end\": \"00:00:11,580\",\n    \"lang\": \"en\",\n    \"text\": \"is worse in taste.\"\n  },\n  {\n    \"start\": \"00:00:11,580\",\n    \"end\": \"00:00:14,640\",\n    \"lang\": \"en\",\n    \"text\": \"Because I used the beef oil\"\n  },\n  {\n    \"start\": \"00:00:18,640\",\n    \"end\": \"00:00:19,700\",\n    \"lang\": \"en\",\n    \"text\": \"to cook the,\"\n  },\n  {\n    \"start\": \"00:00:19,700\",\n    \"end\": \"00:00:21,140\",\n    \"lang\": \"en\",\n    \"text\": \"to cook the potato.\"\n  },\n  {\n    \"start\": \"00:00:32,720\",\n    \"end\": \"00:00:41,680\",\n    \"lang\": \"en\",\n    \"text\": \"This makes the taste and the smell of the potato extremely good and crispy.\"\n  },\n  {\n    \"start\": \"00:00:41,680\",\n    \"end\": \"00:00:43,660\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:43,660\",\n    \"end\": \"00:00:45,120\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,260",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:00:00,260",
+            "end": "00:00:02,820",
+            "en": "so I found that this failed launch",
+            "zh": "所以我发现这次发射失败了",
+            "ar": "لذا وجدت أن هذا الإطلاق فشل"
+        },
+        {
+            "start": "00:00:02,820",
+            "end": "00:00:03,520",
+            "en": "launch,",
+            "zh": "发射，",
+            "ar": "إطلاق،"
+        },
+        {
+            "start": "00:00:03,520",
+            "end": "00:00:05,320",
+            "en": "that it had some,",
+            "zh": "它有一些，",
+            "ar": "أنه كان لديه بعض،"
+        },
+        {
+            "start": "00:00:05,320",
+            "end": "00:00:07,200",
+            "en": "something that is",
+            "zh": "有些东西是",
+            "ar": "شيء هو"
+        },
+        {
+            "start": "00:00:07,200",
+            "end": "00:00:07,940",
+            "en": "successful.",
+            "zh": "成功的。",
+            "ar": "ناجح."
+        },
+        {
+            "start": "00:00:07,940",
+            "end": "00:00:09,740",
+            "en": "So the potato is,",
+            "zh": "所以土豆是，",
+            "ar": "لذلك البطاطا هي،"
+        },
+        {
+            "start": "00:00:09,740",
+            "end": "00:00:11,580",
+            "en": "is worse in taste.",
+            "zh": "味道更糟。",
+            "ar": "الطعم أسوأ."
+        },
+        {
+            "start": "00:00:11,580",
+            "end": "00:00:14,640",
+            "en": "Because I used beef oil",
+            "zh": "因为我用了牛油",
+            "ar": "لأني استخدمت زيت اللحم"
+        },
+        {
+            "start": "00:00:18,640",
+            "end": "00:00:19,700",
+            "en": "to cook the,",
+            "zh": "来烹饪，",
+            "ar": "لطهي،"
+        },
+        {
+            "start": "00:00:19,700",
+            "end": "00:00:21,140",
+            "en": "to cook the potato.",
+            "zh": "煮土豆。",
+            "ar": "لطهي البطاطا."
+        },
+        {
+            "start": "00:00:32,720",
+            "end": "00:00:41,680",
+            "en": "This makes the taste and the smell of the potato extremely good and crispy.",
+            "zh": "这使得土豆的味道和气味极好，而且酥脆。",
+            "ar": "هذا يجعل طعم ورائحة البطاطا جيدة ومقرمشة للغاية."
+        },
+        {
+            "start": "00:00:41,680",
+            "end": "00:00:43,660",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:00:43,660",
+            "end": "00:00:45,120",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقاً."
+        }
+    ]
+}

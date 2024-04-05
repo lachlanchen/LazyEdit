@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,500\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,500\",\n    \"end\": \"00:00:06,980\",\n    \"lang\": \"en\",\n    \"text\": \"so I believe you witnessed the whole process to make this Debasaki Men\"\n  },\n  {\n    \"start\": \"00:00:08,699\",\n    \"end\": \"00:00:13,860\",\n    \"lang\": \"en\",\n    \"text\": \"This Debasaki Men is chicken with noodles with\"\n  },\n  {\n    \"start\": \"00:00:15,479\",\n    \"end\": \"00:00:16,300\",\n    \"lang\": \"en\",\n    \"text\": \"Spinach,\"\n  },\n  {\n    \"start\": \"00:00:16,300\",\n    \"end\": \"00:00:18,040\",\n    \"lang\": \"en\",\n    \"text\": \"bean sprouts,\"\n  },\n  {\n    \"start\": \"00:00:18,040\",\n    \"end\": \"00:00:18,980\",\n    \"lang\": \"en\",\n    \"text\": \"carrot.\"\n  },\n  {\n    \"start\": \"00:00:18,980\",\n    \"end\": \"00:00:20,120\",\n    \"lang\": \"en\",\n    \"text\": \"This is carrot.\"\n  },\n  {\n    \"start\": \"00:00:20,120\",\n    \"end\": \"00:00:22,080\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness\"\n  },\n  {\n    \"start\": \"00:00:22,870\",\n    \"end\": \"00:00:24,200\",\n    \"lang\": \"en\",\n    \"text\": \"The taste is awesome\"\n  },\n  {\n    \"start\": \"00:00:26,460\",\n    \"end\": \"00:00:27,280\",\n    \"lang\": \"en\",\n    \"text\": \"And\"\n  },\n  {\n    \"start\": \"00:00:27,280\",\n    \"end\": \"00:00:29,440\",\n    \"lang\": \"en\",\n    \"text\": \"And apricots,\"\n  },\n  {\n    \"start\": \"00:00:29,440\",\n    \"end\": \"00:00:31,160\",\n    \"lang\": \"en\",\n    \"text\": \"awesome.\"\n  },\n  {\n    \"start\": \"00:00:31,160\",\n    \"end\": \"00:00:32,220\",\n    \"lang\": \"en\",\n    \"text\": \"Chicken with\"\n  },\n  {\n    \"start\": \"00:00:36,194\",\n    \"end\": \"00:00:36,874\",\n    \"lang\": \"en\",\n    \"text\": \"なぜ美 Kristin is\"\n  },\n  {\n    \"start\": \"00:00:36,974\",\n    \"end\": \"00:00:37,214\",\n    \"lang\": \"en\",\n    \"text\": \"gold\"\n  },\n  {\n    \"start\": \"00:00:39,618\",\n    \"end\": \"00:00:40,138\",\n    \"lang\": \"en\",\n    \"text\": \"The tasting,\"\n  },\n  {\n    \"start\": \"00:00:40,138\",\n    \"end\": \"00:00:41,318\",\n    \"lang\": \"en\",\n    \"text\": \"the soup,\"\n  },\n  {\n    \"start\": \"00:00:41,318\",\n    \"end\": \"00:00:42,958\",\n    \"lang\": \"en\",\n    \"text\": \"how perfect.\"\n  },\n  {\n    \"start\": \"00:00:55,658\",\n    \"end\": \"00:01:01,038\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that the facial expression is exaggerated,\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,500",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:00,500",
+            "end": "00:00:06,980",
+            "vi": "vì vậy tôi tin là bạn đã chứng kiến quá trình chế biến món Debasaki này"
+        },
+        {
+            "start": "00:00:08,699",
+            "end": "00:00:13,860",
+            "vi": "Món Debasaki này là món gà với mì và"
+        },
+        {
+            "start": "00:00:15,479",
+            "end": "00:00:16,300",
+            "vi": "Rau chân vịt,"
+        },
+        {
+            "start": "00:00:16,300",
+            "end": "00:00:18,040",
+            "vi": "giá đỗ,"
+        },
+        {
+            "start": "00:00:18,040",
+            "end": "00:00:18,980",
+            "vi": "cà rốt."
+        },
+        {
+            "start": "00:00:18,980",
+            "end": "00:00:20,120",
+            "vi": "Đây là cà rốt."
+        },
+        {
+            "start": "00:00:20,120",
+            "end": "00:00:22,080",
+            "vi": "Ôi chao ôi"
+        },
+        {
+            "start": "00:00:22,870",
+            "end": "00:00:24,200",
+            "vi": "Món này ngon tuyệt vời"
+        },
+        {
+            "start": "00:00:26,460",
+            "end": "00:00:27,280",
+            "vi": "Và"
+        },
+        {
+            "start": "00:00:27,280",
+            "end": "00:00:29,440",
+            "vi": "Và quả mơ,"
+        },
+        {
+            "start": "00:00:29,440",
+            "end": "00:00:31,160",
+            "vi": "tuyệt vời."
+        },
+        {
+            "start": "00:00:31,160",
+            "end": "00:00:32,220",
+            "vi": "Gà với"
+        },
+        {
+            "start": "00:00:36,194",
+            "end": "00:00:36,874",
+            "vi": "Kristin đẹp là"
+        },
+        {
+            "start": "00:00:36,974",
+            "end": "00:00:37,214",
+            "vi": "vàng"
+        },
+        {
+            "start": "00:00:39,618",
+            "end": "00:00:40,138",
+            "vi": "Việc nếm thử,"
+        },
+        {
+            "start": "00:00:40,138",
+            "end": "00:00:41,318",
+            "vi": "súp,"
+        },
+        {
+            "start": "00:00:41,318",
+            "end": "00:00:42,958",
+            "vi": "hoàn hảo."
+        },
+        {
+            "start": "00:00:55,658",
+            "end": "00:01:01,038",
+            "vi": "Tôi tin rằng biểu cảm khuôn mặt đã được phóng đại,"
+        }
+    ]
+}

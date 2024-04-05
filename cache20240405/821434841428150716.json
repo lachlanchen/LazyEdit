@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,320\",\n    \"lang\": \"zh\",\n    \"text\": \"一副Normal Music太难听\"\n  },\n  {\n    \"start\": \"00:00:03,458\",\n    \"end\": \"00:00:06,458\",\n    \"lang\": \"en\",\n    \"text\": \"at 1 to 100 scale.\"\n  },\n  {\n    \"start\": \"00:00:06,458\",\n    \"end\": \"00:00:10,378\",\n    \"lang\": \"en\",\n    \"text\": \"I must be negative 100.\"\n  },\n  {\n    \"start\": \"00:00:10,378\",\n    \"end\": \"00:00:13,878\",\n    \"lang\": \"en\",\n    \"text\": \"So I cannot sing,\"\n  },\n  {\n    \"start\": \"00:00:13,878\",\n    \"end\": \"00:00:15,358\",\n    \"lang\": \"en\",\n    \"text\": \"cannot catch the tone,\"\n  },\n  {\n    \"start\": \"00:00:15,358\",\n    \"end\": \"00:00:18,498\",\n    \"lang\": \"en\",\n    \"text\": \"cannot\"\n  },\n  {\n    \"start\": \"00:00:48,498\",\n    \"end\": \"00:00:49,178\",\n    \"lang\": \"en\",\n    \"text\": \"sing.\"\n  },\n  {\n    \"start\": \"00:00:49,178\",\n    \"end\": \"00:00:50,778\",\n    \"lang\": \"en\",\n    \"text\": \"Not perfectly 100,\"\n  },\n  {\n    \"start\": \"00:00:50,778\",\n    \"end\": \"00:00:57,358\",\n    \"lang\": \"en\",\n    \"text\": \"but just I will sing 100.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,320",
+            "vi": "Một bản nhạc Normal nghe quá tệ"
+        },
+        {
+            "start": "00:00:03,458",
+            "end": "00:00:06,458",
+            "vi": "trên thang điểm từ 1 đến 100."
+        },
+        {
+            "start": "00:00:06,458",
+            "end": "00:00:10,378",
+            "vi": "Tôi phải là âm 100."
+        },
+        {
+            "start": "00:00:10,378",
+            "end": "00:00:13,878",
+            "vi": "Vì vậy tôi không thể hát,"
+        },
+        {
+            "start": "00:00:13,878",
+            "end": "00:00:15,358",
+            "vi": "không thể nắm bắt giai điệu,"
+        },
+        {
+            "start": "00:00:15,358",
+            "end": "00:00:18,498",
+            "vi": "không thể"
+        },
+        {
+            "start": "00:00:48,498",
+            "end": "00:00:49,178",
+            "vi": "hát."
+        },
+        {
+            "start": "00:00:49,178",
+            "end": "00:00:50,778",
+            "vi": "Không hoàn hảo 100,"
+        },
+        {
+            "start": "00:00:50,778",
+            "end": "00:00:57,358",
+            "vi": "nhưng tôi sẽ hát 100."
+        }
+    ]
+}

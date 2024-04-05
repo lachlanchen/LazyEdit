@@ -1,0 +1,187 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,700\",\n    \"lang\": \"en\",\n    \"text\": \"It's time to put all these together.\"\n  },\n  {\n    \"start\": \"00:00:02,820\",\n    \"end\": \"00:00:04,140\",\n    \"lang\": \"en\",\n    \"text\": \"This is instant noodle,\"\n  },\n  {\n    \"start\": \"00:00:04,140\",\n    \"end\": \"00:00:04,960\",\n    \"lang\": \"en\",\n    \"text\": \"spinach,\"\n  },\n  {\n    \"start\": \"00:00:04,960\",\n    \"end\": \"00:00:06,040\",\n    \"lang\": \"en\",\n    \"text\": \"spinach sprouts,\"\n  },\n  {\n    \"start\": \"00:00:06,040\",\n    \"end\": \"00:00:09,620\",\n    \"lang\": \"en\",\n    \"text\": \"and with this chicken wing,\"\n  },\n  {\n    \"start\": \"00:00:09,620\",\n    \"end\": \"00:00:11,320\",\n    \"lang\": \"en\",\n    \"text\": \"chicken wing,\"\n  },\n  {\n    \"start\": \"00:00:11,520\",\n    \"end\": \"00:00:12,540\",\n    \"lang\": \"en\",\n    \"text\": \"carrot and the parsley.\"\n  },\n  {\n    \"start\": \"00:00:14,040\",\n    \"end\": \"00:00:14,520\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:15,500\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:15,500\",\n    \"end\": \"00:00:17,780\",\n    \"lang\": \"en\",\n    \"text\": \"I put it here.\"\n  },\n  {\n    \"start\": \"00:00:17,890\",\n    \"end\": \"00:00:18,090\",\n    \"lang\": \"ja\",\n    \"text\": \"頑張った\"\n  },\n  {\n    \"start\": \"00:00:19,650\",\n    \"end\": \"00:00:19,890\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:19,890\",\n    \"end\": \"00:00:22,350\",\n    \"lang\": \"en\",\n    \"text\": \"this looks gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:24,970\",\n    \"end\": \"00:00:25,890\",\n    \"lang\": \"en\",\n    \"text\": \"This is a\"\n  },\n  {\n    \"start\": \"00:00:31,390\",\n    \"end\": \"00:00:33,450\",\n    \"lang\": \"en\",\n    \"text\": \"product of a top chef,\"\n  },\n  {\n    \"start\": \"00:00:33,930\",\n    \"end\": \"00:00:34,930\",\n    \"lang\": \"en\",\n    \"text\": \"Lai Ken-en-cheng.\"\n  },\n  {\n    \"start\": \"00:00:36,890\",\n    \"end\": \"00:00:37,650\",\n    \"lang\": \"en\",\n    \"text\": \"Chef,\"\n  },\n  {\n    \"start\": \"00:00:37,930\",\n    \"end\": \"00:00:40,470\",\n    \"lang\": \"en\",\n    \"text\": \"I don't serve,\"\n  },\n  {\n    \"start\": \"00:00:40,850\",\n    \"end\": \"00:00:42,210\",\n    \"lang\": \"en\",\n    \"text\": \"hardly can serve people.\"\n  },\n  {\n    \"start\": \"00:00:45,350\",\n    \"end\": \"00:00:45,570\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:45,570\",\n    \"end\": \"00:00:47,790\",\n    \"lang\": \"en\",\n    \"text\": \"mainly I serve only myself.\"\n  },\n  {\n    \"start\": \"00:00:48,750\",\n    \"end\": \"00:00:49,470\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:49,470\",\n    \"end\": \"00:00:50,590\",\n    \"lang\": \"en\",\n    \"text\": \"this is our parakase.\"\n  },\n  {\n    \"start\": \"00:00:51,510\",\n    \"end\": \"00:00:51,870\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:52,866\",\n    \"end\": \"00:00:54,126\",\n    \"lang\": \"ja\",\n    \"text\": \"これで終わりです。\"\n  },\n  {\n    \"start\": \"00:00:54,126\",\n    \"end\": \"00:00:54,966\",\n    \"lang\": \"ja\",\n    \"text\": \"また会いましょう!\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,700",
+            "es": "Es hora de juntar todo esto.",
+            "fr": "Il est temps de tout assembler.",
+            "uk": "Час зібрати все це разом."
+        },
+        {
+            "start": "00:00:02,820",
+            "end": "00:00:04,140",
+            "es": "Esto es fideo instantáneo,",
+            "fr": "Ceci est un nouille instantanée,",
+            "uk": "Це швидка локшина,"
+        },
+        {
+            "start": "00:00:04,140",
+            "end": "00:00:04,960",
+            "es": "espinacas,",
+            "fr": "épinards,",
+            "uk": "шпинат,"
+        },
+        {
+            "start": "00:00:04,960",
+            "end": "00:00:06,040",
+            "es": "brotes de espinacas,",
+            "fr": "pousses d'épinards,",
+            "uk": "паростки шпинату,"
+        },
+        {
+            "start": "00:00:06,040",
+            "end": "00:00:09,620",
+            "es": "y con este ala de pollo,",
+            "fr": "et avec cette aile de poulet,",
+            "uk": "і з цим крилом курки,"
+        },
+        {
+            "start": "00:00:09,620",
+            "end": "00:00:11,320",
+            "es": "ala de pollo,",
+            "fr": "aile de poulet,",
+            "uk": "крило курки,"
+        },
+        {
+            "start": "00:00:11,520",
+            "end": "00:00:12,540",
+            "es": "zanahoria y el perejil.",
+            "fr": "carotte et le persil.",
+            "uk": "морква та петрушка."
+        },
+        {
+            "start": "00:00:14,040",
+            "end": "00:00:14,520",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:15,500",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:15,500",
+            "end": "00:00:17,780",
+            "es": "lo pongo aquí.",
+            "fr": "je le mets ici.",
+            "uk": "я кладу це сюди."
+        },
+        {
+            "start": "00:00:17,890",
+            "end": "00:00:18,090",
+            "es": "Trabajé duro",
+            "fr": "J'ai travaillé dur",
+            "uk": "Я наполегливо працював"
+        },
+        {
+            "start": "00:00:19,650",
+            "end": "00:00:19,890",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "О,"
+        },
+        {
+            "start": "00:00:19,890",
+            "end": "00:00:22,350",
+            "es": "esto se ve maravilloso.",
+            "fr": "ça a l'air magnifique.",
+            "uk": "це виглядає чудово."
+        },
+        {
+            "start": "00:00:24,970",
+            "end": "00:00:25,890",
+            "es": "Esto es un",
+            "fr": "C'est un",
+            "uk": "Це"
+        },
+        {
+            "start": "00:00:31,390",
+            "end": "00:00:33,450",
+            "es": "producto de un gran chef,",
+            "fr": "produit d'un grand chef,",
+            "uk": "продукт великого шеф-кухаря,"
+        },
+        {
+            "start": "00:00:33,930",
+            "end": "00:00:34,930",
+            "es": "Lai Ken-en-cheng.",
+            "fr": "Lai Ken-en-cheng.",
+            "uk": "Лай Кен-ен-ченг."
+        },
+        {
+            "start": "00:00:36,890",
+            "end": "00:00:37,650",
+            "es": "Chef,",
+            "fr": "Chef,",
+            "uk": "Шефе,"
+        },
+        {
+            "start": "00:00:37,930",
+            "end": "00:00:40,470",
+            "es": "no sirvo,",
+            "fr": "je ne sers pas,",
+            "uk": "я не обслуговую,"
+        },
+        {
+            "start": "00:00:40,850",
+            "end": "00:00:42,210",
+            "es": "apenas puedo servir a la gente.",
+            "fr": "je peux à peine servir les gens.",
+            "uk": "я ледь можу обслуговувати людей."
+        },
+        {
+            "start": "00:00:45,350",
+            "end": "00:00:45,570",
+            "es": "Así que,",
+            "fr": "Donc,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:45,570",
+            "end": "00:00:47,790",
+            "es": "principalmente solo me sirvo a mí mismo.",
+            "fr": "principalement je ne sers que moi-même.",
+            "uk": "здебільшого я обслуговую лише себе."
+        },
+        {
+            "start": "00:00:48,750",
+            "end": "00:00:49,470",
+            "es": "Así que,",
+            "fr": "Donc,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:49,470",
+            "end": "00:00:50,590",
+            "es": "esto es nuestra paracasa.",
+            "fr": "c'est notre paracase.",
+            "uk": "це наш параказ."
+        },
+        {
+            "start": "00:00:51,510",
+            "end": "00:00:51,870",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:00:52,866",
+            "end": "00:00:54,126",
+            "es": "Con esto terminamos.",
+            "fr": "Nous avons terminé avec cela.",
+            "uk": "На цьому завершуємо."
+        },
+        {
+            "start": "00:00:54,126",
+            "end": "00:00:54,966",
+            "es": "¡Nos vemos!",
+            "fr": "À bientôt !",
+            "uk": "До зустрічі!"
+        }
+    ]
+}

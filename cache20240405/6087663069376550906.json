@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"This is our special Chongqing flavor,\"\n  },\n  {\n    \"start\": \"00:00:03,580\",\n    \"end\": \"00:00:06,640\",\n    \"lang\": \"en\",\n    \"text\": \"beef and potato.\"\n  },\n  {\n    \"start\": \"00:00:08,582\",\n    \"end\": \"00:00:09,082\",\n    \"lang\": \"en\",\n    \"text\": \"Beep.\"\n  },\n  {\n    \"start\": \"00:00:09,506\",\n    \"end\": \"00:00:12,206\",\n    \"lang\": \"en\",\n    \"text\": \"So let me check this.\"\n  },\n  {\n    \"start\": \"00:00:14,396\",\n    \"end\": \"00:00:15,206\",\n    \"lang\": \"en\",\n    \"text\": \"This potato,\"\n  },\n  {\n    \"start\": \"00:00:15,206\",\n    \"end\": \"00:00:20,186\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't make it as potato crumb.\"\n  },\n  {\n    \"start\": \"00:00:20,906\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to say it,\"\n  },\n  {\n    \"start\": \"00:00:22,146\",\n    \"end\": \"00:00:22,566\",\n    \"lang\": \"en\",\n    \"text\": \"toodoli.\"\n  },\n  {\n    \"start\": \"00:00:23,486\",\n    \"end\": \"00:00:30,626\",\n    \"lang\": \"en\",\n    \"text\": \"So I believe these small fragments will build a balance between flavor,\"\n  },\n  {\n    \"start\": \"00:00:30,626\",\n    \"end\": \"00:00:34,606\",\n    \"lang\": \"en\",\n    \"text\": \"so that is a combination\"\n  },\n  {\n    \"start\": \"00:00:34,606\",\n    \"end\": \"00:00:35,586\",\n    \"lang\": \"en\",\n    \"text\": \"that is a flavor,\"\n  },\n  {\n    \"start\": \"00:00:35,586\",\n    \"end\": \"00:00:40,326\",\n    \"lang\": \"en\",\n    \"text\": \"and the inner core without flavor.\"\n  },\n  {\n    \"start\": \"00:00:40,746\",\n    \"end\": \"00:00:44,746\",\n    \"lang\": \"en\",\n    \"text\": \"It will produce a perfect combination.\"\n  },\n  {\n    \"start\": \"00:00:46,086\",\n    \"end\": \"00:00:47,386\",\n    \"lang\": \"en\",\n    \"text\": \"It will blend in.\"\n  },\n  {\n    \"start\": \"00:00:47,946\",\n    \"end\": \"00:00:50,666\",\n    \"lang\": \"en\",\n    \"text\": \"If it's potato crumb,\"\n  },\n  {\n    \"start\": \"00:00:50,666\",\n    \"end\": \"00:00:54,046\",\n    \"lang\": \"en\",\n    \"text\": \"it will be over flavored.\"\n  },\n  {\n    \"start\": \"00:00:55,966\",\n    \"end\": \"00:00:57,686\",\n    \"lang\": \"en\",\n    \"text\": \"I like this crisp stuff.\"\n  },\n  {\n    \"start\": \"00:00:59,046\",\n    \"end\": \"00:00:59,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "en": "This is our special Chongqing flavor,",
+            "zh": "这是我们特别的重庆风味，",
+            "ar": "هذا هو نكهتنا الخاصة في تشونغتشينغ،"
+        },
+        {
+            "start": "00:00:03,580",
+            "end": "00:00:06,640",
+            "en": "beef and potato.",
+            "zh": "牛肉和土豆。",
+            "ar": "اللحم والبطاطس."
+        },
+        {
+            "start": "00:00:08,582",
+            "end": "00:00:09,082",
+            "en": "Beep.",
+            "zh": "滴。",
+            "ar": "بيب."
+        },
+        {
+            "start": "00:00:09,506",
+            "end": "00:00:12,206",
+            "en": "So let me check this.",
+            "zh": "所以让我检查一下。",
+            "ar": "دعني أتحقق من هذا."
+        },
+        {
+            "start": "00:00:14,396",
+            "end": "00:00:15,206",
+            "en": "This potato,",
+            "zh": "这个土豆，",
+            "ar": "هذه البطاطس،"
+        },
+        {
+            "start": "00:00:15,206",
+            "end": "00:00:20,186",
+            "en": "I didn't make it as potato crumbs.",
+            "zh": "我没有做成土豆屑。",
+            "ar": "لم أصنعه كفتات بطاطس."
+        },
+        {
+            "start": "00:00:20,906",
+            "end": "00:00:22,146",
+            "en": "I don't know how to say it,",
+            "zh": "我不知道怎么说，",
+            "ar": "لا أعرف كيف أقول ذلك،"
+        },
+        {
+            "start": "00:00:22,146",
+            "end": "00:00:22,566",
+            "en": "tudouli.",
+            "zh": "土豆粒。",
+            "ar": "قطع البطاطس."
+        },
+        {
+            "start": "00:00:23,486",
+            "end": "00:00:30,626",
+            "en": "So I believe these small fragments will build a balance between flavor,",
+            "zh": "所以我相信这些小碎片会在风味之间建立一个平衡，",
+            "ar": "لذا أعتقد أن هذه القطع الصغيرة ستبني توازناً بين النكهات،"
+        },
+        {
+            "start": "00:00:30,626",
+            "end": "00:00:34,606",
+            "en": "so that is a combination",
+            "zh": "所以这是一个结合",
+            "ar": "لذا هذا مزيج"
+        },
+        {
+            "start": "00:00:34,606",
+            "end": "00:00:35,586",
+            "en": "that is a flavor,",
+            "zh": "那是一种风味，",
+            "ar": "ذلك نكهة،"
+        },
+        {
+            "start": "00:00:35,586",
+            "end": "00:00:40,326",
+            "en": "and the inner core without flavor.",
+            "zh": "和没有味道的内核。",
+            "ar": "واللب الداخلي بدون نكهة."
+        },
+        {
+            "start": "00:00:40,746",
+            "end": "00:00:44,746",
+            "en": "It will produce a perfect combination.",
+            "zh": "它将产生一个完美的组合。",
+            "ar": "سينتج مزيجاً مثالياً."
+        },
+        {
+            "start": "00:00:46,086",
+            "end": "00:00:47,386",
+            "en": "It will blend in.",
+            "zh": "它会融合在一起。",
+            "ar": "سوف يمتزج."
+        },
+        {
+            "start": "00:00:47,946",
+            "end": "00:00:50,666",
+            "en": "If it's potato crumbs,",
+            "zh": "如果它是土豆屑，",
+            "ar": "إذا كانت فتات البطاطس،"
+        },
+        {
+            "start": "00:00:50,666",
+            "end": "00:00:54,046",
+            "en": "it will be over flavored.",
+            "zh": "它会过于调味。",
+            "ar": "سيكون متبلًا أكثر من اللازم."
+        },
+        {
+            "start": "00:00:55,966",
+            "end": "00:00:57,686",
+            "en": "I like this crisp stuff.",
+            "zh": "我喜欢这种脆脆的东西。",
+            "ar": "أحب هذه الأشياء المقرمشة."
+        },
+        {
+            "start": "00:00:59,046",
+            "end": "00:00:59,686",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسناً."
+        }
+    ]
+}

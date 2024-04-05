@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,642\",\n    \"end\": \"00:01:01,442\",\n    \"lang\": \"ar\",\n    \"text\": \"أنها كذلك\"\n  },\n  {\n    \"start\": \"00:01:02,306\",\n    \"end\": \"00:01:03,046\",\n    \"lang\": \"en\",\n    \"text\": \"this soon.\"\n  },\n  {\n    \"start\": \"00:01:03,046\",\n    \"end\": \"00:01:06,966\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know why I'm quite close to that.\"\n  },\n  {\n    \"start\": \"00:01:08,578\",\n    \"end\": \"00:01:09,738\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花...\"\n  },\n  {\n    \"start\": \"00:01:09,738\",\n    \"end\": \"00:01:12,518\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:13,458\",\n    \"end\": \"00:01:16,038\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书包\"\n  },\n  {\n    \"start\": \"00:01:16,778\",\n    \"end\": \"00:01:19,238\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:19,238\",\n    \"end\": \"00:01:22,138\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书包\"\n  },\n  {\n    \"start\": \"00:01:22,138\",\n    \"end\": \"00:01:25,058\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:25,058\",\n    \"end\": \"00:01:26,438\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书包\"\n  },\n  {\n    \"start\": \"00:01:26,466\",\n    \"end\": \"00:01:30,566\",\n    \"lang\": \"en\",\n    \"text\": \"And guitar,\"\n  },\n  {\n    \"start\": \"00:01:30,566\",\n    \"end\": \"00:01:33,106\",\n    \"lang\": \"en\",\n    \"text\": \"I do science.\"\n  },\n  {\n    \"start\": \"00:01:35,778\",\n    \"end\": \"00:01:36,158\",\n    \"lang\": \"zh\",\n    \"text\": \"老天\"\n  },\n  {\n    \"start\": \"00:01:38,530\",\n    \"end\": \"00:01:44,250\",\n    \"lang\": \"en\",\n    \"text\": \"It might not be as people as music people,\"\n  },\n  {\n    \"start\": \"00:01:44,250\",\n    \"end\": \"00:01:46,730\",\n    \"lang\": \"en\",\n    \"text\": \"dance people,\"\n  },\n  {\n    \"start\": \"00:01:46,730\",\n    \"end\": \"00:01:48,750\",\n    \"lang\": \"en\",\n    \"text\": \"as they learn music,\"\n  },\n  {\n    \"start\": \"00:01:48,750\",\n    \"end\": \"00:01:49,470\",\n    \"lang\": \"en\",\n    \"text\": \"art,\"\n  },\n  {\n    \"start\": \"00:01:49,470\",\n    \"end\": \"00:01:51,210\",\n    \"lang\": \"en\",\n    \"text\": \"but\"\n  },\n  {\n    \"start\": \"00:01:52,530\",\n    \"end\": \"00:01:55,970\",\n    \"lang\": \"en\",\n    \"text\": \"more I learned more in a science way.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,642",
+            "end": "00:01:01,442",
+            "es": "Es verdad",
+            "fr": "C'est vrai",
+            "uk": "Це так"
+        },
+        {
+            "start": "00:01:02,306",
+            "end": "00:01:03,046",
+            "es": "tan pronto.",
+            "fr": "si tôt.",
+            "uk": "так скоро."
+        },
+        {
+            "start": "00:01:03,046",
+            "end": "00:01:06,966",
+            "es": "No sé por qué estoy tan cerca de eso.",
+            "fr": "Je ne sais pas pourquoi je suis si proche de cela.",
+            "uk": "Не знаю, чому я настільки близько до цього."
+        },
+        {
+            "start": "00:01:08,578",
+            "end": "00:01:09,738",
+            "es": "Sin flores...",
+            "fr": "Sans fleurs...",
+            "uk": "Без квітів..."
+        },
+        {
+            "start": "00:01:09,738",
+            "end": "00:01:12,518",
+            "es": "Sin fragancia de flores",
+            "fr": "Sans parfum de fleurs",
+            "uk": "Без запаху квітів"
+        },
+        {
+            "start": "00:01:13,458",
+            "end": "00:01:16,038",
+            "es": "Sin mochila",
+            "fr": "Sans sac à dos",
+            "uk": "Без шкільної сумки"
+        },
+        {
+            "start": "00:01:16,778",
+            "end": "00:01:19,238",
+            "es": "Sin fragancia de flores",
+            "fr": "Sans parfum de fleurs",
+            "uk": "Без запаху квітів"
+        },
+        {
+            "start": "00:01:19,238",
+            "end": "00:01:22,138",
+            "es": "Sin mochila",
+            "fr": "Sans sac à dos",
+            "uk": "Без шкільної сумки"
+        },
+        {
+            "start": "00:01:22,138",
+            "end": "00:01:25,058",
+            "es": "Sin fragancia de flores",
+            "fr": "Sans parfum de fleurs",
+            "uk": "Без запаху квітів"
+        },
+        {
+            "start": "00:01:25,058",
+            "end": "00:01:26,438",
+            "es": "Sin mochila",
+            "fr": "Sans sac à dos",
+            "uk": "Без шкільної сумки"
+        },
+        {
+            "start": "00:01:26,466",
+            "end": "00:01:30,566",
+            "es": "Y guitarra,",
+            "fr": "Et guitare,",
+            "uk": "І гітара,"
+        },
+        {
+            "start": "00:01:30,566",
+            "end": "00:01:33,106",
+            "es": "hago ciencia.",
+            "fr": "je fais de la science.",
+            "uk": "я займаюся наукою."
+        },
+        {
+            "start": "00:01:35,778",
+            "end": "00:01:36,158",
+            "es": "Dios mío",
+            "fr": "Mon Dieu",
+            "uk": "Боже мій"
+        },
+        {
+            "start": "00:01:38,530",
+            "end": "00:01:44,250",
+            "es": "Puede que no sea como las personas de la música,",
+            "fr": "Cela pourrait ne pas être comme les gens de la musique,",
+            "uk": "Можливо, це не як музичні люди,"
+        },
+        {
+            "start": "00:01:44,250",
+            "end": "00:01:46,730",
+            "es": "la gente de la danza,",
+            "fr": "les gens de la danse,",
+            "uk": "люди танцю,"
+        },
+        {
+            "start": "00:01:46,730",
+            "end": "00:01:48,750",
+            "es": "así aprenden música,",
+            "fr": "comme ils apprennent la musique,",
+            "uk": "як вони вчаться музиці,"
+        },
+        {
+            "start": "00:01:48,750",
+            "end": "00:01:49,470",
+            "es": "arte,",
+            "fr": "art,",
+            "uk": "мистецтво,"
+        },
+        {
+            "start": "00:01:49,470",
+            "end": "00:01:51,210",
+            "es": "pero",
+            "fr": "mais",
+            "uk": "але"
+        },
+        {
+            "start": "00:01:52,530",
+            "end": "00:01:55,970",
+            "es": "cuanto más aprendía, más lo hacía de una manera científica.",
+            "fr": "plus j'apprenais, plus c'était de manière scientifique.",
+            "uk": "чим більше я вчився, тим більше це було в науковий спосіб."
+        }
+    ]
+}

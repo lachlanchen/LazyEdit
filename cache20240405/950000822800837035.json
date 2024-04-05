@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,760\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sure that I already catch the coronavirus,\"\n  },\n  {\n    \"start\": \"00:00:03,760\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"the COVID.\"\n  },\n  {\n    \"start\": \"00:00:06,740\",\n    \"end\": \"00:00:06,960\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:06,960\",\n    \"end\": \"00:00:12,820\",\n    \"lang\": \"en\",\n    \"text\": \"this muscle pain and sore throat.\"\n  },\n  {\n    \"start\": \"00:00:14,120\",\n    \"end\": \"00:00:15,220\",\n    \"lang\": \"en\",\n    \"text\": \"It's terrible,\"\n  },\n  {\n    \"start\": \"00:00:15,220\",\n    \"end\": \"00:00:15,740\",\n    \"lang\": \"en\",\n    \"text\": \"it's a fear.\"\n  },\n  {\n    \"start\": \"00:00:17,760\",\n    \"end\": \"00:00:19,140\",\n    \"lang\": \"en\",\n    \"text\": \"I don't like it.\"\n  },\n  {\n    \"start\": \"00:00:26,220\",\n    \"end\": \"00:00:27,280\",\n    \"lang\": \"en\",\n    \"text\": \"These noodles,\"\n  },\n  {\n    \"start\": \"00:00:27,280\",\n    \"end\": \"00:00:29,200\",\n    \"lang\": \"en\",\n    \"text\": \"it's gorgeous,\"\n  },\n  {\n    \"start\": \"00:00:29,200\",\n    \"end\": \"00:00:31,360\",\n    \"lang\": \"en\",\n    \"text\": \"but I don't have very much appetite.\"\n  },\n  {\n    \"start\": \"00:00:32,720\",\n    \"end\": \"00:00:33,160\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:33,160\",\n    \"end\": \"00:00:34,080\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,760",
+            "en": "I'm sure that I already catch the coronavirus,",
+            "zh": "我确信我已经感染了冠状病毒，",
+            "ar": "أنا متأكد من أنني أصبت بفيروس كورونا بالفعل،"
+        },
+        {
+            "start": "00:00:03,760",
+            "end": "00:00:05,140",
+            "en": "the COVID.",
+            "zh": "那个COVID。",
+            "ar": "فيروس كورونا."
+        },
+        {
+            "start": "00:00:06,740",
+            "end": "00:00:06,960",
+            "en": "Oh,",
+            "zh": "哦，",
+            "ar": "أوه،"
+        },
+        {
+            "start": "00:00:06,960",
+            "end": "00:00:12,820",
+            "en": "this muscle pain and sore throat.",
+            "zh": "这肌肉疼痛和嗓子疼。",
+            "ar": "هذه آلام العضلات والتهاب الحلق."
+        },
+        {
+            "start": "00:00:14,120",
+            "end": "00:00:15,220",
+            "en": "It's terrible,",
+            "zh": "这很糟糕，",
+            "ar": "هذا فظيع،"
+        },
+        {
+            "start": "00:00:15,220",
+            "end": "00:00:15,740",
+            "en": "it's a fear.",
+            "zh": "这是一种恐惧。",
+            "ar": "إنه خوف."
+        },
+        {
+            "start": "00:00:17,760",
+            "end": "00:00:19,140",
+            "en": "I don't like it.",
+            "zh": "我不喜欢这个。",
+            "ar": "لا يعجبني ذلك."
+        },
+        {
+            "start": "00:00:26,220",
+            "end": "00:00:27,280",
+            "en": "These noodles,",
+            "zh": "这些面条，",
+            "ar": "هذه النودلز،"
+        },
+        {
+            "start": "00:00:27,280",
+            "end": "00:00:29,200",
+            "en": "it's gorgeous,",
+            "zh": "它很美，",
+            "ar": "إنها رائعة،"
+        },
+        {
+            "start": "00:00:29,200",
+            "end": "00:00:31,360",
+            "en": "but I don't have very much appetite.",
+            "zh": "但是我没有太多的食欲。",
+            "ar": "لكني لا أشعر بالكثير من الشهية."
+        },
+        {
+            "start": "00:00:32,720",
+            "end": "00:00:33,160",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:00:33,160",
+            "end": "00:00:34,080",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقاً."
+        }
+    ]
+}

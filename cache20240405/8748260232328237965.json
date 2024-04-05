@@ -1,0 +1,101 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es) and French (fr) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other language. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,960\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます。\"\n  },\n  {\n    \"start\": \"00:00:02,210\",\n    \"end\": \"00:00:02,710\",\n    \"lang\": \"zh\",\n    \"text\": \"我拿วยinge\"\n  },\n  {\n    \"start\": \"00:00:03,650\",\n    \"end\": \"00:00:05,370\",\n    \"lang\": \"ja\",\n    \"text\": \"私の名前は泣きねる\"\n  },\n  {\n    \"start\": \"00:00:05,890\",\n    \"end\": \"00:00:17,170\",\n    \"lang\": \"en\",\n    \"text\": \"changes so again nothing new to share today but I upgraded the subtitles and I introduced\"\n  },\n  {\n    \"start\": \"00:00:17,170\",\n    \"end\": \"00:00:26,270\",\n    \"lang\": \"en\",\n    \"text\": \"them modified Korean subtitle and also the Vietnamese,\"\n  },\n  {\n    \"start\": \"00:00:26,270\",\n    \"end\": \"00:00:29,630\",\n    \"lang\": \"en\",\n    \"text\": \"French and Spanish and then I\"\n  },\n  {\n    \"start\": \"00:00:29,630\",\n    \"end\": \"00:00:32,350\",\n    \"lang\": \"en\",\n    \"text\": \"think the subtitle might be a little bit too much\"\n  },\n  {\n    \"start\": \"00:00:35,682\",\n    \"end\": \"00:00:36,102\",\n    \"lang\": \"ja\",\n    \"text\": \"おやすみなさい\"\n  },\n  {\n    \"start\": \"00:00:37,314\",\n    \"end\": \"00:00:39,874\",\n    \"lang\": \"en\",\n    \"text\": \"because the space on the screen is too tight,\"\n  },\n  {\n    \"start\": \"00:00:39,874\",\n    \"end\": \"00:00:40,814\",\n    \"lang\": \"en\",\n    \"text\": \"too compact,\"\n  },\n  {\n    \"start\": \"00:00:40,814\",\n    \"end\": \"00:00:43,174\",\n    \"lang\": \"en\",\n    \"text\": \"too dense.\"\n  },\n  {\n    \"start\": \"00:00:44,294\",\n    \"end\": \"00:00:44,554\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:44,554\",\n    \"end\": \"00:00:50,334\",\n    \"lang\": \"en\",\n    \"text\": \"also I want to slightly change the Vietnamese subtitle.\"\n  },\n  {\n    \"start\": \"00:00:50,854\",\n    \"end\": \"00:00:52,394\",\n    \"lang\": \"en\",\n    \"text\": \"And also like the Korean,\"\n  },\n  {\n    \"start\": \"00:00:52,394\",\n    \"end\": \"00:00:54,614\",\n    \"lang\": \"en\",\n    \"text\": \"I want to introduce the Chinese character\"\n  },\n  {\n    \"start\": \"00:00:54,983\",\n    \"end\": \"00:00:59,534\",\n    \"lang\": \"en\",\n    \"text\": \"to replace some Vietnamese that have a Chinese origin.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,960",
+            "es": "Muchas gracias.",
+            "fr": "Merci beaucoup."
+        },
+        {
+            "start": "00:00:02,210",
+            "end": "00:00:02,710",
+            "es": "Me disculpo",
+            "fr": "Je m'excuse"
+        },
+        {
+            "start": "00:00:03,650",
+            "end": "00:00:05,370",
+            "es": "Mi nombre es Nakineru.",
+            "fr": "Mon nom est Nakineru."
+        },
+        {
+            "start": "00:00:05,890",
+            "end": "00:00:17,170",
+            "es": "cambios entonces de nuevo nada nuevo para compartir hoy pero actualicé los subtítulos y los introduje",
+            "fr": "changements donc encore rien de nouveau à partager aujourd'hui mais j'ai mis à jour les sous-titres et je les ai introduits"
+        },
+        {
+            "start": "00:00:17,170",
+            "end": "00:00:26,270",
+            "es": "modifiqué el subtítulo coreano y también el vietnamita,",
+            "fr": "j'ai modifié le sous-titre coréen et aussi le vietnamien,"
+        },
+        {
+            "start": "00:00:26,270",
+            "end": "00:00:29,630",
+            "es": "francés y español y luego creo",
+            "fr": "français et espagnol et puis je pense"
+        },
+        {
+            "start": "00:00:29,630",
+            "end": "00:00:32,350",
+            "es": "que el subtítulo podría ser un poco demasiado",
+            "fr": "que le sous-titre pourrait être un peu trop"
+        },
+        {
+            "start": "00:00:35,682",
+            "end": "00:00:36,102",
+            "es": "Buenas noches",
+            "fr": "Bonne nuit"
+        },
+        {
+            "start": "00:00:37,314",
+            "end": "00:00:39,874",
+            "es": "porque el espacio en la pantalla es demasiado ajustado,",
+            "fr": "parce que l'espace sur l'écran est trop serré,"
+        },
+        {
+            "start": "00:00:39,874",
+            "end": "00:00:40,814",
+            "es": "demasiado compacto,",
+            "fr": "trop compact,"
+        },
+        {
+            "start": "00:00:40,814",
+            "end": "00:00:43,174",
+            "es": "demasiado denso.",
+            "fr": "trop dense."
+        },
+        {
+            "start": "00:00:44,294",
+            "end": "00:00:44,554",
+            "es": "Así que,",
+            "fr": "Alors,"
+        },
+        {
+            "start": "00:00:44,554",
+            "end": "00:00:50,334",
+            "es": "también quiero cambiar ligeramente el subtítulo vietnamita.",
+            "fr": "je veux aussi légèrement changer le sous-titre vietnamien."
+        },
+        {
+            "start": "00:00:50,854",
+            "end": "00:00:52,394",
+            "es": "Y como el coreano,",
+            "fr": "Et comme le coréen,"
+        },
+        {
+            "start": "00:00:52,394",
+            "end": "00:00:54,614",
+            "es": "quiero introducir el carácter chino",
+            "fr": "je veux introduire le caractère chinois"
+        },
+        {
+            "start": "00:00:54,983",
+            "end": "00:00:59,534",
+            "es": "para reemplazar algunos vietnamitas que tienen origen chino.",
+            "fr": "pour remplacer certains vietnamiens d'origine chinoise."
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,880\",\n    \"end\": \"00:00:04,040\",\n    \"lang\": \"zh\",\n    \"text\": \"最奇怪的那个绳子上面\"\n  },\n  {\n    \"start\": \"00:00:05,260\",\n    \"end\": \"00:00:06,620\",\n    \"lang\": \"zh\",\n    \"text\": \"多么大一个它牙\"\n  },\n  {\n    \"start\": \"00:00:06,620\",\n    \"end\": \"00:00:09,080\",\n    \"lang\": \"zh\",\n    \"text\": \"它还没把它牙别没爆呢\"\n  },\n  {\n    \"start\": \"00:00:10,178\",\n    \"end\": \"00:00:10,998\",\n    \"lang\": \"en\",\n    \"text\": \"miyaball\"\n  },\n  {\n    \"start\": \"00:00:12,290\",\n    \"end\": \"00:00:14,130\",\n    \"lang\": \"zh\",\n    \"text\": \"哪一个还是勇猛龟\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,880",
+            "end": "00:00:04,040",
+            "ko": "가장 이상한 그 줄 위에"
+        },
+        {
+            "start": "00:00:05,260",
+            "end": "00:00:06,620",
+            "ko": "얼마나 큰 건가, 그의 이빨"
+        },
+        {
+            "start": "00:00:06,620",
+            "end": "00:00:09,080",
+            "ko": "그것은 아직도 그의 이빨을 폭발시키지 않았어"
+        },
+        {
+            "start": "00:00:10,178",
+            "end": "00:00:10,998",
+            "ko": "미야볼"
+        },
+        {
+            "start": "00:00:12,290",
+            "end": "00:00:14,130",
+            "ko": "어느 것이 용감한 거북이인가"
+        }
+    ]
+}

@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:04,819\",\n    \"end\": \"00:00:10,160\",\n    \"lang\": \"ja\",\n    \"text\": \"このポテトは野菜です\"\n  },\n  {\n    \"start\": \"00:00:14,038\",\n    \"end\": \"00:00:17,118\",\n    \"lang\": \"ja\",\n    \"text\": \"このボンボンは太ももです\"\n  },\n  {\n    \"start\": \"00:00:17,118\",\n    \"end\": \"00:00:24,578\",\n    \"lang\": \"ja\",\n    \"text\": \"この肉は肉です\"\n  },\n  {\n    \"start\": \"00:00:25,538\",\n    \"end\": \"00:00:26,518\",\n    \"lang\": \"en\",\n    \"text\": \"So is that correct?\"\n  },\n  {\n    \"start\": \"00:00:27,298\",\n    \"end\": \"00:00:31,398\",\n    \"lang\": \"en\",\n    \"text\": \"So this potato is a vegetable,\"\n  },\n  {\n    \"start\": \"00:00:31,778\",\n    \"end\": \"00:00:32,738\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry is a fruit,\"\n  },\n  {\n    \"start\": \"00:00:33,118\",\n    \"end\": \"00:00:37,878\",\n    \"lang\": \"en\",\n    \"text\": \"and the beef is meat.\"\n  },\n  {\n    \"start\": \"00:00:39,938\",\n    \"end\": \"00:00:40,558\",\n    \"lang\": \"en\",\n    \"text\": \"And now,\"\n  },\n  {\n    \"start\": \"00:00:41,346\",\n    \"end\": \"00:00:45,306\",\n    \"lang\": \"ja\",\n    \"text\": \"この卵は卵です\"\n  },\n  {\n    \"start\": \"00:00:47,970\",\n    \"end\": \"00:00:48,170\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:04,819",
+            "end": "00:00:10,160",
+            "en": "This potato is a vegetable",
+            "zh": "这个土豆是一种蔬菜",
+            "ar": "هذه البطاطا هي خضروات"
+        },
+        {
+            "start": "00:00:14,038",
+            "end": "00:00:17,118",
+            "en": "This bonbon is a thigh",
+            "zh": "这个糖果是大腿",
+            "ar": "هذا البونبون هو فخذ"
+        },
+        {
+            "start": "00:00:17,118",
+            "end": "00:00:24,578",
+            "en": "This meat is meat",
+            "zh": "这肉是肉",
+            "ar": "هذا اللحم هو لحم"
+        },
+        {
+            "start": "00:00:25,538",
+            "end": "00:00:26,518",
+            "en": "So is that correct?",
+            "zh": "所以，这样对吗？",
+            "ar": "فهل هذا صحيح؟"
+        },
+        {
+            "start": "00:00:27,298",
+            "end": "00:00:31,398",
+            "en": "So this potato is a vegetable,",
+            "zh": "所以这个土豆是一种蔬菜，",
+            "ar": "إذاً هذه البطاطا هي خضروات،"
+        },
+        {
+            "start": "00:00:31,778",
+            "end": "00:00:32,738",
+            "en": "blueberry is a fruit,",
+            "zh": "蓝莓是一种水果，",
+            "ar": "التوت الأزرق هو فاكهة،"
+        },
+        {
+            "start": "00:00:33,118",
+            "end": "00:00:37,878",
+            "en": "and the beef is meat.",
+            "zh": "而牛肉是肉。",
+            "ar": "واللحم البقري هو لحم."
+        },
+        {
+            "start": "00:00:39,938",
+            "end": "00:00:40,558",
+            "en": "And now,",
+            "zh": "现在，",
+            "ar": "والآن،"
+        },
+        {
+            "start": "00:00:41,346",
+            "end": "00:00:45,306",
+            "en": "This egg is an egg",
+            "zh": "这个鸡蛋是鸡蛋",
+            "ar": "هذا البيض هو بيض"
+        },
+        {
+            "start": "00:00:47,970",
+            "end": "00:00:48,170",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسناً."
+        }
+    ]
+}

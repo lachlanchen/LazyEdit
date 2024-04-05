@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:10,826\",\n    \"end\": \"00:01:12,026\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:01:12,026\",\n    \"end\": \"00:01:13,346\",\n    \"lang\": \"en\",\n    \"text\": \"it smells so good.\"\n  },\n  {\n    \"start\": \"00:01:19,166\",\n    \"end\": \"00:01:22,166\",\n    \"lang\": \"en\",\n    \"text\": \"This water factory.\"\n  },\n  {\n    \"start\": \"00:01:23,446\",\n    \"end\": \"00:01:25,146\",\n    \"lang\": \"en\",\n    \"text\": \"It's a water factory.\"\n  },\n  {\n    \"start\": \"00:01:27,866\",\n    \"end\": \"00:01:29,946\",\n    \"lang\": \"en\",\n    \"text\": \"Since it's gorgeous.\"\n  },\n  {\n    \"start\": \"00:01:31,186\",\n    \"end\": \"00:01:31,366\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:32,726\",\n    \"end\": \"00:01:35,466\",\n    \"lang\": \"en\",\n    \"text\": \"So next day is bean juice,\"\n  },\n  {\n    \"start\": \"00:01:35,466\",\n    \"end\": \"00:01:39,586\",\n    \"lang\": \"en\",\n    \"text\": \"and then we finish our lunch.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:10,826",
+            "end": "00:01:12,026",
+            "ko": "오,"
+        },
+        {
+            "start": "00:01:12,026",
+            "end": "00:01:13,346",
+            "ko": "정말 좋은 냄새가 나."
+        },
+        {
+            "start": "00:01:19,166",
+            "end": "00:01:22,166",
+            "ko": "이곳은 물 공장이야."
+        },
+        {
+            "start": "00:01:23,446",
+            "end": "00:01:25,146",
+            "ko": "물 공장이라고."
+        },
+        {
+            "start": "00:01:27,866",
+            "end": "00:01:29,946",
+            "ko": "정말 화려하군."
+        },
+        {
+            "start": "00:01:31,186",
+            "end": "00:01:31,366",
+            "ko": "알겠어."
+        },
+        {
+            "start": "00:01:32,726",
+            "end": "00:01:35,466",
+            "ko": "그러면 다음 날은 콩주스야,"
+        },
+        {
+            "start": "00:01:35,466",
+            "end": "00:01:39,586",
+            "ko": "그리고 점심을 마쳐."
+        }
+    ]
+}

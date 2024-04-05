@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,680\",\n    \"lang\": \"en\",\n    \"text\": \"There is no such thing as happiness after suffering.\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:04,520\",\n    \"lang\": \"en\",\n    \"text\": \"If you suffer,\"\n  },\n  {\n    \"start\": \"00:00:04,520\",\n    \"end\": \"00:00:05,060\",\n    \"lang\": \"en\",\n    \"text\": \"you suffer.\"\n  },\n  {\n    \"start\": \"00:00:07,460\",\n    \"end\": \"00:00:10,920\",\n    \"lang\": \"en\",\n    \"text\": \"If you can't enjoy your life now,\"\n  },\n  {\n    \"start\": \"00:00:10,920\",\n    \"end\": \"00:00:14,400\",\n    \"lang\": \"en\",\n    \"text\": \"then you will never enjoy it until you can enjoy it.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,680",
+            "ko": "고통 끝에 행복이 있는 것은 아니다."
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:04,520",
+            "ko": "고통스러우면,"
+        },
+        {
+            "start": "00:00:04,520",
+            "end": "00:00:05,060",
+            "ko": "그저 고통스러운 것이다."
+        },
+        {
+            "start": "00:00:07,460",
+            "end": "00:00:10,920",
+            "ko": "지금 당신의 삶을 즐길 수 없다면,"
+        },
+        {
+            "start": "00:00:10,920",
+            "end": "00:00:14,400",
+            "ko": "즐길 수 있을 때까지 결코 즐기지 못할 것입니다."
+        }
+    ]
+}

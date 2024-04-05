@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,930\",\n    \"end\": \"00:01:13,730\",\n    \"lang\": \"en\",\n    \"text\": \"so French speakers may think that English pronunciation is vascular.\"\n  },\n  {\n    \"start\": \"00:01:13,730\",\n    \"end\": \"00:01:23,430\",\n    \"lang\": \"en\",\n    \"text\": \"And the British think the American accent is vascular.\"\n  },\n  {\n    \"start\": \"00:01:23,430\",\n    \"end\": \"00:01:28,050\",\n    \"lang\": \"en\",\n    \"text\": \"It's not a horse talks.\"\n  },\n  {\n    \"start\": \"00:01:30,274\",\n    \"end\": \"00:01:30,494\",\n    \"lang\": \"zh\",\n    \"text\": \"再見\"\n  },\n  {\n    \"start\": \"00:01:32,514\",\n    \"end\": \"00:01:40,154\",\n    \"lang\": \"en\",\n    \"text\": \"was a great great what a what a noble it's not a noble so the british thing\"\n  },\n  {\n    \"start\": \"00:01:40,154\",\n    \"end\": \"00:01:42,034\",\n    \"lang\": \"en\",\n    \"text\": \"and him the british accent is\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:02,930",
+            "end": "00:01:13,730",
+            "es": "entonces, los francoparlantes pueden pensar que la pronunciación inglesa es peculiar.",
+            "fr": "alors, les francophones peuvent penser que la prononciation anglaise est particulière.",
+            "uk": "тому франкомовні можуть думати, що англійська вимова є особливою."
+        },
+        {
+            "start": "00:01:13,730",
+            "end": "00:01:23,430",
+            "es": "Y los británicos piensan que el acento americano es peculiar.",
+            "fr": "Et les Britanniques trouvent que l'accent américain est particulier.",
+            "uk": "І британці думають, що американський акцент є особливим."
+        },
+        {
+            "start": "00:01:23,430",
+            "end": "00:01:28,050",
+            "es": "No es un caballo hablando.",
+            "fr": "Ce n'est pas un cheval qui parle.",
+            "uk": "Це не кінь говорить."
+        },
+        {
+            "start": "00:01:30,274",
+            "end": "00:01:30,494",
+            "es": "Adiós",
+            "fr": "Au revoir",
+            "uk": "До побачення"
+        },
+        {
+            "start": "00:01:32,514",
+            "end": "00:01:40,154",
+            "es": "fue un gran gran qué, qué noble, no es un noble así que los británicos creen",
+            "fr": "c'était un grand grand quoi, quel noble, ce n'est pas un noble donc les britanniques pensent",
+            "uk": "було велике велике що, що за благородний, це не благородний тому британці думають"
+        },
+        {
+            "start": "00:01:40,154",
+            "end": "00:01:42,034",
+            "es": "y a él el acento británico es",
+            "fr": "et à lui l'accent britannique est",
+            "uk": "і в нього британський акцент є"
+        }
+    ]
+}

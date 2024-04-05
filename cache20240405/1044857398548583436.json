@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,120\",\n    \"lang\": \"en\",\n    \"text\": \"All the people,\"\n  },\n  {\n    \"start\": \"00:00:01,120\",\n    \"end\": \"00:00:02,480\",\n    \"lang\": \"en\",\n    \"text\": \"I'm looking for.\"\n  },\n  {\n    \"start\": \"00:00:03,720\",\n    \"end\": \"00:00:04,620\",\n    \"lang\": \"en\",\n    \"text\": \"All the people,\"\n  },\n  {\n    \"start\": \"00:00:04,620\",\n    \"end\": \"00:00:06,360\",\n    \"lang\": \"en\",\n    \"text\": \"I'm looking for.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,120",
+            "ja": "すべての人々、"
+        },
+        {
+            "start": "00:00:01,120",
+            "end": "00:00:02,480",
+            "ja": "私が探している。"
+        },
+        {
+            "start": "00:00:03,720",
+            "end": "00:00:04,620",
+            "ja": "すべての人々、"
+        },
+        {
+            "start": "00:00:04,620",
+            "end": "00:00:06,360",
+            "ja": "私が探している。"
+        }
+    ]
+}

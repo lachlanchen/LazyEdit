@@ -1,0 +1,173 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:05,398\",\n    \"end\": \"00:04:07,578\",\n    \"lang\": \"en\",\n    \"text\": \"you are everything,\"\n  },\n  {\n    \"start\": \"00:04:07,578\",\n    \"end\": \"00:04:14,918\",\n    \"lang\": \"en\",\n    \"text\": \"but in fact no matter how\"\n  },\n  {\n    \"start\": \"00:04:14,918\",\n    \"end\": \"00:04:16,017\",\n    \"lang\": \"en\",\n    \"text\": \"much you learn,\"\n  },\n  {\n    \"start\": \"00:04:16,017\",\n    \"end\": \"00:04:19,317\",\n    \"lang\": \"en\",\n    \"text\": \"you still you are ignored,\"\n  },\n  {\n    \"start\": \"00:04:19,317\",\n    \"end\": \"00:04:20,178\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:04:20,178\",\n    \"end\": \"00:04:25,058\",\n    \"lang\": \"en\",\n    \"text\": \"We are still...\"\n  },\n  {\n    \"start\": \"00:04:27,010\",\n    \"end\": \"00:04:27,950\",\n    \"lang\": \"ja\",\n    \"text\": \"ちゃってー\"\n  },\n  {\n    \"start\": \"00:04:29,698\",\n    \"end\": \"00:04:32,278\",\n    \"lang\": \"en\",\n    \"text\": \"obsessed in our own illusion,\"\n  },\n  {\n    \"start\": \"00:04:32,278\",\n    \"end\": \"00:04:35,618\",\n    \"lang\": \"en\",\n    \"text\": \"our own imagination,\"\n  },\n  {\n    \"start\": \"00:04:35,618\",\n    \"end\": \"00:04:38,938\",\n    \"lang\": \"en\",\n    \"text\": \"that we understand the world,\"\n  },\n  {\n    \"start\": \"00:04:38,938\",\n    \"end\": \"00:04:39,778\",\n    \"lang\": \"en\",\n    \"text\": \"understand the\"\n  },\n  {\n    \"start\": \"00:04:39,778\",\n    \"end\": \"00:04:40,138\",\n    \"lang\": \"en\",\n    \"text\": \"universe.\"\n  },\n  {\n    \"start\": \"00:04:40,138\",\n    \"end\": \"00:04:41,298\",\n    \"lang\": \"en\",\n    \"text\": \"But it's a fact,\"\n  },\n  {\n    \"start\": \"00:04:41,298\",\n    \"end\": \"00:04:41,898\",\n    \"lang\": \"en\",\n    \"text\": \"it's not.\"\n  },\n  {\n    \"start\": \"00:04:41,898\",\n    \"end\": \"00:04:43,898\",\n    \"lang\": \"en\",\n    \"text\": \"No matter how much you learn,\"\n  },\n  {\n    \"start\": \"00:04:43,898\",\n    \"end\": \"00:04:45,498\",\n    \"lang\": \"en\",\n    \"text\": \"you are a physicist,\"\n  },\n  {\n    \"start\": \"00:04:45,498\",\n    \"end\": \"00:04:46,858\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  },\n  {\n    \"start\": \"00:04:46,858\",\n    \"end\": \"00:04:49,278\",\n    \"lang\": \"en\",\n    \"text\": \"are a Nobel Prize laureate,\"\n  },\n  {\n    \"start\": \"00:04:49,278\",\n    \"end\": \"00:04:51,818\",\n    \"lang\": \"en\",\n    \"text\": \"it's useless.\"\n  },\n  {\n    \"start\": \"00:04:51,818\",\n    \"end\": \"00:04:57,518\",\n    \"lang\": \"en\",\n    \"text\": \"It still can't solve the core problem that\"\n  },\n  {\n    \"start\": \"00:04:58,466\",\n    \"end\": \"00:04:58,886\",\n    \"lang\": \"ja\",\n    \"text\": \"We are\"\n  },\n  {\n    \"start\": \"00:04:58,926\",\n    \"end\": \"00:04:59,406\",\n    \"lang\": \"ja\",\n    \"text\": \"勇猛なって\"\n  },\n  {\n    \"start\": \"00:05:01,218\",\n    \"end\": \"00:05:04,698\",\n    \"lang\": \"en\",\n    \"text\": \"So just enjoy life everyday.\"\n  },\n  {\n    \"start\": \"00:05:04,698\",\n    \"end\": \"00:05:06,118\",\n    \"lang\": \"en\",\n    \"text\": \"Enjoy life,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:04:05,398",
+            "end": "00:04:07,578",
+            "es": "eres todo,",
+            "fr": "tu es tout,",
+            "uk": "ти все,"
+        },
+        {
+            "start": "00:04:07,578",
+            "end": "00:04:14,918",
+            "es": "pero de hecho no importa cuánto",
+            "fr": "mais en fait peu importe combien",
+            "uk": "але насправді не має значення, скільки"
+        },
+        {
+            "start": "00:04:14,918",
+            "end": "00:04:16,017",
+            "es": "aprendas,",
+            "fr": "tu apprennes,",
+            "uk": "ти вчиш,"
+        },
+        {
+            "start": "00:04:16,017",
+            "end": "00:04:19,317",
+            "es": "sigues siendo ignorado,",
+            "fr": "tu es toujours ignoré,",
+            "uk": "ти все ще ігнорований,"
+        },
+        {
+            "start": "00:04:19,317",
+            "end": "00:04:20,178",
+            "es": "¿verdad?",
+            "fr": "n'est-ce pas?",
+            "uk": "правда?"
+        },
+        {
+            "start": "00:04:20,178",
+            "end": "00:04:25,058",
+            "es": "Todavía estamos...",
+            "fr": "Nous sommes toujours...",
+            "uk": "Ми все ще..."
+        },
+        {
+            "start": "00:04:27,010",
+            "end": "00:04:27,950",
+            "es": "aventurándonos",
+            "fr": "s'aventurant",
+            "uk": "ризикуючи"
+        },
+        {
+            "start": "00:04:29,698",
+            "end": "00:04:32,278",
+            "es": "obsesionados en nuestra propia ilusión,",
+            "fr": "obsédés par notre propre illusion,",
+            "uk": "одержимі власною ілюзією,"
+        },
+        {
+            "start": "00:04:32,278",
+            "end": "00:04:35,618",
+            "es": "nuestra propia imaginación,",
+            "fr": "notre propre imagination,",
+            "uk": "нашою власною уявою,"
+        },
+        {
+            "start": "00:04:35,618",
+            "end": "00:04:38,938",
+            "es": "que entendemos el mundo,",
+            "fr": "que nous comprenons le monde,",
+            "uk": "що ми розуміємо світ,"
+        },
+        {
+            "start": "00:04:38,938",
+            "end": "00:04:39,778",
+            "es": "entendemos el",
+            "fr": "nous comprenons le",
+            "uk": "розуміємо"
+        },
+        {
+            "start": "00:04:39,778",
+            "end": "00:04:40,138",
+            "es": "universo.",
+            "fr": "univers.",
+            "uk": "всесвіт."
+        },
+        {
+            "start": "00:04:40,138",
+            "end": "00:04:41,298",
+            "es": "Pero es un hecho,",
+            "fr": "Mais c'est un fait,",
+            "uk": "Але це факт,"
+        },
+        {
+            "start": "00:04:41,298",
+            "end": "00:04:41,898",
+            "es": "no lo es.",
+            "fr": "ce n'est pas le cas.",
+            "uk": "це не так."
+        },
+        {
+            "start": "00:04:41,898",
+            "end": "00:04:43,898",
+            "es": "No importa cuánto aprendas,",
+            "fr": "Peu importe combien tu apprends,",
+            "uk": "Не має значення, скільки ти вчиш,"
+        },
+        {
+            "start": "00:04:43,898",
+            "end": "00:04:45,498",
+            "es": "eres un físico,",
+            "fr": "tu es un physicien,",
+            "uk": "ти фізик,"
+        },
+        {
+            "start": "00:04:45,498",
+            "end": "00:04:46,858",
+            "es": "eres",
+            "fr": "tu es",
+            "uk": "ти"
+        },
+        {
+            "start": "00:04:46,858",
+            "end": "00:04:49,278",
+            "es": "un laureado del Premio Nobel,",
+            "fr": "un lauréat du Prix Nobel,",
+            "uk": "лауреат Нобелівської премії,"
+        },
+        {
+            "start": "00:04:49,278",
+            "end": "00:04:51,818",
+            "es": "es inútil.",
+            "fr": "c'est inutile.",
+            "uk": "це марно."
+        },
+        {
+            "start": "00:04:51,818",
+            "end": "00:04:57,518",
+            "es": "Aún no puede resolver el problema central que",
+            "fr": "Cela ne peut toujours pas résoudre le problème central que",
+            "uk": "Це все ще не може вирішити основну проблему, яка"
+        },
+        {
+            "start": "00:04:58,466",
+            "end": "00:04:58,886",
+            "es": "Somos",
+            "fr": "Nous sommes",
+            "uk": "Ми"
+        },
+        {
+            "start": "00:04:58,926",
+            "end": "00:04:59,406",
+            "es": "valientes",
+            "fr": "courageux",
+            "uk": "відважні"
+        },
+        {
+            "start": "00:05:01,218",
+            "end": "00:05:04,698",
+            "es": "Así que solo disfruta la vida todos los días.",
+            "fr": "Alors, profite simplement de la vie chaque jour.",
+            "uk": "Тож просто насолоджуйся життям щодня."
+        },
+        {
+            "start": "00:05:04,698",
+            "end": "00:05:06,118",
+            "es": "Disfruta la vida,",
+            "fr": "Profite de la vie,",
+            "uk": "Насолоджуйся життям,"
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:05,020\",\n    \"end\": \"00:02:08,539\",\n    \"ja\": \"<何>[]が<必要>[]でも、\"\n  },\n  {\n    \"start\": \"00:02:10,018\",\n    \"end\": \"00:02:11,418\",\n    \"ja\": \"<必>[]ず<何>[]かの<方法>[]があるはずだ\"\n  },\n  {\n    \"start\": \"00:02:12,866\",\n    \"end\": \"00:02:16,386\",\n    \"ja\": \"100<年>[]もすれば、すべてが<塵>[]と<化>[]す。\"\n  }\n]\n\nPRESERVE the original timestamps. \n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:05,020",
+            "end": "00:02:08,539",
+            "ja": "<何>[なに]が<必要>[ひつよう]でも、"
+        },
+        {
+            "start": "00:02:10,018",
+            "end": "00:02:11,418",
+            "ja": "<必>[かなら]ず<何>[なに]かの<方法>[ほうほう]があるはずだ"
+        },
+        {
+            "start": "00:02:12,866",
+            "end": "00:02:16,386",
+            "ja": "100<年>[ねん]もすれば、すべてが<塵>[ちり]と<化>[か]す。"
+        }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,080\",\n    \"ja\": \"<海岸線>[]を<走>[]りました\"\n  },\n  {\n    \"start\": \"00:00:02,210\",\n    \"end\": \"00:00:05,490\",\n    \"ja\": \"この<ー>[] この<ピンクス>[]\"\n  },\n  {\n    \"start\": \"00:00:06,274\",\n    \"end\": \"00:00:08,674\",\n    \"ja\": \"たまごと<ピーチ>[]。\"\n  },\n  {\n    \"start\": \"00:00:09,354\",\n    \"end\": \"00:00:09,474\",\n    \"ja\": \"ああ、\"\n  },\n  {\n    \"start\": \"00:00:09,474\",\n    \"end\": \"00:00:11,054\",\n    \"ja\": \"こっちです。\"\n  },\n  {\n    \"start\": \"00:00:11,650\",\n    \"end\": \"00:00:12,730\",\n    \"ja\": \"<ストロベリー>[]\"\n  },\n  {\n    \"start\": \"00:00:12,770\",\n    \"end\": \"00:00:13,370\",\n    \"ja\": \"<欠>[]いています\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,080",
+            "ja": "<海岸線>[かいがんせん]を<走>[はし]りました"
+        },
+        {
+            "start": "00:00:02,210",
+            "end": "00:00:05,490",
+            "ja": "この<ー>[] この<ピンクス>[]"
+        },
+        {
+            "start": "00:00:06,274",
+            "end": "00:00:08,674",
+            "ja": "たまごと<ピーチ>[ぴーち]。"
+        },
+        {
+            "start": "00:00:09,354",
+            "end": "00:00:09,474",
+            "ja": "ああ、"
+        },
+        {
+            "start": "00:00:09,474",
+            "end": "00:00:11,054",
+            "ja": "こっちです。"
+        },
+        {
+            "start": "00:00:11,650",
+            "end": "00:00:12,730",
+            "ja": "<ストロベリー>[]"
+        },
+        {
+            "start": "00:00:12,770",
+            "end": "00:00:13,370",
+            "ja": "<欠>[か]いています"
+        }
+    ]
+}

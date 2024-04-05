@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"en\",\n    \"text\": \"I cooked this fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:03,700\",\n    \"end\": \"00:00:06,560\",\n    \"lang\": \"en\",\n    \"text\": \"It takes about an hour.\"\n  },\n  {\n    \"start\": \"00:00:07,020\",\n    \"end\": \"00:00:09,700\",\n    \"lang\": \"en\",\n    \"text\": \"So this fast food is kind of slow.\"\n  },\n  {\n    \"start\": \"00:00:11,220\",\n    \"end\": \"00:00:11,460\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:11,460\",\n    \"end\": \"00:00:13,520\",\n    \"lang\": \"en\",\n    \"text\": \"it smells so good.\"\n  },\n  {\n    \"start\": \"00:00:14,600\",\n    \"end\": \"00:00:16,420\",\n    \"lang\": \"en\",\n    \"text\": \"And with this chicken wing.\"\n  },\n  {\n    \"start\": \"00:00:17,666\",\n    \"end\": \"00:00:19,326\",\n    \"lang\": \"ja\",\n    \"text\": \"この手羽先面を\"\n  },\n  {\n    \"start\": \"00:00:20,514\",\n    \"end\": \"00:00:20,654\",\n    \"lang\": \"en\",\n    \"text\": \"Bye.\"\n  },\n  {\n    \"start\": \"00:00:20,962\",\n    \"end\": \"00:00:22,402\",\n    \"lang\": \"ja\",\n    \"text\": \"私は食べています\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,980",
+            "ko": "이 빠른 면을 요리했어요."
+        },
+        {
+            "start": "00:00:03,700",
+            "end": "00:00:06,560",
+            "ko": "약 한 시간 걸려요."
+        },
+        {
+            "start": "00:00:07,020",
+            "end": "00:00:09,700",
+            "ko": "그래서 이 패스트푸드는 좀 느려요."
+        },
+        {
+            "start": "00:00:11,220",
+            "end": "00:00:11,460",
+            "ko": "오,"
+        },
+        {
+            "start": "00:00:11,460",
+            "end": "00:00:13,520",
+            "ko": "정말 냄새가 좋아요."
+        },
+        {
+            "start": "00:00:14,600",
+            "end": "00:00:16,420",
+            "ko": "그리고 이 치킨 윙이랑."
+        },
+        {
+            "start": "00:00:17,666",
+            "end": "00:00:19,326",
+            "ko": "이 치킨 윙면을"
+        },
+        {
+            "start": "00:00:20,514",
+            "end": "00:00:20,654",
+            "ko": "안녕."
+        },
+        {
+            "start": "00:00:20,962",
+            "end": "00:00:22,402",
+            "ko": "저는 먹고 있어요"
+        }
+    ]
+}

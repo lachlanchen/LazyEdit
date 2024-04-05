@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,520\",\n    \"lang\": \"ja\",\n    \"text\": \"私は海岸線を走ります\"\n  },\n  {\n    \"start\": \"00:00:03,159\",\n    \"end\": \"00:00:04,320\",\n    \"lang\": \"ja\",\n    \"text\": \"新しい、\"\n  },\n  {\n    \"start\": \"00:00:04,320\",\n    \"end\": \"00:00:05,740\",\n    \"lang\": \"ja\",\n    \"text\": \"新しい日です\"\n  },\n  {\n    \"start\": \"00:00:06,300\",\n    \"end\": \"00:00:07,860\",\n    \"lang\": \"ja\",\n    \"text\": \"今日は新しい日です\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,520",
+            "vi": "Tôi chạy dọc bờ biển"
+        },
+        {
+            "start": "00:00:03,159",
+            "end": "00:00:04,320",
+            "vi": "Một ngày mới,"
+        },
+        {
+            "start": "00:00:04,320",
+            "end": "00:00:05,740",
+            "vi": "là một ngày mới"
+        },
+        {
+            "start": "00:00:06,300",
+            "end": "00:00:07,860",
+            "vi": "Hôm nay là một ngày mới"
+        }
+    ]
+}

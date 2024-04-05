@@ -1,0 +1,238 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,800\",\n    \"lang\": \"zh\",\n    \"text\": \"去傻哈\"\n  },\n  {\n    \"start\": \"00:00:01,379\",\n    \"end\": \"00:00:03,000\",\n    \"lang\": \"zh\",\n    \"text\": \"學一點新單詞\"\n  },\n  {\n    \"start\": \"00:00:03,746\",\n    \"end\": \"00:00:09,246\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a banana and chestnut and a banana.\"\n  },\n  {\n    \"start\": \"00:00:09,282\",\n    \"end\": \"00:00:10,022\",\n    \"lang\": \"en\",\n    \"text\": \"Then the pinches.\"\n  },\n  {\n    \"start\": \"00:00:11,262\",\n    \"end\": \"00:00:12,802\",\n    \"lang\": \"en\",\n    \"text\": \"And then...\"\n  },\n  {\n    \"start\": \"00:00:13,314\",\n    \"end\": \"00:00:13,794\",\n    \"lang\": \"en\",\n    \"text\": \"pepper\"\n  },\n  {\n    \"start\": \"00:00:16,673\",\n    \"end\": \"00:00:19,874\",\n    \"lang\": \"en\",\n    \"text\": \"another bag of chestnuts\"\n  },\n  {\n    \"start\": \"00:00:19,874\",\n    \"end\": \"00:00:21,274\",\n    \"lang\": \"en\",\n    \"text\": \"and this is\"\n  },\n  {\n    \"start\": \"00:00:21,974\",\n    \"end\": \"00:00:23,334\",\n    \"lang\": \"en\",\n    \"text\": \"this is\"\n  },\n  {\n    \"start\": \"00:00:24,162\",\n    \"end\": \"00:00:24,662\",\n    \"lang\": \"zh\",\n    \"text\": \"香菜\"\n  },\n  {\n    \"start\": \"00:00:25,352\",\n    \"end\": \"00:00:25,622\",\n    \"lang\": \"zh\",\n    \"text\": \"好的,\"\n  },\n  {\n    \"start\": \"00:00:25,622\",\n    \"end\": \"00:00:25,882\",\n    \"lang\": \"zh\",\n    \"text\": \"謝謝\"\n  },\n  {\n    \"start\": \"00:00:26,372\",\n    \"end\": \"00:00:26,802\",\n    \"lang\": \"zh\",\n    \"text\": \"香菜\"\n  },\n  {\n    \"start\": \"00:00:27,842\",\n    \"end\": \"00:00:28,482\",\n    \"lang\": \"ja\",\n    \"text\": \"くらんだ、\"\n  },\n  {\n    \"start\": \"00:00:28,482\",\n    \"end\": \"00:00:29,382\",\n    \"lang\": \"ja\",\n    \"text\": \"くらんだ\"\n  },\n  {\n    \"start\": \"00:00:30,498\",\n    \"end\": \"00:00:31,118\",\n    \"lang\": \"en\",\n    \"text\": \"and uhm,\"\n  },\n  {\n    \"start\": \"00:00:31,118\",\n    \"end\": \"00:00:32,357\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry\"\n  },\n  {\n    \"start\": \"00:00:32,357\",\n    \"end\": \"00:00:32,858\",\n    \"lang\": \"en\",\n    \"text\": \"..\"\n  },\n  {\n    \"start\": \"00:00:32,858\",\n    \"end\": \"00:00:34,358\",\n    \"lang\": \"en\",\n    \"text\": \".strawberry\"\n  },\n  {\n    \"start\": \"00:00:36,706\",\n    \"end\": \"00:00:37,226\",\n    \"lang\": \"zh\",\n    \"text\": \"好美喔\"\n  },\n  {\n    \"start\": \"00:00:37,794\",\n    \"end\": \"00:00:39,134\",\n    \"lang\": \"en\",\n    \"text\": \"and red pepper\"\n  },\n  {\n    \"start\": \"00:00:39,694\",\n    \"end\": \"00:00:40,874\",\n    \"lang\": \"en\",\n    \"text\": \"and bread,\"\n  },\n  {\n    \"start\": \"00:00:40,874\",\n    \"end\": \"00:00:41,354\",\n    \"lang\": \"en\",\n    \"text\": \"ok,\"\n  },\n  {\n    \"start\": \"00:00:41,354\",\n    \"end\": \"00:00:42,014\",\n    \"lang\": \"en\",\n    \"text\": \"this is bread\"\n  },\n  {\n    \"start\": \"00:00:42,014\",\n    \"end\": \"00:00:43,534\",\n    \"lang\": \"en\",\n    \"text\": \"delicious\"\n  },\n  {\n    \"start\": \"00:00:43,534\",\n    \"end\": \"00:00:46,174\",\n    \"lang\": \"en\",\n    \"text\": \"and blueberries\"\n  },\n  {\n    \"start\": \"00:00:46,174\",\n    \"end\": \"00:00:48,054\",\n    \"lang\": \"en\",\n    \"text\": \"and apple\"\n  },\n  {\n    \"start\": \"00:00:48,054\",\n    \"end\": \"00:00:49,874\",\n    \"lang\": \"en\",\n    \"text\": \"and lemon\"\n  },\n  {\n    \"start\": \"00:00:49,874\",\n    \"end\": \"00:00:50,594\",\n    \"lang\": \"en\",\n    \"text\": \"lemon\"\n  },\n  {\n    \"start\": \"00:00:51,414\",\n    \"end\": \"00:00:52,434\",\n    \"lang\": \"en\",\n    \"text\": \"what is this?\"\n  },\n  {\n    \"start\": \"00:00:52,814\",\n    \"end\": \"00:00:55,494\",\n    \"lang\": \"en\",\n    \"text\": \"this is non-vegetable\"\n  },\n  {\n    \"start\": \"00:00:57,314\",\n    \"end\": \"00:00:57,814\",\n    \"lang\": \"en\",\n    \"text\": \"ok,\"\n  },\n  {\n    \"start\": \"00:00:57,814\",\n    \"end\": \"00:01:00,514\",\n    \"lang\": \"en\",\n    \"text\": \"it doesn't have a name on it\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,800",
+            "en": "Let's start",
+            "zh": "开始吧",
+            "ar": "لنبدأ"
+        },
+        {
+            "start": "00:00:01,379",
+            "end": "00:00:03,000",
+            "en": "Learn some new words",
+            "zh": "学一点新单词",
+            "ar": "تعلم بعض الكلمات الجديدة"
+        },
+        {
+            "start": "00:00:03,746",
+            "end": "00:00:09,246",
+            "en": "So this is a banana, chestnut and a banana.",
+            "zh": "这是一个香蕉，栗子和一个香蕉。",
+            "ar": "إذاً هذه موزة، كستناء وموزة."
+        },
+        {
+            "start": "00:00:09,282",
+            "end": "00:00:10,022",
+            "en": "Then the pinches.",
+            "zh": "然后是捏。",
+            "ar": "ثم القرص."
+        },
+        {
+            "start": "00:00:11,262",
+            "end": "00:00:12,802",
+            "en": "And then...",
+            "zh": "然后...",
+            "ar": "وبعد ذلك..."
+        },
+        {
+            "start": "00:00:13,314",
+            "end": "00:00:13,794",
+            "en": "pepper",
+            "zh": "胡椒",
+            "ar": "فلفل"
+        },
+        {
+            "start": "00:00:16,673",
+            "end": "00:00:19,874",
+            "en": "another bag of chestnuts",
+            "zh": "另一袋栗子",
+            "ar": "كيس آخر من الكستناء"
+        },
+        {
+            "start": "00:00:19,874",
+            "end": "00:00:21,274",
+            "en": "and this is",
+            "zh": "这是",
+            "ar": "وهذا هو"
+        },
+        {
+            "start": "00:00:21,974",
+            "end": "00:00:23,334",
+            "en": "this is",
+            "zh": "这是",
+            "ar": "هذا هو"
+        },
+        {
+            "start": "00:00:24,162",
+            "end": "00:00:24,662",
+            "en": "cilantro",
+            "zh": "香菜",
+            "ar": "كزبرة"
+        },
+        {
+            "start": "00:00:25,352",
+            "end": "00:00:25,622",
+            "en": "Okay,",
+            "zh": "好的,",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:00:25,622",
+            "end": "00:00:25,882",
+            "en": "thank you",
+            "zh": "谢谢",
+            "ar": "شكراً"
+        },
+        {
+            "start": "00:00:26,372",
+            "end": "00:00:26,802",
+            "en": "cilantro",
+            "zh": "香菜",
+            "ar": "كزبرة"
+        },
+        {
+            "start": "00:00:27,842",
+            "end": "00:00:28,482",
+            "en": "coriander",
+            "zh": "香菜",
+            "ar": "كزبرة",
+            "ja": "くらんだ、"
+        },
+        {
+            "start": "00:00:28,482",
+            "end": "00:00:29,382",
+            "en": "coriander",
+            "zh": "香菜",
+            "ar": "كزبرة",
+            "ja": "くらんだ"
+        },
+        {
+            "start": "00:00:30,498",
+            "end": "00:00:31,118",
+            "en": "and uhm,",
+            "zh": "和呃,",
+            "ar": "وأمم،"
+        },
+        {
+            "start": "00:00:31,118",
+            "end": "00:00:32,357",
+            "en": "strawberry",
+            "zh": "草莓",
+            "ar": "فراولة"
+        },
+        {
+            "start": "00:00:32,357",
+            "end": "00:00:32,858",
+            "en": "..",
+            "zh": "..",
+            "ar": ".."
+        },
+        {
+            "start": "00:00:32,858",
+            "end": "00:00:34,358",
+            "en": "strawberry",
+            "zh": "草莓",
+            "ar": "فراولة"
+        },
+        {
+            "start": "00:00:36,706",
+            "end": "00:00:37,226",
+            "en": "So pretty",
+            "zh": "好美喔",
+            "ar": "جميلة جداً"
+        },
+        {
+            "start": "00:00:37,794",
+            "end": "00:00:39,134",
+            "en": "and red pepper",
+            "zh": "和红椒",
+            "ar": "والفلفل الأحمر"
+        },
+        {
+            "start": "00:00:39,694",
+            "end": "00:00:40,874",
+            "en": "and bread,",
+            "zh": "和面包,",
+            "ar": "والخبز،"
+        },
+        {
+            "start": "00:00:40,874",
+            "end": "00:00:41,354",
+            "en": "ok,",
+            "zh": "好的,",
+            "ar": "حسناً،"
+        },
+        {
+            "start": "00:00:41,354",
+            "end": "00:00:42,014",
+            "en": "this is bread",
+            "zh": "这是面包",
+            "ar": "هذا هو الخبز"
+        },
+        {
+            "start": "00:00:42,014",
+            "end": "00:00:43,534",
+            "en": "delicious",
+            "zh": "好吃",
+            "ar": "لذيذ"
+        },
+        {
+            "start": "00:00:43,534",
+            "end": "00:00:46,174",
+            "en": "and blueberries",
+            "zh": "和蓝莓",
+            "ar": "والتوت الأزرق"
+        },
+        {
+            "start": "00:00:46,174",
+            "end": "00:00:48,054",
+            "en": "and apple",
+            "zh": "和苹果",
+            "ar": "وتفاح"
+        },
+        {
+            "start": "00:00:48,054",
+            "end": "00:00:49,874",
+            "en": "and lemon",
+            "zh": "和柠檬",
+            "ar": "والليمون"
+        },
+        {
+            "start": "00:00:49,874",
+            "end": "00:00:50,594",
+            "en": "lemon",
+            "zh": "柠檬",
+            "ar": "ليمون"
+        },
+        {
+            "start": "00:00:51,414",
+            "end": "00:00:52,434",
+            "en": "what is this?",
+            "zh": "这是什么？",
+            "ar": "ما هذا؟"
+        },
+        {
+            "start": "00:00:52,814",
+            "end": "00:00:55,494",
+            "en": "this is non-vegetable",
+            "zh": "这不是蔬菜",
+            "ar": "هذا ليس نباتي"
+        },
+        {
+            "start": "00:00:57,314",
+            "end": "00:00:57,814",
+            "en": "ok,",
+            "zh": "好的,",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:57,814",
+            "end": "00:01:00,514",
+            "en": "it doesn't have a name on it",
+            "zh": "上面没有名字",
+            "ar": "لا يوجد عليه اسم"
+        }
+    ]
+}

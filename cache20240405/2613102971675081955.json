@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,540\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます\"\n  },\n  {\n    \"start\": \"00:00:03,490\",\n    \"end\": \"00:00:13,490\",\n    \"lang\": \"en\",\n    \"text\": \"So yesterday I watched a video of Britain and they mocked that the American English,\"\n  },\n  {\n    \"start\": \"00:00:13,890\",\n    \"end\": \"00:00:14,790\",\n    \"lang\": \"en\",\n    \"text\": \"so they say,\"\n  },\n  {\n    \"start\": \"00:00:14,790\",\n    \"end\": \"00:00:17,250\",\n    \"lang\": \"en\",\n    \"text\": \"like the pavement,\"\n  },\n  {\n    \"start\": \"00:00:17,250\",\n    \"end\": \"00:00:20,550\",\n    \"lang\": \"en\",\n    \"text\": \"in American English it becomes sidewalk.\"\n  },\n  {\n    \"start\": \"00:00:21,370\",\n    \"end\": \"00:00:23,030\",\n    \"lang\": \"en\",\n    \"text\": \"And also the bin,\"\n  },\n  {\n    \"start\": \"00:00:23,030\",\n    \"end\": \"00:00:32,150\",\n    \"lang\": \"en\",\n    \"text\": \"in British it becomes a waste paper basket in American English.\"\n  },\n  {\n    \"start\": \"00:00:32,150\",\n    \"end\": \"00:00:33,410\",\n    \"lang\": \"en\",\n    \"text\": \"And they mocked that,\"\n  },\n  {\n    \"start\": \"00:00:33,410\",\n    \"end\": \"00:00:35,330\",\n    \"lang\": \"en\",\n    \"text\": \"that since Americans,\"\n  },\n  {\n    \"start\": \"00:00:35,330\",\n    \"end\": \"00:00:40,090\",\n    \"lang\": \"en\",\n    \"text\": \"they cannot directly understand English.\"\n  },\n  {\n    \"start\": \"00:00:41,410\",\n    \"end\": \"00:00:42,430\",\n    \"lang\": \"en\",\n    \"text\": \"So there is a,\"\n  },\n  {\n    \"start\": \"00:00:42,430\",\n    \"end\": \"00:00:48,150\",\n    \"lang\": \"en\",\n    \"text\": \"and also like another example is horse riding.\"\n  },\n  {\n    \"start\": \"00:00:49,170\",\n    \"end\": \"00:00:55,750\",\n    \"lang\": \"en\",\n    \"text\": \"They mocked that American English changed to horseback riding.\"\n  },\n  {\n    \"start\": \"00:00:55,750\",\n    \"end\": \"00:00:56,610\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:56,610\",\n    \"end\": \"00:01:02,930\",\n    \"lang\": \"en\",\n    \"text\": \"and I say there is a discrimination chain,\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,540",
+            "es": "Muchas gracias",
+            "fr": "Merci beaucoup",
+            "uk": "Дуже дякую"
+        },
+        {
+            "start": "00:00:03,490",
+            "end": "00:00:13,490",
+            "es": "Así que ayer vi un video de Gran Bretaña y se burlaron de que el inglés americano,",
+            "fr": "Donc hier, j'ai regardé une vidéo de la Grande-Bretagne et ils se sont moqués de l'anglais américain,",
+            "uk": "Отже, вчора я дивився відео про Великобританію, і вони насміхалися над американською англійською,"
+        },
+        {
+            "start": "00:00:13,890",
+            "end": "00:00:14,790",
+            "es": "como ellos dicen,",
+            "fr": "comme ils disent,",
+            "uk": "як вони кажуть,"
+        },
+        {
+            "start": "00:00:14,790",
+            "end": "00:00:17,250",
+            "es": "como el pavimento,",
+            "fr": "comme le trottoir,",
+            "uk": "як тротуар,"
+        },
+        {
+            "start": "00:00:17,250",
+            "end": "00:00:20,550",
+            "es": "en inglés americano se convierte en acera.",
+            "fr": "en anglais américain, cela devient un trottoir.",
+            "uk": "в американській англійській це стає тротуаром."
+        },
+        {
+            "start": "00:00:21,370",
+            "end": "00:00:23,030",
+            "es": "Y también el cubo de basura,",
+            "fr": "Et aussi la poubelle,",
+            "uk": "І також сміттєвий бак,"
+        },
+        {
+            "start": "00:00:23,030",
+            "end": "00:00:32,150",
+            "es": "en británico se convierte en una papelera en inglés americano.",
+            "fr": "en britannique, cela devient une corbeille à papier en anglais américain.",
+            "uk": "у британському це стає паперовим кошиком у американській англійській."
+        },
+        {
+            "start": "00:00:32,150",
+            "end": "00:00:33,410",
+            "es": "Y se burlaron de eso,",
+            "fr": "Et ils se sont moqués de cela,",
+            "uk": "І вони сміялися з цього,"
+        },
+        {
+            "start": "00:00:33,410",
+            "end": "00:00:35,330",
+            "es": "que dado que los americanos,",
+            "fr": "que comme les Américains,",
+            "uk": "що оскільки американці,"
+        },
+        {
+            "start": "00:00:35,330",
+            "end": "00:00:40,090",
+            "es": "no pueden entender el inglés directamente.",
+            "fr": "ne peuvent pas comprendre directement l'anglais.",
+            "uk": "не можуть безпосередньо зрозуміти англійську."
+        },
+        {
+            "start": "00:00:41,410",
+            "end": "00:00:42,430",
+            "es": "Así que hay una,",
+            "fr": "Donc il y a une,",
+            "uk": "Отже, є,"
+        },
+        {
+            "start": "00:00:42,430",
+            "end": "00:00:48,150",
+            "es": "y también como otro ejemplo es la equitación.",
+            "fr": "et aussi comme un autre exemple est l'équitation.",
+            "uk": "а також як інший приклад - верхова їзда."
+        },
+        {
+            "start": "00:00:49,170",
+            "end": "00:00:55,750",
+            "es": "Se burlaron de que el inglés americano cambiara a equitación a caballo.",
+            "fr": "Ils se sont moqués que l'anglais américain change en équitation à cheval.",
+            "uk": "Вони сміялись з того, що американська англійська змінилася на верхову їзду."
+        },
+        {
+            "start": "00:00:55,750",
+            "end": "00:00:56,610",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:56,610",
+            "end": "00:01:02,930",
+            "es": "y yo digo que hay una cadena de discriminación,",
+            "fr": "et je dis qu'il y a une chaîne de discrimination,",
+            "uk": "і я кажу, що є ланцюг дискримінації,"
+        }
+    ]
+}

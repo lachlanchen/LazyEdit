@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,300\",\n    \"lang\": \"zh\",\n    \"text\": \"这是一个芋头\"\n  },\n  {\n    \"start\": \"00:00:02,339\",\n    \"end\": \"00:00:05,820\",\n    \"lang\": \"zh\",\n    \"text\": \"中文名叫卤笋 我从来没吃过\"\n  },\n  {\n    \"start\": \"00:00:05,820\",\n    \"end\": \"00:00:07,420\",\n    \"lang\": \"zh\",\n    \"text\": \"卤是卤味道的卤\"\n  },\n  {\n    \"start\": \"00:00:07,720\",\n    \"end\": \"00:00:08,840\",\n    \"lang\": \"zh\",\n    \"text\": \"笋是煮笋的笋\"\n  },\n  {\n    \"start\": \"00:00:10,139\",\n    \"end\": \"00:00:11,260\",\n    \"lang\": \"zh\",\n    \"text\": \"看一下这个怎么样\"\n  },\n  {\n    \"start\": \"00:00:13,180\",\n    \"end\": \"00:00:14,560\",\n    \"lang\": \"zh\",\n    \"text\": \"做一个鸡肉\"\n  },\n  {\n    \"start\": \"00:00:14,740\",\n    \"end\": \"00:00:15,320\",\n    \"lang\": \"zh\",\n    \"text\": \"鸡翅面\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,300",
+            "en": "This is a taro",
+            "zh": "这是一个芋头",
+            "ar": "هذا هو القلقاس"
+        },
+        {
+            "start": "00:00:02,339",
+            "end": "00:00:05,820",
+            "en": "Its Chinese name is stewed bamboo shoots, I have never eaten it",
+            "zh": "中文名叫卤笋 我从来没吃过",
+            "ar": "اسمها بالصينية هو البراعم الخيزران المطهوة، لم أتناولها أبدًا"
+        },
+        {
+            "start": "00:00:05,820",
+            "end": "00:00:07,420",
+            "en": "The 'lu' is the stew in 'stewed flavor'",
+            "zh": "卤是卤味道的卤",
+            "ar": "'لو' هو اليخنة في 'نكهة اليخنة'"
+        },
+        {
+            "start": "00:00:07,720",
+            "end": "00:00:08,840",
+            "en": "'Sun' refers to the 'bamboo shoots' part of 'cooked bamboo shoots'",
+            "zh": "笋是煮笋的笋",
+            "ar": "'سون' يشير إلى جزء 'البراعم الخيزران' من 'البراعم الخيزران المطبوخة'"
+        },
+        {
+            "start": "00:00:10,139",
+            "end": "00:00:11,260",
+            "en": "Let's see how this is",
+            "zh": "看一下这个怎么样",
+            "ar": "دعونا نرى كيف هذا"
+        },
+        {
+            "start": "00:00:13,180",
+            "end": "00:00:14,560",
+            "en": "Make a chicken dish",
+            "zh": "做一个鸡肉",
+            "ar": "صنع طبق دجاج"
+        },
+        {
+            "start": "00:00:14,740",
+            "end": "00:00:15,320",
+            "en": "Chicken wing surface",
+            "zh": "鸡翅面",
+            "ar": "سطح جناح الدجاج"
+        }
+    ]
+}

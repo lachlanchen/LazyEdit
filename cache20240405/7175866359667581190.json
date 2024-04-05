@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,170\",\n    \"end\": \"00:01:03,930\",\n    \"lang\": \"en\",\n    \"text\": \"on the stream,\"\n  },\n  {\n    \"start\": \"00:01:03,930\",\n    \"end\": \"00:01:06,230\",\n    \"lang\": \"en\",\n    \"text\": \"so is this correct?\"\n  },\n  {\n    \"start\": \"00:01:07,650\",\n    \"end\": \"00:01:14,230\",\n    \"lang\": \"en\",\n    \"text\": \"So this is 4 over 4 times sine nature.\"\n  },\n  {\n    \"start\": \"00:01:15,570\",\n    \"end\": \"00:01:16,170\",\n    \"lang\": \"en\",\n    \"text\": \"Actually,\"\n  },\n  {\n    \"start\": \"00:01:16,170\",\n    \"end\": \"00:01:18,450\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's 4 over 4.\"\n  },\n  {\n    \"start\": \"00:01:19,170\",\n    \"end\": \"00:01:23,510\",\n    \"lang\": \"en\",\n    \"text\": \"I'm quite naive and stupid in music.\"\n  },\n  {\n    \"start\": \"00:01:24,650\",\n    \"end\": \"00:01:24,970\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:24,970\",\n    \"end\": \"00:01:25,450\",\n    \"lang\": \"en\",\n    \"text\": \"thank you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:03,170",
+            "end": "00:01:03,930",
+            "en": "on the stream,",
+            "zh": "在直播中，",
+            "ar": "على البث،"
+        },
+        {
+            "start": "00:01:03,930",
+            "end": "00:01:06,230",
+            "en": "so is this correct?",
+            "zh": "所以这样对吗？",
+            "ar": "فهل هذا صحيح؟"
+        },
+        {
+            "start": "00:01:07,650",
+            "end": "00:01:14,230",
+            "en": "So this is 4 over 4 times sine nature.",
+            "zh": "所以这是四分之四乘以正弦自然。",
+            "ar": "إذًا هذا هو ٤ على ٤ ضرب في طبيعة الجيب."
+        },
+        {
+            "start": "00:01:15,570",
+            "end": "00:01:16,170",
+            "en": "Actually,",
+            "zh": "实际上，",
+            "ar": "في الواقع،"
+        },
+        {
+            "start": "00:01:16,170",
+            "end": "00:01:18,450",
+            "en": "I don't know if it's 4 over 4.",
+            "zh": "我不确定是否是四分之四。",
+            "ar": "أنا لا أعلم إذا كان ٤ على ٤."
+        },
+        {
+            "start": "00:01:19,170",
+            "end": "00:01:23,510",
+            "en": "I'm quite naive and stupid in music.",
+            "zh": "我在音乐方面相当天真和愚蠢。",
+            "ar": "أنا ساذج وغبي جدًا في الموسيقى."
+        },
+        {
+            "start": "00:01:24,650",
+            "end": "00:01:24,970",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:01:24,970",
+            "end": "00:01:25,450",
+            "en": "thank you.",
+            "zh": "谢谢。",
+            "ar": "شكراً."
+        }
+    ]
+}

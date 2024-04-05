@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,900\",\n    \"lang\": \"en\",\n    \"text\": \"come back to our Dugnap.\"\n  },\n  {\n    \"start\": \"00:00:02,690\",\n    \"end\": \"00:00:05,510\",\n    \"lang\": \"zh\",\n    \"text\": \"那边是贵宾圈\"\n  },\n  {\n    \"start\": \"00:00:05,510\",\n    \"end\": \"00:00:06,910\",\n    \"lang\": \"zh\",\n    \"text\": \"贵是高贵的贵\"\n  },\n  {\n    \"start\": \"00:00:07,130\",\n    \"end\": \"00:00:08,170\",\n    \"lang\": \"zh\",\n    \"text\": \"宾是宾客的宾\"\n  },\n  {\n    \"start\": \"00:00:09,058\",\n    \"end\": \"00:00:12,218\",\n    \"lang\": \"en\",\n    \"text\": \"So I'll call it a noble guest dog.\"\n  },\n  {\n    \"start\": \"00:00:13,238\",\n    \"end\": \"00:00:13,638\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:00:14,738\",\n    \"end\": \"00:00:14,998\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:14,998\",\n    \"end\": \"00:00:15,918\",\n    \"lang\": \"en\",\n    \"text\": \"so many dogs.\"\n  },\n  {\n    \"start\": \"00:00:16,198\",\n    \"end\": \"00:00:16,978\",\n    \"lang\": \"en\",\n    \"text\": \"Not that so many.\"\n  },\n  {\n    \"start\": \"00:00:17,558\",\n    \"end\": \"00:00:19,718\",\n    \"lang\": \"en\",\n    \"text\": \"It's not as many as usual.\"\n  },\n  {\n    \"start\": \"00:00:20,798\",\n    \"end\": \"00:00:21,958\",\n    \"lang\": \"en\",\n    \"text\": \"But still many dogs.\"\n  },\n  {\n    \"start\": \"00:00:24,258\",\n    \"end\": \"00:00:25,638\",\n    \"lang\": \"en\",\n    \"text\": \"There is a dog fight.\"\n  },\n  {\n    \"start\": \"00:00:26,358\",\n    \"end\": \"00:00:29,218\",\n    \"lang\": \"en\",\n    \"text\": \"And this dog just get frightened.\"\n  },\n  {\n    \"start\": \"00:00:29,538\",\n    \"end\": \"00:00:31,978\",\n    \"lang\": \"en\",\n    \"text\": \"And we have this eye contact.\"\n  },\n  {\n    \"start\": \"00:00:34,118\",\n    \"end\": \"00:00:34,998\",\n    \"lang\": \"en\",\n    \"text\": \"This dog.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,900",
+            "en": "come back to our Dugnap.",
+            "zh": "回到我们的Dugnap。",
+            "ar": "عُد إلى دوجناب الخاص بنا."
+        },
+        {
+            "start": "00:00:02,690",
+            "end": "00:00:05,510",
+            "en": "Over there is the VIP area",
+            "zh": "那边是贵宾圈",
+            "ar": "هناك منطقة الضيوف المهمين"
+        },
+        {
+            "start": "00:00:05,510",
+            "end": "00:00:06,910",
+            "en": "'Noble' as in 'noble' noble",
+            "zh": "贵是高贵的贵",
+            "ar": "'نبيل' كما في النبلاء"
+        },
+        {
+            "start": "00:00:07,130",
+            "end": "00:00:08,170",
+            "en": "'Guest' as in 'guest' guest",
+            "zh": "宾是宾客的宾",
+            "ar": "'ضيف' كما في الضيوف"
+        },
+        {
+            "start": "00:00:09,058",
+            "end": "00:00:12,218",
+            "en": "So I'll call it a noble guest dog.",
+            "zh": "所以我会称它为贵宾犬。",
+            "ar": "لذلك، سأسميه كلب الضيف النبيل."
+        },
+        {
+            "start": "00:00:13,238",
+            "end": "00:00:13,638",
+            "en": "Right?",
+            "zh": "对吗？",
+            "ar": "أليس كذلك؟"
+        },
+        {
+            "start": "00:00:14,738",
+            "end": "00:00:14,998",
+            "en": "Wow,",
+            "zh": "哇，",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:00:14,998",
+            "end": "00:00:15,918",
+            "en": "so many dogs.",
+            "zh": "好多狗。",
+            "ar": "الكثير من الكلاب."
+        },
+        {
+            "start": "00:00:16,198",
+            "end": "00:00:16,978",
+            "en": "Not that so many.",
+            "zh": "没有那么多。",
+            "ar": "ليس الكثير."
+        },
+        {
+            "start": "00:00:17,558",
+            "end": "00:00:19,718",
+            "en": "It's not as many as usual.",
+            "zh": "没有像往常那么多。",
+            "ar": "ليس بقدر المعتاد."
+        },
+        {
+            "start": "00:00:20,798",
+            "end": "00:00:21,958",
+            "en": "But still many dogs.",
+            "zh": "但还是很多狗。",
+            "ar": "ولكن لا يزال هناك الكثير من الكلاب."
+        },
+        {
+            "start": "00:00:24,258",
+            "end": "00:00:25,638",
+            "en": "There is a dog fight.",
+            "zh": "有一场狗斗。",
+            "ar": "هناك قتال كلاب."
+        },
+        {
+            "start": "00:00:26,358",
+            "end": "00:00:29,218",
+            "en": "And this dog just get frightened.",
+            "zh": "这只狗刚刚被吓到了。",
+            "ar": "وهذا الكلب فقط يُرعب."
+        },
+        {
+            "start": "00:00:29,538",
+            "end": "00:00:31,978",
+            "en": "And we have this eye contact.",
+            "zh": "我们有了眼神接触。",
+            "ar": "وكان بيننا تواصل بصري."
+        },
+        {
+            "start": "00:00:34,118",
+            "end": "00:00:34,998",
+            "en": "This dog.",
+            "zh": "这只狗。",
+            "ar": "هذا الكلب."
+        }
+    ]
+}

@@ -1,0 +1,95 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,460\",\n    \"lang\": \"ja\",\n    \"text\": \"はい、\"\n  },\n  {\n    \"start\": \"00:00:00,460\",\n    \"end\": \"00:00:01,120\",\n    \"lang\": \"ja\",\n    \"text\": \"お願いします\"\n  },\n  {\n    \"start\": \"00:00:05,378\",\n    \"end\": \"00:00:05,678\",\n    \"lang\": \"en\",\n    \"text\": \"Ugh.\"\n  },\n  {\n    \"start\": \"00:00:06,658\",\n    \"end\": \"00:00:10,018\",\n    \"lang\": \"ja\",\n    \"text\": \"私の朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:10,018\",\n    \"end\": \"00:00:11,998\",\n    \"lang\": \"ja\",\n    \"text\": \"私はジンジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:00:19,053\",\n    \"end\": \"00:00:25,554\",\n    \"lang\": \"en\",\n    \"text\": \"It's working out is a gorgeous thing.\"\n  },\n  {\n    \"start\": \"00:00:25,554\",\n    \"end\": \"00:00:37,454\",\n    \"lang\": \"en\",\n    \"text\": \"The difficult part of the workout is just getting out from our house.\"\n  },\n  {\n    \"start\": \"00:00:52,574\",\n    \"end\": \"00:00:55,454\",\n    \"lang\": \"en\",\n    \"text\": \"Once you get it out of your bed,\"\n  },\n  {\n    \"start\": \"00:00:55,454\",\n    \"end\": \"00:00:57,214\",\n    \"lang\": \"en\",\n    \"text\": \"get it off the top of your home,\"\n  },\n  {\n    \"start\": \"00:00:57,214\",\n    \"end\": \"00:00:58,174\",\n    \"lang\": \"en\",\n    \"text\": \"you can do it.\"\n  },\n  {\n    \"start\": \"00:00:58,210\",\n    \"end\": \"00:00:59,250\",\n    \"lang\": \"ja\",\n    \"text\": \"エクストサイズにつながる\"\n  },\n  {\n    \"start\": \"00:00:59,290\",\n    \"end\": \"00:00:59,590\",\n    \"lang\": \"ja\",\n    \"text\": \"シンパシー\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,460",
+            "en": "Yes,",
+            "zh": "是的，",
+            "ar": "نعم،",
+            "ja": "はい、"
+        },
+        {
+            "start": "00:00:00,460",
+            "end": "00:00:01,120",
+            "en": "please.",
+            "zh": "请。",
+            "ar": "رجاء.",
+            "ja": "お願いします"
+        },
+        {
+            "start": "00:00:05,378",
+            "end": "00:00:05,678",
+            "en": "Ugh.",
+            "zh": "啊。",
+            "ar": "أف."
+        },
+        {
+            "start": "00:00:06,658",
+            "end": "00:00:10,018",
+            "en": "I am eating my breakfast.",
+            "zh": "我在吃我的早餐。",
+            "ar": "أنا آكل فطوري.",
+            "ja": "私の朝ごはんを食べています"
+        },
+        {
+            "start": "00:00:10,018",
+            "end": "00:00:11,998",
+            "en": "I am drinking ginger juice.",
+            "zh": "我在喝姜汁。",
+            "ar": "أنا أشرب عصير الزنجبيل.",
+            "ja": "私はジンジュースを飲んでいます"
+        },
+        {
+            "start": "00:00:19,053",
+            "end": "00:00:25,554",
+            "en": "It's working out is a gorgeous thing.",
+            "zh": "锻炼是一件美妙的事情。",
+            "ar": "التمرين شيء رائع."
+        },
+        {
+            "start": "00:00:25,554",
+            "end": "00:00:37,454",
+            "en": "The difficult part of the workout is just getting out from our house.",
+            "zh": "锻炼的困难部分就是离开我们的房子。",
+            "ar": "الجزء الصعب من التمرين هو مجرد الخروج من بيتنا."
+        },
+        {
+            "start": "00:00:52,574",
+            "end": "00:00:55,454",
+            "en": "Once you get it out of your bed,",
+            "zh": "一旦你离开床，",
+            "ar": "حالما تستيقظ من سريرك،"
+        },
+        {
+            "start": "00:00:55,454",
+            "end": "00:00:57,214",
+            "en": "get it off the top of your home,",
+            "zh": "离开你家的顶部，",
+            "ar": "اخرجها من أعلى منزلك،"
+        },
+        {
+            "start": "00:00:57,214",
+            "end": "00:00:58,174",
+            "en": "you can do it.",
+            "zh": "你可以做到。",
+            "ar": "تستطيع فعلها."
+        },
+        {
+            "start": "00:00:58,210",
+            "end": "00:00:59,250",
+            "en": "Leads to exercise.",
+            "zh": "导致锻炼。",
+            "ar": "يؤدي إلى التمرين.",
+            "ja": "エクストサイズにつながる"
+        },
+        {
+            "start": "00:00:59,290",
+            "end": "00:00:59,590",
+            "en": "Sympathy.",
+            "zh": "同情。",
+            "ar": "تعاطف.",
+            "ja": "シンパシー"
+        }
+    ]
+}

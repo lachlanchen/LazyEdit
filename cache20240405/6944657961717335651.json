@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,400\",\n    \"lang\": \"zh\",\n    \"text\": \"就一直说这个粤语和重庆话很像嘛\"\n  },\n  {\n    \"start\": \"00:00:04,040\",\n    \"end\": \"00:00:05,720\",\n    \"lang\": \"zh\",\n    \"text\": \"我脑袋还叫这个叫延续\"\n  },\n  {\n    \"start\": \"00:00:06,300\",\n    \"end\": \"00:00:08,860\",\n    \"lang\": \"zh\",\n    \"text\": \"今天才知道原来粤语里面应该叫什么\"\n  },\n  {\n    \"start\": \"00:00:08,860\",\n    \"end\": \"00:00:09,400\",\n    \"lang\": \"zh\",\n    \"text\": \"元兮\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,400",
+            "es": "Siempre decían que el cantonés y el chongqingés son muy similares",
+            "fr": "Ils disaient toujours que le cantonais et le chongqingais sont très similaires",
+            "uk": "Завжди казали, що кантонська та чунцінська мови дуже схожі"
+        },
+        {
+            "start": "00:00:04,040",
+            "end": "00:00:05,720",
+            "es": "Y mi cabeza lo llamaba esto continuación",
+            "fr": "Et ma tête appelait cela une continuation",
+            "uk": "І моя голова називала це продовженням"
+        },
+        {
+            "start": "00:00:06,300",
+            "end": "00:00:08,860",
+            "es": "Hoy me enteré de lo que realmente debería llamarse en cantonés",
+            "fr": "Aujourd'hui, j'ai appris ce que cela devrait vraiment s'appeler en cantonais",
+            "uk": "Сьогодні я дізнався, як це насправді має називатися кантонською"
+        },
+        {
+            "start": "00:00:08,860",
+            "end": "00:00:09,400",
+            "es": "Yuan Xi",
+            "fr": "Yuan Xi",
+            "uk": "Юань Сі"
+        }
+    ]
+}

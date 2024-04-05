@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,699\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"zh\",\n    \"text\": \"这个兵力拳咋说呢?\"\n  },\n  {\n    \"start\": \"00:00:02,240\",\n    \"end\": \"00:00:02,860\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力拳\"\n  },\n  {\n    \"start\": \"00:00:04,580\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力\"\n  },\n  {\n    \"start\": \"00:00:09,660\",\n    \"end\": \"00:00:10,020\",\n    \"lang\": \"zh\",\n    \"text\": \"哇,\"\n  },\n  {\n    \"start\": \"00:00:10,020\",\n    \"end\": \"00:00:12,200\",\n    \"lang\": \"zh\",\n    \"text\": \"那个黑狗很可爱\"\n  },\n  {\n    \"start\": \"00:00:16,420\",\n    \"end\": \"00:00:16,920\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力,\"\n  },\n  {\n    \"start\": \"00:00:16,920\",\n    \"end\": \"00:00:17,820\",\n    \"lang\": \"zh\",\n    \"text\": \"还有什么呢这\"\n  },\n  {\n    \"start\": \"00:00:18,380\",\n    \"end\": \"00:00:18,740\",\n    \"lang\": \"zh\",\n    \"text\": \"哦,\"\n  },\n  {\n    \"start\": \"00:00:18,740\",\n    \"end\": \"00:00:19,180\",\n    \"lang\": \"zh\",\n    \"text\": \"贵兵,\"\n  },\n  {\n    \"start\": \"00:00:19,180\",\n    \"end\": \"00:00:20,460\",\n    \"lang\": \"zh\",\n    \"text\": \"贵兵拳\"\n  },\n  {\n    \"start\": \"00:00:21,100\",\n    \"end\": \"00:00:21,620\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力,\"\n  },\n  {\n    \"start\": \"00:00:21,620\",\n    \"end\": \"00:00:22,880\",\n    \"lang\": \"zh\",\n    \"text\": \"我说的说些啥\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,699",
+            "end": "00:00:02,240",
+            "en": "How should I describe this military fist?",
+            "zh": "这个兵力拳咋说呢?",
+            "ar": "كيف يجب أن أصف هذا القبضة العسكرية؟"
+        },
+        {
+            "start": "00:00:02,240",
+            "end": "00:00:02,860",
+            "en": "Military fist",
+            "zh": "兵力拳",
+            "ar": "قبضة عسكرية"
+        },
+        {
+            "start": "00:00:04,580",
+            "end": "00:00:05,140",
+            "en": "Military strength",
+            "zh": "兵力",
+            "ar": "القوة العسكرية"
+        },
+        {
+            "start": "00:00:09,660",
+            "end": "00:00:10,020",
+            "en": "Wow,",
+            "zh": "哇,",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:00:10,020",
+            "end": "00:00:12,200",
+            "en": "That black dog is very cute",
+            "zh": "那个黑狗很可爱",
+            "ar": "هذا الكلب الأسود لطيف جداً"
+        },
+        {
+            "start": "00:00:16,420",
+            "end": "00:00:16,920",
+            "en": "Military strength,",
+            "zh": "兵力,",
+            "ar": "القوة العسكرية،"
+        },
+        {
+            "start": "00:00:16,920",
+            "end": "00:00:17,820",
+            "en": "What else is there?",
+            "zh": "还有什么呢这",
+            "ar": "ماذا هناك أيضًا؟"
+        },
+        {
+            "start": "00:00:18,380",
+            "end": "00:00:18,740",
+            "en": "Oh,",
+            "zh": "哦,",
+            "ar": "أوه،"
+        },
+        {
+            "start": "00:00:18,740",
+            "end": "00:00:19,180",
+            "en": "Expensive troops,",
+            "zh": "贵兵,",
+            "ar": "القوات الغالية،"
+        },
+        {
+            "start": "00:00:19,180",
+            "end": "00:00:20,460",
+            "en": "Expensive military fist",
+            "zh": "贵兵拳",
+            "ar": "قبضة العسكرية الغالية"
+        },
+        {
+            "start": "00:00:21,100",
+            "end": "00:00:21,620",
+            "en": "Military strength,",
+            "zh": "兵力,",
+            "ar": "القوة العسكرية،"
+        },
+        {
+            "start": "00:00:21,620",
+            "end": "00:00:22,880",
+            "en": "What was I talking about?",
+            "zh": "我说的说些啥",
+            "ar": "عما كنت أتحدث؟"
+        }
+    ]
+}

@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:04,230\",\n    \"end\": \"00:02:10,250\",\n    \"lang\": \"en\",\n    \"text\": \"but to stop discrimination in the infrastructure,\"\n  },\n  {\n    \"start\": \"00:02:10,250\",\n    \"end\": \"00:02:12,730\",\n    \"lang\": \"en\",\n    \"text\": \"in the institution.\"\n  },\n  {\n    \"start\": \"00:02:14,310\",\n    \"end\": \"00:02:16,070\",\n    \"lang\": \"en\",\n    \"text\": \"From the institution perspective,\"\n  },\n  {\n    \"start\": \"00:02:16,070\",\n    \"end\": \"00:02:22,930\",\n    \"lang\": \"en\",\n    \"text\": \"to stop the discrimination rather than from the moral perspective.\"\n  },\n  {\n    \"start\": \"00:02:23,930\",\n    \"end\": \"00:02:25,030\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:25,030\",\n    \"end\": \"00:02:29,310\",\n    \"lang\": \"en\",\n    \"text\": \"the little thing don't really matter.\"\n  },\n  {\n    \"start\": \"00:02:30,270\",\n    \"end\": \"00:02:31,990\",\n    \"lang\": \"en\",\n    \"text\": \"So it's great.\"\n  },\n  {\n    \"start\": \"00:02:31,990\",\n    \"end\": \"00:02:35,490\",\n    \"lang\": \"en\",\n    \"text\": \"It's practical.\"\n  },\n  {\n    \"start\": \"00:02:35,490\",\n    \"end\": \"00:02:42,950\",\n    \"lang\": \"en\",\n    \"text\": \"It's not something that is too aggressive or restrictive.\"\n  },\n  {\n    \"start\": \"00:02:42,950\",\n    \"end\": \"00:02:43,130\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you.\"\n  },\n  {\n    \"start\": \"00:02:51,890\",\n    \"end\": \"00:02:55,450\",\n    \"lang\": \"zh\",\n    \"text\": \"那个 那是柴犬\"\n  },\n  {\n    \"start\": \"00:02:55,450\",\n    \"end\": \"00:02:56,850\",\n    \"lang\": \"zh\",\n    \"text\": \"柴犬的英语怎么说\"\n  },\n  {\n    \"start\": \"00:02:57,450\",\n    \"end\": \"00:02:57,950\",\n    \"lang\": \"zh\",\n    \"text\": \"柴犬\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:04,230",
+            "end": "00:02:10,250",
+            "vi": "nhưng để ngăn chặn sự phân biệt đối xử trong cơ sở hạ tầng,"
+        },
+        {
+            "start": "00:02:10,250",
+            "end": "00:02:12,730",
+            "vi": "trong các tổ chức."
+        },
+        {
+            "start": "00:02:14,310",
+            "end": "00:02:16,070",
+            "vi": "Từ góc độ của các tổ chức,"
+        },
+        {
+            "start": "00:02:16,070",
+            "end": "00:02:22,930",
+            "vi": "để dừng sự phân biệt đối xử hơn là từ góc độ đạo đức."
+        },
+        {
+            "start": "00:02:23,930",
+            "end": "00:02:25,030",
+            "vi": "Vì vậy,"
+        },
+        {
+            "start": "00:02:25,030",
+            "end": "00:02:29,310",
+            "vi": "những điều nhỏ bé thực sự không quan trọng lắm."
+        },
+        {
+            "start": "00:02:30,270",
+            "end": "00:02:31,990",
+            "vi": "Vì vậy, đó là điều tuyệt vời."
+        },
+        {
+            "start": "00:02:31,990",
+            "end": "00:02:35,490",
+            "vi": "Đó là thực tế."
+        },
+        {
+            "start": "00:02:35,490",
+            "end": "00:02:42,950",
+            "vi": "Đó không phải là điều gì quá quyết liệt hay hạn chế."
+        },
+        {
+            "start": "00:02:42,950",
+            "end": "00:02:43,130",
+            "vi": "Cảm ơn."
+        },
+        {
+            "start": "00:02:51,890",
+            "end": "00:02:55,450",
+            "vi": "Cái đó, đó là chó Shiba"
+        },
+        {
+            "start": "00:02:55,450",
+            "end": "00:02:56,850",
+            "vi": "Chó Shiba tiếng Anh là gì"
+        },
+        {
+            "start": "00:02:57,450",
+            "end": "00:02:57,950",
+            "vi": "Chó Shiba"
+        }
+    ]
+}

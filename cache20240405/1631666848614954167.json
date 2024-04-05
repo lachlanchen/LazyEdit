@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"This is the first time I've seen the Hong Kong TV Mall.\"\n  },\n  {\n    \"start\": \"00:00:06,080\",\n    \"end\": \"00:00:06,960\",\n    \"lang\": \"en\",\n    \"text\": \"And it's terrible.\"\n  },\n  {\n    \"start\": \"00:00:07,440\",\n    \"end\": \"00:00:08,280\",\n    \"lang\": \"en\",\n    \"text\": \"It's primitive.\"\n  },\n  {\n    \"start\": \"00:00:08,740\",\n    \"end\": \"00:00:10,560\",\n    \"lang\": \"en\",\n    \"text\": \"And they have pieces like this.\"\n  },\n  {\n    \"start\": \"00:00:10,980\",\n    \"end\": \"00:00:12,700\",\n    \"lang\": \"en\",\n    \"text\": \"But it's so cool.\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:14,980\",\n    \"lang\": \"en\",\n    \"text\": \"Environment friendly.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,000",
+            "ko": "이건 내가 홍콩 TV 몰을 처음 본 거예요."
+        },
+        {
+            "start": "00:00:06,080",
+            "end": "00:00:06,960",
+            "ko": "그리고 정말 끔찍해요."
+        },
+        {
+            "start": "00:00:07,440",
+            "end": "00:00:08,280",
+            "ko": "정말 원시적이에요."
+        },
+        {
+            "start": "00:00:08,740",
+            "end": "00:00:10,560",
+            "ko": "그리고 이런 제품들이 있어요."
+        },
+        {
+            "start": "00:00:10,980",
+            "end": "00:00:12,700",
+            "ko": "하지만 정말 멋져요."
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:14,980",
+            "ko": "환경 친화적이에요."
+        }
+    ]
+}

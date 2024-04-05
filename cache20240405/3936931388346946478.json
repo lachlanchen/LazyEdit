@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,260\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,260\",\n    \"end\": \"00:00:04,340\",\n    \"lang\": \"en\",\n    \"text\": \"let's check what I have bought on Hong Kong QA Mall.\"\n  },\n  {\n    \"start\": \"00:00:05,340\",\n    \"end\": \"00:00:10,880\",\n    \"lang\": \"en\",\n    \"text\": \"And this is a bath gel and shampoo.\"\n  },\n  {\n    \"start\": \"00:00:12,380\",\n    \"end\": \"00:00:13,340\",\n    \"lang\": \"en\",\n    \"text\": \"Thickening shampoo.\"\n  },\n  {\n    \"start\": \"00:00:15,040\",\n    \"end\": \"00:00:16,120\",\n    \"lang\": \"en\",\n    \"text\": \"I don't believe it.\"\n  },\n  {\n    \"start\": \"00:00:17,200\",\n    \"end\": \"00:00:22,260\",\n    \"lang\": \"en\",\n    \"text\": \"It can energize scalp and thicker for hair.\"\n  },\n  {\n    \"start\": \"00:00:24,738\",\n    \"end\": \"00:00:25,578\",\n    \"lang\": \"en\",\n    \"text\": \"I think you can eat this\"\n  },\n  {\n    \"start\": \"00:00:28,138\",\n    \"end\": \"00:00:28,418\",\n    \"lang\": \"en\",\n    \"text\": \"Yeah\"\n  },\n  {\n    \"start\": \"00:00:30,977\",\n    \"end\": \"00:00:32,558\",\n    \"lang\": \"en\",\n    \"text\": \"How to say this?\"\n  },\n  {\n    \"start\": \"00:00:33,938\",\n    \"end\": \"00:00:35,498\",\n    \"lang\": \"en\",\n    \"text\": \"This is a data card\"\n  },\n  {\n    \"start\": \"00:00:36,497\",\n    \"end\": \"00:00:37,398\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:37,398\",\n    \"end\": \"00:00:39,258\",\n    \"lang\": \"en\",\n    \"text\": \"data card\"\n  },\n  {\n    \"start\": \"00:00:40,018\",\n    \"end\": \"00:00:42,638\",\n    \"lang\": \"en\",\n    \"text\": \"The 4th generation data card\"\n  },\n  {\n    \"start\": \"00:00:42,638\",\n    \"end\": \"00:00:44,478\",\n    \"lang\": \"en\",\n    \"text\": \"And what's this?\"\n  },\n  {\n    \"start\": \"00:00:46,138\",\n    \"end\": \"00:00:47,658\",\n    \"lang\": \"en\",\n    \"text\": \"This is...\"\n  },\n  {\n    \"start\": \"00:00:48,838\",\n    \"end\": \"00:00:50,118\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know\"\n  },\n  {\n    \"start\": \"00:00:59,554\",\n    \"end\": \"00:00:59,994\",\n    \"lang\": \"en\",\n    \"text\": \"For me,\"\n  },\n  {\n    \"start\": \"00:00:59,994\",\n    \"end\": \"00:01:01,454\",\n    \"lang\": \"en\",\n    \"text\": \"learning languages,\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,260",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:00,260",
+            "end": "00:00:04,340",
+            "en": "let's check what I have bought on Hong Kong QA Mall.",
+            "zh": "让我们检查一下我在香港QA商城买了什么。",
+            "ar": "دعونا نتحقق مما اشتريته في مول هونغ كونغ QA."
+        },
+        {
+            "start": "00:00:05,340",
+            "end": "00:00:10,880",
+            "en": "And this is a bath gel and shampoo.",
+            "zh": "这是一瓶沐浴露和洗发水。",
+            "ar": "وهذا هو جل الاستحمام والشامبو."
+        },
+        {
+            "start": "00:00:12,380",
+            "end": "00:00:13,340",
+            "en": "Thickening shampoo.",
+            "zh": "增厚洗发水。",
+            "ar": "شامبو لتكثيف الشعر."
+        },
+        {
+            "start": "00:00:15,040",
+            "end": "00:00:16,120",
+            "en": "I don't believe it.",
+            "zh": "我不相信。",
+            "ar": "أنا لا أصدق ذلك."
+        },
+        {
+            "start": "00:00:17,200",
+            "end": "00:00:22,260",
+            "en": "It can energize the scalp and thicken the hair.",
+            "zh": "它能激活头皮，使头发变得更厚。",
+            "ar": "يمكن أن ينشط فروة الرأس ويكثف الشعر."
+        },
+        {
+            "start": "00:00:24,738",
+            "end": "00:00:25,578",
+            "en": "I think you can eat this",
+            "zh": "我觉得你可以吃这个",
+            "ar": "أعتقد أن بإمكانك أكل هذا"
+        },
+        {
+            "start": "00:00:28,138",
+            "end": "00:00:28,418",
+            "en": "Yeah",
+            "zh": "是的",
+            "ar": "نعم"
+        },
+        {
+            "start": "00:00:30,977",
+            "end": "00:00:32,558",
+            "en": "How to say this?",
+            "zh": "这个怎么说？",
+            "ar": "كيف يقال هذا؟"
+        },
+        {
+            "start": "00:00:33,938",
+            "end": "00:00:35,498",
+            "en": "This is a data card",
+            "zh": "这是一张数据卡",
+            "ar": "هذه بطاقة بيانات"
+        },
+        {
+            "start": "00:00:36,497",
+            "end": "00:00:37,398",
+            "en": "Oh,",
+            "zh": "哦，",
+            "ar": "أوه،"
+        },
+        {
+            "start": "00:00:37,398",
+            "end": "00:00:39,258",
+            "en": "data card",
+            "zh": "数据卡",
+            "ar": "بطاقة البيانات"
+        },
+        {
+            "start": "00:00:40,018",
+            "end": "00:00:42,638",
+            "en": "The fourth generation data card",
+            "zh": "第四代数据卡",
+            "ar": "بطاقة البيانات الجيل الرابع"
+        },
+        {
+            "start": "00:00:42,638",
+            "end": "00:00:44,478",
+            "en": "And what's this?",
+            "zh": "这是什么？",
+            "ar": "وما هذا؟"
+        },
+        {
+            "start": "00:00:46,138",
+            "end": "00:00:47,658",
+            "en": "This is...",
+            "zh": "这是...",
+            "ar": "هذا هو..."
+        },
+        {
+            "start": "00:00:48,838",
+            "end": "00:00:50,118",
+            "en": "I don't know",
+            "zh": "我不知道",
+            "ar": "أنا لا أعرف"
+        },
+        {
+            "start": "00:00:59,554",
+            "end": "00:00:59,994",
+            "en": "For me,",
+            "zh": "对我来说，",
+            "ar": "بالنسبة لي،"
+        },
+        {
+            "start": "00:00:59,994",
+            "end": "00:01:01,454",
+            "en": "learning languages,",
+            "zh": "学习语言，",
+            "ar": "تعلم اللغات،"
+        }
+    ]
+}

@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,606\",\n    \"end\": \"00:01:04,806\",\n    \"lang\": \"en\",\n    \"text\": \"So my own flavor also contribute a lot.\"\n  },\n  {\n    \"start\": \"00:01:04,806\",\n    \"end\": \"00:01:05,746\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:05,746\",\n    \"end\": \"00:01:13,526\",\n    \"lang\": \"en\",\n    \"text\": \"this flavor that they blend together create this unique flavor.\"\n  },\n  {\n    \"start\": \"00:01:20,956\",\n    \"end\": \"00:01:23,006\",\n    \"lang\": \"en\",\n    \"text\": \"I have this intuition.\"\n  },\n  {\n    \"start\": \"00:01:24,036\",\n    \"end\": \"00:01:30,906\",\n    \"lang\": \"en\",\n    \"text\": \"What kind of flavor that they can work together.\"\n  },\n  {\n    \"start\": \"00:01:31,446\",\n    \"end\": \"00:01:39,966\",\n    \"lang\": \"en\",\n    \"text\": \"So I discard two flavor bags that I think is not appropriate and use my own flavor.\"\n  },\n  {\n    \"start\": \"00:01:42,286\",\n    \"end\": \"00:01:43,566\",\n    \"lang\": \"en\",\n    \"text\": \"So it's like a music.\"\n  },\n  {\n    \"start\": \"00:01:44,606\",\n    \"end\": \"00:01:46,186\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this is my talent.\"\n  },\n  {\n    \"start\": \"00:01:46,426\",\n    \"end\": \"00:01:47,706\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not humble on this.\"\n  },\n  {\n    \"start\": \"00:01:48,886\",\n    \"end\": \"00:01:53,266\",\n    \"lang\": \"en\",\n    \"text\": \"I'm quite confident and I'm sure I have this capability.\"\n  },\n  {\n    \"start\": \"00:01:53,266\",\n    \"end\": \"00:01:57,486\",\n    \"lang\": \"en\",\n    \"text\": \"Whenever I taste some food,\"\n  },\n  {\n    \"start\": \"00:01:57,486\",\n    \"end\": \"00:02:05,606\",\n    \"lang\": \"en\",\n    \"text\": \"I can copy that taste and also to refine it based on the taste.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,606",
+            "end": "00:01:04,806",
+            "vi": "Vì vậy hương vị của riêng tôi cũng đóng góp rất nhiều."
+        },
+        {
+            "start": "00:01:04,806",
+            "end": "00:01:05,746",
+            "vi": "Vì vậy,"
+        },
+        {
+            "start": "00:01:05,746",
+            "end": "00:01:13,526",
+            "vi": "hương vị mà họ pha trộn lại tạo nên hương vị độc đáo này."
+        },
+        {
+            "start": "00:01:20,956",
+            "end": "00:01:23,006",
+            "vi": "Tôi có linh cảm này."
+        },
+        {
+            "start": "00:01:24,036",
+            "end": "00:01:30,906",
+            "vi": "Hương vị nào mà họ có thể kết hợp với nhau."
+        },
+        {
+            "start": "00:01:31,446",
+            "end": "00:01:39,966",
+            "vi": "Vì vậy tôi loại bỏ hai túi hương vị mà tôi nghĩ không phù hợp và sử dụng hương vị của riêng mình."
+        },
+        {
+            "start": "00:01:42,286",
+            "end": "00:01:43,566",
+            "vi": "Vì vậy nó giống như âm nhạc."
+        },
+        {
+            "start": "00:01:44,606",
+            "end": "00:01:46,186",
+            "vi": "Tôi tin đây là tài năng của mình."
+        },
+        {
+            "start": "00:01:46,426",
+            "end": "00:01:47,706",
+            "vi": "Tôi không khiêm tốn về điều này."
+        },
+        {
+            "start": "00:01:48,886",
+            "end": "00:01:53,266",
+            "vi": "Tôi khá tự tin và chắc chắn mình có khả năng này."
+        },
+        {
+            "start": "00:01:53,266",
+            "end": "00:01:57,486",
+            "vi": "Mỗi khi tôi nếm thử một món ăn nào đó,"
+        },
+        {
+            "start": "00:01:57,486",
+            "end": "00:02:05,606",
+            "vi": "tôi có thể sao chép được hương vị đó và cũng có khả năng tinh chỉnh dựa trên hương vị."
+        }
+    ]
+}

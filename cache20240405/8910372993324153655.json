@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,240\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,420\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"ja\",\n    \"text\": \"はい、\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:05,400\",\n    \"lang\": \"ja\",\n    \"text\": \"これはコロナです\"\n  },\n  {\n    \"start\": \"00:00:05,400\",\n    \"end\": \"00:00:06,840\",\n    \"lang\": \"ja\",\n    \"text\": \"私をほぼ殺しています\"\n  },\n  {\n    \"start\": \"00:00:08,066\",\n    \"end\": \"00:00:08,526\",\n    \"lang\": \"en\",\n    \"text\": \"I'm dying\"\n  },\n  {\n    \"start\": \"00:00:10,082\",\n    \"end\": \"00:00:12,382\",\n    \"lang\": \"ja\",\n    \"text\": \"ラスティナイはフェイバー\"\n  },\n  {\n    \"start\": \"00:00:13,314\",\n    \"end\": \"00:00:20,654\",\n    \"lang\": \"en\",\n    \"text\": \"and muscle pain and also sore throat.\"\n  },\n  {\n    \"start\": \"00:00:21,506\",\n    \"end\": \"00:00:21,666\",\n    \"lang\": \"ja\",\n    \"text\": \"はい\"\n  },\n  {\n    \"start\": \"00:00:23,105\",\n    \"end\": \"00:00:23,886\",\n    \"lang\": \"ja\",\n    \"text\": \"バリーズ\"\n  },\n  {\n    \"start\": \"00:00:24,802\",\n    \"end\": \"00:00:26,162\",\n    \"lang\": \"en\",\n    \"text\": \"It's a mess.\"\n  },\n  {\n    \"start\": \"00:00:26,162\",\n    \"end\": \"00:00:32,281\",\n    \"lang\": \"en\",\n    \"text\": \"It's a mess severer than the first time that he catches this disease.\"\n  },\n  {\n    \"start\": \"00:00:34,850\",\n    \"end\": \"00:00:37,630\",\n    \"lang\": \"ja\",\n    \"text\": \"今まで downtownでは気分が悪い\"\n  },\n  {\n    \"start\": \"00:00:46,690\",\n    \"end\": \"00:00:50,170\",\n    \"lang\": \"en\",\n    \"text\": \"Hope this vitamin can help me cure.\"\n  },\n  {\n    \"start\": \"00:00:56,590\",\n    \"end\": \"00:00:57,550\",\n    \"lang\": \"en\",\n    \"text\": \"See you!\"\n  },\n  {\n    \"start\": \"00:00:57,550\",\n    \"end\": \"00:00:58,450\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,240",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير"
+        },
+        {
+            "start": "00:00:03,420",
+            "end": "00:00:03,780",
+            "en": "Yes,",
+            "zh": "是的，",
+            "ar": "نعم،"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:05,400",
+            "en": "This is corona",
+            "zh": "这是冠状病毒",
+            "ar": "هذا هو الكورونا"
+        },
+        {
+            "start": "00:00:05,400",
+            "end": "00:00:06,840",
+            "en": "It's almost killing me",
+            "zh": "它几乎要杀了我",
+            "ar": "إنها تقتلني تقريبًا"
+        },
+        {
+            "start": "00:00:08,066",
+            "end": "00:00:08,526",
+            "en": "I'm dying",
+            "zh": "我快死了",
+            "ar": "أنا أموت"
+        },
+        {
+            "start": "00:00:10,082",
+            "end": "00:00:12,382",
+            "en": "Last night, I had a fever",
+            "zh": "昨晚我发烧了",
+            "ar": "الليلة الماضية، كان لدي حمى"
+        },
+        {
+            "start": "00:00:13,314",
+            "end": "00:00:20,654",
+            "en": "and muscle pain and also sore throat.",
+            "zh": "而且肌肉疼痛和喉咙痛。",
+            "ar": "وألم في العضلات وأيضًا التهاب في الحلق."
+        },
+        {
+            "start": "00:00:21,506",
+            "end": "00:00:21,666",
+            "en": "Yes",
+            "zh": "是",
+            "ar": "نعم"
+        },
+        {
+            "start": "00:00:23,105",
+            "end": "00:00:23,886",
+            "en": "Barriers",
+            "zh": "障碍物",
+            "ar": "الحواجز"
+        },
+        {
+            "start": "00:00:24,802",
+            "end": "00:00:26,162",
+            "en": "It's a mess.",
+            "zh": "一团糟。",
+            "ar": "إنه فوضى."
+        },
+        {
+            "start": "00:00:26,162",
+            "end": "00:00:32,281",
+            "en": "It's a mess severer than the first time that he catches this disease.",
+            "zh": "这比他第一次得这个病还要严重。",
+            "ar": "إنها فوضى أشد من المرة الأولى التي أصيب فيها بهذا المرض."
+        },
+        {
+            "start": "00:00:34,850",
+            "end": "00:00:37,630",
+            "en": "I feel sick even in downtown.",
+            "zh": "即使在市中心我也感觉不舒服。",
+            "ar": "أشعر بالمرض حتى في وسط المدينة."
+        },
+        {
+            "start": "00:00:46,690",
+            "end": "00:00:50,170",
+            "en": "Hope this vitamin can help me cure.",
+            "zh": "希望这种维生素可以帮助我治愈。",
+            "ar": "أتمنى أن تساعدني هذه الفيتامينات على الشفاء."
+        },
+        {
+            "start": "00:00:56,590",
+            "end": "00:00:57,550",
+            "en": "See you!",
+            "zh": "再见！",
+            "ar": "أراك لاحقًا!"
+        },
+        {
+            "start": "00:00:57,550",
+            "end": "00:00:58,450",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

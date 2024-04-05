@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,900\",\n    \"lang\": \"en\",\n    \"text\": \"And you want to be careful when you have so many things.\"\n  },\n  {\n    \"start\": \"00:00:04,000\",\n    \"end\": \"00:00:06,460\",\n    \"lang\": \"en\",\n    \"text\": \"Of course I know I'm looking at this red.\"\n  },\n  {\n    \"start\": \"00:00:06,920\",\n    \"end\": \"00:00:07,140\",\n    \"lang\": \"en\",\n    \"text\": \"See,\"\n  },\n  {\n    \"start\": \"00:00:07,140\",\n    \"end\": \"00:00:08,860\",\n    \"lang\": \"en\",\n    \"text\": \"everybody knows red is important.\"\n  },\n  {\n    \"start\": \"00:00:09,040\",\n    \"end\": \"00:00:10,660\",\n    \"lang\": \"en\",\n    \"text\": \"So what you're looking at is red.\"\n  },\n  {\n    \"start\": \"00:00:10,800\",\n    \"end\": \"00:00:12,080\",\n    \"lang\": \"en\",\n    \"text\": \"But when I first look at this,\"\n  },\n  {\n    \"start\": \"00:00:13,500\",\n    \"end\": \"00:00:15,760\",\n    \"lang\": \"en\",\n    \"text\": \"a couple of things I don't really know.\"\n  },\n  {\n    \"start\": \"00:00:16,140\",\n    \"end\": \"00:00:16,580\",\n    \"lang\": \"en\",\n    \"text\": \"For example,\"\n  },\n  {\n    \"start\": \"00:00:16,580\",\n    \"end\": \"00:00:18,760\",\n    \"lang\": \"en\",\n    \"text\": \"these tiny arrows.\"\n  },\n  {\n    \"start\": \"00:00:19,320\",\n    \"end\": \"00:00:20,720\",\n    \"lang\": \"en\",\n    \"text\": \"You can't really see.\"\n  },\n  {\n    \"start\": \"00:00:21,720\",\n    \"end\": \"00:00:21,960\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:22,540\",\n    \"end\": \"00:00:24,780\",\n    \"lang\": \"en\",\n    \"text\": \"I actually don't know these are wavefront.\"\n  },\n  {\n    \"start\": \"00:00:27,520\",\n    \"end\": \"00:00:27,880\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:27,880\",\n    \"end\": \"00:00:34,060\",\n    \"lang\": \"en\",\n    \"text\": \"Because what you're trying to say is this is a small slope.\"\n  },\n  {\n    \"start\": \"00:00:34,720\",\n    \"end\": \"00:00:35,620\",\n    \"lang\": \"en\",\n    \"text\": \"These are biggest.\"\n  },\n  {\n    \"start\": \"00:00:35,960\",\n    \"end\": \"00:00:36,840\",\n    \"lang\": \"en\",\n    \"text\": \"These are the biggest.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,900",
+            "es": "Y quieres tener cuidado cuando tienes tantas cosas.",
+            "fr": "Et vous voulez faire attention lorsque vous avez tant de choses.",
+            "uk": "І ви хочете бути обережними, коли у вас так багато речей."
+        },
+        {
+            "start": "00:00:04,000",
+            "end": "00:00:06,460",
+            "es": "Por supuesto que sé que estoy mirando esto rojo.",
+            "fr": "Bien sûr, je sais que je regarde ce rouge.",
+            "uk": "Звичайно, я знаю, що дивлюся на це червоне."
+        },
+        {
+            "start": "00:00:06,920",
+            "end": "00:00:07,140",
+            "es": "Mira,",
+            "fr": "Regardez,",
+            "uk": "Дивись,"
+        },
+        {
+            "start": "00:00:07,140",
+            "end": "00:00:08,860",
+            "es": "todo el mundo sabe que el rojo es importante.",
+            "fr": "tout le monde sait que le rouge est important.",
+            "uk": "всі знають, що червоний важливий."
+        },
+        {
+            "start": "00:00:09,040",
+            "end": "00:00:10,660",
+            "es": "Entonces, lo que estás mirando es rojo.",
+            "fr": "Alors, ce que vous regardez est rouge.",
+            "uk": "Отже, на що ви дивитесь, то червоне."
+        },
+        {
+            "start": "00:00:10,800",
+            "end": "00:00:12,080",
+            "es": "Pero cuando lo miro por primera vez,",
+            "fr": "Mais quand je le regarde pour la première fois,",
+            "uk": "Але коли я вперше на це дивлюся,"
+        },
+        {
+            "start": "00:00:13,500",
+            "end": "00:00:15,760",
+            "es": "hay un par de cosas que realmente no sé.",
+            "fr": "il y a quelques choses que je ne sais vraiment pas.",
+            "uk": "є кілька речей, які я насправді не знаю."
+        },
+        {
+            "start": "00:00:16,140",
+            "end": "00:00:16,580",
+            "es": "Por ejemplo,",
+            "fr": "Par exemple,",
+            "uk": "Наприклад,"
+        },
+        {
+            "start": "00:00:16,580",
+            "end": "00:00:18,760",
+            "es": "estas pequeñas flechas.",
+            "fr": "ces petites flèches.",
+            "uk": "ці маленькі стрілки."
+        },
+        {
+            "start": "00:00:19,320",
+            "end": "00:00:20,720",
+            "es": "Realmente no puedes ver.",
+            "fr": "Vous ne pouvez vraiment pas voir.",
+            "uk": "Ви насправді не можете бачити."
+        },
+        {
+            "start": "00:00:21,720",
+            "end": "00:00:21,960",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:00:22,540",
+            "end": "00:00:24,780",
+            "es": "En realidad, no sé que son ondas frontales.",
+            "fr": "En fait, je ne sais pas que ce sont des ondes frontales.",
+            "uk": "Я насправді не знаю, що це є хвильові фронти."
+        },
+        {
+            "start": "00:00:27,520",
+            "end": "00:00:27,880",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:00:27,880",
+            "end": "00:00:34,060",
+            "es": "Porque lo que estás tratando de decir es que esto es una pendiente pequeña.",
+            "fr": "Parce que ce que vous essayez de dire, c'est que c'est une petite pente.",
+            "uk": "Тому що те, що ви намагаєтесь сказати, це те, що це малий ухил."
+        },
+        {
+            "start": "00:00:34,720",
+            "end": "00:00:35,620",
+            "es": "Estos son los más grandes.",
+            "fr": "Ceux-ci sont les plus grands.",
+            "uk": "Ці є найбільшими."
+        },
+        {
+            "start": "00:00:35,960",
+            "end": "00:00:36,840",
+            "es": "Estos son los más grandes.",
+            "fr": "Ce sont les plus grands.",
+            "uk": "Це найбільші."
+        }
+    ]
+}

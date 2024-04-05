@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"en\",\n    \"text\": \"Welcome back to the dog club.\"\n  },\n  {\n    \"start\": \"00:00:04,680\",\n    \"end\": \"00:00:07,820\",\n    \"lang\": \"en\",\n    \"text\": \"They are so cute and so happy.\"\n  },\n  {\n    \"start\": \"00:00:11,234\",\n    \"end\": \"00:00:12,454\",\n    \"lang\": \"zh\",\n    \"text\": \"咱去狗顿那吃一碗\"\n  },\n  {\n    \"start\": \"00:00:13,174\",\n    \"end\": \"00:00:13,454\",\n    \"lang\": \"zh\",\n    \"text\": \"好\"\n  },\n  {\n    \"start\": \"00:00:16,482\",\n    \"end\": \"00:00:18,002\",\n    \"lang\": \"en\",\n    \"text\": \"It's a dog club.\"\n  },\n  {\n    \"start\": \"00:00:18,802\",\n    \"end\": \"00:00:20,552\",\n    \"lang\": \"en\",\n    \"text\": \"They are making friends with each other.\"\n  },\n  {\n    \"start\": \"00:00:23,852\",\n    \"end\": \"00:00:24,662\",\n    \"lang\": \"en\",\n    \"text\": \"So gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:25,282\",\n    \"end\": \"00:00:25,802\",\n    \"lang\": \"en\",\n    \"text\": \"Fabulous.\"\n  },\n  {\n    \"start\": \"00:00:28,098\",\n    \"end\": \"00:00:28,658\",\n    \"lang\": \"zh\",\n    \"text\": \"走到那边去\"\n  },\n  {\n    \"start\": \"00:00:32,218\",\n    \"end\": \"00:00:32,778\",\n    \"lang\": \"zh\",\n    \"text\": \"这个叫\"\n  },\n  {\n    \"start\": \"00:00:33,957\",\n    \"end\": \"00:00:34,238\",\n    \"lang\": \"zh\",\n    \"text\": \"这个叫\"\n  },\n  {\n    \"start\": \"00:00:34,274\",\n    \"end\": \"00:00:36,594\",\n    \"lang\": \"en\",\n    \"text\": \"here's a bee nime\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,060",
+            "ko": "다시 돌아온 강아지 클럽에 오신 것을 환영합니다."
+        },
+        {
+            "start": "00:00:04,680",
+            "end": "00:00:07,820",
+            "ko": "너무 귀엽고 행복해 보여요."
+        },
+        {
+            "start": "00:00:11,234",
+            "end": "00:00:12,454",
+            "ko": "강아지 동네에서 한 그릇 먹자"
+        },
+        {
+            "start": "00:00:13,174",
+            "end": "00:00:13,454",
+            "ko": "좋아"
+        },
+        {
+            "start": "00:00:16,482",
+            "end": "00:00:18,002",
+            "ko": "강아지 클럽이에요."
+        },
+        {
+            "start": "00:00:18,802",
+            "end": "00:00:20,552",
+            "ko": "서로 친구가 되고 있어요."
+        },
+        {
+            "start": "00:00:23,852",
+            "end": "00:00:24,662",
+            "ko": "정말 멋져요."
+        },
+        {
+            "start": "00:00:25,282",
+            "end": "00:00:25,802",
+            "ko": "환상적이에요."
+        },
+        {
+            "start": "00:00:28,098",
+            "end": "00:00:28,658",
+            "ko": "저쪽으로 가자"
+        },
+        {
+            "start": "00:00:32,218",
+            "end": "00:00:32,778",
+            "ko": "이거 불러"
+        },
+        {
+            "start": "00:00:33,957",
+            "end": "00:00:34,238",
+            "ko": "이거 불러"
+        },
+        {
+            "start": "00:00:34,274",
+            "end": "00:00:36,594",
+            "ko": "여기 있네, 한 영화 이름이야"
+        }
+    ]
+}

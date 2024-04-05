@@ -1,0 +1,63 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,240\",\n    \"end\": \"00:00:03,380\",\n    \"lang\": \"ja\",\n    \"text\": \"今日はナンデルの日です!\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:04,660\",\n    \"lang\": \"ja\",\n    \"text\": \"ナンデルをやっています!\"\n  },\n  {\n    \"start\": \"00:00:05,666\",\n    \"end\": \"00:00:06,946\",\n    \"lang\": \"zh\",\n    \"text\": \"气氛咋说呢\"\n  },\n  {\n    \"start\": \"00:00:06,946\",\n    \"end\": \"00:00:08,226\",\n    \"lang\": \"zh\",\n    \"text\": \"强度发\"\n  },\n  {\n    \"start\": \"00:00:09,025\",\n    \"end\": \"00:00:09,685\",\n    \"lang\": \"zh\",\n    \"text\": \"轰\"\n  },\n  {\n    \"start\": \"00:00:09,685\",\n    \"end\": \"00:00:10,546\",\n    \"lang\": \"zh\",\n    \"text\": \"咚\"\n  },\n  {\n    \"start\": \"00:00:11,746\",\n    \"end\": \"00:00:12,806\",\n    \"lang\": \"en\",\n    \"text\": \"First straw.\"\n  },\n  {\n    \"start\": \"00:00:13,286\",\n    \"end\": \"00:00:13,746\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,240",
+            "end": "00:00:03,380",
+            "en": "Today is Nander's Day!",
+            "zh": "今天是南德尔的日子!",
+            "ar": "اليوم هو يوم ناندر!",
+            "ja": "今日はナンデルの日です!"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:04,660",
+            "en": "We're doing Nander!",
+            "zh": "我们正在做南德尔!",
+            "ar": "نحن نقوم بناندر!",
+            "ja": "ナンデルをやっています!"
+        },
+        {
+            "start": "00:00:05,666",
+            "end": "00:00:06,946",
+            "en": "How should I put it, the atmosphere...",
+            "zh": "气氛咋说呢",
+            "ar": "كيف يجب أن أضعها، الجو..."
+        },
+        {
+            "start": "00:00:06,946",
+            "end": "00:00:08,226",
+            "en": "The intensity is up",
+            "zh": "强度发",
+            "ar": "الشدة تزداد"
+        },
+        {
+            "start": "00:00:09,025",
+            "end": "00:00:09,685",
+            "en": "Boom",
+            "zh": "轰",
+            "ar": "انفجار"
+        },
+        {
+            "start": "00:00:09,685",
+            "end": "00:00:10,546",
+            "en": "Bang",
+            "zh": "咚",
+            "ar": "ضربة"
+        },
+        {
+            "start": "00:00:11,746",
+            "end": "00:00:12,806",
+            "en": "First straw.",
+            "zh": "第一根稻草。",
+            "ar": "القشة الأولى."
+        },
+        {
+            "start": "00:00:13,286",
+            "end": "00:00:13,746",
+            "en": "Thank you.",
+            "zh": "谢谢。",
+            "ar": "شكرا."
+        }
+    ]
+}

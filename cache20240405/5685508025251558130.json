@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,540\",\n    \"end\": \"00:00:02,340\",\n    \"lang\": \"zh\",\n    \"text\": \"这是我们今天的午饭啊\"\n  },\n  {\n    \"start\": \"00:00:02,340\",\n    \"end\": \"00:00:02,860\",\n    \"lang\": \"zh\",\n    \"text\": \"螺蛳粉\"\n  },\n  {\n    \"start\": \"00:00:03,400\",\n    \"end\": \"00:00:05,260\",\n    \"lang\": \"zh\",\n    \"text\": \"今天是感冒新冠\"\n  },\n  {\n    \"start\": \"00:00:05,800\",\n    \"end\": \"00:00:06,580\",\n    \"lang\": \"zh\",\n    \"text\": \"旧冠\"\n  },\n  {\n    \"start\": \"00:00:07,060\",\n    \"end\": \"00:00:08,000\",\n    \"lang\": \"zh\",\n    \"text\": \"旧冠第四天\"\n  },\n  {\n    \"start\": \"00:00:09,314\",\n    \"end\": \"00:00:09,714\",\n    \"lang\": \"en\",\n    \"text\": \"Um\"\n  },\n  {\n    \"start\": \"00:00:10,658\",\n    \"end\": \"00:00:11,958\",\n    \"lang\": \"zh\",\n    \"text\": \"现在喉咙痛得不行\"\n  },\n  {\n    \"start\": \"00:00:12,537\",\n    \"end\": \"00:00:13,758\",\n    \"lang\": \"zh\",\n    \"text\": \"这以毒攻毒\"\n  },\n  {\n    \"start\": \"00:00:13,758\",\n    \"end\": \"00:00:14,858\",\n    \"lang\": \"zh\",\n    \"text\": \"去靠它了\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,540",
+            "end": "00:00:02,340",
+            "es": "Esta es nuestra comida de hoy",
+            "fr": "Ceci est notre déjeuner aujourd'hui",
+            "uk": "Це наш обід сьогодні"
+        },
+        {
+            "start": "00:00:02,340",
+            "end": "00:00:02,860",
+            "es": "Luosifen",
+            "fr": "Luosifen",
+            "uk": "Луосіфен"
+        },
+        {
+            "start": "00:00:03,400",
+            "end": "00:00:05,260",
+            "es": "Hoy es gripe y COVID",
+            "fr": "Aujourd'hui, c'est grippe et COVID",
+            "uk": "Сьогодні грип і COVID"
+        },
+        {
+            "start": "00:00:05,800",
+            "end": "00:00:06,580",
+            "es": "COVID antiguo",
+            "fr": "Ancien COVID",
+            "uk": "Старий COVID"
+        },
+        {
+            "start": "00:00:07,060",
+            "end": "00:00:08,000",
+            "es": "Cuatro días con el antiguo COVID",
+            "fr": "Quatrième jour avec l'ancien COVID",
+            "uk": "Четвертий день із старим COVID"
+        },
+        {
+            "start": "00:00:09,314",
+            "end": "00:00:09,714",
+            "es": "Um",
+            "fr": "Euh",
+            "uk": "Ем"
+        },
+        {
+            "start": "00:00:10,658",
+            "end": "00:00:11,958",
+            "es": "Ahora me duele mucho la garganta",
+            "fr": "Maintenant, j'ai très mal à la gorge",
+            "uk": "Зараз у мене дуже болить горло"
+        },
+        {
+            "start": "00:00:12,537",
+            "end": "00:00:13,758",
+            "es": "Ahora, combatir el veneno con veneno",
+            "fr": "Maintenant, combattre le poison par le poison",
+            "uk": "Тепер лікувати отруту отрутою"
+        },
+        {
+            "start": "00:00:13,758",
+            "end": "00:00:14,858",
+            "es": "Depender de eso ahora",
+            "fr": "S'appuyer sur cela désormais",
+            "uk": "Тепер покладатись на це"
+        }
+    ]
+}

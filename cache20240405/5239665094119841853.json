@@ -1,0 +1,120 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,440\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの\"\n  },\n  {\n    \"start\": \"00:00:03,330\",\n    \"end\": \"00:00:04,250\",\n    \"lang\": \"en\",\n    \"text\": \"Ayako.\"\n  },\n  {\n    \"start\": \"00:00:04,850\",\n    \"end\": \"00:00:05,330\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:00:05,330\",\n    \"end\": \"00:00:06,250\",\n    \"lang\": \"en\",\n    \"text\": \"sorry.\"\n  },\n  {\n    \"start\": \"00:00:06,594\",\n    \"end\": \"00:00:06,874\",\n    \"lang\": \"ar\",\n    \"text\": \"هيا\"\n  },\n  {\n    \"start\": \"00:00:11,554\",\n    \"end\": \"00:00:11,994\",\n    \"lang\": \"en\",\n    \"text\": \"Snow?\"\n  },\n  {\n    \"start\": \"00:00:11,994\",\n    \"end\": \"00:00:12,854\",\n    \"lang\": \"en\",\n    \"text\": \"Snow?\"\n  },\n  {\n    \"start\": \"00:00:12,854\",\n    \"end\": \"00:00:14,354\",\n    \"lang\": \"en\",\n    \"text\": \"How do you say snow in Japanese?\"\n  },\n  {\n    \"start\": \"00:00:16,161\",\n    \"end\": \"00:00:17,922\",\n    \"lang\": \"ja\",\n    \"text\": \"早い早い早い\"\n  },\n  {\n    \"start\": \"00:00:17,922\",\n    \"end\": \"00:00:18,582\",\n    \"lang\": \"ja\",\n    \"text\": \"早い\"\n  },\n  {\n    \"start\": \"00:00:21,370\",\n    \"end\": \"00:00:25,770\",\n    \"lang\": \"en\",\n    \"text\": \"This is a snow fast food.\"\n  },\n  {\n    \"start\": \"00:00:26,330\",\n    \"end\": \"00:00:26,850\",\n    \"lang\": \"en\",\n    \"text\": \"Because I...\"\n  },\n  {\n    \"start\": \"00:00:28,170\",\n    \"end\": \"00:00:28,830\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway,\"\n  },\n  {\n    \"start\": \"00:00:28,830\",\n    \"end\": \"00:00:29,570\",\n    \"lang\": \"en\",\n    \"text\": \"I have a recorder,\"\n  },\n  {\n    \"start\": \"00:00:29,570\",\n    \"end\": \"00:00:30,030\",\n    \"lang\": \"en\",\n    \"text\": \"I can...\"\n  },\n  {\n    \"start\": \"00:00:30,030\",\n    \"end\": \"00:00:30,710\",\n    \"lang\": \"en\",\n    \"text\": \"I want to...\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,440",
+            "en": "I am this",
+            "zh": "我是这个",
+            "ja": "私はこの",
+            "ar": "أنا هذا"
+        },
+        {
+            "start": "00:00:03,330",
+            "end": "00:00:04,250",
+            "en": "Ayako.",
+            "zh": "绫子。",
+            "ar": "آياكو."
+        },
+        {
+            "start": "00:00:04,850",
+            "end": "00:00:05,330",
+            "en": "Sorry,",
+            "zh": "对不起，",
+            "ar": "آسف،"
+        },
+        {
+            "start": "00:00:05,330",
+            "end": "00:00:06,250",
+            "en": "sorry.",
+            "zh": "抱歉。",
+            "ar": "آسف."
+        },
+        {
+            "start": "00:00:06,594",
+            "end": "00:00:06,874",
+            "en": "Come on",
+            "zh": "来吧",
+            "ar": "هيا"
+        },
+        {
+            "start": "00:00:11,554",
+            "end": "00:00:11,994",
+            "en": "Snow?",
+            "zh": "雪？",
+            "ar": "ثلج؟"
+        },
+        {
+            "start": "00:00:11,994",
+            "end": "00:00:12,854",
+            "en": "Snow?",
+            "zh": "雪？",
+            "ar": "ثلج؟"
+        },
+        {
+            "start": "00:00:12,854",
+            "end": "00:00:14,354",
+            "en": "How do you say snow in Japanese?",
+            "zh": "日语中雪怎么说？",
+            "ar": "كيف تقول ثلج باليابانية؟"
+        },
+        {
+            "start": "00:00:16,161",
+            "end": "00:00:17,922",
+            "en": "Hurry, hurry, hurry",
+            "zh": "快点，快点，快点",
+            "ja": "早い早い早い",
+            "ar": "بسرعة، بسرعة، بسرعة"
+        },
+        {
+            "start": "00:00:17,922",
+            "end": "00:00:18,582",
+            "en": "Hurry",
+            "zh": "快点",
+            "ja": "早い",
+            "ar": "بسرعة"
+        },
+        {
+            "start": "00:00:21,370",
+            "end": "00:00:25,770",
+            "en": "This is snow fast food.",
+            "zh": "这是快餐雪。",
+            "ar": "هذا ثلج الوجبات السريعة."
+        },
+        {
+            "start": "00:00:26,330",
+            "end": "00:00:26,850",
+            "en": "Because I...",
+            "zh": "因为我...",
+            "ar": "لأنني..."
+        },
+        {
+            "start": "00:00:28,170",
+            "end": "00:00:28,830",
+            "en": "Anyway,",
+            "zh": "无论如何，",
+            "ar": "على أي حال،"
+        },
+        {
+            "start": "00:00:28,830",
+            "end": "00:00:29,570",
+            "en": "I have a recorder,",
+            "zh": "我有一个录音机，",
+            "ar": "لدي مسجل،"
+        },
+        {
+            "start": "00:00:29,570",
+            "end": "00:00:30,030",
+            "en": "I can...",
+            "zh": "我可以...",
+            "ar": "أستطيع..."
+        },
+        {
+            "start": "00:00:30,030",
+            "end": "00:00:30,710",
+            "en": "I want to...",
+            "zh": "我想要...",
+            "ar": "أريد أن..."
+        }
+    ]
+}

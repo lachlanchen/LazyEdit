@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,839\",\n    \"end\": \"00:00:03,460\",\n    \"lang\": \"en\",\n    \"text\": \"Our society has too many restrictions,\"\n  },\n  {\n    \"start\": \"00:00:03,460\",\n    \"end\": \"00:00:09,240\",\n    \"lang\": \"en\",\n    \"text\": \"so if you cannot really have some breakthrough creation,\"\n  },\n  {\n    \"start\": \"00:00:10,839\",\n    \"end\": \"00:00:15,060\",\n    \"lang\": \"en\",\n    \"text\": \"I suggest that just set some basic guidelines,\"\n  },\n  {\n    \"start\": \"00:00:15,060\",\n    \"end\": \"00:00:16,079\",\n    \"lang\": \"en\",\n    \"text\": \"basic principles,\"\n  },\n  {\n    \"start\": \"00:00:16,079\",\n    \"end\": \"00:00:19,280\",\n    \"lang\": \"en\",\n    \"text\": \"such as that you don't hurt other people,\"\n  },\n  {\n    \"start\": \"00:00:19,280\",\n    \"end\": \"00:00:20,800\",\n    \"lang\": \"en\",\n    \"text\": \"and then it's okay,\"\n  },\n  {\n    \"start\": \"00:00:20,800\",\n    \"end\": \"00:00:21,820\",\n    \"lang\": \"en\",\n    \"text\": \"do anything you want.\"\n  },\n  {\n    \"start\": \"00:00:21,820\",\n    \"end\": \"00:00:24,120\",\n    \"lang\": \"en\",\n    \"text\": \"Remove these taboos,\"\n  },\n  {\n    \"start\": \"00:00:24,120\",\n    \"end\": \"00:00:26,520\",\n    \"lang\": \"en\",\n    \"text\": \"remove these moral violence.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,839",
+            "end": "00:00:03,460",
+            "vi": "Xã hội chúng ta có quá nhiều hạn chế,"
+        },
+        {
+            "start": "00:00:03,460",
+            "end": "00:00:09,240",
+            "vi": "nên nếu bạn không thực sự tạo ra được một số phát minh đột phá,"
+        },
+        {
+            "start": "00:00:10,839",
+            "end": "00:00:15,060",
+            "vi": "Tôi đề xuất chỉ cần thiết lập một số nguyên tắc cơ bản,"
+        },
+        {
+            "start": "00:00:15,060",
+            "end": "00:00:16,079",
+            "vi": "các nguyên tắc cơ bản,"
+        },
+        {
+            "start": "00:00:16,079",
+            "end": "00:00:19,280",
+            "vi": "như là bạn không làm tổn thương người khác,"
+        },
+        {
+            "start": "00:00:19,280",
+            "end": "00:00:20,800",
+            "vi": "và sau đó mọi thứ đều ổn,"
+        },
+        {
+            "start": "00:00:20,800",
+            "end": "00:00:21,820",
+            "vi": "làm bất cứ điều gì bạn muốn."
+        },
+        {
+            "start": "00:00:21,820",
+            "end": "00:00:24,120",
+            "vi": "Loại bỏ những điều cấm kỵ này,"
+        },
+        {
+            "start": "00:00:24,120",
+            "end": "00:00:26,520",
+            "vi": "loại bỏ những bạo lực đạo đức này."
+        }
+    ]
+}

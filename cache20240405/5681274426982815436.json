@@ -1,0 +1,84 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:29,062\",\n    \"end\": \"00:02:33,422\",\n    \"lang\": \"en\",\n    \"text\": \"When you resort to something outside,\"\n  },\n  {\n    \"start\": \"00:02:33,422\",\n    \"end\": \"00:02:36,282\",\n    \"lang\": \"en\",\n    \"text\": \"be external to this existence.\"\n  },\n  {\n    \"start\": \"00:02:36,282\",\n    \"end\": \"00:02:37,702\",\n    \"lang\": \"en\",\n    \"text\": \"It's like,\"\n  },\n  {\n    \"start\": \"00:02:37,702\",\n    \"end\": \"00:02:40,182\",\n    \"lang\": \"en\",\n    \"text\": \"as the saying goes,\"\n  },\n  {\n    \"start\": \"00:02:40,182\",\n    \"end\": \"00:02:44,102\",\n    \"lang\": \"en\",\n    \"text\": \"you are fishing on the tree.\"\n  },\n  {\n    \"start\": \"00:02:48,738\",\n    \"end\": \"00:02:49,358\",\n    \"lang\": \"ja\",\n    \"text\": \"よーし、\"\n  },\n  {\n    \"start\": \"00:02:49,358\",\n    \"end\": \"00:02:49,818\",\n    \"lang\": \"ja\",\n    \"text\": \"完成\"\n  },\n  {\n    \"start\": \"00:02:51,554\",\n    \"end\": \"00:02:59,414\",\n    \"lang\": \"en\",\n    \"text\": \"superficial stuff and ignore the essence.\"\n  },\n  {\n    \"start\": \"00:03:01,698\",\n    \"end\": \"00:03:03,558\",\n    \"lang\": \"zh\",\n    \"text\": \"In Chinese phrase it's\"\n  },\n  {\n    \"start\": \"00:03:04,318\",\n    \"end\": \"00:03:05,238\",\n    \"lang\": \"zh\",\n    \"text\": \"少本著墨,\"\n  },\n  {\n    \"start\": \"00:03:05,238\",\n    \"end\": \"00:03:07,038\",\n    \"lang\": \"zh\",\n    \"text\": \"圓莫求魚。\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:29,062",
+            "end": "00:02:33,422",
+            "en": "When you resort to something outside,",
+            "zh": "当你求助于外界的东西时，",
+            "ar": "عندما تلجأ إلى شيء خارجي،"
+        },
+        {
+            "start": "00:02:33,422",
+            "end": "00:02:36,282",
+            "en": "be external to this existence.",
+            "zh": "就是脱离了这个存在。",
+            "ar": "كن خارج عن هذه الوجود."
+        },
+        {
+            "start": "00:02:36,282",
+            "end": "00:02:37,702",
+            "en": "It's like,",
+            "zh": "这就像是，",
+            "ar": "إنه مثل،"
+        },
+        {
+            "start": "00:02:37,702",
+            "end": "00:02:40,182",
+            "en": "as the saying goes,",
+            "zh": "俗话说，",
+            "ar": "كما يقول المثل،"
+        },
+        {
+            "start": "00:02:40,182",
+            "end": "00:02:44,102",
+            "en": "you are fishing on the tree.",
+            "zh": "你在树上钓鱼。",
+            "ar": "أنت تصطاد السمك من على الشجرة."
+        },
+        {
+            "start": "00:02:48,738",
+            "end": "00:02:49,358",
+            "en": "Alright,",
+            "zh": "好的，",
+            "ar": "حسنا،",
+            "ja": "よーし、"
+        },
+        {
+            "start": "00:02:49,358",
+            "end": "00:02:49,818",
+            "en": "Done.",
+            "zh": "完成。",
+            "ar": "انتهى.",
+            "ja": "完成"
+        },
+        {
+            "start": "00:02:51,554",
+            "end": "00:02:59,414",
+            "en": "superficial stuff and ignore the essence.",
+            "zh": "只顾表面的东西忽略了本质。",
+            "ar": "الأمور السطحية وتجاهل الجوهر."
+        },
+        {
+            "start": "00:03:01,698",
+            "end": "00:03:03,558",
+            "en": "In Chinese phrase it's",
+            "zh": "用中文的表达方式就是",
+            "ar": "باللغة الصينية تقال"
+        },
+        {
+            "start": "00:03:04,318",
+            "end": "00:03:05,238",
+            "en": "less focus on the foundation,",
+            "zh": "少本著墨，",
+            "ar": "التركيز القليل على الأساس،"
+        },
+        {
+            "start": "00:03:05,238",
+            "end": "00:03:07,038",
+            "en": "trying to catch fish on a tree.",
+            "zh": "圆莫求鱼。",
+            "ar": "محاولة اصطياد السمك على شجرة."
+        }
+    ]
+}

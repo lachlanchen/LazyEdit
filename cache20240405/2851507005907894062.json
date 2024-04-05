@@ -1,0 +1,149 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,500\",\n    \"end\": \"00:00:02,600\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:06,800\",\n    \"lang\": \"ja\",\n    \"text\": \"私は朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:07,320\",\n    \"end\": \"00:00:07,800\",\n    \"lang\": \"ja\",\n    \"text\": \"これは\"\n  },\n  {\n    \"start\": \"00:00:07,800\",\n    \"end\": \"00:00:08,620\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:08,642\",\n    \"end\": \"00:00:09,282\",\n    \"lang\": \"en\",\n    \"text\": \"Strawberry,\"\n  },\n  {\n    \"start\": \"00:00:09,282\",\n    \"end\": \"00:00:10,202\",\n    \"lang\": \"en\",\n    \"text\": \"grape,\"\n  },\n  {\n    \"start\": \"00:00:10,202\",\n    \"end\": \"00:00:12,962\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:00:12,962\",\n    \"end\": \"00:00:14,842\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:14,842\",\n    \"end\": \"00:00:15,982\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:00:15,982\",\n    \"end\": \"00:00:17,942\",\n    \"lang\": \"en\",\n    \"text\": \"and chestnut.\"\n  },\n  {\n    \"start\": \"00:00:18,502\",\n    \"end\": \"00:00:19,842\",\n    \"lang\": \"en\",\n    \"text\": \"I said chestnut.\"\n  },\n  {\n    \"start\": \"00:00:20,502\",\n    \"end\": \"00:00:22,342\",\n    \"lang\": \"en\",\n    \"text\": \"And then tamago,\"\n  },\n  {\n    \"start\": \"00:00:22,342\",\n    \"end\": \"00:00:24,482\",\n    \"lang\": \"en\",\n    \"text\": \"sweet potato.\"\n  },\n  {\n    \"start\": \"00:00:35,242\",\n    \"end\": \"00:00:37,302\",\n    \"lang\": \"en\",\n    \"text\": \"So we have grape,\"\n  },\n  {\n    \"start\": \"00:00:37,302\",\n    \"end\": \"00:00:39,462\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:00:39,462\",\n    \"end\": \"00:00:40,022\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:40,022\",\n    \"end\": \"00:00:40,562\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:00:40,562\",\n    \"end\": \"00:00:41,282\",\n    \"lang\": \"en\",\n    \"text\": \"tamago,\"\n  },\n  {\n    \"start\": \"00:00:41,282\",\n    \"end\": \"00:00:44,862\",\n    \"lang\": \"en\",\n    \"text\": \"and the bean juice.\"\n  },\n  {\n    \"start\": \"00:00:58,162\",\n    \"end\": \"00:00:59,562\",\n    \"lang\": \"en\",\n    \"text\": \"Ceo!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,500",
+            "end": "00:00:02,600",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير",
+            "ja": "おはようございます"
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:06,800",
+            "en": "I am eating breakfast",
+            "zh": "我在吃早餐",
+            "ar": "أنا أتناول وجبة الإفطار",
+            "ja": "私は朝ごはんを食べています"
+        },
+        {
+            "start": "00:00:07,320",
+            "end": "00:00:07,800",
+            "en": "This is",
+            "zh": "这是",
+            "ar": "هذا هو",
+            "ja": "これは"
+        },
+        {
+            "start": "00:00:07,800",
+            "end": "00:00:08,620",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير",
+            "ja": "おはようございます"
+        },
+        {
+            "start": "00:00:08,642",
+            "end": "00:00:09,282",
+            "en": "Strawberry,",
+            "zh": "草莓，",
+            "ar": "فراولة،"
+        },
+        {
+            "start": "00:00:09,282",
+            "end": "00:00:10,202",
+            "en": "grape,",
+            "zh": "葡萄，",
+            "ar": "عنب،"
+        },
+        {
+            "start": "00:00:10,202",
+            "end": "00:00:12,962",
+            "en": "chestnut,",
+            "zh": "栗子，",
+            "ar": "كستناء،"
+        },
+        {
+            "start": "00:00:12,962",
+            "end": "00:00:14,842",
+            "en": "blueberry,",
+            "zh": "蓝莓，",
+            "ar": "توت بري،"
+        },
+        {
+            "start": "00:00:14,842",
+            "end": "00:00:15,982",
+            "en": "strawberry,",
+            "zh": "草莓，",
+            "ar": "فراولة،"
+        },
+        {
+            "start": "00:00:15,982",
+            "end": "00:00:17,942",
+            "en": "and chestnut.",
+            "zh": "和栗子。",
+            "ar": "وكستناء."
+        },
+        {
+            "start": "00:00:18,502",
+            "end": "00:00:19,842",
+            "en": "I said chestnut.",
+            "zh": "我说的是栗子。",
+            "ar": "قلت كستناء."
+        },
+        {
+            "start": "00:00:20,502",
+            "end": "00:00:22,342",
+            "en": "And then tamago,",
+            "zh": "然后是玉子，",
+            "ar": "وبعد ذلك البيض،"
+        },
+        {
+            "start": "00:00:22,342",
+            "end": "00:00:24,482",
+            "en": "sweet potato.",
+            "zh": "红薯。",
+            "ar": "البطاطا الحلوة."
+        },
+        {
+            "start": "00:00:35,242",
+            "end": "00:00:37,302",
+            "en": "So we have grape,",
+            "zh": "所以我们有葡萄，",
+            "ar": "إذن لدينا عنب،"
+        },
+        {
+            "start": "00:00:37,302",
+            "end": "00:00:39,462",
+            "en": "strawberry,",
+            "zh": "草莓，",
+            "ar": "فراولة،"
+        },
+        {
+            "start": "00:00:39,462",
+            "end": "00:00:40,022",
+            "en": "blueberry,",
+            "zh": "蓝莓，",
+            "ar": "توت بري،"
+        },
+        {
+            "start": "00:00:40,022",
+            "end": "00:00:40,562",
+            "en": "chestnut,",
+            "zh": "栗子，",
+            "ar": "كستناء،"
+        },
+        {
+            "start": "00:00:40,562",
+            "end": "00:00:41,282",
+            "en": "tamago,",
+            "zh": "玉子，",
+            "ar": "البيض،"
+        },
+        {
+            "start": "00:00:41,282",
+            "end": "00:00:44,862",
+            "en": "and the bean juice.",
+            "zh": "和豆汁。",
+            "ar": "وعصير الفاصوليا."
+        },
+        {
+            "start": "00:00:58,162",
+            "end": "00:00:59,562",
+            "en": "Ceo!",
+            "zh": "首席执行官！",
+            "ar": "الرئيس التنفيذي!"
+        }
+    ]
+}

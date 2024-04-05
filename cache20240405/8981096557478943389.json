@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,940\",\n    \"lang\": \"en\",\n    \"text\": \"This is my breakfast today.\"\n  },\n  {\n    \"start\": \"00:00:05,780\",\n    \"end\": \"00:00:08,340\",\n    \"lang\": \"en\",\n    \"text\": \"And two buns.\"\n  },\n  {\n    \"start\": \"00:00:12,034\",\n    \"end\": \"00:00:12,314\",\n    \"lang\": \"zh\",\n    \"text\": \"拜拜\"\n  },\n  {\n    \"start\": \"00:00:14,562\",\n    \"end\": \"00:00:14,842\",\n    \"lang\": \"en\",\n    \"text\": \"One,\"\n  },\n  {\n    \"start\": \"00:00:14,842\",\n    \"end\": \"00:00:15,962\",\n    \"lang\": \"en\",\n    \"text\": \"how to say one,\"\n  },\n  {\n    \"start\": \"00:00:15,962\",\n    \"end\": \"00:00:17,082\",\n    \"lang\": \"en\",\n    \"text\": \"one this.\"\n  },\n  {\n    \"start\": \"00:00:18,662\",\n    \"end\": \"00:00:19,702\",\n    \"lang\": \"en\",\n    \"text\": \"One bottle of this.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,940",
+            "vi": "Đây là bữa sáng của tôi hôm nay."
+        },
+        {
+            "start": "00:00:05,780",
+            "end": "00:00:08,340",
+            "vi": "Và hai chiếc bánh mì."
+        },
+        {
+            "start": "00:00:12,034",
+            "end": "00:00:12,314",
+            "vi": "Tạm biệt"
+        },
+        {
+            "start": "00:00:14,562",
+            "end": "00:00:14,842",
+            "vi": "Một,"
+        },
+        {
+            "start": "00:00:14,842",
+            "end": "00:00:15,962",
+            "vi": "làm sao để nói một,"
+        },
+        {
+            "start": "00:00:15,962",
+            "end": "00:00:17,082",
+            "vi": "một cái này."
+        },
+        {
+            "start": "00:00:18,662",
+            "end": "00:00:19,702",
+            "vi": "Một chai của cái này."
+        }
+    ]
+}

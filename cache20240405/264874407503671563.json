@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:14,146\",\n    \"end\": \"00:01:23,466\",\n    \"lang\": \"en\",\n    \"text\": \"I cooked this potato about three to four days ago.\"\n  },\n  {\n    \"start\": \"00:01:23,466\",\n    \"end\": \"00:01:29,386\",\n    \"lang\": \"en\",\n    \"text\": \"I think I could call this something.\"\n  },\n  {\n    \"start\": \"00:01:29,926\",\n    \"end\": \"00:01:30,766\",\n    \"lang\": \"en\",\n    \"text\": \"Sore throat.\"\n  },\n  {\n    \"start\": \"00:01:31,446\",\n    \"end\": \"00:01:33,186\",\n    \"lang\": \"en\",\n    \"text\": \"I found out I cannot eat it.\"\n  },\n  {\n    \"start\": \"00:01:33,886\",\n    \"end\": \"00:01:36,026\",\n    \"lang\": \"en\",\n    \"text\": \"It's a hard stuff.\"\n  },\n  {\n    \"start\": \"00:01:43,906\",\n    \"end\": \"00:01:45,966\",\n    \"lang\": \"en\",\n    \"text\": \"How to eat this?\"\n  },\n  {\n    \"start\": \"00:01:50,166\",\n    \"end\": \"00:01:50,846\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:50,846\",\n    \"end\": \"00:01:51,286\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  },\n  {\n    \"start\": \"00:01:51,626\",\n    \"end\": \"00:01:52,086\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:14,146",
+            "end": "00:01:23,466",
+            "ja": "このポテトは3、4日前に調理しました。"
+        },
+        {
+            "start": "00:01:23,466",
+            "end": "00:01:29,386",
+            "ja": "これに名前をつけることができるかもしれません。"
+        },
+        {
+            "start": "00:01:29,926",
+            "end": "00:01:30,766",
+            "ja": "喉が痛い。"
+        },
+        {
+            "start": "00:01:31,446",
+            "end": "00:01:33,186",
+            "ja": "食べられないことが分かりました。"
+        },
+        {
+            "start": "00:01:33,886",
+            "end": "00:01:36,026",
+            "ja": "硬いものです。"
+        },
+        {
+            "start": "00:01:43,906",
+            "end": "00:01:45,966",
+            "ja": "これはどうやって食べるの？"
+        },
+        {
+            "start": "00:01:50,166",
+            "end": "00:01:50,846",
+            "ja": "オーケー、"
+        },
+        {
+            "start": "00:01:50,846",
+            "end": "00:01:51,286",
+            "ja": "オーケー。"
+        },
+        {
+            "start": "00:01:51,626",
+            "end": "00:01:52,086",
+            "ja": "じゃあね。"
+        }
+    ]
+}

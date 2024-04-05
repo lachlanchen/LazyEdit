@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:29,038\",\n    \"end\": \"00:01:31,698\",\n    \"lang\": \"en\",\n    \"text\": \"As I shared in the morning running,\"\n  },\n  {\n    \"start\": \"00:01:31,698\",\n    \"end\": \"00:01:35,658\",\n    \"lang\": \"en\",\n    \"text\": \"we all have our unique talent,\"\n  },\n  {\n    \"start\": \"00:01:35,658\",\n    \"end\": \"00:01:37,038\",\n    \"lang\": \"en\",\n    \"text\": \"our unique strength,\"\n  },\n  {\n    \"start\": \"00:01:38,438\",\n    \"end\": \"00:01:39,598\",\n    \"lang\": \"en\",\n    \"text\": \"our unique journey,\"\n  },\n  {\n    \"start\": \"00:01:39,598\",\n    \"end\": \"00:01:41,378\",\n    \"lang\": \"en\",\n    \"text\": \"our unique story.\"\n  },\n  {\n    \"start\": \"00:01:45,118\",\n    \"end\": \"00:01:52,098\",\n    \"lang\": \"en\",\n    \"text\": \"So there is no necessity to admire or to be proud of it.\"\n  },\n  {\n    \"start\": \"00:01:52,130\",\n    \"end\": \"00:01:53,570\",\n    \"lang\": \"zh\",\n    \"text\": \"尽量的是我们的阿灯玻璃\"\n  },\n  {\n    \"start\": \"00:02:11,202\",\n    \"end\": \"00:02:12,282\",\n    \"lang\": \"en\",\n    \"text\": \"And all your life,\"\n  },\n  {\n    \"start\": \"00:02:12,282\",\n    \"end\": \"00:02:14,042\",\n    \"lang\": \"en\",\n    \"text\": \"when you disappear,\"\n  },\n  {\n    \"start\": \"00:02:14,042\",\n    \"end\": \"00:02:22,762\",\n    \"lang\": \"en\",\n    \"text\": \"it can only happen inside this existence.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:29,038",
+            "end": "00:01:31,698",
+            "ja": "今朝のランニングで共有したように、"
+        },
+        {
+            "start": "00:01:31,698",
+            "end": "00:01:35,658",
+            "ja": "私たちは皆、独自の才能があります、"
+        },
+        {
+            "start": "00:01:35,658",
+            "end": "00:01:37,038",
+            "ja": "独自の強みがあります、"
+        },
+        {
+            "start": "00:01:38,438",
+            "end": "00:01:39,598",
+            "ja": "独自の旅があります、"
+        },
+        {
+            "start": "00:01:39,598",
+            "end": "00:01:41,378",
+            "ja": "独自の物語があります。"
+        },
+        {
+            "start": "00:01:45,118",
+            "end": "00:01:52,098",
+            "ja": "だからそれを賞賛したり、誇りに思う必要はありません。"
+        },
+        {
+            "start": "00:01:52,130",
+            "end": "00:01:53,570",
+            "ja": "できる限り、それは私たちの存在の中でしか起こり得ません。"
+        },
+        {
+            "start": "00:02:11,202",
+            "end": "00:02:12,282",
+            "ja": "そして人生の中で、"
+        },
+        {
+            "start": "00:02:12,282",
+            "end": "00:02:14,042",
+            "ja": "あなたが消えるとき、"
+        },
+        {
+            "start": "00:02:14,042",
+            "end": "00:02:22,762",
+            "ja": "それはこの存在の中でのみ起こり得ます。"
+        }
+    ]
+}

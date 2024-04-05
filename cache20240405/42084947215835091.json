@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,840\",\n    \"lang\": \"en\",\n    \"text\": \"Another ordinary day with some little progress,\"\n  },\n  {\n    \"start\": \"00:00:04,840\",\n    \"end\": \"00:00:06,000\",\n    \"lang\": \"en\",\n    \"text\": \"little improvement\"\n  },\n  {\n    \"start\": \"00:00:15,520\",\n    \"end\": \"00:00:16,100\",\n    \"lang\": \"en\",\n    \"text\": \"It's very good\"\n  },\n  {\n    \"start\": \"00:00:16,129\",\n    \"end\": \"00:00:16,810\",\n    \"lang\": \"zh\",\n    \"text\": \"小鱼死鱼飞\"\n  },\n  {\n    \"start\": \"00:00:17,698\",\n    \"end\": \"00:00:18,498\",\n    \"lang\": \"en\",\n    \"text\": \"in her grasp\"\n  },\n  {\n    \"start\": \"00:00:30,377\",\n    \"end\": \"00:00:31,217\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:31,217\",\n    \"end\": \"00:00:33,258\",\n    \"lang\": \"en\",\n    \"text\": \"let's get it perfectly wrong,\"\n  },\n  {\n    \"start\": \"00:00:33,258\",\n    \"end\": \"00:00:34,598\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  },\n  {\n    \"start\": \"00:00:54,338\",\n    \"end\": \"00:00:57,118\",\n    \"lang\": \"en\",\n    \"text\": \"Okay this around a the perfect,\"\n  },\n  {\n    \"start\": \"00:00:57,118\",\n    \"end\": \"00:00:58,858\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,840",
+            "en": "Another ordinary day with some little progress,",
+            "zh": "又是平凡的一天，有那么一点点进步，",
+            "ar": "يوم عادي آخر مع بعض التقدم البسيط,"
+        },
+        {
+            "start": "00:00:04,840",
+            "end": "00:00:06,000",
+            "en": "little improvement",
+            "zh": "小小的进步",
+            "ar": "تحسن بسيط"
+        },
+        {
+            "start": "00:00:15,520",
+            "end": "00:00:16,100",
+            "en": "It's very good",
+            "zh": "这非常好",
+            "ar": "هذا جيد جدا"
+        },
+        {
+            "start": "00:00:16,129",
+            "end": "00:00:16,810",
+            "en": "Small fish jumps",
+            "zh": "小鱼跳跃",
+            "ar": "تقفز السمكة الصغيرة"
+        },
+        {
+            "start": "00:00:17,698",
+            "end": "00:00:18,498",
+            "en": "in her grasp",
+            "zh": "在她的掌握中",
+            "ar": "في قبضتها"
+        },
+        {
+            "start": "00:00:30,377",
+            "end": "00:00:31,217",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:00:31,217",
+            "end": "00:00:33,258",
+            "en": "let's get it perfectly wrong,",
+            "zh": "让我们完美地出错，",
+            "ar": "دعونا نخطئ تماما,"
+        },
+        {
+            "start": "00:00:33,258",
+            "end": "00:00:34,598",
+            "en": "okay",
+            "zh": "好的",
+            "ar": "حسنا"
+        },
+        {
+            "start": "00:00:54,338",
+            "end": "00:00:57,118",
+            "en": "Okay, this is around the perfect,",
+            "zh": "好的，这就是所谓的完美，",
+            "ar": "حسنا، هذا هو حول الكمال,"
+        },
+        {
+            "start": "00:00:57,118",
+            "end": "00:00:58,858",
+            "en": "okay",
+            "zh": "好的",
+            "ar": "حسنا"
+        }
+    ]
+}

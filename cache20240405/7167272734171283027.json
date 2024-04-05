@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,078\",\n    \"end\": \"00:01:01,698\",\n    \"lang\": \"en\",\n    \"text\": \"if I don't play the guitar.\"\n  },\n  {\n    \"start\": \"00:01:01,698\",\n    \"end\": \"00:01:04,778\",\n    \"lang\": \"en\",\n    \"text\": \"So even if I play the guitar,\"\n  },\n  {\n    \"start\": \"00:01:04,778\",\n    \"end\": \"00:01:06,718\",\n    \"lang\": \"en\",\n    \"text\": \"I can't guarantee that I still\"\n  },\n  {\n    \"start\": \"00:01:06,718\",\n    \"end\": \"00:01:07,818\",\n    \"lang\": \"en\",\n    \"text\": \"catch the tune.\"\n  },\n  {\n    \"start\": \"00:01:07,818\",\n    \"end\": \"00:01:13,478\",\n    \"lang\": \"en\",\n    \"text\": \"So if I play the guitar,\"\n  },\n  {\n    \"start\": \"00:01:13,478\",\n    \"end\": \"00:01:14,578\",\n    \"lang\": \"en\",\n    \"text\": \"I can.\"\n  },\n  {\n    \"start\": \"00:01:15,458\",\n    \"end\": \"00:01:16,678\",\n    \"lang\": \"en\",\n    \"text\": \"Even if I sing it.\"\n  },\n  {\n    \"start\": \"00:01:24,858\",\n    \"end\": \"00:01:29,198\",\n    \"lang\": \"en\",\n    \"text\": \"I think this tune is originally.\"\n  },\n  {\n    \"start\": \"00:01:29,198\",\n    \"end\": \"00:01:30,258\",\n    \"lang\": \"en\",\n    \"text\": \"I can handle it.\"\n  },\n  {\n    \"start\": \"00:01:30,914\",\n    \"end\": \"00:01:31,534\",\n    \"lang\": \"zh\",\n    \"text\": \"把你\"\n  },\n  {\n    \"start\": \"00:01:31,614\",\n    \"end\": \"00:01:32,374\",\n    \"lang\": \"zh\",\n    \"text\": \"弄得\"\n  },\n  {\n    \"start\": \"00:01:33,154\",\n    \"end\": \"00:01:33,754\",\n    \"lang\": \"zh\",\n    \"text\": \"傲气的意思\"\n  },\n  {\n    \"start\": \"00:01:34,214\",\n    \"end\": \"00:01:34,774\",\n    \"lang\": \"zh\",\n    \"text\": \"来看了\"\n  },\n  {\n    \"start\": \"00:01:35,874\",\n    \"end\": \"00:01:36,354\",\n    \"lang\": \"ja\",\n    \"text\": \"クラス!\"\n  },\n  {\n    \"start\": \"00:01:39,394\",\n    \"end\": \"00:01:39,634\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:01:39,634\",\n    \"end\": \"00:01:40,194\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:01:40,194\",\n    \"end\": \"00:01:40,894\",\n    \"lang\": \"en\",\n    \"text\": \"it's wrong.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,078",
+            "end": "00:01:01,698",
+            "ko": "기타를 치지 않는다면."
+        },
+        {
+            "start": "00:01:01,698",
+            "end": "00:01:04,778",
+            "ko": "그래서 기타를 쳐도,"
+        },
+        {
+            "start": "00:01:04,778",
+            "end": "00:01:06,718",
+            "ko": "곡을 잘 맞추겠다는 걸"
+        },
+        {
+            "start": "00:01:06,718",
+            "end": "00:01:07,818",
+            "ko": "보장할 수는 없어."
+        },
+        {
+            "start": "00:01:07,818",
+            "end": "00:01:13,478",
+            "ko": "그래서 기타를 친다면,"
+        },
+        {
+            "start": "00:01:13,478",
+            "end": "00:01:14,578",
+            "ko": "할 수 있어."
+        },
+        {
+            "start": "00:01:15,458",
+            "end": "00:01:16,678",
+            "ko": "노래를 부르더라도."
+        },
+        {
+            "start": "00:01:24,858",
+            "end": "00:01:29,198",
+            "ko": "이 곡은 원래."
+        },
+        {
+            "start": "00:01:29,198",
+            "end": "00:01:30,258",
+            "ko": "제가 다룰 수 있어요."
+        },
+        {
+            "start": "00:01:30,914",
+            "end": "00:01:31,534",
+            "ko": "너를"
+        },
+        {
+            "start": "00:01:31,614",
+            "end": "00:01:32,374",
+            "ko": "만든"
+        },
+        {
+            "start": "00:01:33,154",
+            "end": "00:01:33,754",
+            "ko": "오만한 의미"
+        },
+        {
+            "start": "00:01:34,214",
+            "end": "00:01:34,774",
+            "ko": "보러 왔어"
+        },
+        {
+            "start": "00:01:35,874",
+            "end": "00:01:36,354",
+            "ko": "수업!"
+        },
+        {
+            "start": "00:01:39,394",
+            "end": "00:01:39,634",
+            "ko": "미안,"
+        },
+        {
+            "start": "00:01:39,634",
+            "end": "00:01:40,194",
+            "ko": "죄송해요,"
+        },
+        {
+            "start": "00:01:40,194",
+            "end": "00:01:40,894",
+            "ko": "틀렸어요."
+        }
+    ]
+}

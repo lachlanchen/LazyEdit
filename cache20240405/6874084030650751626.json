@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,500\",\n    \"lang\": \"en\",\n    \"text\": \"I have fans asking my age.\"\n  },\n  {\n    \"start\": \"00:00:05,500\",\n    \"end\": \"00:00:13,800\",\n    \"lang\": \"en\",\n    \"text\": \"Age is quite a relative thing.\"\n  },\n  {\n    \"start\": \"00:00:14,800\",\n    \"end\": \"00:00:15,300\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:15,300\",\n    \"end\": \"00:00:17,060\",\n    \"lang\": \"en\",\n    \"text\": \"like 40 years old,\"\n  },\n  {\n    \"start\": \"00:00:17,060\",\n    \"end\": \"00:00:23,380\",\n    \"lang\": \"en\",\n    \"text\": \"it could be the start for some people.\"\n  },\n  {\n    \"start\": \"00:00:23,980\",\n    \"end\": \"00:00:31,060\",\n    \"lang\": \"en\",\n    \"text\": \"It could be the start of your life,\"\n  },\n  {\n    \"start\": \"00:00:31,060\",\n    \"end\": \"00:00:32,780\",\n    \"lang\": \"en\",\n    \"text\": \"start of your career.\"\n  },\n  {\n    \"start\": \"00:00:35,300\",\n    \"end\": \"00:00:38,920\",\n    \"lang\": \"en\",\n    \"text\": \"And it could also be the end of some people.\"\n  },\n  {\n    \"start\": \"00:00:39,960\",\n    \"end\": \"00:00:40,600\",\n    \"lang\": \"en\",\n    \"text\": \"As someone,\"\n  },\n  {\n    \"start\": \"00:00:40,600\",\n    \"end\": \"00:00:42,800\",\n    \"lang\": \"en\",\n    \"text\": \"though they are alive,\"\n  },\n  {\n    \"start\": \"00:00:42,800\",\n    \"end\": \"00:00:46,860\",\n    \"lang\": \"en\",\n    \"text\": \"but they died at their 20s and 30s.\"\n  },\n  {\n    \"start\": \"00:00:47,440\",\n    \"end\": \"00:00:47,500\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:47,500\",\n    \"end\": \"00:00:56,980\",\n    \"lang\": \"en\",\n    \"text\": \"their rest of life is just a repetition of their original inertia.\"\n  },\n  {\n    \"start\": \"00:00:59,260\",\n    \"end\": \"00:01:02,300\",\n    \"lang\": \"en\",\n    \"text\": \"Age is not an important thing.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,500",
+            "vi": "Tôi có người hâm mộ hỏi về tuổi tác của mình."
+        },
+        {
+            "start": "00:00:05,500",
+            "end": "00:00:13,800",
+            "vi": "Tuổi tác là một điều tương đối."
+        },
+        {
+            "start": "00:00:14,800",
+            "end": "00:00:15,300",
+            "vi": "Vì vậy,"
+        },
+        {
+            "start": "00:00:15,300",
+            "end": "00:00:17,060",
+            "vi": "như 40 tuổi,"
+        },
+        {
+            "start": "00:00:17,060",
+            "end": "00:00:23,380",
+            "vi": "có thể là khởi đầu cho một số người."
+        },
+        {
+            "start": "00:00:23,980",
+            "end": "00:00:31,060",
+            "vi": "Nó có thể là khởi đầu của cuộc đời bạn,"
+        },
+        {
+            "start": "00:00:31,060",
+            "end": "00:00:32,780",
+            "vi": "khởi đầu của sự nghiệp."
+        },
+        {
+            "start": "00:00:35,300",
+            "end": "00:00:38,920",
+            "vi": "Và nó cũng có thể là kết thúc cho một số người."
+        },
+        {
+            "start": "00:00:39,960",
+            "end": "00:00:40,600",
+            "vi": "Khi một người,"
+        },
+        {
+            "start": "00:00:40,600",
+            "end": "00:00:42,800",
+            "vi": "mặc dù họ vẫn sống,"
+        },
+        {
+            "start": "00:00:42,800",
+            "end": "00:00:46,860",
+            "vi": "nhưng họ đã chết vào tuổi 20 và 30."
+        },
+        {
+            "start": "00:00:47,440",
+            "end": "00:00:47,500",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:00:47,500",
+            "end": "00:00:56,980",
+            "vi": "phần còn lại của cuộc đời họ chỉ là sự lặp lại của động lực ban đầu."
+        },
+        {
+            "start": "00:00:59,260",
+            "end": "00:01:02,300",
+            "vi": "Tuổi tác không phải là điều quan trọng."
+        }
+    ]
+}

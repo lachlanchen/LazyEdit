@@ -1,0 +1,35 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es) and French (fr) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other language. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:25,865\",\n    \"end\": \"00:02:26,386\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:26,386\",\n    \"end\": \"00:02:27,446\",\n    \"lang\": \"en\",\n    \"text\": \"this time it's good.\"\n  },\n  {\n    \"start\": \"00:02:30,866\",\n    \"end\": \"00:02:32,286\",\n    \"lang\": \"en\",\n    \"text\": \"And maybe one more time.\"\n  },\n  {\n    \"start\": \"00:02:56,866\",\n    \"end\": \"00:02:57,186\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:57,186\",\n    \"end\": \"00:02:57,566\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:25,865",
+            "end": "00:02:26,386",
+            "es": "Vale,",
+            "fr": "D'accord,"
+        },
+        {
+            "start": "00:02:26,386",
+            "end": "00:02:27,446",
+            "es": "esta vez está bien.",
+            "fr": "cette fois, c'est bon."
+        },
+        {
+            "start": "00:02:30,866",
+            "end": "00:02:32,286",
+            "es": "Y quizás una vez más.",
+            "fr": "Et peut-être une fois de plus."
+        },
+        {
+            "start": "00:02:56,866",
+            "end": "00:02:57,186",
+            "es": "Vale,",
+            "fr": "D'accord,"
+        },
+        {
+            "start": "00:02:57,186",
+            "end": "00:02:57,566",
+            "es": "nos vemos.",
+            "fr": "à bientôt."
+        }
+    ]
+}

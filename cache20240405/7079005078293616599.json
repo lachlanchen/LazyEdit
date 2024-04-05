@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,100\",\n    \"lang\": \"ja\",\n    \"text\": \"アパート到着しています\"\n  },\n  {\n    \"start\": \"00:00:03,426\",\n    \"end\": \"00:00:03,946\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  },\n  {\n    \"start\": \"00:00:06,274\",\n    \"end\": \"00:00:08,794\",\n    \"lang\": \"ja\",\n    \"text\": \"アパート到着しています\"\n  },\n  {\n    \"start\": \"00:00:10,114\",\n    \"end\": \"00:00:10,614\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,100",
+            "en": "Arrived at the apartment",
+            "zh": "到达公寓了",
+            "ar": "وصلت إلى الشقة"
+        },
+        {
+            "start": "00:00:03,426",
+            "end": "00:00:03,946",
+            "en": "Okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:00:06,274",
+            "end": "00:00:08,794",
+            "en": "Arrived at the apartment",
+            "zh": "到达公寓了",
+            "ar": "وصلت إلى الشقة"
+        },
+        {
+            "start": "00:00:10,114",
+            "end": "00:00:10,614",
+            "en": "Okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        }
+    ]
+}

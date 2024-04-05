@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,738\",\n    \"end\": \"00:01:03,678\",\n    \"lang\": \"en\",\n    \"text\": \"but the taste is really good.\"\n  },\n  {\n    \"start\": \"00:01:05,117\",\n    \"end\": \"00:01:07,498\",\n    \"lang\": \"en\",\n    \"text\": \"I don't have the necessity to lie.\"\n  },\n  {\n    \"start\": \"00:01:09,538\",\n    \"end\": \"00:01:11,918\",\n    \"lang\": \"ja\",\n    \"text\": \"今夜は必要ない\"\n  },\n  {\n    \"start\": \"00:01:14,850\",\n    \"end\": \"00:01:15,230\",\n    \"lang\": \"en\",\n    \"text\": \"Wow.\"\n  },\n  {\n    \"start\": \"00:01:20,840\",\n    \"end\": \"00:01:22,410\",\n    \"lang\": \"en\",\n    \"text\": \"This is really the best thing.\"\n  },\n  {\n    \"start\": \"00:01:23,610\",\n    \"end\": \"00:01:24,670\",\n    \"lang\": \"en\",\n    \"text\": \"The best chicken noodles.\"\n  },\n  {\n    \"start\": \"00:01:31,554\",\n    \"end\": \"00:01:34,494\",\n    \"lang\": \"ja\",\n    \"text\": \"私はピンクジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:01:39,234\",\n    \"end\": \"00:01:48,614\",\n    \"lang\": \"en\",\n    \"text\": \"I have this lactose intolerance and gluten intolerance.\"\n  },\n  {\n    \"start\": \"00:01:49,314\",\n    \"end\": \"00:01:55,434\",\n    \"lang\": \"en\",\n    \"text\": \"So I only drink bean juice and I don't like eating bread.\"\n  },\n  {\n    \"start\": \"00:01:56,334\",\n    \"end\": \"00:01:58,634\",\n    \"lang\": \"en\",\n    \"text\": \"And I also have...\"\n  },\n  {\n    \"start\": \"00:01:58,634\",\n    \"end\": \"00:02:02,614\",\n    \"lang\": \"en\",\n    \"text\": \"I'm intolerant to fruity sugar.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,738",
+            "end": "00:01:03,678",
+            "es": "pero el sabor es realmente bueno.",
+            "fr": "mais le goût est vraiment bon.",
+            "uk": "але смак дійсно хороший."
+        },
+        {
+            "start": "00:01:05,117",
+            "end": "00:01:07,498",
+            "es": "No tengo la necesidad de mentir.",
+            "fr": "Je n'ai pas besoin de mentir.",
+            "uk": "Я не маю необхідності брехати."
+        },
+        {
+            "start": "00:01:09,538",
+            "end": "00:01:11,918",
+            "es": "Hoy por la noche no es necesario.",
+            "fr": "Ce soir, ce n'est pas nécessaire.",
+            "uk": "Сьогодні ввечері не потрібно."
+        },
+        {
+            "start": "00:01:14,850",
+            "end": "00:01:15,230",
+            "es": "Guau.",
+            "fr": "Wow.",
+            "uk": "Вау."
+        },
+        {
+            "start": "00:01:20,840",
+            "end": "00:01:22,410",
+            "es": "Esto es realmente lo mejor.",
+            "fr": "C'est vraiment la meilleure chose.",
+            "uk": "Це дійсно найкраще."
+        },
+        {
+            "start": "00:01:23,610",
+            "end": "00:01:24,670",
+            "es": "Los mejores fideos con pollo.",
+            "fr": "Les meilleurs nouilles au poulet.",
+            "uk": "Найкращі курячі локшина."
+        },
+        {
+            "start": "00:01:31,554",
+            "end": "00:01:34,494",
+            "es": "Estoy bebiendo jugo rosa.",
+            "fr": "Je bois du jus rose.",
+            "uk": "Я п'ю рожевий сік."
+        },
+        {
+            "start": "00:01:39,234",
+            "end": "00:01:48,614",
+            "es": "Tengo intolerancia a la lactosa y al gluten.",
+            "fr": "Je suis intolérant(e) au lactose et au gluten.",
+            "uk": "У мене інтолерантність до лактози та глютену."
+        },
+        {
+            "start": "00:01:49,314",
+            "end": "00:01:55,434",
+            "es": "Así que solo bebo jugo de frijoles y no me gusta comer pan.",
+            "fr": "Donc je ne bois que du jus de haricots et je n'aime pas manger du pain.",
+            "uk": "Тому я п'ю лише бобовий сік і не люблю їсти хліб."
+        },
+        {
+            "start": "00:01:56,334",
+            "end": "00:01:58,634",
+            "es": "Y también tengo...",
+            "fr": "Et j'ai aussi...",
+            "uk": "І в мене також є..."
+        },
+        {
+            "start": "00:01:58,634",
+            "end": "00:02:02,614",
+            "es": "Soy intolerante al azúcar frutal.",
+            "fr": "Je suis intolérant(e) au sucre de fruit.",
+            "uk": "Я інтолерантний до фруктового цукру."
+        }
+    ]
+}

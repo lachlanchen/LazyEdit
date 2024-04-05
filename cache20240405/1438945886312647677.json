@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,460\",\n    \"lang\": \"ja\",\n    \"text\": \"はい、\"\n  },\n  {\n    \"start\": \"00:00:00,460\",\n    \"end\": \"00:00:01,120\",\n    \"lang\": \"ja\",\n    \"text\": \"お願いします\"\n  },\n  {\n    \"start\": \"00:00:05,378\",\n    \"end\": \"00:00:05,678\",\n    \"lang\": \"en\",\n    \"text\": \"Ugh.\"\n  },\n  {\n    \"start\": \"00:00:06,658\",\n    \"end\": \"00:00:10,018\",\n    \"lang\": \"ja\",\n    \"text\": \"私の朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:10,018\",\n    \"end\": \"00:00:11,998\",\n    \"lang\": \"ja\",\n    \"text\": \"私はジンジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:00:19,053\",\n    \"end\": \"00:00:25,554\",\n    \"lang\": \"en\",\n    \"text\": \"It's working out is a gorgeous thing.\"\n  },\n  {\n    \"start\": \"00:00:25,554\",\n    \"end\": \"00:00:37,454\",\n    \"lang\": \"en\",\n    \"text\": \"The difficult part of the workout is just getting out from our house.\"\n  },\n  {\n    \"start\": \"00:00:52,574\",\n    \"end\": \"00:00:55,454\",\n    \"lang\": \"en\",\n    \"text\": \"Once you get it out of your bed,\"\n  },\n  {\n    \"start\": \"00:00:55,454\",\n    \"end\": \"00:00:57,214\",\n    \"lang\": \"en\",\n    \"text\": \"get it off the top of your home,\"\n  },\n  {\n    \"start\": \"00:00:57,214\",\n    \"end\": \"00:00:58,174\",\n    \"lang\": \"en\",\n    \"text\": \"you can do it.\"\n  },\n  {\n    \"start\": \"00:00:58,210\",\n    \"end\": \"00:00:59,250\",\n    \"lang\": \"ja\",\n    \"text\": \"エクストサイズにつながる\"\n  },\n  {\n    \"start\": \"00:00:59,290\",\n    \"end\": \"00:00:59,590\",\n    \"lang\": \"ja\",\n    \"text\": \"シンパシー\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,460",
+            "vi": "Vâng,"
+        },
+        {
+            "start": "00:00:00,460",
+            "end": "00:00:01,120",
+            "vi": "làm ơn."
+        },
+        {
+            "start": "00:00:05,378",
+            "end": "00:00:05,678",
+            "vi": "Ức."
+        },
+        {
+            "start": "00:00:06,658",
+            "end": "00:00:10,018",
+            "vi": "Tôi đang ăn bữa sáng của mình"
+        },
+        {
+            "start": "00:00:10,018",
+            "end": "00:00:11,998",
+            "vi": "Tôi đang uống nước gừng"
+        },
+        {
+            "start": "00:00:19,053",
+            "end": "00:00:25,554",
+            "vi": "Tập luyện là một điều tuyệt vời."
+        },
+        {
+            "start": "00:00:25,554",
+            "end": "00:00:37,454",
+            "vi": "Phần khó của việc luyện tập chỉ là bước ra khỏi nhà."
+        },
+        {
+            "start": "00:00:52,574",
+            "end": "00:00:55,454",
+            "vi": "Một khi bạn đã rời khỏi giường,"
+        },
+        {
+            "start": "00:00:55,454",
+            "end": "00:00:57,214",
+            "vi": "rời khỏi phần trên cùng của nhà bạn,"
+        },
+        {
+            "start": "00:00:57,214",
+            "end": "00:00:58,174",
+            "vi": "bạn có thể làm được."
+        },
+        {
+            "start": "00:00:58,210",
+            "end": "00:00:59,250",
+            "vi": "dẫn đến việc tập luyện"
+        },
+        {
+            "start": "00:00:59,290",
+            "end": "00:00:59,590",
+            "vi": "sự đồng cảm"
+        }
+    ]
+}

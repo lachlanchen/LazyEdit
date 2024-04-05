@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,025\",\n    \"end\": \"00:01:01,606\",\n    \"lang\": \"en\",\n    \"text\": \"there might be an advantage\"\n  },\n  {\n    \"start\": \"00:01:02,886\",\n    \"end\": \"00:01:04,006\",\n    \"lang\": \"en\",\n    \"text\": \"that is\"\n  },\n  {\n    \"start\": \"00:01:05,826\",\n    \"end\": \"00:01:06,986\",\n    \"lang\": \"en\",\n    \"text\": \"you can\"\n  },\n  {\n    \"start\": \"00:01:06,986\",\n    \"end\": \"00:01:08,306\",\n    \"lang\": \"en\",\n    \"text\": \"learn multiple languages\"\n  },\n  {\n    \"start\": \"00:01:08,306\",\n    \"end\": \"00:01:10,046\",\n    \"lang\": \"en\",\n    \"text\": \"so that you can\"\n  },\n  {\n    \"start\": \"00:01:10,046\",\n    \"end\": \"00:01:12,146\",\n    \"lang\": \"en\",\n    \"text\": \"find\"\n  },\n  {\n    \"start\": \"00:01:12,146\",\n    \"end\": \"00:01:14,406\",\n    \"lang\": \"en\",\n    \"text\": \"your soulmate\"\n  },\n  {\n    \"start\": \"00:01:15,546\",\n    \"end\": \"00:01:16,746\",\n    \"lang\": \"en\",\n    \"text\": \"in different\"\n  },\n  {\n    \"start\": \"00:01:16,746\",\n    \"end\": \"00:01:18,146\",\n    \"lang\": \"en\",\n    \"text\": \"countries\"\n  },\n  {\n    \"start\": \"00:01:18,146\",\n    \"end\": \"00:01:19,766\",\n    \"lang\": \"en\",\n    \"text\": \"not limited to your\"\n  },\n  {\n    \"start\": \"00:01:19,766\",\n    \"end\": \"00:01:21,026\",\n    \"lang\": \"en\",\n    \"text\": \"homeland\"\n  },\n  {\n    \"start\": \"00:01:30,206\",\n    \"end\": \"00:01:32,326\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that's an advantage\"\n  },\n  {\n    \"start\": \"00:01:32,326\",\n    \"end\": \"00:01:33,326\",\n    \"lang\": \"en\",\n    \"text\": \"you can meet here\"\n  },\n  {\n    \"start\": \"00:01:35,066\",\n    \"end\": \"00:01:35,786\",\n    \"lang\": \"en\",\n    \"text\": \"anyone\"\n  },\n  {\n    \"start\": \"00:01:36,306\",\n    \"end\": \"00:01:37,566\",\n    \"lang\": \"en\",\n    \"text\": \"on this planet\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,025",
+            "end": "00:01:01,606",
+            "ko": "이점이 있을 수 있습니다"
+        },
+        {
+            "start": "00:01:02,886",
+            "end": "00:01:04,006",
+            "ko": "바로"
+        },
+        {
+            "start": "00:01:05,826",
+            "end": "00:01:06,986",
+            "ko": "당신은"
+        },
+        {
+            "start": "00:01:06,986",
+            "end": "00:01:08,306",
+            "ko": "여러 언어를 배울 수 있습니다"
+        },
+        {
+            "start": "00:01:08,306",
+            "end": "00:01:10,046",
+            "ko": "그래서 당신은"
+        },
+        {
+            "start": "00:01:10,046",
+            "end": "00:01:12,146",
+            "ko": "찾을 수 있습니다"
+        },
+        {
+            "start": "00:01:12,146",
+            "end": "00:01:14,406",
+            "ko": "당신의 영혼의 짝을"
+        },
+        {
+            "start": "00:01:15,546",
+            "end": "00:01:16,746",
+            "ko": "다른"
+        },
+        {
+            "start": "00:01:16,746",
+            "end": "00:01:18,146",
+            "ko": "국가에서"
+        },
+        {
+            "start": "00:01:18,146",
+            "end": "00:01:19,766",
+            "ko": "국적에만 국한되지 않고"
+        },
+        {
+            "start": "00:01:19,766",
+            "end": "00:01:21,026",
+            "ko": "고향"
+        },
+        {
+            "start": "00:01:30,206",
+            "end": "00:01:32,326",
+            "ko": "저는 그것이 이점이라고 생각합니다"
+        },
+        {
+            "start": "00:01:32,326",
+            "end": "00:01:33,326",
+            "ko": "여기서 만날 수 있습니다"
+        },
+        {
+            "start": "00:01:35,066",
+            "end": "00:01:35,786",
+            "ko": "누구든지"
+        },
+        {
+            "start": "00:01:36,306",
+            "end": "00:01:37,566",
+            "ko": "이 지구상에서"
+        }
+    ]
+}

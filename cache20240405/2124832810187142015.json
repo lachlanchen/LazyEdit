@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,780\",\n    \"lang\": \"ja\",\n    \"text\": \"こんじゃ\"\n  },\n  {\n    \"start\": \"00:00:04,194\",\n    \"end\": \"00:00:05,714\",\n    \"lang\": \"zh\",\n    \"text\": \"在做反美啊\"\n  },\n  {\n    \"start\": \"00:00:07,094\",\n    \"end\": \"00:00:08,334\",\n    \"lang\": \"zh\",\n    \"text\": \"在做反美\"\n  },\n  {\n    \"start\": \"00:00:11,522\",\n    \"end\": \"00:00:14,502\",\n    \"lang\": \"ja\",\n    \"text\": \"私は犬ご飯を食べています\"\n  },\n  {\n    \"start\": \"00:00:17,502\",\n    \"end\": \"00:00:20,162\",\n    \"lang\": \"ja\",\n    \"text\": \"今年はコロニー\"\n  },\n  {\n    \"start\": \"00:00:25,410\",\n    \"end\": \"00:00:25,990\",\n    \"lang\": \"ja\",\n    \"text\": \"シェイブだ!\"\n  },\n  {\n    \"start\": \"00:00:27,746\",\n    \"end\": \"00:00:28,186\",\n    \"lang\": \"en\",\n    \"text\": \"knife,\"\n  },\n  {\n    \"start\": \"00:00:28,186\",\n    \"end\": \"00:00:29,586\",\n    \"lang\": \"en\",\n    \"text\": \"knife-shaved noodles\"\n  },\n  {\n    \"start\": \"00:00:32,505\",\n    \"end\": \"00:00:33,546\",\n    \"lang\": \"en\",\n    \"text\": \"That's it.\"\n  },\n  {\n    \"start\": \"00:00:33,546\",\n    \"end\": \"00:00:36,126\",\n    \"lang\": \"en\",\n    \"text\": \"So this is the Korean noodles and\"\n  },\n  {\n    \"start\": \"00:00:36,926\",\n    \"end\": \"00:00:38,486\",\n    \"lang\": \"en\",\n    \"text\": \"knife-shaved noodles with\"\n  },\n  {\n    \"start\": \"00:00:39,106\",\n    \"end\": \"00:00:39,506\",\n    \"lang\": \"en\",\n    \"text\": \"Beef,\"\n  },\n  {\n    \"start\": \"00:00:39,506\",\n    \"end\": \"00:00:40,386\",\n    \"lang\": \"en\",\n    \"text\": \"it's left\"\n  },\n  {\n    \"start\": \"00:00:40,905\",\n    \"end\": \"00:00:41,946\",\n    \"lang\": \"en\",\n    \"text\": \"some left over\"\n  },\n  {\n    \"start\": \"00:00:42,965\",\n    \"end\": \"00:00:44,726\",\n    \"lang\": \"en\",\n    \"text\": \"Must be yesterday\"\n  },\n  {\n    \"start\": \"00:00:55,486\",\n    \"end\": \"00:00:58,366\",\n    \"lang\": \"en\",\n    \"text\": \"Try this yesterday beef\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,780",
+            "es": "Hola",
+            "fr": "Bonjour",
+            "uk": "Привіт"
+        },
+        {
+            "start": "00:00:04,194",
+            "end": "00:00:05,714",
+            "es": "Protestando contra América",
+            "fr": "Protester contre l'Amérique",
+            "uk": "Протест проти Америки"
+        },
+        {
+            "start": "00:00:07,094",
+            "end": "00:00:08,334",
+            "es": "Protestando contra América",
+            "fr": "Protester contre l'Amérique",
+            "uk": "Протест проти Америки"
+        },
+        {
+            "start": "00:00:11,522",
+            "end": "00:00:14,502",
+            "es": "Estoy comiendo comida para perros",
+            "fr": "Je mange de la nourriture pour chien",
+            "uk": "Я їм собаче їжу"
+        },
+        {
+            "start": "00:00:17,502",
+            "end": "00:00:20,162",
+            "es": "Este año es la colonia",
+            "fr": "Cette année, c'est la colonie",
+            "uk": "Цього року колонія"
+        },
+        {
+            "start": "00:00:25,410",
+            "end": "00:00:25,990",
+            "es": "¡Afeitado!",
+            "fr": "Rasé!",
+            "uk": "Оголено!"
+        },
+        {
+            "start": "00:00:27,746",
+            "end": "00:00:28,186",
+            "es": "cuchillo,",
+            "fr": "couteau,",
+            "uk": "ніж,"
+        },
+        {
+            "start": "00:00:28,186",
+            "end": "00:00:29,586",
+            "es": "fideos cortados con cuchillo",
+            "fr": "nouilles coupées au couteau",
+            "uk": "локшина, нарізана ножем"
+        },
+        {
+            "start": "00:00:32,505",
+            "end": "00:00:33,546",
+            "es": "Eso es todo.",
+            "fr": "C'est tout.",
+            "uk": "Ось і все."
+        },
+        {
+            "start": "00:00:33,546",
+            "end": "00:00:36,126",
+            "es": "Así que esto son los fideos coreanos y",
+            "fr": "Donc ceci est les nouilles coréennes et",
+            "uk": "Отже, це корейська локшина та"
+        },
+        {
+            "start": "00:00:36,926",
+            "end": "00:00:38,486",
+            "es": "fideos cortados con cuchillo con",
+            "fr": "nouilles coupées au couteau avec",
+            "uk": "локшина, нарізана ножем з"
+        },
+        {
+            "start": "00:00:39,106",
+            "end": "00:00:39,506",
+            "es": "Carne de res,",
+            "fr": "Boeuf,",
+            "uk": "Яловичина,"
+        },
+        {
+            "start": "00:00:39,506",
+            "end": "00:00:40,386",
+            "es": "quedó",
+            "fr": "il reste",
+            "uk": "залишилося"
+        },
+        {
+            "start": "00:00:40,905",
+            "end": "00:00:41,946",
+            "es": "algo sobrante",
+            "fr": "quelques restes",
+            "uk": "щось залишилося"
+        },
+        {
+            "start": "00:00:42,965",
+            "end": "00:00:44,726",
+            "es": "Debe ser de ayer",
+            "fr": "Ça doit être d'hier",
+            "uk": "Мабуть, з вчора"
+        },
+        {
+            "start": "00:00:55,486",
+            "end": "00:00:58,366",
+            "es": "Prueba esta carne de ayer",
+            "fr": "Essayez ce bœuf d'hier",
+            "uk": "Спробуйте цю вчорашню яловичину"
+        }
+    ]
+}

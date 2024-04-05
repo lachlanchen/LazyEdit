@@ -1,0 +1,159 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,800\",\n    \"end\": \"00:00:01,500\",\n    \"lang\": \"en\",\n    \"text\": \"maintenant\"\n  },\n  {\n    \"start\": \"00:00:01,500\",\n    \"end\": \"00:00:04,780\",\n    \"lang\": \"en\",\n    \"text\": \"ce n'\"\n  },\n  {\n    \"start\": \"00:00:04,880\",\n    \"end\": \"00:00:06,000\",\n    \"lang\": \"en\",\n    \"text\": \"est histoire\"\n  },\n  {\n    \"start\": \"00:00:07,074\",\n    \"end\": \"00:00:08,074\",\n    \"lang\": \"zh\",\n    \"text\": \"買個漂泊溜嘛\"\n  },\n  {\n    \"start\": \"00:00:09,685\",\n    \"end\": \"00:00:10,466\",\n    \"lang\": \"en\",\n    \"text\": \"Very good.\"\n  },\n  {\n    \"start\": \"00:00:10,726\",\n    \"end\": \"00:00:11,126\",\n    \"lang\": \"en\",\n    \"text\": \"This is.\"\n  },\n  {\n    \"start\": \"00:00:11,286\",\n    \"end\": \"00:00:11,966\",\n    \"lang\": \"en\",\n    \"text\": \"See you tonight.\"\n  },\n  {\n    \"start\": \"00:00:12,482\",\n    \"end\": \"00:00:16,202\",\n    \"lang\": \"zh\",\n    \"text\": \"我本來要先弄盆整的然後再往裡倒\"\n  },\n  {\n    \"start\": \"00:00:16,202\",\n    \"end\": \"00:00:18,242\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有了有了\"\n  },\n  {\n    \"start\": \"00:00:18,841\",\n    \"end\": \"00:00:20,862\",\n    \"lang\": \"zh\",\n    \"text\": \"不然走腳走不動\"\n  },\n  {\n    \"start\": \"00:00:20,862\",\n    \"end\": \"00:00:23,022\",\n    \"lang\": \"zh\",\n    \"text\": \"還有肉票撐到你去行得了\"\n  },\n  {\n    \"start\": \"00:00:23,461\",\n    \"end\": \"00:00:26,422\",\n    \"lang\": \"zh\",\n    \"text\": \"弄不定我曉得都有停停\"\n  },\n  {\n    \"start\": \"00:00:26,422\",\n    \"end\": \"00:00:27,242\",\n    \"lang\": \"zh\",\n    \"text\": \"多了有好多停停\"\n  },\n  {\n    \"start\": \"00:00:29,581\",\n    \"end\": \"00:00:31,382\",\n    \"lang\": \"zh\",\n    \"text\": \"弄盆了我再弄盆弄大\"\n  },\n  {\n    \"start\": \"00:00:31,382\",\n    \"end\": \"00:00:33,642\",\n    \"lang\": \"zh\",\n    \"text\": \"那你不是去弄那個泥的嘛\"\n  },\n  {\n    \"start\": \"00:00:33,642\",\n    \"end\": \"00:00:36,362\",\n    \"lang\": \"zh\",\n    \"text\": \"弄大了我就把它泥切進去沒有停\"\n  },\n  {\n    \"start\": \"00:00:40,226\",\n    \"end\": \"00:00:40,826\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  },\n  {\n    \"start\": \"00:00:42,242\",\n    \"end\": \"00:00:44,162\",\n    \"lang\": \"zh\",\n    \"text\": \"那你要不要?\"\n  },\n  {\n    \"start\": \"00:00:44,162\",\n    \"end\": \"00:00:44,842\",\n    \"lang\": \"zh\",\n    \"text\": \"要不要的?\"\n  },\n  {\n    \"start\": \"00:00:45,002\",\n    \"end\": \"00:00:45,602\",\n    \"lang\": \"zh\",\n    \"text\": \"要的\"\n  },\n  {\n    \"start\": \"00:00:45,602\",\n    \"end\": \"00:00:46,662\",\n    \"lang\": \"zh\",\n    \"text\": \"那这个不要\"\n  },\n  {\n    \"start\": \"00:00:47,842\",\n    \"end\": \"00:00:48,702\",\n    \"lang\": \"zh\",\n    \"text\": \"要不要我给你割\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,800",
+            "end": "00:00:01,500",
+            "es": "ahora",
+            "fr": "maintenant",
+            "uk": "зараз"
+        },
+        {
+            "start": "00:00:01,500",
+            "end": "00:00:04,780",
+            "es": "esto no",
+            "fr": "ce n'est",
+            "uk": "це не"
+        },
+        {
+            "start": "00:00:04,880",
+            "end": "00:00:06,000",
+            "es": "es historia",
+            "fr": "pas l'histoire",
+            "uk": "є історією"
+        },
+        {
+            "start": "00:00:07,074",
+            "end": "00:00:08,074",
+            "es": "compra una deriva, ¿vale?",
+            "fr": "achète une dérive, d'accord ?",
+            "uk": "купи дрифт, добре?"
+        },
+        {
+            "start": "00:00:09,685",
+            "end": "00:00:10,466",
+            "es": "Muy bien.",
+            "fr": "Très bien.",
+            "uk": "Дуже добре."
+        },
+        {
+            "start": "00:00:10,726",
+            "end": "00:00:11,126",
+            "es": "Esto es.",
+            "fr": "C'est ça.",
+            "uk": "Ось."
+        },
+        {
+            "start": "00:00:11,286",
+            "end": "00:00:11,966",
+            "es": "Nos vemos esta noche.",
+            "fr": "À ce soir.",
+            "uk": "Бачимося ввечері."
+        },
+        {
+            "start": "00:00:12,482",
+            "end": "00:00:16,202",
+            "es": "Originalmente iba a arreglar primero el recipiente y luego verterlo dentro",
+            "fr": "J'avais l'intention de préparer le pot d'abord, puis de le verser dedans",
+            "uk": "Я спочатку збирався впорядкувати горщик, а потім вилити його всередину"
+        },
+        {
+            "start": "00:00:16,202",
+            "end": "00:00:18,242",
+            "es": "Se acabó, ahora lo tengo",
+            "fr": "C'est fini, je l'ai maintenant",
+            "uk": "Скінчилося, тепер у мене є"
+        },
+        {
+            "start": "00:00:18,841",
+            "end": "00:00:20,862",
+            "es": "De lo contrario, no podré caminar",
+            "fr": "Sinon, je ne pourrai pas marcher",
+            "uk": "Інакше я не зможу ходити"
+        },
+        {
+            "start": "00:00:20,862",
+            "end": "00:00:23,022",
+            "es": "También tengo la carne para mantenerte caminando",
+            "fr": "J'ai aussi de la viande pour te garder en mouvement",
+            "uk": "У мене також є м'ясо, щоб тримати тебе в русі"
+        },
+        {
+            "start": "00:00:23,461",
+            "end": "00:00:26,422",
+            "es": "No puedo hacerlo, sé que hay paradas",
+            "fr": "Je ne peux pas le faire, je sais qu'il y a des arrêts",
+            "uk": "Не можу це зробити, знаю, що є зупинки"
+        },
+        {
+            "start": "00:00:26,422",
+            "end": "00:00:27,242",
+            "es": "Hay muchas paradas",
+            "fr": "Il y a beaucoup d'arrêts",
+            "uk": "Там багато зупинок"
+        },
+        {
+            "start": "00:00:29,581",
+            "end": "00:00:31,382",
+            "es": "Me ocuparé del recipiente y luego lo ampliaré",
+            "fr": "Je vais prendre soin du pot puis l'agrandir",
+            "uk": "Я займуся горщиком, а потім збільшу його"
+        },
+        {
+            "start": "00:00:31,382",
+            "end": "00:00:33,642",
+            "es": "Entonces, ¿no vas a manejar el barro?",
+            "fr": "Alors, tu ne vas pas t'occuper de la boue ?",
+            "uk": "То ти не збираєшся займатися брудом?"
+        },
+        {
+            "start": "00:00:33,642",
+            "end": "00:00:36,362",
+            "es": "Lo agrandaré y luego cortaré el barro en él sin parar",
+            "fr": "Je l'élargirai puis je couperai la boue dedans sans m'arrêter",
+            "uk": "Я розширю його, а потім безперервно наріжу бруд у нього"
+        },
+        {
+            "start": "00:00:40,226",
+            "end": "00:00:40,826",
+            "es": "tú",
+            "fr": "toi",
+            "uk": "ти"
+        },
+        {
+            "start": "00:00:42,242",
+            "end": "00:00:44,162",
+            "es": "Entonces, ¿quieres o no?",
+            "fr": "Alors, tu veux ou tu ne veux pas ?",
+            "uk": "То ти хочеш або не хочеш?"
+        },
+        {
+            "start": "00:00:44,162",
+            "end": "00:00:44,842",
+            "es": "¿Lo quieres o no?",
+            "fr": "Tu le veux ou pas ?",
+            "uk": "Ти хочеш це чи ні?"
+        },
+        {
+            "start": "00:00:45,002",
+            "end": "00:00:45,602",
+            "es": "Lo quiero",
+            "fr": "Je le veux",
+            "uk": "Я цього хочу"
+        },
+        {
+            "start": "00:00:45,602",
+            "end": "00:00:46,662",
+            "es": "Entonces esto no",
+            "fr": "Alors pas ça",
+            "uk": "Тоді це ні"
+        },
+        {
+            "start": "00:00:47,842",
+            "end": "00:00:48,702",
+            "es": "¿Quieres que te lo corte?",
+            "fr": "Tu veux que je te le coupe ?",
+            "uk": "Хочеш, щоб я це порізав?"
+        }
+    ]
+}

@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,080\",\n    \"lang\": \"ja\",\n    \"text\": \"海岸線を走りました\"\n  },\n  {\n    \"start\": \"00:00:02,210\",\n    \"end\": \"00:00:05,490\",\n    \"lang\": \"ja\",\n    \"text\": \"このー このピンクス\"\n  },\n  {\n    \"start\": \"00:00:06,274\",\n    \"end\": \"00:00:08,674\",\n    \"lang\": \"en\",\n    \"text\": \"Tamago and peach.\"\n  },\n  {\n    \"start\": \"00:00:09,354\",\n    \"end\": \"00:00:09,474\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:09,474\",\n    \"end\": \"00:00:11,054\",\n    \"lang\": \"en\",\n    \"text\": \"I'm over here.\"\n  },\n  {\n    \"start\": \"00:00:11,650\",\n    \"end\": \"00:00:12,730\",\n    \"lang\": \"ja\",\n    \"text\": \"ストロベリー\"\n  },\n  {\n    \"start\": \"00:00:12,770\",\n    \"end\": \"00:00:13,370\",\n    \"lang\": \"ja\",\n    \"text\": \"欠いています\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,080",
+            "es": "Corrí a lo largo de la costa",
+            "fr": "J'ai couru le long de la côte",
+            "uk": "Я бігав уздовж узбережжя"
+        },
+        {
+            "start": "00:00:02,210",
+            "end": "00:00:05,490",
+            "es": "Este- este rosa",
+            "fr": "Ce- ce rose",
+            "uk": "Цей- цей рожевий"
+        },
+        {
+            "start": "00:00:06,274",
+            "end": "00:00:08,674",
+            "es": "Huevo y melocotón.",
+            "fr": "Oeuf et pêche.",
+            "uk": "Яйце і персик."
+        },
+        {
+            "start": "00:00:09,354",
+            "end": "00:00:09,474",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "О, "
+        },
+        {
+            "start": "00:00:09,474",
+            "end": "00:00:11,054",
+            "es": "Estoy aquí.",
+            "fr": "Je suis ici.",
+            "uk": "Я тут."
+        },
+        {
+            "start": "00:00:11,650",
+            "end": "00:00:12,730",
+            "es": "Fresa",
+            "fr": "Fraise",
+            "uk": "Полуниця"
+        },
+        {
+            "start": "00:00:12,770",
+            "end": "00:00:13,370",
+            "es": "Falta",
+            "fr": "Manque",
+            "uk": "Не вистачає"
+        }
+    ]
+}

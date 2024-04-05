@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,500\",\n    \"lang\": \"zh\",\n    \"text\": \"全是老板的机器\"\n  },\n  {\n    \"start\": \"00:00:02,160\",\n    \"end\": \"00:00:03,680\",\n    \"lang\": \"zh\",\n    \"text\": \"老板说把我当嫁衣人\"\n  },\n  {\n    \"start\": \"00:00:03,680\",\n    \"end\": \"00:00:04,520\",\n    \"lang\": \"zh\",\n    \"text\": \"就是实话\"\n  },\n  {\n    \"start\": \"00:00:04,520\",\n    \"end\": \"00:00:05,780\",\n    \"lang\": \"zh\",\n    \"text\": \"你们其他人不用当\"\n  },\n  {\n    \"start\": \"00:00:05,780\",\n    \"end\": \"00:00:06,440\",\n    \"lang\": \"zh\",\n    \"text\": \"就是\"\n  },\n  {\n    \"start\": \"00:00:08,119\",\n    \"end\": \"00:00:09,840\",\n    \"lang\": \"zh\",\n    \"text\": \"他们还嫌另间区麻烦\"\n  },\n  {\n    \"start\": \"00:00:09,840\",\n    \"end\": \"00:00:11,320\",\n    \"lang\": \"zh\",\n    \"text\": \"直接把我搭到了他们的家庭\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,500",
+            "en": "All the boss's machines",
+            "zh": "全是老板的机器",
+            "ar": "جميع ماكينات الرئيس"
+        },
+        {
+            "start": "00:00:02,160",
+            "end": "00:00:03,680",
+            "en": "The boss said treat me as a key personnel",
+            "zh": "老板说把我当作关键人物",
+            "ar": "قال الرئيس عاملني كشخص رئيسي"
+        },
+        {
+            "start": "00:00:03,680",
+            "end": "00:00:04,520",
+            "en": "That's the truth",
+            "zh": "就是实话",
+            "ar": "هذه هي الحقيقة"
+        },
+        {
+            "start": "00:00:04,520",
+            "end": "00:00:05,780",
+            "en": "The rest of you don't need to",
+            "zh": "你们其他人不用这样做",
+            "ar": "البقية لا تحتاج إلى ذلك"
+        },
+        {
+            "start": "00:00:05,780",
+            "end": "00:00:06,440",
+            "en": "That's right",
+            "zh": "就是这样",
+            "ar": "هذا صحيح"
+        },
+        {
+            "start": "00:00:08,119",
+            "end": "00:00:09,840",
+            "en": "They also found the other area troublesome",
+            "zh": "他们还觉得另一个区域麻烦",
+            "ar": "وجدوا أيضًا أن المنطقة الأخرى مزعجة"
+        },
+        {
+            "start": "00:00:09,840",
+            "end": "00:00:11,320",
+            "en": "Directly integrated me into their family",
+            "zh": "直接把我融入了他们的家庭",
+            "ar": "دمجوني مباشرة في عائلتهم"
+        }
+    ]
+}

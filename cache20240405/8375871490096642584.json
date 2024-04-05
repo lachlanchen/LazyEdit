@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,240\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,420\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"ja\",\n    \"text\": \"はい、\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:05,400\",\n    \"lang\": \"ja\",\n    \"text\": \"これはコロナです\"\n  },\n  {\n    \"start\": \"00:00:05,400\",\n    \"end\": \"00:00:06,840\",\n    \"lang\": \"ja\",\n    \"text\": \"私をほぼ殺しています\"\n  },\n  {\n    \"start\": \"00:00:08,066\",\n    \"end\": \"00:00:08,526\",\n    \"lang\": \"en\",\n    \"text\": \"I'm dying\"\n  },\n  {\n    \"start\": \"00:00:10,082\",\n    \"end\": \"00:00:12,382\",\n    \"lang\": \"ja\",\n    \"text\": \"ラスティナイはフェイバー\"\n  },\n  {\n    \"start\": \"00:00:13,314\",\n    \"end\": \"00:00:20,654\",\n    \"lang\": \"en\",\n    \"text\": \"and muscle pain and also sore throat.\"\n  },\n  {\n    \"start\": \"00:00:21,506\",\n    \"end\": \"00:00:21,666\",\n    \"lang\": \"ja\",\n    \"text\": \"はい\"\n  },\n  {\n    \"start\": \"00:00:23,105\",\n    \"end\": \"00:00:23,886\",\n    \"lang\": \"ja\",\n    \"text\": \"バリーズ\"\n  },\n  {\n    \"start\": \"00:00:24,802\",\n    \"end\": \"00:00:26,162\",\n    \"lang\": \"en\",\n    \"text\": \"It's a mess.\"\n  },\n  {\n    \"start\": \"00:00:26,162\",\n    \"end\": \"00:00:32,281\",\n    \"lang\": \"en\",\n    \"text\": \"It's a mess severer than the first time that he catches this disease.\"\n  },\n  {\n    \"start\": \"00:00:34,850\",\n    \"end\": \"00:00:37,630\",\n    \"lang\": \"ja\",\n    \"text\": \"今まで downtownでは気分が悪い\"\n  },\n  {\n    \"start\": \"00:00:46,690\",\n    \"end\": \"00:00:50,170\",\n    \"lang\": \"en\",\n    \"text\": \"Hope this vitamin can help me cure.\"\n  },\n  {\n    \"start\": \"00:00:56,590\",\n    \"end\": \"00:00:57,550\",\n    \"lang\": \"en\",\n    \"text\": \"See you!\"\n  },\n  {\n    \"start\": \"00:00:57,550\",\n    \"end\": \"00:00:58,450\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,240",
+            "es": "Buenos días",
+            "fr": "Bonjour",
+            "uk": "Доброго ранку"
+        },
+        {
+            "start": "00:00:03,420",
+            "end": "00:00:03,780",
+            "es": "Sí,",
+            "fr": "Oui,",
+            "uk": "Так,"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:05,400",
+            "es": "esto es Corona",
+            "fr": "c'est le Corona",
+            "uk": "це корона"
+        },
+        {
+            "start": "00:00:05,400",
+            "end": "00:00:06,840",
+            "es": "me está matando",
+            "fr": "ça me tue presque",
+            "uk": "це майже вбиває мене"
+        },
+        {
+            "start": "00:00:08,066",
+            "end": "00:00:08,526",
+            "es": "Estoy muriendo",
+            "fr": "Je suis en train de mourir",
+            "uk": "Я помираю"
+        },
+        {
+            "start": "00:00:10,082",
+            "end": "00:00:12,382",
+            "es": "La última noche fue horrible",
+            "fr": "La nuit dernière était horrible",
+            "uk": "Минулої ночі було жахливо"
+        },
+        {
+            "start": "00:00:13,314",
+            "end": "00:00:20,654",
+            "es": "y dolor muscular y también dolor de garganta.",
+            "fr": "et douleur musculaire et aussi mal de gorge.",
+            "uk": "і м'язовий біль, також біль у горлі."
+        },
+        {
+            "start": "00:00:21,506",
+            "end": "00:00:21,666",
+            "es": "Sí",
+            "fr": "Oui",
+            "uk": "Так"
+        },
+        {
+            "start": "00:00:23,105",
+            "end": "00:00:23,886",
+            "es": "Desastre",
+            "fr": "Désastre",
+            "uk": "Лихо"
+        },
+        {
+            "start": "00:00:24,802",
+            "end": "00:00:26,162",
+            "es": "Es un desastre.",
+            "fr": "C'est un désastre.",
+            "uk": "Це катастрофа."
+        },
+        {
+            "start": "00:00:26,162",
+            "end": "00:00:32,281",
+            "es": "Es un desastre más severo que la primera vez que contrajo esta enfermedad.",
+            "fr": "C'est un désastre plus grave que la première fois qu'il a contracté cette maladie.",
+            "uk": "Це гірше, ніж вперше, коли він заразився цією хворобою."
+        },
+        {
+            "start": "00:00:34,850",
+            "end": "00:00:37,630",
+            "es": "Siempre me siento mal en el centro de la ciudad",
+            "fr": "Je me sens toujours mal en centre-ville",
+            "uk": "Я завжди погано почуваюся у центрі міста"
+        },
+        {
+            "start": "00:00:46,690",
+            "end": "00:00:50,170",
+            "es": "Espero que esta vitamina pueda ayudarme a curar.",
+            "fr": "J'espère que cette vitamine peut m'aider à guérir.",
+            "uk": "Сподіваюся, ця вітаміна допоможе мені вилікуватися."
+        },
+        {
+            "start": "00:00:56,590",
+            "end": "00:00:57,550",
+            "es": "¡Nos vemos!",
+            "fr": "À bientôt !",
+            "uk": "До зустрічі!"
+        },
+        {
+            "start": "00:00:57,550",
+            "end": "00:00:58,450",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        }
+    ]
+}

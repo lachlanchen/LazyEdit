@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:08,530\",\n    \"end\": \"00:02:11,670\",\n    \"lang\": \"en\",\n    \"text\": \"I learned more like how I learned science,\"\n  },\n  {\n    \"start\": \"00:02:11,670\",\n    \"end\": \"00:02:15,610\",\n    \"lang\": \"en\",\n    \"text\": \"rapidity,\"\n  },\n  {\n    \"start\": \"00:02:15,610\",\n    \"end\": \"00:02:20,430\",\n    \"lang\": \"en\",\n    \"text\": \"and practice,\"\n  },\n  {\n    \"start\": \"00:02:20,430\",\n    \"end\": \"00:02:22,890\",\n    \"lang\": \"en\",\n    \"text\": \"like doing exercises,\"\n  },\n  {\n    \"start\": \"00:02:23,150\",\n    \"end\": \"00:02:25,490\",\n    \"lang\": \"en\",\n    \"text\": \"solving a mathematical problem,\"\n  },\n  {\n    \"start\": \"00:02:25,490\",\n    \"end\": \"00:02:26,610\",\n    \"lang\": \"en\",\n    \"text\": \"coding.\"\n  },\n  {\n    \"start\": \"00:02:27,590\",\n    \"end\": \"00:02:29,330\",\n    \"lang\": \"en\",\n    \"text\": \"First I write a MVP,\"\n  },\n  {\n    \"start\": \"00:02:29,330\",\n    \"end\": \"00:02:30,890\",\n    \"lang\": \"en\",\n    \"text\": \"minimum viable program,\"\n  },\n  {\n    \"start\": \"00:02:30,890\",\n    \"end\": \"00:02:33,430\",\n    \"lang\": \"en\",\n    \"text\": \"and then I continue refining it.\"\n  },\n  {\n    \"start\": \"00:02:35,874\",\n    \"end\": \"00:02:38,374\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:38,374\",\n    \"end\": \"00:02:40,194\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树\"\n  },\n  {\n    \"start\": \"00:02:40,802\",\n    \"end\": \"00:02:41,162\",\n    \"lang\": \"en\",\n    \"text\": \"Go.\"\n  },\n  {\n    \"start\": \"00:02:42,722\",\n    \"end\": \"00:02:45,202\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:46,322\",\n    \"end\": \"00:02:48,582\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:02:54,786\",\n    \"end\": \"00:02:54,986\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:02:54,986\",\n    \"end\": \"00:02:55,946\",\n    \"lang\": \"en\",\n    \"text\": \"it's the wrong...\"\n  },\n  {\n    \"start\": \"00:02:55,946\",\n    \"end\": \"00:02:56,406\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:56,406\",\n    \"end\": \"00:02:56,786\",\n    \"lang\": \"en\",\n    \"text\": \"on air.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:08,530",
+            "end": "00:02:11,670",
+            "ja": "私が科学を学んだように、もっと多くを学んだ"
+        },
+        {
+            "start": "00:02:11,670",
+            "end": "00:02:15,610",
+            "ja": "迅速さ"
+        },
+        {
+            "start": "00:02:15,610",
+            "end": "00:02:20,430",
+            "ja": "そして練習"
+        },
+        {
+            "start": "00:02:20,430",
+            "end": "00:02:22,890",
+            "ja": "演習を行うように"
+        },
+        {
+            "start": "00:02:23,150",
+            "end": "00:02:25,490",
+            "ja": "数学の問題を解く"
+        },
+        {
+            "start": "00:02:25,490",
+            "end": "00:02:26,610",
+            "ja": "コーディング"
+        },
+        {
+            "start": "00:02:27,590",
+            "end": "00:02:29,330",
+            "ja": "まず私はMVPを作成する"
+        },
+        {
+            "start": "00:02:29,330",
+            "end": "00:02:30,890",
+            "ja": "最小限動作するプログラム"
+        },
+        {
+            "start": "00:02:30,890",
+            "end": "00:02:33,430",
+            "ja": "そしてそれを続けて磨き上げる"
+        },
+        {
+            "start": "00:02:35,874",
+            "end": "00:02:38,374",
+            "ja": "花の香りはない"
+        },
+        {
+            "start": "00:02:38,374",
+            "end": "00:02:40,194",
+            "ja": "木なし"
+        },
+        {
+            "start": "00:02:40,802",
+            "end": "00:02:41,162",
+            "ja": "行け"
+        },
+        {
+            "start": "00:02:42,722",
+            "end": "00:02:45,202",
+            "ja": "花の香りはない"
+        },
+        {
+            "start": "00:02:46,322",
+            "end": "00:02:48,582",
+            "ja": "木の幹はない"
+        },
+        {
+            "start": "00:02:54,786",
+            "end": "00:02:54,986",
+            "ja": "ごめんなさい"
+        },
+        {
+            "start": "00:02:54,986",
+            "end": "00:02:55,946",
+            "ja": "間違った..."
+        },
+        {
+            "start": "00:02:55,946",
+            "end": "00:02:56,406",
+            "ja": "OK"
+        },
+        {
+            "start": "00:02:56,406",
+            "end": "00:02:56,786",
+            "ja": "放送中"
+        }
+    ]
+}

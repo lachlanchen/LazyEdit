@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,930\",\n    \"end\": \"00:01:13,730\",\n    \"lang\": \"en\",\n    \"text\": \"so French speakers may think that English pronunciation is vascular.\"\n  },\n  {\n    \"start\": \"00:01:13,730\",\n    \"end\": \"00:01:23,430\",\n    \"lang\": \"en\",\n    \"text\": \"And the British think the American accent is vascular.\"\n  },\n  {\n    \"start\": \"00:01:23,430\",\n    \"end\": \"00:01:28,050\",\n    \"lang\": \"en\",\n    \"text\": \"It's not a horse talks.\"\n  },\n  {\n    \"start\": \"00:01:30,274\",\n    \"end\": \"00:01:30,494\",\n    \"lang\": \"zh\",\n    \"text\": \"再見\"\n  },\n  {\n    \"start\": \"00:01:32,514\",\n    \"end\": \"00:01:40,154\",\n    \"lang\": \"en\",\n    \"text\": \"was a great great what a what a noble it's not a noble so the british thing\"\n  },\n  {\n    \"start\": \"00:01:40,154\",\n    \"end\": \"00:01:42,034\",\n    \"lang\": \"en\",\n    \"text\": \"and him the british accent is\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:02,930",
+            "end": "00:01:13,730",
+            "ko": "그래서 프랑스어를 하는 사람들은 영어 발음을 어렵게 생각할 수 있습니다."
+        },
+        {
+            "start": "00:01:13,730",
+            "end": "00:01:23,430",
+            "ko": "그리고 영국 사람들은 미국식 발음을 이상하게 여길 수 있습니다."
+        },
+        {
+            "start": "00:01:23,430",
+            "end": "00:01:28,050",
+            "ko": "말이 아니에요."
+        },
+        {
+            "start": "00:01:30,274",
+            "end": "00:01:30,494",
+            "ko": "안녕"
+        },
+        {
+            "start": "00:01:32,514",
+            "end": "00:01:40,154",
+            "ko": "정말 대단한, 무언가 중요한, 그건 중요한 게 아니에요. 그래서 영국 사람들은"
+        },
+        {
+            "start": "00:01:40,154",
+            "end": "00:01:42,034",
+            "ko": "영국식 발음이라고 생각합니다."
+        }
+    ]
+}

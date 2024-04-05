@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,480\",\n    \"lang\": \"en\",\n    \"text\": \"Live happy and die peacefully.\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:06,554\",\n    \"lang\": \"ja\",\n    \"text\": \"リヴハイピー\"\n  },\n  {\n    \"start\": \"00:00:06,978\",\n    \"end\": \"00:00:07,778\",\n    \"lang\": \"en\",\n    \"text\": \"and die peacefully.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,480",
+            "ko": "행복하게 살고 평화롭게 죽으세요."
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:06,554",
+            "ko": "리브하이피"
+        },
+        {
+            "start": "00:00:06,978",
+            "end": "00:00:07,778",
+            "ko": "그리고 평화롭게 죽으세요."
+        }
+    ]
+}

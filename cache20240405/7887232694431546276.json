@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,240\",\n    \"lang\": \"en\",\n    \"text\": \"This is our old friend.\"\n  },\n  {\n    \"start\": \"00:00:03,120\",\n    \"end\": \"00:00:04,640\",\n    \"lang\": \"en\",\n    \"text\": \"I see him again.\"\n  },\n  {\n    \"start\": \"00:00:07,020\",\n    \"end\": \"00:00:09,080\",\n    \"lang\": \"en\",\n    \"text\": \"I like how he nods off.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,240",
+            "ko": "이건 우리의 오랜 친구야."
+        },
+        {
+            "start": "00:00:03,120",
+            "end": "00:00:04,640",
+            "ko": "다시 만나니 좋군."
+        },
+        {
+            "start": "00:00:07,020",
+            "end": "00:00:09,080",
+            "ko": "그가 고개를 끄덕이는 게 마음에 들어."
+        }
+    ]
+}

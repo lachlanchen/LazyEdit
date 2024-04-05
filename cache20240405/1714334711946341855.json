@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,940\",\n    \"lang\": \"en\",\n    \"text\": \"This is my dinner tonight.\"\n  },\n  {\n    \"start\": \"00:00:02,594\",\n    \"end\": \"00:00:03,014\",\n    \"lang\": \"zh\",\n    \"text\": \"愛你\"\n  },\n  {\n    \"start\": \"00:00:03,414\",\n    \"end\": \"00:00:04,374\",\n    \"lang\": \"zh\",\n    \"text\": \"太酷了\"\n  },\n  {\n    \"start\": \"00:00:04,930\",\n    \"end\": \"00:00:05,350\",\n    \"lang\": \"en\",\n    \"text\": \"Can't deem.\"\n  },\n  {\n    \"start\": \"00:00:06,786\",\n    \"end\": \"00:00:09,046\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是我也不知道发的对不对哈\"\n  },\n  {\n    \"start\": \"00:00:09,046\",\n    \"end\": \"00:00:10,706\",\n    \"lang\": \"zh\",\n    \"text\": \"港大的太古食堂\"\n  },\n  {\n    \"start\": \"00:00:11,246\",\n    \"end\": \"00:00:14,286\",\n    \"lang\": \"zh\",\n    \"text\": \"这个云南米线还挺出名的\"\n  },\n  {\n    \"start\": \"00:00:15,606\",\n    \"end\": \"00:00:17,466\",\n    \"lang\": \"zh\",\n    \"text\": \"上次吃还挺好吃的\"\n  },\n  {\n    \"start\": \"00:00:17,466\",\n    \"end\": \"00:00:19,006\",\n    \"lang\": \"zh\",\n    \"text\": \"做的也太潦草了\"\n  },\n  {\n    \"start\": \"00:00:19,086\",\n    \"end\": \"00:00:20,446\",\n    \"lang\": \"zh\",\n    \"text\": \"这个还是生的\"\n  },\n  {\n    \"start\": \"00:00:21,326\",\n    \"end\": \"00:00:22,246\",\n    \"lang\": \"zh\",\n    \"text\": \"无所谓了\"\n  },\n  {\n    \"start\": \"00:00:22,826\",\n    \"end\": \"00:00:23,646\",\n    \"lang\": \"zh\",\n    \"text\": \"相信它吧\"\n  },\n  {\n    \"start\": \"00:00:24,866\",\n    \"end\": \"00:00:25,446\",\n    \"lang\": \"en\",\n    \"text\": \"What the d traffic light?\"\n  },\n  {\n    \"start\": \"00:00:25,954\",\n    \"end\": \"00:00:26,274\",\n    \"lang\": \"zh\",\n    \"text\": \"OK\"\n  },\n  {\n    \"start\": \"00:00:26,754\",\n    \"end\": \"00:00:27,874\",\n    \"lang\": \"zh\",\n    \"text\": \"看着好美味\"\n  },\n  {\n    \"start\": \"00:00:28,094\",\n    \"end\": \"00:00:28,674\",\n    \"lang\": \"zh\",\n    \"text\": \"太美味了\"\n  },\n  {\n    \"start\": \"00:00:28,714\",\n    \"end\": \"00:00:29,374\",\n    \"lang\": \"zh\",\n    \"text\": \"口水都流出来了\"\n  },\n  {\n    \"start\": \"00:00:30,946\",\n    \"end\": \"00:00:32,286\",\n    \"lang\": \"en\",\n    \"text\": \"My mouth is watering.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,940",
+            "en": "This is my dinner tonight.",
+            "zh": "这是我今晚的晚餐。",
+            "ar": "هذا عشائي الليلة."
+        },
+        {
+            "start": "00:00:02,594",
+            "end": "00:00:03,014",
+            "en": "Love you",
+            "zh": "愛你",
+            "ar": "أحبك"
+        },
+        {
+            "start": "00:00:03,414",
+            "end": "00:00:04,374",
+            "en": "So cool",
+            "zh": "太酷了",
+            "ar": "رائع جدا"
+        },
+        {
+            "start": "00:00:04,930",
+            "end": "00:00:05,350",
+            "en": "Can't decide.",
+            "zh": "无法决定。",
+            "ar": "لا يمكن أن أقرر."
+        },
+        {
+            "start": "00:00:06,786",
+            "end": "00:00:09,046",
+            "en": "I'm not sure if this is correct.",
+            "zh": "这个是我也不知道发的对不对哈",
+            "ar": "لست متأكداً إذا كان هذا صحيحًا."
+        },
+        {
+            "start": "00:00:09,046",
+            "end": "00:00:10,706",
+            "en": "Swire canteen at HKU",
+            "zh": "港大的太古食堂",
+            "ar": "كانتين سوير في جامعة هونغ كونغ"
+        },
+        {
+            "start": "00:00:11,246",
+            "end": "00:00:14,286",
+            "en": "This Yunnan rice noodle is quite famous",
+            "zh": "这个云南米线还挺出名的",
+            "ar": "هذه المعكرونة الأرز يونان شهيرة جدًا"
+        },
+        {
+            "start": "00:00:15,606",
+            "end": "00:00:17,466",
+            "en": "It was pretty delicious last time",
+            "zh": "上次吃还挺好吃的",
+            "ar": "كان لذيذاً جداً في المرة الأخيرة"
+        },
+        {
+            "start": "00:00:17,466",
+            "end": "00:00:19,006",
+            "en": "It's made too carelessly",
+            "zh": "做的也太潦草了",
+            "ar": "تم صنعه بطريقة مهملة جدًا"
+        },
+        {
+            "start": "00:00:19,086",
+            "end": "00:00:20,446",
+            "en": "This is still raw",
+            "zh": "这个还是生的",
+            "ar": "هذا ما زال نيئًا"
+        },
+        {
+            "start": "00:00:21,326",
+            "end": "00:00:22,246",
+            "en": "It doesn't matter",
+            "zh": "無所謂了",
+            "ar": "لا يهم"
+        },
+        {
+            "start": "00:00:22,826",
+            "end": "00:00:23,646",
+            "en": "Believe in it",
+            "zh": "相信它吧",
+            "ar": "ثق به"
+        },
+        {
+            "start": "00:00:24,866",
+            "end": "00:00:25,446",
+            "en": "What's with the traffic light?",
+            "zh": "什么的信号灯？",
+            "ar": "ما الأمر مع إشارة المرور؟"
+        },
+        {
+            "start": "00:00:25,954",
+            "end": "00:00:26,274",
+            "en": "OK",
+            "zh": "OK",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:00:26,754",
+            "end": "00:00:27,874",
+            "en": "It looks so delicious",
+            "zh": "看着好美味",
+            "ar": "يبدو لذيذًا جدًا"
+        },
+        {
+            "start": "00:00:28,094",
+            "end": "00:00:28,674",
+            "en": "So delicious",
+            "zh": "太美味了",
+            "ar": "لذيذ جدًا"
+        },
+        {
+            "start": "00:00:28,714",
+            "end": "00:00:29,374",
+            "en": "My mouth is watering",
+            "zh": "口水都流出来了",
+            "ar": "فمي يسيل"
+        },
+        {
+            "start": "00:00:30,946",
+            "end": "00:00:32,286",
+            "en": "My mouth is watering.",
+            "zh": "口水都流出来了。",
+            "ar": "فمي يسيل."
+        }
+    ]
+}

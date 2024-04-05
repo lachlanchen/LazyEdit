@@ -1,0 +1,10 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:05,762\",\n    \"end\": \"00:00:06,522\",\n    \"ja\": \"<宝石>[]を<掴>[](つか)みます\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:05,762",
+            "end": "00:00:06,522",
+            "ja": "<宝石>[ほうせき]を<掴>[つか]みます"
+        }
+    ]
+}

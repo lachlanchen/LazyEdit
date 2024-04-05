@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:12,660\",\n    \"end\": \"00:01:15,300\",\n    \"lang\": \"en\",\n    \"text\": \"When you look at yourself,\"\n  },\n  {\n    \"start\": \"00:01:15,300\",\n    \"end\": \"00:01:20,780\",\n    \"lang\": \"en\",\n    \"text\": \"it's a shadow and a dimension.\"\n  },\n  {\n    \"start\": \"00:01:20,813\",\n    \"end\": \"00:01:21,133\",\n    \"lang\": \"en\",\n    \"text\": \"See ya.\"\n  },\n  {\n    \"start\": \"00:01:22,594\",\n    \"end\": \"00:01:22,954\",\n    \"lang\": \"en\",\n    \"text\": \"dark.\"\n  },\n  {\n    \"start\": \"00:01:39,474\",\n    \"end\": \"00:01:49,474\",\n    \"lang\": \"en\",\n    \"text\": \"But I believe everyone will have our unique journey that we need to utilize our own karma\"\n  },\n  {\n    \"start\": \"00:01:50,353\",\n    \"end\": \"00:01:53,954\",\n    \"lang\": \"en\",\n    \"text\": \"to create something that belongs to us.\"\n  },\n  {\n    \"start\": \"00:02:00,394\",\n    \"end\": \"00:02:01,114\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:01,114\",\n    \"end\": \"00:02:04,174\",\n    \"lang\": \"en\",\n    \"text\": \"you have a unique journey that you need to utilize.\"\n  },\n  {\n    \"start\": \"00:02:06,234\",\n    \"end\": \"00:02:08,954\",\n    \"lang\": \"en\",\n    \"text\": \"If you utilize it properly,\"\n  },\n  {\n    \"start\": \"00:02:08,954\",\n    \"end\": \"00:02:12,954\",\n    \"lang\": \"en\",\n    \"text\": \"it will be as good as theirs.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:12,660",
+            "end": "00:01:15,300",
+            "en": "When you look at yourself,",
+            "zh": "当你看着自己时，",
+            "ar": "عندما تنظر إلى نفسك،"
+        },
+        {
+            "start": "00:01:15,300",
+            "end": "00:01:20,780",
+            "en": "it's a shadow and a dimension.",
+            "zh": "那是一个阴影和一个维度。",
+            "ar": "إنها ظل وبعد."
+        },
+        {
+            "start": "00:01:20,813",
+            "end": "00:01:21,133",
+            "en": "See ya.",
+            "zh": "再见。",
+            "ar": "أراك لاحقاً."
+        },
+        {
+            "start": "00:01:22,594",
+            "end": "00:01:22,954",
+            "en": "Dark.",
+            "zh": "黑暗。",
+            "ar": "الظلام."
+        },
+        {
+            "start": "00:01:39,474",
+            "end": "00:01:49,474",
+            "en": "But I believe everyone will have our unique journey that we need to utilize our own karma",
+            "zh": "但我相信每个人都将拥有我们需要利用自己的业力的独特旅程",
+            "ar": "لكني أؤمن أن الجميع سيكون لديهم رحلتهم الفريدة التي نحتاج إلى استخدام كارما خاصتنا"
+        },
+        {
+            "start": "00:01:50,353",
+            "end": "00:01:53,954",
+            "en": "to create something that belongs to us.",
+            "zh": "来创造属于我们的东西。",
+            "ar": "لخلق شيء يخصنا."
+        },
+        {
+            "start": "00:02:00,394",
+            "end": "00:02:01,114",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:02:01,114",
+            "end": "00:02:04,174",
+            "en": "you have a unique journey that you need to utilize.",
+            "zh": "你有一段需要利用的独特旅程。",
+            "ar": "لديك رحلة فريدة تحتاج إلى استغلالها."
+        },
+        {
+            "start": "00:02:06,234",
+            "end": "00:02:08,954",
+            "en": "If you utilize it properly,",
+            "zh": "如果你正确地利用它，",
+            "ar": "إذا استخدمتها بشكل صحيح،"
+        },
+        {
+            "start": "00:02:08,954",
+            "end": "00:02:12,954",
+            "en": "it will be as good as theirs.",
+            "zh": "它会像他们的一样好。",
+            "ar": "سيكون جيدًا مثلهم."
+        }
+    ]
+}

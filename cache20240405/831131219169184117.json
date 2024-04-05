@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:25,110\",\n    \"end\": \"00:03:26,070\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  },\n  {\n    \"start\": \"00:03:30,530\",\n    \"end\": \"00:03:31,010\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:03:31,010\",\n    \"end\": \"00:03:31,510\",\n    \"lang\": \"en\",\n    \"text\": \"it's wrong.\"\n  },\n  {\n    \"start\": \"00:03:33,830\",\n    \"end\": \"00:03:34,350\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:03:34,350\",\n    \"end\": \"00:03:34,850\",\n    \"lang\": \"en\",\n    \"text\": \"it's wrong.\"\n  },\n  {\n    \"start\": \"00:03:34,850\",\n    \"end\": \"00:03:36,270\",\n    \"lang\": \"en\",\n    \"text\": \"Let's play again.\"\n  },\n  {\n    \"start\": \"00:03:52,750\",\n    \"end\": \"00:03:53,790\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  },\n  {\n    \"start\": \"00:03:53,790\",\n    \"end\": \"00:03:57,310\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  },\n  {\n    \"start\": \"00:03:58,790\",\n    \"end\": \"00:03:59,630\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:03:59,630\",\n    \"end\": \"00:04:01,190\",\n    \"lang\": \"en\",\n    \"text\": \"this is better.\"\n  },\n  {\n    \"start\": \"00:04:12,010\",\n    \"end\": \"00:04:14,810\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:25,110",
+            "end": "00:03:26,070",
+            "es": "🎵Música de guitarra🎵",
+            "fr": "🎵Musique de guitare🎵",
+            "uk": "🎵Гітарна музика🎵"
+        },
+        {
+            "start": "00:03:30,530",
+            "end": "00:03:31,010",
+            "es": "Lo siento,",
+            "fr": "Désolé,",
+            "uk": "Вибачте,"
+        },
+        {
+            "start": "00:03:31,010",
+            "end": "00:03:31,510",
+            "es": "está mal.",
+            "fr": "c'est faux.",
+            "uk": "це неправильно."
+        },
+        {
+            "start": "00:03:33,830",
+            "end": "00:03:34,350",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:03:34,350",
+            "end": "00:03:34,850",
+            "es": "está mal.",
+            "fr": "c'est faux.",
+            "uk": "це неправильно."
+        },
+        {
+            "start": "00:03:34,850",
+            "end": "00:03:36,270",
+            "es": "Toquemos de nuevo.",
+            "fr": "Jouons de nouveau.",
+            "uk": "Давайте грати знову."
+        },
+        {
+            "start": "00:03:52,750",
+            "end": "00:03:53,790",
+            "es": "🎵Música de guitarra🎵",
+            "fr": "🎵Musique de guitare🎵",
+            "uk": "🎵Гітарна музика🎵"
+        },
+        {
+            "start": "00:03:53,790",
+            "end": "00:03:57,310",
+            "es": "🎵Música de guitarra🎵",
+            "fr": "🎵Musique de guitare🎵",
+            "uk": "🎵Гітарна музика🎵"
+        },
+        {
+            "start": "00:03:58,790",
+            "end": "00:03:59,630",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:03:59,630",
+            "end": "00:04:01,190",
+            "es": "esto está mejor.",
+            "fr": "c'est mieux.",
+            "uk": "це краще."
+        },
+        {
+            "start": "00:04:12,010",
+            "end": "00:04:14,810",
+            "es": "🎵Música de guitarra🎵",
+            "fr": "🎵Musique de guitare🎵",
+            "uk": "🎵Гітарна музика🎵"
+        }
+    ]
+}

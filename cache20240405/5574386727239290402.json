@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,578\",\n    \"end\": \"00:01:03,398\",\n    \"lang\": \"en\",\n    \"text\": \"So we have tamago,\"\n  },\n  {\n    \"start\": \"00:01:03,398\",\n    \"end\": \"00:01:04,697\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:01:04,697\",\n    \"end\": \"00:01:05,678\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:01:05,678\",\n    \"end\": \"00:01:07,918\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:01:07,918\",\n    \"end\": \"00:01:10,958\",\n    \"lang\": \"en\",\n    \"text\": \"and sweet potato,\"\n  },\n  {\n    \"start\": \"00:01:10,958\",\n    \"end\": \"00:01:12,178\",\n    \"lang\": \"en\",\n    \"text\": \"and peach.\"\n  },\n  {\n    \"start\": \"00:01:13,958\",\n    \"end\": \"00:01:14,358\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:14,358\",\n    \"end\": \"00:01:15,298\",\n    \"lang\": \"en\",\n    \"text\": \"see you!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:00,578",
+            "end": "00:01:03,398",
+            "en": "So we have tamago,",
+            "zh": "所以我们有蛋卷，",
+            "ar": "إذًا لدينا تاماغو،"
+        },
+        {
+            "start": "00:01:03,398",
+            "end": "00:01:04,697",
+            "en": "blueberry,",
+            "zh": "蓝莓，",
+            "ar": "توت أزرق،"
+        },
+        {
+            "start": "00:01:04,697",
+            "end": "00:01:05,678",
+            "en": "strawberry,",
+            "zh": "草莓，",
+            "ar": "فراولة،"
+        },
+        {
+            "start": "00:01:05,678",
+            "end": "00:01:07,918",
+            "en": "chestnut,",
+            "zh": "栗子，",
+            "ar": "كستناء،"
+        },
+        {
+            "start": "00:01:07,918",
+            "end": "00:01:10,958",
+            "en": "and sweet potato,",
+            "zh": "和甜土豆，",
+            "ar": "وبطاطا حلوة،"
+        },
+        {
+            "start": "00:01:10,958",
+            "end": "00:01:12,178",
+            "en": "and peach.",
+            "zh": "和桃子。",
+            "ar": "وخوخ."
+        },
+        {
+            "start": "00:01:13,958",
+            "end": "00:01:14,358",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:01:14,358",
+            "end": "00:01:15,298",
+            "en": "see you!",
+            "zh": "再见！",
+            "ar": "أراك لاحقًا!"
+        }
+    ]
+}

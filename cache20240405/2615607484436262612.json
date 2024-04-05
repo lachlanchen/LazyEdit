@@ -1,0 +1,104 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,078\",\n    \"end\": \"00:01:01,698\",\n    \"lang\": \"en\",\n    \"text\": \"if I don't play the guitar.\"\n  },\n  {\n    \"start\": \"00:01:01,698\",\n    \"end\": \"00:01:04,778\",\n    \"lang\": \"en\",\n    \"text\": \"So even if I play the guitar,\"\n  },\n  {\n    \"start\": \"00:01:04,778\",\n    \"end\": \"00:01:06,718\",\n    \"lang\": \"en\",\n    \"text\": \"I can't guarantee that I still\"\n  },\n  {\n    \"start\": \"00:01:06,718\",\n    \"end\": \"00:01:07,818\",\n    \"lang\": \"en\",\n    \"text\": \"catch the tune.\"\n  },\n  {\n    \"start\": \"00:01:07,818\",\n    \"end\": \"00:01:13,478\",\n    \"lang\": \"en\",\n    \"text\": \"So if I play the guitar,\"\n  },\n  {\n    \"start\": \"00:01:13,478\",\n    \"end\": \"00:01:14,578\",\n    \"lang\": \"en\",\n    \"text\": \"I can.\"\n  },\n  {\n    \"start\": \"00:01:15,458\",\n    \"end\": \"00:01:16,678\",\n    \"lang\": \"en\",\n    \"text\": \"Even if I sing it.\"\n  },\n  {\n    \"start\": \"00:01:24,858\",\n    \"end\": \"00:01:29,198\",\n    \"lang\": \"en\",\n    \"text\": \"I think this tune is originally.\"\n  },\n  {\n    \"start\": \"00:01:29,198\",\n    \"end\": \"00:01:30,258\",\n    \"lang\": \"en\",\n    \"text\": \"I can handle it.\"\n  },\n  {\n    \"start\": \"00:01:30,914\",\n    \"end\": \"00:01:31,534\",\n    \"lang\": \"zh\",\n    \"text\": \"把你\"\n  },\n  {\n    \"start\": \"00:01:31,614\",\n    \"end\": \"00:01:32,374\",\n    \"lang\": \"zh\",\n    \"text\": \"弄得\"\n  },\n  {\n    \"start\": \"00:01:33,154\",\n    \"end\": \"00:01:33,754\",\n    \"lang\": \"zh\",\n    \"text\": \"傲气的意思\"\n  },\n  {\n    \"start\": \"00:01:34,214\",\n    \"end\": \"00:01:34,774\",\n    \"lang\": \"zh\",\n    \"text\": \"来看了\"\n  },\n  {\n    \"start\": \"00:01:35,874\",\n    \"end\": \"00:01:36,354\",\n    \"lang\": \"ja\",\n    \"text\": \"クラス!\"\n  },\n  {\n    \"start\": \"00:01:39,394\",\n    \"end\": \"00:01:39,634\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:01:39,634\",\n    \"end\": \"00:01:40,194\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:01:40,194\",\n    \"end\": \"00:01:40,894\",\n    \"lang\": \"en\",\n    \"text\": \"it's wrong.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:00,078",
+            "end": "00:01:01,698",
+            "en": "if I don't play the guitar.",
+            "zh": "如果我不弹吉他。",
+            "ar": "إذا لم أعزف الغيتار."
+        },
+        {
+            "start": "00:01:01,698",
+            "end": "00:01:04,778",
+            "en": "So even if I play the guitar,",
+            "zh": "所以即使我弹吉他，",
+            "ar": "فحتى لو عزفت على الغيتار،"
+        },
+        {
+            "start": "00:01:04,778",
+            "end": "00:01:06,718",
+            "en": "I can't guarantee that I'll still",
+            "zh": "我不能保证我仍然能",
+            "ar": "لا أستطيع أن أضمن أنني سأظل"
+        },
+        {
+            "start": "00:01:06,718",
+            "end": "00:01:07,818",
+            "en": "catch the tune.",
+            "zh": "抓住旋律。",
+            "ar": "أتقن اللحن."
+        },
+        {
+            "start": "00:01:07,818",
+            "end": "00:01:13,478",
+            "en": "So if I play the guitar,",
+            "zh": "所以如果我弹吉他，",
+            "ar": "فإذا عزفت على الغيتار،"
+        },
+        {
+            "start": "00:01:13,478",
+            "end": "00:01:14,578",
+            "en": "I can.",
+            "zh": "我可以。",
+            "ar": "أستطيع."
+        },
+        {
+            "start": "00:01:15,458",
+            "end": "00:01:16,678",
+            "en": "Even if I sing it.",
+            "zh": "即使我唱它。",
+            "ar": "حتى لو غنيته."
+        },
+        {
+            "start": "00:01:24,858",
+            "end": "00:01:29,198",
+            "en": "I think this tune is originally.",
+            "zh": "我认为这首旋律本来就是。",
+            "ar": "أعتقد أن هذا اللحن في الأصل."
+        },
+        {
+            "start": "00:01:29,198",
+            "end": "00:01:30,258",
+            "en": "I can handle it.",
+            "zh": "我可以处理它。",
+            "ar": "أستطيع التعامل معه."
+        },
+        {
+            "start": "00:01:30,914",
+            "end": "00:01:31,534",
+            "en": "Make you",
+            "zh": "把你",
+            "ar": "تجعلك"
+        },
+        {
+            "start": "00:01:31,614",
+            "end": "00:01:32,374",
+            "en": "proud.",
+            "zh": "弄得傲气的意思",
+            "ar": "فخور."
+        },
+        {
+            "start": "00:01:33,154",
+            "end": "00:01:33,754",
+            "en": "Come and see.",
+            "zh": "来看了",
+            "ar": "تعال وانظر."
+        },
+        {
+            "start": "00:01:34,214",
+            "end": "00:01:34,774",
+            "en": "Class!",
+            "zh": "班级!",
+            "ar": "صف!",
+            "ja": "クラス!"
+        },
+        {
+            "start": "00:01:39,394",
+            "end": "00:01:40,894",
+            "en": "Sorry, sorry, it's wrong.",
+            "zh": "对不起，对不起，这是错误的。",
+            "ar": "عذرًا، عذرًا، هذا خطأ."
+        }
+    ]
+}

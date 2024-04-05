@@ -1,0 +1,28 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,920\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our lunch today.\"\n  },\n  {\n    \"start\": \"00:00:03,138\",\n    \"end\": \"00:00:04,438\",\n    \"lang\": \"ja\",\n    \"text\": \"私は…\"\n  },\n  {\n    \"start\": \"00:00:05,282\",\n    \"end\": \"00:00:08,402\",\n    \"lang\": \"ja\",\n    \"text\": \"犬ご飯を作ります\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,920",
+            "en": "So this is our lunch today.",
+            "zh": "所以这是我们今天的午餐。",
+            "ar": "إذا هذا هو غدائنا اليوم."
+        },
+        {
+            "start": "00:00:03,138",
+            "end": "00:00:04,438",
+            "en": "I will...",
+            "zh": "我会…",
+            "ar": "سوف أ...",
+            "ja": "私は…"
+        },
+        {
+            "start": "00:00:05,282",
+            "end": "00:00:08,402",
+            "en": "make dog food",
+            "zh": "做狗食",
+            "ar": "صنع طعام للكلاب",
+            "ja": "犬ご飯を作ります"
+        }
+    ]
+}

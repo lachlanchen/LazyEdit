@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,522\",\n    \"end\": \"00:00:13,882\",\n    \"lang\": \"en\",\n    \"text\": \"I have finished running at the coastline.\"\n  },\n  {\n    \"start\": \"00:00:17,742\",\n    \"end\": \"00:00:29,442\",\n    \"lang\": \"en\",\n    \"text\": \"So your lifestyle could be something that influences other people.\"\n  },\n  {\n    \"start\": \"00:00:29,442\",\n    \"end\": \"00:00:30,682\",\n    \"lang\": \"en\",\n    \"text\": \"You live with happiness,\"\n  },\n  {\n    \"start\": \"00:00:30,682\",\n    \"end\": \"00:00:32,262\",\n    \"lang\": \"en\",\n    \"text\": \"you live with joy.\"\n  },\n  {\n    \"start\": \"00:00:35,502\",\n    \"end\": \"00:00:41,762\",\n    \"lang\": \"en\",\n    \"text\": \"Your life per se can be your work,\"\n  },\n  {\n    \"start\": \"00:00:41,762\",\n    \"end\": \"00:00:44,242\",\n    \"lang\": \"en\",\n    \"text\": \"can be your creation.\"\n  },\n  {\n    \"start\": \"00:00:47,942\",\n    \"end\": \"00:00:48,542\",\n    \"lang\": \"en\",\n    \"text\": \"Muah!\"\n  },\n  {\n    \"start\": \"00:00:55,822\",\n    \"end\": \"00:00:56,662\",\n    \"lang\": \"en\",\n    \"text\": \"Yummy yummy.\"\n  },\n  {\n    \"start\": \"00:00:56,662\",\n    \"end\": \"00:00:57,462\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:57,462\",\n    \"end\": \"00:00:58,182\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,460",
+            "es": "Buenos días",
+            "fr": "Bonjour",
+            "uk": "Доброго ранку"
+        },
+        {
+            "start": "00:00:03,522",
+            "end": "00:00:13,882",
+            "es": "He terminado de correr en la costa.",
+            "fr": "J'ai fini de courir le long de la côte.",
+            "uk": "Я закінчив бігати на узбережжі."
+        },
+        {
+            "start": "00:00:17,742",
+            "end": "00:00:29,442",
+            "es": "Entonces, tu estilo de vida podría ser algo que influya en otras personas.",
+            "fr": "Ainsi, votre mode de vie pourrait être quelque chose qui influence les autres.",
+            "uk": "Отже, ваш спосіб життя може впливати на інших людей."
+        },
+        {
+            "start": "00:00:29,442",
+            "end": "00:00:30,682",
+            "es": "Vives con felicidad,",
+            "fr": "Vous vivez avec bonheur,",
+            "uk": "Живеш із щастям,"
+        },
+        {
+            "start": "00:00:30,682",
+            "end": "00:00:32,262",
+            "es": "vives con alegría.",
+            "fr": "vous vivez avec joie.",
+            "uk": "живеш із радістю."
+        },
+        {
+            "start": "00:00:35,502",
+            "end": "00:00:41,762",
+            "es": "Tu vida per se puede ser tu obra,",
+            "fr": "Votre vie en soi peut être votre œuvre,",
+            "uk": "Ваше життя саме по собі може бути вашою роботою,"
+        },
+        {
+            "start": "00:00:41,762",
+            "end": "00:00:44,242",
+            "es": "puede ser tu creación.",
+            "fr": "peut être votre création.",
+            "uk": "може бути вашим творінням."
+        },
+        {
+            "start": "00:00:47,942",
+            "end": "00:00:48,542",
+            "es": "¡Mua!",
+            "fr": "Muah !",
+            "uk": "Муа!"
+        },
+        {
+            "start": "00:00:55,822",
+            "end": "00:00:56,662",
+            "es": "Ñam ñam.",
+            "fr": "Miam miam.",
+            "uk": "Ням-ням."
+        },
+        {
+            "start": "00:00:56,662",
+            "end": "00:00:57,462",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:57,462",
+            "end": "00:00:58,182",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "uk": "бачимось."
+        }
+    ]
+}

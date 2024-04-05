@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,960\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます。\"\n  },\n  {\n    \"start\": \"00:00:02,210\",\n    \"end\": \"00:00:02,710\",\n    \"lang\": \"zh\",\n    \"text\": \"我拿วยinge\"\n  },\n  {\n    \"start\": \"00:00:03,650\",\n    \"end\": \"00:00:05,370\",\n    \"lang\": \"ja\",\n    \"text\": \"私の名前は泣きねる\"\n  },\n  {\n    \"start\": \"00:00:05,890\",\n    \"end\": \"00:00:17,170\",\n    \"lang\": \"en\",\n    \"text\": \"changes so again nothing new to share today but I upgraded the subtitles and I introduced\"\n  },\n  {\n    \"start\": \"00:00:17,170\",\n    \"end\": \"00:00:26,270\",\n    \"lang\": \"en\",\n    \"text\": \"them modified Korean subtitle and also the Vietnamese,\"\n  },\n  {\n    \"start\": \"00:00:26,270\",\n    \"end\": \"00:00:29,630\",\n    \"lang\": \"en\",\n    \"text\": \"French and Spanish and then I\"\n  },\n  {\n    \"start\": \"00:00:29,630\",\n    \"end\": \"00:00:32,350\",\n    \"lang\": \"en\",\n    \"text\": \"think the subtitle might be a little bit too much\"\n  },\n  {\n    \"start\": \"00:00:35,682\",\n    \"end\": \"00:00:36,102\",\n    \"lang\": \"ja\",\n    \"text\": \"おやすみなさい\"\n  },\n  {\n    \"start\": \"00:00:37,314\",\n    \"end\": \"00:00:39,874\",\n    \"lang\": \"en\",\n    \"text\": \"because the space on the screen is too tight,\"\n  },\n  {\n    \"start\": \"00:00:39,874\",\n    \"end\": \"00:00:40,814\",\n    \"lang\": \"en\",\n    \"text\": \"too compact,\"\n  },\n  {\n    \"start\": \"00:00:40,814\",\n    \"end\": \"00:00:43,174\",\n    \"lang\": \"en\",\n    \"text\": \"too dense.\"\n  },\n  {\n    \"start\": \"00:00:44,294\",\n    \"end\": \"00:00:44,554\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:44,554\",\n    \"end\": \"00:00:50,334\",\n    \"lang\": \"en\",\n    \"text\": \"also I want to slightly change the Vietnamese subtitle.\"\n  },\n  {\n    \"start\": \"00:00:50,854\",\n    \"end\": \"00:00:52,394\",\n    \"lang\": \"en\",\n    \"text\": \"And also like the Korean,\"\n  },\n  {\n    \"start\": \"00:00:52,394\",\n    \"end\": \"00:00:54,614\",\n    \"lang\": \"en\",\n    \"text\": \"I want to introduce the Chinese character\"\n  },\n  {\n    \"start\": \"00:00:54,983\",\n    \"end\": \"00:00:59,534\",\n    \"lang\": \"en\",\n    \"text\": \"to replace some Vietnamese that have a Chinese origin.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,960",
+            "en": "Thank you very much.",
+            "zh": "非常感谢。",
+            "ar": "شكرا جزيلا."
+        },
+        {
+            "start": "00:00:02,210",
+            "end": "00:00:02,710",
+            "en": "I take responsibility.",
+            "zh": "我负责。",
+            "ar": "أتحمل المسؤولية."
+        },
+        {
+            "start": "00:00:03,650",
+            "end": "00:00:05,370",
+            "en": "My name is Nakineru.",
+            "zh": "我的名字叫泣きねる。",
+            "ar": "اسمي ناكينيرو."
+        },
+        {
+            "start": "00:00:05,890",
+            "end": "00:00:17,170",
+            "en": "changes so again nothing new to share today but I upgraded the subtitles and I introduced",
+            "zh": "变化再一次没有新内容分享今天，但是我升级了字幕并且我介绍了",
+            "ar": "التغييرات مرة أخرى لا شيء جديد لمشاركته اليوم لكنني قمت بتحديث الترجمات وقدمت"
+        },
+        {
+            "start": "00:00:17,170",
+            "end": "00:00:26,270",
+            "en": "them modified Korean subtitle and also the Vietnamese,",
+            "zh": "对它们进行了修改的韩文字幕以及越南文，",
+            "ar": "قمت بتعديل ترجمة الكورية وأيضاً الفيتنامية،"
+        },
+        {
+            "start": "00:00:26,270",
+            "end": "00:00:29,630",
+            "en": "French and Spanish and then I",
+            "zh": "法语和西班牙语然后我",
+            "ar": "الفرنسية والإسبانية وبعدها أنا"
+        },
+        {
+            "start": "00:00:29,630",
+            "end": "00:00:32,350",
+            "en": "think the subtitle might be a little bit too much",
+            "zh": "认为字幕可能有点过多",
+            "ar": "أعتقد أن الترجمة قد تكون كثيرة قليلاً"
+        },
+        {
+            "start": "00:00:35,682",
+            "end": "00:00:36,102",
+            "en": "Good night.",
+            "zh": "晚安。",
+            "ar": "تصبح على خير."
+        },
+        {
+            "start": "00:00:37,314",
+            "end": "00:00:39,874",
+            "en": "because the space on the screen is too tight,",
+            "zh": "因为屏幕上的空间太紧张，",
+            "ar": "لأن المساحة على الشاشة ضيقة جداً،"
+        },
+        {
+            "start": "00:00:39,874",
+            "end": "00:00:40,814",
+            "en": "too compact,",
+            "zh": "太紧凑，",
+            "ar": "مضغوطة جداً،"
+        },
+        {
+            "start": "00:00:40,814",
+            "end": "00:00:43,174",
+            "en": "too dense.",
+            "zh": "太密集。",
+            "ar": "كثيفة جداً."
+        },
+        {
+            "start": "00:00:44,294",
+            "end": "00:00:44,554",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذاً،"
+        },
+        {
+            "start": "00:00:44,554",
+            "end": "00:00:50,334",
+            "en": "also I want to slightly change the Vietnamese subtitle.",
+            "zh": "我也想稍微修改越南字幕。",
+            "ar": "أريد أيضاً تغيير الترجمة الفيتنامية قليلاً."
+        },
+        {
+            "start": "00:00:50,854",
+            "end": "00:00:52,394",
+            "en": "And also like the Korean,",
+            "zh": "而且像韩文一样，",
+            "ar": "وأيضاً مثل الكورية،"
+        },
+        {
+            "start": "00:00:52,394",
+            "end": "00:00:54,614",
+            "en": "I want to introduce the Chinese character",
+            "zh": "我想引入中文字符",
+            "ar": "أريد تقديم الحرف الصيني"
+        },
+        {
+            "start": "00:00:54,983",
+            "end": "00:00:59,534",
+            "en": "to replace some Vietnamese that have a Chinese origin.",
+            "zh": "来替换一些有中国来源的越南词。",
+            "ar": "ليحل محل بعض الكلمات الفيتنامية ذات الأصل الصيني."
+        }
+    ]
+}

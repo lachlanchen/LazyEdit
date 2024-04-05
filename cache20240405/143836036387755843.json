@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:29,062\",\n    \"end\": \"00:02:33,422\",\n    \"lang\": \"en\",\n    \"text\": \"When you resort to something outside,\"\n  },\n  {\n    \"start\": \"00:02:33,422\",\n    \"end\": \"00:02:36,282\",\n    \"lang\": \"en\",\n    \"text\": \"be external to this existence.\"\n  },\n  {\n    \"start\": \"00:02:36,282\",\n    \"end\": \"00:02:37,702\",\n    \"lang\": \"en\",\n    \"text\": \"It's like,\"\n  },\n  {\n    \"start\": \"00:02:37,702\",\n    \"end\": \"00:02:40,182\",\n    \"lang\": \"en\",\n    \"text\": \"as the saying goes,\"\n  },\n  {\n    \"start\": \"00:02:40,182\",\n    \"end\": \"00:02:44,102\",\n    \"lang\": \"en\",\n    \"text\": \"you are fishing on the tree.\"\n  },\n  {\n    \"start\": \"00:02:48,738\",\n    \"end\": \"00:02:49,358\",\n    \"lang\": \"ja\",\n    \"text\": \"よーし、\"\n  },\n  {\n    \"start\": \"00:02:49,358\",\n    \"end\": \"00:02:49,818\",\n    \"lang\": \"ja\",\n    \"text\": \"完成\"\n  },\n  {\n    \"start\": \"00:02:51,554\",\n    \"end\": \"00:02:59,414\",\n    \"lang\": \"en\",\n    \"text\": \"superficial stuff and ignore the essence.\"\n  },\n  {\n    \"start\": \"00:03:01,698\",\n    \"end\": \"00:03:03,558\",\n    \"lang\": \"zh\",\n    \"text\": \"In Chinese phrase it's\"\n  },\n  {\n    \"start\": \"00:03:04,318\",\n    \"end\": \"00:03:05,238\",\n    \"lang\": \"zh\",\n    \"text\": \"少本著墨,\"\n  },\n  {\n    \"start\": \"00:03:05,238\",\n    \"end\": \"00:03:07,038\",\n    \"lang\": \"zh\",\n    \"text\": \"圓莫求魚。\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:29,062",
+            "end": "00:02:33,422",
+            "es": "Cuando recurres a algo externo,",
+            "fr": "Quand vous recourez à quelque chose d'extérieur,",
+            "uk": "Коли ви звертаєтеся до чогось зовнішнього,"
+        },
+        {
+            "start": "00:02:33,422",
+            "end": "00:02:36,282",
+            "es": "ser externo a esta existencia.",
+            "fr": "être externe à cette existence.",
+            "uk": "бути зовнішнім цьому існуванню."
+        },
+        {
+            "start": "00:02:36,282",
+            "end": "00:02:37,702",
+            "es": "Es como,",
+            "fr": "C'est comme,",
+            "uk": "Це як,"
+        },
+        {
+            "start": "00:02:37,702",
+            "end": "00:02:40,182",
+            "es": "como dice el refrán,",
+            "fr": "comme le dit le proverbe,",
+            "uk": "як каже приказка,"
+        },
+        {
+            "start": "00:02:40,182",
+            "end": "00:02:44,102",
+            "es": "estás pescando en el árbol.",
+            "fr": "vous pêchez sur l'arbre.",
+            "uk": "ви ловите рибу на дереві."
+        },
+        {
+            "start": "00:02:48,738",
+            "end": "00:02:49,358",
+            "es": "Vamos,",
+            "fr": "Allons-y,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:02:49,358",
+            "end": "00:02:49,818",
+            "es": "terminado.",
+            "fr": "fini.",
+            "uk": "завершено."
+        },
+        {
+            "start": "00:02:51,554",
+            "end": "00:02:59,414",
+            "es": "cosas superficiales e ignorar la esencia.",
+            "fr": "des choses superficielles et ignorer l'essence.",
+            "uk": "поверхові речі та ігнорувати сутність."
+        },
+        {
+            "start": "00:03:01,698",
+            "end": "00:03:03,558",
+            "es": "En una frase china es",
+            "fr": "Dans une expression chinoise, c'est",
+            "uk": "Китайським виразом це"
+        },
+        {
+            "start": "00:03:04,318",
+            "end": "00:03:05,238",
+            "es": "dedicar poco a lo fundamental,",
+            "fr": "peu se pencher sur l'essentiel,",
+            "uk": "мало уваги основному,"
+        },
+        {
+            "start": "00:03:05,238",
+            "end": "00:03:07,038",
+            "es": "no busques peces en el cielo.",
+            "fr": "ne cherchez pas de poissons dans le ciel.",
+            "uk": "не шукайте рибу в небі."
+        }
+    ]
+}

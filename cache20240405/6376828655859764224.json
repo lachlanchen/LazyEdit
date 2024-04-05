@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,820\",\n    \"lang\": \"en\",\n    \"text\": \"I'm dying.\"\n  },\n  {\n    \"start\": \"00:00:01,820\",\n    \"end\": \"00:00:04,460\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sick of shielding.\"\n  },\n  {\n    \"start\": \"00:00:06,560\",\n    \"end\": \"00:00:06,780\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:06,780\",\n    \"end\": \"00:00:10,240\",\n    \"lang\": \"en\",\n    \"text\": \"this cold sometimes almost kills me.\"\n  },\n  {\n    \"start\": \"00:00:10,700\",\n    \"end\": \"00:00:11,100\",\n    \"lang\": \"en\",\n    \"text\": \"And now,\"\n  },\n  {\n    \"start\": \"00:00:11,100\",\n    \"end\": \"00:00:13,360\",\n    \"lang\": \"en\",\n    \"text\": \"every swan...\"\n  },\n  {\n    \"start\": \"00:00:14,722\",\n    \"end\": \"00:00:15,322\",\n    \"lang\": \"zh\",\n    \"text\": \"吞口水\"\n  },\n  {\n    \"start\": \"00:00:16,742\",\n    \"end\": \"00:00:18,781\",\n    \"lang\": \"zh\",\n    \"text\": \"每一次吞口水都很疼\"\n  },\n  {\n    \"start\": \"00:00:19,642\",\n    \"end\": \"00:00:20,322\",\n    \"lang\": \"zh\",\n    \"text\": \"說話\"\n  },\n  {\n    \"start\": \"00:00:21,022\",\n    \"end\": \"00:00:22,402\",\n    \"lang\": \"zh\",\n    \"text\": \"說話也可以很疼\"\n  },\n  {\n    \"start\": \"00:00:23,042\",\n    \"end\": \"00:00:23,642\",\n    \"lang\": \"en\",\n    \"text\": \"I'm dying\"\n  },\n  {\n    \"start\": \"00:00:24,682\",\n    \"end\": \"00:00:26,102\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness\"\n  },\n  {\n    \"start\": \"00:00:27,142\",\n    \"end\": \"00:00:29,802\",\n    \"lang\": \"en\",\n    \"text\": \"But I have to use this vitamin\"\n  },\n  {\n    \"start\": \"00:00:30,442\",\n    \"end\": \"00:00:31,702\",\n    \"lang\": \"en\",\n    \"text\": \"to help me cure\"\n  },\n  {\n    \"start\": \"00:00:32,902\",\n    \"end\": \"00:00:33,542\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:33,542\",\n    \"end\": \"00:00:34,302\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  },\n  {\n    \"start\": \"00:00:37,002\",\n    \"end\": \"00:00:37,802\",\n    \"lang\": \"en\",\n    \"text\": \"See you,\"\n  },\n  {\n    \"start\": \"00:00:37,802\",\n    \"end\": \"00:00:38,162\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,820",
+            "en": "I'm dying.",
+            "zh": "我快死了。",
+            "ar": "أنا أموت."
+        },
+        {
+            "start": "00:00:01,820",
+            "end": "00:00:04,460",
+            "en": "I'm sick of shielding.",
+            "zh": "我厌倦了保护自己。",
+            "ar": "أنا متعب من التحصين."
+        },
+        {
+            "start": "00:00:06,560",
+            "end": "00:00:06,780",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذاً،"
+        },
+        {
+            "start": "00:00:06,780",
+            "end": "00:00:10,240",
+            "en": "this cold sometimes almost kills me.",
+            "zh": "这种感冒有时候几乎要了我的命。",
+            "ar": "هذا البرد أحيانًا يكاد يقتلني."
+        },
+        {
+            "start": "00:00:10,700",
+            "end": "00:00:11,100",
+            "en": "And now,",
+            "zh": "而现在，",
+            "ar": "والآن،"
+        },
+        {
+            "start": "00:00:11,100",
+            "end": "00:00:13,360",
+            "en": "every swan...",
+            "zh": "每一只天鹅...",
+            "ar": "كل بجعة..."
+        },
+        {
+            "start": "00:00:14,722",
+            "end": "00:00:15,322",
+            "en": "Swallowing.",
+            "zh": "吞口水",
+            "ar": "البلع."
+        },
+        {
+            "start": "00:00:16,742",
+            "end": "00:00:18,781",
+            "en": "Every swallow hurts.",
+            "zh": "每一次吞口水都很疼",
+            "ar": "كل بلعة تؤلم."
+        },
+        {
+            "start": "00:00:19,642",
+            "end": "00:00:20,322",
+            "en": "Speaking.",
+            "zh": "說話",
+            "ar": "التحدث."
+        },
+        {
+            "start": "00:00:21,022",
+            "end": "00:00:22,402",
+            "en": "Speaking can also be very painful.",
+            "zh": "說話也可以很疼",
+            "ar": "التحدث يمكن أن يكون مؤلمًا أيضًا."
+        },
+        {
+            "start": "00:00:23,042",
+            "end": "00:00:23,642",
+            "en": "I'm dying",
+            "zh": "我快死了",
+            "ar": "أنا أموت"
+        },
+        {
+            "start": "00:00:24,682",
+            "end": "00:00:26,102",
+            "en": "Oh my goodness",
+            "zh": "我的天哪",
+            "ar": "يا له من أمر"
+        },
+        {
+            "start": "00:00:27,142",
+            "end": "00:00:29,802",
+            "en": "But I have to use this vitamin",
+            "zh": "但我必须使用这种维生素",
+            "ar": "لكن يجب علي استخدام هذا الفيتامين"
+        },
+        {
+            "start": "00:00:30,442",
+            "end": "00:00:31,702",
+            "en": "to help me cure",
+            "zh": "来帮助我治疗",
+            "ar": "لمساعدتي في الشفاء"
+        },
+        {
+            "start": "00:00:32,902",
+            "end": "00:00:33,542",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:33,542",
+            "end": "00:00:34,302",
+            "en": "see you",
+            "zh": "再见",
+            "ar": "أراك لاحقًا"
+        },
+        {
+            "start": "00:00:37,002",
+            "end": "00:00:37,802",
+            "en": "See you,",
+            "zh": "再见，",
+            "ar": "أراك،"
+        },
+        {
+            "start": "00:00:37,802",
+            "end": "00:00:38,162",
+            "en": "see you",
+            "zh": "再见",
+            "ar": "أراك"
+        }
+    ]
+}

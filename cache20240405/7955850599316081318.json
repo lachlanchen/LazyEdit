@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,514\",\n    \"end\": \"00:01:01,394\",\n    \"lang\": \"en\",\n    \"text\": \"whatever\"\n  },\n  {\n    \"start\": \"00:01:02,534\",\n    \"end\": \"00:01:04,274\",\n    \"lang\": \"en\",\n    \"text\": \"and what's this?\"\n  },\n  {\n    \"start\": \"00:01:04,274\",\n    \"end\": \"00:01:05,494\",\n    \"lang\": \"en\",\n    \"text\": \"ok\"\n  },\n  {\n    \"start\": \"00:01:06,914\",\n    \"end\": \"00:01:08,834\",\n    \"lang\": \"ja\",\n    \"text\": \"おやすみなさい\"\n  },\n  {\n    \"start\": \"00:01:11,298\",\n    \"end\": \"00:01:15,317\",\n    \"lang\": \"en\",\n    \"text\": \"So this is asparagus.\"\n  },\n  {\n    \"start\": \"00:01:20,357\",\n    \"end\": \"00:01:22,018\",\n    \"lang\": \"en\",\n    \"text\": \"And that's all.\"\n  },\n  {\n    \"start\": \"00:01:24,298\",\n    \"end\": \"00:01:29,718\",\n    \"lang\": \"en\",\n    \"text\": \"Put this as a cover of our video and teaser.\"\n  },\n  {\n    \"start\": \"00:01:30,518\",\n    \"end\": \"00:01:32,778\",\n    \"lang\": \"en\",\n    \"text\": \"Use this as a teaser.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,514",
+            "end": "00:01:01,394",
+            "es": "lo que sea",
+            "fr": "peu importe",
+            "uk": "що завгодно"
+        },
+        {
+            "start": "00:01:02,534",
+            "end": "00:01:04,274",
+            "es": "¿y qué es esto?",
+            "fr": "et c'est quoi ça ?",
+            "uk": "а що це?"
+        },
+        {
+            "start": "00:01:04,274",
+            "end": "00:01:05,494",
+            "es": "ok",
+            "fr": "d'accord",
+            "uk": "гаразд"
+        },
+        {
+            "start": "00:01:06,914",
+            "end": "00:01:08,834",
+            "es": "buenas noches",
+            "fr": "bonne nuit",
+            "uk": "добраніч"
+        },
+        {
+            "start": "00:01:11,298",
+            "end": "00:01:15,317",
+            "es": "Entonces esto es espárragos.",
+            "fr": "Donc, ça c'est des asperges.",
+            "uk": "Отже, це спаржа."
+        },
+        {
+            "start": "00:01:20,357",
+            "end": "00:01:22,018",
+            "es": "Y eso es todo.",
+            "fr": "Et c'est tout.",
+            "uk": "І це все."
+        },
+        {
+            "start": "00:01:24,298",
+            "end": "00:01:29,718",
+            "es": "Pon esto como portada de nuestro video y teaser.",
+            "fr": "Mettez cela comme couverture de notre vidéo et teaser.",
+            "uk": "Поставте це як обкладинку нашого відео та тизер."
+        },
+        {
+            "start": "00:01:30,518",
+            "end": "00:01:32,778",
+            "es": "Usa esto como un teaser.",
+            "fr": "Utilisez cela comme un teaser.",
+            "uk": "Використовуйте це як тизер."
+        }
+    ]
+}

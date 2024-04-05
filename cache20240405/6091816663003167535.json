@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,640\",\n    \"lang\": \"en\",\n    \"text\": \"So this is my dinner today.\"\n  },\n  {\n    \"start\": \"00:00:02,640\",\n    \"end\": \"00:00:04,180\",\n    \"lang\": \"en\",\n    \"text\": \"Four more dinners.\"\n  },\n  {\n    \"start\": \"00:00:04,180\",\n    \"end\": \"00:00:05,980\",\n    \"lang\": \"en\",\n    \"text\": \"Four more.\"\n  },\n  {\n    \"start\": \"00:00:07,680\",\n    \"end\": \"00:00:15,980\",\n    \"lang\": \"en\",\n    \"text\": \"So fight poison with poison to help me recover from this COVID symptom.\"\n  },\n  {\n    \"start\": \"00:00:18,420\",\n    \"end\": \"00:00:21,060\",\n    \"lang\": \"en\",\n    \"text\": \"I usually don't have dinner,\"\n  },\n  {\n    \"start\": \"00:00:21,060\",\n    \"end\": \"00:00:24,020\",\n    \"lang\": \"en\",\n    \"text\": \"so when I cook this,\"\n  },\n  {\n    \"start\": \"00:00:24,020\",\n    \"end\": \"00:00:27,580\",\n    \"lang\": \"en\",\n    \"text\": \"I don't have the appetite.\"\n  },\n  {\n    \"start\": \"00:00:28,520\",\n    \"end\": \"00:00:29,700\",\n    \"lang\": \"en\",\n    \"text\": \"But the smell is good,\"\n  },\n  {\n    \"start\": \"00:00:29,700\",\n    \"end\": \"00:00:31,240\",\n    \"lang\": \"en\",\n    \"text\": \"so I can eat it anyway.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,640",
+            "ko": "그래서 이게 오늘 저녁이에요."
+        },
+        {
+            "start": "00:00:02,640",
+            "end": "00:00:04,180",
+            "ko": "다른 저녁 네 끼 더."
+        },
+        {
+            "start": "00:00:04,180",
+            "end": "00:00:05,980",
+            "ko": "네 끼 더요."
+        },
+        {
+            "start": "00:00:07,680",
+            "end": "00:00:15,980",
+            "ko": "이 코로나 증상에서 회복하려고 독을 이용해서 싸워요."
+        },
+        {
+            "start": "00:00:18,420",
+            "end": "00:00:21,060",
+            "ko": "보통 저는 저녁을 먹지 않아요,"
+        },
+        {
+            "start": "00:00:21,060",
+            "end": "00:00:24,020",
+            "ko": "그래서 이걸 요리할 때,"
+        },
+        {
+            "start": "00:00:24,020",
+            "end": "00:00:27,580",
+            "ko": "식욕이 없어요."
+        },
+        {
+            "start": "00:00:28,520",
+            "end": "00:00:29,700",
+            "ko": "하지만 냄새는 좋으니,"
+        },
+        {
+            "start": "00:00:29,700",
+            "end": "00:00:31,240",
+            "ko": "어쨌든 먹을 수 있어요."
+        }
+    ]
+}

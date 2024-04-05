@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:11,570\",\n    \"end\": \"00:01:13,090\",\n    \"lang\": \"en\",\n    \"text\": \"It's over-salted.\"\n  },\n  {\n    \"start\": \"00:01:14,710\",\n    \"end\": \"00:01:15,350\",\n    \"lang\": \"en\",\n    \"text\": \"Over-salted.\"\n  },\n  {\n    \"start\": \"00:01:18,070\",\n    \"end\": \"00:01:22,730\",\n    \"lang\": \"en\",\n    \"text\": \"I put too much salt in it.\"\n  },\n  {\n    \"start\": \"00:01:34,818\",\n    \"end\": \"00:01:38,318\",\n    \"lang\": \"en\",\n    \"text\": \"This beef might be the worst I've ever cooked\"\n  },\n  {\n    \"start\": \"00:01:41,758\",\n    \"end\": \"00:01:47,718\",\n    \"lang\": \"en\",\n    \"text\": \"Too much salt and the taste is not as usual\"\n  },\n  {\n    \"start\": \"00:01:57,658\",\n    \"end\": \"00:01:58,058\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  },\n  {\n    \"start\": \"00:02:00,438\",\n    \"end\": \"00:02:01,078\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  },\n  {\n    \"start\": \"00:02:01,838\",\n    \"end\": \"00:02:02,438\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:11,570",
+            "end": "00:01:13,090",
+            "vi": "Nó mặn quá."
+        },
+        {
+            "start": "00:01:14,710",
+            "end": "00:01:15,350",
+            "vi": "Mặn quá."
+        },
+        {
+            "start": "00:01:18,070",
+            "end": "00:01:22,730",
+            "vi": "Tôi cho quá nhiều muối vào."
+        },
+        {
+            "start": "00:01:34,818",
+            "end": "00:01:38,318",
+            "vi": "Có lẽ đây là món thịt bò tệ nhất mà tôi từng nấu"
+        },
+        {
+            "start": "00:01:41,758",
+            "end": "00:01:47,718",
+            "vi": "Quá nhiều muối và hương vị không như mọi khi"
+        },
+        {
+            "start": "00:01:57,658",
+            "end": "00:01:58,058",
+            "vi": "Được"
+        },
+        {
+            "start": "00:02:00,438",
+            "end": "00:02:01,078",
+            "vi": "Hẹn gặp lại"
+        },
+        {
+            "start": "00:02:01,838",
+            "end": "00:02:02,438",
+            "vi": "Hẹn gặp lại"
+        }
+    ]
+}

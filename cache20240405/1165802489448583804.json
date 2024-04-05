@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,860\",\n    \"lang\": \"en\",\n    \"text\": \"The Advices For Self Improvement\"\n  },\n  {\n    \"start\": \"00:00:01,186\",\n    \"end\": \"00:00:03,406\",\n    \"lang\": \"zh\",\n    \"text\": \"看这是不是斗牛桥 我也不太懂\"\n  },\n  {\n    \"start\": \"00:00:04,285\",\n    \"end\": \"00:00:05,006\",\n    \"lang\": \"zh\",\n    \"text\": \"斗牛桥\"\n  },\n  {\n    \"start\": \"00:00:05,106\",\n    \"end\": \"00:00:05,446\",\n    \"lang\": \"zh\",\n    \"text\": \"巴豆\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,860",
+            "vi": "Những Lời Khuyên Để Tự Hoàn Thiện"
+        },
+        {
+            "start": "00:00:01,186",
+            "end": "00:00:03,406",
+            "vi": "Xem đây có phải là Cầu Đấu Bò không, tôi cũng không chắc lắm"
+        },
+        {
+            "start": "00:00:04,285",
+            "end": "00:00:05,006",
+            "vi": "Cầu Đấu Bò"
+        },
+        {
+            "start": "00:00:05,106",
+            "end": "00:00:05,446",
+            "vi": "Hạt Đậu"
+        }
+    ]
+}

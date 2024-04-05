@@ -1,0 +1,48 @@
+{
+    "prompt": "For words that have etymological Chu-Han alternative (due to their Sino-Vietnamese origin), I want to find the corresponding Chinese origin to replace the Viet WORDS (provide consecutive words if exist). However, it's crucial that the Viet in parenthesis followed by these traditional Chu-Han are put in brackets to maintain clarity. Like this example: (viet)[chuhan].\n\nVietnamese to be annotated: đầu tiên là một đợt đánh xuống mạnh, sau đó là một đợt đánh xuống-lên-mạnh cho nhịp thứ hai và\n\nI don't need step by step explanation. ONLY and ALWAYS return a valid JSON back:\n```json\n{\n  \"viet_with_annotation\": \"\",\n  \"viet_chuhan_pairs\": [\n    {\n      \"viet_part\": \"\",\n      \"chuhan\": \"\"\n    }\n  ]\n}\n```",
+    "response": {
+        "viet_with_annotation": "(đầu tiên)[首先] là một (đợt)[波] (đánh)[打] (xuống)[下] (mạnh)[強], sau đó là một (đợt)[波] (đánh)[打] (xuống-lên-mạnh)[下上強] cho (nhịp)[節] (thứ hai)[第二] và",
+        "viet_chuhan_pairs": [
+            {
+                "viet_part": "đầu tiên",
+                "chuhan": "首先"
+            },
+            {
+                "viet_part": "đợt",
+                "chuhan": "波"
+            },
+            {
+                "viet_part": "đánh",
+                "chuhan": "打"
+            },
+            {
+                "viet_part": "xuống",
+                "chuhan": "下"
+            },
+            {
+                "viet_part": "mạnh",
+                "chuhan": "強"
+            },
+            {
+                "viet_part": "đợt",
+                "chuhan": "波"
+            },
+            {
+                "viet_part": "đánh",
+                "chuhan": "打"
+            },
+            {
+                "viet_part": "xuống-lên-mạnh",
+                "chuhan": "下上強"
+            },
+            {
+                "viet_part": "nhịp",
+                "chuhan": "節"
+            },
+            {
+                "viet_part": "thứ hai",
+                "chuhan": "第二"
+            }
+        ]
+    }
+}

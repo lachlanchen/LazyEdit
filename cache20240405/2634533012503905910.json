@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"ar\",\n    \"text\": \"وشكراً على المشاهدة\"\n  },\n  {\n    \"start\": \"00:00:02,274\",\n    \"end\": \"00:00:17,054\",\n    \"lang\": \"en\",\n    \"text\": \"The vegetable has been put in the refrigerator for about one month,\"\n  },\n  {\n    \"start\": \"00:00:17,054\",\n    \"end\": \"00:00:18,214\",\n    \"lang\": \"en\",\n    \"text\": \"maybe two months.\"\n  },\n  {\n    \"start\": \"00:00:18,854\",\n    \"end\": \"00:00:20,354\",\n    \"lang\": \"en\",\n    \"text\": \"Then it has these holes.\"\n  },\n  {\n    \"start\": \"00:00:21,494\",\n    \"end\": \"00:00:25,194\",\n    \"lang\": \"en\",\n    \"text\": \"And then it says that it's a microbe and it doesn't want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:25,194\",\n    \"end\": \"00:00:27,874\",\n    \"lang\": \"en\",\n    \"text\": \"The bacteria don't want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:28,294\",\n    \"end\": \"00:00:29,994\",\n    \"lang\": \"en\",\n    \"text\": \"So the people eat it.\"\n  },\n  {\n    \"start\": \"00:00:32,094\",\n    \"end\": \"00:00:32,514\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:32,514\",\n    \"end\": \"00:00:34,254\",\n    \"lang\": \"en\",\n    \"text\": \"this is our flavor.\"\n  },\n  {\n    \"start\": \"00:00:35,394\",\n    \"end\": \"00:00:39,754\",\n    \"lang\": \"en\",\n    \"text\": \"And I will make chicken noodles,\"\n  },\n  {\n    \"start\": \"00:00:39,754\",\n    \"end\": \"00:00:41,334\",\n    \"lang\": \"en\",\n    \"text\": \"chicken and carrot noodles.\"\n  },\n  {\n    \"start\": \"00:00:43,054\",\n    \"end\": \"00:00:44,894\",\n    \"lang\": \"en\",\n    \"text\": \"And with apricots.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,240",
+            "ko": "시청해주셔서 감사합니다"
+        },
+        {
+            "start": "00:00:02,274",
+            "end": "00:00:17,054",
+            "ko": "이 채소는 약 한 달, 혹은 두 달 동안 냉장고에 보관되었습니다,"
+        },
+        {
+            "start": "00:00:17,054",
+            "end": "00:00:18,214",
+            "ko": "아마도 두 달일 것입니다."
+        },
+        {
+            "start": "00:00:18,854",
+            "end": "00:00:20,354",
+            "ko": "그러면 이런 구멍이 생깁니다."
+        },
+        {
+            "start": "00:00:21,494",
+            "end": "00:00:25,194",
+            "ko": "그리고 마이크로브라고 하면서 먹고 싶지 않다고 합니다."
+        },
+        {
+            "start": "00:00:25,194",
+            "end": "00:00:27,874",
+            "ko": "박테리아도 먹고 싶어하지 않습니다."
+        },
+        {
+            "start": "00:00:28,294",
+            "end": "00:00:29,994",
+            "ko": "그래서 사람들이 먹습니다."
+        },
+        {
+            "start": "00:00:32,094",
+            "end": "00:00:32,514",
+            "ko": "좋아요,"
+        },
+        {
+            "start": "00:00:32,514",
+            "end": "00:00:34,254",
+            "ko": "이건 우리의 맛입니다."
+        },
+        {
+            "start": "00:00:35,394",
+            "end": "00:00:39,754",
+            "ko": "그리고 저는 치킨 누들을 만들 것입니다,"
+        },
+        {
+            "start": "00:00:39,754",
+            "end": "00:00:41,334",
+            "ko": "치킨과 당근 누들을 만들 것입니다."
+        },
+        {
+            "start": "00:00:43,054",
+            "end": "00:00:44,894",
+            "ko": "그리고 살구와 함께 할 것입니다."
+        }
+    ]
+}

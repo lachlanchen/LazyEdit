@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,980\",\n    \"end\": \"00:00:04,600\",\n    \"lang\": \"en\",\n    \"text\": \"I want to share that after eating this pepper,\"\n  },\n  {\n    \"start\": \"00:00:04,600\",\n    \"end\": \"00:00:10,260\",\n    \"lang\": \"en\",\n    \"text\": \"ginger and garlic fragments\"\n  },\n  {\n    \"start\": \"00:00:10,850\",\n    \"end\": \"00:00:12,050\",\n    \"lang\": \"zh\",\n    \"text\": \"碎辣椒\"\n  },\n  {\n    \"start\": \"00:00:12,710\",\n    \"end\": \"00:00:13,770\",\n    \"lang\": \"zh\",\n    \"text\": \"碎辣椒,\"\n  },\n  {\n    \"start\": \"00:00:13,770\",\n    \"end\": \"00:00:14,810\",\n    \"lang\": \"zh\",\n    \"text\": \"吃了之后\"\n  },\n  {\n    \"start\": \"00:00:14,810\",\n    \"end\": \"00:00:17,330\",\n    \"lang\": \"zh\",\n    \"text\": \"我的新冠症状似乎\"\n  },\n  {\n    \"start\": \"00:00:18,050\",\n    \"end\": \"00:00:18,690\",\n    \"lang\": \"en\",\n    \"text\": \"Temporarily,\"\n  },\n  {\n    \"start\": \"00:00:18,690\",\n    \"end\": \"00:00:23,530\",\n    \"lang\": \"en\",\n    \"text\": \"my cold symptoms get elevated\"\n  },\n  {\n    \"start\": \"00:00:25,190\",\n    \"end\": \"00:00:27,170\",\n    \"lang\": \"en\",\n    \"text\": \"And my mouth is watering\"\n  },\n  {\n    \"start\": \"00:00:30,270\",\n    \"end\": \"00:00:31,190\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:31,190\",\n    \"end\": \"00:00:32,509\",\n    \"lang\": \"en\",\n    \"text\": \"so delicious\"\n  },\n  {\n    \"start\": \"00:00:38,890\",\n    \"end\": \"00:00:39,810\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:39,810\",\n    \"end\": \"00:00:41,150\",\n    \"lang\": \"en\",\n    \"text\": \"I like this\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,980",
+            "end": "00:00:04,600",
+            "es": "Quiero compartir que después de comer este pimiento,",
+            "fr": "Je veux partager qu'après avoir mangé ce poivre,",
+            "uk": "Я хочу поділитися, що після того, як з'їм цей перець,"
+        },
+        {
+            "start": "00:00:04,600",
+            "end": "00:00:10,260",
+            "es": "fragmentos de jengibre y ajo",
+            "fr": "des fragments de gingembre et d'ail",
+            "uk": "шматочки імбиру та часнику"
+        },
+        {
+            "start": "00:00:10,850",
+            "end": "00:00:12,050",
+            "es": "fragmentos de chile picante",
+            "fr": "fragments de piment épicé",
+            "uk": "шматочки гострого перцю"
+        },
+        {
+            "start": "00:00:12,710",
+            "end": "00:00:13,770",
+            "es": "fragmentos de chile picante,",
+            "fr": "fragments de piment épicé,",
+            "uk": "шматочки гострого перцю,"
+        },
+        {
+            "start": "00:00:13,770",
+            "end": "00:00:14,810",
+            "es": "después de comer",
+            "fr": "après avoir mangé",
+            "uk": "після того, як з'їм"
+        },
+        {
+            "start": "00:00:14,810",
+            "end": "00:00:17,330",
+            "es": "mis síntomas de COVID parecen",
+            "fr": "mes symptômes du COVID semblent",
+            "uk": "мої симптоми COVID здаються"
+        },
+        {
+            "start": "00:00:18,050",
+            "end": "00:00:18,690",
+            "es": "Temporalmente,",
+            "fr": "Temporairement,",
+            "uk": "Тимчасово,"
+        },
+        {
+            "start": "00:00:18,690",
+            "end": "00:00:23,530",
+            "es": "mis síntomas de resfriado se elevan",
+            "fr": "mes symptômes de rhume s'intensifient",
+            "uk": "мої симптоми застуди підвищуються"
+        },
+        {
+            "start": "00:00:25,190",
+            "end": "00:00:27,170",
+            "es": "Y se me hace agua la boca",
+            "fr": "Et ma bouche s'arrose",
+            "uk": "І у мене текуть слинки"
+        },
+        {
+            "start": "00:00:30,270",
+            "end": "00:00:31,190",
+            "es": "Wow,",
+            "fr": "Wow,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:31,190",
+            "end": "00:00:32,509",
+            "es": "tan delicioso",
+            "fr": "si délicieux",
+            "uk": "так смачно"
+        },
+        {
+            "start": "00:00:38,890",
+            "end": "00:00:39,810",
+            "es": "Wow,",
+            "fr": "Wow,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:39,810",
+            "end": "00:00:41,150",
+            "es": "esto me gusta",
+            "fr": "j'aime ça",
+            "uk": "мені це подобається"
+        }
+    ]
+}

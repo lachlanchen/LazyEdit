@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:08,120\",\n    \"end\": \"00:01:10,620\",\n    \"lang\": \"en\",\n    \"text\": \"So you cannot avoid discrimination.\"\n  },\n  {\n    \"start\": \"00:01:11,260\",\n    \"end\": \"00:01:14,760\",\n    \"lang\": \"en\",\n    \"text\": \"It's rooted from humanity.\"\n  },\n  {\n    \"start\": \"00:01:14,760\",\n    \"end\": \"00:01:16,040\",\n    \"lang\": \"en\",\n    \"text\": \"Fighting!\"\n  },\n  {\n    \"start\": \"00:01:19,138\",\n    \"end\": \"00:01:19,778\",\n    \"lang\": \"zh\",\n    \"text\": \"還真呢\"\n  },\n  {\n    \"start\": \"00:01:21,346\",\n    \"end\": \"00:01:21,706\",\n    \"lang\": \"en\",\n    \"text\": \"normal,\"\n  },\n  {\n    \"start\": \"00:01:21,706\",\n    \"end\": \"00:01:23,666\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:01:23,666\",\n    \"end\": \"00:01:27,786\",\n    \"lang\": \"en\",\n    \"text\": \"as a legal individual,\"\n  },\n  {\n    \"start\": \"00:01:27,786\",\n    \"end\": \"00:01:31,606\",\n    \"lang\": \"en\",\n    \"text\": \"your legal status,\"\n  },\n  {\n    \"start\": \"00:01:32,770\",\n    \"end\": \"00:01:33,370\",\n    \"lang\": \"en\",\n    \"text\": \"那 applauds for this video.\"\n  },\n  {\n    \"start\": \"00:01:35,234\",\n    \"end\": \"00:01:38,634\",\n    \"lang\": \"en\",\n    \"text\": \"the benefits of every individual cannot be harmed.\"\n  },\n  {\n    \"start\": \"00:01:39,994\",\n    \"end\": \"00:01:42,134\",\n    \"lang\": \"en\",\n    \"text\": \"So anything,\"\n  },\n  {\n    \"start\": \"00:01:42,134\",\n    \"end\": \"00:01:44,134\",\n    \"lang\": \"en\",\n    \"text\": \"any other thing is okay.\"\n  },\n  {\n    \"start\": \"00:01:45,434\",\n    \"end\": \"00:01:47,974\",\n    \"lang\": \"en\",\n    \"text\": \"From moral perspective,\"\n  },\n  {\n    \"start\": \"00:01:47,974\",\n    \"end\": \"00:01:50,054\",\n    \"lang\": \"en\",\n    \"text\": \"we shouldn't\"\n  },\n  {\n    \"start\": \"00:01:50,054\",\n    \"end\": \"00:01:53,114\",\n    \"lang\": \"en\",\n    \"text\": \"we shouldn't discriminate others.\"\n  },\n  {\n    \"start\": \"00:01:56,162\",\n    \"end\": \"00:01:58,082\",\n    \"lang\": \"ar\",\n    \"text\": \"لا يمكنك التخلص من هذا\"\n  },\n  {\n    \"start\": \"00:01:58,082\",\n    \"end\": \"00:01:59,922\",\n    \"lang\": \"ar\",\n    \"text\": \"فقط اقبله\"\n  },\n  {\n    \"start\": \"00:02:03,010\",\n    \"end\": \"00:02:03,350\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:03,350\",\n    \"end\": \"00:02:04,830\",\n    \"lang\": \"en\",\n    \"text\": \"see you!\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:08,120",
+            "end": "00:01:10,620",
+            "vi": "Vì vậy bạn không thể tránh khỏi sự phân biệt đối xử."
+        },
+        {
+            "start": "00:01:11,260",
+            "end": "00:01:14,760",
+            "vi": "Nó bắt nguồn từ tính cách của con người."
+        },
+        {
+            "start": "00:01:14,760",
+            "end": "00:01:16,040",
+            "vi": "Cố lên!"
+        },
+        {
+            "start": "00:01:19,138",
+            "end": "00:01:19,778",
+            "vi": "Đúng thật đấy"
+        },
+        {
+            "start": "00:01:21,346",
+            "end": "00:01:21,706",
+            "vi": "bình thường,"
+        },
+        {
+            "start": "00:01:21,706",
+            "end": "00:01:23,666",
+            "vi": "xin lỗi,"
+        },
+        {
+            "start": "00:01:23,666",
+            "end": "00:01:27,786",
+            "vi": "với tư cách là một cá nhân hợp pháp,"
+        },
+        {
+            "start": "00:01:27,786",
+            "end": "00:01:31,606",
+            "vi": "tình trạng pháp lý của bạn,"
+        },
+        {
+            "start": "00:01:32,770",
+            "end": "00:01:33,370",
+            "vi": "hãy vỗ tay cho video này."
+        },
+        {
+            "start": "00:01:35,234",
+            "end": "00:01:38,634",
+            "vi": "lợi ích của mỗi cá nhân không thể bị tổn hại."
+        },
+        {
+            "start": "00:01:39,994",
+            "end": "00:01:42,134",
+            "vi": "Vì vậy bất cứ điều gì,"
+        },
+        {
+            "start": "00:01:42,134",
+            "end": "00:01:44,134",
+            "vi": "bất kỳ thứ gì khác cũng được."
+        },
+        {
+            "start": "00:01:45,434",
+            "end": "00:01:47,974",
+            "vi": "Từ góc độ đạo đức,"
+        },
+        {
+            "start": "00:01:47,974",
+            "end": "00:01:50,054",
+            "vi": "chúng ta không nên"
+        },
+        {
+            "start": "00:01:50,054",
+            "end": "00:01:53,114",
+            "vi": "chúng ta không nên phân biệt đối xử với người khác."
+        },
+        {
+            "start": "00:01:56,162",
+            "end": "00:01:58,082",
+            "vi": "Bạn không thể thoát khỏi điều này"
+        },
+        {
+            "start": "00:01:58,082",
+            "end": "00:01:59,922",
+            "vi": "chỉ cần chấp nhận nó"
+        },
+        {
+            "start": "00:02:03,010",
+            "end": "00:02:03,350",
+            "vi": "Được rồi,"
+        },
+        {
+            "start": "00:02:03,350",
+            "end": "00:02:04,830",
+            "vi": "hẹn gặp lại!"
+        }
+    ]
+}

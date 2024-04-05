@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,180\",\n    \"lang\": \"en\",\n    \"text\": \"I have this symptom.\"\n  },\n  {\n    \"start\": \"00:00:04,700\",\n    \"end\": \"00:00:09,660\",\n    \"lang\": \"en\",\n    \"text\": \"It's a sore throat because of this COVID symptom.\"\n  },\n  {\n    \"start\": \"00:00:10,780\",\n    \"end\": \"00:00:21,000\",\n    \"lang\": \"en\",\n    \"text\": \"And this is a flavor with ginger,\"\n  },\n  {\n    \"start\": \"00:00:21,000\",\n    \"end\": \"00:00:21,660\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:00:21,720\",\n    \"end\": \"00:00:22,040\",\n    \"lang\": \"en\",\n    \"text\": \"Ginger.\"\n  },\n  {\n    \"start\": \"00:00:22,040\",\n    \"end\": \"00:00:22,220\",\n    \"lang\": \"en\",\n    \"text\": \"Ginger.\"\n  },\n  {\n    \"start\": \"00:00:22,220\",\n    \"end\": \"00:00:22,660\",\n    \"lang\": \"en\",\n    \"text\": \"Ginger.\"\n  },\n  {\n    \"start\": \"00:00:22,690\",\n    \"end\": \"00:00:23,890\",\n    \"lang\": \"zh\",\n    \"text\": \"生姜 是吗\"\n  },\n  {\n    \"start\": \"00:00:24,578\",\n    \"end\": \"00:00:25,058\",\n    \"lang\": \"en\",\n    \"text\": \"ginger,\"\n  },\n  {\n    \"start\": \"00:00:25,058\",\n    \"end\": \"00:00:27,278\",\n    \"lang\": \"en\",\n    \"text\": \"pepper and 大蒜\"\n  },\n  {\n    \"start\": \"00:00:27,878\",\n    \"end\": \"00:00:29,098\",\n    \"lang\": \"zh\",\n    \"text\": \"大蒜用英语咋说\"\n  },\n  {\n    \"start\": \"00:00:29,578\",\n    \"end\": \"00:00:30,238\",\n    \"lang\": \"zh\",\n    \"text\": \"忘记了\"\n  },\n  {\n    \"start\": \"00:00:30,238\",\n    \"end\": \"00:00:31,598\",\n    \"lang\": \"zh\",\n    \"text\": \"这个真的很好吃\"\n  },\n  {\n    \"start\": \"00:00:31,630\",\n    \"end\": \"00:00:33,410\",\n    \"lang\": \"en\",\n    \"text\": \"this is a delicious\"\n  },\n  {\n    \"start\": \"00:00:38,219\",\n    \"end\": \"00:00:41,310\",\n    \"lang\": \"en\",\n    \"text\": \"so this is pepper ginger\"\n  },\n  {\n    \"start\": \"00:00:43,420\",\n    \"end\": \"00:00:49,230\",\n    \"lang\": \"en\",\n    \"text\": \"and the last one is quite delicious it's spicy but it's\"\n  },\n  {\n    \"start\": \"00:00:49,230\",\n    \"end\": \"00:00:49,410\",\n    \"lang\": \"en\",\n    \"text\": \"delicious\"\n  },\n  {\n    \"start\": \"00:00:51,230\",\n    \"end\": \"00:00:56,610\",\n    \"lang\": \"en\",\n    \"text\": \"hope hope it can help me help clear my\"\n  },\n  {\n    \"start\": \"00:00:56,610\",\n    \"end\": \"00:01:04,849\",\n    \"lang\": \"en\",\n    \"text\": \"my covid symptoms to animate to animate my covid symptoms\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,180",
+            "vi": "Tôi có triệu chứng này."
+        },
+        {
+            "start": "00:00:04,700",
+            "end": "00:00:09,660",
+            "vi": "Đó là triệu chứng đau họng do COVID."
+        },
+        {
+            "start": "00:00:10,780",
+            "end": "00:00:21,000",
+            "vi": "Và đây là hương vị gừng,"
+        },
+        {
+            "start": "00:00:21,000",
+            "end": "00:00:21,660",
+            "vi": "phải không?"
+        },
+        {
+            "start": "00:00:21,720",
+            "end": "00:00:22,040",
+            "vi": "Gừng."
+        },
+        {
+            "start": "00:00:22,040",
+            "end": "00:00:22,220",
+            "vi": "Gừng."
+        },
+        {
+            "start": "00:00:22,220",
+            "end": "00:00:22,660",
+            "vi": "Gừng."
+        },
+        {
+            "start": "00:00:22,690",
+            "end": "00:00:23,890",
+            "vi": "Gừng, phải không?"
+        },
+        {
+            "start": "00:00:24,578",
+            "end": "00:00:25,058",
+            "vi": "gừng,"
+        },
+        {
+            "start": "00:00:25,058",
+            "end": "00:00:27,278",
+            "vi": "tiêu và tỏi"
+        },
+        {
+            "start": "00:00:27,878",
+            "end": "00:00:29,098",
+            "vi": "Tỏi tiếng Anh là gì nhỉ?"
+        },
+        {
+            "start": "00:00:29,578",
+            "end": "00:00:30,238",
+            "vi": "Quên mất rồi"
+        },
+        {
+            "start": "00:00:30,238",
+            "end": "00:00:31,598",
+            "vi": "Món này thực sự rất ngon"
+        },
+        {
+            "start": "00:00:31,630",
+            "end": "00:00:33,410",
+            "vi": "món này rất ngon"
+        },
+        {
+            "start": "00:00:38,219",
+            "end": "00:00:41,310",
+            "vi": "vậy đây là tiêu gừng"
+        },
+        {
+            "start": "00:00:43,420",
+            "end": "00:00:49,230",
+            "vi": "và món cuối cùng khá ngon, nó cay nhưng nó"
+        },
+        {
+            "start": "00:00:49,230",
+            "end": "00:00:49,410",
+            "vi": "ngon"
+        },
+        {
+            "start": "00:00:51,230",
+            "end": "00:00:56,610",
+            "vi": "hy vọng hy vọng nó có thể giúp tôi làm sạch"
+        },
+        {
+            "start": "00:00:56,610",
+            "end": "00:01:04,849",
+            "vi": "các triệu chứng covid của tôi để làm giảm các triệu chứng covid của tôi"
+        }
+    ]
+}

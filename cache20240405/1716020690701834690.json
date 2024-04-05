@@ -1,0 +1,93 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es) and French (fr) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other language. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,878\",\n    \"end\": \"00:01:01,158\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:04,958\",\n    \"end\": \"00:01:05,418\",\n    \"lang\": \"en\",\n    \"text\": \"Let me,\"\n  },\n  {\n    \"start\": \"00:01:06,187\",\n    \"end\": \"00:01:07,758\",\n    \"lang\": \"en\",\n    \"text\": \"I slightly changed the\"\n  },\n  {\n    \"start\": \"00:01:10,082\",\n    \"end\": \"00:01:11,242\",\n    \"lang\": \"ja\",\n    \"text\": \"プレゼンテーション\"\n  },\n  {\n    \"start\": \"00:01:12,450\",\n    \"end\": \"00:01:18,410\",\n    \"lang\": \"en\",\n    \"text\": \"Vietnamese and Korean and he uses the chiu ha,\"\n  },\n  {\n    \"start\": \"00:01:18,410\",\n    \"end\": \"00:01:23,690\",\n    \"lang\": \"en\",\n    \"text\": \"which is a Vietnamese thing of changing\"\n  },\n  {\n    \"start\": \"00:01:23,690\",\n    \"end\": \"00:01:24,110\",\n    \"lang\": \"en\",\n    \"text\": \"the character.\"\n  },\n  {\n    \"start\": \"00:01:25,154\",\n    \"end\": \"00:01:25,754\",\n    \"lang\": \"zh\",\n    \"text\": \"出汗\"\n  },\n  {\n    \"start\": \"00:01:25,754\",\n    \"end\": \"00:01:26,894\",\n    \"lang\": \"zh\",\n    \"text\": \"啊在汗夹\"\n  },\n  {\n    \"start\": \"00:01:26,894\",\n    \"end\": \"00:01:27,554\",\n    \"lang\": \"zh\",\n    \"text\": \"汗夹\"\n  },\n  {\n    \"start\": \"00:01:28,194\",\n    \"end\": \"00:01:35,694\",\n    \"lang\": \"en\",\n    \"text\": \"I'm using these characters to help me learn Vietnamese and Korean more easily.\"\n  },\n  {\n    \"start\": \"00:01:45,834\",\n    \"end\": \"00:01:46,434\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:47,794\",\n    \"end\": \"00:01:48,514\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  },\n  {\n    \"start\": \"00:01:52,994\",\n    \"end\": \"00:01:53,274\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:00,878",
+            "end": "00:01:01,158",
+            "es": "De acuerdo.",
+            "fr": "D'accord."
+        },
+        {
+            "start": "00:01:04,958",
+            "end": "00:01:05,418",
+            "es": "Déjame,",
+            "fr": "Laissez-moi,"
+        },
+        {
+            "start": "00:01:06,187",
+            "end": "00:01:07,758",
+            "es": "He cambiado ligeramente el",
+            "fr": "J'ai légèrement changé le"
+        },
+        {
+            "start": "00:01:10,082",
+            "end": "00:01:11,242",
+            "es": "Presentación",
+            "fr": "Présentation",
+            "ja": "プレゼンテーション"
+        },
+        {
+            "start": "00:01:12,450",
+            "end": "00:01:18,410",
+            "es": "Vietnamita y Coreano y él usa el chiu ha,",
+            "fr": "Vietnamien et Coréen et il utilise le chiu ha,"
+        },
+        {
+            "start": "00:01:18,410",
+            "end": "00:01:23,690",
+            "es": "que es una cosa Vietnamita de cambiar",
+            "fr": "qui est une chose Vietnamienne de changer"
+        },
+        {
+            "start": "00:01:23,690",
+            "end": "00:01:24,110",
+            "es": "el personaje.",
+            "fr": "le caractère."
+        },
+        {
+            "start": "00:01:25,154",
+            "end": "00:01:25,754",
+            "es": "Sudando",
+            "fr": "Transpiration",
+            "zh": "出汗"
+        },
+        {
+            "start": "00:01:25,754",
+            "end": "00:01:26,894",
+            "es": "Ah en el sudor",
+            "fr": "Ah dans la sueur",
+            "zh": "啊在汗夹"
+        },
+        {
+            "start": "00:01:26,894",
+            "end": "00:01:27,554",
+            "es": "En el sudor",
+            "fr": "Dans la sueur",
+            "zh": "汗夹"
+        },
+        {
+            "start": "00:01:28,194",
+            "end": "00:01:35,694",
+            "es": "Estoy usando estos personajes para ayudarme a aprender Vietnamita y Coreano más fácilmente.",
+            "fr": "J'utilise ces personnages pour m'aider à apprendre le Vietnamien et le Coréen plus facilement."
+        },
+        {
+            "start": "00:01:45,834",
+            "end": "00:01:46,434",
+            "es": "De acuerdo.",
+            "fr": "D'accord."
+        },
+        {
+            "start": "00:01:47,794",
+            "end": "00:01:48,514",
+            "es": "Nos vemos.",
+            "fr": "À bientôt."
+        },
+        {
+            "start": "00:01:52,994",
+            "end": "00:01:53,274",
+            "es": "Nos vemos.",
+            "fr": "À bientôt."
+        }
+    ]
+}

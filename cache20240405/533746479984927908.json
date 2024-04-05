@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,440\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,440\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"en\",\n    \"text\": \"so first,\"\n  },\n  {\n    \"start\": \"00:00:01,460\",\n    \"end\": \"00:00:03,860\",\n    \"lang\": \"en\",\n    \"text\": \"let me put this on.\"\n  },\n  {\n    \"start\": \"00:00:05,600\",\n    \"end\": \"00:00:06,380\",\n    \"lang\": \"en\",\n    \"text\": \"One more.\"\n  },\n  {\n    \"start\": \"00:00:08,194\",\n    \"end\": \"00:00:09,514\",\n    \"lang\": \"zh\",\n    \"text\": \"木瓜油\"\n  },\n  {\n    \"start\": \"00:00:09,514\",\n    \"end\": \"00:00:12,314\",\n    \"lang\": \"en\",\n    \"text\": \"还burger\"\n  },\n  {\n    \"start\": \"00:00:16,738\",\n    \"end\": \"00:00:16,938\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:18,917\",\n    \"end\": \"00:00:20,478\",\n    \"lang\": \"en\",\n    \"text\": \"this is our\"\n  },\n  {\n    \"start\": \"00:00:20,478\",\n    \"end\": \"00:00:21,438\",\n    \"lang\": \"en\",\n    \"text\": \"flavor\"\n  },\n  {\n    \"start\": \"00:00:38,568\",\n    \"end\": \"00:00:40,218\",\n    \"lang\": \"en\",\n    \"text\": \"and our chicken\"\n  },\n  {\n    \"start\": \"00:00:52,678\",\n    \"end\": \"00:00:56,038\",\n    \"lang\": \"en\",\n    \"text\": \"now we add tarragon\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,440",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:00:00,440",
+            "end": "00:00:01,460",
+            "en": "so first,",
+            "zh": "所以首先，",
+            "ar": "إذاً أولاً،"
+        },
+        {
+            "start": "00:00:01,460",
+            "end": "00:00:03,860",
+            "en": "let me put this on.",
+            "zh": "让我戴上这个。",
+            "ar": "دعني أضع هذا."
+        },
+        {
+            "start": "00:00:05,600",
+            "end": "00:00:06,380",
+            "en": "One more.",
+            "zh": "再来一个。",
+            "ar": "واحد آخر."
+        },
+        {
+            "start": "00:00:08,194",
+            "end": "00:00:09,514",
+            "en": "Papaya oil",
+            "zh": "木瓜油",
+            "ar": "زيت البابايا"
+        },
+        {
+            "start": "00:00:09,514",
+            "end": "00:00:12,314",
+            "en": "and burger",
+            "zh": "还有汉堡",
+            "ar": "و البرغر"
+        },
+        {
+            "start": "00:00:16,738",
+            "end": "00:00:16,938",
+            "en": "so",
+            "zh": "所以",
+            "ar": "إذا"
+        },
+        {
+            "start": "00:00:18,917",
+            "end": "00:00:20,478",
+            "en": "this is our",
+            "zh": "这是我们的",
+            "ar": "هذا هو"
+        },
+        {
+            "start": "00:00:20,478",
+            "end": "00:00:21,438",
+            "en": "flavor",
+            "zh": "风味",
+            "ar": "نكهة"
+        },
+        {
+            "start": "00:00:38,568",
+            "end": "00:00:40,218",
+            "en": "and our chicken",
+            "zh": "还有我们的鸡肉",
+            "ar": "و دجاجنا"
+        },
+        {
+            "start": "00:00:52,678",
+            "end": "00:00:56,038",
+            "en": "now we add tarragon",
+            "zh": "现在我们添加龙蒿",
+            "ar": "الآن نضيف التراجون"
+        }
+    ]
+}

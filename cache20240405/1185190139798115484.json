@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,300\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:02,480\",\n    \"end\": \"00:00:05,260\",\n    \"lang\": \"ja\",\n    \"text\": \"私の朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:07,490\",\n    \"end\": \"00:00:09,110\",\n    \"lang\": \"en\",\n    \"text\": \"Recently I found a thing,\"\n  },\n  {\n    \"start\": \"00:00:09,110\",\n    \"end\": \"00:00:11,490\",\n    \"lang\": \"en\",\n    \"text\": \"the SK-II,\"\n  },\n  {\n    \"start\": \"00:00:11,490\",\n    \"end\": \"00:00:17,670\",\n    \"lang\": \"en\",\n    \"text\": \"it kind of cause harm to my skin.\"\n  },\n  {\n    \"start\": \"00:00:18,670\",\n    \"end\": \"00:00:19,930\",\n    \"lang\": \"en\",\n    \"text\": \"Because when I use it,\"\n  },\n  {\n    \"start\": \"00:00:19,930\",\n    \"end\": \"00:00:23,290\",\n    \"lang\": \"en\",\n    \"text\": \"I play guitar,\"\n  },\n  {\n    \"start\": \"00:00:23,290\",\n    \"end\": \"00:00:26,310\",\n    \"lang\": \"en\",\n    \"text\": \"and the finger tip,\"\n  },\n  {\n    \"start\": \"00:00:26,710\",\n    \"end\": \"00:00:26,910\",\n    \"lang\": \"en\",\n    \"text\": \"it's like...\"\n  },\n  {\n    \"start\": \"00:00:26,946\",\n    \"end\": \"00:00:27,446\",\n    \"lang\": \"ja\",\n    \"text\": \"ごめんね\"\n  },\n  {\n    \"start\": \"00:00:28,098\",\n    \"end\": \"00:00:28,858\",\n    \"lang\": \"en\",\n    \"text\": \"It hurts.\"\n  },\n  {\n    \"start\": \"00:00:29,918\",\n    \"end\": \"00:00:36,858\",\n    \"lang\": \"en\",\n    \"text\": \"So I guess it's because the ingredients in SQ2,\"\n  },\n  {\n    \"start\": \"00:00:36,858\",\n    \"end\": \"00:00:40,598\",\n    \"lang\": \"en\",\n    \"text\": \"it has this erosion effect.\"\n  },\n  {\n    \"start\": \"00:00:41,838\",\n    \"end\": \"00:00:53,898\",\n    \"lang\": \"en\",\n    \"text\": \"So please,\"\n  },\n  {\n    \"start\": \"00:00:53,898\",\n    \"end\": \"00:00:54,858\",\n    \"lang\": \"en\",\n    \"text\": \"SQ2,\"\n  },\n  {\n    \"start\": \"00:00:54,858\",\n    \"end\": \"00:00:58,078\",\n    \"lang\": \"en\",\n    \"text\": \"don't prosecute me.\"\n  },\n  {\n    \"start\": \"00:00:58,078\",\n    \"end\": \"00:01:11,318\",\n    \"lang\": \"en\",\n    \"text\": \"I just want to share some thoughts and some hypothesis.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,300",
+            "vi": "Chào buổi sáng"
+        },
+        {
+            "start": "00:00:02,480",
+            "end": "00:00:05,260",
+            "vi": "Tôi đang ăn bữa sáng của mình"
+        },
+        {
+            "start": "00:00:07,490",
+            "end": "00:00:09,110",
+            "vi": "Gần đây tôi đã phát hiện một thứ,"
+        },
+        {
+            "start": "00:00:09,110",
+            "end": "00:00:11,490",
+            "vi": "đó là SK-II,"
+        },
+        {
+            "start": "00:00:11,490",
+            "end": "00:00:17,670",
+            "vi": "nó hình như gây hại cho làn da của tôi."
+        },
+        {
+            "start": "00:00:18,670",
+            "end": "00:00:19,930",
+            "vi": "Bởi vì khi tôi dùng nó,"
+        },
+        {
+            "start": "00:00:19,930",
+            "end": "00:00:23,290",
+            "vi": "tôi chơi đàn guitar,"
+        },
+        {
+            "start": "00:00:23,290",
+            "end": "00:00:26,310",
+            "vi": "và đầu ngón tay,"
+        },
+        {
+            "start": "00:00:26,710",
+            "end": "00:00:26,910",
+            "vi": "nó như là..."
+        },
+        {
+            "start": "00:00:26,946",
+            "end": "00:00:27,446",
+            "vi": "xin lỗi nhé"
+        },
+        {
+            "start": "00:00:28,098",
+            "end": "00:00:28,858",
+            "vi": "Nó đau."
+        },
+        {
+            "start": "00:00:29,918",
+            "end": "00:00:36,858",
+            "vi": "Vì vậy tôi đoán là bởi vì các thành phần trong SQ2,"
+        },
+        {
+            "start": "00:00:36,858",
+            "end": "00:00:40,598",
+            "vi": "nó có tác dụng ăn mòn."
+        },
+        {
+            "start": "00:00:41,838",
+            "end": "00:00:53,898",
+            "vi": "Vậy xin hãy,"
+        },
+        {
+            "start": "00:00:53,898",
+            "end": "00:00:54,858",
+            "vi": "SQ2,"
+        },
+        {
+            "start": "00:00:54,858",
+            "end": "00:00:58,078",
+            "vi": "đừng kiện tôi."
+        },
+        {
+            "start": "00:00:58,078",
+            "end": "00:01:11,318",
+            "vi": "Tôi chỉ muốn chia sẻ một số suy nghĩ và giả thuyết."
+        }
+    ]
+}

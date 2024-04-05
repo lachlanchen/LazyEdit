@@ -1,0 +1,50 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,540\",\n    \"ja\": \"<解体>[]\"\n  },\n  {\n    \"start\": \"00:00:03,682\",\n    \"end\": \"00:00:05,022\",\n    \"ja\": \"これが<一番>[]かわいいね。\"\n  },\n  {\n    \"start\": \"00:00:16,492\",\n    \"end\": \"00:00:18,442\",\n    \"ja\": \"どうやって...\"\n  },\n  {\n    \"start\": \"00:00:18,442\",\n    \"end\": \"00:00:18,902\",\n    \"ja\": \"<柴犬>[]、\"\n  },\n  {\n    \"start\": \"00:00:18,902\",\n    \"end\": \"00:00:19,162\",\n    \"ja\": \"だよね？\"\n  },\n  {\n    \"start\": \"00:00:19,921\",\n    \"end\": \"00:00:21,162\",\n    \"ja\": \"それ、<チャイシュン>[]？\"\n  },\n  {\n    \"start\": \"00:00:22,042\",\n    \"end\": \"00:00:22,782\",\n    \"ja\": \"<柴犬>[]。\"\n  },\n  {\n    \"start\": \"00:00:23,802\",\n    \"end\": \"00:00:24,582\",\n    \"ja\": \"<日本語>[]で。\"\n  },\n  {\n    \"start\": \"00:00:27,042\",\n    \"end\": \"00:00:27,782\",\n    \"ja\": \"そうだね。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,540",
+            "ja": "<解体>[かいたい]"
+        },
+        {
+            "start": "00:00:03,682",
+            "end": "00:00:05,022",
+            "ja": "これが<一番>[いちばん]かわいいね。"
+        },
+        {
+            "start": "00:00:16,492",
+            "end": "00:00:18,442",
+            "ja": "どうやって..."
+        },
+        {
+            "start": "00:00:18,442",
+            "end": "00:00:18,902",
+            "ja": "<柴犬>[しばいぬ]、"
+        },
+        {
+            "start": "00:00:18,902",
+            "end": "00:00:19,162",
+            "ja": "だよね？"
+        },
+        {
+            "start": "00:00:19,921",
+            "end": "00:00:21,162",
+            "ja": "それ、<チャイシュン>[ちゃいしゅん]？"
+        },
+        {
+            "start": "00:00:22,042",
+            "end": "00:00:22,782",
+            "ja": "<柴犬>[しばいぬ]。"
+        },
+        {
+            "start": "00:00:23,802",
+            "end": "00:00:24,582",
+            "ja": "<日本語>[にほんご]で。"
+        },
+        {
+            "start": "00:00:27,042",
+            "end": "00:00:27,782",
+            "ja": "そうだね。"
+        }
+    ]
+}

@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:10,406\",\n    \"end\": \"00:01:13,086\",\n    \"lang\": \"en\",\n    \"text\": \"I used to have a dream that I could build a building\"\n  },\n  {\n    \"start\": \"00:01:13,516\",\n    \"end\": \"00:01:15,086\",\n    \"lang\": \"en\",\n    \"text\": \"with 23 floors.\"\n  },\n  {\n    \"start\": \"00:01:15,706\",\n    \"end\": \"00:01:20,546\",\n    \"lang\": \"en\",\n    \"text\": \"So the top floor is letting me eat per weather food\"\n  },\n  {\n    \"start\": \"00:01:21,026\",\n    \"end\": \"00:01:24,926\",\n    \"lang\": \"en\",\n    \"text\": \"and without price and no need to pay.\"\n  },\n  {\n    \"start\": \"00:01:25,366\",\n    \"end\": \"00:01:30,606\",\n    \"lang\": \"en\",\n    \"text\": \"It's an invitation mechanism.\"\n  },\n  {\n    \"start\": \"00:01:31,166\",\n    \"end\": \"00:01:32,546\",\n    \"lang\": \"en\",\n    \"text\": \"So only you are invited,\"\n  },\n  {\n    \"start\": \"00:01:32,666\",\n    \"end\": \"00:01:35,806\",\n    \"lang\": \"en\",\n    \"text\": \"you can enjoy the food at the 23rd floor\"\n  },\n  {\n    \"start\": \"00:01:39,466\",\n    \"end\": \"00:01:40,266\",\n    \"lang\": \"en\",\n    \"text\": \"in this building.\"\n  },\n  {\n    \"start\": \"00:01:41,186\",\n    \"end\": \"00:01:47,426\",\n    \"lang\": \"en\",\n    \"text\": \"And I will recruit the best chef around the world\"\n  },\n  {\n    \"start\": \"00:01:47,716\",\n    \"end\": \"00:01:52,146\",\n    \"lang\": \"en\",\n    \"text\": \"and give them extremely high salary.\"\n  },\n  {\n    \"start\": \"00:01:56,156\",\n    \"end\": \"00:01:59,046\",\n    \"lang\": \"en\",\n    \"text\": \"And they didn't care about KPI,\"\n  },\n  {\n    \"start\": \"00:01:59,046\",\n    \"end\": \"00:02:00,205\",\n    \"lang\": \"en\",\n    \"text\": \"performance,\"\n  },\n  {\n    \"start\": \"00:02:00,446\",\n    \"end\": \"00:02:01,546\",\n    \"lang\": \"en\",\n    \"text\": \"all these things,\"\n  },\n  {\n    \"start\": \"00:02:01,546\",\n    \"end\": \"00:02:03,546\",\n    \"lang\": \"en\",\n    \"text\": \"they just focus on\"\n  },\n  {\n    \"start\": \"00:02:04,096\",\n    \"end\": \"00:02:06,186\",\n    \"lang\": \"en\",\n    \"text\": \"provide the best food ever.\"\n  },\n  {\n    \"start\": \"00:02:06,946\",\n    \"end\": \"00:02:07,546\",\n    \"lang\": \"en\",\n    \"text\": \"That's my dream.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:10,406",
+            "end": "00:01:13,086",
+            "ja": "以前、ビルを建てる夢を見たことがありました。"
+        },
+        {
+            "start": "00:01:13,516",
+            "end": "00:01:15,086",
+            "ja": "23階建てです。"
+        },
+        {
+            "start": "00:01:15,706",
+            "end": "00:01:20,546",
+            "ja": "その最上階は、天気に合わせて食事を楽しめる場所です"
+        },
+        {
+            "start": "00:01:21,026",
+            "end": "00:01:24,926",
+            "ja": "価格もなく、支払う必要もありません。"
+        },
+        {
+            "start": "00:01:25,366",
+            "end": "00:01:30,606",
+            "ja": "それは招待制の仕組みです。"
+        },
+        {
+            "start": "00:01:31,166",
+            "end": "00:01:32,546",
+            "ja": "ですから、招待されたあなただけが"
+        },
+        {
+            "start": "00:01:32,666",
+            "end": "00:01:35,806",
+            "ja": "23階で食事を楽しむことができるのです"
+        },
+        {
+            "start": "00:01:39,466",
+            "end": "00:01:40,266",
+            "ja": "このビルで。"
+        },
+        {
+            "start": "00:01:41,186",
+            "end": "00:01:47,426",
+            "ja": "そして、世界中から最高のシェフを募集し"
+        },
+        {
+            "start": "00:01:47,716",
+            "end": "00:01:52,146",
+            "ja": "非常に高い給料を支払います。"
+        },
+        {
+            "start": "00:01:56,156",
+            "end": "00:01:59,046",
+            "ja": "彼らはKPIや"
+        },
+        {
+            "start": "00:01:59,046",
+            "end": "00:02:00,205",
+            "ja": "パフォーマンスや"
+        },
+        {
+            "start": "00:02:00,446",
+            "end": "00:02:01,546",
+            "ja": "その他全てのことに"
+        },
+        {
+            "start": "00:02:01,546",
+            "end": "00:02:03,546",
+            "ja": "関心を持たずに"
+        },
+        {
+            "start": "00:02:04,096",
+            "end": "00:02:06,186",
+            "ja": "これまでで最高の食事を提供することにだけ集中します。"
+        },
+        {
+            "start": "00:02:06,946",
+            "end": "00:02:07,546",
+            "ja": "それが私の夢です。"
+        }
+    ]
+}

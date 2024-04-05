@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,780\",\n    \"end\": \"00:00:01,860\",\n    \"lang\": \"en\",\n    \"text\": \"Can we make a friend?\"\n  },\n  {\n    \"start\": \"00:00:03,320\",\n    \"end\": \"00:00:04,000\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness!\"\n  },\n  {\n    \"start\": \"00:00:07,200\",\n    \"end\": \"00:00:09,360\",\n    \"lang\": \"en\",\n    \"text\": \"It seems that you don't want to make a friend with me.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,780",
+            "end": "00:00:01,860",
+            "vi": "Chúng ta có thể kết bạn không?"
+        },
+        {
+            "start": "00:00:03,320",
+            "end": "00:00:04,000",
+            "vi": "Trời ơi!"
+        },
+        {
+            "start": "00:00:07,200",
+            "end": "00:00:09,360",
+            "vi": "Có vẻ như bạn không muốn kết bạn với mình."
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,720\",\n    \"lang\": \"zh\",\n    \"text\": \"露出了\"\n  },\n  {\n    \"start\": \"00:00:08,440\",\n    \"end\": \"00:00:09,940\",\n    \"lang\": \"zh\",\n    \"text\": \"太厉害了\"\n  },\n  {\n    \"start\": \"00:00:09,940\",\n    \"end\": \"00:00:10,520\",\n    \"lang\": \"en\",\n    \"text\": \"看 nice\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:16,000\",\n    \"lang\": \"zh\",\n    \"text\": \"好可爱\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,720",
+            "ko": "드러냈다"
+        },
+        {
+            "start": "00:00:08,440",
+            "end": "00:00:09,940",
+            "ko": "정말 대단해"
+        },
+        {
+            "start": "00:00:09,940",
+            "end": "00:00:10,520",
+            "ko": "정말 멋져"
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:16,000",
+            "ko": "너무 귀여워"
+        }
+    ]
+}

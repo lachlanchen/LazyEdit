@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,930\",\n    \"end\": \"00:01:13,730\",\n    \"lang\": \"en\",\n    \"text\": \"so French speakers may think that English pronunciation is vascular.\"\n  },\n  {\n    \"start\": \"00:01:13,730\",\n    \"end\": \"00:01:23,430\",\n    \"lang\": \"en\",\n    \"text\": \"And the British think the American accent is vascular.\"\n  },\n  {\n    \"start\": \"00:01:23,430\",\n    \"end\": \"00:01:28,050\",\n    \"lang\": \"en\",\n    \"text\": \"It's not a horse talks.\"\n  },\n  {\n    \"start\": \"00:01:30,274\",\n    \"end\": \"00:01:30,494\",\n    \"lang\": \"zh\",\n    \"text\": \"再見\"\n  },\n  {\n    \"start\": \"00:01:32,514\",\n    \"end\": \"00:01:40,154\",\n    \"lang\": \"en\",\n    \"text\": \"was a great great what a what a noble it's not a noble so the british thing\"\n  },\n  {\n    \"start\": \"00:01:40,154\",\n    \"end\": \"00:01:42,034\",\n    \"lang\": \"en\",\n    \"text\": \"and him the british accent is\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:02,930",
+            "end": "00:01:13,730",
+            "vi": "vì vậy người nói tiếng Pháp có thể nghĩ rằng cách phát âm tiếng Anh là phức tạp."
+        },
+        {
+            "start": "00:01:13,730",
+            "end": "00:01:23,430",
+            "vi": "Và người Anh nghĩ giọng Mỹ là phức tạp."
+        },
+        {
+            "start": "00:01:23,430",
+            "end": "00:01:28,050",
+            "vi": "Nó không phải là cách một con ngựa nói."
+        },
+        {
+            "start": "00:01:30,274",
+            "end": "00:01:30,494",
+            "vi": "Tạm biệt"
+        },
+        {
+            "start": "00:01:32,514",
+            "end": "00:01:40,154",
+            "vi": "là một điều tuyệt vời, điều gì thật quý phái, nó không phải là quý phái, vì vậy người Anh nghĩ"
+        },
+        {
+            "start": "00:01:40,154",
+            "end": "00:01:42,034",
+            "vi": "và họ, giọng Anh là"
+        }
+    ]
+}

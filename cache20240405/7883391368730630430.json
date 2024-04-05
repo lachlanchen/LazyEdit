@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,140\",\n    \"lang\": \"en\",\n    \"text\": \"have his eye contact.\"\n  },\n  {\n    \"start\": \"00:00:03,400\",\n    \"end\": \"00:00:03,620\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:04,680\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:05,340\",\n    \"end\": \"00:00:06,020\",\n    \"lang\": \"en\",\n    \"text\": \"This is...\"\n  },\n  {\n    \"start\": \"00:00:09,139\",\n    \"end\": \"00:00:11,340\",\n    \"lang\": \"en\",\n    \"text\": \"This is a panda pig dog.\"\n  },\n  {\n    \"start\": \"00:00:13,640\",\n    \"end\": \"00:00:13,920\",\n    \"lang\": \"en\",\n    \"text\": \"Wow.\"\n  },\n  {\n    \"start\": \"00:00:15,040\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:19,759\",\n    \"end\": \"00:00:20,840\",\n    \"lang\": \"en\",\n    \"text\": \"This is sunrise.\"\n  },\n  {\n    \"start\": \"00:00:23,560\",\n    \"end\": \"00:00:26,400\",\n    \"lang\": \"en\",\n    \"text\": \"This is a panda pig dog.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,140",
+            "en": "have eye contact.",
+            "zh": "进行眼神交流。",
+            "ar": "لديه اتصال بالعين."
+        },
+        {
+            "start": "00:00:03,400",
+            "end": "00:00:03,620",
+            "en": "Hello.",
+            "zh": "你好。",
+            "ar": "مرحبا."
+        },
+        {
+            "start": "00:00:04,680",
+            "end": "00:00:05,140",
+            "en": "Hello.",
+            "zh": "你好。",
+            "ar": "مرحبا."
+        },
+        {
+            "start": "00:00:05,340",
+            "end": "00:00:06,020",
+            "en": "This is...",
+            "zh": "这是...",
+            "ar": "هذا هو..."
+        },
+        {
+            "start": "00:00:09,139",
+            "end": "00:00:11,340",
+            "en": "This is a panda pig dog.",
+            "zh": "这是一只熊猫猪狗。",
+            "ar": "هذا هو كلب الباندا الخنزير."
+        },
+        {
+            "start": "00:00:13,640",
+            "end": "00:00:13,920",
+            "en": "Wow.",
+            "zh": "哇。",
+            "ar": "واو."
+        },
+        {
+            "start": "00:00:15,040",
+            "end": "00:00:15,380",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنا."
+        },
+        {
+            "start": "00:00:19,759",
+            "end": "00:00:20,840",
+            "en": "This is sunrise.",
+            "zh": "这是日出。",
+            "ar": "هذا هو الشروق."
+        },
+        {
+            "start": "00:00:23,560",
+            "end": "00:00:26,400",
+            "en": "This is a panda pig dog.",
+            "zh": "这是一只熊猫猪狗。",
+            "ar": "هذا هو كلب الباندا الخنزير."
+        }
+    ]
+}

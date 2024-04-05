@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:32,798\",\n    \"end\": \"00:01:34,858\",\n    \"lang\": \"en\",\n    \"text\": \"It smells so good.\"\n  },\n  {\n    \"start\": \"00:01:38,358\",\n    \"end\": \"00:01:41,258\",\n    \"lang\": \"en\",\n    \"text\": \"We need to put this as our cover,\"\n  },\n  {\n    \"start\": \"00:01:41,258\",\n    \"end\": \"00:01:42,398\",\n    \"lang\": \"en\",\n    \"text\": \"our keeper.\"\n  },\n  {\n    \"start\": \"00:02:10,657\",\n    \"end\": \"00:02:12,518\",\n    \"lang\": \"en\",\n    \"text\": \"I'm going to put some pepper.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:32,798",
+            "end": "00:01:34,858",
+            "en": "It smells so good.",
+            "zh": "闻起来真香。",
+            "ar": "إنه يشم رائحة جيدة جداً."
+        },
+        {
+            "start": "00:01:38,358",
+            "end": "00:01:41,258",
+            "en": "We need to put this as our cover,",
+            "zh": "我们需要把这个作为我们的封面，",
+            "ar": "نحن بحاجة إلى وضع هذا كغلاف لنا،"
+        },
+        {
+            "start": "00:01:41,258",
+            "end": "00:01:42,398",
+            "en": "our keeper.",
+            "zh": "我们的守护者。",
+            "ar": "حارسنا."
+        },
+        {
+            "start": "00:02:10,657",
+            "end": "00:02:12,518",
+            "en": "I'm going to put some pepper.",
+            "zh": "我要放一些胡椒。",
+            "ar": "سأضع بعض الفلفل."
+        }
+    ]
+}

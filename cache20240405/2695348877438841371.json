@@ -1,0 +1,124 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:03,380\",\n    \"end\": \"00:00:06,480\",\n    \"lang\": \"en\",\n    \"text\": \"I like this rainbow,\"\n  },\n  {\n    \"start\": \"00:00:06,480\",\n    \"end\": \"00:00:08,160\",\n    \"lang\": \"en\",\n    \"text\": \"it's so beautiful.\"\n  },\n  {\n    \"start\": \"00:00:10,720\",\n    \"end\": \"00:00:11,500\",\n    \"lang\": \"en\",\n    \"text\": \"Yesterday,\"\n  },\n  {\n    \"start\": \"00:00:11,500\",\n    \"end\": \"00:00:16,940\",\n    \"lang\": \"en\",\n    \"text\": \"I watched a talk show of Trevor Noah,\"\n  },\n  {\n    \"start\": \"00:00:16,940\",\n    \"end\": \"00:00:23,420\",\n    \"lang\": \"en\",\n    \"text\": \"and I have some thoughts about that.\"\n  },\n  {\n    \"start\": \"00:00:24,600\",\n    \"end\": \"00:00:29,580\",\n    \"lang\": \"en\",\n    \"text\": \"I found that these people,\"\n  },\n  {\n    \"start\": \"00:00:29,580\",\n    \"end\": \"00:00:31,780\",\n    \"lang\": \"en\",\n    \"text\": \"like Trevor Noah,\"\n  },\n  {\n    \"start\": \"00:00:31,780\",\n    \"end\": \"00:00:35,580\",\n    \"lang\": \"en\",\n    \"text\": \"they have a talent in language,\"\n  },\n  {\n    \"start\": \"00:00:35,580\",\n    \"end\": \"00:00:37,800\",\n    \"lang\": \"en\",\n    \"text\": \"and they can never surpass.\"\n  },\n  {\n    \"start\": \"00:00:38,480\",\n    \"end\": \"00:00:40,640\",\n    \"lang\": \"en\",\n    \"text\": \"It seems that every night,\"\n  },\n  {\n    \"start\": \"00:00:40,640\",\n    \"end\": \"00:00:43,140\",\n    \"lang\": \"en\",\n    \"text\": \"every word they say is funny,\"\n  },\n  {\n    \"start\": \"00:00:43,140\",\n    \"end\": \"00:00:43,960\",\n    \"lang\": \"en\",\n    \"text\": \"it's interesting.\"\n  },\n  {\n    \"start\": \"00:00:45,560\",\n    \"end\": \"00:00:46,920\",\n    \"lang\": \"en\",\n    \"text\": \"They make puns every time,\"\n  },\n  {\n    \"start\": \"00:00:46,920\",\n    \"end\": \"00:00:47,500\",\n    \"lang\": \"en\",\n    \"text\": \"everywhere,\"\n  },\n  {\n    \"start\": \"00:00:47,500\",\n    \"end\": \"00:00:49,700\",\n    \"lang\": \"en\",\n    \"text\": \"every occasion.\"\n  },\n  {\n    \"start\": \"00:00:53,599\",\n    \"end\": \"00:00:58,700\",\n    \"lang\": \"en\",\n    \"text\": \"I was on a journey on a peanut street,\"\n  },\n  {\n    \"start\": \"00:00:58,700\",\n    \"end\": \"00:01:06,040\",\n    \"lang\": \"en\",\n    \"text\": \"because every inch of a hurt skin is made of diamond.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:03,380",
+            "end": "00:00:06,480",
+            "en": "I like this rainbow,",
+            "zh": "我喜欢这道彩虹，",
+            "ar": "أحب هذا قوس قزح،"
+        },
+        {
+            "start": "00:00:06,480",
+            "end": "00:00:08,160",
+            "en": "it's so beautiful.",
+            "zh": "它太美了。",
+            "ar": "إنه جميل جدا."
+        },
+        {
+            "start": "00:00:10,720",
+            "end": "00:00:11,500",
+            "en": "Yesterday,",
+            "zh": "昨天，",
+            "ar": "أمس،"
+        },
+        {
+            "start": "00:00:11,500",
+            "end": "00:00:16,940",
+            "en": "I watched a talk show of Trevor Noah,",
+            "zh": "我看了特雷弗·诺亚的脱口秀，",
+            "ar": "شاهدت برنامج حواري لتريفور نوح،"
+        },
+        {
+            "start": "00:00:16,940",
+            "end": "00:00:23,420",
+            "en": "and I have some thoughts about that.",
+            "zh": "我对此有一些想法。",
+            "ar": "ولدي بعض الأفكار حول ذلك."
+        },
+        {
+            "start": "00:00:24,600",
+            "end": "00:00:29,580",
+            "en": "I found that these people,",
+            "zh": "我发现这些人，",
+            "ar": "وجدت أن هؤلاء الناس،"
+        },
+        {
+            "start": "00:00:29,580",
+            "end": "00:00:31,780",
+            "en": "like Trevor Noah,",
+            "zh": "像特雷弗·诺亚，",
+            "ar": "مثل تريفور نوح،"
+        },
+        {
+            "start": "00:00:31,780",
+            "end": "00:00:35,580",
+            "en": "they have a talent in language,",
+            "zh": "他们在语言方面有天赋，",
+            "ar": "لديهم موهبة في اللغة،"
+        },
+        {
+            "start": "00:00:35,580",
+            "end": "00:00:37,800",
+            "en": "and they can never be surpassed.",
+            "zh": "他们无人能及。",
+            "ar": "وهم لا يمكن تجاوزهم."
+        },
+        {
+            "start": "00:00:38,480",
+            "end": "00:00:40,640",
+            "en": "It seems that every night,",
+            "zh": "看起来每个晚上，",
+            "ar": "يبدو أن كل ليلة،"
+        },
+        {
+            "start": "00:00:40,640",
+            "end": "00:00:43,140",
+            "en": "every word they say is funny,",
+            "zh": "他们说的每个词都很有趣，",
+            "ar": "كل كلمة يقولونها مضحكة،"
+        },
+        {
+            "start": "00:00:43,140",
+            "end": "00:00:43,960",
+            "en": "it's interesting.",
+            "zh": "这很有趣。",
+            "ar": "إنه مثير للاهتمام."
+        },
+        {
+            "start": "00:00:45,560",
+            "end": "00:00:46,920",
+            "en": "They make puns every time,",
+            "zh": "他们每次都会说双关语，",
+            "ar": "يصنعون الألعاب اللفظية في كل مرة،"
+        },
+        {
+            "start": "00:00:46,920",
+            "end": "00:00:47,500",
+            "en": "everywhere,",
+            "zh": "无处不在，",
+            "ar": "في كل مكان،"
+        },
+        {
+            "start": "00:00:47,500",
+            "end": "00:00:49,700",
+            "en": "every occasion.",
+            "zh": "每个场合。",
+            "ar": "كل مناسبة."
+        },
+        {
+            "start": "00:00:53,599",
+            "end": "00:00:58,700",
+            "en": "I was on a journey on Peanuts Street,",
+            "zh": "我在花生街上旅行，",
+            "ar": "كنت في رحلة في شارع الفول السوداني،"
+        },
+        {
+            "start": "00:00:58,700",
+            "end": "00:01:06,040",
+            "en": "because every inch of hurt skin is made of diamond.",
+            "zh": "因为每一寸受伤的皮肤都是由钻石构成的。",
+            "ar": "لأن كل بوصة من الجلد المتألم مصنوع من الماس."
+        }
+    ]
+}

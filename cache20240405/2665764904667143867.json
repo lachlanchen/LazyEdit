@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:10,698\",\n    \"end\": \"00:02:16,798\",\n    \"lang\": \"en\",\n    \"text\": \"You can't produce happiness if you keep suffering.\"\n  },\n  {\n    \"start\": \"00:02:16,798\",\n    \"end\": \"00:02:16,918\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:02:16,918\",\n    \"end\": \"00:02:18,998\",\n    \"lang\": \"en\",\n    \"text\": \"Right.\"\n  },\n  {\n    \"start\": \"00:02:26,257\",\n    \"end\": \"00:02:26,938\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:02:26,938\",\n    \"end\": \"00:02:28,638\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:10,698",
+            "end": "00:02:16,798",
+            "es": "No puedes producir felicidad si sigues sufriendo.",
+            "fr": "On ne peut pas produire du bonheur si on continue à souffrir.",
+            "uk": "Ти не можеш створювати щастя, якщо продовжуєш страждати."
+        },
+        {
+            "start": "00:02:16,798",
+            "end": "00:02:16,918",
+            "es": "¿Verdad?",
+            "fr": "N'est-ce pas ?",
+            "uk": "Правильно?"
+        },
+        {
+            "start": "00:02:16,918",
+            "end": "00:02:18,998",
+            "es": "Correcto.",
+            "fr": "Exact.",
+            "uk": "Правильно."
+        },
+        {
+            "start": "00:02:26,257",
+            "end": "00:02:26,938",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:02:26,938",
+            "end": "00:02:28,638",
+            "es": "Nos vemos.",
+            "fr": "À bientôt.",
+            "uk": "До зустрічі."
+        }
+    ]
+}

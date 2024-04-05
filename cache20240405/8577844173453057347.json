@@ -1,0 +1,40 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,540\",\n    \"ja\": \"もう<止>[]められない\"\n  },\n  {\n    \"start\": \"00:00:03,938\",\n    \"end\": \"00:00:05,638\",\n    \"ja\": \"<薬>[]を<買>[]わなければならない。\"\n  },\n  {\n    \"start\": \"00:00:06,338\",\n    \"end\": \"00:00:08,058\",\n    \"ja\": \"<私>[]は<靴>[]にかいています\"\n  },\n  {\n    \"start\": \"00:00:08,866\",\n    \"end\": \"00:00:09,146\",\n    \"ja\": \"<準備>[]はいい？\"\n  },\n  {\n    \"start\": \"00:00:09,146\",\n    \"end\": \"00:00:09,766\",\n    \"ja\": \"<クズニ>[]、\"\n  },\n  {\n    \"start\": \"00:00:09,766\",\n    \"end\": \"00:00:10,446\",\n    \"ja\": \"<クズニ>[]、\"\n  },\n  {\n    \"start\": \"00:00:10,446\",\n    \"end\": \"00:00:11,166\",\n    \"ja\": \"まあ、なんてことだ。\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,540",
+            "ja": "もう<止>[と]められない"
+        },
+        {
+            "start": "00:00:03,938",
+            "end": "00:00:05,638",
+            "ja": "<薬>[くすり]を<買>[か]わなければならない。"
+        },
+        {
+            "start": "00:00:06,338",
+            "end": "00:00:08,058",
+            "ja": "<私>[わたし]は<靴>[くつ]にかいています"
+        },
+        {
+            "start": "00:00:08,866",
+            "end": "00:00:09,146",
+            "ja": "<準備>[じゅんび]はいい？"
+        },
+        {
+            "start": "00:00:09,146",
+            "end": "00:00:09,766",
+            "ja": "<クズニ>[X]、"
+        },
+        {
+            "start": "00:00:09,766",
+            "end": "00:00:10,446",
+            "ja": "<クズニ>[X]、"
+        },
+        {
+            "start": "00:00:10,446",
+            "end": "00:00:11,166",
+            "ja": "まあ、なんてことだ。"
+        }
+    ]
+}

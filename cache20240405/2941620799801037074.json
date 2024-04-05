@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,642\",\n    \"end\": \"00:01:01,442\",\n    \"lang\": \"ar\",\n    \"text\": \"أنها كذلك\"\n  },\n  {\n    \"start\": \"00:01:02,306\",\n    \"end\": \"00:01:03,046\",\n    \"lang\": \"en\",\n    \"text\": \"this soon.\"\n  },\n  {\n    \"start\": \"00:01:03,046\",\n    \"end\": \"00:01:06,966\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know why I'm quite close to that.\"\n  },\n  {\n    \"start\": \"00:01:08,578\",\n    \"end\": \"00:01:09,738\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花...\"\n  },\n  {\n    \"start\": \"00:01:09,738\",\n    \"end\": \"00:01:12,518\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:13,458\",\n    \"end\": \"00:01:16,038\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书包\"\n  },\n  {\n    \"start\": \"00:01:16,778\",\n    \"end\": \"00:01:19,238\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:19,238\",\n    \"end\": \"00:01:22,138\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书包\"\n  },\n  {\n    \"start\": \"00:01:22,138\",\n    \"end\": \"00:01:25,058\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:25,058\",\n    \"end\": \"00:01:26,438\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书包\"\n  },\n  {\n    \"start\": \"00:01:26,466\",\n    \"end\": \"00:01:30,566\",\n    \"lang\": \"en\",\n    \"text\": \"And guitar,\"\n  },\n  {\n    \"start\": \"00:01:30,566\",\n    \"end\": \"00:01:33,106\",\n    \"lang\": \"en\",\n    \"text\": \"I do science.\"\n  },\n  {\n    \"start\": \"00:01:35,778\",\n    \"end\": \"00:01:36,158\",\n    \"lang\": \"zh\",\n    \"text\": \"老天\"\n  },\n  {\n    \"start\": \"00:01:38,530\",\n    \"end\": \"00:01:44,250\",\n    \"lang\": \"en\",\n    \"text\": \"It might not be as people as music people,\"\n  },\n  {\n    \"start\": \"00:01:44,250\",\n    \"end\": \"00:01:46,730\",\n    \"lang\": \"en\",\n    \"text\": \"dance people,\"\n  },\n  {\n    \"start\": \"00:01:46,730\",\n    \"end\": \"00:01:48,750\",\n    \"lang\": \"en\",\n    \"text\": \"as they learn music,\"\n  },\n  {\n    \"start\": \"00:01:48,750\",\n    \"end\": \"00:01:49,470\",\n    \"lang\": \"en\",\n    \"text\": \"art,\"\n  },\n  {\n    \"start\": \"00:01:49,470\",\n    \"end\": \"00:01:51,210\",\n    \"lang\": \"en\",\n    \"text\": \"but\"\n  },\n  {\n    \"start\": \"00:01:52,530\",\n    \"end\": \"00:01:55,970\",\n    \"lang\": \"en\",\n    \"text\": \"more I learned more in a science way.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,642",
+            "end": "00:01:01,442",
+            "vi": "Nó đúng là như vậy"
+        },
+        {
+            "start": "00:01:02,306",
+            "end": "00:01:03,046",
+            "vi": "sớm như thế này."
+        },
+        {
+            "start": "00:01:03,046",
+            "end": "00:01:06,966",
+            "vi": "Tôi không biết tại sao tôi lại gần gũi với điều đó."
+        },
+        {
+            "start": "00:01:08,578",
+            "end": "00:01:09,738",
+            "vi": "Không có hoa..."
+        },
+        {
+            "start": "00:01:09,738",
+            "end": "00:01:12,518",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:01:13,458",
+            "end": "00:01:16,038",
+            "vi": "Không có cặp sách"
+        },
+        {
+            "start": "00:01:16,778",
+            "end": "00:01:19,238",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:01:19,238",
+            "end": "00:01:22,138",
+            "vi": "Không có cặp sách"
+        },
+        {
+            "start": "00:01:22,138",
+            "end": "00:01:25,058",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:01:25,058",
+            "end": "00:01:26,438",
+            "vi": "Không có cặp sách"
+        },
+        {
+            "start": "00:01:26,466",
+            "end": "00:01:30,566",
+            "vi": "Và guitar,"
+        },
+        {
+            "start": "00:01:30,566",
+            "end": "00:01:33,106",
+            "vi": "Tôi học khoa học."
+        },
+        {
+            "start": "00:01:35,778",
+            "end": "00:01:36,158",
+            "vi": "Trời ơi"
+        },
+        {
+            "start": "00:01:38,530",
+            "end": "00:01:44,250",
+            "vi": "Có lẽ nó không giống như người làm nhạc,"
+        },
+        {
+            "start": "00:01:44,250",
+            "end": "00:01:46,730",
+            "vi": "người múa,"
+        },
+        {
+            "start": "00:01:46,730",
+            "end": "00:01:48,750",
+            "vi": "khi họ học nhạc,"
+        },
+        {
+            "start": "00:01:48,750",
+            "end": "00:01:49,470",
+            "vi": "nghệ thuật,"
+        },
+        {
+            "start": "00:01:49,470",
+            "end": "00:01:51,210",
+            "vi": "nhưng"
+        },
+        {
+            "start": "00:01:52,530",
+            "end": "00:01:55,970",
+            "vi": "tôi học được nhiều hơn theo cách khoa học."
+        }
+    ]
+}

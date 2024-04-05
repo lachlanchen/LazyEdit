@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:09,620\",\n    \"lang\": \"en\",\n    \"text\": \"I just thought of a sentence that if we don't want this unexpected innovation,\"\n  },\n  {\n    \"start\": \"00:00:09,620\",\n    \"end\": \"00:00:11,300\",\n    \"lang\": \"en\",\n    \"text\": \"we will never\"\n  },\n  {\n    \"start\": \"00:00:11,300\",\n    \"end\": \"00:00:12,100\",\n    \"lang\": \"en\",\n    \"text\": \"make it.\"\n  },\n  {\n    \"start\": \"00:00:12,130\",\n    \"end\": \"00:00:12,770\",\n    \"lang\": \"ja\",\n    \"text\": \"レイズー\"\n  },\n  {\n    \"start\": \"00:00:15,090\",\n    \"end\": \"00:00:15,830\",\n    \"lang\": \"ja\",\n    \"text\": \"レイズーイ\"\n  },\n  {\n    \"start\": \"00:00:16,706\",\n    \"end\": \"00:00:21,346\",\n    \"lang\": \"en\",\n    \"text\": \"wanted innovation will never be expected.\"\n  },\n  {\n    \"start\": \"00:00:23,606\",\n    \"end\": \"00:00:27,326\",\n    \"lang\": \"en\",\n    \"text\": \"So just setting some basic principles\"\n  },\n  {\n    \"start\": \"00:00:27,726\",\n    \"end\": \"00:00:29,906\",\n    \"lang\": \"en\",\n    \"text\": \"and let it go,\"\n  },\n  {\n    \"start\": \"00:00:29,906\",\n    \"end\": \"00:00:32,106\",\n    \"lang\": \"en\",\n    \"text\": \"set it free,\"\n  },\n  {\n    \"start\": \"00:00:32,106\",\n    \"end\": \"00:00:34,346\",\n    \"lang\": \"en\",\n    \"text\": \"remove the restriction,\"\n  },\n  {\n    \"start\": \"00:00:34,586\",\n    \"end\": \"00:00:37,366\",\n    \"lang\": \"en\",\n    \"text\": \"just setting some basic guidelines,\"\n  },\n  {\n    \"start\": \"00:00:37,366\",\n    \"end\": \"00:00:39,246\",\n    \"lang\": \"en\",\n    \"text\": \"basic principles.\"\n  },\n  {\n    \"start\": \"00:00:40,586\",\n    \"end\": \"00:00:43,466\",\n    \"lang\": \"en\",\n    \"text\": \"Everything let it automatically happen,\"\n  },\n  {\n    \"start\": \"00:00:43,466\",\n    \"end\": \"00:00:45,666\",\n    \"lang\": \"en\",\n    \"text\": \"spontaneously occur,\"\n  },\n  {\n    \"start\": \"00:00:45,666\",\n    \"end\": \"00:00:48,886\",\n    \"lang\": \"en\",\n    \"text\": \"and that's what I think.\"\n  },\n  {\n    \"start\": \"00:00:50,206\",\n    \"end\": \"00:00:50,486\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:50,486\",\n    \"end\": \"00:00:52,426\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:09,620",
+            "ko": "만약 우리가 이런 예기치 않은 혁신을 원치 않는다면, 그 문장이 떠올랐어요,"
+        },
+        {
+            "start": "00:00:09,620",
+            "end": "00:00:11,300",
+            "ko": "우리는 결코"
+        },
+        {
+            "start": "00:00:11,300",
+            "end": "00:00:12,100",
+            "ko": "성공하지 못할 거예요."
+        },
+        {
+            "start": "00:00:12,130",
+            "end": "00:00:12,770",
+            "ko": "레이즈"
+        },
+        {
+            "start": "00:00:15,090",
+            "end": "00:00:15,830",
+            "ko": "레이즈이"
+        },
+        {
+            "start": "00:00:16,706",
+            "end": "00:00:21,346",
+            "ko": "원하는 혁신은 결코 예상되지 않을 거예요."
+        },
+        {
+            "start": "00:00:23,606",
+            "end": "00:00:27,326",
+            "ko": "그러니 몇 가지 기본 원칙을 설정하고"
+        },
+        {
+            "start": "00:00:27,726",
+            "end": "00:00:29,906",
+            "ko": "그대로 두세요,"
+        },
+        {
+            "start": "00:00:29,906",
+            "end": "00:00:32,106",
+            "ko": "자유롭게 해주세요,"
+        },
+        {
+            "start": "00:00:32,106",
+            "end": "00:00:34,346",
+            "ko": "제약을 제거하고,"
+        },
+        {
+            "start": "00:00:34,586",
+            "end": "00:00:37,366",
+            "ko": "단지 몇 가지 기본 지침을 설정하고,"
+        },
+        {
+            "start": "00:00:37,366",
+            "end": "00:00:39,246",
+            "ko": "기본 원칙들."
+        },
+        {
+            "start": "00:00:40,586",
+            "end": "00:00:43,466",
+            "ko": "모든 것을 자동적으로 일어나게 하고,"
+        },
+        {
+            "start": "00:00:43,466",
+            "end": "00:00:45,666",
+            "ko": "자발적으로 발생하게 하고,"
+        },
+        {
+            "start": "00:00:45,666",
+            "end": "00:00:48,886",
+            "ko": "그게 제 생각이에요."
+        },
+        {
+            "start": "00:00:50,206",
+            "end": "00:00:50,486",
+            "ko": "오케이,"
+        },
+        {
+            "start": "00:00:50,486",
+            "end": "00:00:52,426",
+            "ko": "또 봐요."
+        }
+    ]
+}

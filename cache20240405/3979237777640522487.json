@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:07,540\",\n    \"lang\": \"en\",\n    \"text\": \"so it has been a long time that I didn't use this code test\"\n  },\n  {\n    \"start\": \"00:00:08,320\",\n    \"end\": \"00:00:14,080\",\n    \"lang\": \"en\",\n    \"text\": \"it seems that they add flu A,\"\n  },\n  {\n    \"start\": \"00:00:14,080\",\n    \"end\": \"00:00:14,640\",\n    \"lang\": \"en\",\n    \"text\": \"flu B,\"\n  },\n  {\n    \"start\": \"00:00:14,640\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"RSA,\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:15,700\",\n    \"lang\": \"en\",\n    \"text\": \"ADA,\"\n  },\n  {\n    \"start\": \"00:00:15,700\",\n    \"end\": \"00:00:16,379\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know\"\n  },\n  {\n    \"start\": \"00:00:16,379\",\n    \"end\": \"00:00:19,460\",\n    \"lang\": \"en\",\n    \"text\": \"it's a mini oh my goodness\"\n  },\n  {\n    \"start\": \"00:00:22,620\",\n    \"end\": \"00:00:24,400\",\n    \"lang\": \"en\",\n    \"text\": \"this almost kills me\"\n  },\n  {\n    \"start\": \"00:00:31,800\",\n    \"end\": \"00:00:41,240\",\n    \"lang\": \"en\",\n    \"text\": \"I thought my immune system is strong because I work out every day and take a\"\n  },\n  {\n    \"start\": \"00:00:41,240\",\n    \"end\": \"00:00:43,960\",\n    \"lang\": \"en\",\n    \"text\": \"cold bath but I don't know\"\n  },\n  {\n    \"start\": \"00:00:46,880\",\n    \"end\": \"00:00:48,500\",\n    \"lang\": \"en\",\n    \"text\": \"I'm still vulnerable.\"\n  },\n  {\n    \"start\": \"00:00:48,500\",\n    \"end\": \"00:00:51,800\",\n    \"lang\": \"en\",\n    \"text\": \"This might be normal\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:07,540",
+            "ja": "このコードテストを使っていない期間が長かった"
+        },
+        {
+            "start": "00:00:08,320",
+            "end": "00:00:14,080",
+            "ja": "フルエーを追加したようだ、"
+        },
+        {
+            "start": "00:00:14,080",
+            "end": "00:00:14,640",
+            "ja": "フルビー、"
+        },
+        {
+            "start": "00:00:14,640",
+            "end": "00:00:15,380",
+            "ja": "RSA、"
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:15,700",
+            "ja": "ADA、"
+        },
+        {
+            "start": "00:00:15,700",
+            "end": "00:00:16,379",
+            "ja": "分からない"
+        },
+        {
+            "start": "00:00:16,379",
+            "end": "00:00:19,460",
+            "ja": "これはミニ、なんてことだ"
+        },
+        {
+            "start": "00:00:22,620",
+            "end": "00:00:24,400",
+            "ja": "これはほとんど私を殺しかねなかった"
+        },
+        {
+            "start": "00:00:31,800",
+            "end": "00:00:41,240",
+            "ja": "毎日運動して冷たいお風呂に入るから免疫システムが強いと思っていたけど、分からない"
+        },
+        {
+            "start": "00:00:41,240",
+            "end": "00:00:43,960",
+            "ja": "冷たいお風呂に入っているが、分からない"
+        },
+        {
+            "start": "00:00:46,880",
+            "end": "00:00:48,500",
+            "ja": "まだ弱いんだ。"
+        },
+        {
+            "start": "00:00:48,500",
+            "end": "00:00:51,800",
+            "ja": "これは普通のことかもしれない"
+        }
+    ]
+}

@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,890\",\n    \"end\": \"00:01:03,170\",\n    \"lang\": \"en\",\n    \"text\": \"Let's play the little stones.\"\n  },\n  {\n    \"start\": \"00:01:06,114\",\n    \"end\": \"00:01:06,794\",\n    \"lang\": \"zh\",\n    \"text\": \"一山一山 兩千斤\"\n  },\n  {\n    \"start\": \"00:01:07,374\",\n    \"end\": \"00:01:10,494\",\n    \"lang\": \"zh\",\n    \"text\": \"滿天都是小星星\"\n  },\n  {\n    \"start\": \"00:01:10,924\",\n    \"end\": \"00:01:12,714\",\n    \"lang\": \"zh\",\n    \"text\": \"花在天上\"\n  },\n  {\n    \"start\": \"00:01:12,874\",\n    \"end\": \"00:01:14,334\",\n    \"lang\": \"zh\",\n    \"text\": \"黃昏裡\"\n  },\n  {\n    \"start\": \"00:01:14,734\",\n    \"end\": \"00:01:17,974\",\n    \"lang\": \"zh\",\n    \"text\": \"芳香千萬小點心\"\n  },\n  {\n    \"start\": \"00:01:17,974\",\n    \"end\": \"00:01:20,534\",\n    \"lang\": \"zh\",\n    \"text\": \"一山一山\"\n  },\n  {\n    \"start\": \"00:01:20,794\",\n    \"end\": \"00:01:22,054\",\n    \"lang\": \"zh\",\n    \"text\": \"兩千斤\"\n  },\n  {\n    \"start\": \"00:01:22,694\",\n    \"end\": \"00:01:25,734\",\n    \"lang\": \"zh\",\n    \"text\": \"滿天都是小星星\"\n  },\n  {\n    \"start\": \"00:01:27,382\",\n    \"end\": \"00:01:27,882\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  },\n  {\n    \"start\": \"00:01:35,321\",\n    \"end\": \"00:01:36,022\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:01,890",
+            "end": "00:01:03,170",
+            "en": "Let's play with the pebbles.",
+            "zh": "让我们玩小石子。",
+            "ar": "لنلعب بالحصى."
+        },
+        {
+            "start": "00:01:06,114",
+            "end": "00:01:06,794",
+            "en": "One mountain after another, two thousand jin.",
+            "zh": "一山又一山，两千斤。",
+            "ar": "جبل تلو الآخر، ألفي جين."
+        },
+        {
+            "start": "00:01:07,374",
+            "end": "00:01:10,494",
+            "en": "The sky is full of little stars.",
+            "zh": "滿天都是小星星。",
+            "ar": "السماء مليئة بالنجوم الصغيرة."
+        },
+        {
+            "start": "00:01:10,924",
+            "end": "00:01:12,714",
+            "en": "The flowers are in the sky.",
+            "zh": "花在天上。",
+            "ar": "الزهور في السماء."
+        },
+        {
+            "start": "00:01:12,874",
+            "end": "00:01:14,334",
+            "en": "In the twilight,",
+            "zh": "黄昏里，",
+            "ar": "في الغسق،"
+        },
+        {
+            "start": "00:01:14,734",
+            "end": "00:01:17,974",
+            "en": "A thousand fragrant little delicacies.",
+            "zh": "芳香千万小点心。",
+            "ar": "آلاف الحلويات الصغيرة العطرة."
+        },
+        {
+            "start": "00:01:17,974",
+            "end": "00:01:20,534",
+            "en": "One mountain after another,",
+            "zh": "一山又一山，",
+            "ar": "جبل تلو الآخر،"
+        },
+        {
+            "start": "00:01:20,794",
+            "end": "00:01:22,054",
+            "en": "two thousand jin.",
+            "zh": "两千斤。",
+            "ar": "ألفي جين."
+        },
+        {
+            "start": "00:01:22,694",
+            "end": "00:01:25,734",
+            "en": "The sky is full of little stars.",
+            "zh": "滿天都是小星星。",
+            "ar": "السماء مليئة بالنجوم الصغيرة."
+        },
+        {
+            "start": "00:01:27,382",
+            "end": "00:01:27,882",
+            "en": "Okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:01:35,321",
+            "end": "00:01:36,022",
+            "en": "See you",
+            "zh": "再见",
+            "ar": "أراك لاحقًا"
+        }
+    ]
+}

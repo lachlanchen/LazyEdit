@@ -1,0 +1,176 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,440\",\n    \"end\": \"00:01:01,720\",\n    \"lang\": \"en\",\n    \"text\": \"Actually,\"\n  },\n  {\n    \"start\": \"00:01:01,720\",\n    \"end\": \"00:01:02,280\",\n    \"lang\": \"en\",\n    \"text\": \"I believe.\"\n  },\n  {\n    \"start\": \"00:01:02,280\",\n    \"end\": \"00:01:06,240\",\n    \"lang\": \"en\",\n    \"text\": \"I can't give the same as they expected to them.\"\n  },\n  {\n    \"start\": \"00:01:06,240\",\n    \"end\": \"00:01:08,860\",\n    \"lang\": \"en\",\n    \"text\": \"Because...\"\n  },\n  {\n    \"start\": \"00:01:10,434\",\n    \"end\": \"00:01:10,694\",\n    \"lang\": \"ja\",\n    \"text\": \"はい、\"\n  },\n  {\n    \"start\": \"00:01:10,694\",\n    \"end\": \"00:01:10,934\",\n    \"lang\": \"ja\",\n    \"text\": \"じゃあ、\"\n  },\n  {\n    \"start\": \"00:01:10,934\",\n    \"end\": \"00:01:11,414\",\n    \"lang\": \"ja\",\n    \"text\": \"スティーブ\"\n  },\n  {\n    \"start\": \"00:01:12,482\",\n    \"end\": \"00:01:14,462\",\n    \"lang\": \"en\",\n    \"text\": \"is casually be myself.\"\n  },\n  {\n    \"start\": \"00:01:15,282\",\n    \"end\": \"00:01:20,122\",\n    \"lang\": \"en\",\n    \"text\": \"So accidentally I can provide some value for some people,\"\n  },\n  {\n    \"start\": \"00:01:20,342\",\n    \"end\": \"00:01:21,842\",\n    \"lang\": \"en\",\n    \"text\": \"but not any much more.\"\n  },\n  {\n    \"start\": \"00:01:24,962\",\n    \"end\": \"00:01:26,822\",\n    \"lang\": \"en\",\n    \"text\": \"And so I,\"\n  },\n  {\n    \"start\": \"00:01:26,822\",\n    \"end\": \"00:01:30,522\",\n    \"lang\": \"en\",\n    \"text\": \"freedom is quite an important element in my life.\"\n  },\n  {\n    \"start\": \"00:01:31,262\",\n    \"end\": \"00:01:32,182\",\n    \"lang\": \"en\",\n    \"text\": \"Financial freedom,\"\n  },\n  {\n    \"start\": \"00:01:32,182\",\n    \"end\": \"00:01:32,762\",\n    \"lang\": \"en\",\n    \"text\": \"sex,\"\n  },\n  {\n    \"start\": \"00:01:32,762\",\n    \"end\": \"00:01:33,442\",\n    \"lang\": \"en\",\n    \"text\": \"love,\"\n  },\n  {\n    \"start\": \"00:01:33,442\",\n    \"end\": \"00:01:34,211\",\n    \"lang\": \"en\",\n    \"text\": \"and what?\"\n  },\n  {\n    \"start\": \"00:01:38,202\",\n    \"end\": \"00:01:39,682\",\n    \"lang\": \"en\",\n    \"text\": \"And thinking,\"\n  },\n  {\n    \"start\": \"00:01:39,682\",\n    \"end\": \"00:01:41,842\",\n    \"lang\": \"en\",\n    \"text\": \"thinking freely and,\"\n  },\n  {\n    \"start\": \"00:01:42,482\",\n    \"end\": \"00:01:46,802\",\n    \"lang\": \"en\",\n    \"text\": \"thinking freely and also research freedom.\"\n  },\n  {\n    \"start\": \"00:01:53,721\",\n    \"end\": \"00:01:54,202\",\n    \"lang\": \"en\",\n    \"text\": \"This is,\"\n  },\n  {\n    \"start\": \"00:01:54,202\",\n    \"end\": \"00:01:55,142\",\n    \"lang\": \"en\",\n    \"text\": \"this is tasty,\"\n  },\n  {\n    \"start\": \"00:01:55,142\",\n    \"end\": \"00:01:56,302\",\n    \"lang\": \"en\",\n    \"text\": \"gorgeous really.\"\n  },\n  {\n    \"start\": \"00:01:57,782\",\n    \"end\": \"00:01:59,242\",\n    \"lang\": \"en\",\n    \"text\": \"So what is a freedom?\"\n  },\n  {\n    \"start\": \"00:02:00,502\",\n    \"end\": \"00:02:01,782\",\n    \"lang\": \"en\",\n    \"text\": \"But a freedom is not a,\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:01,440",
+            "end": "00:01:01,720",
+            "en": "Actually,",
+            "zh": "其实，",
+            "ar": "في الواقع،"
+        },
+        {
+            "start": "00:01:01,720",
+            "end": "00:01:02,280",
+            "en": "I believe.",
+            "zh": "我相信。",
+            "ar": "أعتقد."
+        },
+        {
+            "start": "00:01:02,280",
+            "end": "00:01:06,240",
+            "en": "I can't give the same as they expected to them.",
+            "zh": "我无法给他们所期望的那样。",
+            "ar": "لا أستطيع أن أعطيهم ما يتوقعونه."
+        },
+        {
+            "start": "00:01:06,240",
+            "end": "00:01:08,860",
+            "en": "Because...",
+            "zh": "因为...",
+            "ar": "بسبب..."
+        },
+        {
+            "start": "00:01:10,434",
+            "end": "00:01:10,694",
+            "en": "Yes,",
+            "zh": "是的，",
+            "ar": "نعم،",
+            "ja": "はい、"
+        },
+        {
+            "start": "00:01:10,694",
+            "end": "00:01:10,934",
+            "en": "then,",
+            "zh": "然后，",
+            "ar": "ثم،",
+            "ja": "じゃあ、"
+        },
+        {
+            "start": "00:01:10,934",
+            "end": "00:01:11,414",
+            "en": "Steve",
+            "zh": "史蒂夫",
+            "ar": "ستيف",
+            "ja": "スティーブ"
+        },
+        {
+            "start": "00:01:12,482",
+            "end": "00:01:14,462",
+            "en": "is just being myself.",
+            "zh": "只是做我自己。",
+            "ar": "أنا فقط أكون نفسي."
+        },
+        {
+            "start": "00:01:15,282",
+            "end": "00:01:20,122",
+            "en": "So accidentally I can provide some value for some people,",
+            "zh": "所以无意中我能为一些人提供一些价值，",
+            "ar": "لذلك بالصدفة أستطيع أن أقدم بعض القيمة لبعض الناس،"
+        },
+        {
+            "start": "00:01:20,342",
+            "end": "00:01:21,842",
+            "en": "but not any much more.",
+            "zh": "但不再多了。",
+            "ar": "ولكن ليس أكثر من ذلك."
+        },
+        {
+            "start": "00:01:24,962",
+            "end": "00:01:26,822",
+            "en": "And so I,",
+            "zh": "所以我，",
+            "ar": "وهكذا أنا،"
+        },
+        {
+            "start": "00:01:26,822",
+            "end": "00:01:30,522",
+            "en": "freedom is quite an important element in my life.",
+            "zh": "自由在我的生活中是相当重要的元素。",
+            "ar": "الحرية عنصر مهم جدا في حياتي."
+        },
+        {
+            "start": "00:01:31,262",
+            "end": "00:01:32,182",
+            "en": "Financial freedom,",
+            "zh": "财务自由，",
+            "ar": "الحرية المالية،"
+        },
+        {
+            "start": "00:01:32,182",
+            "end": "00:01:32,762",
+            "en": "sex,",
+            "zh": "性，",
+            "ar": "الجنس،"
+        },
+        {
+            "start": "00:01:32,762",
+            "end": "00:01:33,442",
+            "en": "love,",
+            "zh": "爱，",
+            "ar": "الحب،"
+        },
+        {
+            "start": "00:01:33,442",
+            "end": "00:01:34,211",
+            "en": "and what?",
+            "zh": "还有什么？",
+            "ar": "وماذا؟"
+        },
+        {
+            "start": "00:01:38,202",
+            "end": "00:01:39,682",
+            "en": "And thinking,",
+            "zh": "而且思考，",
+            "ar": "والتفكير،"
+        },
+        {
+            "start": "00:01:39,682",
+            "end": "00:01:41,842",
+            "en": "thinking freely and,",
+            "zh": "自由地思考，并且，",
+            "ar": "التفكير بحرية و،"
+        },
+        {
+            "start": "00:01:42,482",
+            "end": "00:01:46,802",
+            "en": "thinking freely and also research freedom.",
+            "zh": "自由地思考以及研究自由。",
+            "ar": "التفكير بحرية وأيضا حرية البحث."
+        },
+        {
+            "start": "00:01:53,721",
+            "end": "00:01:54,202",
+            "en": "This is,",
+            "zh": "这是，",
+            "ar": "هذا هو،"
+        },
+        {
+            "start": "00:01:54,202",
+            "end": "00:01:55,142",
+            "en": "this is tasty,",
+            "zh": "这很好吃，",
+            "ar": "هذا لذيذ،"
+        },
+        {
+            "start": "00:01:55,142",
+            "end": "00:01:56,302",
+            "en": "gorgeous really.",
+            "zh": "真的很棒。",
+            "ar": "جميلة حقا."
+        },
+        {
+            "start": "00:01:57,782",
+            "end": "00:01:59,242",
+            "en": "So what is freedom?",
+            "zh": "那么什么是自由？",
+            "ar": "إذا ما هي الحرية؟"
+        },
+        {
+            "start": "00:02:00,502",
+            "end": "00:02:01,782",
+            "en": "But freedom is not a,",
+            "zh": "但自由不是，",
+            "ar": "لكن الحرية ليست،"
+        }
+    ]
+}

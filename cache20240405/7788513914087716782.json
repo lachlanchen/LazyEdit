@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,540\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"zh\",\n    \"text\": \"恭喜您完全成功\"\n  },\n  {\n    \"start\": \"00:00:01,980\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"zh\",\n    \"text\": \"这一单楼是最难的一单楼\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:05,460\",\n    \"lang\": \"zh\",\n    \"text\": \"看到没有\"\n  },\n  {\n    \"start\": \"00:00:06,050\",\n    \"end\": \"00:00:06,890\",\n    \"lang\": \"en\",\n    \"text\": \"You zip\"\n  },\n  {\n    \"start\": \"00:00:07,682\",\n    \"end\": \"00:00:08,762\",\n    \"lang\": \"zh\",\n    \"text\": \"有时候嚼啪的\"\n  },\n  {\n    \"start\": \"00:00:10,121\",\n    \"end\": \"00:00:12,142\",\n    \"lang\": \"zh\",\n    \"text\": \"嚼啪的软就是那个蛋豆\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,540",
+            "end": "00:00:01,980",
+            "vi": "Xin chúc mừng bạn đã hoàn toàn thành công"
+        },
+        {
+            "start": "00:00:01,980",
+            "end": "00:00:04,540",
+            "vi": "Tòa nhà này là cái khó nhất trong số các tòa nhà"
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:05,460",
+            "vi": "Bạn thấy không"
+        },
+        {
+            "start": "00:00:06,050",
+            "end": "00:00:06,890",
+            "vi": "Bạn kéo"
+        },
+        {
+            "start": "00:00:07,682",
+            "end": "00:00:08,762",
+            "vi": "Đôi khi nó có tiếng nổ bục"
+        },
+        {
+            "start": "00:00:10,121",
+            "end": "00:00:12,142",
+            "vi": "Tiếng nổ bục, mềm chính là hạt đậu đó"
+        }
+    ]
+}

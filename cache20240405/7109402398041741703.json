@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,140\",\n    \"lang\": \"en\",\n    \"text\": \"have his eye contact.\"\n  },\n  {\n    \"start\": \"00:00:03,400\",\n    \"end\": \"00:00:03,620\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:04,680\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:05,340\",\n    \"end\": \"00:00:06,020\",\n    \"lang\": \"en\",\n    \"text\": \"This is...\"\n  },\n  {\n    \"start\": \"00:00:09,139\",\n    \"end\": \"00:00:11,340\",\n    \"lang\": \"en\",\n    \"text\": \"This is a panda pig dog.\"\n  },\n  {\n    \"start\": \"00:00:13,640\",\n    \"end\": \"00:00:13,920\",\n    \"lang\": \"en\",\n    \"text\": \"Wow.\"\n  },\n  {\n    \"start\": \"00:00:15,040\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:19,759\",\n    \"end\": \"00:00:20,840\",\n    \"lang\": \"en\",\n    \"text\": \"This is sunrise.\"\n  },\n  {\n    \"start\": \"00:00:23,560\",\n    \"end\": \"00:00:26,400\",\n    \"lang\": \"en\",\n    \"text\": \"This is a panda pig dog.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,140",
+            "es": "mantener contacto visual.",
+            "fr": "garder un contact visuel.",
+            "uk": "підтримувати зоровий контакт."
+        },
+        {
+            "start": "00:00:03,400",
+            "end": "00:00:03,620",
+            "es": "Hola.",
+            "fr": "Bonjour.",
+            "uk": "Привіт."
+        },
+        {
+            "start": "00:00:04,680",
+            "end": "00:00:05,140",
+            "es": "Hola.",
+            "fr": "Bonjour.",
+            "uk": "Привіт."
+        },
+        {
+            "start": "00:00:05,340",
+            "end": "00:00:06,020",
+            "es": "Esto es...",
+            "fr": "Ceci est...",
+            "uk": "Це..."
+        },
+        {
+            "start": "00:00:09,139",
+            "end": "00:00:11,340",
+            "es": "Esto es un perro cerdo panda.",
+            "fr": "Ceci est un chien cochon panda.",
+            "uk": "Це панда-свиня-собака."
+        },
+        {
+            "start": "00:00:13,640",
+            "end": "00:00:13,920",
+            "es": "Vaya.",
+            "fr": "Wow.",
+            "uk": "Вау."
+        },
+        {
+            "start": "00:00:15,040",
+            "end": "00:00:15,380",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:00:19,759",
+            "end": "00:00:20,840",
+            "es": "Esto es el amanecer.",
+            "fr": "Ceci est le lever du soleil.",
+            "uk": "Це світанок."
+        },
+        {
+            "start": "00:00:23,560",
+            "end": "00:00:26,400",
+            "es": "Esto es un perro cerdo panda.",
+            "fr": "Ceci est un chien cochon panda.",
+            "uk": "Це панда-свиня-собака."
+        }
+    ]
+}

@@ -1,0 +1,125 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,440\",\n    \"end\": \"00:01:01,720\",\n    \"lang\": \"en\",\n    \"text\": \"Actually,\"\n  },\n  {\n    \"start\": \"00:01:01,720\",\n    \"end\": \"00:01:02,280\",\n    \"lang\": \"en\",\n    \"text\": \"I believe.\"\n  },\n  {\n    \"start\": \"00:01:02,280\",\n    \"end\": \"00:01:06,240\",\n    \"lang\": \"en\",\n    \"text\": \"I can't give the same as they expected to them.\"\n  },\n  {\n    \"start\": \"00:01:06,240\",\n    \"end\": \"00:01:08,860\",\n    \"lang\": \"en\",\n    \"text\": \"Because...\"\n  },\n  {\n    \"start\": \"00:01:10,434\",\n    \"end\": \"00:01:10,694\",\n    \"lang\": \"ja\",\n    \"text\": \"はい、\"\n  },\n  {\n    \"start\": \"00:01:10,694\",\n    \"end\": \"00:01:10,934\",\n    \"lang\": \"ja\",\n    \"text\": \"じゃあ、\"\n  },\n  {\n    \"start\": \"00:01:10,934\",\n    \"end\": \"00:01:11,414\",\n    \"lang\": \"ja\",\n    \"text\": \"スティーブ\"\n  },\n  {\n    \"start\": \"00:01:12,482\",\n    \"end\": \"00:01:14,462\",\n    \"lang\": \"en\",\n    \"text\": \"is casually be myself.\"\n  },\n  {\n    \"start\": \"00:01:15,282\",\n    \"end\": \"00:01:20,122\",\n    \"lang\": \"en\",\n    \"text\": \"So accidentally I can provide some value for some people,\"\n  },\n  {\n    \"start\": \"00:01:20,342\",\n    \"end\": \"00:01:21,842\",\n    \"lang\": \"en\",\n    \"text\": \"but not any much more.\"\n  },\n  {\n    \"start\": \"00:01:24,962\",\n    \"end\": \"00:01:26,822\",\n    \"lang\": \"en\",\n    \"text\": \"And so I,\"\n  },\n  {\n    \"start\": \"00:01:26,822\",\n    \"end\": \"00:01:30,522\",\n    \"lang\": \"en\",\n    \"text\": \"freedom is quite an important element in my life.\"\n  },\n  {\n    \"start\": \"00:01:31,262\",\n    \"end\": \"00:01:32,182\",\n    \"lang\": \"en\",\n    \"text\": \"Financial freedom,\"\n  },\n  {\n    \"start\": \"00:01:32,182\",\n    \"end\": \"00:01:32,762\",\n    \"lang\": \"en\",\n    \"text\": \"sex,\"\n  },\n  {\n    \"start\": \"00:01:32,762\",\n    \"end\": \"00:01:33,442\",\n    \"lang\": \"en\",\n    \"text\": \"love,\"\n  },\n  {\n    \"start\": \"00:01:33,442\",\n    \"end\": \"00:01:34,211\",\n    \"lang\": \"en\",\n    \"text\": \"and what?\"\n  },\n  {\n    \"start\": \"00:01:38,202\",\n    \"end\": \"00:01:39,682\",\n    \"lang\": \"en\",\n    \"text\": \"And thinking,\"\n  },\n  {\n    \"start\": \"00:01:39,682\",\n    \"end\": \"00:01:41,842\",\n    \"lang\": \"en\",\n    \"text\": \"thinking freely and,\"\n  },\n  {\n    \"start\": \"00:01:42,482\",\n    \"end\": \"00:01:46,802\",\n    \"lang\": \"en\",\n    \"text\": \"thinking freely and also research freedom.\"\n  },\n  {\n    \"start\": \"00:01:53,721\",\n    \"end\": \"00:01:54,202\",\n    \"lang\": \"en\",\n    \"text\": \"This is,\"\n  },\n  {\n    \"start\": \"00:01:54,202\",\n    \"end\": \"00:01:55,142\",\n    \"lang\": \"en\",\n    \"text\": \"this is tasty,\"\n  },\n  {\n    \"start\": \"00:01:55,142\",\n    \"end\": \"00:01:56,302\",\n    \"lang\": \"en\",\n    \"text\": \"gorgeous really.\"\n  },\n  {\n    \"start\": \"00:01:57,782\",\n    \"end\": \"00:01:59,242\",\n    \"lang\": \"en\",\n    \"text\": \"So what is a freedom?\"\n  },\n  {\n    \"start\": \"00:02:00,502\",\n    \"end\": \"00:02:01,782\",\n    \"lang\": \"en\",\n    \"text\": \"But a freedom is not a,\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,440",
+            "end": "00:01:01,720",
+            "vi": "Thực ra,"
+        },
+        {
+            "start": "00:01:01,720",
+            "end": "00:01:02,280",
+            "vi": "tôi tin rằng."
+        },
+        {
+            "start": "00:01:02,280",
+            "end": "00:01:06,240",
+            "vi": "Tôi không thể đáp ứng như họ mong đợi."
+        },
+        {
+            "start": "00:01:06,240",
+            "end": "00:01:08,860",
+            "vi": "Bởi vì..."
+        },
+        {
+            "start": "00:01:10,434",
+            "end": "00:01:10,694",
+            "vi": "Vâng,"
+        },
+        {
+            "start": "00:01:10,694",
+            "end": "00:01:10,934",
+            "vi": "vậy thì,"
+        },
+        {
+            "start": "00:01:10,934",
+            "end": "00:01:11,414",
+            "vi": "Steve"
+        },
+        {
+            "start": "00:01:12,482",
+            "end": "00:01:14,462",
+            "vi": "chỉ là mình là chính mình một cách tự nhiên."
+        },
+        {
+            "start": "00:01:15,282",
+            "end": "00:01:20,122",
+            "vi": "Vì vậy, một cách vô tình, tôi có thể mang lại giá trị cho một số người,"
+        },
+        {
+            "start": "00:01:20,342",
+            "end": "00:01:21,842",
+            "vi": "nhưng không mấy nhiều hơn."
+        },
+        {
+            "start": "00:01:24,962",
+            "end": "00:01:26,822",
+            "vi": "Và do đó, tôi,"
+        },
+        {
+            "start": "00:01:26,822",
+            "end": "00:01:30,522",
+            "vi": "tự do là một yếu tố quan trọng trong cuộc sống của tôi."
+        },
+        {
+            "start": "00:01:31,262",
+            "end": "00:01:32,182",
+            "vi": "Tự do tài chính,"
+        },
+        {
+            "start": "00:01:32,182",
+            "end": "00:01:32,762",
+            "vi": "tình dục,"
+        },
+        {
+            "start": "00:01:32,762",
+            "end": "00:01:33,442",
+            "vi": "tình yêu,"
+        },
+        {
+            "start": "00:01:33,442",
+            "end": "00:01:34,211",
+            "vi": "và cái gì?"
+        },
+        {
+            "start": "00:01:38,202",
+            "end": "00:01:39,682",
+            "vi": "Và suy nghĩ,"
+        },
+        {
+            "start": "00:01:39,682",
+            "end": "00:01:41,842",
+            "vi": "tự do suy nghĩ và,"
+        },
+        {
+            "start": "00:01:42,482",
+            "end": "00:01:46,802",
+            "vi": "tự do suy nghĩ cũng như tự do nghiên cứu."
+        },
+        {
+            "start": "00:01:53,721",
+            "end": "00:01:54,202",
+            "vi": "Đây là,"
+        },
+        {
+            "start": "00:01:54,202",
+            "end": "00:01:55,142",
+            "vi": "đây thật ngon,"
+        },
+        {
+            "start": "00:01:55,142",
+            "end": "00:01:56,302",
+            "vi": "thực sự tuyệt vời."
+        },
+        {
+            "start": "00:01:57,782",
+            "end": "00:01:59,242",
+            "vi": "Vậy tự do là gì?"
+        },
+        {
+            "start": "00:02:00,502",
+            "end": "00:02:01,782",
+            "vi": "Nhưng tự do không phải là,"
+        }
+    ]
+}

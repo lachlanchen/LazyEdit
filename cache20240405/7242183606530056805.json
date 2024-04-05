@@ -1,0 +1,124 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,300\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:02,480\",\n    \"end\": \"00:00:05,260\",\n    \"lang\": \"ja\",\n    \"text\": \"私の朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:07,490\",\n    \"end\": \"00:00:09,110\",\n    \"lang\": \"en\",\n    \"text\": \"Recently I found a thing,\"\n  },\n  {\n    \"start\": \"00:00:09,110\",\n    \"end\": \"00:00:11,490\",\n    \"lang\": \"en\",\n    \"text\": \"the SK-II,\"\n  },\n  {\n    \"start\": \"00:00:11,490\",\n    \"end\": \"00:00:17,670\",\n    \"lang\": \"en\",\n    \"text\": \"it kind of cause harm to my skin.\"\n  },\n  {\n    \"start\": \"00:00:18,670\",\n    \"end\": \"00:00:19,930\",\n    \"lang\": \"en\",\n    \"text\": \"Because when I use it,\"\n  },\n  {\n    \"start\": \"00:00:19,930\",\n    \"end\": \"00:00:23,290\",\n    \"lang\": \"en\",\n    \"text\": \"I play guitar,\"\n  },\n  {\n    \"start\": \"00:00:23,290\",\n    \"end\": \"00:00:26,310\",\n    \"lang\": \"en\",\n    \"text\": \"and the finger tip,\"\n  },\n  {\n    \"start\": \"00:00:26,710\",\n    \"end\": \"00:00:26,910\",\n    \"lang\": \"en\",\n    \"text\": \"it's like...\"\n  },\n  {\n    \"start\": \"00:00:26,946\",\n    \"end\": \"00:00:27,446\",\n    \"lang\": \"ja\",\n    \"text\": \"ごめんね\"\n  },\n  {\n    \"start\": \"00:00:28,098\",\n    \"end\": \"00:00:28,858\",\n    \"lang\": \"en\",\n    \"text\": \"It hurts.\"\n  },\n  {\n    \"start\": \"00:00:29,918\",\n    \"end\": \"00:00:36,858\",\n    \"lang\": \"en\",\n    \"text\": \"So I guess it's because the ingredients in SQ2,\"\n  },\n  {\n    \"start\": \"00:00:36,858\",\n    \"end\": \"00:00:40,598\",\n    \"lang\": \"en\",\n    \"text\": \"it has this erosion effect.\"\n  },\n  {\n    \"start\": \"00:00:41,838\",\n    \"end\": \"00:00:53,898\",\n    \"lang\": \"en\",\n    \"text\": \"So please,\"\n  },\n  {\n    \"start\": \"00:00:53,898\",\n    \"end\": \"00:00:54,858\",\n    \"lang\": \"en\",\n    \"text\": \"SQ2,\"\n  },\n  {\n    \"start\": \"00:00:54,858\",\n    \"end\": \"00:00:58,078\",\n    \"lang\": \"en\",\n    \"text\": \"don't prosecute me.\"\n  },\n  {\n    \"start\": \"00:00:58,078\",\n    \"end\": \"00:01:11,318\",\n    \"lang\": \"en\",\n    \"text\": \"I just want to share some thoughts and some hypothesis.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,300",
+            "es": "Buenos días",
+            "fr": "Bonjour",
+            "uk": "Доброго ранку"
+        },
+        {
+            "start": "00:00:02,480",
+            "end": "00:00:05,260",
+            "es": "Estoy comiendo mi desayuno",
+            "fr": "Je prends mon petit-déjeuner",
+            "uk": "Я їм свій сніданок"
+        },
+        {
+            "start": "00:00:07,490",
+            "end": "00:00:09,110",
+            "es": "Recientemente encontré una cosa,",
+            "fr": "Récemment, j'ai trouvé une chose,",
+            "uk": "Нещодавно я знайшов одну річ,"
+        },
+        {
+            "start": "00:00:09,110",
+            "end": "00:00:11,490",
+            "es": "el SK-II,",
+            "fr": "le SK-II,",
+            "uk": "SK-II,"
+        },
+        {
+            "start": "00:00:11,490",
+            "end": "00:00:17,670",
+            "es": "de alguna manera dañó mi piel.",
+            "fr": "ça a en quelque sorte endommagé ma peau.",
+            "uk": "це якось пошкодило мою шкіру."
+        },
+        {
+            "start": "00:00:18,670",
+            "end": "00:00:19,930",
+            "es": "Porque cuando lo uso,",
+            "fr": "Parce que quand je l'utilise,",
+            "uk": "Бо коли я його використовую,"
+        },
+        {
+            "start": "00:00:19,930",
+            "end": "00:00:23,290",
+            "es": "toco la guitarra,",
+            "fr": "je joue de la guitare,",
+            "uk": "я граю на гітарі,"
+        },
+        {
+            "start": "00:00:23,290",
+            "end": "00:00:26,310",
+            "es": "y la yema del dedo,",
+            "fr": "et le bout de mes doigts,",
+            "uk": "та кінчик пальця,"
+        },
+        {
+            "start": "00:00:26,710",
+            "end": "00:00:26,910",
+            "es": "es como...",
+            "fr": "c'est comme...",
+            "uk": "це ніби..."
+        },
+        {
+            "start": "00:00:26,946",
+            "end": "00:00:27,446",
+            "es": "Lo siento",
+            "fr": "Désolé",
+            "uk": "Вибачте"
+        },
+        {
+            "start": "00:00:28,098",
+            "end": "00:00:28,858",
+            "es": "Me duele.",
+            "fr": "Ça fait mal.",
+            "uk": "Це боляче."
+        },
+        {
+            "start": "00:00:29,918",
+            "end": "00:00:36,858",
+            "es": "Así que supongo que es por los ingredientes en SK-II,",
+            "fr": "Je suppose donc que c'est à cause des ingrédients dans le SK-II,",
+            "uk": "Так що я припускаю, це через інгредієнти в SK-II,"
+        },
+        {
+            "start": "00:00:36,858",
+            "end": "00:00:40,598",
+            "es": "tiene este efecto de erosión.",
+            "fr": "il a cet effet d'érosion.",
+            "uk": "він має цей ефект ерозії."
+        },
+        {
+            "start": "00:00:41,838",
+            "end": "00:00:53,898",
+            "es": "Así que por favor,",
+            "fr": "Donc s'il vous plaît,",
+            "uk": "Так будь ласка,"
+        },
+        {
+            "start": "00:00:53,898",
+            "end": "00:00:54,858",
+            "es": "SK-II,",
+            "fr": "SK-II,",
+            "uk": "SK-II,"
+        },
+        {
+            "start": "00:00:54,858",
+            "end": "00:00:58,078",
+            "es": "no me procesen.",
+            "fr": "ne me poursuivez pas.",
+            "uk": "не судіть мене."
+        },
+        {
+            "start": "00:00:58,078",
+            "end": "00:01:11,318",
+            "es": "Solo quiero compartir algunos pensamientos e hipótesis.",
+            "fr": "Je veux juste partager quelques pensées et hypothèses.",
+            "uk": "Я просто хочу поділитися деякими думками та гіпотезами."
+        }
+    ]
+}

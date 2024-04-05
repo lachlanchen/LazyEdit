@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,600\",\n    \"lang\": \"ja\",\n    \"text\": \"これが私たちのコネワン手羽先レスメンです。\"\n  },\n  {\n    \"start\": \"00:00:04,770\",\n    \"end\": \"00:00:05,870\",\n    \"lang\": \"ja\",\n    \"text\": \"ライス&ヌードルです\"\n  },\n  {\n    \"start\": \"00:00:08,194\",\n    \"end\": \"00:00:10,974\",\n    \"lang\": \"en\",\n    \"text\": \"So it's delicious,\"\n  },\n  {\n    \"start\": \"00:00:10,974\",\n    \"end\": \"00:00:12,614\",\n    \"lang\": \"en\",\n    \"text\": \"it's many,\"\n  },\n  {\n    \"start\": \"00:00:12,614\",\n    \"end\": \"00:00:15,014\",\n    \"lang\": \"en\",\n    \"text\": \"and can I say.\"\n  },\n  {\n    \"start\": \"00:00:17,194\",\n    \"end\": \"00:00:18,034\",\n    \"lang\": \"en\",\n    \"text\": \"It's chicken wing,\"\n  },\n  {\n    \"start\": \"00:00:18,034\",\n    \"end\": \"00:00:20,314\",\n    \"lang\": \"en\",\n    \"text\": \"it's fried chicken wing.\"\n  },\n  {\n    \"start\": \"00:00:20,774\",\n    \"end\": \"00:00:21,974\",\n    \"lang\": \"en\",\n    \"text\": \"It's delicious,\"\n  },\n  {\n    \"start\": \"00:00:21,974\",\n    \"end\": \"00:00:23,054\",\n    \"lang\": \"en\",\n    \"text\": \"extremely delicious.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,600",
+            "ja": "これが私たちのコネワン手羽先レスメンです。"
+        },
+        {
+            "start": "00:00:04,770",
+            "end": "00:00:05,870",
+            "ja": "ライス&ヌードルです"
+        },
+        {
+            "start": "00:00:08,194",
+            "end": "00:00:10,974",
+            "ja": "とてもおいしいです,"
+        },
+        {
+            "start": "00:00:10,974",
+            "end": "00:00:12,614",
+            "ja": "量もたくさんあります,"
+        },
+        {
+            "start": "00:00:12,614",
+            "end": "00:00:15,014",
+            "ja": "そして言わせてください。"
+        },
+        {
+            "start": "00:00:17,194",
+            "end": "00:00:18,034",
+            "ja": "それはチキンウィング、"
+        },
+        {
+            "start": "00:00:18,034",
+            "end": "00:00:20,314",
+            "ja": "フライドチキンウィングです。"
+        },
+        {
+            "start": "00:00:20,774",
+            "end": "00:00:21,974",
+            "ja": "とてもおいしい、"
+        },
+        {
+            "start": "00:00:21,974",
+            "end": "00:00:23,054",
+            "ja": "非常においしいです。"
+        }
+    ]
+}

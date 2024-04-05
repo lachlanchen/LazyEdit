@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:05,074\",\n    \"end\": \"00:01:11,514\",\n    \"lang\": \"en\",\n    \"text\": \"And some cold bean juice to mitigate the hurt.\"\n  },\n  {\n    \"start\": \"00:01:13,714\",\n    \"end\": \"00:01:22,494\",\n    \"lang\": \"en\",\n    \"text\": \"In my upper side of my mouth.\"\n  },\n  {\n    \"start\": \"00:01:23,234\",\n    \"end\": \"00:01:23,514\",\n    \"lang\": \"ar\",\n    \"text\": \"أهلا\"\n  },\n  {\n    \"start\": \"00:01:24,162\",\n    \"end\": \"00:01:25,702\",\n    \"lang\": \"en\",\n    \"text\": \"reaching inside my mouth.\"\n  },\n  {\n    \"start\": \"00:01:27,490\",\n    \"end\": \"00:01:30,150\",\n    \"lang\": \"zh\",\n    \"text\": \"在我们的方言里面我们叫天堂\"\n  },\n  {\n    \"start\": \"00:01:31,750\",\n    \"end\": \"00:01:32,470\",\n    \"lang\": \"zh\",\n    \"text\": \"天堂\"\n  },\n  {\n    \"start\": \"00:01:32,470\",\n    \"end\": \"00:01:33,030\",\n    \"lang\": \"en\",\n    \"text\": \"OK\"\n  },\n  {\n    \"start\": \"00:01:33,550\",\n    \"end\": \"00:01:34,650\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道英语怎么说\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:05,074",
+            "end": "00:01:11,514",
+            "ja": "そして、痛みを和らげるための冷たい豆のジュース。"
+        },
+        {
+            "start": "00:01:13,714",
+            "end": "00:01:22,494",
+            "ja": "私の口の上の部分で。"
+        },
+        {
+            "start": "00:01:23,234",
+            "end": "00:01:23,514",
+            "ja": "こんにちは"
+        },
+        {
+            "start": "00:01:24,162",
+            "end": "00:01:25,702",
+            "ja": "口の中に手を入れて。"
+        },
+        {
+            "start": "00:01:27,490",
+            "end": "00:01:30,150",
+            "ja": "私たちの方言では、それを天国と呼びます"
+        },
+        {
+            "start": "00:01:31,750",
+            "end": "00:01:32,470",
+            "ja": "天国"
+        },
+        {
+            "start": "00:01:32,470",
+            "end": "00:01:33,030",
+            "ja": "OK"
+        },
+        {
+            "start": "00:01:33,550",
+            "end": "00:01:34,650",
+            "ja": "英語で何と言うかわかりません"
+        }
+    ]
+}

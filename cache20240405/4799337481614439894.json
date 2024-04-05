@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"ar\",\n    \"text\": \"وشكراً على المشاهدة\"\n  },\n  {\n    \"start\": \"00:00:02,274\",\n    \"end\": \"00:00:17,054\",\n    \"lang\": \"en\",\n    \"text\": \"The vegetable has been put in the refrigerator for about one month,\"\n  },\n  {\n    \"start\": \"00:00:17,054\",\n    \"end\": \"00:00:18,214\",\n    \"lang\": \"en\",\n    \"text\": \"maybe two months.\"\n  },\n  {\n    \"start\": \"00:00:18,854\",\n    \"end\": \"00:00:20,354\",\n    \"lang\": \"en\",\n    \"text\": \"Then it has these holes.\"\n  },\n  {\n    \"start\": \"00:00:21,494\",\n    \"end\": \"00:00:25,194\",\n    \"lang\": \"en\",\n    \"text\": \"And then it says that it's a microbe and it doesn't want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:25,194\",\n    \"end\": \"00:00:27,874\",\n    \"lang\": \"en\",\n    \"text\": \"The bacteria don't want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:28,294\",\n    \"end\": \"00:00:29,994\",\n    \"lang\": \"en\",\n    \"text\": \"So the people eat it.\"\n  },\n  {\n    \"start\": \"00:00:32,094\",\n    \"end\": \"00:00:32,514\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:32,514\",\n    \"end\": \"00:00:34,254\",\n    \"lang\": \"en\",\n    \"text\": \"this is our flavor.\"\n  },\n  {\n    \"start\": \"00:00:35,394\",\n    \"end\": \"00:00:39,754\",\n    \"lang\": \"en\",\n    \"text\": \"And I will make chicken noodles,\"\n  },\n  {\n    \"start\": \"00:00:39,754\",\n    \"end\": \"00:00:41,334\",\n    \"lang\": \"en\",\n    \"text\": \"chicken and carrot noodles.\"\n  },\n  {\n    \"start\": \"00:00:43,054\",\n    \"end\": \"00:00:44,894\",\n    \"lang\": \"en\",\n    \"text\": \"And with apricots.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,240",
+            "es": "Y gracias por ver.",
+            "fr": "Et merci de regarder.",
+            "uk": "І дякую за перегляд."
+        },
+        {
+            "start": "00:00:02,274",
+            "end": "00:00:17,054",
+            "es": "La verdura ha estado en el refrigerador durante aproximadamente un mes,",
+            "fr": "Le légume a été mis dans le réfrigérateur pendant environ un mois,",
+            "uk": "Овочі були у холодильнику приблизно місяць,"
+        },
+        {
+            "start": "00:00:17,054",
+            "end": "00:00:18,214",
+            "es": "quizás dos meses.",
+            "fr": "peut-être deux mois.",
+            "uk": "можливо, два місяці."
+        },
+        {
+            "start": "00:00:18,854",
+            "end": "00:00:20,354",
+            "es": "Luego tiene estos agujeros.",
+            "fr": "Ensuite, il a ces trous.",
+            "uk": "Потім на ньому з’являються ці дірки."
+        },
+        {
+            "start": "00:00:21,494",
+            "end": "00:00:25,194",
+            "es": "Y luego dice que es un microbio y no quiere comerlo.",
+            "fr": "Et puis il dit que c'est un microbe et qu'il ne veut pas le manger.",
+            "uk": "А потім каже, що це мікроб, і він не хоче це їсти."
+        },
+        {
+            "start": "00:00:25,194",
+            "end": "00:00:27,874",
+            "es": "Las bacterias no quieren comerlo.",
+            "fr": "Les bactéries ne veulent pas le manger.",
+            "uk": "Бактерії не хочуть це їсти."
+        },
+        {
+            "start": "00:00:28,294",
+            "end": "00:00:29,994",
+            "es": "Así que la gente lo come.",
+            "fr": "Alors, les gens le mangent.",
+            "uk": "Так що люди їдять це."
+        },
+        {
+            "start": "00:00:32,094",
+            "end": "00:00:32,514",
+            "es": "Ok,",
+            "fr": "Ok,",
+            "uk": "Ок,"
+        },
+        {
+            "start": "00:00:32,514",
+            "end": "00:00:34,254",
+            "es": "este es nuestro sabor.",
+            "fr": "c'est notre saveur.",
+            "uk": "це наш смак."
+        },
+        {
+            "start": "00:00:35,394",
+            "end": "00:00:39,754",
+            "es": "Y haré fideos de pollo,",
+            "fr": "Et je ferai des nouilles de poulet,",
+            "uk": "І я зроблю курячі локшина,"
+        },
+        {
+            "start": "00:00:39,754",
+            "end": "00:00:41,334",
+            "es": "fideos de pollo y zanahoria.",
+            "fr": "nouilles de poulet et carottes.",
+            "uk": "курячі та морквяні локшина."
+        },
+        {
+            "start": "00:00:43,054",
+            "end": "00:00:44,894",
+            "es": "Y con albaricoques.",
+            "fr": "Et avec des abricots.",
+            "uk": "І з абрикосами."
+        }
+    ]
+}

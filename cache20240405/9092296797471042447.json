@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,220\",\n    \"lang\": \"zh\",\n    \"text\": \"这里还有\"\n  },\n  {\n    \"start\": \"00:00:02,050\",\n    \"end\": \"00:00:02,890\",\n    \"lang\": \"en\",\n    \"text\": \"too many restrictions.\"\n  },\n  {\n    \"start\": \"00:00:03,970\",\n    \"end\": \"00:00:08,470\",\n    \"lang\": \"en\",\n    \"text\": \"So we will never have really scientific breakthrough\"\n  },\n  {\n    \"start\": \"00:00:08,830\",\n    \"end\": \"00:00:10,630\",\n    \"lang\": \"en\",\n    \"text\": \"or create some great art,\"\n  },\n  {\n    \"start\": \"00:00:10,630\",\n    \"end\": \"00:00:11,550\",\n    \"lang\": \"en\",\n    \"text\": \"never.\"\n  },\n  {\n    \"start\": \"00:00:14,990\",\n    \"end\": \"00:00:20,650\",\n    \"lang\": \"en\",\n    \"text\": \"If we want to embrace some real great stuff,\"\n  },\n  {\n    \"start\": \"00:00:21,670\",\n    \"end\": \"00:00:24,590\",\n    \"lang\": \"en\",\n    \"text\": \"and the first thing we should remove is restrictions,\"\n  },\n  {\n    \"start\": \"00:00:24,830\",\n    \"end\": \"00:00:27,710\",\n    \"lang\": \"en\",\n    \"text\": \"but keep some basic principles.\"\n  },\n  {\n    \"start\": \"00:00:27,710\",\n    \"end\": \"00:00:36,710\",\n    \"lang\": \"en\",\n    \"text\": \"And if we have so many restrictions,\"\n  },\n  {\n    \"start\": \"00:00:41,470\",\n    \"end\": \"00:00:47,090\",\n    \"lang\": \"en\",\n    \"text\": \"we can never expect people truly being creative.\"\n  },\n  {\n    \"start\": \"00:00:51,790\",\n    \"end\": \"00:00:52,990\",\n    \"lang\": \"en\",\n    \"text\": \"That's what I think.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,220",
+            "ko": "여기에도 있어"
+        },
+        {
+            "start": "00:00:02,050",
+            "end": "00:00:02,890",
+            "ko": "너무 많은 제한이 있어."
+        },
+        {
+            "start": "00:00:03,970",
+            "end": "00:00:08,470",
+            "ko": "그래서 우리는 정말로 과학적인 발견을 할 수 없을 거야"
+        },
+        {
+            "start": "00:00:08,830",
+            "end": "00:00:10,630",
+            "ko": "또는 무언가 위대한 예술을 창조하지도 못할 거고,"
+        },
+        {
+            "start": "00:00:10,630",
+            "end": "00:00:11,550",
+            "ko": "절대로."
+        },
+        {
+            "start": "00:00:14,990",
+            "end": "00:00:20,650",
+            "ko": "우리가 정말 위대한 것들을 받아들이고 싶다면,"
+        },
+        {
+            "start": "00:00:21,670",
+            "end": "00:00:24,590",
+            "ko": "우리가 해야 할 첫 번째 일은 제한을 제거하는 것이야,"
+        },
+        {
+            "start": "00:00:24,830",
+            "end": "00:00:27,710",
+            "ko": "하지만 몇 가지 기본 원칙은 유지해야 해."
+        },
+        {
+            "start": "00:00:27,710",
+            "end": "00:00:36,710",
+            "ko": "그리고 만약 우리에게 너무 많은 제한이 있다면,"
+        },
+        {
+            "start": "00:00:41,470",
+            "end": "00:00:47,090",
+            "ko": "우리는 사람들이 진정으로 창의적이기를 기대할 수 없어."
+        },
+        {
+            "start": "00:00:51,790",
+            "end": "00:00:52,990",
+            "ko": "내 생각에는 그래."
+        }
+    ]
+}

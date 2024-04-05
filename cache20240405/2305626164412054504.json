@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,260\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは\"\n  },\n  {\n    \"start\": \"00:00:02,000\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"ja\",\n    \"text\": \"この早く遅い\"\n  },\n  {\n    \"start\": \"00:00:05,570\",\n    \"end\": \"00:00:05,870\",\n    \"lang\": \"en\",\n    \"text\": \"Amen.\"\n  },\n  {\n    \"start\": \"00:00:07,970\",\n    \"end\": \"00:00:08,730\",\n    \"lang\": \"ja\",\n    \"text\": \"おいしいです\"\n  },\n  {\n    \"start\": \"00:00:09,122\",\n    \"end\": \"00:00:12,722\",\n    \"lang\": \"en\",\n    \"text\": \"So this is my snow fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:13,522\",\n    \"end\": \"00:00:18,182\",\n    \"lang\": \"en\",\n    \"text\": \"So it's chicken wing noodles and I cook it in,\"\n  },\n  {\n    \"start\": \"00:00:19,182\",\n    \"end\": \"00:00:24,842\",\n    \"lang\": \"en\",\n    \"text\": \"it takes my about one hour to cook this.\"\n  },\n  {\n    \"start\": \"00:00:30,522\",\n    \"end\": \"00:00:33,922\",\n    \"lang\": \"en\",\n    \"text\": \"To cook this snow fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:42,721\",\n    \"end\": \"00:00:43,202\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:43,202\",\n    \"end\": \"00:00:44,002\",\n    \"lang\": \"en\",\n    \"text\": \"it's so delicious.\"\n  },\n  {\n    \"start\": \"00:00:48,522\",\n    \"end\": \"00:00:50,082\",\n    \"lang\": \"en\",\n    \"text\": \"Let me try the chicken wing.\"\n  },\n  {\n    \"start\": \"00:00:51,682\",\n    \"end\": \"00:00:54,062\",\n    \"lang\": \"ja\",\n    \"text\": \"私は手がパサパサしています\"\n  },\n  {\n    \"start\": \"00:00:54,682\",\n    \"end\": \"00:00:55,382\",\n    \"lang\": \"ja\",\n    \"text\": \"食べています\"\n  },\n  {\n    \"start\": \"00:00:59,586\",\n    \"end\": \"00:00:59,906\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm,\"\n  },\n  {\n    \"start\": \"00:00:59,906\",\n    \"end\": \"00:01:01,906\",\n    \"lang\": \"en\",\n    \"text\": \"it's tender,\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,260",
+            "ja": "こんにちは"
+        },
+        {
+            "start": "00:00:02,000",
+            "end": "00:00:05,140",
+            "ja": "この速さと遅さ"
+        },
+        {
+            "start": "00:00:05,570",
+            "end": "00:00:05,870",
+            "ja": "アーメン。"
+        },
+        {
+            "start": "00:00:07,970",
+            "end": "00:00:08,730",
+            "ja": "おいしいです"
+        },
+        {
+            "start": "00:00:09,122",
+            "end": "00:00:12,722",
+            "ja": "これが私のスノーファスト麺です。"
+        },
+        {
+            "start": "00:00:13,522",
+            "end": "00:00:18,182",
+            "ja": "チキンウィングの麺で、私が調理しました。"
+        },
+        {
+            "start": "00:00:19,182",
+            "end": "00:00:24,842",
+            "ja": "この料理には約1時間かかります。"
+        },
+        {
+            "start": "00:00:30,522",
+            "end": "00:00:33,922",
+            "ja": "このスノーファスト麺を調理するには。"
+        },
+        {
+            "start": "00:00:42,721",
+            "end": "00:00:43,202",
+            "ja": "わぁ、"
+        },
+        {
+            "start": "00:00:43,202",
+            "end": "00:00:44,002",
+            "ja": "とても美味しいです。"
+        },
+        {
+            "start": "00:00:48,522",
+            "end": "00:00:50,082",
+            "ja": "チキンウィングを試してみましょう。"
+        },
+        {
+            "start": "00:00:51,682",
+            "end": "00:00:54,062",
+            "ja": "私の手は乾燥しています"
+        },
+        {
+            "start": "00:00:54,682",
+            "end": "00:00:55,382",
+            "ja": "食べています"
+        },
+        {
+            "start": "00:00:59,586",
+            "end": "00:00:59,906",
+            "ja": "ん、"
+        },
+        {
+            "start": "00:00:59,906",
+            "end": "00:01:01,906",
+            "ja": "やわらかい、"
+        }
+    ]
+}

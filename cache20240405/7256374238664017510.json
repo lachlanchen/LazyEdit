@@ -1,0 +1,44 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,160\",\n    \"lang\": \"ja\",\n    \"text\": \"明日かよ、\"\n  },\n  {\n    \"start\": \"00:00:01,160\",\n    \"end\": \"00:00:04,080\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあなたと共に高く飛びたい。\"\n  },\n  {\n    \"start\": \"00:00:04,700\",\n    \"end\": \"00:00:06,160\",\n    \"lang\": \"ja\",\n    \"text\": \"この青波の上で、\"\n  },\n  {\n    \"start\": \"00:00:06,160\",\n    \"end\": \"00:00:09,120\",\n    \"lang\": \"ja\",\n    \"text\": \"この青い空の下で。\"\n  },\n  {\n    \"start\": \"00:00:10,602\",\n    \"end\": \"00:00:11,722\",\n    \"lang\": \"en\",\n    \"text\": \"You are so beautiful.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,160",
+            "en": "Is it tomorrow,",
+            "zh": "是明天吗，",
+            "ar": "هل هو غدًا،",
+            "ja": "明日かよ、"
+        },
+        {
+            "start": "00:00:01,160",
+            "end": "00:00:04,080",
+            "en": "I want to fly high with you.",
+            "zh": "我想和你一起高飞。",
+            "ar": "أريد أن أطير عاليًا معك.",
+            "ja": "私はあなたと共に高く飛びたい。"
+        },
+        {
+            "start": "00:00:04,700",
+            "end": "00:00:06,160",
+            "en": "Above this blue wave,",
+            "zh": "在这蓝色的波浪上，",
+            "ar": "فوق هذه الموجة الزرقاء،",
+            "ja": "この青波の上で、"
+        },
+        {
+            "start": "00:00:06,160",
+            "end": "00:00:09,120",
+            "en": "Under this blue sky.",
+            "zh": "在这蓝天下。",
+            "ar": "تحت هذا السماء الزرقاء.",
+            "ja": "この青い空の下で。"
+        },
+        {
+            "start": "00:00:10,602",
+            "end": "00:00:11,722",
+            "en": "You are so beautiful.",
+            "zh": "你是如此美丽。",
+            "ar": "أنت جميلة جداً."
+        }
+    ]
+}

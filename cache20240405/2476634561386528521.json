@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,350\",\n    \"end\": \"00:01:06,930\",\n    \"lang\": \"en\",\n    \"text\": \"But now I think that is wrong.\"\n  },\n  {\n    \"start\": \"00:01:08,910\",\n    \"end\": \"00:01:10,610\",\n    \"lang\": \"en\",\n    \"text\": \"I can never wait for that moment.\"\n  },\n  {\n    \"start\": \"00:01:11,910\",\n    \"end\": \"00:01:14,210\",\n    \"lang\": \"en\",\n    \"text\": \"Just present yourself to the world,\"\n  },\n  {\n    \"start\": \"00:01:14,550\",\n    \"end\": \"00:01:15,610\",\n    \"lang\": \"en\",\n    \"text\": \"show yourself to the world,\"\n  },\n  {\n    \"start\": \"00:01:15,610\",\n    \"end\": \"00:01:16,850\",\n    \"lang\": \"en\",\n    \"text\": \"being transparent.\"\n  },\n  {\n    \"start\": \"00:01:27,570\",\n    \"end\": \"00:01:28,290\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm.\"\n  },\n  {\n    \"start\": \"00:01:29,410\",\n    \"end\": \"00:01:32,450\",\n    \"lang\": \"en\",\n    \"text\": \"Kendrick Lamar – Do It.\"\n  },\n  {\n    \"start\": \"00:01:33,666\",\n    \"end\": \"00:01:34,186\",\n    \"lang\": \"zh\",\n    \"text\": \"再聽\"\n  },\n  {\n    \"start\": \"00:01:40,162\",\n    \"end\": \"00:01:49,182\",\n    \"lang\": \"en\",\n    \"text\": \"I used to use the knowledge as an escape from reality,\"\n  },\n  {\n    \"start\": \"00:01:49,182\",\n    \"end\": \"00:01:54,062\",\n    \"lang\": \"en\",\n    \"text\": \"to escape the fact that I'm nobody,\"\n  },\n  {\n    \"start\": \"00:01:54,302\",\n    \"end\": \"00:01:54,862\",\n    \"lang\": \"en\",\n    \"text\": \"I'm nothing.\"\n  },\n  {\n    \"start\": \"00:01:54,862\",\n    \"end\": \"00:02:02,362\",\n    \"lang\": \"en\",\n    \"text\": \"But I finally realized that I didn't need to worry about it.\"\n  },\n  {\n    \"start\": \"00:02:02,362\",\n    \"end\": \"00:02:03,782\",\n    \"lang\": \"en\",\n    \"text\": \"So no matter\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:03,350",
+            "end": "00:01:06,930",
+            "en": "But now I think that is wrong.",
+            "zh": "但现在我认为那是错误的。",
+            "ar": "لكنني الآن أعتقد أن هذا خطأ."
+        },
+        {
+            "start": "00:01:08,910",
+            "end": "00:01:10,610",
+            "en": "I can never wait for that moment.",
+            "zh": "我永远不能等待那一刻。",
+            "ar": "لا يمكنني أبدا الانتظار لهذه اللحظة."
+        },
+        {
+            "start": "00:01:11,910",
+            "end": "00:01:14,210",
+            "en": "Just present yourself to the world,",
+            "zh": "只需向世界展示你自己，",
+            "ar": "فقط قدم نفسك للعالم،"
+        },
+        {
+            "start": "00:01:14,550",
+            "end": "00:01:15,610",
+            "en": "show yourself to the world,",
+            "zh": "向世界展示你自己，",
+            "ar": "أظهر نفسك للعالم،"
+        },
+        {
+            "start": "00:01:15,610",
+            "end": "00:01:16,850",
+            "en": "being transparent.",
+            "zh": "保持透明。",
+            "ar": "كن شفافاً."
+        },
+        {
+            "start": "00:01:27,570",
+            "end": "00:01:28,290",
+            "en": "Mmm.",
+            "zh": "嗯。",
+            "ar": "ممم."
+        },
+        {
+            "start": "00:01:29,410",
+            "end": "00:01:32,450",
+            "en": "Kendrick Lamar – Do It.",
+            "zh": "肯德里克·拉马尔 - 去做。",
+            "ar": "كيندريك لامار - افعلها."
+        },
+        {
+            "start": "00:01:33,666",
+            "end": "00:01:34,186",
+            "en": "Listen again",
+            "zh": "再聽",
+            "ar": "استمع مرة أخرى"
+        },
+        {
+            "start": "00:01:40,162",
+            "end": "00:01:49,182",
+            "en": "I used to use the knowledge as an escape from reality,",
+            "zh": "我过去常用知识来逃避现实，",
+            "ar": "كنت أستخدم المعرفة كمهرب من الواقع،"
+        },
+        {
+            "start": "00:01:49,182",
+            "end": "00:01:54,062",
+            "en": "to escape the fact that I'm nobody,",
+            "zh": "逃避我是个无名小卒的事实，",
+            "ar": "للهروب من حقيقة أنني لا أحد،"
+        },
+        {
+            "start": "00:01:54,302",
+            "end": "00:01:54,862",
+            "en": "I'm nothing.",
+            "zh": "我什么都不是。",
+            "ar": "أنا لا شيء."
+        },
+        {
+            "start": "00:01:54,862",
+            "end": "00:02:02,362",
+            "en": "But I finally realized that I didn't need to worry about it.",
+            "zh": "但我最终意识到我不需要担心它。",
+            "ar": "لكنني أدركت أخيرًا أنه لا داعي للقلق بشأن ذلك."
+        },
+        {
+            "start": "00:02:02,362",
+            "end": "00:02:03,782",
+            "en": "So no matter",
+            "zh": "所以无论如何",
+            "ar": "فلا يهم"
+        }
+    ]
+}

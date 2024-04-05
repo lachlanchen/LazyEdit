@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:06,586\",\n    \"end\": \"00:01:08,626\",\n    \"lang\": \"en\",\n    \"text\": \"the problem is that\"\n  },\n  {\n    \"start\": \"00:01:08,866\",\n    \"end\": \"00:01:10,826\",\n    \"lang\": \"en\",\n    \"text\": \"it will be over flavored.\"\n  },\n  {\n    \"start\": \"00:01:12,686\",\n    \"end\": \"00:01:22,046\",\n    \"lang\": \"en\",\n    \"text\": \"And then this fragment is a perfect balance between flavor and the original taste of the\"\n  },\n  {\n    \"start\": \"00:01:22,046\",\n    \"end\": \"00:01:22,626\",\n    \"lang\": \"en\",\n    \"text\": \"food.\"\n  },\n  {\n    \"start\": \"00:01:26,006\",\n    \"end\": \"00:01:31,006\",\n    \"lang\": \"en\",\n    \"text\": \"This beef is famous among my friends.\"\n  },\n  {\n    \"start\": \"00:01:39,626\",\n    \"end\": \"00:01:42,226\",\n    \"lang\": \"en\",\n    \"text\": \"It's a fake rocket.\"\n  },\n  {\n    \"start\": \"00:01:51,786\",\n    \"end\": \"00:01:53,506\",\n    \"lang\": \"en\",\n    \"text\": \"It's very good.\"\n  },\n  {\n    \"start\": \"00:01:54,626\",\n    \"end\": \"00:01:55,486\",\n    \"lang\": \"en\",\n    \"text\": \"It's tender.\"\n  },\n  {\n    \"start\": \"00:01:57,546\",\n    \"end\": \"00:01:58,466\",\n    \"lang\": \"en\",\n    \"text\": \"Tasty.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:06,586",
+            "end": "00:01:08,626",
+            "ko": "문제는 그것이"
+        },
+        {
+            "start": "00:01:08,866",
+            "end": "00:01:10,826",
+            "ko": "너무 강한 맛이 날 거예요."
+        },
+        {
+            "start": "00:01:12,686",
+            "end": "00:01:22,046",
+            "ko": "그리고 이 조각은 맛과 원래 음식의"
+        },
+        {
+            "start": "00:01:22,046",
+            "end": "00:01:22,626",
+            "ko": "본연의 맛 사이 완벽한 균형을 이룹니다."
+        },
+        {
+            "start": "00:01:26,006",
+            "end": "00:01:31,006",
+            "ko": "이 소고기는 제 친구들 사이에서 유명해요."
+        },
+        {
+            "start": "00:01:39,626",
+            "end": "00:01:42,226",
+            "ko": "그건 가짜 로켓이에요."
+        },
+        {
+            "start": "00:01:51,786",
+            "end": "00:01:53,506",
+            "ko": "정말 좋아요."
+        },
+        {
+            "start": "00:01:54,626",
+            "end": "00:01:55,486",
+            "ko": "부드러워요."
+        },
+        {
+            "start": "00:01:57,546",
+            "end": "00:01:58,466",
+            "ko": "맛있어요."
+        }
+    ]
+}

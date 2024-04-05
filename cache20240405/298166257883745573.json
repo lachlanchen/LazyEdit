@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,699\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"en\",\n    \"text\": \"so let me try this\"\n  },\n  {\n    \"start\": \"00:00:04,674\",\n    \"end\": \"00:00:05,094\",\n    \"lang\": \"zh\",\n    \"text\": \"س平ين\"\n  },\n  {\n    \"start\": \"00:00:13,154\",\n    \"end\": \"00:00:14,814\",\n    \"lang\": \"zh\",\n    \"text\": \"冒菜是一个人的火锅\"\n  },\n  {\n    \"start\": \"00:00:15,213\",\n    \"end\": \"00:00:17,134\",\n    \"lang\": \"zh\",\n    \"text\": \"火锅是一群人的冒菜\"\n  },\n  {\n    \"start\": \"00:00:20,514\",\n    \"end\": \"00:00:20,794\",\n    \"lang\": \"ja\",\n    \"text\": \"うん、\"\n  },\n  {\n    \"start\": \"00:00:20,794\",\n    \"end\": \"00:00:21,354\",\n    \"lang\": \"ja\",\n    \"text\": \"はい\"\n  },\n  {\n    \"start\": \"00:00:23,618\",\n    \"end\": \"00:00:23,818\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:23,818\",\n    \"end\": \"00:00:24,058\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  },\n  {\n    \"start\": \"00:00:24,058\",\n    \"end\": \"00:00:24,698\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:24,698\",\n    \"end\": \"00:00:25,038\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,699",
+            "end": "00:00:01,980",
+            "vi": "vậy để tôi thử cái này"
+        },
+        {
+            "start": "00:00:04,674",
+            "end": "00:00:05,094",
+            "vi": "س平ين"
+        },
+        {
+            "start": "00:00:13,154",
+            "end": "00:00:14,814",
+            "vi": "Mao cai là lẩu của một người"
+        },
+        {
+            "start": "00:00:15,213",
+            "end": "00:00:17,134",
+            "vi": "Lẩu là mao cai của một nhóm người"
+        },
+        {
+            "start": "00:00:20,514",
+            "end": "00:00:20,794",
+            "vi": "Ừm,"
+        },
+        {
+            "start": "00:00:20,794",
+            "end": "00:00:21,354",
+            "vi": "Vâng"
+        },
+        {
+            "start": "00:00:23,618",
+            "end": "00:00:23,818",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:23,818",
+            "end": "00:00:24,058",
+            "vi": "được."
+        },
+        {
+            "start": "00:00:24,058",
+            "end": "00:00:24,698",
+            "vi": "Được."
+        },
+        {
+            "start": "00:00:24,698",
+            "end": "00:00:25,038",
+            "vi": "Hẹn gặp lại"
+        }
+    ]
+}

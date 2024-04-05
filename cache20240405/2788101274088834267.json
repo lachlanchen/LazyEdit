@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,660\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:00,660\",\n    \"end\": \"00:00:02,360\",\n    \"lang\": \"en\",\n    \"text\": \"learning is just a repetition.\"\n  },\n  {\n    \"start\": \"00:00:02,360\",\n    \"end\": \"00:00:03,960\",\n    \"lang\": \"en\",\n    \"text\": \"Better without pressure.\"\n  },\n  {\n    \"start\": \"00:00:04,660\",\n    \"end\": \"00:00:05,340\",\n    \"lang\": \"en\",\n    \"text\": \"I don't have pressure.\"\n  },\n  {\n    \"start\": \"00:00:05,698\",\n    \"end\": \"00:00:07,178\",\n    \"lang\": \"zh\",\n    \"text\": \"我可以一直听到晚上,\"\n  },\n  {\n    \"start\": \"00:00:07,178\",\n    \"end\": \"00:00:08,738\",\n    \"lang\": \"zh\",\n    \"text\": \"直到我终于听懂了\"\n  },\n  {\n    \"start\": \"00:00:11,597\",\n    \"end\": \"00:00:14,338\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:15,298\",\n    \"end\": \"00:00:17,618\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:00:36,034\",\n    \"end\": \"00:00:36,334\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:36,334\",\n    \"end\": \"00:00:38,054\",\n    \"lang\": \"en\",\n    \"text\": \"another one.\"\n  },\n  {\n    \"start\": \"00:00:40,642\",\n    \"end\": \"00:00:42,682\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:43,602\",\n    \"end\": \"00:00:45,802\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树梢\"\n  },\n  {\n    \"start\": \"00:00:46,882\",\n    \"end\": \"00:00:47,462\",\n    \"lang\": \"en\",\n    \"text\": \"not correct.\"\n  },\n  {\n    \"start\": \"00:00:52,194\",\n    \"end\": \"00:00:54,154\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,660",
+            "es": "OK,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:00,660",
+            "end": "00:00:02,360",
+            "es": "aprender es solo una repetición.",
+            "fr": "apprendre, c'est juste une répétition.",
+            "uk": "навчання - це просто повторення."
+        },
+        {
+            "start": "00:00:02,360",
+            "end": "00:00:03,960",
+            "es": "Mejor sin presión.",
+            "fr": "Mieux sans pression.",
+            "uk": "Краще без тиску."
+        },
+        {
+            "start": "00:00:04,660",
+            "end": "00:00:05,340",
+            "es": "No tengo presión.",
+            "fr": "Je n'ai pas de pression.",
+            "uk": "У мене немає тиску."
+        },
+        {
+            "start": "00:00:05,698",
+            "end": "00:00:07,178",
+            "es": "Puedo seguir escuchando hasta la noche,",
+            "fr": "Je peux continuer à écouter jusqu'au soir,",
+            "uk": "Я можу слухати аж до вечора,"
+        },
+        {
+            "start": "00:00:07,178",
+            "end": "00:00:08,738",
+            "es": "hasta que finalmente entiendo.",
+            "fr": "jusqu'à ce que je comprenne enfin.",
+            "uk": "поки я нарешті не зрозумію."
+        },
+        {
+            "start": "00:00:11,597",
+            "end": "00:00:14,338",
+            "es": "No hay aroma de flores",
+            "fr": "Il n'y a pas de parfum de fleur",
+            "uk": "Немає аромату квітів"
+        },
+        {
+            "start": "00:00:15,298",
+            "end": "00:00:17,618",
+            "es": "No hay árboles altos",
+            "fr": "Il n'y a pas d'arbres hauts",
+            "uk": "Немає високих дерев"
+        },
+        {
+            "start": "00:00:36,034",
+            "end": "00:00:36,334",
+            "es": "Okay,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:36,334",
+            "end": "00:00:38,054",
+            "es": "otro más.",
+            "fr": "un autre.",
+            "uk": "ще один."
+        },
+        {
+            "start": "00:00:40,642",
+            "end": "00:00:42,682",
+            "es": "No hay aroma de flores",
+            "fr": "Il n'y a pas de parfum de fleur",
+            "uk": "Немає аромату квітів"
+        },
+        {
+            "start": "00:00:43,602",
+            "end": "00:00:45,802",
+            "es": "No hay copas de los árboles",
+            "fr": "Il n'y a pas de cimes d'arbres",
+            "uk": "Немає верхівок дерев"
+        },
+        {
+            "start": "00:00:46,882",
+            "end": "00:00:47,462",
+            "es": "no es correcto.",
+            "fr": "ce n'est pas correct.",
+            "uk": "це не вірно."
+        },
+        {
+            "start": "00:00:52,194",
+            "end": "00:00:54,154",
+            "es": "No hay aroma de flores",
+            "fr": "Il n'y a pas de parfum de fleur",
+            "uk": "Немає аромату квітів"
+        }
+    ]
+}

@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,340\",\n    \"lang\": \"en\",\n    \"text\": \"Kind of listening is quite painful.\"\n  },\n  {\n    \"start\": \"00:00:05,020\",\n    \"end\": \"00:00:06,840\",\n    \"lang\": \"en\",\n    \"text\": \"But first,\"\n  },\n  {\n    \"start\": \"00:00:06,840\",\n    \"end\": \"00:00:07,460\",\n    \"lang\": \"en\",\n    \"text\": \"I...\"\n  },\n  {\n    \"start\": \"00:00:08,418\",\n    \"end\": \"00:00:09,518\",\n    \"lang\": \"zh\",\n    \"text\": \"我們下次見\"\n  },\n  {\n    \"start\": \"00:00:10,178\",\n    \"end\": \"00:00:11,858\",\n    \"lang\": \"en\",\n    \"text\": \"hand the guitar that I can...\"\n  },\n  {\n    \"start\": \"00:00:12,578\",\n    \"end\": \"00:00:13,898\",\n    \"lang\": \"en\",\n    \"text\": \"I can learn singing\"\n  },\n  {\n    \"start\": \"00:00:15,682\",\n    \"end\": \"00:00:17,942\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:18,602\",\n    \"end\": \"00:00:20,782\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:00:53,842\",\n    \"end\": \"00:00:55,242\",\n    \"lang\": \"zh\",\n    \"text\": \"谢谢观看 下集再见\"\n  },\n  {\n    \"start\": \"00:00:55,266\",\n    \"end\": \"00:00:55,446\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:55,446\",\n    \"end\": \"00:00:57,226\",\n    \"lang\": \"en\",\n    \"text\": \"that's the tiny token.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,340",
+            "es": "Escuchar de este modo es bastante doloroso.",
+            "fr": "Écouter de cette manière est assez douloureux.",
+            "uk": "Слухати так досить болісно."
+        },
+        {
+            "start": "00:00:05,020",
+            "end": "00:00:06,840",
+            "es": "Pero primero,",
+            "fr": "Mais d'abord,",
+            "uk": "Але спершу,"
+        },
+        {
+            "start": "00:00:06,840",
+            "end": "00:00:07,460",
+            "es": "Yo...",
+            "fr": "Je...",
+            "uk": "Я..."
+        },
+        {
+            "start": "00:00:08,418",
+            "end": "00:00:09,518",
+            "es": "Nos vemos la próxima vez",
+            "fr": "On se voit la prochaine fois",
+            "uk": "Бачимось наступного разу"
+        },
+        {
+            "start": "00:00:10,178",
+            "end": "00:00:11,858",
+            "es": "entrega la guitarra que puedo...",
+            "fr": "donne la guitare que je peux...",
+            "uk": "віддай гітару, яку я можу..."
+        },
+        {
+            "start": "00:00:12,578",
+            "end": "00:00:13,898",
+            "es": "puedo aprender a cantar",
+            "fr": "je peux apprendre à chanter",
+            "uk": "я можу навчитися співати"
+        },
+        {
+            "start": "00:00:15,682",
+            "end": "00:00:17,942",
+            "es": "sin fragancia de flores",
+            "fr": "sans parfum de fleurs",
+            "uk": "без аромату квітів"
+        },
+        {
+            "start": "00:00:18,602",
+            "end": "00:00:20,782",
+            "es": "sin árboles altos",
+            "fr": "sans hauts arbres",
+            "uk": "без високих дерев"
+        },
+        {
+            "start": "00:00:53,842",
+            "end": "00:00:55,242",
+            "es": "Gracias por ver, nos vemos en el próximo episodio",
+            "fr": "Merci de regarder, à la prochaine",
+            "uk": "Дякую за перегляд, до зустрічі в наступному епізоді"
+        },
+        {
+            "start": "00:00:55,266",
+            "end": "00:00:55,446",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:55,446",
+            "end": "00:00:57,226",
+            "es": "ese es el pequeño detalle.",
+            "fr": "c'est le petit détail.",
+            "uk": "це маленька деталь."
+        }
+    ]
+}

@@ -1,0 +1,62 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,514\",\n    \"end\": \"00:01:01,394\",\n    \"lang\": \"en\",\n    \"text\": \"whatever\"\n  },\n  {\n    \"start\": \"00:01:02,534\",\n    \"end\": \"00:01:04,274\",\n    \"lang\": \"en\",\n    \"text\": \"and what's this?\"\n  },\n  {\n    \"start\": \"00:01:04,274\",\n    \"end\": \"00:01:05,494\",\n    \"lang\": \"en\",\n    \"text\": \"ok\"\n  },\n  {\n    \"start\": \"00:01:06,914\",\n    \"end\": \"00:01:08,834\",\n    \"lang\": \"ja\",\n    \"text\": \"おやすみなさい\"\n  },\n  {\n    \"start\": \"00:01:11,298\",\n    \"end\": \"00:01:15,317\",\n    \"lang\": \"en\",\n    \"text\": \"So this is asparagus.\"\n  },\n  {\n    \"start\": \"00:01:20,357\",\n    \"end\": \"00:01:22,018\",\n    \"lang\": \"en\",\n    \"text\": \"And that's all.\"\n  },\n  {\n    \"start\": \"00:01:24,298\",\n    \"end\": \"00:01:29,718\",\n    \"lang\": \"en\",\n    \"text\": \"Put this as a cover of our video and teaser.\"\n  },\n  {\n    \"start\": \"00:01:30,518\",\n    \"end\": \"00:01:32,778\",\n    \"lang\": \"en\",\n    \"text\": \"Use this as a teaser.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:00,514",
+            "end": "00:01:01,394",
+            "en": "whatever",
+            "zh": "无论如何",
+            "ar": "أيا كان"
+        },
+        {
+            "start": "00:01:02,534",
+            "end": "00:01:04,274",
+            "en": "and what's this?",
+            "zh": "这是什么？",
+            "ar": "وما هذا؟"
+        },
+        {
+            "start": "00:01:04,274",
+            "end": "00:01:05,494",
+            "en": "okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:01:06,914",
+            "end": "00:01:08,834",
+            "en": "Good night",
+            "zh": "晚安",
+            "ar": "تصبح على خير",
+            "ja": "おやすみなさい"
+        },
+        {
+            "start": "00:01:11,298",
+            "end": "00:01:15,317",
+            "en": "So this is asparagus.",
+            "zh": "所以这是芦笋。",
+            "ar": "إذن هذا هو الهليون."
+        },
+        {
+            "start": "00:01:20,357",
+            "end": "00:01:22,018",
+            "en": "And that's all.",
+            "zh": "就这些。",
+            "ar": "وهذا كل شيء."
+        },
+        {
+            "start": "00:01:24,298",
+            "end": "00:01:29,718",
+            "en": "Put this as a cover of our video and teaser.",
+            "zh": "将这个作为我们视频和预告片的封面。",
+            "ar": "ضع هذا كغلاف لفيديونا والإعلان التشويقي."
+        },
+        {
+            "start": "00:01:30,518",
+            "end": "00:01:32,778",
+            "en": "Use this as a teaser.",
+            "zh": "将这个作为预告片。",
+            "ar": "استخدم هذا كإعلان تشويقي."
+        }
+    ]
+}

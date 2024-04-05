@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:01,782\",\n    \"end\": \"00:02:03,642\",\n    \"lang\": \"en\",\n    \"text\": \"it's not an action.\"\n  },\n  {\n    \"start\": \"00:02:04,122\",\n    \"end\": \"00:02:08,662\",\n    \"lang\": \"en\",\n    \"text\": \"It's a consequence of you make proper decisions.\"\n  },\n  {\n    \"start\": \"00:02:09,082\",\n    \"end\": \"00:02:10,901\",\n    \"lang\": \"en\",\n    \"text\": \"So you give up something,\"\n  },\n  {\n    \"start\": \"00:02:10,901\",\n    \"end\": \"00:02:11,902\",\n    \"lang\": \"en\",\n    \"text\": \"you make the trade off,\"\n  },\n  {\n    \"start\": \"00:02:11,902\",\n    \"end\": \"00:02:13,222\",\n    \"lang\": \"en\",\n    \"text\": \"you balance something,\"\n  },\n  {\n    \"start\": \"00:02:13,222\",\n    \"end\": \"00:02:16,122\",\n    \"lang\": \"en\",\n    \"text\": \"you accept something,\"\n  },\n  {\n    \"start\": \"00:02:18,402\",\n    \"end\": \"00:02:23,682\",\n    \"lang\": \"en\",\n    \"text\": \"then you reach a state of peaceful and free freedom.\"\n  },\n  {\n    \"start\": \"00:02:26,402\",\n    \"end\": \"00:02:26,982\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:26,982\",\n    \"end\": \"00:02:28,502\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:01,782",
+            "end": "00:02:03,642",
+            "es": "no es una acción.",
+            "fr": "ce n'est pas une action.",
+            "uk": "це не дія."
+        },
+        {
+            "start": "00:02:04,122",
+            "end": "00:02:08,662",
+            "es": "Es una consecuencia de tú tomar decisiones adecuadas.",
+            "fr": "C'est une conséquence de prendre de bonnes décisions.",
+            "uk": "Це наслідок того, що ти приймаєш правильні рішення."
+        },
+        {
+            "start": "00:02:09,082",
+            "end": "00:02:10,901",
+            "es": "Así que renuncias a algo,",
+            "fr": "Donc, tu abandonnes quelque chose,",
+            "uk": "Отже, ти відмовляєшся від чогось,"
+        },
+        {
+            "start": "00:02:10,901",
+            "end": "00:02:11,902",
+            "es": "haces un intercambio,",
+            "fr": "tu fais un choix,",
+            "uk": "ти робиш обмін,"
+        },
+        {
+            "start": "00:02:11,902",
+            "end": "00:02:13,222",
+            "es": "equilibras algo,",
+            "fr": "tu équilibres quelque chose,",
+            "uk": "ти балансуєш щось,"
+        },
+        {
+            "start": "00:02:13,222",
+            "end": "00:02:16,122",
+            "es": "aceptas algo,",
+            "fr": "tu acceptes quelque chose,",
+            "uk": "ти приймаєш щось,"
+        },
+        {
+            "start": "00:02:18,402",
+            "end": "00:02:23,682",
+            "es": "entonces alcanzas un estado de paz y libertad auténtica.",
+            "fr": "puis tu atteins un état de paix et de liberté véritable.",
+            "uk": "тоді ти досягаєш стану миру та справжньої свободи."
+        },
+        {
+            "start": "00:02:26,402",
+            "end": "00:02:26,982",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:02:26,982",
+            "end": "00:02:28,502",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "uk": "бачимось."
+        }
+    ]
+}

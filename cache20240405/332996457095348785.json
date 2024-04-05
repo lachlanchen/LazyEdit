@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:08,200\",\n    \"end\": \"00:01:08,640\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:01:08,640\",\n    \"end\": \"00:01:10,020\",\n    \"lang\": \"en\",\n    \"text\": \"this time it seems better.\"\n  },\n  {\n    \"start\": \"00:01:10,020\",\n    \"end\": \"00:01:11,440\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:01:11,440\",\n    \"end\": \"00:01:12,280\",\n    \"lang\": \"en\",\n    \"text\": \"so,\"\n  },\n  {\n    \"start\": \"00:01:12,280\",\n    \"end\": \"00:01:15,260\",\n    \"lang\": \"en\",\n    \"text\": \"play some chords.\"\n  },\n  {\n    \"start\": \"00:01:18,754\",\n    \"end\": \"00:01:19,854\",\n    \"lang\": \"zh\",\n    \"text\": \"和弦有英语怎么说\"\n  },\n  {\n    \"start\": \"00:01:49,294\",\n    \"end\": \"00:01:56,274\",\n    \"lang\": \"zh\",\n    \"text\": \"请不吝点赞 订阅 转发 打赏支持明镜与点点栏目\"\n  },\n  {\n    \"start\": \"00:01:58,306\",\n    \"end\": \"00:01:58,466\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:58,466\",\n    \"end\": \"00:01:59,346\",\n    \"lang\": \"en\",\n    \"text\": \"one more time.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:08,200",
+            "end": "00:01:08,640",
+            "en": "Ok,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:01:08,640",
+            "end": "00:01:10,020",
+            "en": "this time it seems better.",
+            "zh": "这次看起来好一些。",
+            "ar": "في هذه المرة يبدو أفضل."
+        },
+        {
+            "start": "00:01:10,020",
+            "end": "00:01:11,440",
+            "en": "Ok,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:01:11,440",
+            "end": "00:01:12,280",
+            "en": "so,",
+            "zh": "所以，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:01:12,280",
+            "end": "00:01:15,260",
+            "en": "play some chords.",
+            "zh": "弹奏一些和弦。",
+            "ar": "عزف بعض الأوتار."
+        },
+        {
+            "start": "00:01:18,754",
+            "end": "00:01:19,854",
+            "en": "How do you say 'chords' in English?",
+            "zh": "和弦有英语怎么说",
+            "ar": "كيف تقول 'أوتار' بالإنجليزية؟"
+        },
+        {
+            "start": "00:01:49,294",
+            "end": "00:01:56,274",
+            "en": "Please feel free to like, subscribe, share, and reward to support Mingjing and Didi columns.",
+            "zh": "请不吝点赞 订阅 转发 打赏支持明镜与点点栏目",
+            "ar": "لا تتردد في الإعجاب، الاشتراك، المشاركة، والمكافأة لدعم أعمدة Mingjing و Didi."
+        },
+        {
+            "start": "00:01:58,306",
+            "end": "00:01:58,466",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:01:58,466",
+            "end": "00:01:59,346",
+            "en": "one more time.",
+            "zh": "再来一次。",
+            "ar": "مرة أخرى."
+        }
+    ]
+}

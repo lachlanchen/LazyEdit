@@ -1,0 +1,175 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,699\",\n    \"end\": \"00:00:01,380\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:01,380\",\n    \"end\": \"00:00:01,820\",\n    \"lang\": \"en\",\n    \"text\": \"so,\"\n  },\n  {\n    \"start\": \"00:00:01,820\",\n    \"end\": \"00:00:05,380\",\n    \"lang\": \"en\",\n    \"text\": \"do our morning running and we record this small progress.\"\n  },\n  {\n    \"start\": \"00:00:07,714\",\n    \"end\": \"00:00:09,014\",\n    \"lang\": \"zh\",\n    \"text\": \"向前行\"\n  },\n  {\n    \"start\": \"00:00:10,294\",\n    \"end\": \"00:00:11,514\",\n    \"lang\": \"zh\",\n    \"text\": \"向后 From beyond\"\n  },\n  {\n    \"start\": \"00:00:11,514\",\n    \"end\": \"00:00:13,674\",\n    \"lang\": \"zh\",\n    \"text\": \"你来ortion\"\n  },\n  {\n    \"start\": \"00:00:15,538\",\n    \"end\": \"00:00:17,538\",\n    \"lang\": \"en\",\n    \"text\": \"is correct\"\n  },\n  {\n    \"start\": \"00:00:29,794\",\n    \"end\": \"00:00:30,654\",\n    \"lang\": \"zh\",\n    \"text\": \"多謝您啊\"\n  },\n  {\n    \"start\": \"00:00:32,034\",\n    \"end\": \"00:00:34,394\",\n    \"lang\": \"ja\",\n    \"text\": \"まだ未来に\"\n  },\n  {\n    \"start\": \"00:00:34,394\",\n    \"end\": \"00:00:35,394\",\n    \"lang\": \"ja\",\n    \"text\": \"見えない\"\n  },\n  {\n    \"start\": \"00:00:35,426\",\n    \"end\": \"00:00:36,046\",\n    \"lang\": \"en\",\n    \"text\": \"So me.\"\n  },\n  {\n    \"start\": \"00:00:36,706\",\n    \"end\": \"00:00:38,906\",\n    \"lang\": \"zh\",\n    \"text\": \"快樂都行啊\"\n  },\n  {\n    \"start\": \"00:00:39,106\",\n    \"end\": \"00:00:40,226\",\n    \"lang\": \"zh\",\n    \"text\": \"送你\"\n  },\n  {\n    \"start\": \"00:00:41,206\",\n    \"end\": \"00:00:43,546\",\n    \"lang\": \"zh\",\n    \"text\": \"娜娜都行啊\"\n  },\n  {\n    \"start\": \"00:00:43,646\",\n    \"end\": \"00:00:45,206\",\n    \"lang\": \"zh\",\n    \"text\": \"娜娜咪咪\"\n  },\n  {\n    \"start\": \"00:00:45,206\",\n    \"end\": \"00:00:47,026\",\n    \"lang\": \"zh\",\n    \"text\": \"咪咪都送你\"\n  },\n  {\n    \"start\": \"00:00:47,026\",\n    \"end\": \"00:00:48,566\",\n    \"lang\": \"zh\",\n    \"text\": \"快樂都行啊\"\n  },\n  {\n    \"start\": \"00:00:48,726\",\n    \"end\": \"00:00:50,106\",\n    \"lang\": \"zh\",\n    \"text\": \"送你\"\n  },\n  {\n    \"start\": \"00:00:50,966\",\n    \"end\": \"00:00:53,346\",\n    \"lang\": \"zh\",\n    \"text\": \"娜娜都行啊\"\n  },\n  {\n    \"start\": \"00:00:53,706\",\n    \"end\": \"00:00:54,286\",\n    \"lang\": \"zh\",\n    \"text\": \"娜娜咪咪\"\n  },\n  {\n    \"start\": \"00:00:54,306\",\n    \"end\": \"00:00:55,126\",\n    \"lang\": \"en\",\n    \"text\": \"Be ready,\"\n  },\n  {\n    \"start\": \"00:00:55,126\",\n    \"end\": \"00:00:56,866\",\n    \"lang\": \"en\",\n    \"text\": \"be ready\"\n  },\n  {\n    \"start\": \"00:00:56,898\",\n    \"end\": \"00:00:58,698\",\n    \"lang\": \"zh\",\n    \"text\": \"你生日快樂\"\n  },\n  {\n    \"start\": \"00:00:59,878\",\n    \"end\": \"00:01:02,278\",\n    \"lang\": \"zh\",\n    \"text\": \"祝你生日快樂\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,699",
+            "end": "00:00:01,380",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:00:01,380",
+            "end": "00:00:01,820",
+            "en": "so,",
+            "zh": "所以，",
+            "ar": "إذاً،"
+        },
+        {
+            "start": "00:00:01,820",
+            "end": "00:00:05,380",
+            "en": "do our morning running and we record this small progress.",
+            "zh": "做我们的晨跑，并记录这些小进步。",
+            "ar": "نقوم بالجري الصباحي ونسجل هذا التقدم البسيط."
+        },
+        {
+            "start": "00:00:07,714",
+            "end": "00:00:09,014",
+            "zh": "向前行",
+            "en": "March forward",
+            "ar": "المضي قدما"
+        },
+        {
+            "start": "00:00:10,294",
+            "end": "00:00:11,514",
+            "zh": "向后 From beyond",
+            "en": "Backwards From beyond",
+            "ar": "العودة من ما وراء"
+        },
+        {
+            "start": "00:00:11,514",
+            "end": "00:00:13,674",
+            "zh": "你来ortion",
+            "en": "You come portion",
+            "ar": "أنت تأتي جزء"
+        },
+        {
+            "start": "00:00:15,538",
+            "end": "00:00:17,538",
+            "en": "is correct",
+            "zh": "是正确的",
+            "ar": "هو صحيح"
+        },
+        {
+            "start": "00:00:29,794",
+            "end": "00:00:30,654",
+            "zh": "多謝您啊",
+            "en": "Thank you very much",
+            "ar": "شكرا جزيلا لك"
+        },
+        {
+            "start": "00:00:32,034",
+            "end": "00:00:34,394",
+            "ja": "まだ未来に",
+            "en": "Still in the future",
+            "zh": "仍在未来",
+            "ar": "لاتزال في المستقبل"
+        },
+        {
+            "start": "00:00:34,394",
+            "end": "00:00:35,394",
+            "ja": "見えない",
+            "en": "Invisible",
+            "zh": "看不见",
+            "ar": "غير مرئي"
+        },
+        {
+            "start": "00:00:35,426",
+            "end": "00:00:36,046",
+            "en": "So me.",
+            "zh": "所以我。",
+            "ar": "إذاً أنا."
+        },
+        {
+            "start": "00:00:36,706",
+            "end": "00:00:38,906",
+            "zh": "快樂都行啊",
+            "en": "Happiness works too",
+            "ar": "السعادة تعمل أيضا"
+        },
+        {
+            "start": "00:00:39,106",
+            "end": "00:00:40,226",
+            "zh": "送你",
+            "en": "For you",
+            "ar": "لك"
+        },
+        {
+            "start": "00:00:41,206",
+            "end": "00:00:43,546",
+            "zh": "娜娜都行啊",
+            "en": "Nana works too",
+            "ar": "نانا تعمل أيضا"
+        },
+        {
+            "start": "00:00:43,646",
+            "end": "00:00:45,206",
+            "zh": "娜娜咪咪",
+            "en": "Nana MiMi",
+            "ar": "نانا ميمي"
+        },
+        {
+            "start": "00:00:45,206",
+            "end": "00:00:47,026",
+            "zh": "咪咪都送你",
+            "en": "MiMi all for you",
+            "ar": "ميمي كلها لك"
+        },
+        {
+            "start": "00:00:47,026",
+            "end": "00:00:48,566",
+            "zh": "快樂都行啊",
+            "en": "Happiness works too",
+            "ar": "السعادة تعمل أيضا"
+        },
+        {
+            "start": "00:00:48,726",
+            "end": "00:00:50,106",
+            "zh": "送你",
+            "en": "For you",
+            "ar": "لك"
+        },
+        {
+            "start": "00:00:50,966",
+            "end": "00:00:53,346",
+            "zh": "娜娜都行啊",
+            "en": "Nana works too",
+            "ar": "نانا تعمل أيضا"
+        },
+        {
+            "start": "00:00:53,706",
+            "end": "00:00:54,286",
+            "zh": "娜娜咪咪",
+            "en": "Nana MiMi",
+            "ar": "نانا ميمي"
+        },
+        {
+            "start": "00:00:54,306",
+            "end": "00:00:55,126",
+            "en": "Be ready,",
+            "zh": "准备好，",
+            "ar": "كن مستعدا،"
+        },
+        {
+            "start": "00:00:55,126",
+            "end": "00:00:56,866",
+            "en": "be ready",
+            "zh": "准备好",
+            "ar": "كن مستعدا"
+        },
+        {
+            "start": "00:00:56,898",
+            "end": "00:00:58,698",
+            "zh": "你生日快樂",
+            "en": "Happy birthday to you",
+            "ar": "عيد ميلاد سعيد لك"
+        },
+        {
+            "start": "00:00:59,878",
+            "end": "00:01:02,278",
+            "zh": "祝你生日快樂",
+            "en": "Wishing you a happy birthday",
+            "ar": "أتمنى لك عيد ميلاد سعيد"
+        }
+    ]
+}

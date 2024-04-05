@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:03,746\",\n    \"end\": \"00:02:04,366\",\n    \"lang\": \"en\",\n    \"text\": \"I'll sing it simply,\"\n  },\n  {\n    \"start\": \"00:02:04,366\",\n    \"end\": \"00:02:05,046\",\n    \"lang\": \"en\",\n    \"text\": \"what do you want me to write?\"\n  },\n  {\n    \"start\": \"00:02:05,486\",\n    \"end\": \"00:02:07,566\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:07,566\",\n    \"end\": \"00:02:08,425\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:08,425\",\n    \"end\": \"00:02:11,486\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:11,486\",\n    \"end\": \"00:02:14,346\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:14,346\",\n    \"end\": \"00:02:15,086\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:15,086\",\n    \"end\": \"00:02:18,746\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:24,966\",\n    \"end\": \"00:02:25,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:25,686\",\n    \"end\": \"00:02:27,146\",\n    \"lang\": \"en\",\n    \"text\": \"play some chords\"\n  },\n  {\n    \"start\": \"00:02:27,146\",\n    \"end\": \"00:02:29,826\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:29,826\",\n    \"end\": \"00:02:29,826\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:29,826\",\n    \"end\": \"00:02:32,066\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:32,994\",\n    \"end\": \"00:02:35,634\",\n    \"lang\": \"ja\",\n    \"text\": \"バリナスティー10マウンス\"\n  },\n  {\n    \"start\": \"00:02:36,418\",\n    \"end\": \"00:02:40,298\",\n    \"lang\": \"en\",\n    \"text\": \"I mainly focus on playing the chords.\"\n  },\n  {\n    \"start\": \"00:02:41,418\",\n    \"end\": \"00:02:42,138\",\n    \"lang\": \"en\",\n    \"text\": \"Hèxiǎn.\"\n  },\n  {\n    \"start\": \"00:02:43,874\",\n    \"end\": \"00:02:45,054\",\n    \"lang\": \"zh\",\n    \"text\": \"好想要试裤子\"\n  },\n  {\n    \"start\": \"00:02:46,093\",\n    \"end\": \"00:02:47,594\",\n    \"lang\": \"zh\",\n    \"text\": \"好想用英语怎么说\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:03,746",
+            "end": "00:02:04,366",
+            "ko": "간단하게 부를게,"
+        },
+        {
+            "start": "00:02:04,366",
+            "end": "00:02:05,046",
+            "ko": "뭐 써줄까요?"
+        },
+        {
+            "start": "00:02:05,486",
+            "end": "00:02:07,566",
+            "ko": "너무 많이 답장하지 말고,"
+        },
+        {
+            "start": "00:02:07,566",
+            "end": "00:02:08,425",
+            "ko": "하지마"
+        },
+        {
+            "start": "00:02:08,425",
+            "end": "00:02:11,486",
+            "ko": "내 사랑을 별로 못 느끼게 하지마"
+        },
+        {
+            "start": "00:02:11,486",
+            "end": "00:02:14,346",
+            "ko": "너무 많이 답장하지 말고,"
+        },
+        {
+            "start": "00:02:14,346",
+            "end": "00:02:15,086",
+            "ko": "하지마"
+        },
+        {
+            "start": "00:02:15,086",
+            "end": "00:02:18,746",
+            "ko": "내 사랑을 별로 못 느끼게 하지마"
+        },
+        {
+            "start": "00:02:24,966",
+            "end": "00:02:25,686",
+            "ko": "오케이,"
+        },
+        {
+            "start": "00:02:25,686",
+            "end": "00:02:27,146",
+            "ko": "코드 몇 개 칠게"
+        },
+        {
+            "start": "00:02:27,146",
+            "end": "00:02:29,826",
+            "ko": "너무 많이 답장하지 말고,"
+        },
+        {
+            "start": "00:02:29,826",
+            "end": "00:02:29,826",
+            "ko": "하지마"
+        },
+        {
+            "start": "00:02:29,826",
+            "end": "00:02:32,066",
+            "ko": "내 사랑을 별로 못 느끼게 하지마"
+        },
+        {
+            "start": "00:02:32,994",
+            "end": "00:02:35,634",
+            "ko": "바리스타 경험 10개월"
+        },
+        {
+            "start": "00:02:36,418",
+            "end": "00:02:40,298",
+            "ko": "주로 코드 연주에 집중해."
+        },
+        {
+            "start": "00:02:41,418",
+            "end": "00:02:42,138",
+            "ko": "합선."
+        },
+        {
+            "start": "00:02:43,874",
+            "end": "00:02:45,054",
+            "ko": "바지를 시도해 보고 싶어요"
+        },
+        {
+            "start": "00:02:46,093",
+            "end": "00:02:47,594",
+            "ko": "영어로 어떻게 말하죠?"
+        }
+    ]
+}

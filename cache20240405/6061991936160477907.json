@@ -1,0 +1,69 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,180\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not joking.\"\n  },\n  {\n    \"start\": \"00:00:01,180\",\n    \"end\": \"00:00:08,039\",\n    \"lang\": \"en\",\n    \"text\": \"This chicken is really the best chicken I've ever cooked.\"\n  },\n  {\n    \"start\": \"00:00:16,580\",\n    \"end\": \"00:00:21,740\",\n    \"lang\": \"en\",\n    \"text\": \"Even though my cooking skill baseline is quite high,\"\n  },\n  {\n    \"start\": \"00:00:21,740\",\n    \"end\": \"00:00:24,420\",\n    \"lang\": \"en\",\n    \"text\": \"this is high over the high.\"\n  },\n  {\n    \"start\": \"00:00:34,940\",\n    \"end\": \"00:00:36,060\",\n    \"lang\": \"en\",\n    \"text\": \"It's so delicious.\"\n  },\n  {\n    \"start\": \"00:00:42,400\",\n    \"end\": \"00:00:47,140\",\n    \"lang\": \"en\",\n    \"text\": \"I should let the people around the world know my cooking skill.\"\n  },\n  {\n    \"start\": \"00:00:53,506\",\n    \"end\": \"00:00:54,286\",\n    \"lang\": \"ja\",\n    \"text\": \"今日のページ\"\n  },\n  {\n    \"start\": \"00:00:55,106\",\n    \"end\": \"00:00:55,886\",\n    \"lang\": \"en\",\n    \"text\": \"Give me a platform,\"\n  },\n  {\n    \"start\": \"00:00:55,886\",\n    \"end\": \"00:00:58,406\",\n    \"lang\": \"en\",\n    \"text\": \"let me serve you guys.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,180",
+            "en": "I'm not joking.",
+            "zh": "我不是在开玩笑。",
+            "ar": "أنا لا أمزح."
+        },
+        {
+            "start": "00:00:01,180",
+            "end": "00:00:08,039",
+            "en": "This chicken is really the best chicken I've ever cooked.",
+            "zh": "这只鸡真的是我做过的最好吃的鸡。",
+            "ar": "هذا الدجاج هو حقًا أفضل دجاج طبخته على الإطلاق."
+        },
+        {
+            "start": "00:00:16,580",
+            "end": "00:00:21,740",
+            "en": "Even though my cooking skill baseline is quite high,",
+            "zh": "尽管我的烹饪技巧的基线相当高，",
+            "ar": "على الرغم من أن مستوى مهاراتي في الطبخ مرتفع جدًا،"
+        },
+        {
+            "start": "00:00:21,740",
+            "end": "00:00:24,420",
+            "en": "this is high over the high.",
+            "zh": "这真的是高出了高。",
+            "ar": "هذا يتجاوز العالي."
+        },
+        {
+            "start": "00:00:34,940",
+            "end": "00:00:36,060",
+            "en": "It's so delicious.",
+            "zh": "它太美味了。",
+            "ar": "إنه لذيذ للغاية."
+        },
+        {
+            "start": "00:00:42,400",
+            "end": "00:00:47,140",
+            "en": "I should let the people around the world know my cooking skill.",
+            "zh": "我应该让全世界的人都知道我的烹饪技巧。",
+            "ar": "يجب أن أخبر الناس في جميع أنحاء العالم بمهاراتي في الطبخ."
+        },
+        {
+            "start": "00:00:53,506",
+            "end": "00:00:54,286",
+            "en": "Today's page",
+            "zh": "今日的页面",
+            "ar": "صفحة اليوم",
+            "ja": "今日のページ"
+        },
+        {
+            "start": "00:00:55,106",
+            "end": "00:00:55,886",
+            "en": "Give me a platform,",
+            "zh": "给我一个平台，",
+            "ar": "أعطني منبرًا،"
+        },
+        {
+            "start": "00:00:55,886",
+            "end": "00:00:58,406",
+            "en": "let me serve you guys.",
+            "zh": "让我为你们服务。",
+            "ar": "دعوني أخدمكم."
+        }
+    ]
+}

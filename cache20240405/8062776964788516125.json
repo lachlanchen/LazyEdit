@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,140\",\n    \"end\": \"00:00:02,140\",\n    \"lang\": \"en\",\n    \"text\": \"It's too windy.\"\n  },\n  {\n    \"start\": \"00:00:02,140\",\n    \"end\": \"00:00:03,300\",\n    \"lang\": \"en\",\n    \"text\": \"It's so lazy.\"\n  },\n  {\n    \"start\": \"00:00:13,858\",\n    \"end\": \"00:00:14,058\",\n    \"lang\": \"zh\",\n    \"text\": \"大哥\"\n  },\n  {\n    \"start\": \"00:00:14,158\",\n    \"end\": \"00:00:14,378\",\n    \"lang\": \"zh\",\n    \"text\": \"指意在哪터\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,140",
+            "end": "00:00:02,140",
+            "es": "Hace demasiado viento.",
+            "fr": "Il fait trop de vent.",
+            "uk": "Дуже вітряно."
+        },
+        {
+            "start": "00:00:02,140",
+            "end": "00:00:03,300",
+            "es": "Es tan perezoso.",
+            "fr": "C'est tellement paresseux.",
+            "uk": "Це такий ледачий."
+        },
+        {
+            "start": "00:00:13,858",
+            "end": "00:00:14,058",
+            "es": "Hermano mayor",
+            "fr": "Grand frère",
+            "uk": "Старший брат"
+        },
+        {
+            "start": "00:00:14,158",
+            "end": "00:00:14,378",
+            "es": "¿Dónde está apuntando?",
+            "fr": "Où est-ce que ça pointe?",
+            "uk": "Куди це вказує?"
+        }
+    ]
+}

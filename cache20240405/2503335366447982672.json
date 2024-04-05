@@ -1,0 +1,187 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,454\",\n    \"end\": \"00:01:02,154\",\n    \"lang\": \"en\",\n    \"text\": \"I think,\"\n  },\n  {\n    \"start\": \"00:01:02,154\",\n    \"end\": \"00:01:10,334\",\n    \"lang\": \"en\",\n    \"text\": \"can be used in daily life.\"\n  },\n  {\n    \"start\": \"00:01:11,274\",\n    \"end\": \"00:01:14,714\",\n    \"lang\": \"en\",\n    \"text\": \"And this is an alcohol sanitizer,\"\n  },\n  {\n    \"start\": \"00:01:14,714\",\n    \"end\": \"00:01:15,454\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:01:16,994\",\n    \"end\": \"00:01:17,954\",\n    \"lang\": \"en\",\n    \"text\": \"Disinfectant.\"\n  },\n  {\n    \"start\": \"00:01:20,034\",\n    \"end\": \"00:01:21,734\",\n    \"lang\": \"en\",\n    \"text\": \"Instant disinfectant.\"\n  },\n  {\n    \"start\": \"00:01:22,694\",\n    \"end\": \"00:01:23,934\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness.\"\n  },\n  {\n    \"start\": \"00:01:26,294\",\n    \"end\": \"00:01:26,894\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:01:26,894\",\n    \"end\": \"00:01:27,194\",\n    \"lang\": \"en\",\n    \"text\": \"okay,\"\n  },\n  {\n    \"start\": \"00:01:27,194\",\n    \"end\": \"00:01:27,594\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  },\n  {\n    \"start\": \"00:01:27,714\",\n    \"end\": \"00:01:29,934\",\n    \"lang\": \"en\",\n    \"text\": \"I just saw that it's pure water,\"\n  },\n  {\n    \"start\": \"00:01:29,934\",\n    \"end\": \"00:01:34,794\",\n    \"lang\": \"en\",\n    \"text\": \"but it's also 75% alcohol.\"\n  },\n  {\n    \"start\": \"00:01:35,694\",\n    \"end\": \"00:01:35,934\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:35,934\",\n    \"end\": \"00:01:37,914\",\n    \"lang\": \"en\",\n    \"text\": \"this is a spray.\"\n  },\n  {\n    \"start\": \"00:01:39,554\",\n    \"end\": \"00:01:40,474\",\n    \"lang\": \"en\",\n    \"text\": \"It's great.\"\n  },\n  {\n    \"start\": \"00:01:41,374\",\n    \"end\": \"00:01:42,194\",\n    \"lang\": \"en\",\n    \"text\": \"And what's this?\"\n  },\n  {\n    \"start\": \"00:01:42,494\",\n    \"end\": \"00:01:42,694\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:01:42,694\",\n    \"end\": \"00:01:43,394\",\n    \"lang\": \"en\",\n    \"text\": \"this is a book.\"\n  },\n  {\n    \"start\": \"00:01:45,874\",\n    \"end\": \"00:01:46,594\",\n    \"lang\": \"en\",\n    \"text\": \"This is a book.\"\n  },\n  {\n    \"start\": \"00:01:46,694\",\n    \"end\": \"00:01:47,674\",\n    \"lang\": \"en\",\n    \"text\": \"This is Cantonese.\"\n  },\n  {\n    \"start\": \"00:01:48,354\",\n    \"end\": \"00:01:49,894\",\n    \"lang\": \"en\",\n    \"text\": \"It's a Cantonese book.\"\n  },\n  {\n    \"start\": \"00:01:52,774\",\n    \"end\": \"00:01:53,134\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:53,494\",\n    \"end\": \"00:01:53,894\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:58,674\",\n    \"end\": \"00:01:59,394\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:59,394\",\n    \"end\": \"00:02:00,234\",\n    \"lang\": \"en\",\n    \"text\": \"this book,\"\n  },\n  {\n    \"start\": \"00:02:00,234\",\n    \"end\": \"00:02:01,894\",\n    \"lang\": \"en\",\n    \"text\": \"Cantonese in Hong Kong.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,454",
+            "end": "00:01:02,154",
+            "es": "Creo,",
+            "fr": "Je pense,",
+            "uk": "Я думаю,"
+        },
+        {
+            "start": "00:01:02,154",
+            "end": "00:01:10,334",
+            "es": "se puede usar en la vida cotidiana.",
+            "fr": "peut être utilisé dans la vie quotidienne.",
+            "uk": "можна використовувати у повсякденному житті."
+        },
+        {
+            "start": "00:01:11,274",
+            "end": "00:01:14,714",
+            "es": "Y esto es un desinfectante de alcohol,",
+            "fr": "Et ceci est un désinfectant alcoolique,",
+            "uk": "І це алкогольний антисептик,"
+        },
+        {
+            "start": "00:01:14,714",
+            "end": "00:01:15,454",
+            "es": "¿verdad?",
+            "fr": "n'est-ce pas?",
+            "uk": "правильно?"
+        },
+        {
+            "start": "00:01:16,994",
+            "end": "00:01:17,954",
+            "es": "Desinfectante.",
+            "fr": "Désinfectant.",
+            "uk": "Дезінфектор."
+        },
+        {
+            "start": "00:01:20,034",
+            "end": "00:01:21,734",
+            "es": "Desinfectante instantáneo.",
+            "fr": "Désinfectant instantané.",
+            "uk": "Миттєвий дезінфектор."
+        },
+        {
+            "start": "00:01:22,694",
+            "end": "00:01:23,934",
+            "es": "Dios mío.",
+            "fr": "Oh mon Dieu.",
+            "uk": "О Боже мій."
+        },
+        {
+            "start": "00:01:26,294",
+            "end": "00:01:26,894",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "О,"
+        },
+        {
+            "start": "00:01:26,894",
+            "end": "00:01:27,194",
+            "es": "vale,",
+            "fr": "d'accord,",
+            "uk": "гаразд,"
+        },
+        {
+            "start": "00:01:27,194",
+            "end": "00:01:27,594",
+            "es": "vale.",
+            "fr": "d'accord.",
+            "uk": "гаразд."
+        },
+        {
+            "start": "00:01:27,714",
+            "end": "00:01:29,934",
+            "es": "Acabo de ver que es agua pura,",
+            "fr": "Je viens de voir que c'est de l'eau pure,",
+            "uk": "Я щойно побачив, що це чиста вода,"
+        },
+        {
+            "start": "00:01:29,934",
+            "end": "00:01:34,794",
+            "es": "pero también es 75% de alcohol.",
+            "fr": "mais c'est aussi 75% d'alcool.",
+            "uk": "але також і 75% алкоголю."
+        },
+        {
+            "start": "00:01:35,694",
+            "end": "00:01:35,934",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:01:35,934",
+            "end": "00:01:37,914",
+            "es": "esto es un spray.",
+            "fr": "c'est un spray.",
+            "uk": "це спрей."
+        },
+        {
+            "start": "00:01:39,554",
+            "end": "00:01:40,474",
+            "es": "Es genial.",
+            "fr": "C'est génial.",
+            "uk": "Це відмінно."
+        },
+        {
+            "start": "00:01:41,374",
+            "end": "00:01:42,194",
+            "es": "¿Y esto qué es?",
+            "fr": "Et qu'est-ce que c'est?",
+            "uk": "А це що?"
+        },
+        {
+            "start": "00:01:42,494",
+            "end": "00:01:42,694",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "О,"
+        },
+        {
+            "start": "00:01:42,694",
+            "end": "00:01:43,394",
+            "es": "esto es un libro.",
+            "fr": "c'est un livre.",
+            "uk": "це книга."
+        },
+        {
+            "start": "00:01:45,874",
+            "end": "00:01:46,594",
+            "es": "Esto es un libro.",
+            "fr": "Ceci est un livre.",
+            "uk": "Це книга."
+        },
+        {
+            "start": "00:01:46,694",
+            "end": "00:01:47,674",
+            "es": "Esto es cantonés.",
+            "fr": "C'est du cantonais.",
+            "uk": "Це кантонська мова."
+        },
+        {
+            "start": "00:01:48,354",
+            "end": "00:01:49,894",
+            "es": "Es un libro en cantonés.",
+            "fr": "C'est un livre en cantonais.",
+            "uk": "Це книга кантонською мовою."
+        },
+        {
+            "start": "00:01:52,774",
+            "end": "00:01:53,134",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:01:53,494",
+            "end": "00:01:53,894",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:01:58,674",
+            "end": "00:01:59,394",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:01:59,394",
+            "end": "00:02:00,234",
+            "es": "este libro,",
+            "fr": "ce livre,",
+            "uk": "ця книга,"
+        },
+        {
+            "start": "00:02:00,234",
+            "end": "00:02:01,894",
+            "es": "cantones en Hong Kong.",
+            "fr": "le cantonais à Hong Kong.",
+            "uk": "кантонська мова в Гонконзі."
+        }
+    ]
+}

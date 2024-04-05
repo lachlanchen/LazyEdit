@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:06,586\",\n    \"end\": \"00:01:08,626\",\n    \"lang\": \"en\",\n    \"text\": \"the problem is that\"\n  },\n  {\n    \"start\": \"00:01:08,866\",\n    \"end\": \"00:01:10,826\",\n    \"lang\": \"en\",\n    \"text\": \"it will be over flavored.\"\n  },\n  {\n    \"start\": \"00:01:12,686\",\n    \"end\": \"00:01:22,046\",\n    \"lang\": \"en\",\n    \"text\": \"And then this fragment is a perfect balance between flavor and the original taste of the\"\n  },\n  {\n    \"start\": \"00:01:22,046\",\n    \"end\": \"00:01:22,626\",\n    \"lang\": \"en\",\n    \"text\": \"food.\"\n  },\n  {\n    \"start\": \"00:01:26,006\",\n    \"end\": \"00:01:31,006\",\n    \"lang\": \"en\",\n    \"text\": \"This beef is famous among my friends.\"\n  },\n  {\n    \"start\": \"00:01:39,626\",\n    \"end\": \"00:01:42,226\",\n    \"lang\": \"en\",\n    \"text\": \"It's a fake rocket.\"\n  },\n  {\n    \"start\": \"00:01:51,786\",\n    \"end\": \"00:01:53,506\",\n    \"lang\": \"en\",\n    \"text\": \"It's very good.\"\n  },\n  {\n    \"start\": \"00:01:54,626\",\n    \"end\": \"00:01:55,486\",\n    \"lang\": \"en\",\n    \"text\": \"It's tender.\"\n  },\n  {\n    \"start\": \"00:01:57,546\",\n    \"end\": \"00:01:58,466\",\n    \"lang\": \"en\",\n    \"text\": \"Tasty.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:06,586",
+            "end": "00:01:08,626",
+            "es": "el problema es que",
+            "fr": "le problème est que",
+            "uk": "проблема в тому, що"
+        },
+        {
+            "start": "00:01:08,866",
+            "end": "00:01:10,826",
+            "es": "estará demasiado condimentado.",
+            "fr": "ce sera trop assaisonné.",
+            "uk": "воно буде переправлене."
+        },
+        {
+            "start": "00:01:12,686",
+            "end": "00:01:22,046",
+            "es": "Y entonces este fragmento es un equilibrio perfecto entre sabor y el gusto original de la",
+            "fr": "Et alors ce fragment est un équilibre parfait entre saveur et le goût original du",
+            "uk": "А цей фрагмент є ідеальним балансом між смаком та оригінальним смаком"
+        },
+        {
+            "start": "00:01:22,046",
+            "end": "00:01:22,626",
+            "es": "comida.",
+            "fr": "nourriture.",
+            "uk": "їжі."
+        },
+        {
+            "start": "00:01:26,006",
+            "end": "00:01:31,006",
+            "es": "Este beef es famoso entre mis amigos.",
+            "fr": "Ce bœuf est célèbre parmi mes amis.",
+            "uk": "Ця яловичина відома серед моїх друзів."
+        },
+        {
+            "start": "00:01:39,626",
+            "end": "00:01:42,226",
+            "es": "Es un cohete falso.",
+            "fr": "C'est une fausse fusée.",
+            "uk": "Це підроблена ракета."
+        },
+        {
+            "start": "00:01:51,786",
+            "end": "00:01:53,506",
+            "es": "Es muy bueno.",
+            "fr": "C'est très bon.",
+            "uk": "Дуже добре."
+        },
+        {
+            "start": "00:01:54,626",
+            "end": "00:01:55,486",
+            "es": "Es tierno.",
+            "fr": "C'est tendre.",
+            "uk": "Він ніжний."
+        },
+        {
+            "start": "00:01:57,546",
+            "end": "00:01:58,466",
+            "es": "Sabroso.",
+            "fr": "Délicieux.",
+            "uk": "Смачно."
+        }
+    ]
+}

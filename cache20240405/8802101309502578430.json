@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,280\",\n    \"lang\": \"en\",\n    \"text\": \"is another lazy dog.\"\n  },\n  {\n    \"start\": \"00:00:05,680\",\n    \"end\": \"00:00:06,020\",\n    \"lang\": \"en\",\n    \"text\": \"Wow.\"\n  },\n  {\n    \"start\": \"00:00:15,640\",\n    \"end\": \"00:00:17,080\",\n    \"lang\": \"en\",\n    \"text\": \"He doesn't move.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,280",
+            "vi": "là một chú chó lười khác."
+        },
+        {
+            "start": "00:00:05,680",
+            "end": "00:00:06,020",
+            "vi": "Wow."
+        },
+        {
+            "start": "00:00:15,640",
+            "end": "00:00:17,080",
+            "vi": "Nó không di chuyển."
+        }
+    ]
+}

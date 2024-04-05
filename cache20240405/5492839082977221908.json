@@ -1,0 +1,125 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,940\",\n    \"lang\": \"en\",\n    \"text\": \"This world is that we can learn two Japanese characters\"\n  },\n  {\n    \"start\": \"00:00:04,930\",\n    \"end\": \"00:00:07,130\",\n    \"lang\": \"ja\",\n    \"text\": \"ワインズ新licht £2 新科技能\"\n  },\n  {\n    \"start\": \"00:00:07,510\",\n    \"end\": \"00:00:07,850\",\n    \"lang\": \"ja\",\n    \"text\": \"新\"\n  },\n  {\n    \"start\": \"00:00:08,546\",\n    \"end\": \"00:00:09,446\",\n    \"lang\": \"en\",\n    \"text\": \"which means deep.\"\n  },\n  {\n    \"start\": \"00:00:10,050\",\n    \"end\": \"00:00:11,990\",\n    \"lang\": \"zh\",\n    \"text\": \"開肝\"\n  },\n  {\n    \"start\": \"00:00:15,938\",\n    \"end\": \"00:00:17,058\",\n    \"lang\": \"ja\",\n    \"text\": \"ええことばいたました\"\n  },\n  {\n    \"start\": \"00:00:17,186\",\n    \"end\": \"00:00:17,666\",\n    \"lang\": \"en\",\n    \"text\": \"Peace out.\"\n  },\n  {\n    \"start\": \"00:00:17,926\",\n    \"end\": \"00:00:18,346\",\n    \"lang\": \"en\",\n    \"text\": \"Peace out.\"\n  },\n  {\n    \"start\": \"00:00:19,126\",\n    \"end\": \"00:00:20,106\",\n    \"lang\": \"en\",\n    \"text\": \"Which is...\"\n  },\n  {\n    \"start\": \"00:00:20,106\",\n    \"end\": \"00:00:20,966\",\n    \"lang\": \"en\",\n    \"text\": \"Happy New Year.\"\n  },\n  {\n    \"start\": \"00:00:20,986\",\n    \"end\": \"00:00:22,386\",\n    \"lang\": \"ja\",\n    \"text\": \"マスティシェルスイン\"\n  },\n  {\n    \"start\": \"00:00:23,234\",\n    \"end\": \"00:00:26,454\",\n    \"lang\": \"en\",\n    \"text\": \"same root with another word,\"\n  },\n  {\n    \"start\": \"00:00:26,454\",\n    \"end\": \"00:00:28,334\",\n    \"lang\": \"en\",\n    \"text\": \"with another English word.\"\n  },\n  {\n    \"start\": \"00:00:29,090\",\n    \"end\": \"00:00:29,230\",\n    \"lang\": \"zh\",\n    \"text\": \"啊\"\n  },\n  {\n    \"start\": \"00:00:29,270\",\n    \"end\": \"00:00:29,690\",\n    \"lang\": \"zh\",\n    \"text\": \"鼻子抹\"\n  },\n  {\n    \"start\": \"00:00:30,018\",\n    \"end\": \"00:00:30,578\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:30,578\",\n    \"end\": \"00:00:31,518\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:31,518\",\n    \"end\": \"00:00:35,438\",\n    \"lang\": \"en\",\n    \"text\": \"which also means something that is extremely deep,\"\n  },\n  {\n    \"start\": \"00:00:35,438\",\n    \"end\": \"00:00:37,658\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:37,658\",\n    \"end\": \"00:00:39,378\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:39,678\",\n    \"end\": \"00:00:40,338\",\n    \"lang\": \"en\",\n    \"text\": \"a beast.\"\n  },\n  {\n    \"start\": \"00:00:41,314\",\n    \"end\": \"00:00:42,134\",\n    \"lang\": \"zh\",\n    \"text\": \"新開農\"\n  },\n  {\n    \"start\": \"00:00:43,173\",\n    \"end\": \"00:00:43,754\",\n    \"lang\": \"zh\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:43,754\",\n    \"end\": \"00:00:46,094\",\n    \"lang\": \"zh\",\n    \"text\": \"這個單詞是新開農\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,940",
+            "vi": "Thế giới mà chúng ta có thể học hai ký tự tiếng Nhật"
+        },
+        {
+            "start": "00:00:04,930",
+            "end": "00:00:07,130",
+            "vi": "ワインズ新licht £2 công nghệ mới"
+        },
+        {
+            "start": "00:00:07,510",
+            "end": "00:00:07,850",
+            "vi": "新"
+        },
+        {
+            "start": "00:00:08,546",
+            "end": "00:00:09,446",
+            "vi": "nghĩa là sâu sắc."
+        },
+        {
+            "start": "00:00:10,050",
+            "end": "00:00:11,990",
+            "vi": "mở gan"
+        },
+        {
+            "start": "00:00:15,938",
+            "end": "00:00:17,058",
+            "vi": "đã nói một điều tốt"
+        },
+        {
+            "start": "00:00:17,186",
+            "end": "00:00:17,666",
+            "vi": "Hẹn gặp lại."
+        },
+        {
+            "start": "00:00:17,926",
+            "end": "00:00:18,346",
+            "vi": "Hẹn gặp lại."
+        },
+        {
+            "start": "00:00:19,126",
+            "end": "00:00:20,106",
+            "vi": "Đó là..."
+        },
+        {
+            "start": "00:00:20,106",
+            "end": "00:00:20,966",
+            "vi": "Chúc mừng năm mới."
+        },
+        {
+            "start": "00:00:20,986",
+            "end": "00:00:22,386",
+            "vi": "マスティシェルスイン"
+        },
+        {
+            "start": "00:00:23,234",
+            "end": "00:00:26,454",
+            "vi": "cùng gốc với một từ khác,"
+        },
+        {
+            "start": "00:00:26,454",
+            "end": "00:00:28,334",
+            "vi": "với một từ tiếng Anh khác."
+        },
+        {
+            "start": "00:00:29,090",
+            "end": "00:00:29,230",
+            "vi": "à"
+        },
+        {
+            "start": "00:00:29,270",
+            "end": "00:00:29,690",
+            "vi": "chạm vào mũi"
+        },
+        {
+            "start": "00:00:30,018",
+            "end": "00:00:30,578",
+            "vi": "một thú vật,"
+        },
+        {
+            "start": "00:00:30,578",
+            "end": "00:00:31,518",
+            "vi": "một thú vật,"
+        },
+        {
+            "start": "00:00:31,518",
+            "end": "00:00:35,438",
+            "vi": "cũng nghĩa là thứ gì đó cực kỳ sâu sắc,"
+        },
+        {
+            "start": "00:00:35,438",
+            "end": "00:00:37,658",
+            "vi": "một thú vật,"
+        },
+        {
+            "start": "00:00:37,658",
+            "end": "00:00:39,378",
+            "vi": "một thú vật,"
+        },
+        {
+            "start": "00:00:39,678",
+            "end": "00:00:40,338",
+            "vi": "một thú vật."
+        },
+        {
+            "start": "00:00:41,314",
+            "end": "00:00:42,134",
+            "vi": "mới mở nông"
+        },
+        {
+            "start": "00:00:43,173",
+            "end": "00:00:43,754",
+            "vi": "OK,"
+        },
+        {
+            "start": "00:00:43,754",
+            "end": "00:00:46,094",
+            "vi": "từ này là mới mở nông"
+        }
+    ]
+}

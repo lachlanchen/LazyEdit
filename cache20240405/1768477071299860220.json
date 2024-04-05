@@ -1,0 +1,26 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,280\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:01,282\",\n    \"end\": \"00:00:02,021\",\n    \"lang\": \"zh\",\n    \"text\": \"这是狐狸犬\"\n  },\n  {\n    \"start\": \"00:00:07,074\",\n    \"end\": \"00:00:07,914\",\n    \"lang\": \"en\",\n    \"text\": \"Oh I will have to once a week just to hammer in some nuts.\"\n  },\n  {\n    \"start\": \"00:00:07,914\",\n    \"end\": \"00:00:08,654\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,280",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:01,282",
+            "end": "00:00:02,021",
+            "zh": "这是狐狸犬",
+            "en": "This is a Beagle",
+            "ar": "هذا بيغل"
+        },
+        {
+            "start": "00:00:07,074",
+            "end": "00:00:08,654",
+            "en": "Oh, I will have to hammer in some nails once a week.",
+            "zh": "哦，我每周都得钉几个钉子。",
+            "ar": "أوه، سأضطر لدق بعض المسامير مرة واحدة في الأسبوع."
+        }
+    ]
+}

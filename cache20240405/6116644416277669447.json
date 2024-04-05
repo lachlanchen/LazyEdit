@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,300\",\n    \"lang\": \"en\",\n    \"text\": \"This is the first step of our lunch.\"\n  },\n  {\n    \"start\": \"00:00:05,899\",\n    \"end\": \"00:00:07,800\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to say it.\"\n  },\n  {\n    \"start\": \"00:00:10,380\",\n    \"end\": \"00:00:12,400\",\n    \"lang\": \"en\",\n    \"text\": \"Just the vegetables and the chicken.\"\n  },\n  {\n    \"start\": \"00:00:13,780\",\n    \"end\": \"00:00:16,180\",\n    \"lang\": \"en\",\n    \"text\": \"This is the first step.\"\n  },\n  {\n    \"start\": \"00:00:17,160\",\n    \"end\": \"00:00:17,580\",\n    \"lang\": \"en\",\n    \"text\": \"And then,\"\n  },\n  {\n    \"start\": \"00:00:17,580\",\n    \"end\": \"00:00:18,780\",\n    \"lang\": \"en\",\n    \"text\": \"the rice noodles.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,300",
+            "es": "Este es el primer paso de nuestro almuerzo.",
+            "fr": "Ceci est la première étape de notre déjeuner.",
+            "uk": "Це перший крок нашого обіду."
+        },
+        {
+            "start": "00:00:05,899",
+            "end": "00:00:07,800",
+            "es": "No sé cómo decirlo.",
+            "fr": "Je ne sais pas comment le dire.",
+            "uk": "Я не знаю, як сказати."
+        },
+        {
+            "start": "00:00:10,380",
+            "end": "00:00:12,400",
+            "es": "Solo las verduras y el pollo.",
+            "fr": "Juste les légumes et le poulet.",
+            "uk": "Лише овочі та курка."
+        },
+        {
+            "start": "00:00:13,780",
+            "end": "00:00:16,180",
+            "es": "Este es el primer paso.",
+            "fr": "Ceci est la première étape.",
+            "uk": "Це перший крок."
+        },
+        {
+            "start": "00:00:17,160",
+            "end": "00:00:17,580",
+            "es": "Y luego,",
+            "fr": "Et ensuite,",
+            "uk": "А потім,"
+        },
+        {
+            "start": "00:00:17,580",
+            "end": "00:00:18,780",
+            "es": "los fideos de arroz.",
+            "fr": "les nouilles de riz.",
+            "uk": "рисові локшини."
+        }
+    ]
+}

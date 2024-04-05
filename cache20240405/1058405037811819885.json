@@ -1,0 +1,40 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,140\",\n    \"ja\": \"<私>[]は<夕>[]ご<飯>[]を<作>[]っています\"\n  },\n  {\n    \"start\": \"00:00:06,679\",\n    \"end\": \"00:00:08,200\",\n    \"ja\": \"これは<手羽先>[]です\"\n  },\n  {\n    \"start\": \"00:00:08,200\",\n    \"end\": \"00:00:09,500\",\n    \"ja\": \"これは<フニバレス>[]です\"\n  },\n  {\n    \"start\": \"00:00:09,500\",\n    \"end\": \"00:00:11,260\",\n    \"ja\": \"これは<パースリー>[]と<カリフラワー>[]です\"\n  },\n  {\n    \"start\": \"00:00:13,259\",\n    \"end\": \"00:00:14,800\",\n    \"ja\": \"これは<クランベリー>[]です\"\n  },\n  {\n    \"start\": \"00:00:17,186\",\n    \"end\": \"00:00:21,486\",\n    \"ja\": \"この<手羽先>[]はもう<骨>[]が<取>[]り<除>[]かれています\"\n  },\n  {\n    \"start\": \"00:00:22,066\",\n    \"end\": \"00:00:24,466\",\n    \"ja\": \"さあ、やってみましょう\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,140",
+            "ja": "<私>[わたし]は<夕>[ゆう]ご<飯>[はん]を<作>[つく]っています"
+        },
+        {
+            "start": "00:00:06,679",
+            "end": "00:00:08,200",
+            "ja": "これは<手羽先>[てばさき]です"
+        },
+        {
+            "start": "00:00:08,200",
+            "end": "00:00:09,500",
+            "ja": "これは<フニバレス>です"
+        },
+        {
+            "start": "00:00:09,500",
+            "end": "00:00:11,260",
+            "ja": "これは<パースリー>と<カリフラワー>です"
+        },
+        {
+            "start": "00:00:13,259",
+            "end": "00:00:14,800",
+            "ja": "これは<クランベリー>です"
+        },
+        {
+            "start": "00:00:17,186",
+            "end": "00:00:21,486",
+            "ja": "この<手羽先>[てばさき]はもう<骨>[ほね]が<取>[と]り<除>[のぞ]かれています"
+        },
+        {
+            "start": "00:00:22,066",
+            "end": "00:00:24,466",
+            "ja": "さあ、やってみましょう"
+        }
+    ]
+}

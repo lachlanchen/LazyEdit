@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:28,174\",\n    \"end\": \"00:04:28,194\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香 没有花香 没有树高\"\n  },\n  {\n    \"start\": \"00:04:28,194\",\n    \"end\": \"00:04:28,254\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香 没有花香 没有树高\"\n  },\n  {\n    \"start\": \"00:04:28,290\",\n    \"end\": \"00:04:28,730\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway,\"\n  },\n  {\n    \"start\": \"00:04:28,730\",\n    \"end\": \"00:04:30,390\",\n    \"lang\": \"en\",\n    \"text\": \"it's still imperfect.\"\n  },\n  {\n    \"start\": \"00:04:32,229\",\n    \"end\": \"00:04:35,270\",\n    \"lang\": \"en\",\n    \"text\": \"I promise that when I practice alone,\"\n  },\n  {\n    \"start\": \"00:04:35,270\",\n    \"end\": \"00:04:37,330\",\n    \"lang\": \"en\",\n    \"text\": \"it's kind of a little bit,\"\n  },\n  {\n    \"start\": \"00:04:37,330\",\n    \"end\": \"00:04:38,670\",\n    \"lang\": \"en\",\n    \"text\": \"somewhat better.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:04:28,174",
+            "end": "00:04:28,194",
+            "ko": "꽃향기도 없고, 꽃향기도 없고, 나무도 높지 않아"
+        },
+        {
+            "start": "00:04:28,194",
+            "end": "00:04:28,254",
+            "ko": "꽃향기도 없고, 꽃향기도 없고, 나무도 높지 않아"
+        },
+        {
+            "start": "00:04:28,290",
+            "end": "00:04:28,730",
+            "ko": "어쨌든,"
+        },
+        {
+            "start": "00:04:28,730",
+            "end": "00:04:30,390",
+            "ko": "여전히 완벽하지 않아."
+        },
+        {
+            "start": "00:04:32,229",
+            "end": "00:04:35,270",
+            "ko": "혼자 연습할 때는,"
+        },
+        {
+            "start": "00:04:35,270",
+            "end": "00:04:37,330",
+            "ko": "조금은,"
+        },
+        {
+            "start": "00:04:37,330",
+            "end": "00:04:38,670",
+            "ko": "약간 더 나아."
+        }
+    ]
+}

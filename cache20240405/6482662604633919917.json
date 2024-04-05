@@ -1,0 +1,105 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,020\",\n    \"lang\": \"en\",\n    \"text\": \"hey guys so i want to ask a stupid question in learning guitar\"\n  },\n  {\n    \"start\": \"00:00:06,338\",\n    \"end\": \"00:00:06,578\",\n    \"lang\": \"ja\",\n    \"text\": \"そう\"\n  },\n  {\n    \"start\": \"00:00:07,074\",\n    \"end\": \"00:00:08,354\",\n    \"lang\": \"en\",\n    \"text\": \"for each chord,\"\n  },\n  {\n    \"start\": \"00:00:08,354\",\n    \"end\": \"00:00:15,254\",\n    \"lang\": \"en\",\n    \"text\": \"how many times I should play on my right hand,\"\n  },\n  {\n    \"start\": \"00:00:15,254\",\n    \"end\": \"00:00:17,114\",\n    \"lang\": \"en\",\n    \"text\": \"how many strongs are needed.\"\n  },\n  {\n    \"start\": \"00:00:18,234\",\n    \"end\": \"00:00:20,114\",\n    \"lang\": \"en\",\n    \"text\": \"So I asked the ChetGBT,\"\n  },\n  {\n    \"start\": \"00:00:20,114\",\n    \"end\": \"00:00:22,494\",\n    \"lang\": \"en\",\n    \"text\": \"and he said it needs\"\n  },\n  {\n    \"start\": \"00:00:23,522\",\n    \"end\": \"00:00:24,422\",\n    \"lang\": \"ja\",\n    \"text\": \"モードを調整してみると、\"\n  },\n  {\n    \"start\": \"00:00:24,422\",\n    \"end\": \"00:00:25,962\",\n    \"lang\": \"ja\",\n    \"text\": \"心の高さを調整する事はできるだろう。\"\n  },\n  {\n    \"start\": \"00:00:25,986\",\n    \"end\": \"00:00:26,506\",\n    \"lang\": \"en\",\n    \"text\": \"same nature.\"\n  },\n  {\n    \"start\": \"00:00:26,506\",\n    \"end\": \"00:00:32,826\",\n    \"lang\": \"en\",\n    \"text\": \"I could play 6 strums for the 4 beats.\"\n  },\n  {\n    \"start\": \"00:00:32,826\",\n    \"end\": \"00:00:35,386\",\n    \"lang\": \"en\",\n    \"text\": \"So the first is down,\"\n  },\n  {\n    \"start\": \"00:00:35,386\",\n    \"end\": \"00:00:36,286\",\n    \"lang\": \"en\",\n    \"text\": \"and the second\"\n  },\n  {\n    \"start\": \"00:00:36,286\",\n    \"end\": \"00:00:38,246\",\n    \"lang\": \"en\",\n    \"text\": \"is down up,\"\n  },\n  {\n    \"start\": \"00:00:38,246\",\n    \"end\": \"00:00:43,686\",\n    \"lang\": \"en\",\n    \"text\": \"and the last 2 beats is up down up.\"\n  },\n  {\n    \"start\": \"00:00:43,686\",\n    \"end\": \"00:00:45,446\",\n    \"lang\": \"en\",\n    \"text\": \"Is that correct?\"\n  },\n  {\n    \"start\": \"00:00:45,446\",\n    \"end\": \"00:00:50,566\",\n    \"lang\": \"en\",\n    \"text\": \"I play 6 strums on these\"\n  },\n  {\n    \"start\": \"00:00:50,566\",\n    \"end\": \"00:00:51,266\",\n    \"lang\": \"en\",\n    \"text\": \"4 beats.\"\n  },\n  {\n    \"start\": \"00:00:51,266\",\n    \"end\": \"00:00:52,946\",\n    \"lang\": \"en\",\n    \"text\": \"So is this correct?\"\n  },\n  {\n    \"start\": \"00:00:52,946\",\n    \"end\": \"00:01:01,826\",\n    \"lang\": \"en\",\n    \"text\": \"So for these 2 chords that I play 12 times,\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,020",
+            "vi": "này các bạn, tôi muốn hỏi một câu hỏi ngớ ngẩn khi học đàn guitar"
+        },
+        {
+            "start": "00:00:06,338",
+            "end": "00:00:06,578",
+            "vi": "vâng"
+        },
+        {
+            "start": "00:00:07,074",
+            "end": "00:00:08,354",
+            "vi": "với mỗi hợp âm,"
+        },
+        {
+            "start": "00:00:08,354",
+            "end": "00:00:15,254",
+            "vi": "tôi nên chơi bao nhiêu lần với tay phải,"
+        },
+        {
+            "start": "00:00:15,254",
+            "end": "00:00:17,114",
+            "vi": "cần bao nhiêu sức mạnh."
+        },
+        {
+            "start": "00:00:18,234",
+            "end": "00:00:20,114",
+            "vi": "Vì vậy, tôi đã hỏi ChetGBT,"
+        },
+        {
+            "start": "00:00:20,114",
+            "end": "00:00:22,494",
+            "vi": "và anh ấy nói nó cần"
+        },
+        {
+            "start": "00:00:23,522",
+            "end": "00:00:24,422",
+            "vi": "hãy thử điều chỉnh chế độ,"
+        },
+        {
+            "start": "00:00:24,422",
+            "end": "00:00:25,962",
+            "vi": "có thể sẽ chỉnh được độ cao của tâm trạng."
+        },
+        {
+            "start": "00:00:25,986",
+            "end": "00:00:26,506",
+            "vi": "cùng bản chất."
+        },
+        {
+            "start": "00:00:26,506",
+            "end": "00:00:32,826",
+            "vi": "Tôi có thể đánh 6 lần cho 4 nhịp."
+        },
+        {
+            "start": "00:00:32,826",
+            "end": "00:00:35,386",
+            "vi": "Vì thế cái đầu tiên là xuống,"
+        },
+        {
+            "start": "00:00:35,386",
+            "end": "00:00:36,286",
+            "vi": "và cái thứ hai"
+        },
+        {
+            "start": "00:00:36,286",
+            "end": "00:00:38,246",
+            "vi": "là xuống lên,"
+        },
+        {
+            "start": "00:00:38,246",
+            "end": "00:00:43,686",
+            "vi": "và 2 nhịp cuối cùng là lên xuống lên."
+        },
+        {
+            "start": "00:00:43,686",
+            "end": "00:00:45,446",
+            "vi": "Đúng không?"
+        },
+        {
+            "start": "00:00:45,446",
+            "end": "00:00:50,566",
+            "vi": "Tôi đánh 6 lần trên"
+        },
+        {
+            "start": "00:00:50,566",
+            "end": "00:00:51,266",
+            "vi": "4 nhịp này."
+        },
+        {
+            "start": "00:00:51,266",
+            "end": "00:00:52,946",
+            "vi": "Vậy có đúng không?"
+        },
+        {
+            "start": "00:00:52,946",
+            "end": "00:01:01,826",
+            "vi": "Vậy cho 2 hợp âm này, tôi chơi 12 lần,"
+        }
+    ]
+}

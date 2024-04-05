@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,640\",\n    \"lang\": \"en\",\n    \"text\": \"So I will share a method to remember this Arabic letter.\"\n  },\n  {\n    \"start\": \"00:00:04,440\",\n    \"end\": \"00:00:05,540\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a sword.\"\n  },\n  {\n    \"start\": \"00:00:07,100\",\n    \"end\": \"00:00:10,920\",\n    \"lang\": \"en\",\n    \"text\": \"This is a man with this big belly.\"\n  },\n  {\n    \"start\": \"00:00:11,760\",\n    \"end\": \"00:00:12,940\",\n    \"lang\": \"en\",\n    \"text\": \"So that's the reason.\"\n  },\n  {\n    \"start\": \"00:00:13,954\",\n    \"end\": \"00:00:14,694\",\n    \"lang\": \"zh\",\n    \"text\": \"那些黑子\"\n  },\n  {\n    \"start\": \"00:00:15,106\",\n    \"end\": \"00:00:15,506\",\n    \"lang\": \"en\",\n    \"text\": \"side.\"\n  },\n  {\n    \"start\": \"00:00:15,506\",\n    \"end\": \"00:00:20,246\",\n    \"lang\": \"en\",\n    \"text\": \"So this is how I remember this matter.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,640",
+            "vi": "Vì vậy, tôi sẽ chia sẻ một phương pháp để nhớ chữ cái tiếng Ả Rập này."
+        },
+        {
+            "start": "00:00:04,440",
+            "end": "00:00:05,540",
+            "vi": "Đây là một thanh kiếm."
+        },
+        {
+            "start": "00:00:07,100",
+            "end": "00:00:10,920",
+            "vi": "Đây là một người đàn ông với cái bụng to này."
+        },
+        {
+            "start": "00:00:11,760",
+            "end": "00:00:12,940",
+            "vi": "Vậy là lí do."
+        },
+        {
+            "start": "00:00:13,954",
+            "end": "00:00:14,694",
+            "vi": "Những kẻ đen tối"
+        },
+        {
+            "start": "00:00:15,106",
+            "end": "00:00:15,506",
+            "vi": "bên."
+        },
+        {
+            "start": "00:00:15,506",
+            "end": "00:00:20,246",
+            "vi": "Vì vậy, đây là cách tôi nhớ về vấn đề này."
+        }
+    ]
+}

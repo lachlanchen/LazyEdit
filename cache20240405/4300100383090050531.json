@@ -1,0 +1,110 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,220\",\n    \"lang\": \"en\",\n    \"text\": \"I found this explosive.\"\n  },\n  {\n    \"start\": \"00:00:02,882\",\n    \"end\": \"00:00:03,662\",\n    \"lang\": \"ar\",\n    \"text\": \"يقصد نوديل\"\n  },\n  {\n    \"start\": \"00:00:05,282\",\n    \"end\": \"00:00:05,982\",\n    \"lang\": \"en\",\n    \"text\": \"Sweet potato.\"\n  },\n  {\n    \"start\": \"00:00:06,442\",\n    \"end\": \"00:00:06,902\",\n    \"lang\": \"en\",\n    \"text\": \"Tastes.\"\n  },\n  {\n    \"start\": \"00:00:07,162\",\n    \"end\": \"00:00:07,702\",\n    \"lang\": \"en\",\n    \"text\": \"Tastes.\"\n  },\n  {\n    \"start\": \"00:00:07,938\",\n    \"end\": \"00:00:08,478\",\n    \"lang\": \"ja\",\n    \"text\": \"こぢゃす\"\n  },\n  {\n    \"start\": \"00:00:09,986\",\n    \"end\": \"00:00:11,046\",\n    \"lang\": \"en\",\n    \"text\": \"So it's crispy,\"\n  },\n  {\n    \"start\": \"00:00:11,046\",\n    \"end\": \"00:00:12,566\",\n    \"lang\": \"en\",\n    \"text\": \"sweet,\"\n  },\n  {\n    \"start\": \"00:00:12,566\",\n    \"end\": \"00:00:14,466\",\n    \"lang\": \"en\",\n    \"text\": \"and...\"\n  },\n  {\n    \"start\": \"00:00:16,206\",\n    \"end\": \"00:00:17,126\",\n    \"lang\": \"en\",\n    \"text\": \"and perfect.\"\n  },\n  {\n    \"start\": \"00:00:18,626\",\n    \"end\": \"00:00:22,586\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot find a word to describe this.\"\n  },\n  {\n    \"start\": \"00:00:23,126\",\n    \"end\": \"00:00:29,646\",\n    \"lang\": \"en\",\n    \"text\": \"But it really tastes better than the unexploded version.\"\n  },\n  {\n    \"start\": \"00:00:32,886\",\n    \"end\": \"00:00:34,245\",\n    \"lang\": \"en\",\n    \"text\": \"This has this...\"\n  },\n  {\n    \"start\": \"00:00:34,246\",\n    \"end\": \"00:00:39,286\",\n    \"lang\": \"en\",\n    \"text\": \"It's burnt sugar.\"\n  },\n  {\n    \"start\": \"00:00:41,506\",\n    \"end\": \"00:00:42,526\",\n    \"lang\": \"zh\",\n    \"text\": \"教堂\"\n  },\n  {\n    \"start\": \"00:00:43,045\",\n    \"end\": \"00:00:44,186\",\n    \"lang\": \"zh\",\n    \"text\": \"教堂怎么说?\"\n  },\n  {\n    \"start\": \"00:00:44,346\",\n    \"end\": \"00:00:45,426\",\n    \"lang\": \"zh\",\n    \"text\": \"好多是教堂\"\n  },\n  {\n    \"start\": \"00:00:45,922\",\n    \"end\": \"00:00:46,582\",\n    \"lang\": \"ja\",\n    \"text\": \"いいイメージ\"\n  },\n  {\n    \"start\": \"00:00:50,050\",\n    \"end\": \"00:00:50,270\",\n    \"lang\": \"en\",\n    \"text\": \"So\"\n  },\n  {\n    \"start\": \"00:00:53,070\",\n    \"end\": \"00:00:53,770\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:53,770\",\n    \"end\": \"00:00:56,010\",\n    \"lang\": \"en\",\n    \"text\": \"it tastes gorgeous\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,220",
+            "vi": "Tôi đã tìm thấy thuốc nổ này."
+        },
+        {
+            "start": "00:00:02,882",
+            "end": "00:00:03,662",
+            "vi": "Ý là mì"
+        },
+        {
+            "start": "00:00:05,282",
+            "end": "00:00:05,982",
+            "vi": "Khoai lang."
+        },
+        {
+            "start": "00:00:06,442",
+            "end": "00:00:06,902",
+            "vi": "Mùi vị."
+        },
+        {
+            "start": "00:00:07,162",
+            "end": "00:00:07,702",
+            "vi": "Mùi vị."
+        },
+        {
+            "start": "00:00:07,938",
+            "end": "00:00:08,478",
+            "vi": "Đúng vậy."
+        },
+        {
+            "start": "00:00:09,986",
+            "end": "00:00:11,046",
+            "vi": "Vậy là nó giòn,"
+        },
+        {
+            "start": "00:00:11,046",
+            "end": "00:00:12,566",
+            "vi": "ngọt,"
+        },
+        {
+            "start": "00:00:12,566",
+            "end": "00:00:14,466",
+            "vi": "và..."
+        },
+        {
+            "start": "00:00:16,206",
+            "end": "00:00:17,126",
+            "vi": "và hoàn hảo."
+        },
+        {
+            "start": "00:00:18,626",
+            "end": "00:00:22,586",
+            "vi": "Tôi không tìm được từ nào để mô tả điều này."
+        },
+        {
+            "start": "00:00:23,126",
+            "end": "00:00:29,646",
+            "vi": "Nhưng thực sự nó ngon hơn phiên bản chưa nổ."
+        },
+        {
+            "start": "00:00:32,886",
+            "end": "00:00:34,245",
+            "vi": "Nó có cái này..."
+        },
+        {
+            "start": "00:00:34,246",
+            "end": "00:00:39,286",
+            "vi": "Đó là đường cháy."
+        },
+        {
+            "start": "00:00:41,506",
+            "end": "00:00:42,526",
+            "vi": "Nhà thờ"
+        },
+        {
+            "start": "00:00:43,045",
+            "end": "00:00:44,186",
+            "vi": "Nhà thờ nói thế nào?"
+        },
+        {
+            "start": "00:00:44,346",
+            "end": "00:00:45,426",
+            "vi": "Có rất nhiều là nhà thờ"
+        },
+        {
+            "start": "00:00:45,922",
+            "end": "00:00:46,582",
+            "vi": "Ấn tượng tốt"
+        },
+        {
+            "start": "00:00:50,050",
+            "end": "00:00:50,270",
+            "vi": "Vậy"
+        },
+        {
+            "start": "00:00:53,070",
+            "end": "00:00:53,770",
+            "vi": "Wow,"
+        },
+        {
+            "start": "00:00:53,770",
+            "end": "00:00:56,010",
+            "vi": "nó có vị tuyệt vời"
+        }
+    ]
+}

@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,140\",\n    \"lang\": \"ja\",\n    \"text\": \"私は夕ご飯を作っています\"\n  },\n  {\n    \"start\": \"00:00:06,679\",\n    \"end\": \"00:00:08,200\",\n    \"lang\": \"ja\",\n    \"text\": \"これは手羽先です\"\n  },\n  {\n    \"start\": \"00:00:08,200\",\n    \"end\": \"00:00:09,500\",\n    \"lang\": \"ja\",\n    \"text\": \"これはフニバレスです\"\n  },\n  {\n    \"start\": \"00:00:09,500\",\n    \"end\": \"00:00:11,260\",\n    \"lang\": \"ja\",\n    \"text\": \"これはパークルスとカロリー\"\n  },\n  {\n    \"start\": \"00:00:13,259\",\n    \"end\": \"00:00:14,800\",\n    \"lang\": \"ja\",\n    \"text\": \"これはクランドです\"\n  },\n  {\n    \"start\": \"00:00:17,186\",\n    \"end\": \"00:00:21,486\",\n    \"lang\": \"en\",\n    \"text\": \"This chicken wing honey bee already removed its bones.\"\n  },\n  {\n    \"start\": \"00:00:22,066\",\n    \"end\": \"00:00:24,466\",\n    \"lang\": \"en\",\n    \"text\": \"So let's do it.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,140",
+            "es": "Estoy preparando la cena",
+            "fr": "Je prépare le dîner",
+            "uk": "Я готую вечерю"
+        },
+        {
+            "start": "00:00:06,679",
+            "end": "00:00:08,200",
+            "es": "Estos son alitas de pollo",
+            "fr": "Ce sont des ailes de poulet",
+            "uk": "Це курячі крильця"
+        },
+        {
+            "start": "00:00:08,200",
+            "end": "00:00:09,500",
+            "es": "Esto es funivares",
+            "fr": "Ceci est des funivares",
+            "uk": "Це фуніварес"
+        },
+        {
+            "start": "00:00:09,500",
+            "end": "00:00:11,260",
+            "es": "Esto es puré de papas y calorías",
+            "fr": "Ceci est de la purée de pommes de terre et des calories",
+            "uk": "Це пюре і калорії"
+        },
+        {
+            "start": "00:00:13,259",
+            "end": "00:00:14,800",
+            "es": "Esto es cilantro",
+            "fr": "Ceci est du coriandre",
+            "uk": "Це кінза"
+        },
+        {
+            "start": "00:00:17,186",
+            "end": "00:00:21,486",
+            "es": "A este ala de pollo ya le han quitado los huesos",
+            "fr": "Les os de cette aile de poulet ont déjà été retirés",
+            "uk": "У цьому курячому крилі вже видалені кістки"
+        },
+        {
+            "start": "00:00:22,066",
+            "end": "00:00:24,466",
+            "es": "Así que vamos a hacerlo",
+            "fr": "Alors, faisons-le",
+            "uk": "Отже, давайте це зробимо"
+        }
+    ]
+}

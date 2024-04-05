@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,080\",\n    \"lang\": \"ja\",\n    \"text\": \"海岸線を走りました\"\n  },\n  {\n    \"start\": \"00:00:02,210\",\n    \"end\": \"00:00:05,490\",\n    \"lang\": \"ja\",\n    \"text\": \"このー このピンクス\"\n  },\n  {\n    \"start\": \"00:00:06,274\",\n    \"end\": \"00:00:08,674\",\n    \"lang\": \"en\",\n    \"text\": \"Tamago and peach.\"\n  },\n  {\n    \"start\": \"00:00:09,354\",\n    \"end\": \"00:00:09,474\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:09,474\",\n    \"end\": \"00:00:11,054\",\n    \"lang\": \"en\",\n    \"text\": \"I'm over here.\"\n  },\n  {\n    \"start\": \"00:00:11,650\",\n    \"end\": \"00:00:12,730\",\n    \"lang\": \"ja\",\n    \"text\": \"ストロベリー\"\n  },\n  {\n    \"start\": \"00:00:12,770\",\n    \"end\": \"00:00:13,370\",\n    \"lang\": \"ja\",\n    \"text\": \"欠いています\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,080",
+            "vi": "Đã chạy dọc theo bờ biển"
+        },
+        {
+            "start": "00:00:02,210",
+            "end": "00:00:05,490",
+            "vi": "Cái này- Cái hồng này"
+        },
+        {
+            "start": "00:00:06,274",
+            "end": "00:00:08,674",
+            "vi": "Trứng và đào."
+        },
+        {
+            "start": "00:00:09,354",
+            "end": "00:00:09,474",
+            "vi": "Ồ,"
+        },
+        {
+            "start": "00:00:09,474",
+            "end": "00:00:11,054",
+            "vi": "Tôi ở đây này."
+        },
+        {
+            "start": "00:00:11,650",
+            "end": "00:00:12,730",
+            "vi": "Dâu tây"
+        },
+        {
+            "start": "00:00:12,770",
+            "end": "00:00:13,370",
+            "vi": "Bị thiếu"
+        }
+    ]
+}

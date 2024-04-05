@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:04,297\",\n    \"end\": \"00:02:06,078\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi mi,\"\n  },\n  {\n    \"start\": \"00:02:06,078\",\n    \"end\": \"00:02:07,898\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi re mi,\"\n  },\n  {\n    \"start\": \"00:02:07,898\",\n    \"end\": \"00:02:09,478\",\n    \"lang\": \"en\",\n    \"text\": \"to hi na,\"\n  },\n  {\n    \"start\": \"00:02:09,478\",\n    \"end\": \"00:02:10,997\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi.\"\n  },\n  {\n    \"start\": \"00:02:13,578\",\n    \"end\": \"00:02:16,998\",\n    \"lang\": \"en\",\n    \"text\": \"I play the guitar almost every day,\"\n  },\n  {\n    \"start\": \"00:02:16,998\",\n    \"end\": \"00:02:17,898\",\n    \"lang\": \"en\",\n    \"text\": \"or four days.\"\n  },\n  {\n    \"start\": \"00:02:20,818\",\n    \"end\": \"00:02:21,598\",\n    \"lang\": \"en\",\n    \"text\": \"So...\"\n  },\n  {\n    \"start\": \"00:02:23,578\",\n    \"end\": \"00:02:28,618\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi,\"\n  },\n  {\n    \"start\": \"00:02:28,618\",\n    \"end\": \"00:02:28,618\",\n    \"lang\": \"en\",\n    \"text\": \"re mi,\"\n  },\n  {\n    \"start\": \"00:02:28,618\",\n    \"end\": \"00:02:29,558\",\n    \"lang\": \"en\",\n    \"text\": \"na na to hi na,\"\n  },\n  {\n    \"start\": \"00:02:29,558\",\n    \"end\": \"00:02:30,958\",\n    \"lang\": \"en\",\n    \"text\": \"na na mi,\"\n  },\n  {\n    \"start\": \"00:02:30,958\",\n    \"end\": \"00:02:32,018\",\n    \"lang\": \"en\",\n    \"text\": \"re mi,\"\n  },\n  {\n    \"start\": \"00:02:32,018\",\n    \"end\": \"00:02:33,638\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi mi,\"\n  },\n  {\n    \"start\": \"00:02:33,638\",\n    \"end\": \"00:02:35,958\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi re mi.\"\n  },\n  {\n    \"start\": \"00:02:36,058\",\n    \"end\": \"00:02:36,538\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:02:37,618\",\n    \"end\": \"00:02:38,498\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:04,297",
+            "end": "00:02:06,078",
+            "vi": "sol mi mi,"
+        },
+        {
+            "start": "00:02:06,078",
+            "end": "00:02:07,898",
+            "vi": "sol mi re mi,"
+        },
+        {
+            "start": "00:02:07,898",
+            "end": "00:02:09,478",
+            "vi": "đô la na,"
+        },
+        {
+            "start": "00:02:09,478",
+            "end": "00:02:10,997",
+            "vi": "sol mi."
+        },
+        {
+            "start": "00:02:13,578",
+            "end": "00:02:16,998",
+            "vi": "Tôi chơi đàn gần như mỗi ngày,"
+        },
+        {
+            "start": "00:02:16,998",
+            "end": "00:02:17,898",
+            "vi": "hoặc bốn ngày."
+        },
+        {
+            "start": "00:02:20,818",
+            "end": "00:02:21,598",
+            "vi": "Vậy..."
+        },
+        {
+            "start": "00:02:23,578",
+            "end": "00:02:28,618",
+            "vi": "Na na mi,"
+        },
+        {
+            "start": "00:02:28,618",
+            "end": "00:02:28,618",
+            "vi": "re mi,"
+        },
+        {
+            "start": "00:02:28,618",
+            "end": "00:02:29,558",
+            "vi": "na na đô la na,"
+        },
+        {
+            "start": "00:02:29,558",
+            "end": "00:02:30,958",
+            "vi": "na na mi,"
+        },
+        {
+            "start": "00:02:30,958",
+            "end": "00:02:32,018",
+            "vi": "re mi,"
+        },
+        {
+            "start": "00:02:32,018",
+            "end": "00:02:33,638",
+            "vi": "sol mi mi,"
+        },
+        {
+            "start": "00:02:33,638",
+            "end": "00:02:35,958",
+            "vi": "sol mi re mi."
+        },
+        {
+            "start": "00:02:36,058",
+            "end": "00:02:36,538",
+            "vi": "Xin lỗi."
+        },
+        {
+            "start": "00:02:37,618",
+            "end": "00:02:38,498",
+            "vi": "Okay."
+        }
+    ]
+}

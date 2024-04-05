@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,340\",\n    \"lang\": \"en\",\n    \"text\": \"on our way of recovery from this Covid.\"\n  },\n  {\n    \"start\": \"00:00:10,146\",\n    \"end\": \"00:00:13,106\",\n    \"lang\": \"ja\",\n    \"text\": \"ただいまはコースに歩いています\"\n  },\n  {\n    \"start\": \"00:00:13,106\",\n    \"end\": \"00:00:15,706\",\n    \"lang\": \"ja\",\n    \"text\": \"私は大観戦を剥いています\"\n  },\n  {\n    \"start\": \"00:00:23,362\",\n    \"end\": \"00:00:26,342\",\n    \"lang\": \"en\",\n    \"text\": \"practice exercising and working out\"\n  },\n  {\n    \"start\": \"00:00:27,081\",\n    \"end\": \"00:00:29,402\",\n    \"lang\": \"en\",\n    \"text\": \"because the feeling is great\"\n  },\n  {\n    \"start\": \"00:00:46,001\",\n    \"end\": \"00:00:46,422\",\n    \"lang\": \"en\",\n    \"text\": \"ok,\"\n  },\n  {\n    \"start\": \"00:00:46,422\",\n    \"end\": \"00:00:47,402\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,340",
+            "es": "en nuestro camino de recuperación de este Covid.",
+            "fr": "sur notre chemin de récupération de ce Covid.",
+            "uk": "на нашому шляху одужання від цього Covid."
+        },
+        {
+            "start": "00:00:10,146",
+            "end": "00:00:13,106",
+            "es": "Ahora estamos caminando por el curso.",
+            "fr": "Nous marchons maintenant sur le cours.",
+            "uk": "Зараз ми йдемо курсом."
+        },
+        {
+            "start": "00:00:13,106",
+            "end": "00:00:15,706",
+            "es": "Estoy disfrutando de una gran vista.",
+            "fr": "Je profite d'une vue magnifique.",
+            "uk": "Я насолоджуюсь чудовим видом."
+        },
+        {
+            "start": "00:00:23,362",
+            "end": "00:00:26,342",
+            "es": "practicar haciendo ejercicio y entrenando",
+            "fr": "pratiquer l'exercice et l'entraînement",
+            "uk": "практикувати вправи та заняття спортом"
+        },
+        {
+            "start": "00:00:27,081",
+            "end": "00:00:29,402",
+            "es": "porque la sensación es genial",
+            "fr": "parce que la sensation est géniale",
+            "uk": "бо відчуття чудове"
+        },
+        {
+            "start": "00:00:46,001",
+            "end": "00:00:46,422",
+            "es": "ok,",
+            "fr": "ok,",
+            "uk": "ок,"
+        },
+        {
+            "start": "00:00:46,422",
+            "end": "00:00:47,402",
+            "es": "nos vemos",
+            "fr": "à bientôt",
+            "uk": "бачимось"
+        }
+    ]
+}

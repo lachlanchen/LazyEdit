@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:28,174\",\n    \"end\": \"00:04:28,194\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香 没有花香 没有树高\"\n  },\n  {\n    \"start\": \"00:04:28,194\",\n    \"end\": \"00:04:28,254\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香 没有花香 没有树高\"\n  },\n  {\n    \"start\": \"00:04:28,290\",\n    \"end\": \"00:04:28,730\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway,\"\n  },\n  {\n    \"start\": \"00:04:28,730\",\n    \"end\": \"00:04:30,390\",\n    \"lang\": \"en\",\n    \"text\": \"it's still imperfect.\"\n  },\n  {\n    \"start\": \"00:04:32,229\",\n    \"end\": \"00:04:35,270\",\n    \"lang\": \"en\",\n    \"text\": \"I promise that when I practice alone,\"\n  },\n  {\n    \"start\": \"00:04:35,270\",\n    \"end\": \"00:04:37,330\",\n    \"lang\": \"en\",\n    \"text\": \"it's kind of a little bit,\"\n  },\n  {\n    \"start\": \"00:04:37,330\",\n    \"end\": \"00:04:38,670\",\n    \"lang\": \"en\",\n    \"text\": \"somewhat better.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:04:28,174",
+            "end": "00:04:28,194",
+            "es": "No hay aroma de flores, no hay altos árboles",
+            "fr": "Pas de parfum de fleurs, pas d'arbres hauts",
+            "uk": "Немає аромату квітів, немає високих дерев"
+        },
+        {
+            "start": "00:04:28,194",
+            "end": "00:04:28,254",
+            "es": "No hay aroma de flores, no hay altos árboles",
+            "fr": "Pas de parfum de fleurs, pas d'arbres hauts",
+            "uk": "Немає аромату квітів, немає високих дерев"
+        },
+        {
+            "start": "00:04:28,290",
+            "end": "00:04:28,730",
+            "es": "De todos modos,",
+            "fr": "De toute façon,",
+            "uk": "Так чи інакше,"
+        },
+        {
+            "start": "00:04:28,730",
+            "end": "00:04:30,390",
+            "es": "todavía es imperfecto.",
+            "fr": "c'est encore imparfait.",
+            "uk": "це все ще недосконало."
+        },
+        {
+            "start": "00:04:32,229",
+            "end": "00:04:35,270",
+            "es": "Prometo que cuando practico solo,",
+            "fr": "Je promets que quand je pratique seul,",
+            "uk": "Обіцяю, коли я практикуюся наодинці,"
+        },
+        {
+            "start": "00:04:35,270",
+            "end": "00:04:37,330",
+            "es": "es algo un poquito,",
+            "fr": "c'est un peu,",
+            "uk": "це трохи,"
+        },
+        {
+            "start": "00:04:37,330",
+            "end": "00:04:38,670",
+            "es": "algo mejor.",
+            "fr": "quelque peu meilleur.",
+            "uk": "трошки краще."
+        }
+    ]
+}

@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,914\",\n    \"end\": \"00:01:03,734\",\n    \"lang\": \"zh\",\n    \"text\": \"体验怎么样\"\n  },\n  {\n    \"start\": \"00:01:03,734\",\n    \"end\": \"00:01:06,734\",\n    \"lang\": \"zh\",\n    \"text\": \"这些是加这种小元素的\"\n  },\n  {\n    \"start\": \"00:01:06,734\",\n    \"end\": \"00:01:09,874\",\n    \"lang\": \"zh\",\n    \"text\": \"然后如果不加就是这种\"\n  },\n  {\n    \"start\": \"00:01:09,874\",\n    \"end\": \"00:01:10,894\",\n    \"lang\": \"zh\",\n    \"text\": \"过渡的\"\n  },\n  {\n    \"start\": \"00:01:12,894\",\n    \"end\": \"00:01:14,334\",\n    \"lang\": \"en\",\n    \"text\": \"STICKers stay safe while educating the next generation of professionals Human Society Great Trust\"\n  },\n  {\n    \"start\": \"00:01:14,370\",\n    \"end\": \"00:01:15,670\",\n    \"lang\": \"zh\",\n    \"text\": \"不加的话就是这种\"\n  },\n  {\n    \"start\": \"00:01:16,769\",\n    \"end\": \"00:01:18,270\",\n    \"lang\": \"zh\",\n    \"text\": \"又是另外一种感觉\"\n  },\n  {\n    \"start\": \"00:01:19,089\",\n    \"end\": \"00:01:20,050\",\n    \"lang\": \"zh\",\n    \"text\": \"不加的话\"\n  },\n  {\n    \"start\": \"00:01:21,169\",\n    \"end\": \"00:01:22,810\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是加而不加\"\n  },\n  {\n    \"start\": \"00:01:22,810\",\n    \"end\": \"00:01:24,170\",\n    \"lang\": \"zh\",\n    \"text\": \"两个不加的感觉\"\n  },\n  {\n    \"start\": \"00:01:25,230\",\n    \"end\": \"00:01:27,030\",\n    \"lang\": \"zh\",\n    \"text\": \"我看还加不加\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:02,914",
+            "end": "00:01:03,734",
+            "en": "How is the experience",
+            "zh": "体验怎么样",
+            "ar": "كيف هي التجربة"
+        },
+        {
+            "start": "00:01:03,734",
+            "end": "00:01:06,734",
+            "en": "These are with such small elements added",
+            "zh": "这些是加这种小元素的",
+            "ar": "هذه مع إضافة عناصر صغيرة مثل هذه"
+        },
+        {
+            "start": "00:01:06,734",
+            "end": "00:01:09,874",
+            "en": "And if not added, it's like this",
+            "zh": "然后如果不加就是这种",
+            "ar": "وإذا لم يُضف، يكون مثل هذا"
+        },
+        {
+            "start": "00:01:09,874",
+            "end": "00:01:10,894",
+            "en": "Transitional",
+            "zh": "过渡的",
+            "ar": "انتقالي"
+        },
+        {
+            "start": "00:01:12,894",
+            "end": "00:01:14,334",
+            "en": "STICKers stay safe while educating the next generation of professionals Human Society Great Trust",
+            "zh": "贴纸保持安全，同时教育下一代专业人士 人类社会大信任",
+            "ar": "تبقى الملصقات آمنة أثناء تعليم الجيل القادم من المحترفين الثقة الكبرى في المجتمع البشري"
+        },
+        {
+            "start": "00:01:14,370",
+            "end": "00:01:15,670",
+            "en": "If not added, it's like this",
+            "zh": "不加的话就是这种",
+            "ar": "إذا لم يتم إضافته، يكون مثل هذا"
+        },
+        {
+            "start": "00:01:16,769",
+            "end": "00:01:18,270",
+            "en": "It's another kind of feeling",
+            "zh": "又是另外一种感觉",
+            "ar": "إنه نوع آخر من الشعور"
+        },
+        {
+            "start": "00:01:19,089",
+            "end": "00:01:20,050",
+            "en": "If not added",
+            "zh": "不加的话",
+            "ar": "إذا لم يتم إضافته"
+        },
+        {
+            "start": "00:01:21,169",
+            "end": "00:01:22,810",
+            "en": "This is with and without added",
+            "zh": "这个是加而不加",
+            "ar": "هذا مع وبدون إضافة"
+        },
+        {
+            "start": "00:01:22,810",
+            "end": "00:01:24,170",
+            "en": "The feeling of both not added",
+            "zh": "两个不加的感觉",
+            "ar": "الشعور بعدم إضافة كلاهما"
+        },
+        {
+            "start": "00:01:25,230",
+            "end": "00:01:27,030",
+            "en": "I see whether to add or not",
+            "zh": "我看还加不加",
+            "ar": "أرى ما إذا كان سيتم الإضافة أم لا"
+        }
+    ]
+}

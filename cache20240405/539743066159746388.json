@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,920\",\n    \"lang\": \"en\",\n    \"text\": \"Our Oda Friend.\"\n  },\n  {\n    \"start\": \"00:00:02,420\",\n    \"end\": \"00:00:03,020\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:04,180\",\n    \"end\": \"00:00:04,940\",\n    \"lang\": \"en\",\n    \"text\": \"He's an Oda dork.\"\n  },\n  {\n    \"start\": \"00:00:05,440\",\n    \"end\": \"00:00:06,080\",\n    \"lang\": \"en\",\n    \"text\": \"Dog-o-friend.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,920",
+            "vi": "Bạn Oda của chúng ta."
+        },
+        {
+            "start": "00:00:02,420",
+            "end": "00:00:03,020",
+            "vi": "Xin chào."
+        },
+        {
+            "start": "00:00:04,180",
+            "end": "00:00:04,940",
+            "vi": "Anh ta là một tên ngốc Oda."
+        },
+        {
+            "start": "00:00:05,440",
+            "end": "00:00:06,080",
+            "vi": "Bạn chó."
+        }
+    ]
+}

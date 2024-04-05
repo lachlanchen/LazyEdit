@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:05,446\",\n    \"end\": \"00:03:06,566\",\n    \"lang\": \"en\",\n    \"text\": \"education concepts.\"\n  },\n  {\n    \"start\": \"00:03:07,746\",\n    \"end\": \"00:03:08,186\",\n    \"lang\": \"ja\",\n    \"text\": \"コンセプト\"\n  },\n  {\n    \"start\": \"00:03:10,082\",\n    \"end\": \"00:03:12,602\",\n    \"lang\": \"en\",\n    \"text\": \"So firstly,\"\n  },\n  {\n    \"start\": \"00:03:12,602\",\n    \"end\": \"00:03:15,182\",\n    \"lang\": \"en\",\n    \"text\": \"when I learn guitar,\"\n  },\n  {\n    \"start\": \"00:03:15,182\",\n    \"end\": \"00:03:17,922\",\n    \"lang\": \"en\",\n    \"text\": \"I focus on repetition.\"\n  },\n  {\n    \"start\": \"00:03:18,462\",\n    \"end\": \"00:03:27,882\",\n    \"lang\": \"en\",\n    \"text\": \"So I just repetitively practice the skill until I can\"\n  },\n  {\n    \"start\": \"00:03:32,642\",\n    \"end\": \"00:03:34,502\",\n    \"lang\": \"zh\",\n    \"text\": \"愛看順死人啊\"\n  },\n  {\n    \"start\": \"00:03:37,442\",\n    \"end\": \"00:03:38,162\",\n    \"lang\": \"en\",\n    \"text\": \"the art.\"\n  },\n  {\n    \"start\": \"00:03:40,542\",\n    \"end\": \"00:03:42,802\",\n    \"lang\": \"en\",\n    \"text\": \"It's hard for me to explain this.\"\n  },\n  {\n    \"start\": \"00:03:51,962\",\n    \"end\": \"00:03:53,082\",\n    \"lang\": \"en\",\n    \"text\": \"It's wrong.\"\n  },\n  {\n    \"start\": \"00:03:53,582\",\n    \"end\": \"00:03:54,002\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:03:54,982\",\n    \"end\": \"00:03:55,302\",\n    \"lang\": \"en\",\n    \"text\": \"It's wrong.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:05,446",
+            "end": "00:03:06,566",
+            "vi": "các khái niệm giáo dục."
+        },
+        {
+            "start": "00:03:07,746",
+            "end": "00:03:08,186",
+            "vi": "khái niệm"
+        },
+        {
+            "start": "00:03:10,082",
+            "end": "00:03:12,602",
+            "vi": "Vì vậy, đầu tiên,"
+        },
+        {
+            "start": "00:03:12,602",
+            "end": "00:03:15,182",
+            "vi": "khi tôi học đàn guitar,"
+        },
+        {
+            "start": "00:03:15,182",
+            "end": "00:03:17,922",
+            "vi": "tôi tập trung vào việc lặp lại."
+        },
+        {
+            "start": "00:03:18,462",
+            "end": "00:03:27,882",
+            "vi": "Vì vậy tôi chỉ luyện tập kỹ năng một cách lặp đi lặp lại cho đến khi tôi có thể"
+        },
+        {
+            "start": "00:03:32,642",
+            "end": "00:03:34,502",
+            "vi": "rất thích nó."
+        },
+        {
+            "start": "00:03:37,442",
+            "end": "00:03:38,162",
+            "vi": "nghệ thuật."
+        },
+        {
+            "start": "00:03:40,542",
+            "end": "00:03:42,802",
+            "vi": "Thật khó để tôi giải thích điều này."
+        },
+        {
+            "start": "00:03:51,962",
+            "end": "00:03:53,082",
+            "vi": "Nó sai."
+        },
+        {
+            "start": "00:03:53,582",
+            "end": "00:03:54,002",
+            "vi": "Xin lỗi."
+        },
+        {
+            "start": "00:03:54,982",
+            "end": "00:03:55,302",
+            "vi": "Nó sai."
+        }
+    ]
+}

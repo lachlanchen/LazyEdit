@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,980\",\n    \"lang\": \"en\",\n    \"text\": \"it seems that I catch the code\"\n  },\n  {\n    \"start\": \"00:00:06,050\",\n    \"end\": \"00:00:07,770\",\n    \"lang\": \"zh\",\n    \"text\": \"我爱看其他科威的\"\n  },\n  {\n    \"start\": \"00:00:08,738\",\n    \"end\": \"00:00:10,698\",\n    \"lang\": \"en\",\n    \"text\": \"the coronavirus\"\n  },\n  {\n    \"start\": \"00:00:10,698\",\n    \"end\": \"00:00:15,598\",\n    \"lang\": \"en\",\n    \"text\": \"I have this sore throat\"\n  },\n  {\n    \"start\": \"00:00:15,598\",\n    \"end\": \"00:00:18,038\",\n    \"lang\": \"en\",\n    \"text\": \"and it hurts my swan\"\n  },\n  {\n    \"start\": \"00:00:22,078\",\n    \"end\": \"00:00:24,078\",\n    \"lang\": \"en\",\n    \"text\": \"It's not...\"\n  },\n  {\n    \"start\": \"00:00:25,958\",\n    \"end\": \"00:00:28,118\",\n    \"lang\": \"en\",\n    \"text\": \"Currently it's getting a slight...\"\n  },\n  {\n    \"start\": \"00:00:28,878\",\n    \"end\": \"00:00:29,718\",\n    \"lang\": \"en\",\n    \"text\": \"slighting level\"\n  },\n  {\n    \"start\": \"00:00:30,858\",\n    \"end\": \"00:00:33,858\",\n    \"lang\": \"en\",\n    \"text\": \"But I don't know if it will get him...\"\n  },\n  {\n    \"start\": \"00:00:33,858\",\n    \"end\": \"00:00:35,578\",\n    \"lang\": \"en\",\n    \"text\": \"get him severe\"\n  },\n  {\n    \"start\": \"00:00:36,838\",\n    \"end\": \"00:00:37,338\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:00:37,798\",\n    \"end\": \"00:00:38,378\",\n    \"lang\": \"en\",\n    \"text\": \"Severe\"\n  },\n  {\n    \"start\": \"00:00:38,378\",\n    \"end\": \"00:00:39,178\",\n    \"lang\": \"en\",\n    \"text\": \"Severe\"\n  },\n  {\n    \"start\": \"00:00:39,878\",\n    \"end\": \"00:00:40,698\",\n    \"lang\": \"en\",\n    \"text\": \"Severe\"\n  },\n  {\n    \"start\": \"00:00:40,698\",\n    \"end\": \"00:00:41,397\",\n    \"lang\": \"en\",\n    \"text\": \"Okee?\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,980",
+            "es": "parece que he cogido el código",
+            "fr": "il semble que j'ai attrapé le code",
+            "uk": "здається, я вловив код"
+        },
+        {
+            "start": "00:00:06,050",
+            "end": "00:00:07,770",
+            "es": "me encanta ver los otros de Kuwait",
+            "fr": "j'aime regarder les autres du Koweït",
+            "uk": "мені подобається дивитися на інших з Кувейту"
+        },
+        {
+            "start": "00:00:08,738",
+            "end": "00:00:10,698",
+            "es": "el coronavirus",
+            "fr": "le coronavirus",
+            "uk": "коронавірус"
+        },
+        {
+            "start": "00:00:10,698",
+            "end": "00:00:15,598",
+            "es": "tengo este dolor de garganta",
+            "fr": "j'ai mal à la gorge",
+            "uk": "в мене болить горло"
+        },
+        {
+            "start": "00:00:15,598",
+            "end": "00:00:18,038",
+            "es": "y me duele mi cisne",
+            "fr": "et ça fait mal à mon cygne",
+            "uk": "і це болить мою лебідь"
+        },
+        {
+            "start": "00:00:22,078",
+            "end": "00:00:24,078",
+            "es": "No es...",
+            "fr": "Ce n'est pas...",
+            "uk": "Це не..."
+        },
+        {
+            "start": "00:00:25,958",
+            "end": "00:00:28,118",
+            "es": "Actualmente está empeorando un poco...",
+            "fr": "Actuellement, ça s'aggrave un peu...",
+            "uk": "Наразі це трохи погіршується..."
+        },
+        {
+            "start": "00:00:28,878",
+            "end": "00:00:29,718",
+            "es": "nivel de infravaloración",
+            "fr": "niveau de sous-évaluation",
+            "uk": "рівень недооцінки"
+        },
+        {
+            "start": "00:00:30,858",
+            "end": "00:00:33,858",
+            "es": "Pero no sé si lo conseguirá...",
+            "fr": "Mais je ne sais pas s'il l'aura...",
+            "uk": "Але я не знаю, чи дістане він його..."
+        },
+        {
+            "start": "00:00:33,858",
+            "end": "00:00:35,578",
+            "es": "que se vuelva grave",
+            "fr": "le rendre grave",
+            "uk": "зробити його серйозним"
+        },
+        {
+            "start": "00:00:36,838",
+            "end": "00:00:37,338",
+            "es": "¿Verdad?",
+            "fr": "N'est-ce pas?",
+            "uk": "Правда?"
+        },
+        {
+            "start": "00:00:37,798",
+            "end": "00:00:38,378",
+            "es": "Grave",
+            "fr": "Grave",
+            "uk": "Серйозно"
+        },
+        {
+            "start": "00:00:38,378",
+            "end": "00:00:39,178",
+            "es": "Grave",
+            "fr": "Grave",
+            "uk": "Серйозно"
+        },
+        {
+            "start": "00:00:39,878",
+            "end": "00:00:40,698",
+            "es": "Grave",
+            "fr": "Grave",
+            "uk": "Серйозно"
+        },
+        {
+            "start": "00:00:40,698",
+            "end": "00:00:41,397",
+            "es": "¿Ok?",
+            "fr": "Ok?",
+            "uk": "Окей?"
+        }
+    ]
+}

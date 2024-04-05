@@ -1,0 +1,126 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,020\",\n    \"end\": \"00:01:04,099\",\n    \"lang\": \"en\",\n    \"text\": \"Being happy and satisfied in the knowledge world.\"\n  },\n  {\n    \"start\": \"00:01:04,920\",\n    \"end\": \"00:01:08,700\",\n    \"lang\": \"en\",\n    \"text\": \"But the reality is that no matter what you learned,\"\n  },\n  {\n    \"start\": \"00:01:08,700\",\n    \"end\": \"00:01:10,880\",\n    \"lang\": \"en\",\n    \"text\": \"what you studied,\"\n  },\n  {\n    \"start\": \"00:01:11,660\",\n    \"end\": \"00:01:13,800\",\n    \"lang\": \"en\",\n    \"text\": \"we are still ignorant.\"\n  },\n  {\n    \"start\": \"00:01:13,800\",\n    \"end\": \"00:01:16,280\",\n    \"lang\": \"en\",\n    \"text\": \"We are ignorant to this universe,\"\n  },\n  {\n    \"start\": \"00:01:16,280\",\n    \"end\": \"00:01:17,280\",\n    \"lang\": \"en\",\n    \"text\": \"to this world.\"\n  },\n  {\n    \"start\": \"00:01:18,160\",\n    \"end\": \"00:01:18,160\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:18,160\",\n    \"end\": \"00:01:20,760\",\n    \"lang\": \"en\",\n    \"text\": \"the knowledge,\"\n  },\n  {\n    \"start\": \"00:01:20,760\",\n    \"end\": \"00:01:25,240\",\n    \"lang\": \"en\",\n    \"text\": \"even the most achieved scientist,\"\n  },\n  {\n    \"start\": \"00:01:25,240\",\n    \"end\": \"00:01:27,520\",\n    \"lang\": \"en\",\n    \"text\": \"Nobel Prize in knowledge,\"\n  },\n  {\n    \"start\": \"00:01:27,520\",\n    \"end\": \"00:01:27,620\",\n    \"lang\": \"en\",\n    \"text\": \"is still ignorant.\"\n  },\n  {\n    \"start\": \"00:01:29,922\",\n    \"end\": \"00:01:30,582\",\n    \"lang\": \"ja\",\n    \"text\": \"ですっていう\"\n  },\n  {\n    \"start\": \"00:01:31,522\",\n    \"end\": \"00:01:35,522\",\n    \"lang\": \"en\",\n    \"text\": \"We are just in a temporary illusion of this...\"\n  },\n  {\n    \"start\": \"00:01:37,022\",\n    \"end\": \"00:01:37,482\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway,\"\n  },\n  {\n    \"start\": \"00:01:37,482\",\n    \"end\": \"00:01:40,642\",\n    \"lang\": \"en\",\n    \"text\": \"we think we are knowledgeable.\"\n  },\n  {\n    \"start\": \"00:01:41,890\",\n    \"end\": \"00:01:42,210\",\n    \"lang\": \"ar\",\n    \"text\": \"حلت\"\n  },\n  {\n    \"start\": \"00:01:43,266\",\n    \"end\": \"00:01:45,666\",\n    \"lang\": \"en\",\n    \"text\": \"But the fact is that we are never\"\n  },\n  {\n    \"start\": \"00:01:50,885\",\n    \"end\": \"00:01:53,686\",\n    \"lang\": \"en\",\n    \"text\": \"We are just dust in this universe\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:00,020",
+            "end": "00:01:04,099",
+            "en": "Being happy and satisfied in the knowledge world.",
+            "zh": "在知识的世界里感到快乐和满足。",
+            "ar": "الشعور بالسعادة والرضا في عالم المعرفة."
+        },
+        {
+            "start": "00:01:04,920",
+            "end": "00:01:08,700",
+            "en": "But the reality is that no matter what you learned,",
+            "zh": "但实际情况是，无论你学到了什么，",
+            "ar": "ولكن الواقع هو أنه بغض النظر عما تعلمت،"
+        },
+        {
+            "start": "00:01:08,700",
+            "end": "00:01:10,880",
+            "en": "what you studied,",
+            "zh": "你研究了什么，",
+            "ar": "ما درسته،"
+        },
+        {
+            "start": "00:01:11,660",
+            "end": "00:01:13,800",
+            "en": "we are still ignorant.",
+            "zh": "我们仍然是无知的。",
+            "ar": "لا زلنا جاهلين."
+        },
+        {
+            "start": "00:01:13,800",
+            "end": "00:01:16,280",
+            "en": "We are ignorant to this universe,",
+            "zh": "我们对这个宇宙一无所知，",
+            "ar": "نحن جاهلون بهذا الكون،"
+        },
+        {
+            "start": "00:01:16,280",
+            "end": "00:01:17,280",
+            "en": "to this world.",
+            "zh": "对这个世界一无所知。",
+            "ar": "لهذا العالم."
+        },
+        {
+            "start": "00:01:18,160",
+            "end": "00:01:20,760",
+            "en": "So, the knowledge,",
+            "zh": "所以，这个知识，",
+            "ar": "إذًا، المعرفة،"
+        },
+        {
+            "start": "00:01:20,760",
+            "end": "00:01:25,240",
+            "en": "even the most achieved scientist,",
+            "zh": "即使是最有成就的科学家，",
+            "ar": "حتى أكثر العلماء تحقيقاً،"
+        },
+        {
+            "start": "00:01:25,240",
+            "end": "00:01:27,520",
+            "en": "Nobel Prize in knowledge,",
+            "zh": "诺贝尔知识奖，",
+            "ar": "جائزة نوبل في المعرفة،"
+        },
+        {
+            "start": "00:01:27,520",
+            "end": "00:01:27,620",
+            "en": "is still ignorant.",
+            "zh": "仍然是无知的。",
+            "ar": "لا يزال جاهلًا."
+        },
+        {
+            "start": "00:01:29,922",
+            "end": "00:01:30,582",
+            "en": "That is to say,",
+            "zh": "也就是说，",
+            "ar": "يعني ذلك،",
+            "ja": "ですっていう"
+        },
+        {
+            "start": "00:01:31,522",
+            "end": "00:01:35,522",
+            "en": "We are just in a temporary illusion of this...",
+            "zh": "我们只是处于这个暂时的幻觉中...",
+            "ar": "نحن فقط في وهم مؤقت لهذا..."
+        },
+        {
+            "start": "00:01:37,022",
+            "end": "00:01:37,482",
+            "en": "Anyway,",
+            "zh": "无论如何，",
+            "ar": "على أي حال،"
+        },
+        {
+            "start": "00:01:37,482",
+            "end": "00:01:40,642",
+            "en": "we think we are knowledgeable.",
+            "zh": "我们认为我们是有知识的。",
+            "ar": "نحن نعتقد أننا على دراية."
+        },
+        {
+            "start": "00:01:41,890",
+            "end": "00:01:42,210",
+            "en": "It's solved.",
+            "zh": "它被解决了。",
+            "ar": "حُلت.",
+            "original": "حلت"
+        },
+        {
+            "start": "00:01:43,266",
+            "end": "00:01:45,666",
+            "en": "But the fact is that we are never",
+            "zh": "但事实是我们从未",
+            "ar": "لكن الحقيقة أننا أبدًا"
+        },
+        {
+            "start": "00:01:50,885",
+            "end": "00:01:53,686",
+            "en": "We are just dust in this universe",
+            "zh": "我们只是这个宇宙中的尘埃",
+            "ar": "نحن مجرد غبار في هذا الكون"
+        }
+    ]
+}

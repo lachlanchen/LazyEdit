@@ -1,0 +1,155 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,154\",\n    \"end\": \"00:01:04,174\",\n    \"lang\": \"zh\",\n    \"text\": \"未見穏\"\n  },\n  {\n    \"start\": \"00:01:04,914\",\n    \"end\": \"00:01:07,034\",\n    \"lang\": \"zh\",\n    \"text\": \"来世時代\"\n  },\n  {\n    \"start\": \"00:01:07,514\",\n    \"end\": \"00:01:08,014\",\n    \"lang\": \"zh\",\n    \"text\": \"穏\"\n  },\n  {\n    \"start\": \"00:01:11,234\",\n    \"end\": \"00:01:12,954\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's correct\"\n  },\n  {\n    \"start\": \"00:01:13,974\",\n    \"end\": \"00:01:16,014\",\n    \"lang\": \"en\",\n    \"text\": \"It's hard for me to catch the tune\"\n  },\n  {\n    \"start\": \"00:01:16,014\",\n    \"end\": \"00:01:19,394\",\n    \"lang\": \"en\",\n    \"text\": \"Na na do si na na na mi\"\n  },\n  {\n    \"start\": \"00:01:19,394\",\n    \"end\": \"00:01:23,134\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi re mi mi mi sol mi\"\n  },\n  {\n    \"start\": \"00:01:23,134\",\n    \"end\": \"00:01:26,354\",\n    \"lang\": \"en\",\n    \"text\": \"Re re do si na sol mi\"\n  },\n  {\n    \"start\": \"00:01:28,074\",\n    \"end\": \"00:01:28,794\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  },\n  {\n    \"start\": \"00:01:38,242\",\n    \"end\": \"00:01:42,082\",\n    \"lang\": \"zh\",\n    \"text\": \"7年7未来\"\n  },\n  {\n    \"start\": \"00:01:42,178\",\n    \"end\": \"00:01:42,578\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  },\n  {\n    \"start\": \"00:01:44,098\",\n    \"end\": \"00:01:45,078\",\n    \"lang\": \"zh\",\n    \"text\": \"送你\"\n  },\n  {\n    \"start\": \"00:01:45,538\",\n    \"end\": \"00:01:46,898\",\n    \"lang\": \"zh\",\n    \"text\": \"来来都行\"\n  },\n  {\n    \"start\": \"00:01:46,898\",\n    \"end\": \"00:01:47,798\",\n    \"lang\": \"zh\",\n    \"text\": \"啊\"\n  },\n  {\n    \"start\": \"00:01:47,858\",\n    \"end\": \"00:01:49,498\",\n    \"lang\": \"zh\",\n    \"text\": \"送你\"\n  },\n  {\n    \"start\": \"00:01:50,818\",\n    \"end\": \"00:01:51,058\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:53,318\",\n    \"end\": \"00:01:54,418\",\n    \"lang\": \"en\",\n    \"text\": \"So make a...\"\n  },\n  {\n    \"start\": \"00:01:54,438\",\n    \"end\": \"00:01:56,658\",\n    \"lang\": \"ja\",\n    \"text\": \"休みながらいい日を!\"\n  },\n  {\n    \"start\": \"00:01:56,658\",\n    \"end\": \"00:01:58,718\",\n    \"lang\": \"ja\",\n    \"text\": \"私は新兵衛です!\"\n  },\n  {\n    \"start\": \"00:01:59,378\",\n    \"end\": \"00:01:59,678\",\n    \"lang\": \"ja\",\n    \"text\": \"もうそろそろ?\"\n  },\n  {\n    \"start\": \"00:01:59,858\",\n    \"end\": \"00:02:00,078\",\n    \"lang\": \"en\",\n    \"text\": \"OK!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:03,154",
+            "end": "00:01:04,174",
+            "en": "Unseen stability",
+            "zh": "未見穏",
+            "ar": "الاستقرار غير المرئي"
+        },
+        {
+            "start": "00:01:04,914",
+            "end": "00:01:07,034",
+            "en": "The era of the next life",
+            "zh": "来世時代",
+            "ar": "عصر الحياة القادمة"
+        },
+        {
+            "start": "00:01:07,514",
+            "end": "00:01:08,014",
+            "en": "Stability",
+            "zh": "穏",
+            "ar": "الاستقرار"
+        },
+        {
+            "start": "00:01:11,234",
+            "end": "00:01:12,954",
+            "en": "I don't know if it's correct",
+            "zh": "我不确定这是否正确",
+            "ar": "لا أعلم إذا كان هذا صحيحًا"
+        },
+        {
+            "start": "00:01:13,974",
+            "end": "00:01:16,014",
+            "en": "It's hard for me to catch the tune",
+            "zh": "我很难抓住这个曲调",
+            "ar": "صعب عليّ الإمساك باللحن"
+        },
+        {
+            "start": "00:01:16,014",
+            "end": "00:01:19,394",
+            "en": "Na na do si na na na mi",
+            "zh": "纳 纳 做 斯 纳 纳 纳 米",
+            "ar": "نا نا دو سي نا نا نا مي"
+        },
+        {
+            "start": "00:01:19,394",
+            "end": "00:01:23,134",
+            "en": "Na na mi re mi mi mi sol mi",
+            "zh": "纳 纳 米 日 米 米 米 索 米",
+            "ar": "نا نا مي ري مي مي مي سول مي"
+        },
+        {
+            "start": "00:01:23,134",
+            "end": "00:01:26,354",
+            "en": "Re re do si na sol mi",
+            "zh": "日 日 做 斯 纳 索 米",
+            "ar": "ري ري دو سي نا سول مي"
+        },
+        {
+            "start": "00:01:28,074",
+            "end": "00:01:28,794",
+            "en": "Okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:01:38,242",
+            "end": "00:01:42,082",
+            "en": "Seven years, seven futures",
+            "zh": "7年7未来",
+            "ar": "سبع سنوات، سبع مستقبلات"
+        },
+        {
+            "start": "00:01:42,178",
+            "end": "00:01:42,578",
+            "en": "you",
+            "zh": "你",
+            "ar": "أنت"
+        },
+        {
+            "start": "00:01:44,098",
+            "end": "00:01:45,078",
+            "en": "For you",
+            "zh": "送你",
+            "ar": "لك"
+        },
+        {
+            "start": "00:01:45,538",
+            "end": "00:01:46,898",
+            "en": "Anything goes",
+            "zh": "来来都行",
+            "ar": "كل شيء يجوز"
+        },
+        {
+            "start": "00:01:46,898",
+            "end": "00:01:47,798",
+            "en": "Ah",
+            "zh": "啊",
+            "ar": "آه"
+        },
+        {
+            "start": "00:01:47,858",
+            "end": "00:01:49,498",
+            "en": "For you",
+            "zh": "送你",
+            "ar": "لك"
+        },
+        {
+            "start": "00:01:50,818",
+            "end": "00:01:51,058",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:01:53,318",
+            "end": "00:01:54,418",
+            "en": "So make a...",
+            "zh": "所以做一个...",
+            "ar": "إذًا اصنع..."
+        },
+        {
+            "start": "00:01:54,438",
+            "end": "00:01:56,658",
+            "ja": "休みながらいい日を!",
+            "en": "Have a good day while resting!",
+            "zh": "休息的同时，过个好日子！",
+            "ar": "استمتع بيوم جيد أثناء الراحة!"
+        },
+        {
+            "start": "00:01:56,658",
+            "end": "00:01:58,718",
+            "ja": "私は新兵衛です!",
+            "en": "I am Shinbei!",
+            "zh": "我是新兵衛!",
+            "ar": "أنا شينبي!"
+        },
+        {
+            "start": "00:01:59,378",
+            "end": "00:01:59,678",
+            "ja": "もうそろそろ?",
+            "en": "Is it almost time?",
+            "zh": "差不多时间了吗？",
+            "ar": "هل حان الوقت تقريبًا؟"
+        },
+        {
+            "start": "00:01:59,858",
+            "end": "00:02:00,078",
+            "en": "OK!",
+            "zh": "好的！",
+            "ar": "حسنًا!"
+        }
+    ]
+}

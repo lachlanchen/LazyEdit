@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,340\",\n    \"lang\": \"en\",\n    \"text\": \"Kind of listening is quite painful.\"\n  },\n  {\n    \"start\": \"00:00:05,020\",\n    \"end\": \"00:00:06,840\",\n    \"lang\": \"en\",\n    \"text\": \"But first,\"\n  },\n  {\n    \"start\": \"00:00:06,840\",\n    \"end\": \"00:00:07,460\",\n    \"lang\": \"en\",\n    \"text\": \"I...\"\n  },\n  {\n    \"start\": \"00:00:08,418\",\n    \"end\": \"00:00:09,518\",\n    \"lang\": \"zh\",\n    \"text\": \"我們下次見\"\n  },\n  {\n    \"start\": \"00:00:10,178\",\n    \"end\": \"00:00:11,858\",\n    \"lang\": \"en\",\n    \"text\": \"hand the guitar that I can...\"\n  },\n  {\n    \"start\": \"00:00:12,578\",\n    \"end\": \"00:00:13,898\",\n    \"lang\": \"en\",\n    \"text\": \"I can learn singing\"\n  },\n  {\n    \"start\": \"00:00:15,682\",\n    \"end\": \"00:00:17,942\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:18,602\",\n    \"end\": \"00:00:20,782\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:00:53,842\",\n    \"end\": \"00:00:55,242\",\n    \"lang\": \"zh\",\n    \"text\": \"谢谢观看 下集再见\"\n  },\n  {\n    \"start\": \"00:00:55,266\",\n    \"end\": \"00:00:55,446\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:55,446\",\n    \"end\": \"00:00:57,226\",\n    \"lang\": \"en\",\n    \"text\": \"that's the tiny token.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,340",
+            "ja": "ある種の聞き取りはかなり苦痛です。"
+        },
+        {
+            "start": "00:00:05,020",
+            "end": "00:00:06,840",
+            "ja": "しかしまず、"
+        },
+        {
+            "start": "00:00:06,840",
+            "end": "00:00:07,460",
+            "ja": "私は…"
+        },
+        {
+            "start": "00:00:08,418",
+            "end": "00:00:09,518",
+            "ja": "私たちは次に会いましょう"
+        },
+        {
+            "start": "00:00:10,178",
+            "end": "00:00:11,858",
+            "ja": "私が弾(ひ)けるギターを渡すと、"
+        },
+        {
+            "start": "00:00:12,578",
+            "end": "00:00:13,898",
+            "ja": "私は歌を習うことができる"
+        },
+        {
+            "start": "00:00:15,682",
+            "end": "00:00:17,942",
+            "ja": "花の香りはない"
+        },
+        {
+            "start": "00:00:18,602",
+            "end": "00:00:20,782",
+            "ja": "高い木もない"
+        },
+        {
+            "start": "00:00:53,842",
+            "end": "00:00:55,242",
+            "ja": "ご視聴ありがとうございました。次回をお楽しみに"
+        },
+        {
+            "start": "00:00:55,266",
+            "end": "00:00:55,446",
+            "ja": "大丈夫、"
+        },
+        {
+            "start": "00:00:55,446",
+            "end": "00:00:57,226",
+            "ja": "それが小さな気持ちです。"
+        }
+    ]
+}

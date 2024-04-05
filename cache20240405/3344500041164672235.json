@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,160\",\n    \"lang\": \"ja\",\n    \"text\": \"私は包丁を食べています\"\n  },\n  {\n    \"start\": \"00:00:07,490\",\n    \"end\": \"00:00:07,890\",\n    \"lang\": \"ar\",\n    \"text\": \"هن أ그� به\"\n  },\n  {\n    \"start\": \"00:00:07,890\",\n    \"end\": \"00:00:08,050\",\n    \"lang\": \"en\",\n    \"text\": \"voll\"\n  },\n  {\n    \"start\": \"00:00:08,050\",\n    \"end\": \"00:00:08,450\",\n    \"lang\": \"en\",\n    \"text\": \"tomato\"\n  },\n  {\n    \"start\": \"00:00:08,450\",\n    \"end\": \"00:00:08,750\",\n    \"lang\": \"ar\",\n    \"text\": \"سمر\"\n  },\n  {\n    \"start\": \"00:00:08,750\",\n    \"end\": \"00:00:08,770\",\n    \"lang\": \"ar\",\n    \"text\": \"وإذا كنتم ترغبون في تحديد الموضوع فاستعرضوا لنا رسالة لكم\"\n  },\n  {\n    \"start\": \"00:00:08,802\",\n    \"end\": \"00:00:09,682\",\n    \"lang\": \"ja\",\n    \"text\": \"コネはコネ\"\n  },\n  {\n    \"start\": \"00:00:11,138\",\n    \"end\": \"00:00:11,938\",\n    \"lang\": \"zh\",\n    \"text\": \"我来包子吧\"\n  },\n  {\n    \"start\": \"00:00:13,890\",\n    \"end\": \"00:00:15,110\",\n    \"lang\": \"ja\",\n    \"text\": \"美味しいです\"\n  },\n  {\n    \"start\": \"00:00:15,110\",\n    \"end\": \"00:00:16,550\",\n    \"lang\": \"ja\",\n    \"text\": \"私は\"\n  },\n  {\n    \"start\": \"00:00:17,509\",\n    \"end\": \"00:00:20,110\",\n    \"lang\": \"ja\",\n    \"text\": \"ピンクジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:00:30,458\",\n    \"end\": \"00:00:31,858\",\n    \"lang\": \"en\",\n    \"text\": \"치 Bismillah按구비\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,160",
+            "ja": "私は包丁を使っています"
+        },
+        {
+            "start": "00:00:07,490",
+            "end": "00:00:07,890",
+            "ja": "それは間違いです"
+        },
+        {
+            "start": "00:00:07,890",
+            "end": "00:00:08,050",
+            "ja": "まったく"
+        },
+        {
+            "start": "00:00:08,050",
+            "end": "00:00:08,450",
+            "ja": "トマト"
+        },
+        {
+            "start": "00:00:08,450",
+            "end": "00:00:08,750",
+            "ja": "それでは"
+        },
+        {
+            "start": "00:00:08,750",
+            "end": "00:00:08,770",
+            "ja": "もし議題を確認したいなら、メッセージを送ってください"
+        },
+        {
+            "start": "00:00:08,802",
+            "end": "00:00:09,682",
+            "ja": "これはこれ"
+        },
+        {
+            "start": "00:00:11,138",
+            "end": "00:00:11,938",
+            "ja": "私が買った肉まんです"
+        },
+        {
+            "start": "00:00:13,890",
+            "end": "00:00:15,110",
+            "ja": "美味しいです"
+        },
+        {
+            "start": "00:00:15,110",
+            "end": "00:00:16,550",
+            "ja": "私は"
+        },
+        {
+            "start": "00:00:17,509",
+            "end": "00:00:20,110",
+            "ja": "ピンクのジュースを飲んでいます"
+        },
+        {
+            "start": "00:00:30,458",
+            "end": "00:00:31,858",
+            "ja": "ビスミラーを始めに"
+        }
+    ]
+}

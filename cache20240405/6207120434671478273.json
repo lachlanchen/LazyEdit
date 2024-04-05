@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:05,641\",\n    \"end\": \"00:02:06,461\",\n    \"lang\": \"zh\",\n    \"text\": \"放心哦\"\n  },\n  {\n    \"start\": \"00:02:07,266\",\n    \"end\": \"00:02:08,086\",\n    \"lang\": \"en\",\n    \"text\": \"different flavor\"\n  },\n  {\n    \"start\": \"00:02:12,446\",\n    \"end\": \"00:02:15,066\",\n    \"lang\": \"en\",\n    \"text\": \"So that's my talent\"\n  },\n  {\n    \"start\": \"00:02:16,002\",\n    \"end\": \"00:02:16,342\",\n    \"lang\": \"en\",\n    \"text\": \"ir Vera\"\n  },\n  {\n    \"start\": \"00:02:26,498\",\n    \"end\": \"00:02:28,498\",\n    \"lang\": \"zh\",\n    \"text\": \"我现在在烹饪\"\n  },\n  {\n    \"start\": \"00:02:29,218\",\n    \"end\": \"00:02:30,738\",\n    \"lang\": \"en\",\n    \"text\": \"This is really delicious.\"\n  },\n  {\n    \"start\": \"00:02:32,078\",\n    \"end\": \"00:02:38,838\",\n    \"lang\": \"en\",\n    \"text\": \"How about I put this rice and the baozi that I left in this morning?\"\n  },\n  {\n    \"start\": \"00:02:40,438\",\n    \"end\": \"00:02:42,358\",\n    \"lang\": \"en\",\n    \"text\": \"Maybe temporarily not at the end,\"\n  },\n  {\n    \"start\": \"00:02:42,358\",\n    \"end\": \"00:02:43,078\",\n    \"lang\": \"en\",\n    \"text\": \"I might try that.\"\n  },\n  {\n    \"start\": \"00:02:43,478\",\n    \"end\": \"00:02:43,698\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:05,641",
+            "end": "00:02:06,461",
+            "ja": "安心して"
+        },
+        {
+            "start": "00:02:07,266",
+            "end": "00:02:08,086",
+            "ja": "違う味"
+        },
+        {
+            "start": "00:02:12,446",
+            "end": "00:02:15,066",
+            "ja": "それが私の才能です"
+        },
+        {
+            "start": "00:02:16,002",
+            "end": "00:02:16,342",
+            "ja": "イラ・ヴェラ"
+        },
+        {
+            "start": "00:02:26,498",
+            "end": "00:02:28,498",
+            "ja": "私は今、料理をしています"
+        },
+        {
+            "start": "00:02:29,218",
+            "end": "00:02:30,738",
+            "ja": "これは本当に美味しいです。"
+        },
+        {
+            "start": "00:02:32,078",
+            "end": "00:02:38,838",
+            "ja": "今朝残したこのご飯とバオズをどうですか？"
+        },
+        {
+            "start": "00:02:40,438",
+            "end": "00:02:42,358",
+            "ja": "多分一時的には終わりではない、"
+        },
+        {
+            "start": "00:02:42,358",
+            "end": "00:02:43,078",
+            "ja": "それを試してみるかもしれません。"
+        },
+        {
+            "start": "00:02:43,478",
+            "end": "00:02:43,698",
+            "ja": "わかった。"
+        }
+    ]
+}

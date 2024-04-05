@@ -1,0 +1,177 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,940\",\n    \"lang\": \"en\",\n    \"text\": \"This world is that we can learn two Japanese characters\"\n  },\n  {\n    \"start\": \"00:00:04,930\",\n    \"end\": \"00:00:07,130\",\n    \"lang\": \"ja\",\n    \"text\": \"ワインズ新licht £2 新科技能\"\n  },\n  {\n    \"start\": \"00:00:07,510\",\n    \"end\": \"00:00:07,850\",\n    \"lang\": \"ja\",\n    \"text\": \"新\"\n  },\n  {\n    \"start\": \"00:00:08,546\",\n    \"end\": \"00:00:09,446\",\n    \"lang\": \"en\",\n    \"text\": \"which means deep.\"\n  },\n  {\n    \"start\": \"00:00:10,050\",\n    \"end\": \"00:00:11,990\",\n    \"lang\": \"zh\",\n    \"text\": \"開肝\"\n  },\n  {\n    \"start\": \"00:00:15,938\",\n    \"end\": \"00:00:17,058\",\n    \"lang\": \"ja\",\n    \"text\": \"ええことばいたました\"\n  },\n  {\n    \"start\": \"00:00:17,186\",\n    \"end\": \"00:00:17,666\",\n    \"lang\": \"en\",\n    \"text\": \"Peace out.\"\n  },\n  {\n    \"start\": \"00:00:17,926\",\n    \"end\": \"00:00:18,346\",\n    \"lang\": \"en\",\n    \"text\": \"Peace out.\"\n  },\n  {\n    \"start\": \"00:00:19,126\",\n    \"end\": \"00:00:20,106\",\n    \"lang\": \"en\",\n    \"text\": \"Which is...\"\n  },\n  {\n    \"start\": \"00:00:20,106\",\n    \"end\": \"00:00:20,966\",\n    \"lang\": \"en\",\n    \"text\": \"Happy New Year.\"\n  },\n  {\n    \"start\": \"00:00:20,986\",\n    \"end\": \"00:00:22,386\",\n    \"lang\": \"ja\",\n    \"text\": \"マスティシェルスイン\"\n  },\n  {\n    \"start\": \"00:00:23,234\",\n    \"end\": \"00:00:26,454\",\n    \"lang\": \"en\",\n    \"text\": \"same root with another word,\"\n  },\n  {\n    \"start\": \"00:00:26,454\",\n    \"end\": \"00:00:28,334\",\n    \"lang\": \"en\",\n    \"text\": \"with another English word.\"\n  },\n  {\n    \"start\": \"00:00:29,090\",\n    \"end\": \"00:00:29,230\",\n    \"lang\": \"zh\",\n    \"text\": \"啊\"\n  },\n  {\n    \"start\": \"00:00:29,270\",\n    \"end\": \"00:00:29,690\",\n    \"lang\": \"zh\",\n    \"text\": \"鼻子抹\"\n  },\n  {\n    \"start\": \"00:00:30,018\",\n    \"end\": \"00:00:30,578\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:30,578\",\n    \"end\": \"00:00:31,518\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:31,518\",\n    \"end\": \"00:00:35,438\",\n    \"lang\": \"en\",\n    \"text\": \"which also means something that is extremely deep,\"\n  },\n  {\n    \"start\": \"00:00:35,438\",\n    \"end\": \"00:00:37,658\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:37,658\",\n    \"end\": \"00:00:39,378\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:39,678\",\n    \"end\": \"00:00:40,338\",\n    \"lang\": \"en\",\n    \"text\": \"a beast.\"\n  },\n  {\n    \"start\": \"00:00:41,314\",\n    \"end\": \"00:00:42,134\",\n    \"lang\": \"zh\",\n    \"text\": \"新開農\"\n  },\n  {\n    \"start\": \"00:00:43,173\",\n    \"end\": \"00:00:43,754\",\n    \"lang\": \"zh\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:43,754\",\n    \"end\": \"00:00:46,094\",\n    \"lang\": \"zh\",\n    \"text\": \"這個單詞是新開農\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,940",
+            "en": "This world is that we can learn two Japanese characters",
+            "zh": "这个世界是我们可以学习两个日本汉字的地方",
+            "ar": "هذا العالم هو الذي يمكننا من تعلم حرفين يابانيين"
+        },
+        {
+            "start": "00:00:04,930",
+            "end": "00:00:07,130",
+            "ja": "ワインズ新licht £2 新科技能",
+            "en": "Wines' new light, £2 new skills",
+            "zh": "葡萄酒的新光芒，2英镑的新技能",
+            "ar": "ضوء جديد للنبيذ، مهارات جديدة بقيمة £2"
+        },
+        {
+            "start": "00:00:07,510",
+            "end": "00:00:07,850",
+            "ja": "新",
+            "en": "New",
+            "zh": "新",
+            "ar": "جديد"
+        },
+        {
+            "start": "00:00:08,546",
+            "end": "00:00:09,446",
+            "en": "which means deep.",
+            "zh": "意味着深刻。",
+            "ar": "الذي يعني عميق."
+        },
+        {
+            "start": "00:00:10,050",
+            "end": "00:00:11,990",
+            "zh": "开肝",
+            "en": "Start the liver",
+            "ar": "ابدأ الكبد"
+        },
+        {
+            "start": "00:00:15,938",
+            "end": "00:00:17,058",
+            "ja": "ええことばいたました",
+            "en": "That was a good word",
+            "zh": "那是一个好词",
+            "ar": "كانت تلك كلمة جيدة"
+        },
+        {
+            "start": "00:00:17,186",
+            "end": "00:00:17,666",
+            "en": "Peace out.",
+            "zh": "再见。",
+            "ar": "في أمان الله."
+        },
+        {
+            "start": "00:00:17,926",
+            "end": "00:00:18,346",
+            "en": "Peace out.",
+            "zh": "再见。",
+            "ar": "في أمان الله."
+        },
+        {
+            "start": "00:00:19,126",
+            "end": "00:00:20,106",
+            "en": "Which is...",
+            "zh": "那是...",
+            "ar": "الذي هو..."
+        },
+        {
+            "start": "00:00:20,106",
+            "end": "00:00:20,966",
+            "en": "Happy New Year.",
+            "zh": "新年快乐。",
+            "ar": "كل عام وأنتم بخير."
+        },
+        {
+            "start": "00:00:20,986",
+            "end": "00:00:22,386",
+            "ja": "マスティシェルスイン",
+            "en": "Mysterious Win",
+            "zh": "神秘胜利",
+            "ar": "فوز غامض"
+        },
+        {
+            "start": "00:00:23,234",
+            "end": "00:00:26,454",
+            "en": "same root with another word,",
+            "zh": "与另一个词有相同的根源，",
+            "ar": "نفس الجذر مع كلمة أخرى،"
+        },
+        {
+            "start": "00:00:26,454",
+            "end": "00:00:28,334",
+            "en": "with another English word.",
+            "zh": "与另一个英文词。",
+            "ar": "مع كلمة إنجليزية أخرى."
+        },
+        {
+            "start": "00:00:29,090",
+            "end": "00:00:29,230",
+            "zh": "啊",
+            "en": "Ah",
+            "ar": "آه"
+        },
+        {
+            "start": "00:00:29,270",
+            "end": "00:00:29,690",
+            "zh": "鼻子抹",
+            "en": "Wipe the nose",
+            "ar": "امسح الأنف"
+        },
+        {
+            "start": "00:00:30,018",
+            "end": "00:00:30,578",
+            "en": "a beast,",
+            "zh": "一头怪兽，",
+            "ar": "وحش،"
+        },
+        {
+            "start": "00:00:30,578",
+            "end": "00:00:31,518",
+            "en": "a beast,",
+            "zh": "一头怪兽，",
+            "ar": "وحش،"
+        },
+        {
+            "start": "00:00:31,518",
+            "end": "00:00:35,438",
+            "en": "which also means something that is extremely deep,",
+            "zh": "这也意味着某事非常深刻，",
+            "ar": "الذي يعني أيضاً شيء عميق جداً،"
+        },
+        {
+            "start": "00:00:35,438",
+            "end": "00:00:37,658",
+            "en": "a beast,",
+            "zh": "一头怪兽，",
+            "ar": "وحش،"
+        },
+        {
+            "start": "00:00:37,658",
+            "end": "00:00:39,378",
+            "en": "a beast,",
+            "zh": "一头怪兽，",
+            "ar": "وحش،"
+        },
+        {
+            "start": "00:00:39,678",
+            "end": "00:00:40,338",
+            "en": "a beast.",
+            "zh": "一头怪兽。",
+            "ar": "وحش."
+        },
+        {
+            "start": "00:00:41,314",
+            "end": "00:00:42,134",
+            "zh": "新开农",
+            "en": "New farm opening",
+            "ar": "افتتاح مزرعة جديدة"
+        },
+        {
+            "start": "00:00:43,173",
+            "end": "00:00:43,754",
+            "zh": "OK,",
+            "en": "OK,",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:43,754",
+            "end": "00:00:46,094",
+            "zh": "这个单词是新开农",
+            "en": "This word is new farm opening",
+            "ar": "هذه الكلمة هي افتتاح مزرعة جديدة"
+        }
+    ]
+}

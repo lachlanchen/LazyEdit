@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,520\",\n    \"lang\": \"en\",\n    \"text\": \"happiness doesn't have an if condition.\"\n  },\n  {\n    \"start\": \"00:00:05,420\",\n    \"end\": \"00:00:09,340\",\n    \"lang\": \"en\",\n    \"text\": \"If your happiness doesn't have an if condition,\"\n  },\n  {\n    \"start\": \"00:00:10,440\",\n    \"end\": \"00:00:12,480\",\n    \"lang\": \"en\",\n    \"text\": \"it can never be true happiness.\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:21,540\",\n    \"lang\": \"en\",\n    \"text\": \"Because no matter how you match this if condition,\"\n  },\n  {\n    \"start\": \"00:00:23,580\",\n    \"end\": \"00:00:28,780\",\n    \"lang\": \"en\",\n    \"text\": \"you will never find another if that's still unmatched.\"\n  },\n  {\n    \"start\": \"00:00:30,320\",\n    \"end\": \"00:00:31,180\",\n    \"lang\": \"en\",\n    \"text\": \"That's what I think.\"\n  },\n  {\n    \"start\": \"00:00:31,180\",\n    \"end\": \"00:00:31,620\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,520",
+            "ko": "행복에는 '만약' 조건이 없습니다."
+        },
+        {
+            "start": "00:00:05,420",
+            "end": "00:00:09,340",
+            "ko": "만약 당신의 행복에 '만약' 조건이 없다면,"
+        },
+        {
+            "start": "00:00:10,440",
+            "end": "00:00:12,480",
+            "ko": "그것은 결코 진정한 행복일 수 없습니다."
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:21,540",
+            "ko": "'만약' 조건을 어떻게 맞추더라도,"
+        },
+        {
+            "start": "00:00:23,580",
+            "end": "00:00:28,780",
+            "ko": "여전히 맞지 않는 또 다른 '만약'을 결코 찾을 수 없습니다."
+        },
+        {
+            "start": "00:00:30,320",
+            "end": "00:00:31,180",
+            "ko": "저는 그렇게 생각합니다."
+        },
+        {
+            "start": "00:00:31,180",
+            "end": "00:00:31,620",
+            "ko": "안녕히 계세요."
+        }
+    ]
+}

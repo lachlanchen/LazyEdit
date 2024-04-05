@@ -1,0 +1,124 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,420\",\n    \"lang\": \"ja\",\n    \"text\": \"私の妹がこのケーキを作りました。\"\n  },\n  {\n    \"start\": \"00:00:07,010\",\n    \"end\": \"00:00:09,190\",\n    \"lang\": \"en\",\n    \"text\": \"So this kick is awesome.\"\n  },\n  {\n    \"start\": \"00:00:10,274\",\n    \"end\": \"00:00:10,894\",\n    \"lang\": \"en\",\n    \"text\": \"It's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:11,634\",\n    \"end\": \"00:00:12,894\",\n    \"lang\": \"en\",\n    \"text\": \"And next is...\"\n  },\n  {\n    \"start\": \"00:00:13,858\",\n    \"end\": \"00:00:16,538\",\n    \"lang\": \"en\",\n    \"text\": \"It seems it's a white strawberry,\"\n  },\n  {\n    \"start\": \"00:00:16,538\",\n    \"end\": \"00:00:18,478\",\n    \"lang\": \"en\",\n    \"text\": \"but in my hometown,\"\n  },\n  {\n    \"start\": \"00:00:18,478\",\n    \"end\": \"00:00:23,178\",\n    \"lang\": \"en\",\n    \"text\": \"we have this local species.\"\n  },\n  {\n    \"start\": \"00:00:26,588\",\n    \"end\": \"00:00:29,178\",\n    \"lang\": \"en\",\n    \"text\": \"It is similar to strawberry,\"\n  },\n  {\n    \"start\": \"00:00:29,178\",\n    \"end\": \"00:00:30,438\",\n    \"lang\": \"en\",\n    \"text\": \"but it's not strawberry.\"\n  },\n  {\n    \"start\": \"00:00:30,718\",\n    \"end\": \"00:00:33,078\",\n    \"lang\": \"en\",\n    \"text\": \"And it also tastes gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:33,818\",\n    \"end\": \"00:00:36,838\",\n    \"lang\": \"en\",\n    \"text\": \"It's the best taste I've ever had.\"\n  },\n  {\n    \"start\": \"00:00:36,866\",\n    \"end\": \"00:00:38,546\",\n    \"lang\": \"zh\",\n    \"text\": \"我記憶中有\"\n  },\n  {\n    \"start\": \"00:00:41,314\",\n    \"end\": \"00:00:44,514\",\n    \"lang\": \"en\",\n    \"text\": \"This work is great.\"\n  },\n  {\n    \"start\": \"00:00:45,394\",\n    \"end\": \"00:00:48,234\",\n    \"lang\": \"en\",\n    \"text\": \"And I have another sister,\"\n  },\n  {\n    \"start\": \"00:00:48,234\",\n    \"end\": \"00:00:48,854\",\n    \"lang\": \"en\",\n    \"text\": \"little sister.\"\n  },\n  {\n    \"start\": \"00:00:50,193\",\n    \"end\": \"00:00:54,274\",\n    \"lang\": \"en\",\n    \"text\": \"She also can make this great handcraft.\"\n  },\n  {\n    \"start\": \"00:00:55,254\",\n    \"end\": \"00:01:00,054\",\n    \"lang\": \"en\",\n    \"text\": \"And I have the best little sister ever.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,420",
+            "es": "Mi hermana hizo este pastel.",
+            "fr": "Ma sœur a fait ce gâteau.",
+            "uk": "Моя сестра зробила цей торт."
+        },
+        {
+            "start": "00:00:07,010",
+            "end": "00:00:09,190",
+            "es": "Entonces este pastel es impresionante.",
+            "fr": "Alors, ce gâteau est génial.",
+            "uk": "Отже, цей торт чудовий."
+        },
+        {
+            "start": "00:00:10,274",
+            "end": "00:00:10,894",
+            "es": "Es hermoso.",
+            "fr": "Il est magnifique.",
+            "uk": "Він прекрасний."
+        },
+        {
+            "start": "00:00:11,634",
+            "end": "00:00:12,894",
+            "es": "Y lo siguiente es...",
+            "fr": "Et ensuite c'est...",
+            "uk": "А далі..."
+        },
+        {
+            "start": "00:00:13,858",
+            "end": "00:00:16,538",
+            "es": "Parece que es una fresa blanca,",
+            "fr": "On dirait que c'est une fraise blanche,",
+            "uk": "Схоже, це біла полуниця,"
+        },
+        {
+            "start": "00:00:16,538",
+            "end": "00:00:18,478",
+            "es": "pero en mi ciudad natal,",
+            "fr": "mais dans ma ville natale,",
+            "uk": "але в моєму рідному місті,"
+        },
+        {
+            "start": "00:00:18,478",
+            "end": "00:00:23,178",
+            "es": "tenemos esta especie local.",
+            "fr": "nous avons cette espèce locale.",
+            "uk": "у нас є цей місцевий вид."
+        },
+        {
+            "start": "00:00:26,588",
+            "end": "00:00:29,178",
+            "es": "Es similar a la fresa,",
+            "fr": "C'est similaire à la fraise,",
+            "uk": "Це схоже на полуницю,"
+        },
+        {
+            "start": "00:00:29,178",
+            "end": "00:00:30,438",
+            "es": "pero no es una fresa.",
+            "fr": "mais ce n'est pas une fraise.",
+            "uk": "але це не полуниця."
+        },
+        {
+            "start": "00:00:30,718",
+            "end": "00:00:33,078",
+            "es": "Y también sabe maravilloso.",
+            "fr": "Et cela a aussi un goût magnifique.",
+            "uk": "І також має чудовий смак."
+        },
+        {
+            "start": "00:00:33,818",
+            "end": "00:00:36,838",
+            "es": "Es el mejor sabor que he probado.",
+            "fr": "C'est le meilleur goût que j'ai jamais eu.",
+            "uk": "Це найкращий смак, який я коли-небудь пробував."
+        },
+        {
+            "start": "00:00:36,866",
+            "end": "00:00:38,546",
+            "es": "Tengo recuerdos de",
+            "fr": "J'ai des souvenirs de",
+            "uk": "У мене в пам'яті є"
+        },
+        {
+            "start": "00:00:41,314",
+            "end": "00:00:44,514",
+            "es": "Este trabajo es genial.",
+            "fr": "Ce travail est formidable.",
+            "uk": "Ця робота чудова."
+        },
+        {
+            "start": "00:00:45,394",
+            "end": "00:00:48,234",
+            "es": "Y tengo otra hermana,",
+            "fr": "Et j'ai une autre sœur,",
+            "uk": "І у мене є ще одна сестра,"
+        },
+        {
+            "start": "00:00:48,234",
+            "end": "00:00:48,854",
+            "es": "hermana menor.",
+            "fr": "petite sœur.",
+            "uk": "молодша сестра."
+        },
+        {
+            "start": "00:00:50,193",
+            "end": "00:00:54,274",
+            "es": "Ella también puede hacer esta gran artesanía.",
+            "fr": "Elle peut aussi faire cet excellent artisanat.",
+            "uk": "Вона теж може робити такі чудові рукоділля."
+        },
+        {
+            "start": "00:00:55,254",
+            "end": "00:01:00,054",
+            "es": "Y tengo la mejor hermana menor del mundo.",
+            "fr": "Et j'ai la meilleure petite sœur du monde.",
+            "uk": "І в мене найкраща молодша сестра у світі."
+        }
+    ]
+}

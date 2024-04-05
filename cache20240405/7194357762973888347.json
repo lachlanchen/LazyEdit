@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,960\",\n    \"lang\": \"zh\",\n    \"text\": \"虽然没有家里的好吃,\"\n  },\n  {\n    \"start\": \"00:00:01,960\",\n    \"end\": \"00:00:04,240\",\n    \"lang\": \"zh\",\n    \"text\": \"但是已经很好吃了。\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:05,440\",\n    \"lang\": \"zh\",\n    \"text\": \"红薯粉条。\"\n  },\n  {\n    \"start\": \"00:00:06,360\",\n    \"end\": \"00:00:07,720\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道英语怎么说。\"\n  },\n  {\n    \"start\": \"00:00:08,360\",\n    \"end\": \"00:00:09,240\",\n    \"lang\": \"en\",\n    \"text\": \"Potato noodles。\"\n  },\n  {\n    \"start\": \"00:00:11,760\",\n    \"end\": \"00:00:12,760\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:12,760\",\n    \"end\": \"00:00:14,400\",\n    \"lang\": \"zh\",\n    \"text\": \"红薯粉条。\"\n  },\n  {\n    \"start\": \"00:00:14,600\",\n    \"end\": \"00:00:15,060\",\n    \"lang\": \"en\",\n    \"text\": \"Vegetables.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,960",
+            "vi": "Mặc dù không ngon bằng ở nhà,"
+        },
+        {
+            "start": "00:00:01,960",
+            "end": "00:00:04,240",
+            "vi": "nhưng mà đã rất ngon rồi."
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:05,440",
+            "vi": "Miến khoai lang."
+        },
+        {
+            "start": "00:00:06,360",
+            "end": "00:00:07,720",
+            "vi": "Tôi không biết tiếng Anh là gì."
+        },
+        {
+            "start": "00:00:08,360",
+            "end": "00:00:09,240",
+            "vi": "Miến khoai."
+        },
+        {
+            "start": "00:00:11,760",
+            "end": "00:00:12,760",
+            "vi": "Và..."
+        },
+        {
+            "start": "00:00:12,760",
+            "end": "00:00:14,400",
+            "vi": "Miến khoai lang."
+        },
+        {
+            "start": "00:00:14,600",
+            "end": "00:00:15,060",
+            "vi": "Rau."
+        }
+    ]
+}

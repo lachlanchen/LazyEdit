@@ -1,0 +1,15 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:27,740\",\n    \"end\": \"00:00:27,880\",\n    \"ja\": \"<運転>[]する<前>[]に\"\n  },\n  {\n    \"start\": \"00:00:27,906\",\n    \"end\": \"00:00:28,866\",\n    \"ja\": \"<ポーズ>[]をとって\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:27,740",
+            "end": "00:00:27,880",
+            "ja": "<運転>[うんてん]する<前>[まえ]に"
+        },
+        {
+            "start": "00:00:27,906",
+            "end": "00:00:28,866",
+            "ja": "<ポーズ>[ぽーず]をとって"
+        }
+    ]
+}

@@ -1,0 +1,140 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,562\",\n    \"end\": \"00:01:02,062\",\n    \"lang\": \"en\",\n    \"text\": \"Bye.\"\n  },\n  {\n    \"start\": \"00:01:02,082\",\n    \"end\": \"00:01:02,802\",\n    \"lang\": \"ja\",\n    \"text\": \"勝手にもう\"\n  },\n  {\n    \"start\": \"00:01:06,122\",\n    \"end\": \"00:01:07,722\",\n    \"lang\": \"ja\",\n    \"text\": \"さぁ\"\n  },\n  {\n    \"start\": \"00:01:07,722\",\n    \"end\": \"00:01:08,102\",\n    \"lang\": \"ja\",\n    \"text\": \"あ\"\n  },\n  {\n    \"start\": \"00:01:09,142\",\n    \"end\": \"00:01:09,542\",\n    \"lang\": \"ja\",\n    \"text\": \"どうすら良いんですかね\"\n  },\n  {\n    \"start\": \"00:01:09,570\",\n    \"end\": \"00:01:18,690\",\n    \"lang\": \"en\",\n    \"text\": \"Today I recorded this poem.\"\n  },\n  {\n    \"start\": \"00:01:19,746\",\n    \"end\": \"00:01:20,206\",\n    \"lang\": \"zh\",\n    \"text\": \"好耶\"\n  },\n  {\n    \"start\": \"00:01:22,178\",\n    \"end\": \"00:01:22,618\",\n    \"lang\": \"en\",\n    \"text\": \"The Nub.\"\n  },\n  {\n    \"start\": \"00:01:24,838\",\n    \"end\": \"00:01:26,358\",\n    \"lang\": \"en\",\n    \"text\": \"The Nub is a venuble.\"\n  },\n  {\n    \"start\": \"00:01:26,838\",\n    \"end\": \"00:01:27,358\",\n    \"lang\": \"en\",\n    \"text\": \"Nub.\"\n  },\n  {\n    \"start\": \"00:01:27,678\",\n    \"end\": \"00:01:27,918\",\n    \"lang\": \"en\",\n    \"text\": \"Yeah.\"\n  },\n  {\n    \"start\": \"00:01:28,198\",\n    \"end\": \"00:01:28,918\",\n    \"lang\": \"en\",\n    \"text\": \"And the,\"\n  },\n  {\n    \"start\": \"00:01:28,918\",\n    \"end\": \"00:01:30,378\",\n    \"lang\": \"en\",\n    \"text\": \"the...\"\n  },\n  {\n    \"start\": \"00:01:31,650\",\n    \"end\": \"00:01:32,910\",\n    \"lang\": \"zh\",\n    \"text\": \"好今天的视频就到这\"\n  },\n  {\n    \"start\": \"00:01:32,930\",\n    \"end\": \"00:01:33,690\",\n    \"lang\": \"en\",\n    \"text\": \"The knife,\"\n  },\n  {\n    \"start\": \"00:01:33,690\",\n    \"end\": \"00:01:34,450\",\n    \"lang\": \"en\",\n    \"text\": \"the knife,\"\n  },\n  {\n    \"start\": \"00:01:34,450\",\n    \"end\": \"00:01:35,110\",\n    \"lang\": \"en\",\n    \"text\": \"the knife,\"\n  },\n  {\n    \"start\": \"00:01:35,110\",\n    \"end\": \"00:01:36,630\",\n    \"lang\": \"en\",\n    \"text\": \"the knife is in my nipple.\"\n  },\n  {\n    \"start\": \"00:01:37,330\",\n    \"end\": \"00:01:38,930\",\n    \"lang\": \"en\",\n    \"text\": \"But he...\"\n  },\n  {\n    \"start\": \"00:01:40,450\",\n    \"end\": \"00:01:42,230\",\n    \"lang\": \"ja\",\n    \"text\": \"なぁもプレッシャーズ\"\n  },\n  {\n    \"start\": \"00:01:43,150\",\n    \"end\": \"00:01:43,570\",\n    \"lang\": \"ja\",\n    \"text\": \"イブ\"\n  },\n  {\n    \"start\": \"00:01:46,754\",\n    \"end\": \"00:01:47,874\",\n    \"lang\": \"en\",\n    \"text\": \"if...\"\n  },\n  {\n    \"start\": \"00:01:49,073\",\n    \"end\": \"00:01:50,654\",\n    \"lang\": \"en\",\n    \"text\": \"so this is so...\"\n  },\n  {\n    \"start\": \"00:01:51,453\",\n    \"end\": \"00:01:54,534\",\n    \"lang\": \"en\",\n    \"text\": \"so not like a poem\"\n  },\n  {\n    \"start\": \"00:01:55,733\",\n    \"end\": \"00:01:57,374\",\n    \"lang\": \"en\",\n    \"text\": \"so if for freedom\"\n  },\n  {\n    \"start\": \"00:01:57,374\",\n    \"end\": \"00:01:59,054\",\n    \"lang\": \"en\",\n    \"text\": \"what is to say is\"\n  },\n  {\n    \"start\": \"00:01:59,054\",\n    \"end\": \"00:02:00,634\",\n    \"lang\": \"en\",\n    \"text\": \"can they give the up?\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,562",
+            "end": "00:01:02,062",
+            "vi": "Tạm biệt."
+        },
+        {
+            "start": "00:01:02,082",
+            "end": "00:01:02,802",
+            "vi": "Tự tiện thế à"
+        },
+        {
+            "start": "00:01:06,122",
+            "end": "00:01:07,722",
+            "vi": "Nào"
+        },
+        {
+            "start": "00:01:07,722",
+            "end": "00:01:08,102",
+            "vi": "Ờ"
+        },
+        {
+            "start": "00:01:09,142",
+            "end": "00:01:09,542",
+            "vi": "Phải làm thế nào bây giờ nhỉ"
+        },
+        {
+            "start": "00:01:09,570",
+            "end": "00:01:18,690",
+            "vi": "Hôm nay tôi đã thu âm bài thơ này."
+        },
+        {
+            "start": "00:01:19,746",
+            "end": "00:01:20,206",
+            "vi": "Tuyệt vời"
+        },
+        {
+            "start": "00:01:22,178",
+            "end": "00:01:22,618",
+            "vi": "Đỉnh."
+        },
+        {
+            "start": "00:01:24,838",
+            "end": "00:01:26,358",
+            "vi": "Đỉnh là một thứ gì đó rất tuyệt vời."
+        },
+        {
+            "start": "00:01:26,838",
+            "end": "00:01:27,358",
+            "vi": "Đỉnh."
+        },
+        {
+            "start": "00:01:27,678",
+            "end": "00:01:27,918",
+            "vi": "Ừ."
+        },
+        {
+            "start": "00:01:28,198",
+            "end": "00:01:28,918",
+            "vi": "Và,"
+        },
+        {
+            "start": "00:01:28,918",
+            "end": "00:01:30,378",
+            "vi": "uh..."
+        },
+        {
+            "start": "00:01:31,650",
+            "end": "00:01:32,910",
+            "vi": "Vậy là video hôm nay kết thúc ở đây"
+        },
+        {
+            "start": "00:01:32,930",
+            "end": "00:01:33,690",
+            "vi": "Con dao,"
+        },
+        {
+            "start": "00:01:33,690",
+            "end": "00:01:34,450",
+            "vi": "con dao,"
+        },
+        {
+            "start": "00:01:34,450",
+            "end": "00:01:35,110",
+            "vi": "con dao,"
+        },
+        {
+            "start": "00:01:35,110",
+            "end": "00:01:36,630",
+            "vi": "con dao đang ở trong ngực tôi."
+        },
+        {
+            "start": "00:01:37,330",
+            "end": "00:01:38,930",
+            "vi": "Nhưng anh..."
+        },
+        {
+            "start": "00:01:40,450",
+            "end": "00:01:42,230",
+            "vi": "Thế là áp lực lớn quá"
+        },
+        {
+            "start": "00:01:43,150",
+            "end": "00:01:43,570",
+            "vi": "Vào Đêm"
+        },
+        {
+            "start": "00:01:46,754",
+            "end": "00:01:47,874",
+            "vi": "nếu..."
+        },
+        {
+            "start": "00:01:49,073",
+            "end": "00:01:50,654",
+            "vi": "nên đây là..."
+        },
+        {
+            "start": "00:01:51,453",
+            "end": "00:01:54,534",
+            "vi": "không giống một bài thơ"
+        },
+        {
+            "start": "00:01:55,733",
+            "end": "00:01:57,374",
+            "vi": "vậy nếu vì tự do"
+        },
+        {
+            "start": "00:01:57,374",
+            "end": "00:01:59,054",
+            "vi": "làm sao để nói rằng"
+        },
+        {
+            "start": "00:01:59,054",
+            "end": "00:02:00,634",
+            "vi": "họ có thể từ bỏ không?"
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:12,660\",\n    \"end\": \"00:01:15,300\",\n    \"lang\": \"en\",\n    \"text\": \"When you look at yourself,\"\n  },\n  {\n    \"start\": \"00:01:15,300\",\n    \"end\": \"00:01:20,780\",\n    \"lang\": \"en\",\n    \"text\": \"it's a shadow and a dimension.\"\n  },\n  {\n    \"start\": \"00:01:20,813\",\n    \"end\": \"00:01:21,133\",\n    \"lang\": \"en\",\n    \"text\": \"See ya.\"\n  },\n  {\n    \"start\": \"00:01:22,594\",\n    \"end\": \"00:01:22,954\",\n    \"lang\": \"en\",\n    \"text\": \"dark.\"\n  },\n  {\n    \"start\": \"00:01:39,474\",\n    \"end\": \"00:01:49,474\",\n    \"lang\": \"en\",\n    \"text\": \"But I believe everyone will have our unique journey that we need to utilize our own karma\"\n  },\n  {\n    \"start\": \"00:01:50,353\",\n    \"end\": \"00:01:53,954\",\n    \"lang\": \"en\",\n    \"text\": \"to create something that belongs to us.\"\n  },\n  {\n    \"start\": \"00:02:00,394\",\n    \"end\": \"00:02:01,114\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:01,114\",\n    \"end\": \"00:02:04,174\",\n    \"lang\": \"en\",\n    \"text\": \"you have a unique journey that you need to utilize.\"\n  },\n  {\n    \"start\": \"00:02:06,234\",\n    \"end\": \"00:02:08,954\",\n    \"lang\": \"en\",\n    \"text\": \"If you utilize it properly,\"\n  },\n  {\n    \"start\": \"00:02:08,954\",\n    \"end\": \"00:02:12,954\",\n    \"lang\": \"en\",\n    \"text\": \"it will be as good as theirs.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:12,660",
+            "end": "00:01:15,300",
+            "vi": "Khi bạn nhìn vào bản thân,"
+        },
+        {
+            "start": "00:01:15,300",
+            "end": "00:01:20,780",
+            "vi": "nó là một cái bóng và một kích thước."
+        },
+        {
+            "start": "00:01:20,813",
+            "end": "00:01:21,133",
+            "vi": "Hẹn gặp lại."
+        },
+        {
+            "start": "00:01:22,594",
+            "end": "00:01:22,954",
+            "vi": "tối."
+        },
+        {
+            "start": "00:01:39,474",
+            "end": "00:01:49,474",
+            "vi": "Nhưng tôi tin rằng mỗi người sẽ có hành trình duy nhất của mình mà chúng ta cần sử dụng karma của chính mình"
+        },
+        {
+            "start": "00:01:50,353",
+            "end": "00:01:53,954",
+            "vi": "để tạo ra thứ thuộc về mình."
+        },
+        {
+            "start": "00:02:00,394",
+            "end": "00:02:01,114",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:02:01,114",
+            "end": "00:02:04,174",
+            "vi": "bạn có một hành trình duy nhất mà bạn cần tận dụng."
+        },
+        {
+            "start": "00:02:06,234",
+            "end": "00:02:08,954",
+            "vi": "Nếu bạn tận dụng nó một cách đúng đắn,"
+        },
+        {
+            "start": "00:02:08,954",
+            "end": "00:02:12,954",
+            "vi": "nó sẽ tốt như của họ."
+        }
+    ]
+}

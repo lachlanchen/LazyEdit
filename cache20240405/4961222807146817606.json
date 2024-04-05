@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:07,540\",\n    \"lang\": \"en\",\n    \"text\": \"so it has been a long time that I didn't use this code test\"\n  },\n  {\n    \"start\": \"00:00:08,320\",\n    \"end\": \"00:00:14,080\",\n    \"lang\": \"en\",\n    \"text\": \"it seems that they add flu A,\"\n  },\n  {\n    \"start\": \"00:00:14,080\",\n    \"end\": \"00:00:14,640\",\n    \"lang\": \"en\",\n    \"text\": \"flu B,\"\n  },\n  {\n    \"start\": \"00:00:14,640\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"RSA,\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:15,700\",\n    \"lang\": \"en\",\n    \"text\": \"ADA,\"\n  },\n  {\n    \"start\": \"00:00:15,700\",\n    \"end\": \"00:00:16,379\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know\"\n  },\n  {\n    \"start\": \"00:00:16,379\",\n    \"end\": \"00:00:19,460\",\n    \"lang\": \"en\",\n    \"text\": \"it's a mini oh my goodness\"\n  },\n  {\n    \"start\": \"00:00:22,620\",\n    \"end\": \"00:00:24,400\",\n    \"lang\": \"en\",\n    \"text\": \"this almost kills me\"\n  },\n  {\n    \"start\": \"00:00:31,800\",\n    \"end\": \"00:00:41,240\",\n    \"lang\": \"en\",\n    \"text\": \"I thought my immune system is strong because I work out every day and take a\"\n  },\n  {\n    \"start\": \"00:00:41,240\",\n    \"end\": \"00:00:43,960\",\n    \"lang\": \"en\",\n    \"text\": \"cold bath but I don't know\"\n  },\n  {\n    \"start\": \"00:00:46,880\",\n    \"end\": \"00:00:48,500\",\n    \"lang\": \"en\",\n    \"text\": \"I'm still vulnerable.\"\n  },\n  {\n    \"start\": \"00:00:48,500\",\n    \"end\": \"00:00:51,800\",\n    \"lang\": \"en\",\n    \"text\": \"This might be normal\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:07,540",
+            "vi": "nên đã khá lâu rồi tôi không sử dụng bài test mã này"
+        },
+        {
+            "start": "00:00:08,320",
+            "end": "00:00:14,080",
+            "vi": "có vẻ như họ đã thêm cảm cúm A,"
+        },
+        {
+            "start": "00:00:14,080",
+            "end": "00:00:14,640",
+            "vi": "cảm cúm B,"
+        },
+        {
+            "start": "00:00:14,640",
+            "end": "00:00:15,380",
+            "vi": "RSA,"
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:15,700",
+            "vi": "ADA,"
+        },
+        {
+            "start": "00:00:15,700",
+            "end": "00:00:16,379",
+            "vi": "tôi không biết"
+        },
+        {
+            "start": "00:00:16,379",
+            "end": "00:00:19,460",
+            "vi": "nó thật sự là một cái mini, ôi chao"
+        },
+        {
+            "start": "00:00:22,620",
+            "end": "00:00:24,400",
+            "vi": "điều này suýt chút nữa đã giết chết tôi"
+        },
+        {
+            "start": "00:00:31,800",
+            "end": "00:00:41,240",
+            "vi": "Tôi nghĩ hệ miễn dịch của mình mạnh vì tôi tập thể dục hàng ngày và tắm lạnh nhưng tôi không chắc"
+        },
+        {
+            "start": "00:00:41,240",
+            "end": "00:00:43,960",
+            "vi": "lạnh nhưng tôi không biết"
+        },
+        {
+            "start": "00:00:46,880",
+            "end": "00:00:48,500",
+            "vi": "Tôi vẫn dễ bị tổn thương."
+        },
+        {
+            "start": "00:00:48,500",
+            "end": "00:00:51,800",
+            "vi": "Có thể đây là điều bình thường"
+        }
+    ]
+}

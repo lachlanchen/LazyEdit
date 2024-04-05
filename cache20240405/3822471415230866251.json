@@ -1,0 +1,173 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,980\",\n    \"end\": \"00:00:03,840\",\n    \"lang\": \"zh\",\n    \"text\": \"我有拼了两个出来\"\n  },\n  {\n    \"start\": \"00:00:03,840\",\n    \"end\": \"00:00:05,780\",\n    \"lang\": \"zh\",\n    \"text\": \"然后你帮我看一下它这个小个\"\n  },\n  {\n    \"start\": \"00:00:07,080\",\n    \"end\": \"00:00:07,480\",\n    \"lang\": \"zh\",\n    \"text\": \"嗯,\"\n  },\n  {\n    \"start\": \"00:00:07,480\",\n    \"end\": \"00:00:08,720\",\n    \"lang\": \"zh\",\n    \"text\": \"暂时有点咸,\"\n  },\n  {\n    \"start\": \"00:00:08,720\",\n    \"end\": \"00:00:09,220\",\n    \"lang\": \"zh\",\n    \"text\": \"放完了\"\n  },\n  {\n    \"start\": \"00:00:10,658\",\n    \"end\": \"00:00:13,138\",\n    \"lang\": \"zh\",\n    \"text\": \"我感觉这个更好看一串对吧\"\n  },\n  {\n    \"start\": \"00:00:13,538\",\n    \"end\": \"00:00:16,398\",\n    \"lang\": \"zh\",\n    \"text\": \"它并不是说拼得越多越小越好看\"\n  },\n  {\n    \"start\": \"00:00:16,398\",\n    \"end\": \"00:00:20,598\",\n    \"lang\": \"zh\",\n    \"text\": \"而是还是看它的这个搭配来\"\n  },\n  {\n    \"start\": \"00:00:21,718\",\n    \"end\": \"00:00:23,878\",\n    \"lang\": \"zh\",\n    \"text\": \"就是说这个这是我第二个\"\n  },\n  {\n    \"start\": \"00:00:24,018\",\n    \"end\": \"00:00:24,798\",\n    \"lang\": \"zh\",\n    \"text\": \"这是第一个\"\n  },\n  {\n    \"start\": \"00:00:25,178\",\n    \"end\": \"00:00:26,538\",\n    \"lang\": \"zh\",\n    \"text\": \"我感觉这个还好看点\"\n  },\n  {\n    \"start\": \"00:00:27,158\",\n    \"end\": \"00:00:28,818\",\n    \"lang\": \"zh\",\n    \"text\": \"然后就是你看一下\"\n  },\n  {\n    \"start\": \"00:00:29,938\",\n    \"end\": \"00:00:33,738\",\n    \"lang\": \"zh\",\n    \"text\": \"嗯 我就打算如果说昨晚拼完了哈\"\n  },\n  {\n    \"start\": \"00:00:33,738\",\n    \"end\": \"00:00:36,858\",\n    \"lang\": \"zh\",\n    \"text\": \"我想缝些这种小配饰上去\"\n  },\n  {\n    \"start\": \"00:00:36,858\",\n    \"end\": \"00:00:39,158\",\n    \"lang\": \"zh\",\n    \"text\": \"就用这些这些洞洞嘛\"\n  },\n  {\n    \"start\": \"00:00:39,158\",\n    \"end\": \"00:00:42,478\",\n    \"lang\": \"zh\",\n    \"text\": \"可以用线就是在缝制过程中就\"\n  },\n  {\n    \"start\": \"00:00:42,478\",\n    \"end\": \"00:00:44,598\",\n    \"lang\": \"zh\",\n    \"text\": \"穿进去就把它缝到个头\"\n  },\n  {\n    \"start\": \"00:00:44,598\",\n    \"end\": \"00:00:46,358\",\n    \"lang\": \"zh\",\n    \"text\": \"也可以后面再\"\n  },\n  {\n    \"start\": \"00:00:46,997\",\n    \"end\": \"00:00:48,198\",\n    \"lang\": \"zh\",\n    \"text\": \"专门缝上去\"\n  },\n  {\n    \"start\": \"00:00:49,098\",\n    \"end\": \"00:00:51,818\",\n    \"lang\": \"zh\",\n    \"text\": \"你看一下加这种小元素怎么加上去\"\n  },\n  {\n    \"start\": \"00:00:51,818\",\n    \"end\": \"00:00:52,518\",\n    \"lang\": \"zh\",\n    \"text\": \"好不好看\"\n  },\n  {\n    \"start\": \"00:00:53,458\",\n    \"end\": \"00:00:55,098\",\n    \"lang\": \"zh\",\n    \"text\": \"然后想一下它\"\n  },\n  {\n    \"start\": \"00:00:55,098\",\n    \"end\": \"00:00:57,358\",\n    \"lang\": \"zh\",\n    \"text\": \"它这种如果加上去的话\"\n  },\n  {\n    \"start\": \"00:00:57,918\",\n    \"end\": \"00:01:00,858\",\n    \"lang\": \"zh\",\n    \"text\": \"会不会碍时后期的使用过程\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,980",
+            "end": "00:00:03,840",
+            "es": "He montado dos",
+            "fr": "J'ai assemblé deux pièces",
+            "uk": "Я зібрав дві штуки"
+        },
+        {
+            "start": "00:00:03,840",
+            "end": "00:00:05,780",
+            "es": "Luego me ayudas a echar un vistazo a este pequeño",
+            "fr": "Ensuite, aide-moi à regarder ce petit",
+            "uk": "Потім допоможи мені подивитися на це маленьке"
+        },
+        {
+            "start": "00:00:07,080",
+            "end": "00:00:07,480",
+            "es": "Um,",
+            "fr": "Euh,",
+            "uk": "Ем,"
+        },
+        {
+            "start": "00:00:07,480",
+            "end": "00:00:08,720",
+            "es": "Es un poco salado por el momento,",
+            "fr": "C'est un peu salé pour l'instant,",
+            "uk": "Наразі трохи солоне,"
+        },
+        {
+            "start": "00:00:08,720",
+            "end": "00:00:09,220",
+            "es": "Está hecho",
+            "fr": "C'est fini",
+            "uk": "Зроблено"
+        },
+        {
+            "start": "00:00:10,658",
+            "end": "00:00:13,138",
+            "es": "Creo que este se ve mejor en una cadena, ¿verdad?",
+            "fr": "Je pense que cela semble mieux sur une chaîne, n'est-ce pas?",
+            "uk": "Я думаю, це краще виглядає на ланцюжку, правда?"
+        },
+        {
+            "start": "00:00:13,538",
+            "end": "00:00:16,398",
+            "es": "No significa que cuanto más pequeño y más montes, mejor se vea",
+            "fr": "Cela ne signifie pas que plus c'est petit et plus tu assembles, mieux c'est",
+            "uk": "Це не означає, що чим менше і більше ти збираєш, тим краще виглядає"
+        },
+        {
+            "start": "00:00:16,398",
+            "end": "00:00:20,598",
+            "es": "Sino que depende de cómo combinarlo",
+            "fr": "Mais cela dépend de la façon dont vous le combinez",
+            "uk": "Але залежить від того, як ви її комбінуєте"
+        },
+        {
+            "start": "00:00:21,718",
+            "end": "00:00:23,878",
+            "es": "Es decir, este es mi segundo",
+            "fr": "C'est-à-dire, ceci est mon deuxième",
+            "uk": "Тобто це мій другий"
+        },
+        {
+            "start": "00:00:24,018",
+            "end": "00:00:24,798",
+            "es": "Este es el primero",
+            "fr": "Ceci est le premier",
+            "uk": "Це перший"
+        },
+        {
+            "start": "00:00:25,178",
+            "end": "00:00:26,538",
+            "es": "Creo que este se ve un poco mejor",
+            "fr": "Je pense que celui-ci a l'air un peu mieux",
+            "uk": "Я думаю, це виглядає трохи краще"
+        },
+        {
+            "start": "00:00:27,158",
+            "end": "00:00:28,818",
+            "es": "Luego solo miras",
+            "fr": "Ensuite, tu regardes juste",
+            "uk": "Потім просто подивись"
+        },
+        {
+            "start": "00:00:29,938",
+            "end": "00:00:33,738",
+            "es": "Um, planeo si digo que terminé ayer por la noche, ja",
+            "fr": "Euh, je prévois si je dis que j'ai fini hier soir, haha",
+            "uk": "Ем, я планую, якщо скажу, що закінчив вчора ввечері, ха"
+        },
+        {
+            "start": "00:00:33,738",
+            "end": "00:00:36,858",
+            "es": "Quiero coser algunos de estos pequeños accesorios",
+            "fr": "Je veux coudre certains de ces petits accessoires",
+            "uk": "Хочу пришити деякі з цих маленьких аксесуарів"
+        },
+        {
+            "start": "00:00:36,858",
+            "end": "00:00:39,158",
+            "es": "Usando estos agujeros",
+            "fr": "En utilisant ces trous",
+            "uk": "Використовуючи ці отвори"
+        },
+        {
+            "start": "00:00:39,158",
+            "end": "00:00:42,478",
+            "es": "Puedes usar un hilo en el proceso de costura",
+            "fr": "Tu peux utiliser un fil dans le processus de couture",
+            "uk": "Можна використовувати нитку в процесі шиття"
+        },
+        {
+            "start": "00:00:42,478",
+            "end": "00:00:44,598",
+            "es": "Pasa a través de ellos y coserlo en la cabeza",
+            "fr": "Passe à travers eux et cousez-le à la tête",
+            "uk": "Проходь через них і пришив до голови"
+        },
+        {
+            "start": "00:00:44,598",
+            "end": "00:00:46,358",
+            "es": "También se puede coser después",
+            "fr": "Cela peut aussi être cousu après",
+            "uk": "Це також можна пришити потім"
+        },
+        {
+            "start": "00:00:46,997",
+            "end": "00:00:48,198",
+            "es": "Cosido especialmente arriba",
+            "fr": "Cousu spécialement en haut",
+            "uk": "Особливо пришитий зверху"
+        },
+        {
+            "start": "00:00:49,098",
+            "end": "00:00:51,818",
+            "es": "Mira cómo agregar estos pequeños elementos y si se ven bien",
+            "fr": "Regarde comment ajouter ces petits éléments et s'ils ont l'air bien",
+            "uk": "Подивись, як додати ці маленькі елементи і чи виглядають вони добре"
+        },
+        {
+            "start": "00:00:51,818",
+            "end": "00:00:52,518",
+            "es": "¿Se ve bien?",
+            "fr": "Est-ce que ça a l'air bien?",
+            "uk": "Це виглядає добре?"
+        },
+        {
+            "start": "00:00:53,458",
+            "end": "00:00:55,098",
+            "es": "Luego piensa en ello",
+            "fr": "Puis pensez-y",
+            "uk": "Подумай про це"
+        },
+        {
+            "start": "00:00:55,098",
+            "end": "00:00:57,358",
+            "es": "Si estas cosas se agregan",
+            "fr": "Si ces choses sont ajoutées",
+            "uk": "Якщо ці речі додаються"
+        },
+        {
+            "start": "00:00:57,918",
+            "end": "00:01:00,858",
+            "es": "¿Interferiría con el uso posterior?",
+            "fr": "Cela interférerait-il avec l'usage ultérieur?",
+            "uk": "Чи перешкоджатиме це подальшому використанню?"
+        }
+    ]
+}

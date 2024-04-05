@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:41,634\",\n    \"end\": \"00:02:42,674\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness,\"\n  },\n  {\n    \"start\": \"00:02:42,674\",\n    \"end\": \"00:02:43,134\",\n    \"lang\": \"en\",\n    \"text\": \"sorry.\"\n  },\n  {\n    \"start\": \"00:02:47,214\",\n    \"end\": \"00:02:47,894\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:47,894\",\n    \"end\": \"00:02:50,514\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  },\n  {\n    \"start\": \"00:02:54,294\",\n    \"end\": \"00:02:56,114\",\n    \"lang\": \"en\",\n    \"text\": \"Let me record another video.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:41,634",
+            "end": "00:02:42,674",
+            "en": "Oh my goodness,",
+            "zh": "天哪，",
+            "ar": "يا إلهي،"
+        },
+        {
+            "start": "00:02:42,674",
+            "end": "00:02:43,134",
+            "en": "sorry.",
+            "zh": "对不起。",
+            "ar": "آسف."
+        },
+        {
+            "start": "00:02:47,214",
+            "end": "00:02:47,894",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:02:47,894",
+            "end": "00:02:50,514",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقاً."
+        },
+        {
+            "start": "00:02:54,294",
+            "end": "00:02:56,114",
+            "en": "Let me record another video.",
+            "zh": "让我再录一个视频。",
+            "ar": "دعني أسجل فيديو آخر."
+        }
+    ]
+}

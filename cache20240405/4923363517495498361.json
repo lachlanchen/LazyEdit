@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"ar\",\n    \"text\": \"وشكراً على المشاهدة\"\n  },\n  {\n    \"start\": \"00:00:02,274\",\n    \"end\": \"00:00:17,054\",\n    \"lang\": \"en\",\n    \"text\": \"The vegetable has been put in the refrigerator for about one month,\"\n  },\n  {\n    \"start\": \"00:00:17,054\",\n    \"end\": \"00:00:18,214\",\n    \"lang\": \"en\",\n    \"text\": \"maybe two months.\"\n  },\n  {\n    \"start\": \"00:00:18,854\",\n    \"end\": \"00:00:20,354\",\n    \"lang\": \"en\",\n    \"text\": \"Then it has these holes.\"\n  },\n  {\n    \"start\": \"00:00:21,494\",\n    \"end\": \"00:00:25,194\",\n    \"lang\": \"en\",\n    \"text\": \"And then it says that it's a microbe and it doesn't want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:25,194\",\n    \"end\": \"00:00:27,874\",\n    \"lang\": \"en\",\n    \"text\": \"The bacteria don't want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:28,294\",\n    \"end\": \"00:00:29,994\",\n    \"lang\": \"en\",\n    \"text\": \"So the people eat it.\"\n  },\n  {\n    \"start\": \"00:00:32,094\",\n    \"end\": \"00:00:32,514\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:32,514\",\n    \"end\": \"00:00:34,254\",\n    \"lang\": \"en\",\n    \"text\": \"this is our flavor.\"\n  },\n  {\n    \"start\": \"00:00:35,394\",\n    \"end\": \"00:00:39,754\",\n    \"lang\": \"en\",\n    \"text\": \"And I will make chicken noodles,\"\n  },\n  {\n    \"start\": \"00:00:39,754\",\n    \"end\": \"00:00:41,334\",\n    \"lang\": \"en\",\n    \"text\": \"chicken and carrot noodles.\"\n  },\n  {\n    \"start\": \"00:00:43,054\",\n    \"end\": \"00:00:44,894\",\n    \"lang\": \"en\",\n    \"text\": \"And with apricots.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,240",
+            "en": "Thank you for watching",
+            "zh": "感谢观看",
+            "ar": "وشكراً على المشاهدة"
+        },
+        {
+            "start": "00:00:02,274",
+            "end": "00:00:17,054",
+            "en": "The vegetable has been put in the refrigerator for about one month,",
+            "zh": "这个蔬菜已经放在冰箱里大约一个月了，",
+            "ar": ""
+        },
+        {
+            "start": "00:00:17,054",
+            "end": "00:00:18,214",
+            "en": "maybe two months.",
+            "zh": "也许两个月。",
+            "ar": ""
+        },
+        {
+            "start": "00:00:18,854",
+            "end": "00:00:20,354",
+            "en": "Then it has these holes.",
+            "zh": "然后它有这些洞。",
+            "ar": ""
+        },
+        {
+            "start": "00:00:21,494",
+            "end": "00:00:25,194",
+            "en": "And then it says that it's a microbe and it doesn't want to eat it.",
+            "zh": "然后它说它是一种微生物，它不想吃它。",
+            "ar": ""
+        },
+        {
+            "start": "00:00:25,194",
+            "end": "00:00:27,874",
+            "en": "The bacteria don't want to eat it.",
+            "zh": "细菌不想吃它。",
+            "ar": ""
+        },
+        {
+            "start": "00:00:28,294",
+            "end": "00:00:29,994",
+            "en": "So the people eat it.",
+            "zh": "所以人们吃它。",
+            "ar": ""
+        },
+        {
+            "start": "00:00:32,094",
+            "end": "00:00:32,514",
+            "en": "OK,",
+            "zh": "好的，",
+            "ar": ""
+        },
+        {
+            "start": "00:00:32,514",
+            "end": "00:00:34,254",
+            "en": "this is our flavor.",
+            "zh": "这是我们的味道。",
+            "ar": ""
+        },
+        {
+            "start": "00:00:35,394",
+            "end": "00:00:39,754",
+            "en": "And I will make chicken noodles,",
+            "zh": "我将要做鸡肉面条，",
+            "ar": ""
+        },
+        {
+            "start": "00:00:39,754",
+            "end": "00:00:41,334",
+            "en": "chicken and carrot noodles.",
+            "zh": "鸡肉和胡萝卜面。",
+            "ar": ""
+        },
+        {
+            "start": "00:00:43,054",
+            "end": "00:00:44,894",
+            "en": "And with apricots.",
+            "zh": "还有杏。",
+            "ar": ""
+        }
+    ]
+}

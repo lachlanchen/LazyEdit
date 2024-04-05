@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,900\",\n    \"lang\": \"en\",\n    \"text\": \"we will come back to the dog club\"\n  },\n  {\n    \"start\": \"00:00:03,639\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"it's a dog paradise\"\n  },\n  {\n    \"start\": \"00:00:08,066\",\n    \"end\": \"00:00:08,606\",\n    \"lang\": \"ja\",\n    \"text\": \"これは\"\n  },\n  {\n    \"start\": \"00:00:09,566\",\n    \"end\": \"00:00:11,106\",\n    \"lang\": \"ja\",\n    \"text\": \"インドゥクナブティス\"\n  },\n  {\n    \"start\": \"00:00:11,938\",\n    \"end\": \"00:00:15,038\",\n    \"lang\": \"en\",\n    \"text\": \"They are so happy,\"\n  },\n  {\n    \"start\": \"00:00:15,038\",\n    \"end\": \"00:00:18,938\",\n    \"lang\": \"en\",\n    \"text\": \"making friends.\"\n  },\n  {\n    \"start\": \"00:00:25,878\",\n    \"end\": \"00:00:28,038\",\n    \"lang\": \"en\",\n    \"text\": \"Look at this dog fight.\"\n  },\n  {\n    \"start\": \"00:00:30,658\",\n    \"end\": \"00:00:38,678\",\n    \"lang\": \"en\",\n    \"text\": \"They want to fight but they also hold their body.\"\n  },\n  {\n    \"start\": \"00:00:48,038\",\n    \"end\": \"00:00:49,378\",\n    \"lang\": \"en\",\n    \"text\": \"It's a triple,\"\n  },\n  {\n    \"start\": \"00:00:49,378\",\n    \"end\": \"00:00:51,038\",\n    \"lang\": \"en\",\n    \"text\": \"it's a trial fight.\"\n  },\n  {\n    \"start\": \"00:00:55,118\",\n    \"end\": \"00:00:58,518\",\n    \"lang\": \"en\",\n    \"text\": \"There are more dogs during this fight.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,900",
+            "ko": "우리는 개 클럽에 다시 올 거예요"
+        },
+        {
+            "start": "00:00:03,639",
+            "end": "00:00:05,140",
+            "ko": "그곳은 강아지 천국이에요"
+        },
+        {
+            "start": "00:00:08,066",
+            "end": "00:00:08,606",
+            "ko": "이것은"
+        },
+        {
+            "start": "00:00:09,566",
+            "end": "00:00:11,106",
+            "ko": "인도의 넙치입니다"
+        },
+        {
+            "start": "00:00:11,938",
+            "end": "00:00:15,038",
+            "ko": "그들은 매우 행복해 보여요,"
+        },
+        {
+            "start": "00:00:15,038",
+            "end": "00:00:18,938",
+            "ko": "친구를 사귀고 있어요."
+        },
+        {
+            "start": "00:00:25,878",
+            "end": "00:00:28,038",
+            "ko": "이 개 싸움을 봐요."
+        },
+        {
+            "start": "00:00:30,658",
+            "end": "00:00:38,678",
+            "ko": "그들은 싸우고 싶어하지만 몸을 조절하고 있어요."
+        },
+        {
+            "start": "00:00:48,038",
+            "end": "00:00:49,378",
+            "ko": "세 배로,"
+        },
+        {
+            "start": "00:00:49,378",
+            "end": "00:00:51,038",
+            "ko": "시험 싸움이에요."
+        },
+        {
+            "start": "00:00:55,118",
+            "end": "00:00:58,518",
+            "ko": "이 싸움 동안 더 많은 개들이 있어요."
+        }
+    ]
+}

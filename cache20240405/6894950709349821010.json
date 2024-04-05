@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,640\",\n    \"lang\": \"en\",\n    \"text\": \"In Chinese,\"\n  },\n  {\n    \"start\": \"00:00:01,640\",\n    \"end\": \"00:00:03,080\",\n    \"lang\": \"en\",\n    \"text\": \"there is a...\"\n  },\n  {\n    \"start\": \"00:00:03,874\",\n    \"end\": \"00:00:06,494\",\n    \"lang\": \"zh\",\n    \"text\": \"有一個成語叫先苦後甜\"\n  },\n  {\n    \"start\": \"00:00:07,154\",\n    \"end\": \"00:00:08,774\",\n    \"lang\": \"zh\",\n    \"text\": \"還有吃得苦中苦\"\n  },\n  {\n    \"start\": \"00:00:08,774\",\n    \"end\": \"00:00:09,994\",\n    \"lang\": \"zh\",\n    \"text\": \"方為人上人\"\n  },\n  {\n    \"start\": \"00:00:11,170\",\n    \"end\": \"00:00:16,170\",\n    \"lang\": \"en\",\n    \"text\": \"which means that sweetness after bittering,\"\n  },\n  {\n    \"start\": \"00:00:16,950\",\n    \"end\": \"00:00:17,310\",\n    \"lang\": \"en\",\n    \"text\": \"sweetness,\"\n  },\n  {\n    \"start\": \"00:00:17,310\",\n    \"end\": \"00:00:18,910\",\n    \"lang\": \"en\",\n    \"text\": \"happiness after pain.\"\n  },\n  {\n    \"start\": \"00:00:19,890\",\n    \"end\": \"00:00:23,270\",\n    \"lang\": \"en\",\n    \"text\": \"And if you suffer more,\"\n  },\n  {\n    \"start\": \"00:00:23,530\",\n    \"end\": \"00:00:25,590\",\n    \"lang\": \"en\",\n    \"text\": \"that you will get high.\"\n  },\n  {\n    \"start\": \"00:00:26,050\",\n    \"end\": \"00:00:28,730\",\n    \"lang\": \"en\",\n    \"text\": \"I hated the two phrases.\"\n  },\n  {\n    \"start\": \"00:00:29,310\",\n    \"end\": \"00:00:31,250\",\n    \"lang\": \"en\",\n    \"text\": \"So both are wrong.\"\n  },\n  {\n    \"start\": \"00:00:32,490\",\n    \"end\": \"00:00:36,750\",\n    \"lang\": \"en\",\n    \"text\": \"So if you cannot enjoy your life now,\"\n  },\n  {\n    \"start\": \"00:00:36,970\",\n    \"end\": \"00:00:39,630\",\n    \"lang\": \"en\",\n    \"text\": \"that you still cannot enjoy it\"\n  },\n  {\n    \"start\": \"00:00:39,630\",\n    \"end\": \"00:00:41,970\",\n    \"lang\": \"en\",\n    \"text\": \"until you can enjoy it.\"\n  },\n  {\n    \"start\": \"00:00:48,290\",\n    \"end\": \"00:00:53,230\",\n    \"lang\": \"en\",\n    \"text\": \"And then if you suffer more,\"\n  },\n  {\n    \"start\": \"00:00:53,350\",\n    \"end\": \"00:00:56,630\",\n    \"lang\": \"en\",\n    \"text\": \"you get higher over people.\"\n  },\n  {\n    \"start\": \"00:00:56,930\",\n    \"end\": \"00:00:58,430\",\n    \"lang\": \"en\",\n    \"text\": \"You can get people over people.\"\n  },\n  {\n    \"start\": \"00:00:59,350\",\n    \"end\": \"00:01:01,130\",\n    \"lang\": \"en\",\n    \"text\": \"You can get a higher position.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,640",
+            "en": "In Chinese,",
+            "zh": "用中文来说，",
+            "ar": "بالصينية،"
+        },
+        {
+            "start": "00:00:01,640",
+            "end": "00:00:03,080",
+            "en": "there is a...",
+            "zh": "有一个...",
+            "ar": "هناك..."
+        },
+        {
+            "start": "00:00:03,874",
+            "end": "00:00:06,494",
+            "en": "which means that sweetness comes after bitterness",
+            "zh": "有一個成語叫先苦後甜",
+            "ar": "وهو ما يعني أن الحلاوة تأتي بعد المرارة"
+        },
+        {
+            "start": "00:00:07,154",
+            "end": "00:00:08,774",
+            "en": "and also enduring the utmost hardship",
+            "zh": "還有吃得苦中苦",
+            "ar": "وأيضًا تحمل أقصى الشدائد"
+        },
+        {
+            "start": "00:00:08,774",
+            "end": "00:00:09,994",
+            "en": "will make one superior among people.",
+            "zh": "方為人上人",
+            "ar": "سيجعل المرء متفوقًا بين الناس."
+        },
+        {
+            "start": "00:00:11,170",
+            "end": "00:00:16,170",
+            "en": "which means that sweetness after bittering,",
+            "zh": "意味著苦後甘甜，",
+            "ar": "وهو ما يعني أن الحلاوة تأتي بعد التجرع،"
+        },
+        {
+            "start": "00:00:16,950",
+            "end": "00:00:17,310",
+            "en": "sweetness,",
+            "zh": "甘甜，",
+            "ar": "الحلاوة،"
+        },
+        {
+            "start": "00:00:17,310",
+            "end": "00:00:18,910",
+            "en": "happiness after pain.",
+            "zh": "痛後的快樂。",
+            "ar": "السعادة بعد الألم."
+        },
+        {
+            "start": "00:00:19,890",
+            "end": "00:00:23,270",
+            "en": "And if you suffer more,",
+            "zh": "而若你受苦更多，",
+            "ar": "وإذا عانيت أكثر،"
+        },
+        {
+            "start": "00:00:23,530",
+            "end": "00:00:25,590",
+            "en": "that you will get high.",
+            "zh": "你將會登高。",
+            "ar": "فإنك ستصل لمرتفعات."
+        },
+        {
+            "start": "00:00:26,050",
+            "end": "00:00:28,730",
+            "en": "I hated the two phrases.",
+            "zh": "我討厭這兩句話。",
+            "ar": "كرهت هذين المصطلحين."
+        },
+        {
+            "start": "00:00:29,310",
+            "end": "00:00:31,250",
+            "en": "So both are wrong.",
+            "zh": "所以兩者都是錯的。",
+            "ar": "لذا كلاهما خاطئ."
+        },
+        {
+            "start": "00:00:32,490",
+            "end": "00:00:36,750",
+            "en": "So if you cannot enjoy your life now,",
+            "zh": "所以如果你現在不能享受你的生活，",
+            "ar": "إذا لم تستطع الاستمتاع بحياتك الآن،"
+        },
+        {
+            "start": "00:00:36,970",
+            "end": "00:00:39,630",
+            "en": "that you still cannot enjoy it",
+            "zh": "你仍然無法享受它",
+            "ar": "فأنت لا زلت لا تستطيع الاستمتاع بها"
+        },
+        {
+            "start": "00:00:39,630",
+            "end": "00:00:41,970",
+            "en": "until you can enjoy it.",
+            "zh": "除非你能享受它。",
+            "ar": "حتى تتمكن من الاستمتاع بها."
+        },
+        {
+            "start": "00:00:48,290",
+            "end": "00:00:53,230",
+            "en": "And then if you suffer more,",
+            "zh": "那麼如果你受苦更多，",
+            "ar": "وعندها إذا عانيت أكثر،"
+        },
+        {
+            "start": "00:00:53,350",
+            "end": "00:00:56,630",
+            "en": "you get higher over people.",
+            "zh": "你能超越他人。",
+            "ar": "يمكنك تجاوز الناس."
+        },
+        {
+            "start": "00:00:56,930",
+            "end": "00:00:58,430",
+            "en": "You can get people over people.",
+            "zh": "你能一人之下万人之上。",
+            "ar": "يمكنك تحقيق مكانة أعلى من الآخرين."
+        },
+        {
+            "start": "00:00:59,350",
+            "end": "00:01:01,130",
+            "en": "You can get a higher position.",
+            "zh": "你可以得到更高的位置。",
+            "ar": "يمكنك الحصول على موقع أعلى."
+        }
+    ]
+}

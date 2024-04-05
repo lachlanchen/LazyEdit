@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,499\",\n    \"end\": \"00:00:03,000\",\n    \"lang\": \"zh\",\n    \"text\": \"那个牛屎等官是不是能等的啊?\"\n  },\n  {\n    \"start\": \"00:00:04,200\",\n    \"end\": \"00:00:06,100\",\n    \"lang\": \"zh\",\n    \"text\": \"老汉还叫他弄到外头,\"\n  },\n  {\n    \"start\": \"00:00:06,100\",\n    \"end\": \"00:00:07,940\",\n    \"lang\": \"zh\",\n    \"text\": \"官让那个牛屎糊到外头\"\n  },\n  {\n    \"start\": \"00:00:08,740\",\n    \"end\": \"00:00:09,900\",\n    \"lang\": \"zh\",\n    \"text\": \"我说糊到外头,\"\n  },\n  {\n    \"start\": \"00:00:09,900\",\n    \"end\": \"00:00:10,680\",\n    \"lang\": \"zh\",\n    \"text\": \"哪个得啊?\"\n  },\n  {\n    \"start\": \"00:00:12,460\",\n    \"end\": \"00:00:13,240\",\n    \"lang\": \"zh\",\n    \"text\": \"你看看,\"\n  },\n  {\n    \"start\": \"00:00:13,240\",\n    \"end\": \"00:00:14,080\",\n    \"lang\": \"zh\",\n    \"text\": \"还糊到外头,\"\n  },\n  {\n    \"start\": \"00:00:14,080\",\n    \"end\": \"00:00:15,480\",\n    \"lang\": \"zh\",\n    \"text\": \"这个牛屎烧得那么\"\n  },\n  {\n    \"start\": \"00:00:17,474\",\n    \"end\": \"00:00:17,974\",\n    \"lang\": \"en\",\n    \"text\": \"mongol\"\n  },\n  {\n    \"start\": \"00:00:24,418\",\n    \"end\": \"00:00:25,418\",\n    \"lang\": \"zh\",\n    \"text\": \"是不是这么担心吗\"\n  },\n  {\n    \"start\": \"00:00:26,138\",\n    \"end\": \"00:00:27,658\",\n    \"lang\": \"zh\",\n    \"text\": \"已经担出来一个\"\n  },\n  {\n    \"start\": \"00:00:41,538\",\n    \"end\": \"00:00:43,098\",\n    \"lang\": \"zh\",\n    \"text\": \"那个牛屎巴担得住\"\n  },\n  {\n    \"start\": \"00:00:43,098\",\n    \"end\": \"00:00:44,918\",\n    \"lang\": \"zh\",\n    \"text\": \"那个草菜不怕牛屎吃吧\"\n  },\n  {\n    \"start\": \"00:00:54,658\",\n    \"end\": \"00:00:55,798\",\n    \"lang\": \"en\",\n    \"text\": \"What would Tori say to Patsy?\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,499",
+            "end": "00:00:03,000",
+            "es": "¿Ese estatus de mierda de vaca se puede esperar o no?",
+            "fr": "Cet état de merde de vache, peut-on attendre ou non?",
+            "uk": "Чи можна чекати на цей статус коров'ячого лайна, чи ні?"
+        },
+        {
+            "start": "00:00:04,200",
+            "end": "00:00:06,100",
+            "es": "El viejo también le pidió que lo llevara fuera,",
+            "fr": "Le vieux lui a également demandé de l'emmener dehors,",
+            "uk": "Старий також попросив його винести це назовні,"
+        },
+        {
+            "start": "00:00:06,100",
+            "end": "00:00:07,940",
+            "es": "el oficial hizo que la mierda de vaca se extendiera afuera",
+            "fr": "l'officier a fait que la merde de vache soit étalée dehors",
+            "uk": "офіцер змусив коров'ячий послід розповсюджуватися зовні"
+        },
+        {
+            "start": "00:00:08,740",
+            "end": "00:00:09,900",
+            "es": "Dije que se extendiera afuera,",
+            "fr": "J'ai dit qu'elle doit être étalée dehors,",
+            "uk": "Я сказав, щоб воно розповсюджувалось зовні,"
+        },
+        {
+            "start": "00:00:09,900",
+            "end": "00:00:10,680",
+            "es": "¿quién obtiene eso?",
+            "fr": "qui l'obtient?",
+            "uk": "хто це отримає?"
+        },
+        {
+            "start": "00:00:12,460",
+            "end": "00:00:13,240",
+            "es": "Mira,",
+            "fr": "Regarde,",
+            "uk": "Дивись,"
+        },
+        {
+            "start": "00:00:13,240",
+            "end": "00:00:14,080",
+            "es": "también se extendió afuera,",
+            "fr": "elle a également été étalée dehors,",
+            "uk": "це також розповсюдилося назовні,"
+        },
+        {
+            "start": "00:00:14,080",
+            "end": "00:00:15,480",
+            "es": "esta mierda de vaca está tan",
+            "fr": "cette merde de vache est si",
+            "uk": "цей коров'ячий послід такий"
+        },
+        {
+            "start": "00:00:17,474",
+            "end": "00:00:17,974",
+            "es": "magnífico",
+            "fr": "magnifique",
+            "uk": "чудово"
+        },
+        {
+            "start": "00:00:24,418",
+            "end": "00:00:25,418",
+            "es": "¿Es realmente tan preocupante?",
+            "fr": "Est-ce vraiment si inquiétant?",
+            "uk": "Чи справді це так турбує?"
+        },
+        {
+            "start": "00:00:26,138",
+            "end": "00:00:27,658",
+            "es": "Ya se ha preocupado por uno",
+            "fr": "Il s'est déjà inquiété pour un",
+            "uk": "Вже перейнявся за одного"
+        },
+        {
+            "start": "00:00:41,538",
+            "end": "00:00:43,098",
+            "es": "Ese estiércol de vaca puede soportarlo",
+            "fr": "Ce fumier de vache peut le supporter",
+            "uk": "Цей коров'ячий послід може витримати"
+        },
+        {
+            "start": "00:00:43,098",
+            "end": "00:00:44,918",
+            "es": "Esa hierba no le teme a comer la mierda de vaca, ¿verdad?",
+            "fr": "Cette herbe n'a pas peur de manger la merde de vache, n'est-ce pas?",
+            "uk": "Ця трава не боїться їсти коров'ячий послід, правда?"
+        },
+        {
+            "start": "00:00:54,658",
+            "end": "00:00:55,798",
+            "es": "¿Qué diría Tori a Patsy?",
+            "fr": "Que dirait Tori à Patsy ?",
+            "uk": "Що б Торі сказав Петсі?"
+        }
+    ]
+}

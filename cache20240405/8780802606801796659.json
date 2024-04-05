@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,399\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"ja\",\n    \"text\": \"私はクスニット\"\n  },\n  {\n    \"start\": \"00:00:03,874\",\n    \"end\": \"00:00:06,994\",\n    \"lang\": \"ja\",\n    \"text\": \"果物を買っています\"\n  },\n  {\n    \"start\": \"00:00:08,002\",\n    \"end\": \"00:00:10,042\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot take this disease anymore.\"\n  },\n  {\n    \"start\": \"00:00:10,822\",\n    \"end\": \"00:00:14,642\",\n    \"lang\": \"en\",\n    \"text\": \"I have to buy some drugs to help me.\"\n  },\n  {\n    \"start\": \"00:00:15,762\",\n    \"end\": \"00:00:19,062\",\n    \"lang\": \"en\",\n    \"text\": \"My own immune system cannot handle it anymore.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,399",
+            "end": "00:00:03,060",
+            "es": "Soy Kusnitz",
+            "fr": "Je suis Kusnitz",
+            "uk": "Я Кусніт"
+        },
+        {
+            "start": "00:00:03,874",
+            "end": "00:00:06,994",
+            "es": "Estoy comprando frutas",
+            "fr": "J'achète des fruits",
+            "uk": "Я купую фрукти"
+        },
+        {
+            "start": "00:00:08,002",
+            "end": "00:00:10,042",
+            "es": "Ya no puedo soportar esta enfermedad.",
+            "fr": "Je ne peux plus supporter cette maladie.",
+            "uk": "Я більше не можу терпіти цю хворобу."
+        },
+        {
+            "start": "00:00:10,822",
+            "end": "00:00:14,642",
+            "es": "Tengo que comprar unas medicinas para ayudarme.",
+            "fr": "Je dois acheter des médicaments pour m'aider.",
+            "uk": "Я повинен купити деякі ліки, щоб допомогти собі."
+        },
+        {
+            "start": "00:00:15,762",
+            "end": "00:00:19,062",
+            "es": "Mi propio sistema inmunológico ya no puede manejarlo.",
+            "fr": "Mon propre système immunitaire ne peut plus le gérer.",
+            "uk": "Моя власна імунна система вже не може з цим впоратися."
+        }
+    ]
+}

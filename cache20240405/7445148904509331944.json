@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,540\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます\"\n  },\n  {\n    \"start\": \"00:00:03,490\",\n    \"end\": \"00:00:13,490\",\n    \"lang\": \"en\",\n    \"text\": \"So yesterday I watched a video of Britain and they mocked that the American English,\"\n  },\n  {\n    \"start\": \"00:00:13,890\",\n    \"end\": \"00:00:14,790\",\n    \"lang\": \"en\",\n    \"text\": \"so they say,\"\n  },\n  {\n    \"start\": \"00:00:14,790\",\n    \"end\": \"00:00:17,250\",\n    \"lang\": \"en\",\n    \"text\": \"like the pavement,\"\n  },\n  {\n    \"start\": \"00:00:17,250\",\n    \"end\": \"00:00:20,550\",\n    \"lang\": \"en\",\n    \"text\": \"in American English it becomes sidewalk.\"\n  },\n  {\n    \"start\": \"00:00:21,370\",\n    \"end\": \"00:00:23,030\",\n    \"lang\": \"en\",\n    \"text\": \"And also the bin,\"\n  },\n  {\n    \"start\": \"00:00:23,030\",\n    \"end\": \"00:00:32,150\",\n    \"lang\": \"en\",\n    \"text\": \"in British it becomes a waste paper basket in American English.\"\n  },\n  {\n    \"start\": \"00:00:32,150\",\n    \"end\": \"00:00:33,410\",\n    \"lang\": \"en\",\n    \"text\": \"And they mocked that,\"\n  },\n  {\n    \"start\": \"00:00:33,410\",\n    \"end\": \"00:00:35,330\",\n    \"lang\": \"en\",\n    \"text\": \"that since Americans,\"\n  },\n  {\n    \"start\": \"00:00:35,330\",\n    \"end\": \"00:00:40,090\",\n    \"lang\": \"en\",\n    \"text\": \"they cannot directly understand English.\"\n  },\n  {\n    \"start\": \"00:00:41,410\",\n    \"end\": \"00:00:42,430\",\n    \"lang\": \"en\",\n    \"text\": \"So there is a,\"\n  },\n  {\n    \"start\": \"00:00:42,430\",\n    \"end\": \"00:00:48,150\",\n    \"lang\": \"en\",\n    \"text\": \"and also like another example is horse riding.\"\n  },\n  {\n    \"start\": \"00:00:49,170\",\n    \"end\": \"00:00:55,750\",\n    \"lang\": \"en\",\n    \"text\": \"They mocked that American English changed to horseback riding.\"\n  },\n  {\n    \"start\": \"00:00:55,750\",\n    \"end\": \"00:00:56,610\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:56,610\",\n    \"end\": \"00:01:02,930\",\n    \"lang\": \"en\",\n    \"text\": \"and I say there is a discrimination chain,\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,540",
+            "vi": "Cảm ơn bạn"
+        },
+        {
+            "start": "00:00:03,490",
+            "end": "00:00:13,490",
+            "vi": "Vậy là hôm qua tôi đã xem một video về Anh và họ đã chế nhạo tiếng Anh Mỹ,"
+        },
+        {
+            "start": "00:00:13,890",
+            "end": "00:00:14,790",
+            "vi": "họ nói,"
+        },
+        {
+            "start": "00:00:14,790",
+            "end": "00:00:17,250",
+            "vi": "như là vỉa hè,"
+        },
+        {
+            "start": "00:00:17,250",
+            "end": "00:00:20,550",
+            "vi": "trong tiếng Anh Mỹ nó trở thành sidewalk."
+        },
+        {
+            "start": "00:00:21,370",
+            "end": "00:00:23,030",
+            "vi": "Và còn thùng rác,"
+        },
+        {
+            "start": "00:00:23,030",
+            "end": "00:00:32,150",
+            "vi": "trong Anh nó trở thành waste paper basket trong tiếng Anh Mỹ."
+        },
+        {
+            "start": "00:00:32,150",
+            "end": "00:00:33,410",
+            "vi": "Và họ đã chế nhạo điều đó,"
+        },
+        {
+            "start": "00:00:33,410",
+            "end": "00:00:35,330",
+            "vi": "rằng người Mỹ,"
+        },
+        {
+            "start": "00:00:35,330",
+            "end": "00:00:40,090",
+            "vi": "họ không thể hiểu trực tiếp tiếng Anh."
+        },
+        {
+            "start": "00:00:41,410",
+            "end": "00:00:42,430",
+            "vi": "Vì vậy có một,"
+        },
+        {
+            "start": "00:00:42,430",
+            "end": "00:00:48,150",
+            "vi": "và cũng như một ví dụ khác là cưỡi ngựa."
+        },
+        {
+            "start": "00:00:49,170",
+            "end": "00:00:55,750",
+            "vi": "Họ chế nhạo rằng trong tiếng Anh Mỹ nó thay đổi thành horseback riding."
+        },
+        {
+            "start": "00:00:55,750",
+            "end": "00:00:56,610",
+            "vi": "Vì vậy,"
+        },
+        {
+            "start": "00:00:56,610",
+            "end": "00:01:02,930",
+            "vi": "và tôi nói rằng có một chuỗi phân biệt đối xử,"
+        }
+    ]
+}

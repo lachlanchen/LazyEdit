@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,960\",\n    \"lang\": \"ja\",\n    \"text\": \"3世代のビジネスです\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:06,780\",\n    \"lang\": \"ja\",\n    \"text\": \"なので生きていけば3世代です\"\n  },\n  {\n    \"start\": \"00:00:07,746\",\n    \"end\": \"00:00:11,866\",\n    \"lang\": \"en\",\n    \"text\": \"So this give us some insight in entrepreneurship.\"\n  },\n  {\n    \"start\": \"00:00:12,886\",\n    \"end\": \"00:00:15,946\",\n    \"lang\": \"en\",\n    \"text\": \"And it needn't to be very big business.\"\n  },\n  {\n    \"start\": \"00:00:16,566\",\n    \"end\": \"00:00:17,606\",\n    \"lang\": \"en\",\n    \"text\": \"Any small business,\"\n  },\n  {\n    \"start\": \"00:00:17,606\",\n    \"end\": \"00:00:21,406\",\n    \"lang\": \"en\",\n    \"text\": \"it can be successful business\"\n  },\n  {\n    \"start\": \"00:00:21,696\",\n    \"end\": \"00:00:24,486\",\n    \"lang\": \"en\",\n    \"text\": \"as long as you have some value.\"\n  },\n  {\n    \"start\": \"00:00:25,126\",\n    \"end\": \"00:00:27,706\",\n    \"lang\": \"en\",\n    \"text\": \"So they sell this Bo Zai Gao.\"\n  },\n  {\n    \"start\": \"00:00:29,746\",\n    \"end\": \"00:00:32,766\",\n    \"lang\": \"en\",\n    \"text\": \"And as long as you can provide value,\"\n  },\n  {\n    \"start\": \"00:00:32,986\",\n    \"end\": \"00:00:34,986\",\n    \"lang\": \"en\",\n    \"text\": \"and you do it repeatedly,\"\n  },\n  {\n    \"start\": \"00:00:38,446\",\n    \"end\": \"00:00:39,186\",\n    \"lang\": \"en\",\n    \"text\": \"repeatedly,\"\n  },\n  {\n    \"start\": \"00:00:39,186\",\n    \"end\": \"00:00:39,926\",\n    \"lang\": \"en\",\n    \"text\": \"so.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,960",
+            "ko": "3대에 걸친 비즈니스입니다"
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:06,780",
+            "ko": "그러니까 살아남는다면 3대 째가 됩니다"
+        },
+        {
+            "start": "00:00:07,746",
+            "end": "00:00:11,866",
+            "ko": "그러니 이것은 우리에게 창업에 대한 통찰을 줍니다."
+        },
+        {
+            "start": "00:00:12,886",
+            "end": "00:00:15,946",
+            "ko": "그리고 꼭 큰 사업일 필요는 없습니다."
+        },
+        {
+            "start": "00:00:16,566",
+            "end": "00:00:17,606",
+            "ko": "어떤 소규모 사업이든,"
+        },
+        {
+            "start": "00:00:17,606",
+            "end": "00:00:21,406",
+            "ko": "성공적인 사업이 될 수 있습니다"
+        },
+        {
+            "start": "00:00:21,696",
+            "end": "00:00:24,486",
+            "ko": "가치만 있다면요."
+        },
+        {
+            "start": "00:00:25,126",
+            "end": "00:00:27,706",
+            "ko": "그래서 그들은 이 부자가오를 팝니다."
+        },
+        {
+            "start": "00:00:29,746",
+            "end": "00:00:32,766",
+            "ko": "그리고 가치를 제공할 수 있다면,"
+        },
+        {
+            "start": "00:00:32,986",
+            "end": "00:00:34,986",
+            "ko": "그리고 계속해서 그렇게 한다면,"
+        },
+        {
+            "start": "00:00:38,446",
+            "end": "00:00:39,186",
+            "ko": "계속해서,"
+        },
+        {
+            "start": "00:00:39,186",
+            "end": "00:00:39,926",
+            "ko": "그렇게요."
+        }
+    ]
+}

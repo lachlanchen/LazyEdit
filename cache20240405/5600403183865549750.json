@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:13,960\",\n    \"end\": \"00:01:15,180\",\n    \"lang\": \"en\",\n    \"text\": \"That's my hope,\"\n  },\n  {\n    \"start\": \"00:01:15,180\",\n    \"end\": \"00:01:16,000\",\n    \"lang\": \"en\",\n    \"text\": \"my dream.\"\n  },\n  {\n    \"start\": \"00:01:16,000\",\n    \"end\": \"00:01:22,420\",\n    \"lang\": \"en\",\n    \"text\": \"But my dream is a thing I want to do.\"\n  },\n  {\n    \"start\": \"00:01:24,540\",\n    \"end\": \"00:01:28,460\",\n    \"lang\": \"en\",\n    \"text\": \"Interesting is that today all my food is in profit.\"\n  },\n  {\n    \"start\": \"00:01:29,460\",\n    \"end\": \"00:01:33,360\",\n    \"lang\": \"en\",\n    \"text\": \"Sweet potato and eggs were exploded.\"\n  },\n  {\n    \"start\": \"00:01:34,400\",\n    \"end\": \"00:01:37,620\",\n    \"lang\": \"en\",\n    \"text\": \"It's kind of explosion day today.\"\n  },\n  {\n    \"start\": \"00:01:38,640\",\n    \"end\": \"00:01:40,560\",\n    \"lang\": \"en\",\n    \"text\": \"Everything is going to be explosive.\"\n  },\n  {\n    \"start\": \"00:01:43,020\",\n    \"end\": \"00:01:44,300\",\n    \"lang\": \"en\",\n    \"text\": \"Explosive growth.\"\n  },\n  {\n    \"start\": \"00:01:46,540\",\n    \"end\": \"00:01:47,060\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:47,060\",\n    \"end\": \"00:01:48,640\",\n    \"lang\": \"en\",\n    \"text\": \"let's try.\"\n  },\n  {\n    \"start\": \"00:01:49,120\",\n    \"end\": \"00:01:59,900\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this is just interesting.\"\n  },\n  {\n    \"start\": \"00:02:03,560\",\n    \"end\": \"00:02:04,960\",\n    \"lang\": \"en\",\n    \"text\": \"It's clever.\"\n  },\n  {\n    \"start\": \"00:02:06,779\",\n    \"end\": \"00:02:07,820\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:07,820\",\n    \"end\": \"00:02:09,039\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  },\n  {\n    \"start\": \"00:02:12,920\",\n    \"end\": \"00:02:13,960\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:02:13,960\",\n    \"end\": \"00:02:14,420\",\n    \"lang\": \"en\",\n    \"text\": \"sorry.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:13,960",
+            "end": "00:01:15,180",
+            "ja": "それが私の希望です、"
+        },
+        {
+            "start": "00:01:15,180",
+            "end": "00:01:16,000",
+            "ja": "私の夢。"
+        },
+        {
+            "start": "00:01:16,000",
+            "end": "00:01:22,420",
+            "ja": "でも、私の夢は実現したいことです。"
+        },
+        {
+            "start": "00:01:24,540",
+            "end": "00:01:28,460",
+            "ja": "面白いことに、今日私の食べ物は全て利益が出ています。"
+        },
+        {
+            "start": "00:01:29,460",
+            "end": "00:01:33,360",
+            "ja": "さつまいもと卵が爆発しました。"
+        },
+        {
+            "start": "00:01:34,400",
+            "end": "00:01:37,620",
+            "ja": "今日はなんだか爆発の日みたい。"
+        },
+        {
+            "start": "00:01:38,640",
+            "end": "00:01:40,560",
+            "ja": "何もかもが爆発的になるでしょう。"
+        },
+        {
+            "start": "00:01:43,020",
+            "end": "00:01:44,300",
+            "ja": "爆発的な成長。"
+        },
+        {
+            "start": "00:01:46,540",
+            "end": "00:01:47,060",
+            "ja": "わかった、"
+        },
+        {
+            "start": "00:01:47,060",
+            "end": "00:01:48,640",
+            "ja": "試してみよう。"
+        },
+        {
+            "start": "00:01:49,120",
+            "end": "00:01:59,900",
+            "ja": "これは単に面白いと信じています。"
+        },
+        {
+            "start": "00:02:03,560",
+            "end": "00:02:04,960",
+            "ja": "それは賢いですね。"
+        },
+        {
+            "start": "00:02:06,779",
+            "end": "00:02:07,820",
+            "ja": "わかった、"
+        },
+        {
+            "start": "00:02:07,820",
+            "end": "00:02:09,039",
+            "ja": "じゃあね。"
+        },
+        {
+            "start": "00:02:12,920",
+            "end": "00:02:13,960",
+            "ja": "ごめんなさい、"
+        },
+        {
+            "start": "00:02:13,960",
+            "end": "00:02:14,420",
+            "ja": "ごめんなさい。"
+        }
+    ]
+}

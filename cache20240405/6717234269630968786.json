@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,720\",\n    \"lang\": \"ja\",\n    \"text\": \"あらなしい日です\"\n  },\n  {\n    \"start\": \"00:00:03,640\",\n    \"end\": \"00:00:05,740\",\n    \"lang\": \"ja\",\n    \"text\": \"今日はあらなしい日です\"\n  },\n  {\n    \"start\": \"00:00:06,299\",\n    \"end\": \"00:00:08,920\",\n    \"lang\": \"ja\",\n    \"text\": \"私は朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:10,978\",\n    \"end\": \"00:00:18,598\",\n    \"lang\": \"en\",\n    \"text\": \"So I wish my video that it can at least encourage people to play terrible guitar,\"\n  },\n  {\n    \"start\": \"00:00:18,598\",\n    \"end\": \"00:00:20,198\",\n    \"lang\": \"en\",\n    \"text\": \"that they\"\n  },\n  {\n    \"start\": \"00:00:20,198\",\n    \"end\": \"00:00:21,378\",\n    \"lang\": \"en\",\n    \"text\": \"speak broken English,\"\n  },\n  {\n    \"start\": \"00:00:21,378\",\n    \"end\": \"00:00:22,998\",\n    \"lang\": \"en\",\n    \"text\": \"broken Japanese,\"\n  },\n  {\n    \"start\": \"00:00:22,998\",\n    \"end\": \"00:00:27,057\",\n    \"lang\": \"en\",\n    \"text\": \"broken Cantonese,\"\n  },\n  {\n    \"start\": \"00:00:27,057\",\n    \"end\": \"00:00:30,458\",\n    \"lang\": \"en\",\n    \"text\": \"broken Vietnamese.\"\n  },\n  {\n    \"start\": \"00:00:39,058\",\n    \"end\": \"00:00:41,498\",\n    \"lang\": \"en\",\n    \"text\": \"So to encourage people,\"\n  },\n  {\n    \"start\": \"00:00:41,498\",\n    \"end\": \"00:00:43,597\",\n    \"lang\": \"en\",\n    \"text\": \"even terrible as it is,\"\n  },\n  {\n    \"start\": \"00:00:43,597\",\n    \"end\": \"00:00:47,018\",\n    \"lang\": \"en\",\n    \"text\": \"I can present myself to the world.\"\n  },\n  {\n    \"start\": \"00:00:48,642\",\n    \"end\": \"00:00:49,262\",\n    \"lang\": \"zh\",\n    \"text\": \"蛮有趣的\"\n  },\n  {\n    \"start\": \"00:00:50,498\",\n    \"end\": \"00:00:51,358\",\n    \"lang\": \"en\",\n    \"text\": \"present yourself,\"\n  },\n  {\n    \"start\": \"00:00:51,358\",\n    \"end\": \"00:00:54,978\",\n    \"lang\": \"en\",\n    \"text\": \"your product to this world,\"\n  },\n  {\n    \"start\": \"00:00:55,258\",\n    \"end\": \"00:00:55,858\",\n    \"lang\": \"en\",\n    \"text\": \"to this universe.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,720",
+            "es": "Es un día tormentoso",
+            "fr": "C'est une journée orageuse",
+            "uk": "Це бурхливий день"
+        },
+        {
+            "start": "00:00:03,640",
+            "end": "00:00:05,740",
+            "es": "Hoy es un día tormentoso",
+            "fr": "Aujourd'hui, c'est une journée orageuse",
+            "uk": "Сьогодні бурхливий день"
+        },
+        {
+            "start": "00:00:06,299",
+            "end": "00:00:08,920",
+            "es": "Estoy comiendo el desayuno",
+            "fr": "Je prends mon petit-déjeuner",
+            "uk": "Я снідаю"
+        },
+        {
+            "start": "00:00:10,978",
+            "end": "00:00:18,598",
+            "es": "Así que deseo que mi video al menos anime a la gente a tocar la guitarra aunque sea mal",
+            "fr": "Donc je souhaite que ma vidéo puisse au moins encourager les gens à jouer de la guitare, même mal",
+            "uk": "Отже, я сподіваюся, що моє відео хоча б заохотить людей грати на гітарі, хоч як погано"
+        },
+        {
+            "start": "00:00:18,598",
+            "end": "00:00:20,198",
+            "es": "que ellos",
+            "fr": "qu'ils",
+            "uk": "що вони"
+        },
+        {
+            "start": "00:00:20,198",
+            "end": "00:00:21,378",
+            "es": "hablen un inglés roto,",
+            "fr": "parlent un anglais cassé,",
+            "uk": "говорять ламаною англійською,"
+        },
+        {
+            "start": "00:00:21,378",
+            "end": "00:00:22,998",
+            "es": "japonés roto,",
+            "fr": "japonais cassé,",
+            "uk": "ламаною японською,"
+        },
+        {
+            "start": "00:00:22,998",
+            "end": "00:00:27,057",
+            "es": "cantonés roto,",
+            "fr": "cantonais cassé,",
+            "uk": "ламаною кантонською,"
+        },
+        {
+            "start": "00:00:27,057",
+            "end": "00:00:30,458",
+            "es": "vietnamita roto.",
+            "fr": "vietnamien cassé.",
+            "uk": "ламаною в'єтнамською."
+        },
+        {
+            "start": "00:00:39,058",
+            "end": "00:00:41,498",
+            "es": "Así que para animar a la gente,",
+            "fr": "Alors pour encourager les gens,",
+            "uk": "Отже, щоб заохотити людей,"
+        },
+        {
+            "start": "00:00:41,498",
+            "end": "00:00:43,597",
+            "es": "aunque sea terrible,",
+            "fr": "même si c'est terrible,",
+            "uk": "хоч це й жахливо,"
+        },
+        {
+            "start": "00:00:43,597",
+            "end": "00:00:47,018",
+            "es": "puedo presentarme al mundo.",
+            "fr": "je peux me présenter au monde.",
+            "uk": "я можу представити себе світові."
+        },
+        {
+            "start": "00:00:48,642",
+            "end": "00:00:49,262",
+            "es": "Bastante interesante",
+            "fr": "Assez intéressant",
+            "uk": "Дуже цікаво"
+        },
+        {
+            "start": "00:00:50,498",
+            "end": "00:00:51,358",
+            "es": "preséntate a ti mismo,",
+            "fr": "présentez-vous,",
+            "uk": "представте себе,"
+        },
+        {
+            "start": "00:00:51,358",
+            "end": "00:00:54,978",
+            "es": "tu producto a este mundo,",
+            "fr": "votre produit à ce monde,",
+            "uk": "ваш продукт цьому світу,"
+        },
+        {
+            "start": "00:00:55,258",
+            "end": "00:00:55,858",
+            "es": "a este universo.",
+            "fr": "à cet univers.",
+            "uk": "цій всесвіті."
+        }
+    ]
+}

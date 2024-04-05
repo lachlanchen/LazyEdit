@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,160\",\n    \"lang\": \"ja\",\n    \"text\": \"明日かよ、\"\n  },\n  {\n    \"start\": \"00:00:01,160\",\n    \"end\": \"00:00:04,080\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあなたと共に高く飛びたい。\"\n  },\n  {\n    \"start\": \"00:00:04,700\",\n    \"end\": \"00:00:06,160\",\n    \"lang\": \"ja\",\n    \"text\": \"この青波の上で、\"\n  },\n  {\n    \"start\": \"00:00:06,160\",\n    \"end\": \"00:00:09,120\",\n    \"lang\": \"ja\",\n    \"text\": \"この青い空の下で。\"\n  },\n  {\n    \"start\": \"00:00:10,602\",\n    \"end\": \"00:00:11,722\",\n    \"lang\": \"en\",\n    \"text\": \"You are so beautiful.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,160",
+            "es": "¿Mañana?",
+            "fr": "Demain ?",
+            "uk": "Завтра?"
+        },
+        {
+            "start": "00:00:01,160",
+            "end": "00:00:04,080",
+            "es": "Quiero volar alto contigo.",
+            "fr": "Je veux voler haut avec toi.",
+            "uk": "Я хочу високо летіти з тобою."
+        },
+        {
+            "start": "00:00:04,700",
+            "end": "00:00:06,160",
+            "es": "Sobre estas olas azules,",
+            "fr": "Sur ces vagues bleues,",
+            "uk": "Над цими синіми хвилями,"
+        },
+        {
+            "start": "00:00:06,160",
+            "end": "00:00:09,120",
+            "es": "bajo este cielo azul.",
+            "fr": "sous ce ciel bleu.",
+            "uk": "під цим синім небом."
+        },
+        {
+            "start": "00:00:10,602",
+            "end": "00:00:11,722",
+            "es": "Eres tan hermosa.",
+            "fr": "Tu es si belle.",
+            "uk": "Ти така красива."
+        }
+    ]
+}

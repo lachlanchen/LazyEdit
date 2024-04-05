@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,440\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの\"\n  },\n  {\n    \"start\": \"00:00:03,330\",\n    \"end\": \"00:00:04,250\",\n    \"lang\": \"en\",\n    \"text\": \"Ayako.\"\n  },\n  {\n    \"start\": \"00:00:04,850\",\n    \"end\": \"00:00:05,330\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:00:05,330\",\n    \"end\": \"00:00:06,250\",\n    \"lang\": \"en\",\n    \"text\": \"sorry.\"\n  },\n  {\n    \"start\": \"00:00:06,594\",\n    \"end\": \"00:00:06,874\",\n    \"lang\": \"ar\",\n    \"text\": \"هيا\"\n  },\n  {\n    \"start\": \"00:00:11,554\",\n    \"end\": \"00:00:11,994\",\n    \"lang\": \"en\",\n    \"text\": \"Snow?\"\n  },\n  {\n    \"start\": \"00:00:11,994\",\n    \"end\": \"00:00:12,854\",\n    \"lang\": \"en\",\n    \"text\": \"Snow?\"\n  },\n  {\n    \"start\": \"00:00:12,854\",\n    \"end\": \"00:00:14,354\",\n    \"lang\": \"en\",\n    \"text\": \"How do you say snow in Japanese?\"\n  },\n  {\n    \"start\": \"00:00:16,161\",\n    \"end\": \"00:00:17,922\",\n    \"lang\": \"ja\",\n    \"text\": \"早い早い早い\"\n  },\n  {\n    \"start\": \"00:00:17,922\",\n    \"end\": \"00:00:18,582\",\n    \"lang\": \"ja\",\n    \"text\": \"早い\"\n  },\n  {\n    \"start\": \"00:00:21,370\",\n    \"end\": \"00:00:25,770\",\n    \"lang\": \"en\",\n    \"text\": \"This is a snow fast food.\"\n  },\n  {\n    \"start\": \"00:00:26,330\",\n    \"end\": \"00:00:26,850\",\n    \"lang\": \"en\",\n    \"text\": \"Because I...\"\n  },\n  {\n    \"start\": \"00:00:28,170\",\n    \"end\": \"00:00:28,830\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway,\"\n  },\n  {\n    \"start\": \"00:00:28,830\",\n    \"end\": \"00:00:29,570\",\n    \"lang\": \"en\",\n    \"text\": \"I have a recorder,\"\n  },\n  {\n    \"start\": \"00:00:29,570\",\n    \"end\": \"00:00:30,030\",\n    \"lang\": \"en\",\n    \"text\": \"I can...\"\n  },\n  {\n    \"start\": \"00:00:30,030\",\n    \"end\": \"00:00:30,710\",\n    \"lang\": \"en\",\n    \"text\": \"I want to...\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,440",
+            "vi": "Tôi là người này"
+        },
+        {
+            "start": "00:00:03,330",
+            "end": "00:00:04,250",
+            "vi": "Ayako."
+        },
+        {
+            "start": "00:00:04,850",
+            "end": "00:00:05,330",
+            "vi": "Xin lỗi,"
+        },
+        {
+            "start": "00:00:05,330",
+            "end": "00:00:06,250",
+            "vi": "xin lỗi."
+        },
+        {
+            "start": "00:00:06,594",
+            "end": "00:00:06,874",
+            "vi": "Nào"
+        },
+        {
+            "start": "00:00:11,554",
+            "end": "00:00:11,994",
+            "vi": "Tuyết?"
+        },
+        {
+            "start": "00:00:11,994",
+            "end": "00:00:12,854",
+            "vi": "Tuyết?"
+        },
+        {
+            "start": "00:00:12,854",
+            "end": "00:00:14,354",
+            "vi": "Làm sao để nói tuyết bằng tiếng Nhật?"
+        },
+        {
+            "start": "00:00:16,161",
+            "end": "00:00:17,922",
+            "vi": "Nhanh, nhanh, nhanh"
+        },
+        {
+            "start": "00:00:17,922",
+            "end": "00:00:18,582",
+            "vi": "Nhanh"
+        },
+        {
+            "start": "00:00:21,370",
+            "end": "00:00:25,770",
+            "vi": "Ăn nhanh tuyết này."
+        },
+        {
+            "start": "00:00:26,330",
+            "end": "00:00:26,850",
+            "vi": "Vì tôi..."
+        },
+        {
+            "start": "00:00:28,170",
+            "end": "00:00:28,830",
+            "vi": "Dù sao,"
+        },
+        {
+            "start": "00:00:28,830",
+            "end": "00:00:29,570",
+            "vi": "Tôi có một máy ghi âm,"
+        },
+        {
+            "start": "00:00:29,570",
+            "end": "00:00:30,030",
+            "vi": "Tôi có thể..."
+        },
+        {
+            "start": "00:00:30,030",
+            "end": "00:00:30,710",
+            "vi": "Tôi muốn..."
+        }
+    ]
+}

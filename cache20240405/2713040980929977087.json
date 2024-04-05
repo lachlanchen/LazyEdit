@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:32,798\",\n    \"end\": \"00:01:34,858\",\n    \"lang\": \"en\",\n    \"text\": \"It smells so good.\"\n  },\n  {\n    \"start\": \"00:01:38,358\",\n    \"end\": \"00:01:41,258\",\n    \"lang\": \"en\",\n    \"text\": \"We need to put this as our cover,\"\n  },\n  {\n    \"start\": \"00:01:41,258\",\n    \"end\": \"00:01:42,398\",\n    \"lang\": \"en\",\n    \"text\": \"our keeper.\"\n  },\n  {\n    \"start\": \"00:02:10,657\",\n    \"end\": \"00:02:12,518\",\n    \"lang\": \"en\",\n    \"text\": \"I'm going to put some pepper.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:32,798",
+            "end": "00:01:34,858",
+            "ko": "정말 좋은 냄새가 나."
+        },
+        {
+            "start": "00:01:38,358",
+            "end": "00:01:41,258",
+            "ko": "이걸 표지로 써야 해,"
+        },
+        {
+            "start": "00:01:41,258",
+            "end": "00:01:42,398",
+            "ko": "우리의 수호자로."
+        },
+        {
+            "start": "00:02:10,657",
+            "end": "00:02:12,518",
+            "ko": "후추 좀 넣을게요."
+        }
+    ]
+}

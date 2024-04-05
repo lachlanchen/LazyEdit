@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,620\",\n    \"lang\": \"en\",\n    \"text\": \"I said a wrong word in the previous video.\"\n  },\n  {\n    \"start\": \"00:00:04,940\",\n    \"end\": \"00:00:05,480\",\n    \"lang\": \"en\",\n    \"text\": \"It's vulgar.\"\n  },\n  {\n    \"start\": \"00:00:06,120\",\n    \"end\": \"00:00:07,040\",\n    \"lang\": \"en\",\n    \"text\": \"But in Western culture,\"\n  },\n  {\n    \"start\": \"00:00:07,040\",\n    \"end\": \"00:00:10,960\",\n    \"lang\": \"en\",\n    \"text\": \"vulgar means another vessel.\"\n  },\n  {\n    \"start\": \"00:00:11,640\",\n    \"end\": \"00:00:17,300\",\n    \"lang\": \"en\",\n    \"text\": \"And vulgar means something is not elegant.\"\n  },\n  {\n    \"start\": \"00:00:22,040\",\n    \"end\": \"00:00:28,120\",\n    \"lang\": \"en\",\n    \"text\": \"The French think English is vulgar.\"\n  },\n  {\n    \"start\": \"00:00:28,120\",\n    \"end\": \"00:00:31,520\",\n    \"lang\": \"en\",\n    \"text\": \"And the Britons think the American accent is vulgar.\"\n  },\n  {\n    \"start\": \"00:00:32,439\",\n    \"end\": \"00:00:34,880\",\n    \"lang\": \"en\",\n    \"text\": \"As I watched the video,\"\n  },\n  {\n    \"start\": \"00:00:34,880\",\n    \"end\": \"00:00:45,440\",\n    \"lang\": \"en\",\n    \"text\": \"the Britons use sidewalks instead of pavements.\"\n  },\n  {\n    \"start\": \"00:00:45,700\",\n    \"end\": \"00:00:51,100\",\n    \"lang\": \"en\",\n    \"text\": \"And use paper baskets to represent the bin.\"\n  },\n  {\n    \"start\": \"00:00:51,629\",\n    \"end\": \"00:00:55,160\",\n    \"lang\": \"en\",\n    \"text\": \"And also horseback riding.\"\n  },\n  {\n    \"start\": \"00:00:56,800\",\n    \"end\": \"00:01:02,160\",\n    \"lang\": \"en\",\n    \"text\": \"They change horseback riding from British English to horseback riding.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,620",
+            "ko": "이전 비디오에서 잘못된 단어를 말했습니다."
+        },
+        {
+            "start": "00:00:04,940",
+            "end": "00:00:05,480",
+            "ko": "그것은 저속한 단어였습니다."
+        },
+        {
+            "start": "00:00:06,120",
+            "end": "00:00:07,040",
+            "ko": "하지만 서양 문화에서는,"
+        },
+        {
+            "start": "00:00:07,040",
+            "end": "00:00:10,960",
+            "ko": "저속함은 다른 의미를 가지고 있습니다."
+        },
+        {
+            "start": "00:00:11,640",
+            "end": "00:00:17,300",
+            "ko": "그리고 저속함은 우아하지 않은 것을 의미합니다."
+        },
+        {
+            "start": "00:00:22,040",
+            "end": "00:00:28,120",
+            "ko": "프랑스인들은 영어가 저속하다고 생각합니다."
+        },
+        {
+            "start": "00:00:28,120",
+            "end": "00:00:31,520",
+            "ko": "그리고 영국인들은 미국식 발음이 저속하다고 생각합니다."
+        },
+        {
+            "start": "00:00:32,439",
+            "end": "00:00:34,880",
+            "ko": "비디오를 보면서,"
+        },
+        {
+            "start": "00:00:34,880",
+            "end": "00:00:45,440",
+            "ko": "영국인들은 보도를 sidewalks 대신 pavements라고 사용합니다."
+        },
+        {
+            "start": "00:00:45,700",
+            "end": "00:00:51,100",
+            "ko": "그리고 쓰레기통을 의미하는데 paper baskets를 사용합니다."
+        },
+        {
+            "start": "00:00:51,629",
+            "end": "00:00:55,160",
+            "ko": "그리고 말 타기도 있습니다."
+        },
+        {
+            "start": "00:00:56,800",
+            "end": "00:01:02,160",
+            "ko": "그들은 영국 영어에서의 말 타기를 horseback riding으로 바꿉니다."
+        }
+    ]
+}

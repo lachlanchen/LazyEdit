@@ -1,0 +1,10 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:31,540\",\n    \"end\": \"00:03:32,940\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:31,540",
+            "end": "00:03:32,940",
+            "ko": "그리고..."
+        }
+    ]
+}

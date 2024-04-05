@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:28,230\",\n    \"end\": \"00:04:30,030\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god\"\n  },\n  {\n    \"start\": \"00:04:30,030\",\n    \"end\": \"00:04:30,570\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  },\n  {\n    \"start\": \"00:04:34,670\",\n    \"end\": \"00:04:34,930\",\n    \"lang\": \"en\",\n    \"text\": \"Oh\"\n  },\n  {\n    \"start\": \"00:04:34,930\",\n    \"end\": \"00:04:35,310\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks for watching\"\n  },\n  {\n    \"start\": \"00:04:36,770\",\n    \"end\": \"00:04:38,630\",\n    \"lang\": \"ja\",\n    \"text\": \"この出まさき麺美味しいです\"\n  },\n  {\n    \"start\": \"00:04:44,449\",\n    \"end\": \"00:04:48,090\",\n    \"lang\": \"ja\",\n    \"text\": \"この出まさき麺とても美味しいです\"\n  },\n  {\n    \"start\": \"00:04:54,786\",\n    \"end\": \"00:04:57,186\",\n    \"lang\": \"en\",\n    \"text\": \"Please add the teaser and the cover,\"\n  },\n  {\n    \"start\": \"00:04:57,186\",\n    \"end\": \"00:04:57,546\",\n    \"lang\": \"en\",\n    \"text\": \"please.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:04:28,230",
+            "end": "00:04:30,030",
+            "es": "Dios mío",
+            "fr": "Mon dieu",
+            "uk": "О Боже мій"
+        },
+        {
+            "start": "00:04:30,030",
+            "end": "00:04:30,570",
+            "es": "Nos vemos",
+            "fr": "À bientôt",
+            "uk": "До побачення"
+        },
+        {
+            "start": "00:04:34,670",
+            "end": "00:04:34,930",
+            "es": "Oh",
+            "fr": "Oh",
+            "uk": "О"
+        },
+        {
+            "start": "00:04:34,930",
+            "end": "00:04:35,310",
+            "es": "Gracias por ver",
+            "fr": "Merci d'avoir regardé",
+            "uk": "Дякуємо, що дивились"
+        },
+        {
+            "start": "00:04:36,770",
+            "end": "00:04:38,630",
+            "es": "Estos fideos son deliciosos",
+            "fr": "Ces nouilles sont délicieuses",
+            "uk": "Ці локшина дуже смачні"
+        },
+        {
+            "start": "00:04:44,449",
+            "end": "00:04:48,090",
+            "es": "Estos fideos son muy deliciosos",
+            "fr": "Ces nouilles sont très délicieuses",
+            "uk": "Ці локшина дуже-дуже смачні"
+        },
+        {
+            "start": "00:04:54,786",
+            "end": "00:04:57,186",
+            "es": "Por favor, añade el teaser y la portada,",
+            "fr": "S'il vous plaît, ajoutez le teaser et la couverture,",
+            "uk": "Будь ласка, додайте тизер та обкладинку,"
+        },
+        {
+            "start": "00:04:57,186",
+            "end": "00:04:57,546",
+            "es": "por favor.",
+            "fr": "s'il vous plaît.",
+            "uk": "будь ласка."
+        }
+    ]
+}

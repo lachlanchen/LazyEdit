@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:09,394\",\n    \"end\": \"00:02:11,974\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi re mi\"\n  },\n  {\n    \"start\": \"00:02:12,884\",\n    \"end\": \"00:02:19,764\",\n    \"lang\": \"en\",\n    \"text\": \"I promise that I'm far much better when I play on my own.\"\n  },\n  {\n    \"start\": \"00:02:22,994\",\n    \"end\": \"00:02:26,874\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi re mi\"\n  },\n  {\n    \"start\": \"00:02:26,874\",\n    \"end\": \"00:02:29,534\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi re mi\"\n  },\n  {\n    \"start\": \"00:02:29,534\",\n    \"end\": \"00:02:32,254\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi re mi\"\n  },\n  {\n    \"start\": \"00:02:32,254\",\n    \"end\": \"00:02:35,294\",\n    \"lang\": \"en\",\n    \"text\": \"Na na tu si la la\"\n  },\n  {\n    \"start\": \"00:02:35,294\",\n    \"end\": \"00:02:36,194\",\n    \"lang\": \"en\",\n    \"text\": \"Now,\"\n  },\n  {\n    \"start\": \"00:02:36,194\",\n    \"end\": \"00:02:37,114\",\n    \"lang\": \"en\",\n    \"text\": \"I am,\"\n  },\n  {\n    \"start\": \"00:02:37,114\",\n    \"end\": \"00:02:38,454\",\n    \"lang\": \"en\",\n    \"text\": \"I am\"\n  },\n  {\n    \"start\": \"00:02:42,754\",\n    \"end\": \"00:02:43,394\",\n    \"lang\": \"en\",\n    \"text\": \"No,\"\n  },\n  {\n    \"start\": \"00:02:43,394\",\n    \"end\": \"00:02:44,034\",\n    \"lang\": \"en\",\n    \"text\": \"I am not.\"\n  },\n  {\n    \"start\": \"00:02:56,065\",\n    \"end\": \"00:02:58,866\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香,没有书稿。\"\n  },\n  {\n    \"start\": \"00:03:05,410\",\n    \"end\": \"00:03:05,650\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:03:05,650\",\n    \"end\": \"00:03:09,010\",\n    \"lang\": \"en\",\n    \"text\": \"and then end up with the...\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:09,394",
+            "end": "00:02:11,974",
+            "es": "Na na mi re mi",
+            "fr": "Na na mi re mi",
+            "uk": "На на мі ре мі"
+        },
+        {
+            "start": "00:02:12,884",
+            "end": "00:02:19,764",
+            "es": "Prometo que soy mucho mejor cuando juego solo.",
+            "fr": "Je promets que je suis bien meilleur quand je joue seul.",
+            "uk": "Обіцяю, що я набагато краще граю сам."
+        },
+        {
+            "start": "00:02:22,994",
+            "end": "00:02:26,874",
+            "es": "Na na mi re mi",
+            "fr": "Na na mi re mi",
+            "uk": "На на мі ре мі"
+        },
+        {
+            "start": "00:02:26,874",
+            "end": "00:02:29,534",
+            "es": "Na na mi re mi",
+            "fr": "Na na mi re mi",
+            "uk": "На на мі ре мі"
+        },
+        {
+            "start": "00:02:29,534",
+            "end": "00:02:32,254",
+            "es": "Na na mi re mi",
+            "fr": "Na na mi re mi",
+            "uk": "На на мі ре мі"
+        },
+        {
+            "start": "00:02:32,254",
+            "end": "00:02:35,294",
+            "es": "Na na tú sí la la",
+            "fr": "Na na toi oui la la",
+            "uk": "На на ти так ла ла"
+        },
+        {
+            "start": "00:02:35,294",
+            "end": "00:02:36,194",
+            "es": "Ahora,",
+            "fr": "Maintenant,",
+            "uk": "Тепер,"
+        },
+        {
+            "start": "00:02:36,194",
+            "end": "00:02:37,114",
+            "es": "yo soy,",
+            "fr": "je suis,",
+            "uk": "я є,"
+        },
+        {
+            "start": "00:02:37,114",
+            "end": "00:02:38,454",
+            "es": "yo soy",
+            "fr": "je suis",
+            "uk": "я є"
+        },
+        {
+            "start": "00:02:42,754",
+            "end": "00:02:43,394",
+            "es": "No,",
+            "fr": "Non,",
+            "uk": "Ні,"
+        },
+        {
+            "start": "00:02:43,394",
+            "end": "00:02:44,034",
+            "es": "no lo soy.",
+            "fr": "je ne le suis pas.",
+            "uk": "я не є."
+        },
+        {
+            "start": "00:02:56,065",
+            "end": "00:02:58,866",
+            "es": "Sin aroma de flores, sin manuscritos.",
+            "fr": "Sans parfum de fleurs, sans manuscrits.",
+            "uk": "Без запаху квітів, без рукописів."
+        },
+        {
+            "start": "00:03:05,410",
+            "end": "00:03:05,650",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:03:05,650",
+            "end": "00:03:09,010",
+            "es": "y luego terminas con...",
+            "fr": "et puis vous finissez avec...",
+            "uk": "а потім закінчуєте з..."
+        }
+    ]
+}

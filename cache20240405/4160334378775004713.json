@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"en\",\n    \"text\": \"Welcome back to the dog club.\"\n  },\n  {\n    \"start\": \"00:00:04,680\",\n    \"end\": \"00:00:07,820\",\n    \"lang\": \"en\",\n    \"text\": \"They are so cute and so happy.\"\n  },\n  {\n    \"start\": \"00:00:11,234\",\n    \"end\": \"00:00:12,454\",\n    \"lang\": \"zh\",\n    \"text\": \"咱去狗顿那吃一碗\"\n  },\n  {\n    \"start\": \"00:00:13,174\",\n    \"end\": \"00:00:13,454\",\n    \"lang\": \"zh\",\n    \"text\": \"好\"\n  },\n  {\n    \"start\": \"00:00:16,482\",\n    \"end\": \"00:00:18,002\",\n    \"lang\": \"en\",\n    \"text\": \"It's a dog club.\"\n  },\n  {\n    \"start\": \"00:00:18,802\",\n    \"end\": \"00:00:20,552\",\n    \"lang\": \"en\",\n    \"text\": \"They are making friends with each other.\"\n  },\n  {\n    \"start\": \"00:00:23,852\",\n    \"end\": \"00:00:24,662\",\n    \"lang\": \"en\",\n    \"text\": \"So gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:25,282\",\n    \"end\": \"00:00:25,802\",\n    \"lang\": \"en\",\n    \"text\": \"Fabulous.\"\n  },\n  {\n    \"start\": \"00:00:28,098\",\n    \"end\": \"00:00:28,658\",\n    \"lang\": \"zh\",\n    \"text\": \"走到那边去\"\n  },\n  {\n    \"start\": \"00:00:32,218\",\n    \"end\": \"00:00:32,778\",\n    \"lang\": \"zh\",\n    \"text\": \"这个叫\"\n  },\n  {\n    \"start\": \"00:00:33,957\",\n    \"end\": \"00:00:34,238\",\n    \"lang\": \"zh\",\n    \"text\": \"这个叫\"\n  },\n  {\n    \"start\": \"00:00:34,274\",\n    \"end\": \"00:00:36,594\",\n    \"lang\": \"en\",\n    \"text\": \"here's a bee nime\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,060",
+            "es": "Bienvenidos de nuevo al club de perros.",
+            "fr": "Bienvenue de retour au club de chiens.",
+            "uk": "Ласкаво просимо знову в клуб собак."
+        },
+        {
+            "start": "00:00:04,680",
+            "end": "00:00:07,820",
+            "es": "Son tan lindos y tan felices.",
+            "fr": "Ils sont si mignons et si heureux.",
+            "uk": "Вони такі милі та такі щасливі."
+        },
+        {
+            "start": "00:00:11,234",
+            "end": "00:00:12,454",
+            "es": "Vamos a comer un tazón en Dogton.",
+            "fr": "Allons manger un bol à Dogton.",
+            "uk": "Поїхали їсти миску в Догтон."
+        },
+        {
+            "start": "00:00:13,174",
+            "end": "00:00:13,454",
+            "es": "Bien.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:00:16,482",
+            "end": "00:00:18,002",
+            "es": "Es un club de perros.",
+            "fr": "C'est un club de chiens.",
+            "uk": "Це клуб собак."
+        },
+        {
+            "start": "00:00:18,802",
+            "end": "00:00:20,552",
+            "es": "Están haciendo amigos entre ellos.",
+            "fr": "Ils se font des amis entre eux.",
+            "uk": "Вони подружжються один з одним."
+        },
+        {
+            "start": "00:00:23,852",
+            "end": "00:00:24,662",
+            "es": "Tan hermoso.",
+            "fr": "Tellement magnifique.",
+            "uk": "Така чудова."
+        },
+        {
+            "start": "00:00:25,282",
+            "end": "00:00:25,802",
+            "es": "Fabuloso.",
+            "fr": "Fabuleux.",
+            "uk": "Чудово."
+        },
+        {
+            "start": "00:00:28,098",
+            "end": "00:00:28,658",
+            "es": "Vamos por ese lado.",
+            "fr": "Allons de ce côté.",
+            "uk": "Підемо туди."
+        },
+        {
+            "start": "00:00:32,218",
+            "end": "00:00:32,778",
+            "es": "Esto se llama",
+            "fr": "Cela s'appelle",
+            "uk": "Це називається"
+        },
+        {
+            "start": "00:00:33,957",
+            "end": "00:00:34,238",
+            "es": "Esto se llama",
+            "fr": "Cela s'appelle",
+            "uk": "Це називається"
+        },
+        {
+            "start": "00:00:34,274",
+            "end": "00:00:36,594",
+            "es": "aquí está un nombre de abeja",
+            "fr": "voici un nom d'abeille",
+            "uk": "ось назва бджоли"
+        }
+    ]
+}

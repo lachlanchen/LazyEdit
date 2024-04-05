@@ -1,0 +1,147 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,120\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:01,120\",\n    \"end\": \"00:00:05,620\",\n    \"lang\": \"en\",\n    \"text\": \"this is our unfinished second part of the lunch.\"\n  },\n  {\n    \"start\": \"00:00:09,620\",\n    \"end\": \"00:00:10,500\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:10,500\",\n    \"end\": \"00:00:13,460\",\n    \"lang\": \"en\",\n    \"text\": \"the potato takes 20 minutes,\"\n  },\n  {\n    \"start\": \"00:00:13,460\",\n    \"end\": \"00:00:18,620\",\n    \"lang\": \"en\",\n    \"text\": \"and the beef takes about 10 minutes.\"\n  },\n  {\n    \"start\": \"00:00:19,746\",\n    \"end\": \"00:00:20,486\",\n    \"lang\": \"zh\",\n    \"text\": \"有筋道的你\"\n  },\n  {\n    \"start\": \"00:00:20,866\",\n    \"end\": \"00:00:21,466\",\n    \"lang\": \"zh\",\n    \"text\": \"鱼肉的你再吃\"\n  },\n  {\n    \"start\": \"00:00:23,138\",\n    \"end\": \"00:00:25,678\",\n    \"lang\": \"en\",\n    \"text\": \"cook the potato before the beef.\"\n  },\n  {\n    \"start\": \"00:00:26,158\",\n    \"end\": \"00:00:26,838\",\n    \"lang\": \"en\",\n    \"text\": \"But today,\"\n  },\n  {\n    \"start\": \"00:00:26,838\",\n    \"end\": \"00:00:29,978\",\n    \"lang\": \"en\",\n    \"text\": \"I cook the beef before the potato\"\n  },\n  {\n    \"start\": \"00:00:30,377\",\n    \"end\": \"00:00:33,918\",\n    \"lang\": \"en\",\n    \"text\": \"and I use the oil of the beef to cook the potato.\"\n  },\n  {\n    \"start\": \"00:00:34,558\",\n    \"end\": \"00:00:40,038\",\n    \"lang\": \"en\",\n    \"text\": \"So this make the potato 20 minutes later.\"\n  },\n  {\n    \"start\": \"00:00:41,058\",\n    \"end\": \"00:00:41,938\",\n    \"lang\": \"ja\",\n    \"text\": \"ランザピー\"\n  },\n  {\n    \"start\": \"00:00:43,394\",\n    \"end\": \"00:00:43,654\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:43,654\",\n    \"end\": \"00:00:47,314\",\n    \"lang\": \"en\",\n    \"text\": \"wow,\"\n  },\n  {\n    \"start\": \"00:00:47,314\",\n    \"end\": \"00:00:50,174\",\n    \"lang\": \"en\",\n    \"text\": \"this is crispy.\"\n  },\n  {\n    \"start\": \"00:00:51,202\",\n    \"end\": \"00:00:53,342\",\n    \"lang\": \"ja\",\n    \"text\": \"とってもおいしいです\"\n  },\n  {\n    \"start\": \"00:00:54,114\",\n    \"end\": \"00:00:54,854\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:54,854\",\n    \"end\": \"00:00:56,734\",\n    \"lang\": \"en\",\n    \"text\": \"do you hear the sound?\"\n  },\n  {\n    \"start\": \"00:00:59,614\",\n    \"end\": \"00:01:00,754\",\n    \"lang\": \"en\",\n    \"text\": \"Crispy sound\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,120",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:01,120",
+            "end": "00:00:05,620",
+            "en": "this is our unfinished second part of the lunch.",
+            "zh": "这是我们午餐未完成的第二部分。",
+            "ar": "هذا هو الجزء الثاني غير المكتمل من الغداء."
+        },
+        {
+            "start": "00:00:09,620",
+            "end": "00:00:10,500",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:00:10,500",
+            "end": "00:00:13,460",
+            "en": "the potato takes 20 minutes,",
+            "zh": "土豆需要20分钟，",
+            "ar": "البطاطس تستغرق 20 دقيقة،"
+        },
+        {
+            "start": "00:00:13,460",
+            "end": "00:00:18,620",
+            "en": "and the beef takes about 10 minutes.",
+            "zh": "牛肉大约需要10分钟。",
+            "ar": "واللحم البقري يستغرق حوالي 10 دقائق."
+        },
+        {
+            "start": "00:00:19,746",
+            "end": "00:00:20,486",
+            "en": "You with the muscles",
+            "zh": "有筋道的你",
+            "ar": "أنت بالعضلات"
+        },
+        {
+            "start": "00:00:20,866",
+            "end": "00:00:21,466",
+            "en": "and you with the fish meat, eat again",
+            "zh": "鱼肉的你再吃",
+            "ar": "وأنت بلحم السمك، تناول الطعام مرة أخرى"
+        },
+        {
+            "start": "00:00:23,138",
+            "end": "00:00:25,678",
+            "en": "cook the potato before the beef.",
+            "zh": "在牛肉之前煮土豆。",
+            "ar": "اطبخ البطاطس قبل اللحم."
+        },
+        {
+            "start": "00:00:26,158",
+            "end": "00:00:26,838",
+            "en": "But today,",
+            "zh": "但今天，",
+            "ar": "لكن اليوم،"
+        },
+        {
+            "start": "00:00:26,838",
+            "end": "00:00:29,978",
+            "en": "I cook the beef before the potato",
+            "zh": "我先煮牛肉再煮土豆",
+            "ar": "أطبخ اللحم قبل البطاطس"
+        },
+        {
+            "start": "00:00:30,377",
+            "end": "00:00:33,918",
+            "en": "and I use the oil of the beef to cook the potato.",
+            "zh": "我用牛肉的油来煮土豆。",
+            "ar": "وأستخدم زيت اللحم لطهي البطاطس."
+        },
+        {
+            "start": "00:00:34,558",
+            "end": "00:00:40,038",
+            "en": "So this make the potato 20 minutes later.",
+            "zh": "所以这使得土豆晚了20分钟。",
+            "ar": "لذا هذا يجعل البطاطس تتأخر 20 دقيقة."
+        },
+        {
+            "start": "00:00:41,058",
+            "end": "00:00:41,938",
+            "en": "It's tasty",
+            "zh": "这很美味",
+            "ar": "إنه لذيذ",
+            "ja": "ランザピー"
+        },
+        {
+            "start": "00:00:43,394",
+            "end": "00:00:43,654",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:00:43,654",
+            "end": "00:00:47,314",
+            "en": "wow,",
+            "zh": "哇，",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:00:47,314",
+            "end": "00:00:50,174",
+            "en": "this is crispy.",
+            "zh": "这是脆的。",
+            "ar": "هذا مقرمش."
+        },
+        {
+            "start": "00:00:51,202",
+            "end": "00:00:53,342",
+            "en": "It's really delicious",
+            "zh": "这真的很好吃",
+            "ar": "إنه لذيذ جدًا",
+            "ja": "とってもおいしいです"
+        },
+        {
+            "start": "00:00:54,114",
+            "end": "00:00:54,854",
+            "en": "Wow,",
+            "zh": "哇，",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:00:54,854",
+            "end": "00:00:56,734",
+            "en": "do you hear the sound?",
+            "zh": "你听到声音了吗？",
+            "ar": "هل تسمع الصوت؟"
+        },
+        {
+            "start": "00:00:59,614",
+            "end": "00:01:00,754",
+            "en": "Crispy sound",
+            "zh": "脆声",
+            "ar": "صوت مقرمش"
+        }
+    ]
+}

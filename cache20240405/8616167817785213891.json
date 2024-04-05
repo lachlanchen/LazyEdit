@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,920\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:00,920\",\n    \"end\": \"00:00:02,620\",\n    \"lang\": \"en\",\n    \"text\": \"before our morning running,\"\n  },\n  {\n    \"start\": \"00:00:02,620\",\n    \"end\": \"00:00:04,580\",\n    \"lang\": \"en\",\n    \"text\": \"I think we record this progress.\"\n  },\n  {\n    \"start\": \"00:00:06,540\",\n    \"end\": \"00:00:07,940\",\n    \"lang\": \"en\",\n    \"text\": \"Na na na na.\"\n  },\n  {\n    \"start\": \"00:00:07,970\",\n    \"end\": \"00:00:09,210\",\n    \"lang\": \"en\",\n    \"text\": \"ному totoshin'\"\n  },\n  {\n    \"start\": \"00:00:09,570\",\n    \"end\": \"00:00:09,690\",\n    \"lang\": \"en\",\n    \"text\": \"na\"\n  },\n  {\n    \"start\": \"00:00:10,626\",\n    \"end\": \"00:00:12,766\",\n    \"lang\": \"ja\",\n    \"text\": \"まだ見えぬ\"\n  },\n  {\n    \"start\": \"00:00:17,506\",\n    \"end\": \"00:00:18,466\",\n    \"lang\": \"en\",\n    \"text\": \"That's a recorder again.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,920",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:00:00,920",
+            "end": "00:00:02,620",
+            "vi": "trước khi chạy buổi sáng của chúng ta,"
+        },
+        {
+            "start": "00:00:02,620",
+            "end": "00:00:04,580",
+            "vi": "tôi nghĩ chúng ta nên ghi lại tiến trình này."
+        },
+        {
+            "start": "00:00:06,540",
+            "end": "00:00:07,940",
+            "vi": "Na na na na."
+        },
+        {
+            "start": "00:00:07,970",
+            "end": "00:00:09,210",
+            "vi": "ному totoshin'"
+        },
+        {
+            "start": "00:00:09,570",
+            "end": "00:00:09,690",
+            "vi": "na"
+        },
+        {
+            "start": "00:00:10,626",
+            "end": "00:00:12,766",
+            "vi": "まだ見えぬ (vẫn chưa thấy)"
+        },
+        {
+            "start": "00:00:17,506",
+            "end": "00:00:18,466",
+            "vi": "Đó lại là một cái máy ghi âm."
+        }
+    ]
+}

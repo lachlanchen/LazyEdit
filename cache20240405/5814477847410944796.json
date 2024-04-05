@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:08,530\",\n    \"end\": \"00:02:11,670\",\n    \"lang\": \"en\",\n    \"text\": \"I learned more like how I learned science,\"\n  },\n  {\n    \"start\": \"00:02:11,670\",\n    \"end\": \"00:02:15,610\",\n    \"lang\": \"en\",\n    \"text\": \"rapidity,\"\n  },\n  {\n    \"start\": \"00:02:15,610\",\n    \"end\": \"00:02:20,430\",\n    \"lang\": \"en\",\n    \"text\": \"and practice,\"\n  },\n  {\n    \"start\": \"00:02:20,430\",\n    \"end\": \"00:02:22,890\",\n    \"lang\": \"en\",\n    \"text\": \"like doing exercises,\"\n  },\n  {\n    \"start\": \"00:02:23,150\",\n    \"end\": \"00:02:25,490\",\n    \"lang\": \"en\",\n    \"text\": \"solving a mathematical problem,\"\n  },\n  {\n    \"start\": \"00:02:25,490\",\n    \"end\": \"00:02:26,610\",\n    \"lang\": \"en\",\n    \"text\": \"coding.\"\n  },\n  {\n    \"start\": \"00:02:27,590\",\n    \"end\": \"00:02:29,330\",\n    \"lang\": \"en\",\n    \"text\": \"First I write a MVP,\"\n  },\n  {\n    \"start\": \"00:02:29,330\",\n    \"end\": \"00:02:30,890\",\n    \"lang\": \"en\",\n    \"text\": \"minimum viable program,\"\n  },\n  {\n    \"start\": \"00:02:30,890\",\n    \"end\": \"00:02:33,430\",\n    \"lang\": \"en\",\n    \"text\": \"and then I continue refining it.\"\n  },\n  {\n    \"start\": \"00:02:35,874\",\n    \"end\": \"00:02:38,374\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:38,374\",\n    \"end\": \"00:02:40,194\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树\"\n  },\n  {\n    \"start\": \"00:02:40,802\",\n    \"end\": \"00:02:41,162\",\n    \"lang\": \"en\",\n    \"text\": \"Go.\"\n  },\n  {\n    \"start\": \"00:02:42,722\",\n    \"end\": \"00:02:45,202\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:46,322\",\n    \"end\": \"00:02:48,582\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:02:54,786\",\n    \"end\": \"00:02:54,986\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:02:54,986\",\n    \"end\": \"00:02:55,946\",\n    \"lang\": \"en\",\n    \"text\": \"it's the wrong...\"\n  },\n  {\n    \"start\": \"00:02:55,946\",\n    \"end\": \"00:02:56,406\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:56,406\",\n    \"end\": \"00:02:56,786\",\n    \"lang\": \"en\",\n    \"text\": \"on air.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:08,530",
+            "end": "00:02:11,670",
+            "en": "I learned more like how I learned science,",
+            "zh": "我学习科学的方式更多的是这样学习的，",
+            "ar": "تعلمت أكثر كيف تعلمت العلم،"
+        },
+        {
+            "start": "00:02:11,670",
+            "end": "00:02:15,610",
+            "en": "rapidity,",
+            "zh": "快速，",
+            "ar": "السرعة،"
+        },
+        {
+            "start": "00:02:15,610",
+            "end": "00:02:20,430",
+            "en": "and practice,",
+            "zh": "和练习，",
+            "ar": "والممارسة،"
+        },
+        {
+            "start": "00:02:20,430",
+            "end": "00:02:22,890",
+            "en": "like doing exercises,",
+            "zh": "就像做练习，",
+            "ar": "مثل القيام بالتمارين،"
+        },
+        {
+            "start": "00:02:23,150",
+            "end": "00:02:25,490",
+            "en": "solving a mathematical problem,",
+            "zh": "解决一个数学问题，",
+            "ar": "حل مسألة رياضية،"
+        },
+        {
+            "start": "00:02:25,490",
+            "end": "00:02:26,610",
+            "en": "coding.",
+            "zh": "编程。",
+            "ar": "البرمجة."
+        },
+        {
+            "start": "00:02:27,590",
+            "end": "00:02:29,330",
+            "en": "First I write a MVP,",
+            "zh": "首先我写一个MVP，",
+            "ar": "أولاً أكتب MVP،"
+        },
+        {
+            "start": "00:02:29,330",
+            "end": "00:02:30,890",
+            "en": "minimum viable program,",
+            "zh": "最小可行程序，",
+            "ar": "البرنامج القابل للتطبيق الأدنى،"
+        },
+        {
+            "start": "00:02:30,890",
+            "end": "00:02:33,430",
+            "en": "and then I continue refining it.",
+            "zh": "然后我继续完善它。",
+            "ar": "ثم أواصل تحسينه."
+        },
+        {
+            "start": "00:02:35,874",
+            "end": "00:02:38,374",
+            "en": "No flower fragrance",
+            "zh": "没有花香",
+            "ar": "لا رائحة للزهور"
+        },
+        {
+            "start": "00:02:38,374",
+            "end": "00:02:40,194",
+            "en": "No trees",
+            "zh": "没有树",
+            "ar": "لا أشجار"
+        },
+        {
+            "start": "00:02:40,802",
+            "end": "00:02:41,162",
+            "en": "Go.",
+            "zh": "走。",
+            "ar": "اذهب."
+        },
+        {
+            "start": "00:02:42,722",
+            "end": "00:02:45,202",
+            "en": "No flower fragrance",
+            "zh": "没有花香",
+            "ar": "لا رائحة للزهور"
+        },
+        {
+            "start": "00:02:46,322",
+            "end": "00:02:48,582",
+            "en": "No trunks",
+            "zh": "没有树干",
+            "ar": "لا جذوع"
+        },
+        {
+            "start": "00:02:54,786",
+            "end": "00:02:54,986",
+            "en": "Sorry,",
+            "zh": "对不起，",
+            "ar": "آسف،"
+        },
+        {
+            "start": "00:02:54,986",
+            "end": "00:02:55,946",
+            "en": "it's the wrong...",
+            "zh": "这是错误的...",
+            "ar": "إنه الخطأ..."
+        },
+        {
+            "start": "00:02:55,946",
+            "end": "00:02:56,406",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:02:56,406",
+            "end": "00:02:56,786",
+            "en": "on air.",
+            "zh": "在播。",
+            "ar": "على الهواء."
+        }
+    ]
+}

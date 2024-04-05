@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,540\",\n    \"end\": \"00:00:02,340\",\n    \"lang\": \"zh\",\n    \"text\": \"这是我们今天的午饭啊\"\n  },\n  {\n    \"start\": \"00:00:02,340\",\n    \"end\": \"00:00:02,860\",\n    \"lang\": \"zh\",\n    \"text\": \"螺蛳粉\"\n  },\n  {\n    \"start\": \"00:00:03,400\",\n    \"end\": \"00:00:05,260\",\n    \"lang\": \"zh\",\n    \"text\": \"今天是感冒新冠\"\n  },\n  {\n    \"start\": \"00:00:05,800\",\n    \"end\": \"00:00:06,580\",\n    \"lang\": \"zh\",\n    \"text\": \"旧冠\"\n  },\n  {\n    \"start\": \"00:00:07,060\",\n    \"end\": \"00:00:08,000\",\n    \"lang\": \"zh\",\n    \"text\": \"旧冠第四天\"\n  },\n  {\n    \"start\": \"00:00:09,314\",\n    \"end\": \"00:00:09,714\",\n    \"lang\": \"en\",\n    \"text\": \"Um\"\n  },\n  {\n    \"start\": \"00:00:10,658\",\n    \"end\": \"00:00:11,958\",\n    \"lang\": \"zh\",\n    \"text\": \"现在喉咙痛得不行\"\n  },\n  {\n    \"start\": \"00:00:12,537\",\n    \"end\": \"00:00:13,758\",\n    \"lang\": \"zh\",\n    \"text\": \"这以毒攻毒\"\n  },\n  {\n    \"start\": \"00:00:13,758\",\n    \"end\": \"00:00:14,858\",\n    \"lang\": \"zh\",\n    \"text\": \"去靠它了\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,540",
+            "end": "00:00:02,340",
+            "en": "This is our lunch for today",
+            "zh": "这是我们今天的午饭啊",
+            "ar": "هذا غداؤنا لليوم"
+        },
+        {
+            "start": "00:00:02,340",
+            "end": "00:00:02,860",
+            "en": "Luosifen",
+            "zh": "螺蛳粉",
+            "ar": "لوسيفين"
+        },
+        {
+            "start": "00:00:03,400",
+            "end": "00:00:05,260",
+            "en": "Today is COVID cold",
+            "zh": "今天是感冒新冠",
+            "ar": "اليوم برد كوفيد"
+        },
+        {
+            "start": "00:00:05,800",
+            "end": "00:00:06,580",
+            "en": "Old crown",
+            "zh": "旧冠",
+            "ar": "التاج القديم"
+        },
+        {
+            "start": "00:00:07,060",
+            "end": "00:00:08,000",
+            "en": "Day four of the old crown",
+            "zh": "旧冠第四天",
+            "ar": "اليوم الرابع للتاج القديم"
+        },
+        {
+            "start": "00:00:09,314",
+            "end": "00:00:09,714",
+            "en": "Um",
+            "zh": "呃",
+            "ar": "أمم"
+        },
+        {
+            "start": "00:00:10,658",
+            "end": "00:00:11,958",
+            "en": "Now my throat hurts so badly",
+            "zh": "现在喉咙痛得不行",
+            "ar": "الآن حلقي يؤلمني بشدة"
+        },
+        {
+            "start": "00:00:12,537",
+            "end": "00:00:13,758",
+            "en": "Fight poison with poison",
+            "zh": "这以毒攻毒",
+            "ar": "قتال السم بالسم"
+        },
+        {
+            "start": "00:00:13,758",
+            "end": "00:00:14,858",
+            "en": "Relying on it now",
+            "zh": "去靠它了",
+            "ar": "الاعتماد عليه الآن"
+        }
+    ]
+}

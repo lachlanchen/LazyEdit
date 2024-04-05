@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:03,782\",\n    \"end\": \"00:02:04,642\",\n    \"lang\": \"en\",\n    \"text\": \"who you are,\"\n  },\n  {\n    \"start\": \"00:02:04,642\",\n    \"end\": \"00:02:05,882\",\n    \"lang\": \"en\",\n    \"text\": \"what's your achievement,\"\n  },\n  {\n    \"start\": \"00:02:05,882\",\n    \"end\": \"00:02:11,182\",\n    \"lang\": \"en\",\n    \"text\": \"at the end we will become dust.\"\n  },\n  {\n    \"start\": \"00:02:11,182\",\n    \"end\": \"00:02:16,922\",\n    \"lang\": \"en\",\n    \"text\": \"We will return everything\"\n  },\n  {\n    \"start\": \"00:02:16,922\",\n    \"end\": \"00:02:18,942\",\n    \"lang\": \"en\",\n    \"text\": \"that we have to the universe.\"\n  },\n  {\n    \"start\": \"00:02:18,942\",\n    \"end\": \"00:02:29,542\",\n    \"lang\": \"en\",\n    \"text\": \"So enjoy the experience in this journey and make it better.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:03,782",
+            "end": "00:02:04,642",
+            "vi": "bạn là ai,"
+        },
+        {
+            "start": "00:02:04,642",
+            "end": "00:02:05,882",
+            "vi": "thành tựu của bạn là gì,"
+        },
+        {
+            "start": "00:02:05,882",
+            "end": "00:02:11,182",
+            "vi": "cuối cùng chúng ta sẽ trở thành bụi."
+        },
+        {
+            "start": "00:02:11,182",
+            "end": "00:02:16,922",
+            "vi": "Chúng ta sẽ trả lại mọi thứ"
+        },
+        {
+            "start": "00:02:16,922",
+            "end": "00:02:18,942",
+            "vi": "mà chúng ta có cho vũ trụ."
+        },
+        {
+            "start": "00:02:18,942",
+            "end": "00:02:29,542",
+            "vi": "Vậy hãy tận hưởng trải nghiệm trong hành trình này và làm cho nó tốt hơn."
+        }
+    ]
+}

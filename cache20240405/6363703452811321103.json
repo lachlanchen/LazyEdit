@@ -1,0 +1,25 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,900\",\n    \"ja\": \"これが<私>[]たちのさつまいもの<麺>[]です。\"\n  },\n  {\n    \"start\": \"00:00:03,800\",\n    \"end\": \"00:00:04,520\",\n    \"ja\": \"わかりました。\"\n  },\n  {\n    \"start\": \"00:00:05,580\",\n    \"end\": \"00:00:08,800\",\n    \"ja\": \"これが<私>[]たちのさつまいもの<麺>[]です。\"\n  },\n  {\n    \"start\": \"00:00:10,040\",\n    \"end\": \"00:00:10,480\",\n    \"ja\": \"わかりました。\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,900",
+            "ja": "これが<私>[わたし]たちのさつまいもの<麺>[めん]です。"
+        },
+        {
+            "start": "00:00:03,800",
+            "end": "00:00:04,520",
+            "ja": "わかりました。"
+        },
+        {
+            "start": "00:00:05,580",
+            "end": "00:00:08,800",
+            "ja": "これが<私>[わたし]たちのさつまいもの<麺>[めん]です。"
+        },
+        {
+            "start": "00:00:10,040",
+            "end": "00:00:10,480",
+            "ja": "わかりました。"
+        }
+    ]
+}

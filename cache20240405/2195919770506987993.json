@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:06,540\",\n    \"lang\": \"en\",\n    \"text\": \"I had a dream to build a 23-floor building.\"\n  },\n  {\n    \"start\": \"00:00:08,060\",\n    \"end\": \"00:00:09,720\",\n    \"lang\": \"en\",\n    \"text\": \"The highest floor,\"\n  },\n  {\n    \"start\": \"00:00:09,720\",\n    \"end\": \"00:00:11,340\",\n    \"lang\": \"en\",\n    \"text\": \"the 23rd floor,\"\n  },\n  {\n    \"start\": \"00:00:11,340\",\n    \"end\": \"00:00:13,900\",\n    \"lang\": \"en\",\n    \"text\": \"that provides food without price.\"\n  },\n  {\n    \"start\": \"00:00:14,620\",\n    \"end\": \"00:00:17,780\",\n    \"lang\": \"en\",\n    \"text\": \"Only the people that are invited can enjoy the food there.\"\n  },\n  {\n    \"start\": \"00:00:17,940\",\n    \"end\": \"00:00:21,160\",\n    \"lang\": \"en\",\n    \"text\": \"And I will recruit the best chefs around the world.\"\n  },\n  {\n    \"start\": \"00:00:21,540\",\n    \"end\": \"00:00:24,580\",\n    \"lang\": \"en\",\n    \"text\": \"They don't care about the KPI,\"\n  },\n  {\n    \"start\": \"00:00:24,580\",\n    \"end\": \"00:00:25,120\",\n    \"lang\": \"en\",\n    \"text\": \"performance,\"\n  },\n  {\n    \"start\": \"00:00:25,120\",\n    \"end\": \"00:00:26,460\",\n    \"lang\": \"en\",\n    \"text\": \"or anything else.\"\n  },\n  {\n    \"start\": \"00:00:26,460\",\n    \"end\": \"00:00:30,780\",\n    \"lang\": \"en\",\n    \"text\": \"They just focus on when we will refine their food.\"\n  },\n  {\n    \"start\": \"00:00:31,860\",\n    \"end\": \"00:00:34,440\",\n    \"lang\": \"en\",\n    \"text\": \"And that's it.\"\n  },\n  {\n    \"start\": \"00:00:34,440\",\n    \"end\": \"00:00:35,380\",\n    \"lang\": \"en\",\n    \"text\": \"That's my dream.\"\n  },\n  {\n    \"start\": \"00:00:35,800\",\n    \"end\": \"00:00:36,540\",\n    \"lang\": \"en\",\n    \"text\": \"Build this building.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:06,540",
+            "es": "Tuve un sueño de construir un edificio de 23 pisos.",
+            "fr": "J'ai eu un rêve de construire un immeuble de 23 étages.",
+            "uk": "Я мав мрію побудувати 23-поверхову будівлю."
+        },
+        {
+            "start": "00:00:08,060",
+            "end": "00:00:09,720",
+            "es": "El piso más alto,",
+            "fr": "L'étage le plus haut,",
+            "uk": "Найвищий поверх,"
+        },
+        {
+            "start": "00:00:09,720",
+            "end": "00:00:11,340",
+            "es": "el piso 23,",
+            "fr": "le 23ème étage,",
+            "uk": "23-тій поверх,"
+        },
+        {
+            "start": "00:00:11,340",
+            "end": "00:00:13,900",
+            "es": "que provee comida sin costo.",
+            "fr": "qui fournit de la nourriture gratuitement.",
+            "uk": "який забезпечує їжею безкоштовно."
+        },
+        {
+            "start": "00:00:14,620",
+            "end": "00:00:17,780",
+            "es": "Solo las personas que están invitadas pueden disfrutar de la comida allí.",
+            "fr": "Seules les personnes invitées peuvent profiter de la nourriture là-bas.",
+            "uk": "Тільки люди, які запрошені, можуть насолоджуватися там їжею."
+        },
+        {
+            "start": "00:00:17,940",
+            "end": "00:00:21,160",
+            "es": "Y reclutaré a los mejores chefs del mundo.",
+            "fr": "Et je recruterai les meilleurs chefs du monde.",
+            "uk": "І я найму найкращих шеф-кухарів світу."
+        },
+        {
+            "start": "00:00:21,540",
+            "end": "00:00:24,580",
+            "es": "A ellos no les importa el KPI,",
+            "fr": "Ils ne se soucient pas des KPI,",
+            "uk": "Їм не важливий KPI,"
+        },
+        {
+            "start": "00:00:24,580",
+            "end": "00:00:25,120",
+            "es": "el rendimiento,",
+            "fr": "la performance,",
+            "uk": "результативність,"
+        },
+        {
+            "start": "00:00:25,120",
+            "end": "00:00:26,460",
+            "es": "ni de nada más.",
+            "fr": "ni de quoi que ce soit d'autre.",
+            "uk": "ані чого іншого."
+        },
+        {
+            "start": "00:00:26,460",
+            "end": "00:00:30,780",
+            "es": "Solo se enfocan en cuándo vamos a refinar su comida.",
+            "fr": "Ils se concentrent uniquement sur le moment où nous allons raffiner leur nourriture.",
+            "uk": "Вони просто зосереджуються на тому, коли ми вдосконалимо їхню їжу."
+        },
+        {
+            "start": "00:00:31,860",
+            "end": "00:00:34,440",
+            "es": "Y eso es todo.",
+            "fr": "Et c'est tout.",
+            "uk": "І ось і все."
+        },
+        {
+            "start": "00:00:34,440",
+            "end": "00:00:35,380",
+            "es": "Ese es mi sueño.",
+            "fr": "C'est mon rêve.",
+            "uk": "Це моя мрія."
+        },
+        {
+            "start": "00:00:35,800",
+            "end": "00:00:36,540",
+            "es": "Construir este edificio.",
+            "fr": "Construire cet immeuble.",
+            "uk": "Побудувати цю будівлю."
+        }
+    ]
+}

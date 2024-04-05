@@ -1,0 +1,111 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,540\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます\"\n  },\n  {\n    \"start\": \"00:00:03,490\",\n    \"end\": \"00:00:13,490\",\n    \"lang\": \"en\",\n    \"text\": \"So yesterday I watched a video of Britain and they mocked that the American English,\"\n  },\n  {\n    \"start\": \"00:00:13,890\",\n    \"end\": \"00:00:14,790\",\n    \"lang\": \"en\",\n    \"text\": \"so they say,\"\n  },\n  {\n    \"start\": \"00:00:14,790\",\n    \"end\": \"00:00:17,250\",\n    \"lang\": \"en\",\n    \"text\": \"like the pavement,\"\n  },\n  {\n    \"start\": \"00:00:17,250\",\n    \"end\": \"00:00:20,550\",\n    \"lang\": \"en\",\n    \"text\": \"in American English it becomes sidewalk.\"\n  },\n  {\n    \"start\": \"00:00:21,370\",\n    \"end\": \"00:00:23,030\",\n    \"lang\": \"en\",\n    \"text\": \"And also the bin,\"\n  },\n  {\n    \"start\": \"00:00:23,030\",\n    \"end\": \"00:00:32,150\",\n    \"lang\": \"en\",\n    \"text\": \"in British it becomes a waste paper basket in American English.\"\n  },\n  {\n    \"start\": \"00:00:32,150\",\n    \"end\": \"00:00:33,410\",\n    \"lang\": \"en\",\n    \"text\": \"And they mocked that,\"\n  },\n  {\n    \"start\": \"00:00:33,410\",\n    \"end\": \"00:00:35,330\",\n    \"lang\": \"en\",\n    \"text\": \"that since Americans,\"\n  },\n  {\n    \"start\": \"00:00:35,330\",\n    \"end\": \"00:00:40,090\",\n    \"lang\": \"en\",\n    \"text\": \"they cannot directly understand English.\"\n  },\n  {\n    \"start\": \"00:00:41,410\",\n    \"end\": \"00:00:42,430\",\n    \"lang\": \"en\",\n    \"text\": \"So there is a,\"\n  },\n  {\n    \"start\": \"00:00:42,430\",\n    \"end\": \"00:00:48,150\",\n    \"lang\": \"en\",\n    \"text\": \"and also like another example is horse riding.\"\n  },\n  {\n    \"start\": \"00:00:49,170\",\n    \"end\": \"00:00:55,750\",\n    \"lang\": \"en\",\n    \"text\": \"They mocked that American English changed to horseback riding.\"\n  },\n  {\n    \"start\": \"00:00:55,750\",\n    \"end\": \"00:00:56,610\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:56,610\",\n    \"end\": \"00:01:02,930\",\n    \"lang\": \"en\",\n    \"text\": \"and I say there is a discrimination chain,\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,540",
+            "en": "Thank you very much",
+            "zh": "非常感谢您",
+            "ar": "شكرا جزيلا لك",
+            "ja": "ありがとうございます"
+        },
+        {
+            "start": "00:00:03,490",
+            "end": "00:00:13,490",
+            "en": "So yesterday I watched a video of Britain and they mocked that the American English,",
+            "zh": "所以昨天我看了一个关于英国的视频，他们嘲笑美式英语，",
+            "ar": "لذا شاهدت أمس فيديو عن بريطانيا وكانوا يسخرون من الإنجليزية الأمريكية،"
+        },
+        {
+            "start": "00:00:13,890",
+            "end": "00:00:14,790",
+            "en": "so they say,",
+            "zh": "所以他们说，",
+            "ar": "فهم يقولون،"
+        },
+        {
+            "start": "00:00:14,790",
+            "end": "00:00:17,250",
+            "en": "like the pavement,",
+            "zh": "比如人行道，",
+            "ar": "مثل الرصيف،"
+        },
+        {
+            "start": "00:00:17,250",
+            "end": "00:00:20,550",
+            "en": "in American English it becomes sidewalk.",
+            "zh": "在美式英语中变成了人行道。",
+            "ar": "في الإنجليزية الأمريكية، يصبح رصيف المشاة."
+        },
+        {
+            "start": "00:00:21,370",
+            "end": "00:00:23,030",
+            "en": "And also the bin,",
+            "zh": "还有垃圾桶，",
+            "ar": "وأيضًا القمامة،"
+        },
+        {
+            "start": "00:00:23,030",
+            "end": "00:00:32,150",
+            "en": "in British it becomes a waste paper basket in American English.",
+            "zh": "在英式英语中，它在美式英语中变成了废纸篓。",
+            "ar": "في البريطانية يصبح سلة مهملات الورق في الإنجليزية الأمريكية."
+        },
+        {
+            "start": "00:00:32,150",
+            "end": "00:00:33,410",
+            "en": "And they mocked that,",
+            "zh": "他们嘲笑这一点，",
+            "ar": "وكانوا يسخرون من ذلك،"
+        },
+        {
+            "start": "00:00:33,410",
+            "end": "00:00:35,330",
+            "en": "that since Americans,",
+            "zh": "因为美国人，",
+            "ar": "نظرًا لأن الأمريكيين،"
+        },
+        {
+            "start": "00:00:35,330",
+            "end": "00:00:40,090",
+            "en": "they cannot directly understand English.",
+            "zh": "他们不能直接理解英语。",
+            "ar": "لا يمكنهم فهم الإنجليزية مباشرة."
+        },
+        {
+            "start": "00:00:41,410",
+            "end": "00:00:42,430",
+            "en": "So there is a,",
+            "zh": "所以有一个，",
+            "ar": "لذا يوجد،"
+        },
+        {
+            "start": "00:00:42,430",
+            "end": "00:00:48,150",
+            "en": "and also like another example is horse riding.",
+            "zh": "还有另一个例子是骑马。",
+            "ar": "وكمثال آخر مثل ركوب الخيل."
+        },
+        {
+            "start": "00:00:49,170",
+            "end": "00:00:55,750",
+            "en": "They mocked that American English changed to horseback riding.",
+            "zh": "他们嘲笑美式英语将其改为骑马。",
+            "ar": "سخروا من أن الإنجليزية الأمريكية تغيرت إلى ركوب الخيل."
+        },
+        {
+            "start": "00:00:55,750",
+            "end": "00:00:56,610",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذا،"
+        },
+        {
+            "start": "00:00:56,610",
+            "end": "00:01:02,930",
+            "en": "and I say there is a discrimination chain,",
+            "zh": "我说这里有一条歧视链，",
+            "ar": "وأقول إن هناك سلسلة تمييز،"
+        }
+    ]
+}

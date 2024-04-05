@@ -1,0 +1,145 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,600\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは こんにちは\"\n  },\n  {\n    \"start\": \"00:00:03,259\",\n    \"end\": \"00:00:04,720\",\n    \"lang\": \"ja\",\n    \"text\": \"This is our breakfast\"\n  },\n  {\n    \"start\": \"00:00:04,840\",\n    \"end\": \"00:00:07,140\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:08,450\",\n    \"end\": \"00:00:09,370\",\n    \"lang\": \"en\",\n    \"text\": \"They not me.\"\n  },\n  {\n    \"start\": \"00:00:10,690\",\n    \"end\": \"00:00:12,590\",\n    \"lang\": \"ja\",\n    \"text\": \"これはヴィルナミドのパンです\"\n  },\n  {\n    \"start\": \"00:00:12,590\",\n    \"end\": \"00:00:14,490\",\n    \"lang\": \"ja\",\n    \"text\": \"ヴィルナミドはヴィルナ本名です\"\n  },\n  {\n    \"start\": \"00:00:14,754\",\n    \"end\": \"00:00:16,014\",\n    \"lang\": \"en\",\n    \"text\": \"Can you talk about this?\"\n  },\n  {\n    \"start\": \"00:00:16,033\",\n    \"end\": \"00:00:17,294\",\n    \"lang\": \"ja\",\n    \"text\": \"この絵はパンです\"\n  },\n  {\n    \"start\": \"00:00:18,274\",\n    \"end\": \"00:00:19,754\",\n    \"lang\": \"en\",\n    \"text\": \"In Japanese it's palm,\"\n  },\n  {\n    \"start\": \"00:00:19,754\",\n    \"end\": \"00:00:20,734\",\n    \"lang\": \"en\",\n    \"text\": \"and blueberry,\"\n  },\n  {\n    \"start\": \"00:00:20,734\",\n    \"end\": \"00:00:21,454\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:00:21,454\",\n    \"end\": \"00:00:22,774\",\n    \"lang\": \"en\",\n    \"text\": \"and...\"\n  },\n  {\n    \"start\": \"00:00:23,490\",\n    \"end\": \"00:00:26,110\",\n    \"lang\": \"ja\",\n    \"text\": \"この骨は卵です\"\n  },\n  {\n    \"start\": \"00:00:26,754\",\n    \"end\": \"00:00:29,574\",\n    \"lang\": \"en\",\n    \"text\": \"and cheese renat and sweet potato.\"\n  },\n  {\n    \"start\": \"00:00:30,494\",\n    \"end\": \"00:00:31,954\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our breakfast.\"\n  },\n  {\n    \"start\": \"00:00:33,454\",\n    \"end\": \"00:00:34,534\",\n    \"lang\": \"en\",\n    \"text\": \"Let me...\"\n  },\n  {\n    \"start\": \"00:00:45,666\",\n    \"end\": \"00:00:48,326\",\n    \"lang\": \"ja\",\n    \"text\": \"私はビールジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:00:51,330\",\n    \"end\": \"00:00:52,770\",\n    \"lang\": \"en\",\n    \"text\": \"So this bread,\"\n  },\n  {\n    \"start\": \"00:00:52,770\",\n    \"end\": \"00:00:54,630\",\n    \"lang\": \"en\",\n    \"text\": \"let me try this.\"\n  },\n  {\n    \"start\": \"00:00:55,510\",\n    \"end\": \"00:00:56,430\",\n    \"lang\": \"en\",\n    \"text\": \"It's great.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,600",
+            "es": "Hola hola",
+            "fr": "Bonjour bonjour",
+            "uk": "Привіт привіт"
+        },
+        {
+            "start": "00:00:03,259",
+            "end": "00:00:04,720",
+            "es": "Este es nuestro desayuno",
+            "fr": "Ceci est notre petit-déjeuner",
+            "uk": "Це наш сніданок"
+        },
+        {
+            "start": "00:00:04,840",
+            "end": "00:00:07,140",
+            "es": "Estoy comiendo este desayuno",
+            "fr": "Je mange ce petit-déjeuner",
+            "uk": "Я їм цей сніданок"
+        },
+        {
+            "start": "00:00:08,450",
+            "end": "00:00:09,370",
+            "es": "Ellos, no yo.",
+            "fr": "Eux, pas moi.",
+            "uk": "Вони, а не я."
+        },
+        {
+            "start": "00:00:10,690",
+            "end": "00:00:12,590",
+            "es": "Este es pan de Vilnamid",
+            "fr": "Ceci est du pain de Vilnamid",
+            "uk": "Це хліб Вільнамід"
+        },
+        {
+            "start": "00:00:12,590",
+            "end": "00:00:14,490",
+            "es": "Vilnamid es el nombre real de Vilna",
+            "fr": "Vilnamid est le vrai nom de Vilna",
+            "uk": "Вільнамід - це справжнє ім'я Вільни"
+        },
+        {
+            "start": "00:00:14,754",
+            "end": "00:00:16,014",
+            "es": "¿Puedes hablar de esto?",
+            "fr": "Peux-tu parler de ça?",
+            "uk": "Можете розповісти про це?"
+        },
+        {
+            "start": "00:00:16,033",
+            "end": "00:00:17,294",
+            "es": "Este cuadro es de pan",
+            "fr": "Cette image est de pain",
+            "uk": "Це зображення хліба"
+        },
+        {
+            "start": "00:00:18,274",
+            "end": "00:00:19,754",
+            "es": "En japonés es palma,",
+            "fr": "En japonais, c'est palme,",
+            "uk": "Японською це пальма,"
+        },
+        {
+            "start": "00:00:19,754",
+            "end": "00:00:20,734",
+            "es": "y arándano,",
+            "fr": "et myrtille,",
+            "uk": "і чорниця,"
+        },
+        {
+            "start": "00:00:20,734",
+            "end": "00:00:21,454",
+            "es": "fresa,",
+            "fr": "fraise,",
+            "uk": "полуниця,"
+        },
+        {
+            "start": "00:00:21,454",
+            "end": "00:00:22,774",
+            "es": "y...",
+            "fr": "et...",
+            "uk": "і..."
+        },
+        {
+            "start": "00:00:23,490",
+            "end": "00:00:26,110",
+            "es": "Este hueso es un huevo",
+            "fr": "Cet os est un oeuf",
+            "uk": "Ця кістка - яйце"
+        },
+        {
+            "start": "00:00:26,754",
+            "end": "00:00:29,574",
+            "es": "y queso renat y batata.",
+            "fr": "et fromage renat et patate douce.",
+            "uk": "і сир ренат та солодка картопля."
+        },
+        {
+            "start": "00:00:30,494",
+            "end": "00:00:31,954",
+            "es": "Así que este es nuestro desayuno.",
+            "fr": "Donc, ceci est notre petit-déjeuner.",
+            "uk": "Отже, це наш сніданок."
+        },
+        {
+            "start": "00:00:33,454",
+            "end": "00:00:34,534",
+            "es": "Déjame...",
+            "fr": "Laissez-moi...",
+            "uk": "Дозвольте мені..."
+        },
+        {
+            "start": "00:00:45,666",
+            "end": "00:00:48,326",
+            "es": "Estoy bebiendo jugo de cerveza",
+            "fr": "Je bois du jus de bière",
+            "uk": "Я п'ю сок з пива"
+        },
+        {
+            "start": "00:00:51,330",
+            "end": "00:00:52,770",
+            "es": "Entonces este pan,",
+            "fr": "Donc ce pain,",
+            "uk": "Отже, цей хліб,"
+        },
+        {
+            "start": "00:00:52,770",
+            "end": "00:00:54,630",
+            "es": "déjame probar esto.",
+            "fr": "laissez-moi essayer ceci.",
+            "uk": "дозвольте мені спробувати це."
+        },
+        {
+            "start": "00:00:55,510",
+            "end": "00:00:56,430",
+            "es": "Es genial.",
+            "fr": "C'est génial.",
+            "uk": "Це чудово."
+        }
+    ]
+}

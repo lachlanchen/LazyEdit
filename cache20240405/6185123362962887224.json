@@ -1,0 +1,40 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,940\",\n    \"ja\": \"<今日>[]の<朝食>[]です。\"\n  },\n  {\n    \"start\": \"00:00:05,780\",\n    \"end\": \"00:00:08,340\",\n    \"ja\": \"そして、<パン>[]2つ。\"\n  },\n  {\n    \"start\": \"00:00:12,034\",\n    \"end\": \"00:00:12,314\",\n    \"ja\": \"<バイバイ>[]\"\n  },\n  {\n    \"start\": \"00:00:14,562\",\n    \"end\": \"00:00:14,842\",\n    \"ja\": \"1つ、\"\n  },\n  {\n    \"start\": \"00:00:14,842\",\n    \"end\": \"00:00:15,962\",\n    \"ja\": \"どうやって「1つ」と<言>[]うのか、\"\n  },\n  {\n    \"start\": \"00:00:15,962\",\n    \"end\": \"00:00:17,082\",\n    \"ja\": \"これが1つ。\"\n  },\n  {\n    \"start\": \"00:00:18,662\",\n    \"end\": \"00:00:19,702\",\n    \"ja\": \"これ1<本>[]。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,940",
+            "ja": "<今日>[きょう]の<朝食>[ちょうしょく]です。"
+        },
+        {
+            "start": "00:00:05,780",
+            "end": "00:00:08,340",
+            "ja": "そして、<パン>2つ。"
+        },
+        {
+            "start": "00:00:12,034",
+            "end": "00:00:12,314",
+            "ja": "<バイバイ>"
+        },
+        {
+            "start": "00:00:14,562",
+            "end": "00:00:14,842",
+            "ja": "1つ、"
+        },
+        {
+            "start": "00:00:14,842",
+            "end": "00:00:15,962",
+            "ja": "どうやって「1つ」と<言>[い]うのか、"
+        },
+        {
+            "start": "00:00:15,962",
+            "end": "00:00:17,082",
+            "ja": "これが1つ。"
+        },
+        {
+            "start": "00:00:18,662",
+            "end": "00:00:19,702",
+            "ja": "これ1<本>[ほん]。"
+        }
+    ]
+}

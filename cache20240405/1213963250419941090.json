@@ -1,0 +1,35 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es) and French (fr) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other language. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,260\",\n    \"lang\": \"en\",\n    \"text\": \"I wish I can record that he played guitar,\"\n  },\n  {\n    \"start\": \"00:00:04,260\",\n    \"end\": \"00:00:05,340\",\n    \"lang\": \"en\",\n    \"text\": \"the guitar class,\"\n  },\n  {\n    \"start\": \"00:00:05,340\",\n    \"end\": \"00:00:08,400\",\n    \"lang\": \"en\",\n    \"text\": \"fluently in 1861 time.\"\n  },\n  {\n    \"start\": \"00:00:42,599\",\n    \"end\": \"00:00:43,160\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:00:43,160\",\n    \"end\": \"00:00:44,080\",\n    \"lang\": \"en\",\n    \"text\": \"one more time.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,260",
+            "es": "Ojalá pudiera grabar eso, que él tocaba la guitarra,",
+            "fr": "J'aimerais pouvoir enregistrer cela, qu'il jouait de la guitare,"
+        },
+        {
+            "start": "00:00:04,260",
+            "end": "00:00:05,340",
+            "es": "la clase de guitarra,",
+            "fr": "la classe de guitare,"
+        },
+        {
+            "start": "00:00:05,340",
+            "end": "00:00:08,400",
+            "es": "fluidamente en el tiempo de 1861.",
+            "fr": "couramment en 1861."
+        },
+        {
+            "start": "00:00:42,599",
+            "end": "00:00:43,160",
+            "es": "Ok,",
+            "fr": "D'accord,"
+        },
+        {
+            "start": "00:00:43,160",
+            "end": "00:00:44,080",
+            "es": "una vez más.",
+            "fr": "encore une fois."
+        }
+    ]
+}

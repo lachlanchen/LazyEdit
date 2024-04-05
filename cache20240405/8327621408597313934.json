@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,620\",\n    \"lang\": \"en\",\n    \"text\": \"I said a wrong word in the previous video.\"\n  },\n  {\n    \"start\": \"00:00:04,940\",\n    \"end\": \"00:00:05,480\",\n    \"lang\": \"en\",\n    \"text\": \"It's vulgar.\"\n  },\n  {\n    \"start\": \"00:00:06,120\",\n    \"end\": \"00:00:07,040\",\n    \"lang\": \"en\",\n    \"text\": \"But in Western culture,\"\n  },\n  {\n    \"start\": \"00:00:07,040\",\n    \"end\": \"00:00:10,960\",\n    \"lang\": \"en\",\n    \"text\": \"vulgar means another vessel.\"\n  },\n  {\n    \"start\": \"00:00:11,640\",\n    \"end\": \"00:00:17,300\",\n    \"lang\": \"en\",\n    \"text\": \"And vulgar means something is not elegant.\"\n  },\n  {\n    \"start\": \"00:00:22,040\",\n    \"end\": \"00:00:28,120\",\n    \"lang\": \"en\",\n    \"text\": \"The French think English is vulgar.\"\n  },\n  {\n    \"start\": \"00:00:28,120\",\n    \"end\": \"00:00:31,520\",\n    \"lang\": \"en\",\n    \"text\": \"And the Britons think the American accent is vulgar.\"\n  },\n  {\n    \"start\": \"00:00:32,439\",\n    \"end\": \"00:00:34,880\",\n    \"lang\": \"en\",\n    \"text\": \"As I watched the video,\"\n  },\n  {\n    \"start\": \"00:00:34,880\",\n    \"end\": \"00:00:45,440\",\n    \"lang\": \"en\",\n    \"text\": \"the Britons use sidewalks instead of pavements.\"\n  },\n  {\n    \"start\": \"00:00:45,700\",\n    \"end\": \"00:00:51,100\",\n    \"lang\": \"en\",\n    \"text\": \"And use paper baskets to represent the bin.\"\n  },\n  {\n    \"start\": \"00:00:51,629\",\n    \"end\": \"00:00:55,160\",\n    \"lang\": \"en\",\n    \"text\": \"And also horseback riding.\"\n  },\n  {\n    \"start\": \"00:00:56,800\",\n    \"end\": \"00:01:02,160\",\n    \"lang\": \"en\",\n    \"text\": \"They change horseback riding from British English to horseback riding.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,620",
+            "vi": "Tôi đã dùng một từ không đúng trong video trước."
+        },
+        {
+            "start": "00:00:04,940",
+            "end": "00:00:05,480",
+            "vi": "Nó thô tục."
+        },
+        {
+            "start": "00:00:06,120",
+            "end": "00:00:07,040",
+            "vi": "Nhưng trong văn hóa phương Tây,"
+        },
+        {
+            "start": "00:00:07,040",
+            "end": "00:00:10,960",
+            "vi": "thô tục có nghĩa là một thứ khác."
+        },
+        {
+            "start": "00:00:11,640",
+            "end": "00:00:17,300",
+            "vi": "Và thô tục có nghĩa là điều gì đó không tao nhã."
+        },
+        {
+            "start": "00:00:22,040",
+            "end": "00:00:28,120",
+            "vi": "Người Pháp cho rằng tiếng Anh thô tục."
+        },
+        {
+            "start": "00:00:28,120",
+            "end": "00:00:31,520",
+            "vi": "Và người Anh cho rằng giọng Mỹ thô tục."
+        },
+        {
+            "start": "00:00:32,439",
+            "end": "00:00:34,880",
+            "vi": "Khi xem video,"
+        },
+        {
+            "start": "00:00:34,880",
+            "end": "00:00:45,440",
+            "vi": "người Anh dùng 'sidewalks' thay vì 'pavements'."
+        },
+        {
+            "start": "00:00:45,700",
+            "end": "00:00:51,100",
+            "vi": "Và dùng 'paper baskets' để chỉ thùng rác."
+        },
+        {
+            "start": "00:00:51,629",
+            "end": "00:00:55,160",
+            "vi": "Và cũng là cưỡi ngựa."
+        },
+        {
+            "start": "00:00:56,800",
+            "end": "00:01:02,160",
+            "vi": "Họ đã thay đổi từ 'cưỡi ngựa' trong tiếng Anh Anh thành 'cưỡi ngựa'."
+        }
+    ]
+}

@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,660\",\n    \"lang\": \"en\",\n    \"text\": \"But it was a basaket man with a paragraph,\"\n  },\n  {\n    \"start\": \"00:00:05,120\",\n    \"end\": \"00:00:05,960\",\n    \"lang\": \"en\",\n    \"text\": \"grinder,\"\n  },\n  {\n    \"start\": \"00:00:05,960\",\n    \"end\": \"00:00:08,640\",\n    \"lang\": \"en\",\n    \"text\": \"and carrot.\"\n  },\n  {\n    \"start\": \"00:00:09,740\",\n    \"end\": \"00:00:10,640\",\n    \"lang\": \"en\",\n    \"text\": \"And also,\"\n  },\n  {\n    \"start\": \"00:00:10,640\",\n    \"end\": \"00:00:12,560\",\n    \"lang\": \"en\",\n    \"text\": \"oh,\"\n  },\n  {\n    \"start\": \"00:00:12,560\",\n    \"end\": \"00:00:13,100\",\n    \"lang\": \"en\",\n    \"text\": \"I forget,\"\n  },\n  {\n    \"start\": \"00:00:13,100\",\n    \"end\": \"00:00:13,660\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,660",
+            "en": "But it was a basket man with a paragraph,",
+            "zh": "但那是一个带着段落的篮子人，",
+            "ar": "ولكن كان هناك رجل سلة مع فقرة،"
+        },
+        {
+            "start": "00:00:05,120",
+            "end": "00:00:05,960",
+            "en": "grinder,",
+            "zh": "研磨机，",
+            "ar": "مطحنة،"
+        },
+        {
+            "start": "00:00:05,960",
+            "end": "00:00:08,640",
+            "en": "and carrot.",
+            "zh": "和胡萝卜。",
+            "ar": "وجزرة."
+        },
+        {
+            "start": "00:00:09,740",
+            "end": "00:00:10,640",
+            "en": "And also,",
+            "zh": "也还有，",
+            "ar": "وأيضا،"
+        },
+        {
+            "start": "00:00:10,640",
+            "end": "00:00:12,560",
+            "en": "oh,",
+            "zh": "哦，",
+            "ar": "أوه،"
+        },
+        {
+            "start": "00:00:12,560",
+            "end": "00:00:13,100",
+            "en": "I forget,",
+            "zh": "我忘了，",
+            "ar": "أنا نسيت،"
+        },
+        {
+            "start": "00:00:13,100",
+            "end": "00:00:13,660",
+            "en": "okay.",
+            "zh": "好的。",
+            "ar": "حسنا."
+        }
+    ]
+}

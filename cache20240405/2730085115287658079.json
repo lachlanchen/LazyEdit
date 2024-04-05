@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,520\",\n    \"lang\": \"en\",\n    \"text\": \"So let's play the little grass,\"\n  },\n  {\n    \"start\": \"00:00:02,520\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"en\",\n    \"text\": \"imperfect little grass.\"\n  },\n  {\n    \"start\": \"00:00:05,640\",\n    \"end\": \"00:00:07,100\",\n    \"lang\": \"en\",\n    \"text\": \"I believe I have some,\"\n  },\n  {\n    \"start\": \"00:00:07,100\",\n    \"end\": \"00:00:10,640\",\n    \"lang\": \"en\",\n    \"text\": \"I have some progress.\"\n  },\n  {\n    \"start\": \"00:00:11,700\",\n    \"end\": \"00:00:12,000\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:12,000\",\n    \"end\": \"00:00:15,320\",\n    \"lang\": \"en\",\n    \"text\": \"let's begin the guitar.\"\n  },\n  {\n    \"start\": \"00:00:37,080\",\n    \"end\": \"00:00:37,700\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:37,700\",\n    \"end\": \"00:00:40,080\",\n    \"lang\": \"en\",\n    \"text\": \"it's a mama bee,\"\n  },\n  {\n    \"start\": \"00:00:40,080\",\n    \"end\": \"00:00:41,060\",\n    \"lang\": \"en\",\n    \"text\": \"mama bee.\"\n  },\n  {\n    \"start\": \"00:00:43,100\",\n    \"end\": \"00:00:44,060\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:44,060\",\n    \"end\": \"00:00:48,380\",\n    \"lang\": \"en\",\n    \"text\": \"so let's play again.\"\n  },\n  {\n    \"start\": \"00:00:49,346\",\n    \"end\": \"00:00:51,686\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:52,226\",\n    \"end\": \"00:00:53,326\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树叶\"\n  },\n  {\n    \"start\": \"00:00:56,738\",\n    \"end\": \"00:01:00,978\",\n    \"lang\": \"zh\",\n    \"text\": \"我想没有输的\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,520",
+            "ko": "자, 이제 작은 초원을 연주해 봅시다,"
+        },
+        {
+            "start": "00:00:02,520",
+            "end": "00:00:04,540",
+            "ko": "완벽하지 않은 작은 초원."
+        },
+        {
+            "start": "00:00:05,640",
+            "end": "00:00:07,100",
+            "ko": "저는 뭔가 있을 거라고 믿어요,"
+        },
+        {
+            "start": "00:00:07,100",
+            "end": "00:00:10,640",
+            "ko": "제가 어느 정도 진전이 있는 것 같아요."
+        },
+        {
+            "start": "00:00:11,700",
+            "end": "00:00:12,000",
+            "ko": "좋아요,"
+        },
+        {
+            "start": "00:00:12,000",
+            "end": "00:00:15,320",
+            "ko": "자, 기타 연주를 시작합시다."
+        },
+        {
+            "start": "00:00:37,080",
+            "end": "00:00:37,700",
+            "ko": "좋아요,"
+        },
+        {
+            "start": "00:00:37,700",
+            "end": "00:00:40,080",
+            "ko": "벌 엄마야,"
+        },
+        {
+            "start": "00:00:40,080",
+            "end": "00:00:41,060",
+            "ko": "벌 엄마야."
+        },
+        {
+            "start": "00:00:43,100",
+            "end": "00:00:44,060",
+            "ko": "좋아요,"
+        },
+        {
+            "start": "00:00:44,060",
+            "end": "00:00:48,380",
+            "ko": "자, 다시 연주해 봅시다."
+        },
+        {
+            "start": "00:00:49,346",
+            "end": "00:00:51,686",
+            "ko": "꽃 향기가 없어요"
+        },
+        {
+            "start": "00:00:52,226",
+            "end": "00:00:53,326",
+            "ko": "나무잎도 없어요"
+        },
+        {
+            "start": "00:00:56,738",
+            "end": "00:01:00,978",
+            "ko": "내 생각에 지는 것이 없어요"
+        }
+    ]
+}

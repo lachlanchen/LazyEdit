@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,220\",\n    \"lang\": \"en\",\n    \"text\": \"This is the last step of this gorgeous rice noodles.\"\n  },\n  {\n    \"start\": \"00:00:06,200\",\n    \"end\": \"00:00:08,280\",\n    \"lang\": \"en\",\n    \"text\": \"We pour this...\"\n  },\n  {\n    \"start\": \"00:00:08,620\",\n    \"end\": \"00:00:10,480\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to say it.\"\n  },\n  {\n    \"start\": \"00:00:11,840\",\n    \"end\": \"00:00:16,280\",\n    \"lang\": \"en\",\n    \"text\": \"It's a dish into our rice noodle.\"\n  },\n  {\n    \"start\": \"00:00:16,580\",\n    \"end\": \"00:00:17,380\",\n    \"lang\": \"en\",\n    \"text\": \"Tebasaki men.\"\n  },\n  {\n    \"start\": \"00:00:18,260\",\n    \"end\": \"00:00:19,780\",\n    \"lang\": \"en\",\n    \"text\": \"Tebasaki rice noodle.\"\n  },\n  {\n    \"start\": \"00:00:20,700\",\n    \"end\": \"00:00:21,100\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:23,900\",\n    \"end\": \"00:00:25,020\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:25,020\",\n    \"end\": \"00:00:26,060\",\n    \"lang\": \"en\",\n    \"text\": \"we have vegetables,\"\n  },\n  {\n    \"start\": \"00:00:26,060\",\n    \"end\": \"00:00:31,740\",\n    \"lang\": \"en\",\n    \"text\": \"chicken and rice noodle.\"\n  },\n  {\n    \"start\": \"00:00:32,299\",\n    \"end\": \"00:00:32,680\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,220",
+            "ja": "これがこの美しい米麺の最後のステップです。"
+        },
+        {
+            "start": "00:00:06,200",
+            "end": "00:00:08,280",
+            "ja": "これを注ぎます…"
+        },
+        {
+            "start": "00:00:08,620",
+            "end": "00:00:10,480",
+            "ja": "言い方が分かりません。"
+        },
+        {
+            "start": "00:00:11,840",
+            "end": "00:00:16,280",
+            "ja": "それは私たちの米麺に入れる料理です。"
+        },
+        {
+            "start": "00:00:16,580",
+            "end": "00:00:17,380",
+            "ja": "手羽先麺。"
+        },
+        {
+            "start": "00:00:18,260",
+            "end": "00:00:19,780",
+            "ja": "手羽先米麺。"
+        },
+        {
+            "start": "00:00:20,700",
+            "end": "00:00:21,100",
+            "ja": "了解。"
+        },
+        {
+            "start": "00:00:23,900",
+            "end": "00:00:25,020",
+            "ja": "それで、"
+        },
+        {
+            "start": "00:00:25,020",
+            "end": "00:00:26,060",
+            "ja": "野菜と、"
+        },
+        {
+            "start": "00:00:26,060",
+            "end": "00:00:31,740",
+            "ja": "鶏肉と米麺があります。"
+        },
+        {
+            "start": "00:00:32,299",
+            "end": "00:00:32,680",
+            "ja": "了解。"
+        }
+    ]
+}

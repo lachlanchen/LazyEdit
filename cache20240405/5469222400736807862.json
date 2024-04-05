@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,420\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:00,420\",\n    \"end\": \"00:00:01,360\",\n    \"lang\": \"en\",\n    \"text\": \"another video.\"\n  },\n  {\n    \"start\": \"00:00:01,780\",\n    \"end\": \"00:00:01,900\",\n    \"lang\": \"en\",\n    \"text\": \"Bye!\"\n  },\n  {\n    \"start\": \"00:00:23,700\",\n    \"end\": \"00:00:24,120\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,420",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:00:00,420",
+            "end": "00:00:01,360",
+            "vi": "một video nữa."
+        },
+        {
+            "start": "00:00:01,780",
+            "end": "00:00:01,900",
+            "vi": "Tạm biệt!"
+        },
+        {
+            "start": "00:00:23,700",
+            "end": "00:00:24,120",
+            "vi": "Ổn."
+        }
+    ]
+}

@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,600\",\n    \"lang\": \"zh\",\n    \"text\": \"哇,\"\n  },\n  {\n    \"start\": \"00:00:00,600\",\n    \"end\": \"00:00:02,560\",\n    \"lang\": \"zh\",\n    \"text\": \"官腔真不错\"\n  },\n  {\n    \"start\": \"00:00:04,706\",\n    \"end\": \"00:00:05,246\",\n    \"lang\": \"ja\",\n    \"text\": \"可愛いです\"\n  },\n  {\n    \"start\": \"00:00:06,566\",\n    \"end\": \"00:00:07,366\",\n    \"lang\": \"ja\",\n    \"text\": \"怖い\"\n  },\n  {\n    \"start\": \"00:00:07,394\",\n    \"end\": \"00:00:07,634\",\n    \"lang\": \"en\",\n    \"text\": \"Well,\"\n  },\n  {\n    \"start\": \"00:00:07,634\",\n    \"end\": \"00:00:08,093\",\n    \"lang\": \"en\",\n    \"text\": \"cheers,\"\n  },\n  {\n    \"start\": \"00:00:08,093\",\n    \"end\": \"00:00:08,914\",\n    \"lang\": \"en\",\n    \"text\": \"I know.\"\n  },\n  {\n    \"start\": \"00:00:10,434\",\n    \"end\": \"00:00:10,914\",\n    \"lang\": \"ja\",\n    \"text\": \"かわいいです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,600",
+            "vi": "Wow,"
+        },
+        {
+            "start": "00:00:00,600",
+            "end": "00:00:02,560",
+            "vi": "Giọng chính thức thật tuyệt"
+        },
+        {
+            "start": "00:00:04,706",
+            "end": "00:00:05,246",
+            "vi": "Dễ thương quá"
+        },
+        {
+            "start": "00:00:06,566",
+            "end": "00:00:07,366",
+            "vi": "Đáng sợ"
+        },
+        {
+            "start": "00:00:07,394",
+            "end": "00:00:07,634",
+            "vi": "Vâng,"
+        },
+        {
+            "start": "00:00:07,634",
+            "end": "00:00:08,093",
+            "vi": "chúc mừng,"
+        },
+        {
+            "start": "00:00:08,093",
+            "end": "00:00:08,914",
+            "vi": "Tôi biết."
+        },
+        {
+            "start": "00:00:10,434",
+            "end": "00:00:10,914",
+            "vi": "Dễ thương quá"
+        }
+    ]
+}

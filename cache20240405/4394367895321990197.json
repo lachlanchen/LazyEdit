@@ -1,0 +1,110 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,900\",\n    \"lang\": \"en\",\n    \"text\": \"So before our morning run,\"\n  },\n  {\n    \"start\": \"00:00:02,900\",\n    \"end\": \"00:00:06,800\",\n    \"lang\": \"en\",\n    \"text\": \"let me record this progress,\"\n  },\n  {\n    \"start\": \"00:00:06,800\",\n    \"end\": \"00:00:07,920\",\n    \"lang\": \"en\",\n    \"text\": \"small progress.\"\n  },\n  {\n    \"start\": \"00:00:09,890\",\n    \"end\": \"00:00:11,370\",\n    \"lang\": \"ja\",\n    \"text\": \"ななとひな\"\n  },\n  {\n    \"start\": \"00:00:11,394\",\n    \"end\": \"00:00:12,434\",\n    \"lang\": \"en\",\n    \"text\": \"nnh,\"\n  },\n  {\n    \"start\": \"00:00:12,434\",\n    \"end\": \"00:00:13,574\",\n    \"lang\": \"en\",\n    \"text\": \"inhhh,\"\n  },\n  {\n    \"start\": \"00:00:13,574\",\n    \"end\": \"00:00:14,394\",\n    \"lang\": \"en\",\n    \"text\": \"up,\"\n  },\n  {\n    \"start\": \"00:00:14,394\",\n    \"end\": \"00:00:14,454\",\n    \"lang\": \"en\",\n    \"text\": \"innh\"\n  },\n  {\n    \"start\": \"00:00:14,454\",\n    \"end\": \"00:00:14,574\",\n    \"lang\": \"en\",\n    \"text\": \"Inh,\"\n  },\n  {\n    \"start\": \"00:00:14,574\",\n    \"end\": \"00:00:14,914\",\n    \"lang\": \"en\",\n    \"text\": \"inhale,\"\n  },\n  {\n    \"start\": \"00:00:14,914\",\n    \"end\": \"00:00:15,594\",\n    \"lang\": \"en\",\n    \"text\": \"exhale\"\n  },\n  {\n    \"start\": \"00:00:15,594\",\n    \"end\": \"00:00:16,754\",\n    \"lang\": \"en\",\n    \"text\": \"Inhale Out,\"\n  },\n  {\n    \"start\": \"00:00:16,754\",\n    \"end\": \"00:00:17,174\",\n    \"lang\": \"en\",\n    \"text\": \"Professor\"\n  },\n  {\n    \"start\": \"00:00:19,154\",\n    \"end\": \"00:00:19,174\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:19,174\",\n    \"end\": \"00:00:20,134\",\n    \"lang\": \"en\",\n    \"text\": \"is that it?\"\n  },\n  {\n    \"start\": \"00:00:20,134\",\n    \"end\": \"00:00:20,374\",\n    \"lang\": \"en\",\n    \"text\": \"Correct?\"\n  },\n  {\n    \"start\": \"00:00:20,674\",\n    \"end\": \"00:00:21,014\",\n    \"lang\": \"en\",\n    \"text\": \"What here?\"\n  },\n  {\n    \"start\": \"00:00:22,494\",\n    \"end\": \"00:00:23,114\",\n    \"lang\": \"en\",\n    \"text\": \"None\"\n  },\n  {\n    \"start\": \"00:00:44,802\",\n    \"end\": \"00:00:50,802\",\n    \"lang\": \"en\",\n    \"text\": \"I promise I play this guitar far much better when I play alone.\"\n  },\n  {\n    \"start\": \"00:00:53,122\",\n    \"end\": \"00:00:57,142\",\n    \"lang\": \"en\",\n    \"text\": \"Even though this video recording didn't give me any pressure,\"\n  },\n  {\n    \"start\": \"00:00:57,142\",\n    \"end\": \"00:00:57,582\",\n    \"lang\": \"en\",\n    \"text\": \"I believe.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,900",
+            "vi": "Vậy trước khi chạy buổi sáng,"
+        },
+        {
+            "start": "00:00:02,900",
+            "end": "00:00:06,800",
+            "vi": "để tôi ghi lại tiến trình này,"
+        },
+        {
+            "start": "00:00:06,800",
+            "end": "00:00:07,920",
+            "vi": "tiến trình nhỏ."
+        },
+        {
+            "start": "00:00:09,890",
+            "end": "00:00:11,370",
+            "vi": "Nana và Hina"
+        },
+        {
+            "start": "00:00:11,394",
+            "end": "00:00:12,434",
+            "vi": "nnh,"
+        },
+        {
+            "start": "00:00:12,434",
+            "end": "00:00:13,574",
+            "vi": "inhhh,"
+        },
+        {
+            "start": "00:00:13,574",
+            "end": "00:00:14,394",
+            "vi": "lên,"
+        },
+        {
+            "start": "00:00:14,394",
+            "end": "00:00:14,454",
+            "vi": "innh"
+        },
+        {
+            "start": "00:00:14,454",
+            "end": "00:00:14,574",
+            "vi": "Inh,"
+        },
+        {
+            "start": "00:00:14,574",
+            "end": "00:00:14,914",
+            "vi": "hít vào,"
+        },
+        {
+            "start": "00:00:14,914",
+            "end": "00:00:15,594",
+            "vi": "thở ra"
+        },
+        {
+            "start": "00:00:15,594",
+            "end": "00:00:16,754",
+            "vi": "Hít Vào Ra,"
+        },
+        {
+            "start": "00:00:16,754",
+            "end": "00:00:17,174",
+            "vi": "Giáo sư"
+        },
+        {
+            "start": "00:00:19,154",
+            "end": "00:00:19,174",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:00:19,174",
+            "end": "00:00:20,134",
+            "vi": "là hết rồi à?"
+        },
+        {
+            "start": "00:00:20,134",
+            "end": "00:00:20,374",
+            "vi": "Đúng không?"
+        },
+        {
+            "start": "00:00:20,674",
+            "end": "00:00:21,014",
+            "vi": "Ở đây có gì?"
+        },
+        {
+            "start": "00:00:22,494",
+            "end": "00:00:23,114",
+            "vi": "Không"
+        },
+        {
+            "start": "00:00:44,802",
+            "end": "00:00:50,802",
+            "vi": "Tôi hứa tôi chơi guitar này tốt hơn nhiều khi tôi chơi một mình."
+        },
+        {
+            "start": "00:00:53,122",
+            "end": "00:00:57,142",
+            "vi": "Mặc dù việc ghi video này không làm tôi cảm thấy áp lực,"
+        },
+        {
+            "start": "00:00:57,142",
+            "end": "00:00:57,582",
+            "vi": "tôi tin là vậy."
+        }
+    ]
+}
