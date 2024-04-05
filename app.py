@@ -560,7 +560,7 @@ def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
             last_end_time = end_seconds
 
             word_text = word_info['word']
-            font_size = find_font_size(word_text, font_path, video_width * 0.8, video_height * 0.8)
+            font_size = find_font_size(word_text, font_path, video_width * 0.5, video_height * 0.5)
 
             # drawtext_filter = (
             #     f"drawtext=text='{word_text}':"
@@ -571,7 +571,7 @@ def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
 
             drawtext_filter = (
                 f"drawtext=text='{word_text}':"
-                f"x=(w-text_w)/2:y=text_h:"
+                f"x=(w-text_w)/2:y=text_h/2:"
                 # f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
                 f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=crimson@0.5:boxborderw=5:"
                 f"enable='between(t,{start_seconds},{end_seconds})'"
@@ -1208,12 +1208,13 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
 
         # Merge subtitles
         print("Merging/Translating subtitles...")
+        processed_json_path = os.path.join(output_folder, f"{base_name}_processed.json")
         processed_sub_path = os.path.join(output_folder, f"{base_name}_processed.ass")
 
         subtitles_processor = SubtitlesTranslator(
             self.openai_client, 
             output_json_mixed, output_srt_mixed, 
-            processed_sub_path, 
+            processed_json_path, processed_sub_path, 
             video_length=video_length,
             video_width=video_width,
             video_height=video_height,

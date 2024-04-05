@@ -1,5 +1,6 @@
 import os
 import json
+import json5
 import traceback
 import glob
 import re
@@ -17,6 +18,10 @@ class JSONValidationError(Exception):
 class JSONParsingError(Exception):
     def __init__(self, message, json_string, text):
         super().__init__(message)
+
+        print("The failed JSON string: \n\n")
+        print(json_string)
+
         self.message = message
         self.json_string = json_string
         self.text = text
@@ -27,6 +32,7 @@ class OpenAIRequestBase:
         self.max_retries = max_retries
         self.use_cache = use_cache
         self.cache_dir = cache_dir
+        self.filename = None
         self.ensure_dir_exists(self.cache_dir)
 
     def ensure_dir_exists(self, path):
@@ -34,8 +40,13 @@ class OpenAIRequestBase:
             os.makedirs(path)
 
     def get_cache_file_path(self, prompt):
-        filename = f"{abs(hash(prompt))}.json"
-        return os.path.join(self.cache_dir, filename)
+        if self.filename:
+            filename = self.filename
+        else:
+            filename = f"{abs(hash(prompt))}.json"
+        cache_path = os.path.join(self.cache_dir, filename)
+        print("cache_path: ", cache_path)
+        return cache_path
 
     def save_to_cache(self, prompt, response):
         file_path = self.get_cache_file_path(prompt)
@@ -58,9 +69,12 @@ class OpenAIRequestBase:
             {"role": "user", "content": prompt}
         ]
 
+        print("self.use_cache: ", self.use_cache)
+
         if self.use_cache:
             cached_response = self.load_from_cache(prompt)
             if cached_response:
+                print("OpenAI cache found. ")
                 return cached_response
 
         while retries < self.max_retries:
@@ -81,7 +95,10 @@ class OpenAIRequestBase:
                 traceback.print_exc()
                 retries += 1
                 messages.append({"role": "system", "content": ai_response})
-                messages.append({"role": "system", "content": e.message})
+                try:
+                    messages.append({"role": "system", "content": e.message})
+                except:
+                    messages.append({"role": "system", "content": str(e)})
 
         raise Exception("Maximum retries reached without success.")
 
@@ -106,7 +123,7 @@ class OpenAIRequestBase:
         if first_dict_index == -1 and first_list_index == -1:
             raise JSONParsingError("No JSON structure found.", response, response)
         
-        if (first_dict_index < first_list_index) or (first_list_index == -1):
+        if (first_dict_index != -1 and first_dict_index < first_list_index) or (first_list_index == -1):
             parse_pattern = r'\{.*\}'
         else:
             parse_pattern = r'\[.*\]'
@@ -117,6 +134,7 @@ class OpenAIRequestBase:
 
         json_string = matches[0]
         try:
-            return json.loads(json_string)
+            return json5.loads(json_string)
         except json.JSONDecodeError as e:
+            print("json_string: ", json_string)
             raise JSONParsingError("Failed to decode JSON.", json_string, response)
