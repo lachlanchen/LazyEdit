@@ -144,10 +144,18 @@ class SubtitlesTranslator(OpenAIRequestBase):
         """Determine if the video is landscape or portrait based on class variables."""
         return self.video_width > self.video_height
 
-    def get_filename(self, lang="ja", idx=0):
-        base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
-        datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        return f"{self.translation_log_folder}/{base_filename}-part{idx}-{lang}-{datetime_str}.json"
+    def get_filename(self, lang="ja", idx=0, timestamp=None):
+        # base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
+        # datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        base_filename = self.base_filename
+        # datetime_str = self.datetime_str
+
+        if timestamp:
+            filename = f"{self.translation_log_folder}/{base_filename}-part{idx}-{lang}-{timestamp}.json"
+        else:
+            filename = f"{self.translation_log_folder}/{base_filename}-part{idx}-{lang}.json"
+
+        return filename
     
 
 
@@ -442,7 +450,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
         # Generate a human-readable string of the full language names for the prompt
         languages_list_str = ', '.join(language_full_names[:-1]) + ', and ' + language_full_names[-1] if len(language_full_names) > 1 else language_full_names[0]
 
-        print("The specified languages are. ")
+        print(f"The specified languages are: {languages_list_str}. ")
 
         system_content = f"Translate mixed language subtitles into {languages_list_str}, providing coherent and accurate translations."
         prompt = (
@@ -731,11 +739,11 @@ class SubtitlesTranslator(OpenAIRequestBase):
             )
 
             response = self.send_request_with_retry(
-            prompt,
-            system_content=system_content,
-            sample_json=sample_json_structure,
-            filename=self.get_filename(lang="hanja", idx=idx)
-        )
+                prompt,
+                system_content=system_content,
+                sample_json=sample_json_structure,
+                filename=self.get_filename(lang="hanja", idx=idx, timestamp=self.format_subtitle_range(subtitle))
+            )
             # Assume response is structured correctly
             annotated_text = response.get("korean_with_annotation", "")
             hanja_pairs = response.get("korean_hanja_pairs", [])
@@ -879,11 +887,11 @@ class SubtitlesTranslator(OpenAIRequestBase):
             )
 
             response = self.send_request_with_retry(
-            prompt,
-            system_content=system_content,
-            sample_json=sample_json_structure,
-            filename=self.get_filename(lang="chuhan", idx=idx)
-        )
+                prompt,
+                system_content=system_content,
+                sample_json=sample_json_structure,
+                filename=self.get_filename(lang="chuhan", idx=idx, timestamp=self.format_subtitle_range(subtitle))
+            )
             annotated_text = response.get("viet_with_annotation", "")
             chuhan_pairs = response.get("viet_chuhan_pairs", [])
             
@@ -912,8 +920,19 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
         return subtitles
 
+    @staticmethod
+    def format_subtitle_range(subtitle):
+        """
+        Takes a subtitle dictionary with 'start' and 'end' timestamp strings,
+        removes all colons from the timestamps, and returns a concatenated string
+        with a dash between the start and end timestamps.
 
-
+        :param subtitle: A dictionary with 'start' and 'end' keys.
+        :return: A string combining the start and end times, with colons removed.
+        """
+        start_formatted = subtitle["start"].replace(":", "").replace(",", "")
+        end_formatted = subtitle["end"].replace(":", "").replace(",", "")
+        return f"{start_formatted}-{end_formatted}"
 
     def save_translated_subtitles_to_srt(self, translated_subtitles):
         """Save the translated subtitles to an SRT file, ensuring language order."""

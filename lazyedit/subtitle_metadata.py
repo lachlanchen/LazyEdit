@@ -32,7 +32,7 @@ def robust_json5_parse(json_str):
 
 
 class Subtitle2Metadata(OpenAIRequestBase):
-    def __init__(self, openai_client, use_cache=False, max_retries=3):
+    def __init__(self, openai_client, use_cache=False, max_retries=3, *args, **kwargs):
 
         kwargs["use_cache"] = use_cache
         kwargs["max_retries"] = max_retries
@@ -46,6 +46,9 @@ class Subtitle2Metadata(OpenAIRequestBase):
 
         self.subtitles2metadata_folder = 'subtitles2metadata'
 
+        # self.base_filename = os.path.splitext(os.path.basename(subtitle_path))[0]
+        self.datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
         # self.use_cache = use_cache
 
         # self.ensure_folder_exists(self.subtitles2metadata_folder)
@@ -55,11 +58,14 @@ class Subtitle2Metadata(OpenAIRequestBase):
     #         os.makedirs(folder_path)
 
     def get_filename(self, subtitle_path, lang):
-        base_name = os.path.basename(subtitle_path)
+        # base_filename = os.path.basename(subtitle_path)
         # Strip extension from base_name if necessary
-        base_name = os.path.splitext(base_name)[0]
-        datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        return f"{self.subtitles2metadata_folder}/{base_name}-{datetime_str}_{lang}.json"
+        # base_filename = os.path.splitext(base_filename)[0]
+        # datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+        base_filename = os.path.splitext(os.path.basename(subtitle_path))[0]
+        # datetime_str = self.datetime_str
+        return f"{self.subtitles2metadata_folder}/{base_filename}_{lang}.json"
 
     # def save_subtitles2metadata(self, subtitle_path, prompt, ai_response, metatype="XiaoHongShu", lang="en"):
     #     filename = self.get_filename(subtitle_path, lang=lang)
@@ -161,7 +167,7 @@ class Subtitle2Metadata(OpenAIRequestBase):
             for word_info in metadata['english_words_to_learn']:
                 if 'timestamp_range' in word_info:
                     # start, end = word_info['timestamp_range'].split(" --> ")
-                    start, end = metadata['teaser']["start"], metadata['teaser']["end"]
+                    start, end = word_info["timestamp_range"]["start"], word_info["timestamp_range"]["end"]
                     word_info['timestamp_range'] = " --> ".join(self.switch_timestamps_if_necessary(start, end))
 
 
@@ -591,7 +597,7 @@ class Subtitle2Metadata(OpenAIRequestBase):
             prompt=prompt,
             system_content=system_content,
             sample_json=sample_json_structure,
-            filename=self.get_log_filename(lang="en")
+            filename=self.get_filename(subtitle_path, lang="en")
         )
 
         self.validate_metadata(result)

@@ -32,29 +32,31 @@ class OpenAIRequestBase:
         self.max_retries = max_retries
         self.use_cache = use_cache
         self.cache_dir = cache_dir
-        self.filename = None
         self.ensure_dir_exists(self.cache_dir)
 
     def ensure_dir_exists(self, path):
         if not os.path.exists(path):
             os.makedirs(path)
 
-    def get_cache_file_path(self, prompt):
-        if self.filename:
-            filename = self.filename
-        else:
+    def get_cache_file_path(self, prompt, filename=None):
+        if filename is None:
+
             filename = f"{abs(hash(prompt))}.json"
+    
         cache_path = os.path.join(self.cache_dir, filename)
         print("cache_path: ", cache_path)
+        cache_dir = os.path.dirname(cache_path)
+        print("cache_dir: ", cache_dir)
+        os.makedirs(cache_dir, exist_ok=True)
         return cache_path
 
-    def save_to_cache(self, prompt, response):
-        file_path = self.get_cache_file_path(prompt)
+    def save_to_cache(self, prompt, response, filename=None):
+        file_path = self.get_cache_file_path(prompt, filename=filename)
         with open(file_path, 'w', encoding='utf-8') as file:
             json.dump({"prompt": prompt, "response": response}, file, ensure_ascii=False, indent=4)
 
-    def load_from_cache(self, prompt):
-        file_path = self.get_cache_file_path(prompt)
+    def load_from_cache(self, prompt, filename=None):
+        file_path = self.get_cache_file_path(prompt, filename=filename)
         if os.path.exists(file_path):
             with open(file_path, 'r', encoding='utf-8') as file:
                 cached_data = json.load(file)
@@ -100,8 +102,6 @@ class OpenAIRequestBase:
 
     def send_request_with_retry(self, prompt, system_content="You are an AI.", sample_json=None, filename=None):
         
-        if filename:
-            self.filename = filename
 
         retries = 0
         # messages = [{"role": "system", "content": system_content}, {"role": "user", "content": prompt}]
@@ -113,7 +113,7 @@ class OpenAIRequestBase:
         print("self.use_cache: ", self.use_cache)
 
         if self.use_cache:
-            cached_response = self.load_from_cache(prompt)
+            cached_response = self.load_from_cache(prompt, filename=filename)
             if cached_response:
                 print("OpenAI cache found. ")
                 return cached_response
@@ -130,7 +130,7 @@ class OpenAIRequestBase:
                 if sample_json:
                     self.validate_json(parsed_response, sample_json)
 
-                self.save_to_cache(prompt, parsed_response)
+                self.save_to_cache(prompt, parsed_response, filename=filename)
                 return parsed_response
             except Exception as e:
                 traceback.print_exc()
