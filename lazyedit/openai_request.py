@@ -60,8 +60,49 @@ class OpenAIRequestBase:
                 cached_data = json.load(file)
                 return cached_data["response"]
         return None
+    
+    def validate_json(self, json_data, sample_json):
+        if type(json_data) != type(sample_json):
+            raise JSONValidationError("JSON data type does not match the sample JSON type.")
 
-    def send_request_with_retry(self, prompt, system_content="You are an AI.", sample_json=None):
+        if isinstance(sample_json, dict):
+            for key, sample_value in sample_json.items():
+                if key not in json_data:
+                    raise JSONValidationError(f"Key '{key}' is missing.")
+                self.validate_json(json_data[key], sample_value)
+        elif isinstance(sample_json, list):
+            if len(sample_json) > 0:
+                sample_item = sample_json[0]
+                for item in json_data:
+                    self.validate_json(item, sample_item)
+
+    def parse_response(self, response):
+        first_dict_index = response.find('{')
+        first_list_index = response.find('[')
+        if first_dict_index == -1 and first_list_index == -1:
+            raise JSONParsingError("No JSON structure found.", response, response)
+        
+        if (first_dict_index != -1 and first_dict_index < first_list_index) or (first_list_index == -1):
+            parse_pattern = r'\{.*\}'
+        else:
+            parse_pattern = r'\[.*\]'
+
+        matches = re.findall(parse_pattern, response, re.DOTALL)
+        if not matches:
+            raise JSONParsingError("No matching JSON structure found.", response, response)
+
+        json_string = matches[0]
+        try:
+            return json5.loads(json_string)
+        except json.JSONDecodeError as e:
+            print("json_string: ", json_string)
+            raise JSONParsingError("Failed to decode JSON.", json_string, response)
+
+    def send_request_with_retry(self, prompt, system_content="You are an AI.", sample_json=None, filename=None):
+        
+        if filename:
+            self.filename = filename
+
         retries = 0
         # messages = [{"role": "system", "content": system_content}, {"role": "user", "content": prompt}]
         messages = [
@@ -101,40 +142,3 @@ class OpenAIRequestBase:
                     messages.append({"role": "system", "content": str(e)})
 
         raise Exception("Maximum retries reached without success.")
-
-    def validate_json(self, json_data, sample_json):
-        if type(json_data) != type(sample_json):
-            raise JSONValidationError("JSON data type does not match the sample JSON type.")
-
-        if isinstance(sample_json, dict):
-            for key, sample_value in sample_json.items():
-                if key not in json_data:
-                    raise JSONValidationError(f"Key '{key}' is missing.")
-                self.validate_json(json_data[key], sample_value)
-        elif isinstance(sample_json, list):
-            if len(sample_json) > 0:
-                sample_item = sample_json[0]
-                for item in json_data:
-                    self.validate_json(item, sample_item)
-
-    def parse_response(self, response):
-        first_dict_index = response.find('{')
-        first_list_index = response.find('[')
-        if first_dict_index == -1 and first_list_index == -1:
-            raise JSONParsingError("No JSON structure found.", response, response)
-        
-        if (first_dict_index != -1 and first_dict_index < first_list_index) or (first_list_index == -1):
-            parse_pattern = r'\{.*\}'
-        else:
-            parse_pattern = r'\[.*\]'
-
-        matches = re.findall(parse_pattern, response, re.DOTALL)
-        if not matches:
-            raise JSONParsingError("No matching JSON structure found.", response, response)
-
-        json_string = matches[0]
-        try:
-            return json5.loads(json_string)
-        except json.JSONDecodeError as e:
-            print("json_string: ", json_string)
-            raise JSONParsingError("Failed to decode JSON.", json_string, response)

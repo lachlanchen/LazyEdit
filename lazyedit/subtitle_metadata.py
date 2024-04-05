@@ -30,8 +30,6 @@ def robust_json5_parse(json_str):
         return None
 
 
-
-
 class Subtitle2Metadata:
     def __init__(self, openai_client, use_cache=False, max_retries=3):
         self.client = openai_client
