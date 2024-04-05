@@ -59,6 +59,9 @@ class SubtitlesTranslator(OpenAIRequestBase):
         self.output_json_path = output_json_path
         self.output_sub_path = output_sub_path
 
+        self.base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
+        self.datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
         self.video_length = video_length
         self.video_width = video_width
         self.video_height = video_height
@@ -82,6 +85,53 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
         # self.max_retries = max_retries
         # self.use_cache = use_cache
+
+        self.flags = {
+            'zh': '🇨🇳',  # China for Mandarin
+            'en': '🇬🇧',  # United Kingdom for English
+            'ja': '🇯🇵',  # Japan
+            'ar': '🇸🇦',  # Saudi Arabia for Arabic
+            'ko': '🇰🇷',  # Korea for Korean
+            'es': '🇪🇸',  # Spain for Spanish
+            'vi': '🇻🇳',  # Vietnam
+            'fr': '🇫🇷',  # France
+            'de': '🇩🇪',  # Germany for German
+            'it': '🇮🇹',  # Italy for Italian
+            'ru': '🇷🇺',  # Russia for Russian
+            'pt': '🇵🇹',  # Portugal for Portuguese (Note: Brazil might use 🇧🇷 depending on the context)
+            'nl': '🇳🇱',  # Netherlands for Dutch
+            'sv': '🇸🇪',  # Sweden for Swedish
+            'no': '🇳🇴',  # Norway for Norwegian
+            'da': '🇩🇰',  # Denmark for Danish
+            'fi': '🇫🇮',  # Finland for Finnish
+            'pl': '🇵🇱',  # Poland for Polish
+            'tr': '🇹🇷',  # Turkey for Turkish
+            'el': '🇬🇷',  # Greece for Greek
+            'he': '🇮🇱',  # Israel for Hebrew
+            'th': '🇹🇭',  # Thailand for Thai
+            'cs': '🇨🇿',  # Czech Republic for Czech
+            'ro': '🇷🇴',  # Romania for Romanian
+            'hu': '🇭🇺',  # Hungary for Hungarian
+            'sk': '🇸🇰',  # Slovakia for Slovak
+            'bg': '🇧🇬',  # Bulgaria for Bulgarian
+            'sr': '🇷🇸',  # Serbia for Serbian
+            'hr': '🇭🇷',  # Croatia for Croatian
+            'sl': '🇸🇮',  # Slovenia for Slovenian
+            'lt': '🇱🇹',  # Lithuania for Lithuanian
+            'lv': '🇱🇻',  # Latvia for Latvian
+            'et': '🇪🇪',  # Estonia for Estonian
+            'id': '🇮🇩',  # Indonesia for Indonesian
+            'ms': '🇲🇾',  # Malaysia for Malay
+            'fil': '🇵🇭',  # Philippines for Filipino
+            'sw': '🇹🇿',  # Tanzania for Swahili (Note: also widely spoken in Kenya 🇰🇪)
+            'uk': '🇺🇦',  # Ukraine for Ukrainian
+            'bn': '🇧🇩',  # Bangladesh for Bengali
+            'hi': '🇮🇳',  # India for Hindi
+            'fa': '🇮🇷',  # Iran for Persian (Farsi)
+            'ur': '🇵🇰',  # Pakistan for Urdu
+            'mn': '🇲🇳',  # Mongolia for Mongolian
+            'ne': '🇳🇵',  # Nepal for Nepali
+        }
 
         print("Using translation cache: ", use_cache)
 
@@ -202,89 +252,6 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
         return batches
 
-    
-
-    # def translate_and_merge_subtitles_in_batch(self, subtitles, idx):
-    #     """Merge translations from Japanese-specific and other languages' functions in parallel."""
-    #     with ThreadPoolExecutor(max_workers=2) as executor:
-    #         # Submit both translation tasks to the executor
-    #         future_ja = executor.submit(self.translate_and_merge_subtitles_ja, subtitles, idx)
-    #         future_major_lang = executor.submit(self.translate_and_merge_subtitles_major_languages, subtitles, idx)
-
-    #         # Wait for both futures to complete and retrieve results
-    #         translations_ja = future_ja.result()
-    #         translations_major_lang = future_major_lang.result()
-
-    #     # Merge translations as before
-    #     timestamps_dict = {
-    #         (translation['start'], translation['end']): translation for translation in translations_major_lang
-    #     }
-
-    #     for ja_translation in translations_ja:
-    #         key = (ja_translation['start'], ja_translation['end'])
-    #         if key in timestamps_dict:
-    #             timestamps_dict[key]['ja'] = ja_translation['ja']
-    #         else:
-    #             timestamps_dict[key] = ja_translation
-
-    #     merged_translations = list(timestamps_dict.values())
-    #     merged_translations.sort(key=lambda x: x['start'])
-
-    #     return merged_translations
-
-    # def translate_and_merge_subtitles_in_batch(self, subtitles, idx):
-    #     """Merge translations from multiple languages' functions in parallel."""
-    #     # Define a dictionary of language codes to their respective translation functions
-    #     translation_tasks = {
-    #         'major': self.translate_and_merge_subtitles_major_languages,  # This handles other major languages
-    #         'ja': self.translate_and_merge_subtitles_ja,
-    #         'ko': self.translate_and_merge_subtitles_ko,  # Assuming you have a similar function for Korean
-    #         'minor': self.translate_and_merge_subtitles_minor_languages
-    #     }
-
-    #     with ThreadPoolExecutor(max_workers=len(translation_tasks)) as executor:
-    #         # Submit all translation tasks to the executor and collect Future objects
-    #         futures = {
-    #             executor.submit(translation_func, subtitles, idx): lang_code
-    #             for lang_code, translation_func in translation_tasks.items()
-    #         }
-
-    #         # Initialize an empty dictionary to collect all translations
-    #         all_translations = {}
-
-    #         # Process completed translation tasks as they complete
-    #         for future in as_completed(futures):
-    #             lang_code = futures[future]
-    #             try:
-    #                 translations = future.result()
-    #                 # Store translations by language code
-    #                 all_translations[lang_code] = translations
-    #             except Exception as exc:
-    #                 print(f'{lang_code} translation generated an exception: {exc}')
-
-    #     # Merge translations
-    #     timestamps_dict = {}
-
-    #     # Start with 'major' language translations as the base
-    #     for translation in all_translations.pop('major', []):
-    #         key = (translation['start'], translation['end'])
-    #         timestamps_dict[key] = translation
-
-    #     # Merge additional language translations
-    #     for lang_code, translations in all_translations.items():
-    #         for translation in translations:
-    #             key = (translation['start'], translation['end'])
-    #             if key in timestamps_dict:
-    #                 timestamps_dict[key][lang_code] = translation[lang_code]
-    #             else:
-    #                 # If the key doesn't exist, it means this timestamp only has translation in this particular language
-    #                 timestamps_dict[key] = translation
-
-    #     merged_translations = list(timestamps_dict.values())
-    #     merged_translations.sort(key=lambda x: x['start'])
-
-    #     return merged_translations
-
     def translate_and_merge_subtitles_in_batch(self, subtitles, idx):
         """Merge translations from multiple languages' functions in parallel."""
         # Define a dictionary of language codes to their respective translation functions
@@ -343,7 +310,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
 
         # # Define a sample JSON structure for validation purposes
-        # sample_subtitles_structure = [
+        # sample_json_structure = [
         #     {
         #         "start": "timestamp",
         #         "end": "timestamp",
@@ -354,7 +321,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
         #     }
         # ]
 
-        # sample_json_string = json.dumps(sample_subtitles_structure, indent=2, ensure_ascii=False)
+        # sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
 
 
         # Define a JSONC string with comments
@@ -372,7 +339,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
         """
 
         # Parse the JSONC string into a Python object
-        sample_subtitles_structure = json5.loads(sample_json_string)
+        sample_json_structure = json5.loads(sample_json_string)
 
 
         system_content = "Translate and merge mixed language subtitles into Chinese, English and Arabic, providing coherent and accurate translations."
@@ -419,7 +386,12 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
 
 
-        translated_subtitles = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure)
+        translated_subtitles = self.send_request_with_retry(
+            prompt, 
+            system_content=system_content, 
+            sample_json=sample_json_structure,
+            filename=f"{self.base_filename}-part{idx}-major-{self.datetime_str}.json"
+        )
 
         print("Translated subtitles (Major): \n")
         pprint(translated_subtitles)
@@ -428,70 +400,13 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
         return translated_subtitles
 
-    # def translate_and_merge_subtitles_minor_languages(self, subtitles, idx):
-    #     """Translate and merge subtitles using the OpenAI API into Spanish, French, and Vietnamese."""
-
-    #     print("Translating subtitles into minor languages...")
-        
-    #     # Define a JSONC string with comments for the minor languages
-    #     sample_json_string = """
-    #     [
-    #         {
-    #             "start": "timestamp",  // Start time of the subtitle
-    #             "end": "timestamp",    // End time of the subtitle
-    #             "es": "Spanish text",  // Spanish translation
-    #             "fr": "French text",   // French translation
-    #             // "...": "Text in the original language, if not in the listed before."
-    #         }
-    #     ]
-    #     """
-
-    #     # Parse the JSONC string into a Python object using json5
-    #     sample_subtitles_structure = json5.loads(sample_json_string)
-
-    #     system_content = "Translate mixed language subtitles into Spanish, French, providing coherent and accurate translations."
-    #     prompt = (
-    #         "Below are mixed language subtitles extracted from a video, including timestamps, "
-    #         "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
-    #         "is presented with Spanish (es) and French (fr) translations, "
-    #         "maintaining the original timestamps. "
-    #         "If a subtitle is already in one of these languages, provide the corresponding translations in the other language. "
-    #         # "For subtitles in any other language, keep the original text but also provide translations in "
-    #         # "Spanish, French, and Vietnamese.\n\n"
-
-    #         "Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. "
-    #         "If I said in subtitles that I want to know or I don't know how to say something, "
-    #         "provide the whole subtitles in that language.\n\n"
-
-    #         "Correct some apparent speech recognition error and inconsistencies, "
-    #         "especially homonym and mumble in both origin and its translation based on the context.\n\n"
-
-    #         "Process the following subtitles, ensuring translations are accurate and coherent, "
-    #         "and format the output as shown in the example. "
-    #         "Note that the original timestamps should be PRESERVED for each entry.\n\n"
-
-    #         "Subtitles to process:\n"
-    #         f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
-
-    #         "ONLY and ALWAYS return a valid JSON back:\n"
-    #         "```json"
-    #         f"{sample_json_string}\n"
-    #         "```"
-    #     )
-
-    #     translated_subtitles = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure)
-
-    #     print("Translated subtitles (Minor): \n")
-    #     pprint(translated_subtitles)
-
-    #     return translated_subtitles
 
     def translate_and_merge_subtitles_minor_languages(self, subtitles, idx):
         """Translate and merge subtitles using the OpenAI API into Spanish, French, and Vietnamese by leveraging the 
         translate_and_merge_subtitles_with_specified_languages function."""
 
         # Define the list of minor languages to translate to
-        minor_languages = ["Spanish", "French", "Ukrainian"]
+        minor_languages = ["Spanish", "French", "Russian"]
         
         # Call the translate_and_merge_subtitles_with_specified_languages function with the minor languages
         translated_subtitles = self.translate_and_merge_subtitles_with_specified_languages(subtitles, minor_languages, idx)
@@ -518,7 +433,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             sample_json_structure[0][code] = f"{LANGUAGES[code]} text"
 
         sample_json_string = json.dumps(sample_json_structure, indent=2)
-        sample_subtitles_structure = json5.loads(sample_json_string)
+        # sample_json_structure = json5.loads(sample_json_string)
 
         # Generate a human-readable string of the full language names for the prompt
         languages_list_str = ', '.join(language_full_names[:-1]) + ', and ' + language_full_names[-1] if len(language_full_names) > 1 else language_full_names[0]
@@ -554,7 +469,13 @@ class SubtitlesTranslator(OpenAIRequestBase):
             "```"
         )
 
-        translated_subtitles = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure)
+        lang_str = "_".join(language_codes)
+        translated_subtitles = self.send_request_with_retry(
+            prompt,
+            system_content=system_content,
+            sample_json=sample_json_structure,
+            filename=f"{self.base_filename}-part{idx}-{lang_str}-{self.datetime_str}.json"
+        )
 
         print("Translated subtitles (Specified Languages): \n")
         pprint(translated_subtitles)
@@ -585,7 +506,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
         """Request Japanese subtitles separately with specific formatting for furigana."""
         print("Translating subtitles to Japanese...")
 
-        sample_subtitles_structure = [
+        sample_json_structure = [
             {
                 "start": "timestamp",
                 "end": "timestamp",
@@ -593,7 +514,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             }
         ]
 
-        sample_json_string = json.dumps(sample_subtitles_structure, indent=2, ensure_ascii=False)
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
 
         # system_content = "Translate subtitles into Japanese, correcting any errors based on context."
         system_content = "Translate subtitles into Japanese, providing coherent and accurate translations."
@@ -619,20 +540,25 @@ class SubtitlesTranslator(OpenAIRequestBase):
         )
 
         
-        translated_subtitles_ja = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure)
+        translated_subtitles = self.send_request_with_retry(
+            prompt,
+            system_content=system_content,
+            sample_json=sample_json_structure,
+            filename=f"{self.base_filename}-part{idx}-ja-{self.datetime_str}.json"
+        )
 
 
-        annotated_subtitles = self.annotate_kanji_katakana(translated_subtitles_ja)
+        annotated_subtitles = self.annotate_kanji_katakana(translated_subtitles)
 
         print("annotated subtitles: \n")
         pprint(annotated_subtitles)
 
-        translated_subtitles_ja_with_furigana = self.add_furigana_for_japanese_subtitles(annotated_subtitles, idx)
+        translated_subtitles = self.add_furigana_for_japanese_subtitles(annotated_subtitles, idx)
 
         print("furigana subtitles: \n")
-        pprint(translated_subtitles_ja_with_furigana)
+        pprint(translated_subtitles)
 
-        return translated_subtitles_ja_with_furigana
+        return translated_subtitles
 
             
 
@@ -640,7 +566,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
     def add_furigana_for_japanese_subtitles(self, subtitles, idx):
         """Request Japanese subtitles with specific formatting for furigana using the OpenAI API with retries."""
 
-        sample_subtitles_structure_with_furigana = [
+        sample_json_structure = [
             {
                 "start": "timestamp",
                 "end": "timestamp",
@@ -648,7 +574,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             }
         ]
 
-        sample_json_string = json.dumps(sample_subtitles_structure_with_furigana, indent=2, ensure_ascii=False)
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
 
         system_content = "Add furigana annotations to the provided Japanese text."
         prompt = (
@@ -669,12 +595,17 @@ class SubtitlesTranslator(OpenAIRequestBase):
         )
 
         # Utilize send_request_with_retry to handle API requests, including retries, caching, and JSON validation
-        translated_subtitles_ja_with_furigana = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure_with_furigana)
+        translated_subtitles = self.send_request_with_retry(
+            prompt,
+            system_content=system_content,
+            sample_json=sample_json_structure,
+            filename=f"{self.base_filename}-part{idx}-furigana-{self.datetime_str}.json"
+        )
 
         print("Translated subtitles (Japanese with furigana): \n")
-        pprint(translated_subtitles_ja_with_furigana)
+        pprint(translated_subtitles)
 
-        return translated_subtitles_ja_with_furigana
+        return translated_subtitles
 
 
     def translate_and_merge_subtitles_ko(self, subtitles, idx):
@@ -682,7 +613,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
         print("Translating subtitles to Korean...")
 
         # Define a sample JSON structure for Korean subtitles
-        sample_subtitles_structure_ko = [
+        sample_json_structure = [
             {
                 "start": "timestamp",
                 "end": "timestamp",
@@ -690,7 +621,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             }
         ]
 
-        sample_json_string_ko = json.dumps(sample_subtitles_structure_ko, indent=2, ensure_ascii=False)
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
 
         # system_content = "Translate subtitles into Korean, correcting any errors based on context."
         system_content = "Translate subtitles into Korean, providing coherent and accurate translations."
@@ -710,22 +641,27 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
             "ONLY and ALWAYS return a valid JSON back:\n"
             "```json\n"
-            f"{sample_json_string_ko}\n"
+            f"{sample_json_string}\n"
             "```"
         )
 
         # Use the function for sending requests with retries, similarly to the Japanese version
-        translated_subtitles_ko = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure_ko)
+        translated_subtitles = self.send_request_with_retry(
+            prompt,
+            system_content=system_content,
+            sample_json=sample_json_structure,
+            filename=f"{self.base_filename}-part{idx}-ko-{self.datetime_str}.json"
+        )
 
         # Here, you might add any specific post-processing for Korean subtitles if necessary
         # For example, annotating certain phrases, cultural references, or anything specific to Korean
 
-        translated_subtitles_ko_with_hanja = self.replace_hangul_with_hanja(translated_subtitles_ko, idx)
+        translated_subtitles = self.replace_hangul_with_hanja(translated_subtitles, idx)
 
         print("Translated subtitles (Korean): \n")
-        pprint(translated_subtitles_ko_with_hanja)
+        pprint(translated_subtitles)
 
-        return translated_subtitles_ko_with_hanja
+        return translated_subtitles
 
 
     
@@ -739,14 +675,14 @@ class SubtitlesTranslator(OpenAIRequestBase):
         system_content = "Annotate Korean text with original Chinese Hanja."
 
         # Sample JSON structure expected in the response
-        sample_annotation_structure = {
+        sample_json_structure = {
             "korean_with_annotation": "",
             "korean_hanja_pairs": [
                 # {"korean_part": "한자 ", "hanja": "漢字 ", "roman": "hanja"}
                 {"korean_part": "", "hanja": ""}
             ]
         }
-        sample_json_string = json.dumps(sample_annotation_structure, indent=2, ensure_ascii=False)
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
 
 
         # Helper function for conservative replacement in the original text
@@ -790,7 +726,12 @@ class SubtitlesTranslator(OpenAIRequestBase):
                 f"```json\n{sample_json_string}\n```"
             )
 
-            response = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_annotation_structure)
+            response = self.send_request_with_retry(
+            prompt,
+            system_content=system_content,
+            sample_json=sample_json_structure,
+            filename=f"{self.base_filename}-part{idx}-hanja-{self.datetime_str}.json"
+        )
             # Assume response is structured correctly
             annotated_text = response.get("korean_with_annotation", "")
             hanja_pairs = response.get("korean_hanja_pairs", [])
@@ -831,7 +772,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
         print("Translating subtitles to Vietnamese...")
 
         # Define a sample JSON structure for Vietnamese subtitles
-        sample_subtitles_structure_vi = [
+        sample_json_structure = [
             {
                 "start": "timestamp",
                 "end": "timestamp",
@@ -839,7 +780,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
             }
         ]
 
-        sample_json_string_vi = json.dumps(sample_subtitles_structure_vi, indent=2, ensure_ascii=False)
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
 
         # system_content = "Translate subtitles into Vietnamese, correcting any errors based on context."
         system_content = "Translate subtitles into Vietnamese, providing coherent and accurate translations."
@@ -860,18 +801,23 @@ class SubtitlesTranslator(OpenAIRequestBase):
 
             "ONLY and ALWAYS return a valid JSON back:\n"
             "```json\n"
-            f"{sample_json_string_vi}\n"
+            f"{sample_json_string}\n"
             "```"
         )
 
-        translated_subtitles_vi = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_subtitles_structure_vi)
+        translated_subtitles = self.send_request_with_retry(
+            prompt,
+            system_content=system_content,
+            sample_json=sample_json_structure,
+            filename=f"{self.base_filename}-part{idx}-vi-{self.datetime_str}.json"
+        )
 
-        translated_subtitles_vi_with_chuhan = self.replace_viet_with_chuhan(translated_subtitles_vi, idx)
+        translated_subtitles = self.replace_viet_with_chuhan(translated_subtitles, idx)
 
         print("Translated subtitles (Vietnamese): \n")
-        pprint(translated_subtitles_vi_with_chuhan)
+        pprint(translated_subtitles)
 
-        return translated_subtitles_vi_with_chuhan
+        return translated_subtitles
 
     def replace_viet_with_chuhan(self, subtitles, idx):
         """Annotate Vietnamese subtitles with Chu-Han and conservatively replace original text with Chu-Han annotations."""
@@ -881,13 +827,13 @@ class SubtitlesTranslator(OpenAIRequestBase):
         system_content = "Annotate Vietnamese text with original Chinese Chu-Han."
         
         # Sample JSON structure expected in the response
-        sample_annotation_structure = {
+        sample_json_structure = {
             "viet_with_annotation": "",
             "viet_chuhan_pairs": [
                 {"viet_part": "", "chuhan": ""}
             ]
         }
-        sample_json_string = json.dumps(sample_annotation_structure, indent=2, ensure_ascii=False)
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
 
         def conservative_replace(original_text, chuhan_pairs):
             """Perform conservative replacement of Viet text with Chu-Han annotations, excluding text within <>[]."""
@@ -928,7 +874,12 @@ class SubtitlesTranslator(OpenAIRequestBase):
                 f"```json\n{sample_json_string}\n```"
             )
 
-            response = self.send_request_with_retry(prompt, system_content=system_content, sample_json=sample_annotation_structure)
+            response = self.send_request_with_retry(
+            prompt,
+            system_content=system_content,
+            sample_json=sample_json_structure,
+            filename=f"{self.base_filename}-part{idx}-chuhan-{self.datetime_str}.json"
+        )
             annotated_text = response.get("viet_with_annotation", "")
             chuhan_pairs = response.get("viet_chuhan_pairs", [])
             
@@ -1555,78 +1506,10 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
 
     def add_flag_emoji(self, lang_code):
-        flags = {
-            'zh': '🇨🇳',  # China for Mandarin
-            'en': '🇬🇧',  # United Kingdom for English
-            'ja': '🇯🇵',  # Japan
-            'ar': '🇸🇦',  # Saudi Arabia for Arabic
-            'ko': '🇰🇷',  # Korea for Korean
-            'es': '🇪🇸',  # Spain for Spanish
-            'vi': '🇻🇳',  # Vietnam
-            'fr': '🇫🇷',  # France
-            'de': '🇩🇪',  # Germany for German
-            'it': '🇮🇹',  # Italy for Italian
-            'ru': '🇷🇺',  # Russia for Russian
-            'pt': '🇵🇹',  # Portugal for Portuguese (Note: Brazil might use 🇧🇷 depending on the context)
-            'nl': '🇳🇱',  # Netherlands for Dutch
-            'sv': '🇸🇪',  # Sweden for Swedish
-            'no': '🇳🇴',  # Norway for Norwegian
-            'da': '🇩🇰',  # Denmark for Danish
-            'fi': '🇫🇮',  # Finland for Finnish
-            'pl': '🇵🇱',  # Poland for Polish
-            'tr': '🇹🇷',  # Turkey for Turkish
-            'el': '🇬🇷',  # Greece for Greek
-            'he': '🇮🇱',  # Israel for Hebrew
-            'th': '🇹🇭',  # Thailand for Thai
-            'cs': '🇨🇿',  # Czech Republic for Czech
-            'ro': '🇷🇴',  # Romania for Romanian
-            'hu': '🇭🇺',  # Hungary for Hungarian
-            'sk': '🇸🇰',  # Slovakia for Slovak
-            'bg': '🇧🇬',  # Bulgaria for Bulgarian
-            'sr': '🇷🇸',  # Serbia for Serbian
-            'hr': '🇭🇷',  # Croatia for Croatian
-            'sl': '🇸🇮',  # Slovenia for Slovenian
-            'lt': '🇱🇹',  # Lithuania for Lithuanian
-            'lv': '🇱🇻',  # Latvia for Latvian
-            'et': '🇪🇪',  # Estonia for Estonian
-            'id': '🇮🇩',  # Indonesia for Indonesian
-            'ms': '🇲🇾',  # Malaysia for Malay
-            'fil': '🇵🇭',  # Philippines for Filipino
-            'sw': '🇹🇿',  # Tanzania for Swahili (Note: also widely spoken in Kenya 🇰🇪)
-            'uk': '🇺🇦',  # Ukraine for Ukrainian
-            'bn': '🇧🇩',  # Bangladesh for Bengali
-            'hi': '🇮🇳',  # India for Hindi
-            'fa': '🇮🇷',  # Iran for Persian (Farsi)
-            'ur': '🇵🇰',  # Pakistan for Urdu
-            'mn': '🇲🇳',  # Mongolia for Mongolian
-            'ne': '🇳🇵',  # Nepal for Nepali
-        }
+        flags = self.flags
+        
         # Return the flag emoji or an empty string if the language code is not found
         return flags.get(lang_code, "")
-
-
-    def add_country_flags_to_translated_subtitles(self, translated_subtitles):
-        """Add country flags to subtitles in translated_subtitles based on their language."""
-        
-        # Mapping of language codes to country flags
-        language_flags = {
-            'en': '🇬🇧',  # Assuming English is represented by the UK flag
-            'es': '🇪🇸',  # Spanish
-            'fr': '🇫🇷',  # French
-            'zh': '🇨🇳',  # Simplified Chinese
-            'ar': '🇸🇦',  # Assuming Arabic is represented by the Saudi Arabia flag
-            'ko': '🇰🇷',  # Korean
-            'vi': '🇻🇳',  # Vietnamese
-            'ja': '🇯🇵',  # Japanese
-        }
-
-        for translated_subtitle in translated_subtitles:
-            for lang, flag in language_flags.items():
-                if lang in translated_subtitle:
-                    # Prepend the country flag to the subtitle text for the specified language
-                    translated_subtitle[lang] = f"{flag} {translated_subtitle[lang]}"
-
-        return translated_subtitles
 
 
 
