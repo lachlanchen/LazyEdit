@@ -26,6 +26,7 @@ from lazyedit.subtitle_metadata import Subtitle2Metadata
 from lazyedit.words_card import VideoAddWordsCard, overlay_word_card_on_cover
 from lazyedit.subtitle_translate import SubtitlesTranslator
 from lazyedit.utils import find_font_size
+from lazyedit.video_captioner import VideoCaptioner
 
 from pprint import pprint
 import json5
@@ -61,7 +62,8 @@ from lingua import Language, LanguageDetectorBuilder
 
 import os
 
-
+from moviepy.editor import VideoFileClip
+import moviepy.editor as mp
 
 
 
@@ -148,7 +150,16 @@ def get_time_range(time_range):
 
 
 
-
+def get_video_length_alternative(filename):
+    from moviepy.editor import VideoFileClip
+    import moviepy.editor as mp
+    """Returns the length of the video in seconds using moviepy. Returns -1 if unable to determine."""
+    try:
+        with VideoFileClip(filename) as video:
+            return video.duration
+    except Exception as e:
+        print(f"Warning: Failed to get video length for {filename}. Error: {e}")
+        return -1
 
 
 
@@ -161,7 +172,8 @@ def get_video_length(filename):
         return video_length
     except Exception as e:
         print(f"Warning: Failed to get video length for {filename}. Error: {e}")
-        return None
+        # return None
+        return get_video_length_alternative(filename)
 
 
 def get_video_resolution(video_path):
@@ -388,7 +400,11 @@ def insert_video_segment_at_start(video_path, start_time, end_time, output_path)
         print("Segment successfully inserted at the start of the video.")
     except subprocess.CalledProcessError as e:
         print(f"An error occurred: {e.stderr.decode()}\nReturning the original file.")
-        return video_path
+        # Use shutil.copy2 to copy the original file to the output path, preserving metadata
+        shutil.copy2(video_path, output_path)
+        # return output_path  # Return the path to the copied original file
+
+        # return video_path
 
     return output_path
 
@@ -437,7 +453,8 @@ def insert_video_segment_at_start_with_temp(video_path, start_time, end_time, ou
         print(f"Segment successfully inserted. Output saved to {output_path}")
     except subprocess.CalledProcessError as e:
         print(f"An error occurred: {e}\nReturning the original file.")
-        return video_path
+        shutil.copy2(video_path, output_path)
+        # return video_path
     finally:
         # Clean up temporary files
         os.remove(temp_segment_path)
@@ -490,27 +507,82 @@ def get_etymology_image(word, output_folder):
         return None
 
 
+# def add_first_word_card_to_video(video_path, english_words_to_learn, output_folder, duration=3):
+#     if not english_words_to_learn:
+#         print("No words to learn provided.")
+#         return video_path, english_words_to_learn, None  # No word card to add
+
+#     first_word_info = english_words_to_learn[0]
+#     english_words_to_learn = english_words_to_learn[1:]  # Exclude the first word for further processing
+
+#     try:
+#         word_card_image_path = get_word_card_image(first_word_info["word"], output_folder)
+#     except:
+#         print("Failed to request word: ", first_word_info["word"])
+#         word_card_image_path = get_word_card_image("hello", output_folder)
+
+#     # filename, file_extension = os.path.splitext(os.path.basename(video_path))
+#     # output_path = os.path.join(self.output_dir, f"{filename}_with_words_card{file_extension}")
+
+#     if word_card_image_path:
+#         video_add_words_card = VideoAddWordsCard(video_path, word_card_image_path, duration=duration)
+#         try:
+#             video_with_first_word_card_path, _ = video_add_words_card.add_image_to_video()
+#             return video_with_first_word_card_path, english_words_to_learn, word_card_image_path
+#         except Exception as e:
+#             print("Error in adding cover word: ", str(e))
+#             # shutil.copy2(video_path, video_with_first_word_card_path)
+#             # return video_with_first_word_card_path, english_words_to_learn, word_card_image_path
+#             return video_path, english_words_to_learn, word_card_image_path
+#     else:
+#         print(f"Failed to obtain word card for '{first_word_info['word']}'. Proceeding without adding word card.")
+#         # shutil.copy2(video_path, video_with_first_word_card_path)
+#         # return video_with_first_word_card_path, english_words_to_learn, None
+#         return video_path, english_words_to_learn, None
+
+#     # return video_path, english_words_to_learn, None
+
 def add_first_word_card_to_video(video_path, english_words_to_learn, output_folder, duration=3):
     if not english_words_to_learn:
         print("No words to learn provided.")
-        return video_path, english_words_to_learn, None  # No word card to add
+        return video_path, english_words_to_learn, None  # No word card to add if the list is empty.
 
-    first_word_info = english_words_to_learn[0]
-    english_words_to_learn = english_words_to_learn[1:]  # Exclude the first word for further processing
+    remaining_words = english_words_to_learn[:]  # Make a copy of the word list to modify it without affecting the original.
+    used_word = None  # Initialize to track which word was successfully used to create a word card.
+    fallback_word = "Lazying Art"  # Define a fallback word in case all words in the list fail.
 
+    # Try each word in the list until one succeeds in creating a word card and adding it to the video.
+    for first_word_info in remaining_words:
+        try:
+            # Attempt to get a word card image for the current word.
+            word_card_image_path = get_word_card_image(first_word_info["word"], output_folder)
+            # Create a video adder object and add the word card to the video.
+            video_add_words_card = VideoAddWordsCard(video_path, word_card_image_path, duration=duration)
+            # Process the video to add the word card, capturing the new video path.
+            video_with_first_word_card_path, _ = video_add_words_card.add_image_to_video()
+            used_word = first_word_info  # Update the used word on success.
+            break  # Exit loop on successful video processing.
+        except Exception as e:
+            print("Failed to request word or add to video: ", first_word_info["word"], "Error:", str(e))
+            continue  # Skip to the next word on failure.
+
+    # If a word card was successfully added, update the remaining words list by removing the used word.
+    if used_word:
+        remaining_words.remove(used_word)
+        return video_with_first_word_card_path, remaining_words, word_card_image_path
+
+    # If no word from the list leads to a successful word card, try the fallback word.
     try:
-        word_card_image_path = get_word_card_image(first_word_info["word"], output_folder)
-    except:
-        print("Failed to request word: ", first_word_info["word"])
-        word_card_image_path = get_word_card_image("hello", output_folder)
-
-    if word_card_image_path:
+        word_card_image_path = get_word_card_image(fallback_word, output_folder)
         video_add_words_card = VideoAddWordsCard(video_path, word_card_image_path, duration=duration)
         video_with_first_word_card_path, _ = video_add_words_card.add_image_to_video()
-        return video_with_first_word_card_path, english_words_to_learn, word_card_image_path
-    else:
-        print(f"Failed to obtain word card for '{first_word_info['word']}'. Proceeding without adding word card.")
-        return video_path, english_words_to_learn, None
+        # On fallback success, return the path of the modified video, the unchanged word list, and the fallback image path.
+        return video_with_first_word_card_path, remaining_words, word_card_image_path
+    except Exception as e:
+        print("Failed to use fallback word 'lazying art':", str(e))
+        # If even the fallback fails, return the original video path, the unchanged word list, and no image path.
+        return video_path, remaining_words, None
+
 
 
 
@@ -1165,7 +1237,25 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
             print(f"Task completed with result: {result}")
 
 
-    
+    def caption_video(self, input_file, output_folder, num_frames=3):
+        """
+        Method to handle video captioning. It directly instantiates and uses VideoCaptioner.
+        """
+        # Instantiate VideoCaptioner with the required settings
+        video_captioner = VideoCaptioner(
+            video_path=input_file,
+            num_frames=num_frames,
+            output_folder=output_folder
+        )
+
+        # Submit the captioning task to the thread pool executor
+        future = self.executor.submit(video_captioner.run_captioning)
+        for future in as_completed([future]):  # Wait for the captioning to complete
+            try:
+                future.result()  # This will raise an exception if the captioning failed
+                print("Captioning completed successfully.")
+            except Exception as e:
+                print(f"An error occurred during video captioning: {str(e)}")
 
 
 
@@ -1196,7 +1286,6 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
         
         output_json_mixed = f"{output_folder}/{base_name}_mixed.json"
         output_srt_mixed = f"{output_folder}/{base_name}_mixed.srt"
-        
 
         # Check if files exist before reading
         # for file_path in [output_md_en, output_srt_en, output_md_zh, output_srt_zh]:
@@ -1205,6 +1294,17 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
                 self.set_status(500)
                 self.write(f"Error: Expected output file not found: {file_path}")
                 return
+
+        self.caption_video(input_file, output_folder, num_frames=5)
+
+        output_json_caption = f"{output_folder}/{os.path.splitext(os.path.basename(input_file))[0]}_caption.json"
+        output_srt_caption = f"{output_folder}/{os.path.splitext(os.path.basename(input_file))[0]}_caption.srt"
+
+        # Example to handle JSON and SRT files if needed
+        if not all(os.path.exists(f) for f in [output_json_caption, output_srt_caption]):
+            self.set_status(500)
+            self.write({'status': 'error', 'message': 'Expected output files not found'})
+            return
 
         # Merge subtitles
         print("Merging/Translating subtitles...")
@@ -1238,7 +1338,7 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
             use_cache=use_metadata_cache
         )
         metadata = sub2meta.generate_video_metadata(
-            output_srt_mixed,
+            output_srt_mixed, output_srt_caption
         )
         metadata["video_filename"] = f"{base_name}_highlighted.mp4"
         metadata["cover_filename"] = f"{base_name}_cover.jpg"

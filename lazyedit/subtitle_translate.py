@@ -1597,7 +1597,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             dialogue_lines = []
 
             # Process languages in a specific order if needed, then all additional languages
-            preferred_order = ['zh', 'en', 'ja', "ar", "ko", "es", "vi", "fr", "uk"][::-1]  # Example: Start with Chinese, then English, then Japanese
+            preferred_order = ['zh', 'en', 'ja', "ar", "ko", "es", "vi", "fr", "ru"][::-1]  # Example: Start with Chinese, then English, then Japanese
             handled_keys = set(preferred_order)
 
             # Add preferred languages first

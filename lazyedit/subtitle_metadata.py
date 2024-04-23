@@ -173,11 +173,11 @@ class Subtitle2Metadata(OpenAIRequestBase):
 
 
 
-    def generate_video_metadata(self, subtitle_path):
+    def generate_video_metadata(self, subtitle_path, caption_path):
         with ThreadPoolExecutor(max_workers=2) as executor:
             # Initiate both tasks in parallel
-            future_zh = executor.submit(self.generate_video_metadata_zh, subtitle_path)
-            future_en = executor.submit(self.generate_video_metadata_en, subtitle_path)
+            future_zh = executor.submit(self.generate_video_metadata_zh, subtitle_path, caption_path)
+            future_en = executor.submit(self.generate_video_metadata_en, subtitle_path, caption_path)
 
             # Wait for both tasks to complete
             result_zh = future_zh.result()
@@ -335,10 +335,13 @@ class Subtitle2Metadata(OpenAIRequestBase):
     #     raise JSONParsingError("Reached maximum retries without success.", ai_response, messages[-1]["content"])
 
 
-    def generate_video_metadata_zh(self, subtitle_path):
+    def generate_video_metadata_zh(self, subtitle_path, caption_path):
         # Load the subtitles from the given file path
         with open(subtitle_path, 'r', encoding='utf-8') as file:
             mixed_subtitles = file.read()
+
+        with open(caption_path, 'r', encoding='utf-8') as file:
+            captions = file.read()
 
         # Sample JSON structure and string definition to reflect the requested changes
         sample_json_structure = {
@@ -372,7 +375,8 @@ class Subtitle2Metadata(OpenAIRequestBase):
         )
         prompt = (
             "I want to publish this video on XiaoHongShu, Bilibili, Douyin. \n\n"
-            "Based on the provided subtitles from a video, please generate a suitable title, "
+            "Based on the provided CLIPxGPT caption of frames and subtitles from the voice track, "
+            "please generate a suitable title, "
             "a brief introduction, a middle description, a long description, tags, "
             "some English words that viewers can learn, teaser range, and a cover timestamp. \n\n"
             "Make it in normal, realistic narration but appealing and put some knowledge in description "
@@ -388,7 +392,8 @@ class Subtitle2Metadata(OpenAIRequestBase):
             "Also, suggest a timestamp for the best scene to use as a cover image for the video. \n\n"
             "Try to find instructions also in subtitles if exist. \n\n"
             "Return correct format result with imagination even subtitles is little or even empty. \n\n"
-            "Multilingual subtitles:\n" + mixed_subtitles + "\n\n"
+            "Captions:\n" + captions + "\n\n"
+            "Subtitles:\n" + mixed_subtitles + "\n\n"
             "Please provide the metadata in the following JSON format:\n"
             "```json\n" + sample_json_string + "\n```"
         )
@@ -534,10 +539,13 @@ class Subtitle2Metadata(OpenAIRequestBase):
 
     #     raise JSONParsingError("Reached maximum retries without success.", ai_response, messages[-1]["content"])
 
-    def generate_video_metadata_en(self, subtitle_path):
+    def generate_video_metadata_en(self, subtitle_path, caption_path):
         # Load the subtitles from the given file path
         with open(subtitle_path, 'r', encoding='utf-8') as file:
             mixed_subtitles = file.read()
+
+        with open(caption_path, 'r', encoding='utf-8') as file:
+            captions = file.read()
 
         # Sample JSON structure and string definition to reflect the requested changes
         sample_json_structure = {
@@ -571,7 +579,8 @@ class Subtitle2Metadata(OpenAIRequestBase):
         )
         prompt = (
             "I want to publish this video on Youtube. \n\n"
-            "Based on the provided subtitles from a video, please generate a suitable title, "
+            "Based on the provided CLIPxGPT caption of frames and subtitles from the voice track, "
+            "please generate a suitable title, "
             "a brief introduction, a middle description, a long description, tags, "
             "some English words that viewers can learn, teaser range, and a cover timestamp. \n\n"
             "Make it in normal, realistic narration but appealing and put some knowledge in description "
@@ -587,7 +596,8 @@ class Subtitle2Metadata(OpenAIRequestBase):
             "Also, suggest a timestamp for the best scene to use as a cover image for the video. \n\n"
             "Try to find instructions also in subtitles if exist. \n\n"
             "Return correct format result with imagination even subtitles is little or even empty. \n\n"
-            "Multilingual subtitles:\n" + mixed_subtitles + "\n\n"
+            "Captions:\n" + captions + "\n\n"
+            "Subtitles:\n" + mixed_subtitles + "\n\n"
             "Please provide the metadata in the following JSON format:\n"
             "```json\n" + sample_json_string + "\n```"
         )
