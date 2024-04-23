@@ -169,15 +169,51 @@ class Subtitle2Metadata(OpenAIRequestBase):
                     # start, end = word_info['timestamp_range'].split(" --> ")
                     start, end = word_info["timestamp_range"]["start"], word_info["timestamp_range"]["end"]
                     word_info['timestamp_range'] = " --> ".join(self.switch_timestamps_if_necessary(start, end))
+                    word_info['word'] = word_info['word'].lower()
 
 
 
 
-    def generate_video_metadata(self, subtitle_path, caption_path):
+    # def generate_video_metadata(self, subtitle_path, caption_path):
+    #     with ThreadPoolExecutor(max_workers=2) as executor:
+    #         # Initiate both tasks in parallel
+    #         future_zh = executor.submit(self.generate_video_metadata_zh, subtitle_path, caption_path)
+    #         future_en = executor.submit(self.generate_video_metadata_en, subtitle_path, caption_path)
+
+    #         # Wait for both tasks to complete
+    #         result_zh = future_zh.result()
+    #         result_en = future_en.result()
+
+    #     # Try to merge 'english_version' from result_en into result_zh
+    #     try:
+    #         result_zh["english_version"] = result_en
+    #     except Exception:
+    #         # In case there's an error, fallback to a copy of result_zh
+    #         result_zh["english_version"] = result_zh.copy()
+
+    #     # Try to merge 'english_words_to_learn' from result_en into result_zh,
+    #     # while keeping a backup of the original 'english_words_to_learn' from result_zh
+    #     try:
+    #         # Backup 'english_words_to_learn' from the Chinese version before replacing
+    #         if "english_words_to_learn" in result_zh:
+    #             result_zh["english_words_to_learn_zh"] = result_zh["english_words_to_learn"].copy()
+
+    #         # Replace 'english_words_to_learn' with the version from the English metadata
+    #         if "english_words_to_learn" in result_en:
+    #             result_zh["english_words_to_learn_en"] = result_en["english_words_to_learn"]
+                
+    #         result_zh["english_words_to_learn"] = result_en["english_words_to_learn"]
+    #     except Exception as e:
+    #         # Handle any exceptions that might occur during the process
+    #         print(f"An error occurred while merging 'english_words_to_learn': {e}")
+
+    #     return result_zh
+
+    def generate_video_metadata(self):
         with ThreadPoolExecutor(max_workers=2) as executor:
             # Initiate both tasks in parallel
-            future_zh = executor.submit(self.generate_video_metadata_zh, subtitle_path, caption_path)
-            future_en = executor.submit(self.generate_video_metadata_en, subtitle_path, caption_path)
+            future_zh = executor.submit(self.generate_video_metadata_zh, self.subtitle_path, self.caption_path)
+            future_en = executor.submit(self.generate_video_metadata_en, self.subtitle_path, self.caption_path)
 
             # Wait for both tasks to complete
             result_zh = future_zh.result()
@@ -190,18 +226,32 @@ class Subtitle2Metadata(OpenAIRequestBase):
             # In case there's an error, fallback to a copy of result_zh
             result_zh["english_version"] = result_zh.copy()
 
-        # Try to merge 'english_words_to_learn' from result_en into result_zh,
-        # while keeping a backup of the original 'english_words_to_learn' from result_zh
+        # Merging 'english_words_to_learn' while keeping original lists intact
         try:
-            # Backup 'english_words_to_learn' from the Chinese version before replacing
+            # Backup the original lists before replacing
             if "english_words_to_learn" in result_zh:
                 result_zh["english_words_to_learn_zh"] = result_zh["english_words_to_learn"].copy()
-
-            # Replace 'english_words_to_learn' with the version from the English metadata
             if "english_words_to_learn" in result_en:
-                result_zh["english_words_to_learn"] = result_en["english_words_to_learn"]
+                result_zh["english_words_to_learn_en"] = result_en["english_words_to_learn"].copy()
+
+            # Create a merged list ensuring unique words across both datasets
+            merged_words = {}
+            all_words = result_zh.get("english_words_to_learn_zh", []) + result_en.get("english_words_to_learn_en", [])
+            for word_info in all_words:
+                key = word_info["timestamp_range"]
+                if key not in merged_words:
+                    merged_words[key] = set()
+                merged_words[key].add(word_info["word"])
+
+            # Convert to a sorted list by timestamp
+            sorted_merged_words = sorted(
+                [{"timestamp_range": k, "word": list(v)} for k, v in merged_words.items()],
+                key=lambda x: self.parse_timestamp(x['timestamp_range'].split(" --> ")[0])
+            )
+
+            result_zh["english_words_to_learn"] = sorted_merged_words
+
         except Exception as e:
-            # Handle any exceptions that might occur during the process
             print(f"An error occurred while merging 'english_words_to_learn': {e}")
 
         return result_zh
