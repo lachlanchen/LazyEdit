@@ -1295,7 +1295,7 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
                 self.write(f"Error: Expected output file not found: {file_path}")
                 return
 
-        self.caption_video(input_file, output_folder, num_frames=5)
+        self.caption_video(input_file, output_folder, num_frames=7)
 
         output_json_caption = f"{output_folder}/{os.path.splitext(os.path.basename(input_file))[0]}_caption.json"
         output_srt_caption = f"{output_folder}/{os.path.splitext(os.path.basename(input_file))[0]}_caption.srt"

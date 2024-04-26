@@ -16,7 +16,8 @@ class VideoCaptioner:
 
     def run_captioning(self):
         # Build the command for the captioning process
-        caption_command = f"{self.conda_env_path} /home/lachlan/Projects/image_captioning/clip-gpt-captioning/src/v2c.py -V \"{self.video_path}\" -N {self.num_frames}"
+        # caption_command = f"{self.conda_env_path} /home/lachlan/Projects/image_captioning/clip-gpt-captioning/src/v2c.py -V \"{self.video_path}\" -N {self.num_frames}"
+        caption_command = f"{self.conda_env_path} /home/lachlan/Projects/vit-gpt2-image-captioning/vit_captioner_video.py -V \"{self.video_path}\" -N {self.num_frames}"
         
         # Run the command in a subprocess
         result = subprocess.run(caption_command, shell=True, check=True, text=True)
