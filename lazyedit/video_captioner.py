@@ -82,10 +82,15 @@ class VideoCaptioner:
                 print("Alternative captioning completed successfully.")
             except subprocess.TimeoutExpired:
                 print("Alternative command timed out. Saving empty file.")
-                with open(self.caption_srt_path, 'w') as file:
-                    file.write("")  # Create an empty file
                 self.specific_kill(alternative_command)
                 
+                with open(self.caption_srt_path, 'w') as file:
+                    file.write("")  # Create an empty file
+
+                with open(self.caption_json_path, 'w') as file:
+                    file.write("")  # Create an empty file
+
+
         self.specific_kill(caption_command)
         self.specific_kill(alternative_command)
 
