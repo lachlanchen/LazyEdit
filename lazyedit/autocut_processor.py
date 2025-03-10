@@ -31,7 +31,9 @@ class AutocutProcessor:
         # Define the command to process the video for the specified language
         # autocut_command = f"/home/lachlan/miniconda3/bin/python -m autocut -t \"{input_file_lang}\" --whisper-model large --lang={lang} --force"
         # autocut_command = f"/home/lachlan/miniconda3/envs/whisper/bin/python /home/lachlan/Projects/whisper_with_lang_detect/vad_lang_subtitle.py -t \"{input_file_lang}\" --whisper-model large-v2 --force"
-        autocut_command = f"/home/lachlan/miniconda3/envs/whisper/bin/python /home/lachlan/Projects/whisper_with_lang_detect/vad_lang_subtitle.py -t \"{input_file_lang}\" --whisper-model large-v2"
+        autocut_command = f"/home/lachlan/miniconda3/envs/whisper/bin/python /home/lachlan/Projects/whisper_with_lang_detect/vad_lang_subtitle.py -t \"{input_file_lang}\" --whisper-model large-v3 --force"
+        print("autocut_command: ", autocut_command)
+
 
         # Run the autocut command with the specified environment
         subprocess.run(autocut_command, shell=True, check=True, env=env)

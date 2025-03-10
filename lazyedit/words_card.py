@@ -7,7 +7,7 @@ from moviepy.editor import VideoFileClip, ImageClip, CompositeVideoClip
 
 from PIL import Image
 
-def overlay_word_card_on_cover(words_card_path, cover_path, output_path, transparency=0.9):
+def overlay_word_card_on_cover(words_card_path, cover_path, output_path, transparency=0.5):
     # Open the word card and the cover images
     words_card_img = Image.open(words_card_path).convert("RGBA")
     cover_img = Image.open(cover_path).convert("RGBA")
@@ -91,7 +91,8 @@ class VideoAddWordsCard:
                 new_width = video_width
             
             new_height = int(new_width * aspect_ratio_image)
-            image_clip = image_clip.resize(newsize=(new_width, new_height)).set_position(("center", "center")).set_opacity(0.68).fadeout(1)
+            # image_clip = image_clip.resize(newsize=(new_width, new_height)).set_position(("center", "center")).set_opacity(0.68).fadeout(1)
+            image_clip = image_clip.resize(newsize=(new_width, new_height)).set_position(("center", "center")).set_opacity(0.38).fadeout(1)
 
             final_video = CompositeVideoClip([video_clip, image_clip.set_start(0)], size=(video_width, video_height))
             filename, file_extension = os.path.splitext(os.path.basename(self.video_path))

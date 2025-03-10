@@ -175,7 +175,7 @@ class Subtitle2Metadata(OpenAIRequestBase):
 
 
     def generate_video_metadata(self, subtitle_path, caption_path):
-        with ThreadPoolExecutor(max_workers=2) as executor:
+        with ThreadPoolExecutor(max_workers=1) as executor:
             # Initiate both tasks in parallel
             future_zh = executor.submit(self.generate_video_metadata_zh, subtitle_path, caption_path)
             future_en = executor.submit(self.generate_video_metadata_en, subtitle_path, caption_path)
@@ -211,7 +211,7 @@ class Subtitle2Metadata(OpenAIRequestBase):
         return result_zh
 
     # def generate_video_metadata(self, subtitle_path, caption_path):
-    #     with ThreadPoolExecutor(max_workers=2) as executor:
+    #     with ThreadPoolExecutor(max_workers=1) as executor:
     #         # Initiate both tasks in parallel
     #         future_zh = executor.submit(self.generate_video_metadata_zh, subtitle_path, caption_path)
     #         future_en = executor.submit(self.generate_video_metadata_en, subtitle_path, caption_path)

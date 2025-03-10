@@ -120,11 +120,12 @@ class OpenAIRequestBase:
 
         while retries < self.max_retries:
             try:
-                response = self.client.chat.completions.create(
-                    model=os.environ.get("OPENAI_MODEL", "gpt-4-0125-preview"),
+                ai_response = ""
+                ai_response = self.client.chat.completions.create(
+                    model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
                     messages=messages
                 )
-                ai_response = response.choices[0].message.content.strip()
+                ai_response = ai_response.choices[0].message.content.strip()
                 parsed_response = self.parse_response(ai_response)
 
                 if sample_json:

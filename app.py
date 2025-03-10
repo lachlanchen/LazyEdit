@@ -1,5 +1,6 @@
 import os
 
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 
 from lazyedit.openai_version_check import OpenAI
@@ -64,7 +65,6 @@ import os
 
 from moviepy.editor import VideoFileClip
 import moviepy.editor as mp
-
 
 
 def detect_language_with_lingua(text, detector):
@@ -1209,7 +1209,7 @@ class FileUploadHandlerStream(tornado.web.RequestHandler):
 
 
 class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
-    executor = ThreadPoolExecutor(max_workers=2)
+    executor = ThreadPoolExecutor(max_workers=1)
 
     def initialize(self):
         self.openai_client = OpenAI()  # Make sure to authenticate your OpenAI client
@@ -1401,7 +1401,15 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
         extract_cover(input_file, cover_plain_image_path, cover_timestamp.replace(",", "."))
 
 
-        overlay_word_card_on_cover(word_card_image_path, cover_plain_image_path, cover_image_path)
+        # overlay_word_card_on_cover(word_card_image_path, cover_plain_image_path, cover_image_path, transparency=0.5)
+        if word_card_image_path and os.path.exists(word_card_image_path):
+            overlay_word_card_on_cover(word_card_image_path, cover_plain_image_path, cover_image_path, transparency=0.5)
+        else:
+            # If we don't have a valid word card image, skip overlay
+            # or copy the plain cover
+            shutil.copy2(cover_plain_image_path, cover_image_path)
+            print("Skipping overlay because `word_card_image_path` was None or didn't exist.")
+
 
         # Prepare the files to return by zipping them
         zip_file_path = os.path.join(output_folder, f"{base_name}.zip")
@@ -1441,7 +1449,9 @@ def make_app(upload_folder):
 
 if __name__ == "__main__":
     # Set the OPENAI_MODEL environment variable
-    os.environ["OPENAI_MODEL"] = "gpt-4-0125-preview"
+    # os.environ["OPENAI_MODEL"] = "gpt-4-0125-preview"
+    os.environ["OPENAI_MODEL"] = "gpt-4o-mini"
+    
     upload_folder = '/home/lachlan/ProjectsLFS/lazyedit/DATA'  # Folder where files will be uploaded
     app = make_app(upload_folder)
     app.listen(8081, max_body_size=10*1024 * 1024 * 1024)

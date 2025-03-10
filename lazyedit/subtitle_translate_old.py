@@ -201,7 +201,7 @@ class SubtitlesTranslator:
         """Process subtitle batches in parallel using ThreadPoolExecutor."""
         translated_subtitles = []
 
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=1) as executor:
             # Submit all batches to be processed in parallel
             future_to_batch = {executor.submit(self.translate_and_merge_subtitles_in_batch, batch, i): batch for i, batch in enumerate(batches)}
 
@@ -273,7 +273,7 @@ class SubtitlesTranslator:
 
     def translate_and_merge_subtitles_in_batch(self, subtitles, idx):
         """Merge translations from Japanese-specific and other languages' functions in parallel."""
-        with ThreadPoolExecutor(max_workers=2) as executor:
+        with ThreadPoolExecutor(max_workers=1) as executor:
             # Submit both translation tasks to the executor
             future_ja = executor.submit(self.translate_and_merge_subtitles_ja, subtitles, idx)
             future_other_lang = executor.submit(self.translate_and_merge_subtitles_other_languages, subtitles, idx)

@@ -222,7 +222,7 @@ class SubtitlesTranslator(OpenAIRequestBase):
         """Process subtitle batches in parallel using ThreadPoolExecutor."""
         translated_subtitles = []
 
-        with ThreadPoolExecutor(max_workers=5) as executor:
+        with ThreadPoolExecutor(max_workers=1) as executor:
             # Submit all batches to be processed in parallel
             future_to_batch = {executor.submit(self.translate_and_merge_subtitles_in_batch, batch, i): batch for i, batch in enumerate(batches)}
 
