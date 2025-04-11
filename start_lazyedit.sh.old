@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Source the config file
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-source "$SCRIPT_DIR/lazyedit_config.sh"
-
 # Check if the tmux session 'lazyedit' already exists
 tmux has-session -t lazyedit 2>/dev/null
 
@@ -15,17 +11,19 @@ if [ $? != 0 ]; then
     # Wait a bit to ensure that commands are sent after the session is properly set up
     sleep 2
 
-    # Activate the conda environment using the function from config
-    tmux send-keys -t lazyedit "cd $LAZYEDIT_DIR" C-m
-    tmux send-keys -t lazyedit "source $CONDA_PATH" C-m
-    tmux send-keys -t lazyedit "conda activate $CONDA_ENV" C-m
+    # Activate the 'autopub-video' conda environment
+    # tmux send-keys -t lazyedit "conda activate autopub-video" C-m
+    tmux send-keys -t lazyedit "conda activate lazyedit" C-m
 
     # Wait for the conda environment to activate
     sleep 5
 
+    # Change directory to the project folder
+    tmux send-keys -t lazyedit "cd /home/lachlan/ProjectsLFS/lazyedit/" C-m
+
     # Execute the script
-    tmux send-keys -t lazyedit "cd $LAZYEDIT_DIR" C-m
-    tmux send-keys -t lazyedit "python app.py $APP_ARGS" C-m
+    tmux send-keys -t lazyedit "python app.py -m lazyedit" C-m
 else
     echo "Tmux session 'lazyedit' already exists."
 fi
+
