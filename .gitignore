@@ -1,7 +1,18 @@
-DATA/*
-subtitles2metadata/*
-translation_logs/*
-cache*/*
-__pycache__/*
+# Ignore data files and auto-generated output
+DATA/
+subtitles2metadata/
+translation_logs/
+
+# Ignore cache folders and all their contents
+cache/
+cache*/
+
+# Ignore compiled Python files and __pycache__ directories
+__pycache__/
 *.pyc
+
+# Ignore additional auto-generated directories (modify as needed)
+clipped/
+temp/
+weights/
 
