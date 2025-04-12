@@ -7,7 +7,7 @@ import subprocess
 import argparse
 import signal
 import time
-
+import traceback
 
 
 # class VideoCaptioner:
@@ -64,24 +64,26 @@ class VideoCaptioner:
         # Clear all potential interfering processes initially
         # self.vague_kill(self.base_command)
         # self.vague_kill(self.alternate_command)
+        caption_command = f"{self.conda_env_path} {self.base_command} -V \"{self.video_path}\" -N {self.num_frames}"
+        alternative_command = f"{self.conda_env_path} {self.alternate_command} -V \"{self.video_path}\" -N {self.num_frames}"
         
         try:
             # First attempt to run the base command
-            caption_command = f"{self.conda_env_path} {self.base_command} -V \"{self.video_path}\" -N {self.num_frames}"
             result = subprocess.run(caption_command, shell=True, check=True, timeout=180)  # 180 seconds = 3 minutes
             print(f"Captioning completed successfully, output saved to: {self.caption_srt_path}")
             print(f"Captioning completed successfully, output saved to: {self.caption_json_path}")
         except subprocess.TimeoutExpired:
             print("First command timed out. Trying alternative command.")
+            traceback.print_exc()
             self.specific_kill(caption_command)
 
             # Alternative command
-            alternative_command = f"{self.conda_env_path} {self.alternate_command} -V \"{self.video_path}\" -N {self.num_frames}"
             try:
                 subprocess.run(alternative_command, shell=True, check=True, timeout=180)
                 print("Alternative captioning completed successfully.")
             except subprocess.TimeoutExpired:
                 print("Alternative command timed out. Saving empty file.")
+                traceback.print_exc()
                 self.specific_kill(alternative_command)
                 
                 with open(self.caption_srt_path, 'w') as file:

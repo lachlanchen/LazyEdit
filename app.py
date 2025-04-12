@@ -90,12 +90,95 @@ def get_seconds(timestamp):
 
 
 
+# def extract_cover(video_path, image_path, time):
+#     # Replace comma with dot for milliseconds
+#     time = time.replace(',', '.')
+#     ffmpeg_command = f"ffmpeg -y -ss {time} -i \"{video_path}\" -frames:v 1 \"{image_path}\""
+#     subprocess.run(ffmpeg_command, shell=True, check=True)
+
 def extract_cover(video_path, image_path, time):
+    """
+    Extracts a frame from a video at the specified time and saves it as an image.
+    Compatible with newer FFmpeg versions that require additional flags for single image output.
+    
+    Args:
+        video_path (str): Path to the input video file
+        image_path (str): Path where the extracted frame will be saved
+        time (str): Timestamp for the frame to extract (in format HH:MM:SS.ms)
+    """
+    import subprocess
+    import os
+    import shutil
+    
     # Replace comma with dot for milliseconds
     time = time.replace(',', '.')
-    ffmpeg_command = f"ffmpeg -y -ss {time} -i \"{video_path}\" -frames:v 1 \"{image_path}\""
-    subprocess.run(ffmpeg_command, shell=True, check=True)
-
+    
+    # Try different approaches to extract the frame
+    methods = [
+        # Method 1: Use -update flag as suggested in the error message
+        f"ffmpeg -y -ss {time} -i \"{video_path}\" -frames:v 1 -update 1 \"{image_path}\"",
+        
+        # Method 2: Explicitly specify the format
+        f"ffmpeg -y -ss {time} -i \"{video_path}\" -frames:v 1 -f image2 -update 1 \"{image_path}\"",
+        
+        # Method 3: Use vframes instead of frames:v
+        f"ffmpeg -y -ss {time} -i \"{video_path}\" -vframes 1 \"{image_path}\"",
+        
+        # Method 4: Use a temporary pattern filename and then rename
+        f"ffmpeg -y -ss {time} -i \"{video_path}\" -vframes 1 \"{os.path.dirname(image_path)}/temp%03d.jpg\""
+    ]
+    
+    success = False
+    
+    for i, method in enumerate(methods):
+        try:
+            print(f"Trying method {i+1} to extract cover frame...")
+            subprocess.run(method, shell=True, check=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            
+            # If using Method 4 (temp filename with pattern), rename the file
+            if i == 3:
+                temp_file = f"{os.path.dirname(image_path)}/temp001.jpg"
+                if os.path.exists(temp_file):
+                    shutil.move(temp_file, image_path)
+            
+            success = True
+            print(f"Successfully extracted cover frame using method {i+1}")
+            break
+            
+        except subprocess.CalledProcessError as e:
+            print(f"Method {i+1} failed: {e.stderr.decode() if e.stderr else str(e)}")
+            continue
+    
+    if not success:
+        print("Failed to extract cover frame using all methods. Attempting fallback...")
+        try:
+            # Fallback method: Use OpenCV to extract a frame
+            import cv2
+            
+            cap = cv2.VideoCapture(video_path)
+            # Convert time string to seconds
+            time_parts = time.split(':')
+            if len(time_parts) == 3:
+                seconds = float(time_parts[0]) * 3600 + float(time_parts[1]) * 60 + float(time_parts[2])
+            else:
+                seconds = float(time)
+                
+            # Set position and read frame
+            cap.set(cv2.CAP_PROP_POS_MSEC, seconds * 1000)
+            ret, frame = cap.read()
+            
+            if ret:
+                cv2.imwrite(image_path, frame)
+                print("Successfully extracted cover frame using OpenCV fallback")
+                success = True
+            
+            cap.release()
+            
+        except Exception as e:
+            print(f"OpenCV fallback failed: {str(e)}")
+            
+    if not success:
+        raise RuntimeError("Failed to extract cover frame using all available methods")
 
 
 def escape_ffmpeg_text(text):
@@ -371,41 +454,110 @@ def repeat_start_of_video(video_path, repeat_sec, output_path):
     ]
     subprocess.run(repeat_command, check=True)
 
+# def insert_video_segment_at_start(video_path, start_time, end_time, output_path):
+#     """
+#     Inserts a specific segment of a video at the beginning of the original video.
+
+#     Args:
+#     - video_path: Path to the input video file.
+#     - start_time: Start time of the segment to insert (in seconds).
+#     - end_time: End time of the segment to insert (in seconds).
+#     - output_path: Path to save the output video with the segment inserted at the start.
+#     """
+
+#     print("Adding teaser...")
+
+#     # Correctly format the ffmpeg command
+#     ffmpeg_command = (
+#         f'ffmpeg -y -i "{video_path}" -filter_complex '
+#         f'"[0:v]trim=start={start_time}:end={end_time},setpts=PTS-STARTPTS[firstv];'
+#         f'[0:a]atrim=start={start_time}:end={end_time},asetpts=PTS-STARTPTS[firsta];'
+#         f'[firstv][0:v]concat=n=2:v=1:a=0[finalv];'
+#         f'[firsta][0:a]concat=n=2:v=0:a=1[finala]" '
+#         f'-map "[finalv]" -map "[finala]" "{output_path}"'
+#     )
+
+#     try:
+#         # Execute the ffmpeg command
+#         subprocess.run(ffmpeg_command, check=True, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+#         print("Segment successfully inserted at the start of the video.")
+#     except subprocess.CalledProcessError as e:
+#         print(f"An error occurred: {e.stderr.decode()}\nReturning the original file.")
+#         # Use shutil.copy2 to copy the original file to the output path, preserving metadata
+#         shutil.copy2(video_path, output_path)
+#         # return output_path  # Return the path to the copied original file
+
+#         # return video_path
+
+#     return output_path
+
 def insert_video_segment_at_start(video_path, start_time, end_time, output_path):
     """
     Inserts a specific segment of a video at the beginning of the original video.
-
+    
     Args:
     - video_path: Path to the input video file.
     - start_time: Start time of the segment to insert (in seconds).
     - end_time: End time of the segment to insert (in seconds).
     - output_path: Path to save the output video with the segment inserted at the start.
     """
+    import os
+    import subprocess
+    import shutil
+    import tempfile
 
     print("Adding teaser...")
-
-    # Correctly format the ffmpeg command
-    ffmpeg_command = (
-        f'ffmpeg -y -i "{video_path}" -filter_complex '
-        f'"[0:v]trim=start={start_time}:end={end_time},setpts=PTS-STARTPTS[firstv];'
-        f'[0:a]atrim=start={start_time}:end={end_time},asetpts=PTS-STARTPTS[firsta];'
-        f'[firstv][0:v]concat=n=2:v=1:a=0[finalv];'
-        f'[firsta][0:a]concat=n=2:v=0:a=1[finala]" '
-        f'-map "[finalv]" -map "[finala]" "{output_path}"'
-    )
-
-    try:
-        # Execute the ffmpeg command
-        subprocess.run(ffmpeg_command, check=True, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        print("Segment successfully inserted at the start of the video.")
-    except subprocess.CalledProcessError as e:
-        print(f"An error occurred: {e.stderr.decode()}\nReturning the original file.")
-        # Use shutil.copy2 to copy the original file to the output path, preserving metadata
-        shutil.copy2(video_path, output_path)
-        # return output_path  # Return the path to the copied original file
-
-        # return video_path
-
+    
+    # Create temporary directory for intermediate files
+    with tempfile.TemporaryDirectory() as temp_dir:
+        # First extract the segment to a separate file with the same codec
+        segment_path = os.path.join(temp_dir, "segment.mp4")
+        extract_cmd = (
+            f'ffmpeg -y -i "{video_path}" -ss {start_time} -to {end_time} '
+            f'-c:v libx264 -c:a aac -strict experimental "{segment_path}"'
+        )
+        
+        try:
+            # Extract the segment
+            subprocess.run(extract_cmd, check=True, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            
+            # Now concatenate the segment with the original video using the concat demuxer
+            concat_list_path = os.path.join(temp_dir, "concat_list.txt")
+            
+            # Write the concat list file with absolute paths
+            with open(concat_list_path, 'w') as f:
+                f.write(f"file '{os.path.abspath(segment_path)}'\n")
+                f.write(f"file '{os.path.abspath(video_path)}'\n")
+            
+            # Use the concat demuxer for more reliable concatenation
+            concat_cmd = (
+                f'ffmpeg -y -f concat -safe 0 -i "{concat_list_path}" '
+                f'-c copy "{output_path}"'
+            )
+            
+            subprocess.run(concat_cmd, check=True, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            print("Segment successfully inserted at the start of the video.")
+            
+        except subprocess.CalledProcessError as e:
+            print(f"An error occurred: {e.stderr.decode()}")
+            print("Trying alternative method...")
+            
+            try:
+                # Alternative method using the concat filter with explicit codec specification
+                alt_concat_cmd = (
+                    f'ffmpeg -y -i "{segment_path}" -i "{video_path}" -filter_complex '
+                    f'"[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[outv][outa]" '
+                    f'-map "[outv]" -map "[outa]" -c:v libx264 -c:a aac -strict experimental "{output_path}"'
+                )
+                
+                subprocess.run(alt_concat_cmd, check=True, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+                print("Segment successfully inserted using alternative method.")
+                
+            except subprocess.CalledProcessError as e2:
+                print(f"Alternative method also failed: {e2.stderr.decode()}")
+                print("Returning the original file.")
+                shutil.copy2(video_path, output_path)
+    
     return output_path
 
 def insert_video_segment_at_start_with_temp(video_path, start_time, end_time, output_path):
@@ -563,6 +715,7 @@ def add_first_word_card_to_video(video_path, english_words_to_learn, output_fold
             used_word = first_word_info  # Update the used word on success.
             break  # Exit loop on successful video processing.
         except Exception as e:
+            traceback.print_exc()
             print("Failed to request word or add to video: ", first_word_info["word"], "Error:", str(e))
             continue  # Skip to the next word on failure.
 
@@ -579,6 +732,7 @@ def add_first_word_card_to_video(video_path, english_words_to_learn, output_fold
         # On fallback success, return the path of the modified video, the unchanged word list, and the fallback image path.
         return video_with_first_word_card_path, remaining_words, word_card_image_path
     except Exception as e:
+        traceback.print_exc()
         print("Failed to use fallback word 'lazying art':", str(e))
         # If even the fallback fails, return the original video path, the unchanged word list, and no image path.
         return video_path, remaining_words, None
@@ -680,6 +834,46 @@ def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
             # shutil.copy(video_path, output_path)
 
     return None  # Since word_card_image_path logic was removed
+
+
+
+def highlight_words_dummy(video_path, english_words_to_learn, output_path, delay=3):
+    """
+    Dummy implementation of highlight_words that simply copies the input video to output path.
+    This function skips the word highlighting process to avoid system freezes.
+    
+    Args:
+        video_path (str): Path to the input video file
+        english_words_to_learn (list): List of words to highlight (ignored in this implementation)
+        output_path (str): Path where the output video will be saved
+        delay (int, optional): Delay parameter (ignored in this implementation). Defaults to 3.
+    
+    Returns:
+        None
+    """
+    print("Using dummy highlight_words function - skipping word highlighting")
+    
+    # Simply copy the input video to the output path to maintain workflow
+    try:
+        # Check if output_path already exists, remove it before creating a new link
+        if os.path.exists(output_path):
+            os.remove(output_path)
+        
+        # Try to create a hard link (fast, doesn't duplicate file data)
+        try:
+            os.link(video_path, output_path)
+            print(f"Created hard link from {video_path} to {output_path}")
+        except OSError:
+            # If hard link fails (e.g., different filesystems), copy the file
+            import shutil
+            shutil.copy2(video_path, output_path)
+            print(f"Copied {video_path} to {output_path}")
+    
+    except Exception as e:
+        print(f"Error in dummy highlight_words function: {e}")
+        traceback.print_exc()
+    
+    return None
 
 def select_font_path(detected_language):
     """
@@ -1063,11 +1257,36 @@ def get_audio_bitrate(video_path):
     # Return the bitrate in kbps if found, else default to 192k
     return f"{int(bitrate)//1000}k" if bitrate.isdigit() else "192k"
 
+# def burn_subtitles(video_path, sub_path, output_path):
+#     # Determine the subtitle file extension
+#     sub_extension = os.path.splitext(sub_path)[1].lower()
+    
+#     # Determine the appropriate subtitle filter based on the extension
+#     if sub_extension in [".ass", ".ssa"]:
+#         subtitle_filter = f"ass={sub_path}"
+#     elif sub_extension == ".srt":
+#         subtitle_filter = f"subtitles={sub_path}"
+#     else:
+#         raise ValueError(f"Unsupported subtitle format: {sub_extension}")
+    
+#     # Extract the original audio bitrate for use in conversion
+#     audio_bitrate = get_audio_bitrate(video_path)
+    
+#     # Construct the FFmpeg command
+#     command = f'ffmpeg -y -i "{video_path}" -vf "{subtitle_filter}" -c:a aac -b:a {audio_bitrate} "{output_path}"'
+    
+#     try:
+#         subprocess.run(command, shell=True, check=True)
+#     except subprocess.CalledProcessError as e:
+#         print(f"Error executing FFmpeg command: {e}")
+
+
 def burn_subtitles(video_path, sub_path, output_path):
     # Determine the subtitle file extension
     sub_extension = os.path.splitext(sub_path)[1].lower()
     
-    # Determine the appropriate subtitle filter based on the extension
+    # Choose the appropriate subtitle filter based on the extension.
+    # ASS/SSA files use the ASS filter; SRT files use the subtitles filter.
     if sub_extension in [".ass", ".ssa"]:
         subtitle_filter = f"ass={sub_path}"
     elif sub_extension == ".srt":
@@ -1075,16 +1294,26 @@ def burn_subtitles(video_path, sub_path, output_path):
     else:
         raise ValueError(f"Unsupported subtitle format: {sub_extension}")
     
-    # Extract the original audio bitrate for use in conversion
+    # Extract the original audio bitrate from the input video.
     audio_bitrate = get_audio_bitrate(video_path)
     
-    # Construct the FFmpeg command
-    command = f'ffmpeg -y -i "{video_path}" -vf "{subtitle_filter}" -c:a aac -b:a {audio_bitrate} "{output_path}"'
+    # Construct the FFmpeg command:
+    # - The -y flag forces overwriting output if it exists.
+    # - -vf applies the subtitle filter.
+    # - -c:a aac and -b:a specify that AAC audio encoding with the extracted bitrate will be used.
+    command = (
+        f'ffmpeg -y -i "{video_path}" '
+        f'-vf "{subtitle_filter}" '
+        f'-c:a aac -b:a {audio_bitrate} '
+        f'"{output_path}"'
+    )
     
+    print("Executing command:", command)
     try:
         subprocess.run(command, shell=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error executing FFmpeg command: {e}")
+
 
 def validate_timestamp(timestamp):
     try:
@@ -1384,7 +1613,7 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
 
         # Step 3: Highlight the remaining words in the updated video
         highlighted_video_path = os.path.join(output_folder, f"{base_name}_highlighted.mp4")
-        highlight_words(video_with_word_card_path, updated_english_words_to_learn, highlighted_video_path, delay=repeat_sec)
+        highlight_words_dummy(video_with_word_card_path, updated_english_words_to_learn, highlighted_video_path, delay=repeat_sec)
 
         # Additional operations involving word_card_image_path can be performed here
 
@@ -1452,7 +1681,8 @@ if __name__ == "__main__":
     # os.environ["OPENAI_MODEL"] = "gpt-4-0125-preview"
     os.environ["OPENAI_MODEL"] = "gpt-4o-mini"
     
-    upload_folder = '/home/lachlan/ProjectsLFS/lazyedit/DATA'  # Folder where files will be uploaded
+    # upload_folder = '/home/lachlan/ProjectsLFS/lazyedit/DATA'  # Folder where files will be uploaded
+    upload_folder = '/home/lachlan/ProjectsM/lazyedit/DATA'  # Folder where files will be uploaded
     app = make_app(upload_folder)
     app.listen(8081, max_body_size=10*1024 * 1024 * 1024)
     tornado.autoreload.start()

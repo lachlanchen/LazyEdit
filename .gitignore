@@ -1,5 +1,6 @@
 # Ignore data files and auto-generated output
 DATA/
+DATA*
 subtitles2metadata/
 translation_logs/
 
