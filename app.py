@@ -446,13 +446,19 @@ def calculate_optimal_repeat_sec(subtitle_json_path):
     return 3.0
 
 def repeat_start_of_video(video_path, repeat_sec, output_path):
+    # repeat_command = [
+    #     "ffmpeg", "-y", "-i", video_path, "-filter_complex",
+    #     f"[0:v]trim=0:{repeat_sec},setpts=PTS-STARTPTS[first3v];[0:a]atrim=0:{repeat_sec},asetpts=PTS-STARTPTS[first3a];"
+    #     f"[first3v][0:v]concat=n=2:v=1:a=0[finalv];[first3a][0:a]concat=n=2:v=0:a=1[finala]",
+    #     "-map", "[finalv]", "-map", "[finala]", output_path
+    # ]
+    # subprocess.run(repeat_command, check=True)
     repeat_command = [
         "ffmpeg", "-y", "-i", video_path, "-filter_complex",
         f"[0:v]trim=0:{repeat_sec},setpts=PTS-STARTPTS[first3v];[0:a]atrim=0:{repeat_sec},asetpts=PTS-STARTPTS[first3a];"
         f"[first3v][0:v]concat=n=2:v=1:a=0[finalv];[first3a][0:a]concat=n=2:v=0:a=1[finala]",
-        "-map", "[finalv]", "-map", "[finala]", output_path
+        "-map", "[finalv]", "-map", "[finala]", "-movflags", "+faststart", output_path  # Add here
     ]
-    subprocess.run(repeat_command, check=True)
 
 # def insert_video_segment_at_start(video_path, start_time, end_time, output_path):
 #     """
@@ -803,9 +809,13 @@ def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
                 f"enable='between(t,{start_seconds},{end_seconds})'"
             )
 
+            # command = (
+            #     f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
+            #     f"-c:a copy \"{temp_output_path}\""
+            # )
             command = (
                 f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
-                f"-c:a copy \"{temp_output_path}\""
+                f"-c:a copy -movflags +faststart \"{temp_output_path}\""  # Add here
             )
 
             subprocess.run(command, shell=True, check=True)
@@ -1304,7 +1314,7 @@ def burn_subtitles(video_path, sub_path, output_path):
     command = (
         f'ffmpeg -y -i "{video_path}" '
         f'-vf "{subtitle_filter}" '
-        f'-c:a aac -b:a {audio_bitrate} '
+        f'-c:a aac -b:a {audio_bitrate} -movflags +faststart '
         f'"{output_path}"'
     )
     
@@ -1314,6 +1324,131 @@ def burn_subtitles(video_path, sub_path, output_path):
     except subprocess.CalledProcessError as e:
         print(f"Error executing FFmpeg command: {e}")
 
+
+# def burn_subtitles(video_path, sub_path, output_path):
+#     """
+#     Burns subtitles into a video using MoviePy and FFmpeg.
+#     This implementation uses a hybrid approach for maximum reliability.
+#     """
+#     from moviepy.editor import VideoFileClip
+#     from moviepy.config import change_settings
+#     import tempfile
+#     import os
+#     import subprocess
+#     import shutil
+#     import traceback
+    
+#     # Determine subtitle filter
+#     sub_extension = os.path.splitext(sub_path)[1].lower()
+#     if sub_extension in [".ass", ".ssa"]:
+#         subtitle_filter = f"ass={sub_path}"
+#     elif sub_extension == ".srt":
+#         subtitle_filter = f"subtitles={sub_path}"
+#     else:
+#         raise ValueError(f"Unsupported subtitle format: {sub_extension}")
+    
+#     # Create temporary directory for processing
+#     with tempfile.TemporaryDirectory() as temp_dir:
+#         # Set MoviePy's temp directory to our controlled location
+#         original_temp = change_settings({"TEMP_DIR": temp_dir})
+        
+#         try:
+#             print(f"Processing video: {video_path}")
+#             print(f"Using subtitle file: {sub_path}")
+            
+#             # Step 1: Analyze the video with MoviePy to get properties
+#             video = VideoFileClip(video_path)
+#             fps = video.fps if video.fps else 24
+#             duration = video.duration
+#             video.close()
+            
+#             # Step 2: Extract audio bitrate using ffprobe
+#             audio_bitrate = "192k"  # Default
+#             try:
+#                 cmd = f"ffprobe -v error -select_streams a:0 -show_entries stream=bit_rate -of default=noprint_wrappers=1:nokey=1 \"{video_path}\""
+#                 result = subprocess.run(cmd, shell=True, text=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE, check=False)
+#                 bitrate = result.stdout.strip()
+#                 if bitrate and bitrate.isdigit():
+#                     audio_bitrate = f"{int(bitrate)//1000}k"
+#             except Exception as e:
+#                 print(f"Error getting audio bitrate: {e}")
+            
+#             # Step 3: Create intermediate file with subtitles
+#             temp_subs = os.path.join(temp_dir, "with_subs.mp4")
+            
+#             # Use FFmpeg for subtitle burning (which MoviePy doesn't directly support)
+#             subs_cmd = (
+#                 f'ffmpeg -y -i "{video_path}" '
+#                 f'-vf "{subtitle_filter}" '
+#                 f'-c:v libx264 -preset medium -crf 23 '
+#                 f'-c:a aac -b:a {audio_bitrate} '
+#                 f'"{temp_subs}"'
+#             )
+            
+#             print("Adding subtitles...")
+#             subprocess.run(subs_cmd, shell=True, check=True)
+            
+#             # Step 4: Use MoviePy to process the final output with proper metadata
+#             print("Finalizing video...")
+#             final_video = VideoFileClip(temp_subs)
+            
+#             # Create the final output with movflags faststart
+#             final_video.write_videofile(
+#                 output_path,
+#                 codec="libx264",
+#                 audio_codec="aac",
+#                 bitrate="0",  # Use CRF instead of bitrate control
+#                 ffmpeg_params=[
+#                     "-crf", "23",
+#                     "-movflags", "+faststart",
+#                     "-preset", "medium"
+#                 ],
+#                 fps=fps
+#             )
+            
+#             final_video.close()
+#             print(f"Successfully created {output_path}")
+            
+#         except Exception as e:
+#             print(f"Error in MoviePy processing: {e}")
+#             traceback.print_exc()
+            
+#             # Fallback to direct FFmpeg with a reliable two-step process
+#             try:
+#                 print("Using FFmpeg fallback method...")
+                
+#                 # Step 1: Create with subtitles
+#                 temp_fallback = os.path.join(temp_dir, "fallback.mp4")
+                
+#                 step1_cmd = (
+#                     f'ffmpeg -y -i "{video_path}" '
+#                     f'-vf "{subtitle_filter}" '
+#                     f'-c:v libx264 -preset fast -crf 23 '
+#                     f'-c:a aac -b:a {audio_bitrate} '
+#                     f'"{temp_fallback}"'
+#                 )
+                
+#                 subprocess.run(step1_cmd, shell=True, check=True)
+                
+#                 # Step 2: Remux with faststart
+#                 step2_cmd = (
+#                     f'ffmpeg -y -i "{temp_fallback}" '
+#                     f'-c copy -movflags +faststart '
+#                     f'"{output_path}"'
+#                 )
+                
+#                 subprocess.run(step2_cmd, shell=True, check=True)
+#                 print("Fallback method successful")
+                
+#             except Exception as e2:
+#                 print(f"All methods failed: {e2}")
+#                 # Last resort - copy the original file
+#                 print("Copying original video as last resort (without subtitles)")
+#                 shutil.copy2(video_path, output_path)
+        
+#         finally:
+#             # Restore original MoviePy settings
+#             change_settings({"TEMP_DIR": original_temp})
 
 def validate_timestamp(timestamp):
     try:
