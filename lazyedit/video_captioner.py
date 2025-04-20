@@ -53,11 +53,13 @@ class VideoCaptioner:
     def vague_kill(self, command):
         # Kill processes based on the script path only
         kill_command = f"pkill -f \"{self.conda_env_path} {command}\""
+        print(f"Executing: {kill_command}")
         os.system(kill_command)
 
     def specific_kill(self, full_command):
         # Kill the specific full command
         kill_command = f"pkill -f \"{full_command}\""
+        print(f"Executing: {kill_command}")
         os.system(kill_command)
 
     def run_captioning(self):
@@ -68,23 +70,33 @@ class VideoCaptioner:
         alternative_command = f"{self.conda_env_path} {self.alternate_command} -V \"{self.video_path}\" -N {self.num_frames}"
         
         try:
+            print("Executing caption command: ", caption_command)
             # First attempt to run the base command
             result = subprocess.run(caption_command, shell=True, check=True, timeout=180)  # 180 seconds = 3 minutes
             print(f"Captioning completed successfully, output saved to: {self.caption_srt_path}")
             print(f"Captioning completed successfully, output saved to: {self.caption_json_path}")
-        except subprocess.TimeoutExpired:
-            print("First command timed out. Trying alternative command.")
+        # except subprocess.TimeoutExpired:
+        except Exception as e:
+
             traceback.print_exc()
+
             self.specific_kill(caption_command)
+
+            print("First command timed out. Trying alternative command.")
 
             # Alternative command
             try:
+                print("Executing alternative command: ", alternative_command)
                 subprocess.run(alternative_command, shell=True, check=True, timeout=180)
                 print("Alternative captioning completed successfully.")
-            except subprocess.TimeoutExpired:
-                print("Alternative command timed out. Saving empty file.")
+            # except subprocess.TimeoutExpired:
+            except Exception as e:
+
                 traceback.print_exc()
+
                 self.specific_kill(alternative_command)
+
+                print("Alternative command timed out. Saving empty file.")
                 
                 with open(self.caption_srt_path, 'w') as file:
                     file.write("")  # Create an empty file
