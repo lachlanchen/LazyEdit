@@ -66,11 +66,6 @@ import os
 from moviepy.editor import VideoFileClip
 import moviepy.editor as mp
 
-from lazyedit.handbrake import preprocess_video
-from lazyedit.video_utils import preprocess_if_needed
-
-
-
 
 def detect_language_with_lingua(text, detector):
     """
@@ -214,49 +209,17 @@ def format_timestamp(seconds):
     ms = int((seconds - int(seconds)) * 1000)
     return f'{h:02}:{m:02}:{s:02},{ms:03}'
 
-# def get_time_range(time_range):
-#     timestamps = time_range.split(' --> ')
-#     if len(timestamps) == 2:
-#         start_timestamp, end_timestamp = timestamps
-#     elif len(timestamps) == 1:
-#         # If there's only one timestamp, use it as the start and add 1 second for the end
-#         start_timestamp = timestamps[0]
-#         end_timestamp = format_timestamp(get_seconds_from_timestamp(start_timestamp) + 1)
-#     else:
-#         # Handle unexpected format by setting both start and end to 0
-#         start_timestamp, end_timestamp = '00:00:00,000', '00:00:00,000'
-
-#     start_seconds = get_seconds_from_timestamp(start_timestamp)
-#     end_seconds = get_seconds_from_timestamp(end_timestamp)
-    
-#     # Add 1 second to end_timestamp if there's an error in parsing either timestamp
-#     if start_seconds == 0 or end_seconds == 0:
-#         end_seconds = start_seconds + 1
-#         end_timestamp = format_timestamp(end_seconds)
-
-#     return start_seconds, end_seconds
-
-
 def get_time_range(time_range):
-    """
-    Updated to handle both old string format and new object format
-    """
-    if isinstance(time_range, dict):
-        # New format: {"start": "HH:MM:SS,mmm", "end": "HH:MM:SS,mmm"}
-        start_timestamp = time_range.get("start", "00:00:00,000")
-        end_timestamp = time_range.get("end", "00:00:01,000")
+    timestamps = time_range.split(' --> ')
+    if len(timestamps) == 2:
+        start_timestamp, end_timestamp = timestamps
+    elif len(timestamps) == 1:
+        # If there's only one timestamp, use it as the start and add 1 second for the end
+        start_timestamp = timestamps[0]
+        end_timestamp = format_timestamp(get_seconds_from_timestamp(start_timestamp) + 1)
     else:
-        # Old format: "HH:MM:SS,mmm --> HH:MM:SS,mmm"
-        timestamps = time_range.split(' --> ')
-        if len(timestamps) == 2:
-            start_timestamp, end_timestamp = timestamps
-        elif len(timestamps) == 1:
-            # If there's only one timestamp, use it as the start and add 1 second for the end
-            start_timestamp = timestamps[0]
-            end_timestamp = format_timestamp(get_seconds_from_timestamp(start_timestamp) + 1)
-        else:
-            # Handle unexpected format by setting both start and end to 0
-            start_timestamp, end_timestamp = '00:00:00,000', '00:00:01,000'
+        # Handle unexpected format by setting both start and end to 0
+        start_timestamp, end_timestamp = '00:00:00,000', '00:00:00,000'
 
     start_seconds = get_seconds_from_timestamp(start_timestamp)
     end_seconds = get_seconds_from_timestamp(end_timestamp)
@@ -267,6 +230,7 @@ def get_time_range(time_range):
         end_timestamp = format_timestamp(end_seconds)
 
     return start_seconds, end_seconds
+
 
 
 def get_video_length_alternative(filename):
@@ -419,55 +383,17 @@ def adjust_teaser_range(teaser_start, teaser_end, subtitles, video_length, max_l
     return teaser_start_td.total_seconds(), teaser_end_td.total_seconds()
 
 
-# def calculate_optimal_teaser_range(metadata_path, subtitle_json_path, video_length):
-#     """
-#     Calculate an optimized teaser range based on the video's metadata and subtitle timings.
-#     """
-
-#     print("Calculating optimal teaser time...")
-#     try:
-#         with open(metadata_path, 'r') as meta_file:
-#             metadata = json.load(meta_file)
-#             teaser = metadata["teaser"].split(" --> ")
-#             teaser_start, teaser_end = convert_time_to_seconds(teaser[0]), convert_time_to_seconds(teaser[1])
-            
-#             teaser_start = max(teaser_start, 0)
-#             teaser_end = min(teaser_end, video_length)
-
-#         with open(subtitle_json_path, 'r') as sub_file:
-#             subtitles = json.load(sub_file)
-#             subtitles = [{'start': convert_time_to_seconds(sub['start']), 'end': convert_time_to_seconds(sub['end'])} for sub in subtitles]
-
-#         adjusted_start, adjusted_end = adjust_teaser_range(teaser_start, teaser_end, subtitles, video_length)
-
-#         return adjusted_start, adjusted_end
-#     except Exception as e:
-#         print(f"Error adjusting teaser range: {e}")
-#         # Return default range if there's an error
-#         default_start, default_end = 0, calculate_optimal_repeat_sec(subtitle_json_path)
-#         return default_start, default_end
-
 def calculate_optimal_teaser_range(metadata_path, subtitle_json_path, video_length):
     """
     Calculate an optimized teaser range based on the video's metadata and subtitle timings.
-    Updated to handle new JSON format.
     """
+
     print("Calculating optimal teaser time...")
     try:
         with open(metadata_path, 'r') as meta_file:
             metadata = json.load(meta_file)
-            teaser = metadata["teaser"]
-            
-            # Handle both old and new format
-            if isinstance(teaser, dict):
-                # New format: {"start": "HH:MM:SS,mmm", "end": "HH:MM:SS,mmm"}
-                teaser_start = convert_time_to_seconds(teaser["start"])
-                teaser_end = convert_time_to_seconds(teaser["end"])
-            else:
-                # Old format: "HH:MM:SS,mmm --> HH:MM:SS,mmm"
-                teaser_parts = teaser.split(" --> ")
-                teaser_start = convert_time_to_seconds(teaser_parts[0])
-                teaser_end = convert_time_to_seconds(teaser_parts[1])
+            teaser = metadata["teaser"].split(" --> ")
+            teaser_start, teaser_end = convert_time_to_seconds(teaser[0]), convert_time_to_seconds(teaser[1])
             
             teaser_start = max(teaser_start, 0)
             teaser_end = min(teaser_end, video_length)
@@ -484,6 +410,8 @@ def calculate_optimal_teaser_range(metadata_path, subtitle_json_path, video_leng
         # Return default range if there's an error
         default_start, default_end = 0, calculate_optimal_repeat_sec(subtitle_json_path)
         return default_start, default_end
+
+
 
 def calculate_optimal_repeat_sec(subtitle_json_path):
     with open(subtitle_json_path, 'r') as file:
@@ -819,109 +747,21 @@ def add_first_word_card_to_video(video_path, english_words_to_learn, output_fold
 
 
 
-# def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
-#     # Get the length of the video
-#     video_length = get_video_length(video_path)
-#     video_width, video_height = get_video_resolution(video_path)
-
-#     # is_video_landscape = video_width > video_height
-
-#     # rescale = 4  # Scaling factor
-
-#     # # Adjust base font sizes
-#     # base_font_size = 24 * rescale if is_video_landscape else 20 * rescale  # Larger for landscape
-#     # furigana_font_size = 20 * rescale if is_video_landscape else 18 * rescale
-#     # arabic_font_size = 26 * rescale if is_video_landscape else 22 * rescale  # Specific for Arabic
-
-
-
-#     # Sort english_words_to_learn by start time
-#     english_words_to_learn.sort(key=lambda x: get_time_range(x['timestamp_range'])[0])
-
-#     # Initialize variables
-#     temp_output_path = output_path + ".temp.mp4"
-#     final_output_path = output_path
-#     current_input_path = video_path
-#     successful = False
-#     last_end_time = delay  # Initialize last end time with the optional delay parameter
-
-#     font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-
-#     # Process each word
-#     for i, word_info in enumerate(english_words_to_learn):
-#         try:
-#             # Get time range
-#             start_seconds, end_seconds = get_time_range(word_info['timestamp_range'])
-
-#             # Ignore words that start beyond the video length or before the last end time
-#             if start_seconds >= video_length or start_seconds < last_end_time:
-#                 continue
-
-#             # Ensure end time is at least 1 second after the start time and does not exceed video length
-#             end_seconds = min(max(end_seconds, start_seconds + 1), video_length)
-
-#             # Update last end time for the next iteration
-#             last_end_time = end_seconds
-
-#             word_text = word_info['word']
-#             font_size = find_font_size(word_text, font_path, video_width * 0.5, video_height * 0.5)
-
-#             # drawtext_filter = (
-#             #     f"drawtext=text='{word_text}':"
-#             #     f"x=(w-text_w)/2:y=(h-text_h)/2:"
-#             #     f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
-#             #     f"enable='between(t,{start_seconds},{end_seconds})'"
-#             # )
-
-#             drawtext_filter = (
-#                 f"drawtext=text='{word_text}':"
-#                 f"x=(w-text_w)/2:y=text_h/2:"
-#                 # f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
-#                 f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=crimson@0.5:boxborderw=5:"
-#                 f"enable='between(t,{start_seconds},{end_seconds})'"
-#             )
-
-#             # command = (
-#             #     f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
-#             #     f"-c:a copy \"{temp_output_path}\""
-#             # )
-#             command = (
-#                 f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
-#                 f"-c:a copy -movflags +faststart \"{temp_output_path}\""  # Add here
-#             )
-
-#             subprocess.run(command, shell=True, check=True)
-
-#             # Prepare for next iteration
-#             if i < len(english_words_to_learn) - 1 or current_input_path != final_output_path:
-#                 os.rename(temp_output_path, final_output_path)
-#                 current_input_path = final_output_path
-#             successful = True
-#         except subprocess.CalledProcessError as e:
-#             print(f"Error processing word '{word_text}': {e}")
-#             continue
-
-#     # Check if any word was successfully processed
-#     if not successful:
-#         # Check if output_path already exists, remove it before creating a new link
-#         if os.path.exists(output_path):
-#             os.remove(output_path)
-#         try:
-#             os.link(video_path, output_path)  # Attempt to create a hard link again
-#         except Exception as e:
-#             print(f"Error linking files: {e}")
-#             traceback.print_exc()  # Print detailed traceback
-#             # If os.link fails, consider using shutil.copy as a fallback
-#             # import shutil
-#             # shutil.copy(video_path, output_path)
-
-#     return None  # Since word_card_image_path logic was removed
-
-
 def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
     # Get the length of the video
     video_length = get_video_length(video_path)
     video_width, video_height = get_video_resolution(video_path)
+
+    # is_video_landscape = video_width > video_height
+
+    # rescale = 4  # Scaling factor
+
+    # # Adjust base font sizes
+    # base_font_size = 24 * rescale if is_video_landscape else 20 * rescale  # Larger for landscape
+    # furigana_font_size = 20 * rescale if is_video_landscape else 18 * rescale
+    # arabic_font_size = 26 * rescale if is_video_landscape else 22 * rescale  # Specific for Arabic
+
+
 
     # Sort english_words_to_learn by start time
     english_words_to_learn.sort(key=lambda x: get_time_range(x['timestamp_range'])[0])
@@ -938,7 +778,7 @@ def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
     # Process each word
     for i, word_info in enumerate(english_words_to_learn):
         try:
-            # Get time range - now handles both old and new format
+            # Get time range
             start_seconds, end_seconds = get_time_range(word_info['timestamp_range'])
 
             # Ignore words that start beyond the video length or before the last end time
@@ -954,16 +794,28 @@ def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
             word_text = word_info['word']
             font_size = find_font_size(word_text, font_path, video_width * 0.5, video_height * 0.5)
 
+            # drawtext_filter = (
+            #     f"drawtext=text='{word_text}':"
+            #     f"x=(w-text_w)/2:y=(h-text_h)/2:"
+            #     f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
+            #     f"enable='between(t,{start_seconds},{end_seconds})'"
+            # )
+
             drawtext_filter = (
                 f"drawtext=text='{word_text}':"
                 f"x=(w-text_w)/2:y=text_h/2:"
+                # f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:"
                 f"fontsize={font_size}:fontcolor=white:box=1:boxcolor=crimson@0.5:boxborderw=5:"
                 f"enable='between(t,{start_seconds},{end_seconds})'"
             )
 
+            # command = (
+            #     f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
+            #     f"-c:a copy \"{temp_output_path}\""
+            # )
             command = (
                 f"ffmpeg -y -i \"{current_input_path}\" -vf \"{drawtext_filter}\" "
-                f"-c:a copy -movflags +faststart \"{temp_output_path}\""
+                f"-c:a copy -movflags +faststart \"{temp_output_path}\""  # Add here
             )
 
             subprocess.run(command, shell=True, check=True)
@@ -987,6 +839,9 @@ def highlight_words(video_path, english_words_to_learn, output_path, delay=3):
         except Exception as e:
             print(f"Error linking files: {e}")
             traceback.print_exc()  # Print detailed traceback
+            # If os.link fails, consider using shutil.copy as a fallback
+            # import shutil
+            # shutil.copy(video_path, output_path)
 
     return None  # Since word_card_image_path logic was removed
 
@@ -1595,33 +1450,8 @@ def burn_subtitles(video_path, sub_path, output_path):
 #             # Restore original MoviePy settings
 #             change_settings({"TEMP_DIR": original_temp})
 
-# def validate_timestamp(timestamp):
-#     try:
-#         # Split the timestamp and check if it has the correct format
-#         h, m, s = timestamp.split(':')
-#         s, ms = s.split('.')
-#         # Convert to integers to check if they are within the correct range
-#         h, m, s, ms = int(h), int(m), int(s), int(ms)
-#         seconds = h*3600 + m * 60 + s + ms/1000
-#         # Check if hours, minutes, seconds, and milliseconds are in the correct range
-#         if h >= 0 and m >= 0 and m < 60 and s >= 0 and s < 60 and ms >= 0 and ms < 1000:
-#             return timestamp, seconds  # The timestamp is valid
-#     except ValueError:
-#         # Catch ValueError if the timestamp is not in the correct format
-#         print("Format unrecognized for timestamp of cover: ", timestamp)
-#         pass
-#     # Return the default value if the timestamp is not valid
-#     return '00:00:01,000', seconds
-
 def validate_timestamp(timestamp):
-    """
-    Updated to handle new timestamp format and validate properly
-    """
     try:
-        # Handle both comma and dot as decimal separators
-        if ',' in timestamp:
-            timestamp = timestamp.replace(',', '.')
-        
         # Split the timestamp and check if it has the correct format
         h, m, s = timestamp.split(':')
         s, ms = s.split('.')
@@ -1630,13 +1460,13 @@ def validate_timestamp(timestamp):
         seconds = h*3600 + m * 60 + s + ms/1000
         # Check if hours, minutes, seconds, and milliseconds are in the correct range
         if h >= 0 and m >= 0 and m < 60 and s >= 0 and s < 60 and ms >= 0 and ms < 1000:
-            return timestamp.replace('.', ','), seconds  # Return in original format with comma
+            return timestamp, seconds  # The timestamp is valid
     except ValueError:
         # Catch ValueError if the timestamp is not in the correct format
         print("Format unrecognized for timestamp of cover: ", timestamp)
         pass
     # Return the default value if the timestamp is not valid
-    return '00:00:01,000', 1.0
+    return '00:00:01,000', seconds
 
 
 # Function to copy a folder to a new location with a new name
@@ -1797,7 +1627,6 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
     def post(self):
         
         input_file = self.get_argument('file_path', None)
-        input_file = preprocess_if_needed(input_file)
         use_translation_cache = self.get_argument('use_translation_cache', "false").lower() == 'true'
         use_metadata_cache = self.get_argument('use_metadata_cache', "false").lower() == 'true'
         if not input_file or not os.path.exists(input_file):
@@ -1924,25 +1753,11 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
         # Additional operations involving word_card_image_path can be performed here
 
 
-        # # Extract the cover image
-        # print("Extracting cover...")
-        # cover_image_path = os.path.join(output_folder, f"{base_name}_cover.jpg")
-        # cover_plain_image_path = os.path.join(output_folder, f"{base_name}_cover_plain.jpg")
-        # cover_timestamp, seconds = validate_timestamp(metadata['cover'].replace(',', '.'))  # Correct the timestamp format
-        
-        # if seconds > get_video_length(input_file) or seconds < 0:
-        #     cover_timestamp = "00:00:01,000"
-
-        # extract_cover(input_file, cover_plain_image_path, cover_timestamp.replace(",", "."))
-
         # Extract the cover image
         print("Extracting cover...")
         cover_image_path = os.path.join(output_folder, f"{base_name}_cover.jpg")
         cover_plain_image_path = os.path.join(output_folder, f"{base_name}_cover_plain.jpg")
-        
-        # Handle the cover timestamp from metadata (no .replace() needed now)
-        cover_timestamp_raw = metadata['cover']
-        cover_timestamp, seconds = validate_timestamp(cover_timestamp_raw)
+        cover_timestamp, seconds = validate_timestamp(metadata['cover'].replace(',', '.'))  # Correct the timestamp format
         
         if seconds > get_video_length(input_file) or seconds < 0:
             cover_timestamp = "00:00:01,000"

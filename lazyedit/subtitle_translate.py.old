@@ -10,11 +10,14 @@ import os
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+
+
 from lazyedit.openai_version_check import OpenAI
+
 
 from lazyedit.utils import JSONParsingError, JSONValidationError
 from lazyedit.utils import safe_pretty_print, sample_texts, find_font_size
-from lazyedit.openai_request_json import OpenAIRequestJSONBase, JSONParsingError, JSONValidationError
+from lazyedit.openai_request import OpenAIRequestBase
 from lazyedit.languages import LANGUAGES, TO_LANGUAGE_CODE
 
 from datetime import datetime
@@ -29,7 +32,8 @@ import numpy as np
 import unicodedata
 
 
-class SubtitlesTranslator(OpenAIRequestJSONBase):
+
+class SubtitlesTranslator(OpenAIRequestBase):
     def __init__(self, 
         openai_client, 
         input_json_path, 
@@ -48,6 +52,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         super().__init__(*args, **kwargs)
 
+
         self.client = openai_client
         self.input_json_path = input_json_path
         self.input_sub_path = input_sub_path
@@ -64,15 +69,23 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         self.base_height = 1080
 
         self.font_size_scale = 1.5
-        self.wrapping_limit_half_width_default = int(80 // self.font_size_scale)  # Default wrapping_limit_half_width for landscape
+        self.wrapping_limit_half_width_default = 80 // self.font_size_scale  # Default wrapping_limit_half_width for landscape
         self.portrait_scale = 0.7   
 
+        
         if not self.is_video_landscape:
             self.wrapping_limit_half_width_default = int(self.wrapping_limit_half_width_default * 0.5)  # Adjust wrapping_limit_half_width for portrait videos
 
+
+        # self.is_video_landscape = video_width > video_height
         self.font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+
         self.translation_log_folder = 'translation_logs'
+
         self.subtitles = None
+
+        # self.max_retries = max_retries
+        # self.use_cache = use_cache
 
         self.flags = {
             'zh': '🇨🇳',  # China for Mandarin
@@ -123,13 +136,20 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         print("Using translation cache: ", use_cache)
 
+        # self.ensure_log_folder_exists()
+
+
+
     @property
     def is_video_landscape(self):
         """Determine if the video is landscape or portrait based on class variables."""
         return self.video_width > self.video_height
 
     def get_filename(self, lang="ja", idx=0, timestamp=None):
+        # base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
+        # datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         base_filename = self.base_filename
+        # datetime_str = self.datetime_str
 
         if timestamp:
             filename = f"{self.translation_log_folder}/{base_filename}-part{idx}-{lang}-{timestamp}.json"
@@ -137,22 +157,64 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             filename = f"{self.translation_log_folder}/{base_filename}-part{idx}-{lang}.json"
 
         return filename
+    
+
 
     def load_subtitles_from_json(self):
         """Load subtitles from a JSON file."""
         with open(self.input_json_path, 'r', encoding='utf-8') as file:
             return json5.load(file)
 
+    @staticmethod
+    def correct_json_string(s):
+        # Remove trailing commas after object properties or array elements
+        corrected_s = re.sub(r',\s*}', '}', s)
+        corrected_s = re.sub(r',\s*\]', ']', corrected_s)
+        return corrected_s
+
+    def extract_and_parse_json(self, text):
+        """Extract and parse JSON from text, handling potential parsing issues."""
+        bracket_pattern = r'\[.*\]'
+        matches = re.findall(bracket_pattern, text, re.DOTALL)
+        # json_string = ""
+
+        if not matches:
+            raise JSONParsingError("No JSON string found in text", text, text)
+        json_string = matches[0].replace('\n', '')
+
+        # pprint(json_string)
+        safe_pretty_print(json_string)
+
+        try:
+            json_string = self.correct_json_string(json_string)
+            return json5.loads(json_string)
+        except ValueError as e:
+            traceback.print_exc()
+            raise JSONParsingError(f"JSON Decode Error: {e}", json_string, text)
+
+    def validate_translated_subtitles(self, subtitles, required_fields=["start", "end", "en", "zh"]):
+        """Validate the structure of translated subtitles."""
+        # required_fields = ["start", "end", "en", "zh"]
+        for subtitle in subtitles:
+            if not all(field in subtitle for field in required_fields):
+                raise JSONValidationError("Subtitle missing one of the required fields: " + ", ".join(required_fields))
+
+
+
     def translate_and_merge_subtitles(self, subtitles):
         self.subtitles = subtitles
 
         """Splits subtitles into 1-minute batches and processes each batch in parallel."""
+        # subtitles = self.load_subtitles_from_json()
+
         # Splitting subtitles into 1-minute batches
         batches = self.split_subtitles_into_batches(subtitles)
 
         # Process each batch and accumulate results in parallel
         translated_subtitles = self.process_batches_in_parallel(batches)
 
+        # Save the final translated subtitles
+        # self.save_translated_subtitles_to_ass(translated_subtitles)
         print("All subtitles have been processed and saved successfully.")
 
         return translated_subtitles
@@ -251,50 +313,47 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return merged_translations
 
-    def translate_and_merge_subtitles_major_languages(self, subtitles, idx):
-        """Translate and merge subtitles using the OpenAI API with structured outputs."""
-        print("Translating subtitles into other languages...")
 
-        # Define JSON schema for major languages - ROOT MUST BE OBJECT
-        major_languages_schema = {
-            "type": "object",
-            "properties": {
-                "subtitles": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "start": {
-                                "type": "string",
-                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                                "description": "Start timestamp in HH:MM:SS,mmm format"
-                            },
-                            "end": {
-                                "type": "string", 
-                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                                "description": "End timestamp in HH:MM:SS,mmm format"
-                            },
-                            "en": {
-                                "type": "string",
-                                "description": "English translation"
-                            },
-                            "zh": {
-                                "type": "string", 
-                                "description": "Chinese translation"
-                            },
-                            "ar": {
-                                "type": "string",
-                                "description": "Arabic translation"
-                            }
-                        },
-                        "required": ["start", "end", "en", "zh", "ar"],
-                        "additionalProperties": False
-                    }
-                }
-            },
-            "required": ["subtitles"],
-            "additionalProperties": False
-        }
+    def translate_and_merge_subtitles_major_languages(self, subtitles, idx):
+        """Translate and merge subtitles using the OpenAI API."""
+
+        print("Translating subtitles into other languages...")
+        
+        # client = self.client
+
+
+        # # Define a sample JSON structure for validation purposes
+        # sample_json_structure = [
+        #     {
+        #         "start": "timestamp",
+        #         "end": "timestamp",
+        #         "en": "English text",
+        #         "zh": "Chinese text",
+        #         "ar": "Arabic text",
+        #         # "...": "Text in the original language, if not in the listed before. "
+        #     }
+        # ]
+
+        # sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
+
+
+        # Define a JSONC string with comments
+        sample_json_string = """
+        [
+            {
+                "start": "timestamp",  // Start time of the subtitle
+                "end": "timestamp",    // End time of the subtitle
+                "en": "English text",  // English translation
+                "zh": "Chinese text",  // Chinese translation
+                "ar": "Arabic text",    // Arabic translation
+                // "...": "Text in the original language, if not in the listed before."
+            }
+        ]
+        """
+
+        # Parse the JSONC string into a Python object
+        sample_json_structure = json5.loads(sample_json_string)
+
 
         system_content = "Translate and merge mixed language subtitles into Chinese, English and Arabic, providing coherent and accurate translations."
         prompt = (
@@ -302,33 +361,65 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
             "is presented with English (en), Chinese (zh), and Arabic (ar) translations, "
             "maintaining the original timestamps.\n\n"
+
+            # "If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. "
+            # "For subtitles in any other language, keep the original text but also provide translations in "
+            # "English, Chinese and Arabic. \n\n"
+
+            # "Fullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. "
+            # "If I said in subtitles that I want to know or I don't know how to say something, "
+            # "provide the whole subtitles in that language. "
+         
+            # "Correct some apparent speech recognition error and inconsistencies, "
+            # "especially homonym and mumble in both origin and its translation based on the context.\n\n"
+    
             "Process the following subtitles, ensuring translations are accurate and coherent, "
             "and format the output as shown in the example.\n\n"
+
+            # "Please provide a complete and accurate translation and formatting for each subtitle entry."
+
+            # "PLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\n"
+            
+            # "Note that the original timestamps should be PRESERVED for each entry.\n\n"
+            
             "Please PRESERVE ALL the original timestamps for EACH ENTRY.\n\n"
+
             "Subtitles to process:\n"
             f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+            
+
+            "ONLY and ALWAYS return a valid JSON back:\n"
+            "```json"
+            f"{sample_json_string}\n"
+            "```"
         )
 
-        response = self.send_request_with_json_schema(
-            prompt=prompt,
-            json_schema=major_languages_schema,
-            system_content=system_content,
-            filename=self.get_filename(lang="major", idx=idx),
-            schema_name="major_languages_translation"
-        )
 
-        # Extract the subtitles array from the response object
-        translated_subtitles = response["subtitles"]
+
+
+
+
+        translated_subtitles = self.send_request_with_retry(
+            prompt, 
+            system_content=system_content, 
+            sample_json=sample_json_structure,
+            filename=self.get_filename(lang="major", idx=idx)
+        )
 
         print("Translated subtitles (Major): \n")
         pprint(translated_subtitles)
+
+
+
         return translated_subtitles
 
+
     def translate_and_merge_subtitles_minor_languages(self, subtitles, idx):
-        """Translate and merge subtitles using the OpenAI API into Spanish, French, and Russian by leveraging the 
+        """Translate and merge subtitles using the OpenAI API into Spanish, French, and Vietnamese by leveraging the 
         translate_and_merge_subtitles_with_specified_languages function."""
 
         # Define the list of minor languages to translate to
+        # minor_languages = ["Spanish", "French", "Russian"]
         minor_languages = ["Spanish", "French", "Russian"]
         
         # Call the translate_and_merge_subtitles_with_specified_languages function with the minor languages
@@ -336,8 +427,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         
         return translated_subtitles
 
+
     def translate_and_merge_subtitles_with_specified_languages(self, subtitles, requested_languages, idx):
-        """Translate and merge subtitles into the specified languages using structured outputs."""
+        """Translate and merge subtitles into the specified languages using the OpenAI API."""
         print("Translating subtitles into specified languages...")
 
         # Convert the list of language names into language codes and full names with initial capitalization
@@ -349,44 +441,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 language_codes.append(code)
                 language_full_names.append(LANGUAGES[code].capitalize())
 
-        # Generate JSON schema dynamically based on requested language codes
-        item_properties = {
-            "start": {
-                "type": "string",
-                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                "description": "Start timestamp in HH:MM:SS,mmm format"
-            },
-            "end": {
-                "type": "string",
-                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$", 
-                "description": "End timestamp in HH:MM:SS,mmm format"
-            }
-        }
-        
-        required_fields = ["start", "end"]
+        # Generate a sample JSON structure dynamically based on requested language codes
+        sample_json_structure = [{"start": "timestamp", "end": "timestamp"}]
         for code in language_codes:
-            item_properties[code] = {
-                "type": "string",
-                "description": f"{LANGUAGES[code]} translation"
-            }
-            required_fields.append(code)
+            sample_json_structure[0][code] = f"{LANGUAGES[code]} text"
 
-        specified_languages_schema = {
-            "type": "object",
-            "properties": {
-                "subtitles": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": item_properties,
-                        "required": required_fields,
-                        "additionalProperties": False
-                    }
-                }
-            },
-            "required": ["subtitles"],
-            "additionalProperties": False
-        }
+        sample_json_string = json.dumps(sample_json_structure, indent=2)
+        # sample_json_structure = json5.loads(sample_json_string)
 
         # Generate a human-readable string of the full language names for the prompt
         languages_list_str = ', '.join(language_full_names[:-1]) + ', and ' + language_full_names[-1] if len(language_full_names) > 1 else language_full_names[0]
@@ -399,27 +460,40 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
             f"is presented with translations in {languages_list_str}, "
             "maintaining the original timestamps.\n\n"
+
+            # "Correct some apparent speech recognition error and inconsistencies, "
+            # "especially homonym and mumble in both origin and its translation based on the context.\n\n"
+
             "Process the following subtitles, ensuring translations are accurate and coherent, "
             "and format the output as shown in the example.\n\n"
+
+            # "PLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\n"
+
+            # "Note that the original timestamps should be PRESERVED for each entry.\n\n"
+
             "Please PRESERVE ALL the original timestamps for EACH ENTRY.\n\n"
+
+
             "Subtitles to process:\n"
             f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+
+            "ONLY and ALWAYS return a valid JSON back:\n"
+            "```json"
+            f"{sample_json_string}\n"
+            "```"
         )
 
         lang_str = "_".join(language_codes)
-        response = self.send_request_with_json_schema(
-            prompt=prompt,
-            json_schema=specified_languages_schema,
+        translated_subtitles = self.send_request_with_retry(
+            prompt,
             system_content=system_content,
-            filename=self.get_filename(lang=lang_str, idx=idx),
-            schema_name="specified_languages_translation"
+            sample_json=sample_json_structure,
+            filename=self.get_filename(lang=lang_str, idx=idx)
         )
-
-        # Extract the subtitles array from the response object
-        translated_subtitles = response["subtitles"]
 
         print("Translated subtitles (Specified Languages): \n")
         pprint(translated_subtitles)
+
         return translated_subtitles
 
     # Function to annotate Kanji and Katakana independently
@@ -443,59 +517,50 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         return subtitles
 
     def translate_and_merge_subtitles_ja(self, subtitles, idx):
-        """Request Japanese subtitles separately with structured outputs."""
+        """Request Japanese subtitles separately with specific formatting for furigana."""
         print("Translating subtitles to Japanese...")
 
-        japanese_schema = {
-            "type": "object",
-            "properties": {
-                "subtitles": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "start": {
-                                "type": "string",
-                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                                "description": "Start timestamp in HH:MM:SS,mmm format"
-                            },
-                            "end": {
-                                "type": "string",
-                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                                "description": "End timestamp in HH:MM:SS,mmm format"
-                            },
-                            "ja": {
-                                "type": "string",
-                                "description": "Japanese translation"
-                            }
-                        },
-                        "required": ["start", "end", "ja"],
-                        "additionalProperties": False
-                    }
-                }
-            },
-            "required": ["subtitles"],
-            "additionalProperties": False
-        }
+        sample_json_structure = [
+            {
+                "start": "timestamp",
+                "end": "timestamp",
+                "ja": "Japanese text"# with optional furigana annotations"
+            }
+        ]
 
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
+
+        # system_content = "Translate subtitles into Japanese, correcting any errors based on context."
         system_content = "Translate subtitles into Japanese, providing coherent and accurate translations."
         prompt = (
-            "Translate the following subtitles into Japanese.\n\n"
+            "Translate the following subtitles into Japanese. "
+            "\n\n"
+
+            # "Correct speech recognition errors and inconsistencies based on context.\n\n"
+            
+            # "PLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\n"
+
+            # "Note that the original timestamps should be PRESERVED for each entry.\n\n"
+
             "Please PRESERVE ALL the original timestamps for EACH ENTRY.\n\n"
+            
             "Subtitles to process:\n"
             f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+
+            "ONLY and ALWAYS return a valid JSON back:\n"
+            "```json\n"
+            f"{sample_json_string}\n"
+            "```"
         )
 
-        response = self.send_request_with_json_schema(
-            prompt=prompt,
-            json_schema=japanese_schema,
+        
+        translated_subtitles = self.send_request_with_retry(
+            prompt,
             system_content=system_content,
-            filename=self.get_filename(lang="ja", idx=idx),
-            schema_name="japanese_translation"
+            sample_json=sample_json_structure,
+            filename=self.get_filename(lang="ja", idx=idx)
         )
 
-        # Extract the subtitles array from the response object
-        translated_subtitles = response["subtitles"]
 
         annotated_subtitles = self.annotate_kanji_katakana(translated_subtitles)
 
@@ -509,120 +574,101 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return translated_subtitles
 
-    def add_furigana_for_japanese_subtitles(self, subtitles, idx):
-        """Request Japanese subtitles with furigana using structured outputs."""
+            
 
-        furigana_schema = {
-            "type": "object",
-            "properties": {
-                "subtitles": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "start": {
-                                "type": "string",
-                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                                "description": "Start timestamp in HH:MM:SS,mmm format"
-                            },
-                            "end": {
-                                "type": "string",
-                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                                "description": "End timestamp in HH:MM:SS,mmm format"
-                            },
-                            "ja": {
-                                "type": "string",
-                                "description": "Japanese text with furigana annotations"
-                            }
-                        },
-                        "required": ["start", "end", "ja"],
-                        "additionalProperties": False
-                    }
-                }
-            },
-            "required": ["subtitles"],
-            "additionalProperties": False
-        }
+
+    def add_furigana_for_japanese_subtitles(self, subtitles, idx):
+        """Request Japanese subtitles with specific formatting for furigana using the OpenAI API with retries."""
+
+        sample_json_structure = [
+            {
+                "start": "timestamp",
+                "end": "timestamp",
+                "ja": "Japanese text with furigana annotations"
+            }
+        ]
+
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
 
         system_content = "Add furigana annotations to the provided Japanese text."
         prompt = (
             "Given the Japanese subtitles, add furigana annotations correctly based on the context. "
-            "Strictly use the format '<Kanji>[Furigana]' for annotations and never use '(' or ')' as it cannot be parsed.\n\n"
+            "Use the format '<Kanji>[Furigana]' for annotations.\n\n"
+
+            # "Correct any speech recognition errors and inconsistencies based on context.\n\n"
+            
             "Please PRESERVE ALL the original timestamps for EACH ENTRY.\n\n"
+
             "Subtitles to process:\n"
             f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+
+            "ONLY and ALWAYS return a valid JSON back:\n"
+            "```json\n"
+            f"{sample_json_string}\n"
+            "```"
         )
 
-        response = self.send_request_with_json_schema(
-            prompt=prompt,
-            json_schema=furigana_schema,
+        # Utilize send_request_with_retry to handle API requests, including retries, caching, and JSON validation
+        translated_subtitles = self.send_request_with_retry(
+            prompt,
             system_content=system_content,
-            filename=self.get_filename(lang="furigana", idx=idx),
-            schema_name="japanese_furigana"
+            sample_json=sample_json_structure,
+            filename=self.get_filename(lang="furigana", idx=idx)
         )
-
-        # Extract the subtitles array from the response object
-        translated_subtitles = response["subtitles"]
 
         print("Translated subtitles (Japanese with furigana): \n")
         pprint(translated_subtitles)
 
         return translated_subtitles
 
+
     def translate_and_merge_subtitles_ko(self, subtitles, idx):
-        """Request Korean subtitles with structured outputs."""
+        """Request Korean subtitles with specific considerations."""
         print("Translating subtitles to Korean...")
 
-        korean_schema = {
-            "type": "object",
-            "properties": {
-                "subtitles": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "start": {
-                                "type": "string",
-                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                                "description": "Start timestamp in HH:MM:SS,mmm format"
-                            },
-                            "end": {
-                                "type": "string",
-                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                                "description": "End timestamp in HH:MM:SS,mmm format"
-                            },
-                            "ko": {
-                                "type": "string",
-                                "description": "Korean translation"
-                            }
-                        },
-                        "required": ["start", "end", "ko"],
-                        "additionalProperties": False
-                    }
-                }
-            },
-            "required": ["subtitles"],
-            "additionalProperties": False
-        }
+        # Define a sample JSON structure for Korean subtitles
+        sample_json_structure = [
+            {
+                "start": "timestamp",
+                "end": "timestamp",
+                "ko": "Korean text"  # Use "ko" for Korean text
+            }
+        ]
 
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
+
+        # system_content = "Translate subtitles into Korean, correcting any errors based on context."
         system_content = "Translate subtitles into Korean, providing coherent and accurate translations."
         prompt = (
-            "Translate the following subtitles into Korean.\n\n"
+            "Translate the following subtitles into Korean. "
+            "\n\n"
+            # "Correct speech recognition errors and inconsistencies based on context.\n\n"
+
+            # "PLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\n"
+
+            # "Note that the original timestamps should be PRESERVED for each entry.\n\n"
+
             "Please PRESERVE ALL the original timestamps for EACH ENTRY.\n\n"
+
             "Subtitles to process:\n"
             f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+
+            "ONLY and ALWAYS return a valid JSON back:\n"
+            "```json\n"
+            f"{sample_json_string}\n"
+            "```"
         )
 
-        response = self.send_request_with_json_schema(
-            prompt=prompt,
-            json_schema=korean_schema,
+        # Use the function for sending requests with retries, similarly to the Japanese version
+        translated_subtitles = self.send_request_with_retry(
+            prompt,
             system_content=system_content,
-            filename=self.get_filename(lang="ko", idx=idx),
-            schema_name="korean_translation"
+            sample_json=sample_json_structure,
+            filename=self.get_filename(lang="ko", idx=idx)
         )
 
-        # Extract the subtitles array from the response object
-        translated_subtitles = response["subtitles"]
+        # Here, you might add any specific post-processing for Korean subtitles if necessary
+        # For example, annotating certain phrases, cultural references, or anything specific to Korean
 
         translated_subtitles = self.replace_hangul_with_hanja(translated_subtitles, idx)
 
@@ -631,42 +677,27 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return translated_subtitles
 
+
+    
+
+
     def replace_hangul_with_hanja(self, subtitles, idx):
-        """Annotate Korean subtitles with Hanja using structured outputs."""
+        """Annotate Korean subtitles with Hanja and conservatively replace original text with Hanja annotations."""
 
         print("Annotating Korean subtitles with Hanja...")
 
-        hanja_schema = {
-            "type": "object",
-            "properties": {
-                "korean_with_annotation": {
-                    "type": "string",
-                    "description": "Korean text with Hanja annotations"
-                },
-                "korean_hanja_pairs": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "korean_part": {
-                                "type": "string",
-                                "description": "Korean text part"
-                            },
-                            "hanja": {
-                                "type": "string",
-                                "description": "Corresponding Hanja characters"
-                            }
-                        },
-                        "required": ["korean_part", "hanja"],
-                        "additionalProperties": False
-                    }
-                }
-            },
-            "required": ["korean_with_annotation", "korean_hanja_pairs"],
-            "additionalProperties": False
-        }
-
         system_content = "Annotate Korean text with original Chinese Hanja."
+
+        # Sample JSON structure expected in the response
+        sample_json_structure = {
+            "korean_with_annotation": "",
+            "korean_hanja_pairs": [
+                # {"korean_part": "한자 ", "hanja": "漢字 ", "roman": "hanja"}
+                {"korean_part": "", "hanja": ""}
+            ]
+        }
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
+
 
         # Helper function for conservative replacement in the original text
         def conservative_replace(original_text, hanja_pairs):
@@ -677,11 +708,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             for pair in hanja_pairs:
                 korean_part = pair.get("korean_part", "")
                 hanja = pair.get("hanja", "")
+                pronunciation = pair.get("roman", "")
 
                 # Check if the 'hanja' part is actually Hangul or if there's no Hanja present
                 if re.match(r'^[\uAC00-\uD7AF]+$', hanja) or len(hanja) == 0:
                     continue  # Skip replacement if Hanja is actually Hangul or if Hanja is missing
 
+                # replace_with = f"<{hanja}>[{korean_part}]({pronunciation})"
                 replace_with = f"<{hanja}>[{korean_part}]"
 
                 # Start search from the last modification position to only look forward
@@ -700,16 +733,18 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 "I want to find the corresponding Chinese character origin to replace the Hangul. "
                 "However, it's crucial that the Hangul in parenthesis followed by these traditional Hanja "
                 "are put in brackets to maintain clarity as in this format: (hangul)[hanja].\n\n"
+                # "Please also provide Roman pronunciation of the Hangul. "
                 f"Korean to be annotated: {subtitle['ko']}\n\n"
-                "I don't need step by step explanation."
+                "I don't need step by step explanation. "
+                "ONLY and ALWAYS return a valid JSON back:\n"
+                f"```json\n{sample_json_string}\n```"
             )
 
-            response = self.send_request_with_json_schema(
-                prompt=prompt,
-                json_schema=hanja_schema,
+            response = self.send_request_with_retry(
+                prompt,
                 system_content=system_content,
-                filename=self.get_filename(lang="hanja", idx=idx, timestamp=self.format_subtitle_range(subtitle)),
-                schema_name="korean_hanja_annotation"
+                sample_json=sample_json_structure,
+                filename=self.get_filename(lang="hanja", idx=idx, timestamp=self.format_subtitle_range(subtitle))
             )
             # Assume response is structured correctly
             annotated_text = response.get("korean_with_annotation", "")
@@ -722,7 +757,11 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 "start": subtitle["start"],
                 "end": subtitle["end"],
                 "ko": updated_original_text,  # Updated original Korean text with Hanja annotations
+                # "annotated": annotated_text,  # Full annotated text (if needed separately)
+                # "hanja_pairs": hanja_pairs  # Hanja pairs for reference
             }
+
+        # annotated_subtitles = [process_subtitle(sub) for sub in subtitles]
 
         # Parallel execution with error handling to return original subtitles if an error occurs
         with ThreadPoolExecutor() as executor:
@@ -741,60 +780,51 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return subtitles
 
+
     def translate_and_merge_subtitles_vi(self, subtitles, idx):
-        """Request Vietnamese subtitles with structured outputs."""
+        """Request Vietnamese subtitles with specific considerations."""
         print("Translating subtitles to Vietnamese...")
 
-        vietnamese_schema = {
-            "type": "object",
-            "properties": {
-                "subtitles": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "start": {
-                                "type": "string",
-                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                                "description": "Start timestamp in HH:MM:SS,mmm format"
-                            },
-                            "end": {
-                                "type": "string",
-                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
-                                "description": "End timestamp in HH:MM:SS,mmm format"
-                            },
-                            "vi": {
-                                "type": "string",
-                                "description": "Vietnamese translation"
-                            }
-                        },
-                        "required": ["start", "end", "vi"],
-                        "additionalProperties": False
-                    }
-                }
-            },
-            "required": ["subtitles"],
-            "additionalProperties": False
-        }
+        # Define a sample JSON structure for Vietnamese subtitles
+        sample_json_structure = [
+            {
+                "start": "timestamp",
+                "end": "timestamp",
+                "vi": "Vietnamese text"  # Use "vi" for Vietnamese text
+            }
+        ]
 
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
+
+        # system_content = "Translate subtitles into Vietnamese, correcting any errors based on context."
         system_content = "Translate subtitles into Vietnamese, providing coherent and accurate translations."
         prompt = (
-            "Translate the following subtitles into Vietnamese.\n\n"
+            "Translate the following subtitles into Vietnamese. "
+            "\n\n"
+
+            # "Correct speech recognition errors and inconsistencies based on context.\n\n"
+
+            # "PLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\n"
+
+            # "Note that the original timestamps should be PRESERVED for each entry.\n\n"
+
             "Please PRESERVE ALL the original timestamps for EACH ENTRY.\n\n"
+
             "Subtitles to process:\n"
             f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+
+            "ONLY and ALWAYS return a valid JSON back:\n"
+            "```json\n"
+            f"{sample_json_string}\n"
+            "```"
         )
 
-        response = self.send_request_with_json_schema(
-            prompt=prompt,
-            json_schema=vietnamese_schema,
+        translated_subtitles = self.send_request_with_retry(
+            prompt,
             system_content=system_content,
-            filename=self.get_filename(lang="vi", idx=idx),
-            schema_name="vietnamese_translation"
+            sample_json=sample_json_structure,
+            filename=self.get_filename(lang="vi", idx=idx)
         )
-
-        # Extract the subtitles array from the response object
-        translated_subtitles = response["subtitles"]
 
         translated_subtitles = self.replace_viet_with_chuhan(translated_subtitles, idx)
 
@@ -804,41 +834,20 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         return translated_subtitles
 
     def replace_viet_with_chuhan(self, subtitles, idx):
-        """Annotate Vietnamese subtitles with Chu-Han using structured outputs."""
+        """Annotate Vietnamese subtitles with Chu-Han and conservatively replace original text with Chu-Han annotations."""
         
         print("Annotating Vietnamese subtitles with Chu-Han...")
 
-        chuhan_schema = {
-            "type": "object", 
-            "properties": {
-                "viet_with_annotation": {
-                    "type": "string",
-                    "description": "Vietnamese text with Chu-Han annotations"
-                },
-                "viet_chuhan_pairs": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "viet_part": {
-                                "type": "string",
-                                "description": "Vietnamese text part"
-                            },
-                            "chuhan": {
-                                "type": "string", 
-                                "description": "Corresponding Chu-Han characters"
-                            }
-                        },
-                        "required": ["viet_part", "chuhan"],
-                        "additionalProperties": False
-                    }
-                }
-            },
-            "required": ["viet_with_annotation", "viet_chuhan_pairs"],
-            "additionalProperties": False
-        }
-
         system_content = "Annotate Vietnamese text with original Chinese Chu-Han."
+        
+        # Sample JSON structure expected in the response
+        sample_json_structure = {
+            "viet_with_annotation": "",
+            "viet_chuhan_pairs": [
+                {"viet_part": "", "chuhan": ""}
+            ]
+        }
+        sample_json_string = json.dumps(sample_json_structure, indent=2, ensure_ascii=False)
 
         def conservative_replace(original_text, chuhan_pairs):
             """Perform conservative replacement of Viet text with Chu-Han annotations, excluding text within <>[]."""
@@ -864,6 +873,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             
             return updated_text
 
+
         def process_subtitle(subtitle):
             """Construct and send a request for annotating a single subtitle with Chu-Han."""
             prompt = (
@@ -873,15 +883,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 "are put in brackets to maintain clarity. "
                 "Like this example: (viet)[chuhan].\n\n"
                 f"Vietnamese to be annotated: {subtitle['vi']}\n\n"
-                "I don't need step by step explanation."
+                "I don't need step by step explanation. "
+                "ONLY and ALWAYS return a valid JSON back:\n"
+                f"```json\n{sample_json_string}\n```"
             )
 
-            response = self.send_request_with_json_schema(
-                prompt=prompt,
-                json_schema=chuhan_schema,
+            response = self.send_request_with_retry(
+                prompt,
                 system_content=system_content,
-                filename=self.get_filename(lang="chuhan", idx=idx, timestamp=self.format_subtitle_range(subtitle)),
-                schema_name="vietnamese_chuhan_annotation"
+                sample_json=sample_json_structure,
+                filename=self.get_filename(lang="chuhan", idx=idx, timestamp=self.format_subtitle_range(subtitle))
             )
             annotated_text = response.get("viet_with_annotation", "")
             chuhan_pairs = response.get("viet_chuhan_pairs", [])
@@ -952,13 +963,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         with open(self.output_sub_path, 'w', encoding='utf-8') as file:
             file.write(srt_content)
 
+
     def process_subtitles(self):
         """Main process to load, translate, merge, and save subtitles."""
         subtitles = self.load_subtitles_from_json()
         translated_subtitles = self.translate_and_merge_subtitles(subtitles)
+        # self.save_translated_subtitles_to_srt(translated_subtitles)
         self.save_translated_subtitles_to_ass(translated_subtitles)
         self.save_translated_subtitles_to_json(translated_subtitles)
         print("Subtitles have been processed and saved successfully.")
+
 
     def rearrange_brackets(self, ja_text):
         """
@@ -1002,6 +1016,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return deduplicated_text
 
+
     def clean_triplicated_sequences(self, ja_text):
         """
         Simplifies text by converting sequences of the form same<same>[same] to just 'same'.
@@ -1020,6 +1035,11 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return simplified_text
 
+
+
+    
+
+
     def clean_duplicated_kanji_hiragana_sequence(self, ja_text):
         """
         Converts sequences of the form 'same kanji<same kanji>[hiragana]' to '<kanji>[hiragana]'.
@@ -1029,6 +1049,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         
         # Function to perform the substitution
         def replacement(match):
+            # for i in range(4):
+            #     print(match.group(i))
+            
             # Return the simplified structure '<kanji>[hiragana]'
             kanji = match.group(2)
             hiragana = match.group(3)
@@ -1047,13 +1070,18 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         - For kanji followed by <hiragana>[hiragana], it replaces them with [hiragana].
         """
 
+        
+
         # Remove <same hiragana>[same hiragana] when at the start or directly after punctuation or preceded by different hiragana
+        # hiragana_pattern = re.compile(r'(^|(?<=[ぁ-ん]))<([ぁ-ん]+)>\[\2\]')
         hiragana_pattern = re.compile(r'(^|(?<=[、。！？>\]ぁ-ん]))<([ぁ-ん]+)>\[\2\]')
         simplified_text = hiragana_pattern.sub(r'\1\2', ja_text)
         
         # Convert kanji<hiragana>[hiragana] to kanji[hiragana], preserving the sequence
         kanji_hiragana_pattern = re.compile(r'(?<=[一-龠ァ-ヶ々ー])<([ぁ-ん]+)>\[\1\]')
         simplified_text = kanji_hiragana_pattern.sub(r'[\1]', simplified_text)
+
+        
         
         return simplified_text
 
@@ -1063,11 +1091,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """
         # Define a regex pattern to match hiragana sequences repeated before and inside angle brackets
         pattern = re.compile(r'<?([ぁ-ん]+)>?<\1>')
+
         
         # Perform the substitution to replace matched patterns with just the hiragana
         simplified_text = pattern.sub(r'\1', ja_text)
 
         return simplified_text
+
 
     def convert_standalone_angle_to_square_brackets(self, ja_text):
         """
@@ -1083,6 +1113,17 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         converted_text = pattern.sub(r'[\1]', ja_text)
         
         return converted_text
+
+
+
+
+
+
+    # # Example usage
+    # original_text = "<字幕>[じまく]上[じょう]でこの<日本語>[にほんご]の発音[はつおん]を学[まな]べるようにしています。"
+    # preprocessed_text = preprocess_text_for_furigana(original_text)
+
+    # print("Preprocessed Text:", preprocessed_text)
 
     def katakana_to_hiragana(self, katakana):
         """
@@ -1118,8 +1159,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """
         Detects <Katakana>[Katakana] then converts the [Katakana] into [Hiragana].
         """
+        # # Define a regex pattern to match <Katakana>[Katakana]
+        # pattern = re.compile(r'<([ァ-ヶー]+)>\[\1\]')
+
         # Define a regex pattern to match both <Katakana>[Katakana] and Katakana[Katakana]
         pattern = re.compile(r'(?:(<([ァ-ヶー]+)>)|([ァ-ヶー]+))\[(\2|\3)\]')
+
+        # # Use the katakana_to_hiragana function to convert matched katakana to hiragana in []
+        # corrected_text = re.sub(pattern, lambda m: f'<{m.group(1)}>[{katakana_to_hiragana(m)}]', ja_text)
 
         def replacement(match):
             # Determine if the match includes angle brackets or not
@@ -1136,6 +1183,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return corrected_text
 
+    
     def preprocess_text_for_furigana(self, ja_text):
         """
         Adjusts Japanese text to ensure that kanji/katakana sequences directly preceding standalone furigana
@@ -1143,6 +1191,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         This version stops including characters in the sequence based on the starting character type (kanji or katakana).
         """
         
+        # This pattern is updated to differentiate between sequences starting with kanji or katakana.
+        # It ensures that if a sequence starts with kanji, it only includes kanji,
+        # and if it starts with katakana, it only includes katakana, directly preceding the furigana annotation.
+        # pattern = re.compile(
+        #     r'(?<!<)'
+        #     r'((?:[一-龠々]+|[ァ-ヶー]+))'  # Matches a sequence of kanji or a sequence of katakana
+        #     r'(?=\[([^\]]+)\])'  # Lookahead for furigana enclosed in brackets without including them in the match
+        # )
         pattern = re.compile(
             r'(?<!<)'
             r'((?:[一-龠々]+|[ァ-ヶー]+))'  # Matches a sequence of kanji or a sequence of katakana
@@ -1161,14 +1217,21 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         # Return the modified text with appropriate enclosures
         return preprocessed_text
 
+
+    
+
+    # @staticmethod
     def convert_furigana_to_ass(self, ja_text):
         """Convert furigana format from <kanji>[furigana], standalone [furigana], or <kanji> to ASS ruby format,
         applying styles for kanji and furigana where present."""
 
+
+        
+
         def replace_with_ruby(match):
             # Adjusted to handle both standalone and combined cases properly.
             kanji = match.group(1)   # Kanji could be in group 1 when present
-            furigana = match.group(2) or match.group(3)  # Furigana is in group 2  or standalone furigana in group 3
+            furigana = match.group(2 )or match.group(3)  # Furigana is in group 2  or standalone furigana in group 3
             
             # Initialize an empty string for the result
             result = ""
@@ -1195,8 +1258,11 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         def replace_with_ass(match):
             hanja = match.group(1)
             hangul = match.group(2)
+            # roman = match.group(3)
 
             result = ""
+
+
             
             # If Hanja is present, style it with the Kanji style
             if hanja:
@@ -1205,10 +1271,17 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             # Style the Hangul part with the Hangul style
             if hangul:
                 result += f"{{\\rHangul}}{hangul}{{\\rKorean}}"
+            
+            # Add Romanized Korean (RomanKO) if present, styled differently
+            # if roman:
+            #     # result += f"{{\\rRomanKO}}({roman}){{\\rDefault}}"
+            #     # result += f"{{\\rRomanKO}}{roman}{{\\rDefault}}"
+            #     pass
 
             return result
 
-        # Pattern to match the format: <Hanja>[Hangul]
+        # Pattern to match the format: <Hanja>[Hangul](RomanKO)
+        # pattern = r"<([^>]+)>\[([^]]+)\]\(([^)]*)\)"
         pattern = r"<([^>]+)>\[([^]]+)\]"
 
         # Replace matches in the text with styled ASS text
@@ -1258,117 +1331,49 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         else:
             return "full-width"
 
-#     def generate_ass_header(self):
-#         """Generates the header for an ASS file, adjusting `PlayResX` and `PlayResY` based on video orientation."""
-#         # Determine if the video is landscape or portrait
-#         is_video_landscape = self.is_video_landscape
 
-#         # Adjust PlayResX and PlayResY based on orientation
-#         play_res_x, play_res_y = (self.video_width, self.video_height) if is_video_landscape else (self.video_height, self.video_width)
-
-#         if self.is_video_landscape:
-#             max_width = self.video_width * 0.8
-#             max_height = self.video_height * 0.5 / 2
-#         else:
-#             max_width = self.video_width * 0.8 * self.portrait_scale
-#             max_height = self.video_height * 0.5 / 4
-
-#         font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-
-#         font_sizes = {}
-#         for language, text in sample_texts.items():
-#             char_width_type = self.estimate_character_width(text)
-#             wrapping_limit = self.wrapping_limit_half_width_default
-#             text_section = text[:wrapping_limit]
-#             font_sizes[language] = find_font_size(text_section, self.font_path, max_width, max_height)
-
-#         print("calculated font size: ")
-#         pprint(font_sizes)
-
-#         base_font_size = font_sizes["English"]
-#         chinese_font_size = font_sizes["Chinese"]
-#         english_font_size = font_sizes["English"] 
-#         japanese_font_size = font_sizes["Japanese"]
-#         kanji_font_size = font_sizes["Japanese"]
-#         furigana_font_size = font_sizes["Japanese"]
-#         arabic_font_size = font_sizes["Arabic"]
-#         # korean
-#         korean_font_size = japanese_font_size 
-#         hanja_font_size = kanji_font_size 
-#         hangul_font_size = furigana_font_size 
-#         romanko_font_size = furigana_font_size 
-#         #
-#         spanish_font_size = english_font_size
-#         french_font_size = english_font_size
-#         # vietnamese
-#         vietnamese_font_size = kanji_font_size 
-#         chuhan_font_size = kanji_font_size 
-#         viet_font_size = furigana_font_size 
-
-#         return f"""[Script Info]
-# ScriptType: v4.00+
-# Collisions: Normal
-# PlayResX: {play_res_x}
-# PlayResY: {play_res_y}
-
-# [V4+ Styles]
-# Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-# Style: Default,Vernada,{base_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Emoji,BabelStone Flags,{base_font_size},&H00FFFFFF,&H00000000,&H00000000,&H00000000,0,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
-# Style: Micphone,Noto Color Emoji,{base_font_size},&H00FFFFFF,&H00000000,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: English,Vernada,{english_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Chinese,Vernada,{chinese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Japanese,Vernada,{japanese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Kanji,Vernada,{kanji_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Furigana,Vernada,{furigana_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
-# Style: Arabic1,Arial,{arabic_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Arabic,Arial,{arabic_font_size},&H0071B33C,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Korean,Vernada,{korean_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Hanja1,Vernada,{hanja_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Hanja,Vernada,{hanja_font_size},&H00E16941,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Hangul1,Vernada,{hangul_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
-# Style: Hangul,Vernada,{hangul_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
-# Style: RomanKO,Vernada,{romanko_font_size},&H00FACADE,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,1,1,2,10,10,10,1
-# Style: Spanish1,Arial,{spanish_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Spanish,Arial,{spanish_font_size},&H0000BFF1,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: French,Arial,{french_font_size},&H003929ED,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: French2,Arial,{french_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Vietnamese,Arial,{vietnamese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Chuhan1,Vernada,{chuhan_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Chuhan,Vernada,{chuhan_font_size},&H00ADDEFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
-# Style: Viet1,Vernada,{viet_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
-# Style: Viet,Vernada,{viet_font_size},&H00E1E4FF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
-
-# [Events]
-# Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-# """   
-
+    # @staticmethod
     def generate_ass_header(self):
         """Generates the header for an ASS file, adjusting `PlayResX` and `PlayResY` based on video orientation."""
         # Determine if the video is landscape or portrait
+        # is_video_landscape = self.video_width > self.video_height
         is_video_landscape = self.is_video_landscape
 
         # Adjust PlayResX and PlayResY based on orientation
+        # play_res_x, play_res_y = (self.base_width, self.base_height) if is_video_landscape else (self.base_height, self.base_width)
         play_res_x, play_res_y = (self.video_width, self.video_height) if is_video_landscape else (self.video_height, self.video_width)
+
+        # wrapping_limit_half_width_default = self.wrapping_limit_half_width_default
+        # wrapping_limit_full_width_default = self.wrapping_limit_half_width_default // 2
+
+            
 
         if self.is_video_landscape:
             max_width = self.video_width * 0.8
+            # max_height = self.video_height * 0.5 / 8
             max_height = self.video_height * 0.5 / 2
         else:
             max_width = self.video_width * 0.8 * self.portrait_scale
+            # max_height = self.video_height * 0.5 / 16
             max_height = self.video_height * 0.5 / 4
 
         font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        # english_portrait_font_size = find_font_size(sample_texts["english"][:wrapping_limit_half_width_default], font_path, max_width, max_height)
+
 
         font_sizes = {}
         for language, text in sample_texts.items():
             char_width_type = self.estimate_character_width(text)
-            wrapping_limit = self.wrapping_limit_half_width_default
+            wrapping_limit = self.wrapping_limit_half_width_default # if char_width_type == 'half-width' else self.wrapping_limit_half_width_default // 2
             text_section = text[:wrapping_limit]
-            font_sizes[language] = find_font_size(text_section, self.font_path, max_width, max_height)
+            font_sizes[language] = find_font_size(text_section, self.font_path, max_width, max_height) # * self.font_size_scale
+
 
         print("calculated font size: ")
         pprint(font_sizes)
+
+
+
 
         base_font_size = font_sizes["English"]
         chinese_font_size = font_sizes["Chinese"]
@@ -1389,32 +1394,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         vietnamese_font_size = kanji_font_size 
         chuhan_font_size = kanji_font_size 
         viet_font_size = furigana_font_size 
-
-        # ===== SPACING AND MARGIN VARIABLES (EASY TO ADJUST) =====
-        margin_l = 3          # Left margin
-        margin_r = 3          # Right margin
-        margin_v = 3           # Vertical margin (line spacing) - Set to 3 for tighter spacing
         
-        # Scaling and spacing variables
-        scale_x = 100          # Horizontal scaling (100 = normal)
-        scale_y = 100          # Vertical scaling (100 = normal, <100 = more compact)
-        spacing = 0            # Character spacing (0 = normal)
-        
-        # Outline and shadow variables
-        outline = 2            # Outline thickness
-        shadow = 2             # Shadow offset
-        
-        # Border style
-        border_style = 1       # 1 = outline + drop shadow, 3 = opaque box
-        
-        # Special scaling for furigana and smaller text elements
-        furigana_scale_x = 50  # Horizontal scaling for furigana
-        furigana_scale_y = 50  # Vertical scaling for furigana
-        hangul_scale_x = 50    # Horizontal scaling for hangul
-        hangul_scale_y = 50    # Vertical scaling for hangul
-        viet_scale_x = 50      # Horizontal scaling for viet
-        viet_scale_y = 50      # Vertical scaling for viet
-        # ===========================================================
 
         return f"""[Script Info]
 ScriptType: v4.00+
@@ -1424,35 +1404,35 @@ PlayResY: {play_res_y}
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Vernada,{base_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Emoji,BabelStone Flags,{base_font_size},&H00FFFFFF,&H00000000,&H00000000,&H00000000,0,0,0,0,{furigana_scale_x},{furigana_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Micphone,Noto Color Emoji,{base_font_size},&H00FFFFFF,&H00000000,&H00000000,&H00000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: English,Vernada,{english_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Chinese,Vernada,{chinese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Japanese,Vernada,{japanese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Kanji,Vernada,{kanji_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Furigana,Vernada,{furigana_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{furigana_scale_x},{furigana_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Arabic1,Arial,{arabic_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Arabic,Arial,{arabic_font_size},&H0071B33C,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Korean,Vernada,{korean_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Hanja1,Vernada,{hanja_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Hanja,Vernada,{hanja_font_size},&H00E16941,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Hangul1,Vernada,{hangul_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{hangul_scale_x},{hangul_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Hangul,Vernada,{hangul_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{hangul_scale_x},{hangul_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: RomanKO,Vernada,{romanko_font_size},&H00FACADE,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{hangul_scale_x},{hangul_scale_y},{spacing},0,1,1,1,2,{margin_l},{margin_r},{margin_v},1
-Style: Spanish1,Arial,{spanish_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Spanish,Arial,{spanish_font_size},&H0000BFF1,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: French,Arial,{french_font_size},&H003929ED,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: French2,Arial,{french_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Vietnamese,Arial,{vietnamese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Chuhan1,Vernada,{chuhan_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Chuhan,Vernada,{chuhan_font_size},&H00ADDEFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Viet1,Vernada,{viet_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{viet_scale_x},{viet_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Viet,Vernada,{viet_font_size},&H00E1E4FF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{viet_scale_x},{viet_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
+Style: Default,Vernada,{base_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Emoji,BabelStone Flags,{base_font_size},&H00FFFFFF,&H00000000,&H00000000,&H00000000,0,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
+Style: Micphone,Noto Color Emoji,{base_font_size},&H00FFFFFF,&H00000000,&H00000000,&H00000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: English,Vernada,{english_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Chinese,Vernada,{chinese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Japanese,Vernada,{japanese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Kanji,Vernada,{kanji_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Furigana,Vernada,{furigana_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
+Style: Arabic1,Arial,{arabic_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Arabic,Arial,{arabic_font_size},&H0071B33C,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Korean,Vernada,{korean_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Hanja1,Vernada,{hanja_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Hanja,Vernada,{hanja_font_size},&H00E16941,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Hangul1,Vernada,{hangul_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
+Style: Hangul,Vernada,{hangul_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
+Style: RomanKO,Vernada,{romanko_font_size},&H00FACADE,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,1,1,2,10,10,10,1
+Style: Spanish1,Arial,{spanish_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Spanish,Arial,{spanish_font_size},&H0000BFF1,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: French,Arial,{french_font_size},&H003929ED,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: French2,Arial,{french_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Vietnamese,Arial,{vietnamese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Chuhan1,Vernada,{chuhan_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Chuhan,Vernada,{chuhan_font_size},&H00ADDEFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,100,100,0,0,1,2,2,2,10,10,10,1
+Style: Viet1,Vernada,{viet_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
+Style: Viet,Vernada,{viet_font_size},&H00E1E4FF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,50,50,0,0,1,2,2,2,10,10,10,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-"""      
+"""             
 
     def preprocess_japanese_ruby(self, subtitles):
         """Preprocess Japanese text within subtitles."""
@@ -1498,6 +1478,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                 ja_text = self.preprocess_text_for_furigana(ja_text)
                 custom_print(enable_print, "After preprocessing text for furigana:", ja_text)
 
+
                 # Update the Japanese text in the subtitle
                 subtitle['ja'] = ja_text
                 custom_print(enable_print, "Final text:", ja_text)
@@ -1526,7 +1507,23 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             elif inside_brackets and 'HIRAGANA' in unicodedata.name(char, ''):
                 hiragana_count += 1
 
+        # Return the counts as a dictionary
+        # return {
+        #     'less_than': count_less_than,
+        #     'greater_than': count_greater_than,
+        #     'open_bracket': count_open_bracket,
+        #     'close_bracket': count_close_bracket,
+        #     'hiragana_inside_brackets': hiragana_count,
+        # }
+
+
+        # return count_less_than + count_greater_than + \
+        #         count_open_bracket + count_close_bracket + \
+        #         hiragana_count / 2
+
         return hiragana_count / 2
+
+
 
     def save_translated_subtitles_to_json(self, translated_subtitles):
         # Write the constructed ASS content to the output file
@@ -1534,11 +1531,14 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             file.write(json.dumps(translated_subtitles, indent=2, ensure_ascii=False))
         print(f"Subtitles have been processed and saved successfully to {self.output_json_path}.")
 
+
     def add_flag_emoji(self, lang_code):
         flags = self.flags
         
         # Return the flag emoji or an empty string if the language code is not found
         return flags.get(lang_code, "")
+
+
 
     def add_microphone_symbol_to_translated_subtitles(self, translated_subtitles):
         """Add a 🎙️ symbol to subtitles in translated_subtitles based on the language specified in self.subtitles."""
@@ -1556,13 +1556,18 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         
         return translated_subtitles
 
+
+
     def save_translated_subtitles_to_ass(self, translated_subtitles):
+        
         """Save the translated subtitles to an ASS file with text wrapping based on video orientation."""
 
+        # translated_subtitles = self.add_country_flags_to_translated_subtitles(translated_subtitles)
         translated_subtitles = self.add_microphone_symbol_to_translated_subtitles(translated_subtitles)
 
+
         if self.is_video_landscape:
-            wrapping_limit_half_width_default = int(self.wrapping_limit_half_width_default)
+            wrapping_limit_half_width_default = self.wrapping_limit_half_width_default
         else:
             wrapping_limit_half_width_default = int(self.wrapping_limit_half_width_default / self.portrait_scale)
 
@@ -1590,8 +1595,8 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             # Format start and end times to ensure two decimal places with comma
             start_seconds = convert_to_seconds(item['start'])
             end_seconds = convert_to_seconds(item['end'])
-            start = "{:02d}:{:02d}:{:05.2f}".format(int(start_seconds // 3600), int((start_seconds % 3600) // 60), start_seconds % 60)
-            end = "{:02d}:{:02d}:{:05.2f}".format(int(end_seconds // 3600), int((end_seconds % 3600) // 60), end_seconds % 60)
+            start = "{:02d}:{:02d}:{:05.2f}".format(int(start_seconds // 3600), int((start_seconds % 3600) // 60), start_seconds % 60)#.replace('.', ',')
+            end = "{:02d}:{:02d}:{:05.2f}".format(int(end_seconds // 3600), int((end_seconds % 3600) // 60), end_seconds % 60)#.replace('.', ',')
 
             dialogue_lines = []
 
@@ -1630,8 +1635,17 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                     else:
                         style = "Default"
 
+                   
+
                     wrapped_text_lines = self.wrap_text(text, wrapping_limit_half_width, is_cjk=is_cjk)
                     dialogue_line = '\\N'.join(wrapped_text_lines)
+
+                    # Prepend flag emoji with the Emoji style and revert back to the original style for the text
+                    # if "🔊" in dialogue_line:
+                    #     dialogue_line = f"{{\\rMicphone}}{dialogue_line[:1]}{{\\rEmoji}}{flag_emoji}{{\\r{style}}}{dialogue_line[1:]}"
+                    # else:
+                    #     dialogue_line = f"{{\\rEmoji}}{flag_emoji}{{\\r{style}}}{dialogue_line}"
+
 
                     if lang == 'ja':
                         dialogue_line = self.convert_furigana_to_ass(dialogue_line)
@@ -1641,6 +1655,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
                     if lang == "vi":
                         dialogue_line = self.convert_chuhan_to_ass(dialogue_line)
+
 
                     subtitle_line = f"Dialogue: 0,{start},{end},{style},,0,0,0,,{dialogue_line}"
                     ass_content += subtitle_line + "\n"
@@ -1659,9 +1674,11 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             file.write(ass_content)
         print(f"Subtitles have been processed and saved successfully to {self.output_sub_path}.")
 
+
     def wrap_text(self, text, wrapping_limit_half_width, is_cjk=False):
         if not is_cjk:
             # For non-CJK text, directly use the wrapping function.
+            # return self.cjkwrap_punctuation(text, wrapping_limit_half_width)
             return [text]
 
         # Step 1: Wrap the text into lines.
@@ -1670,9 +1687,19 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         # Step 2: Join lines with '###' to mark original line breaks.
         joined_text = '###'.join(wrapped_lines)
 
+        # if "歴史" in joined_text:
+        #     print("joined_text: ", joined_text)
+
         # Step 3: Correct breakpoints only for structured texts that were split.
         def correct_breakpoints(match):
             structured_text = match.group(0)
+
+            # if "歴史" in joined_text:
+            #     for i in range(4):
+            #         try:
+            #             print(match.group(i))
+            #         except:
+            #             pass
 
             # If '###' is inside the structured text, it indicates an incorrect break.
             if '###' in structured_text:
@@ -1690,6 +1717,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
         joined_lines = self.join_lines_with_length_check(corrected_lines, wrapping_limit_half_width)
 
+        # return corrected_lines
         return joined_lines
 
     @staticmethod
@@ -1724,16 +1752,24 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
         return final_lines
 
+
     def cjkwrap_punctuation(self, text, width):
         """
         Custom wrapper for CJK text that prioritizes wrapping at punctuation,
         and adjusts lines to avoid starting with punctuation.
         """
 
+
         wrapped_lines = cjkwrap.wrap(text, width)
 
+
+
         # Define full-width and half-width punctuation marks for CJK text
-        punctuations = ".。、，,！!？?；;：:「」『』（）()【】[]《》<>「」『』""\"\""
+        punctuations = ".。、，,！!？?；;：:「」『』（）()【】[]《》<>「」『』“”\"\""
+        # punctuations = ".。、，,！!？?；;：:「」『』（）()【】《》「」『』“”\"\""
+        # punctuations = "。、，,！!？?；;：:「」『』（）()【】《》「」『』“”\"\""
+
+        
 
         # Adjust lines to move punctuation from the beginning of a line to the end of the previous line
         for i in range(1, len(wrapped_lines)):
@@ -1743,7 +1779,12 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                     wrapped_lines[i-1] += wrapped_lines[i][0]  # Move punctuation to the end of the previous line
                     wrapped_lines[i] = wrapped_lines[i][1:]  # Remove punctuation from the current line
 
+        # Handle case where the first line starts with punctuation and there's no previous line to adjust
+        # This might involve a specific strategy, such as re-wrapping with cjkwrap if needed
+        # For simplicity, this case is not explicitly handled here but should be considered based on your requirements
+
         return wrapped_lines
+
 
 
 if __name__ == '__main__':
@@ -1752,6 +1793,7 @@ if __name__ == '__main__':
     input_json_path = '/home/lachlan/Projects/lazyedit/lazyedit/data/IMG_6276_mixed.json'
     output_sub_path = '/home/lachlan/Projects/lazyedit/lazyedit/data/translated_subtitles.srt'
     input_sub_path = '/home/lachlan/Projects/lazyedit/lazyedit/data/IMG_6276_mixed.srt'
+
 
     openai_client = OpenAI()
     subtitles_processor = SubtitlesTranslator(openai_client, input_json_path, input_sub_path, output_sub_path)
