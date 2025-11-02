@@ -11,7 +11,14 @@ Usage:
 from __future__ import annotations
 
 import argparse
-from agi.video_requests import create_poll_and_download
+try:
+    from agi.video_requests import create_poll_and_download
+except ModuleNotFoundError:
+    # Allow execution via `python agi/demo_fantasy_woman.py` by adding repo root
+    import sys
+    from pathlib import Path
+    sys.path.append(str(Path(__file__).resolve().parents[1]))
+    from agi.video_requests import create_poll_and_download
 
 
 PROMPT = (

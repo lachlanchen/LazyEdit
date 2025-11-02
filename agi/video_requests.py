@@ -117,6 +117,10 @@ def create_poll_and_download(
     timeout_seconds: int = 30 * 60,
 ) -> str:
     client = OpenAI()
+    # Ensure output directory exists
+    out_dir = os.path.dirname(output)
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     video = create_video(client, prompt=prompt, model=model, size=size, seconds=seconds)
     print("Video generation started:", video)
 
