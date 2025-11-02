@@ -68,6 +68,8 @@ import moviepy.editor as mp
 
 from lazyedit.handbrake import preprocess_video
 from lazyedit.video_utils import preprocess_if_needed
+from lazyedit import db as ldb
+from lazyedit.plugins.languages import list_languages
 
 
 
@@ -1691,6 +1693,82 @@ class FileUploaderHandler(tornado.web.RequestHandler):
         })
 
 
+class CorsMixin:
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
+        self.set_header("Access-Control-Allow-Headers", "content-type")
+
+    def options(self, *args, **kwargs):
+        self.set_status(204)
+        self.finish()
+
+
+class LanguagesHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self):
+        self.write({"languages": list_languages()})
+
+
+class VideosHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self):
+        # Return recent videos from DB
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT id, file_path, title, created_at FROM videos ORDER BY id DESC LIMIT 100")
+            rows = cur.fetchall()
+        videos = [
+            {"id": r[0], "file_path": r[1], "title": r[2], "created_at": r[3].isoformat() if r[3] else None}
+            for r in rows
+        ]
+        self.write({"videos": videos})
+
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid json"})
+        file_path = data.get("file_path")
+        title = data.get("title")
+        if not file_path:
+            self.set_status(400)
+            return self.write({"error": "file_path required"})
+        ldb.ensure_schema()
+        vid = ldb.add_video(file_path, title)
+        self.write({"id": vid})
+
+
+class CaptionsHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        rows = ldb.get_captions_for_video(video_id_i)
+        caps = [{"id": r[0], "language_code": r[1], "subtitle_path": r[2]} for r in rows]
+        self.write({"captions": caps})
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid json"})
+        lang = data.get("language_code")
+        path = data.get("subtitle_path")
+        if not (lang and path):
+            self.set_status(400)
+            return self.write({"error": "language_code and subtitle_path required"})
+        ldb.ensure_schema()
+        cid = ldb.add_caption(video_id_i, lang, path)
+        self.write({"id": cid})
+
+
 
 
 @tornado.web.stream_request_body
@@ -1994,6 +2072,10 @@ def make_app(upload_folder):
         (r"/upload", FileUploaderHandler, dict(upload_folder=upload_folder)),
         (r"/upload-stream", FileUploadHandlerStream, dict(upload_folder=upload_folder)),
         (r"/video-processing", AutomaticalVideoEditingHandler),
+        # Lightweight JSON APIs for the Expo app
+        (r"/api/languages", LanguagesHandler),
+        (r"/api/videos", VideosHandler),
+        (r"/api/videos/(\d+)/captions", CaptionsHandler),
     ])
 
 if __name__ == "__main__":
@@ -2009,6 +2091,4 @@ if __name__ == "__main__":
     # tornado.autoreload.watch('path/to/config.yaml')
     # tornado.autoreload.watch('path/to/static/file.html')
     tornado.ioloop.IOLoop.current().start()
-
-
 

@@ -6,7 +6,10 @@
 - `DATA/`, `translation_logs/`, `temp/`: Inputs/outputs and logs produced at runtime; avoid committing large media.
 - `fonts/`, `weights/`: Rendering assets and model weights.
 - `start_lazyedit.sh`, `install_lazyedit.sh`, `lazyedit_config.sh`: Service startup and environment configuration.
-- `furigana` (symlink): External dependency; do not modify in‑repo.
+ - `furigana` (symlink): External dependency; do not modify in‑repo.
+ - `echomind` (symlink): External dependency; do not modify in‑repo.
+
+Note on symlinks: Never edit files inside symlinked directories from this repository. Treat them as read-only, external dependencies used for reference at runtime or for code generation.
 
 ## Build, Test, and Development Commands
 - Install system deps and generate service/config:
@@ -18,6 +21,9 @@
   ```bash
   source ~/miniconda3/etc/profile.d/conda.sh
   conda activate lazyedit
+  # Always use the conda env's interpreter
+  # Do NOT use `python3`; use `python` so it resolves to
+  # /home/lachlan/miniconda3/envs/lazyedit/bin/python
   python app.py -m lazyedit
   ```
 - Manage background service and tmux session:
@@ -48,4 +54,3 @@
 - Never commit API keys or credentials; use environment variables.
 - GPU selection: `CUDA_VISIBLE_DEVICES` is set in `app.py`—adjust locally but avoid committing machine‑specific values.
 - Large media belongs in `DATA/` or external storage; keep the repository lightweight.
-
