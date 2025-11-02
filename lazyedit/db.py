@@ -50,7 +50,7 @@ def get_cursor(commit: bool = False):
 
 
 def ensure_schema():
-    """Create minimal tables to track videos and captions if missing."""
+    """Create minimal tables to track videos, captions, and generated videos if missing."""
     ddl_statements = [
         # Videos table stores basic metadata; extend as needed
         """
@@ -75,6 +75,23 @@ def ensure_schema():
         """
         CREATE INDEX IF NOT EXISTS idx_captions_video_lang
             ON captions (video_id, language_code);
+        """,
+        # Generated videos (e.g., Sora jobs) cache prompts and output paths
+        """
+        CREATE TABLE IF NOT EXISTS generated_videos (
+            id SERIAL PRIMARY KEY,
+            job_id TEXT UNIQUE NOT NULL,
+            model TEXT NOT NULL,
+            prompt TEXT NOT NULL,
+            size TEXT,
+            seconds INTEGER,
+            status TEXT NOT NULL,
+            progress INTEGER DEFAULT 0,
+            file_path TEXT,
+            error TEXT,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            completed_at TIMESTAMPTZ
+        );
         """,
     ]
 
@@ -116,4 +133,69 @@ def get_captions_for_video(video_id: int) -> list[tuple]:
             (video_id,),
         )
         return cur.fetchall()
+
+
+# --- Generated video helpers (Sora) ---
+
+def record_generated_video(
+    *,
+    job_id: str,
+    model: str,
+    prompt: str,
+    size: str | None,
+    seconds: int | None,
+    status: str,
+    progress: int | None = None,
+) -> None:
+    ensure_schema()
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO generated_videos (job_id, model, prompt, size, seconds, status, progress)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (job_id) DO UPDATE SET
+              model = EXCLUDED.model,
+              prompt = EXCLUDED.prompt,
+              size = EXCLUDED.size,
+              seconds = EXCLUDED.seconds,
+              status = EXCLUDED.status,
+              progress = COALESCE(EXCLUDED.progress, generated_videos.progress)
+            """,
+            (job_id, model, prompt, size, seconds, status, progress if progress is not None else 0),
+        )
+
+
+def update_generated_video(
+    *,
+    job_id: str,
+    status: str | None = None,
+    progress: int | None = None,
+    file_path: str | None = None,
+    error: str | None = None,
+    completed_at: str | None = None,
+) -> None:
+    ensure_schema()
+    sets = []
+    values = []
+    if status is not None:
+        sets.append("status = %s")
+        values.append(status)
+    if progress is not None:
+        sets.append("progress = %s")
+        values.append(progress)
+    if file_path is not None:
+        sets.append("file_path = %s")
+        values.append(file_path)
+    if error is not None:
+        sets.append("error = %s")
+        values.append(error)
+    if completed_at is not None:
+        sets.append("completed_at = to_timestamp(%s)")
+        values.append(completed_at)
+    if not sets:
+        return
+    values.append(job_id)
+    query = f"UPDATE generated_videos SET {', '.join(sets)} WHERE job_id = %s"
+    with get_cursor(commit=True) as cur:
+        cur.execute(query, tuple(values))
 

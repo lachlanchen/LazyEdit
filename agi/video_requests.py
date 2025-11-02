@@ -21,6 +21,7 @@ from typing import Optional
 
 from openai import OpenAI
 import httpx
+from lazyedit import db as ldb
 
 
 def _have_sdk_videos(client: OpenAI) -> bool:
@@ -128,6 +129,23 @@ def create_poll_and_download(
     video = create_video(client, prompt=prompt, model=model, size=size, seconds=seconds)
     print("Video generation started:", video)
 
+    # Record job in Postgres cache
+    try:
+        vid0 = getattr(video, "id", None) or (video.get("id") if isinstance(video, dict) else None)
+        status0 = getattr(video, "status", None) or (video.get("status") if isinstance(video, dict) else "queued")
+        progress0 = getattr(video, "progress", None) or (video.get("progress") if isinstance(video, dict) else 0)
+        ldb.record_generated_video(
+            job_id=str(vid0),
+            model=model,
+            prompt=prompt,
+            size=size,
+            seconds=seconds,
+            status=str(status0),
+            progress=int(progress0) if isinstance(progress0, (int, float)) else 0,
+        )
+    except Exception as e:
+        print(f"DB record error (non-fatal): {e}")
+
     start = time.time()
     # Normalize response across SDK/HTTP
     progress = (getattr(video, "progress", None) or (video.get("progress") if isinstance(video, dict) else 0) or 0)
@@ -151,6 +169,14 @@ def create_poll_and_download(
         vid = getattr(video, "id", None) or (video.get("id") if isinstance(video, dict) else None)
         video = retrieve_status(client, vid)
         progress = (getattr(video, "progress", None) or (video.get("progress") if isinstance(video, dict) else 0) or 0)
+        try:
+            ldb.update_generated_video(
+                job_id=str(vid),
+                status=str(_status(video)) if _status(video) else None,
+                progress=int(progress) if isinstance(progress, (int, float)) else None,
+            )
+        except Exception as e:
+            print(f"DB update error (non-fatal): {e}")
 
     # end of loop – newline for cleanliness
     sys.stdout.write("\n")
@@ -162,6 +188,10 @@ def create_poll_and_download(
         else:
             err = getattr(getattr(video, "error", None), "message", None)
         err = err or "unknown error"
+        try:
+            ldb.update_generated_video(job_id=str(vid), status="failed", error=str(err))
+        except Exception:
+            pass
         raise RuntimeError(f"Video generation failed: {err}")
 
     print("Video generation completed:", video)
@@ -169,6 +199,17 @@ def create_poll_and_download(
     vid = getattr(video, "id", None) or (video.get("id") if isinstance(video, dict) else None)
     path = download_video(client, vid, out_path=output, variant="video")
     print(f"Wrote {path}")
+    try:
+        completed = getattr(video, "completed_at", None) or (video.get("completed_at") if isinstance(video, dict) else None)
+        ldb.update_generated_video(
+            job_id=str(vid),
+            status="completed",
+            progress=100,
+            file_path=path,
+            completed_at=str(completed) if completed else None,
+        )
+    except Exception as e:
+        print(f"DB finalize error (non-fatal): {e}")
     return path
 
 
