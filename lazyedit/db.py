@@ -93,6 +93,9 @@ def ensure_schema():
             completed_at TIMESTAMPTZ
         );
         """,
+        # Backfill/updates for evolving schema
+        "ALTER TABLE generated_videos ADD COLUMN IF NOT EXISTS request_hash TEXT;",
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_generated_videos_request_hash ON generated_videos (request_hash);",
     ]
 
     with get_cursor(commit=True) as cur:
@@ -146,22 +149,24 @@ def record_generated_video(
     seconds: int | None,
     status: str,
     progress: int | None = None,
+    request_hash: str | None = None,
 ) -> None:
     ensure_schema()
     with get_cursor(commit=True) as cur:
         cur.execute(
             """
-            INSERT INTO generated_videos (job_id, model, prompt, size, seconds, status, progress)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            INSERT INTO generated_videos (job_id, model, prompt, size, seconds, status, progress, request_hash)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             ON CONFLICT (job_id) DO UPDATE SET
               model = EXCLUDED.model,
               prompt = EXCLUDED.prompt,
               size = EXCLUDED.size,
               seconds = EXCLUDED.seconds,
               status = EXCLUDED.status,
-              progress = COALESCE(EXCLUDED.progress, generated_videos.progress)
+              progress = COALESCE(EXCLUDED.progress, generated_videos.progress),
+              request_hash = COALESCE(EXCLUDED.request_hash, generated_videos.request_hash)
             """,
-            (job_id, model, prompt, size, seconds, status, progress if progress is not None else 0),
+            (job_id, model, prompt, size, seconds, status, progress if progress is not None else 0, request_hash),
         )
 
 
@@ -199,3 +204,20 @@ def update_generated_video(
     with get_cursor(commit=True) as cur:
         cur.execute(query, tuple(values))
 
+
+def find_generated_by_hash(request_hash: str):
+    """Return the most recent row for a given request hash, or None."""
+    ensure_schema()
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT job_id, status, progress, file_path, error, created_at, completed_at
+            FROM generated_videos
+            WHERE request_hash = %s
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (request_hash,),
+        )
+        row = cur.fetchone()
+        return row

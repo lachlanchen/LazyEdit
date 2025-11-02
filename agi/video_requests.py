@@ -18,6 +18,8 @@ import os
 import sys
 import time
 from typing import Optional
+import hashlib
+import json
 
 from openai import OpenAI
 import httpx
@@ -120,12 +122,30 @@ def create_poll_and_download(
     output: str = "video.mp4",
     poll_interval: float = 10.0,
     timeout_seconds: int = 30 * 60,
+    use_cache: bool = True,
 ) -> str:
     client = OpenAI()
     # Ensure output directory exists
     out_dir = os.path.dirname(output)
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
+    # Compute request hash and attempt cache
+    payload = {"model": model, "prompt": prompt, "size": size, "seconds": seconds}
+    key = json.dumps(payload, ensure_ascii=False, sort_keys=True)
+    rhash = hashlib.sha256(key.encode("utf-8")).hexdigest()
+    rcode = rhash[:12]
+    print(f"Request code: {rcode}")
+    if use_cache:
+        try:
+            row = ldb.find_generated_by_hash(rhash)
+            if row:
+                job_id, status, progress, file_path, error, created_at, completed_at = row
+                if status == "completed" and file_path and os.path.exists(file_path):
+                    print(f"Cache hit for code {rcode}; returning {file_path}")
+                    return file_path
+        except Exception as e:
+            print(f"Cache lookup error (non-fatal): {e}")
+
     video = create_video(client, prompt=prompt, model=model, size=size, seconds=seconds)
     print("Video generation started:", video)
 
@@ -142,6 +162,7 @@ def create_poll_and_download(
             seconds=seconds,
             status=str(status0),
             progress=int(progress0) if isinstance(progress0, (int, float)) else 0,
+            request_hash=rhash,
         )
     except Exception as e:
         print(f"DB record error (non-fatal): {e}")
@@ -222,6 +243,7 @@ def _parse_args(argv: list[str]) -> argparse.Namespace:
     p.add_argument("--output", default="video.mp4", help="Output mp4 path")
     p.add_argument("--interval", type=float, default=10.0, help="Polling interval seconds")
     p.add_argument("--timeout", type=int, default=1800, help="Timeout seconds")
+    p.add_argument("--no-cache", action="store_true", help="Disable DB cache; always create a new job")
     return p.parse_args(argv)
 
 
@@ -240,6 +262,7 @@ def main(argv: list[str]) -> int:
             output=args.output,
             poll_interval=args.interval,
             timeout_seconds=args.timeout,
+            use_cache=not args.no_cache,
         )
         return 0
     except Exception as e:
