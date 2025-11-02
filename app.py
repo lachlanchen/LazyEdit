@@ -2086,9 +2086,10 @@ if __name__ == "__main__":
     # upload_folder = '/home/lachlan/ProjectsLFS/lazyedit/DATA'  # Folder where files will be uploaded
     upload_folder = '/home/lachlan/ProjectsM/lazyedit/DATA'  # Folder where files will be uploaded
     app = make_app(upload_folder)
-    app.listen(8081, max_body_size=10*1024 * 1024 * 1024)
+    port = int(os.getenv("PORT") or os.getenv("LAZYEDIT_PORT") or 8787)
+    app.listen(port, max_body_size=10*1024 * 1024 * 1024)
+    print(f"LazyEdit backend listening on port {port}")
     tornado.autoreload.start()
     # tornado.autoreload.watch('path/to/config.yaml')
     # tornado.autoreload.watch('path/to/static/file.html')
     tornado.ioloop.IOLoop.current().start()
-
