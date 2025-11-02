@@ -52,13 +52,14 @@ def create_video(
     if not token:
         raise RuntimeError("OPENAI_API_KEY not set for HTTP fallback")
     form = {k: (None, v) for k, v in payload.items()}
+    headers = {"Authorization": f"Bearer {token}"}
+    project = os.getenv("OPENAI_PROJECT") or os.getenv("OPENAI_PROJECT_ID")
+    if project:
+        headers["OpenAI-Project"] = project
     with httpx.Client(timeout=60.0) as s:
-        r = s.post(
-            "https://api.openai.com/v1/videos",
-            headers={"Authorization": f"Bearer {token}"},
-            files=form,
-        )
-        r.raise_for_status()
+        r = s.post("https://api.openai.com/v1/videos", headers=headers, files=form)
+        if r.status_code >= 400:
+            raise RuntimeError(f"POST /videos {r.status_code}: {r.text}")
         return r.json()
 
 
@@ -68,12 +69,14 @@ def retrieve_status(client: OpenAI, video_id: str):
     token = os.getenv("OPENAI_API_KEY")
     if not token:
         raise RuntimeError("OPENAI_API_KEY not set for HTTP fallback")
+    headers = {"Authorization": f"Bearer {token}"}
+    project = os.getenv("OPENAI_PROJECT") or os.getenv("OPENAI_PROJECT_ID")
+    if project:
+        headers["OpenAI-Project"] = project
     with httpx.Client(timeout=60.0) as s:
-        r = s.get(
-            f"https://api.openai.com/v1/videos/{video_id}",
-            headers={"Authorization": f"Bearer {token}"},
-        )
-        r.raise_for_status()
+        r = s.get(f"https://api.openai.com/v1/videos/{video_id}", headers=headers)
+        if r.status_code >= 400:
+            raise RuntimeError(f"GET /videos/{video_id} {r.status_code}: {r.text}")
         return r.json()
 
 
@@ -93,13 +96,14 @@ def download_video(client: OpenAI, video_id: str, out_path: str, variant: str = 
     token = os.getenv("OPENAI_API_KEY")
     if not token:
         raise RuntimeError("OPENAI_API_KEY not set for HTTP fallback")
+    headers = {"Authorization": f"Bearer {token}"}
+    project = os.getenv("OPENAI_PROJECT") or os.getenv("OPENAI_PROJECT_ID")
+    if project:
+        headers["OpenAI-Project"] = project
     with httpx.Client(timeout=None) as s:
-        r = s.get(
-            f"https://api.openai.com/v1/videos/{video_id}/content",
-            headers={"Authorization": f"Bearer {token}"},
-            params={"variant": variant} if variant else None,
-        )
-        r.raise_for_status()
+        r = s.get(f"https://api.openai.com/v1/videos/{video_id}/content", headers=headers, params={"variant": variant} if variant else None)
+        if r.status_code >= 400:
+            raise RuntimeError(f"GET /videos/{video_id}/content {r.status_code}: {r.text}")
         with open(out_path, "wb") as f:
             for chunk in r.iter_bytes():
                 f.write(chunk)
