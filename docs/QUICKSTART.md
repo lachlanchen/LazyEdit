@@ -24,9 +24,13 @@ This is a minimal, copy‑paste guide to run the Tornado backend and the Expo (P
   ```bash
   export LAZYEDIT_DATABASE_URL='postgresql://lachlan:the11thfzpe.g.@localhost:5432/lazyedit_db'
   ```
-- Run the server (default port 8081):
+- Run the server (default port 8787; override with PORT or LAZYEDIT_PORT):
   ```bash
+  # default 8787
   python app.py
+
+  # alternative less-common port
+  PORT=8887 python app.py
   ```
 - Key endpoints:
   - `POST /upload` – upload video (multipart `video` field)
@@ -48,16 +52,26 @@ npm install  # first time only
 
 - Web (PWA) on a non‑conflicting port (Metro uses 8081 by default):
   ```bash
-  EXPO_PUBLIC_API_URL="http://localhost:8081" npx expo start --web --port 8091
+  # default backend 8787
+  EXPO_PUBLIC_API_URL="http://localhost:8787" npx expo start --web --port 8091
+
+  # if you started backend on 8887
+  EXPO_PUBLIC_API_URL="http://localhost:8887" npx expo start --web --port 8091
   ```
 - Android emulator:
   ```bash
   # If using Android emulator on the same host, backend is at 10.0.2.2
-  EXPO_PUBLIC_API_URL="http://10.0.2.2:8081" npx expo start --android
+  EXPO_PUBLIC_API_URL="http://10.0.2.2:8787" npx expo start --android
+
+  # if backend on 8887
+  EXPO_PUBLIC_API_URL="http://10.0.2.2:8887" npx expo start --android
   ```
 - iOS simulator (run on macOS):
   ```bash
-  EXPO_PUBLIC_API_URL="http://127.0.0.1:8081" npx expo start --ios
+  EXPO_PUBLIC_API_URL="http://127.0.0.1:8787" npx expo start --ios
+
+  # if backend on 8887
+  EXPO_PUBLIC_API_URL="http://127.0.0.1:8887" npx expo start --ios
   ```
 
 Home tab lets you pick a video and upload to the backend. Library tab lists videos from the database.
@@ -65,4 +79,4 @@ Home tab lets you pick a video and upload to the backend. Library tab lists vide
 ## Notes
 - CORS is open on the backend for app development.
 - Do not modify symlinked directories `furigana` or `echomind` in this repo; they are read‑only.
-- If port 8081 is busy, keep backend on 8081 and move Expo web to `--port 8091`.
+- If a port is busy, keep backend on 8787 (or your chosen PORT) and move Expo web to `--port 8091`.
