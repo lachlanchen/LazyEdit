@@ -15,17 +15,19 @@ from agi.video_requests import create_poll_and_download
 
 
 PROMPT = (
-    "Cinematic fantasy sequence of an entirely fictional adult woman (over 21) in a flowing sapphire gown, "
-    "walking gracefully through a moonlit elven forest. Soft volumetric lighting, gentle breeze moving her hair, "
-    "tasteful, non-revealing attire; elegant and confident presence. The camera begins with a medium shot and slowly "
-    "dollies to a three-quarter shot, subtle parallax through trees, shallow depth of field, bokeh fireflies in the background. "
-    "High production value, teal-and-amber color grading, warm highlights, cinematic composition. Not a real person; entirely fictional."
+    "A fictional adult woman known as the Oracle of the Mist Valley stands on a wind-swept cliff at dawn. "
+    "Her silver robe glows faintly under the rising sun as mist drifts through crystalline forests below. "
+    "She closes her eyes, sensing faint tremors in the air — echoes of a future she alone can hear. "
+    "The camera glides slowly around her, revealing vast floating isles beyond the valley and the glint of ancient ruins half-buried in the fog. "
+    "The mood is serene, mysterious, and filled with quiet purpose — a world poised on the edge of awakening. "
+    "Not a real person; entirely fictional and fully clothed in tasteful, non-revealing attire."
 )
 
 
 def _parse(argv: list[str]):
     p = argparse.ArgumentParser(description="Run Sora 2 demo: elegant fantasy woman scene")
     p.add_argument("--model", default="sora-2", choices=["sora-2", "sora-2-pro"], help="Video model")
+    p.add_argument("--prompt", default=PROMPT, help="Override the default story prompt")
     p.add_argument("--size", default="1280x720", help="Resolution, e.g. 1280x720")
     p.add_argument("--seconds", type=int, default=8, help="Length in seconds")
     p.add_argument("--output", default="DATA/sora_fantasy_demo.mp4", help="Output mp4 path")
@@ -35,7 +37,7 @@ def _parse(argv: list[str]):
 def main(argv: list[str]) -> int:
     args = _parse(argv)
     create_poll_and_download(
-        prompt=PROMPT,
+        prompt=args.prompt or PROMPT,
         model=args.model,
         size=args.size,
         seconds=args.seconds,
@@ -49,4 +51,3 @@ def main(argv: list[str]) -> int:
 if __name__ == "__main__":
     import sys
     raise SystemExit(main(sys.argv[1:]))
-
