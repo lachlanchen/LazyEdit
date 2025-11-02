@@ -80,3 +80,13 @@ Home tab lets you pick a video and upload to the backend. Library tab lists vide
 - CORS is open on the backend for app development.
 - Do not modify symlinked directories `furigana` or `echomind` in this repo; they are read‑only.
 - If a port is busy, keep backend on 8787 (or your chosen PORT) and move Expo web to `--port 8091`.
+
+## Optional: Sora Video Generation
+- Helpers live in `agi/` and use the Sora 2 API to create videos.
+- Supported seconds: `4`, `8`, `12`. Supported sizes: `720x1280`, `1280x720`, `1024x1792`, `1792x1024`.
+- Example:
+  ```bash
+  # Default Oracle demo (8s, 1280x720)
+  python -m agi.demo_fantasy_woman --seconds 8 --size 1280x720 --output DATA/sora_oracle_valley.mp4
+  ```
+- See details: `docs/SORA_VIDEO.md`
