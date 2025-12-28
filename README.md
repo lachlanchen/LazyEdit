@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="figs/banner.png" alt="LazyingArt banner" />
+</p>
+
 # LazyEdit
 
 LazyEdit is an AI-powered automatic video editing tool that processes videos to add professional-quality subtitles, highlights, word cards, and metadata. It streamlines the video editing workflow using advanced AI techniques to automate labor-intensive tasks.
