@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, RefreshControl } from 'react-native';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8081';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 
 type Video = { id: number; title: string | null; file_path: string; created_at?: string };
 
@@ -61,4 +61,3 @@ const styles = StyleSheet.create({
   time: { color: '#334155', marginLeft: 12, fontSize: 12 },
   empty: { textAlign: 'center', marginTop: 30, color: '#64748b' },
 });
-

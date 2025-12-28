@@ -4,6 +4,7 @@ os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 
 from lazyedit.openai_version_check import OpenAI
+from config import UPLOAD_FOLDER, PORT
 
 
 
@@ -1648,7 +1649,18 @@ def copy_folder(output_folder, new_folder_name):
     print(f"Folder '{output_folder}' was copied to '{new_folder_name}'")
 
 
-class FileUploaderHandler(tornado.web.RequestHandler):
+class CorsMixin:
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT")
+        self.set_header("Access-Control-Allow-Headers", "content-type")
+
+    def options(self, *args, **kwargs):
+        self.set_status(204)
+        self.finish()
+
+
+class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
     def initialize(self, upload_folder):
         self.upload_folder = upload_folder
 
@@ -1685,23 +1697,25 @@ class FileUploaderHandler(tornado.web.RequestHandler):
         with open(input_file, 'wb') as f:
             f.write(video_file['body'])
 
+        # Save a row in the database for the uploaded video
+        title = self.get_argument("title", default=None) or base_name
+        try:
+            ldb.ensure_schema()
+            video_id = ldb.add_video(input_file, title)
+        except Exception as e:
+            self.set_status(500)
+            return self.write({
+                "error": "failed to save video in database",
+                "details": str(e),
+            })
+
         # Respond with the path of the saved file
         self.write({
             'status': 'success',
             'message': f'File {original_fname} uploaded successfully.',
-            'file_path': input_file
+            'file_path': input_file,
+            'video_id': video_id,
         })
-
-
-class CorsMixin:
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
-        self.set_header("Access-Control-Allow-Headers", "content-type")
-
-    def options(self, *args, **kwargs):
-        self.set_status(204)
-        self.finish()
 
 
 class LanguagesHandler(CorsMixin, tornado.web.RequestHandler):
@@ -1772,16 +1786,20 @@ class CaptionsHandler(CorsMixin, tornado.web.RequestHandler):
 
 
 @tornado.web.stream_request_body
-class FileUploadHandlerStream(tornado.web.RequestHandler):
+class FileUploadHandlerStream(CorsMixin, tornado.web.RequestHandler):
     def initialize(self, upload_folder):
         self.bytes_received = 0
         self.file = None
         self.file_path = None
+        self.base_name = None
+        self.title = None
         self.upload_folder = upload_folder
 
     def prepare(self):
         filename = self.get_argument('filename', default='uploaded_file')
         base_name, _ = os.path.splitext(filename)
+        self.base_name = base_name
+        self.title = self.get_argument("title", default=None) or base_name
         output_folder = os.path.join(self.upload_folder, base_name)
 
         # Check if the folder already exists
@@ -1811,10 +1829,20 @@ class FileUploadHandlerStream(tornado.web.RequestHandler):
         if self.file:
             self.file.close()
             self.file = None
+            try:
+                ldb.ensure_schema()
+                video_id = ldb.add_video(self.file_path, self.title)
+            except Exception as e:
+                self.set_status(500)
+                return self.write({
+                    "error": "failed to save video in database",
+                    "details": str(e),
+                })
             response = {
                 'status': 'success',
                 'message': f"Received {self.bytes_received} bytes.",
-                'file_path': self.file_path
+                'file_path': self.file_path,
+                'video_id': video_id,
             }
             self.write(response)
 
@@ -2083,10 +2111,9 @@ if __name__ == "__main__":
     # os.environ["OPENAI_MODEL"] = "gpt-4-0125-preview"
     os.environ["OPENAI_MODEL"] = "gpt-4o-mini"
     
-    # upload_folder = '/home/lachlan/ProjectsLFS/lazyedit/DATA'  # Folder where files will be uploaded
-    upload_folder = '/home/lachlan/ProjectsM/lazyedit/DATA'  # Folder where files will be uploaded
+    upload_folder = UPLOAD_FOLDER
     app = make_app(upload_folder)
-    port = int(os.getenv("PORT") or os.getenv("LAZYEDIT_PORT") or 8787)
+    port = PORT
     app.listen(port, max_body_size=10*1024 * 1024 * 1024)
     print(f"LazyEdit backend listening on port {port}")
     tornado.autoreload.start()

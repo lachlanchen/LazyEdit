@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
-import Constants from 'expo-constants';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8081';
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 
 export default function HomeScreen() {
   const [picked, setPicked] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
@@ -31,7 +30,13 @@ export default function HomeScreen() {
         form.append('video', (file.file as File) ?? (file as any), picked.name || 'video.mp4');
         const resp = await fetch(`${API_URL}/upload`, { method: 'POST', body: form as any });
         const json = await resp.json();
-        setStatus(`Uploaded: ${json.file_path || json.message}`);
+        if (!resp.ok) {
+          setStatus(`Upload failed: ${json.error || json.message || resp.statusText}`);
+          return;
+        }
+        const label = json.file_path || json.message || 'Upload complete';
+        const id = json.video_id ? ` (id: ${json.video_id})` : '';
+        setStatus(`Uploaded: ${label}${id}`);
       } else {
         // Native: use FileSystem upload for reliability
         const resp = await FileSystem.uploadAsync(`${API_URL}/upload`, picked.uri, {
@@ -41,7 +46,13 @@ export default function HomeScreen() {
           parameters: { filename: picked.name || 'video.mp4' },
         });
         const json = JSON.parse(resp.body);
-        setStatus(`Uploaded: ${json.file_path || json.message}`);
+        if (resp.status >= 400) {
+          setStatus(`Upload failed: ${json.error || json.message || `HTTP ${resp.status}`}`);
+          return;
+        }
+        const label = json.file_path || json.message || 'Upload complete';
+        const id = json.video_id ? ` (id: ${json.video_id})` : '';
+        setStatus(`Uploaded: ${label}${id}`);
       }
     } catch (e: any) {
       setStatus(`Upload failed: ${e?.message || String(e)}`);
