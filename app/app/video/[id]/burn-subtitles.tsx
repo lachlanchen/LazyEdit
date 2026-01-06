@@ -418,6 +418,35 @@ export default function BurnSubtitlesScreen() {
           <Text style={styles.title}>Burn subtitles</Text>
           <Text style={styles.meta}>Assign languages to the 4-slot bottom grid.</Text>
 
+          <View style={styles.optionRow}>
+            <View style={{ flex: 1, marginRight: 10 }}>
+              <OptionSelect
+                label="Rows"
+                value={String(rows)}
+                options={ROW_OPTIONS}
+                onChange={(value) => setRows(Number(value) || DEFAULT_ROWS)}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <OptionSelect
+                label="Columns"
+                value={String(cols)}
+                options={COL_OPTIONS}
+                onChange={(value) => setCols(Number(value) || DEFAULT_COLS)}
+              />
+            </View>
+          </View>
+
+          <SliderControl
+            label="Layout height"
+            value={heightRatio}
+            min={0.2}
+            max={0.6}
+            step={0.01}
+            onChange={setHeightRatio}
+            formatValue={(value) => `${Math.round(value * 100)}%`}
+          />
+
           <View style={styles.slotGrid}>
             {sortedSlots.map((slot) => (
               <View key={slot.slot} style={styles.slotCard}>
@@ -467,35 +496,6 @@ export default function BurnSubtitlesScreen() {
               Layout height is the subtitle band as % of full video height: {Math.round(heightRatio * 100)}%.
             </Text>
           </View>
-
-          <View style={styles.optionRow}>
-            <View style={{ flex: 1, marginRight: 10 }}>
-              <OptionSelect
-                label="Rows"
-                value={String(rows)}
-                options={ROW_OPTIONS}
-                onChange={(value) => setRows(Number(value) || DEFAULT_ROWS)}
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <OptionSelect
-                label="Columns"
-                value={String(cols)}
-                options={COL_OPTIONS}
-                onChange={(value) => setCols(Number(value) || DEFAULT_COLS)}
-              />
-            </View>
-          </View>
-
-          <SliderControl
-            label="Layout height"
-            value={heightRatio}
-            min={0.2}
-            max={0.6}
-            step={0.01}
-            onChange={setHeightRatio}
-            formatValue={(value) => `${Math.round(value * 100)}%`}
-          />
 
           <Pressable
             style={[styles.btnPrimary, (burning || isProcessing) && styles.btnDisabled]}
