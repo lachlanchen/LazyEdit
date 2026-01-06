@@ -3094,6 +3094,8 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception as exc:
             status = "failed"
             error_message = str(exc)
+            print(f"Metadata generation failed for {lang}: {error_message}")
+            traceback.print_exc()
 
         metadata_id = ldb.add_video_metadata(
             video_id_i,

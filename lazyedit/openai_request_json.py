@@ -75,9 +75,14 @@ class OpenAIRequestJSONBase:
             try:
                 with open(file_path, 'r', encoding='utf-8') as file:
                     cached_data = json.load(file)
-                    return cached_data.get("response")
-            except json.JSONDecodeError:
-                print(f"Cache file invalid JSON, ignoring: {file_path}")
+                if not isinstance(cached_data, dict):
+                    raise ValueError("Cache payload is not an object")
+                response = cached_data.get("response")
+                if not isinstance(response, dict):
+                    raise ValueError("Cached response is not an object")
+                return response
+            except (json.JSONDecodeError, ValueError) as exc:
+                print(f"Cache file invalid ({exc}), ignoring: {file_path}")
                 try:
                     os.remove(file_path)
                 except Exception:

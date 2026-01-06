@@ -610,7 +610,8 @@ export default function VideoDetailScreen() {
       });
       const json = await resp.json();
       if (!resp.ok) {
-        setMetadataStatus(json.error || json.details || 'Metadata generation failed');
+        const details = json.details ? `${json.error || 'Metadata generation failed'}: ${json.details}` : null;
+        setMetadataStatus(details || json.error || 'Metadata generation failed');
         setMetadataTone('bad');
         return;
       }
