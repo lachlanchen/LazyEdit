@@ -19,6 +19,7 @@ type BurnSlot = {
   romaji?: boolean;
   pinyin?: boolean;
   ipa?: boolean;
+  romaja?: boolean;
   jyutping?: boolean;
 };
 
@@ -73,6 +74,7 @@ const DEFAULT_LIFT_SLOTS = 1;
 const DEFAULT_ROMAJI = true;
 const DEFAULT_PINYIN = true;
 const DEFAULT_JYUTPING = false;
+const DEFAULT_ROMAJA = false;
 
 const DEFAULT_SLOTS: BurnSlot[] = [
   {
@@ -82,6 +84,7 @@ const DEFAULT_SLOTS: BurnSlot[] = [
     romaji: DEFAULT_ROMAJI,
     pinyin: DEFAULT_PINYIN,
     ipa: false,
+    romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
   },
   {
@@ -91,6 +94,7 @@ const DEFAULT_SLOTS: BurnSlot[] = [
     romaji: DEFAULT_ROMAJI,
     pinyin: DEFAULT_PINYIN,
     ipa: false,
+    romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
   },
   {
@@ -100,6 +104,7 @@ const DEFAULT_SLOTS: BurnSlot[] = [
     romaji: DEFAULT_ROMAJI,
     pinyin: DEFAULT_PINYIN,
     ipa: false,
+    romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
   },
   {
@@ -109,6 +114,7 @@ const DEFAULT_SLOTS: BurnSlot[] = [
     romaji: DEFAULT_ROMAJI,
     pinyin: DEFAULT_PINYIN,
     ipa: false,
+    romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
   },
 ];
@@ -132,6 +138,7 @@ const formatSlotLabel = (slotId: number, rows: number, cols: number) => {
 const isJapanese = (lang?: string | null) => lang === 'ja';
 const isChinese = (lang?: string | null) => lang === 'zh' || lang === 'zh-Hant' || lang === 'zh-Hans';
 const isIpaLanguage = (lang?: string | null) => lang === 'en' || lang === 'fr';
+const isKorean = (lang?: string | null) => lang === 'ko';
 const isCantonese = (lang?: string | null) => lang === 'yue';
 
 const shortLabelForLanguage = (lang?: string | null) => {
@@ -300,6 +307,7 @@ export default function BurnSubtitlesScreen() {
         romaji: existing?.romaji ?? DEFAULT_ROMAJI,
         pinyin: existing?.pinyin ?? DEFAULT_PINYIN,
         ipa: existing?.ipa ?? false,
+        romaja: existing?.romaja ?? DEFAULT_ROMAJA,
         jyutping: existing?.jyutping ?? DEFAULT_JYUTPING,
       });
     }
@@ -355,6 +363,7 @@ export default function BurnSubtitlesScreen() {
             romaji: typeof slot.romaji === 'boolean' ? slot.romaji : DEFAULT_ROMAJI,
             pinyin: typeof slot.pinyin === 'boolean' ? slot.pinyin : DEFAULT_PINYIN,
             ipa: typeof slot.ipa === 'boolean' ? slot.ipa : false,
+            romaja: typeof slot.romaja === 'boolean' ? slot.romaja : DEFAULT_ROMAJA,
             jyutping: typeof slot.jyutping === 'boolean' ? slot.jyutping : DEFAULT_JYUTPING,
           }));
         const total = nextRows * nextCols;
@@ -439,7 +448,11 @@ export default function BurnSubtitlesScreen() {
     );
   };
 
-  const updateSlotToggle = (slotId: number, field: 'romaji' | 'pinyin' | 'ipa' | 'jyutping', value: boolean) => {
+  const updateSlotToggle = (
+    slotId: number,
+    field: 'romaji' | 'pinyin' | 'ipa' | 'jyutping' | 'romaja',
+    value: boolean,
+  ) => {
     setSlots((prev) =>
       prev.map((slot) => (slot.slot === slotId ? { ...slot, [field]: value } : slot))
     );
@@ -594,6 +607,20 @@ export default function BurnSubtitlesScreen() {
                       onValueChange={(value) => updateSlotToggle(slot.slot, 'ipa', value)}
                       trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
                       thumbColor={slot.ipa ? '#f8fafc' : '#f1f5f9'}
+                    />
+                  </View>
+                ) : null}
+                {isKorean(slot.language) ? (
+                  <View style={styles.slotToggleRow}>
+                    <View style={styles.slotToggleText}>
+                      <Text style={styles.slotToggleLabel}>Romaja</Text>
+                      <Text style={styles.slotToggleHint}>Romanization above Hangul</Text>
+                    </View>
+                    <Switch
+                      value={slot.romaja ?? DEFAULT_ROMAJA}
+                      onValueChange={(value) => updateSlotToggle(slot.slot, 'romaja', value)}
+                      trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                      thumbColor={slot.romaja ?? DEFAULT_ROMAJA ? '#f8fafc' : '#f1f5f9'}
                     />
                   </View>
                 ) : null}

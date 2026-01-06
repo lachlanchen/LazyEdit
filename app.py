@@ -102,10 +102,10 @@ DEFAULT_BURN_LAYOUT = {
     "cols": 1,
     "liftSlots": 1,
     "slots": [
-        {"slot": 1, "language": None, "romaji": True, "pinyin": True, "ipa": False, "jyutping": False},
-        {"slot": 2, "language": "en", "romaji": True, "pinyin": True, "ipa": False, "jyutping": False},
-        {"slot": 3, "language": "ja", "romaji": True, "pinyin": True, "ipa": False, "jyutping": False},
-        {"slot": 4, "language": None, "romaji": True, "pinyin": True, "ipa": False, "jyutping": False},
+        {"slot": 1, "language": None, "romaji": True, "pinyin": True, "ipa": False, "jyutping": False, "romaja": False},
+        {"slot": 2, "language": "en", "romaji": True, "pinyin": True, "ipa": False, "jyutping": False, "romaja": False},
+        {"slot": 3, "language": "ja", "romaji": True, "pinyin": True, "ipa": False, "jyutping": False, "romaja": False},
+        {"slot": 4, "language": None, "romaji": True, "pinyin": True, "ipa": False, "jyutping": False, "romaja": False},
     ]
 }
 
@@ -273,6 +273,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         pinyin = pinyin_default
         ipa = False
         jyutping = False
+        romaja = False
         if isinstance(entry, dict):
             try:
                 slot_id = int(entry.get("slot") or slot_id)
@@ -291,6 +292,8 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 ipa = entry.get("ipa")
             if isinstance(entry.get("jyutping"), bool):
                 jyutping = entry.get("jyutping")
+            if isinstance(entry.get("romaja"), bool):
+                romaja = entry.get("romaja")
         else:
             language = entry
         if slot_id < 1 or slot_id > slot_count:
@@ -304,6 +307,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
             "pinyin": pinyin,
             "ipa": ipa,
             "jyutping": jyutping,
+            "romaja": romaja,
         }
 
     normalized_slots = []
@@ -317,6 +321,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 "pinyin": pinyin_default,
                 "ipa": False,
                 "jyutping": False,
+                "romaja": False,
             },
         )
         normalized_slots.append(
@@ -328,6 +333,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 "pinyin": entry.get("pinyin", pinyin_default),
                 "ipa": entry.get("ipa", False),
                 "jyutping": entry.get("jyutping", False),
+                "romaja": entry.get("romaja", False),
             }
         )
 
@@ -3220,6 +3226,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             pinyin = slot.get("pinyin") if isinstance(slot.get("pinyin"), bool) else True
             ipa = slot.get("ipa") if isinstance(slot.get("ipa"), bool) else False
             jyutping = slot.get("jyutping") if isinstance(slot.get("jyutping"), bool) else False
+            romaja = slot.get("romaja") if isinstance(slot.get("romaja"), bool) else False
             try:
                 font_scale = float(slot.get("fontScale", 1.0))
             except Exception:
@@ -3265,6 +3272,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     pinyin=pinyin and lang in {"zh", "zh-Hant", "zh-Hans"},
                     ipa=ipa and lang in {"en", "fr"},
                     jyutping=jyutping and lang == "yue",
+                    korean_romaja=romaja and lang == "ko",
                 )
             )
 
