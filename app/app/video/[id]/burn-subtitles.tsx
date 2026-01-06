@@ -354,18 +354,16 @@ export default function BurnSubtitlesScreen() {
   const isProcessing = status?.status === 'processing';
   const progressValue = typeof status?.progress === 'number' ? status.progress : null;
   const previewHeight = 180;
-  const previewBandHeight = Math.max(64, Math.round(previewHeight * heightRatio));
+  const previewBandHeight = Math.max(20, Math.round(previewHeight * heightRatio));
   const previewCellWidth = `${Math.floor(100 / Math.max(cols, 1))}%`;
-  const previewRowGap = 6;
-  const previewColGap = 6;
-  const previewBandPadding = 8;
-  const previewCellHeight = Math.max(
-    18,
-    Math.floor(
-      (previewBandHeight - previewBandPadding * 2 - previewRowGap * (Math.max(rows, 1) - 1)) / Math.max(rows, 1)
-    )
-  );
-  const previewValueSize = Math.max(10, Math.min(14, Math.round(previewCellHeight * 0.5)));
+  const density = Math.min(1, previewBandHeight / Math.max(rows * 26, 1));
+  const previewBandPadding = Math.max(2, Math.round(8 * density));
+  const previewRowGap = Math.max(1, Math.round(6 * density));
+  const previewColGap = Math.max(1, Math.round(6 * density));
+  const availableHeight =
+    previewBandHeight - previewBandPadding * 2 - previewRowGap * (Math.max(rows, 1) - 1);
+  const previewCellHeight = Math.max(6, Math.floor(availableHeight / Math.max(rows, 1)));
+  const previewValueSize = Math.max(8, Math.min(14, Math.round(previewCellHeight * 0.65)));
 
   const burnSubtitles = async () => {
     if (!id || burning) return;
