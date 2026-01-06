@@ -147,7 +147,7 @@ def _sanitize_translation_style(payload: dict | None) -> dict:
 def _sanitize_translation_languages(payload) -> list[str]:
     if not isinstance(payload, (list, tuple)):
         return DEFAULT_TRANSLATION_LANGUAGES.copy()
-    allowed = {"ja", "en"}
+    allowed = {"ja", "en", "zh"}
     cleaned = []
     for item in payload:
         code = str(item).strip().lower()
@@ -2647,7 +2647,7 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             or self.get_argument("lang", default=None)
             or "ja"
         )
-        if lang not in {"ja", "en"}:
+        if lang not in {"ja", "en", "zh"}:
             self.set_status(400)
             return self.write({"error": f"language '{lang}' not supported yet"})
 
@@ -2694,9 +2694,13 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             output_json_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.json")
             output_srt_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.srt")
             output_ass_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.ass")
-        else:
+        elif lang == "en":
             output_json_path = os.path.join(translations_dir, f"{base_name}_en.json")
             output_srt_path = os.path.join(translations_dir, f"{base_name}_en.srt")
+            output_ass_path = None
+        else:
+            output_json_path = os.path.join(translations_dir, f"{base_name}_zh.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_zh.srt")
             output_ass_path = None
 
         for path in (output_json_path, output_srt_path, output_ass_path):
@@ -2722,8 +2726,12 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                 translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
                 translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
                 translator.save_translated_subtitles_to_ass_path(ruby_items, output_ass_path)
-            else:
+            elif lang == "en":
                 plain_items, json_items = translator.process_english_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            else:
+                plain_items, json_items = translator.process_chinese_translation_single_pass()
                 translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
                 translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
 

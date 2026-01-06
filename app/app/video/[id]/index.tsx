@@ -104,8 +104,8 @@ export default function VideoDetailScreen() {
   const [translateStatus, setTranslateStatus] = useState('');
   const [translateTone, setTranslateTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [disableTranslateCache, setDisableTranslateCache] = useState(false);
-  const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<Array<'ja' | 'en'>>(['ja', 'en']);
-  const [previewLang, setPreviewLang] = useState<'ja' | 'en'>('ja');
+  const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<Array<'ja' | 'en' | 'zh'>>(['ja', 'en']);
+  const [previewLang, setPreviewLang] = useState<'ja' | 'en' | 'zh'>('ja');
   const [translateLangsLoaded, setTranslateLangsLoaded] = useState(false);
   const [lightbox, setLightbox] = useState<{ url: string; label?: string } | null>(null);
 
@@ -116,12 +116,14 @@ export default function VideoDetailScreen() {
 
   const headerTitle = video?.title ? video.title : 'Video';
   const captionFrameItems = caption?.frames || [];
-  const translateLangOptions: Array<{ code: 'ja' | 'en'; label: string }> = [
+  const translateLangOptions: Array<{ code: 'ja' | 'en' | 'zh'; label: string }> = [
     { code: 'ja', label: 'Japanese' },
     { code: 'en', label: 'English' },
+    { code: 'zh', label: 'Chinese' },
   ];
   const previewTranslation = translations.find((item) => item.language_code === previewLang) || null;
-  const previewLabel = previewLang === 'ja' ? 'Japanese' : 'English';
+  const previewLabel =
+    previewLang === 'ja' ? 'Japanese' : previewLang === 'en' ? 'English' : 'Chinese';
 
   useEffect(() => {
     if (!selectedTranslateLangs.length) return;
@@ -261,7 +263,9 @@ export default function VideoDetailScreen() {
         const json = await resp.json();
         if (!resp.ok) return;
         const value = Array.isArray(json.value) ? json.value : [];
-        const cleaned = value.filter((item: string) => item === 'ja' || item === 'en') as Array<'ja' | 'en'>;
+        const cleaned = value.filter((item: string) => item === 'ja' || item === 'en' || item === 'zh') as Array<
+          'ja' | 'en' | 'zh'
+        >;
         if (cleaned.length) {
           setSelectedTranslateLangs(cleaned);
           if (!cleaned.includes(previewLang)) {
@@ -382,7 +386,7 @@ export default function VideoDetailScreen() {
     try {
       for (let i = 0; i < selectedTranslateLangs.length; i += 1) {
         const lang = selectedTranslateLangs[i];
-        const label = lang === 'ja' ? 'Japanese' : 'English';
+        const label = lang === 'ja' ? 'Japanese' : lang === 'en' ? 'English' : 'Chinese';
         setTranslateStatus(`Translating ${label} (${i + 1}/${selectedTranslateLangs.length})...`);
         const resp = await fetch(`${API_URL}/api/videos/${video.id}/translate`, {
           method: 'POST',
