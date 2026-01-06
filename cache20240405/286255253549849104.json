@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,640\",\n    \"lang\": \"en\",\n    \"text\": \"In Chinese,\"\n  },\n  {\n    \"start\": \"00:00:01,640\",\n    \"end\": \"00:00:03,080\",\n    \"lang\": \"en\",\n    \"text\": \"there is a...\"\n  },\n  {\n    \"start\": \"00:00:03,874\",\n    \"end\": \"00:00:06,494\",\n    \"lang\": \"zh\",\n    \"text\": \"有一個成語叫先苦後甜\"\n  },\n  {\n    \"start\": \"00:00:07,154\",\n    \"end\": \"00:00:08,774\",\n    \"lang\": \"zh\",\n    \"text\": \"還有吃得苦中苦\"\n  },\n  {\n    \"start\": \"00:00:08,774\",\n    \"end\": \"00:00:09,994\",\n    \"lang\": \"zh\",\n    \"text\": \"方為人上人\"\n  },\n  {\n    \"start\": \"00:00:11,170\",\n    \"end\": \"00:00:16,170\",\n    \"lang\": \"en\",\n    \"text\": \"which means that sweetness after bittering,\"\n  },\n  {\n    \"start\": \"00:00:16,950\",\n    \"end\": \"00:00:17,310\",\n    \"lang\": \"en\",\n    \"text\": \"sweetness,\"\n  },\n  {\n    \"start\": \"00:00:17,310\",\n    \"end\": \"00:00:18,910\",\n    \"lang\": \"en\",\n    \"text\": \"happiness after pain.\"\n  },\n  {\n    \"start\": \"00:00:19,890\",\n    \"end\": \"00:00:23,270\",\n    \"lang\": \"en\",\n    \"text\": \"And if you suffer more,\"\n  },\n  {\n    \"start\": \"00:00:23,530\",\n    \"end\": \"00:00:25,590\",\n    \"lang\": \"en\",\n    \"text\": \"that you will get high.\"\n  },\n  {\n    \"start\": \"00:00:26,050\",\n    \"end\": \"00:00:28,730\",\n    \"lang\": \"en\",\n    \"text\": \"I hated the two phrases.\"\n  },\n  {\n    \"start\": \"00:00:29,310\",\n    \"end\": \"00:00:31,250\",\n    \"lang\": \"en\",\n    \"text\": \"So both are wrong.\"\n  },\n  {\n    \"start\": \"00:00:32,490\",\n    \"end\": \"00:00:36,750\",\n    \"lang\": \"en\",\n    \"text\": \"So if you cannot enjoy your life now,\"\n  },\n  {\n    \"start\": \"00:00:36,970\",\n    \"end\": \"00:00:39,630\",\n    \"lang\": \"en\",\n    \"text\": \"that you still cannot enjoy it\"\n  },\n  {\n    \"start\": \"00:00:39,630\",\n    \"end\": \"00:00:41,970\",\n    \"lang\": \"en\",\n    \"text\": \"until you can enjoy it.\"\n  },\n  {\n    \"start\": \"00:00:48,290\",\n    \"end\": \"00:00:53,230\",\n    \"lang\": \"en\",\n    \"text\": \"And then if you suffer more,\"\n  },\n  {\n    \"start\": \"00:00:53,350\",\n    \"end\": \"00:00:56,630\",\n    \"lang\": \"en\",\n    \"text\": \"you get higher over people.\"\n  },\n  {\n    \"start\": \"00:00:56,930\",\n    \"end\": \"00:00:58,430\",\n    \"lang\": \"en\",\n    \"text\": \"You can get people over people.\"\n  },\n  {\n    \"start\": \"00:00:59,350\",\n    \"end\": \"00:01:01,130\",\n    \"lang\": \"en\",\n    \"text\": \"You can get a higher position.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,640",
+            "ko": "중국어로,"
+        },
+        {
+            "start": "00:00:01,640",
+            "end": "00:00:03,080",
+            "ko": "이런 말이 있어..."
+        },
+        {
+            "start": "00:00:03,874",
+            "end": "00:00:06,494",
+            "ko": "선고후단이라는 성어가 있어"
+        },
+        {
+            "start": "00:00:07,154",
+            "end": "00:00:08,774",
+            "ko": "그리고 고생 끝에 낙이 온다고도 하지"
+        },
+        {
+            "start": "00:00:08,774",
+            "end": "00:00:09,994",
+            "ko": "그게 바로 인생의 정수지"
+        },
+        {
+            "start": "00:00:11,170",
+            "end": "00:00:16,170",
+            "ko": "그것은 고난 뒤에 오는 달콤함을 의미해,"
+        },
+        {
+            "start": "00:00:16,950",
+            "end": "00:00:17,310",
+            "ko": "달콤함,"
+        },
+        {
+            "start": "00:00:17,310",
+            "end": "00:00:18,910",
+            "ko": "고통 뒤의 행복을 말이지."
+        },
+        {
+            "start": "00:00:19,890",
+            "end": "00:00:23,270",
+            "ko": "그리고 더 많은 고난을 겪으면,"
+        },
+        {
+            "start": "00:00:23,530",
+            "end": "00:00:25,590",
+            "ko": "더 높은 곳에 올라갈 거야."
+        },
+        {
+            "start": "00:00:26,050",
+            "end": "00:00:28,730",
+            "ko": "나는 그 두 구절을 싫어했어."
+        },
+        {
+            "start": "00:00:29,310",
+            "end": "00:00:31,250",
+            "ko": "그러니 둘 다 틀렸어."
+        },
+        {
+            "start": "00:00:32,490",
+            "end": "00:00:36,750",
+            "ko": "그러니까 지금 당장 삶을 즐길 수 없다면,"
+        },
+        {
+            "start": "00:00:36,970",
+            "end": "00:00:39,630",
+            "ko": "즐길 수 있을 때까지 계속 즐기지 못할 거야."
+        },
+        {
+            "start": "00:00:39,630",
+            "end": "00:00:41,970",
+            "ko": "즐길 수 있을 때까지 말이야."
+        },
+        {
+            "start": "00:00:48,290",
+            "end": "00:00:53,230",
+            "ko": "그리고 더 많은 고난을 겪으면,"
+        },
+        {
+            "start": "00:00:53,350",
+            "end": "00:00:56,630",
+            "ko": "더 높은 곳에 오를 수 있어."
+        },
+        {
+            "start": "00:00:56,930",
+            "end": "00:00:58,430",
+            "ko": "누군가를 뛰어넘을 수 있어."
+        },
+        {
+            "start": "00:00:59,350",
+            "end": "00:01:01,130",
+            "ko": "더 높은 위치에 올라갈 수 있어."
+        }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,300\",\n    \"lang\": \"zh\",\n    \"text\": \"这是一个芋头\"\n  },\n  {\n    \"start\": \"00:00:02,339\",\n    \"end\": \"00:00:05,820\",\n    \"lang\": \"zh\",\n    \"text\": \"中文名叫卤笋 我从来没吃过\"\n  },\n  {\n    \"start\": \"00:00:05,820\",\n    \"end\": \"00:00:07,420\",\n    \"lang\": \"zh\",\n    \"text\": \"卤是卤味道的卤\"\n  },\n  {\n    \"start\": \"00:00:07,720\",\n    \"end\": \"00:00:08,840\",\n    \"lang\": \"zh\",\n    \"text\": \"笋是煮笋的笋\"\n  },\n  {\n    \"start\": \"00:00:10,139\",\n    \"end\": \"00:00:11,260\",\n    \"lang\": \"zh\",\n    \"text\": \"看一下这个怎么样\"\n  },\n  {\n    \"start\": \"00:00:13,180\",\n    \"end\": \"00:00:14,560\",\n    \"lang\": \"zh\",\n    \"text\": \"做一个鸡肉\"\n  },\n  {\n    \"start\": \"00:00:14,740\",\n    \"end\": \"00:00:15,320\",\n    \"lang\": \"zh\",\n    \"text\": \"鸡翅面\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,300",
+            "ko": "이것은 한 개의 타로입니다"
+        },
+        {
+            "start": "00:00:02,339",
+            "end": "00:00:05,820",
+            "ko": "중국어로 루순이라고 하며 저는 이것을 먹어본 적이 없습니다"
+        },
+        {
+            "start": "00:00:05,820",
+            "end": "00:00:07,420",
+            "ko": "루는 양념 맛의 루입니다"
+        },
+        {
+            "start": "00:00:07,720",
+            "end": "00:00:08,840",
+            "ko": "순은 요리된 죽순의 순입니다"
+        },
+        {
+            "start": "00:00:10,139",
+            "end": "00:00:11,260",
+            "ko": "이것이 어떤지 한번 봅시다"
+        },
+        {
+            "start": "00:00:13,180",
+            "end": "00:00:14,560",
+            "ko": "닭고기를 만들겠습니다"
+        },
+        {
+            "start": "00:00:14,740",
+            "end": "00:00:15,320",
+            "ko": "치킨 윙면입니다"
+        }
+    ]
+}

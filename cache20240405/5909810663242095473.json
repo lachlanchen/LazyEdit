@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"This is our special Chongqing flavor,\"\n  },\n  {\n    \"start\": \"00:00:03,580\",\n    \"end\": \"00:00:06,640\",\n    \"lang\": \"en\",\n    \"text\": \"beef and potato.\"\n  },\n  {\n    \"start\": \"00:00:08,582\",\n    \"end\": \"00:00:09,082\",\n    \"lang\": \"en\",\n    \"text\": \"Beep.\"\n  },\n  {\n    \"start\": \"00:00:09,506\",\n    \"end\": \"00:00:12,206\",\n    \"lang\": \"en\",\n    \"text\": \"So let me check this.\"\n  },\n  {\n    \"start\": \"00:00:14,396\",\n    \"end\": \"00:00:15,206\",\n    \"lang\": \"en\",\n    \"text\": \"This potato,\"\n  },\n  {\n    \"start\": \"00:00:15,206\",\n    \"end\": \"00:00:20,186\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't make it as potato crumb.\"\n  },\n  {\n    \"start\": \"00:00:20,906\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to say it,\"\n  },\n  {\n    \"start\": \"00:00:22,146\",\n    \"end\": \"00:00:22,566\",\n    \"lang\": \"en\",\n    \"text\": \"toodoli.\"\n  },\n  {\n    \"start\": \"00:00:23,486\",\n    \"end\": \"00:00:30,626\",\n    \"lang\": \"en\",\n    \"text\": \"So I believe these small fragments will build a balance between flavor,\"\n  },\n  {\n    \"start\": \"00:00:30,626\",\n    \"end\": \"00:00:34,606\",\n    \"lang\": \"en\",\n    \"text\": \"so that is a combination\"\n  },\n  {\n    \"start\": \"00:00:34,606\",\n    \"end\": \"00:00:35,586\",\n    \"lang\": \"en\",\n    \"text\": \"that is a flavor,\"\n  },\n  {\n    \"start\": \"00:00:35,586\",\n    \"end\": \"00:00:40,326\",\n    \"lang\": \"en\",\n    \"text\": \"and the inner core without flavor.\"\n  },\n  {\n    \"start\": \"00:00:40,746\",\n    \"end\": \"00:00:44,746\",\n    \"lang\": \"en\",\n    \"text\": \"It will produce a perfect combination.\"\n  },\n  {\n    \"start\": \"00:00:46,086\",\n    \"end\": \"00:00:47,386\",\n    \"lang\": \"en\",\n    \"text\": \"It will blend in.\"\n  },\n  {\n    \"start\": \"00:00:47,946\",\n    \"end\": \"00:00:50,666\",\n    \"lang\": \"en\",\n    \"text\": \"If it's potato crumb,\"\n  },\n  {\n    \"start\": \"00:00:50,666\",\n    \"end\": \"00:00:54,046\",\n    \"lang\": \"en\",\n    \"text\": \"it will be over flavored.\"\n  },\n  {\n    \"start\": \"00:00:55,966\",\n    \"end\": \"00:00:57,686\",\n    \"lang\": \"en\",\n    \"text\": \"I like this crisp stuff.\"\n  },\n  {\n    \"start\": \"00:00:59,046\",\n    \"end\": \"00:00:59,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "vi": "Đây là hương vị đặc biệt Trùng Khánh của chúng tôi,"
+        },
+        {
+            "start": "00:00:03,580",
+            "end": "00:00:06,640",
+            "vi": "thịt bò và khoai tây."
+        },
+        {
+            "start": "00:00:08,582",
+            "end": "00:00:09,082",
+            "vi": "Tiếng bíp."
+        },
+        {
+            "start": "00:00:09,506",
+            "end": "00:00:12,206",
+            "vi": "Vậy để tôi kiểm tra."
+        },
+        {
+            "start": "00:00:14,396",
+            "end": "00:00:15,206",
+            "vi": "Củ khoai này,"
+        },
+        {
+            "start": "00:00:15,206",
+            "end": "00:00:20,186",
+            "vi": "tôi không chế biến nó thành dạng vụn khoai."
+        },
+        {
+            "start": "00:00:20,906",
+            "end": "00:00:22,146",
+            "vi": "Tôi không biết nói sao,"
+        },
+        {
+            "start": "00:00:22,146",
+            "end": "00:00:22,566",
+            "vi": "toodoli."
+        },
+        {
+            "start": "00:00:23,486",
+            "end": "00:00:30,626",
+            "vi": "Vì vậy tôi tin rằng những mảnh nhỏ này sẽ tạo ra một sự cân bằng về hương vị,"
+        },
+        {
+            "start": "00:00:30,626",
+            "end": "00:00:34,606",
+            "vi": "đó là sự kết hợp"
+        },
+        {
+            "start": "00:00:34,606",
+            "end": "00:00:35,586",
+            "vi": "đó là một hương vị,"
+        },
+        {
+            "start": "00:00:35,586",
+            "end": "00:00:40,326",
+            "vi": "và phần lõi bên trong không có hương vị."
+        },
+        {
+            "start": "00:00:40,746",
+            "end": "00:00:44,746",
+            "vi": "Nó sẽ tạo ra một sự kết hợp hoàn hảo."
+        },
+        {
+            "start": "00:00:46,086",
+            "end": "00:00:47,386",
+            "vi": "Nó sẽ hòa quện."
+        },
+        {
+            "start": "00:00:47,946",
+            "end": "00:00:50,666",
+            "vi": "Nếu là vụn khoai,"
+        },
+        {
+            "start": "00:00:50,666",
+            "end": "00:00:54,046",
+            "vi": "nó sẽ bị quá mạnh về hương vị."
+        },
+        {
+            "start": "00:00:55,966",
+            "end": "00:00:57,686",
+            "vi": "Tôi thích thứ giòn này."
+        },
+        {
+            "start": "00:00:59,046",
+            "end": "00:00:59,686",
+            "vi": "Được."
+        }
+    ]
+}

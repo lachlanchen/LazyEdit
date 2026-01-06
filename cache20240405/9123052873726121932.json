@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:08,530\",\n    \"end\": \"00:02:11,670\",\n    \"lang\": \"en\",\n    \"text\": \"I learned more like how I learned science,\"\n  },\n  {\n    \"start\": \"00:02:11,670\",\n    \"end\": \"00:02:15,610\",\n    \"lang\": \"en\",\n    \"text\": \"rapidity,\"\n  },\n  {\n    \"start\": \"00:02:15,610\",\n    \"end\": \"00:02:20,430\",\n    \"lang\": \"en\",\n    \"text\": \"and practice,\"\n  },\n  {\n    \"start\": \"00:02:20,430\",\n    \"end\": \"00:02:22,890\",\n    \"lang\": \"en\",\n    \"text\": \"like doing exercises,\"\n  },\n  {\n    \"start\": \"00:02:23,150\",\n    \"end\": \"00:02:25,490\",\n    \"lang\": \"en\",\n    \"text\": \"solving a mathematical problem,\"\n  },\n  {\n    \"start\": \"00:02:25,490\",\n    \"end\": \"00:02:26,610\",\n    \"lang\": \"en\",\n    \"text\": \"coding.\"\n  },\n  {\n    \"start\": \"00:02:27,590\",\n    \"end\": \"00:02:29,330\",\n    \"lang\": \"en\",\n    \"text\": \"First I write a MVP,\"\n  },\n  {\n    \"start\": \"00:02:29,330\",\n    \"end\": \"00:02:30,890\",\n    \"lang\": \"en\",\n    \"text\": \"minimum viable program,\"\n  },\n  {\n    \"start\": \"00:02:30,890\",\n    \"end\": \"00:02:33,430\",\n    \"lang\": \"en\",\n    \"text\": \"and then I continue refining it.\"\n  },\n  {\n    \"start\": \"00:02:35,874\",\n    \"end\": \"00:02:38,374\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:38,374\",\n    \"end\": \"00:02:40,194\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树\"\n  },\n  {\n    \"start\": \"00:02:40,802\",\n    \"end\": \"00:02:41,162\",\n    \"lang\": \"en\",\n    \"text\": \"Go.\"\n  },\n  {\n    \"start\": \"00:02:42,722\",\n    \"end\": \"00:02:45,202\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:46,322\",\n    \"end\": \"00:02:48,582\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:02:54,786\",\n    \"end\": \"00:02:54,986\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:02:54,986\",\n    \"end\": \"00:02:55,946\",\n    \"lang\": \"en\",\n    \"text\": \"it's the wrong...\"\n  },\n  {\n    \"start\": \"00:02:55,946\",\n    \"end\": \"00:02:56,406\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:56,406\",\n    \"end\": \"00:02:56,786\",\n    \"lang\": \"en\",\n    \"text\": \"on air.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:08,530",
+            "end": "00:02:11,670",
+            "es": "Aprendí más como cuando aprendía ciencia,",
+            "fr": "J'ai appris plus comme quand j'apprenais la science,",
+            "uk": "Я вчився більше, як коли я вчився науці,"
+        },
+        {
+            "start": "00:02:11,670",
+            "end": "00:02:15,610",
+            "es": "rapidez,",
+            "fr": "rapidité,",
+            "uk": "швидкість,"
+        },
+        {
+            "start": "00:02:15,610",
+            "end": "00:02:20,430",
+            "es": "y práctica,",
+            "fr": "et pratique,",
+            "uk": "та практика,"
+        },
+        {
+            "start": "00:02:20,430",
+            "end": "00:02:22,890",
+            "es": "como hacer ejercicios,",
+            "fr": "comme faire des exercices,",
+            "uk": "як роблення вправ,"
+        },
+        {
+            "start": "00:02:23,150",
+            "end": "00:02:25,490",
+            "es": "resolviendo un problema matemático,",
+            "fr": "résolvant un problème mathématique,",
+            "uk": "розв’язуючи математичну задачу,"
+        },
+        {
+            "start": "00:02:25,490",
+            "end": "00:02:26,610",
+            "es": "programando.",
+            "fr": "programmant.",
+            "uk": "програмуючи."
+        },
+        {
+            "start": "00:02:27,590",
+            "end": "00:02:29,330",
+            "es": "Primero escribo un MVP,",
+            "fr": "D'abord, j'écris un MVP,",
+            "uk": "Спочатку я пишу MVP,"
+        },
+        {
+            "start": "00:02:29,330",
+            "end": "00:02:30,890",
+            "es": "programa mínimamente viable,",
+            "fr": "programme minimal viable,",
+            "uk": "мінімально життєздатна програма,"
+        },
+        {
+            "start": "00:02:30,890",
+            "end": "00:02:33,430",
+            "es": "y luego continúo refinándolo.",
+            "fr": "et puis je continue à le raffiner.",
+            "uk": "а потім продовжую удосконалювати його."
+        },
+        {
+            "start": "00:02:35,874",
+            "end": "00:02:38,374",
+            "es": "sin aroma de flores",
+            "fr": "pas de parfum de fleurs",
+            "uk": "без запаху квітів"
+        },
+        {
+            "start": "00:02:38,374",
+            "end": "00:02:40,194",
+            "es": "sin árboles",
+            "fr": "pas d'arbres",
+            "uk": "без дерев"
+        },
+        {
+            "start": "00:02:40,802",
+            "end": "00:02:41,162",
+            "es": "Vamos.",
+            "fr": "Allons-y.",
+            "uk": "Йдемо."
+        },
+        {
+            "start": "00:02:42,722",
+            "end": "00:02:45,202",
+            "es": "sin aroma de flores",
+            "fr": "pas de parfum de fleurs",
+            "uk": "без запаху квітів"
+        },
+        {
+            "start": "00:02:46,322",
+            "end": "00:02:48,582",
+            "es": "sin troncos de árboles",
+            "fr": "pas de troncs d'arbres",
+            "uk": "без стовбурів дерев"
+        },
+        {
+            "start": "00:02:54,786",
+            "end": "00:02:54,986",
+            "es": "Perdón,",
+            "fr": "Désolé,",
+            "uk": "Вибачте,"
+        },
+        {
+            "start": "00:02:54,986",
+            "end": "00:02:55,946",
+            "es": "es el equivocado...",
+            "fr": "c'est le mauvais...",
+            "uk": "це не те..."
+        },
+        {
+            "start": "00:02:55,946",
+            "end": "00:02:56,406",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:02:56,406",
+            "end": "00:02:56,786",
+            "es": "en directo.",
+            "fr": "en direct.",
+            "uk": "на повітрі."
+        }
+    ]
+}

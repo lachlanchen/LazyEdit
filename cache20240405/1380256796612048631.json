@@ -1,0 +1,124 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:09,620\",\n    \"lang\": \"en\",\n    \"text\": \"I just thought of a sentence that if we don't want this unexpected innovation,\"\n  },\n  {\n    \"start\": \"00:00:09,620\",\n    \"end\": \"00:00:11,300\",\n    \"lang\": \"en\",\n    \"text\": \"we will never\"\n  },\n  {\n    \"start\": \"00:00:11,300\",\n    \"end\": \"00:00:12,100\",\n    \"lang\": \"en\",\n    \"text\": \"make it.\"\n  },\n  {\n    \"start\": \"00:00:12,130\",\n    \"end\": \"00:00:12,770\",\n    \"lang\": \"ja\",\n    \"text\": \"レイズー\"\n  },\n  {\n    \"start\": \"00:00:15,090\",\n    \"end\": \"00:00:15,830\",\n    \"lang\": \"ja\",\n    \"text\": \"レイズーイ\"\n  },\n  {\n    \"start\": \"00:00:16,706\",\n    \"end\": \"00:00:21,346\",\n    \"lang\": \"en\",\n    \"text\": \"wanted innovation will never be expected.\"\n  },\n  {\n    \"start\": \"00:00:23,606\",\n    \"end\": \"00:00:27,326\",\n    \"lang\": \"en\",\n    \"text\": \"So just setting some basic principles\"\n  },\n  {\n    \"start\": \"00:00:27,726\",\n    \"end\": \"00:00:29,906\",\n    \"lang\": \"en\",\n    \"text\": \"and let it go,\"\n  },\n  {\n    \"start\": \"00:00:29,906\",\n    \"end\": \"00:00:32,106\",\n    \"lang\": \"en\",\n    \"text\": \"set it free,\"\n  },\n  {\n    \"start\": \"00:00:32,106\",\n    \"end\": \"00:00:34,346\",\n    \"lang\": \"en\",\n    \"text\": \"remove the restriction,\"\n  },\n  {\n    \"start\": \"00:00:34,586\",\n    \"end\": \"00:00:37,366\",\n    \"lang\": \"en\",\n    \"text\": \"just setting some basic guidelines,\"\n  },\n  {\n    \"start\": \"00:00:37,366\",\n    \"end\": \"00:00:39,246\",\n    \"lang\": \"en\",\n    \"text\": \"basic principles.\"\n  },\n  {\n    \"start\": \"00:00:40,586\",\n    \"end\": \"00:00:43,466\",\n    \"lang\": \"en\",\n    \"text\": \"Everything let it automatically happen,\"\n  },\n  {\n    \"start\": \"00:00:43,466\",\n    \"end\": \"00:00:45,666\",\n    \"lang\": \"en\",\n    \"text\": \"spontaneously occur,\"\n  },\n  {\n    \"start\": \"00:00:45,666\",\n    \"end\": \"00:00:48,886\",\n    \"lang\": \"en\",\n    \"text\": \"and that's what I think.\"\n  },\n  {\n    \"start\": \"00:00:50,206\",\n    \"end\": \"00:00:50,486\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:50,486\",\n    \"end\": \"00:00:52,426\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:09,620",
+            "es": "Acabo de pensar en una frase que si no queremos esta innovación inesperada,",
+            "fr": "Je viens de penser à une phrase que si nous ne voulons pas cette innovation inattendue,",
+            "uk": "Я щойно подумав про речення, що якщо ми не хочемо цього несподіваного нововведення,"
+        },
+        {
+            "start": "00:00:09,620",
+            "end": "00:00:11,300",
+            "es": "nunca lo lograremos.",
+            "fr": "nous ne réussirons jamais.",
+            "uk": "ми ніколи цього не досягнемо."
+        },
+        {
+            "start": "00:00:11,300",
+            "end": "00:00:12,100",
+            "es": "Lograrlo.",
+            "fr": "Y parvenir.",
+            "uk": "Досягнути цього."
+        },
+        {
+            "start": "00:00:12,130",
+            "end": "00:00:12,770",
+            "es": "Pereza",
+            "fr": "Paresse",
+            "uk": "Лінь"
+        },
+        {
+            "start": "00:00:15,090",
+            "end": "00:00:15,830",
+            "es": "Pereza extrema",
+            "fr": "Paresse extrême",
+            "uk": "Надзвичайна лінь"
+        },
+        {
+            "start": "00:00:16,706",
+            "end": "00:00:21,346",
+            "es": "La innovación deseada nunca será esperada.",
+            "fr": "L'innovation souhaitée ne sera jamais attendue.",
+            "uk": "Бажане нововведення ніколи не буде очікуваним."
+        },
+        {
+            "start": "00:00:23,606",
+            "end": "00:00:27,326",
+            "es": "Así que solo estableciendo algunos principios básicos",
+            "fr": "Alors, simplement en établissant quelques principes de base",
+            "uk": "Отже, просто встановлюючи деякі базові принципи"
+        },
+        {
+            "start": "00:00:27,726",
+            "end": "00:00:29,906",
+            "es": "y dejándolo ir,",
+            "fr": "et le laisser aller,",
+            "uk": "і відпустивши його,"
+        },
+        {
+            "start": "00:00:29,906",
+            "end": "00:00:32,106",
+            "es": "dejarlo libre,",
+            "fr": "le libérer,",
+            "uk": "відпустіть його на волю,"
+        },
+        {
+            "start": "00:00:32,106",
+            "end": "00:00:34,346",
+            "es": "quitar la restricción,",
+            "fr": "retirer la restriction,",
+            "uk": "зняти обмеження,"
+        },
+        {
+            "start": "00:00:34,586",
+            "end": "00:00:37,366",
+            "es": "solo estableciendo algunas pautas básicas,",
+            "fr": "juste en établissant quelques directives de base,",
+            "uk": "просто встановлюючи деякі базові настанови,"
+        },
+        {
+            "start": "00:00:37,366",
+            "end": "00:00:39,246",
+            "es": "principios básicos.",
+            "fr": "principes de base.",
+            "uk": "базові принципи."
+        },
+        {
+            "start": "00:00:40,586",
+            "end": "00:00:43,466",
+            "es": "Dejar que todo suceda automáticamente,",
+            "fr": "Laisser tout se produire automatiquement,",
+            "uk": "Дати все статися автоматично,"
+        },
+        {
+            "start": "00:00:43,466",
+            "end": "00:00:45,666",
+            "es": "ocurrir espontáneamente,",
+            "fr": "se produire spontanément,",
+            "uk": "відбутися спонтанно,"
+        },
+        {
+            "start": "00:00:45,666",
+            "end": "00:00:48,886",
+            "es": "y eso es lo que pienso.",
+            "fr": "et c'est ce que je pense.",
+            "uk": "і ось що я думаю."
+        },
+        {
+            "start": "00:00:50,206",
+            "end": "00:00:50,486",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:50,486",
+            "end": "00:00:52,426",
+            "es": "nos vemos.",
+            "fr": "à plus.",
+            "uk": "бачимось."
+        }
+    ]
+}

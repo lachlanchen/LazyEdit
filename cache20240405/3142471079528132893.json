@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,040\",\n    \"lang\": \"zh\",\n    \"text\": \"12克的Husky\"\n  },\n  {\n    \"start\": \"00:00:02,017\",\n    \"end\": \"00:00:02,898\",\n    \"lang\": \"en\",\n    \"text\": \"She is so cute.\"\n  },\n  {\n    \"start\": \"00:00:08,058\",\n    \"end\": \"00:00:09,038\",\n    \"lang\": \"en\",\n    \"text\": \"So many dogs.\"\n  },\n  {\n    \"start\": \"00:00:09,318\",\n    \"end\": \"00:00:10,938\",\n    \"lang\": \"en\",\n    \"text\": \"We will come back to the dog park.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,040",
+            "en": "A 12-gram Husky",
+            "zh": "12克的Husky",
+            "ar": "هاسكي يزن 12 غرام"
+        },
+        {
+            "start": "00:00:02,017",
+            "end": "00:00:02,898",
+            "en": "She is so cute.",
+            "zh": "她非常可爱。",
+            "ar": "إنها لطيفة جداً."
+        },
+        {
+            "start": "00:00:08,058",
+            "end": "00:00:09,038",
+            "en": "So many dogs.",
+            "zh": "好多狗。",
+            "ar": "الكثير من الكلاب."
+        },
+        {
+            "start": "00:00:09,318",
+            "end": "00:00:10,938",
+            "en": "We will come back to the dog park.",
+            "zh": "我们会再回到狗公园。",
+            "ar": "سنعود إلى حديقة الكلاب."
+        }
+    ]
+}

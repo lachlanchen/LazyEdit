@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,914\",\n    \"end\": \"00:01:03,734\",\n    \"lang\": \"zh\",\n    \"text\": \"体验怎么样\"\n  },\n  {\n    \"start\": \"00:01:03,734\",\n    \"end\": \"00:01:06,734\",\n    \"lang\": \"zh\",\n    \"text\": \"这些是加这种小元素的\"\n  },\n  {\n    \"start\": \"00:01:06,734\",\n    \"end\": \"00:01:09,874\",\n    \"lang\": \"zh\",\n    \"text\": \"然后如果不加就是这种\"\n  },\n  {\n    \"start\": \"00:01:09,874\",\n    \"end\": \"00:01:10,894\",\n    \"lang\": \"zh\",\n    \"text\": \"过渡的\"\n  },\n  {\n    \"start\": \"00:01:12,894\",\n    \"end\": \"00:01:14,334\",\n    \"lang\": \"en\",\n    \"text\": \"STICKers stay safe while educating the next generation of professionals Human Society Great Trust\"\n  },\n  {\n    \"start\": \"00:01:14,370\",\n    \"end\": \"00:01:15,670\",\n    \"lang\": \"zh\",\n    \"text\": \"不加的话就是这种\"\n  },\n  {\n    \"start\": \"00:01:16,769\",\n    \"end\": \"00:01:18,270\",\n    \"lang\": \"zh\",\n    \"text\": \"又是另外一种感觉\"\n  },\n  {\n    \"start\": \"00:01:19,089\",\n    \"end\": \"00:01:20,050\",\n    \"lang\": \"zh\",\n    \"text\": \"不加的话\"\n  },\n  {\n    \"start\": \"00:01:21,169\",\n    \"end\": \"00:01:22,810\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是加而不加\"\n  },\n  {\n    \"start\": \"00:01:22,810\",\n    \"end\": \"00:01:24,170\",\n    \"lang\": \"zh\",\n    \"text\": \"两个不加的感觉\"\n  },\n  {\n    \"start\": \"00:01:25,230\",\n    \"end\": \"00:01:27,030\",\n    \"lang\": \"zh\",\n    \"text\": \"我看还加不加\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:02,914",
+            "end": "00:01:03,734",
+            "es": "¿Cómo es la experiencia?",
+            "fr": "Comment est l'expérience ?",
+            "uk": "Як враження?"
+        },
+        {
+            "start": "00:01:03,734",
+            "end": "00:01:06,734",
+            "es": "Estos son con estos pequeños elementos añadidos",
+            "fr": "Ceux-ci sont avec ces petits éléments ajoutés",
+            "uk": "Це з додаванням таких маленьких елементів"
+        },
+        {
+            "start": "00:01:06,734",
+            "end": "00:01:09,874",
+            "es": "Y si no se añaden, es como esto",
+            "fr": "Et si on ne les ajoute pas, c'est comme ça",
+            "uk": "А якщо не додати, то ось так"
+        },
+        {
+            "start": "00:01:09,874",
+            "end": "00:01:10,894",
+            "es": "Transitorios",
+            "fr": "Transitoires",
+            "uk": "Перехідні"
+        },
+        {
+            "start": "00:01:12,894",
+            "end": "00:01:14,334",
+            "es": "STICKers permanecen a salvo mientras educan a la próxima generación de profesionales Gran Confianza de la Sociedad Humana",
+            "fr": "Les STICKers restent en sécurité tout en éduquant la prochaine génération de professionnels Grande Confiance de la Société Humaine",
+            "uk": "STICKers залишаються в безпеці, одночасно освічуючи наступне покоління професіоналів Велика Довіра Гуманітарного Товариства"
+        },
+        {
+            "start": "00:01:14,370",
+            "end": "00:01:15,670",
+            "es": "Si no se añaden, es como esto",
+            "fr": "Si on ne les ajoute pas, c'est comme ça",
+            "uk": "Якщо не додати, то отак"
+        },
+        {
+            "start": "00:01:16,769",
+            "end": "00:01:18,270",
+            "es": "Es otra sensación",
+            "fr": "C'est une autre sensation",
+            "uk": "Це інше відчуття"
+        },
+        {
+            "start": "00:01:19,089",
+            "end": "00:01:20,050",
+            "es": "Si no se añaden",
+            "fr": "Si on ne les ajoute pas",
+            "uk": "Якщо не додати"
+        },
+        {
+            "start": "00:01:21,169",
+            "end": "00:01:22,810",
+            "es": "Esto es con y sin añadir",
+            "fr": "Ceci est avec et sans ajouter",
+            "uk": "Це з додаванням і без додавання"
+        },
+        {
+            "start": "00:01:22,810",
+            "end": "00:01:24,170",
+            "es": "La sensación de no añadir ninguno",
+            "fr": "La sensation de ne rien ajouter",
+            "uk": "Відчуття не додавати жодного"
+        },
+        {
+            "start": "00:01:25,230",
+            "end": "00:01:27,030",
+            "es": "Veo si añadir o no",
+            "fr": "Je vois si ajouter ou non",
+            "uk": "Дивлюся, додавати чи ні"
+        }
+    ]
+}

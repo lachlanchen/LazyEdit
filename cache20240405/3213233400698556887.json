@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,522\",\n    \"end\": \"00:00:13,882\",\n    \"lang\": \"en\",\n    \"text\": \"I have finished running at the coastline.\"\n  },\n  {\n    \"start\": \"00:00:17,742\",\n    \"end\": \"00:00:29,442\",\n    \"lang\": \"en\",\n    \"text\": \"So your lifestyle could be something that influences other people.\"\n  },\n  {\n    \"start\": \"00:00:29,442\",\n    \"end\": \"00:00:30,682\",\n    \"lang\": \"en\",\n    \"text\": \"You live with happiness,\"\n  },\n  {\n    \"start\": \"00:00:30,682\",\n    \"end\": \"00:00:32,262\",\n    \"lang\": \"en\",\n    \"text\": \"you live with joy.\"\n  },\n  {\n    \"start\": \"00:00:35,502\",\n    \"end\": \"00:00:41,762\",\n    \"lang\": \"en\",\n    \"text\": \"Your life per se can be your work,\"\n  },\n  {\n    \"start\": \"00:00:41,762\",\n    \"end\": \"00:00:44,242\",\n    \"lang\": \"en\",\n    \"text\": \"can be your creation.\"\n  },\n  {\n    \"start\": \"00:00:47,942\",\n    \"end\": \"00:00:48,542\",\n    \"lang\": \"en\",\n    \"text\": \"Muah!\"\n  },\n  {\n    \"start\": \"00:00:55,822\",\n    \"end\": \"00:00:56,662\",\n    \"lang\": \"en\",\n    \"text\": \"Yummy yummy.\"\n  },\n  {\n    \"start\": \"00:00:56,662\",\n    \"end\": \"00:00:57,462\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:57,462\",\n    \"end\": \"00:00:58,182\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,460",
+            "ko": "좋은 아침입니다"
+        },
+        {
+            "start": "00:00:03,522",
+            "end": "00:00:13,882",
+            "ko": "해안가에서 달리기를 마쳤어요."
+        },
+        {
+            "start": "00:00:17,742",
+            "end": "00:00:29,442",
+            "ko": "당신의 생활 방식은 다른 사람들에게 영향을 줄 수 있습니다."
+        },
+        {
+            "start": "00:00:29,442",
+            "end": "00:00:30,682",
+            "ko": "당신은 행복과 함께 살아요,"
+        },
+        {
+            "start": "00:00:30,682",
+            "end": "00:00:32,262",
+            "ko": "기쁨과 함께 살아요."
+        },
+        {
+            "start": "00:00:35,502",
+            "end": "00:00:41,762",
+            "ko": "당신의 삶 자체가 당신의 작업이 될 수 있어요,"
+        },
+        {
+            "start": "00:00:41,762",
+            "end": "00:00:44,242",
+            "ko": "당신의 창조가 될 수 있어요."
+        },
+        {
+            "start": "00:00:47,942",
+            "end": "00:00:48,542",
+            "ko": "뽀뽀!"
+        },
+        {
+            "start": "00:00:55,822",
+            "end": "00:00:56,662",
+            "ko": "맛있어요 맛있어요."
+        },
+        {
+            "start": "00:00:56,662",
+            "end": "00:00:57,462",
+            "ko": "알았어요,"
+        },
+        {
+            "start": "00:00:57,462",
+            "end": "00:00:58,182",
+            "ko": "나중에 봐요."
+        }
+    ]
+}

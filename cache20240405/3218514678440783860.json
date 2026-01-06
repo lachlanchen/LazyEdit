@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,519\",\n    \"end\": \"00:00:01,360\",\n    \"lang\": \"en\",\n    \"text\": \"Let's do this yeah...\"\n  },\n  {\n    \"start\": \"00:00:02,658\",\n    \"end\": \"00:00:03,478\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:07,682\",\n    \"end\": \"00:00:11,082\",\n    \"lang\": \"en\",\n    \"text\": \"I forget what I want to share today.\"\n  },\n  {\n    \"start\": \"00:00:18,021\",\n    \"end\": \"00:00:20,342\",\n    \"lang\": \"en\",\n    \"text\": \"I want to talk about freedom.\"\n  },\n  {\n    \"start\": \"00:00:22,022\",\n    \"end\": \"00:00:22,562\",\n    \"lang\": \"en\",\n    \"text\": \"Freedom,\"\n  },\n  {\n    \"start\": \"00:00:22,562\",\n    \"end\": \"00:00:23,182\",\n    \"lang\": \"en\",\n    \"text\": \"I believe,\"\n  },\n  {\n    \"start\": \"00:00:23,182\",\n    \"end\": \"00:00:24,142\",\n    \"lang\": \"en\",\n    \"text\": \"is not your life.\"\n  },\n  {\n    \"start\": \"00:00:25,218\",\n    \"end\": \"00:00:26,638\",\n    \"lang\": \"zh\",\n    \"text\": \"你不可能自己做\"\n  },\n  {\n    \"start\": \"00:00:26,638\",\n    \"end\": \"00:00:28,938\",\n    \"lang\": \"zh\",\n    \"text\": \"你只需要自由做\"\n  },\n  {\n    \"start\": \"00:00:29,250\",\n    \"end\": \"00:00:33,070\",\n    \"lang\": \"en\",\n    \"text\": \"It's a consequence of something that you fight,\"\n  },\n  {\n    \"start\": \"00:00:33,070\",\n    \"end\": \"00:00:34,450\",\n    \"lang\": \"en\",\n    \"text\": \"you compromise,\"\n  },\n  {\n    \"start\": \"00:00:34,450\",\n    \"end\": \"00:00:37,650\",\n    \"lang\": \"en\",\n    \"text\": \"you pursue,\"\n  },\n  {\n    \"start\": \"00:00:37,650\",\n    \"end\": \"00:00:38,730\",\n    \"lang\": \"en\",\n    \"text\": \"you give up,\"\n  },\n  {\n    \"start\": \"00:00:38,730\",\n    \"end\": \"00:00:39,870\",\n    \"lang\": \"en\",\n    \"text\": \"you accept,\"\n  },\n  {\n    \"start\": \"00:00:39,870\",\n    \"end\": \"00:00:44,950\",\n    \"lang\": \"en\",\n    \"text\": \"you trade off,\"\n  },\n  {\n    \"start\": \"00:00:44,950\",\n    \"end\": \"00:00:48,830\",\n    \"lang\": \"en\",\n    \"text\": \"a balance that you finally take.\"\n  },\n  {\n    \"start\": \"00:00:50,110\",\n    \"end\": \"00:00:53,770\",\n    \"lang\": \"en\",\n    \"text\": \"It's what happens with freedom.\"\n  },\n  {\n    \"start\": \"00:00:57,710\",\n    \"end\": \"00:00:58,530\",\n    \"lang\": \"en\",\n    \"text\": \"That's it.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,519",
+            "end": "00:00:01,360",
+            "ja": "やろうぜ..."
+        },
+        {
+            "start": "00:00:02,658",
+            "end": "00:00:03,478",
+            "ja": "おはようございます"
+        },
+        {
+            "start": "00:00:07,682",
+            "end": "00:00:11,082",
+            "ja": "今日何を話したいか忘れた。"
+        },
+        {
+            "start": "00:00:18,021",
+            "end": "00:00:20,342",
+            "ja": "自由について話したい。"
+        },
+        {
+            "start": "00:00:22,022",
+            "end": "00:00:22,562",
+            "ja": "自由、"
+        },
+        {
+            "start": "00:00:22,562",
+            "end": "00:00:23,182",
+            "ja": "私は信じる、"
+        },
+        {
+            "start": "00:00:23,182",
+            "end": "00:00:24,142",
+            "ja": "あなたの人生ではない。"
+        },
+        {
+            "start": "00:00:25,218",
+            "end": "00:00:26,638",
+            "ja": "あなたは一人ではできない"
+        },
+        {
+            "start": "00:00:26,638",
+            "end": "00:00:28,938",
+            "ja": "あなたはただ自由にやる必要がある"
+        },
+        {
+            "start": "00:00:29,250",
+            "end": "00:00:33,070",
+            "ja": "それはあなたが戦い、"
+        },
+        {
+            "start": "00:00:33,070",
+            "end": "00:00:34,450",
+            "ja": "妥協し、"
+        },
+        {
+            "start": "00:00:34,450",
+            "end": "00:00:37,650",
+            "ja": "追求し、"
+        },
+        {
+            "start": "00:00:37,650",
+            "end": "00:00:38,730",
+            "ja": "諦め、"
+        },
+        {
+            "start": "00:00:38,730",
+            "end": "00:00:39,870",
+            "ja": "受け入れ、"
+        },
+        {
+            "start": "00:00:39,870",
+            "end": "00:00:44,950",
+            "ja": "交換し、"
+        },
+        {
+            "start": "00:00:44,950",
+            "end": "00:00:48,830",
+            "ja": "最終的に取るバランス。"
+        },
+        {
+            "start": "00:00:50,110",
+            "end": "00:00:53,770",
+            "ja": "自由について起こること。"
+        },
+        {
+            "start": "00:00:57,710",
+            "end": "00:00:58,530",
+            "ja": "それだけです。"
+        }
+    ]
+}

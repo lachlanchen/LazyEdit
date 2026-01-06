@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,620\",\n    \"lang\": \"ja\",\n    \"text\": \"私は天体\"\n  },\n  {\n    \"start\": \"00:00:03,042\",\n    \"end\": \"00:00:04,642\",\n    \"lang\": \"ja\",\n    \"text\": \"とにかく大好きです\"\n  },\n  {\n    \"start\": \"00:00:05,922\",\n    \"end\": \"00:00:06,842\",\n    \"lang\": \"en\",\n    \"text\": \"I love this world.\"\n  },\n  {\n    \"start\": \"00:00:07,622\",\n    \"end\": \"00:00:08,962\",\n    \"lang\": \"en\",\n    \"text\": \"I love astrophysics.\"\n  },\n  {\n    \"start\": \"00:00:10,982\",\n    \"end\": \"00:00:14,442\",\n    \"lang\": \"en\",\n    \"text\": \"And also encryption and this world.\"\n  },\n  {\n    \"start\": \"00:00:14,978\",\n    \"end\": \"00:00:16,058\",\n    \"lang\": \"ja\",\n    \"text\": \"私は\"\n  },\n  {\n    \"start\": \"00:00:17,458\",\n    \"end\": \"00:00:18,318\",\n    \"lang\": \"ja\",\n    \"text\": \"私は\"\n  },\n  {\n    \"start\": \"00:00:19,426\",\n    \"end\": \"00:00:20,566\",\n    \"lang\": \"en\",\n    \"text\": \"I'm cool.\"\n  },\n  {\n    \"start\": \"00:00:21,090\",\n    \"end\": \"00:00:23,610\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあんこが\"\n  },\n  {\n    \"start\": \"00:00:23,610\",\n    \"end\": \"00:00:25,390\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあんこが\"\n  },\n  {\n    \"start\": \"00:00:26,369\",\n    \"end\": \"00:00:27,730\",\n    \"lang\": \"ja\",\n    \"text\": \"愛しです\"\n  },\n  {\n    \"start\": \"00:00:27,730\",\n    \"end\": \"00:00:28,390\",\n    \"lang\": \"ja\",\n    \"text\": \"愛します\"\n  },\n  {\n    \"start\": \"00:00:29,329\",\n    \"end\": \"00:00:31,270\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあんこが\"\n  },\n  {\n    \"start\": \"00:00:31,270\",\n    \"end\": \"00:00:31,990\",\n    \"lang\": \"ja\",\n    \"text\": \"愛します\"\n  },\n  {\n    \"start\": \"00:00:33,890\",\n    \"end\": \"00:00:38,090\",\n    \"lang\": \"en\",\n    \"text\": \"Do you remember this Arabic letter?\"\n  },\n  {\n    \"start\": \"00:00:38,890\",\n    \"end\": \"00:00:41,510\",\n    \"lang\": \"en\",\n    \"text\": \"We say it's similar to this door.\"\n  },\n  {\n    \"start\": \"00:00:42,370\",\n    \"end\": \"00:00:44,330\",\n    \"lang\": \"en\",\n    \"text\": \"So the pronunciation is door,\"\n  },\n  {\n    \"start\": \"00:00:44,330\",\n    \"end\": \"00:00:45,390\",\n    \"lang\": \"en\",\n    \"text\": \"D-A-L.\"\n  },\n  {\n    \"start\": \"00:00:45,970\",\n    \"end\": \"00:00:47,270\",\n    \"lang\": \"en\",\n    \"text\": \"This is Arabic letter.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,620",
+            "es": "Soy un cuerpo celeste",
+            "fr": "Je suis un corps céleste",
+            "uk": "Я небесне тіло"
+        },
+        {
+            "start": "00:00:03,042",
+            "end": "00:00:04,642",
+            "es": "Me encantan de todos modos",
+            "fr": "Je les aime de toute façon",
+            "uk": "Я люблю їх у будь-якому випадку"
+        },
+        {
+            "start": "00:00:05,922",
+            "end": "00:00:06,842",
+            "es": "Amo este mundo.",
+            "fr": "J'aime ce monde.",
+            "uk": "Я люблю цей світ."
+        },
+        {
+            "start": "00:00:07,622",
+            "end": "00:00:08,962",
+            "es": "Me encanta la astrofísica.",
+            "fr": "J'aime l'astrophysique.",
+            "uk": "Я обожнюю астрофізику."
+        },
+        {
+            "start": "00:00:10,982",
+            "end": "00:00:14,442",
+            "es": "Y también la criptografía y este mundo.",
+            "fr": "Et aussi le cryptage et ce monde.",
+            "uk": "А також криптографія та цей світ."
+        },
+        {
+            "start": "00:00:14,978",
+            "end": "00:00:16,058",
+            "es": "Yo soy",
+            "fr": "Je suis",
+            "uk": "Я"
+        },
+        {
+            "start": "00:00:17,458",
+            "end": "00:00:18,318",
+            "es": "Yo soy",
+            "fr": "Je suis",
+            "uk": "Я"
+        },
+        {
+            "start": "00:00:19,426",
+            "end": "00:00:20,566",
+            "es": "Soy genial.",
+            "fr": "Je suis cool.",
+            "uk": "Я крутий."
+        },
+        {
+            "start": "00:00:21,090",
+            "end": "00:00:23,610",
+            "es": "Me gusta el anko",
+            "fr": "J'aime l'anko",
+            "uk": "Мені подобається анко"
+        },
+        {
+            "start": "00:00:23,610",
+            "end": "00:00:25,390",
+            "es": "Me gusta el anko",
+            "fr": "J'aime l'anko",
+            "uk": "Мені подобається анко"
+        },
+        {
+            "start": "00:00:26,369",
+            "end": "00:00:27,730",
+            "es": "Estoy enamorado",
+            "fr": "Je suis amoureux",
+            "uk": "Я закоханий"
+        },
+        {
+            "start": "00:00:27,730",
+            "end": "00:00:28,390",
+            "es": "Te amo",
+            "fr": "Je t'aime",
+            "uk": "Я тебе люблю"
+        },
+        {
+            "start": "00:00:29,329",
+            "end": "00:00:31,270",
+            "es": "Me gusta el anko",
+            "fr": "J'aime l'anko",
+            "uk": "Мені подобається анко"
+        },
+        {
+            "start": "00:00:31,270",
+            "end": "00:00:31,990",
+            "es": "Te amo",
+            "fr": "Je t'aime",
+            "uk": "Я тебе люблю"
+        },
+        {
+            "start": "00:00:33,890",
+            "end": "00:00:38,090",
+            "es": "¿Recuerdas esta letra árabe?",
+            "fr": "Vous souvenez-vous de cette lettre arabe?",
+            "uk": "Ви пам'ятаєте цю арабську літеру?"
+        },
+        {
+            "start": "00:00:38,890",
+            "end": "00:00:41,510",
+            "es": "Decimos que es similar a esta puerta.",
+            "fr": "Nous disons qu'elle est similaire à cette porte.",
+            "uk": "Ми кажемо, що вона схожа на ці двері."
+        },
+        {
+            "start": "00:00:42,370",
+            "end": "00:00:44,330",
+            "es": "Así que la pronunciación es puerta,",
+            "fr": "Donc la prononciation est porte,",
+            "uk": "Отже, вимова - двері,"
+        },
+        {
+            "start": "00:00:44,330",
+            "end": "00:00:45,390",
+            "es": "D-A-L.",
+            "fr": "D-A-L.",
+            "uk": "Д-А-Л."
+        },
+        {
+            "start": "00:00:45,970",
+            "end": "00:00:47,270",
+            "es": "Esta es una letra árabe.",
+            "fr": "Ceci est une lettre arabe.",
+            "uk": "Це арабська літера."
+        }
+    ]
+}

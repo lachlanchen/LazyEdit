@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:09,774\",\n    \"end\": \"00:01:10,694\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:01:10,694\",\n    \"end\": \"00:01:12,334\",\n    \"lang\": \"en\",\n    \"text\": \"Years ago,\"\n  },\n  {\n    \"start\": \"00:01:12,334\",\n    \"end\": \"00:01:18,034\",\n    \"lang\": \"en\",\n    \"text\": \"I learned from a Tibetan psychologist in Sichuan University.\"\n  },\n  {\n    \"start\": \"00:01:18,034\",\n    \"end\": \"00:01:19,494\",\n    \"lang\": \"en\",\n    \"text\": \"And he\"\n  },\n  {\n    \"start\": \"00:01:19,494\",\n    \"end\": \"00:01:25,134\",\n    \"lang\": \"en\",\n    \"text\": \"shared that if you eat food with your bare hands,\"\n  },\n  {\n    \"start\": \"00:01:25,134\",\n    \"end\": \"00:01:30,954\",\n    \"lang\": \"en\",\n    \"text\": \"that will help you digest,\"\n  },\n  {\n    \"start\": \"00:01:30,954\",\n    \"end\": \"00:01:33,234\",\n    \"lang\": \"en\",\n    \"text\": \"not help\"\n  },\n  {\n    \"start\": \"00:01:33,234\",\n    \"end\": \"00:01:33,634\",\n    \"lang\": \"en\",\n    \"text\": \"you digest,\"\n  },\n  {\n    \"start\": \"00:01:33,634\",\n    \"end\": \"00:01:35,774\",\n    \"lang\": \"en\",\n    \"text\": \"but make you be more happy.\"\n  },\n  {\n    \"start\": \"00:01:35,774\",\n    \"end\": \"00:01:39,134\",\n    \"lang\": \"en\",\n    \"text\": \"I forget why.\"\n  },\n  {\n    \"start\": \"00:01:39,134\",\n    \"end\": \"00:01:46,954\",\n    \"lang\": \"en\",\n    \"text\": \"I don't accept this theory.\"\n  },\n  {\n    \"start\": \"00:01:46,954\",\n    \"end\": \"00:01:47,334\",\n    \"lang\": \"en\",\n    \"text\": \"I\"\n  },\n  {\n    \"start\": \"00:01:47,334\",\n    \"end\": \"00:01:47,854\",\n    \"lang\": \"en\",\n    \"text\": \"accept it.\"\n  },\n  {\n    \"start\": \"00:01:47,854\",\n    \"end\": \"00:01:51,794\",\n    \"lang\": \"en\",\n    \"text\": \"I don't believe or trust it,\"\n  },\n  {\n    \"start\": \"00:01:51,794\",\n    \"end\": \"00:01:53,234\",\n    \"lang\": \"en\",\n    \"text\": \"but I accept it.\"\n  },\n  {\n    \"start\": \"00:01:53,234\",\n    \"end\": \"00:01:56,334\",\n    \"lang\": \"en\",\n    \"text\": \"I just take it granted.\"\n  },\n  {\n    \"start\": \"00:01:56,334\",\n    \"end\": \"00:02:04,314\",\n    \"lang\": \"en\",\n    \"text\": \"Letting\"\n  },\n  {\n    \"start\": \"00:02:05,114\",\n    \"end\": \"00:02:09,693\",\n    \"lang\": \"en\",\n    \"text\": \"you use your hands to enjoy your food is much better.\"\n  },\n  {\n    \"start\": \"00:02:09,693\",\n    \"end\": \"00:02:11,394\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:09,774",
+            "end": "00:01:10,694",
+            "es": "Lo siento.",
+            "fr": "Pardon.",
+            "uk": "Вибачте."
+        },
+        {
+            "start": "00:01:10,694",
+            "end": "00:01:12,334",
+            "es": "Hace años,",
+            "fr": "Il y a des années,",
+            "uk": "Багато років тому,"
+        },
+        {
+            "start": "00:01:12,334",
+            "end": "00:01:18,034",
+            "es": "aprendí de un psicólogo tibetano en la Universidad de Sichuan.",
+            "fr": "J'ai appris d'un psychologue tibétain à l'Université du Sichuan.",
+            "uk": "Я навчався у тибетського психолога в Університеті Сичуаню."
+        },
+        {
+            "start": "00:01:18,034",
+            "end": "00:01:19,494",
+            "es": "Y él",
+            "fr": "Et il",
+            "uk": "І він"
+        },
+        {
+            "start": "00:01:19,494",
+            "end": "00:01:25,134",
+            "es": "compartió que si comes con tus manos desnudas,",
+            "fr": "a partagé que si tu manges avec tes mains nues,",
+            "uk": "поділився, що якщо їсти їжу голими руками,"
+        },
+        {
+            "start": "00:01:25,134",
+            "end": "00:01:30,954",
+            "es": "eso te ayudará a digerir,",
+            "fr": "cela t'aidera à digérer,",
+            "uk": "це допоможе тобі травити,"
+        },
+        {
+            "start": "00:01:30,954",
+            "end": "00:01:33,634",
+            "es": "no solo a digerir,",
+            "fr": "pas juste à digérer,",
+            "uk": "не просто допомагає травленню,"
+        },
+        {
+            "start": "00:01:33,634",
+            "end": "00:01:35,774",
+            "es": "sino a hacerte más feliz.",
+            "fr": "mais à te rendre plus heureux.",
+            "uk": "але робить тебе щасливішим."
+        },
+        {
+            "start": "00:01:35,774",
+            "end": "00:01:39,134",
+            "es": "Olvidé por qué.",
+            "fr": "J'ai oublié pourquoi.",
+            "uk": "Я забув чому."
+        },
+        {
+            "start": "00:01:39,134",
+            "end": "00:01:46,954",
+            "es": "No acepto esta teoría.",
+            "fr": "Je n'accepte pas cette théorie.",
+            "uk": "Я не приймаю цю теорію."
+        },
+        {
+            "start": "00:01:46,954",
+            "end": "00:01:47,334",
+            "es": "Yo",
+            "fr": "Je",
+            "uk": "Я"
+        },
+        {
+            "start": "00:01:47,334",
+            "end": "00:01:47,854",
+            "es": "la acepto.",
+            "fr": "l'accepte.",
+            "uk": "приймаю її."
+        },
+        {
+            "start": "00:01:47,854",
+            "end": "00:01:51,794",
+            "es": "No creo ni confío en ella,",
+            "fr": "Je ne crois ni ne fais confiance à cela,",
+            "uk": "Не вірю і не довіряю цьому,"
+        },
+        {
+            "start": "00:01:51,794",
+            "end": "00:01:53,234",
+            "es": "pero la acepto.",
+            "fr": "mais je l'accepte.",
+            "uk": "але приймаю це."
+        },
+        {
+            "start": "00:01:53,234",
+            "end": "00:01:56,334",
+            "es": "Simplemente lo tomo como algo dado.",
+            "fr": "Je le prends juste pour acquis.",
+            "uk": "Просто сприймаю це як даність."
+        },
+        {
+            "start": "00:01:56,334",
+            "end": "00:02:04,314",
+            "es": "Dejar",
+            "fr": "Permettre",
+            "uk": "Дозволяти"
+        },
+        {
+            "start": "00:02:05,114",
+            "end": "00:02:09,693",
+            "es": "que uses tus manos para disfrutar de tu comida es mucho mejor.",
+            "fr": "que tu utilises tes mains pour apprécier ta nourriture est bien meilleur.",
+            "uk": "користуватися своїми руками, щоб насолоджуватися їжею, набагато краще."
+        },
+        {
+            "start": "00:02:09,693",
+            "end": "00:02:11,394",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        }
+    ]
+}

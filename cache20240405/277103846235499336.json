@@ -1,0 +1,15 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,840\",\n    \"ja\": \"この<鳥>[]はちょうどこの<ニンジン>[]を<手>[]に<入>[]れた。\"\n  },\n  {\n    \"start\": \"00:00:04,760\",\n    \"end\": \"00:00:07,860\",\n    \"ja\": \"<彼女>[]は<黄色>[]い<目>[]をしていてとても<美>[]しい。\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,840",
+            "ja": "この<鳥>[とり]はちょうどこの<ニンジン>[にんじん]を<手>[て]に<入>[い]れた。"
+        },
+        {
+            "start": "00:00:04,760",
+            "end": "00:00:07,860",
+            "ja": "<彼女>[かのじょ]は<黄色>[きいろ]い<目>[め]をしていてとても<美>[うつく]しい。"
+        }
+    ]
+}

@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,520\",\n    \"lang\": \"en\",\n    \"text\": \"So let's play the little grass,\"\n  },\n  {\n    \"start\": \"00:00:02,520\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"en\",\n    \"text\": \"imperfect little grass.\"\n  },\n  {\n    \"start\": \"00:00:05,640\",\n    \"end\": \"00:00:07,100\",\n    \"lang\": \"en\",\n    \"text\": \"I believe I have some,\"\n  },\n  {\n    \"start\": \"00:00:07,100\",\n    \"end\": \"00:00:10,640\",\n    \"lang\": \"en\",\n    \"text\": \"I have some progress.\"\n  },\n  {\n    \"start\": \"00:00:11,700\",\n    \"end\": \"00:00:12,000\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:12,000\",\n    \"end\": \"00:00:15,320\",\n    \"lang\": \"en\",\n    \"text\": \"let's begin the guitar.\"\n  },\n  {\n    \"start\": \"00:00:37,080\",\n    \"end\": \"00:00:37,700\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:37,700\",\n    \"end\": \"00:00:40,080\",\n    \"lang\": \"en\",\n    \"text\": \"it's a mama bee,\"\n  },\n  {\n    \"start\": \"00:00:40,080\",\n    \"end\": \"00:00:41,060\",\n    \"lang\": \"en\",\n    \"text\": \"mama bee.\"\n  },\n  {\n    \"start\": \"00:00:43,100\",\n    \"end\": \"00:00:44,060\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:44,060\",\n    \"end\": \"00:00:48,380\",\n    \"lang\": \"en\",\n    \"text\": \"so let's play again.\"\n  },\n  {\n    \"start\": \"00:00:49,346\",\n    \"end\": \"00:00:51,686\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:52,226\",\n    \"end\": \"00:00:53,326\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树叶\"\n  },\n  {\n    \"start\": \"00:00:56,738\",\n    \"end\": \"00:01:00,978\",\n    \"lang\": \"zh\",\n    \"text\": \"我想没有输的\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,520",
+            "ja": "では、小さな草を演奏しましょう、"
+        },
+        {
+            "start": "00:00:02,520",
+            "end": "00:00:04,540",
+            "ja": "不完全な小さな草。"
+        },
+        {
+            "start": "00:00:05,640",
+            "end": "00:00:07,100",
+            "ja": "私は少し、"
+        },
+        {
+            "start": "00:00:07,100",
+            "end": "00:00:10,640",
+            "ja": "進歩があると思います。"
+        },
+        {
+            "start": "00:00:11,700",
+            "end": "00:00:12,000",
+            "ja": "オーケー、"
+        },
+        {
+            "start": "00:00:12,000",
+            "end": "00:00:15,320",
+            "ja": "それではギターを始めましょう。"
+        },
+        {
+            "start": "00:00:37,080",
+            "end": "00:00:37,700",
+            "ja": "オーケー、"
+        },
+        {
+            "start": "00:00:37,700",
+            "end": "00:00:40,080",
+            "ja": "それはママビー、"
+        },
+        {
+            "start": "00:00:40,080",
+            "end": "00:00:41,060",
+            "ja": "ママビー。"
+        },
+        {
+            "start": "00:00:43,100",
+            "end": "00:00:44,060",
+            "ja": "オーケー、"
+        },
+        {
+            "start": "00:00:44,060",
+            "end": "00:00:48,380",
+            "ja": "もう一度演奏しましょう。"
+        },
+        {
+            "start": "00:00:49,346",
+            "end": "00:00:51,686",
+            "ja": "花の香りはありません"
+        },
+        {
+            "start": "00:00:52,226",
+            "end": "00:00:53,326",
+            "ja": "木の葉はありません"
+        },
+        {
+            "start": "00:00:56,738",
+            "end": "00:01:00,978",
+            "ja": "私は負けがないと思います"
+        }
+    ]
+}

@@ -1,0 +1,69 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,880\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,074\",\n    \"end\": \"00:00:07,054\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our breakfast.\"\n  },\n  {\n    \"start\": \"00:00:08,294\",\n    \"end\": \"00:00:15,614\",\n    \"lang\": \"en\",\n    \"text\": \"And sorry for it's a little bit over abundant.\"\n  },\n  {\n    \"start\": \"00:00:19,474\",\n    \"end\": \"00:00:26,434\",\n    \"lang\": \"en\",\n    \"text\": \"And we have fried rice and baozi.\"\n  },\n  {\n    \"start\": \"00:00:27,454\",\n    \"end\": \"00:00:31,094\",\n    \"lang\": \"en\",\n    \"text\": \"Two baozi and blueberries,\"\n  },\n  {\n    \"start\": \"00:00:31,094\",\n    \"end\": \"00:00:32,094\",\n    \"lang\": \"en\",\n    \"text\": \"strawberries.\"\n  },\n  {\n    \"start\": \"00:00:32,094\",\n    \"end\": \"00:00:33,634\",\n    \"lang\": \"en\",\n    \"text\": \"This is delicious.\"\n  },\n  {\n    \"start\": \"00:00:36,754\",\n    \"end\": \"00:00:37,834\",\n    \"lang\": \"en\",\n    \"text\": \"Yummy,\"\n  },\n  {\n    \"start\": \"00:00:37,834\",\n    \"end\": \"00:00:38,774\",\n    \"lang\": \"en\",\n    \"text\": \"yummy.\"\n  },\n  {\n    \"start\": \"00:00:49,774\",\n    \"end\": \"00:00:50,854\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:50,854\",\n    \"end\": \"00:00:53,614\",\n    \"lang\": \"en\",\n    \"text\": \"this fried rice is gorgeous.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,880",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير",
+            "ja": "おはようございます"
+        },
+        {
+            "start": "00:00:03,074",
+            "end": "00:00:07,054",
+            "en": "So this is our breakfast.",
+            "zh": "所以这是我们的早餐。",
+            "ar": "إذاً هذا هو إفطارنا."
+        },
+        {
+            "start": "00:00:08,294",
+            "end": "00:00:15,614",
+            "en": "And sorry for it's a little bit over abundant.",
+            "zh": "抱歉，这看起来有点丰盛过头。",
+            "ar": "وآسف لأنه يبدو أكثر من اللازم قليلاً."
+        },
+        {
+            "start": "00:00:19,474",
+            "end": "00:00:26,434",
+            "en": "And we have fried rice and baozi.",
+            "zh": "我们有炒饭和包子。",
+            "ar": "ولدينا أرز مقلي وباوزي."
+        },
+        {
+            "start": "00:00:27,454",
+            "end": "00:00:31,094",
+            "en": "Two baozi and blueberries,",
+            "zh": "两个包子和蓝莓，",
+            "ar": "باوزي اثنين والعنب البري،"
+        },
+        {
+            "start": "00:00:31,094",
+            "end": "00:00:32,094",
+            "en": "strawberries.",
+            "zh": "草莓。",
+            "ar": "فراولة."
+        },
+        {
+            "start": "00:00:32,094",
+            "end": "00:00:33,634",
+            "en": "This is delicious.",
+            "zh": "这很美味。",
+            "ar": "هذا لذيذ."
+        },
+        {
+            "start": "00:00:36,754",
+            "end": "00:00:38,774",
+            "en": "Yummy, yummy.",
+            "zh": "好吃，好吃。",
+            "ar": "لذيذ، لذيذ."
+        },
+        {
+            "start": "00:00:49,774",
+            "end": "00:00:53,614",
+            "en": "Wow, this fried rice is gorgeous.",
+            "zh": "哇，这炒饭太美味了。",
+            "ar": "واو، هذا الأرز المقلي رائع."
+        }
+    ]
+}

@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,839\",\n    \"end\": \"00:00:03,460\",\n    \"lang\": \"en\",\n    \"text\": \"Our society has too many restrictions,\"\n  },\n  {\n    \"start\": \"00:00:03,460\",\n    \"end\": \"00:00:09,240\",\n    \"lang\": \"en\",\n    \"text\": \"so if you cannot really have some breakthrough creation,\"\n  },\n  {\n    \"start\": \"00:00:10,839\",\n    \"end\": \"00:00:15,060\",\n    \"lang\": \"en\",\n    \"text\": \"I suggest that just set some basic guidelines,\"\n  },\n  {\n    \"start\": \"00:00:15,060\",\n    \"end\": \"00:00:16,079\",\n    \"lang\": \"en\",\n    \"text\": \"basic principles,\"\n  },\n  {\n    \"start\": \"00:00:16,079\",\n    \"end\": \"00:00:19,280\",\n    \"lang\": \"en\",\n    \"text\": \"such as that you don't hurt other people,\"\n  },\n  {\n    \"start\": \"00:00:19,280\",\n    \"end\": \"00:00:20,800\",\n    \"lang\": \"en\",\n    \"text\": \"and then it's okay,\"\n  },\n  {\n    \"start\": \"00:00:20,800\",\n    \"end\": \"00:00:21,820\",\n    \"lang\": \"en\",\n    \"text\": \"do anything you want.\"\n  },\n  {\n    \"start\": \"00:00:21,820\",\n    \"end\": \"00:00:24,120\",\n    \"lang\": \"en\",\n    \"text\": \"Remove these taboos,\"\n  },\n  {\n    \"start\": \"00:00:24,120\",\n    \"end\": \"00:00:26,520\",\n    \"lang\": \"en\",\n    \"text\": \"remove these moral violence.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,839",
+            "end": "00:00:03,460",
+            "ja": "私たちの社会は制限が多すぎます、"
+        },
+        {
+            "start": "00:00:03,460",
+            "end": "00:00:09,240",
+            "ja": "ですから、本当に大きな創造をすることができなければ、"
+        },
+        {
+            "start": "00:00:10,839",
+            "end": "00:00:15,060",
+            "ja": "基本的なガイドラインを設定することを提案します、"
+        },
+        {
+            "start": "00:00:15,060",
+            "end": "00:00:16,079",
+            "ja": "基本原則として、"
+        },
+        {
+            "start": "00:00:16,079",
+            "end": "00:00:19,280",
+            "ja": "人を傷つけないこと、"
+        },
+        {
+            "start": "00:00:19,280",
+            "end": "00:00:20,800",
+            "ja": "それができれば大丈夫です、"
+        },
+        {
+            "start": "00:00:20,800",
+            "end": "00:00:21,820",
+            "ja": "何をしてもいいです。"
+        },
+        {
+            "start": "00:00:21,820",
+            "end": "00:00:24,120",
+            "ja": "これらのタブーを取り除く、"
+        },
+        {
+            "start": "00:00:24,120",
+            "end": "00:00:26,520",
+            "ja": "これらの道徳的な暴力を取り除く。"
+        }
+    ]
+}

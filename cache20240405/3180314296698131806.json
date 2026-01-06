@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:03,782\",\n    \"end\": \"00:02:04,642\",\n    \"lang\": \"en\",\n    \"text\": \"who you are,\"\n  },\n  {\n    \"start\": \"00:02:04,642\",\n    \"end\": \"00:02:05,882\",\n    \"lang\": \"en\",\n    \"text\": \"what's your achievement,\"\n  },\n  {\n    \"start\": \"00:02:05,882\",\n    \"end\": \"00:02:11,182\",\n    \"lang\": \"en\",\n    \"text\": \"at the end we will become dust.\"\n  },\n  {\n    \"start\": \"00:02:11,182\",\n    \"end\": \"00:02:16,922\",\n    \"lang\": \"en\",\n    \"text\": \"We will return everything\"\n  },\n  {\n    \"start\": \"00:02:16,922\",\n    \"end\": \"00:02:18,942\",\n    \"lang\": \"en\",\n    \"text\": \"that we have to the universe.\"\n  },\n  {\n    \"start\": \"00:02:18,942\",\n    \"end\": \"00:02:29,542\",\n    \"lang\": \"en\",\n    \"text\": \"So enjoy the experience in this journey and make it better.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:03,782",
+            "end": "00:02:04,642",
+            "ja": "あなたが誰であるか、"
+        },
+        {
+            "start": "00:02:04,642",
+            "end": "00:02:05,882",
+            "ja": "あなたの成就は何か、"
+        },
+        {
+            "start": "00:02:05,882",
+            "end": "00:02:11,182",
+            "ja": "最後には私たち全員が塵となる。"
+        },
+        {
+            "start": "00:02:11,182",
+            "end": "00:02:16,922",
+            "ja": "私たちは全てを返す"
+        },
+        {
+            "start": "00:02:16,922",
+            "end": "00:02:18,942",
+            "ja": "持っているものをすべて宇宙に。"
+        },
+        {
+            "start": "00:02:18,942",
+            "end": "00:02:29,542",
+            "ja": "だからこの旅の経験を楽しみ、それをより良いものにするんだ。"
+        }
+    ]
+}

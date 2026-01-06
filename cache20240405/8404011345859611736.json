@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,460\",\n    \"lang\": \"en\",\n    \"text\": \"interesting.\"\n  },\n  {\n    \"start\": \"00:00:00,460\",\n    \"end\": \"00:00:06,460\",\n    \"lang\": \"en\",\n    \"text\": \"This is a chicken with noodle and our first card pop up is chicken.\"\n  },\n  {\n    \"start\": \"00:00:06,460\",\n    \"end\": \"00:00:07,600\",\n    \"lang\": \"en\",\n    \"text\": \"It's\"\n  },\n  {\n    \"start\": \"00:00:07,600\",\n    \"end\": \"00:00:09,660\",\n    \"lang\": \"en\",\n    \"text\": \"a quite good coincidence.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,460",
+            "vi": "thú vị."
+        },
+        {
+            "start": "00:00:00,460",
+            "end": "00:00:06,460",
+            "vi": "Đây là một con gà với mì và lá bài đầu tiên xuất hiện là gà."
+        },
+        {
+            "start": "00:00:06,460",
+            "end": "00:00:07,600",
+            "vi": "Nó"
+        },
+        {
+            "start": "00:00:07,600",
+            "end": "00:00:09,660",
+            "vi": "là một sự trùng hợp khá hay."
+        }
+    ]
+}

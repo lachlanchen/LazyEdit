@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,160\",\n    \"lang\": \"ja\",\n    \"text\": \"明日かよ、\"\n  },\n  {\n    \"start\": \"00:00:01,160\",\n    \"end\": \"00:00:04,080\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあなたと共に高く飛びたい。\"\n  },\n  {\n    \"start\": \"00:00:04,700\",\n    \"end\": \"00:00:06,160\",\n    \"lang\": \"ja\",\n    \"text\": \"この青波の上で、\"\n  },\n  {\n    \"start\": \"00:00:06,160\",\n    \"end\": \"00:00:09,120\",\n    \"lang\": \"ja\",\n    \"text\": \"この青い空の下で。\"\n  },\n  {\n    \"start\": \"00:00:10,602\",\n    \"end\": \"00:00:11,722\",\n    \"lang\": \"en\",\n    \"text\": \"You are so beautiful.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,160",
+            "ja": "明日かよ、"
+        },
+        {
+            "start": "00:00:01,160",
+            "end": "00:00:04,080",
+            "ja": "私はあなたと共に高く飛びたい。"
+        },
+        {
+            "start": "00:00:04,700",
+            "end": "00:00:06,160",
+            "ja": "この青波の上で、"
+        },
+        {
+            "start": "00:00:06,160",
+            "end": "00:00:09,120",
+            "ja": "この青い空の下で。"
+        },
+        {
+            "start": "00:00:10,602",
+            "end": "00:00:11,722",
+            "ja": "あなたはとても美しいです。"
+        }
+    ]
+}

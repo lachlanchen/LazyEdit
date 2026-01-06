@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,040\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:02,040\",\n    \"end\": \"00:00:03,600\",\n    \"lang\": \"en\",\n    \"text\": \"Konnichiwa.\"\n  },\n  {\n    \"start\": \"00:00:03,600\",\n    \"end\": \"00:00:10,220\",\n    \"lang\": \"en\",\n    \"text\": \"It takes about one hour to cook these fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:11,670\",\n    \"end\": \"00:00:14,560\",\n    \"lang\": \"en\",\n    \"text\": \"This is snow fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:14,560\",\n    \"end\": \"00:00:17,340\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:00:18,670\",\n    \"end\": \"00:00:27,200\",\n    \"lang\": \"en\",\n    \"text\": \"Another thing that has this duality of slowness and fastness is my YouTube channel.\"\n  },\n  {\n    \"start\": \"00:00:27,200\",\n    \"end\": \"00:00:33,720\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks for the guy that now it surpassed 50.\"\n  },\n  {\n    \"start\": \"00:00:34,340\",\n    \"end\": \"00:00:36,180\",\n    \"lang\": \"en\",\n    \"text\": \"When I say 50,\"\n  },\n  {\n    \"start\": \"00:00:36,180\",\n    \"end\": \"00:00:37,720\",\n    \"lang\": \"en\",\n    \"text\": \"I don't mean it's half a million.\"\n  },\n  {\n    \"start\": \"00:00:37,720\",\n    \"end\": \"00:00:39,040\",\n    \"lang\": \"en\",\n    \"text\": \"It's really 50.\"\n  },\n  {\n    \"start\": \"00:00:39,040\",\n    \"end\": \"00:00:40,620\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks.\"\n  },\n  {\n    \"start\": \"00:00:42,080\",\n    \"end\": \"00:00:43,500\",\n    \"lang\": \"en\",\n    \"text\": \"I believe 50 is enough.\"\n  },\n  {\n    \"start\": \"00:00:43,500\",\n    \"end\": \"00:00:44,860\",\n    \"lang\": \"en\",\n    \"text\": \"If I serve this,\"\n  },\n  {\n    \"start\": \"00:00:44,860\",\n    \"end\": \"00:00:46,020\",\n    \"lang\": \"en\",\n    \"text\": \"50 people will.\"\n  },\n  {\n    \"start\": \"00:00:46,020\",\n    \"end\": \"00:00:47,520\",\n    \"lang\": \"en\",\n    \"text\": \"It's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:52,039\",\n    \"end\": \"00:00:56,800\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this guy,\"\n  },\n  {\n    \"start\": \"00:00:56,800\",\n    \"end\": \"00:00:59,280\",\n    \"lang\": \"en\",\n    \"text\": \"someone that followed me,\"\n  },\n  {\n    \"start\": \"00:00:59,280\",\n    \"end\": \"00:01:00,400\",\n    \"lang\": \"en\",\n    \"text\": \"subscribed my channel.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,040",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:02,040",
+            "end": "00:00:03,600",
+            "vi": "Xin chào."
+        },
+        {
+            "start": "00:00:03,600",
+            "end": "00:00:10,220",
+            "vi": "Mất khoảng một giờ để nấu những cái mì nhanh này."
+        },
+        {
+            "start": "00:00:11,670",
+            "end": "00:00:14,560",
+            "vi": "Đây là mì nhanh kiểu tuyết."
+        },
+        {
+            "start": "00:00:14,560",
+            "end": "00:00:17,340",
+            "vi": "Xin lỗi."
+        },
+        {
+            "start": "00:00:18,670",
+            "end": "00:00:27,200",
+            "vi": "Một điều khác có sự song hành của sự chậm và nhanh là kênh YouTube của tôi."
+        },
+        {
+            "start": "00:00:27,200",
+            "end": "00:00:33,720",
+            "vi": "Cảm ơn người đàn ông đã giúp nó vượt qua 50."
+        },
+        {
+            "start": "00:00:34,340",
+            "end": "00:00:36,180",
+            "vi": "Khi tôi nói 50,"
+        },
+        {
+            "start": "00:00:36,180",
+            "end": "00:00:37,720",
+            "vi": "Tôi không có ý là nửa triệu."
+        },
+        {
+            "start": "00:00:37,720",
+            "end": "00:00:39,040",
+            "vi": "Thật sự là 50."
+        },
+        {
+            "start": "00:00:39,040",
+            "end": "00:00:40,620",
+            "vi": "Cảm ơn."
+        },
+        {
+            "start": "00:00:42,080",
+            "end": "00:00:43,500",
+            "vi": "Tôi tin 50 là đủ."
+        },
+        {
+            "start": "00:00:43,500",
+            "end": "00:00:44,860",
+            "vi": "Nếu tôi phục vụ điều này,"
+        },
+        {
+            "start": "00:00:44,860",
+            "end": "00:00:46,020",
+            "vi": "50 người sẽ."
+        },
+        {
+            "start": "00:00:46,020",
+            "end": "00:00:47,520",
+            "vi": "Nó tuyệt vời."
+        },
+        {
+            "start": "00:00:52,039",
+            "end": "00:00:56,800",
+            "vi": "Tôi tin người này,"
+        },
+        {
+            "start": "00:00:56,800",
+            "end": "00:00:59,280",
+            "vi": "một người đã theo dõi tôi,"
+        },
+        {
+            "start": "00:00:59,280",
+            "end": "00:01:00,400",
+            "vi": "đã đăng ký kênh của tôi."
+        }
+    ]
+}

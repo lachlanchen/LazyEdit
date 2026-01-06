@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,100\",\n    \"lang\": \"en\",\n    \"text\": \"Hello,\"\n  },\n  {\n    \"start\": \"00:00:01,100\",\n    \"end\": \"00:00:04,380\",\n    \"lang\": \"en\",\n    \"text\": \"so this is our lunch.\"\n  },\n  {\n    \"start\": \"00:00:07,220\",\n    \"end\": \"00:00:09,360\",\n    \"lang\": \"en\",\n    \"text\": \"Just eat,\"\n  },\n  {\n    \"start\": \"00:00:09,360\",\n    \"end\": \"00:00:10,380\",\n    \"lang\": \"en\",\n    \"text\": \"sleep,\"\n  },\n  {\n    \"start\": \"00:00:10,380\",\n    \"end\": \"00:00:11,300\",\n    \"lang\": \"en\",\n    \"text\": \"eat.\"\n  },\n  {\n    \"start\": \"00:00:20,034\",\n    \"end\": \"00:00:20,894\",\n    \"lang\": \"zh\",\n    \"text\": \"这是牛肉面\"\n  },\n  {\n    \"start\": \"00:00:21,826\",\n    \"end\": \"00:00:23,646\",\n    \"lang\": \"en\",\n    \"text\": \"So this is beef noodles.\"\n  },\n  {\n    \"start\": \"00:00:25,166\",\n    \"end\": \"00:00:26,726\",\n    \"lang\": \"en\",\n    \"text\": \"This is a gorgeous beef.\"\n  },\n  {\n    \"start\": \"00:00:30,606\",\n    \"end\": \"00:00:30,926\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:00:30,926\",\n    \"end\": \"00:00:32,006\",\n    \"lang\": \"en\",\n    \"text\": \"it's over-salted.\"\n  },\n  {\n    \"start\": \"00:00:34,186\",\n    \"end\": \"00:00:35,626\",\n    \"lang\": \"en\",\n    \"text\": \"I put too much salt.\"\n  },\n  {\n    \"start\": \"00:00:43,266\",\n    \"end\": \"00:00:43,906\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:43,906\",\n    \"end\": \"00:00:44,366\",\n    \"lang\": \"en\",\n    \"text\": \"see you!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,100",
+            "ko": "안녕,"
+        },
+        {
+            "start": "00:00:01,100",
+            "end": "00:00:04,380",
+            "ko": "이게 우리 점심이야."
+        },
+        {
+            "start": "00:00:07,220",
+            "end": "00:00:09,360",
+            "ko": "그냥 먹어,"
+        },
+        {
+            "start": "00:00:09,360",
+            "end": "00:00:10,380",
+            "ko": "자고,"
+        },
+        {
+            "start": "00:00:10,380",
+            "end": "00:00:11,300",
+            "ko": "먹어."
+        },
+        {
+            "start": "00:00:20,034",
+            "end": "00:00:20,894",
+            "ko": "이건 소고기 면이에요"
+        },
+        {
+            "start": "00:00:21,826",
+            "end": "00:00:23,646",
+            "ko": "그래, 이게 소고기 면이야."
+        },
+        {
+            "start": "00:00:25,166",
+            "end": "00:00:26,726",
+            "ko": "이건 멋진 소고기야."
+        },
+        {
+            "start": "00:00:30,606",
+            "end": "00:00:30,926",
+            "ko": "미안,"
+        },
+        {
+            "start": "00:00:30,926",
+            "end": "00:00:32,006",
+            "ko": "짜게 됐어."
+        },
+        {
+            "start": "00:00:34,186",
+            "end": "00:00:35,626",
+            "ko": "소금을 너무 많이 넣었어."
+        },
+        {
+            "start": "00:00:43,266",
+            "end": "00:00:43,906",
+            "ko": "오케이,"
+        },
+        {
+            "start": "00:00:43,906",
+            "end": "00:00:44,366",
+            "ko": "잘 가!"
+        }
+    ]
+}

@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,960\",\n    \"lang\": \"en\",\n    \"text\": \"This is our beer friend.\"\n  },\n  {\n    \"start\": \"00:00:01,858\",\n    \"end\": \"00:00:02,598\",\n    \"lang\": \"zh\",\n    \"text\": \"我們的雄筏\"\n  },\n  {\n    \"start\": \"00:00:03,698\",\n    \"end\": \"00:00:04,338\",\n    \"lang\": \"zh\",\n    \"text\": \"第二條竿\"\n  },\n  {\n    \"start\": \"00:00:05,557\",\n    \"end\": \"00:00:06,518\",\n    \"lang\": \"zh\",\n    \"text\": \"好 漂亮\"\n  },\n  {\n    \"start\": \"00:00:09,026\",\n    \"end\": \"00:00:09,226\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks man.\"\n  },\n  {\n    \"start\": \"00:00:10,082\",\n    \"end\": \"00:00:11,882\",\n    \"lang\": \"zh\",\n    \"text\": \"看这些枯枯的地啊\"\n  },\n  {\n    \"start\": \"00:00:13,954\",\n    \"end\": \"00:00:14,134\",\n    \"lang\": \"en\",\n    \"text\": \"junk\"\n  },\n  {\n    \"start\": \"00:00:16,001\",\n    \"end\": \"00:00:16,762\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます。\"\n  },\n  {\n    \"start\": \"00:00:16,762\",\n    \"end\": \"00:00:18,002\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは。\"\n  },\n  {\n    \"start\": \"00:00:18,962\",\n    \"end\": \"00:00:19,242\",\n    \"lang\": \"ja\",\n    \"text\": \"ああ、\"\n  },\n  {\n    \"start\": \"00:00:19,242\",\n    \"end\": \"00:00:19,862\",\n    \"lang\": \"ja\",\n    \"text\": \"おやすみなさい。\"\n  },\n  {\n    \"start\": \"00:00:28,326\",\n    \"end\": \"00:00:29,346\",\n    \"lang\": \"en\",\n    \"text\": \"She's so happy\"\n  },\n  {\n    \"start\": \"00:00:30,850\",\n    \"end\": \"00:00:31,010\",\n    \"lang\": \"ja\",\n    \"text\": \"あれ\"\n  },\n  {\n    \"start\": \"00:00:32,706\",\n    \"end\": \"00:00:33,546\",\n    \"lang\": \"ja\",\n    \"text\": \"かわいいです\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,960",
+            "vi": "Đây là người bạn uống bia của chúng ta."
+        },
+        {
+            "start": "00:00:01,858",
+            "end": "00:00:02,598",
+            "vi": "Chúng ta có những bè lớn"
+        },
+        {
+            "start": "00:00:03,698",
+            "end": "00:00:04,338",
+            "vi": "Cần câu thứ hai"
+        },
+        {
+            "start": "00:00:05,557",
+            "end": "00:00:06,518",
+            "vi": "Đẹp quá"
+        },
+        {
+            "start": "00:00:09,026",
+            "end": "00:00:09,226",
+            "vi": "Cảm ơn bạn."
+        },
+        {
+            "start": "00:00:10,082",
+            "end": "00:00:11,882",
+            "vi": "Nhìn những vùng đất khô cằn này"
+        },
+        {
+            "start": "00:00:13,954",
+            "end": "00:00:14,134",
+            "vi": "rác"
+        },
+        {
+            "start": "00:00:16,001",
+            "end": "00:00:16,762",
+            "vi": "Chào buổi sáng."
+        },
+        {
+            "start": "00:00:16,762",
+            "end": "00:00:18,002",
+            "vi": "Chào buổi chiều."
+        },
+        {
+            "start": "00:00:18,962",
+            "end": "00:00:19,242",
+            "vi": "Ồ,"
+        },
+        {
+            "start": "00:00:19,242",
+            "end": "00:00:19,862",
+            "vi": "Chúc ngủ ngon."
+        },
+        {
+            "start": "00:00:28,326",
+            "end": "00:00:29,346",
+            "vi": "Cô ấy thật hạnh phúc"
+        },
+        {
+            "start": "00:00:30,850",
+            "end": "00:00:31,010",
+            "vi": "Kìa"
+        },
+        {
+            "start": "00:00:32,706",
+            "end": "00:00:33,546",
+            "vi": "Dễ thương quá"
+        }
+    ]
+}

@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,460\",\n    \"lang\": \"ja\",\n    \"text\": \"はい、\"\n  },\n  {\n    \"start\": \"00:00:00,460\",\n    \"end\": \"00:00:01,120\",\n    \"lang\": \"ja\",\n    \"text\": \"お願いします\"\n  },\n  {\n    \"start\": \"00:00:05,378\",\n    \"end\": \"00:00:05,678\",\n    \"lang\": \"en\",\n    \"text\": \"Ugh.\"\n  },\n  {\n    \"start\": \"00:00:06,658\",\n    \"end\": \"00:00:10,018\",\n    \"lang\": \"ja\",\n    \"text\": \"私の朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:10,018\",\n    \"end\": \"00:00:11,998\",\n    \"lang\": \"ja\",\n    \"text\": \"私はジンジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:00:19,053\",\n    \"end\": \"00:00:25,554\",\n    \"lang\": \"en\",\n    \"text\": \"It's working out is a gorgeous thing.\"\n  },\n  {\n    \"start\": \"00:00:25,554\",\n    \"end\": \"00:00:37,454\",\n    \"lang\": \"en\",\n    \"text\": \"The difficult part of the workout is just getting out from our house.\"\n  },\n  {\n    \"start\": \"00:00:52,574\",\n    \"end\": \"00:00:55,454\",\n    \"lang\": \"en\",\n    \"text\": \"Once you get it out of your bed,\"\n  },\n  {\n    \"start\": \"00:00:55,454\",\n    \"end\": \"00:00:57,214\",\n    \"lang\": \"en\",\n    \"text\": \"get it off the top of your home,\"\n  },\n  {\n    \"start\": \"00:00:57,214\",\n    \"end\": \"00:00:58,174\",\n    \"lang\": \"en\",\n    \"text\": \"you can do it.\"\n  },\n  {\n    \"start\": \"00:00:58,210\",\n    \"end\": \"00:00:59,250\",\n    \"lang\": \"ja\",\n    \"text\": \"エクストサイズにつながる\"\n  },\n  {\n    \"start\": \"00:00:59,290\",\n    \"end\": \"00:00:59,590\",\n    \"lang\": \"ja\",\n    \"text\": \"シンパシー\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,460",
+            "es": "Sí,",
+            "fr": "Oui,",
+            "uk": "Так,"
+        },
+        {
+            "start": "00:00:00,460",
+            "end": "00:00:01,120",
+            "es": "por favor",
+            "fr": "s'il vous plaît",
+            "uk": "будь ласка"
+        },
+        {
+            "start": "00:00:05,378",
+            "end": "00:00:05,678",
+            "es": "Uf.",
+            "fr": "Pouah.",
+            "uk": "Фу."
+        },
+        {
+            "start": "00:00:06,658",
+            "end": "00:00:10,018",
+            "es": "Estoy comiendo mi desayuno",
+            "fr": "Je prends mon petit déjeuner",
+            "uk": "Я їм свій сніданок"
+        },
+        {
+            "start": "00:00:10,018",
+            "end": "00:00:11,998",
+            "es": "Estoy bebiendo jugo de jengibre",
+            "fr": "Je bois du jus de gingembre",
+            "uk": "Я п'ю імбирний сік"
+        },
+        {
+            "start": "00:00:19,053",
+            "end": "00:00:25,554",
+            "es": "Hacer ejercicio es algo maravilloso.",
+            "fr": "Faire de l'exercice est une chose magnifique.",
+            "uk": "Займатися спортом - це чудово."
+        },
+        {
+            "start": "00:00:25,554",
+            "end": "00:00:37,454",
+            "es": "La parte difícil del ejercicio es simplemente salir de nuestra casa.",
+            "fr": "La partie difficile de l'entraînement est juste de sortir de chez nous.",
+            "uk": "Найважча частина тренування - просто вийти з нашого будинку."
+        },
+        {
+            "start": "00:00:52,574",
+            "end": "00:00:55,454",
+            "es": "Una vez que lo sacas de tu cama,",
+            "fr": "Une fois que tu es sorti de ton lit,",
+            "uk": "Як тільки ти встаєш з ліжка,"
+        },
+        {
+            "start": "00:00:55,454",
+            "end": "00:00:57,214",
+            "es": "lo sacas de la parte superior de tu casa,",
+            "fr": "tu l'emmènes hors du toit de ta maison,",
+            "uk": "ти забираєш його з верхівки свого дому,"
+        },
+        {
+            "start": "00:00:57,214",
+            "end": "00:00:58,174",
+            "es": "puedes hacerlo.",
+            "fr": "tu peux le faire.",
+            "uk": "ти можеш це зробити."
+        },
+        {
+            "start": "00:00:58,210",
+            "end": "00:00:59,250",
+            "es": "Conduce al ejercicio",
+            "fr": "Ça mène à l'exercice",
+            "uk": "Це призводить до вправ"
+        },
+        {
+            "start": "00:00:59,290",
+            "end": "00:00:59,590",
+            "es": "Simpatía",
+            "fr": "Sympathie",
+            "uk": "Симпатія"
+        }
+    ]
+}

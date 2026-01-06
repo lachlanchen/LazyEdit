@@ -1,0 +1,50 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,140\",\n    \"ja\": \"<彼>[]の<視線>[]を<持>[]つ。\"\n  },\n  {\n    \"start\": \"00:00:03,400\",\n    \"end\": \"00:00:03,620\",\n    \"ja\": \"こんにちは。\"\n  },\n  {\n    \"start\": \"00:00:04,680\",\n    \"end\": \"00:00:05,140\",\n    \"ja\": \"こんにちは。\"\n  },\n  {\n    \"start\": \"00:00:05,340\",\n    \"end\": \"00:00:06,020\",\n    \"ja\": \"これは...\"\n  },\n  {\n    \"start\": \"00:00:09,139\",\n    \"end\": \"00:00:11,340\",\n    \"ja\": \"これは<パンダ>[]<豚犬>[]です。\"\n  },\n  {\n    \"start\": \"00:00:13,640\",\n    \"end\": \"00:00:13,920\",\n    \"ja\": \"わあ。\"\n  },\n  {\n    \"start\": \"00:00:15,040\",\n    \"end\": \"00:00:15,380\",\n    \"ja\": \"<オーケー>[]。\"\n  },\n  {\n    \"start\": \"00:00:19,759\",\n    \"end\": \"00:00:20,840\",\n    \"ja\": \"これは<日>[]の<出>[]です。\"\n  },\n  {\n    \"start\": \"00:00:23,560\",\n    \"end\": \"00:00:26,400\",\n    \"ja\": \"これは<パンダ>[]<豚犬>[]です。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,140",
+            "ja": "<彼>[かれ]の<視線>[しせん]を<持>[も]つ。"
+        },
+        {
+            "start": "00:00:03,400",
+            "end": "00:00:03,620",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:04,680",
+            "end": "00:00:05,140",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:05,340",
+            "end": "00:00:06,020",
+            "ja": "これは..."
+        },
+        {
+            "start": "00:00:09,139",
+            "end": "00:00:11,340",
+            "ja": "これは<パンダ>[ぱんだ]<犬>[いぬ]です。"
+        },
+        {
+            "start": "00:00:13,640",
+            "end": "00:00:13,920",
+            "ja": "わあ。"
+        },
+        {
+            "start": "00:00:15,040",
+            "end": "00:00:15,380",
+            "ja": "<オーケー>[おーけー]。"
+        },
+        {
+            "start": "00:00:19,759",
+            "end": "00:00:20,840",
+            "ja": "これは<日>[ひ]の<出>[で]です。"
+        },
+        {
+            "start": "00:00:23,560",
+            "end": "00:00:26,400",
+            "ja": "これは<パンダ>[ぱんだ]<犬>[いぬ]です。"
+        }
+    ]
+}

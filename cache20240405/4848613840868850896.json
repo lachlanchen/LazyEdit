@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:13,478\",\n    \"end\": \"00:02:13,798\",\n    \"lang\": \"zh\",\n    \"text\": \"字幕by索兰娅^^\"\n  },\n  {\n    \"start\": \"00:02:15,362\",\n    \"end\": \"00:02:15,862\",\n    \"lang\": \"zh\",\n    \"text\": \"uè68 我是主角\"\n  },\n  {\n    \"start\": \"00:02:15,862\",\n    \"end\": \"00:02:16,602\",\n    \"lang\": \"en\",\n    \"text\": \"hiçcheering nice time\"\n  },\n  {\n    \"start\": \"00:02:19,101\",\n    \"end\": \"00:02:20,382\",\n    \"lang\": \"en\",\n    \"text\": \"Meillblowing\"\n  },\n  {\n    \"start\": \"00:02:21,422\",\n    \"end\": \"00:02:21,422\",\n    \"lang\": \"en\",\n    \"text\": \"味 masuk\"\n  },\n  {\n    \"start\": \"00:02:21,442\",\n    \"end\": \"00:02:23,382\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:24,002\",\n    \"end\": \"00:02:26,242\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:02:26,242\",\n    \"end\": \"00:02:28,742\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:29,302\",\n    \"end\": \"00:02:31,622\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:02:31,622\",\n    \"end\": \"00:02:34,742\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:35,522\",\n    \"end\": \"00:02:37,742\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:02:51,442\",\n    \"end\": \"00:02:53,042\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:53,682\",\n    \"end\": \"00:02:56,102\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:02:57,058\",\n    \"end\": \"00:02:57,298\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:57,298\",\n    \"end\": \"00:02:58,978\",\n    \"lang\": \"en\",\n    \"text\": \"this time is far much better.\"\n  },\n  {\n    \"start\": \"00:02:59,118\",\n    \"end\": \"00:02:59,218\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:59,218\",\n    \"end\": \"00:02:59,438\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:13,478",
+            "end": "00:02:13,798",
+            "vi": "Phụ đề bởi Sôlani^^"
+        },
+        {
+            "start": "00:02:15,362",
+            "end": "00:02:15,862",
+            "vi": "Tôi là nhân vật chính"
+        },
+        {
+            "start": "00:02:15,862",
+            "end": "00:02:16,602",
+            "vi": "cổ vũ vui vẻ"
+        },
+        {
+            "start": "00:02:19,101",
+            "end": "00:02:20,382",
+            "vi": "Tuyệt vời"
+        },
+        {
+            "start": "00:02:21,422",
+            "end": "00:02:21,422",
+            "vi": "bắt đầu"
+        },
+        {
+            "start": "00:02:21,442",
+            "end": "00:02:23,382",
+            "vi": "Không có hương hoa"
+        },
+        {
+            "start": "00:02:24,002",
+            "end": "00:02:26,242",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:02:26,242",
+            "end": "00:02:28,742",
+            "vi": "Không có hương hoa"
+        },
+        {
+            "start": "00:02:29,302",
+            "end": "00:02:31,622",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:02:31,622",
+            "end": "00:02:34,742",
+            "vi": "Không có hương hoa"
+        },
+        {
+            "start": "00:02:35,522",
+            "end": "00:02:37,742",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:02:51,442",
+            "end": "00:02:53,042",
+            "vi": "Không có hương hoa"
+        },
+        {
+            "start": "00:02:53,682",
+            "end": "00:02:56,102",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:02:57,058",
+            "end": "00:02:57,298",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:02:57,298",
+            "end": "00:02:58,978",
+            "vi": "lần này tốt hơn nhiều."
+        },
+        {
+            "start": "00:02:59,118",
+            "end": "00:02:59,218",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:02:59,218",
+            "end": "00:02:59,438",
+            "vi": "hẹn gặp lại."
+        }
+    ]
+}

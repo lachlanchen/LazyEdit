@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,420\",\n    \"lang\": \"ja\",\n    \"text\": \"私の妹がこのケーキを作りました。\"\n  },\n  {\n    \"start\": \"00:00:07,010\",\n    \"end\": \"00:00:09,190\",\n    \"lang\": \"en\",\n    \"text\": \"So this kick is awesome.\"\n  },\n  {\n    \"start\": \"00:00:10,274\",\n    \"end\": \"00:00:10,894\",\n    \"lang\": \"en\",\n    \"text\": \"It's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:11,634\",\n    \"end\": \"00:00:12,894\",\n    \"lang\": \"en\",\n    \"text\": \"And next is...\"\n  },\n  {\n    \"start\": \"00:00:13,858\",\n    \"end\": \"00:00:16,538\",\n    \"lang\": \"en\",\n    \"text\": \"It seems it's a white strawberry,\"\n  },\n  {\n    \"start\": \"00:00:16,538\",\n    \"end\": \"00:00:18,478\",\n    \"lang\": \"en\",\n    \"text\": \"but in my hometown,\"\n  },\n  {\n    \"start\": \"00:00:18,478\",\n    \"end\": \"00:00:23,178\",\n    \"lang\": \"en\",\n    \"text\": \"we have this local species.\"\n  },\n  {\n    \"start\": \"00:00:26,588\",\n    \"end\": \"00:00:29,178\",\n    \"lang\": \"en\",\n    \"text\": \"It is similar to strawberry,\"\n  },\n  {\n    \"start\": \"00:00:29,178\",\n    \"end\": \"00:00:30,438\",\n    \"lang\": \"en\",\n    \"text\": \"but it's not strawberry.\"\n  },\n  {\n    \"start\": \"00:00:30,718\",\n    \"end\": \"00:00:33,078\",\n    \"lang\": \"en\",\n    \"text\": \"And it also tastes gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:33,818\",\n    \"end\": \"00:00:36,838\",\n    \"lang\": \"en\",\n    \"text\": \"It's the best taste I've ever had.\"\n  },\n  {\n    \"start\": \"00:00:36,866\",\n    \"end\": \"00:00:38,546\",\n    \"lang\": \"zh\",\n    \"text\": \"我記憶中有\"\n  },\n  {\n    \"start\": \"00:00:41,314\",\n    \"end\": \"00:00:44,514\",\n    \"lang\": \"en\",\n    \"text\": \"This work is great.\"\n  },\n  {\n    \"start\": \"00:00:45,394\",\n    \"end\": \"00:00:48,234\",\n    \"lang\": \"en\",\n    \"text\": \"And I have another sister,\"\n  },\n  {\n    \"start\": \"00:00:48,234\",\n    \"end\": \"00:00:48,854\",\n    \"lang\": \"en\",\n    \"text\": \"little sister.\"\n  },\n  {\n    \"start\": \"00:00:50,193\",\n    \"end\": \"00:00:54,274\",\n    \"lang\": \"en\",\n    \"text\": \"She also can make this great handcraft.\"\n  },\n  {\n    \"start\": \"00:00:55,254\",\n    \"end\": \"00:01:00,054\",\n    \"lang\": \"en\",\n    \"text\": \"And I have the best little sister ever.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,420",
+            "en": "My sister made this cake.",
+            "zh": "我的妹妹做了这个蛋糕。",
+            "ar": "أختي صنعت هذه الكعكة."
+        },
+        {
+            "start": "00:00:07,010",
+            "end": "00:00:09,190",
+            "en": "So this cake is awesome.",
+            "zh": "所以这个蛋糕很棒。",
+            "ar": "إذاً هذه الكعكة رائعة."
+        },
+        {
+            "start": "00:00:10,274",
+            "end": "00:00:10,894",
+            "en": "It's gorgeous.",
+            "zh": "它非常漂亮。",
+            "ar": "إنها رائعة."
+        },
+        {
+            "start": "00:00:11,634",
+            "end": "00:00:12,894",
+            "en": "And next is...",
+            "zh": "下一个是...",
+            "ar": "والتالي هو..."
+        },
+        {
+            "start": "00:00:13,858",
+            "end": "00:00:16,538",
+            "en": "It seems it's a white strawberry,",
+            "zh": "看起来这是一个白草莓，",
+            "ar": "يبدو أنها فراولة بيضاء،"
+        },
+        {
+            "start": "00:00:16,538",
+            "end": "00:00:18,478",
+            "en": "but in my hometown,",
+            "zh": "但在我的家乡，",
+            "ar": "لكن في مسقط رأسي،"
+        },
+        {
+            "start": "00:00:18,478",
+            "end": "00:00:23,178",
+            "en": "we have this local species.",
+            "zh": "我们有这个本地品种。",
+            "ar": "لدينا هذا النوع المحلي."
+        },
+        {
+            "start": "00:00:26,588",
+            "end": "00:00:29,178",
+            "en": "It is similar to a strawberry,",
+            "zh": "它与草莓相似，",
+            "ar": "إنها مشابهة للفراولة،"
+        },
+        {
+            "start": "00:00:29,178",
+            "end": "00:00:30,438",
+            "en": "but it's not a strawberry.",
+            "zh": "但它不是草莓。",
+            "ar": "لكنها ليست فراولة."
+        },
+        {
+            "start": "00:00:30,718",
+            "end": "00:00:33,078",
+            "en": "And it also tastes gorgeous.",
+            "zh": "它的味道也很美。",
+            "ar": "وطعمها أيضاً رائع."
+        },
+        {
+            "start": "00:00:33,818",
+            "end": "00:00:36,838",
+            "en": "It's the best taste I've ever had.",
+            "zh": "这是我所品尝过的最好的味道。",
+            "ar": "إنها أفضل طعم جربته على الإطلاق."
+        },
+        {
+            "start": "00:00:36,866",
+            "end": "00:00:38,546",
+            "en": "I have memories of it.",
+            "zh": "我记忆中有这个。",
+            "ar": "لدي ذكريات عنه."
+        },
+        {
+            "start": "00:00:41,314",
+            "end": "00:00:44,514",
+            "en": "This work is great.",
+            "zh": "这项工作很棒。",
+            "ar": "هذا العمل رائع."
+        },
+        {
+            "start": "00:00:45,394",
+            "end": "00:00:48,234",
+            "en": "And I have another sister, little sister.",
+            "zh": "我还有另一个妹妹，小妹妹。",
+            "ar": "ولدي أخت أخرى، أخت صغيرة."
+        },
+        {
+            "start": "00:00:50,193",
+            "end": "00:00:54,274",
+            "en": "She also can make this great handcraft.",
+            "zh": "她也能制作这种精美的手工艺品。",
+            "ar": "يمكنها أيضًا صنع هذه الحرف اليدوية الرائعة."
+        },
+        {
+            "start": "00:00:55,254",
+            "end": "00:01:00,054",
+            "en": "And I have the best little sister ever.",
+            "zh": "我有最好的小妹妹。",
+            "ar": "وعندي أفضل أخت صغيرة على الإطلاق."
+        }
+    ]
+}

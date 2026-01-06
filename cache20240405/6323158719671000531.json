@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,880\",\n    \"lang\": \"en\",\n    \"text\": \"Everything,\"\n  },\n  {\n    \"start\": \"00:00:00,880\",\n    \"end\": \"00:00:02,920\",\n    \"lang\": \"en\",\n    \"text\": \"I have this little progress.\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"en\",\n    \"text\": \"Bye bye!\"\n  },\n  {\n    \"start\": \"00:00:06,146\",\n    \"end\": \"00:00:08,806\",\n    \"lang\": \"ar\",\n    \"text\": \"أنا أبني وعكا فنري هندريد\"\n  },\n  {\n    \"start\": \"00:00:26,786\",\n    \"end\": \"00:00:27,426\",\n    \"lang\": \"en\",\n    \"text\": \"This is cool.\"\n  },\n  {\n    \"start\": \"00:00:27,806\",\n    \"end\": \"00:00:28,106\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,880",
+            "ko": "모든 것,"
+        },
+        {
+            "start": "00:00:00,880",
+            "end": "00:00:02,920",
+            "ko": "조금씩 진전이 있어."
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:04,540",
+            "ko": "안녕!"
+        },
+        {
+            "start": "00:00:06,146",
+            "end": "00:00:08,806",
+            "ko": "أنا أبني وعكا فنري هندريد를 지어"
+        },
+        {
+            "start": "00:00:26,786",
+            "end": "00:00:27,426",
+            "ko": "이거 멋지다."
+        },
+        {
+            "start": "00:00:27,806",
+            "end": "00:00:28,106",
+            "ko": "오케이."
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,680\",\n    \"lang\": \"en\",\n    \"text\": \"There is no such thing as happiness after suffering.\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:04,520\",\n    \"lang\": \"en\",\n    \"text\": \"If you suffer,\"\n  },\n  {\n    \"start\": \"00:00:04,520\",\n    \"end\": \"00:00:05,060\",\n    \"lang\": \"en\",\n    \"text\": \"you suffer.\"\n  },\n  {\n    \"start\": \"00:00:07,460\",\n    \"end\": \"00:00:10,920\",\n    \"lang\": \"en\",\n    \"text\": \"If you can't enjoy your life now,\"\n  },\n  {\n    \"start\": \"00:00:10,920\",\n    \"end\": \"00:00:14,400\",\n    \"lang\": \"en\",\n    \"text\": \"then you will never enjoy it until you can enjoy it.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,680",
+            "vi": "Không có hạnh phúc sau khổ đau."
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:04,520",
+            "vi": "Nếu bạn đau khổ,"
+        },
+        {
+            "start": "00:00:04,520",
+            "end": "00:00:05,060",
+            "vi": "bạn sẽ đau khổ."
+        },
+        {
+            "start": "00:00:07,460",
+            "end": "00:00:10,920",
+            "vi": "Nếu bạn không thể tận hưởng cuộc sống bây giờ,"
+        },
+        {
+            "start": "00:00:10,920",
+            "end": "00:00:14,400",
+            "vi": "thì bạn sẽ không bao giờ tận hưởng được nó cho đến khi bạn có thể tận hưởng nó."
+        }
+    ]
+}

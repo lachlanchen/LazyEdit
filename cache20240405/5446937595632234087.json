@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:15,699\",\n    \"end\": \"00:01:17,100\",\n    \"lang\": \"en\",\n    \"text\": \"Oh\"\n  },\n  {\n    \"start\": \"00:01:17,100\",\n    \"end\": \"00:01:19,720\",\n    \"lang\": \"en\",\n    \"text\": \"ah\"\n  },\n  {\n    \"start\": \"00:01:37,660\",\n    \"end\": \"00:01:39,820\",\n    \"lang\": \"en\",\n    \"text\": \"This is gorgeous.\"\n  },\n  {\n    \"start\": \"00:01:45,700\",\n    \"end\": \"00:01:47,640\",\n    \"lang\": \"en\",\n    \"text\": \"How to use it?\"\n  },\n  {\n    \"start\": \"00:01:52,800\",\n    \"end\": \"00:01:54,200\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:54,200\",\n    \"end\": \"00:01:54,320\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:54,320\",\n    \"end\": \"00:01:54,400\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:02:11,899\",\n    \"end\": \"00:02:16,040\",\n    \"lang\": \"en\",\n    \"text\": \"I missed one...\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:15,699",
+            "end": "00:01:17,100",
+            "vi": "Ồ"
+        },
+        {
+            "start": "00:01:17,100",
+            "end": "00:01:19,720",
+            "vi": "á"
+        },
+        {
+            "start": "00:01:37,660",
+            "end": "00:01:39,820",
+            "vi": "Nó thật tuyệt vời."
+        },
+        {
+            "start": "00:01:45,700",
+            "end": "00:01:47,640",
+            "vi": "Làm thế nào để sử dụng nó?"
+        },
+        {
+            "start": "00:01:52,800",
+            "end": "00:01:54,200",
+            "vi": "Được."
+        },
+        {
+            "start": "00:01:54,200",
+            "end": "00:01:54,320",
+            "vi": "Được."
+        },
+        {
+            "start": "00:01:54,320",
+            "end": "00:01:54,400",
+            "vi": "Được."
+        },
+        {
+            "start": "00:02:11,899",
+            "end": "00:02:16,040",
+            "vi": "Tôi đã bỏ lỡ một cái..."
+        }
+    ]
+}

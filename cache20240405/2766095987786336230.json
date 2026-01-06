@@ -1,0 +1,20 @@
+{
+    "prompt": "For words that have etymological Hanja alternatives (due to their Sino-Korean origin), I want to find the corresponding Chinese character origin to replace the Hangul. However, it's crucial that the Hangul in parenthesis followed by these traditional Hanja are put in brackets to maintain clarity as in this format: (hangul)[hanja].\n\nKorean to be annotated: 그리고 영국 사람들은 미국식 발음을 이상하게 여길 수 있습니다.\n\nI don't need step by step explanation. PLEASE ONLY output the JSON:\n```json\n{\n  \"korean_with_annotation\": \"\",\n  \"korean_hanja_pairs\": [\n    {\n      \"korean_part\": \"\",\n      \"hanja\": \"\"\n    }\n  ]\n}\n```",
+    "response": {
+        "korean_with_annotation": "그리고 영국(英國) 사람들은 미국(美國)식 발음을 이상(異常)하게 여길 수 있습니다.",
+        "korean_hanja_pairs": [
+            {
+                "korean_part": "영국",
+                "hanja": "英國"
+            },
+            {
+                "korean_part": "미국",
+                "hanja": "美國"
+            },
+            {
+                "korean_part": "이상",
+                "hanja": "異常"
+            }
+        ]
+    }
+}

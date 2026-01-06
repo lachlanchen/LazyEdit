@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,820\",\n    \"lang\": \"ar\",\n    \"text\": \"هنا هنا هنا\"\n  },\n  {\n    \"start\": \"00:00:04,354\",\n    \"end\": \"00:00:04,594\",\n    \"lang\": \"en\",\n    \"text\": \"Hello?\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:07,794\",\n    \"lang\": \"ar\",\n    \"text\": \"هنا هنا هنا\"\n  },\n  {\n    \"start\": \"00:00:09,233\",\n    \"end\": \"00:00:09,934\",\n    \"lang\": \"ar\",\n    \"text\": \"هنا\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,820",
+            "vi": "Ở đây, ở đây, ở đây"
+        },
+        {
+            "start": "00:00:04,354",
+            "end": "00:00:04,594",
+            "vi": "A lô?"
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:07,794",
+            "vi": "Ở đây, ở đây, ở đây"
+        },
+        {
+            "start": "00:00:09,233",
+            "end": "00:00:09,934",
+            "vi": "Ở đây"
+        }
+    ]
+}

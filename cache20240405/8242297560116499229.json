@@ -1,0 +1,160 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"en\",\n    \"text\": \"This is really the best dip by me ever.\"\n  },\n  {\n    \"start\": \"00:00:04,560\",\n    \"end\": \"00:00:04,800\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:04,800\",\n    \"end\": \"00:00:05,380\",\n    \"lang\": \"en\",\n    \"text\": \"for them,\"\n  },\n  {\n    \"start\": \"00:00:05,380\",\n    \"end\": \"00:00:05,760\",\n    \"lang\": \"en\",\n    \"text\": \"I'm happy.\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:06,074\",\n    \"lang\": \"zh\",\n    \"text\": \"点赞\"\n  },\n  {\n    \"start\": \"00:00:06,154\",\n    \"end\": \"00:00:06,234\",\n    \"lang\": \"zh\",\n    \"text\": \"订阅\"\n  },\n  {\n    \"start\": \"00:00:06,594\",\n    \"end\": \"00:00:06,594\",\n    \"lang\": \"zh\",\n    \"text\": \"转发\"\n  },\n  {\n    \"start\": \"00:00:08,134\",\n    \"end\": \"00:00:08,674\",\n    \"lang\": \"zh\",\n    \"text\": \"打赏支持明镜与点点栏目\"\n  },\n  {\n    \"start\": \"00:00:08,706\",\n    \"end\": \"00:00:09,426\",\n    \"lang\": \"ja\",\n    \"text\": \"いざベスク\"\n  },\n  {\n    \"start\": \"00:00:10,914\",\n    \"end\": \"00:00:11,834\",\n    \"lang\": \"en\",\n    \"text\": \"PUN DIS\"\n  },\n  {\n    \"start\": \"00:00:12,914\",\n    \"end\": \"00:00:14,054\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:14,054\",\n    \"end\": \"00:00:14,194\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:16,473\",\n    \"end\": \"00:00:17,654\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:17,654\",\n    \"end\": \"00:00:20,094\",\n    \"lang\": \"en\",\n    \"text\": \"the bakery shop is called\"\n  },\n  {\n    \"start\": \"00:00:20,914\",\n    \"end\": \"00:00:21,854\",\n    \"lang\": \"en\",\n    \"text\": \"childhood\"\n  },\n  {\n    \"start\": \"00:00:22,914\",\n    \"end\": \"00:00:24,014\",\n    \"lang\": \"en\",\n    \"text\": \"bakery\"\n  },\n  {\n    \"start\": \"00:00:24,403\",\n    \"end\": \"00:00:27,014\",\n    \"lang\": \"en\",\n    \"text\": \"so it's help you remember\"\n  },\n  {\n    \"start\": \"00:00:27,014\",\n    \"end\": \"00:00:28,374\",\n    \"lang\": \"en\",\n    \"text\": \"your childhood\"\n  },\n  {\n    \"start\": \"00:00:30,904\",\n    \"end\": \"00:00:32,253\",\n    \"lang\": \"en\",\n    \"text\": \"tasty memory\"\n  },\n  {\n    \"start\": \"00:00:33,573\",\n    \"end\": \"00:00:34,754\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:34,754\",\n    \"end\": \"00:00:35,294\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:35,294\",\n    \"end\": \"00:00:35,954\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:35,954\",\n    \"end\": \"00:00:36,854\",\n    \"lang\": \"en\",\n    \"text\": \"really\"\n  },\n  {\n    \"start\": \"00:00:36,854\",\n    \"end\": \"00:00:38,414\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:45,474\",\n    \"end\": \"00:00:47,134\",\n    \"lang\": \"en\",\n    \"text\": \"it's really\"\n  },\n  {\n    \"start\": \"00:00:47,134\",\n    \"end\": \"00:00:48,834\",\n    \"lang\": \"en\",\n    \"text\": \"delicious\"\n  },\n  {\n    \"start\": \"00:00:48,834\",\n    \"end\": \"00:00:49,934\",\n    \"lang\": \"en\",\n    \"text\": \"it's the cheese\"\n  },\n  {\n    \"start\": \"00:00:49,934\",\n    \"end\": \"00:00:51,094\",\n    \"lang\": \"en\",\n    \"text\": \"years\"\n  },\n  {\n    \"start\": \"00:00:51,094\",\n    \"end\": \"00:00:53,874\",\n    \"lang\": \"en\",\n    \"text\": \"ago\"\n  },\n  {\n    \"start\": \"00:00:53,874\",\n    \"end\": \"00:00:56,734\",\n    \"lang\": \"en\",\n    \"text\": \"I learned from\"\n  },\n  {\n    \"start\": \"00:00:56,734\",\n    \"end\": \"00:00:57,314\",\n    \"lang\": \"en\",\n    \"text\": \"um\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,780",
+            "vi": "Đây thực sự là món chấm tốt nhất mà tôi từng làm."
+        },
+        {
+            "start": "00:00:04,560",
+            "end": "00:00:04,800",
+            "vi": "Vậy nên,"
+        },
+        {
+            "start": "00:00:04,800",
+            "end": "00:00:05,380",
+            "vi": "với họ,"
+        },
+        {
+            "start": "00:00:05,380",
+            "end": "00:00:05,760",
+            "vi": "tôi rất vui."
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:06,074",
+            "vi": "like"
+        },
+        {
+            "start": "00:00:06,154",
+            "end": "00:00:06,234",
+            "vi": "đăng ký"
+        },
+        {
+            "start": "00:00:06,594",
+            "end": "00:00:06,594",
+            "vi": "chia sẻ"
+        },
+        {
+            "start": "00:00:08,134",
+            "end": "00:00:08,674",
+            "vi": "ủng hộ Mingjing và các chương trình khác"
+        },
+        {
+            "start": "00:00:08,706",
+            "end": "00:00:09,426",
+            "vi": "hãy đến với Besk"
+        },
+        {
+            "start": "00:00:10,914",
+            "end": "00:00:11,834",
+            "vi": "pun này"
+        },
+        {
+            "start": "00:00:12,914",
+            "end": "00:00:14,054",
+            "vi": "lol"
+        },
+        {
+            "start": "00:00:14,054",
+            "end": "00:00:14,194",
+            "vi": "lol"
+        },
+        {
+            "start": "00:00:16,473",
+            "end": "00:00:17,654",
+            "vi": "vậy nên"
+        },
+        {
+            "start": "00:00:17,654",
+            "end": "00:00:20,094",
+            "vi": "cửa hàng bánh được gọi là"
+        },
+        {
+            "start": "00:00:20,914",
+            "end": "00:00:21,854",
+            "vi": "tuổi thơ"
+        },
+        {
+            "start": "00:00:22,914",
+            "end": "00:00:24,014",
+            "vi": "bánh"
+        },
+        {
+            "start": "00:00:24,403",
+            "end": "00:00:27,014",
+            "vi": "vậy nó giúp bạn nhớ về"
+        },
+        {
+            "start": "00:00:27,014",
+            "end": "00:00:28,374",
+            "vi": "tuổi thơ của bạn"
+        },
+        {
+            "start": "00:00:30,904",
+            "end": "00:00:32,253",
+            "vi": "ký ức ngon"
+        },
+        {
+            "start": "00:00:33,573",
+            "end": "00:00:34,754",
+            "vi": "lol"
+        },
+        {
+            "start": "00:00:34,754",
+            "end": "00:00:35,294",
+            "vi": "lol"
+        },
+        {
+            "start": "00:00:35,294",
+            "end": "00:00:35,954",
+            "vi": "lol"
+        },
+        {
+            "start": "00:00:35,954",
+            "end": "00:00:36,854",
+            "vi": "thật đấy"
+        },
+        {
+            "start": "00:00:36,854",
+            "end": "00:00:38,414",
+            "vi": "vậy nên"
+        },
+        {
+            "start": "00:00:45,474",
+            "end": "00:00:47,134",
+            "vi": "thực sự"
+        },
+        {
+            "start": "00:00:47,134",
+            "end": "00:00:48,834",
+            "vi": "ngon lành"
+        },
+        {
+            "start": "00:00:48,834",
+            "end": "00:00:49,934",
+            "vi": "đó là phô mai"
+        },
+        {
+            "start": "00:00:49,934",
+            "end": "00:00:51,094",
+            "vi": "năm"
+        },
+        {
+            "start": "00:00:51,094",
+            "end": "00:00:53,874",
+            "vi": "trước"
+        },
+        {
+            "start": "00:00:53,874",
+            "end": "00:00:56,734",
+            "vi": "tôi đã học từ"
+        },
+        {
+            "start": "00:00:56,734",
+            "end": "00:00:57,314",
+            "vi": "ừm"
+        }
+    ]
+}

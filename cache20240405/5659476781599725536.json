@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,500\",\n    \"lang\": \"zh\",\n    \"text\": \"全是老板的机器\"\n  },\n  {\n    \"start\": \"00:00:02,160\",\n    \"end\": \"00:00:03,680\",\n    \"lang\": \"zh\",\n    \"text\": \"老板说把我当嫁衣人\"\n  },\n  {\n    \"start\": \"00:00:03,680\",\n    \"end\": \"00:00:04,520\",\n    \"lang\": \"zh\",\n    \"text\": \"就是实话\"\n  },\n  {\n    \"start\": \"00:00:04,520\",\n    \"end\": \"00:00:05,780\",\n    \"lang\": \"zh\",\n    \"text\": \"你们其他人不用当\"\n  },\n  {\n    \"start\": \"00:00:05,780\",\n    \"end\": \"00:00:06,440\",\n    \"lang\": \"zh\",\n    \"text\": \"就是\"\n  },\n  {\n    \"start\": \"00:00:08,119\",\n    \"end\": \"00:00:09,840\",\n    \"lang\": \"zh\",\n    \"text\": \"他们还嫌另间区麻烦\"\n  },\n  {\n    \"start\": \"00:00:09,840\",\n    \"end\": \"00:00:11,320\",\n    \"lang\": \"zh\",\n    \"text\": \"直接把我搭到了他们的家庭\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,500",
+            "ja": "それは全部社長の機械です"
+        },
+        {
+            "start": "00:00:02,160",
+            "end": "00:00:03,680",
+            "ja": "社長は私を花嫁修業みたいに扱うと言った"
+        },
+        {
+            "start": "00:00:03,680",
+            "end": "00:00:04,520",
+            "ja": "それは本当のことです"
+        },
+        {
+            "start": "00:00:04,520",
+            "end": "00:00:05,780",
+            "ja": "他の人はそうする必要はない"
+        },
+        {
+            "start": "00:00:05,780",
+            "end": "00:00:06,440",
+            "ja": "つまり"
+        },
+        {
+            "start": "00:00:08,119",
+            "end": "00:00:09,840",
+            "ja": "彼らは他の場所が面倒だと思っている"
+        },
+        {
+            "start": "00:00:09,840",
+            "end": "00:00:11,320",
+            "ja": "だから彼らは私を直接自分たちの家に連れて行った"
+        }
+    ]
+}

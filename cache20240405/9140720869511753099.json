@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,960\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます。\"\n  },\n  {\n    \"start\": \"00:00:02,210\",\n    \"end\": \"00:00:02,710\",\n    \"lang\": \"zh\",\n    \"text\": \"我拿วยinge\"\n  },\n  {\n    \"start\": \"00:00:03,650\",\n    \"end\": \"00:00:05,370\",\n    \"lang\": \"ja\",\n    \"text\": \"私の名前は泣きねる\"\n  },\n  {\n    \"start\": \"00:00:05,890\",\n    \"end\": \"00:00:17,170\",\n    \"lang\": \"en\",\n    \"text\": \"changes so again nothing new to share today but I upgraded the subtitles and I introduced\"\n  },\n  {\n    \"start\": \"00:00:17,170\",\n    \"end\": \"00:00:26,270\",\n    \"lang\": \"en\",\n    \"text\": \"them modified Korean subtitle and also the Vietnamese,\"\n  },\n  {\n    \"start\": \"00:00:26,270\",\n    \"end\": \"00:00:29,630\",\n    \"lang\": \"en\",\n    \"text\": \"French and Spanish and then I\"\n  },\n  {\n    \"start\": \"00:00:29,630\",\n    \"end\": \"00:00:32,350\",\n    \"lang\": \"en\",\n    \"text\": \"think the subtitle might be a little bit too much\"\n  },\n  {\n    \"start\": \"00:00:35,682\",\n    \"end\": \"00:00:36,102\",\n    \"lang\": \"ja\",\n    \"text\": \"おやすみなさい\"\n  },\n  {\n    \"start\": \"00:00:37,314\",\n    \"end\": \"00:00:39,874\",\n    \"lang\": \"en\",\n    \"text\": \"because the space on the screen is too tight,\"\n  },\n  {\n    \"start\": \"00:00:39,874\",\n    \"end\": \"00:00:40,814\",\n    \"lang\": \"en\",\n    \"text\": \"too compact,\"\n  },\n  {\n    \"start\": \"00:00:40,814\",\n    \"end\": \"00:00:43,174\",\n    \"lang\": \"en\",\n    \"text\": \"too dense.\"\n  },\n  {\n    \"start\": \"00:00:44,294\",\n    \"end\": \"00:00:44,554\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:44,554\",\n    \"end\": \"00:00:50,334\",\n    \"lang\": \"en\",\n    \"text\": \"also I want to slightly change the Vietnamese subtitle.\"\n  },\n  {\n    \"start\": \"00:00:50,854\",\n    \"end\": \"00:00:52,394\",\n    \"lang\": \"en\",\n    \"text\": \"And also like the Korean,\"\n  },\n  {\n    \"start\": \"00:00:52,394\",\n    \"end\": \"00:00:54,614\",\n    \"lang\": \"en\",\n    \"text\": \"I want to introduce the Chinese character\"\n  },\n  {\n    \"start\": \"00:00:54,983\",\n    \"end\": \"00:00:59,534\",\n    \"lang\": \"en\",\n    \"text\": \"to replace some Vietnamese that have a Chinese origin.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,960",
+            "ko": "감사합니다."
+        },
+        {
+            "start": "00:00:02,210",
+            "end": "00:00:02,710",
+            "ko": "내 것을 가져요"
+        },
+        {
+            "start": "00:00:03,650",
+            "end": "00:00:05,370",
+            "ko": "내 이름은 우는 사람입니다"
+        },
+        {
+            "start": "00:00:05,890",
+            "end": "00:00:17,170",
+            "ko": "변경 사항은 없으나 오늘은 새로운 것을 공유할 것이 없지만, 자막을 업그레이드하고 소개했습니다"
+        },
+        {
+            "start": "00:00:17,170",
+            "end": "00:00:26,270",
+            "ko": "수정된 한국어 자막과 베트남어,"
+        },
+        {
+            "start": "00:00:26,270",
+            "end": "00:00:29,630",
+            "ko": "프랑스어 및 스페인어와 함께"
+        },
+        {
+            "start": "00:00:29,630",
+            "end": "00:00:32,350",
+            "ko": "자막이 조금 과한 것 같습니다"
+        },
+        {
+            "start": "00:00:35,682",
+            "end": "00:00:36,102",
+            "ko": "안녕히 주무세요"
+        },
+        {
+            "start": "00:00:37,314",
+            "end": "00:00:39,874",
+            "ko": "화면의 공간이 너무 협소하기 때문에,"
+        },
+        {
+            "start": "00:00:39,874",
+            "end": "00:00:40,814",
+            "ko": "너무 조밀하게,"
+        },
+        {
+            "start": "00:00:40,814",
+            "end": "00:00:43,174",
+            "ko": "너무 밀집되게."
+        },
+        {
+            "start": "00:00:44,294",
+            "end": "00:00:44,554",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:00:44,554",
+            "end": "00:00:50,334",
+            "ko": "베트남어 자막을 약간 바꾸고 싶습니다."
+        },
+        {
+            "start": "00:00:50,854",
+            "end": "00:00:52,394",
+            "ko": "그리고 한국어처럼,"
+        },
+        {
+            "start": "00:00:52,394",
+            "end": "00:00:54,614",
+            "ko": "한자를 도입하고자 합니다"
+        },
+        {
+            "start": "00:00:54,983",
+            "end": "00:00:59,534",
+            "ko": "중국 기원의 일부 베트남어 대신 한자를 사용하려고 합니다."
+        }
+    ]
+}

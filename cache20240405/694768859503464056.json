@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,282\",\n    \"end\": \"00:01:03,282\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:04,361\",\n    \"end\": \"00:01:07,162\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:01:27,473\",\n    \"end\": \"00:01:28,374\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's right here.\"\n  },\n  {\n    \"start\": \"00:01:30,978\",\n    \"end\": \"00:01:35,618\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香 沒有樹高\"\n  },\n  {\n    \"start\": \"00:01:36,618\",\n    \"end\": \"00:01:39,158\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香\"\n  },\n  {\n    \"start\": \"00:01:39,718\",\n    \"end\": \"00:01:42,398\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有樹高\"\n  },\n  {\n    \"start\": \"00:01:42,398\",\n    \"end\": \"00:01:45,038\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香\"\n  },\n  {\n    \"start\": \"00:01:45,858\",\n    \"end\": \"00:01:48,138\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有樹高\"\n  },\n  {\n    \"start\": \"00:01:49,778\",\n    \"end\": \"00:01:55,338\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香 沒有樹高\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,282",
+            "end": "00:01:03,282",
+            "es": "No hay aroma de flores",
+            "fr": "Il n'y a pas d'odeur de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:01:04,361",
+            "end": "00:01:07,162",
+            "es": "No hay árboles altos",
+            "fr": "Il n'y a pas d'arbres hauts",
+            "uk": "Немає високих дерев"
+        },
+        {
+            "start": "00:01:27,473",
+            "end": "00:01:28,374",
+            "es": "No sé si es correcto aquí.",
+            "fr": "Je ne sais pas si c'est juste ici.",
+            "uk": "Я не знаю, чи це правильно тут."
+        },
+        {
+            "start": "00:01:30,978",
+            "end": "00:01:35,618",
+            "es": "No hay aroma de flores, no hay árboles altos",
+            "fr": "Il n'y a pas d'odeur de fleurs, pas d'arbres hauts",
+            "uk": "Немає запаху квітів, немає високих дерев"
+        },
+        {
+            "start": "00:01:36,618",
+            "end": "00:01:39,158",
+            "es": "No hay aroma de flores",
+            "fr": "Il n'y a pas d'odeur de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:01:39,718",
+            "end": "00:01:42,398",
+            "es": "No hay árboles altos",
+            "fr": "Il n'y a pas d'arbres hauts",
+            "uk": "Немає високих дерев"
+        },
+        {
+            "start": "00:01:42,398",
+            "end": "00:01:45,038",
+            "es": "No hay aroma de flores",
+            "fr": "Il n'y a pas d'odeur de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:01:45,858",
+            "end": "00:01:48,138",
+            "es": "No hay árboles altos",
+            "fr": "Il n'y a pas d'arbres hauts",
+            "uk": "Немає високих дерев"
+        },
+        {
+            "start": "00:01:49,778",
+            "end": "00:01:55,338",
+            "es": "No hay aroma de flores, no hay árboles altos",
+            "fr": "Il n'y a pas d'odeur de fleurs, pas d'arbres hauts",
+            "uk": "Немає запаху квітів, немає високих дерев"
+        }
+    ]
+}

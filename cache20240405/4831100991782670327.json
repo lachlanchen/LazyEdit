@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,340\",\n    \"lang\": \"en\",\n    \"text\": \"on our way of recovery from this Covid.\"\n  },\n  {\n    \"start\": \"00:00:10,146\",\n    \"end\": \"00:00:13,106\",\n    \"lang\": \"ja\",\n    \"text\": \"ただいまはコースに歩いています\"\n  },\n  {\n    \"start\": \"00:00:13,106\",\n    \"end\": \"00:00:15,706\",\n    \"lang\": \"ja\",\n    \"text\": \"私は大観戦を剥いています\"\n  },\n  {\n    \"start\": \"00:00:23,362\",\n    \"end\": \"00:00:26,342\",\n    \"lang\": \"en\",\n    \"text\": \"practice exercising and working out\"\n  },\n  {\n    \"start\": \"00:00:27,081\",\n    \"end\": \"00:00:29,402\",\n    \"lang\": \"en\",\n    \"text\": \"because the feeling is great\"\n  },\n  {\n    \"start\": \"00:00:46,001\",\n    \"end\": \"00:00:46,422\",\n    \"lang\": \"en\",\n    \"text\": \"ok,\"\n  },\n  {\n    \"start\": \"00:00:46,422\",\n    \"end\": \"00:00:47,402\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,340",
+            "vi": "trên con đường phục hồi từ Covid này."
+        },
+        {
+            "start": "00:00:10,146",
+            "end": "00:00:13,106",
+            "vi": "hiện tại chúng tôi đang đi trên sân golf"
+        },
+        {
+            "start": "00:00:13,106",
+            "end": "00:00:15,706",
+            "vi": "tôi đang rất hào hứng được tham gia"
+        },
+        {
+            "start": "00:00:23,362",
+            "end": "00:00:26,342",
+            "vi": "tập thể dục và luyện tập"
+        },
+        {
+            "start": "00:00:27,081",
+            "end": "00:00:29,402",
+            "vi": "vì cảm giác tuyệt vời"
+        },
+        {
+            "start": "00:00:46,001",
+            "end": "00:00:46,422",
+            "vi": "ok,"
+        },
+        {
+            "start": "00:00:46,422",
+            "end": "00:00:47,402",
+            "vi": "hẹn gặp lại"
+        }
+    ]
+}

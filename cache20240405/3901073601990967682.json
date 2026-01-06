@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,620\",\n    \"lang\": \"en\",\n    \"text\": \"I said a wrong word in the previous video.\"\n  },\n  {\n    \"start\": \"00:00:04,940\",\n    \"end\": \"00:00:05,480\",\n    \"lang\": \"en\",\n    \"text\": \"It's vulgar.\"\n  },\n  {\n    \"start\": \"00:00:06,120\",\n    \"end\": \"00:00:07,040\",\n    \"lang\": \"en\",\n    \"text\": \"But in Western culture,\"\n  },\n  {\n    \"start\": \"00:00:07,040\",\n    \"end\": \"00:00:10,960\",\n    \"lang\": \"en\",\n    \"text\": \"vulgar means another vessel.\"\n  },\n  {\n    \"start\": \"00:00:11,640\",\n    \"end\": \"00:00:17,300\",\n    \"lang\": \"en\",\n    \"text\": \"And vulgar means something is not elegant.\"\n  },\n  {\n    \"start\": \"00:00:22,040\",\n    \"end\": \"00:00:28,120\",\n    \"lang\": \"en\",\n    \"text\": \"The French think English is vulgar.\"\n  },\n  {\n    \"start\": \"00:00:28,120\",\n    \"end\": \"00:00:31,520\",\n    \"lang\": \"en\",\n    \"text\": \"And the Britons think the American accent is vulgar.\"\n  },\n  {\n    \"start\": \"00:00:32,439\",\n    \"end\": \"00:00:34,880\",\n    \"lang\": \"en\",\n    \"text\": \"As I watched the video,\"\n  },\n  {\n    \"start\": \"00:00:34,880\",\n    \"end\": \"00:00:45,440\",\n    \"lang\": \"en\",\n    \"text\": \"the Britons use sidewalks instead of pavements.\"\n  },\n  {\n    \"start\": \"00:00:45,700\",\n    \"end\": \"00:00:51,100\",\n    \"lang\": \"en\",\n    \"text\": \"And use paper baskets to represent the bin.\"\n  },\n  {\n    \"start\": \"00:00:51,629\",\n    \"end\": \"00:00:55,160\",\n    \"lang\": \"en\",\n    \"text\": \"And also horseback riding.\"\n  },\n  {\n    \"start\": \"00:00:56,800\",\n    \"end\": \"00:01:02,160\",\n    \"lang\": \"en\",\n    \"text\": \"They change horseback riding from British English to horseback riding.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,620",
+            "ja": "前の動画で間違った言葉を使ってしまいました。"
+        },
+        {
+            "start": "00:00:04,940",
+            "end": "00:00:05,480",
+            "ja": "それは下品です。"
+        },
+        {
+            "start": "00:00:06,120",
+            "end": "00:00:07,040",
+            "ja": "しかし西洋文化では、"
+        },
+        {
+            "start": "00:00:07,040",
+            "end": "00:00:10,960",
+            "ja": "下品は別の意味を持ちます。"
+        },
+        {
+            "start": "00:00:11,640",
+            "end": "00:00:17,300",
+            "ja": "下品は何かがエレガントではないという意味です。"
+        },
+        {
+            "start": "00:00:22,040",
+            "end": "00:00:28,120",
+            "ja": "フランス人は英語を下品だと考えます。"
+        },
+        {
+            "start": "00:00:28,120",
+            "end": "00:00:31,520",
+            "ja": "そして、イギリス人はアメリカ英語のアクセントを下品だと思います。"
+        },
+        {
+            "start": "00:00:32,439",
+            "end": "00:00:34,880",
+            "ja": "ビデオを見ていると、"
+        },
+        {
+            "start": "00:00:34,880",
+            "end": "00:00:45,440",
+            "ja": "イギリス人は歩道を「sidewalks(アメリカ英語)」ではなく「pavements(イギリス英語)」と呼びます。"
+        },
+        {
+            "start": "00:00:45,700",
+            "end": "00:00:51,100",
+            "ja": "そしてゴミ箱を「paper baskets」ではなく「bin」と表現します。"
+        },
+        {
+            "start": "00:00:51,629",
+            "end": "00:00:55,160",
+            "ja": "そして乗馬も含まれます。"
+        },
+        {
+            "start": "00:00:56,800",
+            "end": "00:01:02,160",
+            "ja": "彼らは乗馬をアメリカ英語の「horseback riding」からイギリス英語の「horse riding」に変更します。"
+        }
+    ]
+}

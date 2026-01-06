@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,900\",\n    \"lang\": \"en\",\n    \"text\": \"come back to our Dugnap.\"\n  },\n  {\n    \"start\": \"00:00:02,690\",\n    \"end\": \"00:00:05,510\",\n    \"lang\": \"zh\",\n    \"text\": \"那边是贵宾圈\"\n  },\n  {\n    \"start\": \"00:00:05,510\",\n    \"end\": \"00:00:06,910\",\n    \"lang\": \"zh\",\n    \"text\": \"贵是高贵的贵\"\n  },\n  {\n    \"start\": \"00:00:07,130\",\n    \"end\": \"00:00:08,170\",\n    \"lang\": \"zh\",\n    \"text\": \"宾是宾客的宾\"\n  },\n  {\n    \"start\": \"00:00:09,058\",\n    \"end\": \"00:00:12,218\",\n    \"lang\": \"en\",\n    \"text\": \"So I'll call it a noble guest dog.\"\n  },\n  {\n    \"start\": \"00:00:13,238\",\n    \"end\": \"00:00:13,638\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:00:14,738\",\n    \"end\": \"00:00:14,998\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:14,998\",\n    \"end\": \"00:00:15,918\",\n    \"lang\": \"en\",\n    \"text\": \"so many dogs.\"\n  },\n  {\n    \"start\": \"00:00:16,198\",\n    \"end\": \"00:00:16,978\",\n    \"lang\": \"en\",\n    \"text\": \"Not that so many.\"\n  },\n  {\n    \"start\": \"00:00:17,558\",\n    \"end\": \"00:00:19,718\",\n    \"lang\": \"en\",\n    \"text\": \"It's not as many as usual.\"\n  },\n  {\n    \"start\": \"00:00:20,798\",\n    \"end\": \"00:00:21,958\",\n    \"lang\": \"en\",\n    \"text\": \"But still many dogs.\"\n  },\n  {\n    \"start\": \"00:00:24,258\",\n    \"end\": \"00:00:25,638\",\n    \"lang\": \"en\",\n    \"text\": \"There is a dog fight.\"\n  },\n  {\n    \"start\": \"00:00:26,358\",\n    \"end\": \"00:00:29,218\",\n    \"lang\": \"en\",\n    \"text\": \"And this dog just get frightened.\"\n  },\n  {\n    \"start\": \"00:00:29,538\",\n    \"end\": \"00:00:31,978\",\n    \"lang\": \"en\",\n    \"text\": \"And we have this eye contact.\"\n  },\n  {\n    \"start\": \"00:00:34,118\",\n    \"end\": \"00:00:34,998\",\n    \"lang\": \"en\",\n    \"text\": \"This dog.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,900",
+            "ko": "우리 Dugnap으로 돌아오세요."
+        },
+        {
+            "start": "00:00:02,690",
+            "end": "00:00:05,510",
+            "ko": "저기가 귀빈석이에요"
+        },
+        {
+            "start": "00:00:05,510",
+            "end": "00:00:06,910",
+            "ko": "귀는 고귀한 귀"
+        },
+        {
+            "start": "00:00:07,130",
+            "end": "00:00:08,170",
+            "ko": "빈은 손님의 빈"
+        },
+        {
+            "start": "00:00:09,058",
+            "end": "00:00:12,218",
+            "ko": "그러니까 고귀한 손님의 강아지라고 부르죠."
+        },
+        {
+            "start": "00:00:13,238",
+            "end": "00:00:13,638",
+            "ko": "맞죠?"
+        },
+        {
+            "start": "00:00:14,738",
+            "end": "00:00:14,998",
+            "ko": "우와,"
+        },
+        {
+            "start": "00:00:14,998",
+            "end": "00:00:15,918",
+            "ko": "강아지가 정말 많네요."
+        },
+        {
+            "start": "00:00:16,198",
+            "end": "00:00:16,978",
+            "ko": "그렇게 많지는 않아요."
+        },
+        {
+            "start": "00:00:17,558",
+            "end": "00:00:19,718",
+            "ko": "평소보다 많지 않아요."
+        },
+        {
+            "start": "00:00:20,798",
+            "end": "00:00:21,958",
+            "ko": "하지만 여전히 많은 강아지들이에요."
+        },
+        {
+            "start": "00:00:24,258",
+            "end": "00:00:25,638",
+            "ko": "강아지 싸움이 있어요."
+        },
+        {
+            "start": "00:00:26,358",
+            "end": "00:00:29,218",
+            "ko": "그리고 이 강아지가 겁을 먹었어요."
+        },
+        {
+            "start": "00:00:29,538",
+            "end": "00:00:31,978",
+            "ko": "그리고 우리 눈이 마주쳤어요."
+        },
+        {
+            "start": "00:00:34,118",
+            "end": "00:00:34,998",
+            "ko": "이 강아지."
+        }
+    ]
+}

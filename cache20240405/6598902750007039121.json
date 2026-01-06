@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:04,230\",\n    \"end\": \"00:02:10,250\",\n    \"lang\": \"en\",\n    \"text\": \"but to stop discrimination in the infrastructure,\"\n  },\n  {\n    \"start\": \"00:02:10,250\",\n    \"end\": \"00:02:12,730\",\n    \"lang\": \"en\",\n    \"text\": \"in the institution.\"\n  },\n  {\n    \"start\": \"00:02:14,310\",\n    \"end\": \"00:02:16,070\",\n    \"lang\": \"en\",\n    \"text\": \"From the institution perspective,\"\n  },\n  {\n    \"start\": \"00:02:16,070\",\n    \"end\": \"00:02:22,930\",\n    \"lang\": \"en\",\n    \"text\": \"to stop the discrimination rather than from the moral perspective.\"\n  },\n  {\n    \"start\": \"00:02:23,930\",\n    \"end\": \"00:02:25,030\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:25,030\",\n    \"end\": \"00:02:29,310\",\n    \"lang\": \"en\",\n    \"text\": \"the little thing don't really matter.\"\n  },\n  {\n    \"start\": \"00:02:30,270\",\n    \"end\": \"00:02:31,990\",\n    \"lang\": \"en\",\n    \"text\": \"So it's great.\"\n  },\n  {\n    \"start\": \"00:02:31,990\",\n    \"end\": \"00:02:35,490\",\n    \"lang\": \"en\",\n    \"text\": \"It's practical.\"\n  },\n  {\n    \"start\": \"00:02:35,490\",\n    \"end\": \"00:02:42,950\",\n    \"lang\": \"en\",\n    \"text\": \"It's not something that is too aggressive or restrictive.\"\n  },\n  {\n    \"start\": \"00:02:42,950\",\n    \"end\": \"00:02:43,130\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you.\"\n  },\n  {\n    \"start\": \"00:02:51,890\",\n    \"end\": \"00:02:55,450\",\n    \"lang\": \"zh\",\n    \"text\": \"那个 那是柴犬\"\n  },\n  {\n    \"start\": \"00:02:55,450\",\n    \"end\": \"00:02:56,850\",\n    \"lang\": \"zh\",\n    \"text\": \"柴犬的英语怎么说\"\n  },\n  {\n    \"start\": \"00:02:57,450\",\n    \"end\": \"00:02:57,950\",\n    \"lang\": \"zh\",\n    \"text\": \"柴犬\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:04,230",
+            "end": "00:02:10,250",
+            "es": "pero para detener la discriminación en la infraestructura,",
+            "fr": "mais pour arrêter la discrimination dans l'infrastructure,",
+            "uk": "але щоб зупинити дискримінацію в інфраструктурі,"
+        },
+        {
+            "start": "00:02:10,250",
+            "end": "00:02:12,730",
+            "es": "en la institución.",
+            "fr": "dans l'institution.",
+            "uk": "в установі."
+        },
+        {
+            "start": "00:02:14,310",
+            "end": "00:02:16,070",
+            "es": "Desde la perspectiva de la institución,",
+            "fr": "Du point de vue de l'institution,",
+            "uk": "З точки зору установи,"
+        },
+        {
+            "start": "00:02:16,070",
+            "end": "00:02:22,930",
+            "es": "detener la discriminación en lugar de desde la perspectiva moral.",
+            "fr": "arrêter la discrimination plutôt que du point de vue moral.",
+            "uk": "зупинити дискримінацію замість того, щоб з моральної точки зору."
+        },
+        {
+            "start": "00:02:23,930",
+            "end": "00:02:25,030",
+            "es": "Así que,",
+            "fr": "Donc,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:02:25,030",
+            "end": "00:02:29,310",
+            "es": "las pequeñas cosas realmente no importan mucho.",
+            "fr": "les petites choses n'ont vraiment pas d'importance.",
+            "uk": "дрібниці насправді не мають великого значення."
+        },
+        {
+            "start": "00:02:30,270",
+            "end": "00:02:31,990",
+            "es": "Así que es genial.",
+            "fr": "Alors c'est génial.",
+            "uk": "Отже, це чудово."
+        },
+        {
+            "start": "00:02:31,990",
+            "end": "00:02:35,490",
+            "es": "Es práctico.",
+            "fr": "C'est pratique.",
+            "uk": "Це практично."
+        },
+        {
+            "start": "00:02:35,490",
+            "end": "00:02:42,950",
+            "es": "No es algo que sea demasiado agresivo o restrictivo.",
+            "fr": "Ce n'est pas quelque chose de trop agressif ou restrictif.",
+            "uk": "Це не щось надто агресивне або обмежувальне."
+        },
+        {
+            "start": "00:02:42,950",
+            "end": "00:02:43,130",
+            "es": "Gracias.",
+            "fr": "Merci.",
+            "uk": "Дякую."
+        },
+        {
+            "start": "00:02:51,890",
+            "end": "00:02:55,450",
+            "es": "Ese es un Shiba Inu",
+            "fr": "C'est un Shiba Inu",
+            "uk": "Це Шиба-іну"
+        },
+        {
+            "start": "00:02:55,450",
+            "end": "00:02:56,850",
+            "es": "¿Cómo se dice Shiba Inu en inglés?",
+            "fr": "Comment dit-on Shiba Inu en anglais ?",
+            "uk": "Як сказати Шиба-іну англійською?"
+        },
+        {
+            "start": "00:02:57,450",
+            "end": "00:02:57,950",
+            "es": "Shiba Inu",
+            "fr": "Shiba Inu",
+            "uk": "Шиба-іну"
+        }
+    ]
+}

@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:14,174\",\n    \"end\": \"00:03:15,314\",\n    \"lang\": \"en\",\n    \"text\": \"If I have a chance,\"\n  },\n  {\n    \"start\": \"00:03:15,314\",\n    \"end\": \"00:03:18,274\",\n    \"lang\": \"en\",\n    \"text\": \"I would like to serve you guys one of these noodles.\"\n  },\n  {\n    \"start\": \"00:03:21,693\",\n    \"end\": \"00:03:23,714\",\n    \"lang\": \"en\",\n    \"text\": \"If I don't have any...\"\n  },\n  {\n    \"start\": \"00:03:28,794\",\n    \"end\": \"00:03:30,314\",\n    \"lang\": \"en\",\n    \"text\": \"Daily life?\"\n  },\n  {\n    \"start\": \"00:03:31,314\",\n    \"end\": \"00:03:34,894\",\n    \"lang\": \"en\",\n    \"text\": \"It's not to do science,\"\n  },\n  {\n    \"start\": \"00:03:34,894\",\n    \"end\": \"00:03:38,214\",\n    \"lang\": \"en\",\n    \"text\": \"not to care about your living.\"\n  },\n  {\n    \"start\": \"00:03:42,274\",\n    \"end\": \"00:03:42,814\",\n    \"lang\": \"zh\",\n    \"text\": \"我加個視頻\"\n  },\n  {\n    \"start\": \"00:03:46,914\",\n    \"end\": \"00:03:50,734\",\n    \"lang\": \"en\",\n    \"text\": \"I just made this cooker,\"\n  },\n  {\n    \"start\": \"00:03:50,734\",\n    \"end\": \"00:03:52,714\",\n    \"lang\": \"en\",\n    \"text\": \"prepared this cooker,\"\n  },\n  {\n    \"start\": \"00:03:52,714\",\n    \"end\": \"00:03:54,014\",\n    \"lang\": \"en\",\n    \"text\": \"this oven,\"\n  },\n  {\n    \"start\": \"00:03:54,014\",\n    \"end\": \"00:03:59,274\",\n    \"lang\": \"en\",\n    \"text\": \"this inducer.\"\n  },\n  {\n    \"start\": \"00:04:00,162\",\n    \"end\": \"00:04:00,982\",\n    \"lang\": \"zh\",\n    \"text\": \"謝謝大家\"\n  },\n  {\n    \"start\": \"00:04:02,050\",\n    \"end\": \"00:04:04,690\",\n    \"lang\": \"en\",\n    \"text\": \"I just prepared induction cooker and the cooker for you guys\"\n  },\n  {\n    \"start\": \"00:04:07,410\",\n    \"end\": \"00:04:07,770\",\n    \"lang\": \"en\",\n    \"text\": \"Free\"\n  },\n  {\n    \"start\": \"00:04:08,190\",\n    \"end\": \"00:04:09,090\",\n    \"lang\": \"en\",\n    \"text\": \"You free\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:14,174",
+            "end": "00:03:15,314",
+            "ko": "기회가 있다면,"
+        },
+        {
+            "start": "00:03:15,314",
+            "end": "00:03:18,274",
+            "ko": "이 면 요리를 여러분께 대접하고 싶어요."
+        },
+        {
+            "start": "00:03:21,693",
+            "end": "00:03:23,714",
+            "ko": "만약 제게 아무것도 없다면..."
+        },
+        {
+            "start": "00:03:28,794",
+            "end": "00:03:30,314",
+            "ko": "일상생활?"
+        },
+        {
+            "start": "00:03:31,314",
+            "end": "00:03:34,894",
+            "ko": "과학을 하는 것도 아니고,"
+        },
+        {
+            "start": "00:03:34,894",
+            "end": "00:03:38,214",
+            "ko": "삶을 돌보는 것도 아닙니다."
+        },
+        {
+            "start": "00:03:42,274",
+            "end": "00:03:42,814",
+            "ko": "비디오를 추가하겠습니다"
+        },
+        {
+            "start": "00:03:46,914",
+            "end": "00:03:50,734",
+            "ko": "방금 이 조리기를 만들었어요,"
+        },
+        {
+            "start": "00:03:50,734",
+            "end": "00:03:52,714",
+            "ko": "이 조리기를 준비했어요,"
+        },
+        {
+            "start": "00:03:52,714",
+            "end": "00:03:54,014",
+            "ko": "이 오븐,"
+        },
+        {
+            "start": "00:03:54,014",
+            "end": "00:03:59,274",
+            "ko": "이 인듀서를."
+        },
+        {
+            "start": "00:04:00,162",
+            "end": "00:04:00,982",
+            "ko": "여러분 감사합니다"
+        },
+        {
+            "start": "00:04:02,050",
+            "end": "00:04:04,690",
+            "ko": "방금 여러분을 위해 인덕션 조리기와 조리기를 준비했어요"
+        },
+        {
+            "start": "00:04:07,410",
+            "end": "00:04:07,770",
+            "ko": "무료"
+        },
+        {
+            "start": "00:04:08,190",
+            "end": "00:04:09,090",
+            "ko": "당신은 자유입니다"
+        }
+    ]
+}

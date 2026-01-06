@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:03,380\",\n    \"end\": \"00:00:06,480\",\n    \"lang\": \"en\",\n    \"text\": \"I like this rainbow,\"\n  },\n  {\n    \"start\": \"00:00:06,480\",\n    \"end\": \"00:00:08,160\",\n    \"lang\": \"en\",\n    \"text\": \"it's so beautiful.\"\n  },\n  {\n    \"start\": \"00:00:10,720\",\n    \"end\": \"00:00:11,500\",\n    \"lang\": \"en\",\n    \"text\": \"Yesterday,\"\n  },\n  {\n    \"start\": \"00:00:11,500\",\n    \"end\": \"00:00:16,940\",\n    \"lang\": \"en\",\n    \"text\": \"I watched a talk show of Trevor Noah,\"\n  },\n  {\n    \"start\": \"00:00:16,940\",\n    \"end\": \"00:00:23,420\",\n    \"lang\": \"en\",\n    \"text\": \"and I have some thoughts about that.\"\n  },\n  {\n    \"start\": \"00:00:24,600\",\n    \"end\": \"00:00:29,580\",\n    \"lang\": \"en\",\n    \"text\": \"I found that these people,\"\n  },\n  {\n    \"start\": \"00:00:29,580\",\n    \"end\": \"00:00:31,780\",\n    \"lang\": \"en\",\n    \"text\": \"like Trevor Noah,\"\n  },\n  {\n    \"start\": \"00:00:31,780\",\n    \"end\": \"00:00:35,580\",\n    \"lang\": \"en\",\n    \"text\": \"they have a talent in language,\"\n  },\n  {\n    \"start\": \"00:00:35,580\",\n    \"end\": \"00:00:37,800\",\n    \"lang\": \"en\",\n    \"text\": \"and they can never surpass.\"\n  },\n  {\n    \"start\": \"00:00:38,480\",\n    \"end\": \"00:00:40,640\",\n    \"lang\": \"en\",\n    \"text\": \"It seems that every night,\"\n  },\n  {\n    \"start\": \"00:00:40,640\",\n    \"end\": \"00:00:43,140\",\n    \"lang\": \"en\",\n    \"text\": \"every word they say is funny,\"\n  },\n  {\n    \"start\": \"00:00:43,140\",\n    \"end\": \"00:00:43,960\",\n    \"lang\": \"en\",\n    \"text\": \"it's interesting.\"\n  },\n  {\n    \"start\": \"00:00:45,560\",\n    \"end\": \"00:00:46,920\",\n    \"lang\": \"en\",\n    \"text\": \"They make puns every time,\"\n  },\n  {\n    \"start\": \"00:00:46,920\",\n    \"end\": \"00:00:47,500\",\n    \"lang\": \"en\",\n    \"text\": \"everywhere,\"\n  },\n  {\n    \"start\": \"00:00:47,500\",\n    \"end\": \"00:00:49,700\",\n    \"lang\": \"en\",\n    \"text\": \"every occasion.\"\n  },\n  {\n    \"start\": \"00:00:53,599\",\n    \"end\": \"00:00:58,700\",\n    \"lang\": \"en\",\n    \"text\": \"I was on a journey on a peanut street,\"\n  },\n  {\n    \"start\": \"00:00:58,700\",\n    \"end\": \"00:01:06,040\",\n    \"lang\": \"en\",\n    \"text\": \"because every inch of a hurt skin is made of diamond.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:03,380",
+            "end": "00:00:06,480",
+            "ja": "この虹が好きだな、"
+        },
+        {
+            "start": "00:00:06,480",
+            "end": "00:00:08,160",
+            "ja": "とても美しい。"
+        },
+        {
+            "start": "00:00:10,720",
+            "end": "00:00:11,500",
+            "ja": "昨日、"
+        },
+        {
+            "start": "00:00:11,500",
+            "end": "00:00:16,940",
+            "ja": "トレバー・ノアのトークショーを見たんだ、"
+        },
+        {
+            "start": "00:00:16,940",
+            "end": "00:00:23,420",
+            "ja": "それについていくつかの考えがある。"
+        },
+        {
+            "start": "00:00:24,600",
+            "end": "00:00:29,580",
+            "ja": "これらの人たちは、"
+        },
+        {
+            "start": "00:00:29,580",
+            "end": "00:00:31,780",
+            "ja": "トレバー・ノアのような、"
+        },
+        {
+            "start": "00:00:31,780",
+            "end": "00:00:35,580",
+            "ja": "言語の才能があって、"
+        },
+        {
+            "start": "00:00:35,580",
+            "end": "00:00:37,800",
+            "ja": "それを超えることは決してできない。"
+        },
+        {
+            "start": "00:00:38,480",
+            "end": "00:00:40,640",
+            "ja": "毎晩のように、"
+        },
+        {
+            "start": "00:00:40,640",
+            "end": "00:00:43,140",
+            "ja": "彼らが言う一言一言が面白くて、"
+        },
+        {
+            "start": "00:00:43,140",
+            "end": "00:00:43,960",
+            "ja": "興味深いんだ。"
+        },
+        {
+            "start": "00:00:45,560",
+            "end": "00:00:46,920",
+            "ja": "彼らはいつも、"
+        },
+        {
+            "start": "00:00:46,920",
+            "end": "00:00:47,500",
+            "ja": "どこでも、"
+        },
+        {
+            "start": "00:00:47,500",
+            "end": "00:00:49,700",
+            "ja": "どんな時も言葉遊びをするんだ。"
+        },
+        {
+            "start": "00:00:53,599",
+            "end": "00:00:58,700",
+            "ja": "ピーナッツの通りを旅していたんだ、"
+        },
+        {
+            "start": "00:00:58,700",
+            "end": "00:01:06,040",
+            "ja": "なぜなら、傷ついた肌の各インチがダイアモンドでできているから。"
+        }
+    ]
+}

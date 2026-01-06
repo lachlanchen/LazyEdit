@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,180\",\n    \"lang\": \"ja\",\n    \"text\": \"これは手羽先と\"\n  },\n  {\n    \"start\": \"00:00:03,202\",\n    \"end\": \"00:00:05,002\",\n    \"lang\": \"en\",\n    \"text\": \"papyrus and carrot.\"\n  },\n  {\n    \"start\": \"00:00:05,902\",\n    \"end\": \"00:00:06,862\",\n    \"lang\": \"en\",\n    \"text\": \"This.\"\n  },\n  {\n    \"start\": \"00:00:08,738\",\n    \"end\": \"00:00:09,458\",\n    \"lang\": \"en\",\n    \"text\": \"Inaudible\"\n  },\n  {\n    \"start\": \"00:00:11,970\",\n    \"end\": \"00:00:13,330\",\n    \"lang\": \"ja\",\n    \"text\": \"次のステージは、\"\n  },\n  {\n    \"start\": \"00:00:13,330\",\n    \"end\": \"00:00:15,110\",\n    \"lang\": \"ja\",\n    \"text\": \"福建武道館です。\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,180",
+            "es": "Esto es ala de pollo y",
+            "fr": "Ceci est une aile de poulet et",
+            "uk": "Це крило курки і"
+        },
+        {
+            "start": "00:00:03,202",
+            "end": "00:00:05,002",
+            "es": "papiro y zanahoria.",
+            "fr": "papyrus et carotte.",
+            "uk": "папірус і морква."
+        },
+        {
+            "start": "00:00:05,902",
+            "end": "00:00:06,862",
+            "es": "Esto.",
+            "fr": "Ceci.",
+            "uk": "Це."
+        },
+        {
+            "start": "00:00:08,738",
+            "end": "00:00:09,458",
+            "es": "Inaudible",
+            "fr": "Inaudible",
+            "uk": "Нечітко"
+        },
+        {
+            "start": "00:00:11,970",
+            "end": "00:00:13,330",
+            "es": "La próxima etapa es,",
+            "fr": "La prochaine étape est,",
+            "uk": "Наступний етап це,"
+        },
+        {
+            "start": "00:00:13,330",
+            "end": "00:00:15,110",
+            "es": "el gimnasio de artes marciales de Fujian.",
+            "fr": "le gymnase d'arts martiaux de Fujian.",
+            "uk": "спортзал бойових мистецтв Фуцзянь."
+        }
+    ]
+}

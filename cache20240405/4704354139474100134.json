@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:07,540\",\n    \"lang\": \"en\",\n    \"text\": \"so it has been a long time that I didn't use this code test\"\n  },\n  {\n    \"start\": \"00:00:08,320\",\n    \"end\": \"00:00:14,080\",\n    \"lang\": \"en\",\n    \"text\": \"it seems that they add flu A,\"\n  },\n  {\n    \"start\": \"00:00:14,080\",\n    \"end\": \"00:00:14,640\",\n    \"lang\": \"en\",\n    \"text\": \"flu B,\"\n  },\n  {\n    \"start\": \"00:00:14,640\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"RSA,\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:15,700\",\n    \"lang\": \"en\",\n    \"text\": \"ADA,\"\n  },\n  {\n    \"start\": \"00:00:15,700\",\n    \"end\": \"00:00:16,379\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know\"\n  },\n  {\n    \"start\": \"00:00:16,379\",\n    \"end\": \"00:00:19,460\",\n    \"lang\": \"en\",\n    \"text\": \"it's a mini oh my goodness\"\n  },\n  {\n    \"start\": \"00:00:22,620\",\n    \"end\": \"00:00:24,400\",\n    \"lang\": \"en\",\n    \"text\": \"this almost kills me\"\n  },\n  {\n    \"start\": \"00:00:31,800\",\n    \"end\": \"00:00:41,240\",\n    \"lang\": \"en\",\n    \"text\": \"I thought my immune system is strong because I work out every day and take a\"\n  },\n  {\n    \"start\": \"00:00:41,240\",\n    \"end\": \"00:00:43,960\",\n    \"lang\": \"en\",\n    \"text\": \"cold bath but I don't know\"\n  },\n  {\n    \"start\": \"00:00:46,880\",\n    \"end\": \"00:00:48,500\",\n    \"lang\": \"en\",\n    \"text\": \"I'm still vulnerable.\"\n  },\n  {\n    \"start\": \"00:00:48,500\",\n    \"end\": \"00:00:51,800\",\n    \"lang\": \"en\",\n    \"text\": \"This might be normal\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:07,540",
+            "es": "ha pasado mucho tiempo que no usaba esta prueba de código",
+            "fr": "cela fait longtemps que je n'ai pas utilisé ce test de code",
+            "uk": "минуло багато часу з того як я не користувався цим кодом тесту"
+        },
+        {
+            "start": "00:00:08,320",
+            "end": "00:00:14,080",
+            "es": "parece que añadieron gripe A,",
+            "fr": "il semble qu'ils ont ajouté la grippe A,",
+            "uk": "здається, вони додали грип A,"
+        },
+        {
+            "start": "00:00:14,080",
+            "end": "00:00:14,640",
+            "es": "gripe B,",
+            "fr": "grippe B,",
+            "uk": "грип B,"
+        },
+        {
+            "start": "00:00:14,640",
+            "end": "00:00:15,380",
+            "es": "RSA,",
+            "fr": "RSA,",
+            "uk": "RSA,"
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:15,700",
+            "es": "ADA,",
+            "fr": "ADA,",
+            "uk": "ADA,"
+        },
+        {
+            "start": "00:00:15,700",
+            "end": "00:00:16,379",
+            "es": "no lo sé",
+            "fr": "je ne sais pas",
+            "uk": "не знаю"
+        },
+        {
+            "start": "00:00:16,379",
+            "end": "00:00:19,460",
+            "es": "es una mini, dios mío",
+            "fr": "c'est un mini, mon dieu",
+            "uk": "це міні, о Боже мій"
+        },
+        {
+            "start": "00:00:22,620",
+            "end": "00:00:24,400",
+            "es": "esto casi me mata",
+            "fr": "cela a failli me tuer",
+            "uk": "це ледь не вбило мене"
+        },
+        {
+            "start": "00:00:31,800",
+            "end": "00:00:41,240",
+            "es": "pensaba que mi sistema inmunológico es fuerte porque hago ejercicio todos los días y tomo un baño frío pero no lo sé",
+            "fr": "je pensais que mon système immunitaire était fort parce que je fais de l'exercice tous les jours et prends un bain froid mais je ne sais pas",
+            "uk": "я думав, що мій імунітет сильний, тому що я тренуюся щодня і приймаю холодну ванну, але не знаю"
+        },
+        {
+            "start": "00:00:41,240",
+            "end": "00:00:43,960",
+            "es": "pero no lo sé",
+            "fr": "mais je ne sais pas",
+            "uk": "але не знаю"
+        },
+        {
+            "start": "00:00:46,880",
+            "end": "00:00:48,500",
+            "es": "todavía soy vulnerable.",
+            "fr": "je suis toujours vulnérable.",
+            "uk": "я все ще вразливий."
+        },
+        {
+            "start": "00:00:48,500",
+            "end": "00:00:51,800",
+            "es": "Esto podría ser normal",
+            "fr": "Cela pourrait être normal",
+            "uk": "Це може бути нормальним"
+        }
+    ]
+}

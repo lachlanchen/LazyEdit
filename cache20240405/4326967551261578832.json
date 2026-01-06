@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,340\",\n    \"end\": \"00:01:11,980\",\n    \"lang\": \"en\",\n    \"text\": \"The point is that the American cannot directly sense the meaning from English.\"\n  },\n  {\n    \"start\": \"00:01:12,120\",\n    \"end\": \"00:01:14,740\",\n    \"lang\": \"en\",\n    \"text\": \"But they have to make it frank.\"\n  },\n  {\n    \"start\": \"00:01:21,218\",\n    \"end\": \"00:01:22,698\",\n    \"lang\": \"en\",\n    \"text\": \"Give myself a hug国айangel\"\n  },\n  {\n    \"start\": \"00:01:22,698\",\n    \"end\": \"00:01:22,858\",\n    \"lang\": \"en\",\n    \"text\": \"urgghh\"\n  },\n  {\n    \"start\": \"00:01:22,882\",\n    \"end\": \"00:01:23,062\",\n    \"lang\": \"en\",\n    \"text\": \"Is it me?\"\n  },\n  {\n    \"start\": \"00:01:24,402\",\n    \"end\": \"00:01:25,122\",\n    \"lang\": \"en\",\n    \"text\": \"OK.\"\n  },\n  {\n    \"start\": \"00:01:26,182\",\n    \"end\": \"00:01:26,922\",\n    \"lang\": \"en\",\n    \"text\": \"Trick or treat?\"\n  },\n  {\n    \"start\": \"00:01:26,946\",\n    \"end\": \"00:01:28,066\",\n    \"lang\": \"ja\",\n    \"text\": \"かなり覚えられそう\"\n  },\n  {\n    \"start\": \"00:01:29,442\",\n    \"end\": \"00:01:31,022\",\n    \"lang\": \"en\",\n    \"text\": \"It's a discrimination team.\"\n  },\n  {\n    \"start\": \"00:01:32,610\",\n    \"end\": \"00:01:33,410\",\n    \"lang\": \"zh\",\n    \"text\": \"很迷稳 look nice\"\n  },\n  {\n    \"start\": \"00:01:34,690\",\n    \"end\": \"00:01:42,130\",\n    \"lang\": \"en\",\n    \"text\": \"Even if you want to stop discrimination,\"\n  },\n  {\n    \"start\": \"00:01:42,130\",\n    \"end\": \"00:01:45,830\",\n    \"lang\": \"en\",\n    \"text\": \"you can't avoid discrimination in others'\"\n  },\n  {\n    \"start\": \"00:01:46,010\",\n    \"end\": \"00:01:46,250\",\n    \"lang\": \"en\",\n    \"text\": \"mind.\"\n  },\n  {\n    \"start\": \"00:01:46,510\",\n    \"end\": \"00:01:50,810\",\n    \"lang\": \"en\",\n    \"text\": \"But I think the best part of the US civilization,\"\n  },\n  {\n    \"start\": \"00:01:50,810\",\n    \"end\": \"00:01:52,130\",\n    \"lang\": \"en\",\n    \"text\": \"US culture,\"\n  },\n  {\n    \"start\": \"00:01:52,130\",\n    \"end\": \"00:01:58,750\",\n    \"lang\": \"en\",\n    \"text\": \"US society is that as long as you don't harm my benefit,\"\n  },\n  {\n    \"start\": \"00:01:58,750\",\n    \"end\": \"00:01:59,490\",\n    \"lang\": \"en\",\n    \"text\": \"it's ok.\"\n  },\n  {\n    \"start\": \"00:02:00,530\",\n    \"end\": \"00:02:04,230\",\n    \"lang\": \"en\",\n    \"text\": \"The point is not to stop discrimination in mind,\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,340",
+            "end": "00:01:11,980",
+            "vi": "Vấn đề là người Mỹ không thể trực tiếp cảm nhận ý nghĩa từ tiếng Anh."
+        },
+        {
+            "start": "00:01:12,120",
+            "end": "00:01:14,740",
+            "vi": "Nhưng họ phải làm cho nó rõ ràng."
+        },
+        {
+            "start": "00:01:21,218",
+            "end": "00:01:22,698",
+            "vi": "Ôm mình một cái"
+        },
+        {
+            "start": "00:01:22,698",
+            "end": "00:01:22,858",
+            "vi": "ưm"
+        },
+        {
+            "start": "00:01:22,882",
+            "end": "00:01:23,062",
+            "vi": "Là tôi sao?"
+        },
+        {
+            "start": "00:01:24,402",
+            "end": "00:01:25,122",
+            "vi": "Được."
+        },
+        {
+            "start": "00:01:26,182",
+            "end": "00:01:26,922",
+            "vi": "Kẹo hay bị ghẹo?"
+        },
+        {
+            "start": "00:01:26,946",
+            "end": "00:01:28,066",
+            "vi": "Có vẻ như tôi có thể nhớ được"
+        },
+        {
+            "start": "00:01:29,442",
+            "end": "00:01:31,022",
+            "vi": "Đó là một nhóm phân biệt đối xử."
+        },
+        {
+            "start": "00:01:32,610",
+            "end": "00:01:33,410",
+            "vi": "Trông đẹp đấy"
+        },
+        {
+            "start": "00:01:34,690",
+            "end": "00:01:42,130",
+            "vi": "Ngay cả khi bạn muốn dừng phân biệt đối xử,"
+        },
+        {
+            "start": "00:01:42,130",
+            "end": "00:01:45,830",
+            "vi": "bạn không thể tránh khỏi việc bị phân biệt bởi người khác"
+        },
+        {
+            "start": "00:01:46,010",
+            "end": "00:01:46,250",
+            "vi": "trong tâm trí."
+        },
+        {
+            "start": "00:01:46,510",
+            "end": "00:01:50,810",
+            "vi": "Nhưng tôi nghĩ phần tốt nhất của nền văn minh Mỹ,"
+        },
+        {
+            "start": "00:01:50,810",
+            "end": "00:01:52,130",
+            "vi": "văn hóa Mỹ,"
+        },
+        {
+            "start": "00:01:52,130",
+            "end": "00:01:58,750",
+            "vi": "xã hội Mỹ là miễn là bạn không làm hại đến lợi ích của tôi,"
+        },
+        {
+            "start": "00:01:58,750",
+            "end": "00:01:59,490",
+            "vi": "thì không sao cả."
+        },
+        {
+            "start": "00:02:00,530",
+            "end": "00:02:04,230",
+            "vi": "Vấn đề không phải là dừng lại việc phân biệt đối xử trong tâm trí,"
+        }
+    ]
+}

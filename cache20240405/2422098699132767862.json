@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,020\",\n    \"end\": \"00:00:05,780\",\n    \"lang\": \"zh\",\n    \"text\": \"不管目前依然新冠症狀感冒症狀很嚴重\"\n  },\n  {\n    \"start\": \"00:00:06,940\",\n    \"end\": \"00:00:08,920\",\n    \"lang\": \"zh\",\n    \"text\": \"但是依然給自己煮了一個酸辣粉\"\n  },\n  {\n    \"start\": \"00:00:10,260\",\n    \"end\": \"00:00:12,460\",\n    \"lang\": \"zh\",\n    \"text\": \"這看著很好吃的樣子\"\n  },\n  {\n    \"start\": \"00:00:12,460\",\n    \"end\": \"00:00:13,320\",\n    \"lang\": \"zh\",\n    \"text\": \"很辣\"\n  },\n  {\n    \"start\": \"00:00:13,940\",\n    \"end\": \"00:00:15,480\",\n    \"lang\": \"zh\",\n    \"text\": \"準備繼續以毒攻毒\"\n  },\n  {\n    \"start\": \"00:00:16,000\",\n    \"end\": \"00:00:17,420\",\n    \"lang\": \"zh\",\n    \"text\": \"雖然我真的已經快不行了\"\n  },\n  {\n    \"start\": \"00:00:17,420\",\n    \"end\": \"00:00:19,060\",\n    \"lang\": \"zh\",\n    \"text\": \"我已經現在吃什麼東西都很痛\"\n  },\n  {\n    \"start\": \"00:00:19,522\",\n    \"end\": \"00:00:21,222\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:21,222\",\n    \"end\": \"00:00:21,642\",\n    \"lang\": \"en\",\n    \"text\": \"so,\"\n  },\n  {\n    \"start\": \"00:00:21,642\",\n    \"end\": \"00:00:29,142\",\n    \"lang\": \"en\",\n    \"text\": \"this is my spicy noodles,\"\n  },\n  {\n    \"start\": \"00:00:29,142\",\n    \"end\": \"00:00:36,442\",\n    \"lang\": \"en\",\n    \"text\": \"and leave alone the sore throat and this pain of cold.\"\n  },\n  {\n    \"start\": \"00:00:37,162\",\n    \"end\": \"00:00:39,422\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's a cold or cold.\"\n  },\n  {\n    \"start\": \"00:00:40,142\",\n    \"end\": \"00:00:40,622\",\n    \"lang\": \"en\",\n    \"text\": \"OK.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,020",
+            "end": "00:00:05,780",
+            "es": "A pesar de que los síntomas del resfriado son muy graves en este momento",
+            "fr": "Malgré les symptômes graves du rhume en ce moment",
+            "uk": "Незважаючи на те, що зараз симптоми застуди дуже серйозні"
+        },
+        {
+            "start": "00:00:06,940",
+            "end": "00:00:08,920",
+            "es": "Pero todavía me preparé un plato de fideos picantes agrios",
+            "fr": "Mais je me suis quand même préparé un bol de nouilles épicées et aigres",
+            "uk": "Але я все одно приготував собі кисло-гострі локшина"
+        },
+        {
+            "start": "00:00:10,260",
+            "end": "00:00:12,460",
+            "es": "Esto se ve delicioso",
+            "fr": "Cela a l'air délicieux",
+            "uk": "Це виглядає дуже смачно"
+        },
+        {
+            "start": "00:00:12,460",
+            "end": "00:00:13,320",
+            "es": "Muy picante",
+            "fr": "Très épicé",
+            "uk": "Дуже гостро"
+        },
+        {
+            "start": "00:00:13,940",
+            "end": "00:00:15,480",
+            "es": "Preparado para seguir combatiendo el veneno con veneno",
+            "fr": "Prêt à continuer de combattre le poison par le poison",
+            "uk": "Готовий продовжувати боротись з отрутою отрутою"
+        },
+        {
+            "start": "00:00:16,000",
+            "end": "00:00:17,420",
+            "es": "Aunque realmente ya estoy al límite",
+            "fr": "Même si je suis vraiment à bout",
+            "uk": "Хоча я насправді вже на межі"
+        },
+        {
+            "start": "00:00:17,420",
+            "end": "00:00:19,060",
+            "es": "Ya me duele comer cualquier cosa",
+            "fr": "Manger quoi que ce soit me fait maintenant mal",
+            "uk": "Зараз мені боляче їсти будь-що"
+        },
+        {
+            "start": "00:00:19,522",
+            "end": "00:00:21,222",
+            "es": "OK,",
+            "fr": "OK,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:21,222",
+            "end": "00:00:21,642",
+            "es": "así que,",
+            "fr": "donc,",
+            "uk": "отже,"
+        },
+        {
+            "start": "00:00:21,642",
+            "end": "00:00:29,142",
+            "es": "estos son mis fideos picantes,",
+            "fr": "voici mes nouilles épicées,",
+            "uk": "ось мої гострі локшина,"
+        },
+        {
+            "start": "00:00:29,142",
+            "end": "00:00:36,442",
+            "es": "y dejar de lado el dolor de garganta y este dolor de resfriado.",
+            "fr": "et ignorer le mal de gorge et cette douleur de froid.",
+            "uk": "і залишити осторонь біль у горлі та цей біль від застуди."
+        },
+        {
+            "start": "00:00:37,162",
+            "end": "00:00:39,422",
+            "es": "No sé si es un resfriado o frío.",
+            "fr": "Je ne sais pas si c'est un rhume ou simplement du froid.",
+            "uk": "Я не знаю, це застуда чи просто холод."
+        },
+        {
+            "start": "00:00:40,142",
+            "end": "00:00:40,622",
+            "es": "OK.",
+            "fr": "OK.",
+            "uk": "Добре."
+        }
+    ]
+}

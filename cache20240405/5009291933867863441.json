@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"This is our special Chongqing flavor,\"\n  },\n  {\n    \"start\": \"00:00:03,580\",\n    \"end\": \"00:00:06,640\",\n    \"lang\": \"en\",\n    \"text\": \"beef and potato.\"\n  },\n  {\n    \"start\": \"00:00:08,582\",\n    \"end\": \"00:00:09,082\",\n    \"lang\": \"en\",\n    \"text\": \"Beep.\"\n  },\n  {\n    \"start\": \"00:00:09,506\",\n    \"end\": \"00:00:12,206\",\n    \"lang\": \"en\",\n    \"text\": \"So let me check this.\"\n  },\n  {\n    \"start\": \"00:00:14,396\",\n    \"end\": \"00:00:15,206\",\n    \"lang\": \"en\",\n    \"text\": \"This potato,\"\n  },\n  {\n    \"start\": \"00:00:15,206\",\n    \"end\": \"00:00:20,186\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't make it as potato crumb.\"\n  },\n  {\n    \"start\": \"00:00:20,906\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to say it,\"\n  },\n  {\n    \"start\": \"00:00:22,146\",\n    \"end\": \"00:00:22,566\",\n    \"lang\": \"en\",\n    \"text\": \"toodoli.\"\n  },\n  {\n    \"start\": \"00:00:23,486\",\n    \"end\": \"00:00:30,626\",\n    \"lang\": \"en\",\n    \"text\": \"So I believe these small fragments will build a balance between flavor,\"\n  },\n  {\n    \"start\": \"00:00:30,626\",\n    \"end\": \"00:00:34,606\",\n    \"lang\": \"en\",\n    \"text\": \"so that is a combination\"\n  },\n  {\n    \"start\": \"00:00:34,606\",\n    \"end\": \"00:00:35,586\",\n    \"lang\": \"en\",\n    \"text\": \"that is a flavor,\"\n  },\n  {\n    \"start\": \"00:00:35,586\",\n    \"end\": \"00:00:40,326\",\n    \"lang\": \"en\",\n    \"text\": \"and the inner core without flavor.\"\n  },\n  {\n    \"start\": \"00:00:40,746\",\n    \"end\": \"00:00:44,746\",\n    \"lang\": \"en\",\n    \"text\": \"It will produce a perfect combination.\"\n  },\n  {\n    \"start\": \"00:00:46,086\",\n    \"end\": \"00:00:47,386\",\n    \"lang\": \"en\",\n    \"text\": \"It will blend in.\"\n  },\n  {\n    \"start\": \"00:00:47,946\",\n    \"end\": \"00:00:50,666\",\n    \"lang\": \"en\",\n    \"text\": \"If it's potato crumb,\"\n  },\n  {\n    \"start\": \"00:00:50,666\",\n    \"end\": \"00:00:54,046\",\n    \"lang\": \"en\",\n    \"text\": \"it will be over flavored.\"\n  },\n  {\n    \"start\": \"00:00:55,966\",\n    \"end\": \"00:00:57,686\",\n    \"lang\": \"en\",\n    \"text\": \"I like this crisp stuff.\"\n  },\n  {\n    \"start\": \"00:00:59,046\",\n    \"end\": \"00:00:59,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "ja": "これは私たちの特別な重慶(チョンチン)フレーバーです、"
+        },
+        {
+            "start": "00:00:03,580",
+            "end": "00:00:06,640",
+            "ja": "牛肉とジャガイモです。"
+        },
+        {
+            "start": "00:00:08,582",
+            "end": "00:00:09,082",
+            "ja": "ビープ。"
+        },
+        {
+            "start": "00:00:09,506",
+            "end": "00:00:12,206",
+            "ja": "では、これを確認してみましょう。"
+        },
+        {
+            "start": "00:00:14,396",
+            "end": "00:00:15,206",
+            "ja": "このジャガイモ、"
+        },
+        {
+            "start": "00:00:15,206",
+            "end": "00:00:20,186",
+            "ja": "ジャガイモの破片(クランブ)としては作りませんでした。"
+        },
+        {
+            "start": "00:00:20,906",
+            "end": "00:00:22,146",
+            "ja": "どう表現したらいいかわかりませんが、"
+        },
+        {
+            "start": "00:00:22,146",
+            "end": "00:00:22,566",
+            "ja": "トゥードゥリ。"
+        },
+        {
+            "start": "00:00:23,486",
+            "end": "00:00:30,626",
+            "ja": "だから、これらの小さな断片がフレーバーの間のバランスを取ると信じています、"
+        },
+        {
+            "start": "00:00:30,626",
+            "end": "00:00:34,606",
+            "ja": "それが一体となります"
+        },
+        {
+            "start": "00:00:34,606",
+            "end": "00:00:35,586",
+            "ja": "それは一種のフレーバーです、"
+        },
+        {
+            "start": "00:00:35,586",
+            "end": "00:00:40,326",
+            "ja": "そして、フレーバーのない内部のコアです。"
+        },
+        {
+            "start": "00:00:40,746",
+            "end": "00:00:44,746",
+            "ja": "それは完璧な組み合わせを生み出します。"
+        },
+        {
+            "start": "00:00:46,086",
+            "end": "00:00:47,386",
+            "ja": "それは溶け込みます。"
+        },
+        {
+            "start": "00:00:47,946",
+            "end": "00:00:50,666",
+            "ja": "もしポテトクランブだったら、"
+        },
+        {
+            "start": "00:00:50,666",
+            "end": "00:00:54,046",
+            "ja": "味が濃すぎることになります。"
+        },
+        {
+            "start": "00:00:55,966",
+            "end": "00:00:57,686",
+            "ja": "このパリパリしたものが好きです。"
+        },
+        {
+            "start": "00:00:59,046",
+            "end": "00:00:59,686",
+            "ja": "オーケー。"
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,540\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"zh\",\n    \"text\": \"恭喜您完全成功\"\n  },\n  {\n    \"start\": \"00:00:01,980\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"zh\",\n    \"text\": \"这一单楼是最难的一单楼\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:05,460\",\n    \"lang\": \"zh\",\n    \"text\": \"看到没有\"\n  },\n  {\n    \"start\": \"00:00:06,050\",\n    \"end\": \"00:00:06,890\",\n    \"lang\": \"en\",\n    \"text\": \"You zip\"\n  },\n  {\n    \"start\": \"00:00:07,682\",\n    \"end\": \"00:00:08,762\",\n    \"lang\": \"zh\",\n    \"text\": \"有时候嚼啪的\"\n  },\n  {\n    \"start\": \"00:00:10,121\",\n    \"end\": \"00:00:12,142\",\n    \"lang\": \"zh\",\n    \"text\": \"嚼啪的软就是那个蛋豆\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,540",
+            "end": "00:00:01,980",
+            "ko": "축하드립니다, 완전히 성공했어요"
+        },
+        {
+            "start": "00:00:01,980",
+            "end": "00:00:04,540",
+            "ko": "이번 주문한 건물이 가장 어려운 건물이었어요"
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:05,460",
+            "ko": "보셨나요?"
+        },
+        {
+            "start": "00:00:06,050",
+            "end": "00:00:06,890",
+            "ko": "집니다"
+        },
+        {
+            "start": "00:00:07,682",
+            "end": "00:00:08,762",
+            "ko": "가끔 씹을 때 바삭한"
+        },
+        {
+            "start": "00:00:10,121",
+            "end": "00:00:12,142",
+            "ko": "바삭바삭하고 부드러운 건 바로 그 단팥입니다"
+        }
+    ]
+}

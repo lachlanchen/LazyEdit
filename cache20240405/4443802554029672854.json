@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,140\",\n    \"lang\": \"en\",\n    \"text\": \"have his eye contact.\"\n  },\n  {\n    \"start\": \"00:00:03,400\",\n    \"end\": \"00:00:03,620\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:04,680\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:05,340\",\n    \"end\": \"00:00:06,020\",\n    \"lang\": \"en\",\n    \"text\": \"This is...\"\n  },\n  {\n    \"start\": \"00:00:09,139\",\n    \"end\": \"00:00:11,340\",\n    \"lang\": \"en\",\n    \"text\": \"This is a panda pig dog.\"\n  },\n  {\n    \"start\": \"00:00:13,640\",\n    \"end\": \"00:00:13,920\",\n    \"lang\": \"en\",\n    \"text\": \"Wow.\"\n  },\n  {\n    \"start\": \"00:00:15,040\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:19,759\",\n    \"end\": \"00:00:20,840\",\n    \"lang\": \"en\",\n    \"text\": \"This is sunrise.\"\n  },\n  {\n    \"start\": \"00:00:23,560\",\n    \"end\": \"00:00:26,400\",\n    \"lang\": \"en\",\n    \"text\": \"This is a panda pig dog.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,140",
+            "ja": "彼の視線を持つ。"
+        },
+        {
+            "start": "00:00:03,400",
+            "end": "00:00:03,620",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:04,680",
+            "end": "00:00:05,140",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:05,340",
+            "end": "00:00:06,020",
+            "ja": "これは..."
+        },
+        {
+            "start": "00:00:09,139",
+            "end": "00:00:11,340",
+            "ja": "これはパンダ豚犬です。"
+        },
+        {
+            "start": "00:00:13,640",
+            "end": "00:00:13,920",
+            "ja": "わあ。"
+        },
+        {
+            "start": "00:00:15,040",
+            "end": "00:00:15,380",
+            "ja": "オーケー。"
+        },
+        {
+            "start": "00:00:19,759",
+            "end": "00:00:20,840",
+            "ja": "これは日の出です。"
+        },
+        {
+            "start": "00:00:23,560",
+            "end": "00:00:26,400",
+            "ja": "これはパンダ豚犬です。"
+        }
+    ]
+}

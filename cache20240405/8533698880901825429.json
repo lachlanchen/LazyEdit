@@ -1,0 +1,95 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es) and French (fr) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other language. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,700\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:01,700\",\n    \"end\": \"00:00:02,720\",\n    \"lang\": \"en\",\n    \"text\": \"so...\"\n  },\n  {\n    \"start\": \"00:00:03,682\",\n    \"end\": \"00:00:04,682\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます\"\n  },\n  {\n    \"start\": \"00:00:07,042\",\n    \"end\": \"00:00:07,642\",\n    \"lang\": \"zh\",\n    \"text\": \"那今天影片到這裡\"\n  },\n  {\n    \"start\": \"00:00:08,930\",\n    \"end\": \"00:00:10,890\",\n    \"lang\": \"en\",\n    \"text\": \"Have this breakfast.\"\n  },\n  {\n    \"start\": \"00:00:12,002\",\n    \"end\": \"00:00:12,502\",\n    \"lang\": \"zh\",\n    \"text\": \"下午茶\"\n  },\n  {\n    \"start\": \"00:00:18,242\",\n    \"end\": \"00:00:23,682\",\n    \"lang\": \"en\",\n    \"text\": \"I might be the first person that uses chopsticks to eat bread.\"\n  },\n  {\n    \"start\": \"00:00:26,754\",\n    \"end\": \"00:00:27,854\",\n    \"lang\": \"ja\",\n    \"text\": \"ごちそうさまでした\"\n  },\n  {\n    \"start\": \"00:00:27,874\",\n    \"end\": \"00:00:30,794\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you for watching!\"\n  },\n  {\n    \"start\": \"00:00:32,509\",\n    \"end\": \"00:00:33,769\",\n    \"lang\": \"ja\",\n    \"text\": \"ご視聴ありがとうございました。\"\n  },\n  {\n    \"start\": \"00:00:34,146\",\n    \"end\": \"00:00:34,546\",\n    \"lang\": \"zh\",\n    \"text\": \"不要打完\"\n  },\n  {\n    \"start\": \"00:00:35,906\",\n    \"end\": \"00:00:36,906\",\n    \"lang\": \"en\",\n    \"text\": \"getting your forehand down.\"\n  },\n  {\n    \"start\": \"00:00:37,954\",\n    \"end\": \"00:00:38,894\",\n    \"lang\": \"ja\",\n    \"text\": \"5分でコーヒーになる\"\n  },\n  {\n    \"start\": \"00:00:57,490\",\n    \"end\": \"00:00:57,930\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:57,930\",\n    \"end\": \"00:00:58,410\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,700",
+            "es": "Vale,",
+            "fr": "D'accord,"
+        },
+        {
+            "start": "00:00:01,700",
+            "end": "00:00:02,720",
+            "es": "entonces...",
+            "fr": "alors..."
+        },
+        {
+            "start": "00:00:03,682",
+            "end": "00:00:04,682",
+            "es": "Gracias",
+            "fr": "Merci"
+        },
+        {
+            "start": "00:00:07,042",
+            "end": "00:00:07,642",
+            "es": "Así termina el vídeo de hoy",
+            "fr": "C'est la fin de la vidéo d'aujourd'hui"
+        },
+        {
+            "start": "00:00:08,930",
+            "end": "00:00:10,890",
+            "es": "Toma este desayuno.",
+            "fr": "Prenez ce petit-déjeuner."
+        },
+        {
+            "start": "00:00:12,002",
+            "end": "00:00:12,502",
+            "es": "La merienda",
+            "fr": "Le goûter"
+        },
+        {
+            "start": "00:00:18,242",
+            "end": "00:00:23,682",
+            "es": "Podría ser la primera persona que usa palillos para comer pan.",
+            "fr": "Je pourrais être la première personne à utiliser des baguettes pour manger du pain."
+        },
+        {
+            "start": "00:00:26,754",
+            "end": "00:00:27,854",
+            "es": "Gracias por la comida",
+            "fr": "Merci pour le repas"
+        },
+        {
+            "start": "00:00:27,874",
+            "end": "00:00:30,794",
+            "es": "¡Gracias por ver!",
+            "fr": "Merci d'avoir regardé !"
+        },
+        {
+            "start": "00:00:32,509",
+            "end": "00:00:33,769",
+            "es": "Gracias por ver.",
+            "fr": "Merci pour votre visionnage."
+        },
+        {
+            "start": "00:00:34,146",
+            "end": "00:00:34,546",
+            "es": "No termines todavía",
+            "fr": "Ne finis pas encore"
+        },
+        {
+            "start": "00:00:35,906",
+            "end": "00:00:36,906",
+            "es": "perfeccionando tu revés.",
+            "fr": "améliorer votre revers."
+        },
+        {
+            "start": "00:00:37,954",
+            "end": "00:00:38,894",
+            "es": "Se convierte en café en 5 minutos",
+            "fr": "Ça devient du café en 5 minutes"
+        },
+        {
+            "start": "00:00:57,490",
+            "end": "00:00:57,930",
+            "es": "Vale,",
+            "fr": "D'accord,"
+        },
+        {
+            "start": "00:00:57,930",
+            "end": "00:00:58,410",
+            "es": "nos vemos.",
+            "fr": "à bientôt."
+        }
+    ]
+}

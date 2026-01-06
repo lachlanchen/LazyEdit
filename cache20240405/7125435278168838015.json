@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,642\",\n    \"end\": \"00:01:01,442\",\n    \"lang\": \"ar\",\n    \"text\": \"أنها كذلك\"\n  },\n  {\n    \"start\": \"00:01:02,306\",\n    \"end\": \"00:01:03,046\",\n    \"lang\": \"en\",\n    \"text\": \"this soon.\"\n  },\n  {\n    \"start\": \"00:01:03,046\",\n    \"end\": \"00:01:06,966\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know why I'm quite close to that.\"\n  },\n  {\n    \"start\": \"00:01:08,578\",\n    \"end\": \"00:01:09,738\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花...\"\n  },\n  {\n    \"start\": \"00:01:09,738\",\n    \"end\": \"00:01:12,518\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:13,458\",\n    \"end\": \"00:01:16,038\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书包\"\n  },\n  {\n    \"start\": \"00:01:16,778\",\n    \"end\": \"00:01:19,238\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:19,238\",\n    \"end\": \"00:01:22,138\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书包\"\n  },\n  {\n    \"start\": \"00:01:22,138\",\n    \"end\": \"00:01:25,058\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:25,058\",\n    \"end\": \"00:01:26,438\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书包\"\n  },\n  {\n    \"start\": \"00:01:26,466\",\n    \"end\": \"00:01:30,566\",\n    \"lang\": \"en\",\n    \"text\": \"And guitar,\"\n  },\n  {\n    \"start\": \"00:01:30,566\",\n    \"end\": \"00:01:33,106\",\n    \"lang\": \"en\",\n    \"text\": \"I do science.\"\n  },\n  {\n    \"start\": \"00:01:35,778\",\n    \"end\": \"00:01:36,158\",\n    \"lang\": \"zh\",\n    \"text\": \"老天\"\n  },\n  {\n    \"start\": \"00:01:38,530\",\n    \"end\": \"00:01:44,250\",\n    \"lang\": \"en\",\n    \"text\": \"It might not be as people as music people,\"\n  },\n  {\n    \"start\": \"00:01:44,250\",\n    \"end\": \"00:01:46,730\",\n    \"lang\": \"en\",\n    \"text\": \"dance people,\"\n  },\n  {\n    \"start\": \"00:01:46,730\",\n    \"end\": \"00:01:48,750\",\n    \"lang\": \"en\",\n    \"text\": \"as they learn music,\"\n  },\n  {\n    \"start\": \"00:01:48,750\",\n    \"end\": \"00:01:49,470\",\n    \"lang\": \"en\",\n    \"text\": \"art,\"\n  },\n  {\n    \"start\": \"00:01:49,470\",\n    \"end\": \"00:01:51,210\",\n    \"lang\": \"en\",\n    \"text\": \"but\"\n  },\n  {\n    \"start\": \"00:01:52,530\",\n    \"end\": \"00:01:55,970\",\n    \"lang\": \"en\",\n    \"text\": \"more I learned more in a science way.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:00,642",
+            "end": "00:01:01,442",
+            "en": "It is so",
+            "zh": "就是这样",
+            "ar": "أنها كذلك"
+        },
+        {
+            "start": "00:01:02,306",
+            "end": "00:01:03,046",
+            "en": "this soon.",
+            "zh": "这么快。",
+            "ar": "هكذا قريبا."
+        },
+        {
+            "start": "00:01:03,046",
+            "end": "00:01:06,966",
+            "en": "I don't know why I'm quite close to that.",
+            "zh": "我不知道为什么我离那很近。",
+            "ar": "لا أعرف لماذا أنا قريب جدا من ذلك."
+        },
+        {
+            "start": "00:01:08,578",
+            "end": "00:01:09,738",
+            "en": "No flowers...",
+            "zh": "没有花...",
+            "ar": "لا زهور..."
+        },
+        {
+            "start": "00:01:09,738",
+            "end": "00:01:12,518",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا رائحة للزهور"
+        },
+        {
+            "start": "00:01:13,458",
+            "end": "00:01:16,038",
+            "en": "No school bags",
+            "zh": "没有书包",
+            "ar": "لا حقائب مدرسية"
+        },
+        {
+            "start": "00:01:16,778",
+            "end": "00:01:19,238",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا رائحة للزهور"
+        },
+        {
+            "start": "00:01:19,238",
+            "end": "00:01:22,138",
+            "en": "No school bags",
+            "zh": "没有书包",
+            "ar": "لا حقائب مدرسية"
+        },
+        {
+            "start": "00:01:22,138",
+            "end": "00:01:25,058",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا رائحة للزهور"
+        },
+        {
+            "start": "00:01:25,058",
+            "end": "00:01:26,438",
+            "en": "No school bags",
+            "zh": "没有书包",
+            "ar": "لا حقائب مدرسية"
+        },
+        {
+            "start": "00:01:26,466",
+            "end": "00:01:30,566",
+            "en": "And guitar,",
+            "zh": "还有吉他，",
+            "ar": "والجيتار،"
+        },
+        {
+            "start": "00:01:30,566",
+            "end": "00:01:33,106",
+            "en": "I do science.",
+            "zh": "我搞科学。",
+            "ar": "أنا أمارس العلم."
+        },
+        {
+            "start": "00:01:35,778",
+            "end": "00:01:36,158",
+            "en": "Oh my God",
+            "zh": "老天",
+            "ar": "يا إلهي"
+        },
+        {
+            "start": "00:01:38,530",
+            "end": "00:01:44,250",
+            "en": "It might not be as people as music people,",
+            "zh": "这可能不像音乐人那样受欢迎，",
+            "ar": "قد لا يكون مشهورًا مثل الأشخاص في الموسيقى،"
+        },
+        {
+            "start": "00:01:44,250",
+            "end": "00:01:46,730",
+            "en": "dance people,",
+            "zh": "舞蹈人，",
+            "ar": "أشخاص الرقص،"
+        },
+        {
+            "start": "00:01:46,730",
+            "end": "00:01:48,750",
+            "en": "as they learn music,",
+            "zh": "当他们学习音乐时，",
+            "ar": "بينما يتعلمون الموسيقى،"
+        },
+        {
+            "start": "00:01:48,750",
+            "end": "00:01:49,470",
+            "en": "art,",
+            "zh": "艺术，",
+            "ar": "الفن،"
+        },
+        {
+            "start": "00:01:49,470",
+            "end": "00:01:51,210",
+            "en": "but",
+            "zh": "但是",
+            "ar": "لكن"
+        },
+        {
+            "start": "00:01:52,530",
+            "end": "00:01:55,970",
+            "en": "more I learned more in a science way.",
+            "zh": "我通过科学的方式学到了更多。",
+            "ar": "لكني تعلمت أكثر بطريقة علمية."
+        }
+    ]
+}

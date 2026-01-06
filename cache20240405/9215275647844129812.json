@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"My sister makes these beautiful notebooks.\"\n  },\n  {\n    \"start\": \"00:00:05,500\",\n    \"end\": \"00:00:08,600\",\n    \"lang\": \"en\",\n    \"text\": \"But she thinks it's mediocre and not good.\"\n  },\n  {\n    \"start\": \"00:00:09,340\",\n    \"end\": \"00:00:16,040\",\n    \"lang\": \"en\",\n    \"text\": \"So I want to convince her that her product is great.\"\n  },\n  {\n    \"start\": \"00:00:16,200\",\n    \"end\": \"00:00:18,840\",\n    \"lang\": \"en\",\n    \"text\": \"I use it every day to write notes,\"\n  },\n  {\n    \"start\": \"00:00:18,840\",\n    \"end\": \"00:00:22,280\",\n    \"lang\": \"en\",\n    \"text\": \"to write every thought that pops up in my mind,\"\n  },\n  {\n    \"start\": \"00:00:22,280\",\n    \"end\": \"00:00:23,640\",\n    \"lang\": \"en\",\n    \"text\": \"make plans.\"\n  },\n  {\n    \"start\": \"00:00:23,640\",\n    \"end\": \"00:00:27,520\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this notebook is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:27,840\",\n    \"end\": \"00:00:29,680\",\n    \"lang\": \"en\",\n    \"text\": \"Every day when I see this cover,\"\n  },\n  {\n    \"start\": \"00:00:29,680\",\n    \"end\": \"00:00:33,100\",\n    \"lang\": \"en\",\n    \"text\": \"I have this desire to use it,\"\n  },\n  {\n    \"start\": \"00:00:33,100\",\n    \"end\": \"00:00:34,220\",\n    \"lang\": \"en\",\n    \"text\": \"to open it.\"\n  },\n  {\n    \"start\": \"00:00:34,720\",\n    \"end\": \"00:00:37,420\",\n    \"lang\": \"en\",\n    \"text\": \"But she dare not try.\"\n  },\n  {\n    \"start\": \"00:00:38,520\",\n    \"end\": \"00:00:51,120\",\n    \"lang\": \"en\",\n    \"text\": \"So I want to persuade her that she can present her work to the world on YouTube or Facebook.\"\n  },\n  {\n    \"start\": \"00:00:52,120\",\n    \"end\": \"00:00:55,900\",\n    \"lang\": \"en\",\n    \"text\": \"And also she can speak French.\"\n  },\n  {\n    \"start\": \"00:00:57,160\",\n    \"end\": \"00:01:10,180\",\n    \"lang\": \"en\",\n    \"text\": \"Maybe I want to help her to build a brand that can sell to France to connect with potential French customers.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,000",
+            "vi": "Chị gái tôi làm những quyển sổ tay rất đẹp."
+        },
+        {
+            "start": "00:00:05,500",
+            "end": "00:00:08,600",
+            "vi": "Nhưng chị ấy nghĩ chúng chỉ tầm thường và không tốt."
+        },
+        {
+            "start": "00:00:09,340",
+            "end": "00:00:16,040",
+            "vi": "Vì vậy, tôi muốn thuyết phục chị ấy rằng sản phẩm của chị ấy rất tuyệt."
+        },
+        {
+            "start": "00:00:16,200",
+            "end": "00:00:18,840",
+            "vi": "Tôi dùng nó hàng ngày để ghi chú,"
+        },
+        {
+            "start": "00:00:18,840",
+            "end": "00:00:22,280",
+            "vi": "để viết mọi suy nghĩ xuất hiện trong đầu tôi,"
+        },
+        {
+            "start": "00:00:22,280",
+            "end": "00:00:23,640",
+            "vi": "lập kế hoạch."
+        },
+        {
+            "start": "00:00:23,640",
+            "end": "00:00:27,520",
+            "vi": "Tôi tin rằng quyển sổ này đẹp tuyệt vời."
+        },
+        {
+            "start": "00:00:27,840",
+            "end": "00:00:29,680",
+            "vi": "Mỗi ngày khi nhìn thấy bìa của nó,"
+        },
+        {
+            "start": "00:00:29,680",
+            "end": "00:00:33,100",
+            "vi": "tôi có mong muốn được sử dụng nó,"
+        },
+        {
+            "start": "00:00:33,100",
+            "end": "00:00:34,220",
+            "vi": "để mở nó ra."
+        },
+        {
+            "start": "00:00:34,720",
+            "end": "00:00:37,420",
+            "vi": "Nhưng chị ấy không dám thử."
+        },
+        {
+            "start": "00:00:38,520",
+            "end": "00:00:51,120",
+            "vi": "Vì vậy, tôi muốn thuyết phục chị ấy rằng chị ấy có thể giới thiệu công việc của mình trên YouTube hoặc Facebook."
+        },
+        {
+            "start": "00:00:52,120",
+            "end": "00:00:55,900",
+            "vi": "Và chị ấy cũng có thể nói tiếng Pháp."
+        },
+        {
+            "start": "00:00:57,160",
+            "end": "00:01:10,180",
+            "vi": "Có thể tôi muốn giúp chị ấy xây dựng một thương hiệu có thể bán ra Pháp để kết nối với những khách hàng tiềm năng người Pháp."
+        }
+    ]
+}

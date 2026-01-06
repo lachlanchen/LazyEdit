@@ -1,0 +1,35 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:03,782\",\n    \"end\": \"00:02:04,642\",\n    \"ja\": \"あなたが<誰>[]であるか、\"\n  },\n  {\n    \"start\": \"00:02:04,642\",\n    \"end\": \"00:02:05,882\",\n    \"ja\": \"あなたの<成就>[]は<何>[]か、\"\n  },\n  {\n    \"start\": \"00:02:05,882\",\n    \"end\": \"00:02:11,182\",\n    \"ja\": \"<最後>[]には<私>[]たち<全員>[]が<塵>[]となる。\"\n  },\n  {\n    \"start\": \"00:02:11,182\",\n    \"end\": \"00:02:16,922\",\n    \"ja\": \"<私>[]たちは<全>[]てを<返>[]す\"\n  },\n  {\n    \"start\": \"00:02:16,922\",\n    \"end\": \"00:02:18,942\",\n    \"ja\": \"<持>[]っているものをすべて<宇宙>[]に。\"\n  },\n  {\n    \"start\": \"00:02:18,942\",\n    \"end\": \"00:02:29,542\",\n    \"ja\": \"だからこの<旅>[]の<経験>[]を<楽>[]しみ、それをより<良>[]いものにするんだ。\"\n  }\n]\n\nPRESERVE the original timestamps. \n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:03,782",
+            "end": "00:02:04,642",
+            "ja": "あなたが<誰>[だれ]であるか、"
+        },
+        {
+            "start": "00:02:04,642",
+            "end": "00:02:05,882",
+            "ja": "あなたの<成就>[せいじつ]は<何>[なに]か、"
+        },
+        {
+            "start": "00:02:05,882",
+            "end": "00:02:11,182",
+            "ja": "<最後>[さいご]には<私>[わたし]たち<全員>[ぜんいん]が<塵>[ちり]となる。"
+        },
+        {
+            "start": "00:02:11,182",
+            "end": "00:02:16,922",
+            "ja": "<私>[わたし]たちは<全>[すべ]てを<返>[かえ]す"
+        },
+        {
+            "start": "00:02:16,922",
+            "end": "00:02:18,942",
+            "ja": "<持>[も]っているものをすべて<宇宙>[うちゅう]に。"
+        },
+        {
+            "start": "00:02:18,942",
+            "end": "00:02:29,542",
+            "ja": "だからこの<旅>[たび]の<経験>[けいけん]を<楽>[たの]しみ、それをより<良>[よ]いものにするんだ。"
+        }
+    ]
+}

@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,350\",\n    \"end\": \"00:01:06,930\",\n    \"lang\": \"en\",\n    \"text\": \"But now I think that is wrong.\"\n  },\n  {\n    \"start\": \"00:01:08,910\",\n    \"end\": \"00:01:10,610\",\n    \"lang\": \"en\",\n    \"text\": \"I can never wait for that moment.\"\n  },\n  {\n    \"start\": \"00:01:11,910\",\n    \"end\": \"00:01:14,210\",\n    \"lang\": \"en\",\n    \"text\": \"Just present yourself to the world,\"\n  },\n  {\n    \"start\": \"00:01:14,550\",\n    \"end\": \"00:01:15,610\",\n    \"lang\": \"en\",\n    \"text\": \"show yourself to the world,\"\n  },\n  {\n    \"start\": \"00:01:15,610\",\n    \"end\": \"00:01:16,850\",\n    \"lang\": \"en\",\n    \"text\": \"being transparent.\"\n  },\n  {\n    \"start\": \"00:01:27,570\",\n    \"end\": \"00:01:28,290\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm.\"\n  },\n  {\n    \"start\": \"00:01:29,410\",\n    \"end\": \"00:01:32,450\",\n    \"lang\": \"en\",\n    \"text\": \"Kendrick Lamar – Do It.\"\n  },\n  {\n    \"start\": \"00:01:33,666\",\n    \"end\": \"00:01:34,186\",\n    \"lang\": \"zh\",\n    \"text\": \"再聽\"\n  },\n  {\n    \"start\": \"00:01:40,162\",\n    \"end\": \"00:01:49,182\",\n    \"lang\": \"en\",\n    \"text\": \"I used to use the knowledge as an escape from reality,\"\n  },\n  {\n    \"start\": \"00:01:49,182\",\n    \"end\": \"00:01:54,062\",\n    \"lang\": \"en\",\n    \"text\": \"to escape the fact that I'm nobody,\"\n  },\n  {\n    \"start\": \"00:01:54,302\",\n    \"end\": \"00:01:54,862\",\n    \"lang\": \"en\",\n    \"text\": \"I'm nothing.\"\n  },\n  {\n    \"start\": \"00:01:54,862\",\n    \"end\": \"00:02:02,362\",\n    \"lang\": \"en\",\n    \"text\": \"But I finally realized that I didn't need to worry about it.\"\n  },\n  {\n    \"start\": \"00:02:02,362\",\n    \"end\": \"00:02:03,782\",\n    \"lang\": \"en\",\n    \"text\": \"So no matter\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,350",
+            "end": "00:01:06,930",
+            "es": "Pero ahora creo que eso está mal.",
+            "fr": "Mais maintenant je pense que c'est une erreur.",
+            "uk": "Але зараз я думаю, що це неправильно."
+        },
+        {
+            "start": "00:01:08,910",
+            "end": "00:01:10,610",
+            "es": "Nunca puedo esperar ese momento.",
+            "fr": "Je ne peux jamais attendre ce moment.",
+            "uk": "Я ніколи не можу чекати цього моменту."
+        },
+        {
+            "start": "00:01:11,910",
+            "end": "00:01:14,210",
+            "es": "Simplemente preséntate al mundo,",
+            "fr": "Présentez-vous simplement au monde,",
+            "uk": "Просто представтеся світу,"
+        },
+        {
+            "start": "00:01:14,550",
+            "end": "00:01:15,610",
+            "es": "muéstrate al mundo,",
+            "fr": "montrez-vous au monde,",
+            "uk": "покажіть себе світу,"
+        },
+        {
+            "start": "00:01:15,610",
+            "end": "00:01:16,850",
+            "es": "siendo transparente.",
+            "fr": "en étant transparent.",
+            "uk": "будучи прозорим."
+        },
+        {
+            "start": "00:01:27,570",
+            "end": "00:01:28,290",
+            "es": "Mmm.",
+            "fr": "Mmm.",
+            "uk": "Ммм."
+        },
+        {
+            "start": "00:01:29,410",
+            "end": "00:01:32,450",
+            "es": "Kendrick Lamar – Hazlo.",
+            "fr": "Kendrick Lamar – Fais-le.",
+            "uk": "Kendrick Lamar – Зроби це."
+        },
+        {
+            "start": "00:01:33,666",
+            "end": "00:01:34,186",
+            "es": "Escuchar de nuevo",
+            "fr": "Réécouter",
+            "uk": "Прослухати знову"
+        },
+        {
+            "start": "00:01:40,162",
+            "end": "00:01:49,182",
+            "es": "Solía usar el conocimiento como una escapatoria de la realidad,",
+            "fr": "J'utilisais le savoir comme une échappatoire de la réalité,",
+            "uk": "Я використовував знання як утечу від реальності,"
+        },
+        {
+            "start": "00:01:49,182",
+            "end": "00:01:54,062",
+            "es": "para escapar del hecho de que soy un don nadie,",
+            "fr": "pour fuir le fait que je ne suis personne,",
+            "uk": "щоб втекти від факту, що я ніхто,"
+        },
+        {
+            "start": "00:01:54,302",
+            "end": "00:01:54,862",
+            "es": "no soy nada.",
+            "fr": "je ne suis rien.",
+            "uk": "я ніщо."
+        },
+        {
+            "start": "00:01:54,862",
+            "end": "00:02:02,362",
+            "es": "Pero finalmente me di cuenta de que no necesitaba preocuparme por eso.",
+            "fr": "Mais j'ai finalement réalisé que je n'avais pas à m'en inquiéter.",
+            "uk": "Але я нарешті усвідомив, що не повинен турбуватися про це."
+        },
+        {
+            "start": "00:02:02,362",
+            "end": "00:02:03,782",
+            "es": "Así que no importa",
+            "fr": "Alors peu importe",
+            "uk": "Так що неважливо"
+        }
+    ]
+}

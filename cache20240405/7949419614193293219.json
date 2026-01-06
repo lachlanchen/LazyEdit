@@ -1,0 +1,45 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:10,826\",\n    \"end\": \"00:01:12,026\",\n    \"ja\": \"ああ、\"\n  },\n  {\n    \"start\": \"00:01:12,026\",\n    \"end\": \"00:01:13,346\",\n    \"ja\": \"とてもいい<香>[]りがする。\"\n  },\n  {\n    \"start\": \"00:01:19,166\",\n    \"end\": \"00:01:22,166\",\n    \"ja\": \"これは<水>[]の<工場>[]です。\"\n  },\n  {\n    \"start\": \"00:01:23,446\",\n    \"end\": \"00:01:25,146\",\n    \"ja\": \"<水>[]の<工場>[]だ。\"\n  },\n  {\n    \"start\": \"00:01:27,866\",\n    \"end\": \"00:01:29,946\",\n    \"ja\": \"<豪華>[]だからね。\"\n  },\n  {\n    \"start\": \"00:01:31,186\",\n    \"end\": \"00:01:31,366\",\n    \"ja\": \"わかった。\"\n  },\n  {\n    \"start\": \"00:01:32,726\",\n    \"end\": \"00:01:35,466\",\n    \"ja\": \"<次>[]の<日>[]は<豆汁>[]だね、\"\n  },\n  {\n    \"start\": \"00:01:35,466\",\n    \"end\": \"00:01:39,586\",\n    \"ja\": \"それで<昼食>[]を<終>[]える。\"\n  }\n]\n\nPRESERVE the original timestamps. \n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:10,826",
+            "end": "00:01:12,026",
+            "ja": "ああ、"
+        },
+        {
+            "start": "00:01:12,026",
+            "end": "00:01:13,346",
+            "ja": "とてもいい<香り>[かおり]がする。"
+        },
+        {
+            "start": "00:01:19,166",
+            "end": "00:01:22,166",
+            "ja": "これは<水>[みず]の<工場>[こうじょう]です。"
+        },
+        {
+            "start": "00:01:23,446",
+            "end": "00:01:25,146",
+            "ja": "<水>[みず]の<工場>[こうじょう]だ。"
+        },
+        {
+            "start": "00:01:27,866",
+            "end": "00:01:29,946",
+            "ja": "<豪華>[ごうか]だからね。"
+        },
+        {
+            "start": "00:01:31,186",
+            "end": "00:01:31,366",
+            "ja": "わかった。"
+        },
+        {
+            "start": "00:01:32,726",
+            "end": "00:01:35,466",
+            "ja": "<次>[つぎ]の<日>[ひ]は<豆汁>[とうじる]だね、"
+        },
+        {
+            "start": "00:01:35,466",
+            "end": "00:01:39,586",
+            "ja": "それで<昼食>[ちゅうしょく]を<終>[お]える。"
+        }
+    ]
+}

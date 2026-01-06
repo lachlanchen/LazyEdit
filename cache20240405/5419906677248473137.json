@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,020\",\n    \"end\": \"00:01:04,099\",\n    \"lang\": \"en\",\n    \"text\": \"Being happy and satisfied in the knowledge world.\"\n  },\n  {\n    \"start\": \"00:01:04,920\",\n    \"end\": \"00:01:08,700\",\n    \"lang\": \"en\",\n    \"text\": \"But the reality is that no matter what you learned,\"\n  },\n  {\n    \"start\": \"00:01:08,700\",\n    \"end\": \"00:01:10,880\",\n    \"lang\": \"en\",\n    \"text\": \"what you studied,\"\n  },\n  {\n    \"start\": \"00:01:11,660\",\n    \"end\": \"00:01:13,800\",\n    \"lang\": \"en\",\n    \"text\": \"we are still ignorant.\"\n  },\n  {\n    \"start\": \"00:01:13,800\",\n    \"end\": \"00:01:16,280\",\n    \"lang\": \"en\",\n    \"text\": \"We are ignorant to this universe,\"\n  },\n  {\n    \"start\": \"00:01:16,280\",\n    \"end\": \"00:01:17,280\",\n    \"lang\": \"en\",\n    \"text\": \"to this world.\"\n  },\n  {\n    \"start\": \"00:01:18,160\",\n    \"end\": \"00:01:18,160\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:18,160\",\n    \"end\": \"00:01:20,760\",\n    \"lang\": \"en\",\n    \"text\": \"the knowledge,\"\n  },\n  {\n    \"start\": \"00:01:20,760\",\n    \"end\": \"00:01:25,240\",\n    \"lang\": \"en\",\n    \"text\": \"even the most achieved scientist,\"\n  },\n  {\n    \"start\": \"00:01:25,240\",\n    \"end\": \"00:01:27,520\",\n    \"lang\": \"en\",\n    \"text\": \"Nobel Prize in knowledge,\"\n  },\n  {\n    \"start\": \"00:01:27,520\",\n    \"end\": \"00:01:27,620\",\n    \"lang\": \"en\",\n    \"text\": \"is still ignorant.\"\n  },\n  {\n    \"start\": \"00:01:29,922\",\n    \"end\": \"00:01:30,582\",\n    \"lang\": \"ja\",\n    \"text\": \"ですっていう\"\n  },\n  {\n    \"start\": \"00:01:31,522\",\n    \"end\": \"00:01:35,522\",\n    \"lang\": \"en\",\n    \"text\": \"We are just in a temporary illusion of this...\"\n  },\n  {\n    \"start\": \"00:01:37,022\",\n    \"end\": \"00:01:37,482\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway,\"\n  },\n  {\n    \"start\": \"00:01:37,482\",\n    \"end\": \"00:01:40,642\",\n    \"lang\": \"en\",\n    \"text\": \"we think we are knowledgeable.\"\n  },\n  {\n    \"start\": \"00:01:41,890\",\n    \"end\": \"00:01:42,210\",\n    \"lang\": \"ar\",\n    \"text\": \"حلت\"\n  },\n  {\n    \"start\": \"00:01:43,266\",\n    \"end\": \"00:01:45,666\",\n    \"lang\": \"en\",\n    \"text\": \"But the fact is that we are never\"\n  },\n  {\n    \"start\": \"00:01:50,885\",\n    \"end\": \"00:01:53,686\",\n    \"lang\": \"en\",\n    \"text\": \"We are just dust in this universe\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,020",
+            "end": "00:01:04,099",
+            "es": "Estar feliz y satisfecho en el mundo del conocimiento.",
+            "fr": "Être heureux et satisfait dans le monde du savoir.",
+            "uk": "Бути щасливим і задоволеним у світі знань."
+        },
+        {
+            "start": "00:01:04,920",
+            "end": "00:01:08,700",
+            "es": "Pero la realidad es que, no importa lo que hayas aprendido,",
+            "fr": "Mais la réalité est que, peu importe ce que vous avez appris,",
+            "uk": "Але реальність така, що не має значення, що ви вивчили,"
+        },
+        {
+            "start": "00:01:08,700",
+            "end": "00:01:10,880",
+            "es": "lo que hayas estudiado,",
+            "fr": "ce que vous avez étudié,",
+            "uk": "що ви вчили,"
+        },
+        {
+            "start": "00:01:11,660",
+            "end": "00:01:13,800",
+            "es": "seguimos siendo ignorantes.",
+            "fr": "nous sommes toujours ignorants.",
+            "uk": "ми все ще невігласи."
+        },
+        {
+            "start": "00:01:13,800",
+            "end": "00:01:16,280",
+            "es": "Somos ignorantes de este universo,",
+            "fr": "Nous ignorons cet univers,",
+            "uk": "Ми невігласи до цієї всесвіту,"
+        },
+        {
+            "start": "00:01:16,280",
+            "end": "00:01:17,280",
+            "es": "de este mundo.",
+            "fr": "de ce monde.",
+            "uk": "до цього світу."
+        },
+        {
+            "start": "00:01:18,160",
+            "end": "00:01:18,160",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:01:18,160",
+            "end": "00:01:20,760",
+            "es": "el conocimiento,",
+            "fr": "la connaissance,",
+            "uk": "знання,"
+        },
+        {
+            "start": "00:01:20,760",
+            "end": "00:01:25,240",
+            "es": "incluso el científico más logrado,",
+            "fr": "même le scientifique le plus accompli,",
+            "uk": "навіть найбільш досягнутий науковець,"
+        },
+        {
+            "start": "00:01:25,240",
+            "end": "00:01:27,520",
+            "es": "premio Nobel en conocimiento,",
+            "fr": "Prix Nobel en connaissance,",
+            "uk": "Нобелівська премія з знань,"
+        },
+        {
+            "start": "00:01:27,520",
+            "end": "00:01:27,620",
+            "es": "sigue siendo ignorante.",
+            "fr": "reste ignorant.",
+            "uk": "все ще є невігласом."
+        },
+        {
+            "start": "00:01:29,922",
+            "end": "00:01:30,582",
+            "es": "Eso es.",
+            "fr": "C'est ça.",
+            "uk": "Ось так."
+        },
+        {
+            "start": "00:01:31,522",
+            "end": "00:01:35,522",
+            "es": "Estamos solo en una ilusión temporal de esto...",
+            "fr": "Nous sommes juste dans une illusion temporaire de cela...",
+            "uk": "Ми просто в тимчасовій ілюзії цього..."
+        },
+        {
+            "start": "00:01:37,022",
+            "end": "00:01:37,482",
+            "es": "De todos modos,",
+            "fr": "En tout cas,",
+            "uk": "Так чи інакше,"
+        },
+        {
+            "start": "00:01:37,482",
+            "end": "00:01:40,642",
+            "es": "pensamos que somos conocedores.",
+            "fr": "nous pensons que nous sommes savants.",
+            "uk": "ми думаємо, що ми знаємо."
+        },
+        {
+            "start": "00:01:41,890",
+            "end": "00:01:42,210",
+            "es": "Solucionado.",
+            "fr": "Résolu.",
+            "uk": "Вирішено."
+        },
+        {
+            "start": "00:01:43,266",
+            "end": "00:01:45,666",
+            "es": "Pero el hecho es que nunca",
+            "fr": "Mais le fait est que nous ne sommes jamais",
+            "uk": "Але факт у тому, що ми ніколи"
+        },
+        {
+            "start": "00:01:50,885",
+            "end": "00:01:53,686",
+            "es": "Somos solo polvo en este universo",
+            "fr": "Nous sommes juste de la poussière dans cet univers",
+            "uk": "Ми просто пил у цьому всесвіті"
+        }
+    ]
+}

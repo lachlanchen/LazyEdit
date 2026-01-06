@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,540\",\n    \"lang\": \"zh\",\n    \"text\": \"拆遷\"\n  },\n  {\n    \"start\": \"00:00:03,682\",\n    \"end\": \"00:00:05,022\",\n    \"lang\": \"en\",\n    \"text\": \"This is the cutest one.\"\n  },\n  {\n    \"start\": \"00:00:16,492\",\n    \"end\": \"00:00:18,442\",\n    \"lang\": \"en\",\n    \"text\": \"How do they...\"\n  },\n  {\n    \"start\": \"00:00:18,442\",\n    \"end\": \"00:00:18,902\",\n    \"lang\": \"en\",\n    \"text\": \"Shiba,\"\n  },\n  {\n    \"start\": \"00:00:18,902\",\n    \"end\": \"00:00:19,162\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:00:19,921\",\n    \"end\": \"00:00:21,162\",\n    \"lang\": \"en\",\n    \"text\": \"Is that a Chai-shun?\"\n  },\n  {\n    \"start\": \"00:00:22,042\",\n    \"end\": \"00:00:22,782\",\n    \"lang\": \"en\",\n    \"text\": \"Shiba.\"\n  },\n  {\n    \"start\": \"00:00:23,802\",\n    \"end\": \"00:00:24,582\",\n    \"lang\": \"en\",\n    \"text\": \"In Japanese.\"\n  },\n  {\n    \"start\": \"00:00:27,042\",\n    \"end\": \"00:00:27,782\",\n    \"lang\": \"en\",\n    \"text\": \"Right.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,540",
+            "ja": "解体"
+        },
+        {
+            "start": "00:00:03,682",
+            "end": "00:00:05,022",
+            "ja": "これが一番かわいいね。"
+        },
+        {
+            "start": "00:00:16,492",
+            "end": "00:00:18,442",
+            "ja": "どうやって..."
+        },
+        {
+            "start": "00:00:18,442",
+            "end": "00:00:18,902",
+            "ja": "柴犬、"
+        },
+        {
+            "start": "00:00:18,902",
+            "end": "00:00:19,162",
+            "ja": "だよね？"
+        },
+        {
+            "start": "00:00:19,921",
+            "end": "00:00:21,162",
+            "ja": "それ、チャイシュン？"
+        },
+        {
+            "start": "00:00:22,042",
+            "end": "00:00:22,782",
+            "ja": "柴犬。"
+        },
+        {
+            "start": "00:00:23,802",
+            "end": "00:00:24,582",
+            "ja": "日本語で。"
+        },
+        {
+            "start": "00:00:27,042",
+            "end": "00:00:27,782",
+            "ja": "そうだね。"
+        }
+    ]
+}

@@ -1,0 +1,70 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"en\",\n    \"text\": \"I cooked this fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:03,700\",\n    \"end\": \"00:00:06,560\",\n    \"lang\": \"en\",\n    \"text\": \"It takes about an hour.\"\n  },\n  {\n    \"start\": \"00:00:07,020\",\n    \"end\": \"00:00:09,700\",\n    \"lang\": \"en\",\n    \"text\": \"So this fast food is kind of slow.\"\n  },\n  {\n    \"start\": \"00:00:11,220\",\n    \"end\": \"00:00:11,460\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:11,460\",\n    \"end\": \"00:00:13,520\",\n    \"lang\": \"en\",\n    \"text\": \"it smells so good.\"\n  },\n  {\n    \"start\": \"00:00:14,600\",\n    \"end\": \"00:00:16,420\",\n    \"lang\": \"en\",\n    \"text\": \"And with this chicken wing.\"\n  },\n  {\n    \"start\": \"00:00:17,666\",\n    \"end\": \"00:00:19,326\",\n    \"lang\": \"ja\",\n    \"text\": \"この手羽先面を\"\n  },\n  {\n    \"start\": \"00:00:20,514\",\n    \"end\": \"00:00:20,654\",\n    \"lang\": \"en\",\n    \"text\": \"Bye.\"\n  },\n  {\n    \"start\": \"00:00:20,962\",\n    \"end\": \"00:00:22,402\",\n    \"lang\": \"ja\",\n    \"text\": \"私は食べています\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,980",
+            "en": "I cooked this fast noodles.",
+            "zh": "我做了这个快速面。",
+            "ar": "لقد طبخت هذه المعكرونة السريعة."
+        },
+        {
+            "start": "00:00:03,700",
+            "end": "00:00:06,560",
+            "en": "It takes about an hour.",
+            "zh": "大约需要一个小时。",
+            "ar": "يستغرق حوالي ساعة."
+        },
+        {
+            "start": "00:00:07,020",
+            "end": "00:00:09,700",
+            "en": "So this fast food is kind of slow.",
+            "zh": "所以这个快餐有点慢。",
+            "ar": "لذا هذا الطعام السريع بطيء نوعا ما."
+        },
+        {
+            "start": "00:00:11,220",
+            "end": "00:00:11,460",
+            "en": "Oh,",
+            "zh": "哦，",
+            "ar": "أوه،"
+        },
+        {
+            "start": "00:00:11,460",
+            "end": "00:00:13,520",
+            "en": "it smells so good.",
+            "zh": "闻起来真的好香。",
+            "ar": "رائحته جيدة جدا."
+        },
+        {
+            "start": "00:00:14,600",
+            "end": "00:00:16,420",
+            "en": "And with this chicken wing.",
+            "zh": "加上这个鸡翅。",
+            "ar": "ومع هذا الجناح الدجاج."
+        },
+        {
+            "start": "00:00:17,666",
+            "end": "00:00:19,326",
+            "en": "With this chicken wing side.",
+            "zh": "用这个鸡翅边。",
+            "ar": "مع هذا الجانب الجناح الدجاج.",
+            "ja": "この手羽先面を"
+        },
+        {
+            "start": "00:00:20,514",
+            "end": "00:00:20,654",
+            "en": "Bye.",
+            "zh": "再见。",
+            "ar": "وداعا."
+        },
+        {
+            "start": "00:00:20,962",
+            "end": "00:00:22,402",
+            "en": "I am eating.",
+            "zh": "我在吃。",
+            "ar": "أنا آكل.",
+            "ja": "私は食べています"
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,840\",\n    \"lang\": \"en\",\n    \"text\": \"Another ordinary day with some little progress,\"\n  },\n  {\n    \"start\": \"00:00:04,840\",\n    \"end\": \"00:00:06,000\",\n    \"lang\": \"en\",\n    \"text\": \"little improvement\"\n  },\n  {\n    \"start\": \"00:00:15,520\",\n    \"end\": \"00:00:16,100\",\n    \"lang\": \"en\",\n    \"text\": \"It's very good\"\n  },\n  {\n    \"start\": \"00:00:16,129\",\n    \"end\": \"00:00:16,810\",\n    \"lang\": \"zh\",\n    \"text\": \"小鱼死鱼飞\"\n  },\n  {\n    \"start\": \"00:00:17,698\",\n    \"end\": \"00:00:18,498\",\n    \"lang\": \"en\",\n    \"text\": \"in her grasp\"\n  },\n  {\n    \"start\": \"00:00:30,377\",\n    \"end\": \"00:00:31,217\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:31,217\",\n    \"end\": \"00:00:33,258\",\n    \"lang\": \"en\",\n    \"text\": \"let's get it perfectly wrong,\"\n  },\n  {\n    \"start\": \"00:00:33,258\",\n    \"end\": \"00:00:34,598\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  },\n  {\n    \"start\": \"00:00:54,338\",\n    \"end\": \"00:00:57,118\",\n    \"lang\": \"en\",\n    \"text\": \"Okay this around a the perfect,\"\n  },\n  {\n    \"start\": \"00:00:57,118\",\n    \"end\": \"00:00:58,858\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,840",
+            "ko": "평범한 또 다른 날, 조금의 진전이 있었지,"
+        },
+        {
+            "start": "00:00:04,840",
+            "end": "00:00:06,000",
+            "ko": "조금의 개선"
+        },
+        {
+            "start": "00:00:15,520",
+            "end": "00:00:16,100",
+            "ko": "정말 좋아"
+        },
+        {
+            "start": "00:00:16,129",
+            "end": "00:00:16,810",
+            "ko": "작은 물고기가 허공을 나는"
+        },
+        {
+            "start": "00:00:17,698",
+            "end": "00:00:18,498",
+            "ko": "그녀의 손아귀에"
+        },
+        {
+            "start": "00:00:30,377",
+            "end": "00:00:31,217",
+            "ko": "좋아,"
+        },
+        {
+            "start": "00:00:31,217",
+            "end": "00:00:33,258",
+            "ko": "완전히 잘못된 방식으로 해보자,"
+        },
+        {
+            "start": "00:00:33,258",
+            "end": "00:00:34,598",
+            "ko": "알았지"
+        },
+        {
+            "start": "00:00:54,338",
+            "end": "00:00:57,118",
+            "ko": "이번엔 완벽하게, 알았지"
+        },
+        {
+            "start": "00:00:57,118",
+            "end": "00:00:58,858",
+            "ko": "알았어"
+        }
+    ]
+}

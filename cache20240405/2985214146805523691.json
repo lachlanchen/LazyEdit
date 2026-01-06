@@ -1,0 +1,19 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:06,520\",\n    \"end\": \"00:00:09,280\",\n    \"lang\": \"zh\",\n    \"text\": \"我来帮帮我\"\n  },\n  {\n    \"start\": \"00:00:10,500\",\n    \"end\": \"00:00:12,340\",\n    \"lang\": \"zh\",\n    \"text\": \"我来帮帮你\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:06,520",
+            "end": "00:00:09,280",
+            "en": "Let me help myself",
+            "zh": "我来帮帮我",
+            "ar": "دعني أساعد نفسي"
+        },
+        {
+            "start": "00:00:10,500",
+            "end": "00:00:12,340",
+            "en": "Let me help you",
+            "zh": "我来帮帮你",
+            "ar": "دعني أساعدك"
+        }
+    ]
+}

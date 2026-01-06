@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"This is the first time I've seen the Hong Kong TV Mall.\"\n  },\n  {\n    \"start\": \"00:00:06,080\",\n    \"end\": \"00:00:06,960\",\n    \"lang\": \"en\",\n    \"text\": \"And it's terrible.\"\n  },\n  {\n    \"start\": \"00:00:07,440\",\n    \"end\": \"00:00:08,280\",\n    \"lang\": \"en\",\n    \"text\": \"It's primitive.\"\n  },\n  {\n    \"start\": \"00:00:08,740\",\n    \"end\": \"00:00:10,560\",\n    \"lang\": \"en\",\n    \"text\": \"And they have pieces like this.\"\n  },\n  {\n    \"start\": \"00:00:10,980\",\n    \"end\": \"00:00:12,700\",\n    \"lang\": \"en\",\n    \"text\": \"But it's so cool.\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:14,980\",\n    \"lang\": \"en\",\n    \"text\": \"Environment friendly.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,000",
+            "es": "Esta es la primera vez que veo el centro comercial de televisión de Hong Kong.",
+            "fr": "C'est la première fois que je vois le centre commercial TV de Hong Kong.",
+            "uk": "Це перший раз, коли я бачу торговий центр Гонконгу на ТБ."
+        },
+        {
+            "start": "00:00:06,080",
+            "end": "00:00:06,960",
+            "es": "Y es terrible.",
+            "fr": "Et c'est terrible.",
+            "uk": "І це жахливо."
+        },
+        {
+            "start": "00:00:07,440",
+            "end": "00:00:08,280",
+            "es": "Es primitivo.",
+            "fr": "C'est primitif.",
+            "uk": "Це примітивно."
+        },
+        {
+            "start": "00:00:08,740",
+            "end": "00:00:10,560",
+            "es": "Y tienen piezas como esta.",
+            "fr": "Et ils ont des pièces comme celle-ci.",
+            "uk": "І у них є такі штуки."
+        },
+        {
+            "start": "00:00:10,980",
+            "end": "00:00:12,700",
+            "es": "Pero es tan cool.",
+            "fr": "Mais c'est tellement cool.",
+            "uk": "Але це так круто."
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:14,980",
+            "es": "Amigable con el medio ambiente.",
+            "fr": "Respectueux de l'environnement.",
+            "uk": "Дружній до навколишнього середовища."
+        }
+    ]
+}

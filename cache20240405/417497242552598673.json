@@ -1,0 +1,34 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:03,280\",\n    \"end\": \"00:00:05,540\",\n    \"lang\": \"ja\",\n    \"text\": \"今日はこのディオティックアウトを見てみました\"\n  },\n  {\n    \"start\": \"00:00:08,642\",\n    \"end\": \"00:00:09,242\",\n    \"lang\": \"ja\",\n    \"text\": \"おまえくるりんす\"\n  },\n  {\n    \"start\": \"00:00:14,050\",\n    \"end\": \"00:00:15,130\",\n    \"lang\": \"en\",\n    \"text\": \"So I don't know.\"\n  },\n  {\n    \"start\": \"00:00:15,930\",\n    \"end\": \"00:00:19,270\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if you caught a video of doing this.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:03,280",
+            "end": "00:00:05,540",
+            "en": "Today, we'll take a look at this diotic out",
+            "zh": "今天，我们来看看这个双耳分离输出",
+            "ar": "اليوم، سوف نلقي نظرة على هذا الخروج ثنائي الأذن"
+        },
+        {
+            "start": "00:00:08,642",
+            "end": "00:00:09,242",
+            "en": "You're turning around",
+            "zh": "你在转身",
+            "ar": "أنت تستدير",
+            "ja": "おまえくるりんす"
+        },
+        {
+            "start": "00:00:14,050",
+            "end": "00:00:15,130",
+            "en": "So I don't know.",
+            "zh": "所以我不知道。",
+            "ar": "إذاً أنا لا أعلم."
+        },
+        {
+            "start": "00:00:15,930",
+            "end": "00:00:19,270",
+            "en": "I don't know if you caught a video of doing this.",
+            "zh": "我不知道你是否拍下了这样做的视频。",
+            "ar": "لا أعلم إذا كنت قد التقطت فيديو للقيام بهذا."
+        }
+    ]
+}

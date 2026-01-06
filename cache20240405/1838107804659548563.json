@@ -1,0 +1,105 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,120\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:01,120\",\n    \"end\": \"00:00:05,620\",\n    \"lang\": \"en\",\n    \"text\": \"this is our unfinished second part of the lunch.\"\n  },\n  {\n    \"start\": \"00:00:09,620\",\n    \"end\": \"00:00:10,500\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:10,500\",\n    \"end\": \"00:00:13,460\",\n    \"lang\": \"en\",\n    \"text\": \"the potato takes 20 minutes,\"\n  },\n  {\n    \"start\": \"00:00:13,460\",\n    \"end\": \"00:00:18,620\",\n    \"lang\": \"en\",\n    \"text\": \"and the beef takes about 10 minutes.\"\n  },\n  {\n    \"start\": \"00:00:19,746\",\n    \"end\": \"00:00:20,486\",\n    \"lang\": \"zh\",\n    \"text\": \"有筋道的你\"\n  },\n  {\n    \"start\": \"00:00:20,866\",\n    \"end\": \"00:00:21,466\",\n    \"lang\": \"zh\",\n    \"text\": \"鱼肉的你再吃\"\n  },\n  {\n    \"start\": \"00:00:23,138\",\n    \"end\": \"00:00:25,678\",\n    \"lang\": \"en\",\n    \"text\": \"cook the potato before the beef.\"\n  },\n  {\n    \"start\": \"00:00:26,158\",\n    \"end\": \"00:00:26,838\",\n    \"lang\": \"en\",\n    \"text\": \"But today,\"\n  },\n  {\n    \"start\": \"00:00:26,838\",\n    \"end\": \"00:00:29,978\",\n    \"lang\": \"en\",\n    \"text\": \"I cook the beef before the potato\"\n  },\n  {\n    \"start\": \"00:00:30,377\",\n    \"end\": \"00:00:33,918\",\n    \"lang\": \"en\",\n    \"text\": \"and I use the oil of the beef to cook the potato.\"\n  },\n  {\n    \"start\": \"00:00:34,558\",\n    \"end\": \"00:00:40,038\",\n    \"lang\": \"en\",\n    \"text\": \"So this make the potato 20 minutes later.\"\n  },\n  {\n    \"start\": \"00:00:41,058\",\n    \"end\": \"00:00:41,938\",\n    \"lang\": \"ja\",\n    \"text\": \"ランザピー\"\n  },\n  {\n    \"start\": \"00:00:43,394\",\n    \"end\": \"00:00:43,654\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:43,654\",\n    \"end\": \"00:00:47,314\",\n    \"lang\": \"en\",\n    \"text\": \"wow,\"\n  },\n  {\n    \"start\": \"00:00:47,314\",\n    \"end\": \"00:00:50,174\",\n    \"lang\": \"en\",\n    \"text\": \"this is crispy.\"\n  },\n  {\n    \"start\": \"00:00:51,202\",\n    \"end\": \"00:00:53,342\",\n    \"lang\": \"ja\",\n    \"text\": \"とってもおいしいです\"\n  },\n  {\n    \"start\": \"00:00:54,114\",\n    \"end\": \"00:00:54,854\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:54,854\",\n    \"end\": \"00:00:56,734\",\n    \"lang\": \"en\",\n    \"text\": \"do you hear the sound?\"\n  },\n  {\n    \"start\": \"00:00:59,614\",\n    \"end\": \"00:01:00,754\",\n    \"lang\": \"en\",\n    \"text\": \"Crispy sound\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,120",
+            "ko": "오케이,"
+        },
+        {
+            "start": "00:00:01,120",
+            "end": "00:00:05,620",
+            "ko": "이건 우리가 아직 마무리하지 못한 점심의 두 번째 파트야."
+        },
+        {
+            "start": "00:00:09,620",
+            "end": "00:00:10,500",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:00:10,500",
+            "end": "00:00:13,460",
+            "ko": "감자는 20분이 걸리고,"
+        },
+        {
+            "start": "00:00:13,460",
+            "end": "00:00:18,620",
+            "ko": "소고기는 대략 10분 정도 걸려."
+        },
+        {
+            "start": "00:00:19,746",
+            "end": "00:00:20,486",
+            "ko": "근육질의 너"
+        },
+        {
+            "start": "00:00:20,866",
+            "end": "00:00:21,466",
+            "ko": "생선살 같은 너, 다시 먹어"
+        },
+        {
+            "start": "00:00:23,138",
+            "end": "00:00:25,678",
+            "ko": "소고기 전에 감자를 요리해."
+        },
+        {
+            "start": "00:00:26,158",
+            "end": "00:00:26,838",
+            "ko": "하지만 오늘은,"
+        },
+        {
+            "start": "00:00:26,838",
+            "end": "00:00:29,978",
+            "ko": "나는 감자 전에 소고기를 요리했어"
+        },
+        {
+            "start": "00:00:30,377",
+            "end": "00:00:33,918",
+            "ko": "그리고 소고기의 기름을 사용해서 감자를 요리했지."
+        },
+        {
+            "start": "00:00:34,558",
+            "end": "00:00:40,038",
+            "ko": "그래서 이것은 감자를 20분 늦게 만들었어."
+        },
+        {
+            "start": "00:00:41,058",
+            "end": "00:00:41,938",
+            "ko": "란쟈피"
+        },
+        {
+            "start": "00:00:43,394",
+            "end": "00:00:43,654",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:00:43,654",
+            "end": "00:00:47,314",
+            "ko": "우와,"
+        },
+        {
+            "start": "00:00:47,314",
+            "end": "00:00:50,174",
+            "ko": "이거 바삭바삭하네."
+        },
+        {
+            "start": "00:00:51,202",
+            "end": "00:00:53,342",
+            "ko": "정말 맛있어요"
+        },
+        {
+            "start": "00:00:54,114",
+            "end": "00:00:54,854",
+            "ko": "우와,"
+        },
+        {
+            "start": "00:00:54,854",
+            "end": "00:00:56,734",
+            "ko": "소리 들려?"
+        },
+        {
+            "start": "00:00:59,614",
+            "end": "00:01:00,754",
+            "ko": "바삭바삭한 소리"
+        }
+    ]
+}

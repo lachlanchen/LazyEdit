@@ -1,0 +1,145 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,020\",\n    \"lang\": \"en\",\n    \"text\": \"hey guys so i want to ask a stupid question in learning guitar\"\n  },\n  {\n    \"start\": \"00:00:06,338\",\n    \"end\": \"00:00:06,578\",\n    \"lang\": \"ja\",\n    \"text\": \"そう\"\n  },\n  {\n    \"start\": \"00:00:07,074\",\n    \"end\": \"00:00:08,354\",\n    \"lang\": \"en\",\n    \"text\": \"for each chord,\"\n  },\n  {\n    \"start\": \"00:00:08,354\",\n    \"end\": \"00:00:15,254\",\n    \"lang\": \"en\",\n    \"text\": \"how many times I should play on my right hand,\"\n  },\n  {\n    \"start\": \"00:00:15,254\",\n    \"end\": \"00:00:17,114\",\n    \"lang\": \"en\",\n    \"text\": \"how many strongs are needed.\"\n  },\n  {\n    \"start\": \"00:00:18,234\",\n    \"end\": \"00:00:20,114\",\n    \"lang\": \"en\",\n    \"text\": \"So I asked the ChetGBT,\"\n  },\n  {\n    \"start\": \"00:00:20,114\",\n    \"end\": \"00:00:22,494\",\n    \"lang\": \"en\",\n    \"text\": \"and he said it needs\"\n  },\n  {\n    \"start\": \"00:00:23,522\",\n    \"end\": \"00:00:24,422\",\n    \"lang\": \"ja\",\n    \"text\": \"モードを調整してみると、\"\n  },\n  {\n    \"start\": \"00:00:24,422\",\n    \"end\": \"00:00:25,962\",\n    \"lang\": \"ja\",\n    \"text\": \"心の高さを調整する事はできるだろう。\"\n  },\n  {\n    \"start\": \"00:00:25,986\",\n    \"end\": \"00:00:26,506\",\n    \"lang\": \"en\",\n    \"text\": \"same nature.\"\n  },\n  {\n    \"start\": \"00:00:26,506\",\n    \"end\": \"00:00:32,826\",\n    \"lang\": \"en\",\n    \"text\": \"I could play 6 strums for the 4 beats.\"\n  },\n  {\n    \"start\": \"00:00:32,826\",\n    \"end\": \"00:00:35,386\",\n    \"lang\": \"en\",\n    \"text\": \"So the first is down,\"\n  },\n  {\n    \"start\": \"00:00:35,386\",\n    \"end\": \"00:00:36,286\",\n    \"lang\": \"en\",\n    \"text\": \"and the second\"\n  },\n  {\n    \"start\": \"00:00:36,286\",\n    \"end\": \"00:00:38,246\",\n    \"lang\": \"en\",\n    \"text\": \"is down up,\"\n  },\n  {\n    \"start\": \"00:00:38,246\",\n    \"end\": \"00:00:43,686\",\n    \"lang\": \"en\",\n    \"text\": \"and the last 2 beats is up down up.\"\n  },\n  {\n    \"start\": \"00:00:43,686\",\n    \"end\": \"00:00:45,446\",\n    \"lang\": \"en\",\n    \"text\": \"Is that correct?\"\n  },\n  {\n    \"start\": \"00:00:45,446\",\n    \"end\": \"00:00:50,566\",\n    \"lang\": \"en\",\n    \"text\": \"I play 6 strums on these\"\n  },\n  {\n    \"start\": \"00:00:50,566\",\n    \"end\": \"00:00:51,266\",\n    \"lang\": \"en\",\n    \"text\": \"4 beats.\"\n  },\n  {\n    \"start\": \"00:00:51,266\",\n    \"end\": \"00:00:52,946\",\n    \"lang\": \"en\",\n    \"text\": \"So is this correct?\"\n  },\n  {\n    \"start\": \"00:00:52,946\",\n    \"end\": \"00:01:01,826\",\n    \"lang\": \"en\",\n    \"text\": \"So for these 2 chords that I play 12 times,\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,020",
+            "es": "hola chicos, así que quiero hacer una pregunta tonta sobre aprender guitarra",
+            "fr": "salut les gars, donc je veux poser une question stupide sur l'apprentissage de la guitare",
+            "uk": "привіт хлопці, отже, я хочу задати дурне питання про вивчення гри на гітарі"
+        },
+        {
+            "start": "00:00:06,338",
+            "end": "00:00:06,578",
+            "es": "así es",
+            "fr": "c'est ça",
+            "uk": "так"
+        },
+        {
+            "start": "00:00:07,074",
+            "end": "00:00:08,354",
+            "es": "para cada acorde,",
+            "fr": "pour chaque accord,",
+            "uk": "для кожного акорду,"
+        },
+        {
+            "start": "00:00:08,354",
+            "end": "00:00:15,254",
+            "es": "cuántas veces debería tocar con mi mano derecha,",
+            "fr": "combien de fois je devrais jouer avec ma main droite,",
+            "uk": "скільки разів я повинен грати правою рукою,"
+        },
+        {
+            "start": "00:00:15,254",
+            "end": "00:00:17,114",
+            "es": "cuántas cuerdas son necesarias.",
+            "fr": "combien de cordes sont nécessaires.",
+            "uk": "скільки струн потрібно."
+        },
+        {
+            "start": "00:00:18,234",
+            "end": "00:00:20,114",
+            "es": "Así que pregunté al ChetGBT,",
+            "fr": "Donc, j'ai demandé à ChetGBT,",
+            "uk": "Отже, я запитав у ChetGBT,"
+        },
+        {
+            "start": "00:00:20,114",
+            "end": "00:00:22,494",
+            "es": "y él dijo que necesita",
+            "fr": "et il a dit qu'il faut",
+            "uk": "і він сказав, що потрібно"
+        },
+        {
+            "start": "00:00:23,522",
+            "end": "00:00:24,422",
+            "es": "ajustar el modo, y",
+            "fr": "ajuster le mode, et",
+            "uk": "налаштувати режим, і"
+        },
+        {
+            "start": "00:00:24,422",
+            "end": "00:00:25,962",
+            "es": "puedes ajustar la altura del corazón.",
+            "fr": "tu peux ajuster la hauteur du cœur.",
+            "uk": "можна налаштувати висоту серця."
+        },
+        {
+            "start": "00:00:25,986",
+            "end": "00:00:26,506",
+            "es": "misma naturaleza.",
+            "fr": "même nature.",
+            "uk": "та сама природа."
+        },
+        {
+            "start": "00:00:26,506",
+            "end": "00:00:32,826",
+            "es": "Podría tocar 6 rasgueos para los 4 tiempos.",
+            "fr": "Je pourrais jouer 6 grattages pour les 4 temps.",
+            "uk": "Я міг би зіграти 6 ударів за 4 такти."
+        },
+        {
+            "start": "00:00:32,826",
+            "end": "00:00:35,386",
+            "es": "Así que el primero es hacia abajo,",
+            "fr": "Alors le premier est vers le bas,",
+            "uk": "Отже, перший вниз,"
+        },
+        {
+            "start": "00:00:35,386",
+            "end": "00:00:36,286",
+            "es": "y el segundo",
+            "fr": "et le deuxième",
+            "uk": "а другий"
+        },
+        {
+            "start": "00:00:36,286",
+            "end": "00:00:38,246",
+            "es": "es hacia abajo arriba,",
+            "fr": "est vers le bas haut,",
+            "uk": "це вниз вгору,"
+        },
+        {
+            "start": "00:00:38,246",
+            "end": "00:00:43,686",
+            "es": "y los últimos 2 tiempos son hacia arriba abajo arriba.",
+            "fr": "et les 2 derniers temps sont vers le haut bas haut.",
+            "uk": "і останні 2 такти це вгору вниз вгору."
+        },
+        {
+            "start": "00:00:43,686",
+            "end": "00:00:45,446",
+            "es": "¿Es eso correcto?",
+            "fr": "Est-ce correct ?",
+            "uk": "Це правильно?"
+        },
+        {
+            "start": "00:00:45,446",
+            "end": "00:00:50,566",
+            "es": "Toco 6 rasgueos en estos",
+            "fr": "Je joue 6 grattages sur ceux-ci",
+            "uk": "Я граю 6 ударів на цих"
+        },
+        {
+            "start": "00:00:50,566",
+            "end": "00:00:51,266",
+            "es": "4 tiempos.",
+            "fr": "4 temps.",
+            "uk": "4 такти."
+        },
+        {
+            "start": "00:00:51,266",
+            "end": "00:00:52,946",
+            "es": "Entonces, ¿esto es correcto?",
+            "fr": "Alors, c'est correct ?",
+            "uk": "Отже, це правильно?"
+        },
+        {
+            "start": "00:00:52,946",
+            "end": "00:01:01,826",
+            "es": "Entonces, para estos 2 acordes que toco 12 veces,",
+            "fr": "Donc, pour ces 2 accords que je joue 12 fois,",
+            "uk": "Отже, для цих 2 акордів, які я граю 12 разів,"
+        }
+    ]
+}

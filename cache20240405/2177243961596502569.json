@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:13,960\",\n    \"end\": \"00:01:15,180\",\n    \"lang\": \"en\",\n    \"text\": \"That's my hope,\"\n  },\n  {\n    \"start\": \"00:01:15,180\",\n    \"end\": \"00:01:16,000\",\n    \"lang\": \"en\",\n    \"text\": \"my dream.\"\n  },\n  {\n    \"start\": \"00:01:16,000\",\n    \"end\": \"00:01:22,420\",\n    \"lang\": \"en\",\n    \"text\": \"But my dream is a thing I want to do.\"\n  },\n  {\n    \"start\": \"00:01:24,540\",\n    \"end\": \"00:01:28,460\",\n    \"lang\": \"en\",\n    \"text\": \"Interesting is that today all my food is in profit.\"\n  },\n  {\n    \"start\": \"00:01:29,460\",\n    \"end\": \"00:01:33,360\",\n    \"lang\": \"en\",\n    \"text\": \"Sweet potato and eggs were exploded.\"\n  },\n  {\n    \"start\": \"00:01:34,400\",\n    \"end\": \"00:01:37,620\",\n    \"lang\": \"en\",\n    \"text\": \"It's kind of explosion day today.\"\n  },\n  {\n    \"start\": \"00:01:38,640\",\n    \"end\": \"00:01:40,560\",\n    \"lang\": \"en\",\n    \"text\": \"Everything is going to be explosive.\"\n  },\n  {\n    \"start\": \"00:01:43,020\",\n    \"end\": \"00:01:44,300\",\n    \"lang\": \"en\",\n    \"text\": \"Explosive growth.\"\n  },\n  {\n    \"start\": \"00:01:46,540\",\n    \"end\": \"00:01:47,060\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:47,060\",\n    \"end\": \"00:01:48,640\",\n    \"lang\": \"en\",\n    \"text\": \"let's try.\"\n  },\n  {\n    \"start\": \"00:01:49,120\",\n    \"end\": \"00:01:59,900\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this is just interesting.\"\n  },\n  {\n    \"start\": \"00:02:03,560\",\n    \"end\": \"00:02:04,960\",\n    \"lang\": \"en\",\n    \"text\": \"It's clever.\"\n  },\n  {\n    \"start\": \"00:02:06,779\",\n    \"end\": \"00:02:07,820\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:07,820\",\n    \"end\": \"00:02:09,039\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  },\n  {\n    \"start\": \"00:02:12,920\",\n    \"end\": \"00:02:13,960\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:02:13,960\",\n    \"end\": \"00:02:14,420\",\n    \"lang\": \"en\",\n    \"text\": \"sorry.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:13,960",
+            "end": "00:01:15,180",
+            "es": "Esa es mi esperanza,",
+            "fr": "C'est mon espoir,",
+            "uk": "Це моя надія,"
+        },
+        {
+            "start": "00:01:15,180",
+            "end": "00:01:16,000",
+            "es": "mi sueño.",
+            "fr": "mon rêve.",
+            "uk": "моя мрія."
+        },
+        {
+            "start": "00:01:16,000",
+            "end": "00:01:22,420",
+            "es": "Pero mi sueño es algo que quiero hacer.",
+            "fr": "Mais mon rêve est quelque chose que je veux faire.",
+            "uk": "Але моя мрія - це те, що я хочу зробити."
+        },
+        {
+            "start": "00:01:24,540",
+            "end": "00:01:28,460",
+            "es": "Lo interesante es que hoy toda mi comida está en beneficio.",
+            "fr": "Ce qui est intéressant, c'est qu'aujourd'hui toute ma nourriture est rentable.",
+            "uk": "Цікаво, що сьогодні вся моя їжа є вигідною."
+        },
+        {
+            "start": "00:01:29,460",
+            "end": "00:01:33,360",
+            "es": "Las batatas y los huevos explotaron.",
+            "fr": "Les patates douces et les œufs ont explosé.",
+            "uk": "Солодкі картоплі та яйця вибухнули."
+        },
+        {
+            "start": "00:01:34,400",
+            "end": "00:01:37,620",
+            "es": "Es una especie de día de explosiones hoy.",
+            "fr": "C'est une sorte de journée d'explosions aujourd'hui.",
+            "uk": "Сьогодні якийсь день вибухів."
+        },
+        {
+            "start": "00:01:38,640",
+            "end": "00:01:40,560",
+            "es": "Todo va a ser explosivo.",
+            "fr": "Tout va être explosif.",
+            "uk": "Все буде вибуховим."
+        },
+        {
+            "start": "00:01:43,020",
+            "end": "00:01:44,300",
+            "es": "Crecimiento explosivo.",
+            "fr": "Croissance explosive.",
+            "uk": "Вибухове зростання."
+        },
+        {
+            "start": "00:01:46,540",
+            "end": "00:01:47,060",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:01:47,060",
+            "end": "00:01:48,640",
+            "es": "vamos a probar.",
+            "fr": "essayons.",
+            "uk": "спробуємо."
+        },
+        {
+            "start": "00:01:49,120",
+            "end": "00:01:59,900",
+            "es": "Creo que esto es solo interesante.",
+            "fr": "Je pense que c'est juste intéressant.",
+            "uk": "Я вважаю, це просто цікаво."
+        },
+        {
+            "start": "00:02:03,560",
+            "end": "00:02:04,960",
+            "es": "Es inteligente.",
+            "fr": "C'est intelligent.",
+            "uk": "Це розумно."
+        },
+        {
+            "start": "00:02:06,779",
+            "end": "00:02:07,820",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:02:07,820",
+            "end": "00:02:09,039",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "uk": "побачимося."
+        },
+        {
+            "start": "00:02:12,920",
+            "end": "00:02:13,960",
+            "es": "Perdón,",
+            "fr": "Pardon,",
+            "uk": "Вибачте,"
+        },
+        {
+            "start": "00:02:13,960",
+            "end": "00:02:14,420",
+            "es": "perdón.",
+            "fr": "pardon.",
+            "uk": "вибачте."
+        }
+    ]
+}

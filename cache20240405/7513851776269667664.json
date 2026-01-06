@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:05,154\",\n    \"end\": \"00:02:05,454\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  },\n  {\n    \"start\": \"00:02:06,234\",\n    \"end\": \"00:02:06,854\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:02:11,574\",\n    \"end\": \"00:02:13,214\",\n    \"lang\": \"en\",\n    \"text\": \"freedom is a great thing\"\n  },\n  {\n    \"start\": \"00:02:18,673\",\n    \"end\": \"00:02:19,193\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:02:19,193\",\n    \"end\": \"00:02:19,674\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:02:20,993\",\n    \"end\": \"00:02:22,234\",\n    \"lang\": \"en\",\n    \"text\": \"so this is a poem\"\n  },\n  {\n    \"start\": \"00:02:23,593\",\n    \"end\": \"00:02:24,734\",\n    \"lang\": \"en\",\n    \"text\": \"this is a poem\"\n  },\n  {\n    \"start\": \"00:02:25,254\",\n    \"end\": \"00:02:26,414\",\n    \"lang\": \"en\",\n    \"text\": \"where is the poem?\"\n  },\n  {\n    \"start\": \"00:02:28,334\",\n    \"end\": \"00:02:28,874\",\n    \"lang\": \"en\",\n    \"text\": \"what is the poem?\"\n  },\n  {\n    \"start\": \"00:02:30,306\",\n    \"end\": \"00:02:38,026\",\n    \"lang\": \"ja\",\n    \"text\": \"助かる私はあなたと共に高く飛びたい この青波の上でこの青い空の下で\"\n  },\n  {\n    \"start\": \"00:02:55,506\",\n    \"end\": \"00:02:56,426\",\n    \"lang\": \"ja\",\n    \"text\": \"ok さあ行こう\"\n  },\n  {\n    \"start\": \"00:02:56,450\",\n    \"end\": \"00:02:56,630\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:05,154",
+            "end": "00:02:05,454",
+            "ko": "알겠어"
+        },
+        {
+            "start": "00:02:06,234",
+            "end": "00:02:06,854",
+            "ko": "그래서"
+        },
+        {
+            "start": "00:02:11,574",
+            "end": "00:02:13,214",
+            "ko": "자유는 정말 좋은 것이야"
+        },
+        {
+            "start": "00:02:18,673",
+            "end": "00:02:19,193",
+            "ko": "그래서"
+        },
+        {
+            "start": "00:02:19,193",
+            "end": "00:02:19,674",
+            "ko": "그래서"
+        },
+        {
+            "start": "00:02:20,993",
+            "end": "00:02:22,234",
+            "ko": "이것은 시야"
+        },
+        {
+            "start": "00:02:23,593",
+            "end": "00:02:24,734",
+            "ko": "이것은 시야"
+        },
+        {
+            "start": "00:02:25,254",
+            "end": "00:02:26,414",
+            "ko": "시는 어디에 있나요?"
+        },
+        {
+            "start": "00:02:28,334",
+            "end": "00:02:28,874",
+            "ko": "시란 무엇인가요?"
+        },
+        {
+            "start": "00:02:30,306",
+            "end": "00:02:38,026",
+            "ko": "도와줘. 난 너와 함께 높이 날고 싶어 이 파란 물결 위에서 이 파란 하늘 아래에서"
+        },
+        {
+            "start": "00:02:55,506",
+            "end": "00:02:56,426",
+            "ko": "알겠어, 자 가자"
+        },
+        {
+            "start": "00:02:56,450",
+            "end": "00:02:56,630",
+            "ko": "잘 가."
+        }
+    ]
+}

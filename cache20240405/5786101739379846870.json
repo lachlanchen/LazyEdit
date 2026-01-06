@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,170\",\n    \"end\": \"00:01:03,930\",\n    \"lang\": \"en\",\n    \"text\": \"on the stream,\"\n  },\n  {\n    \"start\": \"00:01:03,930\",\n    \"end\": \"00:01:06,230\",\n    \"lang\": \"en\",\n    \"text\": \"so is this correct?\"\n  },\n  {\n    \"start\": \"00:01:07,650\",\n    \"end\": \"00:01:14,230\",\n    \"lang\": \"en\",\n    \"text\": \"So this is 4 over 4 times sine nature.\"\n  },\n  {\n    \"start\": \"00:01:15,570\",\n    \"end\": \"00:01:16,170\",\n    \"lang\": \"en\",\n    \"text\": \"Actually,\"\n  },\n  {\n    \"start\": \"00:01:16,170\",\n    \"end\": \"00:01:18,450\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's 4 over 4.\"\n  },\n  {\n    \"start\": \"00:01:19,170\",\n    \"end\": \"00:01:23,510\",\n    \"lang\": \"en\",\n    \"text\": \"I'm quite naive and stupid in music.\"\n  },\n  {\n    \"start\": \"00:01:24,650\",\n    \"end\": \"00:01:24,970\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:24,970\",\n    \"end\": \"00:01:25,450\",\n    \"lang\": \"en\",\n    \"text\": \"thank you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,170",
+            "end": "00:01:03,930",
+            "es": "en el arroyo,",
+            "fr": "sur le flux,",
+            "uk": "на потоці,"
+        },
+        {
+            "start": "00:01:03,930",
+            "end": "00:01:06,230",
+            "es": "entonces, ¿esto es correcto?",
+            "fr": "alors, c'est correct ?",
+            "uk": "отже, це правильно?"
+        },
+        {
+            "start": "00:01:07,650",
+            "end": "00:01:14,230",
+            "es": "Así que esto es 4 sobre 4 veces naturaleza seno.",
+            "fr": "Donc c'est 4 sur 4 fois la nature du sinus.",
+            "uk": "Отже, це 4 з 4 рази синус природи."
+        },
+        {
+            "start": "00:01:15,570",
+            "end": "00:01:16,170",
+            "es": "De hecho,",
+            "fr": "En fait,",
+            "uk": "Насправді,"
+        },
+        {
+            "start": "00:01:16,170",
+            "end": "00:01:18,450",
+            "es": "no sé si es 4 sobre 4.",
+            "fr": "je ne sais pas si c'est 4 sur 4.",
+            "uk": "я не знаю, чи це 4 з 4."
+        },
+        {
+            "start": "00:01:19,170",
+            "end": "00:01:23,510",
+            "es": "Soy bastante ingenuo y estúpido en la música.",
+            "fr": "Je suis assez naïf et stupide en musique.",
+            "uk": "Я дуже наївний і тупий у музиці."
+        },
+        {
+            "start": "00:01:24,650",
+            "end": "00:01:24,970",
+            "es": "Bien,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:01:24,970",
+            "end": "00:01:25,450",
+            "es": "gracias.",
+            "fr": "merci.",
+            "uk": "дякую."
+        }
+    ]
+}

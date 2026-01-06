@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:05,074\",\n    \"end\": \"00:01:11,514\",\n    \"lang\": \"en\",\n    \"text\": \"And some cold bean juice to mitigate the hurt.\"\n  },\n  {\n    \"start\": \"00:01:13,714\",\n    \"end\": \"00:01:22,494\",\n    \"lang\": \"en\",\n    \"text\": \"In my upper side of my mouth.\"\n  },\n  {\n    \"start\": \"00:01:23,234\",\n    \"end\": \"00:01:23,514\",\n    \"lang\": \"ar\",\n    \"text\": \"أهلا\"\n  },\n  {\n    \"start\": \"00:01:24,162\",\n    \"end\": \"00:01:25,702\",\n    \"lang\": \"en\",\n    \"text\": \"reaching inside my mouth.\"\n  },\n  {\n    \"start\": \"00:01:27,490\",\n    \"end\": \"00:01:30,150\",\n    \"lang\": \"zh\",\n    \"text\": \"在我们的方言里面我们叫天堂\"\n  },\n  {\n    \"start\": \"00:01:31,750\",\n    \"end\": \"00:01:32,470\",\n    \"lang\": \"zh\",\n    \"text\": \"天堂\"\n  },\n  {\n    \"start\": \"00:01:32,470\",\n    \"end\": \"00:01:33,030\",\n    \"lang\": \"en\",\n    \"text\": \"OK\"\n  },\n  {\n    \"start\": \"00:01:33,550\",\n    \"end\": \"00:01:34,650\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道英语怎么说\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:05,074",
+            "end": "00:01:11,514",
+            "en": "And some cold bean juice to mitigate the hurt.",
+            "zh": "还有一些冷豆汁来减轻伤口的痛苦。",
+            "ar": "وبعض عصير الفاصوليا البارد للتخفيف من الألم."
+        },
+        {
+            "start": "00:01:13,714",
+            "end": "00:01:22,494",
+            "en": "In my upper side of my mouth.",
+            "zh": "在我嘴巴的上侧。",
+            "ar": "في الجانب العلوي من فمي."
+        },
+        {
+            "start": "00:01:23,234",
+            "end": "00:01:23,514",
+            "en": "Hello",
+            "zh": "你好",
+            "ar": "أهلا"
+        },
+        {
+            "start": "00:01:24,162",
+            "end": "00:01:25,702",
+            "en": "reaching inside my mouth.",
+            "zh": "伸到我嘴里。",
+            "ar": "يصل إلى داخل فمي."
+        },
+        {
+            "start": "00:01:27,490",
+            "end": "00:01:30,150",
+            "en": "In our dialect, we call it heaven.",
+            "zh": "在我们的方言里面我们叫天堂",
+            "ar": "في لهجتنا, نحن نسميها الجنة."
+        },
+        {
+            "start": "00:01:31,750",
+            "end": "00:01:32,470",
+            "en": "Heaven.",
+            "zh": "天堂",
+            "ar": "الجنة."
+        },
+        {
+            "start": "00:01:32,470",
+            "end": "00:01:33,030",
+            "en": "OK",
+            "zh": "好的",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:01:33,550",
+            "end": "00:01:34,650",
+            "en": "I don't know how to say it in English.",
+            "zh": "我不知道英语怎么说",
+            "ar": "لا أعرف كيف أقول ذلك بالإنجليزية."
+        }
+    ]
+}

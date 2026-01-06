@@ -1,0 +1,26 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,138\",\n    \"end\": \"00:01:00,698\",\n    \"lang\": \"ja\",\n    \"text\": \"もちテープを\"\n  },\n  {\n    \"start\": \"00:01:01,634\",\n    \"end\": \"00:01:03,234\",\n    \"lang\": \"zh\",\n    \"text\": \"有點甜甜的蔬菜吧\"\n  },\n  {\n    \"start\": \"00:01:03,234\",\n    \"end\": \"00:01:04,013\",\n    \"lang\": \"en\",\n    \"text\": \"OK\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,138",
+            "end": "00:01:00,698",
+            "es": "usa cinta de mochi",
+            "fr": "utilise du ruban de mochi",
+            "uk": "використовуйте мочі стрічку"
+        },
+        {
+            "start": "00:01:01,634",
+            "end": "00:01:03,234",
+            "es": "un poco dulces las verduras",
+            "fr": "des légumes un peu sucrés",
+            "uk": "трохи солодкі овочі"
+        },
+        {
+            "start": "00:01:03,234",
+            "end": "00:01:04,013",
+            "es": "OK",
+            "fr": "D'accord",
+            "uk": "Гаразд"
+        }
+    ]
+}

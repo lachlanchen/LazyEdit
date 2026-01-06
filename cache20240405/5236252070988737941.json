@@ -1,0 +1,124 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,078\",\n    \"end\": \"00:01:01,698\",\n    \"lang\": \"en\",\n    \"text\": \"if I don't play the guitar.\"\n  },\n  {\n    \"start\": \"00:01:01,698\",\n    \"end\": \"00:01:04,778\",\n    \"lang\": \"en\",\n    \"text\": \"So even if I play the guitar,\"\n  },\n  {\n    \"start\": \"00:01:04,778\",\n    \"end\": \"00:01:06,718\",\n    \"lang\": \"en\",\n    \"text\": \"I can't guarantee that I still\"\n  },\n  {\n    \"start\": \"00:01:06,718\",\n    \"end\": \"00:01:07,818\",\n    \"lang\": \"en\",\n    \"text\": \"catch the tune.\"\n  },\n  {\n    \"start\": \"00:01:07,818\",\n    \"end\": \"00:01:13,478\",\n    \"lang\": \"en\",\n    \"text\": \"So if I play the guitar,\"\n  },\n  {\n    \"start\": \"00:01:13,478\",\n    \"end\": \"00:01:14,578\",\n    \"lang\": \"en\",\n    \"text\": \"I can.\"\n  },\n  {\n    \"start\": \"00:01:15,458\",\n    \"end\": \"00:01:16,678\",\n    \"lang\": \"en\",\n    \"text\": \"Even if I sing it.\"\n  },\n  {\n    \"start\": \"00:01:24,858\",\n    \"end\": \"00:01:29,198\",\n    \"lang\": \"en\",\n    \"text\": \"I think this tune is originally.\"\n  },\n  {\n    \"start\": \"00:01:29,198\",\n    \"end\": \"00:01:30,258\",\n    \"lang\": \"en\",\n    \"text\": \"I can handle it.\"\n  },\n  {\n    \"start\": \"00:01:30,914\",\n    \"end\": \"00:01:31,534\",\n    \"lang\": \"zh\",\n    \"text\": \"把你\"\n  },\n  {\n    \"start\": \"00:01:31,614\",\n    \"end\": \"00:01:32,374\",\n    \"lang\": \"zh\",\n    \"text\": \"弄得\"\n  },\n  {\n    \"start\": \"00:01:33,154\",\n    \"end\": \"00:01:33,754\",\n    \"lang\": \"zh\",\n    \"text\": \"傲气的意思\"\n  },\n  {\n    \"start\": \"00:01:34,214\",\n    \"end\": \"00:01:34,774\",\n    \"lang\": \"zh\",\n    \"text\": \"来看了\"\n  },\n  {\n    \"start\": \"00:01:35,874\",\n    \"end\": \"00:01:36,354\",\n    \"lang\": \"ja\",\n    \"text\": \"クラス!\"\n  },\n  {\n    \"start\": \"00:01:39,394\",\n    \"end\": \"00:01:39,634\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:01:39,634\",\n    \"end\": \"00:01:40,194\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:01:40,194\",\n    \"end\": \"00:01:40,894\",\n    \"lang\": \"en\",\n    \"text\": \"it's wrong.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,078",
+            "end": "00:01:01,698",
+            "es": "si no toco la guitarra.",
+            "fr": "si je ne joue pas de la guitare.",
+            "uk": "якщо я не граю на гітарі."
+        },
+        {
+            "start": "00:01:01,698",
+            "end": "00:01:04,778",
+            "es": "Así que incluso si toco la guitarra,",
+            "fr": "Donc même si je joue de la guitare,",
+            "uk": "Отже, навіть якщо я граю на гітарі,"
+        },
+        {
+            "start": "00:01:04,778",
+            "end": "00:01:06,718",
+            "es": "no puedo garantizar que todavía",
+            "fr": "je ne peux pas garantir que je vais encore",
+            "uk": "я не можу гарантувати, що я все ще"
+        },
+        {
+            "start": "00:01:06,718",
+            "end": "00:01:07,818",
+            "es": "atrapar la melodía.",
+            "fr": "attraper la mélodie.",
+            "uk": "вловлю мелодію."
+        },
+        {
+            "start": "00:01:07,818",
+            "end": "00:01:13,478",
+            "es": "Así que si toco la guitarra,",
+            "fr": "Donc, si je joue de la guitare,",
+            "uk": "Отже, якщо я граю на гітарі,"
+        },
+        {
+            "start": "00:01:13,478",
+            "end": "00:01:14,578",
+            "es": "puedo.",
+            "fr": "je peux.",
+            "uk": "я можу."
+        },
+        {
+            "start": "00:01:15,458",
+            "end": "00:01:16,678",
+            "es": "Incluso si lo canto.",
+            "fr": "Même si je le chante.",
+            "uk": "Навіть якщо я співатиму."
+        },
+        {
+            "start": "00:01:24,858",
+            "end": "00:01:29,198",
+            "es": "Creo que esta melodía es originalmente.",
+            "fr": "Je pense que cette mélodie est originalement.",
+            "uk": "Я думаю, ця мелодія є в оригіналі."
+        },
+        {
+            "start": "00:01:29,198",
+            "end": "00:01:30,258",
+            "es": "Puedo manejarlo.",
+            "fr": "Je peux le gérer.",
+            "uk": "Я можу з цим впоратися."
+        },
+        {
+            "start": "00:01:30,914",
+            "end": "00:01:31,534",
+            "es": "Haciéndote",
+            "fr": "Te rend",
+            "uk": "Роблячи тебе"
+        },
+        {
+            "start": "00:01:31,614",
+            "end": "00:01:32,374",
+            "es": "orgulloso.",
+            "fr": "fier.",
+            "uk": "гордим."
+        },
+        {
+            "start": "00:01:33,154",
+            "end": "00:01:33,754",
+            "es": "con un sentido de orgullo.",
+            "fr": "avec un sens de fierté.",
+            "uk": "з відчуттям гордості."
+        },
+        {
+            "start": "00:01:34,214",
+            "end": "00:01:34,774",
+            "es": "ven a ver.",
+            "fr": "viens voir.",
+            "uk": "подивись."
+        },
+        {
+            "start": "00:01:35,874",
+            "end": "00:01:36,354",
+            "es": "¡Clase!",
+            "fr": "Classe !",
+            "uk": "Клас!"
+        },
+        {
+            "start": "00:01:39,394",
+            "end": "00:01:39,634",
+            "es": "Lo siento,",
+            "fr": "Désolé,",
+            "uk": "Вибачте,"
+        },
+        {
+            "start": "00:01:39,634",
+            "end": "00:01:40,194",
+            "es": "lo siento,",
+            "fr": "désolé,",
+            "uk": "вибачте,"
+        },
+        {
+            "start": "00:01:40,194",
+            "end": "00:01:40,894",
+            "es": "es incorrecto.",
+            "fr": "c'est faux.",
+            "uk": "це неправильно."
+        }
+    ]
+}

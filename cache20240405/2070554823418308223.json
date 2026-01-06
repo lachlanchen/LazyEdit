@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,880\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,074\",\n    \"end\": \"00:00:07,054\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our breakfast.\"\n  },\n  {\n    \"start\": \"00:00:08,294\",\n    \"end\": \"00:00:15,614\",\n    \"lang\": \"en\",\n    \"text\": \"And sorry for it's a little bit over abundant.\"\n  },\n  {\n    \"start\": \"00:00:19,474\",\n    \"end\": \"00:00:26,434\",\n    \"lang\": \"en\",\n    \"text\": \"And we have fried rice and baozi.\"\n  },\n  {\n    \"start\": \"00:00:27,454\",\n    \"end\": \"00:00:31,094\",\n    \"lang\": \"en\",\n    \"text\": \"Two baozi and blueberries,\"\n  },\n  {\n    \"start\": \"00:00:31,094\",\n    \"end\": \"00:00:32,094\",\n    \"lang\": \"en\",\n    \"text\": \"strawberries.\"\n  },\n  {\n    \"start\": \"00:00:32,094\",\n    \"end\": \"00:00:33,634\",\n    \"lang\": \"en\",\n    \"text\": \"This is delicious.\"\n  },\n  {\n    \"start\": \"00:00:36,754\",\n    \"end\": \"00:00:37,834\",\n    \"lang\": \"en\",\n    \"text\": \"Yummy,\"\n  },\n  {\n    \"start\": \"00:00:37,834\",\n    \"end\": \"00:00:38,774\",\n    \"lang\": \"en\",\n    \"text\": \"yummy.\"\n  },\n  {\n    \"start\": \"00:00:49,774\",\n    \"end\": \"00:00:50,854\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:50,854\",\n    \"end\": \"00:00:53,614\",\n    \"lang\": \"en\",\n    \"text\": \"this fried rice is gorgeous.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,880",
+            "es": "Buenos días",
+            "fr": "Bonjour",
+            "uk": "Доброго ранку"
+        },
+        {
+            "start": "00:00:03,074",
+            "end": "00:00:07,054",
+            "es": "Así que este es nuestro desayuno.",
+            "fr": "Alors voici notre petit-déjeuner.",
+            "uk": "Отже, це наш сніданок."
+        },
+        {
+            "start": "00:00:08,294",
+            "end": "00:00:15,614",
+            "es": "Y disculpad si es un poco excesivo.",
+            "fr": "Et désolé si c'est un peu trop abondant.",
+            "uk": "І вибачте, що це трохи надто багато."
+        },
+        {
+            "start": "00:00:19,474",
+            "end": "00:00:26,434",
+            "es": "Y tenemos arroz frito y baozi.",
+            "fr": "Et nous avons du riz frit et des baozi.",
+            "uk": "І у нас є смажений рис та баоцзі."
+        },
+        {
+            "start": "00:00:27,454",
+            "end": "00:00:31,094",
+            "es": "Dos baozi y arándanos,",
+            "fr": "Deux baozi et des myrtilles,",
+            "uk": "Два баоцзі та чорниці,"
+        },
+        {
+            "start": "00:00:31,094",
+            "end": "00:00:32,094",
+            "es": "fresas.",
+            "fr": "des fraises.",
+            "uk": "полуниці."
+        },
+        {
+            "start": "00:00:32,094",
+            "end": "00:00:33,634",
+            "es": "Esto está delicioso.",
+            "fr": "C'est délicieux.",
+            "uk": "Це смачно."
+        },
+        {
+            "start": "00:00:36,754",
+            "end": "00:00:37,834",
+            "es": "Rico,",
+            "fr": "Miam,",
+            "uk": "Смачно,"
+        },
+        {
+            "start": "00:00:37,834",
+            "end": "00:00:38,774",
+            "es": "rico.",
+            "fr": "miam.",
+            "uk": "смачно."
+        },
+        {
+            "start": "00:00:49,774",
+            "end": "00:00:50,854",
+            "es": "Vaya,",
+            "fr": "Wow,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:50,854",
+            "end": "00:00:53,614",
+            "es": "este arroz frito es magnífico.",
+            "fr": "ce riz frit est superbe.",
+            "uk": "цей смажений рис чудовий."
+        }
+    ]
+}

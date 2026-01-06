@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:01,782\",\n    \"end\": \"00:02:03,642\",\n    \"lang\": \"en\",\n    \"text\": \"it's not an action.\"\n  },\n  {\n    \"start\": \"00:02:04,122\",\n    \"end\": \"00:02:08,662\",\n    \"lang\": \"en\",\n    \"text\": \"It's a consequence of you make proper decisions.\"\n  },\n  {\n    \"start\": \"00:02:09,082\",\n    \"end\": \"00:02:10,901\",\n    \"lang\": \"en\",\n    \"text\": \"So you give up something,\"\n  },\n  {\n    \"start\": \"00:02:10,901\",\n    \"end\": \"00:02:11,902\",\n    \"lang\": \"en\",\n    \"text\": \"you make the trade off,\"\n  },\n  {\n    \"start\": \"00:02:11,902\",\n    \"end\": \"00:02:13,222\",\n    \"lang\": \"en\",\n    \"text\": \"you balance something,\"\n  },\n  {\n    \"start\": \"00:02:13,222\",\n    \"end\": \"00:02:16,122\",\n    \"lang\": \"en\",\n    \"text\": \"you accept something,\"\n  },\n  {\n    \"start\": \"00:02:18,402\",\n    \"end\": \"00:02:23,682\",\n    \"lang\": \"en\",\n    \"text\": \"then you reach a state of peaceful and free freedom.\"\n  },\n  {\n    \"start\": \"00:02:26,402\",\n    \"end\": \"00:02:26,982\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:26,982\",\n    \"end\": \"00:02:28,502\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:01,782",
+            "end": "00:02:03,642",
+            "en": "It's not an action.",
+            "zh": "这不是一个行动。",
+            "ar": "ليس فعلا."
+        },
+        {
+            "start": "00:02:04,122",
+            "end": "00:02:08,662",
+            "en": "It's a consequence of making proper decisions.",
+            "zh": "这是做出正确决策的结果。",
+            "ar": "إنه نتيجة اتخاذ القرارات الصحيحة."
+        },
+        {
+            "start": "00:02:09,082",
+            "end": "00:02:10,901",
+            "en": "So you give up something,",
+            "zh": "所以你放弃了一些东西，",
+            "ar": "لذلك تتخلى عن شيء ما،"
+        },
+        {
+            "start": "00:02:10,901",
+            "end": "00:02:11,902",
+            "en": "you make a trade-off,",
+            "zh": "你做出了权衡，",
+            "ar": "تقوم بالمقايضة،"
+        },
+        {
+            "start": "00:02:11,902",
+            "end": "00:02:13,222",
+            "en": "you balance something,",
+            "zh": "你平衡了一些东西，",
+            "ar": "أنت توازن شيئاً ما،"
+        },
+        {
+            "start": "00:02:13,222",
+            "end": "00:02:16,122",
+            "en": "you accept something,",
+            "zh": "你接受了一些东西，",
+            "ar": "أنت تقبل شيئاً ما،"
+        },
+        {
+            "start": "00:02:18,402",
+            "end": "00:02:23,682",
+            "en": "then you reach a state of peaceful and free freedom.",
+            "zh": "然后你达到了一种平和自由的状态。",
+            "ar": "ثم تصل إلى حالة من السلام والحرية المطلقة."
+        },
+        {
+            "start": "00:02:26,402",
+            "end": "00:02:26,982",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسناً،"
+        },
+        {
+            "start": "00:02:26,982",
+            "end": "00:02:28,502",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقاً."
+        }
+    ]
+}

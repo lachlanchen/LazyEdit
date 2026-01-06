@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,520\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは!\"\n  },\n  {\n    \"start\": \"00:00:01,920\",\n    \"end\": \"00:00:03,320\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは!\"\n  },\n  {\n    \"start\": \"00:00:04,780\",\n    \"end\": \"00:00:06,180\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは!\"\n  },\n  {\n    \"start\": \"00:00:07,160\",\n    \"end\": \"00:00:08,000\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,520",
+            "vi": "Xin chào!"
+        },
+        {
+            "start": "00:00:01,920",
+            "end": "00:00:03,320",
+            "vi": "Xin chào!"
+        },
+        {
+            "start": "00:00:04,780",
+            "end": "00:00:06,180",
+            "vi": "Xin chào!"
+        },
+        {
+            "start": "00:00:07,160",
+            "end": "00:00:08,000",
+            "vi": "Xin chào!"
+        }
+    ]
+}

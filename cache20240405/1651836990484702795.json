@@ -1,0 +1,182 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,700\",\n    \"lang\": \"en\",\n    \"text\": \"It's time to put all these together.\"\n  },\n  {\n    \"start\": \"00:00:02,820\",\n    \"end\": \"00:00:04,140\",\n    \"lang\": \"en\",\n    \"text\": \"This is instant noodle,\"\n  },\n  {\n    \"start\": \"00:00:04,140\",\n    \"end\": \"00:00:04,960\",\n    \"lang\": \"en\",\n    \"text\": \"spinach,\"\n  },\n  {\n    \"start\": \"00:00:04,960\",\n    \"end\": \"00:00:06,040\",\n    \"lang\": \"en\",\n    \"text\": \"spinach sprouts,\"\n  },\n  {\n    \"start\": \"00:00:06,040\",\n    \"end\": \"00:00:09,620\",\n    \"lang\": \"en\",\n    \"text\": \"and with this chicken wing,\"\n  },\n  {\n    \"start\": \"00:00:09,620\",\n    \"end\": \"00:00:11,320\",\n    \"lang\": \"en\",\n    \"text\": \"chicken wing,\"\n  },\n  {\n    \"start\": \"00:00:11,520\",\n    \"end\": \"00:00:12,540\",\n    \"lang\": \"en\",\n    \"text\": \"carrot and the parsley.\"\n  },\n  {\n    \"start\": \"00:00:14,040\",\n    \"end\": \"00:00:14,520\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:15,500\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:15,500\",\n    \"end\": \"00:00:17,780\",\n    \"lang\": \"en\",\n    \"text\": \"I put it here.\"\n  },\n  {\n    \"start\": \"00:00:17,890\",\n    \"end\": \"00:00:18,090\",\n    \"lang\": \"ja\",\n    \"text\": \"頑張った\"\n  },\n  {\n    \"start\": \"00:00:19,650\",\n    \"end\": \"00:00:19,890\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:19,890\",\n    \"end\": \"00:00:22,350\",\n    \"lang\": \"en\",\n    \"text\": \"this looks gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:24,970\",\n    \"end\": \"00:00:25,890\",\n    \"lang\": \"en\",\n    \"text\": \"This is a\"\n  },\n  {\n    \"start\": \"00:00:31,390\",\n    \"end\": \"00:00:33,450\",\n    \"lang\": \"en\",\n    \"text\": \"product of a top chef,\"\n  },\n  {\n    \"start\": \"00:00:33,930\",\n    \"end\": \"00:00:34,930\",\n    \"lang\": \"en\",\n    \"text\": \"Lai Ken-en-cheng.\"\n  },\n  {\n    \"start\": \"00:00:36,890\",\n    \"end\": \"00:00:37,650\",\n    \"lang\": \"en\",\n    \"text\": \"Chef,\"\n  },\n  {\n    \"start\": \"00:00:37,930\",\n    \"end\": \"00:00:40,470\",\n    \"lang\": \"en\",\n    \"text\": \"I don't serve,\"\n  },\n  {\n    \"start\": \"00:00:40,850\",\n    \"end\": \"00:00:42,210\",\n    \"lang\": \"en\",\n    \"text\": \"hardly can serve people.\"\n  },\n  {\n    \"start\": \"00:00:45,350\",\n    \"end\": \"00:00:45,570\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:45,570\",\n    \"end\": \"00:00:47,790\",\n    \"lang\": \"en\",\n    \"text\": \"mainly I serve only myself.\"\n  },\n  {\n    \"start\": \"00:00:48,750\",\n    \"end\": \"00:00:49,470\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:49,470\",\n    \"end\": \"00:00:50,590\",\n    \"lang\": \"en\",\n    \"text\": \"this is our parakase.\"\n  },\n  {\n    \"start\": \"00:00:51,510\",\n    \"end\": \"00:00:51,870\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:52,866\",\n    \"end\": \"00:00:54,126\",\n    \"lang\": \"ja\",\n    \"text\": \"これで終わりです。\"\n  },\n  {\n    \"start\": \"00:00:54,126\",\n    \"end\": \"00:00:54,966\",\n    \"lang\": \"ja\",\n    \"text\": \"また会いましょう!\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,700",
+            "en": "It's time to put all these together.",
+            "zh": "是时候把这些都放在一起了。",
+            "ar": "حان الوقت لجمع كل هذه معًا."
+        },
+        {
+            "start": "00:00:02,820",
+            "end": "00:00:04,140",
+            "en": "This is instant noodle,",
+            "zh": "这是方便面，",
+            "ar": "هذه نودلز سريعة التحضير،"
+        },
+        {
+            "start": "00:00:04,140",
+            "end": "00:00:04,960",
+            "en": "spinach,",
+            "zh": "菠菜，",
+            "ar": "سبانخ،"
+        },
+        {
+            "start": "00:00:04,960",
+            "end": "00:00:06,040",
+            "en": "spinach sprouts,",
+            "zh": "菠菜芽，",
+            "ar": "براعم السبانخ،"
+        },
+        {
+            "start": "00:00:06,040",
+            "end": "00:00:09,620",
+            "en": "and with this chicken wing,",
+            "zh": "还有这个鸡翅，",
+            "ar": "ومع هذا الجناح الدجاج،"
+        },
+        {
+            "start": "00:00:09,620",
+            "end": "00:00:11,320",
+            "en": "chicken wing,",
+            "zh": "鸡翅，",
+            "ar": "جناح الدجاج،"
+        },
+        {
+            "start": "00:00:11,520",
+            "end": "00:00:12,540",
+            "en": "carrot and the parsley.",
+            "zh": "胡萝卜和欧芹。",
+            "ar": "الجزر والبقدونس."
+        },
+        {
+            "start": "00:00:14,040",
+            "end": "00:00:14,520",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:15,500",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:00:15,500",
+            "end": "00:00:17,780",
+            "en": "I put it here.",
+            "zh": "我把它放在这儿。",
+            "ar": "أضعه هنا."
+        },
+        {
+            "start": "00:00:17,890",
+            "end": "00:00:18,090",
+            "en": "I worked hard.",
+            "zh": "我努力了。",
+            "ar": "لقد عملت بجد.",
+            "ja": "頑張った"
+        },
+        {
+            "start": "00:00:19,650",
+            "end": "00:00:19,890",
+            "en": "Oh,",
+            "zh": "哦，",
+            "ar": "أوه،"
+        },
+        {
+            "start": "00:00:19,890",
+            "end": "00:00:22,350",
+            "en": "this looks gorgeous.",
+            "zh": "这看起来很棒。",
+            "ar": "هذا يبدو رائعًا."
+        },
+        {
+            "start": "00:00:24,970",
+            "end": "00:00:25,890",
+            "en": "This is a",
+            "zh": "这是一个",
+            "ar": "هذا هو"
+        },
+        {
+            "start": "00:00:31,390",
+            "end": "00:00:33,450",
+            "en": "product of a top chef,",
+            "zh": "顶级厨师的作品，",
+            "ar": "منتج لطاهٍ ممتاز،"
+        },
+        {
+            "start": "00:00:33,930",
+            "end": "00:00:34,930",
+            "en": "Lai Ken-en-cheng.",
+            "zh": "来肯恩程。",
+            "ar": "لاي كين-إن-تشنغ."
+        },
+        {
+            "start": "00:00:36,890",
+            "end": "00:00:37,650",
+            "en": "Chef,",
+            "zh": "厨师，",
+            "ar": "الشيف،"
+        },
+        {
+            "start": "00:00:37,930",
+            "end": "00:00:40,470",
+            "en": "I don't serve,",
+            "zh": "我不上菜，",
+            "ar": "أنا لا أخدم،"
+        },
+        {
+            "start": "00:00:40,850",
+            "end": "00:00:42,210",
+            "en": "hardly can serve people.",
+            "zh": "几乎不能为人服务。",
+            "ar": "بالكاد يمكن خدمة الناس."
+        },
+        {
+            "start": "00:00:45,350",
+            "end": "00:00:45,570",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:00:45,570",
+            "end": "00:00:47,790",
+            "en": "mainly I serve only myself.",
+            "zh": "主要是我只服务自己。",
+            "ar": "أساسًا أخدم نفسي فقط."
+        },
+        {
+            "start": "00:00:48,750",
+            "end": "00:00:49,470",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:00:49,470",
+            "end": "00:00:50,590",
+            "en": "this is our parakase.",
+            "zh": "这是我们的帕拉卡斯。",
+            "ar": "هذا هو باراكاسي لدينا."
+        },
+        {
+            "start": "00:00:51,510",
+            "end": "00:00:51,870",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:52,866",
+            "end": "00:00:54,966",
+            "en": "This is the end. See you again!",
+            "zh": "这是结束了。再见!",
+            "ar": "هذه هي النهاية. أراكم مرة أخرى!",
+            "ja": "これで終わりです。また会いましょう!"
+        }
+    ]
+}

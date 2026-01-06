@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:08,120\",\n    \"end\": \"00:01:10,620\",\n    \"lang\": \"en\",\n    \"text\": \"So you cannot avoid discrimination.\"\n  },\n  {\n    \"start\": \"00:01:11,260\",\n    \"end\": \"00:01:14,760\",\n    \"lang\": \"en\",\n    \"text\": \"It's rooted from humanity.\"\n  },\n  {\n    \"start\": \"00:01:14,760\",\n    \"end\": \"00:01:16,040\",\n    \"lang\": \"en\",\n    \"text\": \"Fighting!\"\n  },\n  {\n    \"start\": \"00:01:19,138\",\n    \"end\": \"00:01:19,778\",\n    \"lang\": \"zh\",\n    \"text\": \"還真呢\"\n  },\n  {\n    \"start\": \"00:01:21,346\",\n    \"end\": \"00:01:21,706\",\n    \"lang\": \"en\",\n    \"text\": \"normal,\"\n  },\n  {\n    \"start\": \"00:01:21,706\",\n    \"end\": \"00:01:23,666\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:01:23,666\",\n    \"end\": \"00:01:27,786\",\n    \"lang\": \"en\",\n    \"text\": \"as a legal individual,\"\n  },\n  {\n    \"start\": \"00:01:27,786\",\n    \"end\": \"00:01:31,606\",\n    \"lang\": \"en\",\n    \"text\": \"your legal status,\"\n  },\n  {\n    \"start\": \"00:01:32,770\",\n    \"end\": \"00:01:33,370\",\n    \"lang\": \"en\",\n    \"text\": \"那 applauds for this video.\"\n  },\n  {\n    \"start\": \"00:01:35,234\",\n    \"end\": \"00:01:38,634\",\n    \"lang\": \"en\",\n    \"text\": \"the benefits of every individual cannot be harmed.\"\n  },\n  {\n    \"start\": \"00:01:39,994\",\n    \"end\": \"00:01:42,134\",\n    \"lang\": \"en\",\n    \"text\": \"So anything,\"\n  },\n  {\n    \"start\": \"00:01:42,134\",\n    \"end\": \"00:01:44,134\",\n    \"lang\": \"en\",\n    \"text\": \"any other thing is okay.\"\n  },\n  {\n    \"start\": \"00:01:45,434\",\n    \"end\": \"00:01:47,974\",\n    \"lang\": \"en\",\n    \"text\": \"From moral perspective,\"\n  },\n  {\n    \"start\": \"00:01:47,974\",\n    \"end\": \"00:01:50,054\",\n    \"lang\": \"en\",\n    \"text\": \"we shouldn't\"\n  },\n  {\n    \"start\": \"00:01:50,054\",\n    \"end\": \"00:01:53,114\",\n    \"lang\": \"en\",\n    \"text\": \"we shouldn't discriminate others.\"\n  },\n  {\n    \"start\": \"00:01:56,162\",\n    \"end\": \"00:01:58,082\",\n    \"lang\": \"ar\",\n    \"text\": \"لا يمكنك التخلص من هذا\"\n  },\n  {\n    \"start\": \"00:01:58,082\",\n    \"end\": \"00:01:59,922\",\n    \"lang\": \"ar\",\n    \"text\": \"فقط اقبله\"\n  },\n  {\n    \"start\": \"00:02:03,010\",\n    \"end\": \"00:02:03,350\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:03,350\",\n    \"end\": \"00:02:04,830\",\n    \"lang\": \"en\",\n    \"text\": \"see you!\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:08,120",
+            "end": "00:01:10,620",
+            "en": "So you cannot avoid discrimination.",
+            "zh": "所以你无法避免歧视。",
+            "ar": "لا يمكنك تجنب التمييز."
+        },
+        {
+            "start": "00:01:11,260",
+            "end": "00:01:14,760",
+            "en": "It's rooted in humanity.",
+            "zh": "这根植于人性。",
+            "ar": "إنه متجذر في الإنسانية."
+        },
+        {
+            "start": "00:01:14,760",
+            "end": "00:01:16,040",
+            "en": "Keep it up!",
+            "zh": "加油！",
+            "ar": "استمر!"
+        },
+        {
+            "start": "00:01:19,138",
+            "end": "00:01:19,778",
+            "en": "Indeed.",
+            "zh": "還真呢",
+            "ar": "فعلا."
+        },
+        {
+            "start": "00:01:21,346",
+            "end": "00:01:27,786",
+            "en": "Normal, sorry, as a legal individual, your legal status,",
+            "zh": "正常，对不起，作为一个法律个体，你的法律身份，",
+            "ar": "طبيعي، آسف، باعتبارك فردًا قانونيًا، وضعك القانوني،"
+        },
+        {
+            "start": "00:01:32,770",
+            "end": "00:01:33,370",
+            "en": "Let's applaud for this video.",
+            "zh": "为这个视频鼓掌。",
+            "ar": "دعونا نصفق لهذا الفيديو."
+        },
+        {
+            "start": "00:01:35,234",
+            "end": "00:01:38,634",
+            "en": "The benefits of every individual cannot be harmed.",
+            "zh": "每个人的利益不应受到损害。",
+            "ar": "لا يمكن المساس بمصالح كل فرد."
+        },
+        {
+            "start": "00:01:39,994",
+            "end": "00:01:44,134",
+            "en": "So anything, any other thing is okay.",
+            "zh": "所以任何事情，任何其他事情都可以。",
+            "ar": "إذًا أي شيء، أي شيء آخر على ما يرام."
+        },
+        {
+            "start": "00:01:45,434",
+            "end": "00:01:53,114",
+            "en": "From a moral perspective, we shouldn't discriminate against others.",
+            "zh": "从道德角度来看，我们不应该歧视他人。",
+            "ar": "من منظور أخلاقي، ينبغي علينا ألا نميز ضد الآخرين."
+        },
+        {
+            "start": "00:01:56,162",
+            "end": "00:01:59,922",
+            "en": "You can't get rid of it, just accept it.",
+            "zh": "你无法摆脱它，只能接受它。",
+            "ar": "لا يمكنك التخلص من هذا، فقط اقبله."
+        },
+        {
+            "start": "00:02:03,010",
+            "end": "00:02:04,830",
+            "en": "Okay, see you!",
+            "zh": "好的，再见！",
+            "ar": "حسنًا، أراك!"
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:07,360\",\n    \"ja\": \"この<クラッシュチリ>[]、<クラッシュチリ>[]、<クラッシュペッパー>[]を<味>[]わってみよう\"\n  },\n  {\n    \"start\": \"00:00:09,040\",\n    \"end\": \"00:00:10,040\",\n    \"ja\": \"わあ\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:14,960\",\n    \"ja\": \"わあ、とても<辛>[]い、<強烈>[]だ\"\n  },\n  {\n    \"start\": \"00:00:17,960\",\n    \"end\": \"00:00:18,960\",\n    \"ja\": \"わあ\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:33,900\",\n    \"ja\": \"<辛>[]いけど、<美味>[]しい\"\n  },\n  {\n    \"start\": \"00:00:40,900\",\n    \"end\": \"00:00:49,580\",\n    \"ja\": \"これで<私>[]がCOVIDの<症状>[]から<回復>[]できるといいな\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:07,360",
+            "ja": "この<クラッシュチリ>[]、<クラッシュチリ>[]、<クラッシュペッパー>[]を<味>[あじ]わってみよう"
+        },
+        {
+            "start": "00:00:09,040",
+            "end": "00:00:10,040",
+            "ja": "わあ"
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:14,960",
+            "ja": "わあ、とても<辛>[から]い、<強烈>[きょうれつ]だ"
+        },
+        {
+            "start": "00:00:17,960",
+            "end": "00:00:18,960",
+            "ja": "わあ"
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:33,900",
+            "ja": "<辛>[から]いけど、<美味>[おい]しい"
+        },
+        {
+            "start": "00:00:40,900",
+            "end": "00:00:49,580",
+            "ja": "これで<私>[わたし]がCOVIDの<症状>[しょうじょう]から<回復>[かいふく]できるといいな"
+        }
+    ]
+}

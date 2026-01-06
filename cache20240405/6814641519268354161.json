@@ -1,0 +1,105 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,120\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:01,120\",\n    \"end\": \"00:00:05,620\",\n    \"lang\": \"en\",\n    \"text\": \"this is our unfinished second part of the lunch.\"\n  },\n  {\n    \"start\": \"00:00:09,620\",\n    \"end\": \"00:00:10,500\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:10,500\",\n    \"end\": \"00:00:13,460\",\n    \"lang\": \"en\",\n    \"text\": \"the potato takes 20 minutes,\"\n  },\n  {\n    \"start\": \"00:00:13,460\",\n    \"end\": \"00:00:18,620\",\n    \"lang\": \"en\",\n    \"text\": \"and the beef takes about 10 minutes.\"\n  },\n  {\n    \"start\": \"00:00:19,746\",\n    \"end\": \"00:00:20,486\",\n    \"lang\": \"zh\",\n    \"text\": \"有筋道的你\"\n  },\n  {\n    \"start\": \"00:00:20,866\",\n    \"end\": \"00:00:21,466\",\n    \"lang\": \"zh\",\n    \"text\": \"鱼肉的你再吃\"\n  },\n  {\n    \"start\": \"00:00:23,138\",\n    \"end\": \"00:00:25,678\",\n    \"lang\": \"en\",\n    \"text\": \"cook the potato before the beef.\"\n  },\n  {\n    \"start\": \"00:00:26,158\",\n    \"end\": \"00:00:26,838\",\n    \"lang\": \"en\",\n    \"text\": \"But today,\"\n  },\n  {\n    \"start\": \"00:00:26,838\",\n    \"end\": \"00:00:29,978\",\n    \"lang\": \"en\",\n    \"text\": \"I cook the beef before the potato\"\n  },\n  {\n    \"start\": \"00:00:30,377\",\n    \"end\": \"00:00:33,918\",\n    \"lang\": \"en\",\n    \"text\": \"and I use the oil of the beef to cook the potato.\"\n  },\n  {\n    \"start\": \"00:00:34,558\",\n    \"end\": \"00:00:40,038\",\n    \"lang\": \"en\",\n    \"text\": \"So this make the potato 20 minutes later.\"\n  },\n  {\n    \"start\": \"00:00:41,058\",\n    \"end\": \"00:00:41,938\",\n    \"lang\": \"ja\",\n    \"text\": \"ランザピー\"\n  },\n  {\n    \"start\": \"00:00:43,394\",\n    \"end\": \"00:00:43,654\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:43,654\",\n    \"end\": \"00:00:47,314\",\n    \"lang\": \"en\",\n    \"text\": \"wow,\"\n  },\n  {\n    \"start\": \"00:00:47,314\",\n    \"end\": \"00:00:50,174\",\n    \"lang\": \"en\",\n    \"text\": \"this is crispy.\"\n  },\n  {\n    \"start\": \"00:00:51,202\",\n    \"end\": \"00:00:53,342\",\n    \"lang\": \"ja\",\n    \"text\": \"とってもおいしいです\"\n  },\n  {\n    \"start\": \"00:00:54,114\",\n    \"end\": \"00:00:54,854\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:54,854\",\n    \"end\": \"00:00:56,734\",\n    \"lang\": \"en\",\n    \"text\": \"do you hear the sound?\"\n  },\n  {\n    \"start\": \"00:00:59,614\",\n    \"end\": \"00:01:00,754\",\n    \"lang\": \"en\",\n    \"text\": \"Crispy sound\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,120",
+            "vi": "Ổn,"
+        },
+        {
+            "start": "00:00:01,120",
+            "end": "00:00:05,620",
+            "vi": "đây là phần chưa hoàn thiện thứ hai của bữa trưa."
+        },
+        {
+            "start": "00:00:09,620",
+            "end": "00:00:10,500",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:00:10,500",
+            "end": "00:00:13,460",
+            "vi": "khoai tây mất 20 phút,"
+        },
+        {
+            "start": "00:00:13,460",
+            "end": "00:00:18,620",
+            "vi": "và thịt bò mất khoảng 10 phút."
+        },
+        {
+            "start": "00:00:19,746",
+            "end": "00:00:20,486",
+            "vi": "Có chừng mực của bạn"
+        },
+        {
+            "start": "00:00:20,866",
+            "end": "00:00:21,466",
+            "vi": "Thịt cá của bạn, hãy ăn nữa"
+        },
+        {
+            "start": "00:00:23,138",
+            "end": "00:00:25,678",
+            "vi": "nấu khoai tây trước thịt bò."
+        },
+        {
+            "start": "00:00:26,158",
+            "end": "00:00:26,838",
+            "vi": "Nhưng hôm nay,"
+        },
+        {
+            "start": "00:00:26,838",
+            "end": "00:00:29,978",
+            "vi": "tôi nấu thịt bò trước khoai tây"
+        },
+        {
+            "start": "00:00:30,377",
+            "end": "00:00:33,918",
+            "vi": "và tôi sử dụng dầu của thịt bò để nấu khoai tây."
+        },
+        {
+            "start": "00:00:34,558",
+            "end": "00:00:40,038",
+            "vi": "Vậy nên điều này làm cho khoai tây muộn hơn 20 phút."
+        },
+        {
+            "start": "00:00:41,058",
+            "end": "00:00:41,938",
+            "vi": "Răng giả"
+        },
+        {
+            "start": "00:00:43,394",
+            "end": "00:00:43,654",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:00:43,654",
+            "end": "00:00:47,314",
+            "vi": "wow,"
+        },
+        {
+            "start": "00:00:47,314",
+            "end": "00:00:50,174",
+            "vi": "cái này giòn."
+        },
+        {
+            "start": "00:00:51,202",
+            "end": "00:00:53,342",
+            "vi": "Rất ngon"
+        },
+        {
+            "start": "00:00:54,114",
+            "end": "00:00:54,854",
+            "vi": "Wow,"
+        },
+        {
+            "start": "00:00:54,854",
+            "end": "00:00:56,734",
+            "vi": "bạn có nghe thấy âm thanh không?"
+        },
+        {
+            "start": "00:00:59,614",
+            "end": "00:01:00,754",
+            "vi": "Âm thanh giòn"
+        }
+    ]
+}

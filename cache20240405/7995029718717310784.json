@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,660\",\n    \"lang\": \"en\",\n    \"text\": \"I used to use knowledge as an escape from reality.\"\n  },\n  {\n    \"start\": \"00:00:05,140\",\n    \"end\": \"00:00:06,900\",\n    \"lang\": \"en\",\n    \"text\": \"The reality that I'm nobody,\"\n  },\n  {\n    \"start\": \"00:00:06,900\",\n    \"end\": \"00:00:07,780\",\n    \"lang\": \"en\",\n    \"text\": \"I'm nothing.\"\n  },\n  {\n    \"start\": \"00:00:09,940\",\n    \"end\": \"00:00:13,880\",\n    \"lang\": \"en\",\n    \"text\": \"But I finally accepted myself to be nothing,\"\n  },\n  {\n    \"start\": \"00:00:13,880\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"to be nobody.\"\n  },\n  {\n    \"start\": \"00:00:17,320\",\n    \"end\": \"00:00:18,660\",\n    \"lang\": \"en\",\n    \"text\": \"And the feeling is great.\"\n  },\n  {\n    \"start\": \"00:00:20,260\",\n    \"end\": \"00:00:23,980\",\n    \"lang\": \"en\",\n    \"text\": \"I don't need to be successful.\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:32,700\",\n    \"lang\": \"en\",\n    \"text\": \"To have some achievement.\"\n  },\n  {\n    \"start\": \"00:00:39,200\",\n    \"end\": \"00:00:40,280\",\n    \"lang\": \"en\",\n    \"text\": \"Before,\"\n  },\n  {\n    \"start\": \"00:00:40,280\",\n    \"end\": \"00:00:43,280\",\n    \"lang\": \"en\",\n    \"text\": \"I always learned new stuff.\"\n  },\n  {\n    \"start\": \"00:00:44,220\",\n    \"end\": \"00:00:48,940\",\n    \"lang\": \"en\",\n    \"text\": \"I think I can escape from the ignorance.\"\n  },\n  {\n    \"start\": \"00:00:50,160\",\n    \"end\": \"00:00:51,460\",\n    \"lang\": \"en\",\n    \"text\": \"To build,\"\n  },\n  {\n    \"start\": \"00:00:51,460\",\n    \"end\": \"00:00:55,140\",\n    \"lang\": \"en\",\n    \"text\": \"to live this imaginary world.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,660",
+            "es": "Solía usar el conocimiento como una escapatoria de la realidad.",
+            "fr": "J'utilisais le savoir comme une échappatoire de la réalité.",
+            "uk": "Я використовував знання як втечу від реальності."
+        },
+        {
+            "start": "00:00:05,140",
+            "end": "00:00:06,900",
+            "es": "La realidad de que soy un nadie,",
+            "fr": "La réalité que je suis personne,",
+            "uk": "Реальність того, що я ніхто,"
+        },
+        {
+            "start": "00:00:06,900",
+            "end": "00:00:07,780",
+            "es": "no soy nada.",
+            "fr": "je ne suis rien.",
+            "uk": "я ніщо."
+        },
+        {
+            "start": "00:00:09,940",
+            "end": "00:00:13,880",
+            "es": "Pero finalmente me acepté a mí mismo como nada,",
+            "fr": "Mais j'ai enfin accepté d'être rien,",
+            "uk": "Але я нарешті прийняв себе таким, що ніщо,"
+        },
+        {
+            "start": "00:00:13,880",
+            "end": "00:00:15,380",
+            "es": "ser un nadie.",
+            "fr": "être personne.",
+            "uk": "бути ніким."
+        },
+        {
+            "start": "00:00:17,320",
+            "end": "00:00:18,660",
+            "es": "Y la sensación es genial.",
+            "fr": "Et le sentiment est génial.",
+            "uk": "І почуття чудове."
+        },
+        {
+            "start": "00:00:20,260",
+            "end": "00:00:23,980",
+            "es": "No necesito ser exitoso.",
+            "fr": "Je n'ai pas besoin d'être succès.",
+            "uk": "Мені не потрібно бути успішним."
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:32,700",
+            "es": "Tener algún logro.",
+            "fr": "Avoir une certaine réussite.",
+            "uk": "Мати якесь досягнення."
+        },
+        {
+            "start": "00:00:39,200",
+            "end": "00:00:40,280",
+            "es": "Antes,",
+            "fr": "Avant,",
+            "uk": "Раніше,"
+        },
+        {
+            "start": "00:00:40,280",
+            "end": "00:00:43,280",
+            "es": "siempre aprendía cosas nuevas.",
+            "fr": "j'apprenais toujours des nouvelles choses.",
+            "uk": "я завжди вивчав щось нове."
+        },
+        {
+            "start": "00:00:44,220",
+            "end": "00:00:48,940",
+            "es": "Creo que puedo escapar de la ignorancia.",
+            "fr": "Je pense que je peux échapper à l'ignorance.",
+            "uk": "Думаю, я можу втекти від невігластва."
+        },
+        {
+            "start": "00:00:50,160",
+            "end": "00:00:51,460",
+            "es": "Construir,",
+            "fr": "Construire,",
+            "uk": "Будувати,"
+        },
+        {
+            "start": "00:00:51,460",
+            "end": "00:00:55,140",
+            "es": "vivir este mundo imaginario.",
+            "fr": "vivre dans ce monde imaginaire.",
+            "uk": "жити в цьому уявному світі."
+        }
+    ]
+}

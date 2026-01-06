@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:06,586\",\n    \"end\": \"00:01:08,626\",\n    \"lang\": \"en\",\n    \"text\": \"the problem is that\"\n  },\n  {\n    \"start\": \"00:01:08,866\",\n    \"end\": \"00:01:10,826\",\n    \"lang\": \"en\",\n    \"text\": \"it will be over flavored.\"\n  },\n  {\n    \"start\": \"00:01:12,686\",\n    \"end\": \"00:01:22,046\",\n    \"lang\": \"en\",\n    \"text\": \"And then this fragment is a perfect balance between flavor and the original taste of the\"\n  },\n  {\n    \"start\": \"00:01:22,046\",\n    \"end\": \"00:01:22,626\",\n    \"lang\": \"en\",\n    \"text\": \"food.\"\n  },\n  {\n    \"start\": \"00:01:26,006\",\n    \"end\": \"00:01:31,006\",\n    \"lang\": \"en\",\n    \"text\": \"This beef is famous among my friends.\"\n  },\n  {\n    \"start\": \"00:01:39,626\",\n    \"end\": \"00:01:42,226\",\n    \"lang\": \"en\",\n    \"text\": \"It's a fake rocket.\"\n  },\n  {\n    \"start\": \"00:01:51,786\",\n    \"end\": \"00:01:53,506\",\n    \"lang\": \"en\",\n    \"text\": \"It's very good.\"\n  },\n  {\n    \"start\": \"00:01:54,626\",\n    \"end\": \"00:01:55,486\",\n    \"lang\": \"en\",\n    \"text\": \"It's tender.\"\n  },\n  {\n    \"start\": \"00:01:57,546\",\n    \"end\": \"00:01:58,466\",\n    \"lang\": \"en\",\n    \"text\": \"Tasty.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:06,586",
+            "end": "00:01:08,626",
+            "en": "The problem is that",
+            "zh": "问题在于",
+            "ar": "المشكلة هي أن"
+        },
+        {
+            "start": "00:01:08,866",
+            "end": "00:01:10,826",
+            "en": "it will be over flavored.",
+            "zh": "它会变得过于调味。",
+            "ar": "سيكون مفرط النكهة."
+        },
+        {
+            "start": "00:01:12,686",
+            "end": "00:01:22,046",
+            "en": "And then this fragment is a perfect balance between flavor and the original taste of the",
+            "zh": "然后这个片段是味道和原始滋味之间的完美平衡",
+            "ar": "وبعد ذلك، هذا الجزء هو التوازن المثالي بين النكهة والطعم الأصلي لـ"
+        },
+        {
+            "start": "00:01:22,046",
+            "end": "00:01:22,626",
+            "en": "food.",
+            "zh": "食物。",
+            "ar": "الطعام."
+        },
+        {
+            "start": "00:01:26,006",
+            "end": "00:01:31,006",
+            "en": "This beef is famous among my friends.",
+            "zh": "这牛肉在我的朋友中很有名。",
+            "ar": "هذه اللحمة شهيرة بين أصدقائي."
+        },
+        {
+            "start": "00:01:39,626",
+            "end": "00:01:42,226",
+            "en": "It's a fake rocket.",
+            "zh": "这是一个假火箭。",
+            "ar": "إنه صاروخ مزيف."
+        },
+        {
+            "start": "00:01:51,786",
+            "end": "00:01:53,506",
+            "en": "It's very good.",
+            "zh": "这非常好。",
+            "ar": "إنه جيد جدًا."
+        },
+        {
+            "start": "00:01:54,626",
+            "end": "00:01:55,486",
+            "en": "It's tender.",
+            "zh": "它很嫩。",
+            "ar": "إنه طري."
+        },
+        {
+            "start": "00:01:57,546",
+            "end": "00:01:58,466",
+            "en": "Tasty.",
+            "zh": "美味的。",
+            "ar": "لذيذ."
+        }
+    ]
+}

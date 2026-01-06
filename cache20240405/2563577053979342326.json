@@ -1,0 +1,123 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,860\",\n    \"end\": \"00:00:01,420\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:01,420\",\n    \"end\": \"00:00:02,760\",\n    \"lang\": \"en\",\n    \"text\": \"to help me cure.\"\n  },\n  {\n    \"start\": \"00:00:03,170\",\n    \"end\": \"00:00:04,010\",\n    \"lang\": \"ja\",\n    \"text\": \"フラウ・ネフェン\"\n  },\n  {\n    \"start\": \"00:00:04,354\",\n    \"end\": \"00:00:04,634\",\n    \"lang\": \"en\",\n    \"text\": \"COVID\"\n  },\n  {\n    \"start\": \"00:00:09,826\",\n    \"end\": \"00:00:10,946\",\n    \"lang\": \"ar\",\n    \"text\": \"هذه هي هؤلاء\"\n  },\n  {\n    \"start\": \"00:00:12,514\",\n    \"end\": \"00:00:12,894\",\n    \"lang\": \"en\",\n    \"text\": \"Pierre,\"\n  },\n  {\n    \"start\": \"00:00:12,894\",\n    \"end\": \"00:00:13,474\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:00:13,474\",\n    \"end\": \"00:00:13,994\",\n    \"lang\": \"en\",\n    \"text\": \"Pierre.\"\n  },\n  {\n    \"start\": \"00:00:17,954\",\n    \"end\": \"00:00:19,134\",\n    \"lang\": \"zh\",\n    \"text\": \"梨子是pear吧\"\n  },\n  {\n    \"start\": \"00:00:19,394\",\n    \"end\": \"00:00:19,754\",\n    \"lang\": \"zh\",\n    \"text\": \"梨子\"\n  },\n  {\n    \"start\": \"00:00:20,174\",\n    \"end\": \"00:00:20,794\",\n    \"lang\": \"zh\",\n    \"text\": \"这是梨子\"\n  },\n  {\n    \"start\": \"00:00:21,634\",\n    \"end\": \"00:00:22,474\",\n    \"lang\": \"en\",\n    \"text\": \"and orange,\"\n  },\n  {\n    \"start\": \"00:00:22,474\",\n    \"end\": \"00:00:23,674\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:23,674\",\n    \"end\": \"00:00:24,214\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry.\"\n  },\n  {\n    \"start\": \"00:00:25,698\",\n    \"end\": \"00:00:26,878\",\n    \"lang\": \"zh\",\n    \"text\": \"这是胜于过\"\n  },\n  {\n    \"start\": \"00:00:28,162\",\n    \"end\": \"00:00:28,942\",\n    \"lang\": \"en\",\n    \"text\": \"Chaine du con.\"\n  },\n  {\n    \"start\": \"00:00:29,922\",\n    \"end\": \"00:00:31,222\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道它英文怎么讲\"\n  },\n  {\n    \"start\": \"00:00:31,222\",\n    \"end\": \"00:00:32,042\",\n    \"lang\": \"zh\",\n    \"text\": \"圣女是\"\n  },\n  {\n    \"start\": \"00:00:33,642\",\n    \"end\": \"00:00:35,182\",\n    \"lang\": \"zh\",\n    \"text\": \"神圣的圣\"\n  },\n  {\n    \"start\": \"00:00:35,772\",\n    \"end\": \"00:00:36,522\",\n    \"lang\": \"zh\",\n    \"text\": \"美女的女\"\n  },\n  {\n    \"start\": \"00:00:36,522\",\n    \"end\": \"00:00:37,642\",\n    \"lang\": \"zh\",\n    \"text\": \"水果的果\"\n  },\n  {\n    \"start\": \"00:00:41,622\",\n    \"end\": \"00:00:42,082\",\n    \"lang\": \"en\",\n    \"text\": \"OK\"\n  },\n  {\n    \"start\": \"00:00:47,298\",\n    \"end\": \"00:00:49,798\",\n    \"lang\": \"en\",\n    \"text\": \"Let me see if the translation is correct.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,860",
+            "end": "00:00:01,420",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذاً،"
+        },
+        {
+            "start": "00:00:01,420",
+            "end": "00:00:02,760",
+            "en": "to help me cure.",
+            "zh": "帮助我治愈。",
+            "ar": "لمساعدتي على الشفاء."
+        },
+        {
+            "start": "00:00:03,170",
+            "end": "00:00:04,010",
+            "en": "Frau Nefen (Mrs. Nefen)",
+            "zh": "弗劳·内芬",
+            "ar": "السيدة نيفين",
+            "ja": "フラウ・ネフェン"
+        },
+        {
+            "start": "00:00:04,354",
+            "end": "00:00:04,634",
+            "en": "COVID",
+            "zh": "新冠",
+            "ar": "كوفيد"
+        },
+        {
+            "start": "00:00:09,826",
+            "end": "00:00:10,946",
+            "en": "This is how",
+            "zh": "这是怎样的",
+            "ar": "هذه هي هؤلاء"
+        },
+        {
+            "start": "00:00:12,514",
+            "end": "00:00:12,894",
+            "start2": "00:00:12,894",
+            "end2": "00:00:13,474",
+            "start3": "00:00:13,474",
+            "end3": "00:00:13,994",
+            "en": "Pierre, right? Pierre.",
+            "zh": "皮埃尔，对吧？皮埃尔。",
+            "ar": "بيير، صح؟ بيير."
+        },
+        {
+            "start": "00:00:17,954",
+            "end": "00:00:19,134",
+            "en": "Pear is 'pear', right?",
+            "zh": "梨子是pear吧",
+            "ar": "الكمثرى هي 'pear'، أليس كذلك؟"
+        },
+        {
+            "start": "00:00:19,394",
+            "end": "00:00:19,754",
+            "start2": "00:00:20,174",
+            "end2": "00:00:20,794",
+            "en": "Pear. This is a pear.",
+            "zh": "梨子。这是梨子。",
+            "ar": "الكمثرى. هذه كمثرى."
+        },
+        {
+            "start": "00:00:21,634",
+            "end": "00:00:22,474",
+            "start2": "00:00:22,474",
+            "end2": "00:00:23,674",
+            "start3": "00:00:23,674",
+            "end3": "00:00:24,214",
+            "en": "and orange, blueberry, strawberry.",
+            "zh": "还有橙子、蓝莓、草莓。",
+            "ar": "والبرتقال، والتوت الأزرق، والفراولة."
+        },
+        {
+            "start": "00:00:25,698",
+            "end": "00:00:26,878",
+            "en": "This is superior.",
+            "zh": "这是胜于过",
+            "ar": "هذا أفضل."
+        },
+        {
+            "start": "00:00:28,162",
+            "end": "00:00:28,942",
+            "en": "I don't know how to say it in English",
+            "zh": "我不知道它英文怎么讲",
+            "ar": "لا أعرف كيف أقول ذلك بالإنجليزية",
+            "text": "Chaine du con."
+        },
+        {
+            "start": "00:00:29,922",
+            "end": "00:00:31,222",
+            "start2": "00:00:31,222",
+            "end2": "00:00:32,042",
+            "start3": "00:00:33,642",
+            "end3": "00:00:35,182",
+            "start4": "00:00:35,772",
+            "end4": "00:00:36,522",
+            "start5": "00:00:36,522",
+            "end5": "00:00:37,642",
+            "en": "I don't know how to say it in English, Joan is, the holy of 'holy', the beauty of 'beauty', the fruit of 'fruit'.",
+            "zh": "我不知道它英文怎么讲，圣女是神圣的圣，美女的女，水果的果。",
+            "ar": "لا أعرف كيف أقوله بالإنجليزية، جوان هي، المقدس من 'مقدس'، الجمال من 'جمال'، الفاكهة من 'فاكهة'."
+        },
+        {
+            "start": "00:00:41,622",
+            "end": "00:00:42,082",
+            "en": "OK",
+            "zh": "好的",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:00:47,298",
+            "end": "00:00:49,798",
+            "en": "Let me see if the translation is correct.",
+            "zh": "让我看看翻译是否正确。",
+            "ar": "دعني أرى إذا كان الترجمة صحيحة."
+        }
+    ]
+}

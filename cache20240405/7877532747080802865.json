@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"zh\",\n    \"text\": \"这个好可爱\"\n  },\n  {\n    \"start\": \"00:00:04,660\",\n    \"end\": \"00:00:06,380\",\n    \"lang\": \"zh\",\n    \"text\": \"像一个熊\"\n  },\n  {\n    \"start\": \"00:00:07,490\",\n    \"end\": \"00:00:07,750\",\n    \"lang\": \"zh\",\n    \"text\": \"鸭\"\n  },\n  {\n    \"start\": \"00:00:08,130\",\n    \"end\": \"00:00:08,530\",\n    \"lang\": \"zh\",\n    \"text\": \"鸭\"\n  },\n  {\n    \"start\": \"00:00:08,570\",\n    \"end\": \"00:00:09,230\",\n    \"lang\": \"zh\",\n    \"text\": \"鸭多一个\"\n  },\n  {\n    \"start\": \"00:00:09,850\",\n    \"end\": \"00:00:10,250\",\n    \"lang\": \"zh\",\n    \"text\": \"熊狗\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,060",
+            "en": "This is so cute",
+            "zh": "这个好可爱",
+            "ar": "هذا لطيف للغاية"
+        },
+        {
+            "start": "00:00:04,660",
+            "end": "00:00:06,380",
+            "en": "Like a bear",
+            "zh": "像一个熊",
+            "ar": "مثل دب"
+        },
+        {
+            "start": "00:00:07,490",
+            "end": "00:00:07,750",
+            "en": "Duck",
+            "zh": "鸭",
+            "ar": "بطة"
+        },
+        {
+            "start": "00:00:08,130",
+            "end": "00:00:08,530",
+            "en": "Duck",
+            "zh": "鸭",
+            "ar": "بطة"
+        },
+        {
+            "start": "00:00:08,570",
+            "end": "00:00:09,230",
+            "en": "One more duck",
+            "zh": "鸭多一个",
+            "ar": "بطة أخرى"
+        },
+        {
+            "start": "00:00:09,850",
+            "end": "00:00:10,250",
+            "en": "Bear dog",
+            "zh": "熊狗",
+            "ar": "كلب الدب"
+        }
+    ]
+}

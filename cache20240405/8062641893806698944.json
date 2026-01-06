@@ -1,0 +1,40 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,180\",\n    \"ja\": \"わあ、\"\n  },\n  {\n    \"start\": \"00:00:00,180\",\n    \"end\": \"00:00:01,900\",\n    \"ja\": \"<ゴールデンレトリバー>[]だ。\"\n  },\n  {\n    \"start\": \"00:00:02,880\",\n    \"end\": \"00:00:03,500\",\n    \"ja\": \"かっこいい。\"\n  },\n  {\n    \"start\": \"00:00:03,522\",\n    \"end\": \"00:00:05,702\",\n    \"ja\": \"やっぱりおっさんはもう<忘>[]れてた\"\n  },\n  {\n    \"start\": \"00:00:05,702\",\n    \"end\": \"00:00:10,162\",\n    \"ja\": \"<投>[]げて<応援>[]と<呼>[]んで\"\n  },\n  {\n    \"start\": \"00:00:10,162\",\n    \"end\": \"00:00:10,182\",\n    \"ja\": \"そういう<気持>[]ちで\"\n  },\n  {\n    \"start\": \"00:00:11,554\",\n    \"end\": \"00:00:12,674\",\n    \"ja\": \"<目>[]が<合>[]ったんだ\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,180",
+            "ja": "わあ、"
+        },
+        {
+            "start": "00:00:00,180",
+            "end": "00:00:01,900",
+            "ja": "<ゴールデンレトリバー>[]だ。"
+        },
+        {
+            "start": "00:00:02,880",
+            "end": "00:00:03,500",
+            "ja": "かっこいい。"
+        },
+        {
+            "start": "00:00:03,522",
+            "end": "00:00:05,702",
+            "ja": "やっぱりおっさんはもう<忘>[わす]れてた"
+        },
+        {
+            "start": "00:00:05,702",
+            "end": "00:00:10,162",
+            "ja": "<投>[な]げて<応援>[おうえん]と<呼>[よ]んで"
+        },
+        {
+            "start": "00:00:10,162",
+            "end": "00:00:10,182",
+            "ja": "そういう<気持>[きも]ちで"
+        },
+        {
+            "start": "00:00:11,554",
+            "end": "00:00:12,674",
+            "ja": "<目>[め]が<合>[あ]ったんだ"
+        }
+    ]
+}

@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:08,786\",\n    \"end\": \"00:01:09,986\",\n    \"lang\": \"en\",\n    \"text\": \"It's not necessary,\"\n  },\n  {\n    \"start\": \"00:01:09,986\",\n    \"end\": \"00:01:13,546\",\n    \"lang\": \"en\",\n    \"text\": \"it's unnecessary to regret it for the past.\"\n  },\n  {\n    \"start\": \"00:01:15,234\",\n    \"end\": \"00:01:15,594\",\n    \"lang\": \"zh\",\n    \"text\": \"多謝\"\n  },\n  {\n    \"start\": \"00:01:15,634\",\n    \"end\": \"00:01:15,754\",\n    \"lang\": \"zh\",\n    \"text\": \"思\"\n  },\n  {\n    \"start\": \"00:01:21,314\",\n    \"end\": \"00:01:26,134\",\n    \"lang\": \"en\",\n    \"text\": \"to this imaginary\"\n  },\n  {\n    \"start\": \"00:01:29,378\",\n    \"end\": \"00:01:29,678\",\n    \"lang\": \"zh\",\n    \"text\": \"拼!\"\n  },\n  {\n    \"start\": \"00:01:31,298\",\n    \"end\": \"00:01:31,758\",\n    \"lang\": \"en\",\n    \"text\": \"obsessed\"\n  },\n  {\n    \"start\": \"00:01:34,594\",\n    \"end\": \"00:01:35,574\",\n    \"lang\": \"zh\",\n    \"text\": \"冰淫大警惕\"\n  },\n  {\n    \"start\": \"00:01:35,574\",\n    \"end\": \"00:01:36,754\",\n    \"lang\": \"zh\",\n    \"text\": \"冰淫大警惕應該\"\n  },\n  {\n    \"start\": \"00:01:38,850\",\n    \"end\": \"00:01:39,970\",\n    \"lang\": \"en\",\n    \"text\": \"imaginary or future.\"\n  },\n  {\n    \"start\": \"00:01:40,770\",\n    \"end\": \"00:01:41,010\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:41,010\",\n    \"end\": \"00:01:42,250\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:08,786",
+            "end": "00:01:09,986",
+            "es": "No es necesario,",
+            "fr": "Ce n'est pas nécessaire,",
+            "uk": "Це не необхідно,"
+        },
+        {
+            "start": "00:01:09,986",
+            "end": "00:01:13,546",
+            "es": "no es necesario lamentarlo por el pasado.",
+            "fr": "il n'est pas nécessaire de le regretter pour le passé.",
+            "uk": "не потрібно шкодувати про минуле."
+        },
+        {
+            "start": "00:01:15,234",
+            "end": "00:01:15,594",
+            "es": "Muchas gracias",
+            "fr": "Merci beaucoup",
+            "uk": "Дуже дякую"
+        },
+        {
+            "start": "00:01:15,634",
+            "end": "00:01:15,754",
+            "es": "pensar",
+            "fr": "penser",
+            "uk": "думати"
+        },
+        {
+            "start": "00:01:21,314",
+            "end": "00:01:26,134",
+            "es": "a esta imaginaria",
+            "fr": "à cette imaginaire",
+            "uk": "до цієї уявної"
+        },
+        {
+            "start": "00:01:29,378",
+            "end": "00:01:29,678",
+            "es": "¡Lucha!",
+            "fr": "Lutte!",
+            "uk": "Боріться!"
+        },
+        {
+            "start": "00:01:31,298",
+            "end": "00:01:31,758",
+            "es": "obsesionado",
+            "fr": "obsédé",
+            "uk": "одержимий"
+        },
+        {
+            "start": "00:01:34,594",
+            "end": "00:01:35,574",
+            "es": "estar extremadamente alerta",
+            "fr": "être extrêmement vigilant",
+            "uk": "бути надзвичайно пильним"
+        },
+        {
+            "start": "00:01:35,574",
+            "end": "00:01:36,754",
+            "es": "deberíamos estar extremadamente alerta",
+            "fr": "nous devrions être extrêmement vigilants",
+            "uk": "ми повинні бути надзвичайно пильними"
+        },
+        {
+            "start": "00:01:38,850",
+            "end": "00:01:39,970",
+            "es": "imaginaria o futura.",
+            "fr": "imaginaire ou future.",
+            "uk": "уявну або майбутню."
+        },
+        {
+            "start": "00:01:40,770",
+            "end": "00:01:41,010",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:01:41,010",
+            "end": "00:01:42,250",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "uk": "до зустрічі."
+        }
+    ]
+}

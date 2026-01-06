@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:06,540\",\n    \"lang\": \"en\",\n    \"text\": \"I had a dream to build a 23-floor building.\"\n  },\n  {\n    \"start\": \"00:00:08,060\",\n    \"end\": \"00:00:09,720\",\n    \"lang\": \"en\",\n    \"text\": \"The highest floor,\"\n  },\n  {\n    \"start\": \"00:00:09,720\",\n    \"end\": \"00:00:11,340\",\n    \"lang\": \"en\",\n    \"text\": \"the 23rd floor,\"\n  },\n  {\n    \"start\": \"00:00:11,340\",\n    \"end\": \"00:00:13,900\",\n    \"lang\": \"en\",\n    \"text\": \"that provides food without price.\"\n  },\n  {\n    \"start\": \"00:00:14,620\",\n    \"end\": \"00:00:17,780\",\n    \"lang\": \"en\",\n    \"text\": \"Only the people that are invited can enjoy the food there.\"\n  },\n  {\n    \"start\": \"00:00:17,940\",\n    \"end\": \"00:00:21,160\",\n    \"lang\": \"en\",\n    \"text\": \"And I will recruit the best chefs around the world.\"\n  },\n  {\n    \"start\": \"00:00:21,540\",\n    \"end\": \"00:00:24,580\",\n    \"lang\": \"en\",\n    \"text\": \"They don't care about the KPI,\"\n  },\n  {\n    \"start\": \"00:00:24,580\",\n    \"end\": \"00:00:25,120\",\n    \"lang\": \"en\",\n    \"text\": \"performance,\"\n  },\n  {\n    \"start\": \"00:00:25,120\",\n    \"end\": \"00:00:26,460\",\n    \"lang\": \"en\",\n    \"text\": \"or anything else.\"\n  },\n  {\n    \"start\": \"00:00:26,460\",\n    \"end\": \"00:00:30,780\",\n    \"lang\": \"en\",\n    \"text\": \"They just focus on when we will refine their food.\"\n  },\n  {\n    \"start\": \"00:00:31,860\",\n    \"end\": \"00:00:34,440\",\n    \"lang\": \"en\",\n    \"text\": \"And that's it.\"\n  },\n  {\n    \"start\": \"00:00:34,440\",\n    \"end\": \"00:00:35,380\",\n    \"lang\": \"en\",\n    \"text\": \"That's my dream.\"\n  },\n  {\n    \"start\": \"00:00:35,800\",\n    \"end\": \"00:00:36,540\",\n    \"lang\": \"en\",\n    \"text\": \"Build this building.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:06,540",
+            "ja": "23階建てのビルを建てる夢がありました。"
+        },
+        {
+            "start": "00:00:08,060",
+            "end": "00:00:09,720",
+            "ja": "一番高い階、"
+        },
+        {
+            "start": "00:00:09,720",
+            "end": "00:00:11,340",
+            "ja": "23階は、"
+        },
+        {
+            "start": "00:00:11,340",
+            "end": "00:00:13,900",
+            "ja": "無料で食事を提供する階です。"
+        },
+        {
+            "start": "00:00:14,620",
+            "end": "00:00:17,780",
+            "ja": "招待された人だけがそこで食事を楽しむことができます。"
+        },
+        {
+            "start": "00:00:17,940",
+            "end": "00:00:21,160",
+            "ja": "そして、世界中から最高のシェフを採用します。"
+        },
+        {
+            "start": "00:00:21,540",
+            "end": "00:00:24,580",
+            "ja": "彼らはKPIや"
+        },
+        {
+            "start": "00:00:24,580",
+            "end": "00:00:25,120",
+            "ja": "パフォーマンス、"
+        },
+        {
+            "start": "00:00:25,120",
+            "end": "00:00:26,460",
+            "ja": "またはそれ以外のことは気にしません。"
+        },
+        {
+            "start": "00:00:26,460",
+            "end": "00:00:30,780",
+            "ja": "彼らが集中するのは、いつ彼らの料理を洗練させるかだけです。"
+        },
+        {
+            "start": "00:00:31,860",
+            "end": "00:00:34,440",
+            "ja": "それだけです。"
+        },
+        {
+            "start": "00:00:34,440",
+            "end": "00:00:35,380",
+            "ja": "それが私の夢です。"
+        },
+        {
+            "start": "00:00:35,800",
+            "end": "00:00:36,540",
+            "ja": "このビルを建てること。"
+        }
+    ]
+}

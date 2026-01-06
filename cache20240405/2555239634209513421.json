@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,040\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:02,040\",\n    \"end\": \"00:00:03,600\",\n    \"lang\": \"en\",\n    \"text\": \"Konnichiwa.\"\n  },\n  {\n    \"start\": \"00:00:03,600\",\n    \"end\": \"00:00:10,220\",\n    \"lang\": \"en\",\n    \"text\": \"It takes about one hour to cook these fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:11,670\",\n    \"end\": \"00:00:14,560\",\n    \"lang\": \"en\",\n    \"text\": \"This is snow fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:14,560\",\n    \"end\": \"00:00:17,340\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:00:18,670\",\n    \"end\": \"00:00:27,200\",\n    \"lang\": \"en\",\n    \"text\": \"Another thing that has this duality of slowness and fastness is my YouTube channel.\"\n  },\n  {\n    \"start\": \"00:00:27,200\",\n    \"end\": \"00:00:33,720\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks for the guy that now it surpassed 50.\"\n  },\n  {\n    \"start\": \"00:00:34,340\",\n    \"end\": \"00:00:36,180\",\n    \"lang\": \"en\",\n    \"text\": \"When I say 50,\"\n  },\n  {\n    \"start\": \"00:00:36,180\",\n    \"end\": \"00:00:37,720\",\n    \"lang\": \"en\",\n    \"text\": \"I don't mean it's half a million.\"\n  },\n  {\n    \"start\": \"00:00:37,720\",\n    \"end\": \"00:00:39,040\",\n    \"lang\": \"en\",\n    \"text\": \"It's really 50.\"\n  },\n  {\n    \"start\": \"00:00:39,040\",\n    \"end\": \"00:00:40,620\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks.\"\n  },\n  {\n    \"start\": \"00:00:42,080\",\n    \"end\": \"00:00:43,500\",\n    \"lang\": \"en\",\n    \"text\": \"I believe 50 is enough.\"\n  },\n  {\n    \"start\": \"00:00:43,500\",\n    \"end\": \"00:00:44,860\",\n    \"lang\": \"en\",\n    \"text\": \"If I serve this,\"\n  },\n  {\n    \"start\": \"00:00:44,860\",\n    \"end\": \"00:00:46,020\",\n    \"lang\": \"en\",\n    \"text\": \"50 people will.\"\n  },\n  {\n    \"start\": \"00:00:46,020\",\n    \"end\": \"00:00:47,520\",\n    \"lang\": \"en\",\n    \"text\": \"It's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:52,039\",\n    \"end\": \"00:00:56,800\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this guy,\"\n  },\n  {\n    \"start\": \"00:00:56,800\",\n    \"end\": \"00:00:59,280\",\n    \"lang\": \"en\",\n    \"text\": \"someone that followed me,\"\n  },\n  {\n    \"start\": \"00:00:59,280\",\n    \"end\": \"00:01:00,400\",\n    \"lang\": \"en\",\n    \"text\": \"subscribed my channel.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,040",
+            "ko": "오케이,"
+        },
+        {
+            "start": "00:00:02,040",
+            "end": "00:00:03,600",
+            "ko": "안녕하세요."
+        },
+        {
+            "start": "00:00:03,600",
+            "end": "00:00:10,220",
+            "ko": "이 빠른 면을 요리하는 데는 대략 한 시간이 걸립니다."
+        },
+        {
+            "start": "00:00:11,670",
+            "end": "00:00:14,560",
+            "ko": "이건 눈송이 빠른 면입니다."
+        },
+        {
+            "start": "00:00:14,560",
+            "end": "00:00:17,340",
+            "ko": "죄송합니다."
+        },
+        {
+            "start": "00:00:18,670",
+            "end": "00:00:27,200",
+            "ko": "또 다른 느리고 빠름의 이중성을 지닌 것은 제 유튜브 채널입니다."
+        },
+        {
+            "start": "00:00:27,200",
+            "end": "00:00:33,720",
+            "ko": "이제 구독자가 50명을 넘어선 것에 대해 감사드립니다."
+        },
+        {
+            "start": "00:00:34,340",
+            "end": "00:00:36,180",
+            "ko": "50명이라고 할 때,"
+        },
+        {
+            "start": "00:00:36,180",
+            "end": "00:00:37,720",
+            "ko": "반 백만을 의미하는 게 아닙니다."
+        },
+        {
+            "start": "00:00:37,720",
+            "end": "00:00:39,040",
+            "ko": "정말 50명입니다."
+        },
+        {
+            "start": "00:00:39,040",
+            "end": "00:00:40,620",
+            "ko": "감사합니다."
+        },
+        {
+            "start": "00:00:42,080",
+            "end": "00:00:43,500",
+            "ko": "50명이면 충분하다고 믿습니다."
+        },
+        {
+            "start": "00:00:43,500",
+            "end": "00:00:44,860",
+            "ko": "이걸 제공한다면,"
+        },
+        {
+            "start": "00:00:44,860",
+            "end": "00:00:46,020",
+            "ko": "50명이 될 겁니다."
+        },
+        {
+            "start": "00:00:46,020",
+            "end": "00:00:47,520",
+            "ko": "정말 멋집니다."
+        },
+        {
+            "start": "00:00:52,039",
+            "end": "00:00:56,800",
+            "ko": "이 사람을 믿습니다,"
+        },
+        {
+            "start": "00:00:56,800",
+            "end": "00:00:59,280",
+            "ko": "저를 따라준 사람,"
+        },
+        {
+            "start": "00:00:59,280",
+            "end": "00:01:00,400",
+            "ko": "제 채널을 구독한 사람."
+        }
+    ]
+}

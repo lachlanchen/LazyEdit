@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,540\",\n    \"lang\": \"ja\",\n    \"text\": \"もう止められない\"\n  },\n  {\n    \"start\": \"00:00:03,938\",\n    \"end\": \"00:00:05,638\",\n    \"lang\": \"en\",\n    \"text\": \"I have to buy some drugs.\"\n  },\n  {\n    \"start\": \"00:00:06,338\",\n    \"end\": \"00:00:08,058\",\n    \"lang\": \"ja\",\n    \"text\": \"私は靴にかいています\"\n  },\n  {\n    \"start\": \"00:00:08,866\",\n    \"end\": \"00:00:09,146\",\n    \"lang\": \"en\",\n    \"text\": \"Ready?\"\n  },\n  {\n    \"start\": \"00:00:09,146\",\n    \"end\": \"00:00:09,766\",\n    \"lang\": \"en\",\n    \"text\": \"Kuzni,\"\n  },\n  {\n    \"start\": \"00:00:09,766\",\n    \"end\": \"00:00:10,446\",\n    \"lang\": \"en\",\n    \"text\": \"kuzni,\"\n  },\n  {\n    \"start\": \"00:00:10,446\",\n    \"end\": \"00:00:11,166\",\n    \"lang\": \"en\",\n    \"text\": \"oh my goodness.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,540",
+            "es": "Ya no puedo detenerme",
+            "fr": "Je ne peux plus m'arrêter",
+            "uk": "Я вже не можу зупинитися"
+        },
+        {
+            "start": "00:00:03,938",
+            "end": "00:00:05,638",
+            "es": "Tengo que comprar algunas drogas.",
+            "fr": "Je dois acheter des médicaments.",
+            "uk": "Я маю купити деякі ліки."
+        },
+        {
+            "start": "00:00:06,338",
+            "end": "00:00:08,058",
+            "es": "Estoy escribiendo en mis zapatos",
+            "fr": "J'écris sur mes chaussures",
+            "uk": "Я пишу на своїх туфлях"
+        },
+        {
+            "start": "00:00:08,866",
+            "end": "00:00:09,146",
+            "es": "¿Listo?",
+            "fr": "Prêt?",
+            "uk": "Готовий?"
+        },
+        {
+            "start": "00:00:09,146",
+            "end": "00:00:09,766",
+            "es": "Kuzni,",
+            "fr": "Kuzni,",
+            "uk": "Кузні,"
+        },
+        {
+            "start": "00:00:09,766",
+            "end": "00:00:10,446",
+            "es": "kuzni,",
+            "fr": "kuzni,",
+            "uk": "кузні,"
+        },
+        {
+            "start": "00:00:10,446",
+            "end": "00:00:11,166",
+            "es": "oh, Dios mío.",
+            "fr": "oh mon Dieu.",
+            "uk": "о, Господи."
+        }
+    ]
+}

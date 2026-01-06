@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:03,746\",\n    \"end\": \"00:02:04,366\",\n    \"lang\": \"en\",\n    \"text\": \"I'll sing it simply,\"\n  },\n  {\n    \"start\": \"00:02:04,366\",\n    \"end\": \"00:02:05,046\",\n    \"lang\": \"en\",\n    \"text\": \"what do you want me to write?\"\n  },\n  {\n    \"start\": \"00:02:05,486\",\n    \"end\": \"00:02:07,566\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:07,566\",\n    \"end\": \"00:02:08,425\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:08,425\",\n    \"end\": \"00:02:11,486\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:11,486\",\n    \"end\": \"00:02:14,346\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:14,346\",\n    \"end\": \"00:02:15,086\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:15,086\",\n    \"end\": \"00:02:18,746\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:24,966\",\n    \"end\": \"00:02:25,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:25,686\",\n    \"end\": \"00:02:27,146\",\n    \"lang\": \"en\",\n    \"text\": \"play some chords\"\n  },\n  {\n    \"start\": \"00:02:27,146\",\n    \"end\": \"00:02:29,826\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:29,826\",\n    \"end\": \"00:02:29,826\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:29,826\",\n    \"end\": \"00:02:32,066\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:32,994\",\n    \"end\": \"00:02:35,634\",\n    \"lang\": \"ja\",\n    \"text\": \"バリナスティー10マウンス\"\n  },\n  {\n    \"start\": \"00:02:36,418\",\n    \"end\": \"00:02:40,298\",\n    \"lang\": \"en\",\n    \"text\": \"I mainly focus on playing the chords.\"\n  },\n  {\n    \"start\": \"00:02:41,418\",\n    \"end\": \"00:02:42,138\",\n    \"lang\": \"en\",\n    \"text\": \"Hèxiǎn.\"\n  },\n  {\n    \"start\": \"00:02:43,874\",\n    \"end\": \"00:02:45,054\",\n    \"lang\": \"zh\",\n    \"text\": \"好想要试裤子\"\n  },\n  {\n    \"start\": \"00:02:46,093\",\n    \"end\": \"00:02:47,594\",\n    \"lang\": \"zh\",\n    \"text\": \"好想用英语怎么说\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:03,746",
+            "end": "00:02:04,366",
+            "vi": "Tôi sẽ hát nó một cách đơn giản,"
+        },
+        {
+            "start": "00:02:04,366",
+            "end": "00:02:05,046",
+            "vi": "bạn muốn tôi viết gì?"
+        },
+        {
+            "start": "00:02:05,486",
+            "end": "00:02:07,566",
+            "vi": "Đừng viết trả lời tôi nhiều quá,"
+        },
+        {
+            "start": "00:02:07,566",
+            "end": "00:02:08,425",
+            "vi": "đừng"
+        },
+        {
+            "start": "00:02:08,425",
+            "end": "00:02:11,486",
+            "vi": "Đừng để tình yêu của tôi mờ nhạt"
+        },
+        {
+            "start": "00:02:11,486",
+            "end": "00:02:14,346",
+            "vi": "Đừng viết trả lời tôi nhiều quá,"
+        },
+        {
+            "start": "00:02:14,346",
+            "end": "00:02:15,086",
+            "vi": "đừng"
+        },
+        {
+            "start": "00:02:15,086",
+            "end": "00:02:18,746",
+            "vi": "Đừng để tình yêu của tôi mờ nhạt"
+        },
+        {
+            "start": "00:02:24,966",
+            "end": "00:02:25,686",
+            "vi": "Được rồi,"
+        },
+        {
+            "start": "00:02:25,686",
+            "end": "00:02:27,146",
+            "vi": "hãy đệm vài hợp âm"
+        },
+        {
+            "start": "00:02:27,146",
+            "end": "00:02:29,826",
+            "vi": "Đừng viết trả lời tôi nhiều quá,"
+        },
+        {
+            "start": "00:02:29,826",
+            "end": "00:02:29,826",
+            "vi": "đừng"
+        },
+        {
+            "start": "00:02:29,826",
+            "end": "00:02:32,066",
+            "vi": "Đừng để tình yêu của tôi mờ nhạt"
+        },
+        {
+            "start": "00:02:32,994",
+            "end": "00:02:35,634",
+            "vi": "バリナスティー10ヶ月 (Barinasutī 10 tháng)"
+        },
+        {
+            "start": "00:02:36,418",
+            "end": "00:02:40,298",
+            "vi": "Tôi chủ yếu tập trung vào việc chơi các hợp âm."
+        },
+        {
+            "start": "00:02:41,418",
+            "end": "00:02:42,138",
+            "vi": "Hèxiǎn."
+        },
+        {
+            "start": "00:02:43,874",
+            "end": "00:02:45,054",
+            "vi": "Rất muốn thử quần"
+        },
+        {
+            "start": "00:02:46,093",
+            "end": "00:02:47,594",
+            "vi": "Muốn nói bằng tiếng Anh nên nói thế nào"
+        }
+    ]
+}

@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,540\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this is a paradise for these dogs.\"\n  },\n  {\n    \"start\": \"00:00:04,460\",\n    \"end\": \"00:00:08,620\",\n    \"lang\": \"en\",\n    \"text\": \"You can make friends here at this dog club.\"\n  },\n  {\n    \"start\": \"00:00:09,600\",\n    \"end\": \"00:00:11,080\",\n    \"lang\": \"en\",\n    \"text\": \"This is their arena.\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:13,300\",\n    \"lang\": \"en\",\n    \"text\": \"You can fight,\"\n  },\n  {\n    \"start\": \"00:00:13,300\",\n    \"end\": \"00:00:15,080\",\n    \"lang\": \"en\",\n    \"text\": \"make friends.\"\n  },\n  {\n    \"start\": \"00:00:16,340\",\n    \"end\": \"00:00:17,500\",\n    \"lang\": \"en\",\n    \"text\": \"This is a paradise.\"\n  },\n  {\n    \"start\": \"00:00:19,860\",\n    \"end\": \"00:00:21,260\",\n    \"lang\": \"en\",\n    \"text\": \"So many dogs.\"\n  },\n  {\n    \"start\": \"00:00:24,500\",\n    \"end\": \"00:00:25,900\",\n    \"lang\": \"en\",\n    \"text\": \"Husky,\"\n  },\n  {\n    \"start\": \"00:00:25,900\",\n    \"end\": \"00:00:30,080\",\n    \"lang\": \"en\",\n    \"text\": \"Cookie and Goodyear Trailer.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,540",
+            "ko": "이곳은 이 개들에게 천국입니다."
+        },
+        {
+            "start": "00:00:04,460",
+            "end": "00:00:08,620",
+            "ko": "이 개 클럽에서 친구를 만들 수 있어요."
+        },
+        {
+            "start": "00:00:09,600",
+            "end": "00:00:11,080",
+            "ko": "이곳은 그들의 경기장입니다."
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:13,300",
+            "ko": "싸우며,"
+        },
+        {
+            "start": "00:00:13,300",
+            "end": "00:00:15,080",
+            "ko": "친구를 만들 수 있어요."
+        },
+        {
+            "start": "00:00:16,340",
+            "end": "00:00:17,500",
+            "ko": "이곳은 천국입니다."
+        },
+        {
+            "start": "00:00:19,860",
+            "end": "00:00:21,260",
+            "ko": "개들이 정말 많아요."
+        },
+        {
+            "start": "00:00:24,500",
+            "end": "00:00:25,900",
+            "ko": "허스키,"
+        },
+        {
+            "start": "00:00:25,900",
+            "end": "00:00:30,080",
+            "ko": "쿠키, 그리고 굿이어 트레일러."
+        }
+    ]
+}

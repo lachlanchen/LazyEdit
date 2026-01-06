@@ -1,0 +1,56 @@
+{
+    "prompt": "For words that have etymological Chu-Han alternative (due to their Sino-Vietnamese origin), I want to find the corresponding Chinese origin to replace the Viet WORDS (provide consecutive words if exist). However, it's crucial that the Viet in parenthesis followed by these traditional Chu-Han are put in brackets to maintain clarity. Like this example: (viet)[chuhan].\n\nVietnamese to be annotated: Cảm thấy hạnh phúc và thỏa mãn trong thế giới tri thức.\n\nI don't need step by step explanation. PLEASE ONLY output the JSON:\n```json\n{\n  \"viet_with_annotation\": \"\",\n  \"viet_chuhan_pairs\": [\n    {\n      \"viet_part\": \"\",\n      \"chuhan\": \"\"\n    }\n  ]\n}\n```",
+    "response": {
+        "viet_with_annotation": "Cảm(感) thấy(覺) hạnh(幸) phúc(福) và(和) thỏa(适) mãn(满) trong thế(世) giới(界) tri(知) thức(识).",
+        "viet_chuhan_pairs": [
+            {
+                "viet_part": "Cảm",
+                "chuhan": "感"
+            },
+            {
+                "viet_part": "thấy",
+                "chuhan": "覺"
+            },
+            {
+                "viet_part": "hạnh",
+                "chuhan": "幸"
+            },
+            {
+                "viet_part": "phúc",
+                "chuhan": "福"
+            },
+            {
+                "viet_part": "và",
+                "chuhan": "和"
+            },
+            {
+                "viet_part": "thỏa",
+                "chuhan": "适"
+            },
+            {
+                "viet_part": "mãn",
+                "chuhan": "满"
+            },
+            {
+                "viet_part": "trong",
+                "chuhan": ""
+            },
+            {
+                "viet_part": "thế",
+                "chuhan": "世"
+            },
+            {
+                "viet_part": "giới",
+                "chuhan": "界"
+            },
+            {
+                "viet_part": "tri",
+                "chuhan": "知"
+            },
+            {
+                "viet_part": "thức",
+                "chuhan": "识"
+            }
+        ]
+    }
+}

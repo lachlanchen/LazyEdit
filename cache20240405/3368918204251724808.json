@@ -1,0 +1,110 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,200\",\n    \"lang\": \"en\",\n    \"text\": \"this is called a dog is angry bird\"\n  },\n  {\n    \"start\": \"00:00:04,802\",\n    \"end\": \"00:00:05,442\",\n    \"lang\": \"zh\",\n    \"text\": \"你们烘烫\"\n  },\n  {\n    \"start\": \"00:00:06,562\",\n    \"end\": \"00:00:09,082\",\n    \"lang\": \"en\",\n    \"text\": \"So what he is saying looks like,\"\n  },\n  {\n    \"start\": \"00:00:09,082\",\n    \"end\": \"00:00:11,842\",\n    \"lang\": \"en\",\n    \"text\": \"sounds like the dog is hungry.\"\n  },\n  {\n    \"start\": \"00:00:12,082\",\n    \"end\": \"00:00:13,842\",\n    \"lang\": \"en\",\n    \"text\": \"Because in the old time,\"\n  },\n  {\n    \"start\": \"00:00:13,842\",\n    \"end\": \"00:00:18,062\",\n    \"lang\": \"en\",\n    \"text\": \"there is a girl that she's,\"\n  },\n  {\n    \"start\": \"00:00:18,062\",\n    \"end\": \"00:00:27,022\",\n    \"lang\": \"en\",\n    \"text\": \"she's kind of being killed after that\"\n  },\n  {\n    \"start\": \"00:00:27,022\",\n    \"end\": \"00:00:27,362\",\n    \"lang\": \"en\",\n    \"text\": \"he,\"\n  },\n  {\n    \"start\": \"00:00:27,362\",\n    \"end\": \"00:00:29,922\",\n    \"lang\": \"en\",\n    \"text\": \"this is a child bride that he,\"\n  },\n  {\n    \"start\": \"00:00:29,922\",\n    \"end\": \"00:00:30,782\",\n    \"lang\": \"en\",\n    \"text\": \"she was killed.\"\n  },\n  {\n    \"start\": \"00:00:30,818\",\n    \"end\": \"00:00:32,078\",\n    \"lang\": \"zh\",\n    \"text\": \"其实今天挺热的\"\n  },\n  {\n    \"start\": \"00:00:32,514\",\n    \"end\": \"00:00:41,014\",\n    \"lang\": \"en\",\n    \"text\": \"murdered after they accused her that she stole the food.\"\n  },\n  {\n    \"start\": \"00:00:41,014\",\n    \"end\": \"00:00:44,334\",\n    \"lang\": \"en\",\n    \"text\": \"But once she got murdered,\"\n  },\n  {\n    \"start\": \"00:00:44,334\",\n    \"end\": \"00:00:45,434\",\n    \"lang\": \"en\",\n    \"text\": \"she\"\n  },\n  {\n    \"start\": \"00:00:45,434\",\n    \"end\": \"00:00:46,254\",\n    \"lang\": \"en\",\n    \"text\": \"was not killed.\"\n  },\n  {\n    \"start\": \"00:00:46,274\",\n    \"end\": \"00:00:47,494\",\n    \"lang\": \"zh\",\n    \"text\": \"GP抗那些人\"\n  },\n  {\n    \"start\": \"00:00:47,970\",\n    \"end\": \"00:00:48,550\",\n    \"lang\": \"en\",\n    \"text\": \"It's a bird.\"\n  },\n  {\n    \"start\": \"00:00:49,290\",\n    \"end\": \"00:00:54,310\",\n    \"lang\": \"en\",\n    \"text\": \"And what she always thinks is that she's not the one\"\n  },\n  {\n    \"start\": \"00:00:55,250\",\n    \"end\": \"00:00:56,210\",\n    \"lang\": \"en\",\n    \"text\": \"stealing the food.\"\n  },\n  {\n    \"start\": \"00:00:56,790\",\n    \"end\": \"00:00:58,750\",\n    \"lang\": \"en\",\n    \"text\": \"That is a dog is hungry.\"\n  },\n  {\n    \"start\": \"00:00:59,310\",\n    \"end\": \"00:01:05,610\",\n    \"lang\": \"en\",\n    \"text\": \"So what she thinks looks like a dog is hungry.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,200",
+            "ko": "이것은 화난 새라고 불리는 개입니다"
+        },
+        {
+            "start": "00:00:04,802",
+            "end": "00:00:05,442",
+            "ko": "너희들 열심히 해"
+        },
+        {
+            "start": "00:00:06,562",
+            "end": "00:00:09,082",
+            "ko": "그래서 그가 말하는 것처럼 보이는 건,"
+        },
+        {
+            "start": "00:00:09,082",
+            "end": "00:00:11,842",
+            "ko": "개가 배고픈 것 같다는 소리야."
+        },
+        {
+            "start": "00:00:12,082",
+            "end": "00:00:13,842",
+            "ko": "예전에는,"
+        },
+        {
+            "start": "00:00:13,842",
+            "end": "00:00:18,062",
+            "ko": "그녀가 있는데, 그녀는"
+        },
+        {
+            "start": "00:00:18,062",
+            "end": "00:00:27,022",
+            "ko": "그 다음에 사실상 죽임을 당한 것 같아"
+        },
+        {
+            "start": "00:00:27,022",
+            "end": "00:00:27,362",
+            "ko": "그는,"
+        },
+        {
+            "start": "00:00:27,362",
+            "end": "00:00:29,922",
+            "ko": "그녀는 결혼한 어린 아이였고, 그녀는 살해되었습니다."
+        },
+        {
+            "start": "00:00:29,922",
+            "end": "00:00:30,782",
+            "ko": "그녀는 죽었어."
+        },
+        {
+            "start": "00:00:30,818",
+            "end": "00:00:32,078",
+            "ko": "사실 오늘 꽤 더워"
+        },
+        {
+            "start": "00:00:32,514",
+            "end": "00:00:41,014",
+            "ko": "음식을 훔쳤다고 비난 받은 후에 그녀는 살해당했습니다."
+        },
+        {
+            "start": "00:00:41,014",
+            "end": "00:00:44,334",
+            "ko": "하지만 일단 살해당하고 나면,"
+        },
+        {
+            "start": "00:00:44,334",
+            "end": "00:00:45,434",
+            "ko": "그녀는"
+        },
+        {
+            "start": "00:00:45,434",
+            "end": "00:00:46,254",
+            "ko": "죽지 않았습니다."
+        },
+        {
+            "start": "00:00:46,274",
+            "end": "00:00:47,494",
+            "ko": "GP가 그 사람들에게 맞서다"
+        },
+        {
+            "start": "00:00:47,970",
+            "end": "00:00:48,550",
+            "ko": "그건 새입니다."
+        },
+        {
+            "start": "00:00:49,290",
+            "end": "00:00:54,310",
+            "ko": "그리고 그녀는 항상 생각합니다. 자신이 음식을 훔치는 사람이 아니라고"
+        },
+        {
+            "start": "00:00:55,250",
+            "end": "00:00:56,210",
+            "ko": "음식을 훔치는 사람이 아니에요."
+        },
+        {
+            "start": "00:00:56,790",
+            "end": "00:00:58,750",
+            "ko": "그건 개가 배고픈 거야."
+        },
+        {
+            "start": "00:00:59,310",
+            "end": "00:01:05,610",
+            "ko": "그래서 그녀가 생각하는 것처럼 보이는 건, 개가 배고픈 것 같아."
+        }
+    ]
+}

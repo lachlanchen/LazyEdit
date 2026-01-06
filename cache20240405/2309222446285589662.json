@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,300\",\n    \"lang\": \"zh\",\n    \"text\": \"根本就没有先苦后甜这一回事\"\n  },\n  {\n    \"start\": \"00:00:05,119\",\n    \"end\": \"00:00:06,340\",\n    \"lang\": \"zh\",\n    \"text\": \"如果你有句话叫\"\n  },\n  {\n    \"start\": \"00:00:06,899\",\n    \"end\": \"00:00:08,860\",\n    \"lang\": \"zh\",\n    \"text\": \"会玩的玩一辈子\"\n  },\n  {\n    \"start\": \"00:00:08,860\",\n    \"end\": \"00:00:10,080\",\n    \"lang\": \"zh\",\n    \"text\": \"会做的做一辈子\"\n  },\n  {\n    \"start\": \"00:00:11,458\",\n    \"end\": \"00:00:13,278\",\n    \"lang\": \"en\",\n    \"text\": \"So if you suffer,\"\n  },\n  {\n    \"start\": \"00:00:13,278\",\n    \"end\": \"00:00:19,298\",\n    \"lang\": \"en\",\n    \"text\": \"you keep suffering until you finally decide that you enjoy the life.\"\n  },\n  {\n    \"start\": \"00:00:21,318\",\n    \"end\": \"00:00:22,178\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,300",
+            "es": "Simplemente no existe eso de primero amargo luego dulce",
+            "fr": "Il n'y a tout simplement pas de chose telle que l'amertume suivie de la douceur",
+            "uk": "Просто не існує такого, як спочатку гіркота, потім солодощі"
+        },
+        {
+            "start": "00:00:05,119",
+            "end": "00:00:06,340",
+            "es": "Si tienes un dicho que dice",
+            "fr": "Si tu as un dicton qui dit",
+            "uk": "Якщо у тебе є приказка, що каже"
+        },
+        {
+            "start": "00:00:06,899",
+            "end": "00:00:08,860",
+            "es": "Los que saben jugar, juegan toda la vida",
+            "fr": "Ceux qui savent jouer, jouent toute leur vie",
+            "uk": "Ті, хто вміє грати, грають все життя"
+        },
+        {
+            "start": "00:00:08,860",
+            "end": "00:00:10,080",
+            "es": "Los que saben hacer, lo hacen toda la vida",
+            "fr": "Ceux qui savent faire, le font toute leur vie",
+            "uk": "Ті, хто вміє робити, роблять це все життя"
+        },
+        {
+            "start": "00:00:11,458",
+            "end": "00:00:13,278",
+            "es": "Así que si sufres,",
+            "fr": "Donc si tu souffres,",
+            "uk": "Отже, якщо ти страждаєш,"
+        },
+        {
+            "start": "00:00:13,278",
+            "end": "00:00:19,298",
+            "es": "sigues sufriendo hasta que finalmente decides que disfrutas de la vida.",
+            "fr": "tu continues à souffrir jusqu'à ce que finalement tu décides que tu apprécies la vie.",
+            "uk": "ти продовжуєш страждати, доки нарешті не вирішиш, що насолоджуєшся життям."
+        },
+        {
+            "start": "00:00:21,318",
+            "end": "00:00:22,178",
+            "es": "De acuerdo.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        }
+    ]
+}

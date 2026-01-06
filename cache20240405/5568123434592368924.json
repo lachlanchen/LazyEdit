@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,120\",\n    \"end\": \"00:00:07,160\",\n    \"lang\": \"en\",\n    \"text\": \"So this morning I regret that I didn't take a video of this kite dog.\"\n  },\n  {\n    \"start\": \"00:00:07,880\",\n    \"end\": \"00:00:12,480\",\n    \"lang\": \"en\",\n    \"text\": \"This dog that he climbed on this kind of height.\"\n  },\n  {\n    \"start\": \"00:00:14,210\",\n    \"end\": \"00:00:14,510\",\n    \"lang\": \"ar\",\n    \"text\": \"فنت\"\n  },\n  {\n    \"start\": \"00:00:15,266\",\n    \"end\": \"00:00:16,265\",\n    \"lang\": \"en\",\n    \"text\": \"in Fins,\"\n  },\n  {\n    \"start\": \"00:00:16,265\",\n    \"end\": \"00:00:16,586\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:00:16,586\",\n    \"end\": \"00:00:17,006\",\n    \"lang\": \"en\",\n    \"text\": \"Fins.\"\n  },\n  {\n    \"start\": \"00:00:17,666\",\n    \"end\": \"00:00:18,686\",\n    \"lang\": \"en\",\n    \"text\": \"in one jump,\"\n  },\n  {\n    \"start\": \"00:00:18,686\",\n    \"end\": \"00:00:19,906\",\n    \"lang\": \"en\",\n    \"text\": \"in a single jump.\"\n  },\n  {\n    \"start\": \"00:00:20,686\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"So he's so agile.\"\n  },\n  {\n    \"start\": \"00:00:23,106\",\n    \"end\": \"00:00:25,666\",\n    \"lang\": \"en\",\n    \"text\": \"I regret that I didn't take a photo,\"\n  },\n  {\n    \"start\": \"00:00:25,666\",\n    \"end\": \"00:00:28,246\",\n    \"lang\": \"en\",\n    \"text\": \"take a video for it.\"\n  },\n  {\n    \"start\": \"00:00:29,066\",\n    \"end\": \"00:00:34,216\",\n    \"lang\": \"en\",\n    \"text\": \"But I comfort myself.\"\n  },\n  {\n    \"start\": \"00:00:36,994\",\n    \"end\": \"00:00:37,594\",\n    \"lang\": \"zh\",\n    \"text\": \"又一定要停\"\n  },\n  {\n    \"start\": \"00:00:38,786\",\n    \"end\": \"00:00:42,926\",\n    \"lang\": \"en\",\n    \"text\": \"The past has passed and the future has not yet come.\"\n  },\n  {\n    \"start\": \"00:00:43,966\",\n    \"end\": \"00:00:46,886\",\n    \"lang\": \"en\",\n    \"text\": \"So even I regret it.\"\n  },\n  {\n    \"start\": \"00:00:50,446\",\n    \"end\": \"00:00:54,266\",\n    \"lang\": \"en\",\n    \"text\": \"There is this Eustrohitch sentence,\"\n  },\n  {\n    \"start\": \"00:00:54,266\",\n    \"end\": \"00:00:55,946\",\n    \"lang\": \"en\",\n    \"text\": \"that live in the present.\"\n  },\n  {\n    \"start\": \"00:00:58,006\",\n    \"end\": \"00:00:59,946\",\n    \"lang\": \"en\",\n    \"text\": \"It's not that this is wrong,\"\n  },\n  {\n    \"start\": \"00:00:59,946\",\n    \"end\": \"00:01:04,385\",\n    \"lang\": \"en\",\n    \"text\": \"because it's just only present you can live.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,120",
+            "end": "00:00:07,160",
+            "ko": "그래서 오늘 아침에 이 연날리는 개의 비디오를 찍지 않은 것을 후회했어요."
+        },
+        {
+            "start": "00:00:07,880",
+            "end": "00:00:12,480",
+            "ko": "이 개가 이런 높이에 올라갔어요."
+        },
+        {
+            "start": "00:00:14,210",
+            "end": "00:00:14,510",
+            "ko": "대단해요."
+        },
+        {
+            "start": "00:00:15,266",
+            "end": "00:00:16,265",
+            "ko": "핀즈에서,"
+        },
+        {
+            "start": "00:00:16,265",
+            "end": "00:00:16,586",
+            "ko": "미안해요,"
+        },
+        {
+            "start": "00:00:16,586",
+            "end": "00:00:17,006",
+            "ko": "핀즈."
+        },
+        {
+            "start": "00:00:17,666",
+            "end": "00:00:18,686",
+            "ko": "한 번의 점프로,"
+        },
+        {
+            "start": "00:00:18,686",
+            "end": "00:00:19,906",
+            "ko": "단 한 번의 점프로."
+        },
+        {
+            "start": "00:00:20,686",
+            "end": "00:00:22,146",
+            "ko": "그는 너무 민첩해요."
+        },
+        {
+            "start": "00:00:23,106",
+            "end": "00:00:25,666",
+            "ko": "사진을 찍지 않은 것을 후회해요,"
+        },
+        {
+            "start": "00:00:25,666",
+            "end": "00:00:28,246",
+            "ko": "그것에 대한 비디오를 찍지 않은 것을요."
+        },
+        {
+            "start": "00:00:29,066",
+            "end": "00:00:34,216",
+            "ko": "하지만 나는 내 자신을 위로해요."
+        },
+        {
+            "start": "00:00:36,994",
+            "end": "00:00:37,594",
+            "ko": "꼭 멈춰야 돼요."
+        },
+        {
+            "start": "00:00:38,786",
+            "end": "00:00:42,926",
+            "ko": "과거는 지나갔고 미래는 아직 오지 않았습니다."
+        },
+        {
+            "start": "00:00:43,966",
+            "end": "00:00:46,886",
+            "ko": "그래서 후회한다고 해도."
+        },
+        {
+            "start": "00:00:50,446",
+            "end": "00:00:54,266",
+            "ko": "유스트로히치 문장이 있어요,"
+        },
+        {
+            "start": "00:00:54,266",
+            "end": "00:00:55,946",
+            "ko": "현재에 살라는 것."
+        },
+        {
+            "start": "00:00:58,006",
+            "end": "00:00:59,946",
+            "ko": "이게 틀린 건 아니에요,"
+        },
+        {
+            "start": "00:00:59,946",
+            "end": "00:01:04,385",
+            "ko": "왜냐하면 당신이 살 수 있는 건 오직 현재뿐이기 때문이죠."
+        }
+    ]
+}

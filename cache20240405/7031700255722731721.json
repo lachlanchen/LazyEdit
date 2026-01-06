@@ -1,0 +1,41 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,800\",\n    \"lang\": \"zh\",\n    \"text\": \"正在看扇子\"\n  },\n  {\n    \"start\": \"00:00:01,506\",\n    \"end\": \"00:00:03,086\",\n    \"lang\": \"ja\",\n    \"text\": \"遊んでいます\"\n  },\n  {\n    \"start\": \"00:00:04,610\",\n    \"end\": \"00:00:05,050\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:05,050\",\n    \"end\": \"00:00:07,490\",\n    \"lang\": \"en\",\n    \"text\": \"so our morning run,\"\n  },\n  {\n    \"start\": \"00:00:07,490\",\n    \"end\": \"00:00:08,690\",\n    \"lang\": \"en\",\n    \"text\": \"morning running.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,800",
+            "en": "Looking at the fan",
+            "zh": "正在看扇子",
+            "ar": "أنظر إلى المروحة"
+        },
+        {
+            "start": "00:00:01,506",
+            "end": "00:00:03,086",
+            "en": "Playing",
+            "zh": "正在玩",
+            "ar": "يلعب",
+            "ja": "遊んでいます"
+        },
+        {
+            "start": "00:00:04,610",
+            "end": "00:00:05,050",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:00:05,050",
+            "end": "00:00:07,490",
+            "en": "so our morning run,",
+            "zh": "所以我们的晨跑，",
+            "ar": "إذن، ركضنا في الصباح،"
+        },
+        {
+            "start": "00:00:07,490",
+            "end": "00:00:08,690",
+            "en": "morning running.",
+            "zh": "早晨跑步。",
+            "ar": "الجري في الصباح."
+        }
+    ]
+}

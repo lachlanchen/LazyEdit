@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,300\",\n    \"end\": \"00:01:04,019\",\n    \"lang\": \"en\",\n    \"text\": \"It's a biological age.\"\n  },\n  {\n    \"start\": \"00:01:11,940\",\n    \"end\": \"00:01:14,880\",\n    \"lang\": \"en\",\n    \"text\": \"As time is imaginary,\"\n  },\n  {\n    \"start\": \"00:01:14,880\",\n    \"end\": \"00:01:18,420\",\n    \"lang\": \"en\",\n    \"text\": \"time is physical,\"\n  },\n  {\n    \"start\": \"00:01:18,420\",\n    \"end\": \"00:01:22,040\",\n    \"lang\": \"en\",\n    \"text\": \"but it's also the metric of time.\"\n  },\n  {\n    \"start\": \"00:01:22,040\",\n    \"end\": \"00:01:23,560\",\n    \"lang\": \"en\",\n    \"text\": \"It's imaginary.\"\n  },\n  {\n    \"start\": \"00:01:24,300\",\n    \"end\": \"00:01:24,460\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:24,460\",\n    \"end\": \"00:01:39,860\",\n    \"lang\": \"en\",\n    \"text\": \"if you use the life of a subatomic particle,\"\n  },\n  {\n    \"start\": \"00:01:39,860\",\n    \"end\": \"00:01:42,440\",\n    \"lang\": \"en\",\n    \"text\": \"our life is infinity.\"\n  },\n  {\n    \"start\": \"00:01:42,440\",\n    \"end\": \"00:01:44,300\",\n    \"lang\": \"en\",\n    \"text\": \"Our life is infinity.\"\n  },\n  {\n    \"start\": \"00:01:44,840\",\n    \"end\": \"00:01:48,940\",\n    \"lang\": \"en\",\n    \"text\": \"But if you use the time of the universe as a metric,\"\n  },\n  {\n    \"start\": \"00:01:48,940\",\n    \"end\": \"00:01:56,360\",\n    \"lang\": \"en\",\n    \"text\": \"our lifetime is a blink of an eye.\"\n  },\n  {\n    \"start\": \"00:01:57,440\",\n    \"end\": \"00:01:58,340\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:58,340\",\n    \"end\": \"00:02:03,940\",\n    \"lang\": \"en\",\n    \"text\": \"time is relative and don't be too obsessed with it.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:02,300",
+            "end": "00:01:04,019",
+            "en": "It's a biological age.",
+            "zh": "这是一个生物年龄。",
+            "ar": "إنها العمر البيولوجي."
+        },
+        {
+            "start": "00:01:11,940",
+            "end": "00:01:14,880",
+            "en": "As time is imaginary,",
+            "zh": "由于时间是想象的，",
+            "ar": "بما أن الزمن وهمي،"
+        },
+        {
+            "start": "00:01:14,880",
+            "end": "00:01:18,420",
+            "en": "time is physical,",
+            "zh": "时间是物理的，",
+            "ar": "الوقت مادي،"
+        },
+        {
+            "start": "00:01:18,420",
+            "end": "00:01:22,040",
+            "en": "but it's also the metric of time.",
+            "zh": "但它也是时间的度量。",
+            "ar": "لكنه أيضًا مقياس الوقت."
+        },
+        {
+            "start": "00:01:22,040",
+            "end": "00:01:23,560",
+            "en": "It's imaginary.",
+            "zh": "它是想象的。",
+            "ar": "إنه وهمي."
+        },
+        {
+            "start": "00:01:24,300",
+            "end": "00:01:24,460",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:01:24,460",
+            "end": "00:01:39,860",
+            "en": "if you use the life of a subatomic particle,",
+            "zh": "如果你使用亚原子粒子的生命周期，",
+            "ar": "إذا كنت تستخدم حياة جزيء دون ذري،"
+        },
+        {
+            "start": "00:01:39,860",
+            "end": "00:01:42,440",
+            "en": "our life is infinity.",
+            "zh": "我们的生命是无限的。",
+            "ar": "حياتنا لا نهاية لها."
+        },
+        {
+            "start": "00:01:42,440",
+            "end": "00:01:44,300",
+            "en": "Our life is infinity.",
+            "zh": "我们的生命是无限的。",
+            "ar": "حياتنا لا نهاية لها."
+        },
+        {
+            "start": "00:01:44,840",
+            "end": "00:01:48,940",
+            "en": "But if you use the time of the universe as a metric,",
+            "zh": "但如果你使用宇宙的时间作为度量，",
+            "ar": "ولكن إذا كنت تستخدم وقت الكون كمقياس،"
+        },
+        {
+            "start": "00:01:48,940",
+            "end": "00:01:56,360",
+            "en": "our lifetime is a blink of an eye.",
+            "zh": "我们的一生就是一瞬间。",
+            "ar": "عمرنا هو طرفة عين."
+        },
+        {
+            "start": "00:01:57,440",
+            "end": "00:01:58,340",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:01:58,340",
+            "end": "00:02:03,940",
+            "en": "time is relative and don't be too obsessed with it.",
+            "zh": "时间是相对的，不要太着迷于它。",
+            "ar": "الوقت نسبي ولا تكن مهووسًا به كثيرًا."
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,240\",\n    \"lang\": \"en\",\n    \"text\": \"This is our old friend.\"\n  },\n  {\n    \"start\": \"00:00:03,120\",\n    \"end\": \"00:00:04,640\",\n    \"lang\": \"en\",\n    \"text\": \"I see him again.\"\n  },\n  {\n    \"start\": \"00:00:07,020\",\n    \"end\": \"00:00:09,080\",\n    \"lang\": \"en\",\n    \"text\": \"I like how he nods off.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,240",
+            "en": "This is our old friend.",
+            "zh": "这是我们的老朋友。",
+            "ar": "هذا هو صديقنا القديم."
+        },
+        {
+            "start": "00:00:03,120",
+            "end": "00:00:04,640",
+            "en": "I see him again.",
+            "zh": "我又见到他了。",
+            "ar": "أراه مرة أخرى."
+        },
+        {
+            "start": "00:00:07,020",
+            "end": "00:00:09,080",
+            "en": "I like how he nods off.",
+            "zh": "我喜欢他点头的样子。",
+            "ar": "أحب كيف يومئ برأسه."
+        }
+    ]
+}

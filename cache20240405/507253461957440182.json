@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:06,540\",\n    \"lang\": \"en\",\n    \"text\": \"I had a dream to build a 23-floor building.\"\n  },\n  {\n    \"start\": \"00:00:08,060\",\n    \"end\": \"00:00:09,720\",\n    \"lang\": \"en\",\n    \"text\": \"The highest floor,\"\n  },\n  {\n    \"start\": \"00:00:09,720\",\n    \"end\": \"00:00:11,340\",\n    \"lang\": \"en\",\n    \"text\": \"the 23rd floor,\"\n  },\n  {\n    \"start\": \"00:00:11,340\",\n    \"end\": \"00:00:13,900\",\n    \"lang\": \"en\",\n    \"text\": \"that provides food without price.\"\n  },\n  {\n    \"start\": \"00:00:14,620\",\n    \"end\": \"00:00:17,780\",\n    \"lang\": \"en\",\n    \"text\": \"Only the people that are invited can enjoy the food there.\"\n  },\n  {\n    \"start\": \"00:00:17,940\",\n    \"end\": \"00:00:21,160\",\n    \"lang\": \"en\",\n    \"text\": \"And I will recruit the best chefs around the world.\"\n  },\n  {\n    \"start\": \"00:00:21,540\",\n    \"end\": \"00:00:24,580\",\n    \"lang\": \"en\",\n    \"text\": \"They don't care about the KPI,\"\n  },\n  {\n    \"start\": \"00:00:24,580\",\n    \"end\": \"00:00:25,120\",\n    \"lang\": \"en\",\n    \"text\": \"performance,\"\n  },\n  {\n    \"start\": \"00:00:25,120\",\n    \"end\": \"00:00:26,460\",\n    \"lang\": \"en\",\n    \"text\": \"or anything else.\"\n  },\n  {\n    \"start\": \"00:00:26,460\",\n    \"end\": \"00:00:30,780\",\n    \"lang\": \"en\",\n    \"text\": \"They just focus on when we will refine their food.\"\n  },\n  {\n    \"start\": \"00:00:31,860\",\n    \"end\": \"00:00:34,440\",\n    \"lang\": \"en\",\n    \"text\": \"And that's it.\"\n  },\n  {\n    \"start\": \"00:00:34,440\",\n    \"end\": \"00:00:35,380\",\n    \"lang\": \"en\",\n    \"text\": \"That's my dream.\"\n  },\n  {\n    \"start\": \"00:00:35,800\",\n    \"end\": \"00:00:36,540\",\n    \"lang\": \"en\",\n    \"text\": \"Build this building.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:06,540",
+            "ko": "23층 건물을 짓는 꿈을 꿨어요."
+        },
+        {
+            "start": "00:00:08,060",
+            "end": "00:00:09,720",
+            "ko": "가장 높은 층,"
+        },
+        {
+            "start": "00:00:09,720",
+            "end": "00:00:11,340",
+            "ko": "23층,"
+        },
+        {
+            "start": "00:00:11,340",
+            "end": "00:00:13,900",
+            "ko": "가격 없이 음식을 제공하는 곳입니다."
+        },
+        {
+            "start": "00:00:14,620",
+            "end": "00:00:17,780",
+            "ko": "초대받은 사람만 그곳의 음식을 즐길 수 있어요."
+        },
+        {
+            "start": "00:00:17,940",
+            "end": "00:00:21,160",
+            "ko": "그리고 전 세계 최고의 셰프들을 모집할 거예요."
+        },
+        {
+            "start": "00:00:21,540",
+            "end": "00:00:24,580",
+            "ko": "그들은 KPI, "
+        },
+        {
+            "start": "00:00:24,580",
+            "end": "00:00:25,120",
+            "ko": "성과,"
+        },
+        {
+            "start": "00:00:25,120",
+            "end": "00:00:26,460",
+            "ko": "또는 그 외의 것들에 신경 쓰지 않아요."
+        },
+        {
+            "start": "00:00:26,460",
+            "end": "00:00:30,780",
+            "ko": "그들은 단지 우리가 언제 음식을 정제할지에만 집중해요."
+        },
+        {
+            "start": "00:00:31,860",
+            "end": "00:00:34,440",
+            "ko": "그게 전부예요."
+        },
+        {
+            "start": "00:00:34,440",
+            "end": "00:00:35,380",
+            "ko": "그게 제 꿈이에요."
+        },
+        {
+            "start": "00:00:35,800",
+            "end": "00:00:36,540",
+            "ko": "이 건물을 짓는 거예요."
+        }
+    ]
+}

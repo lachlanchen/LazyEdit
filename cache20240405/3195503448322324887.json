@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:08,530\",\n    \"end\": \"00:02:11,670\",\n    \"lang\": \"en\",\n    \"text\": \"I learned more like how I learned science,\"\n  },\n  {\n    \"start\": \"00:02:11,670\",\n    \"end\": \"00:02:15,610\",\n    \"lang\": \"en\",\n    \"text\": \"rapidity,\"\n  },\n  {\n    \"start\": \"00:02:15,610\",\n    \"end\": \"00:02:20,430\",\n    \"lang\": \"en\",\n    \"text\": \"and practice,\"\n  },\n  {\n    \"start\": \"00:02:20,430\",\n    \"end\": \"00:02:22,890\",\n    \"lang\": \"en\",\n    \"text\": \"like doing exercises,\"\n  },\n  {\n    \"start\": \"00:02:23,150\",\n    \"end\": \"00:02:25,490\",\n    \"lang\": \"en\",\n    \"text\": \"solving a mathematical problem,\"\n  },\n  {\n    \"start\": \"00:02:25,490\",\n    \"end\": \"00:02:26,610\",\n    \"lang\": \"en\",\n    \"text\": \"coding.\"\n  },\n  {\n    \"start\": \"00:02:27,590\",\n    \"end\": \"00:02:29,330\",\n    \"lang\": \"en\",\n    \"text\": \"First I write a MVP,\"\n  },\n  {\n    \"start\": \"00:02:29,330\",\n    \"end\": \"00:02:30,890\",\n    \"lang\": \"en\",\n    \"text\": \"minimum viable program,\"\n  },\n  {\n    \"start\": \"00:02:30,890\",\n    \"end\": \"00:02:33,430\",\n    \"lang\": \"en\",\n    \"text\": \"and then I continue refining it.\"\n  },\n  {\n    \"start\": \"00:02:35,874\",\n    \"end\": \"00:02:38,374\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:38,374\",\n    \"end\": \"00:02:40,194\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树\"\n  },\n  {\n    \"start\": \"00:02:40,802\",\n    \"end\": \"00:02:41,162\",\n    \"lang\": \"en\",\n    \"text\": \"Go.\"\n  },\n  {\n    \"start\": \"00:02:42,722\",\n    \"end\": \"00:02:45,202\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:46,322\",\n    \"end\": \"00:02:48,582\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:02:54,786\",\n    \"end\": \"00:02:54,986\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:02:54,986\",\n    \"end\": \"00:02:55,946\",\n    \"lang\": \"en\",\n    \"text\": \"it's the wrong...\"\n  },\n  {\n    \"start\": \"00:02:55,946\",\n    \"end\": \"00:02:56,406\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:56,406\",\n    \"end\": \"00:02:56,786\",\n    \"lang\": \"en\",\n    \"text\": \"on air.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:08,530",
+            "end": "00:02:11,670",
+            "vi": "Tôi học giống như cách mà tôi học khoa học,"
+        },
+        {
+            "start": "00:02:11,670",
+            "end": "00:02:15,610",
+            "vi": "sự nhanh nhẹn,"
+        },
+        {
+            "start": "00:02:15,610",
+            "end": "00:02:20,430",
+            "vi": "và thực hành,"
+        },
+        {
+            "start": "00:02:20,430",
+            "end": "00:02:22,890",
+            "vi": "như làm bài tập,"
+        },
+        {
+            "start": "00:02:23,150",
+            "end": "00:02:25,490",
+            "vi": "giải một bài toán toán học,"
+        },
+        {
+            "start": "00:02:25,490",
+            "end": "00:02:26,610",
+            "vi": "lập trình."
+        },
+        {
+            "start": "00:02:27,590",
+            "end": "00:02:29,330",
+            "vi": "Đầu tiên tôi viết một MVP,"
+        },
+        {
+            "start": "00:02:29,330",
+            "end": "00:02:30,890",
+            "vi": "chương trình khả thi tối thiểu,"
+        },
+        {
+            "start": "00:02:30,890",
+            "end": "00:02:33,430",
+            "vi": "và sau đó tôi tiếp tục cải thiện nó."
+        },
+        {
+            "start": "00:02:35,874",
+            "end": "00:02:38,374",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:02:38,374",
+            "end": "00:02:40,194",
+            "vi": "Không có cây"
+        },
+        {
+            "start": "00:02:40,802",
+            "end": "00:02:41,162",
+            "vi": "Hãy đi."
+        },
+        {
+            "start": "00:02:42,722",
+            "end": "00:02:45,202",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:02:46,322",
+            "end": "00:02:48,582",
+            "vi": "Không có thân cây"
+        },
+        {
+            "start": "00:02:54,786",
+            "end": "00:02:54,986",
+            "vi": "Xin lỗi,"
+        },
+        {
+            "start": "00:02:54,986",
+            "end": "00:02:55,946",
+            "vi": "đó là sai..."
+        },
+        {
+            "start": "00:02:55,946",
+            "end": "00:02:56,406",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:02:56,406",
+            "end": "00:02:56,786",
+            "vi": "đang phát sóng."
+        }
+    ]
+}

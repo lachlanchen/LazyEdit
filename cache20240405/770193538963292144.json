@@ -1,0 +1,215 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,780\",\n    \"lang\": \"en\",\n    \"text\": \"Shepherd dog.\"\n  },\n  {\n    \"start\": \"00:00:00,780\",\n    \"end\": \"00:00:02,020\",\n    \"lang\": \"en\",\n    \"text\": \"Shepherd.\"\n  },\n  {\n    \"start\": \"00:00:03,234\",\n    \"end\": \"00:00:04,834\",\n    \"lang\": \"zh\",\n    \"text\": \"来学习一下狗的单词吧\"\n  },\n  {\n    \"start\": \"00:00:04,834\",\n    \"end\": \"00:00:06,174\",\n    \"lang\": \"zh\",\n    \"text\": \"牧羊犬科技\"\n  },\n  {\n    \"start\": \"00:00:06,254\",\n    \"end\": \"00:00:07,054\",\n    \"lang\": \"en\",\n    \"text\": \"Cookie\"\n  },\n  {\n    \"start\": \"00:00:07,054\",\n    \"end\": \"00:00:07,994\",\n    \"lang\": \"en\",\n    \"text\": \"Husky\"\n  },\n  {\n    \"start\": \"00:00:07,994\",\n    \"end\": \"00:00:08,494\",\n    \"lang\": \"en\",\n    \"text\": \"Hud\"\n  },\n  {\n    \"start\": \"00:00:08,494\",\n    \"end\": \"00:00:09,394\",\n    \"lang\": \"en\",\n    \"text\": \"Husky\"\n  },\n  {\n    \"start\": \"00:00:10,043\",\n    \"end\": \"00:00:11,254\",\n    \"lang\": \"en\",\n    \"text\": \"还有Golden Retriever\"\n  },\n  {\n    \"start\": \"00:00:11,914\",\n    \"end\": \"00:00:13,094\",\n    \"lang\": \"zh\",\n    \"text\": \"金毛熊灰犬\"\n  },\n  {\n    \"start\": \"00:00:13,094\",\n    \"end\": \"00:00:15,274\",\n    \"lang\": \"zh\",\n    \"text\": \"然后还有博美\"\n  },\n  {\n    \"start\": \"00:00:15,274\",\n    \"end\": \"00:00:16,994\",\n    \"lang\": \"zh\",\n    \"text\": \"博美不知道\"\n  },\n  {\n    \"start\": \"00:00:16,994\",\n    \"end\": \"00:00:19,854\",\n    \"lang\": \"zh\",\n    \"text\": \"还有贵宾犬\"\n  },\n  {\n    \"start\": \"00:00:19,854\",\n    \"end\": \"00:00:21,094\",\n    \"lang\": \"zh\",\n    \"text\": \"贵宾犬\"\n  },\n  {\n    \"start\": \"00:00:21,094\",\n    \"end\": \"00:00:21,594\",\n    \"lang\": \"zh\",\n    \"text\": \"泰迪\"\n  },\n  {\n    \"start\": \"00:00:22,214\",\n    \"end\": \"00:00:22,794\",\n    \"lang\": \"zh\",\n    \"text\": \"泰迪\"\n  },\n  {\n    \"start\": \"00:00:25,026\",\n    \"end\": \"00:00:25,266\",\n    \"lang\": \"en\",\n    \"text\": \"Ok.\"\n  },\n  {\n    \"start\": \"00:00:27,546\",\n    \"end\": \"00:00:27,806\",\n    \"lang\": \"en\",\n    \"text\": \"Allez,\"\n  },\n  {\n    \"start\": \"00:00:27,806\",\n    \"end\": \"00:00:28,326\",\n    \"lang\": \"en\",\n    \"text\": \"on se montre derrière.\"\n  },\n  {\n    \"start\": \"00:00:30,178\",\n    \"end\": \"00:00:32,177\",\n    \"lang\": \"zh\",\n    \"text\": \"这个可以挺快的\"\n  },\n  {\n    \"start\": \"00:00:33,598\",\n    \"end\": \"00:00:33,958\",\n    \"lang\": \"zh\",\n    \"text\": \"还有\"\n  },\n  {\n    \"start\": \"00:00:35,398\",\n    \"end\": \"00:00:35,918\",\n    \"lang\": \"zh\",\n    \"text\": \"不知道\"\n  },\n  {\n    \"start\": \"00:00:36,138\",\n    \"end\": \"00:00:36,958\",\n    \"lang\": \"zh\",\n    \"text\": \"动流群\"\n  },\n  {\n    \"start\": \"00:00:40,318\",\n    \"end\": \"00:00:42,558\",\n    \"lang\": \"zh\",\n    \"text\": \"不是动流群 是巴洞群\"\n  },\n  {\n    \"start\": \"00:00:42,558\",\n    \"end\": \"00:00:43,758\",\n    \"lang\": \"zh\",\n    \"text\": \"巴洞群 OK\"\n  },\n  {\n    \"start\": \"00:00:46,081\",\n    \"end\": \"00:00:51,541\",\n    \"lang\": \"en\",\n    \"text\": \"I forgot the words of the dogs anyway in there today\"\n  },\n  {\n    \"start\": \"00:00:52,741\",\n    \"end\": \"00:00:54,461\",\n    \"lang\": \"en\",\n    \"text\": \"Golden Retriever,\"\n  },\n  {\n    \"start\": \"00:00:54,461\",\n    \"end\": \"00:00:55,981\",\n    \"lang\": \"en\",\n    \"text\": \"Shiffer,\"\n  },\n  {\n    \"start\": \"00:00:55,981\",\n    \"end\": \"00:00:57,461\",\n    \"lang\": \"en\",\n    \"text\": \"Husky,\"\n  },\n  {\n    \"start\": \"00:00:57,461\",\n    \"end\": \"00:01:03,041\",\n    \"lang\": \"en\",\n    \"text\": \"Coogie and the Bad Dog\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,780",
+            "es": "Perro pastor.",
+            "fr": "Chien de berger.",
+            "uk": "Пастуша собака."
+        },
+        {
+            "start": "00:00:00,780",
+            "end": "00:00:02,020",
+            "es": "Pastor.",
+            "fr": "Berger.",
+            "uk": "Пастух."
+        },
+        {
+            "start": "00:00:03,234",
+            "end": "00:00:04,834",
+            "es": "Aprendamos algunas palabras de perros.",
+            "fr": "Apprenons quelques mots sur les chiens.",
+            "uk": "Давайте вивчимо кілька слів про собак."
+        },
+        {
+            "start": "00:00:04,834",
+            "end": "00:00:06,174",
+            "es": "Pastor alemán.",
+            "fr": "Berger allemand.",
+            "uk": "Німецька вівчарка."
+        },
+        {
+            "start": "00:00:06,254",
+            "end": "00:00:07,054",
+            "es": "Galleta",
+            "fr": "Biscuit",
+            "uk": "Печиво"
+        },
+        {
+            "start": "00:00:07,054",
+            "end": "00:00:07,994",
+            "es": "Husky",
+            "fr": "Husky",
+            "uk": "Хаскі"
+        },
+        {
+            "start": "00:00:07,994",
+            "end": "00:00:08,494",
+            "es": "Difuso",
+            "fr": "Flou",
+            "uk": "Розмитий"
+        },
+        {
+            "start": "00:00:08,494",
+            "end": "00:00:09,394",
+            "es": "Husky",
+            "fr": "Husky",
+            "uk": "Хаскі"
+        },
+        {
+            "start": "00:00:10,043",
+            "end": "00:00:11,254",
+            "es": "y el Golden Retriever",
+            "fr": "et le Golden Retriever",
+            "uk": "та Золотистий ретривер"
+        },
+        {
+            "start": "00:00:11,914",
+            "end": "00:00:13,094",
+            "es": "Golden Retriever de pelo gris",
+            "fr": "Golden Retriever aux poils gris",
+            "uk": "Золотистий ретривер сірого кольору"
+        },
+        {
+            "start": "00:00:13,094",
+            "end": "00:00:15,274",
+            "es": "y también Pomerania",
+            "fr": "et aussi le Poméranien",
+            "uk": "та також Померанський шпіц"
+        },
+        {
+            "start": "00:00:15,274",
+            "end": "00:00:16,994",
+            "es": "Pomerania desconocido",
+            "fr": "Poméranien inconnu",
+            "uk": "Невідомий Померанський"
+        },
+        {
+            "start": "00:00:16,994",
+            "end": "00:00:19,854",
+            "es": "y el Caniche",
+            "fr": "et le Caniche",
+            "uk": "та пудель"
+        },
+        {
+            "start": "00:00:19,854",
+            "end": "00:00:21,094",
+            "es": "Caniche",
+            "fr": "Caniche",
+            "uk": "Пудель"
+        },
+        {
+            "start": "00:00:21,094",
+            "end": "00:00:21,594",
+            "es": "Teddy",
+            "fr": "Teddy",
+            "uk": "Тедді"
+        },
+        {
+            "start": "00:00:22,214",
+            "end": "00:00:22,794",
+            "es": "Teddy",
+            "fr": "Teddy",
+            "uk": "Тедді"
+        },
+        {
+            "start": "00:00:25,026",
+            "end": "00:00:25,266",
+            "es": "Ok.",
+            "fr": "Ok.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:00:27,546",
+            "end": "00:00:27,806",
+            "es": "Vamos,",
+            "fr": "Allez,",
+            "uk": "Гайда,"
+        },
+        {
+            "start": "00:00:27,806",
+            "end": "00:00:28,326",
+            "es": "vamos a mostrarnos detrás.",
+            "fr": "on se montre derrière.",
+            "uk": "покажімо себе ззаду."
+        },
+        {
+            "start": "00:00:30,178",
+            "end": "00:00:32,177",
+            "es": "Esto puede ser bastante rápido",
+            "fr": "Cela peut être assez rapide",
+            "uk": "Це може бути досить швидко"
+        },
+        {
+            "start": "00:00:33,598",
+            "end": "00:00:33,958",
+            "es": "y también",
+            "fr": "et aussi",
+            "uk": "та також"
+        },
+        {
+            "start": "00:00:35,398",
+            "end": "00:00:35,918",
+            "es": "desconocido",
+            "fr": "inconnu",
+            "uk": "невідомо"
+        },
+        {
+            "start": "00:00:36,138",
+            "end": "00:00:36,958",
+            "es": "grupo móvil",
+            "fr": "groupe mobile",
+            "uk": "мобільна група"
+        },
+        {
+            "start": "00:00:40,318",
+            "end": "00:00:42,558",
+            "es": "No es grupo móvil, es grupo de Badong",
+            "fr": "Ce n'est pas un groupe mobile, c'est un groupe de Badong",
+            "uk": "Це не мобільна група, це група Бадонг"
+        },
+        {
+            "start": "00:00:42,558",
+            "end": "00:00:43,758",
+            "es": "Grupo de Badong OK",
+            "fr": "Groupe de Badong OK",
+            "uk": "Група Бадонг Гаразд"
+        },
+        {
+            "start": "00:00:46,081",
+            "end": "00:00:51,541",
+            "es": "De todos modos, olvidé las palabras de los perros allí hoy",
+            "fr": "De toute façon, j'ai oublié les mots des chiens là aujourd'hui",
+            "uk": "Так чи інакше, я забув слова про собак там сьогодні"
+        },
+        {
+            "start": "00:00:52,741",
+            "end": "00:00:54,461",
+            "es": "Golden Retriever,",
+            "fr": "Golden Retriever,",
+            "uk": "Золотистий ретривер,"
+        },
+        {
+            "start": "00:00:54,461",
+            "end": "00:00:55,981",
+            "es": "Pastor alemán,",
+            "fr": "Berger allemand,",
+            "uk": "Німецька вівчарка,"
+        },
+        {
+            "start": "00:00:55,981",
+            "end": "00:00:57,461",
+            "es": "Husky,",
+            "fr": "Husky,",
+            "uk": "Хаскі,"
+        },
+        {
+            "start": "00:00:57,461",
+            "end": "00:01:03,041",
+            "es": "Pomerania y el Perro Malo",
+            "fr": "Poméranien et le Mauvais Chien",
+            "uk": "Померанський і Поганий Пес"
+        }
+    ]
+}

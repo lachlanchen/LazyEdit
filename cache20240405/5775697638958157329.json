@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,580\",\n    \"end\": \"00:00:02,420\",\n    \"lang\": \"zh\",\n    \"text\": \"这个上面还有一层云呢\"\n  },\n  {\n    \"start\": \"00:00:04,834\",\n    \"end\": \"00:00:05,094\",\n    \"lang\": \"en\",\n    \"text\": \"Yeah.\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:07,874\",\n    \"lang\": \"zh\",\n    \"text\": \"才从集中石里面取出来的\"\n  },\n  {\n    \"start\": \"00:00:07,874\",\n    \"end\": \"00:00:08,974\",\n    \"lang\": \"zh\",\n    \"text\": \"我发现一种\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,580",
+            "end": "00:00:02,420",
+            "en": "There is another layer of cloud above it",
+            "zh": "这个上面还有一层云呢",
+            "ar": "يوجد طبقة أخرى من السحب فوقها"
+        },
+        {
+            "start": "00:00:04,834",
+            "end": "00:00:05,094",
+            "en": "Yeah.",
+            "zh": "是的。",
+            "ar": "نعم."
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:07,874",
+            "en": "Just taken out from the concentrated stone",
+            "zh": "才从集中石里面取出来的",
+            "ar": "تم استخراجه للتو من الحجر المركز"
+        },
+        {
+            "start": "00:00:07,874",
+            "end": "00:00:08,974",
+            "en": "I found a kind",
+            "zh": "我发现一种",
+            "ar": "وجدت نوعًا"
+        }
+    ]
+}

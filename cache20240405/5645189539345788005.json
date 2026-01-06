@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,717\",\n    \"end\": \"00:01:04,018\",\n    \"lang\": \"en\",\n    \"text\": \"It's played glass\"\n  },\n  {\n    \"start\": \"00:01:04,018\",\n    \"end\": \"00:01:04,498\",\n    \"lang\": \"en\",\n    \"text\": \"Into\"\n  },\n  {\n    \"start\": \"00:01:11,202\",\n    \"end\": \"00:01:14,202\",\n    \"lang\": \"zh\",\n    \"text\": \"没有输高\"\n  },\n  {\n    \"start\": \"00:01:14,202\",\n    \"end\": \"00:01:16,882\",\n    \"lang\": \"zh\",\n    \"text\": \"没有傲嬌\"\n  },\n  {\n    \"start\": \"00:01:16,882\",\n    \"end\": \"00:01:19,702\",\n    \"lang\": \"zh\",\n    \"text\": \"没有输高\"\n  },\n  {\n    \"start\": \"00:01:19,702\",\n    \"end\": \"00:01:22,222\",\n    \"lang\": \"zh\",\n    \"text\": \"没有傲嬌\"\n  },\n  {\n    \"start\": \"00:01:22,222\",\n    \"end\": \"00:01:24,822\",\n    \"lang\": \"zh\",\n    \"text\": \"没有输高\"\n  },\n  {\n    \"start\": \"00:01:24,822\",\n    \"end\": \"00:01:27,122\",\n    \"lang\": \"zh\",\n    \"text\": \"没有傲嬌\"\n  },\n  {\n    \"start\": \"00:01:27,122\",\n    \"end\": \"00:01:29,862\",\n    \"lang\": \"zh\",\n    \"text\": \"没有输高\"\n  },\n  {\n    \"start\": \"00:01:29,862\",\n    \"end\": \"00:01:31,982\",\n    \"lang\": \"zh\",\n    \"text\": \"我是一个唯一不全的人\"\n  },\n  {\n    \"start\": \"00:01:33,782\",\n    \"end\": \"00:01:36,522\",\n    \"lang\": \"zh\",\n    \"text\": \"每天一点小成就我已经很开心了\"\n  },\n  {\n    \"start\": \"00:02:01,022\",\n    \"end\": \"00:02:03,722\",\n    \"lang\": \"zh\",\n    \"text\": \"谢谢观看\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:01,717",
+            "end": "00:01:04,018",
+            "en": "It's plate glass",
+            "zh": "这是平板玻璃",
+            "ar": "إنها زجاج مسطح"
+        },
+        {
+            "start": "00:01:04,018",
+            "end": "00:01:04,498",
+            "en": "Into",
+            "zh": "进入",
+            "ar": "إلى"
+        },
+        {
+            "start": "00:01:11,202",
+            "end": "00:01:14,202",
+            "en": "No arrogance",
+            "zh": "没有傲慢",
+            "ar": "لا غرور"
+        },
+        {
+            "start": "00:01:14,202",
+            "end": "00:01:16,882",
+            "en": "No arrogance",
+            "zh": "没有傲慢",
+            "ar": "لا غرور"
+        },
+        {
+            "start": "00:01:16,882",
+            "end": "00:01:19,702",
+            "en": "No arrogance",
+            "zh": "没有傲慢",
+            "ar": "لا غرور"
+        },
+        {
+            "start": "00:01:19,702",
+            "end": "00:01:22,222",
+            "en": "No arrogance",
+            "zh": "没有傲慢",
+            "ar": "لا غرور"
+        },
+        {
+            "start": "00:01:22,222",
+            "end": "00:01:24,822",
+            "en": "No arrogance",
+            "zh": "没有傲慢",
+            "ar": "لا غرور"
+        },
+        {
+            "start": "00:01:24,822",
+            "end": "00:01:27,122",
+            "en": "No arrogance",
+            "zh": "没有傲慢",
+            "ar": "لا غرور"
+        },
+        {
+            "start": "00:01:27,122",
+            "end": "00:01:29,862",
+            "en": "No arrogance",
+            "zh": "没有傲慢",
+            "ar": "لا غرور"
+        },
+        {
+            "start": "00:01:29,862",
+            "end": "00:01:31,982",
+            "en": "I am a person who is not perfect",
+            "zh": "我是一个不完美的人",
+            "ar": "أنا شخص ليس كامل"
+        },
+        {
+            "start": "00:01:33,782",
+            "end": "00:01:36,522",
+            "en": "A little achievement every day makes me very happy",
+            "zh": "每天一点小成就我已经很开心了",
+            "ar": "إنجاز صغير كل يوم يجعلني سعيدًا جدًا"
+        },
+        {
+            "start": "00:02:01,022",
+            "end": "00:02:03,722",
+            "en": "Thank you for watching",
+            "zh": "谢谢观看",
+            "ar": "شكرا للمشاهدة"
+        }
+    ]
+}

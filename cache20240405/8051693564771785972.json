@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,560\",\n    \"lang\": \"en\",\n    \"text\": \"Now we have this fried chicken,\"\n  },\n  {\n    \"start\": \"00:00:05,560\",\n    \"end\": \"00:00:11,120\",\n    \"lang\": \"en\",\n    \"text\": \"and then it's bean sprouts and spinach.\"\n  },\n  {\n    \"start\": \"00:00:11,960\",\n    \"end\": \"00:00:15,880\",\n    \"lang\": \"en\",\n    \"text\": \"And I put this with our instant noodles.\"\n  },\n  {\n    \"start\": \"00:00:17,939\",\n    \"end\": \"00:00:22,940\",\n    \"lang\": \"en\",\n    \"text\": \"Together with this is coriander.\"\n  },\n  {\n    \"start\": \"00:00:24,040\",\n    \"end\": \"00:00:25,020\",\n    \"lang\": \"en\",\n    \"text\": \"Coriander.\"\n  },\n  {\n    \"start\": \"00:00:30,200\",\n    \"end\": \"00:00:31,140\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:37,960\",\n    \"end\": \"00:00:38,900\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:38,900\",\n    \"end\": \"00:00:42,740\",\n    \"lang\": \"en\",\n    \"text\": \"I think it's time to put this in together.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,560",
+            "es": "Ahora tenemos este pollo frito,",
+            "fr": "Maintenant, nous avons ce poulet frit,",
+            "uk": "Зараз у нас є цей смажений курча,"
+        },
+        {
+            "start": "00:00:05,560",
+            "end": "00:00:11,120",
+            "es": "y luego hay brotes de soja y espinacas.",
+            "fr": "et puis il y a des pousses de soja et des épinards.",
+            "uk": "а потім є соєві паростки та шпинат."
+        },
+        {
+            "start": "00:00:11,960",
+            "end": "00:00:15,880",
+            "es": "Y lo pongo con nuestros fideos instantáneos.",
+            "fr": "Et je mets ça avec nos nouilles instantanées.",
+            "uk": "І я кладу це до наших швидких локшин."
+        },
+        {
+            "start": "00:00:17,939",
+            "end": "00:00:22,940",
+            "es": "Junto con esto es cilantro.",
+            "fr": "Avec cela, il y a du coriandre.",
+            "uk": "Разом з цим є коріандр."
+        },
+        {
+            "start": "00:00:24,040",
+            "end": "00:00:25,020",
+            "es": "Cilantro.",
+            "fr": "Coriandre.",
+            "uk": "Коріандр."
+        },
+        {
+            "start": "00:00:30,200",
+            "end": "00:00:31,140",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:00:37,960",
+            "end": "00:00:38,900",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:38,900",
+            "end": "00:00:42,740",
+            "es": "creo que es hora de poner esto junto.",
+            "fr": "je pense qu'il est temps de mettre cela ensemble.",
+            "uk": "думаю, настав час скласти це разом."
+        }
+    ]
+}

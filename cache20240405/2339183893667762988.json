@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:32,418\",\n    \"end\": \"00:02:32,978\",\n    \"lang\": \"ja\",\n    \"text\": \"私は\"\n  },\n  {\n    \"start\": \"00:02:35,938\",\n    \"end\": \"00:02:36,778\",\n    \"lang\": \"ja\",\n    \"text\": \"おいしいです\"\n  },\n  {\n    \"start\": \"00:02:37,998\",\n    \"end\": \"00:02:39,018\",\n    \"lang\": \"en\",\n    \"text\": \"sorry sorry\"\n  },\n  {\n    \"start\": \"00:02:39,018\",\n    \"end\": \"00:02:41,478\",\n    \"lang\": \"ja\",\n    \"text\": \"私はピンチュース大好きです\"\n  },\n  {\n    \"start\": \"00:02:42,018\",\n    \"end\": \"00:02:44,638\",\n    \"lang\": \"ja\",\n    \"text\": \"私はピンチュース飲んでいます\"\n  },\n  {\n    \"start\": \"00:02:50,586\",\n    \"end\": \"00:02:51,906\",\n    \"lang\": \"en\",\n    \"text\": \"This is gorgeous.\"\n  },\n  {\n    \"start\": \"00:02:53,666\",\n    \"end\": \"00:02:54,386\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:54,386\",\n    \"end\": \"00:02:54,966\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  },\n  {\n    \"start\": \"00:02:57,426\",\n    \"end\": \"00:02:58,326\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:32,418",
+            "end": "00:02:32,978",
+            "ko": "나는"
+        },
+        {
+            "start": "00:02:35,938",
+            "end": "00:02:36,778",
+            "ko": "맛있어요"
+        },
+        {
+            "start": "00:02:37,998",
+            "end": "00:02:39,018",
+            "ko": "미안해요, 미안해요"
+        },
+        {
+            "start": "00:02:39,018",
+            "end": "00:02:41,478",
+            "ko": "저는 핀츄스를 정말 좋아해요"
+        },
+        {
+            "start": "00:02:42,018",
+            "end": "00:02:44,638",
+            "ko": "저는 핀츄스를 마시고 있어요"
+        },
+        {
+            "start": "00:02:50,586",
+            "end": "00:02:51,906",
+            "ko": "정말 환상적이에요."
+        },
+        {
+            "start": "00:02:53,666",
+            "end": "00:02:54,386",
+            "ko": "알겠어요,"
+        },
+        {
+            "start": "00:02:54,386",
+            "end": "00:02:54,966",
+            "ko": "다음에 봐요."
+        },
+        {
+            "start": "00:02:57,426",
+            "end": "00:02:58,326",
+            "ko": "다음에 봐요."
+        }
+    ]
+}

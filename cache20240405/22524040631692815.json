@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,380\",\n    \"lang\": \"ja\",\n    \"text\": \"背が高いです\"\n  },\n  {\n    \"start\": \"00:00:02,978\",\n    \"end\": \"00:00:04,078\",\n    \"lang\": \"en\",\n    \"text\": \"two dogs are so tall.\"\n  },\n  {\n    \"start\": \"00:00:05,506\",\n    \"end\": \"00:00:06,726\",\n    \"lang\": \"zh\",\n    \"text\": \"金毛用英语叫什么\"\n  },\n  {\n    \"start\": \"00:00:06,846\",\n    \"end\": \"00:00:07,326\",\n    \"lang\": \"zh\",\n    \"text\": \"金毛\"\n  },\n  {\n    \"start\": \"00:00:10,562\",\n    \"end\": \"00:00:12,242\",\n    \"lang\": \"en\",\n    \"text\": \"Look at his eyes.\"\n  },\n  {\n    \"start\": \"00:00:14,262\",\n    \"end\": \"00:00:15,542\",\n    \"lang\": \"en\",\n    \"text\": \"He's jolting his eyes.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,380",
+            "ja": "背が高いです"
+        },
+        {
+            "start": "00:00:02,978",
+            "end": "00:00:04,078",
+            "ja": "その2匹の犬はとても背が高いです。"
+        },
+        {
+            "start": "00:00:05,506",
+            "end": "00:00:06,726",
+            "ja": "ゴールデンレトリバーを英語で何と言いますか？"
+        },
+        {
+            "start": "00:00:06,846",
+            "end": "00:00:07,326",
+            "ja": "ゴールデンレトリバー"
+        },
+        {
+            "start": "00:00:10,562",
+            "end": "00:00:12,242",
+            "ja": "彼の目を見てください。"
+        },
+        {
+            "start": "00:00:14,262",
+            "end": "00:00:15,542",
+            "ja": "彼は目を動かしています。"
+        }
+    ]
+}

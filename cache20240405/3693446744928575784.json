@@ -1,0 +1,115 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,260\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは\"\n  },\n  {\n    \"start\": \"00:00:02,000\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"ja\",\n    \"text\": \"この早く遅い\"\n  },\n  {\n    \"start\": \"00:00:05,570\",\n    \"end\": \"00:00:05,870\",\n    \"lang\": \"en\",\n    \"text\": \"Amen.\"\n  },\n  {\n    \"start\": \"00:00:07,970\",\n    \"end\": \"00:00:08,730\",\n    \"lang\": \"ja\",\n    \"text\": \"おいしいです\"\n  },\n  {\n    \"start\": \"00:00:09,122\",\n    \"end\": \"00:00:12,722\",\n    \"lang\": \"en\",\n    \"text\": \"So this is my snow fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:13,522\",\n    \"end\": \"00:00:18,182\",\n    \"lang\": \"en\",\n    \"text\": \"So it's chicken wing noodles and I cook it in,\"\n  },\n  {\n    \"start\": \"00:00:19,182\",\n    \"end\": \"00:00:24,842\",\n    \"lang\": \"en\",\n    \"text\": \"it takes my about one hour to cook this.\"\n  },\n  {\n    \"start\": \"00:00:30,522\",\n    \"end\": \"00:00:33,922\",\n    \"lang\": \"en\",\n    \"text\": \"To cook this snow fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:42,721\",\n    \"end\": \"00:00:43,202\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:43,202\",\n    \"end\": \"00:00:44,002\",\n    \"lang\": \"en\",\n    \"text\": \"it's so delicious.\"\n  },\n  {\n    \"start\": \"00:00:48,522\",\n    \"end\": \"00:00:50,082\",\n    \"lang\": \"en\",\n    \"text\": \"Let me try the chicken wing.\"\n  },\n  {\n    \"start\": \"00:00:51,682\",\n    \"end\": \"00:00:54,062\",\n    \"lang\": \"ja\",\n    \"text\": \"私は手がパサパサしています\"\n  },\n  {\n    \"start\": \"00:00:54,682\",\n    \"end\": \"00:00:55,382\",\n    \"lang\": \"ja\",\n    \"text\": \"食べています\"\n  },\n  {\n    \"start\": \"00:00:59,586\",\n    \"end\": \"00:00:59,906\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm,\"\n  },\n  {\n    \"start\": \"00:00:59,906\",\n    \"end\": \"00:01:01,906\",\n    \"lang\": \"en\",\n    \"text\": \"it's tender,\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,260",
+            "en": "Hello",
+            "zh": "你好",
+            "ar": "مرحبا",
+            "ja": "こんにちは"
+        },
+        {
+            "start": "00:00:02,000",
+            "end": "00:00:05,140",
+            "en": "Is it early or late",
+            "zh": "是早是晚",
+            "ar": "هل هو مبكر أم متأخر",
+            "ja": "この早く遅い"
+        },
+        {
+            "start": "00:00:05,570",
+            "end": "00:00:05,870",
+            "en": "Amen.",
+            "zh": "阿门。",
+            "ar": "آمين."
+        },
+        {
+            "start": "00:00:07,970",
+            "end": "00:00:08,730",
+            "en": "It is delicious",
+            "zh": "很好吃",
+            "ar": "إنه لذيذ",
+            "ja": "おいしいです"
+        },
+        {
+            "start": "00:00:09,122",
+            "end": "00:00:12,722",
+            "en": "So this is my snow fast noodles.",
+            "zh": "这是我的雪速面。",
+            "ar": "هذه هي معكرونة الثلج السريعة الخاصة بي."
+        },
+        {
+            "start": "00:00:13,522",
+            "end": "00:00:18,182",
+            "en": "So it's chicken wing noodles and I cook it in,",
+            "zh": "这是鸡翅面，我要开始煮它，",
+            "ar": "إذاً، إنها معكرونة أجنحة الدجاج وسأطبخها في،"
+        },
+        {
+            "start": "00:00:19,182",
+            "end": "00:00:24,842",
+            "en": "it takes me about one hour to cook this.",
+            "zh": "我大约需要一个小时来煮这个。",
+            "ar": "أحتاج إلى حوالي ساعة لطهي هذا."
+        },
+        {
+            "start": "00:00:30,522",
+            "end": "00:00:33,922",
+            "en": "To cook this snow fast noodles.",
+            "zh": "煮这雪速面。",
+            "ar": "لطهي معكرونة الثلج السريعة هذه."
+        },
+        {
+            "start": "00:00:42,721",
+            "end": "00:00:43,202",
+            "en": "Wow,",
+            "zh": "哇，",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:00:43,202",
+            "end": "00:00:44,002",
+            "en": "it's so delicious.",
+            "zh": "这真是太美味了。",
+            "ar": "إنه لذيذ جداً."
+        },
+        {
+            "start": "00:00:48,522",
+            "end": "00:00:50,082",
+            "en": "Let me try the chicken wing.",
+            "zh": "让我尝尝鸡翅。",
+            "ar": "دعني أجرب جناح الدجاج."
+        },
+        {
+            "start": "00:00:51,682",
+            "end": "00:00:54,062",
+            "en": "My hands are dry.",
+            "zh": "我的手很干。",
+            "ar": "يدي جافتان.",
+            "ja": "私は手がパサパサしています"
+        },
+        {
+            "start": "00:00:54,682",
+            "end": "00:00:55,382",
+            "en": "I'm eating.",
+            "zh": "我在吃。",
+            "ar": "أنا آكل.",
+            "ja": "食べています"
+        },
+        {
+            "start": "00:00:59,586",
+            "end": "00:00:59,906",
+            "en": "Mmm,",
+            "zh": "嗯，",
+            "ar": "ممم،"
+        },
+        {
+            "start": "00:00:59,906",
+            "end": "00:01:01,906",
+            "en": "it's tender,",
+            "zh": "它很嫩，",
+            "ar": "إنه طري،"
+        }
+    ]
+}

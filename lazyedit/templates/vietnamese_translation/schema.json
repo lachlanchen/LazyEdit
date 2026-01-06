@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$"
+          },
+          "end": {
+            "type": "string",
+            "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$"
+          },
+          "vi": {
+            "type": "string"
+          }
+        },
+        "required": ["start", "end", "vi"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["items"],
+  "additionalProperties": false
+}

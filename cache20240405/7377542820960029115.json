@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,640\",\n    \"lang\": \"en\",\n    \"text\": \"So this is my dinner today.\"\n  },\n  {\n    \"start\": \"00:00:02,640\",\n    \"end\": \"00:00:04,180\",\n    \"lang\": \"en\",\n    \"text\": \"Four more dinners.\"\n  },\n  {\n    \"start\": \"00:00:04,180\",\n    \"end\": \"00:00:05,980\",\n    \"lang\": \"en\",\n    \"text\": \"Four more.\"\n  },\n  {\n    \"start\": \"00:00:07,680\",\n    \"end\": \"00:00:15,980\",\n    \"lang\": \"en\",\n    \"text\": \"So fight poison with poison to help me recover from this COVID symptom.\"\n  },\n  {\n    \"start\": \"00:00:18,420\",\n    \"end\": \"00:00:21,060\",\n    \"lang\": \"en\",\n    \"text\": \"I usually don't have dinner,\"\n  },\n  {\n    \"start\": \"00:00:21,060\",\n    \"end\": \"00:00:24,020\",\n    \"lang\": \"en\",\n    \"text\": \"so when I cook this,\"\n  },\n  {\n    \"start\": \"00:00:24,020\",\n    \"end\": \"00:00:27,580\",\n    \"lang\": \"en\",\n    \"text\": \"I don't have the appetite.\"\n  },\n  {\n    \"start\": \"00:00:28,520\",\n    \"end\": \"00:00:29,700\",\n    \"lang\": \"en\",\n    \"text\": \"But the smell is good,\"\n  },\n  {\n    \"start\": \"00:00:29,700\",\n    \"end\": \"00:00:31,240\",\n    \"lang\": \"en\",\n    \"text\": \"so I can eat it anyway.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,640",
+            "es": "Entonces esta es mi cena de hoy.",
+            "fr": "Alors ça, c'est mon dîner de ce soir.",
+            "uk": "Отже, це моя вечеря сьогодні."
+        },
+        {
+            "start": "00:00:02,640",
+            "end": "00:00:04,180",
+            "es": "Cuatro cenas más.",
+            "fr": "Quatre dîners de plus.",
+            "uk": "Ще чотири вечері."
+        },
+        {
+            "start": "00:00:04,180",
+            "end": "00:00:05,980",
+            "es": "Cuatro más.",
+            "fr": "Quatre de plus.",
+            "uk": "Ще чотири."
+        },
+        {
+            "start": "00:00:07,680",
+            "end": "00:00:15,980",
+            "es": "Así que lucha veneno con veneno para ayudarme a recuperarme de este síntoma del COVID.",
+            "fr": "Donc, combattre le poison par le poison pour m'aider à me remettre de ce symptôme du COVID.",
+            "uk": "Отже, борюсь отрутою з отрутою, щоб допомогти мені відновитися від цього симптому COVID."
+        },
+        {
+            "start": "00:00:18,420",
+            "end": "00:00:21,060",
+            "es": "Normalmente no ceno,",
+            "fr": "Je ne dîne généralement pas,",
+            "uk": "Зазвичай я не вечеряю,"
+        },
+        {
+            "start": "00:00:21,060",
+            "end": "00:00:24,020",
+            "es": "así que cuando cocino esto,",
+            "fr": "alors quand je cuisine cela,",
+            "uk": "так що коли я це готую,"
+        },
+        {
+            "start": "00:00:24,020",
+            "end": "00:00:27,580",
+            "es": "no tengo apetito.",
+            "fr": "je n'ai pas d'appétit.",
+            "uk": "у мене немає апетиту."
+        },
+        {
+            "start": "00:00:28,520",
+            "end": "00:00:29,700",
+            "es": "Pero el olor es bueno,",
+            "fr": "Mais l'odeur est bonne,",
+            "uk": "Але запах добрий,"
+        },
+        {
+            "start": "00:00:29,700",
+            "end": "00:00:31,240",
+            "es": "así que puedo comerlo de todos modos.",
+            "fr": "donc je peux quand même le manger.",
+            "uk": "тому я все одно можу його з'їсти."
+        }
+    ]
+}

@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,920\",\n    \"lang\": \"en\",\n    \"text\": \"difícil presidentsOR\"\n  },\n  {\n    \"start\": \"00:00:02,978\",\n    \"end\": \"00:00:04,458\",\n    \"lang\": \"zh\",\n    \"text\": \"韩国泡菜不知道怎么说\"\n  },\n  {\n    \"start\": \"00:00:05,666\",\n    \"end\": \"00:00:09,266\",\n    \"lang\": \"en\",\n    \"text\": \"So this is the Korean sauce vegetable.\"\n  },\n  {\n    \"start\": \"00:00:11,926\",\n    \"end\": \"00:00:13,705\",\n    \"lang\": \"en\",\n    \"text\": \"And the beef.\"\n  },\n  {\n    \"start\": \"00:00:15,526\",\n    \"end\": \"00:00:16,886\",\n    \"lang\": \"en\",\n    \"text\": \"Another piece of beef.\"\n  },\n  {\n    \"start\": \"00:00:17,306\",\n    \"end\": \"00:00:20,046\",\n    \"lang\": \"en\",\n    \"text\": \"That's my lunch today.\"\n  },\n  {\n    \"start\": \"00:00:20,466\",\n    \"end\": \"00:00:20,786\",\n    \"lang\": \"en\",\n    \"text\": \"Firstly,\"\n  },\n  {\n    \"start\": \"00:00:20,786\",\n    \"end\": \"00:00:25,086\",\n    \"lang\": \"en\",\n    \"text\": \"let me have this beef\"\n  },\n  {\n    \"start\": \"00:00:26,105\",\n    \"end\": \"00:00:31,386\",\n    \"lang\": \"en\",\n    \"text\": \"and wait for the Korean sauce vegetable noodles\"\n  },\n  {\n    \"start\": \"00:00:33,346\",\n    \"end\": \"00:00:34,146\",\n    \"lang\": \"en\",\n    \"text\": \"to cool down.\"\n  },\n  {\n    \"start\": \"00:00:35,066\",\n    \"end\": \"00:00:35,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:35,686\",\n    \"end\": \"00:00:36,326\",\n    \"lang\": \"en\",\n    \"text\": \"that's it.\"\n  },\n  {\n    \"start\": \"00:00:36,946\",\n    \"end\": \"00:00:41,446\",\n    \"lang\": \"en\",\n    \"text\": \"I'm still suffering from this COVID.\"\n  },\n  {\n    \"start\": \"00:00:42,246\",\n    \"end\": \"00:00:44,166\",\n    \"lang\": \"en\",\n    \"text\": \"Enjoy what is suffering.\"\n  },\n  {\n    \"start\": \"00:00:45,906\",\n    \"end\": \"00:00:46,526\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,920",
+            "ja": "難しい大統領OR"
+        },
+        {
+            "start": "00:00:02,978",
+            "end": "00:00:04,458",
+            "ja": "韓国のキムチの言い方がわからない"
+        },
+        {
+            "start": "00:00:05,666",
+            "end": "00:00:09,266",
+            "ja": "これは韓国のソース野菜です。"
+        },
+        {
+            "start": "00:00:11,926",
+            "end": "00:00:13,705",
+            "ja": "そして、ビーフ。"
+        },
+        {
+            "start": "00:00:15,526",
+            "end": "00:00:16,886",
+            "ja": "もう一片のビーフ。"
+        },
+        {
+            "start": "00:00:17,306",
+            "end": "00:00:20,046",
+            "ja": "それが今日の私の昼食です。"
+        },
+        {
+            "start": "00:00:20,466",
+            "end": "00:00:20,786",
+            "ja": "まず、"
+        },
+        {
+            "start": "00:00:20,786",
+            "end": "00:00:25,086",
+            "ja": "このビーフから食べましょう"
+        },
+        {
+            "start": "00:00:26,105",
+            "end": "00:00:31,386",
+            "ja": "そして、韓国ソース野菜のヌードルが冷めるのを待ちます"
+        },
+        {
+            "start": "00:00:33,346",
+            "end": "00:00:34,146",
+            "ja": "冷めるまで待つ。"
+        },
+        {
+            "start": "00:00:35,066",
+            "end": "00:00:35,686",
+            "ja": "はい、"
+        },
+        {
+            "start": "00:00:35,686",
+            "end": "00:00:36,326",
+            "ja": "それで終わり。"
+        },
+        {
+            "start": "00:00:36,946",
+            "end": "00:00:41,446",
+            "ja": "私はまだこのCOVIDに苦しんでいます。"
+        },
+        {
+            "start": "00:00:42,246",
+            "end": "00:00:44,166",
+            "ja": "苦しみながら楽しむ。"
+        },
+        {
+            "start": "00:00:45,906",
+            "end": "00:00:46,526",
+            "ja": "はい。"
+        }
+    ]
+}

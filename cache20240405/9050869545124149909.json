@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,260\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,260\",\n    \"end\": \"00:00:02,820\",\n    \"lang\": \"en\",\n    \"text\": \"so I found that this failed launch,\"\n  },\n  {\n    \"start\": \"00:00:02,820\",\n    \"end\": \"00:00:03,520\",\n    \"lang\": \"en\",\n    \"text\": \"launch,\"\n  },\n  {\n    \"start\": \"00:00:03,520\",\n    \"end\": \"00:00:05,320\",\n    \"lang\": \"en\",\n    \"text\": \"that it had some,\"\n  },\n  {\n    \"start\": \"00:00:05,320\",\n    \"end\": \"00:00:07,200\",\n    \"lang\": \"en\",\n    \"text\": \"something that is\"\n  },\n  {\n    \"start\": \"00:00:07,200\",\n    \"end\": \"00:00:07,940\",\n    \"lang\": \"en\",\n    \"text\": \"successful.\"\n  },\n  {\n    \"start\": \"00:00:07,940\",\n    \"end\": \"00:00:09,740\",\n    \"lang\": \"en\",\n    \"text\": \"So the potato is,\"\n  },\n  {\n    \"start\": \"00:00:09,740\",\n    \"end\": \"00:00:11,580\",\n    \"lang\": \"en\",\n    \"text\": \"is worse in taste.\"\n  },\n  {\n    \"start\": \"00:00:11,580\",\n    \"end\": \"00:00:14,640\",\n    \"lang\": \"en\",\n    \"text\": \"Because I used the beef oil\"\n  },\n  {\n    \"start\": \"00:00:18,640\",\n    \"end\": \"00:00:19,700\",\n    \"lang\": \"en\",\n    \"text\": \"to cook the,\"\n  },\n  {\n    \"start\": \"00:00:19,700\",\n    \"end\": \"00:00:21,140\",\n    \"lang\": \"en\",\n    \"text\": \"to cook the potato.\"\n  },\n  {\n    \"start\": \"00:00:32,720\",\n    \"end\": \"00:00:41,680\",\n    \"lang\": \"en\",\n    \"text\": \"This makes the taste and the smell of the potato extremely good and crispy.\"\n  },\n  {\n    \"start\": \"00:00:41,680\",\n    \"end\": \"00:00:43,660\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:43,660\",\n    \"end\": \"00:00:45,120\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,260",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:00:00,260",
+            "end": "00:00:02,820",
+            "es": "así que descubrí que este lanzamiento fallido,",
+            "fr": "alors j'ai découvert que ce lancement raté,",
+            "uk": "отже, я знайшов, що цей невдалий запуск,"
+        },
+        {
+            "start": "00:00:02,820",
+            "end": "00:00:03,520",
+            "es": "lanzamiento,",
+            "fr": "lancement,",
+            "uk": "запуск,"
+        },
+        {
+            "start": "00:00:03,520",
+            "end": "00:00:05,320",
+            "es": "que tenía algo,",
+            "fr": "qu'il avait quelque chose,",
+            "uk": "що у нього було щось,"
+        },
+        {
+            "start": "00:00:05,320",
+            "end": "00:00:07,200",
+            "es": "algo que es",
+            "fr": "quelque chose qui est",
+            "uk": "щось, що є"
+        },
+        {
+            "start": "00:00:07,200",
+            "end": "00:00:07,940",
+            "es": "exitoso.",
+            "fr": "réussi.",
+            "uk": "успішним."
+        },
+        {
+            "start": "00:00:07,940",
+            "end": "00:00:09,740",
+            "es": "Entonces el patata es,",
+            "fr": "Alors, la pomme de terre est,",
+            "uk": "Отже, картопля є,"
+        },
+        {
+            "start": "00:00:09,740",
+            "end": "00:00:11,580",
+            "es": "peor al sabor.",
+            "fr": "pire au goût.",
+            "uk": "гірша на смак."
+        },
+        {
+            "start": "00:00:11,580",
+            "end": "00:00:14,640",
+            "es": "Porque usé aceite de res",
+            "fr": "Parce que j'ai utilisé de l'huile de boeuf",
+            "uk": "Бо я використав яловиче масло"
+        },
+        {
+            "start": "00:00:18,640",
+            "end": "00:00:19,700",
+            "es": "para cocinar,",
+            "fr": "pour cuisiner,",
+            "uk": "щоб приготувати,"
+        },
+        {
+            "start": "00:00:19,700",
+            "end": "00:00:21,140",
+            "es": "para cocinar la patata.",
+            "fr": "pour faire cuire la pomme de terre.",
+            "uk": "щоб приготувати картоплю."
+        },
+        {
+            "start": "00:00:32,720",
+            "end": "00:00:41,680",
+            "es": "Esto hace que el sabor y el olor de la patata sean extremadamente buenos y crujientes.",
+            "fr": "Cela rend le goût et l'odeur de la pomme de terre extrêmement bons et croustillants.",
+            "uk": "Це робить смак і запах картоплі надзвичайно хорошими та хрусткими."
+        },
+        {
+            "start": "00:00:41,680",
+            "end": "00:00:43,660",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:00:43,660",
+            "end": "00:00:45,120",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "uk": "до зустрічі."
+        }
+    ]
+}

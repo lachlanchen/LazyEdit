@@ -1,0 +1,97 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,140\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"I believe I have some progress,\"\n  },\n  {\n    \"start\": \"00:00:05,140\",\n    \"end\": \"00:00:08,160\",\n    \"lang\": \"en\",\n    \"text\": \"so record it.\"\n  },\n  {\n    \"start\": \"00:00:09,980\",\n    \"end\": \"00:00:15,840\",\n    \"lang\": \"en\",\n    \"text\": \"And I see a problem in recent content creating.\"\n  },\n  {\n    \"start\": \"00:00:15,840\",\n    \"end\": \"00:00:18,640\",\n    \"lang\": \"en\",\n    \"text\": \"Some content creators,\"\n  },\n  {\n    \"start\": \"00:00:18,640\",\n    \"end\": \"00:00:29,720\",\n    \"lang\": \"en\",\n    \"text\": \"they just firstly find the audience,\"\n  },\n  {\n    \"start\": \"00:00:29,720\",\n    \"end\": \"00:00:32,220\",\n    \"lang\": \"en\",\n    \"text\": \"make the audience,\"\n  },\n  {\n    \"start\": \"00:00:32,220\",\n    \"end\": \"00:00:35,540\",\n    \"lang\": \"en\",\n    \"text\": \"and then cater the taste.\"\n  },\n  {\n    \"start\": \"00:00:35,540\",\n    \"end\": \"00:00:38,500\",\n    \"lang\": \"en\",\n    \"text\": \"And use their work,\"\n  },\n  {\n    \"start\": \"00:00:38,500\",\n    \"end\": \"00:00:39,600\",\n    \"lang\": \"en\",\n    \"text\": \"product,\"\n  },\n  {\n    \"start\": \"00:00:39,600\",\n    \"end\": \"00:00:42,800\",\n    \"lang\": \"en\",\n    \"text\": \"to please the audience.\"\n  },\n  {\n    \"start\": \"00:00:43,780\",\n    \"end\": \"00:00:45,320\",\n    \"lang\": \"en\",\n    \"text\": \"This causes a problem.\"\n  },\n  {\n    \"start\": \"00:00:45,320\",\n    \"end\": \"00:00:57,480\",\n    \"lang\": \"en\",\n    \"text\": \"The problem is that we should focus on what we like to do.\"\n  },\n  {\n    \"start\": \"00:00:59,746\",\n    \"end\": \"00:01:00,386\",\n    \"lang\": \"ja\",\n    \"text\": \"ゆりこみ\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,140",
+            "end": "00:00:05,140",
+            "en": "I believe I have some progress,",
+            "zh": "我相信我有一些进展，",
+            "ar": "أعتقد أن لدي بعض التقدم،"
+        },
+        {
+            "start": "00:00:05,140",
+            "end": "00:00:08,160",
+            "en": "so record it.",
+            "zh": "所以记录下来。",
+            "ar": "لذا سجل ذلك."
+        },
+        {
+            "start": "00:00:09,980",
+            "end": "00:00:15,840",
+            "en": "And I see a problem in recent content creating.",
+            "zh": "我看到最近内容创造中的一个问题。",
+            "ar": "وأرى مشكلة في إنشاء المحتوى مؤخرًا."
+        },
+        {
+            "start": "00:00:15,840",
+            "end": "00:00:18,640",
+            "en": "Some content creators,",
+            "zh": "一些内容创作者，",
+            "ar": "بعض صناع المحتوى،"
+        },
+        {
+            "start": "00:00:18,640",
+            "end": "00:00:29,720",
+            "en": "they just firstly find the audience,",
+            "zh": "他们首先找到观众，",
+            "ar": "إنهم يقومون أولاً بإيجاد الجمهور،"
+        },
+        {
+            "start": "00:00:29,720",
+            "end": "00:00:32,220",
+            "en": "make the audience,",
+            "zh": "制作观众，",
+            "ar": "خلق الجمهور،"
+        },
+        {
+            "start": "00:00:32,220",
+            "end": "00:00:35,540",
+            "en": "and then cater the taste.",
+            "zh": "然后迎合口味。",
+            "ar": "ثم يلبون الذوق."
+        },
+        {
+            "start": "00:00:35,540",
+            "end": "00:00:38,500",
+            "en": "And use their work,",
+            "zh": "并使用他们的作品，",
+            "ar": "ويستخدمون عملهم،"
+        },
+        {
+            "start": "00:00:38,500",
+            "end": "00:00:39,600",
+            "en": "product,",
+            "zh": "产品，",
+            "ar": "المنتج،"
+        },
+        {
+            "start": "00:00:39,600",
+            "end": "00:00:42,800",
+            "en": "to please the audience.",
+            "zh": "以取悦观众。",
+            "ar": "لإرضاء الجمهور."
+        },
+        {
+            "start": "00:00:43,780",
+            "end": "00:00:45,320",
+            "en": "This causes a problem.",
+            "zh": "这造成了一个问题。",
+            "ar": "هذا يسبب مشكلة."
+        },
+        {
+            "start": "00:00:45,320",
+            "end": "00:00:57,480",
+            "en": "The problem is that we should focus on what we like to do.",
+            "zh": "问题是我们应该专注于我们喜欢做的事情。",
+            "ar": "المشكلة هي أننا يجب أن نركز على ما نحب القيام به."
+        },
+        {
+            "start": "00:00:59,746",
+            "end": "00:01:00,386",
+            "en": "Infiltration",
+            "zh": "渗透",
+            "ar": "التسلل",
+            "ja": "ゆりこみ"
+        }
+    ]
+}

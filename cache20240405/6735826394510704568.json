@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,840\",\n    \"lang\": \"en\",\n    \"text\": \"Another ordinary day with some little progress,\"\n  },\n  {\n    \"start\": \"00:00:04,840\",\n    \"end\": \"00:00:06,000\",\n    \"lang\": \"en\",\n    \"text\": \"little improvement\"\n  },\n  {\n    \"start\": \"00:00:15,520\",\n    \"end\": \"00:00:16,100\",\n    \"lang\": \"en\",\n    \"text\": \"It's very good\"\n  },\n  {\n    \"start\": \"00:00:16,129\",\n    \"end\": \"00:00:16,810\",\n    \"lang\": \"zh\",\n    \"text\": \"小鱼死鱼飞\"\n  },\n  {\n    \"start\": \"00:00:17,698\",\n    \"end\": \"00:00:18,498\",\n    \"lang\": \"en\",\n    \"text\": \"in her grasp\"\n  },\n  {\n    \"start\": \"00:00:30,377\",\n    \"end\": \"00:00:31,217\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:31,217\",\n    \"end\": \"00:00:33,258\",\n    \"lang\": \"en\",\n    \"text\": \"let's get it perfectly wrong,\"\n  },\n  {\n    \"start\": \"00:00:33,258\",\n    \"end\": \"00:00:34,598\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  },\n  {\n    \"start\": \"00:00:54,338\",\n    \"end\": \"00:00:57,118\",\n    \"lang\": \"en\",\n    \"text\": \"Okay this around a the perfect,\"\n  },\n  {\n    \"start\": \"00:00:57,118\",\n    \"end\": \"00:00:58,858\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,840",
+            "ja": "また平凡な一日が少しの進歩と共に、"
+        },
+        {
+            "start": "00:00:04,840",
+            "end": "00:00:06,000",
+            "ja": "少しだけの改善"
+        },
+        {
+            "start": "00:00:15,520",
+            "end": "00:00:16,100",
+            "ja": "とても良い"
+        },
+        {
+            "start": "00:00:16,129",
+            "end": "00:00:16,810",
+            "ja": "彼女の手中に"
+        },
+        {
+            "start": "00:00:17,698",
+            "end": "00:00:18,498",
+            "ja": "彼女の手中に"
+        },
+        {
+            "start": "00:00:30,377",
+            "end": "00:00:31,217",
+            "ja": "わかった、"
+        },
+        {
+            "start": "00:00:31,217",
+            "end": "00:00:33,258",
+            "ja": "完璧に間違えましょう、"
+        },
+        {
+            "start": "00:00:33,258",
+            "end": "00:00:34,598",
+            "ja": "わかった"
+        },
+        {
+            "start": "00:00:54,338",
+            "end": "00:00:57,118",
+            "ja": "わかった、これを完璧に、"
+        },
+        {
+            "start": "00:00:57,118",
+            "end": "00:00:58,858",
+            "ja": "わかった"
+        }
+    ]
+}

@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,520\",\n    \"lang\": \"en\",\n    \"text\": \"So let's play the little grass,\"\n  },\n  {\n    \"start\": \"00:00:02,520\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"en\",\n    \"text\": \"imperfect little grass.\"\n  },\n  {\n    \"start\": \"00:00:05,640\",\n    \"end\": \"00:00:07,100\",\n    \"lang\": \"en\",\n    \"text\": \"I believe I have some,\"\n  },\n  {\n    \"start\": \"00:00:07,100\",\n    \"end\": \"00:00:10,640\",\n    \"lang\": \"en\",\n    \"text\": \"I have some progress.\"\n  },\n  {\n    \"start\": \"00:00:11,700\",\n    \"end\": \"00:00:12,000\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:12,000\",\n    \"end\": \"00:00:15,320\",\n    \"lang\": \"en\",\n    \"text\": \"let's begin the guitar.\"\n  },\n  {\n    \"start\": \"00:00:37,080\",\n    \"end\": \"00:00:37,700\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:37,700\",\n    \"end\": \"00:00:40,080\",\n    \"lang\": \"en\",\n    \"text\": \"it's a mama bee,\"\n  },\n  {\n    \"start\": \"00:00:40,080\",\n    \"end\": \"00:00:41,060\",\n    \"lang\": \"en\",\n    \"text\": \"mama bee.\"\n  },\n  {\n    \"start\": \"00:00:43,100\",\n    \"end\": \"00:00:44,060\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:44,060\",\n    \"end\": \"00:00:48,380\",\n    \"lang\": \"en\",\n    \"text\": \"so let's play again.\"\n  },\n  {\n    \"start\": \"00:00:49,346\",\n    \"end\": \"00:00:51,686\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:52,226\",\n    \"end\": \"00:00:53,326\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树叶\"\n  },\n  {\n    \"start\": \"00:00:56,738\",\n    \"end\": \"00:01:00,978\",\n    \"lang\": \"zh\",\n    \"text\": \"我想没有输的\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,520",
+            "es": "Así que vamos a tocar la pequeña hierba,",
+            "fr": "Alors jouons avec la petite herbe,",
+            "uk": "Отже, давайте грати на маленькій траві,"
+        },
+        {
+            "start": "00:00:02,520",
+            "end": "00:00:04,540",
+            "es": "imperfecta pequeña hierba.",
+            "fr": "petite herbe imparfaite.",
+            "uk": "недосконала маленька трава."
+        },
+        {
+            "start": "00:00:05,640",
+            "end": "00:00:07,100",
+            "es": "Creo que tengo algo,",
+            "fr": "Je crois que j'ai quelque chose,",
+            "uk": "Я вірю, я маю щось,"
+        },
+        {
+            "start": "00:00:07,100",
+            "end": "00:00:10,640",
+            "es": "he logrado algún progreso.",
+            "fr": "j'ai fait des progrès.",
+            "uk": "я зробив деякий прогрес."
+        },
+        {
+            "start": "00:00:11,700",
+            "end": "00:00:12,000",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:12,000",
+            "end": "00:00:15,320",
+            "es": "empecemos con la guitarra.",
+            "fr": "commeçons la guitare.",
+            "uk": "почнімо з гітари."
+        },
+        {
+            "start": "00:00:37,080",
+            "end": "00:00:37,700",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:37,700",
+            "end": "00:00:40,080",
+            "es": "es una abeja madre,",
+            "fr": "c'est une maman abeille,",
+            "uk": "це мама-бджола,"
+        },
+        {
+            "start": "00:00:40,080",
+            "end": "00:00:41,060",
+            "es": "mama abeja.",
+            "fr": "maman abeille.",
+            "uk": "мама бджола."
+        },
+        {
+            "start": "00:00:43,100",
+            "end": "00:00:44,060",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:44,060",
+            "end": "00:00:48,380",
+            "es": "así que vamos a tocar otra vez.",
+            "fr": "alors jouons à nouveau.",
+            "uk": "так давайте зіграємо знову."
+        },
+        {
+            "start": "00:00:49,346",
+            "end": "00:00:51,686",
+            "es": "Sin fragancia de flores",
+            "fr": "Pas de parfum de fleurs",
+            "uk": "Без запаху квітів"
+        },
+        {
+            "start": "00:00:52,226",
+            "end": "00:00:53,326",
+            "es": "sin hojas de árbol",
+            "fr": "pas de feuilles d'arbre",
+            "uk": "без листя дерев"
+        },
+        {
+            "start": "00:00:56,738",
+            "end": "00:01:00,978",
+            "es": "Creo que no hay pérdida",
+            "fr": "Je pense qu'il n'y a pas de perte",
+            "uk": "Я думаю, немає втрати"
+        }
+    ]
+}

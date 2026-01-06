@@ -1,0 +1,15 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,480\",\n    \"ja\": \"<幸>[]せに<生>[]きて、<平和>[]に<死>[]ぬ。\"\n  },\n  {\n    \"start\": \"00:00:06,978\",\n    \"end\": \"00:00:07,778\",\n    \"ja\": \"そして<平和>[]に<死>[]ぬ。\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,480",
+            "ja": "<幸>[しあわ]せに<生>[い]きて、<平和>[へいわ]に<死>[し]ぬ。"
+        },
+        {
+            "start": "00:00:06,978",
+            "end": "00:00:07,778",
+            "ja": "そして<平和>[へいわ]に<死>[し]ぬ。"
+        }
+    ]
+}

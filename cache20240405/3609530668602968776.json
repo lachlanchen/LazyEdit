@@ -1,0 +1,48 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:10,494\",\n    \"end\": \"00:02:14,014\",\n    \"lang\": \"ja\",\n    \"text\": \"ななななとじな\"\n  },\n  {\n    \"start\": \"00:02:15,138\",\n    \"end\": \"00:02:15,358\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:15,358\",\n    \"end\": \"00:02:15,778\",\n    \"lang\": \"en\",\n    \"text\": \"anyway,\"\n  },\n  {\n    \"start\": \"00:02:15,778\",\n    \"end\": \"00:02:17,958\",\n    \"lang\": \"en\",\n    \"text\": \"so I told him,\"\n  },\n  {\n    \"start\": \"00:02:19,998\",\n    \"end\": \"00:02:21,218\",\n    \"lang\": \"en\",\n    \"text\": \"it's already a mess,\"\n  },\n  {\n    \"start\": \"00:02:21,218\",\n    \"end\": \"00:02:23,718\",\n    \"lang\": \"en\",\n    \"text\": \"I should take a rest.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:10,494",
+            "end": "00:02:14,014",
+            "en": "Nanana and Jina",
+            "zh": "娜娜娜和吉娜",
+            "ar": "نانانا وجينا",
+            "ja": "ななななとじな"
+        },
+        {
+            "start": "00:02:15,138",
+            "end": "00:02:15,358",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:02:15,358",
+            "end": "00:02:15,778",
+            "en": "anyway,",
+            "zh": "无论如何，",
+            "ar": "على أي حال،"
+        },
+        {
+            "start": "00:02:15,778",
+            "end": "00:02:17,958",
+            "en": "so I told him,",
+            "zh": "所以我告诉他，",
+            "ar": "لذا أخبرته،"
+        },
+        {
+            "start": "00:02:19,998",
+            "end": "00:02:21,218",
+            "en": "it's already a mess,",
+            "zh": "已经一团糟了，",
+            "ar": "لقد أصبح الأمر فوضى بالفعل،"
+        },
+        {
+            "start": "00:02:21,218",
+            "end": "00:02:23,718",
+            "en": "I should take a rest.",
+            "zh": "我应该休息一下。",
+            "ar": "يجب أن أستريح."
+        }
+    ]
+}

@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:04,382\",\n    \"end\": \"00:03:06,462\",\n    \"lang\": \"en\",\n    \"text\": \"As an escape from reality,\"\n  },\n  {\n    \"start\": \"00:03:06,462\",\n    \"end\": \"00:03:13,382\",\n    \"lang\": \"en\",\n    \"text\": \"I kept learning new stuff.\"\n  },\n  {\n    \"start\": \"00:03:13,382\",\n    \"end\": \"00:03:18,982\",\n    \"lang\": \"en\",\n    \"text\": \"Because this will make an illusion\"\n  },\n  {\n    \"start\": \"00:03:18,982\",\n    \"end\": \"00:03:28,702\",\n    \"lang\": \"en\",\n    \"text\": \"that an illusion is keeping us.\"\n  },\n  {\n    \"start\": \"00:03:28,737\",\n    \"end\": \"00:03:29,777\",\n    \"lang\": \"ja\",\n    \"text\": \"横からおー…\"\n  },\n  {\n    \"start\": \"00:03:31,778\",\n    \"end\": \"00:03:32,418\",\n    \"lang\": \"en\",\n    \"text\": \"ignorance.\"\n  },\n  {\n    \"start\": \"00:03:32,418\",\n    \"end\": \"00:03:36,238\",\n    \"lang\": \"en\",\n    \"text\": \"So you think that you are\"\n  },\n  {\n    \"start\": \"00:03:36,994\",\n    \"end\": \"00:03:37,714\",\n    \"lang\": \"zh\",\n    \"text\": \"变发\"\n  },\n  {\n    \"start\": \"00:03:37,954\",\n    \"end\": \"00:03:38,314\",\n    \"lang\": \"zh\",\n    \"text\": \"变\"\n  },\n  {\n    \"start\": \"00:03:39,138\",\n    \"end\": \"00:03:54,378\",\n    \"lang\": \"en\",\n    \"text\": \"apart from ignorance and you work towards some imaginary utopian world,\"\n  },\n  {\n    \"start\": \"00:03:54,378\",\n    \"end\": \"00:03:56,118\",\n    \"lang\": \"en\",\n    \"text\": \"utopian land,\"\n  },\n  {\n    \"start\": \"00:03:56,118\",\n    \"end\": \"00:04:05,398\",\n    \"lang\": \"en\",\n    \"text\": \"that in that world you have everything,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:04,382",
+            "end": "00:03:06,462",
+            "vi": "Như một lối thoát khỏi thực tại,"
+        },
+        {
+            "start": "00:03:06,462",
+            "end": "00:03:13,382",
+            "vi": "Tôi tiếp tục học những điều mới."
+        },
+        {
+            "start": "00:03:13,382",
+            "end": "00:03:18,982",
+            "vi": "Bởi vì điều này sẽ tạo ra một ảo giác"
+        },
+        {
+            "start": "00:03:18,982",
+            "end": "00:03:28,702",
+            "vi": "rằng một ảo giác đang giữ chúng ta."
+        },
+        {
+            "start": "00:03:28,737",
+            "end": "00:03:29,777",
+            "vi": "Từ bên cạnh, ồ..."
+        },
+        {
+            "start": "00:03:31,778",
+            "end": "00:03:32,418",
+            "vi": "sự ngu dốt."
+        },
+        {
+            "start": "00:03:32,418",
+            "end": "00:03:36,238",
+            "vi": "Vậy bạn nghĩ rằng bạn đang"
+        },
+        {
+            "start": "00:03:36,994",
+            "end": "00:03:37,714",
+            "vi": "biến thái"
+        },
+        {
+            "start": "00:03:37,954",
+            "end": "00:03:38,314",
+            "vi": "biến"
+        },
+        {
+            "start": "00:03:39,138",
+            "end": "00:03:54,378",
+            "vi": "phân biệt với sự ngu dốt và bạn làm việc hướng tới một thế giới utopia tưởng tượng,"
+        },
+        {
+            "start": "00:03:54,378",
+            "end": "00:03:56,118",
+            "vi": "đất nước utopia,"
+        },
+        {
+            "start": "00:03:56,118",
+            "end": "00:04:05,398",
+            "vi": "trong thế giới đó bạn có mọi thứ,"
+        }
+    ]
+}

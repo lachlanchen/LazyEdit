@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:03,719\",\n    \"end\": \"00:00:05,420\",\n    \"lang\": \"zh\",\n    \"text\": \"这是第一次吃外卖\"\n  },\n  {\n    \"start\": \"00:00:08,379\",\n    \"end\": \"00:00:10,060\",\n    \"lang\": \"zh\",\n    \"text\": \"今天是水煮鲜鱼\"\n  },\n  {\n    \"start\": \"00:00:12,340\",\n    \"end\": \"00:00:14,560\",\n    \"lang\": \"zh\",\n    \"text\": \"新灌第六天\"\n  },\n  {\n    \"start\": \"00:00:18,380\",\n    \"end\": \"00:00:19,380\",\n    \"lang\": \"zh\",\n    \"text\": \"第五天\"\n  },\n  {\n    \"start\": \"00:00:20,560\",\n    \"end\": \"00:00:21,420\",\n    \"lang\": \"zh\",\n    \"text\": \"试一下\"\n  },\n  {\n    \"start\": \"00:00:25,666\",\n    \"end\": \"00:00:25,866\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm.\"\n  },\n  {\n    \"start\": \"00:00:27,394\",\n    \"end\": \"00:00:28,074\",\n    \"lang\": \"zh\",\n    \"text\": \"好吃\"\n  },\n  {\n    \"start\": \"00:00:31,714\",\n    \"end\": \"00:00:32,573\",\n    \"lang\": \"zh\",\n    \"text\": \"好辣\"\n  },\n  {\n    \"start\": \"00:00:36,386\",\n    \"end\": \"00:00:36,886\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god,\"\n  },\n  {\n    \"start\": \"00:00:36,886\",\n    \"end\": \"00:00:37,766\",\n    \"lang\": \"en\",\n    \"text\": \"it's so spicy.\"\n  },\n  {\n    \"start\": \"00:00:41,406\",\n    \"end\": \"00:00:41,846\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:03,719",
+            "end": "00:00:05,420",
+            "en": "This is the first time eating takeout",
+            "zh": "这是第一次吃外卖",
+            "ar": "هذه هي المرة الأولى لتناول الطعام الخارجي"
+        },
+        {
+            "start": "00:00:08,379",
+            "end": "00:00:10,060",
+            "en": "Today is boiled fresh fish",
+            "zh": "今天是水煮鲜鱼",
+            "ar": "اليوم هو سمك طازج مسلوق"
+        },
+        {
+            "start": "00:00:12,340",
+            "end": "00:00:14,560",
+            "en": "Day six of the new casting",
+            "zh": "新灌第六天",
+            "ar": "اليوم السادس من الصب الجديد"
+        },
+        {
+            "start": "00:00:18,380",
+            "end": "00:00:19,380",
+            "en": "Day five",
+            "zh": "第五天",
+            "ar": "اليوم الخامس"
+        },
+        {
+            "start": "00:00:20,560",
+            "end": "00:00:21,420",
+            "en": "Try it",
+            "zh": "试一下",
+            "ar": "جربها"
+        },
+        {
+            "start": "00:00:25,666",
+            "end": "00:00:25,866",
+            "en": "Mmm.",
+            "zh": "嗯。",
+            "ar": "ممم."
+        },
+        {
+            "start": "00:00:27,394",
+            "end": "00:00:28,074",
+            "en": "Delicious",
+            "zh": "好吃",
+            "ar": "لذيذ"
+        },
+        {
+            "start": "00:00:31,714",
+            "end": "00:00:32,573",
+            "en": "So spicy",
+            "zh": "好辣",
+            "ar": "حار جدا"
+        },
+        {
+            "start": "00:00:36,386",
+            "end": "00:00:36,886",
+            "en": "Oh my god,",
+            "zh": "哦，我的天，",
+            "ar": "يا إلهي،"
+        },
+        {
+            "start": "00:00:36,886",
+            "end": "00:00:37,766",
+            "en": "it's so spicy.",
+            "zh": "它太辣了。",
+            "ar": "إنه حار جدًا."
+        },
+        {
+            "start": "00:00:41,406",
+            "end": "00:00:41,846",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

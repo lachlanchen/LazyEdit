@@ -1,0 +1,152 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:09,100\",\n    \"lang\": \"en\",\n    \"text\": \"Now this is quite a simple source routine to get used to the web.\"\n  },\n  {\n    \"start\": \"00:00:10,146\",\n    \"end\": \"00:00:12,086\",\n    \"lang\": \"zh\",\n    \"text\": \"在这里 我买黑的一只\"\n  },\n  {\n    \"start\": \"00:00:13,346\",\n    \"end\": \"00:00:14,006\",\n    \"lang\": \"en\",\n    \"text\": \"is painful.\"\n  },\n  {\n    \"start\": \"00:00:14,006\",\n    \"end\": \"00:00:18,926\",\n    \"lang\": \"en\",\n    \"text\": \"When I turn my head to the right and left,\"\n  },\n  {\n    \"start\": \"00:00:18,926\",\n    \"end\": \"00:00:21,086\",\n    \"lang\": \"en\",\n    \"text\": \"it also hurts.\"\n  },\n  {\n    \"start\": \"00:00:21,086\",\n    \"end\": \"00:00:21,906\",\n    \"lang\": \"en\",\n    \"text\": \"It's not that it\"\n  },\n  {\n    \"start\": \"00:00:21,906\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"hurts,\"\n  },\n  {\n    \"start\": \"00:00:22,146\",\n    \"end\": \"00:00:25,466\",\n    \"lang\": \"en\",\n    \"text\": \"but it has this blunt pain.\"\n  },\n  {\n    \"start\": \"00:00:25,466\",\n    \"end\": \"00:00:30,826\",\n    \"lang\": \"en\",\n    \"text\": \"And it's kind of my head getting larger,\"\n  },\n  {\n    \"start\": \"00:00:30,826\",\n    \"end\": \"00:00:32,086\",\n    \"lang\": \"en\",\n    \"text\": \"I guess.\"\n  },\n  {\n    \"start\": \"00:00:32,086\",\n    \"end\": \"00:00:33,486\",\n    \"lang\": \"en\",\n    \"text\": \"Oh\"\n  },\n  {\n    \"start\": \"00:00:33,486\",\n    \"end\": \"00:00:33,926\",\n    \"lang\": \"en\",\n    \"text\": \"my goodness.\"\n  },\n  {\n    \"start\": \"00:00:33,926\",\n    \"end\": \"00:00:37,006\",\n    \"lang\": \"en\",\n    \"text\": \"I want to eat this and I don't want to eat this.\"\n  },\n  {\n    \"start\": \"00:00:37,006\",\n    \"end\": \"00:00:38,046\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:38,046\",\n    \"end\": \"00:00:41,686\",\n    \"lang\": \"en\",\n    \"text\": \"the swallowing is painful.\"\n  },\n  {\n    \"start\": \"00:00:42,818\",\n    \"end\": \"00:00:43,918\",\n    \"lang\": \"en\",\n    \"text\": \"I have to do it.\"\n  },\n  {\n    \"start\": \"00:00:48,738\",\n    \"end\": \"00:00:49,518\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness,\"\n  },\n  {\n    \"start\": \"00:00:49,518\",\n    \"end\": \"00:00:51,378\",\n    \"lang\": \"en\",\n    \"text\": \"this kills me.\"\n  },\n  {\n    \"start\": \"00:00:56,318\",\n    \"end\": \"00:00:57,038\",\n    \"lang\": \"en\",\n    \"text\": \"But,\"\n  },\n  {\n    \"start\": \"00:00:57,038\",\n    \"end\": \"00:00:57,758\",\n    \"lang\": \"en\",\n    \"text\": \"okay,\"\n  },\n  {\n    \"start\": \"00:00:57,758\",\n    \"end\": \"00:00:58,418\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:09,100",
+            "es": "Ahora esto es una rutina de fuente bastante simple para acostumbrarse a la web.",
+            "fr": "Maintenant, c'est une routine de source assez simple pour s'habituer au web.",
+            "uk": "Тепер це досить проста рутинна процедура, щоб звикнути до вебу."
+        },
+        {
+            "start": "00:00:10,146",
+            "end": "00:00:12,086",
+            "es": "Aquí compro una de color negro.",
+            "fr": "Ici, j'achète une noire.",
+            "uk": "Тут я купую чорну."
+        },
+        {
+            "start": "00:00:13,346",
+            "end": "00:00:14,006",
+            "es": "es doloroso.",
+            "fr": "c'est douloureux.",
+            "uk": "це болісно."
+        },
+        {
+            "start": "00:00:14,006",
+            "end": "00:00:18,926",
+            "es": "Cuando giro mi cabeza hacia la derecha y la izquierda,",
+            "fr": "Quand je tourne ma tête à droite et à gauche,",
+            "uk": "Коли я повертаю голову вправо і вліво,"
+        },
+        {
+            "start": "00:00:18,926",
+            "end": "00:00:21,086",
+            "es": "también duele.",
+            "fr": "cela fait aussi mal.",
+            "uk": "також болить."
+        },
+        {
+            "start": "00:00:21,086",
+            "end": "00:00:21,906",
+            "es": "No es que",
+            "fr": "Ce n'est pas que",
+            "uk": "Не те що"
+        },
+        {
+            "start": "00:00:21,906",
+            "end": "00:00:22,146",
+            "es": "duela,",
+            "fr": "ça fait mal,",
+            "uk": "болить,"
+        },
+        {
+            "start": "00:00:22,146",
+            "end": "00:00:25,466",
+            "es": "sino que tiene este dolor sordo.",
+            "fr": "mais il a cette douleur sourde.",
+            "uk": "але в нього є цей тупий біль."
+        },
+        {
+            "start": "00:00:25,466",
+            "end": "00:00:30,826",
+            "es": "Y es como si mi cabeza se agrandara,",
+            "fr": "Et c'est comme si ma tête grossissait,",
+            "uk": "І це ніби моя голова збільшується,"
+        },
+        {
+            "start": "00:00:30,826",
+            "end": "00:00:32,086",
+            "es": "supongo.",
+            "fr": "je suppose.",
+            "uk": "гадаю."
+        },
+        {
+            "start": "00:00:32,086",
+            "end": "00:00:33,486",
+            "es": "Oh",
+            "fr": "Oh",
+            "uk": "Ох"
+        },
+        {
+            "start": "00:00:33,486",
+            "end": "00:00:33,926",
+            "es": "por Dios.",
+            "fr": "mon Dieu.",
+            "uk": "мій Боже."
+        },
+        {
+            "start": "00:00:33,926",
+            "end": "00:00:37,006",
+            "es": "Quiero comer esto y no quiero comer esto.",
+            "fr": "Je veux manger cela et je ne veux pas manger cela.",
+            "uk": "Я хочу це з'їсти і не хочу це їсти."
+        },
+        {
+            "start": "00:00:37,006",
+            "end": "00:00:38,046",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:38,046",
+            "end": "00:00:41,686",
+            "es": "tragar es doloroso.",
+            "fr": "avaler est douloureux.",
+            "uk": "ковтати боляче."
+        },
+        {
+            "start": "00:00:42,818",
+            "end": "00:00:43,918",
+            "es": "Tengo que hacerlo.",
+            "fr": "Je dois le faire.",
+            "uk": "Я мушу це зробити."
+        },
+        {
+            "start": "00:00:48,738",
+            "end": "00:00:49,518",
+            "es": "Oh por Dios,",
+            "fr": "Oh mon Dieu,",
+            "uk": "О, мій Боже,"
+        },
+        {
+            "start": "00:00:49,518",
+            "end": "00:00:51,378",
+            "es": "esto me mata.",
+            "fr": "ça me tue.",
+            "uk": "це вбиває мене."
+        },
+        {
+            "start": "00:00:56,318",
+            "end": "00:00:57,038",
+            "es": "Pero,",
+            "fr": "Mais,",
+            "uk": "Але,"
+        },
+        {
+            "start": "00:00:57,038",
+            "end": "00:00:57,758",
+            "es": "está bien,",
+            "fr": "d'accord,",
+            "uk": "добре,"
+        },
+        {
+            "start": "00:00:57,758",
+            "end": "00:00:58,418",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "uk": "до побачення."
+        }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,240\",\n    \"lang\": \"en\",\n    \"text\": \"Want my potato?\"\n  },\n  {\n    \"start\": \"00:00:05,730\",\n    \"end\": \"00:00:06,270\",\n    \"lang\": \"ja\",\n    \"text\": \"クッカーだ\"\n  },\n  {\n    \"start\": \"00:00:07,682\",\n    \"end\": \"00:00:11,122\",\n    \"lang\": \"en\",\n    \"text\": \"Except this two piece is okay.\"\n  },\n  {\n    \"start\": \"00:00:14,262\",\n    \"end\": \"00:00:17,562\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if this is eatable.\"\n  },\n  {\n    \"start\": \"00:00:22,850\",\n    \"end\": \"00:00:23,530\",\n    \"lang\": \"ja\",\n    \"text\": \"おまえっぽだね、\"\n  },\n  {\n    \"start\": \"00:00:23,530\",\n    \"end\": \"00:00:24,590\",\n    \"lang\": \"ja\",\n    \"text\": \"そう\"\n  },\n  {\n    \"start\": \"00:00:29,666\",\n    \"end\": \"00:00:33,106\",\n    \"lang\": \"en\",\n    \"text\": \"and we also have prawns\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,240",
+            "vi": "Muốn khoai của tôi không?"
+        },
+        {
+            "start": "00:00:05,730",
+            "end": "00:00:06,270",
+            "vi": "Nó là cục nướng"
+        },
+        {
+            "start": "00:00:07,682",
+            "end": "00:00:11,122",
+            "vi": "Ngoại trừ hai mảnh này thì ổn."
+        },
+        {
+            "start": "00:00:14,262",
+            "end": "00:00:17,562",
+            "vi": "Tôi không biết liệu nó có thể ăn được không."
+        },
+        {
+            "start": "00:00:22,850",
+            "end": "00:00:23,530",
+            "vi": "Giống bạn đấy,"
+        },
+        {
+            "start": "00:00:23,530",
+            "end": "00:00:24,590",
+            "vi": "đúng vậy"
+        },
+        {
+            "start": "00:00:29,666",
+            "end": "00:00:33,106",
+            "vi": "và chúng tôi cũng có tôm"
+        }
+    ]
+}

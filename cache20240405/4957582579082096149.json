@@ -1,0 +1,30 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:05,414\",\n    \"end\": \"00:02:06,674\",\n    \"ja\": \"<食道>[]の<問題>[]です\"\n  },\n  {\n    \"start\": \"00:02:07,214\",\n    \"end\": \"00:02:09,253\",\n    \"ja\": \"<食道>[]にがんがあります\"\n  },\n  {\n    \"start\": \"00:02:10,973\",\n    \"end\": \"00:02:11,634\",\n    \"ja\": \"わかりました\"\n  },\n  {\n    \"start\": \"00:02:13,214\",\n    \"end\": \"00:02:13,534\",\n    \"ja\": \"じゃあね\"\n  },\n  {\n    \"start\": \"00:02:14,854\",\n    \"end\": \"00:02:15,494\",\n    \"ja\": \"じゃあね\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:05,414",
+            "end": "00:02:06,674",
+            "ja": "<食道>[しょくどう]の<問題>[もんだい]です"
+        },
+        {
+            "start": "00:02:07,214",
+            "end": "00:02:09,253",
+            "ja": "<食道>[しょくどう]に<癌>[がん]があります"
+        },
+        {
+            "start": "00:02:10,973",
+            "end": "00:02:11,634",
+            "ja": "わかりました"
+        },
+        {
+            "start": "00:02:13,214",
+            "end": "00:02:13,534",
+            "ja": "じゃあね"
+        },
+        {
+            "start": "00:02:14,854",
+            "end": "00:02:15,494",
+            "ja": "じゃあね"
+        }
+    ]
+}

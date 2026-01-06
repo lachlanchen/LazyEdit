@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,300\",\n    \"lang\": \"zh\",\n    \"text\": \"根本就没有先苦后甜这一回事\"\n  },\n  {\n    \"start\": \"00:00:05,119\",\n    \"end\": \"00:00:06,340\",\n    \"lang\": \"zh\",\n    \"text\": \"如果你有句话叫\"\n  },\n  {\n    \"start\": \"00:00:06,899\",\n    \"end\": \"00:00:08,860\",\n    \"lang\": \"zh\",\n    \"text\": \"会玩的玩一辈子\"\n  },\n  {\n    \"start\": \"00:00:08,860\",\n    \"end\": \"00:00:10,080\",\n    \"lang\": \"zh\",\n    \"text\": \"会做的做一辈子\"\n  },\n  {\n    \"start\": \"00:00:11,458\",\n    \"end\": \"00:00:13,278\",\n    \"lang\": \"en\",\n    \"text\": \"So if you suffer,\"\n  },\n  {\n    \"start\": \"00:00:13,278\",\n    \"end\": \"00:00:19,298\",\n    \"lang\": \"en\",\n    \"text\": \"you keep suffering until you finally decide that you enjoy the life.\"\n  },\n  {\n    \"start\": \"00:00:21,318\",\n    \"end\": \"00:00:22,178\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,300",
+            "ko": "처음부터 괴로움 끝에 달콤함이 온다는 건 없어."
+        },
+        {
+            "start": "00:00:05,119",
+            "end": "00:00:06,340",
+            "ko": "만약 너에게 한 마디가 있다면"
+        },
+        {
+            "start": "00:00:06,899",
+            "end": "00:00:08,860",
+            "ko": "즐길 줄 아는 사람은 평생을 즐겨"
+        },
+        {
+            "start": "00:00:08,860",
+            "end": "00:00:10,080",
+            "ko": "할 줄 아는 사람은 평생을 해"
+        },
+        {
+            "start": "00:00:11,458",
+            "end": "00:00:13,278",
+            "ko": "그러니까, 네가 고통 받으면,"
+        },
+        {
+            "start": "00:00:13,278",
+            "end": "00:00:19,298",
+            "ko": "계속 고통받다가 결국에는 인생을 즐기기로 결정할 때까지야."
+        },
+        {
+            "start": "00:00:21,318",
+            "end": "00:00:22,178",
+            "ko": "알겠어."
+        }
+    ]
+}

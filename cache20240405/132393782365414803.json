@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,960\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます。\"\n  },\n  {\n    \"start\": \"00:00:02,210\",\n    \"end\": \"00:00:02,710\",\n    \"lang\": \"zh\",\n    \"text\": \"我拿วยinge\"\n  },\n  {\n    \"start\": \"00:00:03,650\",\n    \"end\": \"00:00:05,370\",\n    \"lang\": \"ja\",\n    \"text\": \"私の名前は泣きねる\"\n  },\n  {\n    \"start\": \"00:00:05,890\",\n    \"end\": \"00:00:17,170\",\n    \"lang\": \"en\",\n    \"text\": \"changes so again nothing new to share today but I upgraded the subtitles and I introduced\"\n  },\n  {\n    \"start\": \"00:00:17,170\",\n    \"end\": \"00:00:26,270\",\n    \"lang\": \"en\",\n    \"text\": \"them modified Korean subtitle and also the Vietnamese,\"\n  },\n  {\n    \"start\": \"00:00:26,270\",\n    \"end\": \"00:00:29,630\",\n    \"lang\": \"en\",\n    \"text\": \"French and Spanish and then I\"\n  },\n  {\n    \"start\": \"00:00:29,630\",\n    \"end\": \"00:00:32,350\",\n    \"lang\": \"en\",\n    \"text\": \"think the subtitle might be a little bit too much\"\n  },\n  {\n    \"start\": \"00:00:35,682\",\n    \"end\": \"00:00:36,102\",\n    \"lang\": \"ja\",\n    \"text\": \"おやすみなさい\"\n  },\n  {\n    \"start\": \"00:00:37,314\",\n    \"end\": \"00:00:39,874\",\n    \"lang\": \"en\",\n    \"text\": \"because the space on the screen is too tight,\"\n  },\n  {\n    \"start\": \"00:00:39,874\",\n    \"end\": \"00:00:40,814\",\n    \"lang\": \"en\",\n    \"text\": \"too compact,\"\n  },\n  {\n    \"start\": \"00:00:40,814\",\n    \"end\": \"00:00:43,174\",\n    \"lang\": \"en\",\n    \"text\": \"too dense.\"\n  },\n  {\n    \"start\": \"00:00:44,294\",\n    \"end\": \"00:00:44,554\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:44,554\",\n    \"end\": \"00:00:50,334\",\n    \"lang\": \"en\",\n    \"text\": \"also I want to slightly change the Vietnamese subtitle.\"\n  },\n  {\n    \"start\": \"00:00:50,854\",\n    \"end\": \"00:00:52,394\",\n    \"lang\": \"en\",\n    \"text\": \"And also like the Korean,\"\n  },\n  {\n    \"start\": \"00:00:52,394\",\n    \"end\": \"00:00:54,614\",\n    \"lang\": \"en\",\n    \"text\": \"I want to introduce the Chinese character\"\n  },\n  {\n    \"start\": \"00:00:54,983\",\n    \"end\": \"00:00:59,534\",\n    \"lang\": \"en\",\n    \"text\": \"to replace some Vietnamese that have a Chinese origin.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,960",
+            "vi": "Cảm ơn bạn."
+        },
+        {
+            "start": "00:00:02,210",
+            "end": "00:00:02,710",
+            "vi": "Tôi lấy cái này"
+        },
+        {
+            "start": "00:00:03,650",
+            "end": "00:00:05,370",
+            "vi": "Tên tôi là Nakinuru"
+        },
+        {
+            "start": "00:00:05,890",
+            "end": "00:00:17,170",
+            "vi": "không có gì mới để chia sẻ hôm nay nhưng tôi đã cập nhật phụ đề và tôi đã giới thiệu"
+        },
+        {
+            "start": "00:00:17,170",
+            "end": "00:00:26,270",
+            "vi": "phụ đề tiếng Hàn được chỉnh sửa và cả phụ đề tiếng Việt,"
+        },
+        {
+            "start": "00:00:26,270",
+            "end": "00:00:29,630",
+            "vi": "tiếng Pháp và tiếng Tây Ban Nha và sau đó tôi"
+        },
+        {
+            "start": "00:00:29,630",
+            "end": "00:00:32,350",
+            "vi": "nghĩ rằng phụ đề có thể hơi nhiều một chút"
+        },
+        {
+            "start": "00:00:35,682",
+            "end": "00:00:36,102",
+            "vi": "Chúc ngủ ngon"
+        },
+        {
+            "start": "00:00:37,314",
+            "end": "00:00:39,874",
+            "vi": "vì không gian trên màn hình quá chật hẹp,"
+        },
+        {
+            "start": "00:00:39,874",
+            "end": "00:00:40,814",
+            "vi": "quá đông đúc,"
+        },
+        {
+            "start": "00:00:40,814",
+            "end": "00:00:43,174",
+            "vi": "quá dày đặc."
+        },
+        {
+            "start": "00:00:44,294",
+            "end": "00:00:44,554",
+            "vi": "Vì vậy,"
+        },
+        {
+            "start": "00:00:44,554",
+            "end": "00:00:50,334",
+            "vi": "tôi cũng muốn chỉnh sửa nhẹ nhàng phụ đề tiếng Việt."
+        },
+        {
+            "start": "00:00:50,854",
+            "end": "00:00:52,394",
+            "vi": "Và giống như tiếng Hàn,"
+        },
+        {
+            "start": "00:00:52,394",
+            "end": "00:00:54,614",
+            "vi": "tôi muốn giới thiệu ký tự Hán"
+        },
+        {
+            "start": "00:00:54,983",
+            "end": "00:00:59,534",
+            "vi": "để thay thế một số từ tiếng Việt có nguồn gốc từ tiếng Trung."
+        }
+    ]
+}

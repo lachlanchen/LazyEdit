@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:26,954\",\n    \"end\": \"00:03:28,354\",\n    \"lang\": \"zh\",\n    \"text\": \"感谢观看\"\n  },\n  {\n    \"start\": \"00:03:28,378\",\n    \"end\": \"00:03:28,938\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:03:29,058\",\n    \"end\": \"00:03:29,678\",\n    \"lang\": \"zh\",\n    \"text\": \"我的另一首歌\"\n  },\n  {\n    \"start\": \"00:03:49,338\",\n    \"end\": \"00:03:52,718\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:52,718\",\n    \"end\": \"00:03:55,178\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:03:55,178\",\n    \"end\": \"00:03:58,058\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:58,058\",\n    \"end\": \"00:03:59,038\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:03:59,038\",\n    \"end\": \"00:04:00,338\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:04:01,038\",\n    \"end\": \"00:04:02,878\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:04:02,878\",\n    \"end\": \"00:04:05,258\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:04:05,258\",\n    \"end\": \"00:04:07,178\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:04:07,178\",\n    \"end\": \"00:04:07,938\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:04:09,038\",\n    \"end\": \"00:04:11,458\",\n    \"lang\": \"zh\",\n    \"text\": \"那是所有正确的歌词\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:26,954",
+            "end": "00:03:28,354",
+            "es": "Gracias por mirar",
+            "fr": "Merci de regarder",
+            "uk": "Дякуємо за перегляд"
+        },
+        {
+            "start": "00:03:28,378",
+            "end": "00:03:28,938",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:03:29,058",
+            "end": "00:03:29,678",
+            "es": "Mi otra canción",
+            "fr": "Ma autre chanson",
+            "uk": "Моя інша пісня"
+        },
+        {
+            "start": "00:03:49,338",
+            "end": "00:03:52,718",
+            "es": "Sin aroma de flores",
+            "fr": "Sans parfum de fleurs",
+            "uk": "Без аромату квітів"
+        },
+        {
+            "start": "00:03:52,718",
+            "end": "00:03:55,178",
+            "es": "Sin troncos de árboles",
+            "fr": "Sans troncs d'arbres",
+            "uk": "Без стовбурів дерев"
+        },
+        {
+            "start": "00:03:55,178",
+            "end": "00:03:58,058",
+            "es": "Sin aroma de flores",
+            "fr": "Sans parfum de fleurs",
+            "uk": "Без аромату квітів"
+        },
+        {
+            "start": "00:03:58,058",
+            "end": "00:03:59,038",
+            "es": "Sin troncos de árboles",
+            "fr": "Sans troncs d'arbres",
+            "uk": "Без стовбурів дерев"
+        },
+        {
+            "start": "00:03:59,038",
+            "end": "00:04:00,338",
+            "es": "Sin troncos de árboles",
+            "fr": "Sans troncs d'arbres",
+            "uk": "Без стовбурів дерев"
+        },
+        {
+            "start": "00:04:01,038",
+            "end": "00:04:02,878",
+            "es": "Sin aroma de flores",
+            "fr": "Sans parfum de fleurs",
+            "uk": "Без аромату квітів"
+        },
+        {
+            "start": "00:04:02,878",
+            "end": "00:04:05,258",
+            "es": "Sin troncos de árboles",
+            "fr": "Sans troncs d'arbres",
+            "uk": "Без стовбурів дерев"
+        },
+        {
+            "start": "00:04:05,258",
+            "end": "00:04:07,178",
+            "es": "Sin aroma de flores",
+            "fr": "Sans parfum de fleurs",
+            "uk": "Без аромату квітів"
+        },
+        {
+            "start": "00:04:07,178",
+            "end": "00:04:07,938",
+            "es": "Sin troncos de árboles",
+            "fr": "Sans troncs d'arbres",
+            "uk": "Без стовбурів дерев"
+        },
+        {
+            "start": "00:04:09,038",
+            "end": "00:04:11,458",
+            "es": "Esas son todas las letras correctas",
+            "fr": "Ce sont toutes les bonnes paroles",
+            "uk": "Це всі правильні слова"
+        }
+    ]
+}

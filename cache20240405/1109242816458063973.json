@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:01,546\",\n    \"end\": \"00:02:06,746\",\n    \"lang\": \"en\",\n    \"text\": \"So it's not important that you understand or not\"\n  },\n  {\n    \"start\": \"00:02:06,746\",\n    \"end\": \"00:02:07,906\",\n    \"lang\": \"en\",\n    \"text\": \"But you better understand\"\n  },\n  {\n    \"start\": \"00:02:12,226\",\n    \"end\": \"00:02:13,046\",\n    \"lang\": \"en\",\n    \"text\": \"If you don't understand,\"\n  },\n  {\n    \"start\": \"00:02:13,046\",\n    \"end\": \"00:02:13,346\",\n    \"lang\": \"en\",\n    \"text\": \"you're just a piece of shit\"\n  },\n  {\n    \"start\": \"00:02:13,385\",\n    \"end\": \"00:02:15,445\",\n    \"lang\": \"en\",\n    \"text\": \"If you don't do it,\"\n  },\n  {\n    \"start\": \"00:02:15,445\",\n    \"end\": \"00:02:16,525\",\n    \"lang\": \"en\",\n    \"text\": \"you're a loser.\"\n  },\n  {\n    \"start\": \"00:02:16,546\",\n    \"end\": \"00:02:16,866\",\n    \"lang\": \"en\",\n    \"text\": \"Nowadays,\"\n  },\n  {\n    \"start\": \"00:02:16,866\",\n    \"end\": \"00:02:19,506\",\n    \"lang\": \"en\",\n    \"text\": \"the things are still okay.\"\n  },\n  {\n    \"start\": \"00:02:21,806\",\n    \"end\": \"00:02:23,566\",\n    \"lang\": \"en\",\n    \"text\": \"It's not a problem.\"\n  },\n  {\n    \"start\": \"00:02:26,026\",\n    \"end\": \"00:02:26,386\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:02:28,586\",\n    \"end\": \"00:02:29,166\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:01,546",
+            "end": "00:02:06,746",
+            "vi": "Vậy nên không quan trọng là bạn có hiểu hay không"
+        },
+        {
+            "start": "00:02:06,746",
+            "end": "00:02:07,906",
+            "vi": "Nhưng bạn tốt nhất là nên hiểu"
+        },
+        {
+            "start": "00:02:12,226",
+            "end": "00:02:13,046",
+            "vi": "Nếu bạn không hiểu,"
+        },
+        {
+            "start": "00:02:13,046",
+            "end": "00:02:13,346",
+            "vi": "bạn chỉ là kẻ vô dụng"
+        },
+        {
+            "start": "00:02:13,385",
+            "end": "00:02:15,445",
+            "vi": "Nếu bạn không làm điều đó,"
+        },
+        {
+            "start": "00:02:15,445",
+            "end": "00:02:16,525",
+            "vi": "bạn là người thất bại."
+        },
+        {
+            "start": "00:02:16,546",
+            "end": "00:02:16,866",
+            "vi": "Ngày nay,"
+        },
+        {
+            "start": "00:02:16,866",
+            "end": "00:02:19,506",
+            "vi": "mọi thứ vẫn ổn."
+        },
+        {
+            "start": "00:02:21,806",
+            "end": "00:02:23,566",
+            "vi": "Không phải là vấn đề."
+        },
+        {
+            "start": "00:02:26,026",
+            "end": "00:02:26,386",
+            "vi": "Được."
+        },
+        {
+            "start": "00:02:28,586",
+            "end": "00:02:29,166",
+            "vi": "Hẹn gặp lại."
+        }
+    ]
+}

@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,540\",\n    \"lang\": \"zh\",\n    \"text\": \"拆遷\"\n  },\n  {\n    \"start\": \"00:00:03,682\",\n    \"end\": \"00:00:05,022\",\n    \"lang\": \"en\",\n    \"text\": \"This is the cutest one.\"\n  },\n  {\n    \"start\": \"00:00:16,492\",\n    \"end\": \"00:00:18,442\",\n    \"lang\": \"en\",\n    \"text\": \"How do they...\"\n  },\n  {\n    \"start\": \"00:00:18,442\",\n    \"end\": \"00:00:18,902\",\n    \"lang\": \"en\",\n    \"text\": \"Shiba,\"\n  },\n  {\n    \"start\": \"00:00:18,902\",\n    \"end\": \"00:00:19,162\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:00:19,921\",\n    \"end\": \"00:00:21,162\",\n    \"lang\": \"en\",\n    \"text\": \"Is that a Chai-shun?\"\n  },\n  {\n    \"start\": \"00:00:22,042\",\n    \"end\": \"00:00:22,782\",\n    \"lang\": \"en\",\n    \"text\": \"Shiba.\"\n  },\n  {\n    \"start\": \"00:00:23,802\",\n    \"end\": \"00:00:24,582\",\n    \"lang\": \"en\",\n    \"text\": \"In Japanese.\"\n  },\n  {\n    \"start\": \"00:00:27,042\",\n    \"end\": \"00:00:27,782\",\n    \"lang\": \"en\",\n    \"text\": \"Right.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,540",
+            "en": "Demolition",
+            "zh": "拆遷",
+            "ar": "هدم"
+        },
+        {
+            "start": "00:00:03,682",
+            "end": "00:00:05,022",
+            "en": "This is the cutest one.",
+            "zh": "这是最可爱的一个。",
+            "ar": "هذا هو الأجمل."
+        },
+        {
+            "start": "00:00:16,492",
+            "end": "00:00:18,442",
+            "en": "How do they...",
+            "zh": "他们怎么...",
+            "ar": "كيف يفعلون..."
+        },
+        {
+            "start": "00:00:18,442",
+            "end": "00:00:18,902",
+            "en": "Shiba,",
+            "zh": "柴犬，",
+            "ar": "شيبا،"
+        },
+        {
+            "start": "00:00:18,902",
+            "end": "00:00:19,162",
+            "en": "right?",
+            "zh": "对吧？",
+            "ar": "أليس كذلك؟"
+        },
+        {
+            "start": "00:00:19,921",
+            "end": "00:00:21,162",
+            "en": "Is that a Shiba?",
+            "zh": "那是柴犬吗？",
+            "ar": "هل هذا شيبا؟"
+        },
+        {
+            "start": "00:00:22,042",
+            "end": "00:00:22,782",
+            "en": "Shiba.",
+            "zh": "柴犬。",
+            "ar": "شيبا."
+        },
+        {
+            "start": "00:00:23,802",
+            "end": "00:00:24,582",
+            "en": "In Japanese.",
+            "zh": "用日语。",
+            "ar": "باليابانية."
+        },
+        {
+            "start": "00:00:27,042",
+            "end": "00:00:27,782",
+            "en": "Right.",
+            "zh": "对。",
+            "ar": "صحيح."
+        }
+    ]
+}

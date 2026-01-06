@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:08,740\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our lunch with this fried chicken wing and red noodles.\"\n  },\n  {\n    \"start\": \"00:00:10,082\",\n    \"end\": \"00:00:11,062\",\n    \"lang\": \"zh\",\n    \"text\": \"这是螺蛳粉啊\"\n  },\n  {\n    \"start\": \"00:00:11,242\",\n    \"end\": \"00:00:11,922\",\n    \"lang\": \"zh\",\n    \"text\": \"螺蛳粉\"\n  },\n  {\n    \"start\": \"00:00:12,610\",\n    \"end\": \"00:00:13,190\",\n    \"lang\": \"ja\",\n    \"text\": \"ごめんなさい\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:08,740",
+            "ko": "이것이 우리의 점심입니다. 이건 바삭바삭한 치킨 윙과 빨간 면이에요."
+        },
+        {
+            "start": "00:00:10,082",
+            "end": "00:00:11,062",
+            "ko": "이건 루오시펀이에요"
+        },
+        {
+            "start": "00:00:11,242",
+            "end": "00:00:11,922",
+            "ko": "루오시펀"
+        },
+        {
+            "start": "00:00:12,610",
+            "end": "00:00:13,190",
+            "ko": "죄송합니다"
+        }
+    ]
+}

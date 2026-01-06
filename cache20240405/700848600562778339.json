@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:11,234\",\n    \"end\": \"00:01:13,114\",\n    \"lang\": \"en\",\n    \"text\": \"So this is,\"\n  },\n  {\n    \"start\": \"00:01:13,114\",\n    \"end\": \"00:01:18,814\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's Yangzhou fried rice.\"\n  },\n  {\n    \"start\": \"00:01:30,814\",\n    \"end\": \"00:01:34,274\",\n    \"lang\": \"en\",\n    \"text\": \"It's really good.\"\n  },\n  {\n    \"start\": \"00:01:34,434\",\n    \"end\": \"00:01:34,454\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:01:34,554\",\n    \"end\": \"00:01:35,234\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:01:35,234\",\n    \"end\": \"00:01:35,574\",\n    \"lang\": \"en\",\n    \"text\": \"thanks.\"\n  },\n  {\n    \"start\": \"00:01:45,054\",\n    \"end\": \"00:01:45,994\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:47,034\",\n    \"end\": \"00:01:48,174\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:11,234",
+            "end": "00:01:13,114",
+            "es": "Entonces esto es,",
+            "fr": "Alors ceci est,",
+            "uk": "Отже, це,"
+        },
+        {
+            "start": "00:01:13,114",
+            "end": "00:01:18,814",
+            "es": "No sé si es arroz frito al estilo Yangzhou.",
+            "fr": "Je ne sais pas si c'est du riz frit à la Yangzhou.",
+            "uk": "Не знаю, чи це смажений рис по-Янчжоу."
+        },
+        {
+            "start": "00:01:30,814",
+            "end": "00:01:34,274",
+            "es": "Está realmente bueno.",
+            "fr": "C'est vraiment bon.",
+            "uk": "Це справді добре."
+        },
+        {
+            "start": "00:01:34,434",
+            "end": "00:01:34,454",
+            "es": "Perdón.",
+            "fr": "Pardon.",
+            "uk": "Вибачте."
+        },
+        {
+            "start": "00:01:34,554",
+            "end": "00:01:35,234",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "О,"
+        },
+        {
+            "start": "00:01:35,234",
+            "end": "00:01:35,574",
+            "es": "gracias.",
+            "fr": "merci.",
+            "uk": "дякую."
+        },
+        {
+            "start": "00:01:45,054",
+            "end": "00:01:45,994",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:01:47,034",
+            "end": "00:01:48,174",
+            "es": "Nos vemos.",
+            "fr": "À bientôt.",
+            "uk": "Бачимось."
+        }
+    ]
+}

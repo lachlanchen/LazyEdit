@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,760\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:00,760\",\n    \"end\": \"00:00:04,059\",\n    \"lang\": \"en\",\n    \"text\": \"I believe we have some small improvement,\"\n  },\n  {\n    \"start\": \"00:00:04,059\",\n    \"end\": \"00:00:05,860\",\n    \"lang\": \"en\",\n    \"text\": \"small progress.\"\n  },\n  {\n    \"start\": \"00:00:07,040\",\n    \"end\": \"00:00:07,160\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:07,160\",\n    \"end\": \"00:00:09,000\",\n    \"lang\": \"en\",\n    \"text\": \"our glass,\"\n  },\n  {\n    \"start\": \"00:00:09,000\",\n    \"end\": \"00:00:11,100\",\n    \"lang\": \"en\",\n    \"text\": \"this is some little glass.\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:12,620\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:16,460\",\n    \"lang\": \"en\",\n    \"text\": \"I'm going to put it here.\"\n  },\n  {\n    \"start\": \"00:00:16,482\",\n    \"end\": \"00:00:17,482\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花,\"\n  },\n  {\n    \"start\": \"00:00:17,482\",\n    \"end\": \"00:00:20,242\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香,\"\n  },\n  {\n    \"start\": \"00:00:20,242\",\n    \"end\": \"00:00:22,902\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树根\"\n  },\n  {\n    \"start\": \"00:00:24,802\",\n    \"end\": \"00:00:27,022\",\n    \"lang\": \"zh\",\n    \"text\": \"我是一个无人知道的小草\"\n  },\n  {\n    \"start\": \"00:00:51,162\",\n    \"end\": \"00:00:52,542\",\n    \"lang\": \"zh\",\n    \"text\": \"谢谢观看\"\n  },\n  {\n    \"start\": \"00:00:52,578\",\n    \"end\": \"00:00:54,838\",\n    \"lang\": \"en\",\n    \"text\": \"not perfect but there is still some improvement.\"\n  },\n  {\n    \"start\": \"00:00:54,838\",\n    \"end\": \"00:01:00,078\",\n    \"lang\": \"en\",\n    \"text\": \"And I can't catch the tune when singing it\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,760",
+            "ja": "そう、"
+        },
+        {
+            "start": "00:00:00,760",
+            "end": "00:00:04,059",
+            "ja": "少しだけ進歩があったと思います、"
+        },
+        {
+            "start": "00:00:04,059",
+            "end": "00:00:05,860",
+            "ja": "小さな進歩です。"
+        },
+        {
+            "start": "00:00:07,040",
+            "end": "00:00:07,160",
+            "ja": "そう、"
+        },
+        {
+            "start": "00:00:07,160",
+            "end": "00:00:09,000",
+            "ja": "私たちのグラス、"
+        },
+        {
+            "start": "00:00:09,000",
+            "end": "00:00:11,100",
+            "ja": "これは小さなグラスです。"
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:12,620",
+            "ja": "オーケー。"
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:16,460",
+            "ja": "ここに置きます。"
+        },
+        {
+            "start": "00:00:16,482",
+            "end": "00:00:17,482",
+            "ja": "花はなく、"
+        },
+        {
+            "start": "00:00:17,482",
+            "end": "00:00:20,242",
+            "ja": "花の香りもなく、"
+        },
+        {
+            "start": "00:00:20,242",
+            "end": "00:00:22,902",
+            "ja": "木の根もない"
+        },
+        {
+            "start": "00:00:24,802",
+            "end": "00:00:27,022",
+            "ja": "誰にも知られていない小さな草です"
+        },
+        {
+            "start": "00:00:51,162",
+            "end": "00:00:52,542",
+            "ja": "ご覧いただきありがとうございます"
+        },
+        {
+            "start": "00:00:52,578",
+            "end": "00:00:54,838",
+            "ja": "完璧ではありませんが、少しは進歩があるんです。"
+        },
+        {
+            "start": "00:00:54,838",
+            "end": "00:01:00,078",
+            "ja": "そして、それを歌う時にメロディーをつかむことができません"
+        }
+    ]
+}

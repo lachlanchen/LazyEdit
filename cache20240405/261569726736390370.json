@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,060\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:01,060\",\n    \"end\": \"00:00:02,360\",\n    \"lang\": \"en\",\n    \"text\": \"this is UDM.\"\n  },\n  {\n    \"start\": \"00:00:02,946\",\n    \"end\": \"00:00:03,446\",\n    \"lang\": \"zh\",\n    \"text\": \"但是\"\n  },\n  {\n    \"start\": \"00:00:04,545\",\n    \"end\": \"00:00:05,246\",\n    \"lang\": \"zh\",\n    \"text\": \"不用\"\n  },\n  {\n    \"start\": \"00:00:06,306\",\n    \"end\": \"00:00:07,686\",\n    \"lang\": \"en\",\n    \"text\": \"eat around the world,\"\n  },\n  {\n    \"start\": \"00:00:07,686\",\n    \"end\": \"00:00:10,046\",\n    \"lang\": \"en\",\n    \"text\": \"that's the best flavor is the sword.\"\n  },\n  {\n    \"start\": \"00:00:11,650\",\n    \"end\": \"00:00:11,890\",\n    \"lang\": \"en\",\n    \"text\": \"start\"\n  },\n  {\n    \"start\": \"00:00:12,386\",\n    \"end\": \"00:00:13,666\",\n    \"lang\": \"en\",\n    \"text\": \"walk around the world,\"\n  },\n  {\n    \"start\": \"00:00:14,786\",\n    \"end\": \"00:00:17,506\",\n    \"lang\": \"en\",\n    \"text\": \"and the best people is your mom.\"\n  },\n  {\n    \"start\": \"00:00:18,786\",\n    \"end\": \"00:00:20,366\",\n    \"lang\": \"en\",\n    \"text\": \"So this book,\"\n  },\n  {\n    \"start\": \"00:00:20,366\",\n    \"end\": \"00:00:20,966\",\n    \"lang\": \"en\",\n    \"text\": \"I think,\"\n  },\n  {\n    \"start\": \"00:00:21,986\",\n    \"end\": \"00:00:22,506\",\n    \"lang\": \"zh\",\n    \"text\": \"frame 里面 现在 what\"\n  },\n  {\n    \"start\": \"00:00:24,226\",\n    \"end\": \"00:00:25,086\",\n    \"lang\": \"en\",\n    \"text\": \"a salty culture,\"\n  },\n  {\n    \"start\": \"00:00:25,086\",\n    \"end\": \"00:00:26,306\",\n    \"lang\": \"en\",\n    \"text\": \"S-A-L-T,\"\n  },\n  {\n    \"start\": \"00:00:26,306\",\n    \"end\": \"00:00:28,326\",\n    \"lang\": \"en\",\n    \"text\": \"salty culture in my hometown.\"\n  },\n  {\n    \"start\": \"00:00:30,594\",\n    \"end\": \"00:00:32,774\",\n    \"lang\": \"zh\",\n    \"text\": \"我们的麻辣烧鱼汤很出名\"\n  },\n  {\n    \"start\": \"00:00:35,490\",\n    \"end\": \"00:00:37,030\",\n    \"lang\": \"en\",\n    \"text\": \"and it's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:38,250\",\n    \"end\": \"00:00:38,890\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,060",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:01,060",
+            "end": "00:00:02,360",
+            "es": "esto es UDM.",
+            "fr": "c'est UDM.",
+            "uk": "це UDM."
+        },
+        {
+            "start": "00:00:02,946",
+            "end": "00:00:03,446",
+            "es": "pero",
+            "fr": "mais",
+            "uk": "але"
+        },
+        {
+            "start": "00:00:04,545",
+            "end": "00:00:05,246",
+            "es": "no necesitas",
+            "fr": "pas besoin",
+            "uk": "не потрібно"
+        },
+        {
+            "start": "00:00:06,306",
+            "end": "00:00:07,686",
+            "es": "comer alrededor del mundo,",
+            "fr": "manger autour du monde,",
+            "uk": "їсти навколо світу,"
+        },
+        {
+            "start": "00:00:07,686",
+            "end": "00:00:10,046",
+            "es": "ese es el mejor sabor, es la espada.",
+            "fr": "c'est le meilleur goût, c'est l'épée.",
+            "uk": "це найкращий смак, то є меч."
+        },
+        {
+            "start": "00:00:11,650",
+            "end": "00:00:11,890",
+            "es": "empieza",
+            "fr": "commence",
+            "uk": "початок"
+        },
+        {
+            "start": "00:00:12,386",
+            "end": "00:00:13,666",
+            "es": "camina alrededor del mundo,",
+            "fr": "marche autour du monde,",
+            "uk": "гуляй навколо світу,"
+        },
+        {
+            "start": "00:00:14,786",
+            "end": "00:00:17,506",
+            "es": "y la mejor persona es tu madre.",
+            "fr": "et la meilleure personne est ta mère.",
+            "uk": "і найкраща людина - це твоя мама."
+        },
+        {
+            "start": "00:00:18,786",
+            "end": "00:00:20,366",
+            "es": "Así este libro,",
+            "fr": "Alors ce livre,",
+            "uk": "Отже, ця книга,"
+        },
+        {
+            "start": "00:00:20,366",
+            "end": "00:00:20,966",
+            "es": "creo,",
+            "fr": "je pense,",
+            "uk": "я думаю,"
+        },
+        {
+            "start": "00:00:21,986",
+            "end": "00:00:22,506",
+            "es": "en el marco ahora qué",
+            "fr": "dans le cadre maintenant quoi",
+            "uk": "в рамці зараз що"
+        },
+        {
+            "start": "00:00:24,226",
+            "end": "00:00:25,086",
+            "es": "una cultura salada,",
+            "fr": "une culture salée,",
+            "uk": "солона культура,"
+        },
+        {
+            "start": "00:00:25,086",
+            "end": "00:00:26,306",
+            "es": "S-A-L,",
+            "fr": "S-A-L,",
+            "uk": "С-О-Л,"
+        },
+        {
+            "start": "00:00:26,306",
+            "end": "00:00:28,326",
+            "es": "cultura salada en mi ciudad natal.",
+            "fr": "culture salée dans ma ville natale.",
+            "uk": "солона культура в моєму рідному місті."
+        },
+        {
+            "start": "00:00:30,594",
+            "end": "00:00:32,774",
+            "es": "Nuestra sopa de pescado picante es muy famosa",
+            "fr": "Notre soupe de poisson épicée est très célèbre",
+            "uk": "Наш суп з гострою рибою дуже відомий"
+        },
+        {
+            "start": "00:00:35,490",
+            "end": "00:00:37,030",
+            "es": "y es magnífico.",
+            "fr": "et c'est magnifique.",
+            "uk": "і це чудово."
+        },
+        {
+            "start": "00:00:38,250",
+            "end": "00:00:38,890",
+            "es": "De acuerdo.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        }
+    ]
+}

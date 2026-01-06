@@ -1,0 +1,84 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,900\",\n    \"lang\": \"en\",\n    \"text\": \"we will come back to the dog club\"\n  },\n  {\n    \"start\": \"00:00:03,639\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"it's a dog paradise\"\n  },\n  {\n    \"start\": \"00:00:08,066\",\n    \"end\": \"00:00:08,606\",\n    \"lang\": \"ja\",\n    \"text\": \"これは\"\n  },\n  {\n    \"start\": \"00:00:09,566\",\n    \"end\": \"00:00:11,106\",\n    \"lang\": \"ja\",\n    \"text\": \"インドゥクナブティス\"\n  },\n  {\n    \"start\": \"00:00:11,938\",\n    \"end\": \"00:00:15,038\",\n    \"lang\": \"en\",\n    \"text\": \"They are so happy,\"\n  },\n  {\n    \"start\": \"00:00:15,038\",\n    \"end\": \"00:00:18,938\",\n    \"lang\": \"en\",\n    \"text\": \"making friends.\"\n  },\n  {\n    \"start\": \"00:00:25,878\",\n    \"end\": \"00:00:28,038\",\n    \"lang\": \"en\",\n    \"text\": \"Look at this dog fight.\"\n  },\n  {\n    \"start\": \"00:00:30,658\",\n    \"end\": \"00:00:38,678\",\n    \"lang\": \"en\",\n    \"text\": \"They want to fight but they also hold their body.\"\n  },\n  {\n    \"start\": \"00:00:48,038\",\n    \"end\": \"00:00:49,378\",\n    \"lang\": \"en\",\n    \"text\": \"It's a triple,\"\n  },\n  {\n    \"start\": \"00:00:49,378\",\n    \"end\": \"00:00:51,038\",\n    \"lang\": \"en\",\n    \"text\": \"it's a trial fight.\"\n  },\n  {\n    \"start\": \"00:00:55,118\",\n    \"end\": \"00:00:58,518\",\n    \"lang\": \"en\",\n    \"text\": \"There are more dogs during this fight.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,900",
+            "en": "we will come back to the dog club",
+            "zh": "我们会回到狗俱乐部",
+            "ar": "سنعود إلى نادي الكلاب"
+        },
+        {
+            "start": "00:00:03,639",
+            "end": "00:00:05,140",
+            "en": "it's a dog paradise",
+            "zh": "这是一个狗的天堂",
+            "ar": "إنه جنة الكلاب"
+        },
+        {
+            "start": "00:00:08,066",
+            "end": "00:00:08,606",
+            "en": "This is",
+            "zh": "这是",
+            "ar": "هذا هو",
+            "ja": "これは"
+        },
+        {
+            "start": "00:00:09,566",
+            "end": "00:00:11,106",
+            "en": "Introduction",
+            "zh": "介绍",
+            "ar": "مقدمة",
+            "ja": "インドゥクナブティス"
+        },
+        {
+            "start": "00:00:11,938",
+            "end": "00:00:15,038",
+            "en": "They are so happy,",
+            "zh": "它们非常开心，",
+            "ar": "إنهم سعداء جدا،"
+        },
+        {
+            "start": "00:00:15,038",
+            "end": "00:00:18,938",
+            "en": "making friends.",
+            "zh": "结交朋友。",
+            "ar": "يكونون أصدقاء."
+        },
+        {
+            "start": "00:00:25,878",
+            "end": "00:00:28,038",
+            "en": "Look at this dog fight.",
+            "zh": "看这场狗斗。",
+            "ar": "انظروا إلى هذه المعركة بين الكلاب."
+        },
+        {
+            "start": "00:00:30,658",
+            "end": "00:00:38,678",
+            "en": "They want to fight but they also hold their body.",
+            "zh": "它们想要战斗但也保持自己的身体。",
+            "ar": "إنهم يريدون القتال ولكنهم أيضاً يتحكمون في أجسادهم."
+        },
+        {
+            "start": "00:00:48,038",
+            "end": "00:00:49,378",
+            "en": "It's a triple,",
+            "zh": "这是三重的，",
+            "ar": "إنه ثلاثي،"
+        },
+        {
+            "start": "00:00:49,378",
+            "end": "00:00:51,038",
+            "en": "it's a trial fight.",
+            "zh": "这是一场试战。",
+            "ar": "إنها معركة تجريبية."
+        },
+        {
+            "start": "00:00:55,118",
+            "end": "00:00:58,518",
+            "en": "There are more dogs during this fight.",
+            "zh": "在这场战斗中有更多的狗。",
+            "ar": "هناك المزيد من الكلاب خلال هذه المعركة."
+        }
+    ]
+}

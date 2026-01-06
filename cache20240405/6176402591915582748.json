@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,400\",\n    \"lang\": \"ja\",\n    \"text\": \"影の線を走りました\"\n  },\n  {\n    \"start\": \"00:00:02,146\",\n    \"end\": \"00:00:03,206\",\n    \"lang\": \"en\",\n    \"text\": \"This is what I bought,\"\n  },\n  {\n    \"start\": \"00:00:03,206\",\n    \"end\": \"00:00:03,826\",\n    \"lang\": \"en\",\n    \"text\": \"banana,\"\n  },\n  {\n    \"start\": \"00:00:03,826\",\n    \"end\": \"00:00:04,706\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:00:04,706\",\n    \"end\": \"00:00:05,726\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:05,726\",\n    \"end\": \"00:00:07,266\",\n    \"lang\": \"en\",\n    \"text\": \"bean juice,\"\n  },\n  {\n    \"start\": \"00:00:07,266\",\n    \"end\": \"00:00:12,166\",\n    \"lang\": \"en\",\n    \"text\": \"and various kinds of vegetables.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,400",
+            "es": "Corrí a lo largo de la línea de la sombra",
+            "fr": "J'ai couru le long de la ligne d'ombre",
+            "uk": "Я біг по лінії тіні"
+        },
+        {
+            "start": "00:00:02,146",
+            "end": "00:00:03,206",
+            "es": "Esto es lo que compré,",
+            "fr": "Voici ce que j'ai acheté,",
+            "uk": "Ось що я купив,"
+        },
+        {
+            "start": "00:00:03,206",
+            "end": "00:00:03,826",
+            "es": "plátano,",
+            "fr": "banane,",
+            "uk": "банан,"
+        },
+        {
+            "start": "00:00:03,826",
+            "end": "00:00:04,706",
+            "es": "castaña,",
+            "fr": "châtaigne,",
+            "uk": "каштан,"
+        },
+        {
+            "start": "00:00:04,706",
+            "end": "00:00:05,726",
+            "es": "arándano,",
+            "fr": "myrtille,",
+            "uk": "чорниця,"
+        },
+        {
+            "start": "00:00:05,726",
+            "end": "00:00:07,266",
+            "es": "jugo de frijoles,",
+            "fr": "jus de haricot,",
+            "uk": "сік з бобів,"
+        },
+        {
+            "start": "00:00:07,266",
+            "end": "00:00:12,166",
+            "es": "y varios tipos de verduras.",
+            "fr": "et divers types de légumes.",
+            "uk": "та різноманітні види овочів."
+        }
+    ]
+}

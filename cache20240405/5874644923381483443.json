@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,880\",\n    \"end\": \"00:00:04,040\",\n    \"lang\": \"zh\",\n    \"text\": \"最奇怪的那个绳子上面\"\n  },\n  {\n    \"start\": \"00:00:05,260\",\n    \"end\": \"00:00:06,620\",\n    \"lang\": \"zh\",\n    \"text\": \"多么大一个它牙\"\n  },\n  {\n    \"start\": \"00:00:06,620\",\n    \"end\": \"00:00:09,080\",\n    \"lang\": \"zh\",\n    \"text\": \"它还没把它牙别没爆呢\"\n  },\n  {\n    \"start\": \"00:00:10,178\",\n    \"end\": \"00:00:10,998\",\n    \"lang\": \"en\",\n    \"text\": \"miyaball\"\n  },\n  {\n    \"start\": \"00:00:12,290\",\n    \"end\": \"00:00:14,130\",\n    \"lang\": \"zh\",\n    \"text\": \"哪一个还是勇猛龟\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,880",
+            "end": "00:00:04,040",
+            "es": "El más extraño de ese pedazo de cuerda",
+            "fr": "Le plus étrange de cette corde",
+            "uk": "Найбільш дивний той шматок мотузки"
+        },
+        {
+            "start": "00:00:05,260",
+            "end": "00:00:06,620",
+            "es": "Qué grande es su diente",
+            "fr": "Comme sa dent est grande",
+            "uk": "Який великий його зуб"
+        },
+        {
+            "start": "00:00:06,620",
+            "end": "00:00:09,080",
+            "es": "Aún no ha explotado su diente",
+            "fr": "Sa dent n'a pas encore explosé",
+            "uk": "Його зуб ще не вибухнув"
+        },
+        {
+            "start": "00:00:10,178",
+            "end": "00:00:10,998",
+            "es": "miyaball",
+            "fr": "miyaball",
+            "uk": "miyaball"
+        },
+        {
+            "start": "00:00:12,290",
+            "end": "00:00:14,130",
+            "es": "¿Cuál de ellos es Blastoise?",
+            "fr": "Lequel d'entre eux est Tortank ?",
+            "uk": "Який з них є Бластойз?"
+        }
+    ]
+}

@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:10,406\",\n    \"end\": \"00:01:13,086\",\n    \"lang\": \"en\",\n    \"text\": \"I used to have a dream that I could build a building\"\n  },\n  {\n    \"start\": \"00:01:13,516\",\n    \"end\": \"00:01:15,086\",\n    \"lang\": \"en\",\n    \"text\": \"with 23 floors.\"\n  },\n  {\n    \"start\": \"00:01:15,706\",\n    \"end\": \"00:01:20,546\",\n    \"lang\": \"en\",\n    \"text\": \"So the top floor is letting me eat per weather food\"\n  },\n  {\n    \"start\": \"00:01:21,026\",\n    \"end\": \"00:01:24,926\",\n    \"lang\": \"en\",\n    \"text\": \"and without price and no need to pay.\"\n  },\n  {\n    \"start\": \"00:01:25,366\",\n    \"end\": \"00:01:30,606\",\n    \"lang\": \"en\",\n    \"text\": \"It's an invitation mechanism.\"\n  },\n  {\n    \"start\": \"00:01:31,166\",\n    \"end\": \"00:01:32,546\",\n    \"lang\": \"en\",\n    \"text\": \"So only you are invited,\"\n  },\n  {\n    \"start\": \"00:01:32,666\",\n    \"end\": \"00:01:35,806\",\n    \"lang\": \"en\",\n    \"text\": \"you can enjoy the food at the 23rd floor\"\n  },\n  {\n    \"start\": \"00:01:39,466\",\n    \"end\": \"00:01:40,266\",\n    \"lang\": \"en\",\n    \"text\": \"in this building.\"\n  },\n  {\n    \"start\": \"00:01:41,186\",\n    \"end\": \"00:01:47,426\",\n    \"lang\": \"en\",\n    \"text\": \"And I will recruit the best chef around the world\"\n  },\n  {\n    \"start\": \"00:01:47,716\",\n    \"end\": \"00:01:52,146\",\n    \"lang\": \"en\",\n    \"text\": \"and give them extremely high salary.\"\n  },\n  {\n    \"start\": \"00:01:56,156\",\n    \"end\": \"00:01:59,046\",\n    \"lang\": \"en\",\n    \"text\": \"And they didn't care about KPI,\"\n  },\n  {\n    \"start\": \"00:01:59,046\",\n    \"end\": \"00:02:00,205\",\n    \"lang\": \"en\",\n    \"text\": \"performance,\"\n  },\n  {\n    \"start\": \"00:02:00,446\",\n    \"end\": \"00:02:01,546\",\n    \"lang\": \"en\",\n    \"text\": \"all these things,\"\n  },\n  {\n    \"start\": \"00:02:01,546\",\n    \"end\": \"00:02:03,546\",\n    \"lang\": \"en\",\n    \"text\": \"they just focus on\"\n  },\n  {\n    \"start\": \"00:02:04,096\",\n    \"end\": \"00:02:06,186\",\n    \"lang\": \"en\",\n    \"text\": \"provide the best food ever.\"\n  },\n  {\n    \"start\": \"00:02:06,946\",\n    \"end\": \"00:02:07,546\",\n    \"lang\": \"en\",\n    \"text\": \"That's my dream.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:10,406",
+            "end": "00:01:13,086",
+            "vi": "Ngày xưa tôi có một giấc mơ là mình có thể xây một tòa nhà"
+        },
+        {
+            "start": "00:01:13,516",
+            "end": "00:01:15,086",
+            "vi": "với 23 tầng."
+        },
+        {
+            "start": "00:01:15,706",
+            "end": "00:01:20,546",
+            "vi": "Vì vậy, tầng cao nhất cho phép tôi ăn thực phẩm theo thời tiết"
+        },
+        {
+            "start": "00:01:21,026",
+            "end": "00:01:24,926",
+            "vi": "mà không cần giá cả và không cần phải trả."
+        },
+        {
+            "start": "00:01:25,366",
+            "end": "00:01:30,606",
+            "vi": "Đó là một cơ chế mời."
+        },
+        {
+            "start": "00:01:31,166",
+            "end": "00:01:32,546",
+            "vi": "Vì vậy, chỉ khi bạn được mời,"
+        },
+        {
+            "start": "00:01:32,666",
+            "end": "00:01:35,806",
+            "vi": "bạn mới có thể thưởng thức thức ăn ở tầng 23"
+        },
+        {
+            "start": "00:01:39,466",
+            "end": "00:01:40,266",
+            "vi": "trong tòa nhà này."
+        },
+        {
+            "start": "00:01:41,186",
+            "end": "00:01:47,426",
+            "vi": "Và tôi sẽ tuyển chọn những đầu bếp giỏi nhất trên thế giới"
+        },
+        {
+            "start": "00:01:47,716",
+            "end": "00:01:52,146",
+            "vi": "và trả lương cực kỳ cao cho họ."
+        },
+        {
+            "start": "00:01:56,156",
+            "end": "00:01:59,046",
+            "vi": "Và họ không quan tâm đến KPI,"
+        },
+        {
+            "start": "00:01:59,046",
+            "end": "00:02:00,205",
+            "vi": "hiệu suất,"
+        },
+        {
+            "start": "00:02:00,446",
+            "end": "00:02:01,546",
+            "vi": "tất cả những thứ này,"
+        },
+        {
+            "start": "00:02:01,546",
+            "end": "00:02:03,546",
+            "vi": "họ chỉ tập trung vào"
+        },
+        {
+            "start": "00:02:04,096",
+            "end": "00:02:06,186",
+            "vi": "cung cấp thức ăn ngon nhất có thể."
+        },
+        {
+            "start": "00:02:06,946",
+            "end": "00:02:07,546",
+            "vi": "Đó là giấc mơ của tôi."
+        }
+    ]
+}

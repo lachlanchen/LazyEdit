@@ -1,0 +1,115 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:05:06,118\",\n    \"end\": \"00:05:07,718\",\n    \"lang\": \"en\",\n    \"text\": \"life everyday.\"\n  },\n  {\n    \"start\": \"00:05:08,398\",\n    \"end\": \"00:05:09,578\",\n    \"lang\": \"en\",\n    \"text\": \"And um...\"\n  },\n  {\n    \"start\": \"00:05:10,210\",\n    \"end\": \"00:05:10,930\",\n    \"lang\": \"ja\",\n    \"text\": \"みくねっす、\"\n  },\n  {\n    \"start\": \"00:05:10,930\",\n    \"end\": \"00:05:11,830\",\n    \"lang\": \"ja\",\n    \"text\": \"ほうちゅるり、\"\n  },\n  {\n    \"start\": \"00:05:11,830\",\n    \"end\": \"00:05:12,410\",\n    \"lang\": \"ja\",\n    \"text\": \"ぴー\"\n  },\n  {\n    \"start\": \"00:05:15,746\",\n    \"end\": \"00:05:16,766\",\n    \"lang\": \"en\",\n    \"text\": \"be comprehensive,\"\n  },\n  {\n    \"start\": \"00:05:16,766\",\n    \"end\": \"00:05:19,006\",\n    \"lang\": \"en\",\n    \"text\": \"inclusive,\"\n  },\n  {\n    \"start\": \"00:05:19,006\",\n    \"end\": \"00:05:20,746\",\n    \"lang\": \"en\",\n    \"text\": \"and fantastic.\"\n  },\n  {\n    \"start\": \"00:05:22,986\",\n    \"end\": \"00:05:26,206\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that's the right thing to do.\"\n  },\n  {\n    \"start\": \"00:05:26,506\",\n    \"end\": \"00:05:29,646\",\n    \"lang\": \"en\",\n    \"text\": \"But it doesn't mean that you don't learn,\"\n  },\n  {\n    \"start\": \"00:05:29,646\",\n    \"end\": \"00:05:30,606\",\n    \"lang\": \"en\",\n    \"text\": \"don't study.\"\n  },\n  {\n    \"start\": \"00:05:30,886\",\n    \"end\": \"00:05:31,726\",\n    \"lang\": \"en\",\n    \"text\": \"You can still study,\"\n  },\n  {\n    \"start\": \"00:05:31,726\",\n    \"end\": \"00:05:32,666\",\n    \"lang\": \"en\",\n    \"text\": \"you can still learn.\"\n  },\n  {\n    \"start\": \"00:05:33,386\",\n    \"end\": \"00:05:37,866\",\n    \"lang\": \"en\",\n    \"text\": \"It's a thing that is deep in your mind,\"\n  },\n  {\n    \"start\": \"00:05:39,466\",\n    \"end\": \"00:05:42,426\",\n    \"lang\": \"en\",\n    \"text\": \"for which you are desperate,\"\n  },\n  {\n    \"start\": \"00:05:42,426\",\n    \"end\": \"00:05:43,606\",\n    \"lang\": \"en\",\n    \"text\": \"you are crazy,\"\n  },\n  {\n    \"start\": \"00:05:43,606\",\n    \"end\": \"00:05:44,886\",\n    \"lang\": \"en\",\n    \"text\": \"you are eager.\"\n  },\n  {\n    \"start\": \"00:05:46,265\",\n    \"end\": \"00:05:48,126\",\n    \"lang\": \"en\",\n    \"text\": \"So you can still do it,\"\n  },\n  {\n    \"start\": \"00:05:48,126\",\n    \"end\": \"00:05:51,266\",\n    \"lang\": \"en\",\n    \"text\": \"you can still learn things,\"\n  },\n  {\n    \"start\": \"00:05:51,586\",\n    \"end\": \"00:05:55,746\",\n    \"lang\": \"en\",\n    \"text\": \"but it's not a thing that you escape from reality.\"\n  },\n  {\n    \"start\": \"00:05:56,525\",\n    \"end\": \"00:05:57,046\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:05:57,046\",\n    \"end\": \"00:05:58,706\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:05:06,118",
+            "end": "00:05:07,718",
+            "vi": "cuộc sống hàng ngày."
+        },
+        {
+            "start": "00:05:08,398",
+            "end": "00:05:09,578",
+            "vi": "Và ưm..."
+        },
+        {
+            "start": "00:05:10,210",
+            "end": "00:05:10,930",
+            "vi": "nó là một cái gì đó,"
+        },
+        {
+            "start": "00:05:10,930",
+            "end": "00:05:11,830",
+            "vi": "rất quan trọng,"
+        },
+        {
+            "start": "00:05:11,830",
+            "end": "00:05:12,410",
+            "vi": "nha"
+        },
+        {
+            "start": "00:05:15,746",
+            "end": "00:05:16,766",
+            "vi": "toàn diện,"
+        },
+        {
+            "start": "00:05:16,766",
+            "end": "00:05:19,006",
+            "vi": "bao quát,"
+        },
+        {
+            "start": "00:05:19,006",
+            "end": "00:05:20,746",
+            "vi": "và tuyệt vời."
+        },
+        {
+            "start": "00:05:22,986",
+            "end": "00:05:26,206",
+            "vi": "Tôi tin đó là điều đúng đắn cần làm."
+        },
+        {
+            "start": "00:05:26,506",
+            "end": "00:05:29,646",
+            "vi": "Nhưng điều đó không có nghĩa là bạn không học,"
+        },
+        {
+            "start": "00:05:29,646",
+            "end": "00:05:30,606",
+            "vi": "không nghiên cứu."
+        },
+        {
+            "start": "00:05:30,886",
+            "end": "00:05:31,726",
+            "vi": "Bạn vẫn có thể học,"
+        },
+        {
+            "start": "00:05:31,726",
+            "end": "00:05:32,666",
+            "vi": "vẫn có thể tiếp thu."
+        },
+        {
+            "start": "00:05:33,386",
+            "end": "00:05:37,866",
+            "vi": "Đó là thứ sâu thẳm trong tâm trí bạn,"
+        },
+        {
+            "start": "00:05:39,466",
+            "end": "00:05:42,426",
+            "vi": "vì điều mà bạn khao khát,"
+        },
+        {
+            "start": "00:05:42,426",
+            "end": "00:05:43,606",
+            "vi": "bạn điên cuồng,"
+        },
+        {
+            "start": "00:05:43,606",
+            "end": "00:05:44,886",
+            "vi": "bạn háo hức."
+        },
+        {
+            "start": "00:05:46,265",
+            "end": "00:05:48,126",
+            "vi": "Vì vậy, bạn vẫn có thể làm nó,"
+        },
+        {
+            "start": "00:05:48,126",
+            "end": "00:05:51,266",
+            "vi": "vẫn có thể học hỏi,"
+        },
+        {
+            "start": "00:05:51,586",
+            "end": "00:05:55,746",
+            "vi": "nhưng đó không phải là thứ để bạn trốn chạy từ thực tại."
+        },
+        {
+            "start": "00:05:56,525",
+            "end": "00:05:57,046",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:05:57,046",
+            "end": "00:05:58,706",
+            "vi": "hẹn gặp lại."
+        }
+    ]
+}

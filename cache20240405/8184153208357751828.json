@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:29,038\",\n    \"end\": \"00:01:31,698\",\n    \"lang\": \"en\",\n    \"text\": \"As I shared in the morning running,\"\n  },\n  {\n    \"start\": \"00:01:31,698\",\n    \"end\": \"00:01:35,658\",\n    \"lang\": \"en\",\n    \"text\": \"we all have our unique talent,\"\n  },\n  {\n    \"start\": \"00:01:35,658\",\n    \"end\": \"00:01:37,038\",\n    \"lang\": \"en\",\n    \"text\": \"our unique strength,\"\n  },\n  {\n    \"start\": \"00:01:38,438\",\n    \"end\": \"00:01:39,598\",\n    \"lang\": \"en\",\n    \"text\": \"our unique journey,\"\n  },\n  {\n    \"start\": \"00:01:39,598\",\n    \"end\": \"00:01:41,378\",\n    \"lang\": \"en\",\n    \"text\": \"our unique story.\"\n  },\n  {\n    \"start\": \"00:01:45,118\",\n    \"end\": \"00:01:52,098\",\n    \"lang\": \"en\",\n    \"text\": \"So there is no necessity to admire or to be proud of it.\"\n  },\n  {\n    \"start\": \"00:01:52,130\",\n    \"end\": \"00:01:53,570\",\n    \"lang\": \"zh\",\n    \"text\": \"尽量的是我们的阿灯玻璃\"\n  },\n  {\n    \"start\": \"00:02:11,202\",\n    \"end\": \"00:02:12,282\",\n    \"lang\": \"en\",\n    \"text\": \"And all your life,\"\n  },\n  {\n    \"start\": \"00:02:12,282\",\n    \"end\": \"00:02:14,042\",\n    \"lang\": \"en\",\n    \"text\": \"when you disappear,\"\n  },\n  {\n    \"start\": \"00:02:14,042\",\n    \"end\": \"00:02:22,762\",\n    \"lang\": \"en\",\n    \"text\": \"it can only happen inside this existence.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:29,038",
+            "end": "00:01:31,698",
+            "vi": "Như tôi đã chia sẻ vào buổi sáng chạy bộ,"
+        },
+        {
+            "start": "00:01:31,698",
+            "end": "00:01:35,658",
+            "vi": "mỗi người chúng ta đều có tài năng độc đáo của riêng mình,"
+        },
+        {
+            "start": "00:01:35,658",
+            "end": "00:01:37,038",
+            "vi": "sức mạnh độc đáo của riêng mình,"
+        },
+        {
+            "start": "00:01:38,438",
+            "end": "00:01:39,598",
+            "vi": "hành trình độc đáo của riêng mình,"
+        },
+        {
+            "start": "00:01:39,598",
+            "end": "00:01:41,378",
+            "vi": "câu chuyện độc đáo của riêng mình."
+        },
+        {
+            "start": "00:01:45,118",
+            "end": "00:01:52,098",
+            "vi": "Vì vậy, không cần thiết phải ngưỡng mộ hay tự hào về nó."
+        },
+        {
+            "start": "00:01:52,130",
+            "end": "00:01:53,570",
+            "vi": "Cố gắng là ánh sáng của chính chúng ta"
+        },
+        {
+            "start": "00:02:11,202",
+            "end": "00:02:12,282",
+            "vi": "Và suốt đời bạn,"
+        },
+        {
+            "start": "00:02:12,282",
+            "end": "00:02:14,042",
+            "vi": "khi bạn biến mất,"
+        },
+        {
+            "start": "00:02:14,042",
+            "end": "00:02:22,762",
+            "vi": "chỉ có thể xảy ra bên trong sự tồn tại này."
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"This is the first time I've seen the Hong Kong TV Mall.\"\n  },\n  {\n    \"start\": \"00:00:06,080\",\n    \"end\": \"00:00:06,960\",\n    \"lang\": \"en\",\n    \"text\": \"And it's terrible.\"\n  },\n  {\n    \"start\": \"00:00:07,440\",\n    \"end\": \"00:00:08,280\",\n    \"lang\": \"en\",\n    \"text\": \"It's primitive.\"\n  },\n  {\n    \"start\": \"00:00:08,740\",\n    \"end\": \"00:00:10,560\",\n    \"lang\": \"en\",\n    \"text\": \"And they have pieces like this.\"\n  },\n  {\n    \"start\": \"00:00:10,980\",\n    \"end\": \"00:00:12,700\",\n    \"lang\": \"en\",\n    \"text\": \"But it's so cool.\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:14,980\",\n    \"lang\": \"en\",\n    \"text\": \"Environment friendly.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,000",
+            "ja": "これは初めて見る香港のTVショッピングです。"
+        },
+        {
+            "start": "00:00:06,080",
+            "end": "00:00:06,960",
+            "ja": "そして、ひどいです。"
+        },
+        {
+            "start": "00:00:07,440",
+            "end": "00:00:08,280",
+            "ja": "原始的です。"
+        },
+        {
+            "start": "00:00:08,740",
+            "end": "00:00:10,560",
+            "ja": "こんな品物もあります。"
+        },
+        {
+            "start": "00:00:10,980",
+            "end": "00:00:12,700",
+            "ja": "でも、とてもクールです。"
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:14,980",
+            "ja": "環境に優しいです。"
+        }
+    ]
+}

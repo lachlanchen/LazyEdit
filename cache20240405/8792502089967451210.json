@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,680\",\n    \"lang\": \"en\",\n    \"text\": \"So cute!\"\n  },\n  {\n    \"start\": \"00:00:03,266\",\n    \"end\": \"00:00:04,126\",\n    \"lang\": \"zh\",\n    \"text\": \"好可爱呀这个\"\n  },\n  {\n    \"start\": \"00:00:04,994\",\n    \"end\": \"00:00:05,234\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:06,014\",\n    \"end\": \"00:00:06,534\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:07,394\",\n    \"end\": \"00:00:08,093\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:08,794\",\n    \"end\": \"00:00:09,134\",\n    \"lang\": \"en\",\n    \"text\": \"Annyeonghaseyo.\"\n  },\n  {\n    \"start\": \"00:00:12,482\",\n    \"end\": \"00:00:13,722\",\n    \"lang\": \"ja\",\n    \"text\": \"チーズソースハネス\"\n  },\n  {\n    \"start\": \"00:00:14,681\",\n    \"end\": \"00:00:16,001\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬はかわいいです\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                \"vi\": \"Vietnamese text\"  // Vietnamese translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,680",
+            "es": "¡Qué lindo!",
+            "fr": "Trop mignon !",
+            "vi": "Quá dễ thương!"
+        },
+        {
+            "start": "00:00:03,266",
+            "end": "00:00:04,126",
+            "es": "¡Este es tan lindo!",
+            "fr": "C'est tellement mignon !",
+            "vi": "Thật đáng yêu quá!"
+        },
+        {
+            "start": "00:00:04,994",
+            "end": "00:00:05,234",
+            "es": "Hola.",
+            "fr": "Bonjour.",
+            "vi": "Xin chào."
+        },
+        {
+            "start": "00:00:06,014",
+            "end": "00:00:06,534",
+            "es": "Hola.",
+            "fr": "Bonjour.",
+            "vi": "Xin chào."
+        },
+        {
+            "start": "00:00:07,394",
+            "end": "00:00:08,093",
+            "es": "Hola.",
+            "fr": "Bonjour.",
+            "vi": "Xin chào."
+        },
+        {
+            "start": "00:00:08,794",
+            "end": "00:00:09,134",
+            "es": "Annyeonghaseyo.",
+            "fr": "Annyeonghaseyo.",
+            "vi": "Annyeonghaseyo."
+        },
+        {
+            "start": "00:00:12,482",
+            "end": "00:00:13,722",
+            "es": "Salsa de queso por favor",
+            "fr": "Sauce fromage, s'il vous plaît",
+            "vi": "Cho tôi sốt phô mai"
+        },
+        {
+            "start": "00:00:14,681",
+            "end": "00:00:16,001",
+            "es": "Este perro es lindo",
+            "fr": "Ce chien est mignon",
+            "vi": "Con chó này rất dễ thương"
+        }
+    ]
+}

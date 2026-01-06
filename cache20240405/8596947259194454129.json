@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,760\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:00,760\",\n    \"end\": \"00:00:04,059\",\n    \"lang\": \"en\",\n    \"text\": \"I believe we have some small improvement,\"\n  },\n  {\n    \"start\": \"00:00:04,059\",\n    \"end\": \"00:00:05,860\",\n    \"lang\": \"en\",\n    \"text\": \"small progress.\"\n  },\n  {\n    \"start\": \"00:00:07,040\",\n    \"end\": \"00:00:07,160\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:07,160\",\n    \"end\": \"00:00:09,000\",\n    \"lang\": \"en\",\n    \"text\": \"our glass,\"\n  },\n  {\n    \"start\": \"00:00:09,000\",\n    \"end\": \"00:00:11,100\",\n    \"lang\": \"en\",\n    \"text\": \"this is some little glass.\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:12,620\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:16,460\",\n    \"lang\": \"en\",\n    \"text\": \"I'm going to put it here.\"\n  },\n  {\n    \"start\": \"00:00:16,482\",\n    \"end\": \"00:00:17,482\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花,\"\n  },\n  {\n    \"start\": \"00:00:17,482\",\n    \"end\": \"00:00:20,242\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香,\"\n  },\n  {\n    \"start\": \"00:00:20,242\",\n    \"end\": \"00:00:22,902\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树根\"\n  },\n  {\n    \"start\": \"00:00:24,802\",\n    \"end\": \"00:00:27,022\",\n    \"lang\": \"zh\",\n    \"text\": \"我是一个无人知道的小草\"\n  },\n  {\n    \"start\": \"00:00:51,162\",\n    \"end\": \"00:00:52,542\",\n    \"lang\": \"zh\",\n    \"text\": \"谢谢观看\"\n  },\n  {\n    \"start\": \"00:00:52,578\",\n    \"end\": \"00:00:54,838\",\n    \"lang\": \"en\",\n    \"text\": \"not perfect but there is still some improvement.\"\n  },\n  {\n    \"start\": \"00:00:54,838\",\n    \"end\": \"00:01:00,078\",\n    \"lang\": \"en\",\n    \"text\": \"And I can't catch the tune when singing it\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,760",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:00,760",
+            "end": "00:00:04,059",
+            "es": "creo que tenemos una pequeña mejora,",
+            "fr": "je crois que nous avons une petite amélioration,",
+            "uk": "я вважаю, що у нас є деяке невелике поліпшення,"
+        },
+        {
+            "start": "00:00:04,059",
+            "end": "00:00:05,860",
+            "es": "un pequeño progreso.",
+            "fr": "un petit progrès.",
+            "uk": "невеликий прогрес."
+        },
+        {
+            "start": "00:00:07,040",
+            "end": "00:00:07,160",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:07,160",
+            "end": "00:00:09,000",
+            "es": "nuestro vaso,",
+            "fr": "notre verre,",
+            "uk": "наш склянку,"
+        },
+        {
+            "start": "00:00:09,000",
+            "end": "00:00:11,100",
+            "es": "este es un pequeño vaso.",
+            "fr": "c'est un petit verre.",
+            "uk": "це маленька склянка."
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:12,620",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:16,460",
+            "es": "Lo voy a poner aquí.",
+            "fr": "Je vais le mettre ici.",
+            "uk": "Я покладу це сюди."
+        },
+        {
+            "start": "00:00:16,482",
+            "end": "00:00:17,482",
+            "es": "sin flores,",
+            "fr": "sans fleurs,",
+            "uk": "без квітів,"
+        },
+        {
+            "start": "00:00:17,482",
+            "end": "00:00:20,242",
+            "es": "sin fragancia de flores,",
+            "fr": "sans parfum de fleurs,",
+            "uk": "без аромату квітів,"
+        },
+        {
+            "start": "00:00:20,242",
+            "end": "00:00:22,902",
+            "es": "sin raíces",
+            "fr": "sans racines",
+            "uk": "без коренів"
+        },
+        {
+            "start": "00:00:24,802",
+            "end": "00:00:27,022",
+            "es": "soy una hierbaja que nadie conoce",
+            "fr": "je suis une mauvaise herbe que personne ne connaît",
+            "uk": "я бур'ян, про який ніхто не знає"
+        },
+        {
+            "start": "00:00:51,162",
+            "end": "00:00:52,542",
+            "es": "gracias por ver",
+            "fr": "merci d'avoir regardé",
+            "uk": "дякую за перегляд"
+        },
+        {
+            "start": "00:00:52,578",
+            "end": "00:00:54,838",
+            "es": "no es perfecto, pero todavía hay alguna mejora.",
+            "fr": "ce n'est pas parfait, mais il y a quand même une amélioration.",
+            "uk": "не ідеально, але все ж є деяке поліпшення."
+        },
+        {
+            "start": "00:00:54,838",
+            "end": "00:01:00,078",
+            "es": "Y no puedo seguir la melodía al cantar",
+            "fr": "Et je ne peux pas suivre l'air en chantant",
+            "uk": "І я не можу вловити мелодію, співаючи"
+        }
+    ]
+}

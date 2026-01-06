@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,320\",\n    \"lang\": \"zh\",\n    \"text\": \"一副Normal Music太难听\"\n  },\n  {\n    \"start\": \"00:00:03,458\",\n    \"end\": \"00:00:06,458\",\n    \"lang\": \"en\",\n    \"text\": \"at 1 to 100 scale.\"\n  },\n  {\n    \"start\": \"00:00:06,458\",\n    \"end\": \"00:00:10,378\",\n    \"lang\": \"en\",\n    \"text\": \"I must be negative 100.\"\n  },\n  {\n    \"start\": \"00:00:10,378\",\n    \"end\": \"00:00:13,878\",\n    \"lang\": \"en\",\n    \"text\": \"So I cannot sing,\"\n  },\n  {\n    \"start\": \"00:00:13,878\",\n    \"end\": \"00:00:15,358\",\n    \"lang\": \"en\",\n    \"text\": \"cannot catch the tone,\"\n  },\n  {\n    \"start\": \"00:00:15,358\",\n    \"end\": \"00:00:18,498\",\n    \"lang\": \"en\",\n    \"text\": \"cannot\"\n  },\n  {\n    \"start\": \"00:00:48,498\",\n    \"end\": \"00:00:49,178\",\n    \"lang\": \"en\",\n    \"text\": \"sing.\"\n  },\n  {\n    \"start\": \"00:00:49,178\",\n    \"end\": \"00:00:50,778\",\n    \"lang\": \"en\",\n    \"text\": \"Not perfectly 100,\"\n  },\n  {\n    \"start\": \"00:00:50,778\",\n    \"end\": \"00:00:57,358\",\n    \"lang\": \"en\",\n    \"text\": \"but just I will sing 100.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,320",
+            "es": "Una pieza de música normal es muy difícil de escuchar",
+            "fr": "Une morceau de musique normal est trop dur à écouter",
+            "uk": "Звичайна музика дуже важко слухати"
+        },
+        {
+            "start": "00:00:03,458",
+            "end": "00:00:06,458",
+            "es": "en una escala del 1 al 100.",
+            "fr": "sur une échelle de 1 à 100.",
+            "uk": "на шкалі від 1 до 100."
+        },
+        {
+            "start": "00:00:06,458",
+            "end": "00:00:10,378",
+            "es": "Debo ser menos 100.",
+            "fr": "Je dois être moins 100.",
+            "uk": "Я маю бути мінус 100."
+        },
+        {
+            "start": "00:00:10,378",
+            "end": "00:00:13,878",
+            "es": "Así que no puedo cantar,",
+            "fr": "Donc, je ne peux pas chanter,",
+            "uk": "Так що я не можу співати,"
+        },
+        {
+            "start": "00:00:13,878",
+            "end": "00:00:15,358",
+            "es": "no puedo seguir el tono,",
+            "fr": "je ne peux pas attraper le ton,",
+            "uk": "не можу вловити тон,"
+        },
+        {
+            "start": "00:00:15,358",
+            "end": "00:00:18,498",
+            "es": "no puedo",
+            "fr": "je ne peux pas",
+            "uk": "не можу"
+        },
+        {
+            "start": "00:00:48,498",
+            "end": "00:00:49,178",
+            "es": "cantar.",
+            "fr": "chanter.",
+            "uk": "співати."
+        },
+        {
+            "start": "00:00:49,178",
+            "end": "00:00:50,778",
+            "es": "No perfectamente 100,",
+            "fr": "Pas parfaitement 100,",
+            "uk": "Не ідеально 100,"
+        },
+        {
+            "start": "00:00:50,778",
+            "end": "00:00:57,358",
+            "es": "pero justo voy a cantar 100.",
+            "fr": "mais juste je vais chanter 100.",
+            "uk": "але я просто буду співати 100."
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,300\",\n    \"lang\": \"en\",\n    \"text\": \"This is the first step of our lunch.\"\n  },\n  {\n    \"start\": \"00:00:05,899\",\n    \"end\": \"00:00:07,800\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know how to say it.\"\n  },\n  {\n    \"start\": \"00:00:10,380\",\n    \"end\": \"00:00:12,400\",\n    \"lang\": \"en\",\n    \"text\": \"Just the vegetables and the chicken.\"\n  },\n  {\n    \"start\": \"00:00:13,780\",\n    \"end\": \"00:00:16,180\",\n    \"lang\": \"en\",\n    \"text\": \"This is the first step.\"\n  },\n  {\n    \"start\": \"00:00:17,160\",\n    \"end\": \"00:00:17,580\",\n    \"lang\": \"en\",\n    \"text\": \"And then,\"\n  },\n  {\n    \"start\": \"00:00:17,580\",\n    \"end\": \"00:00:18,780\",\n    \"lang\": \"en\",\n    \"text\": \"the rice noodles.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,300",
+            "ko": "이것은 저희 점심의 첫 번째 단계입니다."
+        },
+        {
+            "start": "00:00:05,899",
+            "end": "00:00:07,800",
+            "ko": "어떻게 말해야 할지 모르겠어요."
+        },
+        {
+            "start": "00:00:10,380",
+            "end": "00:00:12,400",
+            "ko": "그냥 채소와 치킨이에요."
+        },
+        {
+            "start": "00:00:13,780",
+            "end": "00:00:16,180",
+            "ko": "이것은 첫 번째 단계입니다."
+        },
+        {
+            "start": "00:00:17,160",
+            "end": "00:00:17,580",
+            "ko": "그리고 나서,"
+        },
+        {
+            "start": "00:00:17,580",
+            "end": "00:00:18,780",
+            "ko": "쌀국수입니다."
+        }
+    ]
+}

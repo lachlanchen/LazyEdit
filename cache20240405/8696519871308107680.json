@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,260\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,260\",\n    \"end\": \"00:00:02,820\",\n    \"lang\": \"en\",\n    \"text\": \"so I found that this failed launch,\"\n  },\n  {\n    \"start\": \"00:00:02,820\",\n    \"end\": \"00:00:03,520\",\n    \"lang\": \"en\",\n    \"text\": \"launch,\"\n  },\n  {\n    \"start\": \"00:00:03,520\",\n    \"end\": \"00:00:05,320\",\n    \"lang\": \"en\",\n    \"text\": \"that it had some,\"\n  },\n  {\n    \"start\": \"00:00:05,320\",\n    \"end\": \"00:00:07,200\",\n    \"lang\": \"en\",\n    \"text\": \"something that is\"\n  },\n  {\n    \"start\": \"00:00:07,200\",\n    \"end\": \"00:00:07,940\",\n    \"lang\": \"en\",\n    \"text\": \"successful.\"\n  },\n  {\n    \"start\": \"00:00:07,940\",\n    \"end\": \"00:00:09,740\",\n    \"lang\": \"en\",\n    \"text\": \"So the potato is,\"\n  },\n  {\n    \"start\": \"00:00:09,740\",\n    \"end\": \"00:00:11,580\",\n    \"lang\": \"en\",\n    \"text\": \"is worse in taste.\"\n  },\n  {\n    \"start\": \"00:00:11,580\",\n    \"end\": \"00:00:14,640\",\n    \"lang\": \"en\",\n    \"text\": \"Because I used the beef oil\"\n  },\n  {\n    \"start\": \"00:00:18,640\",\n    \"end\": \"00:00:19,700\",\n    \"lang\": \"en\",\n    \"text\": \"to cook the,\"\n  },\n  {\n    \"start\": \"00:00:19,700\",\n    \"end\": \"00:00:21,140\",\n    \"lang\": \"en\",\n    \"text\": \"to cook the potato.\"\n  },\n  {\n    \"start\": \"00:00:32,720\",\n    \"end\": \"00:00:41,680\",\n    \"lang\": \"en\",\n    \"text\": \"This makes the taste and the smell of the potato extremely good and crispy.\"\n  },\n  {\n    \"start\": \"00:00:41,680\",\n    \"end\": \"00:00:43,660\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:43,660\",\n    \"end\": \"00:00:45,120\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,260",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:00,260",
+            "end": "00:00:02,820",
+            "vi": "vậy tôi đã phát hiện ra rằng lần phóng này thất bại,"
+        },
+        {
+            "start": "00:00:02,820",
+            "end": "00:00:03,520",
+            "vi": "phóng,"
+        },
+        {
+            "start": "00:00:03,520",
+            "end": "00:00:05,320",
+            "vi": "là nó có một số,"
+        },
+        {
+            "start": "00:00:05,320",
+            "end": "00:00:07,200",
+            "vi": "điều gì đó thành công."
+        },
+        {
+            "start": "00:00:07,940",
+            "end": "00:00:09,740",
+            "vi": "Vậy nên khoai tây,"
+        },
+        {
+            "start": "00:00:09,740",
+            "end": "00:00:11,580",
+            "vi": "có vị tệ hơn."
+        },
+        {
+            "start": "00:00:11,580",
+            "end": "00:00:14,640",
+            "vi": "Bởi vì tôi đã sử dụng dầu bò"
+        },
+        {
+            "start": "00:00:18,640",
+            "end": "00:00:19,700",
+            "vi": "để nấu,"
+        },
+        {
+            "start": "00:00:19,700",
+            "end": "00:00:21,140",
+            "vi": "để nấu khoai tây."
+        },
+        {
+            "start": "00:00:32,720",
+            "end": "00:00:41,680",
+            "vi": "Điều này khiến cho vị và mùi của khoai tây trở nên cực kỳ ngon và giòn."
+        },
+        {
+            "start": "00:00:41,680",
+            "end": "00:00:43,660",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:43,660",
+            "end": "00:00:45,120",
+            "vi": "hẹn gặp lại."
+        }
+    ]
+}

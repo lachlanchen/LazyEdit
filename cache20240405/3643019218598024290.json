@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,520\",\n    \"lang\": \"en\",\n    \"text\": \"So record my guitar improvement,\"\n  },\n  {\n    \"start\": \"00:00:03,520\",\n    \"end\": \"00:00:04,560\",\n    \"lang\": \"en\",\n    \"text\": \"small progress.\"\n  },\n  {\n    \"start\": \"00:00:28,360\",\n    \"end\": \"00:00:29,760\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:00:29,760\",\n    \"end\": \"00:00:34,540\",\n    \"lang\": \"en\",\n    \"text\": \"so let's play the last part.\"\n  },\n  {\n    \"start\": \"00:00:34,560\",\n    \"end\": \"00:00:35,860\",\n    \"lang\": \"en\",\n    \"text\": \"May I sing?\"\n  },\n  {\n    \"start\": \"00:00:57,474\",\n    \"end\": \"00:00:58,614\",\n    \"lang\": \"zh\",\n    \"text\": \"長年\"\n  },\n  {\n    \"start\": \"00:00:59,954\",\n    \"end\": \"00:01:01,874\",\n    \"lang\": \"zh\",\n    \"text\": \"長未来\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,520",
+            "vi": "Vậy hãy ghi lại sự tiến bộ của tôi khi chơi đàn guitar,"
+        },
+        {
+            "start": "00:00:03,520",
+            "end": "00:00:04,560",
+            "vi": "tiến bộ nhỏ."
+        },
+        {
+            "start": "00:00:28,360",
+            "end": "00:00:29,760",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:29,760",
+            "end": "00:00:34,540",
+            "vi": "vậy hãy chơi phần cuối cùng."
+        },
+        {
+            "start": "00:00:34,560",
+            "end": "00:00:35,860",
+            "vi": "Tôi có thể hát không?"
+        },
+        {
+            "start": "00:00:57,474",
+            "end": "00:00:58,614",
+            "vi": "Bao năm"
+        },
+        {
+            "start": "00:00:59,954",
+            "end": "00:01:01,874",
+            "vi": "Tương lai lâu dài"
+        }
+    ]
+}

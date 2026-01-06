@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,620\",\n    \"lang\": \"en\",\n    \"text\": \"So we learned a new word,\"\n  },\n  {\n    \"start\": \"00:00:01,620\",\n    \"end\": \"00:00:03,520\",\n    \"lang\": \"en\",\n    \"text\": \"zoanthropy.\"\n  },\n  {\n    \"start\": \"00:00:04,059\",\n    \"end\": \"00:00:04,820\",\n    \"lang\": \"en\",\n    \"text\": \"Zoanthropy.\"\n  },\n  {\n    \"start\": \"00:00:06,380\",\n    \"end\": \"00:00:09,700\",\n    \"lang\": \"en\",\n    \"text\": \"Which means that he wants to be an animal.\"\n  },\n  {\n    \"start\": \"00:00:11,540\",\n    \"end\": \"00:00:13,460\",\n    \"lang\": \"en\",\n    \"text\": \"Do-fu-zu...\"\n  },\n  {\n    \"start\": \"00:00:13,460\",\n    \"end\": \"00:00:15,220\",\n    \"lang\": \"en\",\n    \"text\": \"Do-fu-zu-ni...\"\n  },\n  {\n    \"start\": \"00:00:16,962\",\n    \"end\": \"00:00:18,542\",\n    \"lang\": \"zh\",\n    \"text\": \"都不自恨心\"\n  },\n  {\n    \"start\": \"00:00:19,618\",\n    \"end\": \"00:00:20,898\",\n    \"lang\": \"en\",\n    \"text\": \"Kan-po.\"\n  },\n  {\n    \"start\": \"00:00:21,558\",\n    \"end\": \"00:00:22,138\",\n    \"lang\": \"en\",\n    \"text\": \"Kan-po.\"\n  },\n  {\n    \"start\": \"00:00:22,138\",\n    \"end\": \"00:00:22,798\",\n    \"lang\": \"en\",\n    \"text\": \"Kan-po.\"\n  },\n  {\n    \"start\": \"00:00:24,066\",\n    \"end\": \"00:00:25,546\",\n    \"lang\": \"zh\",\n    \"text\": \"更新幹部\"\n  },\n  {\n    \"start\": \"00:00:26,066\",\n    \"end\": \"00:00:27,786\",\n    \"lang\": \"zh\",\n    \"text\": \"多謝\"\n  },\n  {\n    \"start\": \"00:00:27,842\",\n    \"end\": \"00:00:28,762\",\n    \"lang\": \"en\",\n    \"text\": \"for watching.\"\n  },\n  {\n    \"start\": \"00:00:33,570\",\n    \"end\": \"00:00:36,190\",\n    \"lang\": \"zh\",\n    \"text\": \"狠心都不吃狠心漢堡\"\n  },\n  {\n    \"start\": \"00:00:36,706\",\n    \"end\": \"00:00:37,286\",\n    \"lang\": \"en\",\n    \"text\": \"GUMBALL\"\n  },\n  {\n    \"start\": \"00:00:38,206\",\n    \"end\": \"00:00:38,646\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:38,646\",\n    \"end\": \"00:00:38,926\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,620",
+            "vi": "Vậy chúng ta đã học một từ mới,"
+        },
+        {
+            "start": "00:00:01,620",
+            "end": "00:00:03,520",
+            "vi": "zoanthropy."
+        },
+        {
+            "start": "00:00:04,059",
+            "end": "00:00:04,820",
+            "vi": "Zoanthropy."
+        },
+        {
+            "start": "00:00:06,380",
+            "end": "00:00:09,700",
+            "vi": "Có nghĩa là anh ta muốn trở thành một con vật."
+        },
+        {
+            "start": "00:00:11,540",
+            "end": "00:00:13,460",
+            "vi": "Đậu phụ..."
+        },
+        {
+            "start": "00:00:13,460",
+            "end": "00:00:15,220",
+            "vi": "Đậu phụ xào..."
+        },
+        {
+            "start": "00:00:16,962",
+            "end": "00:00:18,542",
+            "vi": "都不自恨心"
+        },
+        {
+            "start": "00:00:19,618",
+            "end": "00:00:20,898",
+            "vi": "Kanpo."
+        },
+        {
+            "start": "00:00:21,558",
+            "end": "00:00:22,138",
+            "vi": "Kanpo."
+        },
+        {
+            "start": "00:00:22,138",
+            "end": "00:00:22,798",
+            "vi": "Kanpo."
+        },
+        {
+            "start": "00:00:24,066",
+            "end": "00:00:25,546",
+            "vi": "Cập nhật cấp bậc"
+        },
+        {
+            "start": "00:00:26,066",
+            "end": "00:00:27,786",
+            "vi": "Cảm ơn"
+        },
+        {
+            "start": "00:00:27,842",
+            "end": "00:00:28,762",
+            "vi": "vì đã xem."
+        },
+        {
+            "start": "00:00:33,570",
+            "end": "00:00:36,190",
+            "vi": "Dù có lòng dạ độc ác cũng chẳng ăn được Hamburger độc ác"
+        },
+        {
+            "start": "00:00:36,706",
+            "end": "00:00:37,286",
+            "vi": "GUMBALL"
+        },
+        {
+            "start": "00:00:38,206",
+            "end": "00:00:38,646",
+            "vi": "Ổn,"
+        },
+        {
+            "start": "00:00:38,646",
+            "end": "00:00:38,926",
+            "vi": "ổn."
+        }
+    ]
+}

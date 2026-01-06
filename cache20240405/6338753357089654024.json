@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,300\",\n    \"lang\": \"en\",\n    \"text\": \"Damn it.\"\n  },\n  {\n    \"start\": \"00:00:00,738\",\n    \"end\": \"00:00:02,037\",\n    \"lang\": \"zh\",\n    \"text\": \"我是返回來族\"\n  },\n  {\n    \"start\": \"00:00:02,037\",\n    \"end\": \"00:00:02,418\",\n    \"lang\": \"zh\",\n    \"text\": \"怎樣 dictatorship\"\n  },\n  {\n    \"start\": \"00:00:03,458\",\n    \"end\": \"00:00:04,078\",\n    \"lang\": \"en\",\n    \"text\": \"Should we take a walk?\"\n  },\n  {\n    \"start\": \"00:00:06,498\",\n    \"end\": \"00:00:06,878\",\n    \"lang\": \"zh\",\n    \"text\": \"點我!\"\n  },\n  {\n    \"start\": \"00:00:08,418\",\n    \"end\": \"00:00:08,738\",\n    \"lang\": \"en\",\n    \"text\": \"can.\"\n  },\n  {\n    \"start\": \"00:00:09,158\",\n    \"end\": \"00:00:09,158\",\n    \"lang\": \"en\",\n    \"text\": \"Yes,\"\n  },\n  {\n    \"start\": \"00:00:09,158\",\n    \"end\": \"00:00:10,258\",\n    \"lang\": \"en\",\n    \"text\": \"check me out.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,300",
+            "vi": "Chết tiệt."
+        },
+        {
+            "start": "00:00:00,738",
+            "end": "00:00:02,037",
+            "vi": "Tôi là người trở về."
+        },
+        {
+            "start": "00:00:02,037",
+            "end": "00:00:02,418",
+            "vi": "chế độ độc tài như thế nào"
+        },
+        {
+            "start": "00:00:03,458",
+            "end": "00:00:04,078",
+            "vi": "Chúng ta nên đi dạo không?"
+        },
+        {
+            "start": "00:00:06,498",
+            "end": "00:00:06,878",
+            "vi": "Bấm vào tôi!"
+        },
+        {
+            "start": "00:00:08,418",
+            "end": "00:00:08,738",
+            "vi": "có thể."
+        },
+        {
+            "start": "00:00:09,158",
+            "end": "00:00:09,158",
+            "vi": "Vâng,"
+        },
+        {
+            "start": "00:00:09,158",
+            "end": "00:00:10,258",
+            "vi": "xem tôi này."
+        }
+    ]
+}

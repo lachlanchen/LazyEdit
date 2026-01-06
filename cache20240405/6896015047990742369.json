@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,025\",\n    \"end\": \"00:01:01,606\",\n    \"lang\": \"en\",\n    \"text\": \"there might be an advantage\"\n  },\n  {\n    \"start\": \"00:01:02,886\",\n    \"end\": \"00:01:04,006\",\n    \"lang\": \"en\",\n    \"text\": \"that is\"\n  },\n  {\n    \"start\": \"00:01:05,826\",\n    \"end\": \"00:01:06,986\",\n    \"lang\": \"en\",\n    \"text\": \"you can\"\n  },\n  {\n    \"start\": \"00:01:06,986\",\n    \"end\": \"00:01:08,306\",\n    \"lang\": \"en\",\n    \"text\": \"learn multiple languages\"\n  },\n  {\n    \"start\": \"00:01:08,306\",\n    \"end\": \"00:01:10,046\",\n    \"lang\": \"en\",\n    \"text\": \"so that you can\"\n  },\n  {\n    \"start\": \"00:01:10,046\",\n    \"end\": \"00:01:12,146\",\n    \"lang\": \"en\",\n    \"text\": \"find\"\n  },\n  {\n    \"start\": \"00:01:12,146\",\n    \"end\": \"00:01:14,406\",\n    \"lang\": \"en\",\n    \"text\": \"your soulmate\"\n  },\n  {\n    \"start\": \"00:01:15,546\",\n    \"end\": \"00:01:16,746\",\n    \"lang\": \"en\",\n    \"text\": \"in different\"\n  },\n  {\n    \"start\": \"00:01:16,746\",\n    \"end\": \"00:01:18,146\",\n    \"lang\": \"en\",\n    \"text\": \"countries\"\n  },\n  {\n    \"start\": \"00:01:18,146\",\n    \"end\": \"00:01:19,766\",\n    \"lang\": \"en\",\n    \"text\": \"not limited to your\"\n  },\n  {\n    \"start\": \"00:01:19,766\",\n    \"end\": \"00:01:21,026\",\n    \"lang\": \"en\",\n    \"text\": \"homeland\"\n  },\n  {\n    \"start\": \"00:01:30,206\",\n    \"end\": \"00:01:32,326\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that's an advantage\"\n  },\n  {\n    \"start\": \"00:01:32,326\",\n    \"end\": \"00:01:33,326\",\n    \"lang\": \"en\",\n    \"text\": \"you can meet here\"\n  },\n  {\n    \"start\": \"00:01:35,066\",\n    \"end\": \"00:01:35,786\",\n    \"lang\": \"en\",\n    \"text\": \"anyone\"\n  },\n  {\n    \"start\": \"00:01:36,306\",\n    \"end\": \"00:01:37,566\",\n    \"lang\": \"en\",\n    \"text\": \"on this planet\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,025",
+            "end": "00:01:01,606",
+            "ja": "一つの利点があるかもしれません"
+        },
+        {
+            "start": "00:01:02,886",
+            "end": "00:01:04,006",
+            "ja": "それは"
+        },
+        {
+            "start": "00:01:05,826",
+            "end": "00:01:06,986",
+            "ja": "あなたは"
+        },
+        {
+            "start": "00:01:06,986",
+            "end": "00:01:08,306",
+            "ja": "複数の言語を学ぶことができる"
+        },
+        {
+            "start": "00:01:08,306",
+            "end": "00:01:10,046",
+            "ja": "それによってあなたは"
+        },
+        {
+            "start": "00:01:10,046",
+            "end": "00:01:12,146",
+            "ja": "見つけることができる"
+        },
+        {
+            "start": "00:01:12,146",
+            "end": "00:01:14,406",
+            "ja": "あなたの運命の人を"
+        },
+        {
+            "start": "00:01:15,546",
+            "end": "00:01:16,746",
+            "ja": "異なる"
+        },
+        {
+            "start": "00:01:16,746",
+            "end": "00:01:18,146",
+            "ja": "国々で"
+        },
+        {
+            "start": "00:01:18,146",
+            "end": "00:01:19,766",
+            "ja": "自国に限定されずに"
+        },
+        {
+            "start": "00:01:19,766",
+            "end": "00:01:21,026",
+            "ja": "あなたの故国"
+        },
+        {
+            "start": "00:01:30,206",
+            "end": "00:01:32,326",
+            "ja": "それは利点だと思います"
+        },
+        {
+            "start": "00:01:32,326",
+            "end": "00:01:33,326",
+            "ja": "ここで会うことができる"
+        },
+        {
+            "start": "00:01:35,066",
+            "end": "00:01:35,786",
+            "ja": "誰でも"
+        },
+        {
+            "start": "00:01:36,306",
+            "end": "00:01:37,566",
+            "ja": "この地球上で"
+        }
+    ]
+}

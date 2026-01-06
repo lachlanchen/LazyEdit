@@ -1,0 +1,26 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:05,020\",\n    \"end\": \"00:02:08,539\",\n    \"lang\": \"en\",\n    \"text\": \"No matter what you need,\"\n  },\n  {\n    \"start\": \"00:02:10,018\",\n    \"end\": \"00:02:11,418\",\n    \"lang\": \"zh\",\n    \"text\": \"一定有包天野的色的\"\n  },\n  {\n    \"start\": \"00:02:12,866\",\n    \"end\": \"00:02:16,386\",\n    \"lang\": \"en\",\n    \"text\": \"No more than 100 years everything will go to dust.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:05,020",
+            "end": "00:02:08,539",
+            "es": "No importa lo que necesites,",
+            "fr": "Peu importe ce dont vous avez besoin,",
+            "uk": "Без різниці, що вам потрібно,"
+        },
+        {
+            "start": "00:02:10,018",
+            "end": "00:02:11,418",
+            "es": "definitivamente hay un color que viene del cielo",
+            "fr": "il y a certainement une couleur qui vient du ciel",
+            "uk": "однозначно є колір, що йде з неба"
+        },
+        {
+            "start": "00:02:12,866",
+            "end": "00:02:16,386",
+            "es": "En no más de 100 años, todo se convertirá en polvo.",
+            "fr": "En moins de 100 ans, tout se transformera en poussière.",
+            "uk": "За не більше ніж 100 років, все перетвориться на пил."
+        }
+    ]
+}

@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,180\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:00,180\",\n    \"end\": \"00:00:01,900\",\n    \"lang\": \"en\",\n    \"text\": \"it's a golden retriever.\"\n  },\n  {\n    \"start\": \"00:00:02,880\",\n    \"end\": \"00:00:03,500\",\n    \"lang\": \"en\",\n    \"text\": \"So cool.\"\n  },\n  {\n    \"start\": \"00:00:03,522\",\n    \"end\": \"00:00:05,702\",\n    \"lang\": \"ja\",\n    \"text\": \"やっぱおっさんがもう忘れてた\"\n  },\n  {\n    \"start\": \"00:00:05,702\",\n    \"end\": \"00:00:10,162\",\n    \"lang\": \"ja\",\n    \"text\": \"投げ応援と呼んで\"\n  },\n  {\n    \"start\": \"00:00:10,162\",\n    \"end\": \"00:00:10,182\",\n    \"lang\": \"ja\",\n    \"text\": \"そういう気持ちで\"\n  },\n  {\n    \"start\": \"00:00:11,554\",\n    \"end\": \"00:00:12,674\",\n    \"lang\": \"en\",\n    \"text\": \"we have this eye contact\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,180",
+            "ja": "わあ、"
+        },
+        {
+            "start": "00:00:00,180",
+            "end": "00:00:01,900",
+            "ja": "ゴールデンレトリバーだ。"
+        },
+        {
+            "start": "00:00:02,880",
+            "end": "00:00:03,500",
+            "ja": "かっこいい。"
+        },
+        {
+            "start": "00:00:03,522",
+            "end": "00:00:05,702",
+            "ja": "やっぱりおっさんはもう忘れてた"
+        },
+        {
+            "start": "00:00:05,702",
+            "end": "00:00:10,162",
+            "ja": "投げて応援と呼んで"
+        },
+        {
+            "start": "00:00:10,162",
+            "end": "00:00:10,182",
+            "ja": "そういう気持ちで"
+        },
+        {
+            "start": "00:00:11,554",
+            "end": "00:00:12,674",
+            "ja": "目が合ったんだ"
+        }
+    ]
+}

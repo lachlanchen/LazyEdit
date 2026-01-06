@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,400\",\n    \"lang\": \"ja\",\n    \"text\": \"影の線を走りました\"\n  },\n  {\n    \"start\": \"00:00:02,146\",\n    \"end\": \"00:00:03,206\",\n    \"lang\": \"en\",\n    \"text\": \"This is what I bought,\"\n  },\n  {\n    \"start\": \"00:00:03,206\",\n    \"end\": \"00:00:03,826\",\n    \"lang\": \"en\",\n    \"text\": \"banana,\"\n  },\n  {\n    \"start\": \"00:00:03,826\",\n    \"end\": \"00:00:04,706\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:00:04,706\",\n    \"end\": \"00:00:05,726\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:05,726\",\n    \"end\": \"00:00:07,266\",\n    \"lang\": \"en\",\n    \"text\": \"bean juice,\"\n  },\n  {\n    \"start\": \"00:00:07,266\",\n    \"end\": \"00:00:12,166\",\n    \"lang\": \"en\",\n    \"text\": \"and various kinds of vegetables.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,400",
+            "ko": "그림자 선을 따라 달렸어요"
+        },
+        {
+            "start": "00:00:02,146",
+            "end": "00:00:03,206",
+            "ko": "이것은 제가 산 것입니다,"
+        },
+        {
+            "start": "00:00:03,206",
+            "end": "00:00:03,826",
+            "ko": "바나나,"
+        },
+        {
+            "start": "00:00:03,826",
+            "end": "00:00:04,706",
+            "ko": "밤,"
+        },
+        {
+            "start": "00:00:04,706",
+            "end": "00:00:05,726",
+            "ko": "블루베리,"
+        },
+        {
+            "start": "00:00:05,726",
+            "end": "00:00:07,266",
+            "ko": "콩주스,"
+        },
+        {
+            "start": "00:00:07,266",
+            "end": "00:00:12,166",
+            "ko": "그리고 여러 종류의 채소들."
+        }
+    ]
+}

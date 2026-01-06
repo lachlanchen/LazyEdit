@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,000\",\n    \"lang\": \"zh\",\n    \"text\": \"不想跳了\"\n  },\n  {\n    \"start\": \"00:00:04,380\",\n    \"end\": \"00:00:04,980\",\n    \"lang\": \"zh\",\n    \"text\": \"跑了\"\n  },\n  {\n    \"start\": \"00:00:04,980\",\n    \"end\": \"00:00:08,080\",\n    \"lang\": \"zh\",\n    \"text\": \"莫桑跑的这个动作有点牛逼啊\"\n  },\n  {\n    \"start\": \"00:00:08,080\",\n    \"end\": \"00:00:09,380\",\n    \"lang\": \"zh\",\n    \"text\": \"一切合成\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,000",
+            "ko": "더 이상 뛰고 싶지 않아"
+        },
+        {
+            "start": "00:00:04,380",
+            "end": "00:00:04,980",
+            "ko": "도망쳤어"
+        },
+        {
+            "start": "00:00:04,980",
+            "end": "00:00:08,080",
+            "ko": "모잠이 달리는 그 동작이 좀 대단해"
+        },
+        {
+            "start": "00:00:08,080",
+            "end": "00:00:09,380",
+            "ko": "모든 것이 조합되었어"
+        }
+    ]
+}

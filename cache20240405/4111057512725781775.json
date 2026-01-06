@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,020\",\n    \"lang\": \"ar\",\n    \"text\": \"كوبانوة\"\n  },\n  {\n    \"start\": \"00:00:04,098\",\n    \"end\": \"00:00:06,998\",\n    \"lang\": \"en\",\n    \"text\": \"So this is my dinner.\"\n  },\n  {\n    \"start\": \"00:00:08,058\",\n    \"end\": \"00:00:08,838\",\n    \"lang\": \"en\",\n    \"text\": \"Crushed chili,\"\n  },\n  {\n    \"start\": \"00:00:08,838\",\n    \"end\": \"00:00:09,958\",\n    \"lang\": \"en\",\n    \"text\": \"ginger,\"\n  },\n  {\n    \"start\": \"00:00:09,958\",\n    \"end\": \"00:00:10,638\",\n    \"lang\": \"en\",\n    \"text\": \"and garlic.\"\n  },\n  {\n    \"start\": \"00:00:12,078\",\n    \"end\": \"00:00:17,558\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if this will deteriorate my cold symptoms\"\n  },\n  {\n    \"start\": \"00:00:18,638\",\n    \"end\": \"00:00:21,478\",\n    \"lang\": \"en\",\n    \"text\": \"or benefit my health,\"\n  },\n  {\n    \"start\": \"00:00:22,658\",\n    \"end\": \"00:00:24,638\",\n    \"lang\": \"en\",\n    \"text\": \"but it's in my body,\"\n  },\n  {\n    \"start\": \"00:00:24,638\",\n    \"end\": \"00:00:26,098\",\n    \"lang\": \"en\",\n    \"text\": \"I want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:27,918\",\n    \"end\": \"00:00:28,298\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:28,298\",\n    \"end\": \"00:00:29,938\",\n    \"lang\": \"en\",\n    \"text\": \"it's so spicy.\"\n  },\n  {\n    \"start\": \"00:00:36,878\",\n    \"end\": \"00:00:39,378\",\n    \"lang\": \"en\",\n    \"text\": \"I put too much pepper.\"\n  },\n  {\n    \"start\": \"00:00:40,618\",\n    \"end\": \"00:00:41,778\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot hold this.\"\n  },\n  {\n    \"start\": \"00:00:43,106\",\n    \"end\": \"00:00:44,306\",\n    \"lang\": \"ar\",\n    \"text\": \"لا أستطيع أن أخذ هذا الزيت\"\n  },\n  {\n    \"start\": \"00:00:46,978\",\n    \"end\": \"00:00:47,998\",\n    \"lang\": \"en\",\n    \"text\": \"I need more salt.\"\n  },\n  {\n    \"start\": \"00:00:47,998\",\n    \"end\": \"00:00:54,158\",\n    \"lang\": \"en\",\n    \"text\": \"Salt can soften the spicy.\"\n  },\n  {\n    \"start\": \"00:00:55,398\",\n    \"end\": \"00:00:55,838\",\n    \"lang\": \"en\",\n    \"text\": \"Yes,\"\n  },\n  {\n    \"start\": \"00:00:55,838\",\n    \"end\": \"00:00:56,478\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,020",
+            "vi": "Cubano"
+        },
+        {
+            "start": "00:00:04,098",
+            "end": "00:00:06,998",
+            "vi": "Vậy đây là bữa tối của tôi."
+        },
+        {
+            "start": "00:00:08,058",
+            "end": "00:00:08,838",
+            "vi": "Ớt băm,"
+        },
+        {
+            "start": "00:00:08,838",
+            "end": "00:00:09,958",
+            "vi": "gừng,"
+        },
+        {
+            "start": "00:00:09,958",
+            "end": "00:00:10,638",
+            "vi": "và tỏi."
+        },
+        {
+            "start": "00:00:12,078",
+            "end": "00:00:17,558",
+            "vi": "Tôi không biết liệu điều này sẽ làm tăng triệu chứng cảm lạnh của tôi"
+        },
+        {
+            "start": "00:00:18,638",
+            "end": "00:00:21,478",
+            "vi": "hay có lợi cho sức khỏe của tôi,"
+        },
+        {
+            "start": "00:00:22,658",
+            "end": "00:00:24,638",
+            "vi": "nhưng nó đã vào người tôi,"
+        },
+        {
+            "start": "00:00:24,638",
+            "end": "00:00:26,098",
+            "vi": "Tôi muốn ăn nó."
+        },
+        {
+            "start": "00:00:27,918",
+            "end": "00:00:28,298",
+            "vi": "Wow,"
+        },
+        {
+            "start": "00:00:28,298",
+            "end": "00:00:29,938",
+            "vi": "nó quá cay."
+        },
+        {
+            "start": "00:00:36,878",
+            "end": "00:00:39,378",
+            "vi": "Tôi cho quá nhiều tiêu."
+        },
+        {
+            "start": "00:00:40,618",
+            "end": "00:00:41,778",
+            "vi": "Tôi không thể nhịn được nữa."
+        },
+        {
+            "start": "00:00:43,106",
+            "end": "00:00:44,306",
+            "vi": "Tôi không thể chịu đựng cái dầu này"
+        },
+        {
+            "start": "00:00:46,978",
+            "end": "00:00:47,998",
+            "vi": "Tôi cần thêm muối."
+        },
+        {
+            "start": "00:00:47,998",
+            "end": "00:00:54,158",
+            "vi": "Muối có thể làm dịu vị cay."
+        },
+        {
+            "start": "00:00:55,398",
+            "end": "00:00:55,838",
+            "vi": "Vâng,"
+        },
+        {
+            "start": "00:00:55,838",
+            "end": "00:00:56,478",
+            "vi": "được."
+        }
+    ]
+}

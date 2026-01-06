@@ -1,0 +1,35 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Preserve the original timestamps. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,000\",\n    \"ja\": \"これはとても<面白>[]く<書>[]かれている\"\n  },\n  {\n    \"start\": \"00:00:01,499\",\n    \"end\": \"00:00:03,460\",\n    \"ja\": \"<超自然現象>[]には<防衛局>[]がある\"\n  },\n  {\n    \"start\": \"00:00:04,322\",\n    \"end\": \"00:00:04,722\",\n    \"ja\": \"を<マイスタッフ>[]\"\n  },\n  {\n    \"start\": \"00:00:04,902\",\n    \"end\": \"00:00:06,282\",\n    \"ja\": \"これはとても<面白>[]く<書>[]かれている\"\n  },\n  {\n    \"start\": \"00:00:06,781\",\n    \"end\": \"00:00:08,722\",\n    \"ja\": \"<超自然現象>[]と<防衛局>[]\"\n  },\n  {\n    \"start\": \"00:00:09,570\",\n    \"end\": \"00:00:10,070\",\n    \"ja\": \"なんてこった。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,000",
+            "ja": "これはとても<面白[おもしろ]>く<書[か]>かれている"
+        },
+        {
+            "start": "00:00:01,499",
+            "end": "00:00:03,460",
+            "ja": "<超自然現象[ちょうしぜんげんしょう]>には<防衛局[ぼうえいきょく]>がある"
+        },
+        {
+            "start": "00:00:04,322",
+            "end": "00:00:04,722",
+            "ja": "を<マイスタッフ>[]"
+        },
+        {
+            "start": "00:00:04,902",
+            "end": "00:00:06,282",
+            "ja": "これはとても<面白[おもしろ]>く<書[か]>かれている"
+        },
+        {
+            "start": "00:00:06,781",
+            "end": "00:00:08,722",
+            "ja": "<超自然現象[ちょうしぜんげんしょう]>と<防衛局[ぼうえいきょく]>"
+        },
+        {
+            "start": "00:00:09,570",
+            "end": "00:00:10,070",
+            "ja": "なんてこった。"
+        }
+    ]
+}

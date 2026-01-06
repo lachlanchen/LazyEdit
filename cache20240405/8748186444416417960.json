@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,220\",\n    \"lang\": \"zh\",\n    \"text\": \"这里还有\"\n  },\n  {\n    \"start\": \"00:00:02,050\",\n    \"end\": \"00:00:02,890\",\n    \"lang\": \"en\",\n    \"text\": \"too many restrictions.\"\n  },\n  {\n    \"start\": \"00:00:03,970\",\n    \"end\": \"00:00:08,470\",\n    \"lang\": \"en\",\n    \"text\": \"So we will never have really scientific breakthrough\"\n  },\n  {\n    \"start\": \"00:00:08,830\",\n    \"end\": \"00:00:10,630\",\n    \"lang\": \"en\",\n    \"text\": \"or create some great art,\"\n  },\n  {\n    \"start\": \"00:00:10,630\",\n    \"end\": \"00:00:11,550\",\n    \"lang\": \"en\",\n    \"text\": \"never.\"\n  },\n  {\n    \"start\": \"00:00:14,990\",\n    \"end\": \"00:00:20,650\",\n    \"lang\": \"en\",\n    \"text\": \"If we want to embrace some real great stuff,\"\n  },\n  {\n    \"start\": \"00:00:21,670\",\n    \"end\": \"00:00:24,590\",\n    \"lang\": \"en\",\n    \"text\": \"and the first thing we should remove is restrictions,\"\n  },\n  {\n    \"start\": \"00:00:24,830\",\n    \"end\": \"00:00:27,710\",\n    \"lang\": \"en\",\n    \"text\": \"but keep some basic principles.\"\n  },\n  {\n    \"start\": \"00:00:27,710\",\n    \"end\": \"00:00:36,710\",\n    \"lang\": \"en\",\n    \"text\": \"And if we have so many restrictions,\"\n  },\n  {\n    \"start\": \"00:00:41,470\",\n    \"end\": \"00:00:47,090\",\n    \"lang\": \"en\",\n    \"text\": \"we can never expect people truly being creative.\"\n  },\n  {\n    \"start\": \"00:00:51,790\",\n    \"end\": \"00:00:52,990\",\n    \"lang\": \"en\",\n    \"text\": \"That's what I think.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,220",
+            "es": "Aquí todavía hay",
+            "fr": "Il y a encore ici",
+            "uk": "Тут ще є"
+        },
+        {
+            "start": "00:00:02,050",
+            "end": "00:00:02,890",
+            "es": "demasiadas restricciones.",
+            "fr": "trop de restrictions.",
+            "uk": "забагато обмежень."
+        },
+        {
+            "start": "00:00:03,970",
+            "end": "00:00:08,470",
+            "es": "Así que nunca tendremos realmente un avance científico",
+            "fr": "Donc, nous n'aurons jamais vraiment de percée scientifique",
+            "uk": "Тому ми ніколи не матимемо дійсного наукового прориву"
+        },
+        {
+            "start": "00:00:08,830",
+            "end": "00:00:10,630",
+            "es": "o crear alguna gran obra de arte,",
+            "fr": "ou créer une grande œuvre d'art,",
+            "uk": "або створити якусь велику мистецьку роботу,"
+        },
+        {
+            "start": "00:00:10,630",
+            "end": "00:00:11,550",
+            "es": "nunca.",
+            "fr": "jamais.",
+            "uk": "ніколи."
+        },
+        {
+            "start": "00:00:14,990",
+            "end": "00:00:20,650",
+            "es": "Si queremos abrazar algunas cosas realmente grandiosas,",
+            "fr": "Si nous voulons embrasser des choses vraiment géniales,",
+            "uk": "Якщо ми хочемо прийняти деякі дійсно великі речі,"
+        },
+        {
+            "start": "00:00:21,670",
+            "end": "00:00:24,590",
+            "es": "y la primera cosa que deberíamos eliminar son las restricciones,",
+            "fr": "et la première chose que nous devrions supprimer, ce sont les restrictions,",
+            "uk": "і перше, що ми повинні прибрати, це обмеження,"
+        },
+        {
+            "start": "00:00:24,830",
+            "end": "00:00:27,710",
+            "es": "pero mantener algunos principios básicos.",
+            "fr": "mais conserver quelques principes de base.",
+            "uk": "але зберігати деякі основні принципи."
+        },
+        {
+            "start": "00:00:27,710",
+            "end": "00:00:36,710",
+            "es": "Y si tenemos tantas restricciones,",
+            "fr": "Et si nous avons tant de restrictions,",
+            "uk": "І якщо у нас є стільки обмежень,"
+        },
+        {
+            "start": "00:00:41,470",
+            "end": "00:00:47,090",
+            "es": "nunca podemos esperar que las personas sean realmente creativas.",
+            "fr": "nous ne pouvons jamais attendre des gens qu'ils soient vraiment créatifs.",
+            "uk": "ми ніколи не можемо очікувати, що люди будуть справді творчими."
+        },
+        {
+            "start": "00:00:51,790",
+            "end": "00:00:52,990",
+            "es": "Eso es lo que pienso.",
+            "fr": "C'est ce que je pense.",
+            "uk": "Ось що я думаю."
+        }
+    ]
+}

@@ -1,0 +1,135 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:02,540\",\n    \"end\": \"00:00:03,620\",\n    \"lang\": \"en\",\n    \"text\": \"Hey guys,\"\n  },\n  {\n    \"start\": \"00:00:03,620\",\n    \"end\": \"00:00:04,260\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:04,674\",\n    \"end\": \"00:00:06,574\",\n    \"lang\": \"ja\",\n    \"text\": \"質問したいです\"\n  },\n  {\n    \"start\": \"00:00:08,846\",\n    \"end\": \"00:00:15,246\",\n    \"lang\": \"ja\",\n    \"text\": \"こちらの音はセンサーのギターの音です声は\"\n  },\n  {\n    \"start\": \"00:00:15,246\",\n    \"end\": \"00:00:16,226\",\n    \"lang\": \"ja\",\n    \"text\": \"ドリンクと輸出をつけているといこと\"\n  },\n  {\n    \"start\": \"00:00:16,226\",\n    \"end\": \"00:00:16,286\",\n    \"lang\": \"ja\",\n    \"text\": \"謝れ\"\n  },\n  {\n    \"start\": \"00:00:16,642\",\n    \"end\": \"00:00:17,882\",\n    \"lang\": \"zh\",\n    \"text\": \"一起库尔\"\n  },\n  {\n    \"start\": \"00:00:18,722\",\n    \"end\": \"00:00:23,862\",\n    \"lang\": \"en\",\n    \"text\": \"so how many strings are needed to play this chord?\"\n  },\n  {\n    \"start\": \"00:00:24,362\",\n    \"end\": \"00:00:27,882\",\n    \"lang\": \"en\",\n    \"text\": \"so I asked ChetGBT that he said\"\n  },\n  {\n    \"start\": \"00:00:28,872\",\n    \"end\": \"00:00:35,722\",\n    \"lang\": \"en\",\n    \"text\": \"if for 4 over 4 time signature that it will be this\"\n  },\n  {\n    \"start\": \"00:00:37,332\",\n    \"end\": \"00:00:43,042\",\n    \"lang\": \"en\",\n    \"text\": \"first is a down-strong and then it's a down-up-strong for the second beat and\"\n  },\n  {\n    \"start\": \"00:00:43,042\",\n    \"end\": \"00:00:47,982\",\n    \"lang\": \"en\",\n    \"text\": \"then it's up-down-up-strong for the last two beats\"\n  },\n  {\n    \"start\": \"00:00:48,582\",\n    \"end\": \"00:00:50,602\",\n    \"lang\": \"en\",\n    \"text\": \"so is this correct?\"\n  },\n  {\n    \"start\": \"00:00:51,142\",\n    \"end\": \"00:00:56,782\",\n    \"lang\": \"en\",\n    \"text\": \"so I just put my right hand\"\n  },\n  {\n    \"start\": \"00:00:56,782\",\n    \"end\": \"00:00:57,702\",\n    \"lang\": \"en\",\n    \"text\": \"I put it\"\n  },\n  {\n    \"start\": \"00:00:59,394\",\n    \"end\": \"00:01:00,194\",\n    \"lang\": \"en\",\n    \"text\": \"6th,\"\n  },\n  {\n    \"start\": \"00:01:00,194\",\n    \"end\": \"00:01:00,894\",\n    \"lang\": \"en\",\n    \"text\": \"6th times.\"\n  },\n  {\n    \"start\": \"00:01:01,214\",\n    \"end\": \"00:01:01,794\",\n    \"lang\": \"en\",\n    \"text\": \"on these\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:02,540",
+            "end": "00:00:03,620",
+            "en": "Hey guys,",
+            "zh": "嘿，大家好，",
+            "ar": "مرحبا يا شباب،"
+        },
+        {
+            "start": "00:00:03,620",
+            "end": "00:00:04,260",
+            "en": "so",
+            "zh": "所以",
+            "ar": "إذا"
+        },
+        {
+            "start": "00:00:04,674",
+            "end": "00:00:06,574",
+            "en": "I want to ask",
+            "zh": "我想问一下",
+            "ar": "أريد أن أسأل",
+            "ja": "質問したいです"
+        },
+        {
+            "start": "00:00:08,846",
+            "end": "00:00:15,246",
+            "en": "This sound is the sound of a sensor guitar, and the voice is",
+            "zh": "这个声音是传感器吉他的声音，声音是",
+            "ar": "هذا الصوت هو صوت جيتار الحساسية، والصوت هو",
+            "ja": "こちらの音はセンサーのギターの音です声は"
+        },
+        {
+            "start": "00:00:15,246",
+            "end": "00:00:16,226",
+            "en": "Putting drinks and exports, that's it",
+            "zh": "放置饮料和出口，就是这样",
+            "ar": "وضع المشروبات والصادرات، هذا هو",
+            "ja": "ドリンクと輸出をつけているといこと"
+        },
+        {
+            "start": "00:00:16,226",
+            "end": "00:00:16,286",
+            "en": "Apologize",
+            "zh": "道歉",
+            "ar": "اعتذار",
+            "ja": "謝れ"
+        },
+        {
+            "start": "00:00:16,642",
+            "end": "00:00:17,882",
+            "en": "Let's gather",
+            "zh": "一起库尔",
+            "ar": "لنجتمع"
+        },
+        {
+            "start": "00:00:18,722",
+            "end": "00:00:23,862",
+            "en": "so how many strings are needed to play this chord?",
+            "zh": "那么，演奏这个和弦需要多少根弦？",
+            "ar": "فكم عدد الأوتار المطلوبة لعزف هذا الوتر؟"
+        },
+        {
+            "start": "00:00:24,362",
+            "end": "00:00:27,882",
+            "en": "so I asked ChetGBT that he said",
+            "zh": "所以我问了ChetGBT，他说",
+            "ar": "لذا سألت ChetGBT فقال"
+        },
+        {
+            "start": "00:00:28,872",
+            "end": "00:00:35,722",
+            "en": "if for 4 over 4 time signature that it will be this",
+            "zh": "如果是4/4拍子，那将会是这样",
+            "ar": "إذا كان لتوقيع الزمن 4 على 4 فسيكون هذا"
+        },
+        {
+            "start": "00:00:37,332",
+            "end": "00:00:43,042",
+            "en": "first is a down-strong and then it's a down-up-strong for the second beat and",
+            "zh": "首先是强向下弹，然后对于第二拍是向下-向上-强弹，和",
+            "ar": "أولا هو قوة للأسفل وثم هو لأسفل-لأعلى-قوة للنبضة الثانية و"
+        },
+        {
+            "start": "00:00:43,042",
+            "end": "00:00:47,982",
+            "en": "then it's up-down-up-strong for the last two beats",
+            "zh": "然后对于最后两拍是向上-向下-向上-强弹",
+            "ar": "ثم هو لأعلى-لأسفل-لأعلى-قوة لآخر نبضتين"
+        },
+        {
+            "start": "00:00:48,582",
+            "end": "00:00:50,602",
+            "en": "so is this correct?",
+            "zh": "这样正确吗？",
+            "ar": "هل هذا صحيح؟"
+        },
+        {
+            "start": "00:00:51,142",
+            "end": "00:00:56,782",
+            "en": "so I just put my right hand",
+            "zh": "所以我只是放下我的右手",
+            "ar": "لذا أنا فقط وضعت يدي اليمنى"
+        },
+        {
+            "start": "00:00:56,782",
+            "end": "00:00:57,702",
+            "en": "I put it",
+            "zh": "我放下它",
+            "ar": "لقد وضعتها"
+        },
+        {
+            "start": "00:00:59,394",
+            "end": "00:01:00,194",
+            "en": "6th,",
+            "zh": "第六次，",
+            "ar": "السادس،"
+        },
+        {
+            "start": "00:01:00,194",
+            "end": "00:01:00,894",
+            "en": "6th times.",
+            "zh": "第六次。",
+            "ar": "المرة السادسة."
+        },
+        {
+            "start": "00:01:01,214",
+            "end": "00:01:01,794",
+            "en": "on these",
+            "zh": "在这些上",
+            "ar": "على هؤلاء"
+        }
+    ]
+}

@@ -1,0 +1,114 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,700\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:01,700\",\n    \"end\": \"00:00:02,720\",\n    \"lang\": \"en\",\n    \"text\": \"so...\"\n  },\n  {\n    \"start\": \"00:00:03,682\",\n    \"end\": \"00:00:04,682\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます\"\n  },\n  {\n    \"start\": \"00:00:07,042\",\n    \"end\": \"00:00:07,642\",\n    \"lang\": \"zh\",\n    \"text\": \"那今天影片到這裡\"\n  },\n  {\n    \"start\": \"00:00:08,930\",\n    \"end\": \"00:00:10,890\",\n    \"lang\": \"en\",\n    \"text\": \"Have this breakfast.\"\n  },\n  {\n    \"start\": \"00:00:12,002\",\n    \"end\": \"00:00:12,502\",\n    \"lang\": \"zh\",\n    \"text\": \"下午茶\"\n  },\n  {\n    \"start\": \"00:00:18,242\",\n    \"end\": \"00:00:23,682\",\n    \"lang\": \"en\",\n    \"text\": \"I might be the first person that uses chopsticks to eat bread.\"\n  },\n  {\n    \"start\": \"00:00:26,754\",\n    \"end\": \"00:00:27,854\",\n    \"lang\": \"ja\",\n    \"text\": \"ごちそうさまでした\"\n  },\n  {\n    \"start\": \"00:00:27,874\",\n    \"end\": \"00:00:30,794\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you for watching!\"\n  },\n  {\n    \"start\": \"00:00:32,509\",\n    \"end\": \"00:00:33,769\",\n    \"lang\": \"ja\",\n    \"text\": \"ご視聴ありがとうございました。\"\n  },\n  {\n    \"start\": \"00:00:34,146\",\n    \"end\": \"00:00:34,546\",\n    \"lang\": \"zh\",\n    \"text\": \"不要打完\"\n  },\n  {\n    \"start\": \"00:00:35,906\",\n    \"end\": \"00:00:36,906\",\n    \"lang\": \"en\",\n    \"text\": \"getting your forehand down.\"\n  },\n  {\n    \"start\": \"00:00:37,954\",\n    \"end\": \"00:00:38,894\",\n    \"lang\": \"ja\",\n    \"text\": \"5分でコーヒーになる\"\n  },\n  {\n    \"start\": \"00:00:57,490\",\n    \"end\": \"00:00:57,930\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:57,930\",\n    \"end\": \"00:00:58,410\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,700",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسناً،"
+        },
+        {
+            "start": "00:00:01,700",
+            "end": "00:00:02,720",
+            "en": "so...",
+            "zh": "所以…",
+            "ar": "إذاً..."
+        },
+        {
+            "start": "00:00:03,682",
+            "end": "00:00:04,682",
+            "en": "Thank you very much",
+            "zh": "非常感谢您",
+            "ar": "شكرا جزيلا",
+            "ja": "ありがとうございます"
+        },
+        {
+            "start": "00:00:07,042",
+            "end": "00:00:07,642",
+            "en": "That's all for today's video",
+            "zh": "那今天影片到這裡",
+            "ar": "هذا كل شيء لفيديو اليوم"
+        },
+        {
+            "start": "00:00:08,930",
+            "end": "00:00:10,890",
+            "en": "Have this breakfast.",
+            "zh": "吃这个早餐。",
+            "ar": "تناول هذا الإفطار."
+        },
+        {
+            "start": "00:00:12,002",
+            "end": "00:00:12,502",
+            "en": "Afternoon tea",
+            "zh": "下午茶",
+            "ar": "شاي بعد الظهر"
+        },
+        {
+            "start": "00:00:18,242",
+            "end": "00:00:23,682",
+            "en": "I might be the first person that uses chopsticks to eat bread.",
+            "zh": "我可能是第一个用筷子吃面包的人。",
+            "ar": "قد أكون أول شخص يستخدم أعواد الأكل لتناول الخبز."
+        },
+        {
+            "start": "00:00:26,754",
+            "end": "00:00:27,854",
+            "en": "Thank you for the meal",
+            "zh": "感谢这顿餐",
+            "ar": "شكراً على الوجبة",
+            "ja": "ごちそうさまでした"
+        },
+        {
+            "start": "00:00:27,874",
+            "end": "00:00:30,794",
+            "en": "Thank you for watching!",
+            "zh": "感谢您的观看！",
+            "ar": "شكراً لمشاهدتكم!"
+        },
+        {
+            "start": "00:00:32,509",
+            "end": "00:00:33,769",
+            "en": "Thank you for watching.",
+            "zh": "感谢您的观看。",
+            "ar": "شكراً على المشاهدة.",
+            "ja": "ご視聴ありがとうございました。"
+        },
+        {
+            "start": "00:00:34,146",
+            "end": "00:00:34,546",
+            "en": "Do not end it",
+            "zh": "不要打完",
+            "ar": "لا تنهه"
+        },
+        {
+            "start": "00:00:35,906",
+            "end": "00:00:36,906",
+            "en": "getting your forehand down.",
+            "zh": "把你的正手打下去。",
+            "ar": "احصل على ضرباتك الأمامية."
+        },
+        {
+            "start": "00:00:37,954",
+            "end": "00:00:38,894",
+            "en": "It becomes coffee in 5 minutes.",
+            "zh": "5分钟变成咖啡。",
+            "ar": "يصبح قهوة في 5 دقائق.",
+            "ja": "5分でコーヒーになる"
+        },
+        {
+            "start": "00:00:57,490",
+            "end": "00:00:57,930",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسناً،"
+        },
+        {
+            "start": "00:00:57,930",
+            "end": "00:00:58,410",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقاً."
+        }
+    ]
+}

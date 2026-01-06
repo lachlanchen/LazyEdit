@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,640\",\n    \"lang\": \"en\",\n    \"text\": \"In Chinese,\"\n  },\n  {\n    \"start\": \"00:00:01,640\",\n    \"end\": \"00:00:03,080\",\n    \"lang\": \"en\",\n    \"text\": \"there is a...\"\n  },\n  {\n    \"start\": \"00:00:03,874\",\n    \"end\": \"00:00:06,494\",\n    \"lang\": \"zh\",\n    \"text\": \"有一個成語叫先苦後甜\"\n  },\n  {\n    \"start\": \"00:00:07,154\",\n    \"end\": \"00:00:08,774\",\n    \"lang\": \"zh\",\n    \"text\": \"還有吃得苦中苦\"\n  },\n  {\n    \"start\": \"00:00:08,774\",\n    \"end\": \"00:00:09,994\",\n    \"lang\": \"zh\",\n    \"text\": \"方為人上人\"\n  },\n  {\n    \"start\": \"00:00:11,170\",\n    \"end\": \"00:00:16,170\",\n    \"lang\": \"en\",\n    \"text\": \"which means that sweetness after bittering,\"\n  },\n  {\n    \"start\": \"00:00:16,950\",\n    \"end\": \"00:00:17,310\",\n    \"lang\": \"en\",\n    \"text\": \"sweetness,\"\n  },\n  {\n    \"start\": \"00:00:17,310\",\n    \"end\": \"00:00:18,910\",\n    \"lang\": \"en\",\n    \"text\": \"happiness after pain.\"\n  },\n  {\n    \"start\": \"00:00:19,890\",\n    \"end\": \"00:00:23,270\",\n    \"lang\": \"en\",\n    \"text\": \"And if you suffer more,\"\n  },\n  {\n    \"start\": \"00:00:23,530\",\n    \"end\": \"00:00:25,590\",\n    \"lang\": \"en\",\n    \"text\": \"that you will get high.\"\n  },\n  {\n    \"start\": \"00:00:26,050\",\n    \"end\": \"00:00:28,730\",\n    \"lang\": \"en\",\n    \"text\": \"I hated the two phrases.\"\n  },\n  {\n    \"start\": \"00:00:29,310\",\n    \"end\": \"00:00:31,250\",\n    \"lang\": \"en\",\n    \"text\": \"So both are wrong.\"\n  },\n  {\n    \"start\": \"00:00:32,490\",\n    \"end\": \"00:00:36,750\",\n    \"lang\": \"en\",\n    \"text\": \"So if you cannot enjoy your life now,\"\n  },\n  {\n    \"start\": \"00:00:36,970\",\n    \"end\": \"00:00:39,630\",\n    \"lang\": \"en\",\n    \"text\": \"that you still cannot enjoy it\"\n  },\n  {\n    \"start\": \"00:00:39,630\",\n    \"end\": \"00:00:41,970\",\n    \"lang\": \"en\",\n    \"text\": \"until you can enjoy it.\"\n  },\n  {\n    \"start\": \"00:00:48,290\",\n    \"end\": \"00:00:53,230\",\n    \"lang\": \"en\",\n    \"text\": \"And then if you suffer more,\"\n  },\n  {\n    \"start\": \"00:00:53,350\",\n    \"end\": \"00:00:56,630\",\n    \"lang\": \"en\",\n    \"text\": \"you get higher over people.\"\n  },\n  {\n    \"start\": \"00:00:56,930\",\n    \"end\": \"00:00:58,430\",\n    \"lang\": \"en\",\n    \"text\": \"You can get people over people.\"\n  },\n  {\n    \"start\": \"00:00:59,350\",\n    \"end\": \"00:01:01,130\",\n    \"lang\": \"en\",\n    \"text\": \"You can get a higher position.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,640",
+            "es": "En chino,",
+            "fr": "En chinois,",
+            "uk": "Китайською мовою,"
+        },
+        {
+            "start": "00:00:01,640",
+            "end": "00:00:03,080",
+            "es": "hay un...",
+            "fr": "il y a...",
+            "uk": "є..."
+        },
+        {
+            "start": "00:00:03,874",
+            "end": "00:00:06,494",
+            "es": "existe un proverbio que dice que primero es amargo y luego dulce",
+            "fr": "il y a un dicton qui dit d'abord amer, puis doux",
+            "uk": "є приказка, що каже спочатку гірке, потім солодке"
+        },
+        {
+            "start": "00:00:07,154",
+            "end": "00:00:08,774",
+            "es": "y también sufrir en la amargura",
+            "fr": "et aussi souffrir dans l'amertume",
+            "uk": "та також страждати у гіркоті"
+        },
+        {
+            "start": "00:00:08,774",
+            "end": "00:00:09,994",
+            "es": "es lo que te hace superior a los demás",
+            "fr": "c'est ce qui te rend supérieur aux autres",
+            "uk": "це те, що робить тебе вищим за інших"
+        },
+        {
+            "start": "00:00:11,170",
+            "end": "00:00:16,170",
+            "es": "lo que significa que después de sufrir viene la dulzura,",
+            "fr": "ce qui signifie que la douceur vient après la souffrance,",
+            "uk": "що означає, що після страждань настає солодкість,"
+        },
+        {
+            "start": "00:00:16,950",
+            "end": "00:00:17,310",
+            "es": "dulzura,",
+            "fr": "douceur,",
+            "uk": "солодкість,"
+        },
+        {
+            "start": "00:00:17,310",
+            "end": "00:00:18,910",
+            "es": "felicidad después del dolor.",
+            "fr": "bonheur après la douleur.",
+            "uk": "щастя після болю."
+        },
+        {
+            "start": "00:00:19,890",
+            "end": "00:00:23,270",
+            "es": "Y si sufres más,",
+            "fr": "Et si tu souffres plus,",
+            "uk": "І якщо ти страждаєш більше,"
+        },
+        {
+            "start": "00:00:23,530",
+            "end": "00:00:25,590",
+            "es": "entonces alcanzarás lo más alto.",
+            "fr": "alors tu atteindras le sommet.",
+            "uk": "тоді ти досягнеш вершини."
+        },
+        {
+            "start": "00:00:26,050",
+            "end": "00:00:28,730",
+            "es": "Odiaba esas dos frases.",
+            "fr": "Je détestais ces deux phrases.",
+            "uk": "Я ненавидів ці два висловлювання."
+        },
+        {
+            "start": "00:00:29,310",
+            "end": "00:00:31,250",
+            "es": "Así que ambas son incorrectas.",
+            "fr": "Donc les deux sont fausses.",
+            "uk": "Отже, обидві неправильні."
+        },
+        {
+            "start": "00:00:32,490",
+            "end": "00:00:36,750",
+            "es": "Así que si no puedes disfrutar de tu vida ahora,",
+            "fr": "Donc, si tu ne peux pas profiter de ta vie maintenant,",
+            "uk": "Отже, якщо ти не можеш насолоджуватися життям зараз,"
+        },
+        {
+            "start": "00:00:36,970",
+            "end": "00:00:39,630",
+            "es": "entonces todavía no podrás disfrutarla",
+            "fr": "alors tu ne pourras toujours pas en profiter",
+            "uk": "то ти все одно не зможеш насолоджуватися нею"
+        },
+        {
+            "start": "00:00:39,630",
+            "end": "00:00:41,970",
+            "es": "hasta que puedas disfrutarla.",
+            "fr": "jusqu'à ce que tu puisses en profiter.",
+            "uk": "доки ти не зможеш насолоджуватися нею."
+        },
+        {
+            "start": "00:00:48,290",
+            "end": "00:00:53,230",
+            "es": "Y entonces si sufres más,",
+            "fr": "Et alors si tu souffres plus,",
+            "uk": "І тоді якщо ти страждаєш більше,"
+        },
+        {
+            "start": "00:00:53,350",
+            "end": "00:00:56,630",
+            "es": "te elevarás sobre los demás.",
+            "fr": "tu t'élèveras au-dessus des autres.",
+            "uk": "ти піднімешся над іншими."
+        },
+        {
+            "start": "00:00:56,930",
+            "end": "00:00:58,430",
+            "es": "Puedes estar por encima de los demás.",
+            "fr": "Tu peux être au-dessus des autres.",
+            "uk": "Ти можеш бути вище за інших."
+        },
+        {
+            "start": "00:00:59,350",
+            "end": "00:01:01,130",
+            "es": "Puedes obtener una posición más alta.",
+            "fr": "Tu peux obtenir une position plus élevée.",
+            "uk": "Ти можеш отримати вищу посаду."
+        }
+    ]
+}

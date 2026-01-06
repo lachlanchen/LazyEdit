@@ -1,0 +1,77 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,460\",\n    \"lang\": \"en\",\n    \"text\": \"Two dogs.\"\n  },\n  {\n    \"start\": \"00:00:01,250\",\n    \"end\": \"00:00:01,730\",\n    \"lang\": \"en\",\n    \"text\": \"receptor\"\n  },\n  {\n    \"start\": \"00:00:03,378\",\n    \"end\": \"00:00:04,418\",\n    \"lang\": \"zh\",\n    \"text\": \"跳艇艾斯\"\n  },\n  {\n    \"start\": \"00:00:05,554\",\n    \"end\": \"00:00:07,254\",\n    \"lang\": \"zh\",\n    \"text\": \"看他们把屁股甩的那样\"\n  },\n  {\n    \"start\": \"00:00:07,674\",\n    \"end\": \"00:00:08,754\",\n    \"lang\": \"zh\",\n    \"text\": \"还挺可爱的\"\n  },\n  {\n    \"start\": \"00:00:10,754\",\n    \"end\": \"00:00:10,874\",\n    \"lang\": \"ja\",\n    \"text\": \"はい\"\n  },\n  {\n    \"start\": \"00:00:11,793\",\n    \"end\": \"00:00:12,334\",\n    \"lang\": \"ja\",\n    \"text\": \"えー\"\n  },\n  {\n    \"start\": \"00:00:12,334\",\n    \"end\": \"00:00:14,254\",\n    \"lang\": \"en\",\n    \"text\": \"The name of the dog is Creeper\"\n  },\n  {\n    \"start\": \"00:00:14,254\",\n    \"end\": \"00:00:15,434\",\n    \"lang\": \"en\",\n    \"text\": \"It's a Creeper\"\n  },\n  {\n    \"start\": \"00:00:15,434\",\n    \"end\": \"00:00:16,234\",\n    \"lang\": \"en\",\n    \"text\": \"Creeper dog\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,460",
+            "en": "Two dogs.",
+            "zh": "两只狗。",
+            "ar": "كلبان."
+        },
+        {
+            "start": "00:00:01,250",
+            "end": "00:00:01,730",
+            "en": "receptor",
+            "zh": "接受器",
+            "ar": "المستقبل"
+        },
+        {
+            "start": "00:00:03,378",
+            "end": "00:00:04,418",
+            "en": "Jump boat Ace",
+            "zh": "跳艇艾斯",
+            "ar": "قفز قارب آيس"
+        },
+        {
+            "start": "00:00:05,554",
+            "end": "00:00:07,254",
+            "en": "Look at them swinging their butts like that",
+            "zh": "看他们把屁股甩的那样",
+            "ar": "انظر كيف يتأرجحون بهذه الطريقة"
+        },
+        {
+            "start": "00:00:07,674",
+            "end": "00:00:08,754",
+            "en": "Quite adorable",
+            "zh": "还挺可爱的",
+            "ar": "جذاب جدا"
+        },
+        {
+            "start": "00:00:10,754",
+            "end": "00:00:10,874",
+            "en": "Yes",
+            "zh": "是",
+            "ar": "نعم",
+            "ja": "はい"
+        },
+        {
+            "start": "00:00:11,793",
+            "end": "00:00:12,334",
+            "en": "Ah",
+            "zh": "啊",
+            "ar": "آه",
+            "ja": "えー"
+        },
+        {
+            "start": "00:00:12,334",
+            "end": "00:00:14,254",
+            "en": "The name of the dog is Creeper",
+            "zh": "这只狗的名字叫Creeper",
+            "ar": "اسم الكلب كريبر"
+        },
+        {
+            "start": "00:00:14,254",
+            "end": "00:00:15,434",
+            "en": "It's a Creeper",
+            "zh": "它是一个Creeper",
+            "ar": "إنه كريبر"
+        },
+        {
+            "start": "00:00:15,434",
+            "end": "00:00:16,234",
+            "en": "Creeper dog",
+            "zh": "Creeper狗",
+            "ar": "كلب كريبر"
+        }
+    ]
+}

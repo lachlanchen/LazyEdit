@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,960\",\n    \"lang\": \"en\",\n    \"text\": \"This is our beer friend.\"\n  },\n  {\n    \"start\": \"00:00:01,858\",\n    \"end\": \"00:00:02,598\",\n    \"lang\": \"zh\",\n    \"text\": \"我們的雄筏\"\n  },\n  {\n    \"start\": \"00:00:03,698\",\n    \"end\": \"00:00:04,338\",\n    \"lang\": \"zh\",\n    \"text\": \"第二條竿\"\n  },\n  {\n    \"start\": \"00:00:05,557\",\n    \"end\": \"00:00:06,518\",\n    \"lang\": \"zh\",\n    \"text\": \"好 漂亮\"\n  },\n  {\n    \"start\": \"00:00:09,026\",\n    \"end\": \"00:00:09,226\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks man.\"\n  },\n  {\n    \"start\": \"00:00:10,082\",\n    \"end\": \"00:00:11,882\",\n    \"lang\": \"zh\",\n    \"text\": \"看这些枯枯的地啊\"\n  },\n  {\n    \"start\": \"00:00:13,954\",\n    \"end\": \"00:00:14,134\",\n    \"lang\": \"en\",\n    \"text\": \"junk\"\n  },\n  {\n    \"start\": \"00:00:16,001\",\n    \"end\": \"00:00:16,762\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます。\"\n  },\n  {\n    \"start\": \"00:00:16,762\",\n    \"end\": \"00:00:18,002\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは。\"\n  },\n  {\n    \"start\": \"00:00:18,962\",\n    \"end\": \"00:00:19,242\",\n    \"lang\": \"ja\",\n    \"text\": \"ああ、\"\n  },\n  {\n    \"start\": \"00:00:19,242\",\n    \"end\": \"00:00:19,862\",\n    \"lang\": \"ja\",\n    \"text\": \"おやすみなさい。\"\n  },\n  {\n    \"start\": \"00:00:28,326\",\n    \"end\": \"00:00:29,346\",\n    \"lang\": \"en\",\n    \"text\": \"She's so happy\"\n  },\n  {\n    \"start\": \"00:00:30,850\",\n    \"end\": \"00:00:31,010\",\n    \"lang\": \"ja\",\n    \"text\": \"あれ\"\n  },\n  {\n    \"start\": \"00:00:32,706\",\n    \"end\": \"00:00:33,546\",\n    \"lang\": \"ja\",\n    \"text\": \"かわいいです\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,960",
+            "es": "Este es nuestro amigo cerveza.",
+            "fr": "C'est notre ami bière.",
+            "uk": "Це наш пивний друг."
+        },
+        {
+            "start": "00:00:01,858",
+            "end": "00:00:02,598",
+            "es": "Nuestro macho alfa.",
+            "fr": "Notre mâle alpha.",
+            "uk": "Наш альфа-самець."
+        },
+        {
+            "start": "00:00:03,698",
+            "end": "00:00:04,338",
+            "es": "La segunda caña.",
+            "fr": "Le deuxième bâton.",
+            "uk": "Друга вудка."
+        },
+        {
+            "start": "00:00:05,557",
+            "end": "00:00:06,518",
+            "es": "Qué bonito.",
+            "fr": "Comme c'est beau.",
+            "uk": "Як гарно."
+        },
+        {
+            "start": "00:00:09,026",
+            "end": "00:00:09,226",
+            "es": "Gracias, amigo.",
+            "fr": "Merci, mon pote.",
+            "uk": "Дякую, чувак."
+        },
+        {
+            "start": "00:00:10,082",
+            "end": "00:00:11,882",
+            "es": "Mira estos terrenos secos.",
+            "fr": "Regarde ces terres sèches.",
+            "uk": "Подивися на ці сухі землі."
+        },
+        {
+            "start": "00:00:13,954",
+            "end": "00:00:14,134",
+            "es": "Desperdicio.",
+            "fr": "Déchet.",
+            "uk": "Мотлох."
+        },
+        {
+            "start": "00:00:16,001",
+            "end": "00:00:16,762",
+            "es": "Buenos días.",
+            "fr": "Bonjour.",
+            "uk": "Доброго ранку."
+        },
+        {
+            "start": "00:00:16,762",
+            "end": "00:00:18,002",
+            "es": "Buenas tardes.",
+            "fr": "Bonne après-midi.",
+            "uk": "Доброго дня."
+        },
+        {
+            "start": "00:00:18,962",
+            "end": "00:00:19,242",
+            "es": "Ah,",
+            "fr": "Ah,",
+            "uk": "Агов,"
+        },
+        {
+            "start": "00:00:19,242",
+            "end": "00:00:19,862",
+            "es": "Buenas noches.",
+            "fr": "Bonne nuit.",
+            "uk": "Добраніч."
+        },
+        {
+            "start": "00:00:28,326",
+            "end": "00:00:29,346",
+            "es": "Ella está tan feliz",
+            "fr": "Elle est si heureuse",
+            "uk": "Вона така щаслива"
+        },
+        {
+            "start": "00:00:30,850",
+            "end": "00:00:31,010",
+            "es": "Miren",
+            "fr": "Regardez",
+            "uk": "Дивіться"
+        },
+        {
+            "start": "00:00:32,706",
+            "end": "00:00:33,546",
+            "es": "Es adorable",
+            "fr": "C'est mignon",
+            "uk": "Це мило"
+        }
+    ]
+}

@@ -1,0 +1,166 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,860\",\n    \"end\": \"00:00:01,420\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:01,420\",\n    \"end\": \"00:00:02,760\",\n    \"lang\": \"en\",\n    \"text\": \"to help me cure.\"\n  },\n  {\n    \"start\": \"00:00:03,170\",\n    \"end\": \"00:00:04,010\",\n    \"lang\": \"ja\",\n    \"text\": \"フラウ・ネフェン\"\n  },\n  {\n    \"start\": \"00:00:04,354\",\n    \"end\": \"00:00:04,634\",\n    \"lang\": \"en\",\n    \"text\": \"COVID\"\n  },\n  {\n    \"start\": \"00:00:09,826\",\n    \"end\": \"00:00:10,946\",\n    \"lang\": \"ar\",\n    \"text\": \"هذه هي هؤلاء\"\n  },\n  {\n    \"start\": \"00:00:12,514\",\n    \"end\": \"00:00:12,894\",\n    \"lang\": \"en\",\n    \"text\": \"Pierre,\"\n  },\n  {\n    \"start\": \"00:00:12,894\",\n    \"end\": \"00:00:13,474\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:00:13,474\",\n    \"end\": \"00:00:13,994\",\n    \"lang\": \"en\",\n    \"text\": \"Pierre.\"\n  },\n  {\n    \"start\": \"00:00:17,954\",\n    \"end\": \"00:00:19,134\",\n    \"lang\": \"zh\",\n    \"text\": \"梨子是pear吧\"\n  },\n  {\n    \"start\": \"00:00:19,394\",\n    \"end\": \"00:00:19,754\",\n    \"lang\": \"zh\",\n    \"text\": \"梨子\"\n  },\n  {\n    \"start\": \"00:00:20,174\",\n    \"end\": \"00:00:20,794\",\n    \"lang\": \"zh\",\n    \"text\": \"这是梨子\"\n  },\n  {\n    \"start\": \"00:00:21,634\",\n    \"end\": \"00:00:22,474\",\n    \"lang\": \"en\",\n    \"text\": \"and orange,\"\n  },\n  {\n    \"start\": \"00:00:22,474\",\n    \"end\": \"00:00:23,674\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:23,674\",\n    \"end\": \"00:00:24,214\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry.\"\n  },\n  {\n    \"start\": \"00:00:25,698\",\n    \"end\": \"00:00:26,878\",\n    \"lang\": \"zh\",\n    \"text\": \"这是胜于过\"\n  },\n  {\n    \"start\": \"00:00:28,162\",\n    \"end\": \"00:00:28,942\",\n    \"lang\": \"en\",\n    \"text\": \"Chaine du con.\"\n  },\n  {\n    \"start\": \"00:00:29,922\",\n    \"end\": \"00:00:31,222\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道它英文怎么讲\"\n  },\n  {\n    \"start\": \"00:00:31,222\",\n    \"end\": \"00:00:32,042\",\n    \"lang\": \"zh\",\n    \"text\": \"圣女是\"\n  },\n  {\n    \"start\": \"00:00:33,642\",\n    \"end\": \"00:00:35,182\",\n    \"lang\": \"zh\",\n    \"text\": \"神圣的圣\"\n  },\n  {\n    \"start\": \"00:00:35,772\",\n    \"end\": \"00:00:36,522\",\n    \"lang\": \"zh\",\n    \"text\": \"美女的女\"\n  },\n  {\n    \"start\": \"00:00:36,522\",\n    \"end\": \"00:00:37,642\",\n    \"lang\": \"zh\",\n    \"text\": \"水果的果\"\n  },\n  {\n    \"start\": \"00:00:41,622\",\n    \"end\": \"00:00:42,082\",\n    \"lang\": \"en\",\n    \"text\": \"OK\"\n  },\n  {\n    \"start\": \"00:00:47,298\",\n    \"end\": \"00:00:49,798\",\n    \"lang\": \"en\",\n    \"text\": \"Let me see if the translation is correct.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,860",
+            "end": "00:00:01,420",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:01,420",
+            "end": "00:00:02,760",
+            "es": "para ayudarme a curar.",
+            "fr": "pour m'aider à guérir.",
+            "uk": "щоб допомогти мені вилікуватися."
+        },
+        {
+            "start": "00:00:03,170",
+            "end": "00:00:04,010",
+            "es": "Señora Neffen",
+            "fr": "Madame Neffen",
+            "uk": "Пані Неффен"
+        },
+        {
+            "start": "00:00:04,354",
+            "end": "00:00:04,634",
+            "es": "COVID",
+            "fr": "COVID",
+            "uk": "COVID"
+        },
+        {
+            "start": "00:00:09,826",
+            "end": "00:00:10,946",
+            "es": "Estos son",
+            "fr": "Ce sont",
+            "uk": "Ось вони"
+        },
+        {
+            "start": "00:00:12,514",
+            "end": "00:00:12,894",
+            "es": "Pierre,",
+            "fr": "Pierre,",
+            "uk": "П'єр,"
+        },
+        {
+            "start": "00:00:12,894",
+            "end": "00:00:13,474",
+            "es": "¿verdad?",
+            "fr": "n'est-ce pas ?",
+            "uk": "правильно?"
+        },
+        {
+            "start": "00:00:13,474",
+            "end": "00:00:13,994",
+            "es": "Pierre.",
+            "fr": "Pierre.",
+            "uk": "П'єр."
+        },
+        {
+            "start": "00:00:17,954",
+            "end": "00:00:19,134",
+            "es": "La pera es 'pear', ¿verdad?",
+            "fr": "La poire c'est 'pear', n'est-ce pas?",
+            "uk": "Груша - це 'pear', так?"
+        },
+        {
+            "start": "00:00:19,394",
+            "end": "00:00:19,754",
+            "es": "Pera",
+            "fr": "Poire",
+            "uk": "Груша"
+        },
+        {
+            "start": "00:00:20,174",
+            "end": "00:00:20,794",
+            "es": "Esto es una pera",
+            "fr": "Ceci est une poire",
+            "uk": "Це груша"
+        },
+        {
+            "start": "00:00:21,634",
+            "end": "00:00:22,474",
+            "es": "y naranja,",
+            "fr": "et orange,",
+            "uk": "та апельсин,"
+        },
+        {
+            "start": "00:00:22,474",
+            "end": "00:00:23,674",
+            "es": "arándano,",
+            "fr": "myrtille,",
+            "uk": "чорниця,"
+        },
+        {
+            "start": "00:00:23,674",
+            "end": "00:00:24,214",
+            "es": "fresa.",
+            "fr": "fraise.",
+            "uk": "полуниця."
+        },
+        {
+            "start": "00:00:25,698",
+            "end": "00:00:26,878",
+            "es": "Esto es excepcional",
+            "fr": "C'est exceptionnel",
+            "uk": "Це виняткове"
+        },
+        {
+            "start": "00:00:28,162",
+            "end": "00:00:28,942",
+            "es": "Cadena del tono.",
+            "fr": "Chaîne du ton.",
+            "uk": "Ланцюг тону."
+        },
+        {
+            "start": "00:00:29,922",
+            "end": "00:00:31,222",
+            "es": "No sé cómo decirlo en inglés",
+            "fr": "Je ne sais pas comment le dire en anglais",
+            "uk": "Я не знаю, як це сказати англійською"
+        },
+        {
+            "start": "00:00:31,222",
+            "end": "00:00:32,042",
+            "es": "Santa es",
+            "fr": "Sainte est",
+            "uk": "Свята це"
+        },
+        {
+            "start": "00:00:33,642",
+            "end": "00:00:35,182",
+            "es": "Sagrada de 'santo'",
+            "fr": "Sacrée de 'saint'",
+            "uk": "Священна від 'святий'"
+        },
+        {
+            "start": "00:00:35,772",
+            "end": "00:00:36,522",
+            "es": "Belleza de 'bella'",
+            "fr": "Beauté de 'belle'",
+            "uk": "Краса від 'красива'"
+        },
+        {
+            "start": "00:00:36,522",
+            "end": "00:00:37,642",
+            "es": "Fruto de 'fruta'",
+            "fr": "Fruit de 'fruit'",
+            "uk": "Плід від 'фрукт'"
+        },
+        {
+            "start": "00:00:41,622",
+            "end": "00:00:42,082",
+            "es": "OK",
+            "fr": "OK",
+            "uk": "Гаразд"
+        },
+        {
+            "start": "00:00:47,298",
+            "end": "00:00:49,798",
+            "es": "Veamos si la traducción es correcta.",
+            "fr": "Voyons si la traduction est correcte.",
+            "uk": "Перевіримо, чи правильний переклад."
+        }
+    ]
+}

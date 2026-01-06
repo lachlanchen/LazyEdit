@@ -1,0 +1,59 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,140\",\n    \"lang\": \"ja\",\n    \"text\": \"私は夕ご飯を作っています\"\n  },\n  {\n    \"start\": \"00:00:06,679\",\n    \"end\": \"00:00:08,200\",\n    \"lang\": \"ja\",\n    \"text\": \"これは手羽先です\"\n  },\n  {\n    \"start\": \"00:00:08,200\",\n    \"end\": \"00:00:09,500\",\n    \"lang\": \"ja\",\n    \"text\": \"これはフニバレスです\"\n  },\n  {\n    \"start\": \"00:00:09,500\",\n    \"end\": \"00:00:11,260\",\n    \"lang\": \"ja\",\n    \"text\": \"これはパークルスとカロリー\"\n  },\n  {\n    \"start\": \"00:00:13,259\",\n    \"end\": \"00:00:14,800\",\n    \"lang\": \"ja\",\n    \"text\": \"これはクランドです\"\n  },\n  {\n    \"start\": \"00:00:17,186\",\n    \"end\": \"00:00:21,486\",\n    \"lang\": \"en\",\n    \"text\": \"This chicken wing honey bee already removed its bones.\"\n  },\n  {\n    \"start\": \"00:00:22,066\",\n    \"end\": \"00:00:24,466\",\n    \"lang\": \"en\",\n    \"text\": \"So let's do it.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,140",
+            "en": "I am making dinner",
+            "zh": "我在做晚餐",
+            "ar": "أنا أصنع العشاء",
+            "ja": "私は夕ご飯を作っています"
+        },
+        {
+            "start": "00:00:06,679",
+            "end": "00:00:08,200",
+            "en": "This is a chicken wing",
+            "zh": "这是鸡翅",
+            "ar": "هذه جناح دجاج",
+            "ja": "これは手羽先です"
+        },
+        {
+            "start": "00:00:08,200",
+            "end": "00:00:09,500",
+            "en": "This is a funnel",
+            "zh": "这是一个漏斗",
+            "ar": "هذا قمع",
+            "ja": "これはフニバレスです"
+        },
+        {
+            "start": "00:00:09,500",
+            "end": "00:00:11,260",
+            "en": "These are pickles and calories",
+            "zh": "这些是泡菜和卡路里",
+            "ar": "هذه المخللات والسعرات الحرارية",
+            "ja": "これはパークルスとカロリー"
+        },
+        {
+            "start": "00:00:13,259",
+            "end": "00:00:14,800",
+            "en": "This is cilantro",
+            "zh": "这是香菜",
+            "ar": "هذا الكزبرة",
+            "ja": "これはクランドです"
+        },
+        {
+            "start": "00:00:17,186",
+            "end": "00:00:21,486",
+            "en": "This chicken wing has already had its bones removed.",
+            "zh": "这只鸡翅已经去骨了。",
+            "ar": "تم إزالة العظام من هذا الجناح الدجاج بالفعل."
+        },
+        {
+            "start": "00:00:22,066",
+            "end": "00:00:24,466",
+            "en": "So let's do it.",
+            "zh": "所以，让我们开始吧。",
+            "ar": "لذا، دعونا نفعل ذلك."
+        }
+    ]
+}

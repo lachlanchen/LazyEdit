@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"en\",\n    \"text\": \"So I forget to say,\"\n  },\n  {\n    \"start\": \"00:00:01,460\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"we also have this small tomato.\"\n  },\n  {\n    \"start\": \"00:00:07,586\",\n    \"end\": \"00:00:09,706\",\n    \"lang\": \"zh\",\n    \"text\": \"生驴果 我跟你说 好多生\"\n  },\n  {\n    \"start\": \"00:00:09,986\",\n    \"end\": \"00:00:11,186\",\n    \"lang\": \"zh\",\n    \"text\": \"生驴果\"\n  },\n  {\n    \"start\": \"00:00:14,178\",\n    \"end\": \"00:00:14,698\",\n    \"lang\": \"en\",\n    \"text\": \"And the grapes.\"\n  },\n  {\n    \"start\": \"00:00:39,746\",\n    \"end\": \"00:00:39,966\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,460",
+            "ja": "だから忘れちゃったんだけど、"
+        },
+        {
+            "start": "00:00:01,460",
+            "end": "00:00:05,000",
+            "ja": "小さなトマトもあるんだよ。"
+        },
+        {
+            "start": "00:00:07,586",
+            "end": "00:00:09,706",
+            "ja": "生のドンキーフルーツ、たくさんあるって言ってたよね。"
+        },
+        {
+            "start": "00:00:09,986",
+            "end": "00:00:11,186",
+            "ja": "生のドンキーフルーツ"
+        },
+        {
+            "start": "00:00:14,178",
+            "end": "00:00:14,698",
+            "ja": "そして、ブドウも。"
+        },
+        {
+            "start": "00:00:39,746",
+            "end": "00:00:39,966",
+            "ja": "じゃ、またね。"
+        }
+    ]
+}

@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,620\",\n    \"lang\": \"ja\",\n    \"text\": \"私は天体\"\n  },\n  {\n    \"start\": \"00:00:03,042\",\n    \"end\": \"00:00:04,642\",\n    \"lang\": \"ja\",\n    \"text\": \"とにかく大好きです\"\n  },\n  {\n    \"start\": \"00:00:05,922\",\n    \"end\": \"00:00:06,842\",\n    \"lang\": \"en\",\n    \"text\": \"I love this world.\"\n  },\n  {\n    \"start\": \"00:00:07,622\",\n    \"end\": \"00:00:08,962\",\n    \"lang\": \"en\",\n    \"text\": \"I love astrophysics.\"\n  },\n  {\n    \"start\": \"00:00:10,982\",\n    \"end\": \"00:00:14,442\",\n    \"lang\": \"en\",\n    \"text\": \"And also encryption and this world.\"\n  },\n  {\n    \"start\": \"00:00:14,978\",\n    \"end\": \"00:00:16,058\",\n    \"lang\": \"ja\",\n    \"text\": \"私は\"\n  },\n  {\n    \"start\": \"00:00:17,458\",\n    \"end\": \"00:00:18,318\",\n    \"lang\": \"ja\",\n    \"text\": \"私は\"\n  },\n  {\n    \"start\": \"00:00:19,426\",\n    \"end\": \"00:00:20,566\",\n    \"lang\": \"en\",\n    \"text\": \"I'm cool.\"\n  },\n  {\n    \"start\": \"00:00:21,090\",\n    \"end\": \"00:00:23,610\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあんこが\"\n  },\n  {\n    \"start\": \"00:00:23,610\",\n    \"end\": \"00:00:25,390\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあんこが\"\n  },\n  {\n    \"start\": \"00:00:26,369\",\n    \"end\": \"00:00:27,730\",\n    \"lang\": \"ja\",\n    \"text\": \"愛しです\"\n  },\n  {\n    \"start\": \"00:00:27,730\",\n    \"end\": \"00:00:28,390\",\n    \"lang\": \"ja\",\n    \"text\": \"愛します\"\n  },\n  {\n    \"start\": \"00:00:29,329\",\n    \"end\": \"00:00:31,270\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあんこが\"\n  },\n  {\n    \"start\": \"00:00:31,270\",\n    \"end\": \"00:00:31,990\",\n    \"lang\": \"ja\",\n    \"text\": \"愛します\"\n  },\n  {\n    \"start\": \"00:00:33,890\",\n    \"end\": \"00:00:38,090\",\n    \"lang\": \"en\",\n    \"text\": \"Do you remember this Arabic letter?\"\n  },\n  {\n    \"start\": \"00:00:38,890\",\n    \"end\": \"00:00:41,510\",\n    \"lang\": \"en\",\n    \"text\": \"We say it's similar to this door.\"\n  },\n  {\n    \"start\": \"00:00:42,370\",\n    \"end\": \"00:00:44,330\",\n    \"lang\": \"en\",\n    \"text\": \"So the pronunciation is door,\"\n  },\n  {\n    \"start\": \"00:00:44,330\",\n    \"end\": \"00:00:45,390\",\n    \"lang\": \"en\",\n    \"text\": \"D-A-L.\"\n  },\n  {\n    \"start\": \"00:00:45,970\",\n    \"end\": \"00:00:47,270\",\n    \"lang\": \"en\",\n    \"text\": \"This is Arabic letter.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,620",
+            "vi": "Tôi yêu thích các thiên thể"
+        },
+        {
+            "start": "00:00:03,042",
+            "end": "00:00:04,642",
+            "vi": "Tôi cực kì yêu thích chúng"
+        },
+        {
+            "start": "00:00:05,922",
+            "end": "00:00:06,842",
+            "vi": "Tôi yêu thế giới này."
+        },
+        {
+            "start": "00:00:07,622",
+            "end": "00:00:08,962",
+            "vi": "Tôi yêu vật lý thiên văn."
+        },
+        {
+            "start": "00:00:10,982",
+            "end": "00:00:14,442",
+            "vi": "Và cũng yêu mật mã học và thế giới này."
+        },
+        {
+            "start": "00:00:14,978",
+            "end": "00:00:16,058",
+            "vi": "Tôi là"
+        },
+        {
+            "start": "00:00:17,458",
+            "end": "00:00:18,318",
+            "vi": "Tôi là"
+        },
+        {
+            "start": "00:00:19,426",
+            "end": "00:00:20,566",
+            "vi": "Tôi thật ngầu."
+        },
+        {
+            "start": "00:00:21,090",
+            "end": "00:00:23,610",
+            "vi": "Tôi yêu thích"
+        },
+        {
+            "start": "00:00:23,610",
+            "end": "00:00:25,390",
+            "vi": "Tôi thích"
+        },
+        {
+            "start": "00:00:26,369",
+            "end": "00:00:27,730",
+            "vi": "rất yêu"
+        },
+        {
+            "start": "00:00:27,730",
+            "end": "00:00:28,390",
+            "vi": "yêu thích"
+        },
+        {
+            "start": "00:00:29,329",
+            "end": "00:00:31,270",
+            "vi": "Tôi thích"
+        },
+        {
+            "start": "00:00:31,270",
+            "end": "00:00:31,990",
+            "vi": "yêu thích"
+        },
+        {
+            "start": "00:00:33,890",
+            "end": "00:00:38,090",
+            "vi": "Bạn còn nhớ chữ cái Ả Rập này không?"
+        },
+        {
+            "start": "00:00:38,890",
+            "end": "00:00:41,510",
+            "vi": "Chúng ta nói rằng nó giống như cái cửa này."
+        },
+        {
+            "start": "00:00:42,370",
+            "end": "00:00:44,330",
+            "vi": "Vì vậy, cách phát âm là cửa,"
+        },
+        {
+            "start": "00:00:44,330",
+            "end": "00:00:45,390",
+            "vi": "D-A-L."
+        },
+        {
+            "start": "00:00:45,970",
+            "end": "00:00:47,270",
+            "vi": "Đây là chữ cái Ả Rập."
+        }
+    ]
+}

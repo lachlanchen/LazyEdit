@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,650\",\n    \"end\": \"00:01:05,430\",\n    \"lang\": \"en\",\n    \"text\": \"I don't like it in two points.\"\n  },\n  {\n    \"start\": \"00:01:05,430\",\n    \"end\": \"00:01:06,110\",\n    \"lang\": \"en\",\n    \"text\": \"Firstly,\"\n  },\n  {\n    \"start\": \"00:01:06,110\",\n    \"end\": \"00:01:07,870\",\n    \"lang\": \"en\",\n    \"text\": \"it is incorrect name.\"\n  },\n  {\n    \"start\": \"00:01:08,802\",\n    \"end\": \"00:01:09,462\",\n    \"lang\": \"ja\",\n    \"text\": \"一斉に\"\n  },\n  {\n    \"start\": \"00:01:10,978\",\n    \"end\": \"00:01:18,738\",\n    \"lang\": \"en\",\n    \"text\": \"It means that if you are a people that are above other people,\"\n  },\n  {\n    \"start\": \"00:01:18,738\",\n    \"end\": \"00:01:20,878\",\n    \"lang\": \"en\",\n    \"text\": \"that is a good thing.\"\n  },\n  {\n    \"start\": \"00:01:22,658\",\n    \"end\": \"00:01:27,798\",\n    \"lang\": \"en\",\n    \"text\": \"If it doesn't have to be a good thing,\"\n  },\n  {\n    \"start\": \"00:01:27,798\",\n    \"end\": \"00:01:31,358\",\n    \"lang\": \"en\",\n    \"text\": \"you are a happy people,\"\n  },\n  {\n    \"start\": \"00:01:31,358\",\n    \"end\": \"00:01:36,818\",\n    \"lang\": \"en\",\n    \"text\": \"you are a full-blown life,\"\n  },\n  {\n    \"start\": \"00:01:36,818\",\n    \"end\": \"00:01:38,418\",\n    \"lang\": \"en\",\n    \"text\": \"full-blown creature,\"\n  },\n  {\n    \"start\": \"00:01:38,418\",\n    \"end\": \"00:01:42,118\",\n    \"lang\": \"en\",\n    \"text\": \"that's a good thing.\"\n  },\n  {\n    \"start\": \"00:01:42,118\",\n    \"end\": \"00:01:46,138\",\n    \"lang\": \"en\",\n    \"text\": \"That's the most important thing that you should do.\"\n  },\n  {\n    \"start\": \"00:01:47,738\",\n    \"end\": \"00:01:53,498\",\n    \"lang\": \"en\",\n    \"text\": \"And the second part is that if you suffer more,\"\n  },\n  {\n    \"start\": \"00:01:53,498\",\n    \"end\": \"00:01:54,698\",\n    \"lang\": \"en\",\n    \"text\": \"then you keep suffering.\"\n  },\n  {\n    \"start\": \"00:01:55,658\",\n    \"end\": \"00:01:57,258\",\n    \"lang\": \"en\",\n    \"text\": \"It doesn't mean that you are getting better.\"\n  },\n  {\n    \"start\": \"00:01:57,258\",\n    \"end\": \"00:02:00,778\",\n    \"lang\": \"en\",\n    \"text\": \"If you are a people that keep suffering,\"\n  },\n  {\n    \"start\": \"00:02:00,778\",\n    \"end\": \"00:02:02,578\",\n    \"lang\": \"en\",\n    \"text\": \"keep suffering,\"\n  },\n  {\n    \"start\": \"00:02:02,578\",\n    \"end\": \"00:02:10,198\",\n    \"lang\": \"en\",\n    \"text\": \"then what you produce is also suffering.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:02,650",
+            "end": "00:01:05,430",
+            "vi": "Tôi không thích ở hai điểm."
+        },
+        {
+            "start": "00:01:05,430",
+            "end": "00:01:06,110",
+            "vi": "Đầu tiên,"
+        },
+        {
+            "start": "00:01:06,110",
+            "end": "00:01:07,870",
+            "vi": "đó là tên không chính xác."
+        },
+        {
+            "start": "00:01:08,802",
+            "end": "00:01:09,462",
+            "vi": "Cùng một lúc"
+        },
+        {
+            "start": "00:01:10,978",
+            "end": "00:01:18,738",
+            "vi": "Nghĩa là nếu bạn là người vượt trội hơn những người khác,"
+        },
+        {
+            "start": "00:01:18,738",
+            "end": "00:01:20,878",
+            "vi": "đó là điều tốt."
+        },
+        {
+            "start": "00:01:22,658",
+            "end": "00:01:27,798",
+            "vi": "Nếu điều đó không nhất thiết phải là điều tốt,"
+        },
+        {
+            "start": "00:01:27,798",
+            "end": "00:01:31,358",
+            "vi": "bạn là người hạnh phúc,"
+        },
+        {
+            "start": "00:01:31,358",
+            "end": "00:01:36,818",
+            "vi": "bạn sống trọn vẹn,"
+        },
+        {
+            "start": "00:01:36,818",
+            "end": "00:01:38,418",
+            "vi": "sinh vật trọn vẹn,"
+        },
+        {
+            "start": "00:01:38,418",
+            "end": "00:01:42,118",
+            "vi": "đó là điều tốt."
+        },
+        {
+            "start": "00:01:42,118",
+            "end": "00:01:46,138",
+            "vi": "Đó là điều quan trọng nhất bạn nên làm."
+        },
+        {
+            "start": "00:01:47,738",
+            "end": "00:01:53,498",
+            "vi": "Và điểm thứ hai là nếu bạn chịu đau khổ hơn,"
+        },
+        {
+            "start": "00:01:53,498",
+            "end": "00:01:54,698",
+            "vi": "thì bạn cứ tiếp tục chịu đau khổ."
+        },
+        {
+            "start": "00:01:55,658",
+            "end": "00:01:57,258",
+            "vi": "Điều đó không có nghĩa là bạn đang trở nên tốt hơn."
+        },
+        {
+            "start": "00:01:57,258",
+            "end": "00:02:00,778",
+            "vi": "Nếu bạn là người cứ tiếp tục chịu đau khổ,"
+        },
+        {
+            "start": "00:02:00,778",
+            "end": "00:02:02,578",
+            "vi": "cứ tiếp tục chịu đau khổ,"
+        },
+        {
+            "start": "00:02:02,578",
+            "end": "00:02:10,198",
+            "vi": "thì thứ bạn tạo ra cũng là sự đau khổ."
+        }
+    ]
+}

@@ -1,0 +1,105 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:12,578\",\n    \"end\": \"00:01:13,398\",\n    \"lang\": \"zh\",\n    \"text\": \"來來來\"\n  },\n  {\n    \"start\": \"00:01:13,438\",\n    \"end\": \"00:01:13,958\",\n    \"lang\": \"zh\",\n    \"text\": \"菜心\"\n  },\n  {\n    \"start\": \"00:01:17,570\",\n    \"end\": \"00:01:17,890\",\n    \"lang\": \"en\",\n    \"text\": \"season.\"\n  },\n  {\n    \"start\": \"00:01:18,050\",\n    \"end\": \"00:01:18,290\",\n    \"lang\": \"en\",\n    \"text\": \"Awesome.\"\n  },\n  {\n    \"start\": \"00:01:19,554\",\n    \"end\": \"00:01:20,174\",\n    \"lang\": \"zh\",\n    \"text\": \"我是斯芬\"\n  },\n  {\n    \"start\": \"00:01:20,738\",\n    \"end\": \"00:01:21,458\",\n    \"lang\": \"ja\",\n    \"text\": \"まっすぐです\"\n  },\n  {\n    \"start\": \"00:01:24,002\",\n    \"end\": \"00:01:24,302\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:01:24,302\",\n    \"end\": \"00:01:25,822\",\n    \"lang\": \"en\",\n    \"text\": \"a blueberry\"\n  },\n  {\n    \"start\": \"00:01:28,072\",\n    \"end\": \"00:01:30,082\",\n    \"lang\": \"en\",\n    \"text\": \"and a blueberry\"\n  },\n  {\n    \"start\": \"00:01:34,492\",\n    \"end\": \"00:01:34,962\",\n    \"lang\": \"en\",\n    \"text\": \"Yak,\"\n  },\n  {\n    \"start\": \"00:01:34,962\",\n    \"end\": \"00:01:35,962\",\n    \"lang\": \"en\",\n    \"text\": \"don't juice\"\n  },\n  {\n    \"start\": \"00:01:44,492\",\n    \"end\": \"00:01:45,742\",\n    \"lang\": \"en\",\n    \"text\": \"and a sweetこれで\"\n  },\n  {\n    \"start\": \"00:01:54,002\",\n    \"end\": \"00:01:54,662\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:02:04,101\",\n    \"end\": \"00:02:04,802\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:12,578",
+            "end": "00:01:13,398",
+            "en": "Come come come",
+            "zh": "來來來",
+            "ar": "تعال تعال تعال"
+        },
+        {
+            "start": "00:01:13,438",
+            "end": "00:01:13,958",
+            "en": "Choy sum",
+            "zh": "菜心",
+            "ar": "تشوي سوم"
+        },
+        {
+            "start": "00:01:17,570",
+            "end": "00:01:17,890",
+            "en": "season.",
+            "zh": "季节。",
+            "ar": "الموسم."
+        },
+        {
+            "start": "00:01:18,050",
+            "end": "00:01:18,290",
+            "en": "Awesome.",
+            "zh": "太棒了。",
+            "ar": "رائع."
+        },
+        {
+            "start": "00:01:19,554",
+            "end": "00:01:20,174",
+            "en": "I am Sven",
+            "zh": "我是斯芬",
+            "ar": "أنا سفين"
+        },
+        {
+            "start": "00:01:20,738",
+            "end": "00:01:21,458",
+            "en": "Straight ahead",
+            "zh": "直走",
+            "ar": "مباشرة إلى الأمام",
+            "ja": "まっすぐです"
+        },
+        {
+            "start": "00:01:24,002",
+            "end": "00:01:24,302",
+            "en": "Ok,",
+            "zh": "好的，",
+            "ar": "حسناً،"
+        },
+        {
+            "start": "00:01:24,302",
+            "end": "00:01:25,822",
+            "en": "a blueberry",
+            "zh": "一颗蓝莓",
+            "ar": "توت بري"
+        },
+        {
+            "start": "00:01:28,072",
+            "end": "00:01:30,082",
+            "en": "and a blueberry",
+            "zh": "和一颗蓝莓",
+            "ar": "وتوت بري"
+        },
+        {
+            "start": "00:01:34,492",
+            "end": "00:01:34,962",
+            "en": "Yak,",
+            "zh": "牦牛，",
+            "ar": "الياك،"
+        },
+        {
+            "start": "00:01:34,962",
+            "end": "00:01:35,962",
+            "en": "don't juice",
+            "zh": "不要榨汁",
+            "ar": "لا تعصر"
+        },
+        {
+            "start": "00:01:44,492",
+            "end": "00:01:45,742",
+            "en": "and a sweet",
+            "zh": "和一种甜品",
+            "ar": "وحلو",
+            "ja": "これで"
+        },
+        {
+            "start": "00:01:54,002",
+            "end": "00:01:54,662",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:02:04,101",
+            "end": "00:02:04,802",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

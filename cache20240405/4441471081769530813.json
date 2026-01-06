@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:32,798\",\n    \"end\": \"00:01:34,858\",\n    \"lang\": \"en\",\n    \"text\": \"It smells so good.\"\n  },\n  {\n    \"start\": \"00:01:38,358\",\n    \"end\": \"00:01:41,258\",\n    \"lang\": \"en\",\n    \"text\": \"We need to put this as our cover,\"\n  },\n  {\n    \"start\": \"00:01:41,258\",\n    \"end\": \"00:01:42,398\",\n    \"lang\": \"en\",\n    \"text\": \"our keeper.\"\n  },\n  {\n    \"start\": \"00:02:10,657\",\n    \"end\": \"00:02:12,518\",\n    \"lang\": \"en\",\n    \"text\": \"I'm going to put some pepper.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:32,798",
+            "end": "00:01:34,858",
+            "es": "Huele tan bien.",
+            "fr": "Ça sent si bon.",
+            "uk": "Це так добре пахне."
+        },
+        {
+            "start": "00:01:38,358",
+            "end": "00:01:41,258",
+            "es": "Necesitamos poner esto como nuestra portada,",
+            "fr": "Nous devons mettre cela comme notre couverture,",
+            "uk": "Нам потрібно поставити це як нашу обкладинку,"
+        },
+        {
+            "start": "00:01:41,258",
+            "end": "00:01:42,398",
+            "es": "nuestro guardián.",
+            "fr": "notre gardien.",
+            "uk": "нашого вартового."
+        },
+        {
+            "start": "00:02:10,657",
+            "end": "00:02:12,518",
+            "es": "Voy a poner un poco de pimienta.",
+            "fr": "Je vais mettre un peu de poivre.",
+            "uk": "Я додам трохи перцю."
+        }
+    ]
+}

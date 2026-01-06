@@ -1,0 +1,206 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"en\",\n    \"text\": \"This is really the best dip by me ever.\"\n  },\n  {\n    \"start\": \"00:00:04,560\",\n    \"end\": \"00:00:04,800\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:04,800\",\n    \"end\": \"00:00:05,380\",\n    \"lang\": \"en\",\n    \"text\": \"for them,\"\n  },\n  {\n    \"start\": \"00:00:05,380\",\n    \"end\": \"00:00:05,760\",\n    \"lang\": \"en\",\n    \"text\": \"I'm happy.\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:06,074\",\n    \"lang\": \"zh\",\n    \"text\": \"点赞\"\n  },\n  {\n    \"start\": \"00:00:06,154\",\n    \"end\": \"00:00:06,234\",\n    \"lang\": \"zh\",\n    \"text\": \"订阅\"\n  },\n  {\n    \"start\": \"00:00:06,594\",\n    \"end\": \"00:00:06,594\",\n    \"lang\": \"zh\",\n    \"text\": \"转发\"\n  },\n  {\n    \"start\": \"00:00:08,134\",\n    \"end\": \"00:00:08,674\",\n    \"lang\": \"zh\",\n    \"text\": \"打赏支持明镜与点点栏目\"\n  },\n  {\n    \"start\": \"00:00:08,706\",\n    \"end\": \"00:00:09,426\",\n    \"lang\": \"ja\",\n    \"text\": \"いざベスク\"\n  },\n  {\n    \"start\": \"00:00:10,914\",\n    \"end\": \"00:00:11,834\",\n    \"lang\": \"en\",\n    \"text\": \"PUN DIS\"\n  },\n  {\n    \"start\": \"00:00:12,914\",\n    \"end\": \"00:00:14,054\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:14,054\",\n    \"end\": \"00:00:14,194\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:16,473\",\n    \"end\": \"00:00:17,654\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:17,654\",\n    \"end\": \"00:00:20,094\",\n    \"lang\": \"en\",\n    \"text\": \"the bakery shop is called\"\n  },\n  {\n    \"start\": \"00:00:20,914\",\n    \"end\": \"00:00:21,854\",\n    \"lang\": \"en\",\n    \"text\": \"childhood\"\n  },\n  {\n    \"start\": \"00:00:22,914\",\n    \"end\": \"00:00:24,014\",\n    \"lang\": \"en\",\n    \"text\": \"bakery\"\n  },\n  {\n    \"start\": \"00:00:24,403\",\n    \"end\": \"00:00:27,014\",\n    \"lang\": \"en\",\n    \"text\": \"so it's help you remember\"\n  },\n  {\n    \"start\": \"00:00:27,014\",\n    \"end\": \"00:00:28,374\",\n    \"lang\": \"en\",\n    \"text\": \"your childhood\"\n  },\n  {\n    \"start\": \"00:00:30,904\",\n    \"end\": \"00:00:32,253\",\n    \"lang\": \"en\",\n    \"text\": \"tasty memory\"\n  },\n  {\n    \"start\": \"00:00:33,573\",\n    \"end\": \"00:00:34,754\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:34,754\",\n    \"end\": \"00:00:35,294\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:35,294\",\n    \"end\": \"00:00:35,954\",\n    \"lang\": \"en\",\n    \"text\": \"lol\"\n  },\n  {\n    \"start\": \"00:00:35,954\",\n    \"end\": \"00:00:36,854\",\n    \"lang\": \"en\",\n    \"text\": \"really\"\n  },\n  {\n    \"start\": \"00:00:36,854\",\n    \"end\": \"00:00:38,414\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:45,474\",\n    \"end\": \"00:00:47,134\",\n    \"lang\": \"en\",\n    \"text\": \"it's really\"\n  },\n  {\n    \"start\": \"00:00:47,134\",\n    \"end\": \"00:00:48,834\",\n    \"lang\": \"en\",\n    \"text\": \"delicious\"\n  },\n  {\n    \"start\": \"00:00:48,834\",\n    \"end\": \"00:00:49,934\",\n    \"lang\": \"en\",\n    \"text\": \"it's the cheese\"\n  },\n  {\n    \"start\": \"00:00:49,934\",\n    \"end\": \"00:00:51,094\",\n    \"lang\": \"en\",\n    \"text\": \"years\"\n  },\n  {\n    \"start\": \"00:00:51,094\",\n    \"end\": \"00:00:53,874\",\n    \"lang\": \"en\",\n    \"text\": \"ago\"\n  },\n  {\n    \"start\": \"00:00:53,874\",\n    \"end\": \"00:00:56,734\",\n    \"lang\": \"en\",\n    \"text\": \"I learned from\"\n  },\n  {\n    \"start\": \"00:00:56,734\",\n    \"end\": \"00:00:57,314\",\n    \"lang\": \"en\",\n    \"text\": \"um\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,780",
+            "en": "This is really the best dip by me ever.",
+            "zh": "这真的是我做过的最好的蘸酱。",
+            "ar": "هذا حقًا أفضل غمس صنعته على الإطلاق."
+        },
+        {
+            "start": "00:00:04,560",
+            "end": "00:00:04,800",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:00:04,800",
+            "end": "00:00:05,380",
+            "en": "for them,",
+            "zh": "为了他们，",
+            "ar": "من أجلهم،"
+        },
+        {
+            "start": "00:00:05,380",
+            "end": "00:00:05,760",
+            "en": "I'm happy.",
+            "zh": "我很高兴。",
+            "ar": "أنا سعيد."
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:06,074",
+            "en": "Like",
+            "zh": "点赞",
+            "ar": "أعجبني"
+        },
+        {
+            "start": "00:00:06,154",
+            "end": "00:00:06,234",
+            "en": "Subscribe",
+            "zh": "订阅",
+            "ar": "اشتراك"
+        },
+        {
+            "start": "00:00:06,594",
+            "end": "00:00:06,594",
+            "en": "Share",
+            "zh": "转发",
+            "ar": "مشاركة"
+        },
+        {
+            "start": "00:00:08,134",
+            "end": "00:00:08,674",
+            "en": "Support Ming Mirror and Point Columns with rewards",
+            "zh": "打赏支持明镜与点点栏目",
+            "ar": "دعم عمودي مرآة مينج والنقاط بالمكافآت"
+        },
+        {
+            "start": "00:00:08,706",
+            "end": "00:00:09,426",
+            "en": "Let's go, best!",
+            "zh": "我们走，最好的!",
+            "ar": "هيا، الأفضل!",
+            "ja": "いざベスク"
+        },
+        {
+            "start": "00:00:10,914",
+            "end": "00:00:11,834",
+            "en": "Understood",
+            "zh": "明白了",
+            "ar": "فهمت",
+            "origText": "PUN DIS",
+            "origLang": "en"
+        },
+        {
+            "start": "00:00:12,914",
+            "end": "00:00:14,194",
+            "en": "lol",
+            "zh": "哈哈",
+            "ar": "ههه"
+        },
+        {
+            "start": "00:00:16,473",
+            "end": "00:00:17,654",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:00:17,654",
+            "end": "00:00:20,094",
+            "en": "the bakery shop is called",
+            "zh": "这家面包店叫做",
+            "ar": "يطلق على متجر المخبوزات اسم"
+        },
+        {
+            "start": "00:00:20,914",
+            "end": "00:00:21,854",
+            "en": "childhood",
+            "zh": "童年",
+            "ar": "الطفولة"
+        },
+        {
+            "start": "00:00:22,914",
+            "end": "00:00:24,014",
+            "en": "bakery",
+            "zh": "面包店",
+            "ar": "مخبز"
+        },
+        {
+            "start": "00:00:24,403",
+            "end": "00:00:27,014",
+            "en": "so it helps you remember",
+            "zh": "所以它帮助你记住",
+            "ar": "لذلك فهو يساعدك على تذكر"
+        },
+        {
+            "start": "00:00:27,014",
+            "end": "00:00:28,374",
+            "en": "your childhood",
+            "zh": "你的童年",
+            "ar": "طفولتك"
+        },
+        {
+            "start": "00:00:30,904",
+            "end": "00:00:32,253",
+            "en": "tasty memory",
+            "zh": "美味的回忆",
+            "ar": "ذكرى لذيذة"
+        },
+        {
+            "start": "00:00:33,573",
+            "end": "00:00:35,954",
+            "en": "lol",
+            "zh": "哈哈",
+            "ar": "ههه"
+        },
+        {
+            "start": "00:00:35,954",
+            "end": "00:00:36,854",
+            "en": "really",
+            "zh": "真的",
+            "ar": "حقًا"
+        },
+        {
+            "start": "00:00:36,854",
+            "end": "00:00:38,414",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:00:45,474",
+            "end": "00:00:47,134",
+            "en": "it's really",
+            "zh": "这真的是",
+            "ar": "إنه حقًا"
+        },
+        {
+            "start": "00:00:47,134",
+            "end": "00:00:48,834",
+            "en": "delicious",
+            "zh": "很美味",
+            "ar": "لذيذ"
+        },
+        {
+            "start": "00:00:48,834",
+            "end": "00:00:49,934",
+            "en": "it's the cheese",
+            "zh": "这是奶酪",
+            "ar": "إنها الجبنة"
+        },
+        {
+            "start": "00:00:49,934",
+            "end": "00:00:51,094",
+            "en": "mastery",
+            "zh": "精湛",
+            "ar": "إتقان",
+            "origText": "years",
+            "origLang": "en"
+        },
+        {
+            "start": "00:00:51,094",
+            "end": "00:00:53,874",
+            "en": "ago",
+            "zh": "以前",
+            "ar": "منذ"
+        },
+        {
+            "start": "00:00:53,874",
+            "end": "00:00:56,734",
+            "en": "I learned from",
+            "zh": "我从中学到了",
+            "ar": "تعلمت من"
+        },
+        {
+            "start": "00:00:56,734",
+            "end": "00:00:57,314",
+            "en": "um",
+            "zh": "嗯",
+            "ar": "أم"
+        }
+    ]
+}

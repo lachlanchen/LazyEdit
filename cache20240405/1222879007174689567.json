@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,400\",\n    \"lang\": \"ja\",\n    \"text\": \"3匹の犬と戦っています。\"\n  },\n  {\n    \"start\": \"00:00:07,554\",\n    \"end\": \"00:00:09,054\",\n    \"lang\": \"ja\",\n    \"text\": \"かなり危険です\"\n  },\n  {\n    \"start\": \"00:00:17,221\",\n    \"end\": \"00:00:18,182\",\n    \"lang\": \"ja\",\n    \"text\": \"ご視聴ありがとうございました\"\n  },\n  {\n    \"start\": \"00:00:26,501\",\n    \"end\": \"00:00:27,561\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know what to do.\"\n  },\n  {\n    \"start\": \"00:00:27,561\",\n    \"end\": \"00:00:28,921\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know what to do.\"\n  },\n  {\n    \"start\": \"00:00:29,001\",\n    \"end\": \"00:00:30,241\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know what to do.\"\n  },\n  {\n    \"start\": \"00:00:30,421\",\n    \"end\": \"00:00:31,261\",\n    \"lang\": \"en\",\n    \"text\": \"It's so...\"\n  },\n  {\n    \"start\": \"00:00:37,701\",\n    \"end\": \"00:00:38,821\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god.\"\n  },\n  {\n    \"start\": \"00:00:44,961\",\n    \"end\": \"00:00:47,761\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,400",
+            "ko": "3마리의 개와 싸우고 있어요."
+        },
+        {
+            "start": "00:00:07,554",
+            "end": "00:00:09,054",
+            "ko": "꽤 위험해요"
+        },
+        {
+            "start": "00:00:17,221",
+            "end": "00:00:18,182",
+            "ko": "시청해주셔서 감사합니다"
+        },
+        {
+            "start": "00:00:26,501",
+            "end": "00:00:27,561",
+            "ko": "무엇을 해야 할지 모르겠어요."
+        },
+        {
+            "start": "00:00:27,561",
+            "end": "00:00:28,921",
+            "ko": "무엇을 해야 할지 모르겠어요."
+        },
+        {
+            "start": "00:00:29,001",
+            "end": "00:00:30,241",
+            "ko": "무엇을 해야 할지 모르겠어요."
+        },
+        {
+            "start": "00:00:30,421",
+            "end": "00:00:31,261",
+            "ko": "정말로..."
+        },
+        {
+            "start": "00:00:37,701",
+            "end": "00:00:38,821",
+            "ko": "오 마이 갓."
+        },
+        {
+            "start": "00:00:44,961",
+            "end": "00:00:47,761",
+            "ko": "오 마이 갓."
+        }
+    ]
+}

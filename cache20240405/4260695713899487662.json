@@ -1,0 +1,105 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,500\",\n    \"end\": \"00:00:02,600\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:06,800\",\n    \"lang\": \"ja\",\n    \"text\": \"私は朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:07,320\",\n    \"end\": \"00:00:07,800\",\n    \"lang\": \"ja\",\n    \"text\": \"これは\"\n  },\n  {\n    \"start\": \"00:00:07,800\",\n    \"end\": \"00:00:08,620\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:08,642\",\n    \"end\": \"00:00:09,282\",\n    \"lang\": \"en\",\n    \"text\": \"Strawberry,\"\n  },\n  {\n    \"start\": \"00:00:09,282\",\n    \"end\": \"00:00:10,202\",\n    \"lang\": \"en\",\n    \"text\": \"grape,\"\n  },\n  {\n    \"start\": \"00:00:10,202\",\n    \"end\": \"00:00:12,962\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:00:12,962\",\n    \"end\": \"00:00:14,842\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:14,842\",\n    \"end\": \"00:00:15,982\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:00:15,982\",\n    \"end\": \"00:00:17,942\",\n    \"lang\": \"en\",\n    \"text\": \"and chestnut.\"\n  },\n  {\n    \"start\": \"00:00:18,502\",\n    \"end\": \"00:00:19,842\",\n    \"lang\": \"en\",\n    \"text\": \"I said chestnut.\"\n  },\n  {\n    \"start\": \"00:00:20,502\",\n    \"end\": \"00:00:22,342\",\n    \"lang\": \"en\",\n    \"text\": \"And then tamago,\"\n  },\n  {\n    \"start\": \"00:00:22,342\",\n    \"end\": \"00:00:24,482\",\n    \"lang\": \"en\",\n    \"text\": \"sweet potato.\"\n  },\n  {\n    \"start\": \"00:00:35,242\",\n    \"end\": \"00:00:37,302\",\n    \"lang\": \"en\",\n    \"text\": \"So we have grape,\"\n  },\n  {\n    \"start\": \"00:00:37,302\",\n    \"end\": \"00:00:39,462\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:00:39,462\",\n    \"end\": \"00:00:40,022\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:00:40,022\",\n    \"end\": \"00:00:40,562\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:00:40,562\",\n    \"end\": \"00:00:41,282\",\n    \"lang\": \"en\",\n    \"text\": \"tamago,\"\n  },\n  {\n    \"start\": \"00:00:41,282\",\n    \"end\": \"00:00:44,862\",\n    \"lang\": \"en\",\n    \"text\": \"and the bean juice.\"\n  },\n  {\n    \"start\": \"00:00:58,162\",\n    \"end\": \"00:00:59,562\",\n    \"lang\": \"en\",\n    \"text\": \"Ceo!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,500",
+            "end": "00:00:02,600",
+            "vi": "Chào buổi sáng"
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:06,800",
+            "vi": "Tôi đang ăn sáng"
+        },
+        {
+            "start": "00:00:07,320",
+            "end": "00:00:07,800",
+            "vi": "Đây là"
+        },
+        {
+            "start": "00:00:07,800",
+            "end": "00:00:08,620",
+            "vi": "Chào buổi sáng"
+        },
+        {
+            "start": "00:00:08,642",
+            "end": "00:00:09,282",
+            "vi": "Dâu tây,"
+        },
+        {
+            "start": "00:00:09,282",
+            "end": "00:00:10,202",
+            "vi": "nho,"
+        },
+        {
+            "start": "00:00:10,202",
+            "end": "00:00:12,962",
+            "vi": "hạt dẻ,"
+        },
+        {
+            "start": "00:00:12,962",
+            "end": "00:00:14,842",
+            "vi": "việt quất,"
+        },
+        {
+            "start": "00:00:14,842",
+            "end": "00:00:15,982",
+            "vi": "dâu tây,"
+        },
+        {
+            "start": "00:00:15,982",
+            "end": "00:00:17,942",
+            "vi": "và hạt dẻ."
+        },
+        {
+            "start": "00:00:18,502",
+            "end": "00:00:19,842",
+            "vi": "Tôi nói hạt dẻ."
+        },
+        {
+            "start": "00:00:20,502",
+            "end": "00:00:22,342",
+            "vi": "Và sau đó là tamago,"
+        },
+        {
+            "start": "00:00:22,342",
+            "end": "00:00:24,482",
+            "vi": "khoai lang."
+        },
+        {
+            "start": "00:00:35,242",
+            "end": "00:00:37,302",
+            "vi": "Vậy chúng ta có nho,"
+        },
+        {
+            "start": "00:00:37,302",
+            "end": "00:00:39,462",
+            "vi": "dâu tây,"
+        },
+        {
+            "start": "00:00:39,462",
+            "end": "00:00:40,022",
+            "vi": "việt quất,"
+        },
+        {
+            "start": "00:00:40,022",
+            "end": "00:00:40,562",
+            "vi": "hạt dẻ,"
+        },
+        {
+            "start": "00:00:40,562",
+            "end": "00:00:41,282",
+            "vi": "tamago,"
+        },
+        {
+            "start": "00:00:41,282",
+            "end": "00:00:44,862",
+            "vi": "và nước đậu."
+        },
+        {
+            "start": "00:00:58,162",
+            "end": "00:00:59,562",
+            "vi": "Giám đốc!"
+        }
+    ]
+}

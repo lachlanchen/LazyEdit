@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,240\",\n    \"lang\": \"en\",\n    \"text\": \"fish had lose its freedom because of this bait.\"\n  },\n  {\n    \"start\": \"00:00:04,240\",\n    \"end\": \"00:00:07,500\",\n    \"lang\": \"en\",\n    \"text\": \"That's a life for us.\"\n  },\n  {\n    \"start\": \"00:00:07,500\",\n    \"end\": \"00:00:11,900\",\n    \"lang\": \"en\",\n    \"text\": \"Every day we sacrifice\"\n  },\n  {\n    \"start\": \"00:00:11,900\",\n    \"end\": \"00:00:14,020\",\n    \"lang\": \"en\",\n    \"text\": \"our freedom for this small,\"\n  },\n  {\n    \"start\": \"00:00:14,020\",\n    \"end\": \"00:00:15,000\",\n    \"lang\": \"en\",\n    \"text\": \"useless,\"\n  },\n  {\n    \"start\": \"00:00:15,000\",\n    \"end\": \"00:00:16,260\",\n    \"lang\": \"en\",\n    \"text\": \"meaningless bait.\"\n  },\n  {\n    \"start\": \"00:00:19,580\",\n    \"end\": \"00:00:23,180\",\n    \"lang\": \"en\",\n    \"text\": \"This fish is quite big.\"\n  },\n  {\n    \"start\": \"00:00:23,202\",\n    \"end\": \"00:00:23,882\",\n    \"lang\": \"zh\",\n    \"text\": \"可以喊得死你\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,240",
+            "ko": "이 미끼 때문에 물고기가 자유를 잃었습니다."
+        },
+        {
+            "start": "00:00:04,240",
+            "end": "00:00:07,500",
+            "ko": "그게 우리의 삶입니다."
+        },
+        {
+            "start": "00:00:07,500",
+            "end": "00:00:11,900",
+            "ko": "매일 우리는"
+        },
+        {
+            "start": "00:00:11,900",
+            "end": "00:00:14,020",
+            "ko": "우리의 자유를 이 작은,"
+        },
+        {
+            "start": "00:00:14,020",
+            "end": "00:00:15,000",
+            "ko": "쓸모없는,"
+        },
+        {
+            "start": "00:00:15,000",
+            "end": "00:00:16,260",
+            "ko": "의미없는 미끼를 위해 희생합니다."
+        },
+        {
+            "start": "00:00:19,580",
+            "end": "00:00:23,180",
+            "ko": "이 물고기는 꽤 큽니다."
+        },
+        {
+            "start": "00:00:23,202",
+            "end": "00:00:23,882",
+            "ko": "당신을 죽일 수 있어"
+        }
+    ]
+}

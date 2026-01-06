@@ -1,0 +1,35 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,460\",\n    \"ja\": \"だから<忘>[]れちゃったんだけど、\"\n  },\n  {\n    \"start\": \"00:00:01,460\",\n    \"end\": \"00:00:05,000\",\n    \"ja\": \"<小>[]さな<トマト>[]もあるんだよ。\"\n  },\n  {\n    \"start\": \"00:00:07,586\",\n    \"end\": \"00:00:09,706\",\n    \"ja\": \"<生>[]の<ドンキーフルーツ>[]、たくさんあるって<言>[]ってたよね。\"\n  },\n  {\n    \"start\": \"00:00:09,986\",\n    \"end\": \"00:00:11,186\",\n    \"ja\": \"<生>[]の<ドンキーフルーツ>[]\"\n  },\n  {\n    \"start\": \"00:00:14,178\",\n    \"end\": \"00:00:14,698\",\n    \"ja\": \"そして、<ブドウ>[]も。\"\n  },\n  {\n    \"start\": \"00:00:39,746\",\n    \"end\": \"00:00:39,966\",\n    \"ja\": \"じゃ、またね。\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,460",
+            "ja": "だから<忘>[わす]れちゃったんだけど、"
+        },
+        {
+            "start": "00:00:01,460",
+            "end": "00:00:05,000",
+            "ja": "<小>[ちい]さな<トマト>[]もあるんだよ。"
+        },
+        {
+            "start": "00:00:07,586",
+            "end": "00:00:09,706",
+            "ja": "<生>[なま]の<ドンキーフルーツ>[], たくさんあるって<言>[い]ってたよね。"
+        },
+        {
+            "start": "00:00:09,986",
+            "end": "00:00:11,186",
+            "ja": "<生>[なま]の<ドンキーフルーツ>[]"
+        },
+        {
+            "start": "00:00:14,178",
+            "end": "00:00:14,698",
+            "ja": "そして、<ブドウ>[]も。"
+        },
+        {
+            "start": "00:00:39,746",
+            "end": "00:00:39,966",
+            "ja": "じゃ、またね。"
+        }
+    ]
+}

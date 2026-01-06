@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:05,414\",\n    \"end\": \"00:02:06,674\",\n    \"lang\": \"en\",\n    \"text\": \"It's a food duct\"\n  },\n  {\n    \"start\": \"00:02:07,214\",\n    \"end\": \"00:02:09,253\",\n    \"lang\": \"en\",\n    \"text\": \"It's a cancer in the food duct\"\n  },\n  {\n    \"start\": \"00:02:10,973\",\n    \"end\": \"00:02:11,634\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  },\n  {\n    \"start\": \"00:02:13,214\",\n    \"end\": \"00:02:13,534\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  },\n  {\n    \"start\": \"00:02:14,854\",\n    \"end\": \"00:02:15,494\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:05,414",
+            "end": "00:02:06,674",
+            "es": "Es un conducto alimentario",
+            "fr": "C'est un conduit alimentaire",
+            "uk": "Це їжовід"
+        },
+        {
+            "start": "00:02:07,214",
+            "end": "00:02:09,253",
+            "es": "Es un cáncer en el conducto alimentario",
+            "fr": "C'est un cancer du conduit alimentaire",
+            "uk": "Це рак у їжоводі"
+        },
+        {
+            "start": "00:02:10,973",
+            "end": "00:02:11,634",
+            "es": "Vale",
+            "fr": "D'accord",
+            "uk": "Добре"
+        },
+        {
+            "start": "00:02:13,214",
+            "end": "00:02:13,534",
+            "es": "Nos vemos",
+            "fr": "À plus",
+            "uk": "До зустрічі"
+        },
+        {
+            "start": "00:02:14,854",
+            "end": "00:02:15,494",
+            "es": "Nos vemos",
+            "fr": "À plus",
+            "uk": "До зустрічі"
+        }
+    ]
+}

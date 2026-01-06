@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,920\",\n    \"lang\": \"en\",\n    \"text\": \"Our Oda Friend.\"\n  },\n  {\n    \"start\": \"00:00:02,420\",\n    \"end\": \"00:00:03,020\",\n    \"lang\": \"en\",\n    \"text\": \"Hello.\"\n  },\n  {\n    \"start\": \"00:00:04,180\",\n    \"end\": \"00:00:04,940\",\n    \"lang\": \"en\",\n    \"text\": \"He's an Oda dork.\"\n  },\n  {\n    \"start\": \"00:00:05,440\",\n    \"end\": \"00:00:06,080\",\n    \"lang\": \"en\",\n    \"text\": \"Dog-o-friend.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,920",
+            "en": "Our Oda Friend.",
+            "zh": "我们的小奥朋友。",
+            "ar": "صديقنا أودا."
+        },
+        {
+            "start": "00:00:02,420",
+            "end": "00:00:03,020",
+            "en": "Hello.",
+            "zh": "你好。",
+            "ar": "مرحبا."
+        },
+        {
+            "start": "00:00:04,180",
+            "end": "00:00:04,940",
+            "en": "He's an Oda dork.",
+            "zh": "他是个呆瓜奥达。",
+            "ar": "إنه أحمق من أودا."
+        },
+        {
+            "start": "00:00:05,440",
+            "end": "00:00:06,080",
+            "en": "Dog-o-friend.",
+            "zh": "狗狗朋友。",
+            "ar": "صديق الكلب."
+        }
+    ]
+}

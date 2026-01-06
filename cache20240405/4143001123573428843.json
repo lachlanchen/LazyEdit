@@ -1,0 +1,52 @@
+{
+    "prompt": "For words that have etymological Hanja alternatives (due to their Sino-Korean origin), I want to find the corresponding Chinese character origin to replace the Hangul. However, it's crucial that the Hangul in parenthesis followed by these traditional Hanja are put in brackets to maintain clarity as in this format: (hangul)[hanja].\n\nKorean to be annotated: 도와줘. 난 너와 함께 높이 날고 싶어 이 파란 물결 위에서 이 파란 하늘 아래에서\n\nI don't need step by step explanation. PLEASE ONLY output the JSON:\n```json\n{\n  \"korean_with_annotation\": \"\",\n  \"korean_hanja_pairs\": [\n    {\n      \"korean_part\": \"\",\n      \"hanja\": \"\"\n    }\n  ]\n}\n```",
+    "response": {
+        "korean_with_annotation": "(도와줘)[助我]. (난)[難] (너와)[你我] (함께)[共] (높이)[高] (날고)[飛] 싶어 이 (파란)[波瀾] (물결)[物訣] (위에서)[位上] 이 (파란)[波瀾] (하늘)[天] (아래에서)[下]",
+        "korean_hanja_pairs": [
+            {
+                "korean_part": "도와줘",
+                "hanja": "助我"
+            },
+            {
+                "korean_part": "난",
+                "hanja": "難"
+            },
+            {
+                "korean_part": "너와",
+                "hanja": "你我"
+            },
+            {
+                "korean_part": "함께",
+                "hanja": "共"
+            },
+            {
+                "korean_part": "높이",
+                "hanja": "高"
+            },
+            {
+                "korean_part": "날고",
+                "hanja": "飛"
+            },
+            {
+                "korean_part": "파란",
+                "hanja": "波瀾"
+            },
+            {
+                "korean_part": "물결",
+                "hanja": "物訣"
+            },
+            {
+                "korean_part": "위에서",
+                "hanja": "位上"
+            },
+            {
+                "korean_part": "하늘",
+                "hanja": "天"
+            },
+            {
+                "korean_part": "아래에서",
+                "hanja": "下"
+            }
+        ]
+    }
+}

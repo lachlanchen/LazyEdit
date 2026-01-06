@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:25,046\",\n    \"end\": \"00:03:25,746\",\n    \"lang\": \"en\",\n    \"text\": \"the\"\n  },\n  {\n    \"start\": \"00:03:25,746\",\n    \"end\": \"00:03:26,586\",\n    \"lang\": \"en\",\n    \"text\": \"the real\"\n  },\n  {\n    \"start\": \"00:03:26,586\",\n    \"end\": \"00:03:26,606\",\n    \"lang\": \"en\",\n    \"text\": \"the real\"\n  },\n  {\n    \"start\": \"00:03:26,626\",\n    \"end\": \"00:03:30,666\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't see the voice recordings.\"\n  },\n  {\n    \"start\": \"00:03:31,522\",\n    \"end\": \"00:03:35,942\",\n    \"lang\": \"en\",\n    \"text\": \"software recognized the language of this voice\"\n  },\n  {\n    \"start\": \"00:03:35,942\",\n    \"end\": \"00:03:40,142\",\n    \"lang\": \"en\",\n    \"text\": \"so I put a symbol at that language before it\"\n  },\n  {\n    \"start\": \"00:03:40,142\",\n    \"end\": \"00:03:45,222\",\n    \"lang\": \"en\",\n    \"text\": \"so when you see the voice symbol\"\n  },\n  {\n    \"start\": \"00:03:45,222\",\n    \"end\": \"00:03:48,062\",\n    \"lang\": \"en\",\n    \"text\": \"it means this language is\"\n  },\n  {\n    \"start\": \"00:03:50,582\",\n    \"end\": \"00:03:54,162\",\n    \"lang\": \"en\",\n    \"text\": \"automatically recognized software\"\n  },\n  {\n    \"start\": \"00:03:55,742\",\n    \"end\": \"00:03:59,302\",\n    \"lang\": \"en\",\n    \"text\": \"detected language for this line\"\n  },\n  {\n    \"start\": \"00:03:59,302\",\n    \"end\": \"00:04:01,702\",\n    \"lang\": \"en\",\n    \"text\": \"okey\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:25,046",
+            "end": "00:03:25,746",
+            "es": "el",
+            "fr": "le",
+            "uk": "те"
+        },
+        {
+            "start": "00:03:25,746",
+            "end": "00:03:26,586",
+            "es": "el real",
+            "fr": "le réel",
+            "uk": "справжній"
+        },
+        {
+            "start": "00:03:26,586",
+            "end": "00:03:26,606",
+            "es": "el real",
+            "fr": "le réel",
+            "uk": "справжній"
+        },
+        {
+            "start": "00:03:26,626",
+            "end": "00:03:30,666",
+            "es": "No vi las grabaciones de voz.",
+            "fr": "Je n'ai pas vu les enregistrements vocaux.",
+            "uk": "Я не бачив голосових записів."
+        },
+        {
+            "start": "00:03:31,522",
+            "end": "00:03:35,942",
+            "es": "el software reconoció el idioma de esta voz",
+            "fr": "le logiciel a reconnu la langue de cette voix",
+            "uk": "програма розпізнала мову цього голосу"
+        },
+        {
+            "start": "00:03:35,942",
+            "end": "00:03:40,142",
+            "es": "así que puse un símbolo para ese idioma antes de ello",
+            "fr": "alors j'ai mis un symbole pour cette langue avant cela",
+            "uk": "тому я поставив символ для цієї мови перед цим"
+        },
+        {
+            "start": "00:03:40,142",
+            "end": "00:03:45,222",
+            "es": "así que cuando veas el símbolo de voz",
+            "fr": "donc quand tu vois le symbole vocal",
+            "uk": "так що коли ви бачите символ голосу"
+        },
+        {
+            "start": "00:03:45,222",
+            "end": "00:03:48,062",
+            "es": "significa que este idioma es",
+            "fr": "cela signifie que cette langue est",
+            "uk": "це означає, що ця мова є"
+        },
+        {
+            "start": "00:03:50,582",
+            "end": "00:03:54,162",
+            "es": "software reconocido automáticamente",
+            "fr": "logiciel reconnu automatiquement",
+            "uk": "автоматично розпізнане програмне забезпечення"
+        },
+        {
+            "start": "00:03:55,742",
+            "end": "00:03:59,302",
+            "es": "lenguaje detectado para esta línea",
+            "fr": "langue détectée pour cette ligne",
+            "uk": "мову виявлено для цього рядка"
+        },
+        {
+            "start": "00:03:59,302",
+            "end": "00:04:01,702",
+            "es": "vale",
+            "fr": "d'accord",
+            "uk": "гаразд"
+        }
+    ]
+}

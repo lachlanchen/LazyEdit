@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,720\",\n    \"lang\": \"zh\",\n    \"text\": \"露出了\"\n  },\n  {\n    \"start\": \"00:00:08,440\",\n    \"end\": \"00:00:09,940\",\n    \"lang\": \"zh\",\n    \"text\": \"太厉害了\"\n  },\n  {\n    \"start\": \"00:00:09,940\",\n    \"end\": \"00:00:10,520\",\n    \"lang\": \"en\",\n    \"text\": \"看 nice\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:16,000\",\n    \"lang\": \"zh\",\n    \"text\": \"好可爱\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,720",
+            "vi": "Lộ ra rồi"
+        },
+        {
+            "start": "00:00:08,440",
+            "end": "00:00:09,940",
+            "vi": "Quá đỉnh"
+        },
+        {
+            "start": "00:00:09,940",
+            "end": "00:00:10,520",
+            "vi": "Nhìn đẹp quá"
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:16,000",
+            "vi": "Dễ thương quá"
+        }
+    ]
+}

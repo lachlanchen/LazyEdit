@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,839\",\n    \"end\": \"00:00:03,460\",\n    \"lang\": \"en\",\n    \"text\": \"Our society has too many restrictions,\"\n  },\n  {\n    \"start\": \"00:00:03,460\",\n    \"end\": \"00:00:09,240\",\n    \"lang\": \"en\",\n    \"text\": \"so if you cannot really have some breakthrough creation,\"\n  },\n  {\n    \"start\": \"00:00:10,839\",\n    \"end\": \"00:00:15,060\",\n    \"lang\": \"en\",\n    \"text\": \"I suggest that just set some basic guidelines,\"\n  },\n  {\n    \"start\": \"00:00:15,060\",\n    \"end\": \"00:00:16,079\",\n    \"lang\": \"en\",\n    \"text\": \"basic principles,\"\n  },\n  {\n    \"start\": \"00:00:16,079\",\n    \"end\": \"00:00:19,280\",\n    \"lang\": \"en\",\n    \"text\": \"such as that you don't hurt other people,\"\n  },\n  {\n    \"start\": \"00:00:19,280\",\n    \"end\": \"00:00:20,800\",\n    \"lang\": \"en\",\n    \"text\": \"and then it's okay,\"\n  },\n  {\n    \"start\": \"00:00:20,800\",\n    \"end\": \"00:00:21,820\",\n    \"lang\": \"en\",\n    \"text\": \"do anything you want.\"\n  },\n  {\n    \"start\": \"00:00:21,820\",\n    \"end\": \"00:00:24,120\",\n    \"lang\": \"en\",\n    \"text\": \"Remove these taboos,\"\n  },\n  {\n    \"start\": \"00:00:24,120\",\n    \"end\": \"00:00:26,520\",\n    \"lang\": \"en\",\n    \"text\": \"remove these moral violence.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,839",
+            "end": "00:00:03,460",
+            "es": "Nuestra sociedad tiene demasiadas restricciones,",
+            "fr": "Notre société a trop de restrictions,",
+            "uk": "Наше суспільство має занадто багато обмежень,"
+        },
+        {
+            "start": "00:00:03,460",
+            "end": "00:00:09,240",
+            "es": "así que si realmente no puedes tener alguna creación revolucionaria,",
+            "fr": "donc si vous ne pouvez vraiment pas avoir de création révolutionnaire,",
+            "uk": "тож якщо ви дійсно не можете мати якогось проривного творіння,"
+        },
+        {
+            "start": "00:00:10,839",
+            "end": "00:00:15,060",
+            "es": "Sugiero que solo establezcas algunas pautas básicas,",
+            "fr": "Je suggère de juste établir quelques lignes directrices de base,",
+            "uk": "Я пропоную просто встановити деякі базові настанови,"
+        },
+        {
+            "start": "00:00:15,060",
+            "end": "00:00:16,079",
+            "es": "principios básicos,",
+            "fr": "principes de base,",
+            "uk": "базові принципи,"
+        },
+        {
+            "start": "00:00:16,079",
+            "end": "00:00:19,280",
+            "es": "como que no lastimes a otras personas,",
+            "fr": "comme ne pas blesser les autres,",
+            "uk": "такі як те, щоб ви не шкодили іншим,"
+        },
+        {
+            "start": "00:00:19,280",
+            "end": "00:00:20,800",
+            "es": "y entonces está bien,",
+            "fr": "et alors c'est bon,",
+            "uk": "а тоді все гаразд,"
+        },
+        {
+            "start": "00:00:20,800",
+            "end": "00:00:21,820",
+            "es": "haz lo que quieras.",
+            "fr": "faites ce que vous voulez.",
+            "uk": "робіть все, що хочете."
+        },
+        {
+            "start": "00:00:21,820",
+            "end": "00:00:24,120",
+            "es": "Elimina estos tabúes,",
+            "fr": "Supprimez ces tabous,",
+            "uk": "Позбудьтеся цих табу,"
+        },
+        {
+            "start": "00:00:24,120",
+            "end": "00:00:26,520",
+            "es": "elimina estas violencias morales.",
+            "fr": "supprimez ces violences morales.",
+            "uk": "позбудьтеся цього морального насильства."
+        }
+    ]
+}

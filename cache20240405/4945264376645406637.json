@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:16,790\",\n    \"end\": \"00:04:18,190\",\n    \"lang\": \"zh\",\n    \"text\": \"好的\"\n  },\n  {\n    \"start\": \"00:04:21,122\",\n    \"end\": \"00:04:23,442\",\n    \"lang\": \"en\",\n    \"text\": \"This is what happens when I'm alone.\"\n  },\n  {\n    \"start\": \"00:04:24,290\",\n    \"end\": \"00:04:24,630\",\n    \"lang\": \"ar\",\n    \"text\": \"أنت ي 없다\"\n  },\n  {\n    \"start\": \"00:04:25,986\",\n    \"end\": \"00:04:28,506\",\n    \"lang\": \"en\",\n    \"text\": \"When I reminded this,\"\n  },\n  {\n    \"start\": \"00:04:28,506\",\n    \"end\": \"00:04:31,006\",\n    \"lang\": \"en\",\n    \"text\": \"Professor Gardner,\"\n  },\n  {\n    \"start\": \"00:04:32,026\",\n    \"end\": \"00:04:33,066\",\n    \"lang\": \"en\",\n    \"text\": \"this is the same.\"\n  },\n  {\n    \"start\": \"00:04:34,006\",\n    \"end\": \"00:04:34,366\",\n    \"lang\": \"en\",\n    \"text\": \"OK.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:04:16,790",
+            "end": "00:04:18,190",
+            "en": "OK",
+            "zh": "好的",
+            "ar": "حسنًا"
+        },
+        {
+            "start": "00:04:21,122",
+            "end": "00:04:23,442",
+            "en": "This is what happens when I'm alone.",
+            "zh": "这就是我一个人时会发生的事。",
+            "ar": "هذا ما يحدث عندما أكون وحيدًا."
+        },
+        {
+            "start": "00:04:24,290",
+            "end": "00:04:24,630",
+            "en": "You are not there.",
+            "zh": "你不在那里。",
+            "ar": "أنت غير موجود."
+        },
+        {
+            "start": "00:04:25,986",
+            "end": "00:04:28,506",
+            "en": "When I reminded this,",
+            "zh": "当我想起这个，",
+            "ar": "عندما أتذكر هذا،"
+        },
+        {
+            "start": "00:04:28,506",
+            "end": "00:04:31,006",
+            "en": "Professor Gardner,",
+            "zh": "加德纳教授，",
+            "ar": "البروفيسور غاردنر،"
+        },
+        {
+            "start": "00:04:32,026",
+            "end": "00:04:33,066",
+            "en": "this is the same.",
+            "zh": "这是一样的。",
+            "ar": "هذا هو نفس الشيء."
+        },
+        {
+            "start": "00:04:34,006",
+            "end": "00:04:34,366",
+            "en": "OK.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

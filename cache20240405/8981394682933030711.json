@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"Can you see the fork on top of this?\"\n  },\n  {\n    \"start\": \"00:00:06,178\",\n    \"end\": \"00:00:06,858\",\n    \"lang\": \"ja\",\n    \"text\": \"言えません\"\n  },\n  {\n    \"start\": \"00:00:07,842\",\n    \"end\": \"00:00:25,322\",\n    \"lang\": \"en\",\n    \"text\": \"I put this flavor in a freezer compartment so that it can keep the food longer.\"\n  },\n  {\n    \"start\": \"00:00:28,002\",\n    \"end\": \"00:00:29,222\",\n    \"lang\": \"en\",\n    \"text\": \"And that's it.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "vi": "Bạn có thấy cái nĩa trên đỉnh này không?"
+        },
+        {
+            "start": "00:00:06,178",
+            "end": "00:00:06,858",
+            "vi": "Tôi không nói được"
+        },
+        {
+            "start": "00:00:07,842",
+            "end": "00:00:25,322",
+            "vi": "Tôi đã cho hương vị này vào một ngăn đá để nó có thể bảo quản thức ăn lâu hơn."
+        },
+        {
+            "start": "00:00:28,002",
+            "end": "00:00:29,222",
+            "vi": "Và đó là tất cả."
+        }
+    ]
+}

@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:07,540\",\n    \"lang\": \"en\",\n    \"text\": \"so it has been a long time that I didn't use this code test\"\n  },\n  {\n    \"start\": \"00:00:08,320\",\n    \"end\": \"00:00:14,080\",\n    \"lang\": \"en\",\n    \"text\": \"it seems that they add flu A,\"\n  },\n  {\n    \"start\": \"00:00:14,080\",\n    \"end\": \"00:00:14,640\",\n    \"lang\": \"en\",\n    \"text\": \"flu B,\"\n  },\n  {\n    \"start\": \"00:00:14,640\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"RSA,\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:15,700\",\n    \"lang\": \"en\",\n    \"text\": \"ADA,\"\n  },\n  {\n    \"start\": \"00:00:15,700\",\n    \"end\": \"00:00:16,379\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know\"\n  },\n  {\n    \"start\": \"00:00:16,379\",\n    \"end\": \"00:00:19,460\",\n    \"lang\": \"en\",\n    \"text\": \"it's a mini oh my goodness\"\n  },\n  {\n    \"start\": \"00:00:22,620\",\n    \"end\": \"00:00:24,400\",\n    \"lang\": \"en\",\n    \"text\": \"this almost kills me\"\n  },\n  {\n    \"start\": \"00:00:31,800\",\n    \"end\": \"00:00:41,240\",\n    \"lang\": \"en\",\n    \"text\": \"I thought my immune system is strong because I work out every day and take a\"\n  },\n  {\n    \"start\": \"00:00:41,240\",\n    \"end\": \"00:00:43,960\",\n    \"lang\": \"en\",\n    \"text\": \"cold bath but I don't know\"\n  },\n  {\n    \"start\": \"00:00:46,880\",\n    \"end\": \"00:00:48,500\",\n    \"lang\": \"en\",\n    \"text\": \"I'm still vulnerable.\"\n  },\n  {\n    \"start\": \"00:00:48,500\",\n    \"end\": \"00:00:51,800\",\n    \"lang\": \"en\",\n    \"text\": \"This might be normal\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:07,540",
+            "en": "so it has been a long time that I didn't use this code test",
+            "zh": "所以我很久没有使用这个代码测试了",
+            "ar": "لذا لقد مضى وقت طويل منذ أن لم أستخدم هذا الاختبار البرمجي"
+        },
+        {
+            "start": "00:00:08,320",
+            "end": "00:00:14,080",
+            "en": "it seems that they add flu A,",
+            "zh": "看来他们增加了甲型流感，",
+            "ar": "يبدو أنهم أضافوا إنفلونزا A،"
+        },
+        {
+            "start": "00:00:14,080",
+            "end": "00:00:14,640",
+            "en": "flu B,",
+            "zh": "乙型流感，",
+            "ar": "إنفلونزا B،"
+        },
+        {
+            "start": "00:00:14,640",
+            "end": "00:00:15,380",
+            "en": "RSA,",
+            "zh": "RSA，",
+            "ar": "RSA،"
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:15,700",
+            "en": "ADA,",
+            "zh": "ADA，",
+            "ar": "ADA،"
+        },
+        {
+            "start": "00:00:15,700",
+            "end": "00:00:16,379",
+            "en": "I don't know",
+            "zh": "我不知道",
+            "ar": "لا أعلم"
+        },
+        {
+            "start": "00:00:16,379",
+            "end": "00:00:19,460",
+            "en": "it's a mini oh my goodness",
+            "zh": "这是一个迷你，哦，我的天啊",
+            "ar": "إنه ميني يا للروعة"
+        },
+        {
+            "start": "00:00:22,620",
+            "end": "00:00:24,400",
+            "en": "this almost kills me",
+            "zh": "这差点杀了我",
+            "ar": "كاد هذا أن يقتلني"
+        },
+        {
+            "start": "00:00:31,800",
+            "end": "00:00:41,240",
+            "en": "I thought my immune system is strong because I work out every day and take a",
+            "zh": "我以为我的免疫系统很强，因为我每天锻炼并且进行",
+            "ar": "ظننت أن جهاز المناعة لدي قوي لأنني أتمرن كل يوم وأتناول"
+        },
+        {
+            "start": "00:00:41,240",
+            "end": "00:00:43,960",
+            "en": "cold bath but I don't know",
+            "zh": "冷水浴，但我不知道",
+            "ar": "حمام بارد لكنني لا أعلم"
+        },
+        {
+            "start": "00:00:46,880",
+            "end": "00:00:48,500",
+            "en": "I'm still vulnerable.",
+            "zh": "我仍然很脆弱。",
+            "ar": "أنا لا زلت ضعيفاً."
+        },
+        {
+            "start": "00:00:48,500",
+            "end": "00:00:51,800",
+            "en": "This might be normal",
+            "zh": "这可能是正常的",
+            "ar": "قد يكون هذا طبيعيًا"
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:11,570\",\n    \"end\": \"00:01:13,090\",\n    \"lang\": \"en\",\n    \"text\": \"It's over-salted.\"\n  },\n  {\n    \"start\": \"00:01:14,710\",\n    \"end\": \"00:01:15,350\",\n    \"lang\": \"en\",\n    \"text\": \"Over-salted.\"\n  },\n  {\n    \"start\": \"00:01:18,070\",\n    \"end\": \"00:01:22,730\",\n    \"lang\": \"en\",\n    \"text\": \"I put too much salt in it.\"\n  },\n  {\n    \"start\": \"00:01:34,818\",\n    \"end\": \"00:01:38,318\",\n    \"lang\": \"en\",\n    \"text\": \"This beef might be the worst I've ever cooked\"\n  },\n  {\n    \"start\": \"00:01:41,758\",\n    \"end\": \"00:01:47,718\",\n    \"lang\": \"en\",\n    \"text\": \"Too much salt and the taste is not as usual\"\n  },\n  {\n    \"start\": \"00:01:57,658\",\n    \"end\": \"00:01:58,058\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  },\n  {\n    \"start\": \"00:02:00,438\",\n    \"end\": \"00:02:01,078\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  },\n  {\n    \"start\": \"00:02:01,838\",\n    \"end\": \"00:02:02,438\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:11,570",
+            "end": "00:01:13,090",
+            "es": "Está demasiado salado.",
+            "fr": "C'est trop salé.",
+            "uk": "Це занадто солоно."
+        },
+        {
+            "start": "00:01:14,710",
+            "end": "00:01:15,350",
+            "es": "Demasiado salado.",
+            "fr": "Trop salé.",
+            "uk": "Занадто солоне."
+        },
+        {
+            "start": "00:01:18,070",
+            "end": "00:01:22,730",
+            "es": "Le eché demasiada sal.",
+            "fr": "J'ai mis trop de sel.",
+            "uk": "Я додав забагато солі."
+        },
+        {
+            "start": "00:01:34,818",
+            "end": "00:01:38,318",
+            "es": "Esta carne podría ser la peor que he cocinado",
+            "fr": "Ce bœuf pourrait être le pire que j'ai jamais cuisiné",
+            "uk": "Ця яловичина може бути найгіршою, яку я коли-небудь готував"
+        },
+        {
+            "start": "00:01:41,758",
+            "end": "00:01:47,718",
+            "es": "Demasiada sal y el sabor no es como de costumbre",
+            "fr": "Trop de sel et le goût n'est pas comme d'habitude",
+            "uk": "Забагато солі та смак не як зазвичай"
+        },
+        {
+            "start": "00:01:57,658",
+            "end": "00:01:58,058",
+            "es": "Vale",
+            "fr": "D'accord",
+            "uk": "Добре"
+        },
+        {
+            "start": "00:02:00,438",
+            "end": "00:02:01,078",
+            "es": "Nos vemos",
+            "fr": "À bientôt",
+            "uk": "До зустрічі"
+        },
+        {
+            "start": "00:02:01,838",
+            "end": "00:02:02,438",
+            "es": "Nos vemos",
+            "fr": "À bientôt",
+            "uk": "До зустрічі"
+        }
+    ]
+}

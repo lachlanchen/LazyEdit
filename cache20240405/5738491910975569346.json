@@ -1,0 +1,162 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:05:06,118\",\n    \"end\": \"00:05:07,718\",\n    \"lang\": \"en\",\n    \"text\": \"life everyday.\"\n  },\n  {\n    \"start\": \"00:05:08,398\",\n    \"end\": \"00:05:09,578\",\n    \"lang\": \"en\",\n    \"text\": \"And um...\"\n  },\n  {\n    \"start\": \"00:05:10,210\",\n    \"end\": \"00:05:10,930\",\n    \"lang\": \"ja\",\n    \"text\": \"みくねっす、\"\n  },\n  {\n    \"start\": \"00:05:10,930\",\n    \"end\": \"00:05:11,830\",\n    \"lang\": \"ja\",\n    \"text\": \"ほうちゅるり、\"\n  },\n  {\n    \"start\": \"00:05:11,830\",\n    \"end\": \"00:05:12,410\",\n    \"lang\": \"ja\",\n    \"text\": \"ぴー\"\n  },\n  {\n    \"start\": \"00:05:15,746\",\n    \"end\": \"00:05:16,766\",\n    \"lang\": \"en\",\n    \"text\": \"be comprehensive,\"\n  },\n  {\n    \"start\": \"00:05:16,766\",\n    \"end\": \"00:05:19,006\",\n    \"lang\": \"en\",\n    \"text\": \"inclusive,\"\n  },\n  {\n    \"start\": \"00:05:19,006\",\n    \"end\": \"00:05:20,746\",\n    \"lang\": \"en\",\n    \"text\": \"and fantastic.\"\n  },\n  {\n    \"start\": \"00:05:22,986\",\n    \"end\": \"00:05:26,206\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that's the right thing to do.\"\n  },\n  {\n    \"start\": \"00:05:26,506\",\n    \"end\": \"00:05:29,646\",\n    \"lang\": \"en\",\n    \"text\": \"But it doesn't mean that you don't learn,\"\n  },\n  {\n    \"start\": \"00:05:29,646\",\n    \"end\": \"00:05:30,606\",\n    \"lang\": \"en\",\n    \"text\": \"don't study.\"\n  },\n  {\n    \"start\": \"00:05:30,886\",\n    \"end\": \"00:05:31,726\",\n    \"lang\": \"en\",\n    \"text\": \"You can still study,\"\n  },\n  {\n    \"start\": \"00:05:31,726\",\n    \"end\": \"00:05:32,666\",\n    \"lang\": \"en\",\n    \"text\": \"you can still learn.\"\n  },\n  {\n    \"start\": \"00:05:33,386\",\n    \"end\": \"00:05:37,866\",\n    \"lang\": \"en\",\n    \"text\": \"It's a thing that is deep in your mind,\"\n  },\n  {\n    \"start\": \"00:05:39,466\",\n    \"end\": \"00:05:42,426\",\n    \"lang\": \"en\",\n    \"text\": \"for which you are desperate,\"\n  },\n  {\n    \"start\": \"00:05:42,426\",\n    \"end\": \"00:05:43,606\",\n    \"lang\": \"en\",\n    \"text\": \"you are crazy,\"\n  },\n  {\n    \"start\": \"00:05:43,606\",\n    \"end\": \"00:05:44,886\",\n    \"lang\": \"en\",\n    \"text\": \"you are eager.\"\n  },\n  {\n    \"start\": \"00:05:46,265\",\n    \"end\": \"00:05:48,126\",\n    \"lang\": \"en\",\n    \"text\": \"So you can still do it,\"\n  },\n  {\n    \"start\": \"00:05:48,126\",\n    \"end\": \"00:05:51,266\",\n    \"lang\": \"en\",\n    \"text\": \"you can still learn things,\"\n  },\n  {\n    \"start\": \"00:05:51,586\",\n    \"end\": \"00:05:55,746\",\n    \"lang\": \"en\",\n    \"text\": \"but it's not a thing that you escape from reality.\"\n  },\n  {\n    \"start\": \"00:05:56,525\",\n    \"end\": \"00:05:57,046\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:05:57,046\",\n    \"end\": \"00:05:58,706\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:05:06,118",
+            "end": "00:05:07,718",
+            "en": "life everyday.",
+            "zh": "每天的生活。",
+            "ar": "الحياة يوميا."
+        },
+        {
+            "start": "00:05:08,398",
+            "end": "00:05:09,578",
+            "en": "And um...",
+            "zh": "而且呃...",
+            "ar": "و ام..."
+        },
+        {
+            "start": "00:05:10,210",
+            "end": "00:05:10,930",
+            "en": "Complexity,",
+            "zh": "复杂性，",
+            "ar": "التعقيد،",
+            "ja": "みくねっす、"
+        },
+        {
+            "start": "00:05:10,930",
+            "end": "00:05:11,830",
+            "en": "methodology,",
+            "zh": "方法论，",
+            "ar": "المنهجية،",
+            "ja": "ほうちゅるり、"
+        },
+        {
+            "start": "00:05:11,830",
+            "end": "00:05:12,410",
+            "en": "yeah.",
+            "zh": "是的。",
+            "ar": "نعم.",
+            "ja": "ぴー"
+        },
+        {
+            "start": "00:05:15,746",
+            "end": "00:05:16,766",
+            "en": "be comprehensive,",
+            "zh": "要全面，",
+            "ar": "أن تكون شاملة،"
+        },
+        {
+            "start": "00:05:16,766",
+            "end": "00:05:19,006",
+            "en": "inclusive,",
+            "zh": "包容性，",
+            "ar": "شامل,"
+        },
+        {
+            "start": "00:05:19,006",
+            "end": "00:05:20,746",
+            "en": "and fantastic.",
+            "zh": "而且极好的。",
+            "ar": "ورائع."
+        },
+        {
+            "start": "00:05:22,986",
+            "end": "00:05:26,206",
+            "en": "I believe that's the right thing to do.",
+            "zh": "我相信那是正确的做法。",
+            "ar": "أعتقد أن هذا هو الشيء الصحيح الذي يجب القيام به."
+        },
+        {
+            "start": "00:05:26,506",
+            "end": "00:05:29,646",
+            "en": "But it doesn't mean that you don't learn,",
+            "zh": "但这并不意味着你不学习，",
+            "ar": "لكن هذا لا يعني أنك لا تتعلم,"
+        },
+        {
+            "start": "00:05:29,646",
+            "end": "00:05:30,606",
+            "en": "don't study.",
+            "zh": "不研究。",
+            "ar": "لا تدرس."
+        },
+        {
+            "start": "00:05:30,886",
+            "end": "00:05:31,726",
+            "en": "You can still study,",
+            "zh": "你还是可以学习的，",
+            "ar": "يمكنك ما زلت تدرس،"
+        },
+        {
+            "start": "00:05:31,726",
+            "end": "00:05:32,666",
+            "en": "you can still learn.",
+            "zh": "你仍然可以学习。",
+            "ar": "يمكنك لا تزال تتعلم."
+        },
+        {
+            "start": "00:05:33,386",
+            "end": "00:05:37,866",
+            "en": "It's a thing that is deep in your mind,",
+            "zh": "这是深藏在你脑海中的东西，",
+            "ar": "إنها شيء عميق في عقلك،"
+        },
+        {
+            "start": "00:05:39,466",
+            "end": "00:05:42,426",
+            "en": "for which you are desperate,",
+            "zh": "对此你感到绝望，",
+            "ar": "الذي أنت يائس من أجله،"
+        },
+        {
+            "start": "00:05:42,426",
+            "end": "00:05:43,606",
+            "en": "you are crazy,",
+            "zh": "你疯了，",
+            "ar": "أنت مجنون،"
+        },
+        {
+            "start": "00:05:43,606",
+            "end": "00:05:44,886",
+            "en": "you are eager.",
+            "zh": "你渴望。",
+            "ar": "أنت متحمس."
+        },
+        {
+            "start": "00:05:46,265",
+            "end": "00:05:48,126",
+            "en": "So you can still do it,",
+            "zh": "所以你仍然可以做到，",
+            "ar": "لذا يمكنك ما زلت تفعل ذلك،"
+        },
+        {
+            "start": "00:05:48,126",
+            "end": "00:05:51,266",
+            "en": "you can still learn things,",
+            "zh": "你仍然可以学习东西，",
+            "ar": "يمكنك لا تزال تتعلم الأشياء،"
+        },
+        {
+            "start": "00:05:51,586",
+            "end": "00:05:55,746",
+            "en": "but it's not a thing that you escape from reality.",
+            "zh": "但这并不是你从现实中逃避的事情。",
+            "ar": "لكنه ليس شيئًا تهرب منه من الواقع."
+        },
+        {
+            "start": "00:05:56,525",
+            "end": "00:05:57,046",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:05:57,046",
+            "end": "00:05:58,706",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقاً."
+        }
+    ]
+}

@@ -1,0 +1,166 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,840\",\n    \"lang\": \"en\",\n    \"text\": \"So...\"\n  },\n  {\n    \"start\": \"00:00:01,762\",\n    \"end\": \"00:00:02,502\",\n    \"lang\": \"ja\",\n    \"text\": \"私は、\"\n  },\n  {\n    \"start\": \"00:00:02,502\",\n    \"end\": \"00:00:05,302\",\n    \"lang\": \"ja\",\n    \"text\": \"ナーシスティズムは良いものだと感じました。\"\n  },\n  {\n    \"start\": \"00:00:06,466\",\n    \"end\": \"00:00:08,306\",\n    \"lang\": \"en\",\n    \"text\": \"especially for the artists\"\n  },\n  {\n    \"start\": \"00:00:08,306\",\n    \"end\": \"00:00:09,006\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:09,006\",\n    \"end\": \"00:00:12,786\",\n    \"lang\": \"en\",\n    \"text\": \"that is loving your own work\"\n  },\n  {\n    \"start\": \"00:00:12,786\",\n    \"end\": \"00:00:16,106\",\n    \"lang\": \"en\",\n    \"text\": \"I believe it's a motivation\"\n  },\n  {\n    \"start\": \"00:00:16,106\",\n    \"end\": \"00:00:17,246\",\n    \"lang\": \"en\",\n    \"text\": \"that you keep\"\n  },\n  {\n    \"start\": \"00:00:17,246\",\n    \"end\": \"00:00:18,546\",\n    \"lang\": \"en\",\n    \"text\": \"as an artist,\"\n  },\n  {\n    \"start\": \"00:00:18,546\",\n    \"end\": \"00:00:20,026\",\n    \"lang\": \"en\",\n    \"text\": \"that you keep creating\"\n  },\n  {\n    \"start\": \"00:00:20,026\",\n    \"end\": \"00:00:23,546\",\n    \"lang\": \"en\",\n    \"text\": \"keep producing\"\n  },\n  {\n    \"start\": \"00:00:23,546\",\n    \"end\": \"00:00:29,186\",\n    \"lang\": \"en\",\n    \"text\": \"keep working on their work\"\n  },\n  {\n    \"start\": \"00:00:29,186\",\n    \"end\": \"00:00:30,546\",\n    \"lang\": \"en\",\n    \"text\": \"hehehe\"\n  },\n  {\n    \"start\": \"00:00:31,766\",\n    \"end\": \"00:00:32,746\",\n    \"lang\": \"en\",\n    \"text\": \"anyway,\"\n  },\n  {\n    \"start\": \"00:00:32,746\",\n    \"end\": \"00:00:33,926\",\n    \"lang\": \"en\",\n    \"text\": \"that's the point\"\n  },\n  {\n    \"start\": \"00:00:36,806\",\n    \"end\": \"00:00:37,546\",\n    \"lang\": \"en\",\n    \"text\": \"anyway,\"\n  },\n  {\n    \"start\": \"00:00:37,546\",\n    \"end\": \"00:00:40,746\",\n    \"lang\": \"en\",\n    \"text\": \"sometimes I'm narcissistic\"\n  },\n  {\n    \"start\": \"00:00:40,746\",\n    \"end\": \"00:00:42,026\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:42,926\",\n    \"end\": \"00:00:44,606\",\n    \"lang\": \"en\",\n    \"text\": \"I love my own work\"\n  },\n  {\n    \"start\": \"00:00:48,946\",\n    \"end\": \"00:00:51,886\",\n    \"lang\": \"en\",\n    \"text\": \"if you say that you don't love your work\"\n  },\n  {\n    \"start\": \"00:00:51,886\",\n    \"end\": \"00:00:54,946\",\n    \"lang\": \"en\",\n    \"text\": \"how can you expect others like your work?\"\n  },\n  {\n    \"start\": \"00:00:55,726\",\n    \"end\": \"00:00:56,026\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:00:56,486\",\n    \"end\": \"00:00:57,066\",\n    \"lang\": \"en\",\n    \"text\": \"ok\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,840",
+            "es": "Entonces...",
+            "fr": "Alors...",
+            "uk": "Отже..."
+        },
+        {
+            "start": "00:00:01,762",
+            "end": "00:00:02,502",
+            "es": "Yo...",
+            "fr": "Je...",
+            "uk": "Я..."
+        },
+        {
+            "start": "00:00:02,502",
+            "end": "00:00:05,302",
+            "es": "sentí que el narcisismo es algo bueno.",
+            "fr": "ai senti que le narcissisme est une bonne chose.",
+            "uk": "відчув, що нарцисизм це добре."
+        },
+        {
+            "start": "00:00:06,466",
+            "end": "00:00:08,306",
+            "es": "especialmente para los artistas",
+            "fr": "surtout pour les artistes",
+            "uk": "особливо для художників"
+        },
+        {
+            "start": "00:00:08,306",
+            "end": "00:00:09,006",
+            "es": "así que",
+            "fr": "alors",
+            "uk": "отже"
+        },
+        {
+            "start": "00:00:09,006",
+            "end": "00:00:12,786",
+            "es": "eso es amar tu propio trabajo",
+            "fr": "c'est aimer votre propre travail",
+            "uk": "це любити свою власну роботу"
+        },
+        {
+            "start": "00:00:12,786",
+            "end": "00:00:16,106",
+            "es": "Creo que es una motivación",
+            "fr": "Je crois que c'est une motivation",
+            "uk": "Я вважаю, що це мотивація"
+        },
+        {
+            "start": "00:00:16,106",
+            "end": "00:00:17,246",
+            "es": "que mantienes",
+            "fr": "que vous gardez",
+            "uk": "яку ти тримаєш"
+        },
+        {
+            "start": "00:00:17,246",
+            "end": "00:00:18,546",
+            "es": "como artista,",
+            "fr": "en tant qu'artiste,",
+            "uk": "як художник,"
+        },
+        {
+            "start": "00:00:18,546",
+            "end": "00:00:20,026",
+            "es": "que sigues creando",
+            "fr": "que vous continuez à créer",
+            "uk": "що ти продовжуєш створювати"
+        },
+        {
+            "start": "00:00:20,026",
+            "end": "00:00:23,546",
+            "es": "sigues produciendo",
+            "fr": "continue à produire",
+            "uk": "продовжуй виробляти"
+        },
+        {
+            "start": "00:00:23,546",
+            "end": "00:00:29,186",
+            "es": "sigues trabajando en tu obra",
+            "fr": "continue à travailler sur ton œuvre",
+            "uk": "продовжуй працювати над своєю роботою"
+        },
+        {
+            "start": "00:00:29,186",
+            "end": "00:00:30,546",
+            "es": "jejeje",
+            "fr": "hehehe",
+            "uk": "хіхіхі"
+        },
+        {
+            "start": "00:00:31,766",
+            "end": "00:00:32,746",
+            "es": "de todos modos,",
+            "fr": "de toute façon,",
+            "uk": "у будь-якому випадку,"
+        },
+        {
+            "start": "00:00:32,746",
+            "end": "00:00:33,926",
+            "es": "ese es el punto",
+            "fr": "c'est le point",
+            "uk": "ось в чому справа"
+        },
+        {
+            "start": "00:00:36,806",
+            "end": "00:00:37,546",
+            "es": "de todos modos,",
+            "fr": "de toute façon,",
+            "uk": "у будь-якому випадку,"
+        },
+        {
+            "start": "00:00:37,546",
+            "end": "00:00:40,746",
+            "es": "a veces soy narcisista",
+            "fr": "parfois, je suis narcissique",
+            "uk": "іноді я нарцис"
+        },
+        {
+            "start": "00:00:40,746",
+            "end": "00:00:42,026",
+            "es": "así que",
+            "fr": "alors",
+            "uk": "отже"
+        },
+        {
+            "start": "00:00:42,926",
+            "end": "00:00:44,606",
+            "es": "amo mi propio trabajo",
+            "fr": "j'aime mon propre travail",
+            "uk": "я люблю свою власну роботу"
+        },
+        {
+            "start": "00:00:48,946",
+            "end": "00:00:51,886",
+            "es": "si dices que no amas tu trabajo",
+            "fr": "si vous dites que vous n'aimez pas votre travail",
+            "uk": "якщо скажеш, що не любиш свою роботу"
+        },
+        {
+            "start": "00:00:51,886",
+            "end": "00:00:54,946",
+            "es": "¿cómo puedes esperar que a otros les guste tu trabajo?",
+            "fr": "comment pouvez-vous attendre que d'autres aiment votre travail ?",
+            "uk": "як можеш очікувати, що іншим сподобається твоя робота?"
+        },
+        {
+            "start": "00:00:55,726",
+            "end": "00:00:56,026",
+            "es": "¿verdad?",
+            "fr": "n'est-ce pas ?",
+            "uk": "правда?"
+        },
+        {
+            "start": "00:00:56,486",
+            "end": "00:00:57,066",
+            "es": "ok",
+            "fr": "d'accord",
+            "uk": "добре"
+        }
+    ]
+}

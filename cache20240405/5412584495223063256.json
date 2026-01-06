@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"en\",\n    \"text\": \"So never wait for this perfect moment,\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:06,180\",\n    \"lang\": \"en\",\n    \"text\": \"that everything is prepared,\"\n  },\n  {\n    \"start\": \"00:00:06,180\",\n    \"end\": \"00:00:08,360\",\n    \"lang\": \"en\",\n    \"text\": \"because it will never come.\"\n  },\n  {\n    \"start\": \"00:00:12,360\",\n    \"end\": \"00:00:16,900\",\n    \"lang\": \"en\",\n    \"text\": \"So you will find yourself in this journey,\"\n  },\n  {\n    \"start\": \"00:00:16,900\",\n    \"end\": \"00:00:19,660\",\n    \"lang\": \"en\",\n    \"text\": \"that being attacked,\"\n  },\n  {\n    \"start\": \"00:00:19,660\",\n    \"end\": \"00:00:20,860\",\n    \"lang\": \"en\",\n    \"text\": \"being criticized,\"\n  },\n  {\n    \"start\": \"00:00:20,860\",\n    \"end\": \"00:00:22,880\",\n    \"lang\": \"en\",\n    \"text\": \"being humiliated,\"\n  },\n  {\n    \"start\": \"00:00:22,880\",\n    \"end\": \"00:00:27,560\",\n    \"lang\": \"en\",\n    \"text\": \"being imperfect.\"\n  },\n  {\n    \"start\": \"00:00:30,439\",\n    \"end\": \"00:00:32,360\",\n    \"lang\": \"en\",\n    \"text\": \"Present yourself to the world.\"\n  },\n  {\n    \"start\": \"00:00:33,442\",\n    \"end\": \"00:00:33,842\",\n    \"lang\": \"ja\",\n    \"text\": \"しゅい\"\n  },\n  {\n    \"start\": \"00:00:44,098\",\n    \"end\": \"00:00:45,458\",\n    \"lang\": \"en\",\n    \"text\": \"Allow yourself to fail,\"\n  },\n  {\n    \"start\": \"00:00:45,458\",\n    \"end\": \"00:00:48,378\",\n    \"lang\": \"en\",\n    \"text\": \"to be imperfect.\"\n  },\n  {\n    \"start\": \"00:00:52,978\",\n    \"end\": \"00:00:55,798\",\n    \"lang\": \"en\",\n    \"text\": \"The world will end in dust.\"\n  },\n  {\n    \"start\": \"00:00:56,618\",\n    \"end\": \"00:00:57,658\",\n    \"lang\": \"en\",\n    \"text\": \"Nothing is important.\"\n  },\n  {\n    \"start\": \"00:00:57,658\",\n    \"end\": \"00:00:59,578\",\n    \"lang\": \"en\",\n    \"text\": \"Everything is meaningless.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,780",
+            "es": "Así que nunca esperes ese momento perfecto,",
+            "fr": "Alors, n'attendez jamais le moment parfait,",
+            "uk": "Отже, ніколи не чекайте цього ідеального моменту,"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:06,180",
+            "es": "que todo esté preparado,",
+            "fr": "que tout soit prêt,",
+            "uk": "що все підготовлено,"
+        },
+        {
+            "start": "00:00:06,180",
+            "end": "00:00:08,360",
+            "es": "porque nunca llegará.",
+            "fr": "parce qu'il n'arrivera jamais.",
+            "uk": "бо він ніколи не настане."
+        },
+        {
+            "start": "00:00:12,360",
+            "end": "00:00:16,900",
+            "es": "Así que te encontrarás en este viaje,",
+            "fr": "Ainsi, vous vous trouverez dans ce voyage,",
+            "uk": "Отже, ви опинитеся в цій подорожі,"
+        },
+        {
+            "start": "00:00:16,900",
+            "end": "00:00:19,660",
+            "es": "siendo atacado,",
+            "fr": "étant attaqué,",
+            "uk": "будучи атакованим,"
+        },
+        {
+            "start": "00:00:19,660",
+            "end": "00:00:20,860",
+            "es": "siendo criticado,",
+            "fr": "étant critiqué,",
+            "uk": "будучи критикованим,"
+        },
+        {
+            "start": "00:00:20,860",
+            "end": "00:00:22,880",
+            "es": "siendo humillado,",
+            "fr": "étant humilié,",
+            "uk": "будучи приниженим,"
+        },
+        {
+            "start": "00:00:22,880",
+            "end": "00:00:27,560",
+            "es": "siendo imperfecto.",
+            "fr": "étant imparfait.",
+            "uk": "будучи недосконалим."
+        },
+        {
+            "start": "00:00:30,439",
+            "end": "00:00:32,360",
+            "es": "Preséntate al mundo.",
+            "fr": "Présentez-vous au monde.",
+            "uk": "Представтеся світу."
+        },
+        {
+            "start": "00:00:33,442",
+            "end": "00:00:33,842",
+            "es": "Prepárate (corrección de reconocimiento de habla 'しゅい' a 'Prepárate')",
+            "fr": "Préparez-vous (correction d'erreur de reconnaissance vocale 'しゅい' à 'Préparez-vous')",
+            "uk": "Приготуйся (виправлення помилки розпізнавання мови 'しゅい' на 'Приготуйся')"
+        },
+        {
+            "start": "00:00:44,098",
+            "end": "00:00:45,458",
+            "es": "Permítete fallar,",
+            "fr": "Permettez-vous d'échouer,",
+            "uk": "Дозволь собі провалитись,"
+        },
+        {
+            "start": "00:00:45,458",
+            "end": "00:00:48,378",
+            "es": "ser imperfecto.",
+            "fr": "être imparfait.",
+            "uk": "бути недосконалим."
+        },
+        {
+            "start": "00:00:52,978",
+            "end": "00:00:55,798",
+            "es": "El mundo terminará en polvo.",
+            "fr": "Le monde finira en poussière.",
+            "uk": "Світ закінчиться пилом."
+        },
+        {
+            "start": "00:00:56,618",
+            "end": "00:00:57,658",
+            "es": "Nada es importante.",
+            "fr": "Rien n'est important.",
+            "uk": "Ніщо не є важливим."
+        },
+        {
+            "start": "00:00:57,658",
+            "end": "00:00:59,578",
+            "es": "Todo es sin sentido.",
+            "fr": "Tout est dénué de sens.",
+            "uk": "Все є безглуздим."
+        }
+    ]
+}

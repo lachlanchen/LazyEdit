@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:04,230\",\n    \"end\": \"00:02:10,250\",\n    \"lang\": \"en\",\n    \"text\": \"but to stop discrimination in the infrastructure,\"\n  },\n  {\n    \"start\": \"00:02:10,250\",\n    \"end\": \"00:02:12,730\",\n    \"lang\": \"en\",\n    \"text\": \"in the institution.\"\n  },\n  {\n    \"start\": \"00:02:14,310\",\n    \"end\": \"00:02:16,070\",\n    \"lang\": \"en\",\n    \"text\": \"From the institution perspective,\"\n  },\n  {\n    \"start\": \"00:02:16,070\",\n    \"end\": \"00:02:22,930\",\n    \"lang\": \"en\",\n    \"text\": \"to stop the discrimination rather than from the moral perspective.\"\n  },\n  {\n    \"start\": \"00:02:23,930\",\n    \"end\": \"00:02:25,030\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:25,030\",\n    \"end\": \"00:02:29,310\",\n    \"lang\": \"en\",\n    \"text\": \"the little thing don't really matter.\"\n  },\n  {\n    \"start\": \"00:02:30,270\",\n    \"end\": \"00:02:31,990\",\n    \"lang\": \"en\",\n    \"text\": \"So it's great.\"\n  },\n  {\n    \"start\": \"00:02:31,990\",\n    \"end\": \"00:02:35,490\",\n    \"lang\": \"en\",\n    \"text\": \"It's practical.\"\n  },\n  {\n    \"start\": \"00:02:35,490\",\n    \"end\": \"00:02:42,950\",\n    \"lang\": \"en\",\n    \"text\": \"It's not something that is too aggressive or restrictive.\"\n  },\n  {\n    \"start\": \"00:02:42,950\",\n    \"end\": \"00:02:43,130\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you.\"\n  },\n  {\n    \"start\": \"00:02:51,890\",\n    \"end\": \"00:02:55,450\",\n    \"lang\": \"zh\",\n    \"text\": \"那个 那是柴犬\"\n  },\n  {\n    \"start\": \"00:02:55,450\",\n    \"end\": \"00:02:56,850\",\n    \"lang\": \"zh\",\n    \"text\": \"柴犬的英语怎么说\"\n  },\n  {\n    \"start\": \"00:02:57,450\",\n    \"end\": \"00:02:57,950\",\n    \"lang\": \"zh\",\n    \"text\": \"柴犬\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:04,230",
+            "end": "00:02:10,250",
+            "en": "but to stop discrimination in the infrastructure,",
+            "zh": "但是要停止基础设施中的歧视，",
+            "ar": "ولكن لوقف التمييز في البنية التحتية،"
+        },
+        {
+            "start": "00:02:10,250",
+            "end": "00:02:12,730",
+            "en": "in the institution.",
+            "zh": "在机构中。",
+            "ar": "في المؤسسة."
+        },
+        {
+            "start": "00:02:14,310",
+            "end": "00:02:16,070",
+            "en": "From the institution perspective,",
+            "zh": "从机构的角度来看，",
+            "ar": "من وجهة نظر المؤسسة،"
+        },
+        {
+            "start": "00:02:16,070",
+            "end": "00:02:22,930",
+            "en": "to stop the discrimination rather than from the moral perspective.",
+            "zh": "停止歧视而不是从道德的角度。",
+            "ar": "لوقف التمييز بدلاً من المنظور الأخلاقي."
+        },
+        {
+            "start": "00:02:23,930",
+            "end": "00:02:25,030",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذاً،"
+        },
+        {
+            "start": "00:02:25,030",
+            "end": "00:02:29,310",
+            "en": "the little thing don't really matter.",
+            "zh": "小事并不重要。",
+            "ar": "الشيء الصغير لا يهم حقًا."
+        },
+        {
+            "start": "00:02:30,270",
+            "end": "00:02:31,990",
+            "en": "So it's great.",
+            "zh": "所以这很好。",
+            "ar": "فهذا رائع."
+        },
+        {
+            "start": "00:02:31,990",
+            "end": "00:02:35,490",
+            "en": "It's practical.",
+            "zh": "这是实用的。",
+            "ar": "إنه عملي."
+        },
+        {
+            "start": "00:02:35,490",
+            "end": "00:02:42,950",
+            "en": "It's not something that is too aggressive or restrictive.",
+            "zh": "这不是一件过于激进或限制性的事情。",
+            "ar": "إنه ليس شيئًا عدوانيًا أو مقيدًا للغاية."
+        },
+        {
+            "start": "00:02:42,950",
+            "end": "00:02:43,130",
+            "en": "Thank you.",
+            "zh": "谢谢。",
+            "ar": "شكراً."
+        },
+        {
+            "start": "00:02:51,890",
+            "end": "00:02:55,450",
+            "en": "That's a Shiba Inu.",
+            "zh": "那个那是柴犬",
+            "ar": "هذا شيبا إينو."
+        },
+        {
+            "start": "00:02:55,450",
+            "end": "00:02:56,850",
+            "en": "How do you say Shiba Inu in English?",
+            "zh": "柴犬的英语怎么说",
+            "ar": "كيف تقول شيبا إينو بالإنجليزية؟"
+        },
+        {
+            "start": "00:02:57,450",
+            "end": "00:02:57,950",
+            "en": "Shiba Inu.",
+            "zh": "柴犬",
+            "ar": "شيبا إينو."
+        }
+    ]
+}

@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:29,038\",\n    \"end\": \"00:01:31,698\",\n    \"lang\": \"en\",\n    \"text\": \"As I shared in the morning running,\"\n  },\n  {\n    \"start\": \"00:01:31,698\",\n    \"end\": \"00:01:35,658\",\n    \"lang\": \"en\",\n    \"text\": \"we all have our unique talent,\"\n  },\n  {\n    \"start\": \"00:01:35,658\",\n    \"end\": \"00:01:37,038\",\n    \"lang\": \"en\",\n    \"text\": \"our unique strength,\"\n  },\n  {\n    \"start\": \"00:01:38,438\",\n    \"end\": \"00:01:39,598\",\n    \"lang\": \"en\",\n    \"text\": \"our unique journey,\"\n  },\n  {\n    \"start\": \"00:01:39,598\",\n    \"end\": \"00:01:41,378\",\n    \"lang\": \"en\",\n    \"text\": \"our unique story.\"\n  },\n  {\n    \"start\": \"00:01:45,118\",\n    \"end\": \"00:01:52,098\",\n    \"lang\": \"en\",\n    \"text\": \"So there is no necessity to admire or to be proud of it.\"\n  },\n  {\n    \"start\": \"00:01:52,130\",\n    \"end\": \"00:01:53,570\",\n    \"lang\": \"zh\",\n    \"text\": \"尽量的是我们的阿灯玻璃\"\n  },\n  {\n    \"start\": \"00:02:11,202\",\n    \"end\": \"00:02:12,282\",\n    \"lang\": \"en\",\n    \"text\": \"And all your life,\"\n  },\n  {\n    \"start\": \"00:02:12,282\",\n    \"end\": \"00:02:14,042\",\n    \"lang\": \"en\",\n    \"text\": \"when you disappear,\"\n  },\n  {\n    \"start\": \"00:02:14,042\",\n    \"end\": \"00:02:22,762\",\n    \"lang\": \"en\",\n    \"text\": \"it can only happen inside this existence.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:29,038",
+            "end": "00:01:31,698",
+            "en": "As I shared in the morning running,",
+            "zh": "就像我在早间跑步时分享的，",
+            "ar": "كما شاركت في الجري الصباحي،"
+        },
+        {
+            "start": "00:01:31,698",
+            "end": "00:01:35,658",
+            "en": "we all have our unique talent,",
+            "zh": "我们都有我们独特的才能，",
+            "ar": "لكل منا موهبته الفريدة،"
+        },
+        {
+            "start": "00:01:35,658",
+            "end": "00:01:37,038",
+            "en": "our unique strength,",
+            "zh": "我们独特的力量，",
+            "ar": "قوتنا الفريدة،"
+        },
+        {
+            "start": "00:01:38,438",
+            "end": "00:01:39,598",
+            "en": "our unique journey,",
+            "zh": "我们独特的旅程，",
+            "ar": "رحلتنا الفريدة،"
+        },
+        {
+            "start": "00:01:39,598",
+            "end": "00:01:41,378",
+            "en": "our unique story.",
+            "zh": "我们独特的故事。",
+            "ar": "قصتنا الفريدة."
+        },
+        {
+            "start": "00:01:45,118",
+            "end": "00:01:52,098",
+            "en": "So there is no necessity to admire or to be proud of it.",
+            "zh": "所以没有必要钦佩或为之骄傲。",
+            "ar": "لذلك لا ضرورة للإعجاب بها أو الفخر بها."
+        },
+        {
+            "start": "00:01:52,130",
+            "end": "00:01:53,570",
+            "en": "It's simply our existence.",
+            "zh": "尽量的是我们的阿灯玻璃",
+            "ar": "إنها مجرد وجودنا."
+        },
+        {
+            "start": "00:02:11,202",
+            "end": "00:02:12,282",
+            "en": "And all your life,",
+            "zh": "在你的一生中，",
+            "ar": "وطوال حياتك،"
+        },
+        {
+            "start": "00:02:12,282",
+            "end": "00:02:14,042",
+            "en": "when you disappear,",
+            "zh": "当你消失时，",
+            "ar": "عندما تختفي،"
+        },
+        {
+            "start": "00:02:14,042",
+            "end": "00:02:22,762",
+            "en": "it can only happen inside this existence.",
+            "zh": "这只能在这个存在中发生。",
+            "ar": "يمكن أن يحدث هذا فقط داخل هذا الوجود."
+        }
+    ]
+}

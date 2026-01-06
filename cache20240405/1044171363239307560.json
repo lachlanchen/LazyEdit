@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,922\",\n    \"end\": \"00:01:02,262\",\n    \"lang\": \"ja\",\n    \"text\": \"これは\"\n  },\n  {\n    \"start\": \"00:01:03,618\",\n    \"end\": \"00:01:04,697\",\n    \"lang\": \"en\",\n    \"text\": \"Strawberry,\"\n  },\n  {\n    \"start\": \"00:01:04,697\",\n    \"end\": \"00:01:05,158\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:01:05,158\",\n    \"end\": \"00:01:06,758\",\n    \"lang\": \"en\",\n    \"text\": \"peach and nuts.\"\n  },\n  {\n    \"start\": \"00:01:08,386\",\n    \"end\": \"00:01:09,906\",\n    \"lang\": \"zh\",\n    \"text\": \"妖蛊用英语怎么说\"\n  },\n  {\n    \"start\": \"00:01:10,066\",\n    \"end\": \"00:01:11,086\",\n    \"lang\": \"zh\",\n    \"text\": \"妖蛊 不知道\"\n  },\n  {\n    \"start\": \"00:01:12,026\",\n    \"end\": \"00:01:18,106\",\n    \"lang\": \"en\",\n    \"text\": \"and only another two eggs in the steam cooker\"\n  },\n  {\n    \"start\": \"00:01:23,846\",\n    \"end\": \"00:01:24,286\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:24,286\",\n    \"end\": \"00:01:25,886\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  },\n  {\n    \"start\": \"00:01:31,766\",\n    \"end\": \"00:01:32,586\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god,\"\n  },\n  {\n    \"start\": \"00:01:32,586\",\n    \"end\": \"00:01:33,606\",\n    \"lang\": \"en\",\n    \"text\": \"oh my god,\"\n  },\n  {\n    \"start\": \"00:01:33,606\",\n    \"end\": \"00:01:37,046\",\n    \"lang\": \"en\",\n    \"text\": \"this is a rotten strawberry,\"\n  },\n  {\n    \"start\": \"00:01:37,046\",\n    \"end\": \"00:01:38,406\",\n    \"lang\": \"en\",\n    \"text\": \"whatever\"\n  },\n  {\n    \"start\": \"00:01:46,746\",\n    \"end\": \"00:01:47,886\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:47,886\",\n    \"end\": \"00:01:49,146\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,922",
+            "end": "00:01:02,262",
+            "es": "Esto es",
+            "fr": "C'est",
+            "uk": "Це"
+        },
+        {
+            "start": "00:01:03,618",
+            "end": "00:01:04,697",
+            "es": "Fresa,",
+            "fr": "Fraise,",
+            "uk": "Полуниця,"
+        },
+        {
+            "start": "00:01:04,697",
+            "end": "00:01:05,158",
+            "es": "arándano,",
+            "fr": "myrtille,",
+            "uk": "чорниця,"
+        },
+        {
+            "start": "00:01:05,158",
+            "end": "00:01:06,758",
+            "es": "durazno y nueces.",
+            "fr": "pêche et noix.",
+            "uk": "персик і горіхи."
+        },
+        {
+            "start": "00:01:08,386",
+            "end": "00:01:09,906",
+            "es": "Cómo se dice '妖蛊' en inglés",
+            "fr": "Comment dit-on '妖蛊' en anglais",
+            "uk": "Як сказати '妖蛊' англійською"
+        },
+        {
+            "start": "00:01:10,066",
+            "end": "00:01:11,086",
+            "es": "'妖蛊' No sé",
+            "fr": "'妖蛊' Je ne sais pas",
+            "uk": "'妖蛊' Не знаю"
+        },
+        {
+            "start": "00:01:12,026",
+            "end": "00:01:18,106",
+            "es": "y solo otros dos huevos en la vaporera",
+            "fr": "et seulement deux autres œufs dans le cuiseur vapeur",
+            "uk": "і лише ще два яйця в пароварці"
+        },
+        {
+            "start": "00:01:23,846",
+            "end": "00:01:24,286",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:01:24,286",
+            "end": "00:01:25,886",
+            "es": "nos vemos",
+            "fr": "à bientôt",
+            "uk": "бачимось"
+        },
+        {
+            "start": "00:01:31,766",
+            "end": "00:01:32,586",
+            "es": "Dios mío,",
+            "fr": "Mon Dieu,",
+            "uk": "Боже мій,"
+        },
+        {
+            "start": "00:01:32,586",
+            "end": "00:01:33,606",
+            "es": "dios mío,",
+            "fr": "mon Dieu,",
+            "uk": "боже мій,"
+        },
+        {
+            "start": "00:01:33,606",
+            "end": "00:01:37,046",
+            "es": "esta es una fresa podrida,",
+            "fr": "c'est une fraise pourrie,",
+            "uk": "це гнила полуниця,"
+        },
+        {
+            "start": "00:01:37,046",
+            "end": "00:01:38,406",
+            "es": "lo que sea",
+            "fr": "peu importe",
+            "uk": "що завгодно"
+        },
+        {
+            "start": "00:01:46,746",
+            "end": "00:01:47,886",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:01:47,886",
+            "end": "00:01:49,146",
+            "es": "nos vemos",
+            "fr": "à bientôt",
+            "uk": "бачимось"
+        }
+    ]
+}

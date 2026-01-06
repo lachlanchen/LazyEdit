@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,960\",\n    \"lang\": \"zh\",\n    \"text\": \"虽然没有家里的好吃,\"\n  },\n  {\n    \"start\": \"00:00:01,960\",\n    \"end\": \"00:00:04,240\",\n    \"lang\": \"zh\",\n    \"text\": \"但是已经很好吃了。\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:05,440\",\n    \"lang\": \"zh\",\n    \"text\": \"红薯粉条。\"\n  },\n  {\n    \"start\": \"00:00:06,360\",\n    \"end\": \"00:00:07,720\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道英语怎么说。\"\n  },\n  {\n    \"start\": \"00:00:08,360\",\n    \"end\": \"00:00:09,240\",\n    \"lang\": \"en\",\n    \"text\": \"Potato noodles。\"\n  },\n  {\n    \"start\": \"00:00:11,760\",\n    \"end\": \"00:00:12,760\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:12,760\",\n    \"end\": \"00:00:14,400\",\n    \"lang\": \"zh\",\n    \"text\": \"红薯粉条。\"\n  },\n  {\n    \"start\": \"00:00:14,600\",\n    \"end\": \"00:00:15,060\",\n    \"lang\": \"en\",\n    \"text\": \"Vegetables.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,960",
+            "es": "Aunque no es tan bueno como en casa,",
+            "fr": "Bien que ce ne soit pas aussi bon qu'à la maison,",
+            "uk": "Хоча це і не так смачно, як вдома,"
+        },
+        {
+            "start": "00:00:01,960",
+            "end": "00:00:04,240",
+            "es": "ya está bastante bueno.",
+            "fr": "c'est déjà assez bon.",
+            "uk": "воно вже досить смачно."
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:05,440",
+            "es": "Fideos de batata.",
+            "fr": "Vermicelles de patate douce.",
+            "uk": "Горохові вермішелі."
+        },
+        {
+            "start": "00:00:06,360",
+            "end": "00:00:07,720",
+            "es": "No sé cómo se dice en inglés.",
+            "fr": "Je ne sais pas comment cela se dit en anglais.",
+            "uk": "Я не знаю, як це сказати англійською."
+        },
+        {
+            "start": "00:00:08,360",
+            "end": "00:00:09,240",
+            "es": "Fideos de patata.",
+            "fr": "Nouilles de pomme de terre.",
+            "uk": "Картопляні локшина."
+        },
+        {
+            "start": "00:00:11,760",
+            "end": "00:00:12,760",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        },
+        {
+            "start": "00:00:12,760",
+            "end": "00:00:14,400",
+            "es": "Fideos de batata.",
+            "fr": "Vermicelles de patate douce.",
+            "uk": "Горохові вермішелі."
+        },
+        {
+            "start": "00:00:14,600",
+            "end": "00:00:15,060",
+            "es": "Verduras.",
+            "fr": "Légumes.",
+            "uk": "Овочі."
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,580\",\n    \"end\": \"00:00:02,180\",\n    \"lang\": \"ja\",\n    \"text\": \"アラナシイヒです。\"\n  },\n  {\n    \"start\": \"00:00:02,180\",\n    \"end\": \"00:00:03,920\",\n    \"lang\": \"ja\",\n    \"text\": \"今日はアラナシイヒです。\"\n  },\n  {\n    \"start\": \"00:00:03,920\",\n    \"end\": \"00:00:06,280\",\n    \"lang\": \"ja\",\n    \"text\": \"私は海岸線を走ります。\"\n  },\n  {\n    \"start\": \"00:00:07,970\",\n    \"end\": \"00:00:08,970\",\n    \"lang\": \"en\",\n    \"text\": \"See you at the Akustna.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,580",
+            "end": "00:00:02,180",
+            "vi": "Đây là Alana Shi."
+        },
+        {
+            "start": "00:00:02,180",
+            "end": "00:00:03,920",
+            "vi": "Hôm nay là Alana Shi."
+        },
+        {
+            "start": "00:00:03,920",
+            "end": "00:00:06,280",
+            "vi": "Tôi sẽ chạy dọc theo bờ biển."
+        },
+        {
+            "start": "00:00:07,970",
+            "end": "00:00:08,970",
+            "vi": "Hẹn gặp bạn ở Akustna."
+        }
+    ]
+}

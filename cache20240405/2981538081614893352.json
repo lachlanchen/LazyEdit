@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,940\",\n    \"lang\": \"en\",\n    \"text\": \"This is my dinner tonight.\"\n  },\n  {\n    \"start\": \"00:00:02,594\",\n    \"end\": \"00:00:03,014\",\n    \"lang\": \"zh\",\n    \"text\": \"愛你\"\n  },\n  {\n    \"start\": \"00:00:03,414\",\n    \"end\": \"00:00:04,374\",\n    \"lang\": \"zh\",\n    \"text\": \"太酷了\"\n  },\n  {\n    \"start\": \"00:00:04,930\",\n    \"end\": \"00:00:05,350\",\n    \"lang\": \"en\",\n    \"text\": \"Can't deem.\"\n  },\n  {\n    \"start\": \"00:00:06,786\",\n    \"end\": \"00:00:09,046\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是我也不知道发的对不对哈\"\n  },\n  {\n    \"start\": \"00:00:09,046\",\n    \"end\": \"00:00:10,706\",\n    \"lang\": \"zh\",\n    \"text\": \"港大的太古食堂\"\n  },\n  {\n    \"start\": \"00:00:11,246\",\n    \"end\": \"00:00:14,286\",\n    \"lang\": \"zh\",\n    \"text\": \"这个云南米线还挺出名的\"\n  },\n  {\n    \"start\": \"00:00:15,606\",\n    \"end\": \"00:00:17,466\",\n    \"lang\": \"zh\",\n    \"text\": \"上次吃还挺好吃的\"\n  },\n  {\n    \"start\": \"00:00:17,466\",\n    \"end\": \"00:00:19,006\",\n    \"lang\": \"zh\",\n    \"text\": \"做的也太潦草了\"\n  },\n  {\n    \"start\": \"00:00:19,086\",\n    \"end\": \"00:00:20,446\",\n    \"lang\": \"zh\",\n    \"text\": \"这个还是生的\"\n  },\n  {\n    \"start\": \"00:00:21,326\",\n    \"end\": \"00:00:22,246\",\n    \"lang\": \"zh\",\n    \"text\": \"无所谓了\"\n  },\n  {\n    \"start\": \"00:00:22,826\",\n    \"end\": \"00:00:23,646\",\n    \"lang\": \"zh\",\n    \"text\": \"相信它吧\"\n  },\n  {\n    \"start\": \"00:00:24,866\",\n    \"end\": \"00:00:25,446\",\n    \"lang\": \"en\",\n    \"text\": \"What the d traffic light?\"\n  },\n  {\n    \"start\": \"00:00:25,954\",\n    \"end\": \"00:00:26,274\",\n    \"lang\": \"zh\",\n    \"text\": \"OK\"\n  },\n  {\n    \"start\": \"00:00:26,754\",\n    \"end\": \"00:00:27,874\",\n    \"lang\": \"zh\",\n    \"text\": \"看着好美味\"\n  },\n  {\n    \"start\": \"00:00:28,094\",\n    \"end\": \"00:00:28,674\",\n    \"lang\": \"zh\",\n    \"text\": \"太美味了\"\n  },\n  {\n    \"start\": \"00:00:28,714\",\n    \"end\": \"00:00:29,374\",\n    \"lang\": \"zh\",\n    \"text\": \"口水都流出来了\"\n  },\n  {\n    \"start\": \"00:00:30,946\",\n    \"end\": \"00:00:32,286\",\n    \"lang\": \"en\",\n    \"text\": \"My mouth is watering.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,940",
+            "vi": "Đây là bữa tối của tôi tối nay."
+        },
+        {
+            "start": "00:00:02,594",
+            "end": "00:00:03,014",
+            "vi": "Yêu em"
+        },
+        {
+            "start": "00:00:03,414",
+            "end": "00:00:04,374",
+            "vi": "Quá chất rồi"
+        },
+        {
+            "start": "00:00:04,930",
+            "end": "00:00:05,350",
+            "vi": "Không thể tin nổi."
+        },
+        {
+            "start": "00:00:06,786",
+            "end": "00:00:09,046",
+            "vi": "Cái này tôi cũng không biết có đúng không nữa ha"
+        },
+        {
+            "start": "00:00:09,046",
+            "end": "00:00:10,706",
+            "vi": "Căn tin Swire của Đại học Hồng Kông"
+        },
+        {
+            "start": "00:00:11,246",
+            "end": "00:00:14,286",
+            "vi": "Mì Yunnan này khá nổi tiếng"
+        },
+        {
+            "start": "00:00:15,606",
+            "end": "00:00:17,466",
+            "vi": "Lần trước ăn mà thấy rất ngon"
+        },
+        {
+            "start": "00:00:17,466",
+            "end": "00:00:19,006",
+            "vi": "Làm cẩu thả quá"
+        },
+        {
+            "start": "00:00:19,086",
+            "end": "00:00:20,446",
+            "vi": "Cái này còn sống nữa"
+        },
+        {
+            "start": "00:00:21,326",
+            "end": "00:00:22,246",
+            "vi": "Không sao đâu"
+        },
+        {
+            "start": "00:00:22,826",
+            "end": "00:00:23,646",
+            "vi": "Tin nó đi"
+        },
+        {
+            "start": "00:00:24,866",
+            "end": "00:00:25,446",
+            "vi": "Cái gì thế này, đèn giao thông à?"
+        },
+        {
+            "start": "00:00:25,954",
+            "end": "00:00:26,274",
+            "vi": "Được"
+        },
+        {
+            "start": "00:00:26,754",
+            "end": "00:00:27,874",
+            "vi": "Trông ngon quá"
+        },
+        {
+            "start": "00:00:28,094",
+            "end": "00:00:28,674",
+            "vi": "Quá ngon luôn"
+        },
+        {
+            "start": "00:00:28,714",
+            "end": "00:00:29,374",
+            "vi": "Nước miếng chảy ra mất"
+        },
+        {
+            "start": "00:00:30,946",
+            "end": "00:00:32,286",
+            "vi": "Miệng tôi đang chảy nước."
+        }
+    ]
+}

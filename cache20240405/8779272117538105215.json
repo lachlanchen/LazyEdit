@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,140\",\n    \"end\": \"00:00:02,140\",\n    \"lang\": \"en\",\n    \"text\": \"It's too windy.\"\n  },\n  {\n    \"start\": \"00:00:02,140\",\n    \"end\": \"00:00:03,300\",\n    \"lang\": \"en\",\n    \"text\": \"It's so lazy.\"\n  },\n  {\n    \"start\": \"00:00:13,858\",\n    \"end\": \"00:00:14,058\",\n    \"lang\": \"zh\",\n    \"text\": \"大哥\"\n  },\n  {\n    \"start\": \"00:00:14,158\",\n    \"end\": \"00:00:14,378\",\n    \"lang\": \"zh\",\n    \"text\": \"指意在哪터\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,140",
+            "end": "00:00:02,140",
+            "ko": "너무 바람이 세다."
+        },
+        {
+            "start": "00:00:02,140",
+            "end": "00:00:03,300",
+            "ko": "정말 게으르다."
+        },
+        {
+            "start": "00:00:13,858",
+            "end": "00:00:14,058",
+            "ko": "형"
+        },
+        {
+            "start": "00:00:14,158",
+            "end": "00:00:14,378",
+            "ko": "목적지는 어디야?"
+        }
+    ]
+}

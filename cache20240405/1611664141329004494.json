@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,720\",\n    \"lang\": \"ja\",\n    \"text\": \"あらなしい日です\"\n  },\n  {\n    \"start\": \"00:00:03,640\",\n    \"end\": \"00:00:05,740\",\n    \"lang\": \"ja\",\n    \"text\": \"今日はあらなしい日です\"\n  },\n  {\n    \"start\": \"00:00:06,299\",\n    \"end\": \"00:00:08,920\",\n    \"lang\": \"ja\",\n    \"text\": \"私は朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:10,978\",\n    \"end\": \"00:00:18,598\",\n    \"lang\": \"en\",\n    \"text\": \"So I wish my video that it can at least encourage people to play terrible guitar,\"\n  },\n  {\n    \"start\": \"00:00:18,598\",\n    \"end\": \"00:00:20,198\",\n    \"lang\": \"en\",\n    \"text\": \"that they\"\n  },\n  {\n    \"start\": \"00:00:20,198\",\n    \"end\": \"00:00:21,378\",\n    \"lang\": \"en\",\n    \"text\": \"speak broken English,\"\n  },\n  {\n    \"start\": \"00:00:21,378\",\n    \"end\": \"00:00:22,998\",\n    \"lang\": \"en\",\n    \"text\": \"broken Japanese,\"\n  },\n  {\n    \"start\": \"00:00:22,998\",\n    \"end\": \"00:00:27,057\",\n    \"lang\": \"en\",\n    \"text\": \"broken Cantonese,\"\n  },\n  {\n    \"start\": \"00:00:27,057\",\n    \"end\": \"00:00:30,458\",\n    \"lang\": \"en\",\n    \"text\": \"broken Vietnamese.\"\n  },\n  {\n    \"start\": \"00:00:39,058\",\n    \"end\": \"00:00:41,498\",\n    \"lang\": \"en\",\n    \"text\": \"So to encourage people,\"\n  },\n  {\n    \"start\": \"00:00:41,498\",\n    \"end\": \"00:00:43,597\",\n    \"lang\": \"en\",\n    \"text\": \"even terrible as it is,\"\n  },\n  {\n    \"start\": \"00:00:43,597\",\n    \"end\": \"00:00:47,018\",\n    \"lang\": \"en\",\n    \"text\": \"I can present myself to the world.\"\n  },\n  {\n    \"start\": \"00:00:48,642\",\n    \"end\": \"00:00:49,262\",\n    \"lang\": \"zh\",\n    \"text\": \"蛮有趣的\"\n  },\n  {\n    \"start\": \"00:00:50,498\",\n    \"end\": \"00:00:51,358\",\n    \"lang\": \"en\",\n    \"text\": \"present yourself,\"\n  },\n  {\n    \"start\": \"00:00:51,358\",\n    \"end\": \"00:00:54,978\",\n    \"lang\": \"en\",\n    \"text\": \"your product to this world,\"\n  },\n  {\n    \"start\": \"00:00:55,258\",\n    \"end\": \"00:00:55,858\",\n    \"lang\": \"en\",\n    \"text\": \"to this universe.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,720",
+            "ko": "건조한 날씨네요"
+        },
+        {
+            "start": "00:00:03,640",
+            "end": "00:00:05,740",
+            "ko": "오늘은 건조한 날씨예요"
+        },
+        {
+            "start": "00:00:06,299",
+            "end": "00:00:08,920",
+            "ko": "저는 아침밥을 먹고 있어요"
+        },
+        {
+            "start": "00:00:10,978",
+            "end": "00:00:18,598",
+            "ko": "저의 비디오가 사람들이 엉터리 기타를 치게 하더라도 조금이나마 권장할 수 있기를 바라요,"
+        },
+        {
+            "start": "00:00:18,598",
+            "end": "00:00:20,198",
+            "ko": "그들이"
+        },
+        {
+            "start": "00:00:20,198",
+            "end": "00:00:21,378",
+            "ko": "서툰 영어를,"
+        },
+        {
+            "start": "00:00:21,378",
+            "end": "00:00:22,998",
+            "ko": "서툰 일본어를,"
+        },
+        {
+            "start": "00:00:22,998",
+            "end": "00:00:27,057",
+            "ko": "서툰 광동어를,"
+        },
+        {
+            "start": "00:00:27,057",
+            "end": "00:00:30,458",
+            "ko": "서툰 베트남어를."
+        },
+        {
+            "start": "00:00:39,058",
+            "end": "00:00:41,498",
+            "ko": "그래서 사람들을 격려하기 위해,"
+        },
+        {
+            "start": "00:00:41,498",
+            "end": "00:00:43,597",
+            "ko": "아무리 엉망이라도,"
+        },
+        {
+            "start": "00:00:43,597",
+            "end": "00:00:47,018",
+            "ko": "나는 세상에 나를 내보낼 수 있습니다."
+        },
+        {
+            "start": "00:00:48,642",
+            "end": "00:00:49,262",
+            "ko": "꽤 흥미로워요"
+        },
+        {
+            "start": "00:00:50,498",
+            "end": "00:00:51,358",
+            "ko": "자신을,"
+        },
+        {
+            "start": "00:00:51,358",
+            "end": "00:00:54,978",
+            "ko": "당신의 제품을 이 세상에,"
+        },
+        {
+            "start": "00:00:55,258",
+            "end": "00:00:55,858",
+            "ko": "이 우주에."
+        }
+    ]
+}

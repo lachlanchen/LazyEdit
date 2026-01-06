@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,080\",\n    \"end\": \"00:00:03,900\",\n    \"lang\": \"zh\",\n    \"text\": \"我们这个今天双半月哟\"\n  },\n  {\n    \"start\": \"00:00:03,900\",\n    \"end\": \"00:00:05,220\",\n    \"lang\": \"zh\",\n    \"text\": \"来剃脑壳\"\n  },\n  {\n    \"start\": \"00:00:06,280\",\n    \"end\": \"00:00:08,020\",\n    \"lang\": \"zh\",\n    \"text\": \"剃成光头了\"\n  },\n  {\n    \"start\": \"00:00:11,202\",\n    \"end\": \"00:00:11,862\",\n    \"lang\": \"en\",\n    \"text\": \"There you are,\"\n  },\n  {\n    \"start\": \"00:00:11,862\",\n    \"end\": \"00:00:12,002\",\n    \"lang\": \"en\",\n    \"text\": \"you.\"\n  },\n  {\n    \"start\": \"00:00:13,666\",\n    \"end\": \"00:00:14,986\",\n    \"lang\": \"zh\",\n    \"text\": \"他一点都不怕累\"\n  },\n  {\n    \"start\": \"00:00:14,986\",\n    \"end\": \"00:00:16,686\",\n    \"lang\": \"zh\",\n    \"text\": \"我们去第一次下水\"\n  },\n  {\n    \"start\": \"00:00:16,686\",\n    \"end\": \"00:00:17,806\",\n    \"lang\": \"zh\",\n    \"text\": \"骑着挖他的脚\"\n  },\n  {\n    \"start\": \"00:00:26,805\",\n    \"end\": \"00:00:28,306\",\n    \"lang\": \"zh\",\n    \"text\": \"有12斤的\"\n  },\n  {\n    \"start\": \"00:00:32,886\",\n    \"end\": \"00:00:33,846\",\n    \"lang\": \"zh\",\n    \"text\": \"哇塞\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,080",
+            "end": "00:00:03,900",
+            "es": "Hoy es el día de la media luna doble",
+            "fr": "Aujourd'hui, c'est le jour de la demi-lune double",
+            "uk": "Сьогодні день подвійного півмісяця"
+        },
+        {
+            "start": "00:00:03,900",
+            "end": "00:00:05,220",
+            "es": "Vamos a raparnos la cabeza",
+            "fr": "Nous allons nous raser la tête",
+            "uk": "Поголімо голови"
+        },
+        {
+            "start": "00:00:06,280",
+            "end": "00:00:08,020",
+            "es": "Nos afeitamos la cabeza al cero",
+            "fr": "Nous nous sommes rasé la tête à blanc",
+            "uk": "Ми поголили голови налисо"
+        },
+        {
+            "start": "00:00:11,202",
+            "end": "00:00:11,862",
+            "es": "Ahí estás,",
+            "fr": "Te voilà,",
+            "uk": "Ось ти,"
+        },
+        {
+            "start": "00:00:11,862",
+            "end": "00:00:12,002",
+            "es": "tú.",
+            "fr": "toi.",
+            "uk": "ти."
+        },
+        {
+            "start": "00:00:13,666",
+            "end": "00:00:14,986",
+            "es": "Él no tiene miedo al cansancio en absoluto",
+            "fr": "Il n'a pas peur de la fatigue du tout",
+            "uk": "Він зовсім не боїться втоми"
+        },
+        {
+            "start": "00:00:14,986",
+            "end": "00:00:16,686",
+            "es": "Vamos a nadar por primera vez",
+            "fr": "Allons nager pour la première fois",
+            "uk": "Підемо на перше плавання"
+        },
+        {
+            "start": "00:00:16,686",
+            "end": "00:00:17,806",
+            "es": "Montando sus pies",
+            "fr": "En montant ses pieds",
+            "uk": "Катаючись на його ногах"
+        },
+        {
+            "start": "00:00:26,805",
+            "end": "00:00:28,306",
+            "es": "Hay uno de 12 jin",
+            "fr": "Il y en a un de 12 jin",
+            "uk": "Є один на 12 цзинь"
+        },
+        {
+            "start": "00:00:32,886",
+            "end": "00:00:33,846",
+            "es": "Guau",
+            "fr": "Waouh",
+            "uk": "Вау"
+        }
+    ]
+}

@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,500\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,500\",\n    \"end\": \"00:00:06,980\",\n    \"lang\": \"en\",\n    \"text\": \"so I believe you witnessed the whole process to make this Debasaki Men\"\n  },\n  {\n    \"start\": \"00:00:08,699\",\n    \"end\": \"00:00:13,860\",\n    \"lang\": \"en\",\n    \"text\": \"This Debasaki Men is chicken with noodles with\"\n  },\n  {\n    \"start\": \"00:00:15,479\",\n    \"end\": \"00:00:16,300\",\n    \"lang\": \"en\",\n    \"text\": \"Spinach,\"\n  },\n  {\n    \"start\": \"00:00:16,300\",\n    \"end\": \"00:00:18,040\",\n    \"lang\": \"en\",\n    \"text\": \"bean sprouts,\"\n  },\n  {\n    \"start\": \"00:00:18,040\",\n    \"end\": \"00:00:18,980\",\n    \"lang\": \"en\",\n    \"text\": \"carrot.\"\n  },\n  {\n    \"start\": \"00:00:18,980\",\n    \"end\": \"00:00:20,120\",\n    \"lang\": \"en\",\n    \"text\": \"This is carrot.\"\n  },\n  {\n    \"start\": \"00:00:20,120\",\n    \"end\": \"00:00:22,080\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness\"\n  },\n  {\n    \"start\": \"00:00:22,870\",\n    \"end\": \"00:00:24,200\",\n    \"lang\": \"en\",\n    \"text\": \"The taste is awesome\"\n  },\n  {\n    \"start\": \"00:00:26,460\",\n    \"end\": \"00:00:27,280\",\n    \"lang\": \"en\",\n    \"text\": \"And\"\n  },\n  {\n    \"start\": \"00:00:27,280\",\n    \"end\": \"00:00:29,440\",\n    \"lang\": \"en\",\n    \"text\": \"And apricots,\"\n  },\n  {\n    \"start\": \"00:00:29,440\",\n    \"end\": \"00:00:31,160\",\n    \"lang\": \"en\",\n    \"text\": \"awesome.\"\n  },\n  {\n    \"start\": \"00:00:31,160\",\n    \"end\": \"00:00:32,220\",\n    \"lang\": \"en\",\n    \"text\": \"Chicken with\"\n  },\n  {\n    \"start\": \"00:00:36,194\",\n    \"end\": \"00:00:36,874\",\n    \"lang\": \"en\",\n    \"text\": \"なぜ美 Kristin is\"\n  },\n  {\n    \"start\": \"00:00:36,974\",\n    \"end\": \"00:00:37,214\",\n    \"lang\": \"en\",\n    \"text\": \"gold\"\n  },\n  {\n    \"start\": \"00:00:39,618\",\n    \"end\": \"00:00:40,138\",\n    \"lang\": \"en\",\n    \"text\": \"The tasting,\"\n  },\n  {\n    \"start\": \"00:00:40,138\",\n    \"end\": \"00:00:41,318\",\n    \"lang\": \"en\",\n    \"text\": \"the soup,\"\n  },\n  {\n    \"start\": \"00:00:41,318\",\n    \"end\": \"00:00:42,958\",\n    \"lang\": \"en\",\n    \"text\": \"how perfect.\"\n  },\n  {\n    \"start\": \"00:00:55,658\",\n    \"end\": \"00:01:01,038\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that the facial expression is exaggerated,\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,500",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:00,500",
+            "end": "00:00:06,980",
+            "es": "así que creo que fuiste testigo de todo el proceso para hacer este Debasaki Men",
+            "fr": "donc je crois que vous avez assisté à tout le processus pour faire ce Debasaki Men",
+            "uk": "тож я вважаю, що ви були свідком усього процесу приготування цього Debasaki Men"
+        },
+        {
+            "start": "00:00:08,699",
+            "end": "00:00:13,860",
+            "es": "Este Debasaki Men es pollo con fideos con",
+            "fr": "Ce Debasaki Men est un poulet avec des nouilles avec",
+            "uk": "Цей Debasaki Men - це курка з локшиною з"
+        },
+        {
+            "start": "00:00:15,479",
+            "end": "00:00:16,300",
+            "es": "Espinacas,",
+            "fr": "Épinards,",
+            "uk": "Шпинат,"
+        },
+        {
+            "start": "00:00:16,300",
+            "end": "00:00:18,040",
+            "es": "brotes de soja,",
+            "fr": "pousses de soja,",
+            "uk": "паростки сої,"
+        },
+        {
+            "start": "00:00:18,040",
+            "end": "00:00:18,980",
+            "es": "zanahoria.",
+            "fr": "carotte.",
+            "uk": "морква."
+        },
+        {
+            "start": "00:00:18,980",
+            "end": "00:00:20,120",
+            "es": "Esto es zanahoria.",
+            "fr": "Ceci est une carotte.",
+            "uk": "Це морква."
+        },
+        {
+            "start": "00:00:20,120",
+            "end": "00:00:22,080",
+            "es": "Oh Dios mío",
+            "fr": "Oh mon Dieu",
+            "uk": "Ой лишенько"
+        },
+        {
+            "start": "00:00:22,870",
+            "end": "00:00:24,200",
+            "es": "El sabor es increíble",
+            "fr": "Le goût est incroyable",
+            "uk": "Смак неймовірний"
+        },
+        {
+            "start": "00:00:26,460",
+            "end": "00:00:27,280",
+            "es": "Y",
+            "fr": "Et",
+            "uk": "І"
+        },
+        {
+            "start": "00:00:27,280",
+            "end": "00:00:29,440",
+            "es": "Y albaricoques,",
+            "fr": "Et des abricots,",
+            "uk": "І абрикоси,"
+        },
+        {
+            "start": "00:00:29,440",
+            "end": "00:00:31,160",
+            "es": "increíble.",
+            "fr": "incroyable.",
+            "uk": "неймовірно."
+        },
+        {
+            "start": "00:00:31,160",
+            "end": "00:00:32,220",
+            "es": "Pollo con",
+            "fr": "Poulet avec",
+            "uk": "Курка з"
+        },
+        {
+            "start": "00:00:36,194",
+            "end": "00:00:36,874",
+            "es": "por qué Kristin es",
+            "fr": "pourquoi Kristin est",
+            "uk": "чому Крістін є"
+        },
+        {
+            "start": "00:00:36,974",
+            "end": "00:00:37,214",
+            "es": "oro",
+            "fr": "or",
+            "uk": "золото"
+        },
+        {
+            "start": "00:00:39,618",
+            "end": "00:00:40,138",
+            "es": "La degustación,",
+            "fr": "La dégustation,",
+            "uk": "Дегустація,"
+        },
+        {
+            "start": "00:00:40,138",
+            "end": "00:00:41,318",
+            "es": "la sopa,",
+            "fr": "la soupe,",
+            "uk": "суп,"
+        },
+        {
+            "start": "00:00:41,318",
+            "end": "00:00:42,958",
+            "es": "qué perfecta.",
+            "fr": "comme c'est parfait.",
+            "uk": "яка досконалість."
+        },
+        {
+            "start": "00:00:55,658",
+            "end": "00:01:01,038",
+            "es": "Creo que la expresión facial es exagerada,",
+            "fr": "Je crois que l'expression faciale est exagérée,",
+            "uk": "Я вважаю, що міміка обличчя перебільшена,"
+        }
+    ]
+}

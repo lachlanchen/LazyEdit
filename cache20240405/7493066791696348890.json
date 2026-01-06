@@ -1,0 +1,15 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,510\",\n    \"end\": \"00:01:00,730\",\n    \"lang\": \"en\",\n    \"text\": \"Mm.\"\n  },\n  {\n    \"start\": \"00:01:03,350\",\n    \"end\": \"00:01:03,810\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,510",
+            "end": "00:01:00,730",
+            "vi": "Ừm."
+        },
+        {
+            "start": "00:01:03,350",
+            "end": "00:01:03,810",
+            "vi": "Được."
+        }
+    ]
+}

@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,020\",\n    \"end\": \"00:01:04,099\",\n    \"lang\": \"en\",\n    \"text\": \"Being happy and satisfied in the knowledge world.\"\n  },\n  {\n    \"start\": \"00:01:04,920\",\n    \"end\": \"00:01:08,700\",\n    \"lang\": \"en\",\n    \"text\": \"But the reality is that no matter what you learned,\"\n  },\n  {\n    \"start\": \"00:01:08,700\",\n    \"end\": \"00:01:10,880\",\n    \"lang\": \"en\",\n    \"text\": \"what you studied,\"\n  },\n  {\n    \"start\": \"00:01:11,660\",\n    \"end\": \"00:01:13,800\",\n    \"lang\": \"en\",\n    \"text\": \"we are still ignorant.\"\n  },\n  {\n    \"start\": \"00:01:13,800\",\n    \"end\": \"00:01:16,280\",\n    \"lang\": \"en\",\n    \"text\": \"We are ignorant to this universe,\"\n  },\n  {\n    \"start\": \"00:01:16,280\",\n    \"end\": \"00:01:17,280\",\n    \"lang\": \"en\",\n    \"text\": \"to this world.\"\n  },\n  {\n    \"start\": \"00:01:18,160\",\n    \"end\": \"00:01:18,160\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:18,160\",\n    \"end\": \"00:01:20,760\",\n    \"lang\": \"en\",\n    \"text\": \"the knowledge,\"\n  },\n  {\n    \"start\": \"00:01:20,760\",\n    \"end\": \"00:01:25,240\",\n    \"lang\": \"en\",\n    \"text\": \"even the most achieved scientist,\"\n  },\n  {\n    \"start\": \"00:01:25,240\",\n    \"end\": \"00:01:27,520\",\n    \"lang\": \"en\",\n    \"text\": \"Nobel Prize in knowledge,\"\n  },\n  {\n    \"start\": \"00:01:27,520\",\n    \"end\": \"00:01:27,620\",\n    \"lang\": \"en\",\n    \"text\": \"is still ignorant.\"\n  },\n  {\n    \"start\": \"00:01:29,922\",\n    \"end\": \"00:01:30,582\",\n    \"lang\": \"ja\",\n    \"text\": \"ですっていう\"\n  },\n  {\n    \"start\": \"00:01:31,522\",\n    \"end\": \"00:01:35,522\",\n    \"lang\": \"en\",\n    \"text\": \"We are just in a temporary illusion of this...\"\n  },\n  {\n    \"start\": \"00:01:37,022\",\n    \"end\": \"00:01:37,482\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway,\"\n  },\n  {\n    \"start\": \"00:01:37,482\",\n    \"end\": \"00:01:40,642\",\n    \"lang\": \"en\",\n    \"text\": \"we think we are knowledgeable.\"\n  },\n  {\n    \"start\": \"00:01:41,890\",\n    \"end\": \"00:01:42,210\",\n    \"lang\": \"ar\",\n    \"text\": \"حلت\"\n  },\n  {\n    \"start\": \"00:01:43,266\",\n    \"end\": \"00:01:45,666\",\n    \"lang\": \"en\",\n    \"text\": \"But the fact is that we are never\"\n  },\n  {\n    \"start\": \"00:01:50,885\",\n    \"end\": \"00:01:53,686\",\n    \"lang\": \"en\",\n    \"text\": \"We are just dust in this universe\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,020",
+            "end": "00:01:04,099",
+            "vi": "Cảm thấy hạnh phúc và thỏa mãn trong thế giới tri thức."
+        },
+        {
+            "start": "00:01:04,920",
+            "end": "00:01:08,700",
+            "vi": "Nhưng sự thực là không quan trọng bạn học được gì,"
+        },
+        {
+            "start": "00:01:08,700",
+            "end": "00:01:10,880",
+            "vi": "bạn nghiên cứu cái gì,"
+        },
+        {
+            "start": "00:01:11,660",
+            "end": "00:01:13,800",
+            "vi": "chúng ta vẫn là những người mù quáng."
+        },
+        {
+            "start": "00:01:13,800",
+            "end": "00:01:16,280",
+            "vi": "Chúng ta mù quáng về vũ trụ này,"
+        },
+        {
+            "start": "00:01:16,280",
+            "end": "00:01:17,280",
+            "vi": "về thế giới này."
+        },
+        {
+            "start": "00:01:18,160",
+            "end": "00:01:18,160",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:01:18,160",
+            "end": "00:01:20,760",
+            "vi": "kiến thức,"
+        },
+        {
+            "start": "00:01:20,760",
+            "end": "00:01:25,240",
+            "vi": "ngay cả nhà khoa học giỏi nhất,"
+        },
+        {
+            "start": "00:01:25,240",
+            "end": "00:01:27,520",
+            "vi": "giải Nobel về kiến thức,"
+        },
+        {
+            "start": "00:01:27,520",
+            "end": "00:01:27,620",
+            "vi": "vẫn là mù quáng."
+        },
+        {
+            "start": "00:01:29,922",
+            "end": "00:01:30,582",
+            "vi": "là như vậy"
+        },
+        {
+            "start": "00:01:31,522",
+            "end": "00:01:35,522",
+            "vi": "Chúng ta chỉ đang trong một ảo giác tạm thời về điều này..."
+        },
+        {
+            "start": "00:01:37,022",
+            "end": "00:01:37,482",
+            "vi": "Dù sao,"
+        },
+        {
+            "start": "00:01:37,482",
+            "end": "00:01:40,642",
+            "vi": "chúng ta nghĩ mình biết nhiều."
+        },
+        {
+            "start": "00:01:41,890",
+            "end": "00:01:42,210",
+            "vi": "đã giải quyết"
+        },
+        {
+            "start": "00:01:43,266",
+            "end": "00:01:45,666",
+            "vi": "Nhưng sự thật là chúng ta không bao giờ"
+        },
+        {
+            "start": "00:01:50,885",
+            "end": "00:01:53,686",
+            "vi": "Chúng ta chỉ là hạt bụi trong vũ trụ này"
+        }
+    ]
+}

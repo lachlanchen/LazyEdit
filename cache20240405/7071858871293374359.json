@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,940\",\n    \"lang\": \"en\",\n    \"text\": \"This is my breakfast today.\"\n  },\n  {\n    \"start\": \"00:00:05,780\",\n    \"end\": \"00:00:08,340\",\n    \"lang\": \"en\",\n    \"text\": \"And two buns.\"\n  },\n  {\n    \"start\": \"00:00:12,034\",\n    \"end\": \"00:00:12,314\",\n    \"lang\": \"zh\",\n    \"text\": \"拜拜\"\n  },\n  {\n    \"start\": \"00:00:14,562\",\n    \"end\": \"00:00:14,842\",\n    \"lang\": \"en\",\n    \"text\": \"One,\"\n  },\n  {\n    \"start\": \"00:00:14,842\",\n    \"end\": \"00:00:15,962\",\n    \"lang\": \"en\",\n    \"text\": \"how to say one,\"\n  },\n  {\n    \"start\": \"00:00:15,962\",\n    \"end\": \"00:00:17,082\",\n    \"lang\": \"en\",\n    \"text\": \"one this.\"\n  },\n  {\n    \"start\": \"00:00:18,662\",\n    \"end\": \"00:00:19,702\",\n    \"lang\": \"en\",\n    \"text\": \"One bottle of this.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,940",
+            "en": "This is my breakfast today.",
+            "zh": "这是我今天的早餐。",
+            "ar": "هذا فطوري لهذا اليوم."
+        },
+        {
+            "start": "00:00:05,780",
+            "end": "00:00:08,340",
+            "en": "And two buns.",
+            "zh": "还有两个小面包。",
+            "ar": "واثنين من الكعك."
+        },
+        {
+            "start": "00:00:12,034",
+            "end": "00:00:12,314",
+            "en": "Goodbye",
+            "zh": "拜拜",
+            "ar": "وداعا"
+        },
+        {
+            "start": "00:00:14,562",
+            "end": "00:00:15,962",
+            "en": "One, how to say one,",
+            "zh": "一，怎么说一个，",
+            "ar": "واحد، كيف تقول واحد،"
+        },
+        {
+            "start": "00:00:15,962",
+            "end": "00:00:17,082",
+            "en": "One this.",
+            "zh": "就是这一个。",
+            "ar": "واحد هذا."
+        },
+        {
+            "start": "00:00:18,662",
+            "end": "00:00:19,702",
+            "en": "One bottle of this.",
+            "zh": "这个的一瓶。",
+            "ar": "زجاجة واحدة من هذا."
+        }
+    ]
+}

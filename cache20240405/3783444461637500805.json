@@ -1,0 +1,152 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,939\",\n    \"end\": \"00:00:01,780\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:01,780\",\n    \"end\": \"00:00:07,580\",\n    \"lang\": \"en\",\n    \"text\": \"so this is the first day of the coronavirus.\"\n  },\n  {\n    \"start\": \"00:00:09,960\",\n    \"end\": \"00:00:12,060\",\n    \"lang\": \"en\",\n    \"text\": \"It hurts when I swallow.\"\n  },\n  {\n    \"start\": \"00:00:13,619\",\n    \"end\": \"00:00:18,340\",\n    \"lang\": \"en\",\n    \"text\": \"But I still make this spicy North rice noodles,\"\n  },\n  {\n    \"start\": \"00:00:18,340\",\n    \"end\": \"00:00:19,820\",\n    \"lang\": \"en\",\n    \"text\": \"Nor Shi Fen.\"\n  },\n  {\n    \"start\": \"00:00:21,346\",\n    \"end\": \"00:00:23,746\",\n    \"lang\": \"zh\",\n    \"text\": \"最辣的糯米粉還有這個辣椒\"\n  },\n  {\n    \"start\": \"00:00:24,825\",\n    \"end\": \"00:00:25,986\",\n    \"lang\": \"zh\",\n    \"text\": \"很辣很辣的\"\n  },\n  {\n    \"start\": \"00:00:26,526\",\n    \"end\": \"00:00:27,266\",\n    \"lang\": \"zh\",\n    \"text\": \"以毒攻毒\"\n  },\n  {\n    \"start\": \"00:00:28,205\",\n    \"end\": \"00:00:29,126\",\n    \"lang\": \"zh\",\n    \"text\": \"就靠它了\"\n  },\n  {\n    \"start\": \"00:00:30,722\",\n    \"end\": \"00:00:34,942\",\n    \"lang\": \"en\",\n    \"text\": \"So it's a,\"\n  },\n  {\n    \"start\": \"00:00:34,942\",\n    \"end\": \"00:00:36,862\",\n    \"lang\": \"en\",\n    \"text\": \"it hurts.\"\n  },\n  {\n    \"start\": \"00:00:37,202\",\n    \"end\": \"00:00:38,422\",\n    \"lang\": \"en\",\n    \"text\": \"It's painful,\"\n  },\n  {\n    \"start\": \"00:00:38,422\",\n    \"end\": \"00:00:41,162\",\n    \"lang\": \"en\",\n    \"text\": \"but it's a good thing.\"\n  },\n  {\n    \"start\": \"00:00:41,186\",\n    \"end\": \"00:00:41,986\",\n    \"lang\": \"ja\",\n    \"text\": \"まだ楽しんでます\"\n  },\n  {\n    \"start\": \"00:00:43,170\",\n    \"end\": \"00:00:43,490\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:43,490\",\n    \"end\": \"00:00:45,050\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  },\n  {\n    \"start\": \"00:00:47,990\",\n    \"end\": \"00:00:48,750\",\n    \"lang\": \"en\",\n    \"text\": \"Let me taste it.\"\n  },\n  {\n    \"start\": \"00:00:53,350\",\n    \"end\": \"00:00:53,990\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:53,990\",\n    \"end\": \"00:00:55,910\",\n    \"lang\": \"en\",\n    \"text\": \"it's delicious.\"\n  },\n  {\n    \"start\": \"00:00:55,910\",\n    \"end\": \"00:00:57,410\",\n    \"lang\": \"en\",\n    \"text\": \"Put this as a teaser,\"\n  },\n  {\n    \"start\": \"00:00:57,410\",\n    \"end\": \"00:00:58,850\",\n    \"lang\": \"en\",\n    \"text\": \"as a cover.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,939",
+            "end": "00:00:01,780",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:01,780",
+            "end": "00:00:07,580",
+            "es": "así que este es el primer día del coronavirus.",
+            "fr": "donc ceci est le premier jour du coronavirus.",
+            "uk": "отже, це перший день коронавірусу."
+        },
+        {
+            "start": "00:00:09,960",
+            "end": "00:00:12,060",
+            "es": "Me duele al tragar.",
+            "fr": "Ça fait mal quand j'avale.",
+            "uk": "Болить, коли ковтаю."
+        },
+        {
+            "start": "00:00:13,619",
+            "end": "00:00:18,340",
+            "es": "Pero aun así hago estos picantes fideos de arroz norteños,",
+            "fr": "Mais je fais quand même ces nouilles de riz nordiques épicées,",
+            "uk": "Але я все одно роблю ці пікантні північні рисові локшини,"
+        },
+        {
+            "start": "00:00:18,340",
+            "end": "00:00:19,820",
+            "es": "Nor Shi Fen.",
+            "fr": "Nor Shi Fen.",
+            "uk": "Нор Ші Фен."
+        },
+        {
+            "start": "00:00:21,346",
+            "end": "00:00:23,746",
+            "es": "El más picante de los fideos de arroz glutinoso y este chile",
+            "fr": "Le plus épicé des nouilles de riz gluant et ce piment",
+            "uk": "Найгостріші клейкі рисові локшини та цей перець"
+        },
+        {
+            "start": "00:00:24,825",
+            "end": "00:00:25,986",
+            "es": "Muy picante, muy picante",
+            "fr": "Très épicé, très épicé",
+            "uk": "Дуже гостро, дуже гостро"
+        },
+        {
+            "start": "00:00:26,526",
+            "end": "00:00:27,266",
+            "es": "Con el veneno contra el veneno",
+            "fr": "Utiliser un poison contre un poison",
+            "uk": "Отрутою проти отрути"
+        },
+        {
+            "start": "00:00:28,205",
+            "end": "00:00:29,126",
+            "es": "todo depende de esto",
+            "fr": "tout repose sur ça",
+            "uk": "все залежить від цього"
+        },
+        {
+            "start": "00:00:30,722",
+            "end": "00:00:34,942",
+            "es": "Así que es un,",
+            "fr": "Donc c'est un,",
+            "uk": "Отже це,"
+        },
+        {
+            "start": "00:00:34,942",
+            "end": "00:00:36,862",
+            "es": "duele.",
+            "fr": "ça fait mal.",
+            "uk": "болить."
+        },
+        {
+            "start": "00:00:37,202",
+            "end": "00:00:38,422",
+            "es": "Es doloroso,",
+            "fr": "C'est douloureux,",
+            "uk": "Це болісно,"
+        },
+        {
+            "start": "00:00:38,422",
+            "end": "00:00:41,162",
+            "es": "pero es algo bueno.",
+            "fr": "mais c'est une bonne chose.",
+            "uk": "але це добре."
+        },
+        {
+            "start": "00:00:41,186",
+            "end": "00:00:41,986",
+            "es": "Todavía lo estoy disfrutando",
+            "fr": "Je continue de m'amuser",
+            "uk": "Я все ще насолоджуюсь цим"
+        },
+        {
+            "start": "00:00:43,170",
+            "end": "00:00:43,490",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:43,490",
+            "end": "00:00:45,050",
+            "es": "nos vemos.",
+            "fr": "À bientôt.",
+            "uk": "До побачення."
+        },
+        {
+            "start": "00:00:47,990",
+            "end": "00:00:48,750",
+            "es": "Déjame probarlo.",
+            "fr": "Laissez-moi y goûter.",
+            "uk": "Дайте мені спробувати."
+        },
+        {
+            "start": "00:00:53,350",
+            "end": "00:00:53,990",
+            "es": "Guau,",
+            "fr": "Wow,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:53,990",
+            "end": "00:00:55,910",
+            "es": "es delicioso.",
+            "fr": "c'est délicieux.",
+            "uk": "це смачно."
+        },
+        {
+            "start": "00:00:55,910",
+            "end": "00:00:57,410",
+            "es": "Pon esto como un adelanto,",
+            "fr": "Mets ça comme un teaser,",
+            "uk": "Постав це як тизер,"
+        },
+        {
+            "start": "00:00:57,410",
+            "end": "00:00:58,850",
+            "es": "como una portada.",
+            "fr": "comme une couverture.",
+            "uk": "як обкладинку."
+        }
+    ]
+}

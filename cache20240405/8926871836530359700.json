@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,820\",\n    \"lang\": \"en\",\n    \"text\": \"I'm dying.\"\n  },\n  {\n    \"start\": \"00:00:01,820\",\n    \"end\": \"00:00:04,460\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sick of shielding.\"\n  },\n  {\n    \"start\": \"00:00:06,560\",\n    \"end\": \"00:00:06,780\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:06,780\",\n    \"end\": \"00:00:10,240\",\n    \"lang\": \"en\",\n    \"text\": \"this cold sometimes almost kills me.\"\n  },\n  {\n    \"start\": \"00:00:10,700\",\n    \"end\": \"00:00:11,100\",\n    \"lang\": \"en\",\n    \"text\": \"And now,\"\n  },\n  {\n    \"start\": \"00:00:11,100\",\n    \"end\": \"00:00:13,360\",\n    \"lang\": \"en\",\n    \"text\": \"every swan...\"\n  },\n  {\n    \"start\": \"00:00:14,722\",\n    \"end\": \"00:00:15,322\",\n    \"lang\": \"zh\",\n    \"text\": \"吞口水\"\n  },\n  {\n    \"start\": \"00:00:16,742\",\n    \"end\": \"00:00:18,781\",\n    \"lang\": \"zh\",\n    \"text\": \"每一次吞口水都很疼\"\n  },\n  {\n    \"start\": \"00:00:19,642\",\n    \"end\": \"00:00:20,322\",\n    \"lang\": \"zh\",\n    \"text\": \"說話\"\n  },\n  {\n    \"start\": \"00:00:21,022\",\n    \"end\": \"00:00:22,402\",\n    \"lang\": \"zh\",\n    \"text\": \"說話也可以很疼\"\n  },\n  {\n    \"start\": \"00:00:23,042\",\n    \"end\": \"00:00:23,642\",\n    \"lang\": \"en\",\n    \"text\": \"I'm dying\"\n  },\n  {\n    \"start\": \"00:00:24,682\",\n    \"end\": \"00:00:26,102\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness\"\n  },\n  {\n    \"start\": \"00:00:27,142\",\n    \"end\": \"00:00:29,802\",\n    \"lang\": \"en\",\n    \"text\": \"But I have to use this vitamin\"\n  },\n  {\n    \"start\": \"00:00:30,442\",\n    \"end\": \"00:00:31,702\",\n    \"lang\": \"en\",\n    \"text\": \"to help me cure\"\n  },\n  {\n    \"start\": \"00:00:32,902\",\n    \"end\": \"00:00:33,542\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:33,542\",\n    \"end\": \"00:00:34,302\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  },\n  {\n    \"start\": \"00:00:37,002\",\n    \"end\": \"00:00:37,802\",\n    \"lang\": \"en\",\n    \"text\": \"See you,\"\n  },\n  {\n    \"start\": \"00:00:37,802\",\n    \"end\": \"00:00:38,162\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,820",
+            "vi": "Tôi đang chết."
+        },
+        {
+            "start": "00:00:01,820",
+            "end": "00:00:04,460",
+            "vi": "Tôi mệt mỏi vì phải che chắn."
+        },
+        {
+            "start": "00:00:06,560",
+            "end": "00:00:06,780",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:00:06,780",
+            "end": "00:00:10,240",
+            "vi": "cái lạnh đôi khi suýt giết chết tôi."
+        },
+        {
+            "start": "00:00:10,700",
+            "end": "00:00:11,100",
+            "vi": "Và bây giờ,"
+        },
+        {
+            "start": "00:00:11,100",
+            "end": "00:00:13,360",
+            "vi": "mỗi con thiên nga..."
+        },
+        {
+            "start": "00:00:14,722",
+            "end": "00:00:15,322",
+            "vi": "Nuốt nước bọt"
+        },
+        {
+            "start": "00:00:16,742",
+            "end": "00:00:18,781",
+            "vi": "Mỗi lần nuốt nước bọt đều rất đau"
+        },
+        {
+            "start": "00:00:19,642",
+            "end": "00:00:20,322",
+            "vi": "Nói chuyện"
+        },
+        {
+            "start": "00:00:21,022",
+            "end": "00:00:22,402",
+            "vi": "Nói chuyện cũng có thể rất đau"
+        },
+        {
+            "start": "00:00:23,042",
+            "end": "00:00:23,642",
+            "vi": "Tôi đang chết"
+        },
+        {
+            "start": "00:00:24,682",
+            "end": "00:00:26,102",
+            "vi": "Ôi trời ơi"
+        },
+        {
+            "start": "00:00:27,142",
+            "end": "00:00:29,802",
+            "vi": "Nhưng tôi phải sử dụng vitamin này"
+        },
+        {
+            "start": "00:00:30,442",
+            "end": "00:00:31,702",
+            "vi": "để giúp tôi chữa trị"
+        },
+        {
+            "start": "00:00:32,902",
+            "end": "00:00:33,542",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:33,542",
+            "end": "00:00:34,302",
+            "vi": "hẹn gặp lại"
+        },
+        {
+            "start": "00:00:37,002",
+            "end": "00:00:37,802",
+            "vi": "Hẹn gặp lại,"
+        },
+        {
+            "start": "00:00:37,802",
+            "end": "00:00:38,162",
+            "vi": "hẹn gặp lại"
+        }
+    ]
+}

@@ -1,0 +1,3 @@
+[submodule "furigana"]
+	path = furigana
+	url = git@github.com:lachlanchen/FuriganaSubtitles.git

@@ -1,0 +1,41 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es) and French (fr) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other language. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,000\",\n    \"lang\": \"zh\",\n    \"text\": \"这个写的很有趣\"\n  },\n  {\n    \"start\": \"00:00:01,499\",\n    \"end\": \"00:00:03,460\",\n    \"lang\": \"zh\",\n    \"text\": \"超自然现象有防御局\"\n  },\n  {\n    \"start\": \"00:00:04,322\",\n    \"end\": \"00:00:04,722\",\n    \"lang\": \"ja\",\n    \"text\": \"を迈 Staff\"\n  },\n  {\n    \"start\": \"00:00:04,902\",\n    \"end\": \"00:00:06,282\",\n    \"lang\": \"zh\",\n    \"text\": \"这个写的很有趣\"\n  },\n  {\n    \"start\": \"00:00:06,781\",\n    \"end\": \"00:00:08,722\",\n    \"lang\": \"zh\",\n    \"text\": \"超自然现象与防御局\"\n  },\n  {\n    \"start\": \"00:00:09,570\",\n    \"end\": \"00:00:10,070\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,000",
+            "es": "Esto está escrito de manera muy interesante",
+            "fr": "Ceci est écrit de manière très intéressante"
+        },
+        {
+            "start": "00:00:01,499",
+            "end": "00:00:03,460",
+            "es": "Fenómenos sobrenaturales con defensa",
+            "fr": "Phénomènes surnaturels avec défense"
+        },
+        {
+            "start": "00:00:04,322",
+            "end": "00:00:04,722",
+            "es": "al superar al personal",
+            "fr": "en dépassant le personnel"
+        },
+        {
+            "start": "00:00:04,902",
+            "end": "00:00:06,282",
+            "es": "Esto está escrito de manera muy interesante",
+            "fr": "Ceci est écrit de manière très intéressante"
+        },
+        {
+            "start": "00:00:06,781",
+            "end": "00:00:08,722",
+            "es": "Fenómenos sobrenaturales y la defensa",
+            "fr": "Phénomènes surnaturels et la défense"
+        },
+        {
+            "start": "00:00:09,570",
+            "end": "00:00:10,070",
+            "es": "Dios mío.",
+            "fr": "Oh mon Dieu."
+        }
+    ]
+}

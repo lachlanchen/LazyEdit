@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,700\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは、\"\n  },\n  {\n    \"start\": \"00:00:00,700\",\n    \"end\": \"00:00:01,480\",\n    \"lang\": \"ja\",\n    \"text\": \"私、\"\n  },\n  {\n    \"start\": \"00:00:01,480\",\n    \"end\": \"00:00:04,240\",\n    \"lang\": \"ja\",\n    \"text\": \"これは私の朝ごはんです\"\n  },\n  {\n    \"start\": \"00:00:05,922\",\n    \"end\": \"00:00:08,722\",\n    \"lang\": \"en\",\n    \"text\": \"So I kind of...\"\n  },\n  {\n    \"start\": \"00:00:12,701\",\n    \"end\": \"00:00:14,382\",\n    \"lang\": \"en\",\n    \"text\": \"Not insomnia.\"\n  },\n  {\n    \"start\": \"00:00:15,101\",\n    \"end\": \"00:00:16,181\",\n    \"lang\": \"en\",\n    \"text\": \"It's not insomnia.\"\n  },\n  {\n    \"start\": \"00:00:16,502\",\n    \"end\": \"00:00:17,162\",\n    \"lang\": \"en\",\n    \"text\": \"It's not in...\"\n  },\n  {\n    \"start\": \"00:00:17,162\",\n    \"end\": \"00:00:22,802\",\n    \"lang\": \"en\",\n    \"text\": \"I sleep too early at nine to 10 o'clock yesterday.\"\n  },\n  {\n    \"start\": \"00:00:23,222\",\n    \"end\": \"00:00:28,282\",\n    \"lang\": \"en\",\n    \"text\": \"So I wake up at 2.30 in the morning.\"\n  },\n  {\n    \"start\": \"00:00:29,422\",\n    \"end\": \"00:00:32,302\",\n    \"lang\": \"en\",\n    \"text\": \"And then I sleep again.\"\n  },\n  {\n    \"start\": \"00:00:32,302\",\n    \"end\": \"00:00:39,642\",\n    \"lang\": \"en\",\n    \"text\": \"So I wake up at eight o'clock after meditation\"\n  },\n  {\n    \"start\": \"00:00:39,642\",\n    \"end\": \"00:00:44,222\",\n    \"lang\": \"en\",\n    \"text\": \"and playing guitar.\"\n  },\n  {\n    \"start\": \"00:00:44,582\",\n    \"end\": \"00:00:48,202\",\n    \"lang\": \"en\",\n    \"text\": \"So I have no time to prepare breakfast.\"\n  },\n  {\n    \"start\": \"00:00:49,502\",\n    \"end\": \"00:00:58,982\",\n    \"lang\": \"en\",\n    \"text\": \"So I only have this nuts and vegetables and fruits.\"\n  },\n  {\n    \"start\": \"00:00:58,982\",\n    \"end\": \"00:01:00,662\",\n    \"lang\": \"en\",\n    \"text\": \"Fruits.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,700",
+            "ja": "こんにちは、"
+        },
+        {
+            "start": "00:00:00,700",
+            "end": "00:00:01,480",
+            "ja": "私、"
+        },
+        {
+            "start": "00:00:01,480",
+            "end": "00:00:04,240",
+            "ja": "これは私の朝ごはんです"
+        },
+        {
+            "start": "00:00:05,922",
+            "end": "00:00:08,722",
+            "ja": "だから私はちょっと..."
+        },
+        {
+            "start": "00:00:12,701",
+            "end": "00:00:14,382",
+            "ja": "不眠症ではない。"
+        },
+        {
+            "start": "00:00:15,101",
+            "end": "00:00:16,181",
+            "ja": "不眠症じゃないんです。"
+        },
+        {
+            "start": "00:00:16,502",
+            "end": "00:00:17,162",
+            "ja": "不眠症じゃなくて..."
+        },
+        {
+            "start": "00:00:17,162",
+            "end": "00:00:22,802",
+            "ja": "昨日は9時から10時に早く寝すぎました。"
+        },
+        {
+            "start": "00:00:23,222",
+            "end": "00:00:28,282",
+            "ja": "だから朝の2時30分に起きちゃったんです。"
+        },
+        {
+            "start": "00:00:29,422",
+            "end": "00:00:32,302",
+            "ja": "そしてもう一度寝ました。"
+        },
+        {
+            "start": "00:00:32,302",
+            "end": "00:00:39,642",
+            "ja": "それで瞑想をした後、8時に起きました。"
+        },
+        {
+            "start": "00:00:39,642",
+            "end": "00:00:44,222",
+            "ja": "そしてギターを弾きました。"
+        },
+        {
+            "start": "00:00:44,582",
+            "end": "00:00:48,202",
+            "ja": "だから朝ごはんを準備する時間がありませんでした。"
+        },
+        {
+            "start": "00:00:49,502",
+            "end": "00:00:58,982",
+            "ja": "だからこのナッツと野菜と果物しかありません。"
+        },
+        {
+            "start": "00:00:58,982",
+            "end": "00:01:00,662",
+            "ja": "果物。"
+        }
+    ]
+}

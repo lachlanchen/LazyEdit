@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,460\",\n    \"lang\": \"en\",\n    \"text\": \"interesting.\"\n  },\n  {\n    \"start\": \"00:00:00,460\",\n    \"end\": \"00:00:06,460\",\n    \"lang\": \"en\",\n    \"text\": \"This is a chicken with noodle and our first card pop up is chicken.\"\n  },\n  {\n    \"start\": \"00:00:06,460\",\n    \"end\": \"00:00:07,600\",\n    \"lang\": \"en\",\n    \"text\": \"It's\"\n  },\n  {\n    \"start\": \"00:00:07,600\",\n    \"end\": \"00:00:09,660\",\n    \"lang\": \"en\",\n    \"text\": \"a quite good coincidence.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,460",
+            "ko": "흥미롭군요."
+        },
+        {
+            "start": "00:00:00,460",
+            "end": "00:00:06,460",
+            "ko": "이것은 치킨에 면이 있는 요리고, 첫 번째 카드 팝업은 치킨입니다."
+        },
+        {
+            "start": "00:00:06,460",
+            "end": "00:00:07,600",
+            "ko": "그것은"
+        },
+        {
+            "start": "00:00:07,600",
+            "end": "00:00:09,660",
+            "ko": "꽤 좋은 우연이네요."
+        }
+    ]
+}

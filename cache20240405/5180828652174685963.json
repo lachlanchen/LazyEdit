@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,520\",\n    \"lang\": \"en\",\n    \"text\": \"So let's play the little grass,\"\n  },\n  {\n    \"start\": \"00:00:02,520\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"en\",\n    \"text\": \"imperfect little grass.\"\n  },\n  {\n    \"start\": \"00:00:05,640\",\n    \"end\": \"00:00:07,100\",\n    \"lang\": \"en\",\n    \"text\": \"I believe I have some,\"\n  },\n  {\n    \"start\": \"00:00:07,100\",\n    \"end\": \"00:00:10,640\",\n    \"lang\": \"en\",\n    \"text\": \"I have some progress.\"\n  },\n  {\n    \"start\": \"00:00:11,700\",\n    \"end\": \"00:00:12,000\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:12,000\",\n    \"end\": \"00:00:15,320\",\n    \"lang\": \"en\",\n    \"text\": \"let's begin the guitar.\"\n  },\n  {\n    \"start\": \"00:00:37,080\",\n    \"end\": \"00:00:37,700\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:37,700\",\n    \"end\": \"00:00:40,080\",\n    \"lang\": \"en\",\n    \"text\": \"it's a mama bee,\"\n  },\n  {\n    \"start\": \"00:00:40,080\",\n    \"end\": \"00:00:41,060\",\n    \"lang\": \"en\",\n    \"text\": \"mama bee.\"\n  },\n  {\n    \"start\": \"00:00:43,100\",\n    \"end\": \"00:00:44,060\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:44,060\",\n    \"end\": \"00:00:48,380\",\n    \"lang\": \"en\",\n    \"text\": \"so let's play again.\"\n  },\n  {\n    \"start\": \"00:00:49,346\",\n    \"end\": \"00:00:51,686\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:52,226\",\n    \"end\": \"00:00:53,326\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树叶\"\n  },\n  {\n    \"start\": \"00:00:56,738\",\n    \"end\": \"00:01:00,978\",\n    \"lang\": \"zh\",\n    \"text\": \"我想没有输的\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,520",
+            "en": "So let's play the guitar,",
+            "zh": "让我们来弹吉他，",
+            "ar": "فلنعزف الغيتار،"
+        },
+        {
+            "start": "00:00:02,520",
+            "end": "00:00:04,540",
+            "en": "imperfect guitar.",
+            "zh": "不完美的吉他。",
+            "ar": "غيتار غير مكتمل."
+        },
+        {
+            "start": "00:00:05,640",
+            "end": "00:00:07,100",
+            "en": "I believe I have some,",
+            "zh": "我相信我有一些，",
+            "ar": "أعتقد أن لدي بعض،"
+        },
+        {
+            "start": "00:00:07,100",
+            "end": "00:00:10,640",
+            "en": "I have made some progress.",
+            "zh": "我取得了一些进展。",
+            "ar": "لقد أحرزت بعض التقدم."
+        },
+        {
+            "start": "00:00:11,700",
+            "end": "00:00:12,000",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:12,000",
+            "end": "00:00:15,320",
+            "en": "let's begin the guitar.",
+            "zh": "让我们开始弹吉他。",
+            "ar": "دعونا نبدأ الغيتار."
+        },
+        {
+            "start": "00:00:37,080",
+            "end": "00:00:37,700",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:37,700",
+            "end": "00:00:40,080",
+            "en": "it's Mama Bee,",
+            "zh": "这是妈妈蜜蜂，",
+            "ar": "إنها ماما بي،"
+        },
+        {
+            "start": "00:00:40,080",
+            "end": "00:00:41,060",
+            "en": "Mama Bee.",
+            "zh": "妈妈蜜蜂。",
+            "ar": "ماما بي."
+        },
+        {
+            "start": "00:00:43,100",
+            "end": "00:00:44,060",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:44,060",
+            "end": "00:00:48,380",
+            "en": "so let's play again.",
+            "zh": "让我们再次弹奏。",
+            "ar": "فلنعزف مرة أخرى."
+        },
+        {
+            "start": "00:00:49,346",
+            "end": "00:00:51,686",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا عطر للزهور"
+        },
+        {
+            "start": "00:00:52,226",
+            "end": "00:00:53,326",
+            "en": "No leaves on the trees",
+            "zh": "没有树叶",
+            "ar": "لا أوراق على الأشجار"
+        },
+        {
+            "start": "00:00:56,738",
+            "end": "00:01:00,978",
+            "en": "I think there's no defeat",
+            "zh": "我想没有输的",
+            "ar": "أعتقد أنه لا يوجد هزيمة"
+        }
+    ]
+}

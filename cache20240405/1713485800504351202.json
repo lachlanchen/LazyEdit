@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:04,297\",\n    \"end\": \"00:02:06,078\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi mi,\"\n  },\n  {\n    \"start\": \"00:02:06,078\",\n    \"end\": \"00:02:07,898\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi re mi,\"\n  },\n  {\n    \"start\": \"00:02:07,898\",\n    \"end\": \"00:02:09,478\",\n    \"lang\": \"en\",\n    \"text\": \"to hi na,\"\n  },\n  {\n    \"start\": \"00:02:09,478\",\n    \"end\": \"00:02:10,997\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi.\"\n  },\n  {\n    \"start\": \"00:02:13,578\",\n    \"end\": \"00:02:16,998\",\n    \"lang\": \"en\",\n    \"text\": \"I play the guitar almost every day,\"\n  },\n  {\n    \"start\": \"00:02:16,998\",\n    \"end\": \"00:02:17,898\",\n    \"lang\": \"en\",\n    \"text\": \"or four days.\"\n  },\n  {\n    \"start\": \"00:02:20,818\",\n    \"end\": \"00:02:21,598\",\n    \"lang\": \"en\",\n    \"text\": \"So...\"\n  },\n  {\n    \"start\": \"00:02:23,578\",\n    \"end\": \"00:02:28,618\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi,\"\n  },\n  {\n    \"start\": \"00:02:28,618\",\n    \"end\": \"00:02:28,618\",\n    \"lang\": \"en\",\n    \"text\": \"re mi,\"\n  },\n  {\n    \"start\": \"00:02:28,618\",\n    \"end\": \"00:02:29,558\",\n    \"lang\": \"en\",\n    \"text\": \"na na to hi na,\"\n  },\n  {\n    \"start\": \"00:02:29,558\",\n    \"end\": \"00:02:30,958\",\n    \"lang\": \"en\",\n    \"text\": \"na na mi,\"\n  },\n  {\n    \"start\": \"00:02:30,958\",\n    \"end\": \"00:02:32,018\",\n    \"lang\": \"en\",\n    \"text\": \"re mi,\"\n  },\n  {\n    \"start\": \"00:02:32,018\",\n    \"end\": \"00:02:33,638\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi mi,\"\n  },\n  {\n    \"start\": \"00:02:33,638\",\n    \"end\": \"00:02:35,958\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi re mi.\"\n  },\n  {\n    \"start\": \"00:02:36,058\",\n    \"end\": \"00:02:36,538\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:02:37,618\",\n    \"end\": \"00:02:38,498\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:04,297",
+            "end": "00:02:06,078",
+            "es": "sol mi mi,",
+            "fr": "sol mi mi,",
+            "uk": "соль мі мі,"
+        },
+        {
+            "start": "00:02:06,078",
+            "end": "00:02:07,898",
+            "es": "sol mi re mi,",
+            "fr": "sol mi ré mi,",
+            "uk": "соль мі ре мі,"
+        },
+        {
+            "start": "00:02:07,898",
+            "end": "00:02:09,478",
+            "es": "to hi na,",
+            "fr": "to hi na,",
+            "uk": "то хі на,"
+        },
+        {
+            "start": "00:02:09,478",
+            "end": "00:02:10,997",
+            "es": "sol mi.",
+            "fr": "sol mi.",
+            "uk": "соль мі."
+        },
+        {
+            "start": "00:02:13,578",
+            "end": "00:02:16,998",
+            "es": "Toco la guitarra casi todos los días,",
+            "fr": "Je joue de la guitare presque tous les jours,",
+            "uk": "Я граю на гітарі майже кожного дня,"
+        },
+        {
+            "start": "00:02:16,998",
+            "end": "00:02:17,898",
+            "es": "o cuatro días.",
+            "fr": "ou quatre jours.",
+            "uk": "або чотири дні."
+        },
+        {
+            "start": "00:02:20,818",
+            "end": "00:02:21,598",
+            "es": "Entonces...",
+            "fr": "Alors...",
+            "uk": "Отже..."
+        },
+        {
+            "start": "00:02:23,578",
+            "end": "00:02:28,618",
+            "es": "Na na mi,",
+            "fr": "Na na mi,",
+            "uk": "На на мі,"
+        },
+        {
+            "start": "00:02:28,618",
+            "end": "00:02:28,618",
+            "es": "re mi,",
+            "fr": "ré mi,",
+            "uk": "ре мі,"
+        },
+        {
+            "start": "00:02:28,618",
+            "end": "00:02:29,558",
+            "es": "na na to hi na,",
+            "fr": "na na to hi na,",
+            "uk": "на на то хі на,"
+        },
+        {
+            "start": "00:02:29,558",
+            "end": "00:02:30,958",
+            "es": "na na mi,",
+            "fr": "na na mi,",
+            "uk": "на на мі,"
+        },
+        {
+            "start": "00:02:30,958",
+            "end": "00:02:32,018",
+            "es": "re mi,",
+            "fr": "ré mi,",
+            "uk": "ре мі,"
+        },
+        {
+            "start": "00:02:32,018",
+            "end": "00:02:33,638",
+            "es": "sol mi mi,",
+            "fr": "sol mi mi,",
+            "uk": "соль мі мі,"
+        },
+        {
+            "start": "00:02:33,638",
+            "end": "00:02:35,958",
+            "es": "sol mi re mi.",
+            "fr": "sol mi ré mi.",
+            "uk": "соль мі ре мі."
+        },
+        {
+            "start": "00:02:36,058",
+            "end": "00:02:36,538",
+            "es": "Lo siento.",
+            "fr": "Désolé.",
+            "uk": "Вибачте."
+        },
+        {
+            "start": "00:02:37,618",
+            "end": "00:02:38,498",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        }
+    ]
+}

@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,700\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは、\"\n  },\n  {\n    \"start\": \"00:00:00,700\",\n    \"end\": \"00:00:01,480\",\n    \"lang\": \"ja\",\n    \"text\": \"私、\"\n  },\n  {\n    \"start\": \"00:00:01,480\",\n    \"end\": \"00:00:04,240\",\n    \"lang\": \"ja\",\n    \"text\": \"これは私の朝ごはんです\"\n  },\n  {\n    \"start\": \"00:00:05,922\",\n    \"end\": \"00:00:08,722\",\n    \"lang\": \"en\",\n    \"text\": \"So I kind of...\"\n  },\n  {\n    \"start\": \"00:00:12,701\",\n    \"end\": \"00:00:14,382\",\n    \"lang\": \"en\",\n    \"text\": \"Not insomnia.\"\n  },\n  {\n    \"start\": \"00:00:15,101\",\n    \"end\": \"00:00:16,181\",\n    \"lang\": \"en\",\n    \"text\": \"It's not insomnia.\"\n  },\n  {\n    \"start\": \"00:00:16,502\",\n    \"end\": \"00:00:17,162\",\n    \"lang\": \"en\",\n    \"text\": \"It's not in...\"\n  },\n  {\n    \"start\": \"00:00:17,162\",\n    \"end\": \"00:00:22,802\",\n    \"lang\": \"en\",\n    \"text\": \"I sleep too early at nine to 10 o'clock yesterday.\"\n  },\n  {\n    \"start\": \"00:00:23,222\",\n    \"end\": \"00:00:28,282\",\n    \"lang\": \"en\",\n    \"text\": \"So I wake up at 2.30 in the morning.\"\n  },\n  {\n    \"start\": \"00:00:29,422\",\n    \"end\": \"00:00:32,302\",\n    \"lang\": \"en\",\n    \"text\": \"And then I sleep again.\"\n  },\n  {\n    \"start\": \"00:00:32,302\",\n    \"end\": \"00:00:39,642\",\n    \"lang\": \"en\",\n    \"text\": \"So I wake up at eight o'clock after meditation\"\n  },\n  {\n    \"start\": \"00:00:39,642\",\n    \"end\": \"00:00:44,222\",\n    \"lang\": \"en\",\n    \"text\": \"and playing guitar.\"\n  },\n  {\n    \"start\": \"00:00:44,582\",\n    \"end\": \"00:00:48,202\",\n    \"lang\": \"en\",\n    \"text\": \"So I have no time to prepare breakfast.\"\n  },\n  {\n    \"start\": \"00:00:49,502\",\n    \"end\": \"00:00:58,982\",\n    \"lang\": \"en\",\n    \"text\": \"So I only have this nuts and vegetables and fruits.\"\n  },\n  {\n    \"start\": \"00:00:58,982\",\n    \"end\": \"00:01:00,662\",\n    \"lang\": \"en\",\n    \"text\": \"Fruits.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,700",
+            "es": "Hola,",
+            "fr": "Bonjour,",
+            "uk": "Привіт,"
+        },
+        {
+            "start": "00:00:00,700",
+            "end": "00:00:01,480",
+            "es": "yo,",
+            "fr": "moi,",
+            "uk": "я,"
+        },
+        {
+            "start": "00:00:01,480",
+            "end": "00:00:04,240",
+            "es": "esto es mi desayuno",
+            "fr": "c'est mon petit-déjeuner",
+            "uk": "це мій сніданок"
+        },
+        {
+            "start": "00:00:05,922",
+            "end": "00:00:08,722",
+            "es": "Así que un poco...",
+            "fr": "Alors je suis un peu...",
+            "uk": "Отже, я трохи..."
+        },
+        {
+            "start": "00:00:12,701",
+            "end": "00:00:14,382",
+            "es": "No insomnio.",
+            "fr": "Pas d'insomnie.",
+            "uk": "Не безсоння."
+        },
+        {
+            "start": "00:00:15,101",
+            "end": "00:00:16,181",
+            "es": "No es insomnio.",
+            "fr": "Ce n'est pas de l'insomnie.",
+            "uk": "Це не безсоння."
+        },
+        {
+            "start": "00:00:16,502",
+            "end": "00:00:17,162",
+            "es": "No en...",
+            "fr": "Ce n'est pas dans...",
+            "uk": "Це не в..."
+        },
+        {
+            "start": "00:00:17,162",
+            "end": "00:00:22,802",
+            "es": "Me duermo temprano a las nueve o diez de ayer.",
+            "fr": "Je me suis endormi tôt à neuf ou dix heures hier.",
+            "uk": "Я лягаю спати рано о дев'ятій або десятій вчора."
+        },
+        {
+            "start": "00:00:23,222",
+            "end": "00:00:28,282",
+            "es": "Entonces me despierto a las 2.30 de la mañana.",
+            "fr": "Donc je me réveille à 2h30 du matin.",
+            "uk": "Отже, я прокидаюся о 2:30 ранку."
+        },
+        {
+            "start": "00:00:29,422",
+            "end": "00:00:32,302",
+            "es": "Y después me duermo de nuevo.",
+            "fr": "Et puis je me rendors.",
+            "uk": "А потім я знову засинаю."
+        },
+        {
+            "start": "00:00:32,302",
+            "end": "00:00:39,642",
+            "es": "Así que me despierto a las ocho después de meditar",
+            "fr": "Alors je me réveille à huit heures après avoir médité",
+            "uk": "Отже, я прокидаюся о восьмій після медитації"
+        },
+        {
+            "start": "00:00:39,642",
+            "end": "00:00:44,222",
+            "es": "y tocar la guitarra.",
+            "fr": "et jouer de la guitare.",
+            "uk": "і грати на гітарі."
+        },
+        {
+            "start": "00:00:44,582",
+            "end": "00:00:48,202",
+            "es": "Así que no tengo tiempo para preparar el desayuno.",
+            "fr": "Donc, je n'ai pas le temps de préparer le petit-déjeuner.",
+            "uk": "Отже, у мене немає часу готувати сніданок."
+        },
+        {
+            "start": "00:00:49,502",
+            "end": "00:00:58,982",
+            "es": "Así que solo tengo estos frutos secos, verduras y frutas.",
+            "fr": "Donc je n'ai que ces noix, légumes et fruits.",
+            "uk": "Отже, у мене є лише ці горіхи, овочі та фрукти."
+        },
+        {
+            "start": "00:00:58,982",
+            "end": "00:01:00,662",
+            "es": "Frutas.",
+            "fr": "Fruits.",
+            "uk": "Фрукти."
+        }
+    ]
+}

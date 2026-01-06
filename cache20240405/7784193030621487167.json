@@ -1,0 +1,152 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,220\",\n    \"lang\": \"en\",\n    \"text\": \"I found this explosive.\"\n  },\n  {\n    \"start\": \"00:00:02,882\",\n    \"end\": \"00:00:03,662\",\n    \"lang\": \"ar\",\n    \"text\": \"يقصد نوديل\"\n  },\n  {\n    \"start\": \"00:00:05,282\",\n    \"end\": \"00:00:05,982\",\n    \"lang\": \"en\",\n    \"text\": \"Sweet potato.\"\n  },\n  {\n    \"start\": \"00:00:06,442\",\n    \"end\": \"00:00:06,902\",\n    \"lang\": \"en\",\n    \"text\": \"Tastes.\"\n  },\n  {\n    \"start\": \"00:00:07,162\",\n    \"end\": \"00:00:07,702\",\n    \"lang\": \"en\",\n    \"text\": \"Tastes.\"\n  },\n  {\n    \"start\": \"00:00:07,938\",\n    \"end\": \"00:00:08,478\",\n    \"lang\": \"ja\",\n    \"text\": \"こぢゃす\"\n  },\n  {\n    \"start\": \"00:00:09,986\",\n    \"end\": \"00:00:11,046\",\n    \"lang\": \"en\",\n    \"text\": \"So it's crispy,\"\n  },\n  {\n    \"start\": \"00:00:11,046\",\n    \"end\": \"00:00:12,566\",\n    \"lang\": \"en\",\n    \"text\": \"sweet,\"\n  },\n  {\n    \"start\": \"00:00:12,566\",\n    \"end\": \"00:00:14,466\",\n    \"lang\": \"en\",\n    \"text\": \"and...\"\n  },\n  {\n    \"start\": \"00:00:16,206\",\n    \"end\": \"00:00:17,126\",\n    \"lang\": \"en\",\n    \"text\": \"and perfect.\"\n  },\n  {\n    \"start\": \"00:00:18,626\",\n    \"end\": \"00:00:22,586\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot find a word to describe this.\"\n  },\n  {\n    \"start\": \"00:00:23,126\",\n    \"end\": \"00:00:29,646\",\n    \"lang\": \"en\",\n    \"text\": \"But it really tastes better than the unexploded version.\"\n  },\n  {\n    \"start\": \"00:00:32,886\",\n    \"end\": \"00:00:34,245\",\n    \"lang\": \"en\",\n    \"text\": \"This has this...\"\n  },\n  {\n    \"start\": \"00:00:34,246\",\n    \"end\": \"00:00:39,286\",\n    \"lang\": \"en\",\n    \"text\": \"It's burnt sugar.\"\n  },\n  {\n    \"start\": \"00:00:41,506\",\n    \"end\": \"00:00:42,526\",\n    \"lang\": \"zh\",\n    \"text\": \"教堂\"\n  },\n  {\n    \"start\": \"00:00:43,045\",\n    \"end\": \"00:00:44,186\",\n    \"lang\": \"zh\",\n    \"text\": \"教堂怎么说?\"\n  },\n  {\n    \"start\": \"00:00:44,346\",\n    \"end\": \"00:00:45,426\",\n    \"lang\": \"zh\",\n    \"text\": \"好多是教堂\"\n  },\n  {\n    \"start\": \"00:00:45,922\",\n    \"end\": \"00:00:46,582\",\n    \"lang\": \"ja\",\n    \"text\": \"いいイメージ\"\n  },\n  {\n    \"start\": \"00:00:50,050\",\n    \"end\": \"00:00:50,270\",\n    \"lang\": \"en\",\n    \"text\": \"So\"\n  },\n  {\n    \"start\": \"00:00:53,070\",\n    \"end\": \"00:00:53,770\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:53,770\",\n    \"end\": \"00:00:56,010\",\n    \"lang\": \"en\",\n    \"text\": \"it tastes gorgeous\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,220",
+            "es": "He encontrado este explosivo.",
+            "fr": "J'ai trouvé cet explosif.",
+            "uk": "Я знайшов цей вибуховий пристрій."
+        },
+        {
+            "start": "00:00:02,882",
+            "end": "00:00:03,662",
+            "es": "Se refiere a fideos.",
+            "fr": "Il parle de nouilles.",
+            "uk": "Має на увазі локшина."
+        },
+        {
+            "start": "00:00:05,282",
+            "end": "00:00:05,982",
+            "es": "Boniato.",
+            "fr": "Patate douce.",
+            "uk": "Солодка картопля."
+        },
+        {
+            "start": "00:00:06,442",
+            "end": "00:00:06,902",
+            "es": "Sabe.",
+            "fr": "Goûte.",
+            "uk": "Смакує."
+        },
+        {
+            "start": "00:00:07,162",
+            "end": "00:00:07,702",
+            "es": "Sabe.",
+            "fr": "Goûte.",
+            "uk": "Смакує."
+        },
+        {
+            "start": "00:00:07,938",
+            "end": "00:00:08,478",
+            "es": "Es bueno.",
+            "fr": "C'est bon.",
+            "uk": "Це добре."
+        },
+        {
+            "start": "00:00:09,986",
+            "end": "00:00:11,046",
+            "es": "Así que es crujiente,",
+            "fr": "Donc c'est croustillant,",
+            "uk": "Отже, воно хрустке,"
+        },
+        {
+            "start": "00:00:11,046",
+            "end": "00:00:12,566",
+            "es": "dulce,",
+            "fr": "doux,",
+            "uk": "солодке,"
+        },
+        {
+            "start": "00:00:12,566",
+            "end": "00:00:14,466",
+            "es": "y...",
+            "fr": "et...",
+            "uk": "і..."
+        },
+        {
+            "start": "00:00:16,206",
+            "end": "00:00:17,126",
+            "es": "y perfecto.",
+            "fr": "et parfait.",
+            "uk": "і ідеальне."
+        },
+        {
+            "start": "00:00:18,626",
+            "end": "00:00:22,586",
+            "es": "No puedo encontrar una palabra para describir esto.",
+            "fr": "Je ne trouve pas de mot pour décrire cela.",
+            "uk": "Я не можу знайти слова, щоб описати це."
+        },
+        {
+            "start": "00:00:23,126",
+            "end": "00:00:29,646",
+            "es": "Pero realmente sabe mejor que la versión sin explotar.",
+            "fr": "Mais ça a vraiment meilleur goût que la version non explosée.",
+            "uk": "Але це справді смакує краще, ніж не вибухова версія."
+        },
+        {
+            "start": "00:00:32,886",
+            "end": "00:00:34,245",
+            "es": "Esto tiene esto...",
+            "fr": "Ceci a ceci...",
+            "uk": "Це має це..."
+        },
+        {
+            "start": "00:00:34,246",
+            "end": "00:00:39,286",
+            "es": "Es azúcar quemado.",
+            "fr": "C'est du sucre brûlé.",
+            "uk": "Це спалений цукор."
+        },
+        {
+            "start": "00:00:41,506",
+            "end": "00:00:42,526",
+            "es": "Iglesia",
+            "fr": "Église",
+            "uk": "Церква"
+        },
+        {
+            "start": "00:00:43,045",
+            "end": "00:00:44,186",
+            "es": "¿Cómo se dice iglesia?",
+            "fr": "Comment dit-on église?",
+            "uk": "Як сказати церква?"
+        },
+        {
+            "start": "00:00:44,346",
+            "end": "00:00:45,426",
+            "es": "Hay muchas iglesias.",
+            "fr": "Il y a beaucoup d'églises.",
+            "uk": "Там багато церков."
+        },
+        {
+            "start": "00:00:45,922",
+            "end": "00:00:46,582",
+            "es": "Buena imagen.",
+            "fr": "Bonne image.",
+            "uk": "Хороше уявлення."
+        },
+        {
+            "start": "00:00:50,050",
+            "end": "00:00:50,270",
+            "es": "Entonces",
+            "fr": "Alors",
+            "uk": "Отже"
+        },
+        {
+            "start": "00:00:53,070",
+            "end": "00:00:53,770",
+            "es": "Vaya,",
+            "fr": "Wouah,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:53,770",
+            "end": "00:00:56,010",
+            "es": "sabe hermoso",
+            "fr": "ça a un goût magnifique",
+            "uk": "смакує чудово"
+        }
+    ]
+}

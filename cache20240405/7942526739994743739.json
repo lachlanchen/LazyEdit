@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,860\",\n    \"end\": \"00:00:03,180\",\n    \"lang\": \"zh\",\n    \"text\": \"有一个特别好闻的味道\"\n  },\n  {\n    \"start\": \"00:00:03,180\",\n    \"end\": \"00:00:04,180\",\n    \"lang\": \"zh\",\n    \"text\": \"就像是\"\n  },\n  {\n    \"start\": \"00:00:05,220\",\n    \"end\": \"00:00:06,300\",\n    \"lang\": \"zh\",\n    \"text\": \"就像是什么呢\"\n  },\n  {\n    \"start\": \"00:00:06,300\",\n    \"end\": \"00:00:07,560\",\n    \"lang\": \"zh\",\n    \"text\": \"像那个粽子\"\n  },\n  {\n    \"start\": \"00:00:07,560\",\n    \"end\": \"00:00:08,300\",\n    \"lang\": \"zh\",\n    \"text\": \"但是也不像\"\n  },\n  {\n    \"start\": \"00:00:08,930\",\n    \"end\": \"00:00:12,370\",\n    \"lang\": \"en\",\n    \"text\": \"I almost get intoxicated by that awesome smell.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,860",
+            "end": "00:00:03,180",
+            "ko": "정말 좋은 냄새가 나요"
+        },
+        {
+            "start": "00:00:03,180",
+            "end": "00:00:04,180",
+            "ko": "마치"
+        },
+        {
+            "start": "00:00:05,220",
+            "end": "00:00:06,300",
+            "ko": "마치 뭐랄까"
+        },
+        {
+            "start": "00:00:06,300",
+            "end": "00:00:07,560",
+            "ko": "그, 찰떡같이요"
+        },
+        {
+            "start": "00:00:07,560",
+            "end": "00:00:08,300",
+            "ko": "그렇지만 또 아니에요"
+        },
+        {
+            "start": "00:00:08,930",
+            "end": "00:00:12,370",
+            "ko": "그 멋진 냄새에 거의 취할 것 같아요."
+        }
+    ]
+}

@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,300\",\n    \"end\": \"00:01:04,019\",\n    \"lang\": \"en\",\n    \"text\": \"It's a biological age.\"\n  },\n  {\n    \"start\": \"00:01:11,940\",\n    \"end\": \"00:01:14,880\",\n    \"lang\": \"en\",\n    \"text\": \"As time is imaginary,\"\n  },\n  {\n    \"start\": \"00:01:14,880\",\n    \"end\": \"00:01:18,420\",\n    \"lang\": \"en\",\n    \"text\": \"time is physical,\"\n  },\n  {\n    \"start\": \"00:01:18,420\",\n    \"end\": \"00:01:22,040\",\n    \"lang\": \"en\",\n    \"text\": \"but it's also the metric of time.\"\n  },\n  {\n    \"start\": \"00:01:22,040\",\n    \"end\": \"00:01:23,560\",\n    \"lang\": \"en\",\n    \"text\": \"It's imaginary.\"\n  },\n  {\n    \"start\": \"00:01:24,300\",\n    \"end\": \"00:01:24,460\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:24,460\",\n    \"end\": \"00:01:39,860\",\n    \"lang\": \"en\",\n    \"text\": \"if you use the life of a subatomic particle,\"\n  },\n  {\n    \"start\": \"00:01:39,860\",\n    \"end\": \"00:01:42,440\",\n    \"lang\": \"en\",\n    \"text\": \"our life is infinity.\"\n  },\n  {\n    \"start\": \"00:01:42,440\",\n    \"end\": \"00:01:44,300\",\n    \"lang\": \"en\",\n    \"text\": \"Our life is infinity.\"\n  },\n  {\n    \"start\": \"00:01:44,840\",\n    \"end\": \"00:01:48,940\",\n    \"lang\": \"en\",\n    \"text\": \"But if you use the time of the universe as a metric,\"\n  },\n  {\n    \"start\": \"00:01:48,940\",\n    \"end\": \"00:01:56,360\",\n    \"lang\": \"en\",\n    \"text\": \"our lifetime is a blink of an eye.\"\n  },\n  {\n    \"start\": \"00:01:57,440\",\n    \"end\": \"00:01:58,340\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:58,340\",\n    \"end\": \"00:02:03,940\",\n    \"lang\": \"en\",\n    \"text\": \"time is relative and don't be too obsessed with it.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:02,300",
+            "end": "00:01:04,019",
+            "ja": "それは生物学的な年齢です。"
+        },
+        {
+            "start": "00:01:11,940",
+            "end": "00:01:14,880",
+            "ja": "時間は想像上のものですが、"
+        },
+        {
+            "start": "00:01:14,880",
+            "end": "00:01:18,420",
+            "ja": "時間は物理的なものでもあります、"
+        },
+        {
+            "start": "00:01:18,420",
+            "end": "00:01:22,040",
+            "ja": "しかし、それはまた時間の尺度です。"
+        },
+        {
+            "start": "00:01:22,040",
+            "end": "00:01:23,560",
+            "ja": "それは想像上のものです。"
+        },
+        {
+            "start": "00:01:24,300",
+            "end": "00:01:24,460",
+            "ja": "だから、"
+        },
+        {
+            "start": "00:01:24,460",
+            "end": "00:01:39,860",
+            "ja": "もし素粒子の寿命を使うならば、"
+        },
+        {
+            "start": "00:01:39,860",
+            "end": "00:01:42,440",
+            "ja": "私たちの人生は無限です。"
+        },
+        {
+            "start": "00:01:42,440",
+            "end": "00:01:44,300",
+            "ja": "私たちの人生は無限です。"
+        },
+        {
+            "start": "00:01:44,840",
+            "end": "00:01:48,940",
+            "ja": "しかし、もし宇宙の時間を尺度として使うならば、"
+        },
+        {
+            "start": "00:01:48,940",
+            "end": "00:01:56,360",
+            "ja": "私たちの一生は瞬きのようなものです。"
+        },
+        {
+            "start": "00:01:57,440",
+            "end": "00:01:58,340",
+            "ja": "だから、"
+        },
+        {
+            "start": "00:01:58,340",
+            "end": "00:02:03,940",
+            "ja": "時間は相対的なものであり、あまりにもそれに囚われてはいけません。"
+        }
+    ]
+}

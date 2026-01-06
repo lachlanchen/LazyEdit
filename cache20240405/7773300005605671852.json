@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:12,578\",\n    \"end\": \"00:01:13,398\",\n    \"lang\": \"zh\",\n    \"text\": \"來來來\"\n  },\n  {\n    \"start\": \"00:01:13,438\",\n    \"end\": \"00:01:13,958\",\n    \"lang\": \"zh\",\n    \"text\": \"菜心\"\n  },\n  {\n    \"start\": \"00:01:17,570\",\n    \"end\": \"00:01:17,890\",\n    \"lang\": \"en\",\n    \"text\": \"season.\"\n  },\n  {\n    \"start\": \"00:01:18,050\",\n    \"end\": \"00:01:18,290\",\n    \"lang\": \"en\",\n    \"text\": \"Awesome.\"\n  },\n  {\n    \"start\": \"00:01:19,554\",\n    \"end\": \"00:01:20,174\",\n    \"lang\": \"zh\",\n    \"text\": \"我是斯芬\"\n  },\n  {\n    \"start\": \"00:01:20,738\",\n    \"end\": \"00:01:21,458\",\n    \"lang\": \"ja\",\n    \"text\": \"まっすぐです\"\n  },\n  {\n    \"start\": \"00:01:24,002\",\n    \"end\": \"00:01:24,302\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:01:24,302\",\n    \"end\": \"00:01:25,822\",\n    \"lang\": \"en\",\n    \"text\": \"a blueberry\"\n  },\n  {\n    \"start\": \"00:01:28,072\",\n    \"end\": \"00:01:30,082\",\n    \"lang\": \"en\",\n    \"text\": \"and a blueberry\"\n  },\n  {\n    \"start\": \"00:01:34,492\",\n    \"end\": \"00:01:34,962\",\n    \"lang\": \"en\",\n    \"text\": \"Yak,\"\n  },\n  {\n    \"start\": \"00:01:34,962\",\n    \"end\": \"00:01:35,962\",\n    \"lang\": \"en\",\n    \"text\": \"don't juice\"\n  },\n  {\n    \"start\": \"00:01:44,492\",\n    \"end\": \"00:01:45,742\",\n    \"lang\": \"en\",\n    \"text\": \"and a sweetこれで\"\n  },\n  {\n    \"start\": \"00:01:54,002\",\n    \"end\": \"00:01:54,662\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:02:04,101\",\n    \"end\": \"00:02:04,802\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:12,578",
+            "end": "00:01:13,398",
+            "es": "Ven ven ven",
+            "fr": "Viens, viens, viens",
+            "uk": "Іди, іди, іди"
+        },
+        {
+            "start": "00:01:13,438",
+            "end": "00:01:13,958",
+            "es": "Bok choy",
+            "fr": "Pak choï",
+            "uk": "Бок-чой"
+        },
+        {
+            "start": "00:01:17,570",
+            "end": "00:01:17,890",
+            "es": "temporada.",
+            "fr": "saison.",
+            "uk": "сезон."
+        },
+        {
+            "start": "00:01:18,050",
+            "end": "00:01:18,290",
+            "es": "Impresionante.",
+            "fr": "Incroyable.",
+            "uk": "Чудово."
+        },
+        {
+            "start": "00:01:19,554",
+            "end": "00:01:20,174",
+            "es": "Yo soy Sven",
+            "fr": "Je suis Sven",
+            "uk": "Я Свен"
+        },
+        {
+            "start": "00:01:20,738",
+            "end": "00:01:21,458",
+            "es": "soy directo",
+            "fr": "je suis droit",
+            "uk": "я прямий"
+        },
+        {
+            "start": "00:01:24,002",
+            "end": "00:01:24,302",
+            "es": "Ok,",
+            "fr": "Ok,",
+            "uk": "Ок,"
+        },
+        {
+            "start": "00:01:24,302",
+            "end": "00:01:25,822",
+            "es": "un arándano",
+            "fr": "une myrtille",
+            "uk": "одна чорниця"
+        },
+        {
+            "start": "00:01:28,072",
+            "end": "00:01:30,082",
+            "es": "y un arándano",
+            "fr": "et une myrtille",
+            "uk": "та одна чорница"
+        },
+        {
+            "start": "00:01:34,492",
+            "end": "00:01:34,962",
+            "es": "Yak,",
+            "fr": "Yak,",
+            "uk": "Як,"
+        },
+        {
+            "start": "00:01:34,962",
+            "end": "00:01:35,962",
+            "es": "no zumo",
+            "fr": "ne pas jus",
+            "uk": "не сік"
+        },
+        {
+            "start": "00:01:44,492",
+            "end": "00:01:45,742",
+            "es": "y un dulce",
+            "fr": "et un sucré",
+            "uk": "та солодке"
+        },
+        {
+            "start": "00:01:54,002",
+            "end": "00:01:54,662",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:02:04,101",
+            "end": "00:02:04,802",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        }
+    ]
+}

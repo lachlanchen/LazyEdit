@@ -1,0 +1,100 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,700\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:01,314\",\n    \"end\": \"00:00:02,094\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,490\",\n    \"end\": \"00:00:05,170\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our lunch.\"\n  },\n  {\n    \"start\": \"00:00:05,870\",\n    \"end\": \"00:00:06,270\",\n    \"lang\": \"en\",\n    \"text\": \"Lunch.\"\n  },\n  {\n    \"start\": \"00:00:09,450\",\n    \"end\": \"00:00:10,710\",\n    \"lang\": \"en\",\n    \"text\": \"And then...\"\n  },\n  {\n    \"start\": \"00:00:10,710\",\n    \"end\": \"00:00:11,110\",\n    \"lang\": \"en\",\n    \"text\": \"Actually,\"\n  },\n  {\n    \"start\": \"00:00:11,110\",\n    \"end\": \"00:00:13,270\",\n    \"lang\": \"en\",\n    \"text\": \"it's the first part of the lunch.\"\n  },\n  {\n    \"start\": \"00:00:14,090\",\n    \"end\": \"00:00:14,490\",\n    \"lang\": \"en\",\n    \"text\": \"Because,\"\n  },\n  {\n    \"start\": \"00:00:14,490\",\n    \"end\": \"00:00:15,490\",\n    \"lang\": \"en\",\n    \"text\": \"um...\"\n  },\n  {\n    \"start\": \"00:00:15,490\",\n    \"end\": \"00:00:17,770\",\n    \"lang\": \"en\",\n    \"text\": \"Another part is the potato.\"\n  },\n  {\n    \"start\": \"00:00:18,570\",\n    \"end\": \"00:00:19,150\",\n    \"lang\": \"en\",\n    \"text\": \"This is,\"\n  },\n  {\n    \"start\": \"00:00:19,150\",\n    \"end\": \"00:00:20,390\",\n    \"lang\": \"en\",\n    \"text\": \"um...\"\n  },\n  {\n    \"start\": \"00:00:20,390\",\n    \"end\": \"00:00:21,050\",\n    \"lang\": \"en\",\n    \"text\": \"Air fryer.\"\n  },\n  {\n    \"start\": \"00:00:22,070\",\n    \"end\": \"00:00:22,410\",\n    \"lang\": \"en\",\n    \"text\": \"I mean,\"\n  },\n  {\n    \"start\": \"00:00:22,410\",\n    \"end\": \"00:00:23,250\",\n    \"lang\": \"en\",\n    \"text\": \"air fryer.\"\n  },\n  {\n    \"start\": \"00:00:29,110\",\n    \"end\": \"00:00:29,890\",\n    \"lang\": \"en\",\n    \"text\": \"No,\"\n  },\n  {\n    \"start\": \"00:00:29,890\",\n    \"end\": \"00:00:30,810\",\n    \"lang\": \"en\",\n    \"text\": \"it's overflowing.\"\n  },\n  {\n    \"start\": \"00:00:34,350\",\n    \"end\": \"00:00:35,470\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:35,470\",\n    \"end\": \"00:00:36,990\",\n    \"lang\": \"en\",\n    \"text\": \"I need some pinches.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,700",
+            "vi": "Được."
+        },
+        {
+            "start": "00:00:01,314",
+            "end": "00:00:02,094",
+            "vi": "Chào buổi sáng."
+        },
+        {
+            "start": "00:00:03,490",
+            "end": "00:00:05,170",
+            "vi": "Vậy đây là bữa trưa của chúng ta."
+        },
+        {
+            "start": "00:00:05,870",
+            "end": "00:00:06,270",
+            "vi": "Bữa trưa."
+        },
+        {
+            "start": "00:00:09,450",
+            "end": "00:00:10,710",
+            "vi": "Và sau đó..."
+        },
+        {
+            "start": "00:00:10,710",
+            "end": "00:00:11,110",
+            "vi": "Thực ra,"
+        },
+        {
+            "start": "00:00:11,110",
+            "end": "00:00:13,270",
+            "vi": "đó là phần đầu tiên của bữa trưa."
+        },
+        {
+            "start": "00:00:14,090",
+            "end": "00:00:14,490",
+            "vi": "Bởi vì,"
+        },
+        {
+            "start": "00:00:14,490",
+            "end": "00:00:15,490",
+            "vi": "um..."
+        },
+        {
+            "start": "00:00:15,490",
+            "end": "00:00:17,770",
+            "vi": "Phần khác là khoai tây."
+        },
+        {
+            "start": "00:00:18,570",
+            "end": "00:00:19,150",
+            "vi": "Đây là,"
+        },
+        {
+            "start": "00:00:19,150",
+            "end": "00:00:20,390",
+            "vi": "um..."
+        },
+        {
+            "start": "00:00:20,390",
+            "end": "00:00:21,050",
+            "vi": "Nồi chiên không dầu."
+        },
+        {
+            "start": "00:00:22,070",
+            "end": "00:00:22,410",
+            "vi": "Ý tôi là,"
+        },
+        {
+            "start": "00:00:22,410",
+            "end": "00:00:23,250",
+            "vi": "nồi chiên không dầu."
+        },
+        {
+            "start": "00:00:29,110",
+            "end": "00:00:29,890",
+            "vi": "Không,"
+        },
+        {
+            "start": "00:00:29,890",
+            "end": "00:00:30,810",
+            "vi": "nó tràn ra rồi."
+        },
+        {
+            "start": "00:00:34,350",
+            "end": "00:00:35,470",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:35,470",
+            "end": "00:00:36,990",
+            "vi": "Tôi cần vài cái kẹp."
+        }
+    ]
+}

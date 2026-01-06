@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,900\",\n    \"lang\": \"en\",\n    \"text\": \"we will come back to the dog club\"\n  },\n  {\n    \"start\": \"00:00:03,639\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"it's a dog paradise\"\n  },\n  {\n    \"start\": \"00:00:08,066\",\n    \"end\": \"00:00:08,606\",\n    \"lang\": \"ja\",\n    \"text\": \"これは\"\n  },\n  {\n    \"start\": \"00:00:09,566\",\n    \"end\": \"00:00:11,106\",\n    \"lang\": \"ja\",\n    \"text\": \"インドゥクナブティス\"\n  },\n  {\n    \"start\": \"00:00:11,938\",\n    \"end\": \"00:00:15,038\",\n    \"lang\": \"en\",\n    \"text\": \"They are so happy,\"\n  },\n  {\n    \"start\": \"00:00:15,038\",\n    \"end\": \"00:00:18,938\",\n    \"lang\": \"en\",\n    \"text\": \"making friends.\"\n  },\n  {\n    \"start\": \"00:00:25,878\",\n    \"end\": \"00:00:28,038\",\n    \"lang\": \"en\",\n    \"text\": \"Look at this dog fight.\"\n  },\n  {\n    \"start\": \"00:00:30,658\",\n    \"end\": \"00:00:38,678\",\n    \"lang\": \"en\",\n    \"text\": \"They want to fight but they also hold their body.\"\n  },\n  {\n    \"start\": \"00:00:48,038\",\n    \"end\": \"00:00:49,378\",\n    \"lang\": \"en\",\n    \"text\": \"It's a triple,\"\n  },\n  {\n    \"start\": \"00:00:49,378\",\n    \"end\": \"00:00:51,038\",\n    \"lang\": \"en\",\n    \"text\": \"it's a trial fight.\"\n  },\n  {\n    \"start\": \"00:00:55,118\",\n    \"end\": \"00:00:58,518\",\n    \"lang\": \"en\",\n    \"text\": \"There are more dogs during this fight.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,900",
+            "es": "volveremos al club de perros",
+            "fr": "nous reviendrons au club de chiens",
+            "uk": "ми повернемося до клубу собак"
+        },
+        {
+            "start": "00:00:03,639",
+            "end": "00:00:05,140",
+            "es": "es un paraíso para perros",
+            "fr": "c'est un paradis pour les chiens",
+            "uk": "це рай для собак"
+        },
+        {
+            "start": "00:00:08,066",
+            "end": "00:00:08,606",
+            "es": "esto es",
+            "fr": "c'est",
+            "uk": "це"
+        },
+        {
+            "start": "00:00:09,566",
+            "end": "00:00:11,106",
+            "es": "Incomparable",
+            "fr": "Incomparable",
+            "uk": "Безпрецедентно"
+        },
+        {
+            "start": "00:00:11,938",
+            "end": "00:00:15,038",
+            "es": "Están tan felices,",
+            "fr": "Ils sont si heureux,",
+            "uk": "Вони такі щасливі,"
+        },
+        {
+            "start": "00:00:15,038",
+            "end": "00:00:18,938",
+            "es": "haciendo amigos.",
+            "fr": "se faisant des amis.",
+            "uk": "заводячи друзів."
+        },
+        {
+            "start": "00:00:25,878",
+            "end": "00:00:28,038",
+            "es": "Mira esta pelea de perros.",
+            "fr": "Regardez cette bagarre de chiens.",
+            "uk": "Дивіться на цю собачу бійку."
+        },
+        {
+            "start": "00:00:30,658",
+            "end": "00:00:38,678",
+            "es": "Quieren pelear pero también controlan su cuerpo.",
+            "fr": "Ils veulent se battre mais ils contrôlent aussi leur corps.",
+            "uk": "Вони хочуть битися, але також стримують своє тіло."
+        },
+        {
+            "start": "00:00:48,038",
+            "end": "00:00:49,378",
+            "es": "Es un triple,",
+            "fr": "C'est un triple,",
+            "uk": "Це потрійне,"
+        },
+        {
+            "start": "00:00:49,378",
+            "end": "00:00:51,038",
+            "es": "es una pelea de prueba.",
+            "fr": "c'est un combat d'essai.",
+            "uk": "це пробний бій."
+        },
+        {
+            "start": "00:00:55,118",
+            "end": "00:00:58,518",
+            "es": "Hay más perros durante esta pelea.",
+            "fr": "Il y a plus de chiens pendant ce combat.",
+            "uk": "Під час цієї бійки є більше собак."
+        }
+    ]
+}

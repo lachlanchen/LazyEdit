@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,240\",\n    \"end\": \"00:00:03,380\",\n    \"lang\": \"ja\",\n    \"text\": \"今日はナンデルの日です!\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:04,660\",\n    \"lang\": \"ja\",\n    \"text\": \"ナンデルをやっています!\"\n  },\n  {\n    \"start\": \"00:00:05,666\",\n    \"end\": \"00:00:06,946\",\n    \"lang\": \"zh\",\n    \"text\": \"气氛咋说呢\"\n  },\n  {\n    \"start\": \"00:00:06,946\",\n    \"end\": \"00:00:08,226\",\n    \"lang\": \"zh\",\n    \"text\": \"强度发\"\n  },\n  {\n    \"start\": \"00:00:09,025\",\n    \"end\": \"00:00:09,685\",\n    \"lang\": \"zh\",\n    \"text\": \"轰\"\n  },\n  {\n    \"start\": \"00:00:09,685\",\n    \"end\": \"00:00:10,546\",\n    \"lang\": \"zh\",\n    \"text\": \"咚\"\n  },\n  {\n    \"start\": \"00:00:11,746\",\n    \"end\": \"00:00:12,806\",\n    \"lang\": \"en\",\n    \"text\": \"First straw.\"\n  },\n  {\n    \"start\": \"00:00:13,286\",\n    \"end\": \"00:00:13,746\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,240",
+            "end": "00:00:03,380",
+            "es": "¡Hoy es el día de Nandell!",
+            "fr": "Aujourd'hui, c'est le jour de Nandell !",
+            "uk": "Сьогодні день Нанделя!"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:04,660",
+            "es": "Estamos haciendo Nandell!",
+            "fr": "Nous faisons du Nandell !",
+            "uk": "Ми робимо Нандель!"
+        },
+        {
+            "start": "00:00:05,666",
+            "end": "00:00:06,946",
+            "es": "¿Cómo describir el ambiente?",
+            "fr": "Comment décrire l'ambiance ?",
+            "uk": "Як описати атмосферу?"
+        },
+        {
+            "start": "00:00:06,946",
+            "end": "00:00:08,226",
+            "es": "La intensidad despega",
+            "fr": "L'intensité décolle",
+            "uk": "Інтенсивність злітає"
+        },
+        {
+            "start": "00:00:09,025",
+            "end": "00:00:09,685",
+            "es": "Boom",
+            "fr": "Boum",
+            "uk": "Бум"
+        },
+        {
+            "start": "00:00:09,685",
+            "end": "00:00:10,546",
+            "es": "Dong",
+            "fr": "Dong",
+            "uk": "Донг"
+        },
+        {
+            "start": "00:00:11,746",
+            "end": "00:00:12,806",
+            "es": "Primer sorbo.",
+            "fr": "Première paille.",
+            "uk": "Перша соломинка."
+        },
+        {
+            "start": "00:00:13,286",
+            "end": "00:00:13,746",
+            "es": "Gracias.",
+            "fr": "Merci.",
+            "uk": "Дякую."
+        }
+    ]
+}

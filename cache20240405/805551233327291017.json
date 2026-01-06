@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,025\",\n    \"end\": \"00:01:01,606\",\n    \"lang\": \"en\",\n    \"text\": \"there might be an advantage\"\n  },\n  {\n    \"start\": \"00:01:02,886\",\n    \"end\": \"00:01:04,006\",\n    \"lang\": \"en\",\n    \"text\": \"that is\"\n  },\n  {\n    \"start\": \"00:01:05,826\",\n    \"end\": \"00:01:06,986\",\n    \"lang\": \"en\",\n    \"text\": \"you can\"\n  },\n  {\n    \"start\": \"00:01:06,986\",\n    \"end\": \"00:01:08,306\",\n    \"lang\": \"en\",\n    \"text\": \"learn multiple languages\"\n  },\n  {\n    \"start\": \"00:01:08,306\",\n    \"end\": \"00:01:10,046\",\n    \"lang\": \"en\",\n    \"text\": \"so that you can\"\n  },\n  {\n    \"start\": \"00:01:10,046\",\n    \"end\": \"00:01:12,146\",\n    \"lang\": \"en\",\n    \"text\": \"find\"\n  },\n  {\n    \"start\": \"00:01:12,146\",\n    \"end\": \"00:01:14,406\",\n    \"lang\": \"en\",\n    \"text\": \"your soulmate\"\n  },\n  {\n    \"start\": \"00:01:15,546\",\n    \"end\": \"00:01:16,746\",\n    \"lang\": \"en\",\n    \"text\": \"in different\"\n  },\n  {\n    \"start\": \"00:01:16,746\",\n    \"end\": \"00:01:18,146\",\n    \"lang\": \"en\",\n    \"text\": \"countries\"\n  },\n  {\n    \"start\": \"00:01:18,146\",\n    \"end\": \"00:01:19,766\",\n    \"lang\": \"en\",\n    \"text\": \"not limited to your\"\n  },\n  {\n    \"start\": \"00:01:19,766\",\n    \"end\": \"00:01:21,026\",\n    \"lang\": \"en\",\n    \"text\": \"homeland\"\n  },\n  {\n    \"start\": \"00:01:30,206\",\n    \"end\": \"00:01:32,326\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that's an advantage\"\n  },\n  {\n    \"start\": \"00:01:32,326\",\n    \"end\": \"00:01:33,326\",\n    \"lang\": \"en\",\n    \"text\": \"you can meet here\"\n  },\n  {\n    \"start\": \"00:01:35,066\",\n    \"end\": \"00:01:35,786\",\n    \"lang\": \"en\",\n    \"text\": \"anyone\"\n  },\n  {\n    \"start\": \"00:01:36,306\",\n    \"end\": \"00:01:37,566\",\n    \"lang\": \"en\",\n    \"text\": \"on this planet\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,025",
+            "end": "00:01:01,606",
+            "es": "podría haber una ventaja",
+            "fr": "il pourrait y avoir un avantage",
+            "uk": "можливо, є перевага"
+        },
+        {
+            "start": "00:01:02,886",
+            "end": "00:01:04,006",
+            "es": "eso es",
+            "fr": "c'est",
+            "uk": "це"
+        },
+        {
+            "start": "00:01:05,826",
+            "end": "00:01:06,986",
+            "es": "tú puedes",
+            "fr": "tu peux",
+            "uk": "ти можеш"
+        },
+        {
+            "start": "00:01:06,986",
+            "end": "00:01:08,306",
+            "es": "aprender varios idiomas",
+            "fr": "apprendre plusieurs langues",
+            "uk": "вивчати кілька мов"
+        },
+        {
+            "start": "00:01:08,306",
+            "end": "00:01:10,046",
+            "es": "para que puedas",
+            "fr": "afin que tu puisses",
+            "uk": "щоб ти міг"
+        },
+        {
+            "start": "00:01:10,046",
+            "end": "00:01:12,146",
+            "es": "encontrar",
+            "fr": "trouver",
+            "uk": "знайти"
+        },
+        {
+            "start": "00:01:12,146",
+            "end": "00:01:14,406",
+            "es": "tu alma gemela",
+            "fr": "ton âme sœur",
+            "uk": "свою другу половинку"
+        },
+        {
+            "start": "00:01:15,546",
+            "end": "00:01:16,746",
+            "es": "en diferentes",
+            "fr": "dans différents",
+            "uk": "в різних"
+        },
+        {
+            "start": "00:01:16,746",
+            "end": "00:01:18,146",
+            "es": "países",
+            "fr": "pays",
+            "uk": "країнах"
+        },
+        {
+            "start": "00:01:18,146",
+            "end": "00:01:19,766",
+            "es": "no limitado a tu",
+            "fr": "pas limité à ton",
+            "uk": "не обмежуючись твоєю"
+        },
+        {
+            "start": "00:01:19,766",
+            "end": "00:01:21,026",
+            "es": "patria",
+            "fr": "patrie",
+            "uk": "батьківщиною"
+        },
+        {
+            "start": "00:01:30,206",
+            "end": "00:01:32,326",
+            "es": "Creo que es una ventaja",
+            "fr": "Je crois que c'est un avantage",
+            "uk": "Я вважаю, це перевага"
+        },
+        {
+            "start": "00:01:32,326",
+            "end": "00:01:33,326",
+            "es": "puedes conocer aquí",
+            "fr": "tu peux rencontrer ici",
+            "uk": "ти можеш зустріти тут"
+        },
+        {
+            "start": "00:01:35,066",
+            "end": "00:01:35,786",
+            "es": "a cualquiera",
+            "fr": "n'importe qui",
+            "uk": "будь-кого"
+        },
+        {
+            "start": "00:01:36,306",
+            "end": "00:01:37,566",
+            "es": "en este planeta",
+            "fr": "sur cette planète",
+            "uk": "на цій планеті"
+        }
+    ]
+}

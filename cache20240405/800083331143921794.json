@@ -1,0 +1,60 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es) and French (fr) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other language. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:08,200\",\n    \"end\": \"00:01:08,640\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:01:08,640\",\n    \"end\": \"00:01:10,020\",\n    \"lang\": \"en\",\n    \"text\": \"this time it seems better.\"\n  },\n  {\n    \"start\": \"00:01:10,020\",\n    \"end\": \"00:01:11,440\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:01:11,440\",\n    \"end\": \"00:01:12,280\",\n    \"lang\": \"en\",\n    \"text\": \"so,\"\n  },\n  {\n    \"start\": \"00:01:12,280\",\n    \"end\": \"00:01:15,260\",\n    \"lang\": \"en\",\n    \"text\": \"play some chords.\"\n  },\n  {\n    \"start\": \"00:01:18,754\",\n    \"end\": \"00:01:19,854\",\n    \"lang\": \"zh\",\n    \"text\": \"和弦有英语怎么说\"\n  },\n  {\n    \"start\": \"00:01:49,294\",\n    \"end\": \"00:01:56,274\",\n    \"lang\": \"zh\",\n    \"text\": \"请不吝点赞 订阅 转发 打赏支持明镜与点点栏目\"\n  },\n  {\n    \"start\": \"00:01:58,306\",\n    \"end\": \"00:01:58,466\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:58,466\",\n    \"end\": \"00:01:59,346\",\n    \"lang\": \"en\",\n    \"text\": \"one more time.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:08,200",
+            "end": "00:01:08,640",
+            "es": "Ok,",
+            "fr": "D'accord,"
+        },
+        {
+            "start": "00:01:08,640",
+            "end": "00:01:10,020",
+            "es": "esta vez parece mejor.",
+            "fr": "cette fois-ci, cela semble mieux."
+        },
+        {
+            "start": "00:01:10,020",
+            "end": "00:01:11,440",
+            "es": "Ok,",
+            "fr": "D'accord,"
+        },
+        {
+            "start": "00:01:11,440",
+            "end": "00:01:12,280",
+            "es": "entonces,",
+            "fr": "alors,"
+        },
+        {
+            "start": "00:01:12,280",
+            "end": "00:01:15,260",
+            "es": "toca algunos acordes.",
+            "fr": "joue quelques accords."
+        },
+        {
+            "start": "00:01:18,754",
+            "end": "00:01:19,854",
+            "es": "¿Cómo se dice acordes en inglés?",
+            "fr": "Comment dit-on 'accords' en anglais ?",
+            "en": "How to say chords in English"
+        },
+        {
+            "start": "00:01:49,294",
+            "end": "00:01:56,274",
+            "es": "Por favor no escatimen en dar like, suscribirse, compartir y apoyar Ming Jing y el programa Dian Dian con donaciones.",
+            "fr": "S'il vous plaît, n'hésitez pas à aimer, vous abonner, partager et soutenir Ming Jing et le programme Dian Dian avec des dons."
+        },
+        {
+            "start": "00:01:58,306",
+            "end": "00:01:58,466",
+            "es": "Ok,",
+            "fr": "D'accord,"
+        },
+        {
+            "start": "00:01:58,466",
+            "end": "00:01:59,346",
+            "es": "una vez más.",
+            "fr": "encore une fois."
+        }
+    ]
+}

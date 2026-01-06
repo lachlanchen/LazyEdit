@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,480\",\n    \"lang\": \"en\",\n    \"text\": \"I have two little sisters and I believe they...\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:06,294\",\n    \"lang\": \"zh\",\n    \"text\": \"不死人\"\n  },\n  {\n    \"start\": \"00:00:06,850\",\n    \"end\": \"00:00:07,310\",\n    \"lang\": \"en\",\n    \"text\": \"genius.\"\n  },\n  {\n    \"start\": \"00:00:07,310\",\n    \"end\": \"00:00:11,270\",\n    \"lang\": \"en\",\n    \"text\": \"So one made this great cake,\"\n  },\n  {\n    \"start\": \"00:00:11,270\",\n    \"end\": \"00:00:17,170\",\n    \"lang\": \"en\",\n    \"text\": \"and another made this great handcraft.\"\n  },\n  {\n    \"start\": \"00:00:17,170\",\n    \"end\": \"00:00:19,010\",\n    \"lang\": \"en\",\n    \"text\": \"This cake,\"\n  },\n  {\n    \"start\": \"00:00:19,010\",\n    \"end\": \"00:00:19,350\",\n    \"lang\": \"en\",\n    \"text\": \"this\"\n  },\n  {\n    \"start\": \"00:00:19,350\",\n    \"end\": \"00:00:21,330\",\n    \"lang\": \"en\",\n    \"text\": \"is white strawberry.\"\n  },\n  {\n    \"start\": \"00:00:21,330\",\n    \"end\": \"00:00:24,170\",\n    \"lang\": \"en\",\n    \"text\": \"This is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:24,170\",\n    \"end\": \"00:00:28,130\",\n    \"lang\": \"en\",\n    \"text\": \"This is the best cake I've ever seen.\"\n  },\n  {\n    \"start\": \"00:00:28,130\",\n    \"end\": \"00:00:29,750\",\n    \"lang\": \"en\",\n    \"text\": \"And I know\"\n  },\n  {\n    \"start\": \"00:00:29,750\",\n    \"end\": \"00:00:32,130\",\n    \"lang\": \"en\",\n    \"text\": \"it must taste the best.\"\n  },\n  {\n    \"start\": \"00:00:32,130\",\n    \"end\": \"00:00:39,350\",\n    \"lang\": \"en\",\n    \"text\": \"Because I had tasted the cooking of my little sister.\"\n  },\n  {\n    \"start\": \"00:00:41,730\",\n    \"end\": \"00:00:42,570\",\n    \"lang\": \"ja\",\n    \"text\": \"美しい\"\n  },\n  {\n    \"start\": \"00:00:44,098\",\n    \"end\": \"00:00:48,918\",\n    \"lang\": \"en\",\n    \"text\": \"It's a pastry dessert and a bakery.\"\n  },\n  {\n    \"start\": \"00:00:50,938\",\n    \"end\": \"00:00:51,618\",\n    \"lang\": \"en\",\n    \"text\": \"OK.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,480",
+            "ko": "나에게는 두 명의 여동생이 있고 나는 그들이..."
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:06,294",
+            "ko": "천재라고 믿어요."
+        },
+        {
+            "start": "00:00:06,850",
+            "end": "00:00:07,310",
+            "ko": "천재."
+        },
+        {
+            "start": "00:00:07,310",
+            "end": "00:00:11,270",
+            "ko": "그래서 한 명은 이 멋진 케이크를 만들었고,"
+        },
+        {
+            "start": "00:00:11,270",
+            "end": "00:00:17,170",
+            "ko": "다른 한 명은 이 멋진 수공예품을 만들었어요."
+        },
+        {
+            "start": "00:00:17,170",
+            "end": "00:00:19,010",
+            "ko": "이 케이크는"
+        },
+        {
+            "start": "00:00:19,010",
+            "end": "00:00:19,350",
+            "ko": "이건"
+        },
+        {
+            "start": "00:00:19,350",
+            "end": "00:00:21,330",
+            "ko": "화이트 스트로베리예요."
+        },
+        {
+            "start": "00:00:21,330",
+            "end": "00:00:24,170",
+            "ko": "정말 멋져요."
+        },
+        {
+            "start": "00:00:24,170",
+            "end": "00:00:28,130",
+            "ko": "이건 내가 본 케이크 중에서 최고예요."
+        },
+        {
+            "start": "00:00:28,130",
+            "end": "00:00:29,750",
+            "ko": "그리고 나는 알아요"
+        },
+        {
+            "start": "00:00:29,750",
+            "end": "00:00:32,130",
+            "ko": "이게 제일 맛있을 거라는 걸."
+        },
+        {
+            "start": "00:00:32,130",
+            "end": "00:00:39,350",
+            "ko": "왜냐하면 나는 내 여동생이 만든 요리를 맛본 적이 있으니까요."
+        },
+        {
+            "start": "00:00:41,730",
+            "end": "00:00:42,570",
+            "ko": "아름다워"
+        },
+        {
+            "start": "00:00:44,098",
+            "end": "00:00:48,918",
+            "ko": "이건 페이스트리 디저트이자 베이커리예요."
+        },
+        {
+            "start": "00:00:50,938",
+            "end": "00:00:51,618",
+            "ko": "알겠어요."
+        }
+    ]
+}

@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,694\",\n    \"end\": \"00:01:04,174\",\n    \"lang\": \"en\",\n    \"text\": \"In Vietnamese it's called Chu Han.\"\n  },\n  {\n    \"start\": \"00:01:05,054\",\n    \"end\": \"00:01:05,373\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:05,373\",\n    \"end\": \"00:01:08,014\",\n    \"lang\": \"en\",\n    \"text\": \"if you will help me learn Vietnamese.\"\n  },\n  {\n    \"start\": \"00:01:08,714\",\n    \"end\": \"00:01:11,954\",\n    \"lang\": \"en\",\n    \"text\": \"Actually I learned Vietnamese not long ago,\"\n  },\n  {\n    \"start\": \"00:01:11,954\",\n    \"end\": \"00:01:13,514\",\n    \"lang\": \"en\",\n    \"text\": \"10 years ago.\"\n  },\n  {\n    \"start\": \"00:01:14,194\",\n    \"end\": \"00:01:15,714\",\n    \"lang\": \"en\",\n    \"text\": \"I learned a little bit.\"\n  },\n  {\n    \"start\": \"00:01:18,134\",\n    \"end\": \"00:01:21,294\",\n    \"lang\": \"en\",\n    \"text\": \"At that time I have a Vietnamese girlfriend,\"\n  },\n  {\n    \"start\": \"00:01:21,574\",\n    \"end\": \"00:01:24,494\",\n    \"lang\": \"en\",\n    \"text\": \"and I dated a Vietnamese girl.\"\n  },\n  {\n    \"start\": \"00:01:28,294\",\n    \"end\": \"00:01:31,074\",\n    \"lang\": \"en\",\n    \"text\": \"I learned a little bit Vietnamese.\"\n  },\n  {\n    \"start\": \"00:01:40,074\",\n    \"end\": \"00:01:41,474\",\n    \"lang\": \"en\",\n    \"text\": \"And it's okay.\"\n  },\n  {\n    \"start\": \"00:01:42,714\",\n    \"end\": \"00:01:43,474\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  },\n  {\n    \"start\": \"00:01:45,014\",\n    \"end\": \"00:01:45,414\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  },\n  {\n    \"start\": \"00:01:52,774\",\n    \"end\": \"00:01:53,334\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:53,334\",\n    \"end\": \"00:01:54,494\",\n    \"lang\": \"en\",\n    \"text\": \"that's a happy minute.\"\n  },\n  {\n    \"start\": \"00:01:54,774\",\n    \"end\": \"00:01:56,354\",\n    \"lang\": \"en\",\n    \"text\": \"That's what we share today.\"\n  },\n  {\n    \"start\": \"00:01:57,794\",\n    \"end\": \"00:01:58,854\",\n    \"lang\": \"en\",\n    \"text\": \"Have a happy day.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,694",
+            "end": "00:01:04,174",
+            "vi": "Trong tiếng Việt, nó được gọi là Chữ Hán."
+        },
+        {
+            "start": "00:01:05,054",
+            "end": "00:01:05,373",
+            "vi": "Vì vậy,"
+        },
+        {
+            "start": "00:01:05,373",
+            "end": "00:01:08,014",
+            "vi": "nếu bạn sẽ giúp tôi học tiếng Việt."
+        },
+        {
+            "start": "00:01:08,714",
+            "end": "00:01:11,954",
+            "vi": "Thực ra tôi đã học tiếng Việt không lâu lắm,"
+        },
+        {
+            "start": "00:01:11,954",
+            "end": "00:01:13,514",
+            "vi": "10 năm trước."
+        },
+        {
+            "start": "00:01:14,194",
+            "end": "00:01:15,714",
+            "vi": "Tôi học được một chút."
+        },
+        {
+            "start": "00:01:18,134",
+            "end": "00:01:21,294",
+            "vi": "Lúc đó tôi có bạn gái người Việt Nam,"
+        },
+        {
+            "start": "00:01:21,574",
+            "end": "00:01:24,494",
+            "vi": "và tôi đã hẹn hò với một cô gái Việt Nam."
+        },
+        {
+            "start": "00:01:28,294",
+            "end": "00:01:31,074",
+            "vi": "Tôi học được một chút tiếng Việt."
+        },
+        {
+            "start": "00:01:40,074",
+            "end": "00:01:41,474",
+            "vi": "Và nó ổn."
+        },
+        {
+            "start": "00:01:42,714",
+            "end": "00:01:43,474",
+            "vi": "Hẹn gặp lại."
+        },
+        {
+            "start": "00:01:45,014",
+            "end": "00:01:45,414",
+            "vi": "Hẹn gặp lại."
+        },
+        {
+            "start": "00:01:52,774",
+            "end": "00:01:53,334",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:01:53,334",
+            "end": "00:01:54,494",
+            "vi": "đó là một phút hạnh phúc."
+        },
+        {
+            "start": "00:01:54,774",
+            "end": "00:01:56,354",
+            "vi": "Đó là những gì chúng ta chia sẻ hôm nay."
+        },
+        {
+            "start": "00:01:57,794",
+            "end": "00:01:58,854",
+            "vi": "Chúc bạn có một ngày vui vẻ."
+        }
+    ]
+}

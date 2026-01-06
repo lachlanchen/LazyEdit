@@ -1,0 +1,126 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:03,746\",\n    \"end\": \"00:02:04,366\",\n    \"lang\": \"en\",\n    \"text\": \"I'll sing it simply,\"\n  },\n  {\n    \"start\": \"00:02:04,366\",\n    \"end\": \"00:02:05,046\",\n    \"lang\": \"en\",\n    \"text\": \"what do you want me to write?\"\n  },\n  {\n    \"start\": \"00:02:05,486\",\n    \"end\": \"00:02:07,566\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:07,566\",\n    \"end\": \"00:02:08,425\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:08,425\",\n    \"end\": \"00:02:11,486\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:11,486\",\n    \"end\": \"00:02:14,346\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:14,346\",\n    \"end\": \"00:02:15,086\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:15,086\",\n    \"end\": \"00:02:18,746\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:24,966\",\n    \"end\": \"00:02:25,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:25,686\",\n    \"end\": \"00:02:27,146\",\n    \"lang\": \"en\",\n    \"text\": \"play some chords\"\n  },\n  {\n    \"start\": \"00:02:27,146\",\n    \"end\": \"00:02:29,826\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:29,826\",\n    \"end\": \"00:02:29,826\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:29,826\",\n    \"end\": \"00:02:32,066\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:32,994\",\n    \"end\": \"00:02:35,634\",\n    \"lang\": \"ja\",\n    \"text\": \"バリナスティー10マウンス\"\n  },\n  {\n    \"start\": \"00:02:36,418\",\n    \"end\": \"00:02:40,298\",\n    \"lang\": \"en\",\n    \"text\": \"I mainly focus on playing the chords.\"\n  },\n  {\n    \"start\": \"00:02:41,418\",\n    \"end\": \"00:02:42,138\",\n    \"lang\": \"en\",\n    \"text\": \"Hèxiǎn.\"\n  },\n  {\n    \"start\": \"00:02:43,874\",\n    \"end\": \"00:02:45,054\",\n    \"lang\": \"zh\",\n    \"text\": \"好想要试裤子\"\n  },\n  {\n    \"start\": \"00:02:46,093\",\n    \"end\": \"00:02:47,594\",\n    \"lang\": \"zh\",\n    \"text\": \"好想用英语怎么说\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:03,746",
+            "end": "00:02:04,366",
+            "en": "I'll sing it simply,",
+            "zh": "我会简单地唱它，",
+            "ar": "سأغنيها ببساطة،"
+        },
+        {
+            "start": "00:02:04,366",
+            "end": "00:02:05,046",
+            "en": "what do you want me to write?",
+            "zh": "你想让我写什么？",
+            "ar": "ماذا تريد مني أن أكتب؟"
+        },
+        {
+            "start": "00:02:05,486",
+            "end": "00:02:07,566",
+            "en": "Don't write me back so much,",
+            "zh": "不要回复我这么多，",
+            "ar": "لا ترد علي كثيرًا،"
+        },
+        {
+            "start": "00:02:07,566",
+            "end": "00:02:08,425",
+            "en": "don't",
+            "zh": "不要",
+            "ar": "لا"
+        },
+        {
+            "start": "00:02:08,425",
+            "end": "00:02:11,486",
+            "en": "Don't see much of my love at all",
+            "zh": "根本就不怎么看到我的爱",
+            "ar": "لا ترى الكثير من حبي على الإطلاق"
+        },
+        {
+            "start": "00:02:11,486",
+            "end": "00:02:14,346",
+            "en": "Don't write me back so much,",
+            "zh": "不要回复我这么多，",
+            "ar": "لا ترد علي كثيرًا،"
+        },
+        {
+            "start": "00:02:14,346",
+            "end": "00:02:15,086",
+            "en": "don't",
+            "zh": "不要",
+            "ar": "لا"
+        },
+        {
+            "start": "00:02:15,086",
+            "end": "00:02:18,746",
+            "en": "Don't see much of my love at all",
+            "zh": "根本就不怎么看到我的爱",
+            "ar": "لا ترى الكثير من حبي على الإطلاق"
+        },
+        {
+            "start": "00:02:24,966",
+            "end": "00:02:25,686",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:02:25,686",
+            "end": "00:02:27,146",
+            "en": "play some chords",
+            "zh": "弹奏一些和弦",
+            "ar": "عزف بعض الأكوردات"
+        },
+        {
+            "start": "00:02:27,146",
+            "end": "00:02:29,826",
+            "en": "Don't write me back so much,",
+            "zh": "不要回复我这么多，",
+            "ar": "لا ترد علي كثيرًا،"
+        },
+        {
+            "start": "00:02:29,826",
+            "end": "00:02:32,066",
+            "en": "Don't see much of my love at all",
+            "zh": "根本就不怎么看到我的爱",
+            "ar": "لا ترى الكثير من حبي على الإطلاق"
+        },
+        {
+            "start": "00:02:32,994",
+            "end": "00:02:35,634",
+            "en": "Valentine's ten months",
+            "zh": "情人节十个月",
+            "ar": "عيد الحب عشرة أشهر",
+            "ja": "バリナスティー10マウンス"
+        },
+        {
+            "start": "00:02:36,418",
+            "end": "00:02:40,298",
+            "en": "I mainly focus on playing the chords.",
+            "zh": "我主要专注于弹奏和弦。",
+            "ar": "أركز بشكل أساسي على عزف الأكوردات."
+        },
+        {
+            "start": "00:02:41,418",
+            "end": "00:02:42,138",
+            "en": "Harmony.",
+            "zh": "和声。",
+            "ar": "الانسجام.",
+            "text": "Hèxiǎn."
+        },
+        {
+            "start": "00:02:43,874",
+            "end": "00:02:45,054",
+            "en": "I really want to try on trousers.",
+            "zh": "好想要试裤子",
+            "ar": "أريد حقًا تجربة البنطال."
+        },
+        {
+            "start": "00:02:46,093",
+            "end": "00:02:47,594",
+            "en": "How do you say 'I really want' in English?",
+            "zh": "好想用英语怎么说",
+            "ar": "كيف تقول 'أريد حقًا' بالإنجليزية؟"
+        }
+    ]
+}

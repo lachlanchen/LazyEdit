@@ -1,0 +1,166 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,480\",\n    \"lang\": \"zh\",\n    \"text\": \"今天學兩個單詞\"\n  },\n  {\n    \"start\": \"00:00:02,460\",\n    \"end\": \"00:00:03,440\",\n    \"lang\": \"zh\",\n    \"text\": \"這個豆芽\"\n  },\n  {\n    \"start\": \"00:00:03,440\",\n    \"end\": \"00:00:04,800\",\n    \"lang\": \"zh\",\n    \"text\": \"用英語怎麼說\"\n  },\n  {\n    \"start\": \"00:00:06,779\",\n    \"end\": \"00:00:07,420\",\n    \"lang\": \"zh\",\n    \"text\": \"豆芽\"\n  },\n  {\n    \"start\": \"00:00:07,420\",\n    \"end\": \"00:00:08,160\",\n    \"lang\": \"zh\",\n    \"text\": \"牙齒在什麼\"\n  },\n  {\n    \"start\": \"00:00:08,160\",\n    \"end\": \"00:00:08,840\",\n    \"lang\": \"zh\",\n    \"text\": \"牙齒\"\n  },\n  {\n    \"start\": \"00:00:10,860\",\n    \"end\": \"00:00:12,200\",\n    \"lang\": \"zh\",\n    \"text\": \"怎麼突然想不起來\"\n  },\n  {\n    \"start\": \"00:00:14,220\",\n    \"end\": \"00:00:15,280\",\n    \"lang\": \"zh\",\n    \"text\": \"後面兩個\"\n  },\n  {\n    \"start\": \"00:00:15,280\",\n    \"end\": \"00:00:17,100\",\n    \"lang\": \"zh\",\n    \"text\": \"肯定是u和d結尾的\"\n  },\n  {\n    \"start\": \"00:00:17,826\",\n    \"end\": \"00:00:19,486\",\n    \"lang\": \"ar\",\n    \"text\": \"ماذا؟ ماذا سنلنى؟\"\n  },\n  {\n    \"start\": \"00:00:20,258\",\n    \"end\": \"00:00:20,598\",\n    \"lang\": \"en\",\n    \"text\": \"BAM!\"\n  },\n  {\n    \"start\": \"00:00:20,598\",\n    \"end\": \"00:00:21,578\",\n    \"lang\": \"en\",\n    \"text\": \"BAM!\"\n  },\n  {\n    \"start\": \"00:00:23,298\",\n    \"end\": \"00:00:24,818\",\n    \"lang\": \"en\",\n    \"text\": \"And then...\"\n  },\n  {\n    \"start\": \"00:00:24,818\",\n    \"end\": \"00:00:25,978\",\n    \"lang\": \"en\",\n    \"text\": \"Another word is...\"\n  },\n  {\n    \"start\": \"00:00:26,434\",\n    \"end\": \"00:00:27,214\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜\"\n  },\n  {\n    \"start\": \"00:00:27,693\",\n    \"end\": \"00:00:28,934\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜用英语咋说\"\n  },\n  {\n    \"start\": \"00:00:29,453\",\n    \"end\": \"00:00:32,113\",\n    \"lang\": \"zh\",\n    \"text\": \"我觉得菠菜里面它是含铁比较高\"\n  },\n  {\n    \"start\": \"00:00:32,113\",\n    \"end\": \"00:00:34,454\",\n    \"lang\": \"zh\",\n    \"text\": \"所以它好像它里面的雌根是不是有一个铁\"\n  },\n  {\n    \"start\": \"00:00:35,170\",\n    \"end\": \"00:00:36,110\",\n    \"lang\": \"en\",\n    \"text\": \"Your F.E.R.\"\n  },\n  {\n    \"start\": \"00:00:43,906\",\n    \"end\": \"00:00:44,226\",\n    \"lang\": \"zh\",\n    \"text\": \"是吗\"\n  },\n  {\n    \"start\": \"00:00:50,434\",\n    \"end\": \"00:00:51,434\",\n    \"lang\": \"zh\",\n    \"text\": \"哇真的太好吃了\"\n  },\n  {\n    \"start\": \"00:00:52,494\",\n    \"end\": \"00:00:52,994\",\n    \"lang\": \"zh\",\n    \"text\": \"多汁\"\n  },\n  {\n    \"start\": \"00:00:53,874\",\n    \"end\": \"00:00:54,574\",\n    \"lang\": \"zh\",\n    \"text\": \"够味\"\n  },\n  {\n    \"start\": \"00:00:55,114\",\n    \"end\": \"00:00:56,034\",\n    \"lang\": \"zh\",\n    \"text\": \"麻辣\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,480",
+            "en": "Learn two words today",
+            "zh": "今天學兩個單詞",
+            "ar": "دراسة كلمتين اليوم"
+        },
+        {
+            "start": "00:00:02,460",
+            "end": "00:00:03,440",
+            "en": "This bean sprout",
+            "zh": "這個豆芽",
+            "ar": "هذا البرعم الفول"
+        },
+        {
+            "start": "00:00:03,440",
+            "end": "00:00:04,800",
+            "en": "How do you say in English?",
+            "zh": "用英語怎麼說",
+            "ar": "كيف تقول بالإنجليزية؟"
+        },
+        {
+            "start": "00:00:06,779",
+            "end": "00:00:07,420",
+            "en": "Bean Sprout",
+            "zh": "豆芽",
+            "ar": "البرعم الفول"
+        },
+        {
+            "start": "00:00:07,420",
+            "end": "00:00:08,160",
+            "en": "Teeth in what?",
+            "zh": "牙齒在什麼",
+            "ar": "الأسنان في ماذا؟"
+        },
+        {
+            "start": "00:00:08,160",
+            "end": "00:00:08,840",
+            "en": "Teeth",
+            "zh": "牙齒",
+            "ar": "الأسنان"
+        },
+        {
+            "start": "00:00:10,860",
+            "end": "00:00:12,200",
+            "en": "Why can't I suddenly remember?",
+            "zh": "怎麼突然想不起來",
+            "ar": "لماذا لا أستطيع تذكر فجأة؟"
+        },
+        {
+            "start": "00:00:14,220",
+            "end": "00:00:15,280",
+            "en": "The last two",
+            "zh": "後面兩個",
+            "ar": "الأخيران"
+        },
+        {
+            "start": "00:00:15,280",
+            "end": "00:00:17,100",
+            "en": "Definitely ends with u and d",
+            "zh": "肯定是u和d結尾的",
+            "ar": "بالتأكيد ينتهي بـ u و d"
+        },
+        {
+            "start": "00:00:17,826",
+            "end": "00:00:19,486",
+            "en": "What? What are we learning?",
+            "zh": "什麼？我們在学什么？",
+            "ar": "ماذا؟ ماذا سنتعلم؟"
+        },
+        {
+            "start": "00:00:20,258",
+            "end": "00:00:21,578",
+            "en": "BAM!",
+            "zh": "轟！",
+            "ar": "باه!"
+        },
+        {
+            "start": "00:00:23,298",
+            "end": "00:00:24,818",
+            "en": "And then...",
+            "zh": "然後...",
+            "ar": "ثم..."
+        },
+        {
+            "start": "00:00:24,818",
+            "end": "00:00:25,978",
+            "en": "Another word is...",
+            "zh": "另一個單詞是...",
+            "ar": "كلمة أخرى هي..."
+        },
+        {
+            "start": "00:00:26,434",
+            "end": "00:00:27,214",
+            "en": "Spinach",
+            "zh": "菠菜",
+            "ar": "السبانخ"
+        },
+        {
+            "start": "00:00:27,693",
+            "end": "00:00:28,934",
+            "en": "How do you say spinach in English?",
+            "zh": "菠菜用英语咋说",
+            "ar": "كيف تقول السبانخ بالإنجليزية؟"
+        },
+        {
+            "start": "00:00:29,453",
+            "end": "00:00:32,113",
+            "en": "I think spinach is relatively high in iron",
+            "zh": "我觉得菠菜里面它是含铁比较高",
+            "ar": "أعتقد أن السبانخ غني بالحديد نسبياً"
+        },
+        {
+            "start": "00:00:32,113",
+            "end": "00:00:34,454",
+            "en": "So, it's like it has an iron in its stamen, right?",
+            "zh": "所以它好像它里面的雌根是不是有一个铁",
+            "ar": "لذا، فإنه يشبه أن لديه حديد في سداة، أليس كذلك؟"
+        },
+        {
+            "start": "00:00:35,170",
+            "end": "00:00:36,110",
+            "en": "Your F.I.R.",
+            "zh": "你的遠紅外線",
+            "ar": "الأشعة تحت الحمراء البعيدة لك"
+        },
+        {
+            "start": "00:00:43,906",
+            "end": "00:00:44,226",
+            "en": "Is it?",
+            "zh": "是吗",
+            "ar": "هل هذا صحيح؟"
+        },
+        {
+            "start": "00:00:50,434",
+            "end": "00:00:51,434",
+            "en": "Wow, it's really delicious",
+            "zh": "哇真的太好吃了",
+            "ar": "واو، إنه لذيذ حقا"
+        },
+        {
+            "start": "00:00:52,494",
+            "end": "00:00:52,994",
+            "en": "Juicy",
+            "zh": "多汁",
+            "ar": "عصيري"
+        },
+        {
+            "start": "00:00:53,874",
+            "end": "00:00:54,574",
+            "en": "Flavorful",
+            "zh": "够味",
+            "ar": "طيب الطعم"
+        },
+        {
+            "start": "00:00:55,114",
+            "end": "00:00:56,034",
+            "en": "Spicy",
+            "zh": "麻辣",
+            "ar": "حار"
+        }
+    ]
+}

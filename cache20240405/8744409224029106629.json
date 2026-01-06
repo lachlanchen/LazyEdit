@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,760\",\n    \"lang\": \"en\",\n    \"text\": \"See the horror.\"\n  },\n  {\n    \"start\": \"00:00:02,260\",\n    \"end\": \"00:00:03,540\",\n    \"lang\": \"en\",\n    \"text\": \"See the horror.\"\n  },\n  {\n    \"start\": \"00:00:05,370\",\n    \"end\": \"00:00:06,220\",\n    \"lang\": \"en\",\n    \"text\": \"See the horror.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,760",
+            "ko": "공포를 봐."
+        },
+        {
+            "start": "00:00:02,260",
+            "end": "00:00:03,540",
+            "ko": "공포를 봐."
+        },
+        {
+            "start": "00:00:05,370",
+            "end": "00:00:06,220",
+            "ko": "공포를 봐."
+        }
+    ]
+}

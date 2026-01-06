@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,240\",\n    \"end\": \"00:00:03,380\",\n    \"lang\": \"ja\",\n    \"text\": \"今日はナンデルの日です!\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:04,660\",\n    \"lang\": \"ja\",\n    \"text\": \"ナンデルをやっています!\"\n  },\n  {\n    \"start\": \"00:00:05,666\",\n    \"end\": \"00:00:06,946\",\n    \"lang\": \"zh\",\n    \"text\": \"气氛咋说呢\"\n  },\n  {\n    \"start\": \"00:00:06,946\",\n    \"end\": \"00:00:08,226\",\n    \"lang\": \"zh\",\n    \"text\": \"强度发\"\n  },\n  {\n    \"start\": \"00:00:09,025\",\n    \"end\": \"00:00:09,685\",\n    \"lang\": \"zh\",\n    \"text\": \"轰\"\n  },\n  {\n    \"start\": \"00:00:09,685\",\n    \"end\": \"00:00:10,546\",\n    \"lang\": \"zh\",\n    \"text\": \"咚\"\n  },\n  {\n    \"start\": \"00:00:11,746\",\n    \"end\": \"00:00:12,806\",\n    \"lang\": \"en\",\n    \"text\": \"First straw.\"\n  },\n  {\n    \"start\": \"00:00:13,286\",\n    \"end\": \"00:00:13,746\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,240",
+            "end": "00:00:03,380",
+            "ja": "今日はランデルの日です!"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:04,660",
+            "ja": "ランデルをやっています!"
+        },
+        {
+            "start": "00:00:05,666",
+            "end": "00:00:06,946",
+            "ja": "雰囲気はどうだろう"
+        },
+        {
+            "start": "00:00:06,946",
+            "end": "00:00:08,226",
+            "ja": "強度は高い"
+        },
+        {
+            "start": "00:00:09,025",
+            "end": "00:00:09,685",
+            "ja": "ドカン"
+        },
+        {
+            "start": "00:00:09,685",
+            "end": "00:00:10,546",
+            "ja": "バン"
+        },
+        {
+            "start": "00:00:11,746",
+            "end": "00:00:12,806",
+            "ja": "最初の一手。"
+        },
+        {
+            "start": "00:00:13,286",
+            "end": "00:00:13,746",
+            "ja": "ありがとうございます。"
+        }
+    ]
+}

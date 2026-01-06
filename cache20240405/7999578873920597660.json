@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,920\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,600\",\n    \"end\": \"00:00:05,240\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:07,746\",\n    \"end\": \"00:00:07,926\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:07,926\",\n    \"end\": \"00:00:09,946\",\n    \"lang\": \"en\",\n    \"text\": \"nothing to share today.\"\n  },\n  {\n    \"start\": \"00:00:13,546\",\n    \"end\": \"00:00:14,366\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:15,298\",\n    \"end\": \"00:00:18,038\",\n    \"lang\": \"ja\",\n    \"text\": \"私はピンクジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:00:19,358\",\n    \"end\": \"00:00:20,058\",\n    \"lang\": \"ja\",\n    \"text\": \"ぷぬっ\"\n  },\n  {\n    \"start\": \"00:00:22,114\",\n    \"end\": \"00:00:22,794\",\n    \"lang\": \"ja\",\n    \"text\": \"食べています\"\n  },\n  {\n    \"start\": \"00:00:22,794\",\n    \"end\": \"00:00:24,974\",\n    \"lang\": \"ja\",\n    \"text\": \"ストロベリー食べています\"\n  },\n  {\n    \"start\": \"00:00:32,133\",\n    \"end\": \"00:00:33,054\",\n    \"lang\": \"ja\",\n    \"text\": \"わぁ\"\n  },\n  {\n    \"start\": \"00:00:34,214\",\n    \"end\": \"00:00:34,674\",\n    \"lang\": \"ja\",\n    \"text\": \"この\"\n  },\n  {\n    \"start\": \"00:00:36,134\",\n    \"end\": \"00:00:37,814\",\n    \"lang\": \"ja\",\n    \"text\": \"このストロベリー美味しいです\"\n  },\n  {\n    \"start\": \"00:00:43,994\",\n    \"end\": \"00:00:44,454\",\n    \"lang\": \"ja\",\n    \"text\": \"この、\"\n  },\n  {\n    \"start\": \"00:00:44,454\",\n    \"end\": \"00:00:45,254\",\n    \"lang\": \"ja\",\n    \"text\": \"この部分\"\n  },\n  {\n    \"start\": \"00:00:47,654\",\n    \"end\": \"00:00:48,994\",\n    \"lang\": \"ja\",\n    \"text\": \"このストロベリー\"\n  },\n  {\n    \"start\": \"00:00:50,882\",\n    \"end\": \"00:00:51,402\",\n    \"lang\": \"en\",\n    \"text\": \"todemo\"\n  },\n  {\n    \"start\": \"00:00:52,674\",\n    \"end\": \"00:00:53,434\",\n    \"lang\": \"ja\",\n    \"text\": \"美味しいです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,920",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير"
+        },
+        {
+            "start": "00:00:03,600",
+            "end": "00:00:05,240",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير"
+        },
+        {
+            "start": "00:00:07,746",
+            "end": "00:00:07,926",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذا،"
+        },
+        {
+            "start": "00:00:07,926",
+            "end": "00:00:09,946",
+            "en": "nothing to share today.",
+            "zh": "今天没有什么可分享的。",
+            "ar": "لا شيء للمشاركة اليوم."
+        },
+        {
+            "start": "00:00:13,546",
+            "end": "00:00:14,366",
+            "en": "And...",
+            "zh": "而且...",
+            "ar": "و..."
+        },
+        {
+            "start": "00:00:15,298",
+            "end": "00:00:18,038",
+            "en": "I'm drinking pink juice",
+            "zh": "我在喝粉红色的果汁",
+            "ar": "أنا أشرب عصير وردي"
+        },
+        {
+            "start": "00:00:19,358",
+            "end": "00:00:20,058",
+            "en": "Punnu",
+            "zh": "搞笑的声音",
+            "ar": "صوت مضحك",
+            "ja": "ぷぬっ"
+        },
+        {
+            "start": "00:00:22,114",
+            "end": "00:00:22,794",
+            "en": "I'm eating",
+            "zh": "我在吃东西",
+            "ar": "أنا آكل"
+        },
+        {
+            "start": "00:00:22,794",
+            "end": "00:00:24,974",
+            "en": "I'm eating strawberries",
+            "zh": "我在吃草莓",
+            "ar": "أنا أكل الفراولة"
+        },
+        {
+            "start": "00:00:32,133",
+            "end": "00:00:33,054",
+            "en": "Wow",
+            "zh": "哇",
+            "ar": "واو",
+            "ja": "わぁ"
+        },
+        {
+            "start": "00:00:34,214",
+            "end": "00:00:34,674",
+            "en": "This",
+            "zh": "这个",
+            "ar": "هذا",
+            "ja": "この"
+        },
+        {
+            "start": "00:00:36,134",
+            "end": "00:00:37,814",
+            "en": "This strawberry is delicious",
+            "zh": "这个草莓很好吃",
+            "ar": "هذه الفراولة لذيذة"
+        },
+        {
+            "start": "00:00:43,994",
+            "end": "00:00:44,454",
+            "en": "This,",
+            "zh": "这个，",
+            "ar": "هذا،",
+            "ja": "この、"
+        },
+        {
+            "start": "00:00:44,454",
+            "end": "00:00:45,254",
+            "en": "This part",
+            "zh": "这个部分",
+            "ar": "هذا الجزء",
+            "ja": "この部分"
+        },
+        {
+            "start": "00:00:47,654",
+            "end": "00:00:48,994",
+            "en": "This strawberry",
+            "zh": "这个草莓",
+            "ar": "هذه الفراولة",
+            "ja": "このストロベリー"
+        },
+        {
+            "start": "00:00:50,882",
+            "end": "00:00:51,402",
+            "en": "Absolutely",
+            "zh": "绝对",
+            "ar": "إطلاقا",
+            "ja": "todemo"
+        },
+        {
+            "start": "00:00:52,674",
+            "end": "00:00:53,434",
+            "en": "It's delicious",
+            "zh": "它很好吃",
+            "ar": "إنه لذيذ"
+        }
+    ]
+}

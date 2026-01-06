@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:08,100\",\n    \"lang\": \"en\",\n    \"text\": \"Never wait for this perfect moment that everything is prepared because it will never come.\"\n  },\n  {\n    \"start\": \"00:00:14,680\",\n    \"end\": \"00:00:18,960\",\n    \"lang\": \"en\",\n    \"text\": \"So allow yourself to fail,\"\n  },\n  {\n    \"start\": \"00:00:18,960\",\n    \"end\": \"00:00:20,660\",\n    \"lang\": \"en\",\n    \"text\": \"to be imperfect,\"\n  },\n  {\n    \"start\": \"00:00:20,660\",\n    \"end\": \"00:00:23,500\",\n    \"lang\": \"en\",\n    \"text\": \"to be attacked,\"\n  },\n  {\n    \"start\": \"00:00:23,500\",\n    \"end\": \"00:00:29,200\",\n    \"lang\": \"en\",\n    \"text\": \"to be to be\"\n  },\n  {\n    \"start\": \"00:00:29,200\",\n    \"end\": \"00:00:29,820\",\n    \"lang\": \"en\",\n    \"text\": \"discriminated,\"\n  },\n  {\n    \"start\": \"00:00:29,820\",\n    \"end\": \"00:00:36,040\",\n    \"lang\": \"en\",\n    \"text\": \"to be criticized by other people,\"\n  },\n  {\n    \"start\": \"00:00:36,040\",\n    \"end\": \"00:00:37,540\",\n    \"lang\": \"en\",\n    \"text\": \"by the world.\"\n  },\n  {\n    \"start\": \"00:00:38,400\",\n    \"end\": \"00:00:42,380\",\n    \"lang\": \"en\",\n    \"text\": \"So accept yourself to be imperfect.\"\n  },\n  {\n    \"start\": \"00:00:42,380\",\n    \"end\": \"00:00:48,220\",\n    \"lang\": \"en\",\n    \"text\": \"Accept failure as a normal experience in your life.\"\n  },\n  {\n    \"start\": \"00:00:54,100\",\n    \"end\": \"00:00:54,780\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:54,780\",\n    \"end\": \"00:00:55,180\",\n    \"lang\": \"en\",\n    \"text\": \"I love you.\"\n  },\n  {\n    \"start\": \"00:00:55,202\",\n    \"end\": \"00:00:57,002\",\n    \"lang\": \"en\",\n    \"text\": \"I used to want to...\"\n  },\n  {\n    \"start\": \"00:00:57,570\",\n    \"end\": \"00:01:02,550\",\n    \"lang\": \"en\",\n    \"text\": \"wait for a perfect moment to present myself to the world.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:08,100",
+            "es": "Nunca esperes a ese momento perfecto en que todo esté preparado porque nunca llegará.",
+            "fr": "N'attendez jamais le moment parfait où tout est préparé parce qu'il ne viendra jamais.",
+            "uk": "Ніколи не чекай цього ідеального моменту, коли все буде готове, бо він ніколи не настане."
+        },
+        {
+            "start": "00:00:14,680",
+            "end": "00:00:18,960",
+            "es": "Así que permítete fallar,",
+            "fr": "Alors permettez-vous d'échouer,",
+            "uk": "Тож дозволь собі провалитися,"
+        },
+        {
+            "start": "00:00:18,960",
+            "end": "00:00:20,660",
+            "es": "ser imperfecto,",
+            "fr": "être imparfait,",
+            "uk": "бути недосконалим,"
+        },
+        {
+            "start": "00:00:20,660",
+            "end": "00:00:23,500",
+            "es": "ser atacado,",
+            "fr": "être attaqué,",
+            "uk": "бути атакованим,"
+        },
+        {
+            "start": "00:00:23,500",
+            "end": "00:00:29,200",
+            "es": "ser discriminado,",
+            "fr": "être discriminé,",
+            "uk": "бути дискримінованим,"
+        },
+        {
+            "start": "00:00:29,200",
+            "end": "00:00:29,820",
+            "es": "ser discriminado,",
+            "fr": "être discriminé,",
+            "uk": "бути дискримінованим,"
+        },
+        {
+            "start": "00:00:29,820",
+            "end": "00:00:36,040",
+            "es": "ser criticado por otras personas,",
+            "fr": "être critiqué par d'autres personnes,",
+            "uk": "бути критикованим іншими людьми,"
+        },
+        {
+            "start": "00:00:36,040",
+            "end": "00:00:37,540",
+            "es": "por el mundo.",
+            "fr": "par le monde.",
+            "uk": "світом."
+        },
+        {
+            "start": "00:00:38,400",
+            "end": "00:00:42,380",
+            "es": "Así que acéptate a ti mismo como imperfecto.",
+            "fr": "Alors acceptez-vous comme étant imparfait.",
+            "uk": "Тож прийміть себе недосконалим."
+        },
+        {
+            "start": "00:00:42,380",
+            "end": "00:00:48,220",
+            "es": "Acepta el fracaso como una experiencia normal en tu vida.",
+            "fr": "Acceptez l'échec comme une expérience normale dans votre vie.",
+            "uk": "Прийми невдачу як нормальний досвід у твоєму житті."
+        },
+        {
+            "start": "00:00:54,100",
+            "end": "00:00:54,780",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:54,780",
+            "end": "00:00:55,180",
+            "es": "te amo.",
+            "fr": "je t'aime.",
+            "uk": "я тебе кохаю."
+        },
+        {
+            "start": "00:00:55,202",
+            "end": "00:00:57,002",
+            "es": "Antes quería...",
+            "fr": "Avant, je voulais...",
+            "uk": "Раніше я хотів..."
+        },
+        {
+            "start": "00:00:57,570",
+            "end": "00:01:02,550",
+            "es": "esperar a un momento perfecto para presentarme al mundo.",
+            "fr": "attendre un moment parfait pour me présenter au monde.",
+            "uk": "чекати ідеального моменту, щоб представити себе світові."
+        }
+    ]
+}

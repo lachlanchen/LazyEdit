@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,820\",\n    \"lang\": \"en\",\n    \"text\": \"I'm dying.\"\n  },\n  {\n    \"start\": \"00:00:01,820\",\n    \"end\": \"00:00:04,460\",\n    \"lang\": \"en\",\n    \"text\": \"I'm sick of shielding.\"\n  },\n  {\n    \"start\": \"00:00:06,560\",\n    \"end\": \"00:00:06,780\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:06,780\",\n    \"end\": \"00:00:10,240\",\n    \"lang\": \"en\",\n    \"text\": \"this cold sometimes almost kills me.\"\n  },\n  {\n    \"start\": \"00:00:10,700\",\n    \"end\": \"00:00:11,100\",\n    \"lang\": \"en\",\n    \"text\": \"And now,\"\n  },\n  {\n    \"start\": \"00:00:11,100\",\n    \"end\": \"00:00:13,360\",\n    \"lang\": \"en\",\n    \"text\": \"every swan...\"\n  },\n  {\n    \"start\": \"00:00:14,722\",\n    \"end\": \"00:00:15,322\",\n    \"lang\": \"zh\",\n    \"text\": \"吞口水\"\n  },\n  {\n    \"start\": \"00:00:16,742\",\n    \"end\": \"00:00:18,781\",\n    \"lang\": \"zh\",\n    \"text\": \"每一次吞口水都很疼\"\n  },\n  {\n    \"start\": \"00:00:19,642\",\n    \"end\": \"00:00:20,322\",\n    \"lang\": \"zh\",\n    \"text\": \"說話\"\n  },\n  {\n    \"start\": \"00:00:21,022\",\n    \"end\": \"00:00:22,402\",\n    \"lang\": \"zh\",\n    \"text\": \"說話也可以很疼\"\n  },\n  {\n    \"start\": \"00:00:23,042\",\n    \"end\": \"00:00:23,642\",\n    \"lang\": \"en\",\n    \"text\": \"I'm dying\"\n  },\n  {\n    \"start\": \"00:00:24,682\",\n    \"end\": \"00:00:26,102\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness\"\n  },\n  {\n    \"start\": \"00:00:27,142\",\n    \"end\": \"00:00:29,802\",\n    \"lang\": \"en\",\n    \"text\": \"But I have to use this vitamin\"\n  },\n  {\n    \"start\": \"00:00:30,442\",\n    \"end\": \"00:00:31,702\",\n    \"lang\": \"en\",\n    \"text\": \"to help me cure\"\n  },\n  {\n    \"start\": \"00:00:32,902\",\n    \"end\": \"00:00:33,542\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:33,542\",\n    \"end\": \"00:00:34,302\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  },\n  {\n    \"start\": \"00:00:37,002\",\n    \"end\": \"00:00:37,802\",\n    \"lang\": \"en\",\n    \"text\": \"See you,\"\n  },\n  {\n    \"start\": \"00:00:37,802\",\n    \"end\": \"00:00:38,162\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,820",
+            "es": "Me estoy muriendo.",
+            "fr": "Je suis en train de mourir.",
+            "uk": "Я помираю."
+        },
+        {
+            "start": "00:00:01,820",
+            "end": "00:00:04,460",
+            "es": "Estoy harto de protegerme.",
+            "fr": "J'en ai marre de me protéger.",
+            "uk": "Мені набридло ховатися."
+        },
+        {
+            "start": "00:00:06,560",
+            "end": "00:00:06,780",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:06,780",
+            "end": "00:00:10,240",
+            "es": "este frío a veces casi me mata.",
+            "fr": "ce froid parfois me tue presque.",
+            "uk": "цей холод іноді майже вбиває мене."
+        },
+        {
+            "start": "00:00:10,700",
+            "end": "00:00:11,100",
+            "es": "Y ahora,",
+            "fr": "Et maintenant,",
+            "uk": "І тепер,"
+        },
+        {
+            "start": "00:00:11,100",
+            "end": "00:00:13,360",
+            "es": "cada cisne...",
+            "fr": "chaque cygne...",
+            "uk": "кожен лебідь..."
+        },
+        {
+            "start": "00:00:14,722",
+            "end": "00:00:15,322",
+            "es": "Tragar saliva",
+            "fr": "Avaler sa salive",
+            "uk": "Ковтати слину"
+        },
+        {
+            "start": "00:00:16,742",
+            "end": "00:00:18,781",
+            "es": "Cada vez que trago saliva duele mucho",
+            "fr": "Chaque fois que j'avale, ça fait très mal",
+            "uk": "Кожен раз, коли я ковтаю, дуже боляче"
+        },
+        {
+            "start": "00:00:19,642",
+            "end": "00:00:20,322",
+            "es": "Hablar",
+            "fr": "Parler",
+            "uk": "Говорити"
+        },
+        {
+            "start": "00:00:21,022",
+            "end": "00:00:22,402",
+            "es": "Hablar también puede doler mucho",
+            "fr": "Parler peut aussi faire très mal",
+            "uk": "Говорити теж може бути дуже боляче"
+        },
+        {
+            "start": "00:00:23,042",
+            "end": "00:00:23,642",
+            "es": "Me estoy muriendo",
+            "fr": "Je suis en train de mourir",
+            "uk": "Я помираю"
+        },
+        {
+            "start": "00:00:24,682",
+            "end": "00:00:26,102",
+            "es": "Dios mío",
+            "fr": "Oh mon dieu",
+            "uk": "О, Боже мій"
+        },
+        {
+            "start": "00:00:27,142",
+            "end": "00:00:29,802",
+            "es": "Pero tengo que usar esta vitamina",
+            "fr": "Mais je dois utiliser cette vitamine",
+            "uk": "Але я маю використовувати цю вітаміну"
+        },
+        {
+            "start": "00:00:30,442",
+            "end": "00:00:31,702",
+            "es": "para ayudarme a curar",
+            "fr": "pour m'aider à guérir",
+            "uk": "щоб допомогти мені вилікуватися"
+        },
+        {
+            "start": "00:00:32,902",
+            "end": "00:00:33,542",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:33,542",
+            "end": "00:00:34,302",
+            "es": "nos vemos",
+            "fr": "à bientôt",
+            "uk": "бачимось"
+        },
+        {
+            "start": "00:00:37,002",
+            "end": "00:00:37,802",
+            "es": "Nos vemos,",
+            "fr": "À bientôt,",
+            "uk": "Бачимося,"
+        },
+        {
+            "start": "00:00:37,802",
+            "end": "00:00:38,162",
+            "es": "nos vemos",
+            "fr": "à bientôt",
+            "uk": "бачимось"
+        }
+    ]
+}

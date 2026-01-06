@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:08,100\",\n    \"lang\": \"en\",\n    \"text\": \"Never wait for this perfect moment that everything is prepared because it will never come.\"\n  },\n  {\n    \"start\": \"00:00:14,680\",\n    \"end\": \"00:00:18,960\",\n    \"lang\": \"en\",\n    \"text\": \"So allow yourself to fail,\"\n  },\n  {\n    \"start\": \"00:00:18,960\",\n    \"end\": \"00:00:20,660\",\n    \"lang\": \"en\",\n    \"text\": \"to be imperfect,\"\n  },\n  {\n    \"start\": \"00:00:20,660\",\n    \"end\": \"00:00:23,500\",\n    \"lang\": \"en\",\n    \"text\": \"to be attacked,\"\n  },\n  {\n    \"start\": \"00:00:23,500\",\n    \"end\": \"00:00:29,200\",\n    \"lang\": \"en\",\n    \"text\": \"to be to be\"\n  },\n  {\n    \"start\": \"00:00:29,200\",\n    \"end\": \"00:00:29,820\",\n    \"lang\": \"en\",\n    \"text\": \"discriminated,\"\n  },\n  {\n    \"start\": \"00:00:29,820\",\n    \"end\": \"00:00:36,040\",\n    \"lang\": \"en\",\n    \"text\": \"to be criticized by other people,\"\n  },\n  {\n    \"start\": \"00:00:36,040\",\n    \"end\": \"00:00:37,540\",\n    \"lang\": \"en\",\n    \"text\": \"by the world.\"\n  },\n  {\n    \"start\": \"00:00:38,400\",\n    \"end\": \"00:00:42,380\",\n    \"lang\": \"en\",\n    \"text\": \"So accept yourself to be imperfect.\"\n  },\n  {\n    \"start\": \"00:00:42,380\",\n    \"end\": \"00:00:48,220\",\n    \"lang\": \"en\",\n    \"text\": \"Accept failure as a normal experience in your life.\"\n  },\n  {\n    \"start\": \"00:00:54,100\",\n    \"end\": \"00:00:54,780\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:54,780\",\n    \"end\": \"00:00:55,180\",\n    \"lang\": \"en\",\n    \"text\": \"I love you.\"\n  },\n  {\n    \"start\": \"00:00:55,202\",\n    \"end\": \"00:00:57,002\",\n    \"lang\": \"en\",\n    \"text\": \"I used to want to...\"\n  },\n  {\n    \"start\": \"00:00:57,570\",\n    \"end\": \"00:01:02,550\",\n    \"lang\": \"en\",\n    \"text\": \"wait for a perfect moment to present myself to the world.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:08,100",
+            "vi": "Đừng bao giờ chờ đợi một khoảnh khắc hoàn hảo mà mọi thứ đều sẵn sàng bởi vì nó sẽ không bao giờ đến."
+        },
+        {
+            "start": "00:00:14,680",
+            "end": "00:00:18,960",
+            "vi": "Vì vậy, hãy cho phép bản thân mình thất bại,"
+        },
+        {
+            "start": "00:00:18,960",
+            "end": "00:00:20,660",
+            "vi": "để không hoàn hảo,"
+        },
+        {
+            "start": "00:00:20,660",
+            "end": "00:00:23,500",
+            "vi": "để bị tấn công,"
+        },
+        {
+            "start": "00:00:23,500",
+            "end": "00:00:29,200",
+            "vi": "để bị"
+        },
+        {
+            "start": "00:00:29,200",
+            "end": "00:00:29,820",
+            "vi": "phân biệt đối xử,"
+        },
+        {
+            "start": "00:00:29,820",
+            "end": "00:00:36,040",
+            "vi": "để bị chỉ trích bởi người khác,"
+        },
+        {
+            "start": "00:00:36,040",
+            "end": "00:00:37,540",
+            "vi": "bởi thế giới."
+        },
+        {
+            "start": "00:00:38,400",
+            "end": "00:00:42,380",
+            "vi": "Vì vậy, hãy chấp nhận bản thân mình không hoàn hảo."
+        },
+        {
+            "start": "00:00:42,380",
+            "end": "00:00:48,220",
+            "vi": "Chấp nhận thất bại như một trải nghiệm bình thường trong cuộc sống của bạn."
+        },
+        {
+            "start": "00:00:54,100",
+            "end": "00:00:54,780",
+            "vi": "Vì vậy,"
+        },
+        {
+            "start": "00:00:54,780",
+            "end": "00:00:55,180",
+            "vi": "Anh yêu em."
+        },
+        {
+            "start": "00:00:55,202",
+            "end": "00:00:57,002",
+            "vi": "Tôi đã từng muốn..."
+        },
+        {
+            "start": "00:00:57,570",
+            "end": "00:01:02,550",
+            "vi": "đợi một khoảnh khắc hoàn hảo để tự giới thiệu mình với thế giới."
+        }
+    ]
+}

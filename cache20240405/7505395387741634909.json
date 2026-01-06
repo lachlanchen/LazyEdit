@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,640\",\n    \"lang\": \"en\",\n    \"text\": \"So this is my dinner today.\"\n  },\n  {\n    \"start\": \"00:00:02,640\",\n    \"end\": \"00:00:04,180\",\n    \"lang\": \"en\",\n    \"text\": \"Four more dinners.\"\n  },\n  {\n    \"start\": \"00:00:04,180\",\n    \"end\": \"00:00:05,980\",\n    \"lang\": \"en\",\n    \"text\": \"Four more.\"\n  },\n  {\n    \"start\": \"00:00:07,680\",\n    \"end\": \"00:00:15,980\",\n    \"lang\": \"en\",\n    \"text\": \"So fight poison with poison to help me recover from this COVID symptom.\"\n  },\n  {\n    \"start\": \"00:00:18,420\",\n    \"end\": \"00:00:21,060\",\n    \"lang\": \"en\",\n    \"text\": \"I usually don't have dinner,\"\n  },\n  {\n    \"start\": \"00:00:21,060\",\n    \"end\": \"00:00:24,020\",\n    \"lang\": \"en\",\n    \"text\": \"so when I cook this,\"\n  },\n  {\n    \"start\": \"00:00:24,020\",\n    \"end\": \"00:00:27,580\",\n    \"lang\": \"en\",\n    \"text\": \"I don't have the appetite.\"\n  },\n  {\n    \"start\": \"00:00:28,520\",\n    \"end\": \"00:00:29,700\",\n    \"lang\": \"en\",\n    \"text\": \"But the smell is good,\"\n  },\n  {\n    \"start\": \"00:00:29,700\",\n    \"end\": \"00:00:31,240\",\n    \"lang\": \"en\",\n    \"text\": \"so I can eat it anyway.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,640",
+            "en": "So this is my dinner today.",
+            "zh": "所以这是我今天的晚餐。",
+            "ar": "إذًا هذا هو عشائي اليوم."
+        },
+        {
+            "start": "00:00:02,640",
+            "end": "00:00:04,180",
+            "en": "Four more dinners.",
+            "zh": "再四顿晚餐。",
+            "ar": "أربع عشاءات أخرى."
+        },
+        {
+            "start": "00:00:04,180",
+            "end": "00:00:05,980",
+            "en": "Four more.",
+            "zh": "再四个。",
+            "ar": "أربعة أخرى."
+        },
+        {
+            "start": "00:00:07,680",
+            "end": "00:00:15,980",
+            "en": "So fight poison with poison to help me recover from this COVID symptom.",
+            "zh": "所以用毒攻毒来帮助我从这个COVID症状中恢复。",
+            "ar": "إذًا، أقاوم السم بالسم لمساعدتي على التعافي من أعراض كوفيد هذه."
+        },
+        {
+            "start": "00:00:18,420",
+            "end": "00:00:21,060",
+            "en": "I usually don't have dinner,",
+            "zh": "我通常不吃晚餐，",
+            "ar": "عادة لا أتناول العشاء،"
+        },
+        {
+            "start": "00:00:21,060",
+            "end": "00:00:24,020",
+            "en": "so when I cook this,",
+            "zh": "所以当我煮这个的时候，",
+            "ar": "لذا عندما أطبخ هذا،"
+        },
+        {
+            "start": "00:00:24,020",
+            "end": "00:00:27,580",
+            "en": "I don't have the appetite.",
+            "zh": "我没有胃口。",
+            "ar": "لا أشعر بالشهية."
+        },
+        {
+            "start": "00:00:28,520",
+            "end": "00:00:29,700",
+            "en": "But the smell is good,",
+            "zh": "但是味道很好，",
+            "ar": "لكن الرائحة جيدة،"
+        },
+        {
+            "start": "00:00:29,700",
+            "end": "00:00:31,240",
+            "en": "so I can eat it anyway.",
+            "zh": "所以我无论如何都可以吃。",
+            "ar": "لذلك يمكنني تناوله على أي حال."
+        }
+    ]
+}

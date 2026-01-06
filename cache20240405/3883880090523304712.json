@@ -1,0 +1,45 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,514\",\n    \"end\": \"00:01:01,394\",\n    \"ja\": \"<何>[]でも\"\n  },\n  {\n    \"start\": \"00:01:02,534\",\n    \"end\": \"00:01:04,274\",\n    \"ja\": \"これは<何>[]？\"\n  },\n  {\n    \"start\": \"00:01:04,274\",\n    \"end\": \"00:01:05,494\",\n    \"ja\": \"わかった\"\n  },\n  {\n    \"start\": \"00:01:06,914\",\n    \"end\": \"00:01:08,834\",\n    \"ja\": \"おやすみなさい\"\n  },\n  {\n    \"start\": \"00:01:11,298\",\n    \"end\": \"00:01:15,317\",\n    \"ja\": \"これは<アスパラガス>[]だ。\"\n  },\n  {\n    \"start\": \"00:01:20,357\",\n    \"end\": \"00:01:22,018\",\n    \"ja\": \"それで<全部>[]だ。\"\n  },\n  {\n    \"start\": \"00:01:24,298\",\n    \"end\": \"00:01:29,718\",\n    \"ja\": \"これを<私>[]たちの<ビデオ>[]と<ティーザー>[]の<カバー>[]として<使>[]ってください。\"\n  },\n  {\n    \"start\": \"00:01:30,518\",\n    \"end\": \"00:01:32,778\",\n    \"ja\": \"これを<ティーザー>[]として<使>[]ってください。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,514",
+            "end": "00:01:01,394",
+            "ja": "<何>[なに]でも"
+        },
+        {
+            "start": "00:01:02,534",
+            "end": "00:01:04,274",
+            "ja": "これは<何>[なに]？"
+        },
+        {
+            "start": "00:01:04,274",
+            "end": "00:01:05,494",
+            "ja": "わかった"
+        },
+        {
+            "start": "00:01:06,914",
+            "end": "00:01:08,834",
+            "ja": "おやすみなさい"
+        },
+        {
+            "start": "00:01:11,298",
+            "end": "00:01:15,317",
+            "ja": "これは<アスパラガス>[]だ。"
+        },
+        {
+            "start": "00:01:20,357",
+            "end": "00:01:22,018",
+            "ja": "それで<全部>[ぜんぶ]だ。"
+        },
+        {
+            "start": "00:01:24,298",
+            "end": "00:01:29,718",
+            "ja": "これを<私>[わたし]たちの<ビデオ>[]と<ティーザー>[]の<カバー>[]として<使>[つか]ってください。"
+        },
+        {
+            "start": "00:01:30,518",
+            "end": "00:01:32,778",
+            "ja": "これを<ティーザー>[]として<使>[つか]ってください。"
+        }
+    ]
+}

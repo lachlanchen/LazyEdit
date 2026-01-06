@@ -1,0 +1,115 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:05:06,118\",\n    \"end\": \"00:05:07,718\",\n    \"lang\": \"en\",\n    \"text\": \"life everyday.\"\n  },\n  {\n    \"start\": \"00:05:08,398\",\n    \"end\": \"00:05:09,578\",\n    \"lang\": \"en\",\n    \"text\": \"And um...\"\n  },\n  {\n    \"start\": \"00:05:10,210\",\n    \"end\": \"00:05:10,930\",\n    \"lang\": \"ja\",\n    \"text\": \"みくねっす、\"\n  },\n  {\n    \"start\": \"00:05:10,930\",\n    \"end\": \"00:05:11,830\",\n    \"lang\": \"ja\",\n    \"text\": \"ほうちゅるり、\"\n  },\n  {\n    \"start\": \"00:05:11,830\",\n    \"end\": \"00:05:12,410\",\n    \"lang\": \"ja\",\n    \"text\": \"ぴー\"\n  },\n  {\n    \"start\": \"00:05:15,746\",\n    \"end\": \"00:05:16,766\",\n    \"lang\": \"en\",\n    \"text\": \"be comprehensive,\"\n  },\n  {\n    \"start\": \"00:05:16,766\",\n    \"end\": \"00:05:19,006\",\n    \"lang\": \"en\",\n    \"text\": \"inclusive,\"\n  },\n  {\n    \"start\": \"00:05:19,006\",\n    \"end\": \"00:05:20,746\",\n    \"lang\": \"en\",\n    \"text\": \"and fantastic.\"\n  },\n  {\n    \"start\": \"00:05:22,986\",\n    \"end\": \"00:05:26,206\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that's the right thing to do.\"\n  },\n  {\n    \"start\": \"00:05:26,506\",\n    \"end\": \"00:05:29,646\",\n    \"lang\": \"en\",\n    \"text\": \"But it doesn't mean that you don't learn,\"\n  },\n  {\n    \"start\": \"00:05:29,646\",\n    \"end\": \"00:05:30,606\",\n    \"lang\": \"en\",\n    \"text\": \"don't study.\"\n  },\n  {\n    \"start\": \"00:05:30,886\",\n    \"end\": \"00:05:31,726\",\n    \"lang\": \"en\",\n    \"text\": \"You can still study,\"\n  },\n  {\n    \"start\": \"00:05:31,726\",\n    \"end\": \"00:05:32,666\",\n    \"lang\": \"en\",\n    \"text\": \"you can still learn.\"\n  },\n  {\n    \"start\": \"00:05:33,386\",\n    \"end\": \"00:05:37,866\",\n    \"lang\": \"en\",\n    \"text\": \"It's a thing that is deep in your mind,\"\n  },\n  {\n    \"start\": \"00:05:39,466\",\n    \"end\": \"00:05:42,426\",\n    \"lang\": \"en\",\n    \"text\": \"for which you are desperate,\"\n  },\n  {\n    \"start\": \"00:05:42,426\",\n    \"end\": \"00:05:43,606\",\n    \"lang\": \"en\",\n    \"text\": \"you are crazy,\"\n  },\n  {\n    \"start\": \"00:05:43,606\",\n    \"end\": \"00:05:44,886\",\n    \"lang\": \"en\",\n    \"text\": \"you are eager.\"\n  },\n  {\n    \"start\": \"00:05:46,265\",\n    \"end\": \"00:05:48,126\",\n    \"lang\": \"en\",\n    \"text\": \"So you can still do it,\"\n  },\n  {\n    \"start\": \"00:05:48,126\",\n    \"end\": \"00:05:51,266\",\n    \"lang\": \"en\",\n    \"text\": \"you can still learn things,\"\n  },\n  {\n    \"start\": \"00:05:51,586\",\n    \"end\": \"00:05:55,746\",\n    \"lang\": \"en\",\n    \"text\": \"but it's not a thing that you escape from reality.\"\n  },\n  {\n    \"start\": \"00:05:56,525\",\n    \"end\": \"00:05:57,046\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:05:57,046\",\n    \"end\": \"00:05:58,706\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:05:06,118",
+            "end": "00:05:07,718",
+            "ko": "매일 생활."
+        },
+        {
+            "start": "00:05:08,398",
+            "end": "00:05:09,578",
+            "ko": "그리고 음..."
+        },
+        {
+            "start": "00:05:10,210",
+            "end": "00:05:10,930",
+            "ko": "미끄러지는,"
+        },
+        {
+            "start": "00:05:10,930",
+            "end": "00:05:11,830",
+            "ko": "또는 회전하는,"
+        },
+        {
+            "start": "00:05:11,830",
+            "end": "00:05:12,410",
+            "ko": "피"
+        },
+        {
+            "start": "00:05:15,746",
+            "end": "00:05:16,766",
+            "ko": "종합적이며,"
+        },
+        {
+            "start": "00:05:16,766",
+            "end": "00:05:19,006",
+            "ko": "포괄적이면서,"
+        },
+        {
+            "start": "00:05:19,006",
+            "end": "00:05:20,746",
+            "ko": "그리고 대단해."
+        },
+        {
+            "start": "00:05:22,986",
+            "end": "00:05:26,206",
+            "ko": "그게 옳은 일이라고 생각해요."
+        },
+        {
+            "start": "00:05:26,506",
+            "end": "00:05:29,646",
+            "ko": "하지만 그렇다고 해서 배우지 않는다는 뜻은 아니에요,"
+        },
+        {
+            "start": "00:05:29,646",
+            "end": "00:05:30,606",
+            "ko": "공부하지 않는다는 뜻도 아니고요."
+        },
+        {
+            "start": "00:05:30,886",
+            "end": "00:05:31,726",
+            "ko": "여전히 공부할 수 있어요,"
+        },
+        {
+            "start": "00:05:31,726",
+            "end": "00:05:32,666",
+            "ko": "여전히 배울 수 있어요."
+        },
+        {
+            "start": "00:05:33,386",
+            "end": "00:05:37,866",
+            "ko": "그것은 마음속 깊은 곳에 있는 것,"
+        },
+        {
+            "start": "00:05:39,466",
+            "end": "00:05:42,426",
+            "ko": "그것에 대해 절박한 것,"
+        },
+        {
+            "start": "00:05:42,426",
+            "end": "00:05:43,606",
+            "ko": "미치는 것,"
+        },
+        {
+            "start": "00:05:43,606",
+            "end": "00:05:44,886",
+            "ko": "열망하는 것."
+        },
+        {
+            "start": "00:05:46,265",
+            "end": "00:05:48,126",
+            "ko": "그러니까 여전히 할 수 있어요,"
+        },
+        {
+            "start": "00:05:48,126",
+            "end": "00:05:51,266",
+            "ko": "여전히 배울 수 있는 것들이 있어요,"
+        },
+        {
+            "start": "00:05:51,586",
+            "end": "00:05:55,746",
+            "ko": "하지만 그것은 현실에서 도망치는 것이 아니에요."
+        },
+        {
+            "start": "00:05:56,525",
+            "end": "00:05:57,046",
+            "ko": "알겠어요,"
+        },
+        {
+            "start": "00:05:57,046",
+            "end": "00:05:58,706",
+            "ko": "안녕."
+        }
+    ]
+}

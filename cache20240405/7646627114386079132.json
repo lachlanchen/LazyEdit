@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,780\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:00,780\",\n    \"end\": \"00:00:10,400\",\n    \"lang\": \"en\",\n    \"text\": \"first we play the main melody.\"\n  },\n  {\n    \"start\": \"00:00:10,400\",\n    \"end\": \"00:00:12,520\",\n    \"lang\": \"en\",\n    \"text\": \"Then I turn down the pitch and ring an oath.\"\n  },\n  {\n    \"start\": \"00:00:12,520\",\n    \"end\": \"00:00:28,860\",\n    \"lang\": \"en\",\n    \"text\": \"We share one ear of coffee and drink another cup of coffee.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,780",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:00:00,780",
+            "end": "00:00:10,400",
+            "en": "first we play the main melody.",
+            "zh": "首先我们演奏主旋律。",
+            "ar": "أولاً، نعزف اللحن الرئيسي."
+        },
+        {
+            "start": "00:00:10,400",
+            "end": "00:00:12,520",
+            "en": "Then I turn down the pitch and ring an oath.",
+            "zh": "然后我降低音调，奏响誓言。",
+            "ar": "ثم أخفض النغمة وأدق عهدًا."
+        },
+        {
+            "start": "00:00:12,520",
+            "end": "00:00:28,860",
+            "en": "We share one ear of coffee and drink another cup of coffee.",
+            "zh": "我们共享一杯咖啡，再喝一杯咖啡。",
+            "ar": "نشارك أذن من القهوة ونشرب فنجانًا آخر من القهوة."
+        }
+    ]
+}

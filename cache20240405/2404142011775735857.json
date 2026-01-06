@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,138\",\n    \"end\": \"00:01:00,698\",\n    \"lang\": \"ja\",\n    \"text\": \"もちテープを\"\n  },\n  {\n    \"start\": \"00:01:01,634\",\n    \"end\": \"00:01:03,234\",\n    \"lang\": \"zh\",\n    \"text\": \"有點甜甜的蔬菜吧\"\n  },\n  {\n    \"start\": \"00:01:03,234\",\n    \"end\": \"00:01:04,013\",\n    \"lang\": \"en\",\n    \"text\": \"OK\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,138",
+            "end": "00:01:00,698",
+            "ko": "모찌 테이프를"
+        },
+        {
+            "start": "00:01:01,634",
+            "end": "00:01:03,234",
+            "ko": "조금 달콤한 채소네요"
+        },
+        {
+            "start": "00:01:03,234",
+            "end": "00:01:04,013",
+            "ko": "알겠습니다"
+        }
+    ]
+}

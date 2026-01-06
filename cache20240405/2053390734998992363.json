@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:14,699\",\n    \"end\": \"00:01:16,100\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:01:26,199\",\n    \"end\": \"00:01:27,600\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:01:27,600\",\n    \"end\": \"00:01:27,860\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:01:27,860\",\n    \"end\": \"00:01:29,960\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:01:35,140\",\n    \"end\": \"00:01:36,020\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:01:36,020\",\n    \"end\": \"00:01:36,020\",\n    \"lang\": \"en\",\n    \"text\": \"And now,\"\n  },\n  {\n    \"start\": \"00:01:36,020\",\n    \"end\": \"00:01:37,240\",\n    \"lang\": \"en\",\n    \"text\": \"prepare the soup.\"\n  },\n  {\n    \"start\": \"00:01:38,260\",\n    \"end\": \"00:01:40,100\",\n    \"lang\": \"en\",\n    \"text\": \"Our most recommended noodle soup.\"\n  },\n  {\n    \"start\": \"00:01:44,300\",\n    \"end\": \"00:01:45,180\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:01:49,200\",\n    \"end\": \"00:01:50,080\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:02:11,700\",\n    \"end\": \"00:02:13,100\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:14,699",
+            "end": "00:01:16,100",
+            "vi": "Và..."
+        },
+        {
+            "start": "00:01:26,199",
+            "end": "00:01:27,600",
+            "vi": "Và..."
+        },
+        {
+            "start": "00:01:27,600",
+            "end": "00:01:27,860",
+            "vi": "Và..."
+        },
+        {
+            "start": "00:01:27,860",
+            "end": "00:01:29,960",
+            "vi": "Và..."
+        },
+        {
+            "start": "00:01:35,140",
+            "end": "00:01:36,020",
+            "vi": "Và..."
+        },
+        {
+            "start": "00:01:36,020",
+            "end": "00:01:36,020",
+            "vi": "Và bây giờ,"
+        },
+        {
+            "start": "00:01:36,020",
+            "end": "00:01:37,240",
+            "vi": "chuẩn bị súp."
+        },
+        {
+            "start": "00:01:38,260",
+            "end": "00:01:40,100",
+            "vi": "Món súp mì được khuyên dùng nhất của chúng tôi."
+        },
+        {
+            "start": "00:01:44,300",
+            "end": "00:01:45,180",
+            "vi": "Và..."
+        },
+        {
+            "start": "00:01:49,200",
+            "end": "00:01:50,080",
+            "vi": "Được."
+        },
+        {
+            "start": "00:02:11,700",
+            "end": "00:02:13,100",
+            "vi": "Và..."
+        }
+    ]
+}

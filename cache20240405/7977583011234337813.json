@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,940\",\n    \"lang\": \"en\",\n    \"text\": \"This is my breakfast today.\"\n  },\n  {\n    \"start\": \"00:00:05,780\",\n    \"end\": \"00:00:08,340\",\n    \"lang\": \"en\",\n    \"text\": \"And two buns.\"\n  },\n  {\n    \"start\": \"00:00:12,034\",\n    \"end\": \"00:00:12,314\",\n    \"lang\": \"zh\",\n    \"text\": \"拜拜\"\n  },\n  {\n    \"start\": \"00:00:14,562\",\n    \"end\": \"00:00:14,842\",\n    \"lang\": \"en\",\n    \"text\": \"One,\"\n  },\n  {\n    \"start\": \"00:00:14,842\",\n    \"end\": \"00:00:15,962\",\n    \"lang\": \"en\",\n    \"text\": \"how to say one,\"\n  },\n  {\n    \"start\": \"00:00:15,962\",\n    \"end\": \"00:00:17,082\",\n    \"lang\": \"en\",\n    \"text\": \"one this.\"\n  },\n  {\n    \"start\": \"00:00:18,662\",\n    \"end\": \"00:00:19,702\",\n    \"lang\": \"en\",\n    \"text\": \"One bottle of this.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,940",
+            "ko": "오늘 아침 식사입니다."
+        },
+        {
+            "start": "00:00:05,780",
+            "end": "00:00:08,340",
+            "ko": "그리고 빵 두 개."
+        },
+        {
+            "start": "00:00:12,034",
+            "end": "00:00:12,314",
+            "ko": "안녕."
+        },
+        {
+            "start": "00:00:14,562",
+            "end": "00:00:14,842",
+            "ko": "하나,"
+        },
+        {
+            "start": "00:00:14,842",
+            "end": "00:00:15,962",
+            "ko": "하나라고 하려면,"
+        },
+        {
+            "start": "00:00:15,962",
+            "end": "00:00:17,082",
+            "ko": "하나, 이것."
+        },
+        {
+            "start": "00:00:18,662",
+            "end": "00:00:19,702",
+            "ko": "이것 한 병."
+        }
+    ]
+}

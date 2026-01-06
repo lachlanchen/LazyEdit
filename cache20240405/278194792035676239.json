@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,080\",\n    \"lang\": \"ja\",\n    \"text\": \"海岸線を走りました\"\n  },\n  {\n    \"start\": \"00:00:02,210\",\n    \"end\": \"00:00:05,490\",\n    \"lang\": \"ja\",\n    \"text\": \"このー このピンクス\"\n  },\n  {\n    \"start\": \"00:00:06,274\",\n    \"end\": \"00:00:08,674\",\n    \"lang\": \"en\",\n    \"text\": \"Tamago and peach.\"\n  },\n  {\n    \"start\": \"00:00:09,354\",\n    \"end\": \"00:00:09,474\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:09,474\",\n    \"end\": \"00:00:11,054\",\n    \"lang\": \"en\",\n    \"text\": \"I'm over here.\"\n  },\n  {\n    \"start\": \"00:00:11,650\",\n    \"end\": \"00:00:12,730\",\n    \"lang\": \"ja\",\n    \"text\": \"ストロベリー\"\n  },\n  {\n    \"start\": \"00:00:12,770\",\n    \"end\": \"00:00:13,370\",\n    \"lang\": \"ja\",\n    \"text\": \"欠いています\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,080",
+            "ko": "해안선을 달렸어요"
+        },
+        {
+            "start": "00:00:02,210",
+            "end": "00:00:05,490",
+            "ko": "이거- 이 핑크색"
+        },
+        {
+            "start": "00:00:06,274",
+            "end": "00:00:08,674",
+            "ko": "타마고와 복숭아."
+        },
+        {
+            "start": "00:00:09,354",
+            "end": "00:00:09,474",
+            "ko": "오,"
+        },
+        {
+            "start": "00:00:09,474",
+            "end": "00:00:11,054",
+            "ko": "여기 있어요."
+        },
+        {
+            "start": "00:00:11,650",
+            "end": "00:00:12,730",
+            "ko": "스트로베리"
+        },
+        {
+            "start": "00:00:12,770",
+            "end": "00:00:13,370",
+            "ko": "빠져있어요"
+        }
+    ]
+}

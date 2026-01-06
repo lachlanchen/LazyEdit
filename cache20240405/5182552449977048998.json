@@ -1,0 +1,83 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,140\",\n    \"end\": \"00:00:02,620\",\n    \"lang\": \"en\",\n    \"text\": \"I'm gonna have to get more um preparing.\"\n  },\n  {\n    \"start\": \"00:00:02,658\",\n    \"end\": \"00:00:05,338\",\n    \"lang\": \"ja\",\n    \"text\": \"マストーはクラスターチーニです\"\n  },\n  {\n    \"start\": \"00:00:05,410\",\n    \"end\": \"00:00:06,090\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:07,234\",\n    \"end\": \"00:00:08,154\",\n    \"lang\": \"zh\",\n    \"text\": \"一些胡椒\"\n  },\n  {\n    \"start\": \"00:00:08,794\",\n    \"end\": \"00:00:09,634\",\n    \"lang\": \"zh\",\n    \"text\": \"胡椒\"\n  },\n  {\n    \"start\": \"00:00:09,814\",\n    \"end\": \"00:00:11,154\",\n    \"lang\": \"zh\",\n    \"text\": \"辣椒 大蒜\"\n  },\n  {\n    \"start\": \"00:00:11,314\",\n    \"end\": \"00:00:11,734\",\n    \"lang\": \"zh\",\n    \"text\": \"生姜\"\n  },\n  {\n    \"start\": \"00:00:13,986\",\n    \"end\": \"00:00:14,226\",\n    \"lang\": \"en\",\n    \"text\": \"So.\"\n  },\n  {\n    \"start\": \"00:00:14,882\",\n    \"end\": \"00:00:16,502\",\n    \"lang\": \"zh\",\n    \"text\": \"没有没有放花椒\"\n  },\n  {\n    \"start\": \"00:00:18,434\",\n    \"end\": \"00:00:19,894\",\n    \"lang\": \"en\",\n    \"text\": \"My mouth is already watering\"\n  },\n  {\n    \"start\": \"00:00:21,974\",\n    \"end\": \"00:00:22,554\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,140",
+            "end": "00:00:02,620",
+            "en": "I'm gonna have to get more um preparing.",
+            "zh": "我得准备更多的东西。",
+            "ar": "سأحتاج إلى التحضير أكثر."
+        },
+        {
+            "start": "00:00:02,658",
+            "end": "00:00:05,338",
+            "en": "Mustard is a key ingredient.",
+            "zh": "芥末是关键成分。",
+            "ar": "الخردل مكون أساسي.",
+            "ja": "マストーはクラスターチーニです"
+        },
+        {
+            "start": "00:00:05,410",
+            "end": "00:00:06,090",
+            "en": "And...",
+            "zh": "还有...",
+            "ar": "و..."
+        },
+        {
+            "start": "00:00:07,234",
+            "end": "00:00:08,154",
+            "en": "Some pepper",
+            "zh": "一些胡椒",
+            "ar": "بعض الفلفل"
+        },
+        {
+            "start": "00:00:08,794",
+            "end": "00:00:09,634",
+            "en": "Pepper",
+            "zh": "胡椒",
+            "ar": "الفلفل"
+        },
+        {
+            "start": "00:00:09,814",
+            "end": "00:00:11,154",
+            "en": "Chili, Garlic",
+            "zh": "辣椒 大蒜",
+            "ar": "الفلفل الحار، الثوم"
+        },
+        {
+            "start": "00:00:11,314",
+            "end": "00:00:11,734",
+            "en": "Ginger",
+            "zh": "生姜",
+            "ar": "الزنجبيل"
+        },
+        {
+            "start": "00:00:13,986",
+            "end": "00:00:14,226",
+            "en": "So.",
+            "zh": "所以。",
+            "ar": "إذًا."
+        },
+        {
+            "start": "00:00:14,882",
+            "end": "00:00:16,502",
+            "en": "Did not add Sichuan pepper",
+            "zh": "没有没有放花椒",
+            "ar": "لم أضف الفلفل السيشوان"
+        },
+        {
+            "start": "00:00:18,434",
+            "end": "00:00:19,894",
+            "en": "My mouth is already watering",
+            "zh": "我现在已经开始流口水了",
+            "ar": "فمي يسيل لعابه بالفعل"
+        },
+        {
+            "start": "00:00:21,974",
+            "end": "00:00:22,554",
+            "en": "Okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        }
+    ]
+}

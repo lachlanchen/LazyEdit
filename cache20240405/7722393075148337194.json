@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:25,110\",\n    \"end\": \"00:03:26,070\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  },\n  {\n    \"start\": \"00:03:30,530\",\n    \"end\": \"00:03:31,010\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:03:31,010\",\n    \"end\": \"00:03:31,510\",\n    \"lang\": \"en\",\n    \"text\": \"it's wrong.\"\n  },\n  {\n    \"start\": \"00:03:33,830\",\n    \"end\": \"00:03:34,350\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:03:34,350\",\n    \"end\": \"00:03:34,850\",\n    \"lang\": \"en\",\n    \"text\": \"it's wrong.\"\n  },\n  {\n    \"start\": \"00:03:34,850\",\n    \"end\": \"00:03:36,270\",\n    \"lang\": \"en\",\n    \"text\": \"Let's play again.\"\n  },\n  {\n    \"start\": \"00:03:52,750\",\n    \"end\": \"00:03:53,790\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  },\n  {\n    \"start\": \"00:03:53,790\",\n    \"end\": \"00:03:57,310\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  },\n  {\n    \"start\": \"00:03:58,790\",\n    \"end\": \"00:03:59,630\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:03:59,630\",\n    \"end\": \"00:04:01,190\",\n    \"lang\": \"en\",\n    \"text\": \"this is better.\"\n  },\n  {\n    \"start\": \"00:04:12,010\",\n    \"end\": \"00:04:14,810\",\n    \"lang\": \"en\",\n    \"text\": \"🎵Guitar music🎵\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:03:25,110",
+            "end": "00:03:26,070",
+            "en": "🎵Guitar music🎵",
+            "zh": "🎵吉他音乐🎵",
+            "ar": "🎵موسيقى الجيتار🎵"
+        },
+        {
+            "start": "00:03:30,530",
+            "end": "00:03:31,010",
+            "en": "Sorry,",
+            "zh": "对不起，",
+            "ar": "عذرًا،"
+        },
+        {
+            "start": "00:03:31,010",
+            "end": "00:03:31,510",
+            "en": "it's wrong.",
+            "zh": "这是错的。",
+            "ar": "هذا خطأ."
+        },
+        {
+            "start": "00:03:33,830",
+            "end": "00:03:34,350",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:03:34,350",
+            "end": "00:03:34,850",
+            "en": "it's wrong.",
+            "zh": "这是错的。",
+            "ar": "هذا خطأ."
+        },
+        {
+            "start": "00:03:34,850",
+            "end": "00:03:36,270",
+            "en": "Let's play again.",
+            "zh": "我们再玩一次。",
+            "ar": "لنلعب مرة أخرى."
+        },
+        {
+            "start": "00:03:52,750",
+            "end": "00:03:53,790",
+            "en": "🎵Guitar music🎵",
+            "zh": "🎵吉他音乐🎵",
+            "ar": "🎵موسيقى الجيتار🎵"
+        },
+        {
+            "start": "00:03:53,790",
+            "end": "00:03:57,310",
+            "en": "🎵Guitar music🎵",
+            "zh": "🎵吉他音乐🎵",
+            "ar": "🎵موسيقى الجيتار🎵"
+        },
+        {
+            "start": "00:03:58,790",
+            "end": "00:03:59,630",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:03:59,630",
+            "end": "00:04:01,190",
+            "en": "this is better.",
+            "zh": "这个更好。",
+            "ar": "هذا أفضل."
+        },
+        {
+            "start": "00:04:12,010",
+            "end": "00:04:14,810",
+            "en": "🎵Guitar music🎵",
+            "zh": "🎵吉他音乐🎵",
+            "ar": "🎵موسيقى الجيتار🎵"
+        }
+    ]
+}

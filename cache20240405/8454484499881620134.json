@@ -1,0 +1,25 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,120\",\n    \"ja\": \"すべての<人>[]々、\"\n  },\n  {\n    \"start\": \"00:00:01,120\",\n    \"end\": \"00:00:02,480\",\n    \"ja\": \"<私>[]が<探>[]している。\"\n  },\n  {\n    \"start\": \"00:00:03,720\",\n    \"end\": \"00:00:04,620\",\n    \"ja\": \"すべての<人>[]々、\"\n  },\n  {\n    \"start\": \"00:00:04,620\",\n    \"end\": \"00:00:06,360\",\n    \"ja\": \"<私>[]が<探>[]している。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,120",
+            "ja": "すべての<人>[ひと]々、"
+        },
+        {
+            "start": "00:00:01,120",
+            "end": "00:00:02,480",
+            "ja": "<私>[わたし]が<探>[さが]している。"
+        },
+        {
+            "start": "00:00:03,720",
+            "end": "00:00:04,620",
+            "ja": "すべての<人>[ひと]々、"
+        },
+        {
+            "start": "00:00:04,620",
+            "end": "00:00:06,360",
+            "ja": "<私>[わたし]が<探>[さが]している。"
+        }
+    ]
+}

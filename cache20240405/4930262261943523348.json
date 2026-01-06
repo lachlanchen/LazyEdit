@@ -1,0 +1,25 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,580\",\n    \"end\": \"00:00:02,420\",\n    \"ja\": \"この<上>[]にはまだ<一層>[]の<雲>[]があるね\"\n  },\n  {\n    \"start\": \"00:00:04,834\",\n    \"end\": \"00:00:05,094\",\n    \"ja\": \"はい。\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:07,874\",\n    \"ja\": \"<集中石>[]から<取>[]り<出>[]したばかりの\"\n  },\n  {\n    \"start\": \"00:00:07,874\",\n    \"end\": \"00:00:08,974\",\n    \"ja\": \"<一種>[]を<見>[]つけた\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,580",
+            "end": "00:00:02,420",
+            "ja": "この<上>[うえ]にはまだ<一層>[いっそう]の<雲>[くも]があるね"
+        },
+        {
+            "start": "00:00:04,834",
+            "end": "00:00:05,094",
+            "ja": "はい。"
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:07,874",
+            "ja": "<集中石>[しゅうちゅうせき]から<取>[と]り<出>[だ]したばかりの"
+        },
+        {
+            "start": "00:00:07,874",
+            "end": "00:00:08,974",
+            "ja": "<一種>[いっしゅ]を<見>[み]つけた"
+        }
+    ]
+}

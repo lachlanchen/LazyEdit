@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:14,174\",\n    \"end\": \"00:03:15,314\",\n    \"lang\": \"en\",\n    \"text\": \"If I have a chance,\"\n  },\n  {\n    \"start\": \"00:03:15,314\",\n    \"end\": \"00:03:18,274\",\n    \"lang\": \"en\",\n    \"text\": \"I would like to serve you guys one of these noodles.\"\n  },\n  {\n    \"start\": \"00:03:21,693\",\n    \"end\": \"00:03:23,714\",\n    \"lang\": \"en\",\n    \"text\": \"If I don't have any...\"\n  },\n  {\n    \"start\": \"00:03:28,794\",\n    \"end\": \"00:03:30,314\",\n    \"lang\": \"en\",\n    \"text\": \"Daily life?\"\n  },\n  {\n    \"start\": \"00:03:31,314\",\n    \"end\": \"00:03:34,894\",\n    \"lang\": \"en\",\n    \"text\": \"It's not to do science,\"\n  },\n  {\n    \"start\": \"00:03:34,894\",\n    \"end\": \"00:03:38,214\",\n    \"lang\": \"en\",\n    \"text\": \"not to care about your living.\"\n  },\n  {\n    \"start\": \"00:03:42,274\",\n    \"end\": \"00:03:42,814\",\n    \"lang\": \"zh\",\n    \"text\": \"我加個視頻\"\n  },\n  {\n    \"start\": \"00:03:46,914\",\n    \"end\": \"00:03:50,734\",\n    \"lang\": \"en\",\n    \"text\": \"I just made this cooker,\"\n  },\n  {\n    \"start\": \"00:03:50,734\",\n    \"end\": \"00:03:52,714\",\n    \"lang\": \"en\",\n    \"text\": \"prepared this cooker,\"\n  },\n  {\n    \"start\": \"00:03:52,714\",\n    \"end\": \"00:03:54,014\",\n    \"lang\": \"en\",\n    \"text\": \"this oven,\"\n  },\n  {\n    \"start\": \"00:03:54,014\",\n    \"end\": \"00:03:59,274\",\n    \"lang\": \"en\",\n    \"text\": \"this inducer.\"\n  },\n  {\n    \"start\": \"00:04:00,162\",\n    \"end\": \"00:04:00,982\",\n    \"lang\": \"zh\",\n    \"text\": \"謝謝大家\"\n  },\n  {\n    \"start\": \"00:04:02,050\",\n    \"end\": \"00:04:04,690\",\n    \"lang\": \"en\",\n    \"text\": \"I just prepared induction cooker and the cooker for you guys\"\n  },\n  {\n    \"start\": \"00:04:07,410\",\n    \"end\": \"00:04:07,770\",\n    \"lang\": \"en\",\n    \"text\": \"Free\"\n  },\n  {\n    \"start\": \"00:04:08,190\",\n    \"end\": \"00:04:09,090\",\n    \"lang\": \"en\",\n    \"text\": \"You free\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:03:14,174",
+            "end": "00:03:15,314",
+            "en": "If I have a chance,",
+            "zh": "如果我有机会，",
+            "ar": "إذا كان لدي فرصة،"
+        },
+        {
+            "start": "00:03:15,314",
+            "end": "00:03:18,274",
+            "en": "I would like to serve you guys one of these noodles.",
+            "zh": "我想为你们做这些面条中的一种。",
+            "ar": "أود أن أقدم لكم واحدة من هذه النودلز."
+        },
+        {
+            "start": "00:03:21,693",
+            "end": "00:03:23,714",
+            "en": "If I don't have any...",
+            "zh": "如果我没有任何...",
+            "ar": "إذا لم يكن لدي أي..."
+        },
+        {
+            "start": "00:03:28,794",
+            "end": "00:03:30,314",
+            "en": "Daily life?",
+            "zh": "日常生活？",
+            "ar": "الحياة اليومية؟"
+        },
+        {
+            "start": "00:03:31,314",
+            "end": "00:03:34,894",
+            "en": "It's not to do science,",
+            "zh": "这不是做科学，",
+            "ar": "ليس للقيام بالعلم،"
+        },
+        {
+            "start": "00:03:34,894",
+            "end": "00:03:38,214",
+            "en": "not to care about your living.",
+            "zh": "不关心你的生活。",
+            "ar": "لا تهتم بمعيشتك."
+        },
+        {
+            "start": "00:03:42,274",
+            "end": "00:03:42,814",
+            "en": "I'll add a video",
+            "zh": "我加个视频",
+            "ar": "سأضيف فيديو"
+        },
+        {
+            "start": "00:03:46,914",
+            "end": "00:03:50,734",
+            "en": "I just made this cooker,",
+            "zh": "我刚做了这个炊具，",
+            "ar": "لقد صنعت هذا الطباخ للتو،"
+        },
+        {
+            "start": "00:03:50,734",
+            "end": "00:03:52,714",
+            "en": "prepared this cooker,",
+            "zh": "准备了这个炊具，",
+            "ar": "أعددت هذا الطباخ،"
+        },
+        {
+            "start": "00:03:52,714",
+            "end": "00:03:54,014",
+            "en": "this oven,",
+            "zh": "这个烤箱，",
+            "ar": "هذا الفرن،"
+        },
+        {
+            "start": "00:03:54,014",
+            "end": "00:03:59,274",
+            "en": "this inducer.",
+            "zh": "这个诱导器。",
+            "ar": "هذا المُحفِز."
+        },
+        {
+            "start": "00:04:00,162",
+            "end": "00:04:00,982",
+            "en": "Thank you everyone",
+            "zh": "謝謝大家",
+            "ar": "شكراً للجميع"
+        },
+        {
+            "start": "00:04:02,050",
+            "end": "00:04:04,690",
+            "en": "I just prepared induction cooker and the cooker for you guys",
+            "zh": "我刚为你们准备了电磁炉和炊具",
+            "ar": "لقد أعددت لكم للتو موقد الحث والطباخ"
+        },
+        {
+            "start": "00:04:07,410",
+            "end": "00:04:07,770",
+            "en": "Free",
+            "zh": "免费",
+            "ar": "مجاناً"
+        },
+        {
+            "start": "00:04:08,190",
+            "end": "00:04:09,090",
+            "en": "You free",
+            "zh": "你自由",
+            "ar": "أنت حر"
+        }
+    ]
+}

@@ -1,0 +1,111 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"en\",\n    \"text\": \"So never wait for this perfect moment,\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:06,180\",\n    \"lang\": \"en\",\n    \"text\": \"that everything is prepared,\"\n  },\n  {\n    \"start\": \"00:00:06,180\",\n    \"end\": \"00:00:08,360\",\n    \"lang\": \"en\",\n    \"text\": \"because it will never come.\"\n  },\n  {\n    \"start\": \"00:00:12,360\",\n    \"end\": \"00:00:16,900\",\n    \"lang\": \"en\",\n    \"text\": \"So you will find yourself in this journey,\"\n  },\n  {\n    \"start\": \"00:00:16,900\",\n    \"end\": \"00:00:19,660\",\n    \"lang\": \"en\",\n    \"text\": \"that being attacked,\"\n  },\n  {\n    \"start\": \"00:00:19,660\",\n    \"end\": \"00:00:20,860\",\n    \"lang\": \"en\",\n    \"text\": \"being criticized,\"\n  },\n  {\n    \"start\": \"00:00:20,860\",\n    \"end\": \"00:00:22,880\",\n    \"lang\": \"en\",\n    \"text\": \"being humiliated,\"\n  },\n  {\n    \"start\": \"00:00:22,880\",\n    \"end\": \"00:00:27,560\",\n    \"lang\": \"en\",\n    \"text\": \"being imperfect.\"\n  },\n  {\n    \"start\": \"00:00:30,439\",\n    \"end\": \"00:00:32,360\",\n    \"lang\": \"en\",\n    \"text\": \"Present yourself to the world.\"\n  },\n  {\n    \"start\": \"00:00:33,442\",\n    \"end\": \"00:00:33,842\",\n    \"lang\": \"ja\",\n    \"text\": \"しゅい\"\n  },\n  {\n    \"start\": \"00:00:44,098\",\n    \"end\": \"00:00:45,458\",\n    \"lang\": \"en\",\n    \"text\": \"Allow yourself to fail,\"\n  },\n  {\n    \"start\": \"00:00:45,458\",\n    \"end\": \"00:00:48,378\",\n    \"lang\": \"en\",\n    \"text\": \"to be imperfect.\"\n  },\n  {\n    \"start\": \"00:00:52,978\",\n    \"end\": \"00:00:55,798\",\n    \"lang\": \"en\",\n    \"text\": \"The world will end in dust.\"\n  },\n  {\n    \"start\": \"00:00:56,618\",\n    \"end\": \"00:00:57,658\",\n    \"lang\": \"en\",\n    \"text\": \"Nothing is important.\"\n  },\n  {\n    \"start\": \"00:00:57,658\",\n    \"end\": \"00:00:59,578\",\n    \"lang\": \"en\",\n    \"text\": \"Everything is meaningless.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,780",
+            "en": "So never wait for this perfect moment,",
+            "zh": "所以永远不要等待这个完美的时刻，",
+            "ar": "لذا لا تنتظر هذه اللحظة المثالية أبدًا،"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:06,180",
+            "en": "that everything is prepared,",
+            "zh": "一切都准备好了，",
+            "ar": "أن كل شيء جاهز،"
+        },
+        {
+            "start": "00:00:06,180",
+            "end": "00:00:08,360",
+            "en": "because it will never come.",
+            "zh": "因为它永远不会来。",
+            "ar": "لأنها لن تأتي أبدًا."
+        },
+        {
+            "start": "00:00:12,360",
+            "end": "00:00:16,900",
+            "en": "So you will find yourself in this journey,",
+            "zh": "所以你会在这个旅程中找到自己，",
+            "ar": "لذا ستجد نفسك في هذه الرحلة،"
+        },
+        {
+            "start": "00:00:16,900",
+            "end": "00:00:19,660",
+            "en": "that being attacked,",
+            "zh": "即遭到攻击，",
+            "ar": "أن يتم الهجوم عليك،"
+        },
+        {
+            "start": "00:00:19,660",
+            "end": "00:00:20,860",
+            "en": "being criticized,",
+            "zh": "受到批评，",
+            "ar": "يتم انتقادك،"
+        },
+        {
+            "start": "00:00:20,860",
+            "end": "00:00:22,880",
+            "en": "being humiliated,",
+            "zh": "受到羞辱，",
+            "ar": "تتعرض للإهانة،"
+        },
+        {
+            "start": "00:00:22,880",
+            "end": "00:00:27,560",
+            "en": "being imperfect.",
+            "zh": "不完美。",
+            "ar": "عدم كونك كاملًا."
+        },
+        {
+            "start": "00:00:30,439",
+            "end": "00:00:32,360",
+            "en": "Present yourself to the world.",
+            "zh": "向世界展示你自己。",
+            "ar": "قدم نفسك للعالم."
+        },
+        {
+            "start": "00:00:33,442",
+            "end": "00:00:33,842",
+            "en": "Realize",
+            "zh": "意识到",
+            "ar": "إدراك",
+            "ja": "しゅい"
+        },
+        {
+            "start": "00:00:44,098",
+            "end": "00:00:45,458",
+            "en": "Allow yourself to fail,",
+            "zh": "允许自己失败，",
+            "ar": "اسمح لنفسك بالفشل،"
+        },
+        {
+            "start": "00:00:45,458",
+            "end": "00:00:48,378",
+            "en": "to be imperfect.",
+            "zh": "允许自己不完美。",
+            "ar": "أن تكون غير كامل."
+        },
+        {
+            "start": "00:00:52,978",
+            "end": "00:00:55,798",
+            "en": "The world will end in dust.",
+            "zh": "世界将以尘埃结束。",
+            "ar": "سينتهي العالم في الغبار."
+        },
+        {
+            "start": "00:00:56,618",
+            "end": "00:00:57,658",
+            "en": "Nothing is important.",
+            "zh": "没有什么是重要的。",
+            "ar": "لا شيء مهم."
+        },
+        {
+            "start": "00:00:57,658",
+            "end": "00:00:59,578",
+            "en": "Everything is meaningless.",
+            "zh": "一切都没有意义。",
+            "ar": "كل شيء لا معنى له."
+        }
+    ]
+}

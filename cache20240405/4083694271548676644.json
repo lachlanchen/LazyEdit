@@ -1,0 +1,40 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,660\",\n    \"ja\": \"しかし、それは<パラグラフ>[]を<持>[]つ<バスケットマン>[]だった、\"\n  },\n  {\n    \"start\": \"00:00:05,120\",\n    \"end\": \"00:00:05,960\",\n    \"ja\": \"<グラインダー>[]、\"\n  },\n  {\n    \"start\": \"00:00:05,960\",\n    \"end\": \"00:00:08,640\",\n    \"ja\": \"そして<ニンジン>[]。\"\n  },\n  {\n    \"start\": \"00:00:09,740\",\n    \"end\": \"00:00:10,640\",\n    \"ja\": \"そしてまた、\"\n  },\n  {\n    \"start\": \"00:00:10,640\",\n    \"end\": \"00:00:12,560\",\n    \"ja\": \"あ、\"\n  },\n  {\n    \"start\": \"00:00:12,560\",\n    \"end\": \"00:00:13,100\",\n    \"ja\": \"<忘>[]れた、\"\n  },\n  {\n    \"start\": \"00:00:13,100\",\n    \"end\": \"00:00:13,660\",\n    \"ja\": \"<オーケー>[]。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,660",
+            "ja": "しかし、それは<パラシュート>[パラシュート]を<持>[も]つ<バスケットボール>[バスケットボール]マンだった、"
+        },
+        {
+            "start": "00:00:05,120",
+            "end": "00:00:05,960",
+            "ja": "<グラインダー>[グラインダー]、"
+        },
+        {
+            "start": "00:00:05,960",
+            "end": "00:00:08,640",
+            "ja": "そして<人参>[ニンジン]。"
+        },
+        {
+            "start": "00:00:09,740",
+            "end": "00:00:10,640",
+            "ja": "そしてまた、"
+        },
+        {
+            "start": "00:00:10,640",
+            "end": "00:00:12,560",
+            "ja": "あ、"
+        },
+        {
+            "start": "00:00:12,560",
+            "end": "00:00:13,100",
+            "ja": "<忘>[わす]れた、"
+        },
+        {
+            "start": "00:00:13,100",
+            "end": "00:00:13,660",
+            "ja": "<オーケー>[オーケー]。"
+        }
+    ]
+}

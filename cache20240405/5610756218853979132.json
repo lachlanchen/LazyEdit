@@ -1,0 +1,173 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,440\",\n    \"end\": \"00:01:01,720\",\n    \"lang\": \"en\",\n    \"text\": \"Actually,\"\n  },\n  {\n    \"start\": \"00:01:01,720\",\n    \"end\": \"00:01:02,280\",\n    \"lang\": \"en\",\n    \"text\": \"I believe.\"\n  },\n  {\n    \"start\": \"00:01:02,280\",\n    \"end\": \"00:01:06,240\",\n    \"lang\": \"en\",\n    \"text\": \"I can't give the same as they expected to them.\"\n  },\n  {\n    \"start\": \"00:01:06,240\",\n    \"end\": \"00:01:08,860\",\n    \"lang\": \"en\",\n    \"text\": \"Because...\"\n  },\n  {\n    \"start\": \"00:01:10,434\",\n    \"end\": \"00:01:10,694\",\n    \"lang\": \"ja\",\n    \"text\": \"はい、\"\n  },\n  {\n    \"start\": \"00:01:10,694\",\n    \"end\": \"00:01:10,934\",\n    \"lang\": \"ja\",\n    \"text\": \"じゃあ、\"\n  },\n  {\n    \"start\": \"00:01:10,934\",\n    \"end\": \"00:01:11,414\",\n    \"lang\": \"ja\",\n    \"text\": \"スティーブ\"\n  },\n  {\n    \"start\": \"00:01:12,482\",\n    \"end\": \"00:01:14,462\",\n    \"lang\": \"en\",\n    \"text\": \"is casually be myself.\"\n  },\n  {\n    \"start\": \"00:01:15,282\",\n    \"end\": \"00:01:20,122\",\n    \"lang\": \"en\",\n    \"text\": \"So accidentally I can provide some value for some people,\"\n  },\n  {\n    \"start\": \"00:01:20,342\",\n    \"end\": \"00:01:21,842\",\n    \"lang\": \"en\",\n    \"text\": \"but not any much more.\"\n  },\n  {\n    \"start\": \"00:01:24,962\",\n    \"end\": \"00:01:26,822\",\n    \"lang\": \"en\",\n    \"text\": \"And so I,\"\n  },\n  {\n    \"start\": \"00:01:26,822\",\n    \"end\": \"00:01:30,522\",\n    \"lang\": \"en\",\n    \"text\": \"freedom is quite an important element in my life.\"\n  },\n  {\n    \"start\": \"00:01:31,262\",\n    \"end\": \"00:01:32,182\",\n    \"lang\": \"en\",\n    \"text\": \"Financial freedom,\"\n  },\n  {\n    \"start\": \"00:01:32,182\",\n    \"end\": \"00:01:32,762\",\n    \"lang\": \"en\",\n    \"text\": \"sex,\"\n  },\n  {\n    \"start\": \"00:01:32,762\",\n    \"end\": \"00:01:33,442\",\n    \"lang\": \"en\",\n    \"text\": \"love,\"\n  },\n  {\n    \"start\": \"00:01:33,442\",\n    \"end\": \"00:01:34,211\",\n    \"lang\": \"en\",\n    \"text\": \"and what?\"\n  },\n  {\n    \"start\": \"00:01:38,202\",\n    \"end\": \"00:01:39,682\",\n    \"lang\": \"en\",\n    \"text\": \"And thinking,\"\n  },\n  {\n    \"start\": \"00:01:39,682\",\n    \"end\": \"00:01:41,842\",\n    \"lang\": \"en\",\n    \"text\": \"thinking freely and,\"\n  },\n  {\n    \"start\": \"00:01:42,482\",\n    \"end\": \"00:01:46,802\",\n    \"lang\": \"en\",\n    \"text\": \"thinking freely and also research freedom.\"\n  },\n  {\n    \"start\": \"00:01:53,721\",\n    \"end\": \"00:01:54,202\",\n    \"lang\": \"en\",\n    \"text\": \"This is,\"\n  },\n  {\n    \"start\": \"00:01:54,202\",\n    \"end\": \"00:01:55,142\",\n    \"lang\": \"en\",\n    \"text\": \"this is tasty,\"\n  },\n  {\n    \"start\": \"00:01:55,142\",\n    \"end\": \"00:01:56,302\",\n    \"lang\": \"en\",\n    \"text\": \"gorgeous really.\"\n  },\n  {\n    \"start\": \"00:01:57,782\",\n    \"end\": \"00:01:59,242\",\n    \"lang\": \"en\",\n    \"text\": \"So what is a freedom?\"\n  },\n  {\n    \"start\": \"00:02:00,502\",\n    \"end\": \"00:02:01,782\",\n    \"lang\": \"en\",\n    \"text\": \"But a freedom is not a,\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,440",
+            "end": "00:01:01,720",
+            "es": "De hecho,",
+            "fr": "En fait,",
+            "uk": "Насправді,"
+        },
+        {
+            "start": "00:01:01,720",
+            "end": "00:01:02,280",
+            "es": "Yo creo.",
+            "fr": "Je crois.",
+            "uk": "Я вірю."
+        },
+        {
+            "start": "00:01:02,280",
+            "end": "00:01:06,240",
+            "es": "No puedo darles lo mismo que esperaban.",
+            "fr": "Je ne peux pas leur donner ce qu'ils attendaient.",
+            "uk": "Я не можу дати їм того, чого вони очікували."
+        },
+        {
+            "start": "00:01:06,240",
+            "end": "00:01:08,860",
+            "es": "Porque...",
+            "fr": "Parce que...",
+            "uk": "Тому що..."
+        },
+        {
+            "start": "00:01:10,434",
+            "end": "00:01:10,694",
+            "es": "Sí,",
+            "fr": "Oui,",
+            "uk": "Так,"
+        },
+        {
+            "start": "00:01:10,694",
+            "end": "00:01:10,934",
+            "es": "entonces,",
+            "fr": "alors,",
+            "uk": "отже,"
+        },
+        {
+            "start": "00:01:10,934",
+            "end": "00:01:11,414",
+            "es": "Steve",
+            "fr": "Steve",
+            "uk": "Стів"
+        },
+        {
+            "start": "00:01:12,482",
+            "end": "00:01:14,462",
+            "es": "simplemente puedo ser yo mismo.",
+            "fr": "je peux juste être moi-même.",
+            "uk": "я просто можу бути собою."
+        },
+        {
+            "start": "00:01:15,282",
+            "end": "00:01:20,122",
+            "es": "Así que accidentalmente puedo proporcionar algún valor para algunas personas,",
+            "fr": "Donc, par accident, je peux apporter de la valeur à certaines personnes,",
+            "uk": "Таким чином, випадково я можу надати деяку цінність для деяких людей,"
+        },
+        {
+            "start": "00:01:20,342",
+            "end": "00:01:21,842",
+            "es": "pero no mucho más.",
+            "fr": "mais pas beaucoup plus.",
+            "uk": "але не набагато більше."
+        },
+        {
+            "start": "00:01:24,962",
+            "end": "00:01:26,822",
+            "es": "Y así, yo,",
+            "fr": "Et donc, moi,",
+            "uk": "Отже, я,"
+        },
+        {
+            "start": "00:01:26,822",
+            "end": "00:01:30,522",
+            "es": "la libertad es un elemento bastante importante en mi vida.",
+            "fr": "la liberté est un élément assez important dans ma vie.",
+            "uk": "свобода є досить важливим елементом у моєму житті."
+        },
+        {
+            "start": "00:01:31,262",
+            "end": "00:01:32,182",
+            "es": "Libertad financiera,",
+            "fr": "Liberté financière,",
+            "uk": "Фінансова свобода,"
+        },
+        {
+            "start": "00:01:32,182",
+            "end": "00:01:32,762",
+            "es": "sexo,",
+            "fr": "sexe,",
+            "uk": "секс,"
+        },
+        {
+            "start": "00:01:32,762",
+            "end": "00:01:33,442",
+            "es": "amor,",
+            "fr": "amour,",
+            "uk": "кохання,"
+        },
+        {
+            "start": "00:01:33,442",
+            "end": "00:01:34,211",
+            "es": "¿y qué?",
+            "fr": "et quoi ?",
+            "uk": "і що?"
+        },
+        {
+            "start": "00:01:38,202",
+            "end": "00:01:39,682",
+            "es": "Y pensar,",
+            "fr": "Et penser,",
+            "uk": "І думати,"
+        },
+        {
+            "start": "00:01:39,682",
+            "end": "00:01:41,842",
+            "es": "pensar libremente y,",
+            "fr": "penser librement et,",
+            "uk": "вільно думати і,"
+        },
+        {
+            "start": "00:01:42,482",
+            "end": "00:01:46,802",
+            "es": "pensar libremente y también libertad de investigación.",
+            "fr": "penser librement et aussi la liberté de recherche.",
+            "uk": "вільно думати та також свободу досліджень."
+        },
+        {
+            "start": "00:01:53,721",
+            "end": "00:01:54,202",
+            "es": "Esto es,",
+            "fr": "Ceci est,",
+            "uk": "Це,"
+        },
+        {
+            "start": "00:01:54,202",
+            "end": "00:01:55,142",
+            "es": "esto es sabroso,",
+            "fr": "c'est délicieux,",
+            "uk": "це смачно,"
+        },
+        {
+            "start": "00:01:55,142",
+            "end": "00:01:56,302",
+            "es": "realmente hermoso.",
+            "fr": "vraiment magnifique.",
+            "uk": "дійсно чудово."
+        },
+        {
+            "start": "00:01:57,782",
+            "end": "00:01:59,242",
+            "es": "Entonces, ¿qué es la libertad?",
+            "fr": "Alors, qu'est-ce que la liberté ?",
+            "uk": "Отже, що таке свобода?"
+        },
+        {
+            "start": "00:02:00,502",
+            "end": "00:02:01,782",
+            "es": "Pero la libertad no es,",
+            "fr": "Mais la liberté n'est pas,",
+            "uk": "Але свобода не є,"
+        }
+    ]
+}

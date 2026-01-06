@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,570\",\n    \"end\": \"00:01:04,209\",\n    \"lang\": \"en\",\n    \"text\": \"Yummy,\"\n  },\n  {\n    \"start\": \"00:01:04,209\",\n    \"end\": \"00:01:04,530\",\n    \"lang\": \"en\",\n    \"text\": \"yummy.\"\n  },\n  {\n    \"start\": \"00:01:04,530\",\n    \"end\": \"00:01:05,650\",\n    \"lang\": \"en\",\n    \"text\": \"So delicious.\"\n  },\n  {\n    \"start\": \"00:01:07,030\",\n    \"end\": \"00:01:08,670\",\n    \"lang\": \"en\",\n    \"text\": \"North rice noodles.\"\n  },\n  {\n    \"start\": \"00:01:09,794\",\n    \"end\": \"00:01:10,654\",\n    \"lang\": \"ja\",\n    \"text\": \"おいしいです\"\n  },\n  {\n    \"start\": \"00:01:16,994\",\n    \"end\": \"00:01:17,214\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:17,214\",\n    \"end\": \"00:01:17,614\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,570",
+            "end": "00:01:04,209",
+            "vi": "Ngon,"
+        },
+        {
+            "start": "00:01:04,209",
+            "end": "00:01:04,530",
+            "vi": "ngon."
+        },
+        {
+            "start": "00:01:04,530",
+            "end": "00:01:05,650",
+            "vi": "Thật là ngon."
+        },
+        {
+            "start": "00:01:07,030",
+            "end": "00:01:08,670",
+            "vi": "Bún miền Bắc."
+        },
+        {
+            "start": "00:01:09,794",
+            "end": "00:01:10,654",
+            "vi": "Ngon quá."
+        },
+        {
+            "start": "00:01:16,994",
+            "end": "00:01:17,214",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:01:17,214",
+            "end": "00:01:17,614",
+            "vi": "hẹn gặp lại."
+        }
+    ]
+}

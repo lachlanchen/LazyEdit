@@ -1,0 +1,173 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,940\",\n    \"lang\": \"en\",\n    \"text\": \"This world is that we can learn two Japanese characters\"\n  },\n  {\n    \"start\": \"00:00:04,930\",\n    \"end\": \"00:00:07,130\",\n    \"lang\": \"ja\",\n    \"text\": \"ワインズ新licht £2 新科技能\"\n  },\n  {\n    \"start\": \"00:00:07,510\",\n    \"end\": \"00:00:07,850\",\n    \"lang\": \"ja\",\n    \"text\": \"新\"\n  },\n  {\n    \"start\": \"00:00:08,546\",\n    \"end\": \"00:00:09,446\",\n    \"lang\": \"en\",\n    \"text\": \"which means deep.\"\n  },\n  {\n    \"start\": \"00:00:10,050\",\n    \"end\": \"00:00:11,990\",\n    \"lang\": \"zh\",\n    \"text\": \"開肝\"\n  },\n  {\n    \"start\": \"00:00:15,938\",\n    \"end\": \"00:00:17,058\",\n    \"lang\": \"ja\",\n    \"text\": \"ええことばいたました\"\n  },\n  {\n    \"start\": \"00:00:17,186\",\n    \"end\": \"00:00:17,666\",\n    \"lang\": \"en\",\n    \"text\": \"Peace out.\"\n  },\n  {\n    \"start\": \"00:00:17,926\",\n    \"end\": \"00:00:18,346\",\n    \"lang\": \"en\",\n    \"text\": \"Peace out.\"\n  },\n  {\n    \"start\": \"00:00:19,126\",\n    \"end\": \"00:00:20,106\",\n    \"lang\": \"en\",\n    \"text\": \"Which is...\"\n  },\n  {\n    \"start\": \"00:00:20,106\",\n    \"end\": \"00:00:20,966\",\n    \"lang\": \"en\",\n    \"text\": \"Happy New Year.\"\n  },\n  {\n    \"start\": \"00:00:20,986\",\n    \"end\": \"00:00:22,386\",\n    \"lang\": \"ja\",\n    \"text\": \"マスティシェルスイン\"\n  },\n  {\n    \"start\": \"00:00:23,234\",\n    \"end\": \"00:00:26,454\",\n    \"lang\": \"en\",\n    \"text\": \"same root with another word,\"\n  },\n  {\n    \"start\": \"00:00:26,454\",\n    \"end\": \"00:00:28,334\",\n    \"lang\": \"en\",\n    \"text\": \"with another English word.\"\n  },\n  {\n    \"start\": \"00:00:29,090\",\n    \"end\": \"00:00:29,230\",\n    \"lang\": \"zh\",\n    \"text\": \"啊\"\n  },\n  {\n    \"start\": \"00:00:29,270\",\n    \"end\": \"00:00:29,690\",\n    \"lang\": \"zh\",\n    \"text\": \"鼻子抹\"\n  },\n  {\n    \"start\": \"00:00:30,018\",\n    \"end\": \"00:00:30,578\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:30,578\",\n    \"end\": \"00:00:31,518\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:31,518\",\n    \"end\": \"00:00:35,438\",\n    \"lang\": \"en\",\n    \"text\": \"which also means something that is extremely deep,\"\n  },\n  {\n    \"start\": \"00:00:35,438\",\n    \"end\": \"00:00:37,658\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:37,658\",\n    \"end\": \"00:00:39,378\",\n    \"lang\": \"en\",\n    \"text\": \"a beast,\"\n  },\n  {\n    \"start\": \"00:00:39,678\",\n    \"end\": \"00:00:40,338\",\n    \"lang\": \"en\",\n    \"text\": \"a beast.\"\n  },\n  {\n    \"start\": \"00:00:41,314\",\n    \"end\": \"00:00:42,134\",\n    \"lang\": \"zh\",\n    \"text\": \"新開農\"\n  },\n  {\n    \"start\": \"00:00:43,173\",\n    \"end\": \"00:00:43,754\",\n    \"lang\": \"zh\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:43,754\",\n    \"end\": \"00:00:46,094\",\n    \"lang\": \"zh\",\n    \"text\": \"這個單詞是新開農\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,940",
+            "es": "Este mundo es que podemos aprender dos caracteres japoneses",
+            "fr": "Ce monde, c'est que nous pouvons apprendre deux caractères japonais",
+            "uk": "Цей світ полягає в тому, що ми можемо вивчити два японські символи"
+        },
+        {
+            "start": "00:00:04,930",
+            "end": "00:00:07,130",
+            "es": "Vinos nuevos, £2, nuevas tecnologías",
+            "fr": "Vins nouveaux, £2, nouvelles technologies",
+            "uk": "Нові вина, £2, нові технології"
+        },
+        {
+            "start": "00:00:07,510",
+            "end": "00:00:07,850",
+            "es": "Nuevo",
+            "fr": "Nouveau",
+            "uk": "Новий"
+        },
+        {
+            "start": "00:00:08,546",
+            "end": "00:00:09,446",
+            "es": "que significa profundo.",
+            "fr": "qui signifie profond.",
+            "uk": "що означає глибокий."
+        },
+        {
+            "start": "00:00:10,050",
+            "end": "00:00:11,990",
+            "es": "Empezar hígado",
+            "fr": "Commencer le foie",
+            "uk": "Початок печінки"
+        },
+        {
+            "start": "00:00:15,938",
+            "end": "00:00:17,058",
+            "es": "Dije una buena palabra",
+            "fr": "J'ai dit un bon mot",
+            "uk": "Я сказав добре слово"
+        },
+        {
+            "start": "00:00:17,186",
+            "end": "00:00:17,666",
+            "es": "Hasta luego.",
+            "fr": "Au revoir.",
+            "uk": "До побачення."
+        },
+        {
+            "start": "00:00:17,926",
+            "end": "00:00:18,346",
+            "es": "Hasta luego.",
+            "fr": "Au revoir.",
+            "uk": "До побачення."
+        },
+        {
+            "start": "00:00:19,126",
+            "end": "00:00:20,106",
+            "es": "Que es...",
+            "fr": "Qui est...",
+            "uk": "Який є..."
+        },
+        {
+            "start": "00:00:20,106",
+            "end": "00:00:20,966",
+            "es": "Feliz Año Nuevo.",
+            "fr": "Bonne année.",
+            "uk": "З Новим Роком."
+        },
+        {
+            "start": "00:00:20,986",
+            "end": "00:00:22,386",
+            "es": "Celebraciones masivas",
+            "fr": "Célébrations massives",
+            "uk": "Масові святкування"
+        },
+        {
+            "start": "00:00:23,234",
+            "end": "00:00:26,454",
+            "es": "misma raíz que otra palabra,",
+            "fr": "même racine qu'un autre mot,",
+            "uk": "таке ж коріння, що й інше слово,"
+        },
+        {
+            "start": "00:00:26,454",
+            "end": "00:00:28,334",
+            "es": "con otra palabra en inglés.",
+            "fr": "avec un autre mot anglais.",
+            "uk": "з іншим англійським словом."
+        },
+        {
+            "start": "00:00:29,090",
+            "end": "00:00:29,230",
+            "es": "Ah",
+            "fr": "Ah",
+            "uk": "Ах"
+        },
+        {
+            "start": "00:00:29,270",
+            "end": "00:00:29,690",
+            "es": "frotarse la nariz",
+            "fr": "se frotter le nez",
+            "uk": "потерти ніс"
+        },
+        {
+            "start": "00:00:30,018",
+            "end": "00:00:30,578",
+            "es": "una bestia,",
+            "fr": "une bête,",
+            "uk": "звір,"
+        },
+        {
+            "start": "00:00:30,578",
+            "end": "00:00:31,518",
+            "es": "una bestia,",
+            "fr": "une bête,",
+            "uk": "звір,"
+        },
+        {
+            "start": "00:00:31,518",
+            "end": "00:00:35,438",
+            "es": "que también significa algo que es extremadamente profundo,",
+            "fr": "qui signifie aussi quelque chose qui est extrêmement profond,",
+            "uk": "що також означає щось надзвичайно глибоке,"
+        },
+        {
+            "start": "00:00:35,438",
+            "end": "00:00:37,658",
+            "es": "una bestia,",
+            "fr": "une bête,",
+            "uk": "звір,"
+        },
+        {
+            "start": "00:00:37,658",
+            "end": "00:00:39,378",
+            "es": "una bestia,",
+            "fr": "une bête,",
+            "uk": "звір,"
+        },
+        {
+            "start": "00:00:39,678",
+            "end": "00:00:40,338",
+            "es": "una bestia.",
+            "fr": "une bête.",
+            "uk": "звір."
+        },
+        {
+            "start": "00:00:41,314",
+            "end": "00:00:42,134",
+            "es": "Nueva apertura de la granja",
+            "fr": "Nouvelle ouverture de ferme",
+            "uk": "Нове відкриття ферми"
+        },
+        {
+            "start": "00:00:43,173",
+            "end": "00:00:43,754",
+            "es": "OK,",
+            "fr": "OK,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:43,754",
+            "end": "00:00:46,094",
+            "es": "esta palabra es Nueva apertura de la granja",
+            "fr": "ce mot est Nouvelle ouverture de ferme",
+            "uk": "це слово Нове відкриття ферми"
+        }
+    ]
+}

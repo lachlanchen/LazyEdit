@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:03,719\",\n    \"end\": \"00:00:05,420\",\n    \"lang\": \"zh\",\n    \"text\": \"这是第一次吃外卖\"\n  },\n  {\n    \"start\": \"00:00:08,379\",\n    \"end\": \"00:00:10,060\",\n    \"lang\": \"zh\",\n    \"text\": \"今天是水煮鲜鱼\"\n  },\n  {\n    \"start\": \"00:00:12,340\",\n    \"end\": \"00:00:14,560\",\n    \"lang\": \"zh\",\n    \"text\": \"新灌第六天\"\n  },\n  {\n    \"start\": \"00:00:18,380\",\n    \"end\": \"00:00:19,380\",\n    \"lang\": \"zh\",\n    \"text\": \"第五天\"\n  },\n  {\n    \"start\": \"00:00:20,560\",\n    \"end\": \"00:00:21,420\",\n    \"lang\": \"zh\",\n    \"text\": \"试一下\"\n  },\n  {\n    \"start\": \"00:00:25,666\",\n    \"end\": \"00:00:25,866\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm.\"\n  },\n  {\n    \"start\": \"00:00:27,394\",\n    \"end\": \"00:00:28,074\",\n    \"lang\": \"zh\",\n    \"text\": \"好吃\"\n  },\n  {\n    \"start\": \"00:00:31,714\",\n    \"end\": \"00:00:32,573\",\n    \"lang\": \"zh\",\n    \"text\": \"好辣\"\n  },\n  {\n    \"start\": \"00:00:36,386\",\n    \"end\": \"00:00:36,886\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god,\"\n  },\n  {\n    \"start\": \"00:00:36,886\",\n    \"end\": \"00:00:37,766\",\n    \"lang\": \"en\",\n    \"text\": \"it's so spicy.\"\n  },\n  {\n    \"start\": \"00:00:41,406\",\n    \"end\": \"00:00:41,846\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:03,719",
+            "end": "00:00:05,420",
+            "es": "Esta es la primera vez que como comida a domicilio",
+            "fr": "C'est la première fois que je mange à emporter",
+            "uk": "Це перший раз, коли я їм їжу з доставкою"
+        },
+        {
+            "start": "00:00:08,379",
+            "end": "00:00:10,060",
+            "es": "Hoy es pescado fresco al agua",
+            "fr": "Aujourd'hui, c'est poisson frais à l'eau",
+            "uk": "Сьогодні свіжа риба у водяній подрібнювачі"
+        },
+        {
+            "start": "00:00:12,340",
+            "end": "00:00:14,560",
+            "es": "Es el sexto día del nuevo relleno",
+            "fr": "C'est le sixième jour du nouveau remplissage",
+            "uk": "Шостий день нового заливання"
+        },
+        {
+            "start": "00:00:18,380",
+            "end": "00:00:19,380",
+            "es": "Quinto día",
+            "fr": "Cinquième jour",
+            "uk": "П'ятий день"
+        },
+        {
+            "start": "00:00:20,560",
+            "end": "00:00:21,420",
+            "es": "Prueba esto",
+            "fr": "Essaye ça",
+            "uk": "Спробуй це"
+        },
+        {
+            "start": "00:00:25,666",
+            "end": "00:00:25,866",
+            "es": "Mmm.",
+            "fr": "Mmm.",
+            "uk": "Ммм."
+        },
+        {
+            "start": "00:00:27,394",
+            "end": "00:00:28,074",
+            "es": "Delicioso",
+            "fr": "Délicieux",
+            "uk": "Смачно"
+        },
+        {
+            "start": "00:00:31,714",
+            "end": "00:00:32,573",
+            "es": "Muy picante",
+            "fr": "Très épicé",
+            "uk": "Дуже гостро"
+        },
+        {
+            "start": "00:00:36,386",
+            "end": "00:00:36,886",
+            "es": "Dios mío,",
+            "fr": "Mon dieu,",
+            "uk": "О Боже,"
+        },
+        {
+            "start": "00:00:36,886",
+            "end": "00:00:37,766",
+            "es": "está muy picante.",
+            "fr": "c'est tellement épicé.",
+            "uk": "це так гостро."
+        },
+        {
+            "start": "00:00:41,406",
+            "end": "00:00:41,846",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        }
+    ]
+}

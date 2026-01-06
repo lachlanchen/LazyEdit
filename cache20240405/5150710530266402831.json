@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,759\",\n    \"end\": \"00:00:02,860\",\n    \"lang\": \"zh\",\n    \"text\": \"你看放在那个垫子上的是不是\"\n  },\n  {\n    \"start\": \"00:00:03,359\",\n    \"end\": \"00:00:05,120\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是毛竹笋吗\"\n  },\n  {\n    \"start\": \"00:00:05,120\",\n    \"end\": \"00:00:05,240\",\n    \"lang\": \"zh\",\n    \"text\": \"嗯\"\n  },\n  {\n    \"start\": \"00:00:06,719\",\n    \"end\": \"00:00:07,680\",\n    \"lang\": \"zh\",\n    \"text\": \"这是笋\"\n  },\n  {\n    \"start\": \"00:00:08,260\",\n    \"end\": \"00:00:09,720\",\n    \"lang\": \"zh\",\n    \"text\": \"他们一直租那个\"\n  },\n  {\n    \"start\": \"00:00:09,720\",\n    \"end\": \"00:00:11,040\",\n    \"lang\": \"zh\",\n    \"text\": \"就说\"\n  },\n  {\n    \"start\": \"00:00:11,040\",\n    \"end\": \"00:00:11,780\",\n    \"lang\": \"zh\",\n    \"text\": \"哎呦没数\"\n  },\n  {\n    \"start\": \"00:00:11,780\",\n    \"end\": \"00:00:13,400\",\n    \"lang\": \"zh\",\n    \"text\": \"租那个干笋\"\n  },\n  {\n    \"start\": \"00:00:13,400\",\n    \"end\": \"00:00:14,340\",\n    \"lang\": \"zh\",\n    \"text\": \"把它压扁\"\n  },\n  {\n    \"start\": \"00:00:14,340\",\n    \"end\": \"00:00:17,060\",\n    \"lang\": \"zh\",\n    \"text\": \"一天只那么多\"\n  },\n  {\n    \"start\": \"00:00:18,160\",\n    \"end\": \"00:00:19,320\",\n    \"lang\": \"zh\",\n    \"text\": \"然后冬天吃\"\n  },\n  {\n    \"start\": \"00:00:19,320\",\n    \"end\": \"00:00:21,000\",\n    \"lang\": \"zh\",\n    \"text\": \"我刚才跟小姑姑喝酒\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,759",
+            "end": "00:00:02,860",
+            "en": "Is that placed on the mat?",
+            "zh": "你看放在那个垫子上的是不是",
+            "ar": "هل هذا موضوع على الحصيرة؟"
+        },
+        {
+            "start": "00:00:03,359",
+            "end": "00:00:05,120",
+            "en": "Is this bamboo shoot?",
+            "zh": "这个是毛竹笋吗",
+            "ar": "هل هذا برعم البامبو؟"
+        },
+        {
+            "start": "00:00:05,120",
+            "end": "00:00:05,240",
+            "en": "Yes",
+            "zh": "嗯",
+            "ar": "نعم"
+        },
+        {
+            "start": "00:00:06,719",
+            "end": "00:00:07,680",
+            "en": "This is a shoot",
+            "zh": "这是笋",
+            "ar": "هذا هو البرعم"
+        },
+        {
+            "start": "00:00:08,260",
+            "end": "00:00:09,720",
+            "en": "They've been renting that",
+            "zh": "他们一直租那个",
+            "ar": "لقد كانوا يستأجرون ذلك"
+        },
+        {
+            "start": "00:00:09,720",
+            "end": "00:00:11,040",
+            "en": "They said",
+            "zh": "就说",
+            "ar": "قالوا"
+        },
+        {
+            "start": "00:00:11,040",
+            "end": "00:00:11,780",
+            "en": "Oh, no count",
+            "zh": "哎呦没数",
+            "ar": "آه، لا عد"
+        },
+        {
+            "start": "00:00:11,780",
+            "end": "00:00:13,400",
+            "en": "Renting that dried shoot",
+            "zh": "租那个干笋",
+            "ar": "تأجير تلك البراعم المجففة"
+        },
+        {
+            "start": "00:00:13,400",
+            "end": "00:00:14,340",
+            "en": "Flattening it",
+            "zh": "把它压扁",
+            "ar": "تسويته"
+        },
+        {
+            "start": "00:00:14,340",
+            "end": "00:00:17,060",
+            "en": "Only that much in one day",
+            "zh": "一天只那么多",
+            "ar": "فقط بهذا القدر في يوم واحد"
+        },
+        {
+            "start": "00:00:18,160",
+            "end": "00:00:19,320",
+            "en": "And then eat it in winter",
+            "zh": "然后冬天吃",
+            "ar": "ثم تناوله في الشتاء"
+        },
+        {
+            "start": "00:00:19,320",
+            "end": "00:00:21,000",
+            "en": "I was just drinking with my little aunt",
+            "zh": "我刚才跟小姑姑喝酒",
+            "ar": "كنت أشرب للتو مع عمتي الصغيرة"
+        }
+    ]
+}

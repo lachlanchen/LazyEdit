@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,120\",\n    \"lang\": \"en\",\n    \"text\": \"so this is our crispy potato\"\n  },\n  {\n    \"start\": \"00:00:04,470\",\n    \"end\": \"00:00:06,440\",\n    \"lang\": \"en\",\n    \"text\": \"this is crispy\"\n  },\n  {\n    \"start\": \"00:00:13,220\",\n    \"end\": \"00:00:16,960\",\n    \"lang\": \"en\",\n    \"text\": \"crispy and Chongqing flavor potato\"\n  },\n  {\n    \"start\": \"00:00:31,640\",\n    \"end\": \"00:00:38,100\",\n    \"lang\": \"en\",\n    \"text\": \"so an advantage of this is that you don't need to clean the cooker,\"\n  },\n  {\n    \"start\": \"00:00:38,100\",\n    \"end\": \"00:00:39,140\",\n    \"lang\": \"en\",\n    \"text\": \"the pot\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,120",
+            "es": "así que esta es nuestra papa crujiente",
+            "fr": "donc ceci est notre pomme de terre croustillante",
+            "uk": "отже, це наша хрустка картопля"
+        },
+        {
+            "start": "00:00:04,470",
+            "end": "00:00:06,440",
+            "es": "esto es crujiente",
+            "fr": "c'est croustillant",
+            "uk": "це хрустке"
+        },
+        {
+            "start": "00:00:13,220",
+            "end": "00:00:16,960",
+            "es": "papa crujiente y con sabor a Chongqing",
+            "fr": "pomme de terre croustillante et avec goût de Chongqing",
+            "uk": "хрустка картопля зі смаком Чунцин"
+        },
+        {
+            "start": "00:00:31,640",
+            "end": "00:00:38,100",
+            "es": "así que una ventaja de esto es que no necesitas limpiar la cocina,",
+            "fr": "donc un avantage de cela est que vous n'avez pas besoin de nettoyer la cuisinière,",
+            "uk": "отже, перевага цього полягає в тому, що вам не потрібно чистити кухонну плиту,"
+        },
+        {
+            "start": "00:00:38,100",
+            "end": "00:00:39,140",
+            "es": "la olla",
+            "fr": "la casserole",
+            "uk": "каструлю"
+        }
+    ]
+}

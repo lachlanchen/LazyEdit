@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:02,874\",\n    \"end\": \"00:02:05,414\",\n    \"lang\": \"en\",\n    \"text\": \"And put this as a cover.\"\n  },\n  {\n    \"start\": \"00:02:05,894\",\n    \"end\": \"00:02:06,214\",\n    \"lang\": \"en\",\n    \"text\": \"Please,\"\n  },\n  {\n    \"start\": \"00:02:06,214\",\n    \"end\": \"00:02:06,734\",\n    \"lang\": \"en\",\n    \"text\": \"please.\"\n  },\n  {\n    \"start\": \"00:02:07,894\",\n    \"end\": \"00:02:08,614\",\n    \"lang\": \"en\",\n    \"text\": \"OpenAI,\"\n  },\n  {\n    \"start\": \"00:02:08,614\",\n    \"end\": \"00:02:10,913\",\n    \"lang\": \"en\",\n    \"text\": \"please put this as a cover.\"\n  },\n  {\n    \"start\": \"00:02:11,474\",\n    \"end\": \"00:02:13,854\",\n    \"lang\": \"en\",\n    \"text\": \"Cover teaser.\"\n  },\n  {\n    \"start\": \"00:02:14,974\",\n    \"end\": \"00:02:15,254\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:15,254\",\n    \"end\": \"00:02:15,514\",\n    \"lang\": \"en\",\n    \"text\": \"okay,\"\n  },\n  {\n    \"start\": \"00:02:15,514\",\n    \"end\": \"00:02:15,954\",\n    \"lang\": \"en\",\n    \"text\": \"thank you.\"\n  },\n  {\n    \"start\": \"00:02:16,334\",\n    \"end\": \"00:02:18,634\",\n    \"lang\": \"en\",\n    \"text\": \"Please put this as a cover.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:02,874",
+            "end": "00:02:05,414",
+            "ja": "これをカバーとしてください。"
+        },
+        {
+            "start": "00:02:05,894",
+            "end": "00:02:06,214",
+            "ja": "お願いします、"
+        },
+        {
+            "start": "00:02:06,214",
+            "end": "00:02:06,734",
+            "ja": "お願いします。"
+        },
+        {
+            "start": "00:02:07,894",
+            "end": "00:02:08,614",
+            "ja": "OpenAI、"
+        },
+        {
+            "start": "00:02:08,614",
+            "end": "00:02:10,913",
+            "ja": "これをカバーとしてください。"
+        },
+        {
+            "start": "00:02:11,474",
+            "end": "00:02:13,854",
+            "ja": "カバーティーザー。"
+        },
+        {
+            "start": "00:02:14,974",
+            "end": "00:02:15,254",
+            "ja": "はい、"
+        },
+        {
+            "start": "00:02:15,254",
+            "end": "00:02:15,514",
+            "ja": "はい、"
+        },
+        {
+            "start": "00:02:15,514",
+            "end": "00:02:15,954",
+            "ja": "ありがとう。"
+        },
+        {
+            "start": "00:02:16,334",
+            "end": "00:02:18,634",
+            "ja": "これをカバーとしてください。"
+        }
+    ]
+}

@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,400\",\n    \"lang\": \"zh\",\n    \"text\": \"就一直说这个粤语和重庆话很像嘛\"\n  },\n  {\n    \"start\": \"00:00:04,040\",\n    \"end\": \"00:00:05,720\",\n    \"lang\": \"zh\",\n    \"text\": \"我脑袋还叫这个叫延续\"\n  },\n  {\n    \"start\": \"00:00:06,300\",\n    \"end\": \"00:00:08,860\",\n    \"lang\": \"zh\",\n    \"text\": \"今天才知道原来粤语里面应该叫什么\"\n  },\n  {\n    \"start\": \"00:00:08,860\",\n    \"end\": \"00:00:09,400\",\n    \"lang\": \"zh\",\n    \"text\": \"元兮\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,400",
+            "en": "Always saying that Cantonese and Chongqing dialect are similar",
+            "zh": "就一直说这个粤语和重庆话很像嘛",
+            "ar": "دائمًا ما يقال أن اللهجة الكانتونية ولهجة تشونغتشينغ متشابهتان"
+        },
+        {
+            "start": "00:00:04,040",
+            "end": "00:00:05,720",
+            "en": "My head also calls it a continuity",
+            "zh": "我脑袋还叫这个叫延续",
+            "ar": "رأسي يسميها أيضًا استمرارية"
+        },
+        {
+            "start": "00:00:06,300",
+            "end": "00:00:08,860",
+            "en": "Only today did I know what it should be called in Cantonese",
+            "zh": "今天才知道原来粤语里面应该叫什么",
+            "ar": "فقط اليوم عرفت ما يجب أن يُسمى به في الكانتونية"
+        },
+        {
+            "start": "00:00:08,860",
+            "end": "00:00:09,400",
+            "en": "Yuan Xi",
+            "zh": "元兮",
+            "ar": "يوان شي"
+        }
+    ]
+}

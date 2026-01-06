@@ -1,0 +1,145 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,480\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,480\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"en\",\n    \"text\": \"konnichiwa.\"\n  },\n  {\n    \"start\": \"00:00:01,980\",\n    \"end\": \"00:00:06,000\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our North rice noodles.\"\n  },\n  {\n    \"start\": \"00:00:06,594\",\n    \"end\": \"00:00:07,214\",\n    \"lang\": \"zh\",\n    \"text\": \"螺螄粉\"\n  },\n  {\n    \"start\": \"00:00:08,034\",\n    \"end\": \"00:00:08,494\",\n    \"lang\": \"zh\",\n    \"text\": \"这是\"\n  },\n  {\n    \"start\": \"00:00:10,413\",\n    \"end\": \"00:00:11,374\",\n    \"lang\": \"zh\",\n    \"text\": \"这是我们\"\n  },\n  {\n    \"start\": \"00:00:12,254\",\n    \"end\": \"00:00:14,014\",\n    \"lang\": \"zh\",\n    \"text\": \"最好吃的螺螄粉\"\n  },\n  {\n    \"start\": \"00:00:14,593\",\n    \"end\": \"00:00:15,774\",\n    \"lang\": \"zh\",\n    \"text\": \"来尝一下\"\n  },\n  {\n    \"start\": \"00:00:17,570\",\n    \"end\": \"00:00:18,210\",\n    \"lang\": \"en\",\n    \"text\": \"It's tasty.\"\n  },\n  {\n    \"start\": \"00:00:21,538\",\n    \"end\": \"00:00:22,958\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの\"\n  },\n  {\n    \"start\": \"00:00:25,938\",\n    \"end\": \"00:00:28,438\",\n    \"lang\": \"ja\",\n    \"text\": \"このノースレスルース\"\n  },\n  {\n    \"start\": \"00:00:30,690\",\n    \"end\": \"00:00:32,110\",\n    \"lang\": \"zh\",\n    \"text\": \"嘗一下用日語咋說的\"\n  },\n  {\n    \"start\": \"00:00:32,110\",\n    \"end\": \"00:00:33,550\",\n    \"lang\": \"zh\",\n    \"text\": \"我怎麼突然想不起來呢\"\n  },\n  {\n    \"start\": \"00:00:34,146\",\n    \"end\": \"00:00:37,946\",\n    \"lang\": \"en\",\n    \"text\": \"I just can't remember how to say...\"\n  },\n  {\n    \"start\": \"00:00:40,130\",\n    \"end\": \"00:00:40,630\",\n    \"lang\": \"zh\",\n    \"text\": \"嚐了一下\"\n  },\n  {\n    \"start\": \"00:00:42,306\",\n    \"end\": \"00:00:43,786\",\n    \"lang\": \"en\",\n    \"text\": \"taste it in Japanese.\"\n  },\n  {\n    \"start\": \"00:00:47,806\",\n    \"end\": \"00:00:48,606\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:48,606\",\n    \"end\": \"00:00:51,126\",\n    \"lang\": \"en\",\n    \"text\": \"this taste is,\"\n  },\n  {\n    \"start\": \"00:00:51,126\",\n    \"end\": \"00:00:52,786\",\n    \"lang\": \"en\",\n    \"text\": \"I think,\"\n  },\n  {\n    \"start\": \"00:00:52,786\",\n    \"end\": \"00:01:00,566\",\n    \"lang\": \"en\",\n    \"text\": \"is not just the flavor bag of this instant rice noodles.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,480",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:00,480",
+            "end": "00:00:01,980",
+            "es": "hola (en japonés).",
+            "fr": "bonjour (en japonais).",
+            "uk": "привіт (японською)."
+        },
+        {
+            "start": "00:00:01,980",
+            "end": "00:00:06,000",
+            "es": "Entonces, estos son nuestros fideos de arroz del norte.",
+            "fr": "Alors, voici nos nouilles de riz du nord.",
+            "uk": "Отже, це наші північні рисові локшина."
+        },
+        {
+            "start": "00:00:06,594",
+            "end": "00:00:07,214",
+            "es": "Fideos de caracol",
+            "fr": "Nouilles d'escargot",
+            "uk": "Равликові локшина"
+        },
+        {
+            "start": "00:00:08,034",
+            "end": "00:00:08,494",
+            "es": "esto es",
+            "fr": "c'est",
+            "uk": "це є"
+        },
+        {
+            "start": "00:00:10,413",
+            "end": "00:00:11,374",
+            "es": "esto es nosotros",
+            "fr": "c'est nous",
+            "uk": "це ми"
+        },
+        {
+            "start": "00:00:12,254",
+            "end": "00:00:14,014",
+            "es": "los fideos de caracol más deliciosos",
+            "fr": "les nouilles d'escargot les plus délicieuses",
+            "uk": "Найсмачніші равликові локшина"
+        },
+        {
+            "start": "00:00:14,593",
+            "end": "00:00:15,774",
+            "es": "pruebalo",
+            "fr": "essayez-le",
+            "uk": "спробуйте"
+        },
+        {
+            "start": "00:00:17,570",
+            "end": "00:00:18,210",
+            "es": "Está sabroso.",
+            "fr": "C'est savoureux.",
+            "uk": "Це смачно."
+        },
+        {
+            "start": "00:00:21,538",
+            "end": "00:00:22,958",
+            "es": "Yo esto",
+            "fr": "Moi cela",
+            "uk": "Я це"
+        },
+        {
+            "start": "00:00:25,938",
+            "end": "00:00:28,438",
+            "es": "Estos fideos del norte",
+            "fr": "Ces nouilles du nord",
+            "uk": "Ці північні локшина"
+        },
+        {
+            "start": "00:00:30,690",
+            "end": "00:00:32,110",
+            "es": "Prueba esto en japonés, cómo se dice",
+            "fr": "Goûte cela en japonais, comment dire",
+            "uk": "Спробуйте це японською, як сказати"
+        },
+        {
+            "start": "00:00:32,110",
+            "end": "00:00:33,550",
+            "es": "¿Cómo es que de repente no me acuerdo?",
+            "fr": "Comment se fait-il que je ne me souvienne soudainement pas?",
+            "uk": "Як це я раптом не можу згадати?"
+        },
+        {
+            "start": "00:00:34,146",
+            "end": "00:00:37,946",
+            "es": "Simplemente no puedo recordar cómo decir...",
+            "fr": "Je ne peux tout simplement pas me rappeler comment dire...",
+            "uk": "Просто не можу згадати, як сказати..."
+        },
+        {
+            "start": "00:00:40,130",
+            "end": "00:00:40,630",
+            "es": "probando un poco",
+            "fr": "en goûtant un peu",
+            "uk": "Спробувавши трохи"
+        },
+        {
+            "start": "00:00:42,306",
+            "end": "00:00:43,786",
+            "es": "pruébalo en japonés.",
+            "fr": "goûte-le en japonais.",
+            "uk": "Спробуйте це японською."
+        },
+        {
+            "start": "00:00:47,806",
+            "end": "00:00:48,606",
+            "es": "Vaya,",
+            "fr": "Wow,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:48,606",
+            "end": "00:00:51,126",
+            "es": "este sabor es,",
+            "fr": "ce goût est,",
+            "uk": "цей смак є,"
+        },
+        {
+            "start": "00:00:51,126",
+            "end": "00:00:52,786",
+            "es": "creo,",
+            "fr": "je pense,",
+            "uk": "думаю,"
+        },
+        {
+            "start": "00:00:52,786",
+            "end": "00:01:00,566",
+            "es": "no es solo la bolsa de sabor de estos fideos de arroz instantáneos.",
+            "fr": "ce n'est pas juste le sachet d'arôme de ces nouilles de riz instantanées.",
+            "uk": "це не просто пакетик з ароматизатором цих швидкорозчинних рисових локшин."
+        }
+    ]
+}

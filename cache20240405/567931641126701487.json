@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,320\",\n    \"lang\": \"zh\",\n    \"text\": \"邊行車台\"\n  },\n  {\n    \"start\": \"00:00:02,320\",\n    \"end\": \"00:00:02,420\",\n    \"lang\": \"zh\",\n    \"text\": \"經過富士山\"\n  },\n  {\n    \"start\": \"00:00:02,420\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"zh\",\n    \"text\": \"有金毛巨itis\"\n  },\n  {\n    \"start\": \"00:00:06,114\",\n    \"end\": \"00:00:07,014\",\n    \"lang\": \"en\",\n    \"text\": \"Not bad,\"\n  },\n  {\n    \"start\": \"00:00:07,014\",\n    \"end\": \"00:00:07,294\",\n    \"lang\": \"en\",\n    \"text\": \"not bad at all.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,320",
+            "es": "Al lado de la plataforma del tren",
+            "fr": "À côté du quai de train",
+            "uk": "Поруч із платформою поїзда"
+        },
+        {
+            "start": "00:00:02,320",
+            "end": "00:00:02,420",
+            "es": "pasando por el Monte Fuji",
+            "fr": "passant par le Mont Fuji",
+            "uk": "проходячи повз гору Фудзі"
+        },
+        {
+            "start": "00:00:02,420",
+            "end": "00:00:03,060",
+            "es": "con un perro golden retriever gigante",
+            "fr": "avec un grand golden retriever",
+            "uk": "з великим золотистим ретривером"
+        },
+        {
+            "start": "00:00:06,114",
+            "end": "00:00:07,014",
+            "es": "No está mal,",
+            "fr": "Pas mal,",
+            "uk": "Не погано,"
+        },
+        {
+            "start": "00:00:07,014",
+            "end": "00:00:07,294",
+            "es": "no está mal en absoluto.",
+            "fr": "pas mal du tout.",
+            "uk": "зовсім не погано."
+        }
+    ]
+}

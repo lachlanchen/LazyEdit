@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:25,865\",\n    \"end\": \"00:02:26,386\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:26,386\",\n    \"end\": \"00:02:27,446\",\n    \"lang\": \"en\",\n    \"text\": \"this time it's good.\"\n  },\n  {\n    \"start\": \"00:02:30,866\",\n    \"end\": \"00:02:32,286\",\n    \"lang\": \"en\",\n    \"text\": \"And maybe one more time.\"\n  },\n  {\n    \"start\": \"00:02:56,866\",\n    \"end\": \"00:02:57,186\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:57,186\",\n    \"end\": \"00:02:57,566\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:25,865",
+            "end": "00:02:26,386",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:02:26,386",
+            "end": "00:02:27,446",
+            "en": "this time it's good.",
+            "zh": "这次很好。",
+            "ar": "هذه المرة هو جيد."
+        },
+        {
+            "start": "00:02:30,866",
+            "end": "00:02:32,286",
+            "en": "And maybe one more time.",
+            "zh": "也许还有一次。",
+            "ar": "وربما مرة أخرى."
+        },
+        {
+            "start": "00:02:56,866",
+            "end": "00:02:57,186",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:02:57,186",
+            "end": "00:02:57,566",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقًا."
+        }
+    ]
+}

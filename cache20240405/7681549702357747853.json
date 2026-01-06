@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,399\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"ja\",\n    \"text\": \"私はクスニット\"\n  },\n  {\n    \"start\": \"00:00:03,874\",\n    \"end\": \"00:00:06,994\",\n    \"lang\": \"ja\",\n    \"text\": \"果物を買っています\"\n  },\n  {\n    \"start\": \"00:00:08,002\",\n    \"end\": \"00:00:10,042\",\n    \"lang\": \"en\",\n    \"text\": \"I cannot take this disease anymore.\"\n  },\n  {\n    \"start\": \"00:00:10,822\",\n    \"end\": \"00:00:14,642\",\n    \"lang\": \"en\",\n    \"text\": \"I have to buy some drugs to help me.\"\n  },\n  {\n    \"start\": \"00:00:15,762\",\n    \"end\": \"00:00:19,062\",\n    \"lang\": \"en\",\n    \"text\": \"My own immune system cannot handle it anymore.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,399",
+            "end": "00:00:03,060",
+            "ko": "저는 크스니트입니다"
+        },
+        {
+            "start": "00:00:03,874",
+            "end": "00:00:06,994",
+            "ko": "과일을 사고 있어요"
+        },
+        {
+            "start": "00:00:08,002",
+            "end": "00:00:10,042",
+            "ko": "이 병을 더 이상 참을 수 없어요."
+        },
+        {
+            "start": "00:00:10,822",
+            "end": "00:00:14,642",
+            "ko": "도와줄 약을 좀 사야겠어요."
+        },
+        {
+            "start": "00:00:15,762",
+            "end": "00:00:19,062",
+            "ko": "제 자신의 면역 체계로는 더 이상 감당할 수 없어요."
+        }
+    ]
+}

@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,180\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not joking.\"\n  },\n  {\n    \"start\": \"00:00:01,180\",\n    \"end\": \"00:00:08,039\",\n    \"lang\": \"en\",\n    \"text\": \"This chicken is really the best chicken I've ever cooked.\"\n  },\n  {\n    \"start\": \"00:00:16,580\",\n    \"end\": \"00:00:21,740\",\n    \"lang\": \"en\",\n    \"text\": \"Even though my cooking skill baseline is quite high,\"\n  },\n  {\n    \"start\": \"00:00:21,740\",\n    \"end\": \"00:00:24,420\",\n    \"lang\": \"en\",\n    \"text\": \"this is high over the high.\"\n  },\n  {\n    \"start\": \"00:00:34,940\",\n    \"end\": \"00:00:36,060\",\n    \"lang\": \"en\",\n    \"text\": \"It's so delicious.\"\n  },\n  {\n    \"start\": \"00:00:42,400\",\n    \"end\": \"00:00:47,140\",\n    \"lang\": \"en\",\n    \"text\": \"I should let the people around the world know my cooking skill.\"\n  },\n  {\n    \"start\": \"00:00:53,506\",\n    \"end\": \"00:00:54,286\",\n    \"lang\": \"ja\",\n    \"text\": \"今日のページ\"\n  },\n  {\n    \"start\": \"00:00:55,106\",\n    \"end\": \"00:00:55,886\",\n    \"lang\": \"en\",\n    \"text\": \"Give me a platform,\"\n  },\n  {\n    \"start\": \"00:00:55,886\",\n    \"end\": \"00:00:58,406\",\n    \"lang\": \"en\",\n    \"text\": \"let me serve you guys.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,180",
+            "vi": "Tôi không đùa đâu."
+        },
+        {
+            "start": "00:00:01,180",
+            "end": "00:00:08,039",
+            "vi": "Con gà này thực sự là con gà ngon nhất mà tôi từng nấu."
+        },
+        {
+            "start": "00:00:16,580",
+            "end": "00:00:21,740",
+            "vi": "Mặc dù kỹ năng nấu ăn cơ bản của tôi khá cao,"
+        },
+        {
+            "start": "00:00:21,740",
+            "end": "00:00:24,420",
+            "vi": "đây là cao hơn cả mức cao."
+        },
+        {
+            "start": "00:00:34,940",
+            "end": "00:00:36,060",
+            "vi": "Nó quá ngon."
+        },
+        {
+            "start": "00:00:42,400",
+            "end": "00:00:47,140",
+            "vi": "Tôi nên để mọi người trên thế giới biết đến kỹ năng nấu ăn của mình."
+        },
+        {
+            "start": "00:00:53,506",
+            "end": "00:00:54,286",
+            "vi": "Trang của hôm nay"
+        },
+        {
+            "start": "00:00:55,106",
+            "end": "00:00:55,886",
+            "vi": "Cho tôi một nền tảng,"
+        },
+        {
+            "start": "00:00:55,886",
+            "end": "00:00:58,406",
+            "vi": "để tôi phục vụ các bạn."
+        }
+    ]
+}

@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:09,698\",\n    \"end\": \"00:02:10,437\",\n    \"lang\": \"zh\",\n    \"text\": \"玚家\"\n  },\n  {\n    \"start\": \"00:02:10,877\",\n    \"end\": \"00:02:11,438\",\n    \"lang\": \"zh\",\n    \"text\": \"玚家\"\n  },\n  {\n    \"start\": \"00:02:11,438\",\n    \"end\": \"00:02:11,998\",\n    \"lang\": \"zh\",\n    \"text\": \"玚家\"\n  },\n  {\n    \"start\": \"00:02:12,898\",\n    \"end\": \"00:02:21,538\",\n    \"lang\": \"en\",\n    \"text\": \"replace those Korean that it has a challenging origin.\"\n  },\n  {\n    \"start\": \"00:02:22,378\",\n    \"end\": \"00:02:26,518\",\n    \"lang\": \"en\",\n    \"text\": \"So to make myself learning easier,\"\n  },\n  {\n    \"start\": \"00:02:27,098\",\n    \"end\": \"00:02:33,418\",\n    \"lang\": \"en\",\n    \"text\": \"so there's no any other intention like so-called lower\"\n  },\n  {\n    \"start\": \"00:02:34,538\",\n    \"end\": \"00:02:35,618\",\n    \"lang\": \"en\",\n    \"text\": \"the Korean.\"\n  },\n  {\n    \"start\": \"00:02:35,958\",\n    \"end\": \"00:02:37,298\",\n    \"lang\": \"en\",\n    \"text\": \"That's not my purpose.\"\n  },\n  {\n    \"start\": \"00:02:37,658\",\n    \"end\": \"00:02:41,158\",\n    \"lang\": \"en\",\n    \"text\": \"I just want to make Korean,\"\n  },\n  {\n    \"start\": \"00:02:41,158\",\n    \"end\": \"00:02:41,818\",\n    \"lang\": \"en\",\n    \"text\": \"Japanese,\"\n  },\n  {\n    \"start\": \"00:02:41,818\",\n    \"end\": \"00:02:44,378\",\n    \"lang\": \"en\",\n    \"text\": \"and Vietnamese together\"\n  },\n  {\n    \"start\": \"00:02:45,238\",\n    \"end\": \"00:02:46,498\",\n    \"lang\": \"en\",\n    \"text\": \"being more easy.\"\n  },\n  {\n    \"start\": \"00:03:00,158\",\n    \"end\": \"00:03:00,558\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:03:00,558\",\n    \"end\": \"00:03:01,418\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:09,698",
+            "end": "00:02:10,437",
+            "en": "Chia Family",
+            "zh": "玚家",
+            "ar": "عائلة تشيا"
+        },
+        {
+            "start": "00:02:10,877",
+            "end": "00:02:11,438",
+            "en": "Chia Family",
+            "zh": "玚家",
+            "ar": "عائلة تشيا"
+        },
+        {
+            "start": "00:02:11,438",
+            "end": "00:02:11,998",
+            "en": "Chia Family",
+            "zh": "玚家",
+            "ar": "عائلة تشيا"
+        },
+        {
+            "start": "00:02:12,898",
+            "end": "00:02:21,538",
+            "en": "Replace those Korean that has a challenging origin.",
+            "zh": "更换那些有挑战性来源的韩语。",
+            "ar": "استبدل تلك الكورية التي لها أصل صعب."
+        },
+        {
+            "start": "00:02:22,378",
+            "end": "00:02:26,518",
+            "en": "So to make myself learning easier,",
+            "zh": "所以为了让自己学得更轻松，",
+            "ar": "لذا لجعل تعلمي أسهل،"
+        },
+        {
+            "start": "00:02:27,098",
+            "end": "00:02:33,418",
+            "en": "So there's no any other intention like so-called lower",
+            "zh": "所以没有任何其他意图，就像所谓的降低",
+            "ar": "لذا لا يوجد أي نية أخرى مثل ما يسمى بالأقل"
+        },
+        {
+            "start": "00:02:34,538",
+            "end": "00:02:35,618",
+            "en": "The Korean.",
+            "zh": "韩语。",
+            "ar": "الكورية."
+        },
+        {
+            "start": "00:02:35,958",
+            "end": "00:02:37,298",
+            "en": "That's not my purpose.",
+            "zh": "那不是我的目的。",
+            "ar": "هذا ليس هدفي."
+        },
+        {
+            "start": "00:02:37,658",
+            "end": "00:02:41,158",
+            "en": "I just want to make Korean,",
+            "zh": "我只是想使韩语，",
+            "ar": "أريد فقط أن أجعل الكورية،"
+        },
+        {
+            "start": "00:02:41,158",
+            "end": "00:02:41,818",
+            "en": "Japanese,",
+            "zh": "日语，",
+            "ar": "اليابانية،"
+        },
+        {
+            "start": "00:02:41,818",
+            "end": "00:02:44,378",
+            "en": "And Vietnamese together",
+            "zh": "和越南语一起",
+            "ar": "والفيتنامية معا"
+        },
+        {
+            "start": "00:02:45,238",
+            "end": "00:02:46,498",
+            "en": "Being more easy.",
+            "zh": "变得更容易。",
+            "ar": "أن تكون أكثر سهولة."
+        },
+        {
+            "start": "00:03:00,158",
+            "end": "00:03:00,558",
+            "en": "OK,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:03:00,558",
+            "end": "00:03:01,418",
+            "en": "See you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقاً."
+        }
+    ]
+}

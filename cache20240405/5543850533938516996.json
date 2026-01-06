@@ -1,0 +1,125 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:05,398\",\n    \"end\": \"00:04:07,578\",\n    \"lang\": \"en\",\n    \"text\": \"you are everything,\"\n  },\n  {\n    \"start\": \"00:04:07,578\",\n    \"end\": \"00:04:14,918\",\n    \"lang\": \"en\",\n    \"text\": \"but in fact no matter how\"\n  },\n  {\n    \"start\": \"00:04:14,918\",\n    \"end\": \"00:04:16,017\",\n    \"lang\": \"en\",\n    \"text\": \"much you learn,\"\n  },\n  {\n    \"start\": \"00:04:16,017\",\n    \"end\": \"00:04:19,317\",\n    \"lang\": \"en\",\n    \"text\": \"you still you are ignored,\"\n  },\n  {\n    \"start\": \"00:04:19,317\",\n    \"end\": \"00:04:20,178\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:04:20,178\",\n    \"end\": \"00:04:25,058\",\n    \"lang\": \"en\",\n    \"text\": \"We are still...\"\n  },\n  {\n    \"start\": \"00:04:27,010\",\n    \"end\": \"00:04:27,950\",\n    \"lang\": \"ja\",\n    \"text\": \"ちゃってー\"\n  },\n  {\n    \"start\": \"00:04:29,698\",\n    \"end\": \"00:04:32,278\",\n    \"lang\": \"en\",\n    \"text\": \"obsessed in our own illusion,\"\n  },\n  {\n    \"start\": \"00:04:32,278\",\n    \"end\": \"00:04:35,618\",\n    \"lang\": \"en\",\n    \"text\": \"our own imagination,\"\n  },\n  {\n    \"start\": \"00:04:35,618\",\n    \"end\": \"00:04:38,938\",\n    \"lang\": \"en\",\n    \"text\": \"that we understand the world,\"\n  },\n  {\n    \"start\": \"00:04:38,938\",\n    \"end\": \"00:04:39,778\",\n    \"lang\": \"en\",\n    \"text\": \"understand the\"\n  },\n  {\n    \"start\": \"00:04:39,778\",\n    \"end\": \"00:04:40,138\",\n    \"lang\": \"en\",\n    \"text\": \"universe.\"\n  },\n  {\n    \"start\": \"00:04:40,138\",\n    \"end\": \"00:04:41,298\",\n    \"lang\": \"en\",\n    \"text\": \"But it's a fact,\"\n  },\n  {\n    \"start\": \"00:04:41,298\",\n    \"end\": \"00:04:41,898\",\n    \"lang\": \"en\",\n    \"text\": \"it's not.\"\n  },\n  {\n    \"start\": \"00:04:41,898\",\n    \"end\": \"00:04:43,898\",\n    \"lang\": \"en\",\n    \"text\": \"No matter how much you learn,\"\n  },\n  {\n    \"start\": \"00:04:43,898\",\n    \"end\": \"00:04:45,498\",\n    \"lang\": \"en\",\n    \"text\": \"you are a physicist,\"\n  },\n  {\n    \"start\": \"00:04:45,498\",\n    \"end\": \"00:04:46,858\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  },\n  {\n    \"start\": \"00:04:46,858\",\n    \"end\": \"00:04:49,278\",\n    \"lang\": \"en\",\n    \"text\": \"are a Nobel Prize laureate,\"\n  },\n  {\n    \"start\": \"00:04:49,278\",\n    \"end\": \"00:04:51,818\",\n    \"lang\": \"en\",\n    \"text\": \"it's useless.\"\n  },\n  {\n    \"start\": \"00:04:51,818\",\n    \"end\": \"00:04:57,518\",\n    \"lang\": \"en\",\n    \"text\": \"It still can't solve the core problem that\"\n  },\n  {\n    \"start\": \"00:04:58,466\",\n    \"end\": \"00:04:58,886\",\n    \"lang\": \"ja\",\n    \"text\": \"We are\"\n  },\n  {\n    \"start\": \"00:04:58,926\",\n    \"end\": \"00:04:59,406\",\n    \"lang\": \"ja\",\n    \"text\": \"勇猛なって\"\n  },\n  {\n    \"start\": \"00:05:01,218\",\n    \"end\": \"00:05:04,698\",\n    \"lang\": \"en\",\n    \"text\": \"So just enjoy life everyday.\"\n  },\n  {\n    \"start\": \"00:05:04,698\",\n    \"end\": \"00:05:06,118\",\n    \"lang\": \"en\",\n    \"text\": \"Enjoy life,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:04:05,398",
+            "end": "00:04:07,578",
+            "ko": "당신은 모든 것이에요,"
+        },
+        {
+            "start": "00:04:07,578",
+            "end": "00:04:14,918",
+            "ko": "하지만 사실 아무리"
+        },
+        {
+            "start": "00:04:14,918",
+            "end": "00:04:16,017",
+            "ko": "많이 배워도,"
+        },
+        {
+            "start": "00:04:16,017",
+            "end": "00:04:19,317",
+            "ko": "여전히 당신은 무시당하죠,"
+        },
+        {
+            "start": "00:04:19,317",
+            "end": "00:04:20,178",
+            "ko": "맞죠?"
+        },
+        {
+            "start": "00:04:20,178",
+            "end": "00:04:25,058",
+            "ko": "우리는 여전히..."
+        },
+        {
+            "start": "00:04:27,010",
+            "end": "00:04:27,950",
+            "ko": "착각에 빠져있어요."
+        },
+        {
+            "start": "00:04:29,698",
+            "end": "00:04:32,278",
+            "ko": "우리만의 환상에,"
+        },
+        {
+            "start": "00:04:32,278",
+            "end": "00:04:35,618",
+            "ko": "우리만의 상상에,"
+        },
+        {
+            "start": "00:04:35,618",
+            "end": "00:04:38,938",
+            "ko": "세상을 이해한다고,"
+        },
+        {
+            "start": "00:04:38,938",
+            "end": "00:04:39,778",
+            "ko": "우주를 이해한다고"
+        },
+        {
+            "start": "00:04:39,778",
+            "end": "00:04:40,138",
+            "ko": "생각해요."
+        },
+        {
+            "start": "00:04:40,138",
+            "end": "00:04:41,298",
+            "ko": "하지만 사실은,"
+        },
+        {
+            "start": "00:04:41,298",
+            "end": "00:04:41,898",
+            "ko": "그렇지 않아요."
+        },
+        {
+            "start": "00:04:41,898",
+            "end": "00:04:43,898",
+            "ko": "아무리 많이 배워도,"
+        },
+        {
+            "start": "00:04:43,898",
+            "end": "00:04:45,498",
+            "ko": "당신이 물리학자라고 해도,"
+        },
+        {
+            "start": "00:04:45,498",
+            "end": "00:04:46,858",
+            "ko": "당신이"
+        },
+        {
+            "start": "00:04:46,858",
+            "end": "00:04:49,278",
+            "ko": "노벨상 수상자라고 해도,"
+        },
+        {
+            "start": "00:04:49,278",
+            "end": "00:04:51,818",
+            "ko": "쓸모없어요."
+        },
+        {
+            "start": "00:04:51,818",
+            "end": "00:04:57,518",
+            "ko": "그건 여전히 핵심 문제를 해결할 수 없어요."
+        },
+        {
+            "start": "00:04:58,466",
+            "end": "00:04:58,886",
+            "ko": "우리는"
+        },
+        {
+            "start": "00:04:58,926",
+            "end": "00:04:59,406",
+            "ko": "용감해집니다."
+        },
+        {
+            "start": "00:05:01,218",
+            "end": "00:05:04,698",
+            "ko": "그냥 매일 삶을 즐기세요."
+        },
+        {
+            "start": "00:05:04,698",
+            "end": "00:05:06,118",
+            "ko": "인생을 즐기세요,"
+        }
+    ]
+}

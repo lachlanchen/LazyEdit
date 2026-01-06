@@ -1,0 +1,34 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:08,740\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our lunch with this fried chicken wing and red noodles.\"\n  },\n  {\n    \"start\": \"00:00:10,082\",\n    \"end\": \"00:00:11,062\",\n    \"lang\": \"zh\",\n    \"text\": \"这是螺蛳粉啊\"\n  },\n  {\n    \"start\": \"00:00:11,242\",\n    \"end\": \"00:00:11,922\",\n    \"lang\": \"zh\",\n    \"text\": \"螺蛳粉\"\n  },\n  {\n    \"start\": \"00:00:12,610\",\n    \"end\": \"00:00:13,190\",\n    \"lang\": \"ja\",\n    \"text\": \"ごめんなさい\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:08,740",
+            "en": "So this is our lunch with this fried chicken wing and red noodles.",
+            "zh": "这是我们的午餐，有炸鸡翅和红色面条。",
+            "ar": "إذاً هذا غداؤنا مع جناح الدجاج المقلي والنودلز الأحمر."
+        },
+        {
+            "start": "00:00:10,082",
+            "end": "00:00:11,062",
+            "en": "This is Luosifen.",
+            "zh": "这是螺蛳粉啊",
+            "ar": "هذا هو لوسيفين."
+        },
+        {
+            "start": "00:00:11,242",
+            "end": "00:00:11,922",
+            "en": "Luosifen",
+            "zh": "螺蛳粉",
+            "ar": "لوسيفين"
+        },
+        {
+            "start": "00:00:12,610",
+            "end": "00:00:13,190",
+            "en": "Sorry",
+            "zh": "对不起",
+            "ar": "آسف",
+            "ja": "ごめんなさい"
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,660\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,362\",\n    \"end\": \"00:00:06,302\",\n    \"lang\": \"en\",\n    \"text\": \"After taking the medicine,\"\n  },\n  {\n    \"start\": \"00:00:06,302\",\n    \"end\": \"00:00:10,882\",\n    \"lang\": \"en\",\n    \"text\": \"I started recovering.\"\n  },\n  {\n    \"start\": \"00:00:12,902\",\n    \"end\": \"00:00:17,122\",\n    \"lang\": \"en\",\n    \"text\": \"So now the sore throat is relieved.\"\n  },\n  {\n    \"start\": \"00:00:19,421\",\n    \"end\": \"00:00:19,762\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:00:21,882\",\n    \"end\": \"00:00:24,862\",\n    \"lang\": \"en\",\n    \"text\": \"So now I can eat stuff.\"\n  },\n  {\n    \"start\": \"00:00:25,202\",\n    \"end\": \"00:00:25,642\",\n    \"lang\": \"en\",\n    \"text\": \"You can see.\"\n  },\n  {\n    \"start\": \"00:00:42,622\",\n    \"end\": \"00:00:45,162\",\n    \"lang\": \"en\",\n    \"text\": \"Health is the most important thing.\"\n  },\n  {\n    \"start\": \"00:00:46,442\",\n    \"end\": \"00:00:58,202\",\n    \"lang\": \"en\",\n    \"text\": \"So I just want to help myself and everyone.\"\n  },\n  {\n    \"start\": \"00:00:58,202\",\n    \"end\": \"00:01:04,342\",\n    \"lang\": \"en\",\n    \"text\": \"So when you are alive,\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,660",
+            "vi": "Chào buổi sáng"
+        },
+        {
+            "start": "00:00:03,362",
+            "end": "00:00:06,302",
+            "vi": "Sau khi uống thuốc,"
+        },
+        {
+            "start": "00:00:06,302",
+            "end": "00:00:10,882",
+            "vi": "Tôi bắt đầu hồi phục."
+        },
+        {
+            "start": "00:00:12,902",
+            "end": "00:00:17,122",
+            "vi": "Vậy nên giờ đây cơn đau họng đã được giảm nhẹ."
+        },
+        {
+            "start": "00:00:19,421",
+            "end": "00:00:19,762",
+            "vi": "Phải không?"
+        },
+        {
+            "start": "00:00:21,882",
+            "end": "00:00:24,862",
+            "vi": "Vậy nên bây giờ tôi có thể ăn được."
+        },
+        {
+            "start": "00:00:25,202",
+            "end": "00:00:25,642",
+            "vi": "Bạn có thể thấy."
+        },
+        {
+            "start": "00:00:42,622",
+            "end": "00:00:45,162",
+            "vi": "Sức khỏe là thứ quan trọng nhất."
+        },
+        {
+            "start": "00:00:46,442",
+            "end": "00:00:58,202",
+            "vi": "Vì vậy tôi chỉ muốn giúp bản thân và mọi người."
+        },
+        {
+            "start": "00:00:58,202",
+            "end": "00:01:04,342",
+            "vi": "Vậy nên khi bạn còn sống,"
+        }
+    ]
+}

@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:01,546\",\n    \"end\": \"00:02:06,746\",\n    \"lang\": \"en\",\n    \"text\": \"So it's not important that you understand or not\"\n  },\n  {\n    \"start\": \"00:02:06,746\",\n    \"end\": \"00:02:07,906\",\n    \"lang\": \"en\",\n    \"text\": \"But you better understand\"\n  },\n  {\n    \"start\": \"00:02:12,226\",\n    \"end\": \"00:02:13,046\",\n    \"lang\": \"en\",\n    \"text\": \"If you don't understand,\"\n  },\n  {\n    \"start\": \"00:02:13,046\",\n    \"end\": \"00:02:13,346\",\n    \"lang\": \"en\",\n    \"text\": \"you're just a piece of shit\"\n  },\n  {\n    \"start\": \"00:02:13,385\",\n    \"end\": \"00:02:15,445\",\n    \"lang\": \"en\",\n    \"text\": \"If you don't do it,\"\n  },\n  {\n    \"start\": \"00:02:15,445\",\n    \"end\": \"00:02:16,525\",\n    \"lang\": \"en\",\n    \"text\": \"you're a loser.\"\n  },\n  {\n    \"start\": \"00:02:16,546\",\n    \"end\": \"00:02:16,866\",\n    \"lang\": \"en\",\n    \"text\": \"Nowadays,\"\n  },\n  {\n    \"start\": \"00:02:16,866\",\n    \"end\": \"00:02:19,506\",\n    \"lang\": \"en\",\n    \"text\": \"the things are still okay.\"\n  },\n  {\n    \"start\": \"00:02:21,806\",\n    \"end\": \"00:02:23,566\",\n    \"lang\": \"en\",\n    \"text\": \"It's not a problem.\"\n  },\n  {\n    \"start\": \"00:02:26,026\",\n    \"end\": \"00:02:26,386\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:02:28,586\",\n    \"end\": \"00:02:29,166\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:01,546",
+            "end": "00:02:06,746",
+            "es": "Así que no es importante si entiendes o no",
+            "fr": "Donc, ce n'est pas important si vous comprenez ou non",
+            "uk": "Отже, не важливо, чи ви розумієте це, чи ні"
+        },
+        {
+            "start": "00:02:06,746",
+            "end": "00:02:07,906",
+            "es": "Pero más te vale entender",
+            "fr": "Mais vous feriez mieux de comprendre",
+            "uk": "Але краще вам зрозуміти"
+        },
+        {
+            "start": "00:02:12,226",
+            "end": "00:02:13,046",
+            "es": "Si no entiendes,",
+            "fr": "Si vous ne comprenez pas,",
+            "uk": "Якщо ви не розумієте,"
+        },
+        {
+            "start": "00:02:13,046",
+            "end": "00:02:13,346",
+            "es": "eres solo una mierda",
+            "fr": "vous n'êtes qu'une merde",
+            "uk": "ви просто лайно"
+        },
+        {
+            "start": "00:02:13,385",
+            "end": "00:02:15,445",
+            "es": "Si no lo haces,",
+            "fr": "Si vous ne le faites pas,",
+            "uk": "Якщо ви цього не робите,"
+        },
+        {
+            "start": "00:02:15,445",
+            "end": "00:02:16,525",
+            "es": "eres un perdedor.",
+            "fr": "vous êtes un perdant.",
+            "uk": "ви лузер."
+        },
+        {
+            "start": "00:02:16,546",
+            "end": "00:02:16,866",
+            "es": "Hoy en día,",
+            "fr": "De nos jours,",
+            "uk": "В наші дні,"
+        },
+        {
+            "start": "00:02:16,866",
+            "end": "00:02:19,506",
+            "es": "las cosas aún están bien.",
+            "fr": "les choses vont encore bien.",
+            "uk": "речі ще добре."
+        },
+        {
+            "start": "00:02:21,806",
+            "end": "00:02:23,566",
+            "es": "No es un problema.",
+            "fr": "Ce n'est pas un problème.",
+            "uk": "Це не проблема."
+        },
+        {
+            "start": "00:02:26,026",
+            "end": "00:02:26,386",
+            "es": "De acuerdo.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:02:28,586",
+            "end": "00:02:29,166",
+            "es": "Nos vemos.",
+            "fr": "À bientôt.",
+            "uk": "Бачимось."
+        }
+    ]
+}

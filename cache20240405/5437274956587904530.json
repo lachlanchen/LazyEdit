@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,260\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは\"\n  },\n  {\n    \"start\": \"00:00:02,000\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"ja\",\n    \"text\": \"この早く遅い\"\n  },\n  {\n    \"start\": \"00:00:05,570\",\n    \"end\": \"00:00:05,870\",\n    \"lang\": \"en\",\n    \"text\": \"Amen.\"\n  },\n  {\n    \"start\": \"00:00:07,970\",\n    \"end\": \"00:00:08,730\",\n    \"lang\": \"ja\",\n    \"text\": \"おいしいです\"\n  },\n  {\n    \"start\": \"00:00:09,122\",\n    \"end\": \"00:00:12,722\",\n    \"lang\": \"en\",\n    \"text\": \"So this is my snow fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:13,522\",\n    \"end\": \"00:00:18,182\",\n    \"lang\": \"en\",\n    \"text\": \"So it's chicken wing noodles and I cook it in,\"\n  },\n  {\n    \"start\": \"00:00:19,182\",\n    \"end\": \"00:00:24,842\",\n    \"lang\": \"en\",\n    \"text\": \"it takes my about one hour to cook this.\"\n  },\n  {\n    \"start\": \"00:00:30,522\",\n    \"end\": \"00:00:33,922\",\n    \"lang\": \"en\",\n    \"text\": \"To cook this snow fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:42,721\",\n    \"end\": \"00:00:43,202\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:43,202\",\n    \"end\": \"00:00:44,002\",\n    \"lang\": \"en\",\n    \"text\": \"it's so delicious.\"\n  },\n  {\n    \"start\": \"00:00:48,522\",\n    \"end\": \"00:00:50,082\",\n    \"lang\": \"en\",\n    \"text\": \"Let me try the chicken wing.\"\n  },\n  {\n    \"start\": \"00:00:51,682\",\n    \"end\": \"00:00:54,062\",\n    \"lang\": \"ja\",\n    \"text\": \"私は手がパサパサしています\"\n  },\n  {\n    \"start\": \"00:00:54,682\",\n    \"end\": \"00:00:55,382\",\n    \"lang\": \"ja\",\n    \"text\": \"食べています\"\n  },\n  {\n    \"start\": \"00:00:59,586\",\n    \"end\": \"00:00:59,906\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm,\"\n  },\n  {\n    \"start\": \"00:00:59,906\",\n    \"end\": \"00:01:01,906\",\n    \"lang\": \"en\",\n    \"text\": \"it's tender,\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,260",
+            "es": "Hola",
+            "fr": "Bonjour",
+            "uk": "Привіт"
+        },
+        {
+            "start": "00:00:02,000",
+            "end": "00:00:05,140",
+            "es": "Esto es rápido y lento",
+            "fr": "C'est rapide et lent",
+            "uk": "Це швидко і повільно"
+        },
+        {
+            "start": "00:00:05,570",
+            "end": "00:00:05,870",
+            "es": "Amén.",
+            "fr": "Amen.",
+            "uk": "Амінь."
+        },
+        {
+            "start": "00:00:07,970",
+            "end": "00:00:08,730",
+            "es": "Está delicioso",
+            "fr": "C'est délicieux",
+            "uk": "Це смачно"
+        },
+        {
+            "start": "00:00:09,122",
+            "end": "00:00:12,722",
+            "es": "Así que estos son mis fideos súper rápidos.",
+            "fr": "Donc, voici mes nouilles super rapides.",
+            "uk": "Отже, це мої супершвидкісні локшина."
+        },
+        {
+            "start": "00:00:13,522",
+            "end": "00:00:18,182",
+            "es": "Son fideos de ala de pollo y lo cocino en,",
+            "fr": "Ce sont des nouilles aux ailes de poulet et je les cuisine dans,",
+            "uk": "Це локшина з курячими крильцями, і я готую їх у,"
+        },
+        {
+            "start": "00:00:19,182",
+            "end": "00:00:24,842",
+            "es": "me toma alrededor de una hora cocinar esto.",
+            "fr": "cela me prend environ une heure pour cuisiner cela.",
+            "uk": "мені потрібно близько години, щоб приготувати це."
+        },
+        {
+            "start": "00:00:30,522",
+            "end": "00:00:33,922",
+            "es": "Para cocinar estos fideos súper rápidos.",
+            "fr": "Pour cuisiner ces nouilles super rapides.",
+            "uk": "Щоб приготувати ці супершвидкісні локшина."
+        },
+        {
+            "start": "00:00:42,721",
+            "end": "00:00:43,202",
+            "es": "Vaya,",
+            "fr": "Wow,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:43,202",
+            "end": "00:00:44,002",
+            "es": "está tan delicioso.",
+            "fr": "c'est tellement délicieux.",
+            "uk": "це так смачно."
+        },
+        {
+            "start": "00:00:48,522",
+            "end": "00:00:50,082",
+            "es": "Déjame probar la ala de pollo.",
+            "fr": "Laisse-moi essayer l'aile de poulet.",
+            "uk": "Дозвольте спробувати куряче крило."
+        },
+        {
+            "start": "00:00:51,682",
+            "end": "00:00:54,062",
+            "es": "Mis manos están secas",
+            "fr": "Mes mains sont sèches",
+            "uk": "Мої руки сухі"
+        },
+        {
+            "start": "00:00:54,682",
+            "end": "00:00:55,382",
+            "es": "Estoy comiendo",
+            "fr": "Je suis en train de manger",
+            "uk": "Я їм"
+        },
+        {
+            "start": "00:00:59,586",
+            "end": "00:00:59,906",
+            "es": "Mmm,",
+            "fr": "Mmm,",
+            "uk": "Ммм,"
+        },
+        {
+            "start": "00:00:59,906",
+            "end": "00:01:01,906",
+            "es": "está tierno,",
+            "fr": "c'est tendre,",
+            "uk": "це ніжно,"
+        }
+    ]
+}

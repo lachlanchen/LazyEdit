@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:03,782\",\n    \"end\": \"00:02:04,642\",\n    \"lang\": \"en\",\n    \"text\": \"who you are,\"\n  },\n  {\n    \"start\": \"00:02:04,642\",\n    \"end\": \"00:02:05,882\",\n    \"lang\": \"en\",\n    \"text\": \"what's your achievement,\"\n  },\n  {\n    \"start\": \"00:02:05,882\",\n    \"end\": \"00:02:11,182\",\n    \"lang\": \"en\",\n    \"text\": \"at the end we will become dust.\"\n  },\n  {\n    \"start\": \"00:02:11,182\",\n    \"end\": \"00:02:16,922\",\n    \"lang\": \"en\",\n    \"text\": \"We will return everything\"\n  },\n  {\n    \"start\": \"00:02:16,922\",\n    \"end\": \"00:02:18,942\",\n    \"lang\": \"en\",\n    \"text\": \"that we have to the universe.\"\n  },\n  {\n    \"start\": \"00:02:18,942\",\n    \"end\": \"00:02:29,542\",\n    \"lang\": \"en\",\n    \"text\": \"So enjoy the experience in this journey and make it better.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:03,782",
+            "end": "00:02:04,642",
+            "es": "quién eres,",
+            "fr": "qui tu es,",
+            "uk": "хто ти,"
+        },
+        {
+            "start": "00:02:04,642",
+            "end": "00:02:05,882",
+            "es": "cuál es tu logro,",
+            "fr": "quel est ton accomplissement,",
+            "uk": "яке твоє досягнення,"
+        },
+        {
+            "start": "00:02:05,882",
+            "end": "00:02:11,182",
+            "es": "al final nos convertiremos en polvo.",
+            "fr": "à la fin, nous deviendrons poussière.",
+            "uk": "в кінці ми станемо пилом."
+        },
+        {
+            "start": "00:02:11,182",
+            "end": "00:02:16,922",
+            "es": "Devolveremos todo",
+            "fr": "Nous rendrons tout",
+            "uk": "Ми повернемо все"
+        },
+        {
+            "start": "00:02:16,922",
+            "end": "00:02:18,942",
+            "es": "lo que tenemos al universo.",
+            "fr": "ce que nous avons à l'univers.",
+            "uk": "що маємо всесвіту."
+        },
+        {
+            "start": "00:02:18,942",
+            "end": "00:02:29,542",
+            "es": "Así que disfruta de la experiencia en este viaje y hazlo mejor.",
+            "fr": "Alors profite de l'expérience dans ce voyage et rends-la meilleure.",
+            "uk": "Отже, насолоджуйся досвідом у цій подорожі та зроби її кращою."
+        }
+    ]
+}

@@ -1,0 +1,152 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,160\",\n    \"lang\": \"en\",\n    \"text\": \"Konnichiwa!\"\n  },\n  {\n    \"start\": \"00:00:02,420\",\n    \"end\": \"00:00:05,520\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our chicken wing noodles.\"\n  },\n  {\n    \"start\": \"00:00:05,820\",\n    \"end\": \"00:00:07,520\",\n    \"lang\": \"en\",\n    \"text\": \"Let me try this fried chicken.\"\n  },\n  {\n    \"start\": \"00:00:08,180\",\n    \"end\": \"00:00:09,340\",\n    \"lang\": \"en\",\n    \"text\": \"Grilled chicken.\"\n  },\n  {\n    \"start\": \"00:00:11,240\",\n    \"end\": \"00:00:11,480\",\n    \"lang\": \"en\",\n    \"text\": \"Wow!\"\n  },\n  {\n    \"start\": \"00:00:16,040\",\n    \"end\": \"00:00:19,460\",\n    \"lang\": \"en\",\n    \"text\": \"It's not crispy,\"\n  },\n  {\n    \"start\": \"00:00:19,460\",\n    \"end\": \"00:00:22,200\",\n    \"lang\": \"en\",\n    \"text\": \"but a little bit below crispy.\"\n  },\n  {\n    \"start\": \"00:00:23,540\",\n    \"end\": \"00:00:25,200\",\n    \"lang\": \"en\",\n    \"text\": \"And tender,\"\n  },\n  {\n    \"start\": \"00:00:25,200\",\n    \"end\": \"00:00:26,500\",\n    \"lang\": \"en\",\n    \"text\": \"and spicy,\"\n  },\n  {\n    \"start\": \"00:00:26,500\",\n    \"end\": \"00:00:27,840\",\n    \"lang\": \"en\",\n    \"text\": \"and tasty.\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:30,880\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god!\"\n  },\n  {\n    \"start\": \"00:00:30,880\",\n    \"end\": \"00:00:32,200\",\n    \"lang\": \"en\",\n    \"text\": \"This is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:33,560\",\n    \"end\": \"00:00:33,880\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:33,880\",\n    \"end\": \"00:00:34,520\",\n    \"lang\": \"en\",\n    \"text\": \"see you!\"\n  },\n  {\n    \"start\": \"00:00:36,300\",\n    \"end\": \"00:00:37,240\",\n    \"lang\": \"en\",\n    \"text\": \"Let me try this.\"\n  },\n  {\n    \"start\": \"00:00:39,560\",\n    \"end\": \"00:00:40,240\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm!\"\n  },\n  {\n    \"start\": \"00:00:40,240\",\n    \"end\": \"00:00:41,580\",\n    \"lang\": \"en\",\n    \"text\": \"Juicy,\"\n  },\n  {\n    \"start\": \"00:00:41,580\",\n    \"end\": \"00:00:43,080\",\n    \"lang\": \"en\",\n    \"text\": \"and spicy,\"\n  },\n  {\n    \"start\": \"00:00:43,080\",\n    \"end\": \"00:00:44,160\",\n    \"lang\": \"en\",\n    \"text\": \"and tasty.\"\n  },\n  {\n    \"start\": \"00:00:47,000\",\n    \"end\": \"00:00:47,420\",\n    \"lang\": \"en\",\n    \"text\": \"Gorgeous!\"\n  },\n  {\n    \"start\": \"00:00:47,458\",\n    \"end\": \"00:00:48,878\",\n    \"lang\": \"ja\",\n    \"text\": \"この手羽先美味しいです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,160",
+            "es": "¡Konnichiwa!",
+            "fr": "Konnichiwa !",
+            "uk": "Коннітіва!"
+        },
+        {
+            "start": "00:00:02,420",
+            "end": "00:00:05,520",
+            "es": "Así que estos son nuestros fideos con alas de pollo.",
+            "fr": "Donc ceci est nos nouilles aux ailes de poulet.",
+            "uk": "Отже, це наші локшина з курячими крильцями."
+        },
+        {
+            "start": "00:00:05,820",
+            "end": "00:00:07,520",
+            "es": "Déjame probar este pollo frito.",
+            "fr": "Laissez-moi essayer ce poulet frit.",
+            "uk": "Дозвольте мені спробувати це смажене курча."
+        },
+        {
+            "start": "00:00:08,180",
+            "end": "00:00:09,340",
+            "es": "Pollo a la parrilla.",
+            "fr": "Poulet grillé.",
+            "uk": "Грильоване курча."
+        },
+        {
+            "start": "00:00:11,240",
+            "end": "00:00:11,480",
+            "es": "¡Guau!",
+            "fr": "Wow !",
+            "uk": "Вау!"
+        },
+        {
+            "start": "00:00:16,040",
+            "end": "00:00:19,460",
+            "es": "No está crujiente,",
+            "fr": "Ce n'est pas croustillant,",
+            "uk": "Це не хрустке,"
+        },
+        {
+            "start": "00:00:19,460",
+            "end": "00:00:22,200",
+            "es": "pero un poco menos que crujiente.",
+            "fr": "mais un peu moins que croustillant.",
+            "uk": "але трохи менше ніж хрустке."
+        },
+        {
+            "start": "00:00:23,540",
+            "end": "00:00:25,200",
+            "es": "Y tierno,",
+            "fr": "Et tendre,",
+            "uk": "І ніжне,"
+        },
+        {
+            "start": "00:00:25,200",
+            "end": "00:00:26,500",
+            "es": "y picante,",
+            "fr": "et épicé,",
+            "uk": "і гостре,"
+        },
+        {
+            "start": "00:00:26,500",
+            "end": "00:00:27,840",
+            "es": "y sabroso.",
+            "fr": "et savoureux.",
+            "uk": "і смачне."
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:30,880",
+            "es": "¡Oh Dios mío!",
+            "fr": "Oh mon Dieu !",
+            "uk": "О Боже мій!"
+        },
+        {
+            "start": "00:00:30,880",
+            "end": "00:00:32,200",
+            "es": "Esto es magnífico.",
+            "fr": "C'est magnifique.",
+            "uk": "Це чудово."
+        },
+        {
+            "start": "00:00:33,560",
+            "end": "00:00:33,880",
+            "es": "Okay,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:33,880",
+            "end": "00:00:34,520",
+            "es": "¡nos vemos!",
+            "fr": "à bientôt !",
+            "uk": "бачимось!"
+        },
+        {
+            "start": "00:00:36,300",
+            "end": "00:00:37,240",
+            "es": "Déjame intentar esto.",
+            "fr": "Laisse-moi essayer ça.",
+            "uk": "Дозволь мені спробувати це."
+        },
+        {
+            "start": "00:00:39,560",
+            "end": "00:00:40,240",
+            "es": "¡Mmm!",
+            "fr": "Mmm !",
+            "uk": "Ммм!"
+        },
+        {
+            "start": "00:00:40,240",
+            "end": "00:00:41,580",
+            "es": "Jugoso,",
+            "fr": "Juteux,",
+            "uk": "Соковите,"
+        },
+        {
+            "start": "00:00:41,580",
+            "end": "00:00:43,080",
+            "es": "y picante,",
+            "fr": "et épicé,",
+            "uk": "і гостре,"
+        },
+        {
+            "start": "00:00:43,080",
+            "end": "00:00:44,160",
+            "es": "y sabroso.",
+            "fr": "et savoureux.",
+            "uk": "і смачне."
+        },
+        {
+            "start": "00:00:47,000",
+            "end": "00:00:47,420",
+            "es": "¡Hermoso!",
+            "fr": "Magnifique !",
+            "uk": "Чудово!"
+        },
+        {
+            "start": "00:00:47,458",
+            "end": "00:00:48,878",
+            "es": "Estas alas de pollo son deliciosas.",
+            "fr": "Ces ailes de poulet sont délicieuses.",
+            "uk": "Ці курячі крильця смачні."
+        }
+    ]
+}

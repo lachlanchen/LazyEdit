@@ -1,0 +1,35 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,860\",\n    \"end\": \"00:00:03,180\",\n    \"ja\": \"とてもいい<匂>[]いがする\"\n  },\n  {\n    \"start\": \"00:00:03,180\",\n    \"end\": \"00:00:04,180\",\n    \"ja\": \"まるで\"\n  },\n  {\n    \"start\": \"00:00:05,220\",\n    \"end\": \"00:00:06,300\",\n    \"ja\": \"<何>[]のようだろう\"\n  },\n  {\n    \"start\": \"00:00:06,300\",\n    \"end\": \"00:00:07,560\",\n    \"ja\": \"まるでその<粽子>[]みたい\"\n  },\n  {\n    \"start\": \"00:00:07,560\",\n    \"end\": \"00:00:08,300\",\n    \"ja\": \"でも、<違>[]うような\"\n  },\n  {\n    \"start\": \"00:00:08,930\",\n    \"end\": \"00:00:12,370\",\n    \"ja\": \"その<素晴>[]らしい<匂>[]いにほぼ<酔>[]いしれそうだ。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,860",
+            "end": "00:00:03,180",
+            "ja": "とてもいい<匂>[にお]いがする"
+        },
+        {
+            "start": "00:00:03,180",
+            "end": "00:00:04,180",
+            "ja": "まるで"
+        },
+        {
+            "start": "00:00:05,220",
+            "end": "00:00:06,300",
+            "ja": "<何>[なに]のようだろう"
+        },
+        {
+            "start": "00:00:06,300",
+            "end": "00:00:07,560",
+            "ja": "まるでその<粽子>[ちまき]みたい"
+        },
+        {
+            "start": "00:00:07,560",
+            "end": "00:00:08,300",
+            "ja": "でも、<違>[ちが]うような"
+        },
+        {
+            "start": "00:00:08,930",
+            "end": "00:00:12,370",
+            "ja": "その<素晴>[すば]らしい<匂>[にお]いにほぼ<酔>[よ]いしれそうだ。"
+        }
+    ]
+}

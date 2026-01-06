@@ -1,0 +1,20 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:09,060\",\n    \"ja\": \"それはつまり、19<オ>[], かっこいいと<思>[]う、<シンプル>[]でかなり\"\n  },\n  {\n    \"start\": \"00:00:09,060\",\n    \"end\": \"00:00:19,220\",\n    \"ja\": \"<似>[]ている、お<前>[]はもう<少>[]しで<私>[]を<殺>[]しかけたんだから、これは<再発>[]の2<回目>[]だ、<再発>[]だ\"\n  },\n  {\n    \"start\": \"00:00:20,380\",\n    \"end\": \"00:00:21,620\",\n    \"ja\": \"わかった、じゃあね\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:09,060",
+            "ja": "それはつまり、19<オ>[], かっこいいと<思>[おも]う、<シンプル>[]でかなり"
+        },
+        {
+            "start": "00:00:09,060",
+            "end": "00:00:19,220",
+            "ja": "<似>[に]ている、お<前>[まえ]はもう<少>[すこ]しで<私>[わたし]を<殺>[ころ]しかけたんだから、これは<再発>[さいはつ]の2<回目>[かいめ]だ、<再発>[さいはつ]だ"
+        },
+        {
+            "start": "00:00:20,380",
+            "end": "00:00:21,620",
+            "ja": "わかった、じゃあね"
+        }
+    ]
+}

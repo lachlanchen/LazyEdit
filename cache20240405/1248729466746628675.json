@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,240\",\n    \"lang\": \"en\",\n    \"text\": \"This is our old friend.\"\n  },\n  {\n    \"start\": \"00:00:03,120\",\n    \"end\": \"00:00:04,640\",\n    \"lang\": \"en\",\n    \"text\": \"I see him again.\"\n  },\n  {\n    \"start\": \"00:00:07,020\",\n    \"end\": \"00:00:09,080\",\n    \"lang\": \"en\",\n    \"text\": \"I like how he nods off.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,240",
+            "ja": "これは私たちの古い友達です。"
+        },
+        {
+            "start": "00:00:03,120",
+            "end": "00:00:04,640",
+            "ja": "また彼に会えてうれしい。"
+        },
+        {
+            "start": "00:00:07,020",
+            "end": "00:00:09,080",
+            "ja": "彼がうなずくのが好きです。"
+        }
+    ]
+}

@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:04,819\",\n    \"end\": \"00:00:10,160\",\n    \"lang\": \"ja\",\n    \"text\": \"このポテトは野菜です\"\n  },\n  {\n    \"start\": \"00:00:14,038\",\n    \"end\": \"00:00:17,118\",\n    \"lang\": \"ja\",\n    \"text\": \"このボンボンは太ももです\"\n  },\n  {\n    \"start\": \"00:00:17,118\",\n    \"end\": \"00:00:24,578\",\n    \"lang\": \"ja\",\n    \"text\": \"この肉は肉です\"\n  },\n  {\n    \"start\": \"00:00:25,538\",\n    \"end\": \"00:00:26,518\",\n    \"lang\": \"en\",\n    \"text\": \"So is that correct?\"\n  },\n  {\n    \"start\": \"00:00:27,298\",\n    \"end\": \"00:00:31,398\",\n    \"lang\": \"en\",\n    \"text\": \"So this potato is a vegetable,\"\n  },\n  {\n    \"start\": \"00:00:31,778\",\n    \"end\": \"00:00:32,738\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry is a fruit,\"\n  },\n  {\n    \"start\": \"00:00:33,118\",\n    \"end\": \"00:00:37,878\",\n    \"lang\": \"en\",\n    \"text\": \"and the beef is meat.\"\n  },\n  {\n    \"start\": \"00:00:39,938\",\n    \"end\": \"00:00:40,558\",\n    \"lang\": \"en\",\n    \"text\": \"And now,\"\n  },\n  {\n    \"start\": \"00:00:41,346\",\n    \"end\": \"00:00:45,306\",\n    \"lang\": \"ja\",\n    \"text\": \"この卵は卵です\"\n  },\n  {\n    \"start\": \"00:00:47,970\",\n    \"end\": \"00:00:48,170\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:04,819",
+            "end": "00:00:10,160",
+            "ja": "このポテトは野菜です"
+        },
+        {
+            "start": "00:00:14,038",
+            "end": "00:00:17,118",
+            "ja": "このボンボンは太ももです"
+        },
+        {
+            "start": "00:00:17,118",
+            "end": "00:00:24,578",
+            "ja": "この肉は肉です"
+        },
+        {
+            "start": "00:00:25,538",
+            "end": "00:00:26,518",
+            "ja": "それは正しいですか？"
+        },
+        {
+            "start": "00:00:27,298",
+            "end": "00:00:31,398",
+            "ja": "このポテトは野菜で、"
+        },
+        {
+            "start": "00:00:31,778",
+            "end": "00:00:32,738",
+            "ja": "ブルーベリーは果物で、"
+        },
+        {
+            "start": "00:00:33,118",
+            "end": "00:00:37,878",
+            "ja": "そして、この牛肉は肉です。"
+        },
+        {
+            "start": "00:00:39,938",
+            "end": "00:00:40,558",
+            "ja": "そして今、"
+        },
+        {
+            "start": "00:00:41,346",
+            "end": "00:00:45,306",
+            "ja": "この卵は卵です"
+        },
+        {
+            "start": "00:00:47,970",
+            "end": "00:00:48,170",
+            "ja": "オーケー。"
+        }
+    ]
+}

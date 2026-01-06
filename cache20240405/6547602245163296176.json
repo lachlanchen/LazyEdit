@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:12,660\",\n    \"end\": \"00:01:15,300\",\n    \"lang\": \"en\",\n    \"text\": \"When you look at yourself,\"\n  },\n  {\n    \"start\": \"00:01:15,300\",\n    \"end\": \"00:01:20,780\",\n    \"lang\": \"en\",\n    \"text\": \"it's a shadow and a dimension.\"\n  },\n  {\n    \"start\": \"00:01:20,813\",\n    \"end\": \"00:01:21,133\",\n    \"lang\": \"en\",\n    \"text\": \"See ya.\"\n  },\n  {\n    \"start\": \"00:01:22,594\",\n    \"end\": \"00:01:22,954\",\n    \"lang\": \"en\",\n    \"text\": \"dark.\"\n  },\n  {\n    \"start\": \"00:01:39,474\",\n    \"end\": \"00:01:49,474\",\n    \"lang\": \"en\",\n    \"text\": \"But I believe everyone will have our unique journey that we need to utilize our own karma\"\n  },\n  {\n    \"start\": \"00:01:50,353\",\n    \"end\": \"00:01:53,954\",\n    \"lang\": \"en\",\n    \"text\": \"to create something that belongs to us.\"\n  },\n  {\n    \"start\": \"00:02:00,394\",\n    \"end\": \"00:02:01,114\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:01,114\",\n    \"end\": \"00:02:04,174\",\n    \"lang\": \"en\",\n    \"text\": \"you have a unique journey that you need to utilize.\"\n  },\n  {\n    \"start\": \"00:02:06,234\",\n    \"end\": \"00:02:08,954\",\n    \"lang\": \"en\",\n    \"text\": \"If you utilize it properly,\"\n  },\n  {\n    \"start\": \"00:02:08,954\",\n    \"end\": \"00:02:12,954\",\n    \"lang\": \"en\",\n    \"text\": \"it will be as good as theirs.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:12,660",
+            "end": "00:01:15,300",
+            "es": "Cuando te miras a ti mismo,",
+            "fr": "Quand tu te regardes,",
+            "uk": "Коли ти дивишся на себе,"
+        },
+        {
+            "start": "00:01:15,300",
+            "end": "00:01:20,780",
+            "es": "es una sombra y una dimensión.",
+            "fr": "c'est une ombre et une dimension.",
+            "uk": "це тінь і вимір."
+        },
+        {
+            "start": "00:01:20,813",
+            "end": "00:01:21,133",
+            "es": "Nos vemos.",
+            "fr": "À plus.",
+            "uk": "Бувай."
+        },
+        {
+            "start": "00:01:22,594",
+            "end": "00:01:22,954",
+            "es": "oscuro.",
+            "fr": "sombre.",
+            "uk": "темно."
+        },
+        {
+            "start": "00:01:39,474",
+            "end": "00:01:49,474",
+            "es": "Pero creo que todos tendremos nuestro viaje único que necesitamos para utilizar nuestro propio karma",
+            "fr": "Mais je crois que chacun aura son propre voyage que nous devons utiliser notre propre karma",
+            "uk": "Але я вірю, що кожен з нас матиме свій унікальний шлях, який ми повинні використовувати свій власний карму"
+        },
+        {
+            "start": "00:01:50,353",
+            "end": "00:01:53,954",
+            "es": "para crear algo que nos pertenece.",
+            "fr": "pour créer quelque chose qui nous appartient.",
+            "uk": "створити щось, що належить нам."
+        },
+        {
+            "start": "00:02:00,394",
+            "end": "00:02:01,114",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:02:01,114",
+            "end": "00:02:04,174",
+            "es": "tienes un viaje único que necesitas utilizar.",
+            "fr": "tu as un voyage unique que tu dois utiliser.",
+            "uk": "у тебе є унікальний шлях, який ти повинен використовувати."
+        },
+        {
+            "start": "00:02:06,234",
+            "end": "00:02:08,954",
+            "es": "Si lo utilizas correctamente,",
+            "fr": "Si tu l'utilises correctement,",
+            "uk": "Якщо ти використовуєш його правильно,"
+        },
+        {
+            "start": "00:02:08,954",
+            "end": "00:02:12,954",
+            "es": "será tan bueno como el suyo.",
+            "fr": "ça sera aussi bon que le leur.",
+            "uk": "це буде так само добре, як і їхнє."
+        }
+    ]
+}

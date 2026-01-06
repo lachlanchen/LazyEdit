@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,960\",\n    \"lang\": \"ja\",\n    \"text\": \"3世代のビジネスです\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:06,780\",\n    \"lang\": \"ja\",\n    \"text\": \"なので生きていけば3世代です\"\n  },\n  {\n    \"start\": \"00:00:07,746\",\n    \"end\": \"00:00:11,866\",\n    \"lang\": \"en\",\n    \"text\": \"So this give us some insight in entrepreneurship.\"\n  },\n  {\n    \"start\": \"00:00:12,886\",\n    \"end\": \"00:00:15,946\",\n    \"lang\": \"en\",\n    \"text\": \"And it needn't to be very big business.\"\n  },\n  {\n    \"start\": \"00:00:16,566\",\n    \"end\": \"00:00:17,606\",\n    \"lang\": \"en\",\n    \"text\": \"Any small business,\"\n  },\n  {\n    \"start\": \"00:00:17,606\",\n    \"end\": \"00:00:21,406\",\n    \"lang\": \"en\",\n    \"text\": \"it can be successful business\"\n  },\n  {\n    \"start\": \"00:00:21,696\",\n    \"end\": \"00:00:24,486\",\n    \"lang\": \"en\",\n    \"text\": \"as long as you have some value.\"\n  },\n  {\n    \"start\": \"00:00:25,126\",\n    \"end\": \"00:00:27,706\",\n    \"lang\": \"en\",\n    \"text\": \"So they sell this Bo Zai Gao.\"\n  },\n  {\n    \"start\": \"00:00:29,746\",\n    \"end\": \"00:00:32,766\",\n    \"lang\": \"en\",\n    \"text\": \"And as long as you can provide value,\"\n  },\n  {\n    \"start\": \"00:00:32,986\",\n    \"end\": \"00:00:34,986\",\n    \"lang\": \"en\",\n    \"text\": \"and you do it repeatedly,\"\n  },\n  {\n    \"start\": \"00:00:38,446\",\n    \"end\": \"00:00:39,186\",\n    \"lang\": \"en\",\n    \"text\": \"repeatedly,\"\n  },\n  {\n    \"start\": \"00:00:39,186\",\n    \"end\": \"00:00:39,926\",\n    \"lang\": \"en\",\n    \"text\": \"so.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,960",
+            "ja": "3世代にわたるビジネスです"
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:06,780",
+            "ja": "つまり、3世代続いています"
+        },
+        {
+            "start": "00:00:07,746",
+            "end": "00:00:11,866",
+            "ja": "これは私たちに起業家精神についてのいくつかの洞察を与えます"
+        },
+        {
+            "start": "00:00:12,886",
+            "end": "00:00:15,946",
+            "ja": "そして、それが非常に大規模なビジネスである必要はありません"
+        },
+        {
+            "start": "00:00:16,566",
+            "end": "00:00:17,606",
+            "ja": "どんな小さなビジネスでも、"
+        },
+        {
+            "start": "00:00:17,606",
+            "end": "00:00:21,406",
+            "ja": "それが成功するビジネスになる可能性があります"
+        },
+        {
+            "start": "00:00:21,696",
+            "end": "00:00:24,486",
+            "ja": "あなたが何かしらの価値を持っている限り"
+        },
+        {
+            "start": "00:00:25,126",
+            "end": "00:00:27,706",
+            "ja": "だから彼らはこの薄焼きケーキを売っています"
+        },
+        {
+            "start": "00:00:29,746",
+            "end": "00:00:32,766",
+            "ja": "そして、あなたが価値を提供できる限り、"
+        },
+        {
+            "start": "00:00:32,986",
+            "end": "00:00:34,986",
+            "ja": "そしてそれを繰り返し行うなら、"
+        },
+        {
+            "start": "00:00:38,446",
+            "end": "00:00:39,186",
+            "ja": "繰り返し、"
+        },
+        {
+            "start": "00:00:39,186",
+            "end": "00:00:39,926",
+            "ja": "そうですね。"
+        }
+    ]
+}

@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,080\",\n    \"end\": \"00:00:03,900\",\n    \"lang\": \"zh\",\n    \"text\": \"我们这个今天双半月哟\"\n  },\n  {\n    \"start\": \"00:00:03,900\",\n    \"end\": \"00:00:05,220\",\n    \"lang\": \"zh\",\n    \"text\": \"来剃脑壳\"\n  },\n  {\n    \"start\": \"00:00:06,280\",\n    \"end\": \"00:00:08,020\",\n    \"lang\": \"zh\",\n    \"text\": \"剃成光头了\"\n  },\n  {\n    \"start\": \"00:00:11,202\",\n    \"end\": \"00:00:11,862\",\n    \"lang\": \"en\",\n    \"text\": \"There you are,\"\n  },\n  {\n    \"start\": \"00:00:11,862\",\n    \"end\": \"00:00:12,002\",\n    \"lang\": \"en\",\n    \"text\": \"you.\"\n  },\n  {\n    \"start\": \"00:00:13,666\",\n    \"end\": \"00:00:14,986\",\n    \"lang\": \"zh\",\n    \"text\": \"他一点都不怕累\"\n  },\n  {\n    \"start\": \"00:00:14,986\",\n    \"end\": \"00:00:16,686\",\n    \"lang\": \"zh\",\n    \"text\": \"我们去第一次下水\"\n  },\n  {\n    \"start\": \"00:00:16,686\",\n    \"end\": \"00:00:17,806\",\n    \"lang\": \"zh\",\n    \"text\": \"骑着挖他的脚\"\n  },\n  {\n    \"start\": \"00:00:26,805\",\n    \"end\": \"00:00:28,306\",\n    \"lang\": \"zh\",\n    \"text\": \"有12斤的\"\n  },\n  {\n    \"start\": \"00:00:32,886\",\n    \"end\": \"00:00:33,846\",\n    \"lang\": \"zh\",\n    \"text\": \"哇塞\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,080",
+            "end": "00:00:03,900",
+            "en": "Today is a special day for a half-moon haircut",
+            "zh": "我们这个今天双半月哟",
+            "ar": "اليوم يوم خاص لقصة شعر نصف القمر"
+        },
+        {
+            "start": "00:00:03,900",
+            "end": "00:00:05,220",
+            "en": "To shave the head",
+            "zh": "来剃脑壳",
+            "ar": "لحلاقة الرأس"
+        },
+        {
+            "start": "00:00:06,280",
+            "end": "00:00:08,020",
+            "en": "Shaved bald",
+            "zh": "剃成光头了",
+            "ar": "محلوقة صلعا"
+        },
+        {
+            "start": "00:00:11,202",
+            "end": "00:00:11,862",
+            "en": "There you are,",
+            "zh": "你在那里，",
+            "ar": "ها أنت ذا،"
+        },
+        {
+            "start": "00:00:11,862",
+            "end": "00:00:12,002",
+            "en": "you.",
+            "zh": "你。",
+            "ar": "أنت."
+        },
+        {
+            "start": "00:00:13,666",
+            "end": "00:00:14,986",
+            "en": "He is not afraid of being tired at all",
+            "zh": "他一点都不怕累",
+            "ar": "هو لا يخاف من الإرهاق على الإطلاق"
+        },
+        {
+            "start": "00:00:14,986",
+            "end": "00:00:16,686",
+            "en": "We go for our first swim",
+            "zh": "我们去第一次下水",
+            "ar": "نذهب للسباحة لأول مرة"
+        },
+        {
+            "start": "00:00:16,686",
+            "end": "00:00:17,806",
+            "en": "Riding on his feet",
+            "zh": "骑着挖他的脚",
+            "ar": "ركوب على قدميه"
+        },
+        {
+            "start": "00:00:26,805",
+            "end": "00:00:28,306",
+            "en": "It's 12 jin",
+            "zh": "有12斤的",
+            "ar": "هناك 12 جين"
+        },
+        {
+            "start": "00:00:32,886",
+            "end": "00:00:33,846",
+            "en": "Wow",
+            "zh": "哇塞",
+            "ar": "واو"
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,400\",\n    \"lang\": \"zh\",\n    \"text\": \"就一直说这个粤语和重庆话很像嘛\"\n  },\n  {\n    \"start\": \"00:00:04,040\",\n    \"end\": \"00:00:05,720\",\n    \"lang\": \"zh\",\n    \"text\": \"我脑袋还叫这个叫延续\"\n  },\n  {\n    \"start\": \"00:00:06,300\",\n    \"end\": \"00:00:08,860\",\n    \"lang\": \"zh\",\n    \"text\": \"今天才知道原来粤语里面应该叫什么\"\n  },\n  {\n    \"start\": \"00:00:08,860\",\n    \"end\": \"00:00:09,400\",\n    \"lang\": \"zh\",\n    \"text\": \"元兮\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,400",
+            "ja": "ずっとこの広東語と重慶語が似ていると言っていますね"
+        },
+        {
+            "start": "00:00:04,040",
+            "end": "00:00:05,720",
+            "ja": "私の頭はそれを延長と呼ぶ"
+        },
+        {
+            "start": "00:00:06,300",
+            "end": "00:00:08,860",
+            "ja": "今日初めて広東語の中で何と呼ぶべきか知りました"
+        },
+        {
+            "start": "00:00:08,860",
+            "end": "00:00:09,400",
+            "ja": "元気"
+        }
+    ]
+}

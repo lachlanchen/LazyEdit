@@ -1,0 +1,26 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:09,060\",\n    \"lang\": \"en\",\n    \"text\": \"so that means it's a I think it's a cool with the 19 oh the simple is a quite\"\n  },\n  {\n    \"start\": \"00:00:09,060\",\n    \"end\": \"00:00:19,220\",\n    \"lang\": \"en\",\n    \"text\": \"a similar you almost killed me so this is the second time recur right recur\"\n  },\n  {\n    \"start\": \"00:00:20,380\",\n    \"end\": \"00:00:21,620\",\n    \"lang\": \"en\",\n    \"text\": \"okay see you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:09,060",
+            "es": "así que eso significa que es un, creo que es un guay con el 19 oh lo simple es bastante",
+            "fr": "alors cela signifie que c'est, je pense que c'est cool avec le 19 oh le simple est assez",
+            "uk": "отже, це означає, що це, я думаю, це круто з 19 о, просте є досить"
+        },
+        {
+            "start": "00:00:09,060",
+            "end": "00:00:19,220",
+            "es": "un similar casi me mataste así que esta es la segunda vez que recuerdo, recuerdo",
+            "fr": "un similaire tu m'as presque tué donc c'est la deuxième fois que je me souviens, je me souviens",
+            "uk": "схожий ти ледь мене не вбив, так що це другий раз, я пам'ятаю, пам'ятаю"
+        },
+        {
+            "start": "00:00:20,380",
+            "end": "00:00:21,620",
+            "es": "ok nos vemos",
+            "fr": "d'accord, à bientôt",
+            "uk": "добре, побачимося"
+        }
+    ]
+}

@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"en\",\n    \"text\": \"So I forget to say,\"\n  },\n  {\n    \"start\": \"00:00:01,460\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"we also have this small tomato.\"\n  },\n  {\n    \"start\": \"00:00:07,586\",\n    \"end\": \"00:00:09,706\",\n    \"lang\": \"zh\",\n    \"text\": \"生驴果 我跟你说 好多生\"\n  },\n  {\n    \"start\": \"00:00:09,986\",\n    \"end\": \"00:00:11,186\",\n    \"lang\": \"zh\",\n    \"text\": \"生驴果\"\n  },\n  {\n    \"start\": \"00:00:14,178\",\n    \"end\": \"00:00:14,698\",\n    \"lang\": \"en\",\n    \"text\": \"And the grapes.\"\n  },\n  {\n    \"start\": \"00:00:39,746\",\n    \"end\": \"00:00:39,966\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,460",
+            "ko": "그래서 말을 잊었어,"
+        },
+        {
+            "start": "00:00:01,460",
+            "end": "00:00:05,000",
+            "ko": "우리에게는 이 작은 토마토도 있어."
+        },
+        {
+            "start": "00:00:07,586",
+            "end": "00:00:09,706",
+            "ko": "알로에, 말이야, 정말 많아"
+        },
+        {
+            "start": "00:00:09,986",
+            "end": "00:00:11,186",
+            "ko": "알로에"
+        },
+        {
+            "start": "00:00:14,178",
+            "end": "00:00:14,698",
+            "ko": "그리고 포도."
+        },
+        {
+            "start": "00:00:39,746",
+            "end": "00:00:39,966",
+            "ko": "잘 가."
+        }
+    ]
+}

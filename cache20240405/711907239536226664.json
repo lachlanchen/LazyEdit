@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:14,174\",\n    \"end\": \"00:03:15,314\",\n    \"lang\": \"en\",\n    \"text\": \"If I have a chance,\"\n  },\n  {\n    \"start\": \"00:03:15,314\",\n    \"end\": \"00:03:18,274\",\n    \"lang\": \"en\",\n    \"text\": \"I would like to serve you guys one of these noodles.\"\n  },\n  {\n    \"start\": \"00:03:21,693\",\n    \"end\": \"00:03:23,714\",\n    \"lang\": \"en\",\n    \"text\": \"If I don't have any...\"\n  },\n  {\n    \"start\": \"00:03:28,794\",\n    \"end\": \"00:03:30,314\",\n    \"lang\": \"en\",\n    \"text\": \"Daily life?\"\n  },\n  {\n    \"start\": \"00:03:31,314\",\n    \"end\": \"00:03:34,894\",\n    \"lang\": \"en\",\n    \"text\": \"It's not to do science,\"\n  },\n  {\n    \"start\": \"00:03:34,894\",\n    \"end\": \"00:03:38,214\",\n    \"lang\": \"en\",\n    \"text\": \"not to care about your living.\"\n  },\n  {\n    \"start\": \"00:03:42,274\",\n    \"end\": \"00:03:42,814\",\n    \"lang\": \"zh\",\n    \"text\": \"我加個視頻\"\n  },\n  {\n    \"start\": \"00:03:46,914\",\n    \"end\": \"00:03:50,734\",\n    \"lang\": \"en\",\n    \"text\": \"I just made this cooker,\"\n  },\n  {\n    \"start\": \"00:03:50,734\",\n    \"end\": \"00:03:52,714\",\n    \"lang\": \"en\",\n    \"text\": \"prepared this cooker,\"\n  },\n  {\n    \"start\": \"00:03:52,714\",\n    \"end\": \"00:03:54,014\",\n    \"lang\": \"en\",\n    \"text\": \"this oven,\"\n  },\n  {\n    \"start\": \"00:03:54,014\",\n    \"end\": \"00:03:59,274\",\n    \"lang\": \"en\",\n    \"text\": \"this inducer.\"\n  },\n  {\n    \"start\": \"00:04:00,162\",\n    \"end\": \"00:04:00,982\",\n    \"lang\": \"zh\",\n    \"text\": \"謝謝大家\"\n  },\n  {\n    \"start\": \"00:04:02,050\",\n    \"end\": \"00:04:04,690\",\n    \"lang\": \"en\",\n    \"text\": \"I just prepared induction cooker and the cooker for you guys\"\n  },\n  {\n    \"start\": \"00:04:07,410\",\n    \"end\": \"00:04:07,770\",\n    \"lang\": \"en\",\n    \"text\": \"Free\"\n  },\n  {\n    \"start\": \"00:04:08,190\",\n    \"end\": \"00:04:09,090\",\n    \"lang\": \"en\",\n    \"text\": \"You free\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:14,174",
+            "end": "00:03:15,314",
+            "es": "Si tengo la oportunidad,",
+            "fr": "Si j'ai une chance,",
+            "uk": "Якщо у мене буде шанс,"
+        },
+        {
+            "start": "00:03:15,314",
+            "end": "00:03:18,274",
+            "es": "me gustaría servirles a ustedes uno de estos fideos.",
+            "fr": "J'aimerais vous servir l'un de ces nouilles.",
+            "uk": "Я б хотів подати вам одні з цих локшин."
+        },
+        {
+            "start": "00:03:21,693",
+            "end": "00:03:23,714",
+            "es": "Si no tengo ninguno...",
+            "fr": "Si je n'en ai aucun...",
+            "uk": "Якщо у мене немає жодного..."
+        },
+        {
+            "start": "00:03:28,794",
+            "end": "00:03:30,314",
+            "es": "¿Vida diaria?",
+            "fr": "La vie quotidienne ?",
+            "uk": "Щоденне життя?"
+        },
+        {
+            "start": "00:03:31,314",
+            "end": "00:03:34,894",
+            "es": "No es hacer ciencia,",
+            "fr": "Ce n'est pas pour faire de la science,",
+            "uk": "Це не займатися наукою,"
+        },
+        {
+            "start": "00:03:34,894",
+            "end": "00:03:38,214",
+            "es": "no es preocuparse por tu vida.",
+            "fr": "ce n'est pas se soucier de votre vie.",
+            "uk": "не турбуватися про ваше життя."
+        },
+        {
+            "start": "00:03:42,274",
+            "end": "00:03:42,814",
+            "es": "Agregaré un vídeo",
+            "fr": "Je vais ajouter une vidéo",
+            "uk": "Я додам відео"
+        },
+        {
+            "start": "00:03:46,914",
+            "end": "00:03:50,734",
+            "es": "Acabo de hacer esta cocina,",
+            "fr": "Je viens de faire cette cuisinière,",
+            "uk": "Я щойно зробив цю плиту,"
+        },
+        {
+            "start": "00:03:50,734",
+            "end": "00:03:52,714",
+            "es": "preparé esta cocina,",
+            "fr": "j'ai préparé cette cuisinière,",
+            "uk": "я підготував цю кухню,"
+        },
+        {
+            "start": "00:03:52,714",
+            "end": "00:03:54,014",
+            "es": "este horno,",
+            "fr": "ce four,",
+            "uk": "ця духовка,"
+        },
+        {
+            "start": "00:03:54,014",
+            "end": "00:03:59,274",
+            "es": "este inductor.",
+            "fr": "cet inducteur.",
+            "uk": "цей індуктор."
+        },
+        {
+            "start": "00:04:00,162",
+            "end": "00:04:00,982",
+            "es": "Gracias a todos",
+            "fr": "Merci à tous",
+            "uk": "Дякую всім"
+        },
+        {
+            "start": "00:04:02,050",
+            "end": "00:04:04,690",
+            "es": "Acabo de preparar la cocina de inducción y la cocina para ustedes",
+            "fr": "Je viens de préparer la cuisinière à induction et la cuisinière pour vous",
+            "uk": "Я тільки що підготував індукційну плиту та кухню для вас"
+        },
+        {
+            "start": "00:04:07,410",
+            "end": "00:04:07,770",
+            "es": "Gratis",
+            "fr": "Gratuit",
+            "uk": "Безкоштовно"
+        },
+        {
+            "start": "00:04:08,190",
+            "end": "00:04:09,090",
+            "es": "Tú libre",
+            "fr": "Tu es libre",
+            "uk": "Ти вільний"
+        }
+    ]
+}

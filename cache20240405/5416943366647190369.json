@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,699\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"zh\",\n    \"text\": \"这个兵力拳咋说呢?\"\n  },\n  {\n    \"start\": \"00:00:02,240\",\n    \"end\": \"00:00:02,860\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力拳\"\n  },\n  {\n    \"start\": \"00:00:04,580\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力\"\n  },\n  {\n    \"start\": \"00:00:09,660\",\n    \"end\": \"00:00:10,020\",\n    \"lang\": \"zh\",\n    \"text\": \"哇,\"\n  },\n  {\n    \"start\": \"00:00:10,020\",\n    \"end\": \"00:00:12,200\",\n    \"lang\": \"zh\",\n    \"text\": \"那个黑狗很可爱\"\n  },\n  {\n    \"start\": \"00:00:16,420\",\n    \"end\": \"00:00:16,920\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力,\"\n  },\n  {\n    \"start\": \"00:00:16,920\",\n    \"end\": \"00:00:17,820\",\n    \"lang\": \"zh\",\n    \"text\": \"还有什么呢这\"\n  },\n  {\n    \"start\": \"00:00:18,380\",\n    \"end\": \"00:00:18,740\",\n    \"lang\": \"zh\",\n    \"text\": \"哦,\"\n  },\n  {\n    \"start\": \"00:00:18,740\",\n    \"end\": \"00:00:19,180\",\n    \"lang\": \"zh\",\n    \"text\": \"贵兵,\"\n  },\n  {\n    \"start\": \"00:00:19,180\",\n    \"end\": \"00:00:20,460\",\n    \"lang\": \"zh\",\n    \"text\": \"贵兵拳\"\n  },\n  {\n    \"start\": \"00:00:21,100\",\n    \"end\": \"00:00:21,620\",\n    \"lang\": \"zh\",\n    \"text\": \"兵力,\"\n  },\n  {\n    \"start\": \"00:00:21,620\",\n    \"end\": \"00:00:22,880\",\n    \"lang\": \"zh\",\n    \"text\": \"我说的说些啥\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,699",
+            "end": "00:00:02,240",
+            "es": "¿Cómo deberíamos describir esta fuerza de puño?",
+            "fr": "Comment doit-on parler de cette force de poing?",
+            "uk": "Як нам говорити про цю силу кулака?"
+        },
+        {
+            "start": "00:00:02,240",
+            "end": "00:00:02,860",
+            "es": "Fuerza de puño",
+            "fr": "Force de poing",
+            "uk": "Сила кулака"
+        },
+        {
+            "start": "00:00:04,580",
+            "end": "00:00:05,140",
+            "es": "Fuerza",
+            "fr": "Force",
+            "uk": "Сила"
+        },
+        {
+            "start": "00:00:09,660",
+            "end": "00:00:10,020",
+            "es": "¡Vaya!",
+            "fr": "Wow!",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:10,020",
+            "end": "00:00:12,200",
+            "es": "Ese perro negro es muy lindo",
+            "fr": "Ce chien noir est très mignon",
+            "uk": "Той чорний пес дуже милий"
+        },
+        {
+            "start": "00:00:16,420",
+            "end": "00:00:16,920",
+            "es": "Fuerza,",
+            "fr": "Force,",
+            "uk": "Сила,"
+        },
+        {
+            "start": "00:00:16,920",
+            "end": "00:00:17,820",
+            "es": "¿Qué más hay aquí?",
+            "fr": "Quoi d'autre y a-t-il ici?",
+            "uk": "Що ще тут є?"
+        },
+        {
+            "start": "00:00:18,380",
+            "end": "00:00:18,740",
+            "es": "Oh,",
+            "fr": "Oh,",
+            "uk": "О,"
+        },
+        {
+            "start": "00:00:18,740",
+            "end": "00:00:19,180",
+            "es": "Guerreros nobles,",
+            "fr": "Guerriers nobles,",
+            "uk": "Благородні воїни,"
+        },
+        {
+            "start": "00:00:19,180",
+            "end": "00:00:20,460",
+            "es": "Puño de guerreros nobles",
+            "fr": "Poing de guerriers nobles",
+            "uk": "Кулак благородних воїнів"
+        },
+        {
+            "start": "00:00:21,100",
+            "end": "00:00:21,620",
+            "es": "Fuerza,",
+            "fr": "Force,",
+            "uk": "Сила,"
+        },
+        {
+            "start": "00:00:21,620",
+            "end": "00:00:22,880",
+            "es": "¿Qué estaba diciendo?",
+            "fr": "Qu'est-ce que je disais?",
+            "uk": "Що я казав?"
+        }
+    ]
+}

@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,140\",\n    \"end\": \"00:00:02,620\",\n    \"lang\": \"en\",\n    \"text\": \"I'm gonna have to get more um preparing.\"\n  },\n  {\n    \"start\": \"00:00:02,658\",\n    \"end\": \"00:00:05,338\",\n    \"lang\": \"ja\",\n    \"text\": \"マストーはクラスターチーニです\"\n  },\n  {\n    \"start\": \"00:00:05,410\",\n    \"end\": \"00:00:06,090\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:07,234\",\n    \"end\": \"00:00:08,154\",\n    \"lang\": \"zh\",\n    \"text\": \"一些胡椒\"\n  },\n  {\n    \"start\": \"00:00:08,794\",\n    \"end\": \"00:00:09,634\",\n    \"lang\": \"zh\",\n    \"text\": \"胡椒\"\n  },\n  {\n    \"start\": \"00:00:09,814\",\n    \"end\": \"00:00:11,154\",\n    \"lang\": \"zh\",\n    \"text\": \"辣椒 大蒜\"\n  },\n  {\n    \"start\": \"00:00:11,314\",\n    \"end\": \"00:00:11,734\",\n    \"lang\": \"zh\",\n    \"text\": \"生姜\"\n  },\n  {\n    \"start\": \"00:00:13,986\",\n    \"end\": \"00:00:14,226\",\n    \"lang\": \"en\",\n    \"text\": \"So.\"\n  },\n  {\n    \"start\": \"00:00:14,882\",\n    \"end\": \"00:00:16,502\",\n    \"lang\": \"zh\",\n    \"text\": \"没有没有放花椒\"\n  },\n  {\n    \"start\": \"00:00:18,434\",\n    \"end\": \"00:00:19,894\",\n    \"lang\": \"en\",\n    \"text\": \"My mouth is already watering\"\n  },\n  {\n    \"start\": \"00:00:21,974\",\n    \"end\": \"00:00:22,554\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,140",
+            "end": "00:00:02,620",
+            "es": "Voy a tener que prepararme más.",
+            "fr": "Je vais devoir me préparer davantage.",
+            "uk": "Мені доведеться більше готуватися."
+        },
+        {
+            "start": "00:00:02,658",
+            "end": "00:00:05,338",
+            "es": "マストー es un tipo de té de cúrcuma.",
+            "fr": "マストー est un type de thé au curcuma.",
+            "uk": "マストー це тип чаю з куркумою."
+        },
+        {
+            "start": "00:00:05,410",
+            "end": "00:00:06,090",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        },
+        {
+            "start": "00:00:07,234",
+            "end": "00:00:08,154",
+            "es": "Un poco de pimienta",
+            "fr": "Un peu de poivre",
+            "uk": "Трохи перцю"
+        },
+        {
+            "start": "00:00:08,794",
+            "end": "00:00:09,634",
+            "es": "Pimienta",
+            "fr": "Poivre",
+            "uk": "Перець"
+        },
+        {
+            "start": "00:00:09,814",
+            "end": "00:00:11,154",
+            "es": "Chile, ajo",
+            "fr": "Piment, ail",
+            "uk": "Чилі, часник"
+        },
+        {
+            "start": "00:00:11,314",
+            "end": "00:00:11,734",
+            "es": "Jengibre",
+            "fr": "Gingembre",
+            "uk": "Імбир"
+        },
+        {
+            "start": "00:00:13,986",
+            "end": "00:00:14,226",
+            "es": "Entonces.",
+            "fr": "Alors.",
+            "uk": "Отже."
+        },
+        {
+            "start": "00:00:14,882",
+            "end": "00:00:16,502",
+            "es": "No, no puse pimienta de Sichuan",
+            "fr": "Non, je n'ai pas mis de poivre du Sichuan",
+            "uk": "Ні, я не додав сичуаньський перець"
+        },
+        {
+            "start": "00:00:18,434",
+            "end": "00:00:19,894",
+            "es": "Ya se me hace agua la boca",
+            "fr": "Ma bouche commence déjà à s'arroser",
+            "uk": "Вже текла слинка"
+        },
+        {
+            "start": "00:00:21,974",
+            "end": "00:00:22,554",
+            "es": "Vale",
+            "fr": "D'accord",
+            "uk": "Добре"
+        }
+    ]
+}

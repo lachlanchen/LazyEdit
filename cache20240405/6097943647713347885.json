@@ -1,0 +1,124 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,920\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,600\",\n    \"end\": \"00:00:05,240\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:07,746\",\n    \"end\": \"00:00:07,926\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:07,926\",\n    \"end\": \"00:00:09,946\",\n    \"lang\": \"en\",\n    \"text\": \"nothing to share today.\"\n  },\n  {\n    \"start\": \"00:00:13,546\",\n    \"end\": \"00:00:14,366\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:15,298\",\n    \"end\": \"00:00:18,038\",\n    \"lang\": \"ja\",\n    \"text\": \"私はピンクジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:00:19,358\",\n    \"end\": \"00:00:20,058\",\n    \"lang\": \"ja\",\n    \"text\": \"ぷぬっ\"\n  },\n  {\n    \"start\": \"00:00:22,114\",\n    \"end\": \"00:00:22,794\",\n    \"lang\": \"ja\",\n    \"text\": \"食べています\"\n  },\n  {\n    \"start\": \"00:00:22,794\",\n    \"end\": \"00:00:24,974\",\n    \"lang\": \"ja\",\n    \"text\": \"ストロベリー食べています\"\n  },\n  {\n    \"start\": \"00:00:32,133\",\n    \"end\": \"00:00:33,054\",\n    \"lang\": \"ja\",\n    \"text\": \"わぁ\"\n  },\n  {\n    \"start\": \"00:00:34,214\",\n    \"end\": \"00:00:34,674\",\n    \"lang\": \"ja\",\n    \"text\": \"この\"\n  },\n  {\n    \"start\": \"00:00:36,134\",\n    \"end\": \"00:00:37,814\",\n    \"lang\": \"ja\",\n    \"text\": \"このストロベリー美味しいです\"\n  },\n  {\n    \"start\": \"00:00:43,994\",\n    \"end\": \"00:00:44,454\",\n    \"lang\": \"ja\",\n    \"text\": \"この、\"\n  },\n  {\n    \"start\": \"00:00:44,454\",\n    \"end\": \"00:00:45,254\",\n    \"lang\": \"ja\",\n    \"text\": \"この部分\"\n  },\n  {\n    \"start\": \"00:00:47,654\",\n    \"end\": \"00:00:48,994\",\n    \"lang\": \"ja\",\n    \"text\": \"このストロベリー\"\n  },\n  {\n    \"start\": \"00:00:50,882\",\n    \"end\": \"00:00:51,402\",\n    \"lang\": \"en\",\n    \"text\": \"todemo\"\n  },\n  {\n    \"start\": \"00:00:52,674\",\n    \"end\": \"00:00:53,434\",\n    \"lang\": \"ja\",\n    \"text\": \"美味しいです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,920",
+            "es": "Buenos días",
+            "fr": "Bonjour",
+            "uk": "Доброго ранку"
+        },
+        {
+            "start": "00:00:03,600",
+            "end": "00:00:05,240",
+            "es": "Buenos días",
+            "fr": "Bonjour",
+            "uk": "Доброго ранку"
+        },
+        {
+            "start": "00:00:07,746",
+            "end": "00:00:07,926",
+            "es": "Entonces,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:07,926",
+            "end": "00:00:09,946",
+            "es": "nada para compartir hoy.",
+            "fr": "rien à partager aujourd'hui.",
+            "uk": "нічого ділитись сьогодні."
+        },
+        {
+            "start": "00:00:13,546",
+            "end": "00:00:14,366",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        },
+        {
+            "start": "00:00:15,298",
+            "end": "00:00:18,038",
+            "es": "Estoy bebiendo jugo de rosa",
+            "fr": "Je bois du jus rose",
+            "uk": "Я п'ю рожевий сік"
+        },
+        {
+            "start": "00:00:19,358",
+            "end": "00:00:20,058",
+            "es": "Glup",
+            "fr": "Gloups",
+            "uk": "Глуп"
+        },
+        {
+            "start": "00:00:22,114",
+            "end": "00:00:22,794",
+            "es": "comiendo",
+            "fr": "en train de manger",
+            "uk": "їм"
+        },
+        {
+            "start": "00:00:22,794",
+            "end": "00:00:24,974",
+            "es": "comiendo fresas",
+            "fr": "en train de manger des fraises",
+            "uk": "їм полуниці"
+        },
+        {
+            "start": "00:00:32,133",
+            "end": "00:00:33,054",
+            "es": "Wow",
+            "fr": "Wow",
+            "uk": "Вау"
+        },
+        {
+            "start": "00:00:34,214",
+            "end": "00:00:34,674",
+            "es": "Esta",
+            "fr": "Cette",
+            "uk": "Ця"
+        },
+        {
+            "start": "00:00:36,134",
+            "end": "00:00:37,814",
+            "es": "Esta fresa está deliciosa",
+            "fr": "Cette fraise est délicieuse",
+            "uk": "Ця полуниця смачна"
+        },
+        {
+            "start": "00:00:43,994",
+            "end": "00:00:44,454",
+            "es": "Esta,",
+            "fr": "Cette,",
+            "uk": "Ця,"
+        },
+        {
+            "start": "00:00:44,454",
+            "end": "00:00:45,254",
+            "es": "Esta parte",
+            "fr": "Cette partie",
+            "uk": "Ця частина"
+        },
+        {
+            "start": "00:00:47,654",
+            "end": "00:00:48,994",
+            "es": "Esta fresa",
+            "fr": "Cette fraise",
+            "uk": "Ця полуниця"
+        },
+        {
+            "start": "00:00:50,882",
+            "end": "00:00:51,402",
+            "es": "de todas maneras",
+            "fr": "de toute façon",
+            "uk": "так чи інакше"
+        },
+        {
+            "start": "00:00:52,674",
+            "end": "00:00:53,434",
+            "es": "es deliciosa",
+            "fr": "est délicieuse",
+            "uk": "смачна"
+        }
+    ]
+}

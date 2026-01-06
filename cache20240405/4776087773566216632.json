@@ -1,0 +1,152 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:09,100\",\n    \"lang\": \"en\",\n    \"text\": \"Now this is quite a simple source routine to get used to the web.\"\n  },\n  {\n    \"start\": \"00:00:10,146\",\n    \"end\": \"00:00:12,086\",\n    \"lang\": \"zh\",\n    \"text\": \"在这里 我买黑的一只\"\n  },\n  {\n    \"start\": \"00:00:13,346\",\n    \"end\": \"00:00:14,006\",\n    \"lang\": \"en\",\n    \"text\": \"is painful.\"\n  },\n  {\n    \"start\": \"00:00:14,006\",\n    \"end\": \"00:00:18,926\",\n    \"lang\": \"en\",\n    \"text\": \"When I turn my head to the right and left,\"\n  },\n  {\n    \"start\": \"00:00:18,926\",\n    \"end\": \"00:00:21,086\",\n    \"lang\": \"en\",\n    \"text\": \"it also hurts.\"\n  },\n  {\n    \"start\": \"00:00:21,086\",\n    \"end\": \"00:00:21,906\",\n    \"lang\": \"en\",\n    \"text\": \"It's not that it\"\n  },\n  {\n    \"start\": \"00:00:21,906\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"hurts,\"\n  },\n  {\n    \"start\": \"00:00:22,146\",\n    \"end\": \"00:00:25,466\",\n    \"lang\": \"en\",\n    \"text\": \"but it has this blunt pain.\"\n  },\n  {\n    \"start\": \"00:00:25,466\",\n    \"end\": \"00:00:30,826\",\n    \"lang\": \"en\",\n    \"text\": \"And it's kind of my head getting larger,\"\n  },\n  {\n    \"start\": \"00:00:30,826\",\n    \"end\": \"00:00:32,086\",\n    \"lang\": \"en\",\n    \"text\": \"I guess.\"\n  },\n  {\n    \"start\": \"00:00:32,086\",\n    \"end\": \"00:00:33,486\",\n    \"lang\": \"en\",\n    \"text\": \"Oh\"\n  },\n  {\n    \"start\": \"00:00:33,486\",\n    \"end\": \"00:00:33,926\",\n    \"lang\": \"en\",\n    \"text\": \"my goodness.\"\n  },\n  {\n    \"start\": \"00:00:33,926\",\n    \"end\": \"00:00:37,006\",\n    \"lang\": \"en\",\n    \"text\": \"I want to eat this and I don't want to eat this.\"\n  },\n  {\n    \"start\": \"00:00:37,006\",\n    \"end\": \"00:00:38,046\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:38,046\",\n    \"end\": \"00:00:41,686\",\n    \"lang\": \"en\",\n    \"text\": \"the swallowing is painful.\"\n  },\n  {\n    \"start\": \"00:00:42,818\",\n    \"end\": \"00:00:43,918\",\n    \"lang\": \"en\",\n    \"text\": \"I have to do it.\"\n  },\n  {\n    \"start\": \"00:00:48,738\",\n    \"end\": \"00:00:49,518\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness,\"\n  },\n  {\n    \"start\": \"00:00:49,518\",\n    \"end\": \"00:00:51,378\",\n    \"lang\": \"en\",\n    \"text\": \"this kills me.\"\n  },\n  {\n    \"start\": \"00:00:56,318\",\n    \"end\": \"00:00:57,038\",\n    \"lang\": \"en\",\n    \"text\": \"But,\"\n  },\n  {\n    \"start\": \"00:00:57,038\",\n    \"end\": \"00:00:57,758\",\n    \"lang\": \"en\",\n    \"text\": \"okay,\"\n  },\n  {\n    \"start\": \"00:00:57,758\",\n    \"end\": \"00:00:58,418\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:09,100",
+            "en": "Now this is quite a simple source routine to get used to the web.",
+            "zh": "现在这是一个相当简单的资源例程，用来适应网络。",
+            "ar": "الآن هذه هي روتين مصدر بسيط جدًا للتعود على الويب."
+        },
+        {
+            "start": "00:00:10,146",
+            "end": "00:00:12,086",
+            "en": "Here, I bought a black one.",
+            "zh": "在这里 我买黑的一只",
+            "ar": "هنا، لقد اشتريت واحدة سوداء."
+        },
+        {
+            "start": "00:00:13,346",
+            "end": "00:00:14,006",
+            "en": "is painful.",
+            "zh": "很痛。",
+            "ar": "مؤلم."
+        },
+        {
+            "start": "00:00:14,006",
+            "end": "00:00:18,926",
+            "en": "When I turn my head to the right and left,",
+            "zh": "当我向右和向左转头时，",
+            "ar": "عندما أدير رأسي يمينًا ويسارًا،"
+        },
+        {
+            "start": "00:00:18,926",
+            "end": "00:00:21,086",
+            "en": "it also hurts.",
+            "zh": "它也很疼。",
+            "ar": "هذا أيضًا يؤلم."
+        },
+        {
+            "start": "00:00:21,086",
+            "end": "00:00:21,906",
+            "en": "It's not that it",
+            "zh": "不是它",
+            "ar": "ليس أنه"
+        },
+        {
+            "start": "00:00:21,906",
+            "end": "00:00:22,146",
+            "en": "hurts,",
+            "zh": "痛，",
+            "ar": "يؤلم،"
+        },
+        {
+            "start": "00:00:22,146",
+            "end": "00:00:25,466",
+            "en": "but it has this blunt pain.",
+            "zh": "但它有这种钝痛。",
+            "ar": "ولكن لديه هذا الألم الخفيف."
+        },
+        {
+            "start": "00:00:25,466",
+            "end": "00:00:30,826",
+            "en": "And it's kind of my head getting larger,",
+            "zh": "而且这种感觉就像我的头变大了，",
+            "ar": "ونوع من رأسي يصبح أكبر،"
+        },
+        {
+            "start": "00:00:30,826",
+            "end": "00:00:32,086",
+            "en": "I guess.",
+            "zh": "我猜。",
+            "ar": "أظن."
+        },
+        {
+            "start": "00:00:32,086",
+            "end": "00:00:33,486",
+            "en": "Oh",
+            "zh": "哦",
+            "ar": "أوه"
+        },
+        {
+            "start": "00:00:33,486",
+            "end": "00:00:33,926",
+            "en": "my goodness.",
+            "zh": "我的天哪。",
+            "ar": "يا له من جنون."
+        },
+        {
+            "start": "00:00:33,926",
+            "end": "00:00:37,006",
+            "en": "I want to eat this and I don't want to eat this.",
+            "zh": "我既想吃这个又不想吃这个。",
+            "ar": "أريد أن آكل هذا ولا أريد أن آكل هذا."
+        },
+        {
+            "start": "00:00:37,006",
+            "end": "00:00:38,046",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذا،"
+        },
+        {
+            "start": "00:00:38,046",
+            "end": "00:00:41,686",
+            "en": "the swallowing is painful.",
+            "zh": "吞咽很痛。",
+            "ar": "البلع مؤلم."
+        },
+        {
+            "start": "00:00:42,818",
+            "end": "00:00:43,918",
+            "en": "I have to do it.",
+            "zh": "我必须这么做。",
+            "ar": "يجب علي أن أفعلها."
+        },
+        {
+            "start": "00:00:48,738",
+            "end": "00:00:49,518",
+            "en": "Oh my goodness,",
+            "zh": "哦，我的天哪，",
+            "ar": "يا الهي،"
+        },
+        {
+            "start": "00:00:49,518",
+            "end": "00:00:51,378",
+            "en": "this kills me.",
+            "zh": "这要了我的命。",
+            "ar": "هذا يقتلني."
+        },
+        {
+            "start": "00:00:56,318",
+            "end": "00:00:57,038",
+            "en": "But,",
+            "zh": "但是，",
+            "ar": "لكن،"
+        },
+        {
+            "start": "00:00:57,038",
+            "end": "00:00:57,758",
+            "en": "okay,",
+            "zh": "好吧，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:57,758",
+            "end": "00:00:58,418",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك."
+        }
+    ]
+}

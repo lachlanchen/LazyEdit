@@ -1,0 +1,236 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,800\",\n    \"lang\": \"zh\",\n    \"text\": \"去傻哈\"\n  },\n  {\n    \"start\": \"00:00:01,379\",\n    \"end\": \"00:00:03,000\",\n    \"lang\": \"zh\",\n    \"text\": \"學一點新單詞\"\n  },\n  {\n    \"start\": \"00:00:03,746\",\n    \"end\": \"00:00:09,246\",\n    \"lang\": \"en\",\n    \"text\": \"So this is a banana and chestnut and a banana.\"\n  },\n  {\n    \"start\": \"00:00:09,282\",\n    \"end\": \"00:00:10,022\",\n    \"lang\": \"en\",\n    \"text\": \"Then the pinches.\"\n  },\n  {\n    \"start\": \"00:00:11,262\",\n    \"end\": \"00:00:12,802\",\n    \"lang\": \"en\",\n    \"text\": \"And then...\"\n  },\n  {\n    \"start\": \"00:00:13,314\",\n    \"end\": \"00:00:13,794\",\n    \"lang\": \"en\",\n    \"text\": \"pepper\"\n  },\n  {\n    \"start\": \"00:00:16,673\",\n    \"end\": \"00:00:19,874\",\n    \"lang\": \"en\",\n    \"text\": \"another bag of chestnuts\"\n  },\n  {\n    \"start\": \"00:00:19,874\",\n    \"end\": \"00:00:21,274\",\n    \"lang\": \"en\",\n    \"text\": \"and this is\"\n  },\n  {\n    \"start\": \"00:00:21,974\",\n    \"end\": \"00:00:23,334\",\n    \"lang\": \"en\",\n    \"text\": \"this is\"\n  },\n  {\n    \"start\": \"00:00:24,162\",\n    \"end\": \"00:00:24,662\",\n    \"lang\": \"zh\",\n    \"text\": \"香菜\"\n  },\n  {\n    \"start\": \"00:00:25,352\",\n    \"end\": \"00:00:25,622\",\n    \"lang\": \"zh\",\n    \"text\": \"好的,\"\n  },\n  {\n    \"start\": \"00:00:25,622\",\n    \"end\": \"00:00:25,882\",\n    \"lang\": \"zh\",\n    \"text\": \"謝謝\"\n  },\n  {\n    \"start\": \"00:00:26,372\",\n    \"end\": \"00:00:26,802\",\n    \"lang\": \"zh\",\n    \"text\": \"香菜\"\n  },\n  {\n    \"start\": \"00:00:27,842\",\n    \"end\": \"00:00:28,482\",\n    \"lang\": \"ja\",\n    \"text\": \"くらんだ、\"\n  },\n  {\n    \"start\": \"00:00:28,482\",\n    \"end\": \"00:00:29,382\",\n    \"lang\": \"ja\",\n    \"text\": \"くらんだ\"\n  },\n  {\n    \"start\": \"00:00:30,498\",\n    \"end\": \"00:00:31,118\",\n    \"lang\": \"en\",\n    \"text\": \"and uhm,\"\n  },\n  {\n    \"start\": \"00:00:31,118\",\n    \"end\": \"00:00:32,357\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry\"\n  },\n  {\n    \"start\": \"00:00:32,357\",\n    \"end\": \"00:00:32,858\",\n    \"lang\": \"en\",\n    \"text\": \"..\"\n  },\n  {\n    \"start\": \"00:00:32,858\",\n    \"end\": \"00:00:34,358\",\n    \"lang\": \"en\",\n    \"text\": \".strawberry\"\n  },\n  {\n    \"start\": \"00:00:36,706\",\n    \"end\": \"00:00:37,226\",\n    \"lang\": \"zh\",\n    \"text\": \"好美喔\"\n  },\n  {\n    \"start\": \"00:00:37,794\",\n    \"end\": \"00:00:39,134\",\n    \"lang\": \"en\",\n    \"text\": \"and red pepper\"\n  },\n  {\n    \"start\": \"00:00:39,694\",\n    \"end\": \"00:00:40,874\",\n    \"lang\": \"en\",\n    \"text\": \"and bread,\"\n  },\n  {\n    \"start\": \"00:00:40,874\",\n    \"end\": \"00:00:41,354\",\n    \"lang\": \"en\",\n    \"text\": \"ok,\"\n  },\n  {\n    \"start\": \"00:00:41,354\",\n    \"end\": \"00:00:42,014\",\n    \"lang\": \"en\",\n    \"text\": \"this is bread\"\n  },\n  {\n    \"start\": \"00:00:42,014\",\n    \"end\": \"00:00:43,534\",\n    \"lang\": \"en\",\n    \"text\": \"delicious\"\n  },\n  {\n    \"start\": \"00:00:43,534\",\n    \"end\": \"00:00:46,174\",\n    \"lang\": \"en\",\n    \"text\": \"and blueberries\"\n  },\n  {\n    \"start\": \"00:00:46,174\",\n    \"end\": \"00:00:48,054\",\n    \"lang\": \"en\",\n    \"text\": \"and apple\"\n  },\n  {\n    \"start\": \"00:00:48,054\",\n    \"end\": \"00:00:49,874\",\n    \"lang\": \"en\",\n    \"text\": \"and lemon\"\n  },\n  {\n    \"start\": \"00:00:49,874\",\n    \"end\": \"00:00:50,594\",\n    \"lang\": \"en\",\n    \"text\": \"lemon\"\n  },\n  {\n    \"start\": \"00:00:51,414\",\n    \"end\": \"00:00:52,434\",\n    \"lang\": \"en\",\n    \"text\": \"what is this?\"\n  },\n  {\n    \"start\": \"00:00:52,814\",\n    \"end\": \"00:00:55,494\",\n    \"lang\": \"en\",\n    \"text\": \"this is non-vegetable\"\n  },\n  {\n    \"start\": \"00:00:57,314\",\n    \"end\": \"00:00:57,814\",\n    \"lang\": \"en\",\n    \"text\": \"ok,\"\n  },\n  {\n    \"start\": \"00:00:57,814\",\n    \"end\": \"00:01:00,514\",\n    \"lang\": \"en\",\n    \"text\": \"it doesn't have a name on it\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,800",
+            "es": "Ve, tonto",
+            "fr": "Va, idiot",
+            "uk": "Йди, дурнику"
+        },
+        {
+            "start": "00:00:01,379",
+            "end": "00:00:03,000",
+            "es": "Aprende algunas palabras nuevas",
+            "fr": "Apprends quelques nouveaux mots",
+            "uk": "Вивчи кілька нових слів"
+        },
+        {
+            "start": "00:00:03,746",
+            "end": "00:00:09,246",
+            "es": "Así que esto es un plátano y castañas y un plátano.",
+            "fr": "Donc, ceci est une banane et des châtaignes et une banane.",
+            "uk": "Отже, це банан і каштани та банан."
+        },
+        {
+            "start": "00:00:09,282",
+            "end": "00:00:10,022",
+            "es": "Luego las pinzas.",
+            "fr": "Ensuite les pincettes.",
+            "uk": "Потім щипці."
+        },
+        {
+            "start": "00:00:11,262",
+            "end": "00:00:12,802",
+            "es": "Y luego...",
+            "fr": "Et puis...",
+            "uk": "А потім..."
+        },
+        {
+            "start": "00:00:13,314",
+            "end": "00:00:13,794",
+            "es": "pimienta",
+            "fr": "poivre",
+            "uk": "перець"
+        },
+        {
+            "start": "00:00:16,673",
+            "end": "00:00:19,874",
+            "es": "otra bolsa de castañas",
+            "fr": "un autre sac de châtaignes",
+            "uk": "ще один пакет каштанів"
+        },
+        {
+            "start": "00:00:19,874",
+            "end": "00:00:21,274",
+            "es": "y esto es",
+            "fr": "et ceci est",
+            "uk": "і це"
+        },
+        {
+            "start": "00:00:21,974",
+            "end": "00:00:23,334",
+            "es": "esto es",
+            "fr": "ceci est",
+            "uk": "це є"
+        },
+        {
+            "start": "00:00:24,162",
+            "end": "00:00:24,662",
+            "es": "cilantro",
+            "fr": "coriandre",
+            "uk": "коріандр"
+        },
+        {
+            "start": "00:00:25,352",
+            "end": "00:00:25,622",
+            "es": "Bien,",
+            "fr": "Bien,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:25,622",
+            "end": "00:00:25,882",
+            "es": "gracias",
+            "fr": "merci",
+            "uk": "дякую"
+        },
+        {
+            "start": "00:00:26,372",
+            "end": "00:00:26,802",
+            "es": "cilantro",
+            "fr": "coriandre",
+            "uk": "коріандр"
+        },
+        {
+            "start": "00:00:27,842",
+            "end": "00:00:28,482",
+            "es": "confundido,",
+            "fr": "confus,",
+            "uk": "збентежений,"
+        },
+        {
+            "start": "00:00:28,482",
+            "end": "00:00:29,382",
+            "es": "confundido",
+            "fr": "confus",
+            "uk": "збентежений"
+        },
+        {
+            "start": "00:00:30,498",
+            "end": "00:00:31,118",
+            "es": "y umm,",
+            "fr": "et euh,",
+            "uk": "і ем,"
+        },
+        {
+            "start": "00:00:31,118",
+            "end": "00:00:32,357",
+            "es": "fresa",
+            "fr": "fraise",
+            "uk": "полуниця"
+        },
+        {
+            "start": "00:00:32,357",
+            "end": "00:00:32,858",
+            "es": "..",
+            "fr": "..",
+            "uk": ".."
+        },
+        {
+            "start": "00:00:32,858",
+            "end": "00:00:34,358",
+            "es": ".fresa",
+            "fr": ".fraise",
+            "uk": ".полуниця"
+        },
+        {
+            "start": "00:00:36,706",
+            "end": "00:00:37,226",
+            "es": "qué hermoso",
+            "fr": "que c'est beau",
+            "uk": "як це гарно"
+        },
+        {
+            "start": "00:00:37,794",
+            "end": "00:00:39,134",
+            "es": "y pimiento rojo",
+            "fr": "et poivron rouge",
+            "uk": "і червоний перець"
+        },
+        {
+            "start": "00:00:39,694",
+            "end": "00:00:40,874",
+            "es": "y pan,",
+            "fr": "et pain,",
+            "uk": "і хліб,"
+        },
+        {
+            "start": "00:00:40,874",
+            "end": "00:00:41,354",
+            "es": "ok,",
+            "fr": "ok,",
+            "uk": "ок,"
+        },
+        {
+            "start": "00:00:41,354",
+            "end": "00:00:42,014",
+            "es": "esto es pan",
+            "fr": "ceci est du pain",
+            "uk": "це хліб"
+        },
+        {
+            "start": "00:00:42,014",
+            "end": "00:00:43,534",
+            "es": "delicioso",
+            "fr": "délicieux",
+            "uk": "смачно"
+        },
+        {
+            "start": "00:00:43,534",
+            "end": "00:00:46,174",
+            "es": "y arándanos",
+            "fr": "et myrtilles",
+            "uk": "і чорниці"
+        },
+        {
+            "start": "00:00:46,174",
+            "end": "00:00:48,054",
+            "es": "y manzana",
+            "fr": "et pomme",
+            "uk": "і яблуко"
+        },
+        {
+            "start": "00:00:48,054",
+            "end": "00:00:49,874",
+            "es": "y limón",
+            "fr": "et citron",
+            "uk": "і лимон"
+        },
+        {
+            "start": "00:00:49,874",
+            "end": "00:00:50,594",
+            "es": "limón",
+            "fr": "citron",
+            "uk": "лимон"
+        },
+        {
+            "start": "00:00:51,414",
+            "end": "00:00:52,434",
+            "es": "¿qué es esto?",
+            "fr": "qu'est-ce que c'est?",
+            "uk": "що це?"
+        },
+        {
+            "start": "00:00:52,814",
+            "end": "00:00:55,494",
+            "es": "esto no es un vegetal",
+            "fr": "ceci n'est pas un légume",
+            "uk": "це не овоч"
+        },
+        {
+            "start": "00:00:57,314",
+            "end": "00:00:57,814",
+            "es": "ok,",
+            "fr": "ok,",
+            "uk": "ок,"
+        },
+        {
+            "start": "00:00:57,814",
+            "end": "00:01:00,514",
+            "es": "no tiene nombre en ello",
+            "fr": "il n'y a pas de nom dessus",
+            "uk": "на ньому немає назви"
+        }
+    ]
+}

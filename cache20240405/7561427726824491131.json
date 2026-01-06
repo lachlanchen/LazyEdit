@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,860\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは\"\n  },\n  {\n    \"start\": \"00:00:04,290\",\n    \"end\": \"00:00:10,630\",\n    \"lang\": \"en\",\n    \"text\": \"This is our special Chongqing flavored potato.\"\n  },\n  {\n    \"start\": \"00:00:12,130\",\n    \"end\": \"00:00:12,770\",\n    \"lang\": \"en\",\n    \"text\": \"The taste,\"\n  },\n  {\n    \"start\": \"00:00:12,770\",\n    \"end\": \"00:00:13,650\",\n    \"lang\": \"en\",\n    \"text\": \"the smell,\"\n  },\n  {\n    \"start\": \"00:00:13,650\",\n    \"end\": \"00:00:17,530\",\n    \"lang\": \"en\",\n    \"text\": \"the water factory sense,\"\n  },\n  {\n    \"start\": \"00:00:18,450\",\n    \"end\": \"00:00:19,250\",\n    \"lang\": \"en\",\n    \"text\": \"experience,\"\n  },\n  {\n    \"start\": \"00:00:19,250\",\n    \"end\": \"00:00:20,850\",\n    \"lang\": \"en\",\n    \"text\": \"water factory,\"\n  },\n  {\n    \"start\": \"00:00:20,850\",\n    \"end\": \"00:00:21,630\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:00:22,970\",\n    \"end\": \"00:00:23,310\",\n    \"lang\": \"en\",\n    \"text\": \"Water,\"\n  },\n  {\n    \"start\": \"00:00:23,310\",\n    \"end\": \"00:00:24,370\",\n    \"lang\": \"en\",\n    \"text\": \"water factory.\"\n  },\n  {\n    \"start\": \"00:00:28,990\",\n    \"end\": \"00:00:29,790\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:29,790\",\n    \"end\": \"00:00:31,230\",\n    \"lang\": \"en\",\n    \"text\": \"let me taste it.\"\n  },\n  {\n    \"start\": \"00:00:36,569\",\n    \"end\": \"00:00:37,370\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:37,370\",\n    \"end\": \"00:00:38,730\",\n    \"lang\": \"en\",\n    \"text\": \"this is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:48,270\",\n    \"end\": \"00:00:48,670\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:48,670\",\n    \"end\": \"00:00:51,250\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't make potato crab.\"\n  },\n  {\n    \"start\": \"00:00:52,770\",\n    \"end\": \"00:00:54,070\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道土豆泥怎么说\"\n  },\n  {\n    \"start\": \"00:00:55,266\",\n    \"end\": \"00:01:06,586\",\n    \"lang\": \"en\",\n    \"text\": \"So I only make this fragment because I believe if it's a potato crumb,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,860",
+            "vi": "Xin chào"
+        },
+        {
+            "start": "00:00:04,290",
+            "end": "00:00:10,630",
+            "vi": "Đây là khoai tây hương vị Chongqing đặc biệt của chúng tôi."
+        },
+        {
+            "start": "00:00:12,130",
+            "end": "00:00:12,770",
+            "vi": "Hương vị,"
+        },
+        {
+            "start": "00:00:12,770",
+            "end": "00:00:13,650",
+            "vi": "mùi thơm,"
+        },
+        {
+            "start": "00:00:13,650",
+            "end": "00:00:17,530",
+            "vi": "cảm giác như ở nhà máy nước,"
+        },
+        {
+            "start": "00:00:18,450",
+            "end": "00:00:19,250",
+            "vi": "trải nghiệm,"
+        },
+        {
+            "start": "00:00:19,250",
+            "end": "00:00:20,850",
+            "vi": "nhà máy nước,"
+        },
+        {
+            "start": "00:00:20,850",
+            "end": "00:00:21,630",
+            "vi": "phải không?"
+        },
+        {
+            "start": "00:00:22,970",
+            "end": "00:00:23,310",
+            "vi": "Nước,"
+        },
+        {
+            "start": "00:00:23,310",
+            "end": "00:00:24,370",
+            "vi": "nhà máy nước."
+        },
+        {
+            "start": "00:00:28,990",
+            "end": "00:00:29,790",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:00:29,790",
+            "end": "00:00:31,230",
+            "vi": "để tôi thử nó."
+        },
+        {
+            "start": "00:00:36,569",
+            "end": "00:00:37,370",
+            "vi": "Ôi,"
+        },
+        {
+            "start": "00:00:37,370",
+            "end": "00:00:38,730",
+            "vi": "nó thật tuyệt vời."
+        },
+        {
+            "start": "00:00:48,270",
+            "end": "00:00:48,670",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:00:48,670",
+            "end": "00:00:51,250",
+            "vi": "Tôi không làm cua khoai tây."
+        },
+        {
+            "start": "00:00:52,770",
+            "end": "00:00:54,070",
+            "vi": "Tôi không biết cách nói 'khoai tây nghiền'"
+        },
+        {
+            "start": "00:00:55,266",
+            "end": "00:01:06,586",
+            "vi": "Vậy nên tôi chỉ làm mảnh này vì tôi tin nếu nó là mảnh vụn khoai tây,"
+        }
+    ]
+}

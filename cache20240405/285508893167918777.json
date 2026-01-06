@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:11,234\",\n    \"end\": \"00:01:13,114\",\n    \"lang\": \"en\",\n    \"text\": \"So this is,\"\n  },\n  {\n    \"start\": \"00:01:13,114\",\n    \"end\": \"00:01:18,814\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's Yangzhou fried rice.\"\n  },\n  {\n    \"start\": \"00:01:30,814\",\n    \"end\": \"00:01:34,274\",\n    \"lang\": \"en\",\n    \"text\": \"It's really good.\"\n  },\n  {\n    \"start\": \"00:01:34,434\",\n    \"end\": \"00:01:34,454\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:01:34,554\",\n    \"end\": \"00:01:35,234\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:01:35,234\",\n    \"end\": \"00:01:35,574\",\n    \"lang\": \"en\",\n    \"text\": \"thanks.\"\n  },\n  {\n    \"start\": \"00:01:45,054\",\n    \"end\": \"00:01:45,994\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:47,034\",\n    \"end\": \"00:01:48,174\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:11,234",
+            "end": "00:01:13,114",
+            "vi": "Vậy đây là,"
+        },
+        {
+            "start": "00:01:13,114",
+            "end": "00:01:18,814",
+            "vi": "Tôi không chắc đây có phải là cơm chiên Dương Châu không."
+        },
+        {
+            "start": "00:01:30,814",
+            "end": "00:01:34,274",
+            "vi": "Nó thật sự ngon."
+        },
+        {
+            "start": "00:01:34,434",
+            "end": "00:01:34,454",
+            "vi": "Xin lỗi."
+        },
+        {
+            "start": "00:01:34,554",
+            "end": "00:01:35,234",
+            "vi": "Ồ,"
+        },
+        {
+            "start": "00:01:35,234",
+            "end": "00:01:35,574",
+            "vi": "cảm ơn."
+        },
+        {
+            "start": "00:01:45,054",
+            "end": "00:01:45,994",
+            "vi": "Được."
+        },
+        {
+            "start": "00:01:47,034",
+            "end": "00:01:48,174",
+            "vi": "Hẹn gặp lại."
+        }
+    ]
+}

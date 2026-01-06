@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,540\",\n    \"lang\": \"ja\",\n    \"text\": \"もう止められない\"\n  },\n  {\n    \"start\": \"00:00:03,938\",\n    \"end\": \"00:00:05,638\",\n    \"lang\": \"en\",\n    \"text\": \"I have to buy some drugs.\"\n  },\n  {\n    \"start\": \"00:00:06,338\",\n    \"end\": \"00:00:08,058\",\n    \"lang\": \"ja\",\n    \"text\": \"私は靴にかいています\"\n  },\n  {\n    \"start\": \"00:00:08,866\",\n    \"end\": \"00:00:09,146\",\n    \"lang\": \"en\",\n    \"text\": \"Ready?\"\n  },\n  {\n    \"start\": \"00:00:09,146\",\n    \"end\": \"00:00:09,766\",\n    \"lang\": \"en\",\n    \"text\": \"Kuzni,\"\n  },\n  {\n    \"start\": \"00:00:09,766\",\n    \"end\": \"00:00:10,446\",\n    \"lang\": \"en\",\n    \"text\": \"kuzni,\"\n  },\n  {\n    \"start\": \"00:00:10,446\",\n    \"end\": \"00:00:11,166\",\n    \"lang\": \"en\",\n    \"text\": \"oh my goodness.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,540",
+            "vi": "Không thể dừng lại được nữa"
+        },
+        {
+            "start": "00:00:03,938",
+            "end": "00:00:05,638",
+            "vi": "Tôi phải mua một số thuốc."
+        },
+        {
+            "start": "00:00:06,338",
+            "end": "00:00:08,058",
+            "vi": "Tôi đang đau chân"
+        },
+        {
+            "start": "00:00:08,866",
+            "end": "00:00:09,146",
+            "vi": "Sẵn sàng chưa?"
+        },
+        {
+            "start": "00:00:09,146",
+            "end": "00:00:09,766",
+            "vi": "Kuzni,"
+        },
+        {
+            "start": "00:00:09,766",
+            "end": "00:00:10,446",
+            "vi": "kuzni,"
+        },
+        {
+            "start": "00:00:10,446",
+            "end": "00:00:11,166",
+            "vi": "Ôi chao ôi."
+        }
+    ]
+}

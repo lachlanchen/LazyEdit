@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:29,038\",\n    \"end\": \"00:01:31,698\",\n    \"lang\": \"en\",\n    \"text\": \"As I shared in the morning running,\"\n  },\n  {\n    \"start\": \"00:01:31,698\",\n    \"end\": \"00:01:35,658\",\n    \"lang\": \"en\",\n    \"text\": \"we all have our unique talent,\"\n  },\n  {\n    \"start\": \"00:01:35,658\",\n    \"end\": \"00:01:37,038\",\n    \"lang\": \"en\",\n    \"text\": \"our unique strength,\"\n  },\n  {\n    \"start\": \"00:01:38,438\",\n    \"end\": \"00:01:39,598\",\n    \"lang\": \"en\",\n    \"text\": \"our unique journey,\"\n  },\n  {\n    \"start\": \"00:01:39,598\",\n    \"end\": \"00:01:41,378\",\n    \"lang\": \"en\",\n    \"text\": \"our unique story.\"\n  },\n  {\n    \"start\": \"00:01:45,118\",\n    \"end\": \"00:01:52,098\",\n    \"lang\": \"en\",\n    \"text\": \"So there is no necessity to admire or to be proud of it.\"\n  },\n  {\n    \"start\": \"00:01:52,130\",\n    \"end\": \"00:01:53,570\",\n    \"lang\": \"zh\",\n    \"text\": \"尽量的是我们的阿灯玻璃\"\n  },\n  {\n    \"start\": \"00:02:11,202\",\n    \"end\": \"00:02:12,282\",\n    \"lang\": \"en\",\n    \"text\": \"And all your life,\"\n  },\n  {\n    \"start\": \"00:02:12,282\",\n    \"end\": \"00:02:14,042\",\n    \"lang\": \"en\",\n    \"text\": \"when you disappear,\"\n  },\n  {\n    \"start\": \"00:02:14,042\",\n    \"end\": \"00:02:22,762\",\n    \"lang\": \"en\",\n    \"text\": \"it can only happen inside this existence.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:29,038",
+            "end": "00:01:31,698",
+            "ko": "오늘 아침에 달리기 하면서 나눈 이야기처럼,"
+        },
+        {
+            "start": "00:01:31,698",
+            "end": "00:01:35,658",
+            "ko": "우리 모두는 각자의 독특한 재능을 가지고 있어요,"
+        },
+        {
+            "start": "00:01:35,658",
+            "end": "00:01:37,038",
+            "ko": "독특한 강점을,"
+        },
+        {
+            "start": "00:01:38,438",
+            "end": "00:01:39,598",
+            "ko": "독특한 여정을,"
+        },
+        {
+            "start": "00:01:39,598",
+            "end": "00:01:41,378",
+            "ko": "독특한 이야기를 가지고 있어요."
+        },
+        {
+            "start": "00:01:45,118",
+            "end": "00:01:52,098",
+            "ko": "그래서 그것을 부러워하거나 자랑스러워할 필요가 없어요."
+        },
+        {
+            "start": "00:01:52,130",
+            "end": "00:01:53,570",
+            "ko": "우리 삶의 불빛이 되세요"
+        },
+        {
+            "start": "00:02:11,202",
+            "end": "00:02:12,282",
+            "ko": "그리고 당신의 삶 전체에서,"
+        },
+        {
+            "start": "00:02:12,282",
+            "end": "00:02:14,042",
+            "ko": "당신이 사라질 때,"
+        },
+        {
+            "start": "00:02:14,042",
+            "end": "00:02:22,762",
+            "ko": "그것은 오직 이 존재 안에서만 일어날 수 있습니다."
+        }
+    ]
+}

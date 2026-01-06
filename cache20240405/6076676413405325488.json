@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:07,360\",\n    \"lang\": \"en\",\n    \"text\": \"let me taste this crushed chili crushed chili crushed pepper\"\n  },\n  {\n    \"start\": \"00:00:09,040\",\n    \"end\": \"00:00:10,040\",\n    \"lang\": \"en\",\n    \"text\": \"Wow\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:14,960\",\n    \"lang\": \"en\",\n    \"text\": \"Wow so spicy so strong\"\n  },\n  {\n    \"start\": \"00:00:17,960\",\n    \"end\": \"00:00:18,960\",\n    \"lang\": \"en\",\n    \"text\": \"Wow\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:33,900\",\n    \"lang\": \"en\",\n    \"text\": \"it's spicy but delicious\"\n  },\n  {\n    \"start\": \"00:00:40,900\",\n    \"end\": \"00:00:49,580\",\n    \"lang\": \"en\",\n    \"text\": \"hopefully it can help me I leave the covid symptom okay\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:07,360",
+            "ko": "이 맛이 궁금해 이 부숴진 칠리, 부숴진 칠리, 부숴진 후추"
+        },
+        {
+            "start": "00:00:09,040",
+            "end": "00:00:10,040",
+            "ko": "와"
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:14,960",
+            "ko": "와, 너무 맵고 강해"
+        },
+        {
+            "start": "00:00:17,960",
+            "end": "00:00:18,960",
+            "ko": "와"
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:33,900",
+            "ko": "맵지만 맛있어"
+        },
+        {
+            "start": "00:00:40,900",
+            "end": "00:00:49,580",
+            "ko": "이게 내 코로나 증상을 낫게 해줬으면 좋겠어"
+        }
+    ]
+}

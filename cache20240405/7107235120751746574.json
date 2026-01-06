@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,340\",\n    \"lang\": \"en\",\n    \"text\": \"Kind of listening is quite painful.\"\n  },\n  {\n    \"start\": \"00:00:05,020\",\n    \"end\": \"00:00:06,840\",\n    \"lang\": \"en\",\n    \"text\": \"But first,\"\n  },\n  {\n    \"start\": \"00:00:06,840\",\n    \"end\": \"00:00:07,460\",\n    \"lang\": \"en\",\n    \"text\": \"I...\"\n  },\n  {\n    \"start\": \"00:00:08,418\",\n    \"end\": \"00:00:09,518\",\n    \"lang\": \"zh\",\n    \"text\": \"我們下次見\"\n  },\n  {\n    \"start\": \"00:00:10,178\",\n    \"end\": \"00:00:11,858\",\n    \"lang\": \"en\",\n    \"text\": \"hand the guitar that I can...\"\n  },\n  {\n    \"start\": \"00:00:12,578\",\n    \"end\": \"00:00:13,898\",\n    \"lang\": \"en\",\n    \"text\": \"I can learn singing\"\n  },\n  {\n    \"start\": \"00:00:15,682\",\n    \"end\": \"00:00:17,942\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:00:18,602\",\n    \"end\": \"00:00:20,782\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:00:53,842\",\n    \"end\": \"00:00:55,242\",\n    \"lang\": \"zh\",\n    \"text\": \"谢谢观看 下集再见\"\n  },\n  {\n    \"start\": \"00:00:55,266\",\n    \"end\": \"00:00:55,446\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:55,446\",\n    \"end\": \"00:00:57,226\",\n    \"lang\": \"en\",\n    \"text\": \"that's the tiny token.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,340",
+            "vi": "Loại sự lắng nghe này thật là đau đớn."
+        },
+        {
+            "start": "00:00:05,020",
+            "end": "00:00:06,840",
+            "vi": "Nhưng trước tiên,"
+        },
+        {
+            "start": "00:00:06,840",
+            "end": "00:00:07,460",
+            "vi": "Tôi..."
+        },
+        {
+            "start": "00:00:08,418",
+            "end": "00:00:09,518",
+            "vi": "Hẹn gặp lại lần sau"
+        },
+        {
+            "start": "00:00:10,178",
+            "end": "00:00:11,858",
+            "vi": "đưa cây đàn mà tôi có thể..."
+        },
+        {
+            "start": "00:00:12,578",
+            "end": "00:00:13,898",
+            "vi": "Tôi có thể học hát"
+        },
+        {
+            "start": "00:00:15,682",
+            "end": "00:00:17,942",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:00:18,602",
+            "end": "00:00:20,782",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:00:53,842",
+            "end": "00:00:55,242",
+            "vi": "Cảm ơn đã xem, hẹn gặp lại ở tập sau"
+        },
+        {
+            "start": "00:00:55,266",
+            "end": "00:00:55,446",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:55,446",
+            "end": "00:00:57,226",
+            "vi": "đó là một dấu hiệu nhỏ."
+        }
+    ]
+}

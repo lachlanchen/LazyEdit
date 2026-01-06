@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,320\",\n    \"lang\": \"zh\",\n    \"text\": \"邊行車台\"\n  },\n  {\n    \"start\": \"00:00:02,320\",\n    \"end\": \"00:00:02,420\",\n    \"lang\": \"zh\",\n    \"text\": \"經過富士山\"\n  },\n  {\n    \"start\": \"00:00:02,420\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"zh\",\n    \"text\": \"有金毛巨itis\"\n  },\n  {\n    \"start\": \"00:00:06,114\",\n    \"end\": \"00:00:07,014\",\n    \"lang\": \"en\",\n    \"text\": \"Not bad,\"\n  },\n  {\n    \"start\": \"00:00:07,014\",\n    \"end\": \"00:00:07,294\",\n    \"lang\": \"en\",\n    \"text\": \"not bad at all.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,320",
+            "ko": "변경 차선"
+        },
+        {
+            "start": "00:00:02,320",
+            "end": "00:00:02,420",
+            "ko": "후지산을 지나면서"
+        },
+        {
+            "start": "00:00:02,420",
+            "end": "00:00:03,060",
+            "ko": "금색 대형견이 있어요"
+        },
+        {
+            "start": "00:00:06,114",
+            "end": "00:00:07,014",
+            "ko": "나쁘지 않네요,"
+        },
+        {
+            "start": "00:00:07,014",
+            "end": "00:00:07,294",
+            "ko": "전혀 나쁘지 않아요."
+        }
+    ]
+}

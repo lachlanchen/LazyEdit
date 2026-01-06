@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,700\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあそ…\"\n  },\n  {\n    \"start\": \"00:00:02,700\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"ja\",\n    \"text\": \"あそに…\"\n  },\n  {\n    \"start\": \"00:00:04,610\",\n    \"end\": \"00:00:08,850\",\n    \"lang\": \"ja\",\n    \"text\": \"私は外で遊んでいます\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,700",
+            "vi": "Tôi đang ở đó..."
+        },
+        {
+            "start": "00:00:02,700",
+            "end": "00:00:03,780",
+            "vi": "Ở đó..."
+        },
+        {
+            "start": "00:00:04,610",
+            "end": "00:00:08,850",
+            "vi": "Tôi đang chơi ngoài trời"
+        }
+    ]
+}

@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,540\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this is a paradise for these dogs.\"\n  },\n  {\n    \"start\": \"00:00:04,460\",\n    \"end\": \"00:00:08,620\",\n    \"lang\": \"en\",\n    \"text\": \"You can make friends here at this dog club.\"\n  },\n  {\n    \"start\": \"00:00:09,600\",\n    \"end\": \"00:00:11,080\",\n    \"lang\": \"en\",\n    \"text\": \"This is their arena.\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:13,300\",\n    \"lang\": \"en\",\n    \"text\": \"You can fight,\"\n  },\n  {\n    \"start\": \"00:00:13,300\",\n    \"end\": \"00:00:15,080\",\n    \"lang\": \"en\",\n    \"text\": \"make friends.\"\n  },\n  {\n    \"start\": \"00:00:16,340\",\n    \"end\": \"00:00:17,500\",\n    \"lang\": \"en\",\n    \"text\": \"This is a paradise.\"\n  },\n  {\n    \"start\": \"00:00:19,860\",\n    \"end\": \"00:00:21,260\",\n    \"lang\": \"en\",\n    \"text\": \"So many dogs.\"\n  },\n  {\n    \"start\": \"00:00:24,500\",\n    \"end\": \"00:00:25,900\",\n    \"lang\": \"en\",\n    \"text\": \"Husky,\"\n  },\n  {\n    \"start\": \"00:00:25,900\",\n    \"end\": \"00:00:30,080\",\n    \"lang\": \"en\",\n    \"text\": \"Cookie and Goodyear Trailer.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,540",
+            "ja": "これは犬たちにとっての楽園だと思います。"
+        },
+        {
+            "start": "00:00:04,460",
+            "end": "00:00:08,620",
+            "ja": "この犬クラブで友達を作ることができます。"
+        },
+        {
+            "start": "00:00:09,600",
+            "end": "00:00:11,080",
+            "ja": "これが彼らのアリーナです。"
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:13,300",
+            "ja": "戦うことも,"
+        },
+        {
+            "start": "00:00:13,300",
+            "end": "00:00:15,080",
+            "ja": "友達を作ることもできます。"
+        },
+        {
+            "start": "00:00:16,340",
+            "end": "00:00:17,500",
+            "ja": "ここは楽園です。"
+        },
+        {
+            "start": "00:00:19,860",
+            "end": "00:00:21,260",
+            "ja": "たくさんの犬がいます。"
+        },
+        {
+            "start": "00:00:24,500",
+            "end": "00:00:25,900",
+            "ja": "ハスキー,"
+        },
+        {
+            "start": "00:00:25,900",
+            "end": "00:00:30,080",
+            "ja": "クッキーとグッドイヤートレーラー。"
+        }
+    ]
+}

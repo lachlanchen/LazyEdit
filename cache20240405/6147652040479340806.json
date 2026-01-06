@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,100\",\n    \"lang\": \"ja\",\n    \"text\": \"アパート到着しています\"\n  },\n  {\n    \"start\": \"00:00:03,426\",\n    \"end\": \"00:00:03,946\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  },\n  {\n    \"start\": \"00:00:06,274\",\n    \"end\": \"00:00:08,794\",\n    \"lang\": \"ja\",\n    \"text\": \"アパート到着しています\"\n  },\n  {\n    \"start\": \"00:00:10,114\",\n    \"end\": \"00:00:10,614\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,100",
+            "ko": "아파트에 도착했습니다"
+        },
+        {
+            "start": "00:00:03,426",
+            "end": "00:00:03,946",
+            "ko": "알겠어요"
+        },
+        {
+            "start": "00:00:06,274",
+            "end": "00:00:08,794",
+            "ko": "아파트에 도착했습니다"
+        },
+        {
+            "start": "00:00:10,114",
+            "end": "00:00:10,614",
+            "ko": "알겠어요."
+        }
+    ]
+}

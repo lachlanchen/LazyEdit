@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,140\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:05,122\",\n    \"end\": \"00:00:05,502\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm.\"\n  },\n  {\n    \"start\": \"00:00:06,338\",\n    \"end\": \"00:00:10,318\",\n    \"lang\": \"ja\",\n    \"text\": \"私はこの朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:12,418\",\n    \"end\": \"00:00:15,058\",\n    \"lang\": \"en\",\n    \"text\": \"We have banana,\"\n  },\n  {\n    \"start\": \"00:00:15,058\",\n    \"end\": \"00:00:16,958\",\n    \"lang\": \"en\",\n    \"text\": \"orange,\"\n  },\n  {\n    \"start\": \"00:00:16,958\",\n    \"end\": \"00:00:19,738\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:00:19,738\",\n    \"end\": \"00:00:20,578\",\n    \"lang\": \"en\",\n    \"text\": \"and blueberry.\"\n  },\n  {\n    \"start\": \"00:00:26,038\",\n    \"end\": \"00:00:27,438\",\n    \"lang\": \"ja\",\n    \"text\": \"今日は水曜日です。\"\n  },\n  {\n    \"start\": \"00:00:27,438\",\n    \"end\": \"00:00:31,958\",\n    \"lang\": \"en\",\n    \"text\": \"Let's choose the Japanese.\"\n  },\n  {\n    \"start\": \"00:00:32,838\",\n    \"end\": \"00:00:35,838\",\n    \"lang\": \"zh\",\n    \"text\": \"水曜日 or 水曜日.\"\n  },\n  {\n    \"start\": \"00:00:35,874\",\n    \"end\": \"00:00:36,654\",\n    \"lang\": \"ja\",\n    \"text\": \"かっこよく\"\n  },\n  {\n    \"start\": \"00:00:37,506\",\n    \"end\": \"00:00:37,866\",\n    \"lang\": \"en\",\n    \"text\": \"whatever\"\n  },\n  {\n    \"start\": \"00:00:52,365\",\n    \"end\": \"00:00:56,446\",\n    \"lang\": \"en\",\n    \"text\": \"I think there might be a benefit\"\n  },\n  {\n    \"start\": \"00:00:56,446\",\n    \"end\": \"00:00:57,166\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:00:57,166\",\n    \"end\": \"00:00:58,526\",\n    \"lang\": \"en\",\n    \"text\": \"there might be a benefit\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,140",
+            "vi": "Chào buổi sáng."
+        },
+        {
+            "start": "00:00:05,122",
+            "end": "00:00:05,502",
+            "vi": "Ừm."
+        },
+        {
+            "start": "00:00:06,338",
+            "end": "00:00:10,318",
+            "vi": "Tôi đang ăn bữa sáng này."
+        },
+        {
+            "start": "00:00:12,418",
+            "end": "00:00:15,058",
+            "vi": "Chúng ta có chuối,"
+        },
+        {
+            "start": "00:00:15,058",
+            "end": "00:00:16,958",
+            "vi": "cam,"
+        },
+        {
+            "start": "00:00:16,958",
+            "end": "00:00:19,738",
+            "vi": "dâu,"
+        },
+        {
+            "start": "00:00:19,738",
+            "end": "00:00:20,578",
+            "vi": "và việt quất."
+        },
+        {
+            "start": "00:00:26,038",
+            "end": "00:00:27,438",
+            "vi": "Hôm nay là thứ Tư."
+        },
+        {
+            "start": "00:00:27,438",
+            "end": "00:00:31,958",
+            "vi": "Hãy chọn tiếng Nhật."
+        },
+        {
+            "start": "00:00:32,838",
+            "end": "00:00:35,838",
+            "vi": "Thứ Tư hoặc Thứ Tư."
+        },
+        {
+            "start": "00:00:35,874",
+            "end": "00:00:36,654",
+            "vi": "thật cool"
+        },
+        {
+            "start": "00:00:37,506",
+            "end": "00:00:37,866",
+            "vi": "dù sao đi chăng nữa"
+        },
+        {
+            "start": "00:00:52,365",
+            "end": "00:00:56,446",
+            "vi": "Tôi nghĩ có thể có một lợi ích"
+        },
+        {
+            "start": "00:00:56,446",
+            "end": "00:00:57,166",
+            "vi": "xin lỗi,"
+        },
+        {
+            "start": "00:00:57,166",
+            "end": "00:00:58,526",
+            "vi": "có thể có một lợi ích"
+        }
+    ]
+}

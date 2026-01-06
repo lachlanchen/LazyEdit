@@ -1,0 +1,134 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,200\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,586\",\n    \"end\": \"00:00:03,726\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:03,726\",\n    \"end\": \"00:00:08,526\",\n    \"lang\": \"en\",\n    \"text\": \"yesterday has passed.\"\n  },\n  {\n    \"start\": \"00:00:09,786\",\n    \"end\": \"00:00:11,566\",\n    \"lang\": \"en\",\n    \"text\": \"Tomorrow has not yet come.\"\n  },\n  {\n    \"start\": \"00:00:12,866\",\n    \"end\": \"00:00:13,146\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:13,146\",\n    \"end\": \"00:00:15,886\",\n    \"lang\": \"en\",\n    \"text\": \"only present exists.\"\n  },\n  {\n    \"start\": \"00:00:19,866\",\n    \"end\": \"00:00:20,926\",\n    \"lang\": \"en\",\n    \"text\": \"Look at that bird.\"\n  },\n  {\n    \"start\": \"00:00:24,674\",\n    \"end\": \"00:00:25,694\",\n    \"lang\": \"ja\",\n    \"text\": \"真的是運だね\"\n  },\n  {\n    \"start\": \"00:00:25,922\",\n    \"end\": \"00:00:26,782\",\n    \"lang\": \"en\",\n    \"text\": \"beautiful rainbow.\"\n  },\n  {\n    \"start\": \"00:00:26,782\",\n    \"end\": \"00:00:28,402\",\n    \"lang\": \"en\",\n    \"text\": \"I like this rainbow.\"\n  },\n  {\n    \"start\": \"00:00:28,402\",\n    \"end\": \"00:00:29,602\",\n    \"lang\": \"en\",\n    \"text\": \"It means pretty good.\"\n  },\n  {\n    \"start\": \"00:00:29,602\",\n    \"end\": \"00:00:31,122\",\n    \"lang\": \"en\",\n    \"text\": \"Our teaser and the cover.\"\n  },\n  {\n    \"start\": \"00:00:32,002\",\n    \"end\": \"00:00:32,802\",\n    \"lang\": \"en\",\n    \"text\": \"I like this rainbow.\"\n  },\n  {\n    \"start\": \"00:00:33,730\",\n    \"end\": \"00:00:34,010\",\n    \"lang\": \"ja\",\n    \"text\": \"そう、\"\n  },\n  {\n    \"start\": \"00:00:34,010\",\n    \"end\": \"00:00:34,770\",\n    \"lang\": \"ja\",\n    \"text\": \"こちらっすね\"\n  },\n  {\n    \"start\": \"00:00:35,746\",\n    \"end\": \"00:00:37,106\",\n    \"lang\": \"en\",\n    \"text\": \"They need those happiness.\"\n  },\n  {\n    \"start\": \"00:00:38,246\",\n    \"end\": \"00:00:38,486\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:38,486\",\n    \"end\": \"00:00:38,826\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,200",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير"
+        },
+        {
+            "start": "00:00:03,586",
+            "end": "00:00:03,726",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:00:03,726",
+            "end": "00:00:08,526",
+            "en": "yesterday has passed.",
+            "zh": "昨天已经过去了。",
+            "ar": "لقد مضى الأمس."
+        },
+        {
+            "start": "00:00:09,786",
+            "end": "00:00:11,566",
+            "en": "Tomorrow has not yet come.",
+            "zh": "明天还没有到来。",
+            "ar": "لم يأتِ الغد بعد."
+        },
+        {
+            "start": "00:00:12,866",
+            "end": "00:00:13,146",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذن،"
+        },
+        {
+            "start": "00:00:13,146",
+            "end": "00:00:15,886",
+            "en": "only present exists.",
+            "zh": "只有现在存在。",
+            "ar": "فقط الحاضر موجود."
+        },
+        {
+            "start": "00:00:19,866",
+            "end": "00:00:20,926",
+            "en": "Look at that bird.",
+            "zh": "看那只鸟。",
+            "ar": "انظر إلى ذلك الطائر."
+        },
+        {
+            "start": "00:00:24,674",
+            "end": "00:00:25,694",
+            "en": "It's really lucky.",
+            "zh": "真的很幸运。",
+            "ar": "هذا حظ جميل حقًا.",
+            "ja": "真的是運だね"
+        },
+        {
+            "start": "00:00:25,922",
+            "end": "00:00:26,782",
+            "en": "beautiful rainbow.",
+            "zh": "美丽的彩虹。",
+            "ar": "قوس قزح جميل."
+        },
+        {
+            "start": "00:00:26,782",
+            "end": "00:00:28,402",
+            "en": "I like this rainbow.",
+            "zh": "我喜欢这道彩虹。",
+            "ar": "أحب هذا قوس قزح."
+        },
+        {
+            "start": "00:00:28,402",
+            "end": "00:00:29,602",
+            "en": "It means pretty good.",
+            "zh": "这意味着很好。",
+            "ar": "هذا يعني جيد جداً."
+        },
+        {
+            "start": "00:00:29,602",
+            "end": "00:00:31,122",
+            "en": "Our teaser and the cover.",
+            "zh": "我们的预告片和封面。",
+            "ar": "الإعلان التشويقي والغلاف."
+        },
+        {
+            "start": "00:00:32,002",
+            "end": "00:00:32,802",
+            "en": "I like this rainbow.",
+            "zh": "我喜欢这道彩虹。",
+            "ar": "أحب هذا قوس قزح."
+        },
+        {
+            "start": "00:00:33,730",
+            "end": "00:00:34,010",
+            "en": "Yes,",
+            "zh": "是的，",
+            "ar": "نعم،",
+            "ja": "そう、"
+        },
+        {
+            "start": "00:00:34,010",
+            "end": "00:00:34,770",
+            "en": "that's right.",
+            "zh": "没错。",
+            "ar": "هذا صحيح.",
+            "ja": "こちらっすね"
+        },
+        {
+            "start": "00:00:35,746",
+            "end": "00:00:37,106",
+            "en": "They need those happiness.",
+            "zh": "他们需要那些幸福。",
+            "ar": "إنهم بحاجة إلى تلك السعادة."
+        },
+        {
+            "start": "00:00:38,246",
+            "end": "00:00:38,486",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:38,486",
+            "end": "00:00:38,826",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقًا."
+        }
+    ]
+}

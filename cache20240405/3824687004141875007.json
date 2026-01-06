@@ -1,0 +1,145 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,120\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:01,120\",\n    \"end\": \"00:00:05,620\",\n    \"lang\": \"en\",\n    \"text\": \"this is our unfinished second part of the lunch.\"\n  },\n  {\n    \"start\": \"00:00:09,620\",\n    \"end\": \"00:00:10,500\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:10,500\",\n    \"end\": \"00:00:13,460\",\n    \"lang\": \"en\",\n    \"text\": \"the potato takes 20 minutes,\"\n  },\n  {\n    \"start\": \"00:00:13,460\",\n    \"end\": \"00:00:18,620\",\n    \"lang\": \"en\",\n    \"text\": \"and the beef takes about 10 minutes.\"\n  },\n  {\n    \"start\": \"00:00:19,746\",\n    \"end\": \"00:00:20,486\",\n    \"lang\": \"zh\",\n    \"text\": \"有筋道的你\"\n  },\n  {\n    \"start\": \"00:00:20,866\",\n    \"end\": \"00:00:21,466\",\n    \"lang\": \"zh\",\n    \"text\": \"鱼肉的你再吃\"\n  },\n  {\n    \"start\": \"00:00:23,138\",\n    \"end\": \"00:00:25,678\",\n    \"lang\": \"en\",\n    \"text\": \"cook the potato before the beef.\"\n  },\n  {\n    \"start\": \"00:00:26,158\",\n    \"end\": \"00:00:26,838\",\n    \"lang\": \"en\",\n    \"text\": \"But today,\"\n  },\n  {\n    \"start\": \"00:00:26,838\",\n    \"end\": \"00:00:29,978\",\n    \"lang\": \"en\",\n    \"text\": \"I cook the beef before the potato\"\n  },\n  {\n    \"start\": \"00:00:30,377\",\n    \"end\": \"00:00:33,918\",\n    \"lang\": \"en\",\n    \"text\": \"and I use the oil of the beef to cook the potato.\"\n  },\n  {\n    \"start\": \"00:00:34,558\",\n    \"end\": \"00:00:40,038\",\n    \"lang\": \"en\",\n    \"text\": \"So this make the potato 20 minutes later.\"\n  },\n  {\n    \"start\": \"00:00:41,058\",\n    \"end\": \"00:00:41,938\",\n    \"lang\": \"ja\",\n    \"text\": \"ランザピー\"\n  },\n  {\n    \"start\": \"00:00:43,394\",\n    \"end\": \"00:00:43,654\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:43,654\",\n    \"end\": \"00:00:47,314\",\n    \"lang\": \"en\",\n    \"text\": \"wow,\"\n  },\n  {\n    \"start\": \"00:00:47,314\",\n    \"end\": \"00:00:50,174\",\n    \"lang\": \"en\",\n    \"text\": \"this is crispy.\"\n  },\n  {\n    \"start\": \"00:00:51,202\",\n    \"end\": \"00:00:53,342\",\n    \"lang\": \"ja\",\n    \"text\": \"とってもおいしいです\"\n  },\n  {\n    \"start\": \"00:00:54,114\",\n    \"end\": \"00:00:54,854\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:54,854\",\n    \"end\": \"00:00:56,734\",\n    \"lang\": \"en\",\n    \"text\": \"do you hear the sound?\"\n  },\n  {\n    \"start\": \"00:00:59,614\",\n    \"end\": \"00:01:00,754\",\n    \"lang\": \"en\",\n    \"text\": \"Crispy sound\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,120",
+            "es": "Está bien,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:01,120",
+            "end": "00:00:05,620",
+            "es": "esta es nuestra segunda parte inacabada del almuerzo.",
+            "fr": "voici la seconde partie inachevée de notre déjeuner.",
+            "uk": "це наша незакінчена друга частина обіду."
+        },
+        {
+            "start": "00:00:09,620",
+            "end": "00:00:10,500",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:10,500",
+            "end": "00:00:13,460",
+            "es": "la patata tarda 20 minutos,",
+            "fr": "la pomme de terre prend 20 minutes,",
+            "uk": "картопля вариться 20 хвилин,"
+        },
+        {
+            "start": "00:00:13,460",
+            "end": "00:00:18,620",
+            "es": "y la carne tarda unos 10 minutos.",
+            "fr": "et le boeuf prend environ 10 minutes.",
+            "uk": "і м'ясо готується близько 10 хвилин."
+        },
+        {
+            "start": "00:00:19,746",
+            "end": "00:00:20,486",
+            "es": "El tú consistente",
+            "fr": "Toi qui es consistant",
+            "uk": "Ти послідовний"
+        },
+        {
+            "start": "00:00:20,866",
+            "end": "00:00:21,466",
+            "es": "Tú, el de la carne de pescado, come otro",
+            "fr": "Toi, avec le poisson, mange un autre encore",
+            "uk": "Ти, з рибним м'ясом, їж ще"
+        },
+        {
+            "start": "00:00:23,138",
+            "end": "00:00:25,678",
+            "es": "cocina la patata antes de la carne.",
+            "fr": "cuis la pomme de terre avant le boeuf.",
+            "uk": "готуй картоплю перед м'ясом."
+        },
+        {
+            "start": "00:00:26,158",
+            "end": "00:00:26,838",
+            "es": "Pero hoy,",
+            "fr": "Mais aujourd'hui,",
+            "uk": "Але сьогодні,"
+        },
+        {
+            "start": "00:00:26,838",
+            "end": "00:00:29,978",
+            "es": "cocino la carne antes que la patata",
+            "fr": "je cuisine le boeuf avant la pomme de terre",
+            "uk": "я готую м'ясо перед картоплею"
+        },
+        {
+            "start": "00:00:30,377",
+            "end": "00:00:33,918",
+            "es": "y uso el aceite de la carne para cocinar la patata.",
+            "fr": "et j'utilise l'huile du boeuf pour cuisiner la pomme de terre.",
+            "uk": "і використовую олію з м'яса для приготування картоплі."
+        },
+        {
+            "start": "00:00:34,558",
+            "end": "00:00:40,038",
+            "es": "Así que esto hace que la patata tarde 20 minutos más.",
+            "fr": "Ainsi, cela rend la pomme de terre 20 minutes plus tard.",
+            "uk": "Отже, це робить картоплю на 20 хвилин пізніше."
+        },
+        {
+            "start": "00:00:41,058",
+            "end": "00:00:41,938",
+            "es": "Lanza en el pico",
+            "fr": "Lancer sur le pic",
+            "uk": "Запускай в пік"
+        },
+        {
+            "start": "00:00:43,394",
+            "end": "00:00:43,654",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:00:43,654",
+            "end": "00:00:47,314",
+            "es": "vaya,",
+            "fr": "wooow,",
+            "uk": "воу,"
+        },
+        {
+            "start": "00:00:47,314",
+            "end": "00:00:50,174",
+            "es": "esto está crujiente.",
+            "fr": "c'est croustillant.",
+            "uk": "це хрустке."
+        },
+        {
+            "start": "00:00:51,202",
+            "end": "00:00:53,342",
+            "es": "Es muy delicioso",
+            "fr": "C'est très délicieux",
+            "uk": "Дуже смачно"
+        },
+        {
+            "start": "00:00:54,114",
+            "end": "00:00:54,854",
+            "es": "Vaya,",
+            "fr": "Wouah,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:54,854",
+            "end": "00:00:56,734",
+            "es": "¿escuchas ese sonido?",
+            "fr": "tu entends ce son ?",
+            "uk": "ти чуєш цей звук?"
+        },
+        {
+            "start": "00:00:59,614",
+            "end": "00:01:00,754",
+            "es": "Sonido crujiente",
+            "fr": "Son croustillant",
+            "uk": "Хрускіт"
+        }
+    ]
+}

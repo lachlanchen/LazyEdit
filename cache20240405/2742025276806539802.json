@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,699\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"en\",\n    \"text\": \"so let me try this\"\n  },\n  {\n    \"start\": \"00:00:04,674\",\n    \"end\": \"00:00:05,094\",\n    \"lang\": \"zh\",\n    \"text\": \"س平ين\"\n  },\n  {\n    \"start\": \"00:00:13,154\",\n    \"end\": \"00:00:14,814\",\n    \"lang\": \"zh\",\n    \"text\": \"冒菜是一个人的火锅\"\n  },\n  {\n    \"start\": \"00:00:15,213\",\n    \"end\": \"00:00:17,134\",\n    \"lang\": \"zh\",\n    \"text\": \"火锅是一群人的冒菜\"\n  },\n  {\n    \"start\": \"00:00:20,514\",\n    \"end\": \"00:00:20,794\",\n    \"lang\": \"ja\",\n    \"text\": \"うん、\"\n  },\n  {\n    \"start\": \"00:00:20,794\",\n    \"end\": \"00:00:21,354\",\n    \"lang\": \"ja\",\n    \"text\": \"はい\"\n  },\n  {\n    \"start\": \"00:00:23,618\",\n    \"end\": \"00:00:23,818\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:23,818\",\n    \"end\": \"00:00:24,058\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  },\n  {\n    \"start\": \"00:00:24,058\",\n    \"end\": \"00:00:24,698\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:24,698\",\n    \"end\": \"00:00:25,038\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,699",
+            "end": "00:00:01,980",
+            "es": "así que déjame intentarlo",
+            "fr": "alors laissez-moi essayer",
+            "uk": "отже, дозвольте мені спробувати"
+        },
+        {
+            "start": "00:00:04,674",
+            "end": "00:00:05,094",
+            "es": "桌子",
+            "fr": "table",
+            "uk": "стіл"
+        },
+        {
+            "start": "00:00:13,154",
+            "end": "00:00:14,814",
+            "es": "Mao cai es un hot pot individual",
+            "fr": "Mao cai est un hot pot pour une personne",
+            "uk": "Mao cai це індивідуальний хот пот"
+        },
+        {
+            "start": "00:00:15,213",
+            "end": "00:00:17,134",
+            "es": "El hot pot es un mao cai para un grupo de personas",
+            "fr": "Le hot pot est un mao cai pour un groupe de personnes",
+            "uk": "Хот пот це мао цай для групи людей"
+        },
+        {
+            "start": "00:00:20,514",
+            "end": "00:00:20,794",
+            "es": "Sí,",
+            "fr": "Oui,",
+            "uk": "Так,"
+        },
+        {
+            "start": "00:00:20,794",
+            "end": "00:00:21,354",
+            "es": "sí",
+            "fr": "oui",
+            "uk": "так"
+        },
+        {
+            "start": "00:00:23,618",
+            "end": "00:00:23,818",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:00:23,818",
+            "end": "00:00:24,058",
+            "es": "vale.",
+            "fr": "d'accord.",
+            "uk": "гаразд."
+        },
+        {
+            "start": "00:00:24,058",
+            "end": "00:00:24,698",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Гаразд."
+        },
+        {
+            "start": "00:00:24,698",
+            "end": "00:00:25,038",
+            "es": "Nos vemos",
+            "fr": "À bientôt",
+            "uk": "До побачення"
+        }
+    ]
+}

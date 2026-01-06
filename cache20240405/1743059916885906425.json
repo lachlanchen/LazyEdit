@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,860\",\n    \"end\": \"00:00:03,180\",\n    \"lang\": \"zh\",\n    \"text\": \"有一个特别好闻的味道\"\n  },\n  {\n    \"start\": \"00:00:03,180\",\n    \"end\": \"00:00:04,180\",\n    \"lang\": \"zh\",\n    \"text\": \"就像是\"\n  },\n  {\n    \"start\": \"00:00:05,220\",\n    \"end\": \"00:00:06,300\",\n    \"lang\": \"zh\",\n    \"text\": \"就像是什么呢\"\n  },\n  {\n    \"start\": \"00:00:06,300\",\n    \"end\": \"00:00:07,560\",\n    \"lang\": \"zh\",\n    \"text\": \"像那个粽子\"\n  },\n  {\n    \"start\": \"00:00:07,560\",\n    \"end\": \"00:00:08,300\",\n    \"lang\": \"zh\",\n    \"text\": \"但是也不像\"\n  },\n  {\n    \"start\": \"00:00:08,930\",\n    \"end\": \"00:00:12,370\",\n    \"lang\": \"en\",\n    \"text\": \"I almost get intoxicated by that awesome smell.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,860",
+            "end": "00:00:03,180",
+            "en": "There's this really nice smell",
+            "zh": "有一个特别好闻的味道",
+            "ar": "هناك رائحة لطيفة جدًا"
+        },
+        {
+            "start": "00:00:03,180",
+            "end": "00:00:04,180",
+            "en": "It's like",
+            "zh": "就像是",
+            "ar": "إنها مثل"
+        },
+        {
+            "start": "00:00:05,220",
+            "end": "00:00:06,300",
+            "en": "It's like what?",
+            "zh": "就像是什么呢",
+            "ar": "إنها مثل ماذا؟"
+        },
+        {
+            "start": "00:00:06,300",
+            "end": "00:00:07,560",
+            "en": "Like that zongzi",
+            "zh": "像那个粽子",
+            "ar": "مثل ذلك زونغزي"
+        },
+        {
+            "start": "00:00:07,560",
+            "end": "00:00:08,300",
+            "en": "But not quite",
+            "zh": "但是也不像",
+            "ar": "ولكن ليس تماما"
+        },
+        {
+            "start": "00:00:08,930",
+            "end": "00:00:12,370",
+            "en": "I almost get intoxicated by that awesome smell.",
+            "zh": "那种美妙的气味几乎让我陶醉。",
+            "ar": "كدت أن أصبح مخمورا بتلك الرائحة الرائعة."
+        }
+    ]
+}

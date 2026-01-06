@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,520\",\n    \"lang\": \"en\",\n    \"text\": \"happiness doesn't have an if condition.\"\n  },\n  {\n    \"start\": \"00:00:05,420\",\n    \"end\": \"00:00:09,340\",\n    \"lang\": \"en\",\n    \"text\": \"If your happiness doesn't have an if condition,\"\n  },\n  {\n    \"start\": \"00:00:10,440\",\n    \"end\": \"00:00:12,480\",\n    \"lang\": \"en\",\n    \"text\": \"it can never be true happiness.\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:21,540\",\n    \"lang\": \"en\",\n    \"text\": \"Because no matter how you match this if condition,\"\n  },\n  {\n    \"start\": \"00:00:23,580\",\n    \"end\": \"00:00:28,780\",\n    \"lang\": \"en\",\n    \"text\": \"you will never find another if that's still unmatched.\"\n  },\n  {\n    \"start\": \"00:00:30,320\",\n    \"end\": \"00:00:31,180\",\n    \"lang\": \"en\",\n    \"text\": \"That's what I think.\"\n  },\n  {\n    \"start\": \"00:00:31,180\",\n    \"end\": \"00:00:31,620\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,520",
+            "es": "la felicidad no tiene una condición de si.",
+            "fr": "le bonheur n'a pas de condition si.",
+            "uk": "щастя не має умови якщо."
+        },
+        {
+            "start": "00:00:05,420",
+            "end": "00:00:09,340",
+            "es": "Si tu felicidad no tiene una condición de si,",
+            "fr": "Si ton bonheur n'a pas de condition si,",
+            "uk": "Якщо твоє щастя не має умови якщо,"
+        },
+        {
+            "start": "00:00:10,440",
+            "end": "00:00:12,480",
+            "es": "nunca puede ser verdadera felicidad.",
+            "fr": "cela ne peut jamais être le vrai bonheur.",
+            "uk": "воно ніколи не може бути справжнім щастям."
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:21,540",
+            "es": "Porque no importa cómo cumplas esta condición de si,",
+            "fr": "Parce que peu importe comment tu satisfais cette condition si,",
+            "uk": "Бо незалежно від того, як ти задовольниш цю умову якщо,"
+        },
+        {
+            "start": "00:00:23,580",
+            "end": "00:00:28,780",
+            "es": "nunca encontrarás otro si que aún no se haya cumplido.",
+            "fr": "tu ne trouveras jamais un autre si qui n'est toujours pas satisfait.",
+            "uk": "ти ніколи не знайдеш іншого якщо, яке ще не виконано."
+        },
+        {
+            "start": "00:00:30,320",
+            "end": "00:00:31,180",
+            "es": "Eso es lo que pienso.",
+            "fr": "C'est ce que je pense.",
+            "uk": "Ось що я думаю."
+        },
+        {
+            "start": "00:00:31,180",
+            "end": "00:00:31,620",
+            "es": "Nos vemos.",
+            "fr": "À bientôt.",
+            "uk": "До побачення."
+        }
+    ]
+}

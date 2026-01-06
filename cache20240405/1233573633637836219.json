@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:05,074\",\n    \"end\": \"00:01:11,514\",\n    \"lang\": \"en\",\n    \"text\": \"And some cold bean juice to mitigate the hurt.\"\n  },\n  {\n    \"start\": \"00:01:13,714\",\n    \"end\": \"00:01:22,494\",\n    \"lang\": \"en\",\n    \"text\": \"In my upper side of my mouth.\"\n  },\n  {\n    \"start\": \"00:01:23,234\",\n    \"end\": \"00:01:23,514\",\n    \"lang\": \"ar\",\n    \"text\": \"أهلا\"\n  },\n  {\n    \"start\": \"00:01:24,162\",\n    \"end\": \"00:01:25,702\",\n    \"lang\": \"en\",\n    \"text\": \"reaching inside my mouth.\"\n  },\n  {\n    \"start\": \"00:01:27,490\",\n    \"end\": \"00:01:30,150\",\n    \"lang\": \"zh\",\n    \"text\": \"在我们的方言里面我们叫天堂\"\n  },\n  {\n    \"start\": \"00:01:31,750\",\n    \"end\": \"00:01:32,470\",\n    \"lang\": \"zh\",\n    \"text\": \"天堂\"\n  },\n  {\n    \"start\": \"00:01:32,470\",\n    \"end\": \"00:01:33,030\",\n    \"lang\": \"en\",\n    \"text\": \"OK\"\n  },\n  {\n    \"start\": \"00:01:33,550\",\n    \"end\": \"00:01:34,650\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道英语怎么说\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:05,074",
+            "end": "00:01:11,514",
+            "es": "Y algo de jugo de frijol frío para mitigar el dolor.",
+            "fr": "Et un peu de jus de haricot froid pour atténuer la douleur.",
+            "uk": "І трохи холодного соєвого соку, щоб пом'якшити біль."
+        },
+        {
+            "start": "00:01:13,714",
+            "end": "00:01:22,494",
+            "es": "En la parte superior de mi boca.",
+            "fr": "Dans la partie supérieure de ma bouche.",
+            "uk": "У верхній частині мого рота."
+        },
+        {
+            "start": "00:01:23,234",
+            "end": "00:01:23,514",
+            "es": "Hola",
+            "fr": "Bonjour",
+            "uk": "Привіт"
+        },
+        {
+            "start": "00:01:24,162",
+            "end": "00:01:25,702",
+            "es": "Llegando dentro de mi boca.",
+            "fr": "Atteignant l'intérieur de ma bouche.",
+            "uk": "Досягаючи всередині мого рота."
+        },
+        {
+            "start": "00:01:27,490",
+            "end": "00:01:30,150",
+            "es": "En nuestro dialecto, lo llamamos paraíso",
+            "fr": "Dans notre dialecte, nous l'appelons paradis",
+            "uk": "У нашому діалекті ми називаємо це раєм"
+        },
+        {
+            "start": "00:01:31,750",
+            "end": "00:01:32,470",
+            "es": "Paraíso",
+            "fr": "Paradis",
+            "uk": "Рай"
+        },
+        {
+            "start": "00:01:32,470",
+            "end": "00:01:33,030",
+            "es": "OK",
+            "fr": "D'accord",
+            "uk": "Гаразд"
+        },
+        {
+            "start": "00:01:33,550",
+            "end": "00:01:34,650",
+            "es": "No sé cómo decirlo en inglés",
+            "fr": "Je ne sais pas comment le dire en anglais",
+            "uk": "Я не знаю, як це сказати англійською"
+        }
+    ]
+}

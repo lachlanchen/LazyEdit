@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,499\",\n    \"end\": \"00:00:03,000\",\n    \"lang\": \"zh\",\n    \"text\": \"那个牛屎等官是不是能等的啊?\"\n  },\n  {\n    \"start\": \"00:00:04,200\",\n    \"end\": \"00:00:06,100\",\n    \"lang\": \"zh\",\n    \"text\": \"老汉还叫他弄到外头,\"\n  },\n  {\n    \"start\": \"00:00:06,100\",\n    \"end\": \"00:00:07,940\",\n    \"lang\": \"zh\",\n    \"text\": \"官让那个牛屎糊到外头\"\n  },\n  {\n    \"start\": \"00:00:08,740\",\n    \"end\": \"00:00:09,900\",\n    \"lang\": \"zh\",\n    \"text\": \"我说糊到外头,\"\n  },\n  {\n    \"start\": \"00:00:09,900\",\n    \"end\": \"00:00:10,680\",\n    \"lang\": \"zh\",\n    \"text\": \"哪个得啊?\"\n  },\n  {\n    \"start\": \"00:00:12,460\",\n    \"end\": \"00:00:13,240\",\n    \"lang\": \"zh\",\n    \"text\": \"你看看,\"\n  },\n  {\n    \"start\": \"00:00:13,240\",\n    \"end\": \"00:00:14,080\",\n    \"lang\": \"zh\",\n    \"text\": \"还糊到外头,\"\n  },\n  {\n    \"start\": \"00:00:14,080\",\n    \"end\": \"00:00:15,480\",\n    \"lang\": \"zh\",\n    \"text\": \"这个牛屎烧得那么\"\n  },\n  {\n    \"start\": \"00:00:17,474\",\n    \"end\": \"00:00:17,974\",\n    \"lang\": \"en\",\n    \"text\": \"mongol\"\n  },\n  {\n    \"start\": \"00:00:24,418\",\n    \"end\": \"00:00:25,418\",\n    \"lang\": \"zh\",\n    \"text\": \"是不是这么担心吗\"\n  },\n  {\n    \"start\": \"00:00:26,138\",\n    \"end\": \"00:00:27,658\",\n    \"lang\": \"zh\",\n    \"text\": \"已经担出来一个\"\n  },\n  {\n    \"start\": \"00:00:41,538\",\n    \"end\": \"00:00:43,098\",\n    \"lang\": \"zh\",\n    \"text\": \"那个牛屎巴担得住\"\n  },\n  {\n    \"start\": \"00:00:43,098\",\n    \"end\": \"00:00:44,918\",\n    \"lang\": \"zh\",\n    \"text\": \"那个草菜不怕牛屎吃吧\"\n  },\n  {\n    \"start\": \"00:00:54,658\",\n    \"end\": \"00:00:55,798\",\n    \"lang\": \"en\",\n    \"text\": \"What would Tori say to Patsy?\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,499",
+            "end": "00:00:03,000",
+            "vi": "Cái chức năng đó có thể chờ được không?"
+        },
+        {
+            "start": "00:00:04,200",
+            "end": "00:00:06,100",
+            "vi": "Người đàn ông lớn tuổi còn bảo anh ta mang ra ngoài,"
+        },
+        {
+            "start": "00:00:06,100",
+            "end": "00:00:07,940",
+            "vi": "Ông ta bảo đó là bãi bò phải mang ra ngoài"
+        },
+        {
+            "start": "00:00:08,740",
+            "end": "00:00:09,900",
+            "vi": "Tôi nói là phải mang ra ngoài,"
+        },
+        {
+            "start": "00:00:09,900",
+            "end": "00:00:10,680",
+            "vi": "Ai sẽ làm điều đó?"
+        },
+        {
+            "start": "00:00:12,460",
+            "end": "00:00:13,240",
+            "vi": "Bạn xem này,"
+        },
+        {
+            "start": "00:00:13,240",
+            "end": "00:00:14,080",
+            "vi": "vẫn phải mang ra ngoài,"
+        },
+        {
+            "start": "00:00:14,080",
+            "end": "00:00:15,480",
+            "vi": "cái bãi bò này đốt mãi mà"
+        },
+        {
+            "start": "00:00:17,474",
+            "end": "00:00:17,974",
+            "vi": "Mông Cổ"
+        },
+        {
+            "start": "00:00:24,418",
+            "end": "00:00:25,418",
+            "vi": "Có phải đang lo lắng quá không?"
+        },
+        {
+            "start": "00:00:26,138",
+            "end": "00:00:27,658",
+            "vi": "Đã lo lắng đến nỗi xuất hiện một cái"
+        },
+        {
+            "start": "00:00:41,538",
+            "end": "00:00:43,098",
+            "vi": "Cái bãi bò đó có thể chịu đựng được không"
+        },
+        {
+            "start": "00:00:43,098",
+            "end": "00:00:44,918",
+            "vi": "Cái rau đó không sợ bị bãi bò chen chúc hả?"
+        },
+        {
+            "start": "00:00:54,658",
+            "end": "00:00:55,798",
+            "vi": "Tori sẽ nói gì với Patsy?"
+        }
+    ]
+}

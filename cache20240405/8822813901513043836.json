@@ -1,0 +1,19 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:03,479\",\n    \"end\": \"00:00:08,860\",\n    \"lang\": \"zh\",\n    \"text\": \"老板家的这个肥肠好做又好吃\"\n  },\n  {\n    \"start\": \"00:00:12,639\",\n    \"end\": \"00:00:14,380\",\n    \"lang\": \"zh\",\n    \"text\": \"会回购哦\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:03,479",
+            "end": "00:00:08,860",
+            "es": "La tripa gorda de la casa del jefe es fácil de hacer y deliciosa",
+            "fr": "Le gros intestin de la maison du patron est facile à préparer et délicieux",
+            "uk": "Цей товстий кишок від шефа легко приготувати і він смачний"
+        },
+        {
+            "start": "00:00:12,639",
+            "end": "00:00:14,380",
+            "es": "Lo compraré de nuevo",
+            "fr": "Je vais racheter ça",
+            "uk": "Я куплю це знову"
+        }
+    ]
+}

@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:04,297\",\n    \"end\": \"00:02:06,078\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi mi,\"\n  },\n  {\n    \"start\": \"00:02:06,078\",\n    \"end\": \"00:02:07,898\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi re mi,\"\n  },\n  {\n    \"start\": \"00:02:07,898\",\n    \"end\": \"00:02:09,478\",\n    \"lang\": \"en\",\n    \"text\": \"to hi na,\"\n  },\n  {\n    \"start\": \"00:02:09,478\",\n    \"end\": \"00:02:10,997\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi.\"\n  },\n  {\n    \"start\": \"00:02:13,578\",\n    \"end\": \"00:02:16,998\",\n    \"lang\": \"en\",\n    \"text\": \"I play the guitar almost every day,\"\n  },\n  {\n    \"start\": \"00:02:16,998\",\n    \"end\": \"00:02:17,898\",\n    \"lang\": \"en\",\n    \"text\": \"or four days.\"\n  },\n  {\n    \"start\": \"00:02:20,818\",\n    \"end\": \"00:02:21,598\",\n    \"lang\": \"en\",\n    \"text\": \"So...\"\n  },\n  {\n    \"start\": \"00:02:23,578\",\n    \"end\": \"00:02:28,618\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi,\"\n  },\n  {\n    \"start\": \"00:02:28,618\",\n    \"end\": \"00:02:28,618\",\n    \"lang\": \"en\",\n    \"text\": \"re mi,\"\n  },\n  {\n    \"start\": \"00:02:28,618\",\n    \"end\": \"00:02:29,558\",\n    \"lang\": \"en\",\n    \"text\": \"na na to hi na,\"\n  },\n  {\n    \"start\": \"00:02:29,558\",\n    \"end\": \"00:02:30,958\",\n    \"lang\": \"en\",\n    \"text\": \"na na mi,\"\n  },\n  {\n    \"start\": \"00:02:30,958\",\n    \"end\": \"00:02:32,018\",\n    \"lang\": \"en\",\n    \"text\": \"re mi,\"\n  },\n  {\n    \"start\": \"00:02:32,018\",\n    \"end\": \"00:02:33,638\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi mi,\"\n  },\n  {\n    \"start\": \"00:02:33,638\",\n    \"end\": \"00:02:35,958\",\n    \"lang\": \"en\",\n    \"text\": \"sol mi re mi.\"\n  },\n  {\n    \"start\": \"00:02:36,058\",\n    \"end\": \"00:02:36,538\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:02:37,618\",\n    \"end\": \"00:02:38,498\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:04,297",
+            "end": "00:02:06,078",
+            "en": "sol mi mi,",
+            "zh": "sol mi mi,",
+            "ar": "سول مي مي،"
+        },
+        {
+            "start": "00:02:06,078",
+            "end": "00:02:07,898",
+            "en": "sol mi re mi,",
+            "zh": "sol mi re mi,",
+            "ar": "سول مي ري مي،"
+        },
+        {
+            "start": "00:02:07,898",
+            "end": "00:02:09,478",
+            "en": "to hi na,",
+            "zh": "to hi na,",
+            "ar": "تو هي نا،"
+        },
+        {
+            "start": "00:02:09,478",
+            "end": "00:02:10,997",
+            "en": "sol mi.",
+            "zh": "sol mi.",
+            "ar": "سول مي."
+        },
+        {
+            "start": "00:02:13,578",
+            "end": "00:02:16,998",
+            "en": "I play the guitar almost every day,",
+            "zh": "我几乎每天都弹吉他，",
+            "ar": "أعزف على الجيتار تقريبا كل يوم،"
+        },
+        {
+            "start": "00:02:16,998",
+            "end": "00:02:17,898",
+            "en": "or four days.",
+            "zh": "或四天。",
+            "ar": "أو أربعة أيام."
+        },
+        {
+            "start": "00:02:20,818",
+            "end": "00:02:21,598",
+            "en": "So...",
+            "zh": "所以...",
+            "ar": "إذن..."
+        },
+        {
+            "start": "00:02:23,578",
+            "end": "00:02:28,618",
+            "en": "Na na mi,",
+            "zh": "Na na mi,",
+            "ar": "نا نا مي،"
+        },
+        {
+            "start": "00:02:28,618",
+            "end": "00:02:28,618",
+            "en": "re mi,",
+            "zh": "re mi,",
+            "ar": "ري مي،"
+        },
+        {
+            "start": "00:02:28,618",
+            "end": "00:02:29,558",
+            "en": "na na to hi na,",
+            "zh": "na na to hi na,",
+            "ar": "نا نا تو هي نا،"
+        },
+        {
+            "start": "00:02:29,558",
+            "end": "00:02:30,958",
+            "en": "na na mi,",
+            "zh": "na na mi,",
+            "ar": "نا نا مي،"
+        },
+        {
+            "start": "00:02:30,958",
+            "end": "00:02:32,018",
+            "en": "re mi,",
+            "zh": "re mi,",
+            "ar": "ري مي،"
+        },
+        {
+            "start": "00:02:32,018",
+            "end": "00:02:33,638",
+            "en": "sol mi mi,",
+            "zh": "sol mi mi,",
+            "ar": "سول مي مي،"
+        },
+        {
+            "start": "00:02:33,638",
+            "end": "00:02:35,958",
+            "en": "sol mi re mi.",
+            "zh": "sol mi re mi.",
+            "ar": "سول مي ري مي."
+        },
+        {
+            "start": "00:02:36,058",
+            "end": "00:02:36,538",
+            "en": "Sorry.",
+            "zh": "抱歉。",
+            "ar": "آسف."
+        },
+        {
+            "start": "00:02:37,618",
+            "end": "00:02:38,498",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,760\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:00,760\",\n    \"end\": \"00:00:04,059\",\n    \"lang\": \"en\",\n    \"text\": \"I believe we have some small improvement,\"\n  },\n  {\n    \"start\": \"00:00:04,059\",\n    \"end\": \"00:00:05,860\",\n    \"lang\": \"en\",\n    \"text\": \"small progress.\"\n  },\n  {\n    \"start\": \"00:00:07,040\",\n    \"end\": \"00:00:07,160\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:07,160\",\n    \"end\": \"00:00:09,000\",\n    \"lang\": \"en\",\n    \"text\": \"our glass,\"\n  },\n  {\n    \"start\": \"00:00:09,000\",\n    \"end\": \"00:00:11,100\",\n    \"lang\": \"en\",\n    \"text\": \"this is some little glass.\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:12,620\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:16,460\",\n    \"lang\": \"en\",\n    \"text\": \"I'm going to put it here.\"\n  },\n  {\n    \"start\": \"00:00:16,482\",\n    \"end\": \"00:00:17,482\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花,\"\n  },\n  {\n    \"start\": \"00:00:17,482\",\n    \"end\": \"00:00:20,242\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香,\"\n  },\n  {\n    \"start\": \"00:00:20,242\",\n    \"end\": \"00:00:22,902\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树根\"\n  },\n  {\n    \"start\": \"00:00:24,802\",\n    \"end\": \"00:00:27,022\",\n    \"lang\": \"zh\",\n    \"text\": \"我是一个无人知道的小草\"\n  },\n  {\n    \"start\": \"00:00:51,162\",\n    \"end\": \"00:00:52,542\",\n    \"lang\": \"zh\",\n    \"text\": \"谢谢观看\"\n  },\n  {\n    \"start\": \"00:00:52,578\",\n    \"end\": \"00:00:54,838\",\n    \"lang\": \"en\",\n    \"text\": \"not perfect but there is still some improvement.\"\n  },\n  {\n    \"start\": \"00:00:54,838\",\n    \"end\": \"00:01:00,078\",\n    \"lang\": \"en\",\n    \"text\": \"And I can't catch the tune when singing it\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,760",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذاً،"
+        },
+        {
+            "start": "00:00:00,760",
+            "end": "00:00:04,059",
+            "en": "I believe we have some small improvement,",
+            "zh": "我相信我们有一些小的进步，",
+            "ar": "أعتقد أن لدينا بعض التحسينات الصغيرة،"
+        },
+        {
+            "start": "00:00:04,059",
+            "end": "00:00:05,860",
+            "en": "small progress.",
+            "zh": "小的进展。",
+            "ar": "تقدم صغير."
+        },
+        {
+            "start": "00:00:07,040",
+            "end": "00:00:07,160",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذاً،"
+        },
+        {
+            "start": "00:00:07,160",
+            "end": "00:00:09,000",
+            "en": "our glass,",
+            "zh": "我们的玻璃，",
+            "ar": "زجاجنا،"
+        },
+        {
+            "start": "00:00:09,000",
+            "end": "00:00:11,100",
+            "en": "this is some little glass.",
+            "zh": "这是一些小玻璃。",
+            "ar": "هذا بعض الزجاج الصغير."
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:12,620",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:16,460",
+            "en": "I'm going to put it here.",
+            "zh": "我要把它放在这儿。",
+            "ar": "سأضعه هنا."
+        },
+        {
+            "start": "00:00:16,482",
+            "end": "00:00:17,482",
+            "en": "No flowers,",
+            "zh": "没有花,",
+            "ar": "لا زهور،"
+        },
+        {
+            "start": "00:00:17,482",
+            "end": "00:00:20,242",
+            "en": "no fragrance of flowers,",
+            "zh": "没有花香,",
+            "ar": "لا عبير للزهور،"
+        },
+        {
+            "start": "00:00:20,242",
+            "end": "00:00:22,902",
+            "en": "no roots.",
+            "zh": "没有树根",
+            "ar": "لا جذور."
+        },
+        {
+            "start": "00:00:24,802",
+            "end": "00:00:27,022",
+            "en": "I am a little grass unknown to anyone.",
+            "zh": "我是一个无人知道的小草",
+            "ar": "أنا عشب صغير لا يعرفني أحد."
+        },
+        {
+            "start": "00:00:51,162",
+            "end": "00:00:52,542",
+            "en": "Thank you for watching",
+            "zh": "谢谢观看",
+            "ar": "شكرًا لمشاهدتكم"
+        },
+        {
+            "start": "00:00:52,578",
+            "end": "00:00:54,838",
+            "en": "not perfect but there is still some improvement.",
+            "zh": "不完美但仍有所改进。",
+            "ar": "ليست مثالية ولكن لا يزال هناك بعض التحسين."
+        },
+        {
+            "start": "00:00:54,838",
+            "end": "00:01:00,078",
+            "en": "And I can't catch the tune when singing it",
+            "zh": "唱的时候我抓不住曲调",
+            "ar": "وأنا لا أستطيع التقاط اللحن عندما أغنيه"
+        }
+    ]
+}

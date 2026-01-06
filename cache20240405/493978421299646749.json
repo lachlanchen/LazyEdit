@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:08,200\",\n    \"end\": \"00:01:08,640\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:01:08,640\",\n    \"end\": \"00:01:10,020\",\n    \"lang\": \"en\",\n    \"text\": \"this time it seems better.\"\n  },\n  {\n    \"start\": \"00:01:10,020\",\n    \"end\": \"00:01:11,440\",\n    \"lang\": \"en\",\n    \"text\": \"Ok,\"\n  },\n  {\n    \"start\": \"00:01:11,440\",\n    \"end\": \"00:01:12,280\",\n    \"lang\": \"en\",\n    \"text\": \"so,\"\n  },\n  {\n    \"start\": \"00:01:12,280\",\n    \"end\": \"00:01:15,260\",\n    \"lang\": \"en\",\n    \"text\": \"play some chords.\"\n  },\n  {\n    \"start\": \"00:01:18,754\",\n    \"end\": \"00:01:19,854\",\n    \"lang\": \"zh\",\n    \"text\": \"和弦有英语怎么说\"\n  },\n  {\n    \"start\": \"00:01:49,294\",\n    \"end\": \"00:01:56,274\",\n    \"lang\": \"zh\",\n    \"text\": \"请不吝点赞 订阅 转发 打赏支持明镜与点点栏目\"\n  },\n  {\n    \"start\": \"00:01:58,306\",\n    \"end\": \"00:01:58,466\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:58,466\",\n    \"end\": \"00:01:59,346\",\n    \"lang\": \"en\",\n    \"text\": \"one more time.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:08,200",
+            "end": "00:01:08,640",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:01:08,640",
+            "end": "00:01:10,020",
+            "vi": "lần này có vẻ tốt hơn."
+        },
+        {
+            "start": "00:01:10,020",
+            "end": "00:01:11,440",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:01:11,440",
+            "end": "00:01:12,280",
+            "vi": "vậy,"
+        },
+        {
+            "start": "00:01:12,280",
+            "end": "00:01:15,260",
+            "vi": "hãy chơi một số hợp âm."
+        },
+        {
+            "start": "00:01:18,754",
+            "end": "00:01:19,854",
+            "vi": "Hợp âm tiếng Anh gọi là gì?"
+        },
+        {
+            "start": "00:01:49,294",
+            "end": "00:01:56,274",
+            "vi": "Xin đừng ngần ngại like, đăng ký, chia sẻ, và ủng hộ Minh Kính và chương trình của chúng tôi."
+        },
+        {
+            "start": "00:01:58,306",
+            "end": "00:01:58,466",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:01:58,466",
+            "end": "00:01:59,346",
+            "vi": "một lần nữa."
+        }
+    ]
+}

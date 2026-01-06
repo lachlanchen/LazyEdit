@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,700\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは、\"\n  },\n  {\n    \"start\": \"00:00:00,700\",\n    \"end\": \"00:00:01,480\",\n    \"lang\": \"ja\",\n    \"text\": \"私、\"\n  },\n  {\n    \"start\": \"00:00:01,480\",\n    \"end\": \"00:00:04,240\",\n    \"lang\": \"ja\",\n    \"text\": \"これは私の朝ごはんです\"\n  },\n  {\n    \"start\": \"00:00:05,922\",\n    \"end\": \"00:00:08,722\",\n    \"lang\": \"en\",\n    \"text\": \"So I kind of...\"\n  },\n  {\n    \"start\": \"00:00:12,701\",\n    \"end\": \"00:00:14,382\",\n    \"lang\": \"en\",\n    \"text\": \"Not insomnia.\"\n  },\n  {\n    \"start\": \"00:00:15,101\",\n    \"end\": \"00:00:16,181\",\n    \"lang\": \"en\",\n    \"text\": \"It's not insomnia.\"\n  },\n  {\n    \"start\": \"00:00:16,502\",\n    \"end\": \"00:00:17,162\",\n    \"lang\": \"en\",\n    \"text\": \"It's not in...\"\n  },\n  {\n    \"start\": \"00:00:17,162\",\n    \"end\": \"00:00:22,802\",\n    \"lang\": \"en\",\n    \"text\": \"I sleep too early at nine to 10 o'clock yesterday.\"\n  },\n  {\n    \"start\": \"00:00:23,222\",\n    \"end\": \"00:00:28,282\",\n    \"lang\": \"en\",\n    \"text\": \"So I wake up at 2.30 in the morning.\"\n  },\n  {\n    \"start\": \"00:00:29,422\",\n    \"end\": \"00:00:32,302\",\n    \"lang\": \"en\",\n    \"text\": \"And then I sleep again.\"\n  },\n  {\n    \"start\": \"00:00:32,302\",\n    \"end\": \"00:00:39,642\",\n    \"lang\": \"en\",\n    \"text\": \"So I wake up at eight o'clock after meditation\"\n  },\n  {\n    \"start\": \"00:00:39,642\",\n    \"end\": \"00:00:44,222\",\n    \"lang\": \"en\",\n    \"text\": \"and playing guitar.\"\n  },\n  {\n    \"start\": \"00:00:44,582\",\n    \"end\": \"00:00:48,202\",\n    \"lang\": \"en\",\n    \"text\": \"So I have no time to prepare breakfast.\"\n  },\n  {\n    \"start\": \"00:00:49,502\",\n    \"end\": \"00:00:58,982\",\n    \"lang\": \"en\",\n    \"text\": \"So I only have this nuts and vegetables and fruits.\"\n  },\n  {\n    \"start\": \"00:00:58,982\",\n    \"end\": \"00:01:00,662\",\n    \"lang\": \"en\",\n    \"text\": \"Fruits.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,700",
+            "vi": "Xin chào,"
+        },
+        {
+            "start": "00:00:00,700",
+            "end": "00:00:01,480",
+            "vi": "Tôi,"
+        },
+        {
+            "start": "00:00:01,480",
+            "end": "00:00:04,240",
+            "vi": "Đây là bữa sáng của tôi"
+        },
+        {
+            "start": "00:00:05,922",
+            "end": "00:00:08,722",
+            "vi": "Vậy nên tôi hơi..."
+        },
+        {
+            "start": "00:00:12,701",
+            "end": "00:00:14,382",
+            "vi": "Không phải mất ngủ."
+        },
+        {
+            "start": "00:00:15,101",
+            "end": "00:00:16,181",
+            "vi": "Không phải mất ngủ."
+        },
+        {
+            "start": "00:00:16,502",
+            "end": "00:00:17,162",
+            "vi": "Không phải là..."
+        },
+        {
+            "start": "00:00:17,162",
+            "end": "00:00:22,802",
+            "vi": "Tôi ngủ quá sớm từ 9 đến 10 giờ tối hôm qua."
+        },
+        {
+            "start": "00:00:23,222",
+            "end": "00:00:28,282",
+            "vi": "Vậy nên tôi thức dậy lúc 2 giờ 30 sáng."
+        },
+        {
+            "start": "00:00:29,422",
+            "end": "00:00:32,302",
+            "vi": "Sau đó tôi ngủ lại."
+        },
+        {
+            "start": "00:00:32,302",
+            "end": "00:00:39,642",
+            "vi": "Vậy nên tôi thức dậy lúc 8 giờ sau khi thiền"
+        },
+        {
+            "start": "00:00:39,642",
+            "end": "00:00:44,222",
+            "vi": "và chơi đàn guitar."
+        },
+        {
+            "start": "00:00:44,582",
+            "end": "00:00:48,202",
+            "vi": "Vậy nên tôi không có thời gian chuẩn bị bữa sáng."
+        },
+        {
+            "start": "00:00:49,502",
+            "end": "00:00:58,982",
+            "vi": "Vậy nên tôi chỉ có hạt và rau củ quả."
+        },
+        {
+            "start": "00:00:58,982",
+            "end": "00:01:00,662",
+            "vi": "Quả."
+        }
+    ]
+}

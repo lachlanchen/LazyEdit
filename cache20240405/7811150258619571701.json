@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,980\",\n    \"end\": \"00:00:04,600\",\n    \"lang\": \"en\",\n    \"text\": \"I want to share that after eating this pepper,\"\n  },\n  {\n    \"start\": \"00:00:04,600\",\n    \"end\": \"00:00:10,260\",\n    \"lang\": \"en\",\n    \"text\": \"ginger and garlic fragments\"\n  },\n  {\n    \"start\": \"00:00:10,850\",\n    \"end\": \"00:00:12,050\",\n    \"lang\": \"zh\",\n    \"text\": \"碎辣椒\"\n  },\n  {\n    \"start\": \"00:00:12,710\",\n    \"end\": \"00:00:13,770\",\n    \"lang\": \"zh\",\n    \"text\": \"碎辣椒,\"\n  },\n  {\n    \"start\": \"00:00:13,770\",\n    \"end\": \"00:00:14,810\",\n    \"lang\": \"zh\",\n    \"text\": \"吃了之后\"\n  },\n  {\n    \"start\": \"00:00:14,810\",\n    \"end\": \"00:00:17,330\",\n    \"lang\": \"zh\",\n    \"text\": \"我的新冠症状似乎\"\n  },\n  {\n    \"start\": \"00:00:18,050\",\n    \"end\": \"00:00:18,690\",\n    \"lang\": \"en\",\n    \"text\": \"Temporarily,\"\n  },\n  {\n    \"start\": \"00:00:18,690\",\n    \"end\": \"00:00:23,530\",\n    \"lang\": \"en\",\n    \"text\": \"my cold symptoms get elevated\"\n  },\n  {\n    \"start\": \"00:00:25,190\",\n    \"end\": \"00:00:27,170\",\n    \"lang\": \"en\",\n    \"text\": \"And my mouth is watering\"\n  },\n  {\n    \"start\": \"00:00:30,270\",\n    \"end\": \"00:00:31,190\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:31,190\",\n    \"end\": \"00:00:32,509\",\n    \"lang\": \"en\",\n    \"text\": \"so delicious\"\n  },\n  {\n    \"start\": \"00:00:38,890\",\n    \"end\": \"00:00:39,810\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:39,810\",\n    \"end\": \"00:00:41,150\",\n    \"lang\": \"en\",\n    \"text\": \"I like this\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,980",
+            "end": "00:00:04,600",
+            "vi": "Tôi muốn chia sẻ rằng sau khi ăn quả ớt này,"
+        },
+        {
+            "start": "00:00:04,600",
+            "end": "00:00:10,260",
+            "vi": "cùng với mảnh gừng và tỏi"
+        },
+        {
+            "start": "00:00:10,850",
+            "end": "00:00:12,050",
+            "vi": "mảnh ớt cay"
+        },
+        {
+            "start": "00:00:12,710",
+            "end": "00:00:13,770",
+            "vi": "mảnh ớt cay,"
+        },
+        {
+            "start": "00:00:13,770",
+            "end": "00:00:14,810",
+            "vi": "sau khi ăn"
+        },
+        {
+            "start": "00:00:14,810",
+            "end": "00:00:17,330",
+            "vi": "các triệu chứng nhiễm COVID-19 của tôi dường như"
+        },
+        {
+            "start": "00:00:18,050",
+            "end": "00:00:18,690",
+            "vi": "Tạm thời,"
+        },
+        {
+            "start": "00:00:18,690",
+            "end": "00:00:23,530",
+            "vi": "các triệu chứng cảm lạnh của tôi được giảm bớt"
+        },
+        {
+            "start": "00:00:25,190",
+            "end": "00:00:27,170",
+            "vi": "Và tôi cảm thấy miệng mình chảy nước"
+        },
+        {
+            "start": "00:00:30,270",
+            "end": "00:00:31,190",
+            "vi": "Wow,"
+        },
+        {
+            "start": "00:00:31,190",
+            "end": "00:00:32,509",
+            "vi": "thật ngon"
+        },
+        {
+            "start": "00:00:38,890",
+            "end": "00:00:39,810",
+            "vi": "Wow,"
+        },
+        {
+            "start": "00:00:39,810",
+            "end": "00:00:41,150",
+            "vi": "tôi thích cái này"
+        }
+    ]
+}

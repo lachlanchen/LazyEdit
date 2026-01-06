@@ -1,0 +1,35 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,300\",\n    \"ja\": \"これは<私>[]たちの<昼食>[]の<第一歩>[]です。\"\n  },\n  {\n    \"start\": \"00:00:05,899\",\n    \"end\": \"00:00:07,800\",\n    \"ja\": \"どう<言>[]っていいかわからない。\"\n  },\n  {\n    \"start\": \"00:00:10,380\",\n    \"end\": \"00:00:12,400\",\n    \"ja\": \"<野菜>[]と<鶏肉>[]だけです。\"\n  },\n  {\n    \"start\": \"00:00:13,780\",\n    \"end\": \"00:00:16,180\",\n    \"ja\": \"これが<最初>[]の<ステップ>[]です。\"\n  },\n  {\n    \"start\": \"00:00:17,160\",\n    \"end\": \"00:00:17,580\",\n    \"ja\": \"そして、\"\n  },\n  {\n    \"start\": \"00:00:17,580\",\n    \"end\": \"00:00:18,780\",\n    \"ja\": \"その<後>[]、<ライスヌードル>[]。\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,300",
+            "ja": "これは<私>[わたし]たちの<昼食>[ちゅうしょく]の<第一歩>[だいいっぽ]です。"
+        },
+        {
+            "start": "00:00:05,899",
+            "end": "00:00:07,800",
+            "ja": "どう<言>[い]っていいかわからない。"
+        },
+        {
+            "start": "00:00:10,380",
+            "end": "00:00:12,400",
+            "ja": "<野菜>[やさい]と<鶏肉>[とりにく]だけです。"
+        },
+        {
+            "start": "00:00:13,780",
+            "end": "00:00:16,180",
+            "ja": "これが<最初>[さいしょ]の<ステップ>[]です。"
+        },
+        {
+            "start": "00:00:17,160",
+            "end": "00:00:17,580",
+            "ja": "そして、"
+        },
+        {
+            "start": "00:00:17,580",
+            "end": "00:00:18,780",
+            "ja": "その<後>[ご]、<ライスヌードル>[]。"
+        }
+    ]
+}

@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,519\",\n    \"end\": \"00:00:01,360\",\n    \"lang\": \"en\",\n    \"text\": \"Let's do this yeah...\"\n  },\n  {\n    \"start\": \"00:00:02,658\",\n    \"end\": \"00:00:03,478\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:07,682\",\n    \"end\": \"00:00:11,082\",\n    \"lang\": \"en\",\n    \"text\": \"I forget what I want to share today.\"\n  },\n  {\n    \"start\": \"00:00:18,021\",\n    \"end\": \"00:00:20,342\",\n    \"lang\": \"en\",\n    \"text\": \"I want to talk about freedom.\"\n  },\n  {\n    \"start\": \"00:00:22,022\",\n    \"end\": \"00:00:22,562\",\n    \"lang\": \"en\",\n    \"text\": \"Freedom,\"\n  },\n  {\n    \"start\": \"00:00:22,562\",\n    \"end\": \"00:00:23,182\",\n    \"lang\": \"en\",\n    \"text\": \"I believe,\"\n  },\n  {\n    \"start\": \"00:00:23,182\",\n    \"end\": \"00:00:24,142\",\n    \"lang\": \"en\",\n    \"text\": \"is not your life.\"\n  },\n  {\n    \"start\": \"00:00:25,218\",\n    \"end\": \"00:00:26,638\",\n    \"lang\": \"zh\",\n    \"text\": \"你不可能自己做\"\n  },\n  {\n    \"start\": \"00:00:26,638\",\n    \"end\": \"00:00:28,938\",\n    \"lang\": \"zh\",\n    \"text\": \"你只需要自由做\"\n  },\n  {\n    \"start\": \"00:00:29,250\",\n    \"end\": \"00:00:33,070\",\n    \"lang\": \"en\",\n    \"text\": \"It's a consequence of something that you fight,\"\n  },\n  {\n    \"start\": \"00:00:33,070\",\n    \"end\": \"00:00:34,450\",\n    \"lang\": \"en\",\n    \"text\": \"you compromise,\"\n  },\n  {\n    \"start\": \"00:00:34,450\",\n    \"end\": \"00:00:37,650\",\n    \"lang\": \"en\",\n    \"text\": \"you pursue,\"\n  },\n  {\n    \"start\": \"00:00:37,650\",\n    \"end\": \"00:00:38,730\",\n    \"lang\": \"en\",\n    \"text\": \"you give up,\"\n  },\n  {\n    \"start\": \"00:00:38,730\",\n    \"end\": \"00:00:39,870\",\n    \"lang\": \"en\",\n    \"text\": \"you accept,\"\n  },\n  {\n    \"start\": \"00:00:39,870\",\n    \"end\": \"00:00:44,950\",\n    \"lang\": \"en\",\n    \"text\": \"you trade off,\"\n  },\n  {\n    \"start\": \"00:00:44,950\",\n    \"end\": \"00:00:48,830\",\n    \"lang\": \"en\",\n    \"text\": \"a balance that you finally take.\"\n  },\n  {\n    \"start\": \"00:00:50,110\",\n    \"end\": \"00:00:53,770\",\n    \"lang\": \"en\",\n    \"text\": \"It's what happens with freedom.\"\n  },\n  {\n    \"start\": \"00:00:57,710\",\n    \"end\": \"00:00:58,530\",\n    \"lang\": \"en\",\n    \"text\": \"That's it.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,519",
+            "end": "00:00:01,360",
+            "vi": "Hãy bắt đầu nào..."
+        },
+        {
+            "start": "00:00:02,658",
+            "end": "00:00:03,478",
+            "vi": "Chào buổi sáng"
+        },
+        {
+            "start": "00:00:07,682",
+            "end": "00:00:11,082",
+            "vi": "Tôi quên mất hôm nay muốn chia sẻ gì."
+        },
+        {
+            "start": "00:00:18,021",
+            "end": "00:00:20,342",
+            "vi": "Tôi muốn nói về tự do."
+        },
+        {
+            "start": "00:00:22,022",
+            "end": "00:00:22,562",
+            "vi": "Tự do,"
+        },
+        {
+            "start": "00:00:22,562",
+            "end": "00:00:23,182",
+            "vi": "tôi tin rằng,"
+        },
+        {
+            "start": "00:00:23,182",
+            "end": "00:00:24,142",
+            "vi": "không phải là cuộc sống của bạn."
+        },
+        {
+            "start": "00:00:25,218",
+            "end": "00:00:26,638",
+            "vi": "Bạn không thể tự làm"
+        },
+        {
+            "start": "00:00:26,638",
+            "end": "00:00:28,938",
+            "vi": "Bạn chỉ cần tự do làm"
+        },
+        {
+            "start": "00:00:29,250",
+            "end": "00:00:33,070",
+            "vi": "Đó là hậu quả của việc bạn chiến đấu,"
+        },
+        {
+            "start": "00:00:33,070",
+            "end": "00:00:34,450",
+            "vi": "bạn thỏa hiệp,"
+        },
+        {
+            "start": "00:00:34,450",
+            "end": "00:00:37,650",
+            "vi": "bạn theo đuổi,"
+        },
+        {
+            "start": "00:00:37,650",
+            "end": "00:00:38,730",
+            "vi": "bạn từ bỏ,"
+        },
+        {
+            "start": "00:00:38,730",
+            "end": "00:00:39,870",
+            "vi": "bạn chấp nhận,"
+        },
+        {
+            "start": "00:00:39,870",
+            "end": "00:00:44,950",
+            "vi": "bạn đánh đổi,"
+        },
+        {
+            "start": "00:00:44,950",
+            "end": "00:00:48,830",
+            "vi": "một sự cân bằng mà cuối cùng bạn lấy."
+        },
+        {
+            "start": "00:00:50,110",
+            "end": "00:00:53,770",
+            "vi": "Đó là những gì xảy ra với tự do."
+        },
+        {
+            "start": "00:00:57,710",
+            "end": "00:00:58,530",
+            "vi": "Đó là tất cả."
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,780\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:00,780\",\n    \"end\": \"00:00:10,400\",\n    \"lang\": \"en\",\n    \"text\": \"first we play the main melody.\"\n  },\n  {\n    \"start\": \"00:00:10,400\",\n    \"end\": \"00:00:12,520\",\n    \"lang\": \"en\",\n    \"text\": \"Then I turn down the pitch and ring an oath.\"\n  },\n  {\n    \"start\": \"00:00:12,520\",\n    \"end\": \"00:00:28,860\",\n    \"lang\": \"en\",\n    \"text\": \"We share one ear of coffee and drink another cup of coffee.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,780",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:00:00,780",
+            "end": "00:00:10,400",
+            "ko": "먼저 주 멜로디를 연주해요."
+        },
+        {
+            "start": "00:00:10,400",
+            "end": "00:00:12,520",
+            "ko": "그런 다음에 피치를 낮추고 서약을 울려요."
+        },
+        {
+            "start": "00:00:12,520",
+            "end": "00:00:28,860",
+            "ko": "우리는 커피 한 잔을 같이 나눠 마시고 또 다른 컵을 마셔요."
+        }
+    ]
+}

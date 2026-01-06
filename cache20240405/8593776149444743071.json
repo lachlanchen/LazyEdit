@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:14,214\",\n    \"end\": \"00:02:14,574\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:02:17,154\",\n    \"end\": \"00:02:18,514\",\n    \"lang\": \"en\",\n    \"text\": \"Yes.\"\n  },\n  {\n    \"start\": \"00:02:21,954\",\n    \"end\": \"00:02:29,494\",\n    \"lang\": \"en\",\n    \"text\": \"I found that I gradually become better at speaking English daily.\"\n  },\n  {\n    \"start\": \"00:02:35,013\",\n    \"end\": \"00:02:36,414\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:36,414\",\n    \"end\": \"00:02:48,454\",\n    \"lang\": \"en\",\n    \"text\": \"I think I found my talent that belongs to me.\"\n  },\n  {\n    \"start\": \"00:02:49,314\",\n    \"end\": \"00:02:50,534\",\n    \"lang\": \"ja\",\n    \"text\": \"今更にセスティアム\"\n  },\n  {\n    \"start\": \"00:02:51,106\",\n    \"end\": \"00:02:58,106\",\n    \"lang\": \"en\",\n    \"text\": \"obscure or vague but it gradually becomes crystal clear.\"\n  },\n  {\n    \"start\": \"00:03:08,506\",\n    \"end\": \"00:03:12,526\",\n    \"lang\": \"en\",\n    \"text\": \"So I have a unique journey in science.\"\n  },\n  {\n    \"start\": \"00:03:13,186\",\n    \"end\": \"00:03:19,926\",\n    \"lang\": \"en\",\n    \"text\": \"Also programming and multidisciplinary.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:14,214",
+            "end": "00:02:14,574",
+            "ja": "そうですか？"
+        },
+        {
+            "start": "00:02:17,154",
+            "end": "00:02:18,514",
+            "ja": "はい。"
+        },
+        {
+            "start": "00:02:21,954",
+            "end": "00:02:29,494",
+            "ja": "私は毎日英語を話すのが少しずつ上手になっていると感じました。"
+        },
+        {
+            "start": "00:02:35,013",
+            "end": "00:02:36,414",
+            "ja": "だから、"
+        },
+        {
+            "start": "00:02:36,414",
+            "end": "00:02:48,454",
+            "ja": "私にとっての才能を見つけたと思います。"
+        },
+        {
+            "start": "00:02:49,314",
+            "end": "00:02:50,534",
+            "ja": "今さらながら"
+        },
+        {
+            "start": "00:02:51,106",
+            "end": "00:02:58,106",
+            "ja": "初めは曖昧または不明瞭だったが、次第にはっきりとしてきます。"
+        },
+        {
+            "start": "00:03:08,506",
+            "end": "00:03:12,526",
+            "ja": "だから私は科学においてユニークな旅をしています。"
+        },
+        {
+            "start": "00:03:13,186",
+            "end": "00:03:19,926",
+            "ja": "また、プログラミングや多分野に渡る。"
+        }
+    ]
+}

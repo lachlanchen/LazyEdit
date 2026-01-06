@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,860\",\n    \"end\": \"00:00:03,180\",\n    \"lang\": \"zh\",\n    \"text\": \"有一个特别好闻的味道\"\n  },\n  {\n    \"start\": \"00:00:03,180\",\n    \"end\": \"00:00:04,180\",\n    \"lang\": \"zh\",\n    \"text\": \"就像是\"\n  },\n  {\n    \"start\": \"00:00:05,220\",\n    \"end\": \"00:00:06,300\",\n    \"lang\": \"zh\",\n    \"text\": \"就像是什么呢\"\n  },\n  {\n    \"start\": \"00:00:06,300\",\n    \"end\": \"00:00:07,560\",\n    \"lang\": \"zh\",\n    \"text\": \"像那个粽子\"\n  },\n  {\n    \"start\": \"00:00:07,560\",\n    \"end\": \"00:00:08,300\",\n    \"lang\": \"zh\",\n    \"text\": \"但是也不像\"\n  },\n  {\n    \"start\": \"00:00:08,930\",\n    \"end\": \"00:00:12,370\",\n    \"lang\": \"en\",\n    \"text\": \"I almost get intoxicated by that awesome smell.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,860",
+            "end": "00:00:03,180",
+            "es": "Hay un olor especialmente agradable",
+            "fr": "Il y a une odeur particulièrement agréable",
+            "uk": "Є особливо приємний запах"
+        },
+        {
+            "start": "00:00:03,180",
+            "end": "00:00:04,180",
+            "es": "Es como",
+            "fr": "C'est comme",
+            "uk": "Це як"
+        },
+        {
+            "start": "00:00:05,220",
+            "end": "00:00:06,300",
+            "es": "¿Es como qué?",
+            "fr": "C'est comme quoi?",
+            "uk": "Це як що?"
+        },
+        {
+            "start": "00:00:06,300",
+            "end": "00:00:07,560",
+            "es": "Como esos zongzi",
+            "fr": "Comme ces zongzi",
+            "uk": "Як ті зонзі"
+        },
+        {
+            "start": "00:00:07,560",
+            "end": "00:00:08,300",
+            "es": "Pero también no lo es",
+            "fr": "Mais ce n'est pas non plus cela",
+            "uk": "Але це також не воно"
+        },
+        {
+            "start": "00:00:08,930",
+            "end": "00:00:12,370",
+            "es": "Casi me embriago con ese increíble olor.",
+            "fr": "Je suis presque enivré par cette odeur incroyable.",
+            "uk": "Я майже сп'янів від того чудового запаху."
+        }
+    ]
+}

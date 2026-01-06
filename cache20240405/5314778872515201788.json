@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,800\",\n    \"lang\": \"zh\",\n    \"text\": \"正在看扇子\"\n  },\n  {\n    \"start\": \"00:00:01,506\",\n    \"end\": \"00:00:03,086\",\n    \"lang\": \"ja\",\n    \"text\": \"遊んでいます\"\n  },\n  {\n    \"start\": \"00:00:04,610\",\n    \"end\": \"00:00:05,050\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:05,050\",\n    \"end\": \"00:00:07,490\",\n    \"lang\": \"en\",\n    \"text\": \"so our morning run,\"\n  },\n  {\n    \"start\": \"00:00:07,490\",\n    \"end\": \"00:00:08,690\",\n    \"lang\": \"en\",\n    \"text\": \"morning running.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                \"vi\": \"Vietnamese text\"  // Vietnamese translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,800",
+            "es": "Mirando un abanico",
+            "fr": "Regardant un éventail",
+            "vi": "Đang xem quạt"
+        },
+        {
+            "start": "00:00:01,506",
+            "end": "00:00:03,086",
+            "es": "Está jugando",
+            "fr": "Il joue",
+            "vi": "Đang chơi"
+        },
+        {
+            "start": "00:00:04,610",
+            "end": "00:00:05,050",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:05,050",
+            "end": "00:00:07,490",
+            "es": "así que nuestra carrera matutina,",
+            "fr": "alors notre course matinale,",
+            "vi": "vậy là chúng ta chạy buổi sáng,"
+        },
+        {
+            "start": "00:00:07,490",
+            "end": "00:00:08,690",
+            "es": "carrera matinal.",
+            "fr": "course matinale.",
+            "vi": "chạy buổi sáng."
+        }
+    ]
+}

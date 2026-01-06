@@ -1,0 +1,125 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:05,398\",\n    \"end\": \"00:04:07,578\",\n    \"lang\": \"en\",\n    \"text\": \"you are everything,\"\n  },\n  {\n    \"start\": \"00:04:07,578\",\n    \"end\": \"00:04:14,918\",\n    \"lang\": \"en\",\n    \"text\": \"but in fact no matter how\"\n  },\n  {\n    \"start\": \"00:04:14,918\",\n    \"end\": \"00:04:16,017\",\n    \"lang\": \"en\",\n    \"text\": \"much you learn,\"\n  },\n  {\n    \"start\": \"00:04:16,017\",\n    \"end\": \"00:04:19,317\",\n    \"lang\": \"en\",\n    \"text\": \"you still you are ignored,\"\n  },\n  {\n    \"start\": \"00:04:19,317\",\n    \"end\": \"00:04:20,178\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:04:20,178\",\n    \"end\": \"00:04:25,058\",\n    \"lang\": \"en\",\n    \"text\": \"We are still...\"\n  },\n  {\n    \"start\": \"00:04:27,010\",\n    \"end\": \"00:04:27,950\",\n    \"lang\": \"ja\",\n    \"text\": \"ちゃってー\"\n  },\n  {\n    \"start\": \"00:04:29,698\",\n    \"end\": \"00:04:32,278\",\n    \"lang\": \"en\",\n    \"text\": \"obsessed in our own illusion,\"\n  },\n  {\n    \"start\": \"00:04:32,278\",\n    \"end\": \"00:04:35,618\",\n    \"lang\": \"en\",\n    \"text\": \"our own imagination,\"\n  },\n  {\n    \"start\": \"00:04:35,618\",\n    \"end\": \"00:04:38,938\",\n    \"lang\": \"en\",\n    \"text\": \"that we understand the world,\"\n  },\n  {\n    \"start\": \"00:04:38,938\",\n    \"end\": \"00:04:39,778\",\n    \"lang\": \"en\",\n    \"text\": \"understand the\"\n  },\n  {\n    \"start\": \"00:04:39,778\",\n    \"end\": \"00:04:40,138\",\n    \"lang\": \"en\",\n    \"text\": \"universe.\"\n  },\n  {\n    \"start\": \"00:04:40,138\",\n    \"end\": \"00:04:41,298\",\n    \"lang\": \"en\",\n    \"text\": \"But it's a fact,\"\n  },\n  {\n    \"start\": \"00:04:41,298\",\n    \"end\": \"00:04:41,898\",\n    \"lang\": \"en\",\n    \"text\": \"it's not.\"\n  },\n  {\n    \"start\": \"00:04:41,898\",\n    \"end\": \"00:04:43,898\",\n    \"lang\": \"en\",\n    \"text\": \"No matter how much you learn,\"\n  },\n  {\n    \"start\": \"00:04:43,898\",\n    \"end\": \"00:04:45,498\",\n    \"lang\": \"en\",\n    \"text\": \"you are a physicist,\"\n  },\n  {\n    \"start\": \"00:04:45,498\",\n    \"end\": \"00:04:46,858\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  },\n  {\n    \"start\": \"00:04:46,858\",\n    \"end\": \"00:04:49,278\",\n    \"lang\": \"en\",\n    \"text\": \"are a Nobel Prize laureate,\"\n  },\n  {\n    \"start\": \"00:04:49,278\",\n    \"end\": \"00:04:51,818\",\n    \"lang\": \"en\",\n    \"text\": \"it's useless.\"\n  },\n  {\n    \"start\": \"00:04:51,818\",\n    \"end\": \"00:04:57,518\",\n    \"lang\": \"en\",\n    \"text\": \"It still can't solve the core problem that\"\n  },\n  {\n    \"start\": \"00:04:58,466\",\n    \"end\": \"00:04:58,886\",\n    \"lang\": \"ja\",\n    \"text\": \"We are\"\n  },\n  {\n    \"start\": \"00:04:58,926\",\n    \"end\": \"00:04:59,406\",\n    \"lang\": \"ja\",\n    \"text\": \"勇猛なって\"\n  },\n  {\n    \"start\": \"00:05:01,218\",\n    \"end\": \"00:05:04,698\",\n    \"lang\": \"en\",\n    \"text\": \"So just enjoy life everyday.\"\n  },\n  {\n    \"start\": \"00:05:04,698\",\n    \"end\": \"00:05:06,118\",\n    \"lang\": \"en\",\n    \"text\": \"Enjoy life,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:04:05,398",
+            "end": "00:04:07,578",
+            "ja": "あなたはすべてだ、"
+        },
+        {
+            "start": "00:04:07,578",
+            "end": "00:04:14,918",
+            "ja": "でも実際にはどれだけ"
+        },
+        {
+            "start": "00:04:14,918",
+            "end": "00:04:16,017",
+            "ja": "勉強しても、"
+        },
+        {
+            "start": "00:04:16,017",
+            "end": "00:04:19,317",
+            "ja": "あなたはまだ無視されている、"
+        },
+        {
+            "start": "00:04:19,317",
+            "end": "00:04:20,178",
+            "ja": "ね？"
+        },
+        {
+            "start": "00:04:20,178",
+            "end": "00:04:25,058",
+            "ja": "私たちはまだ…"
+        },
+        {
+            "start": "00:04:27,010",
+            "end": "00:04:27,950",
+            "ja": "ちゃってー"
+        },
+        {
+            "start": "00:04:29,698",
+            "end": "00:04:32,278",
+            "ja": "私たち自身の幻想に取りつかれ、"
+        },
+        {
+            "start": "00:04:32,278",
+            "end": "00:04:35,618",
+            "ja": "私たち自身の想像力に、"
+        },
+        {
+            "start": "00:04:35,618",
+            "end": "00:04:38,938",
+            "ja": "世界を理解していると思っている、"
+        },
+        {
+            "start": "00:04:38,938",
+            "end": "00:04:39,778",
+            "ja": "宇宙を理解している"
+        },
+        {
+            "start": "00:04:39,778",
+            "end": "00:04:40,138",
+            "ja": "と。"
+        },
+        {
+            "start": "00:04:40,138",
+            "end": "00:04:41,298",
+            "ja": "でもそれは事実では、"
+        },
+        {
+            "start": "00:04:41,298",
+            "end": "00:04:41,898",
+            "ja": "ない。"
+        },
+        {
+            "start": "00:04:41,898",
+            "end": "00:04:43,898",
+            "ja": "どれだけ学んでも、"
+        },
+        {
+            "start": "00:04:43,898",
+            "end": "00:04:45,498",
+            "ja": "あなたが物理学者であろうと、"
+        },
+        {
+            "start": "00:04:45,498",
+            "end": "00:04:46,858",
+            "ja": "あなたが"
+        },
+        {
+            "start": "00:04:46,858",
+            "end": "00:04:49,278",
+            "ja": "ノーベル賞受賞者であろうと、"
+        },
+        {
+            "start": "00:04:49,278",
+            "end": "00:04:51,818",
+            "ja": "それは無意味だ。"
+        },
+        {
+            "start": "00:04:51,818",
+            "end": "00:04:57,518",
+            "ja": "それでも根本的な問題を解決することはできない"
+        },
+        {
+            "start": "00:04:58,466",
+            "end": "00:04:58,886",
+            "ja": "私たちは"
+        },
+        {
+            "start": "00:04:58,926",
+            "end": "00:04:59,406",
+            "ja": "勇敢だ"
+        },
+        {
+            "start": "00:05:01,218",
+            "end": "00:05:04,698",
+            "ja": "だから毎日人生を楽しむんだ。"
+        },
+        {
+            "start": "00:05:04,698",
+            "end": "00:05:06,118",
+            "ja": "人生を楽しむ、"
+        }
+    ]
+}

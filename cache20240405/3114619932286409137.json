@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:04,342\",\n    \"end\": \"00:01:13,622\",\n    \"lang\": \"en\",\n    \"text\": \"the most important thing is that you have food.\"\n  },\n  {\n    \"start\": \"00:01:15,121\",\n    \"end\": \"00:01:16,422\",\n    \"lang\": \"en\",\n    \"text\": \"Don't get cold.\"\n  },\n  {\n    \"start\": \"00:01:17,442\",\n    \"end\": \"00:01:19,002\",\n    \"lang\": \"en\",\n    \"text\": \"And when you die,\"\n  },\n  {\n    \"start\": \"00:01:19,002\",\n    \"end\": \"00:01:19,922\",\n    \"lang\": \"en\",\n    \"text\": \"die peacefully.\"\n  },\n  {\n    \"start\": \"00:01:21,378\",\n    \"end\": \"00:01:22,898\",\n    \"lang\": \"ar\",\n    \"text\": \"هذا هو المسجد\"\n  },\n  {\n    \"start\": \"00:01:23,586\",\n    \"end\": \"00:01:24,886\",\n    \"lang\": \"en\",\n    \"text\": \"Two or three important things.\"\n  },\n  {\n    \"start\": \"00:01:25,326\",\n    \"end\": \"00:01:25,646\",\n    \"lang\": \"en\",\n    \"text\": \"Food,\"\n  },\n  {\n    \"start\": \"00:01:25,646\",\n    \"end\": \"00:01:27,166\",\n    \"lang\": \"en\",\n    \"text\": \"die peacefully.\"\n  },\n  {\n    \"start\": \"00:01:28,566\",\n    \"end\": \"00:01:32,866\",\n    \"lang\": \"en\",\n    \"text\": \"Don't die from cancer.\"\n  },\n  {\n    \"start\": \"00:01:38,498\",\n    \"end\": \"00:01:39,338\",\n    \"lang\": \"zh\",\n    \"text\": \"大家可以試試看\"\n  },\n  {\n    \"start\": \"00:01:47,250\",\n    \"end\": \"00:01:47,950\",\n    \"lang\": \"en\",\n    \"text\": \"OK\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:04,342",
+            "end": "00:01:13,622",
+            "es": "lo más importante es que tengas comida.",
+            "fr": "la chose la plus importante, c'est que vous ayez de la nourriture.",
+            "uk": "найважливіше, щоб у вас була їжа."
+        },
+        {
+            "start": "00:01:15,121",
+            "end": "00:01:16,422",
+            "es": "No te enfríes.",
+            "fr": "Ne prenez pas froid.",
+            "uk": "Не замерзай."
+        },
+        {
+            "start": "00:01:17,442",
+            "end": "00:01:19,002",
+            "es": "Y cuando mueras,",
+            "fr": "Et quand vous mourrez,",
+            "uk": "І коли ви помрете,"
+        },
+        {
+            "start": "00:01:19,002",
+            "end": "00:01:19,922",
+            "es": "muere pacíficamente.",
+            "fr": "mourrez paisiblement.",
+            "uk": "помиріть мирно."
+        },
+        {
+            "start": "00:01:21,378",
+            "end": "00:01:22,898",
+            "es": "Esa es la mezquita",
+            "fr": "C'est la mosquée",
+            "uk": "Ось мечеть"
+        },
+        {
+            "start": "00:01:23,586",
+            "end": "00:01:24,886",
+            "es": "Dos o tres cosas importantes.",
+            "fr": "Deux ou trois choses importantes.",
+            "uk": "Дві або три важливі речі."
+        },
+        {
+            "start": "00:01:25,326",
+            "end": "00:01:25,646",
+            "es": "Comida,",
+            "fr": "Nourriture,",
+            "uk": "Їжа,"
+        },
+        {
+            "start": "00:01:25,646",
+            "end": "00:01:27,166",
+            "es": "muere pacíficamente.",
+            "fr": "mourrez paisiblement.",
+            "uk": "помиріть мирно."
+        },
+        {
+            "start": "00:01:28,566",
+            "end": "00:01:32,866",
+            "es": "No mueras de cáncer.",
+            "fr": "Ne mourez pas du cancer.",
+            "uk": "Не помирайте від раку."
+        },
+        {
+            "start": "00:01:38,498",
+            "end": "00:01:39,338",
+            "es": "Pueden probarlo.",
+            "fr": "Vous pouvez essayer.",
+            "uk": "Ви можете спробувати."
+        },
+        {
+            "start": "00:01:47,250",
+            "end": "00:01:47,950",
+            "es": "OK",
+            "fr": "D'accord",
+            "uk": "Гаразд"
+        }
+    ]
+}

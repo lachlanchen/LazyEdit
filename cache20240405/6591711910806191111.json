@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,440\",\n    \"lang\": \"ar\",\n    \"text\": \"هذا فيديو\"\n  },\n  {\n    \"start\": \"00:00:01,922\",\n    \"end\": \"00:00:05,222\",\n    \"lang\": \"en\",\n    \"text\": \"story of Harvard.\"\n  },\n  {\n    \"start\": \"00:00:05,922\",\n    \"end\": \"00:00:07,142\",\n    \"lang\": \"ar\",\n    \"text\": \"ناتحدّد\"\n  },\n  {\n    \"start\": \"00:00:07,170\",\n    \"end\": \"00:00:07,530\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:07,530\",\n    \"end\": \"00:00:08,290\",\n    \"lang\": \"en\",\n    \"text\": \"um...\"\n  },\n  {\n    \"start\": \"00:00:09,186\",\n    \"end\": \"00:00:09,706\",\n    \"lang\": \"ar\",\n    \"text\": \"فیدو\"\n  },\n  {\n    \"start\": \"00:00:11,490\",\n    \"end\": \"00:00:14,010\",\n    \"lang\": \"en\",\n    \"text\": \"He is an education expert.\"\n  },\n  {\n    \"start\": \"00:00:14,650\",\n    \"end\": \"00:00:18,150\",\n    \"lang\": \"en\",\n    \"text\": \"So when he was in China,\"\n  },\n  {\n    \"start\": \"00:00:18,150\",\n    \"end\": \"00:00:19,790\",\n    \"lang\": \"en\",\n    \"text\": \"he met...\"\n  },\n  {\n    \"start\": \"00:00:20,418\",\n    \"end\": \"00:00:20,798\",\n    \"lang\": \"zh\",\n    \"text\": \"意思是,\"\n  },\n  {\n    \"start\": \"00:00:20,798\",\n    \"end\": \"00:00:21,278\",\n    \"lang\": \"zh\",\n    \"text\": \"意思是,\"\n  },\n  {\n    \"start\": \"00:00:21,278\",\n    \"end\": \"00:00:22,018\",\n    \"lang\": \"zh\",\n    \"text\": \"南京\"\n  },\n  {\n    \"start\": \"00:00:22,722\",\n    \"end\": \"00:00:23,222\",\n    \"lang\": \"en\",\n    \"text\": \"It's money.\"\n  },\n  {\n    \"start\": \"00:00:24,082\",\n    \"end\": \"00:00:24,442\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:24,442\",\n    \"end\": \"00:00:28,362\",\n    \"lang\": \"en\",\n    \"text\": \"they live in a hotel.\"\n  },\n  {\n    \"start\": \"00:00:30,050\",\n    \"end\": \"00:00:30,310\",\n    \"lang\": \"en\",\n    \"text\": \"style\"\n  },\n  {\n    \"start\": \"00:00:32,418\",\n    \"end\": \"00:00:33,618\",\n    \"lang\": \"en\",\n    \"text\": \"There are some binging.\"\n  },\n  {\n    \"start\": \"00:00:34,530\",\n    \"end\": \"00:00:35,070\",\n    \"lang\": \"zh\",\n    \"text\": \"再聽一\"\n  },\n  {\n    \"start\": \"00:00:35,938\",\n    \"end\": \"00:00:39,418\",\n    \"lang\": \"en\",\n    \"text\": \"when they check out from the hotel,\"\n  },\n  {\n    \"start\": \"00:00:39,418\",\n    \"end\": \"00:00:40,118\",\n    \"lang\": \"en\",\n    \"text\": \"not check out,\"\n  },\n  {\n    \"start\": \"00:00:40,118\",\n    \"end\": \"00:00:41,378\",\n    \"lang\": \"en\",\n    \"text\": \"just leave the hotel,\"\n  },\n  {\n    \"start\": \"00:00:41,538\",\n    \"end\": \"00:00:44,738\",\n    \"lang\": \"en\",\n    \"text\": \"they should put the key in a box.\"\n  },\n  {\n    \"start\": \"00:00:45,518\",\n    \"end\": \"00:00:45,798\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:48,038\",\n    \"end\": \"00:00:48,798\",\n    \"lang\": \"en\",\n    \"text\": \"however,\"\n  },\n  {\n    \"start\": \"00:00:49,698\",\n    \"end\": \"00:00:50,818\",\n    \"lang\": \"en\",\n    \"text\": \"noticed that\"\n  },\n  {\n    \"start\": \"00:00:52,778\",\n    \"end\": \"00:00:54,958\",\n    \"lang\": \"en\",\n    \"text\": \"the servant of the hotel\"\n  },\n  {\n    \"start\": \"00:00:54,958\",\n    \"end\": \"00:00:57,498\",\n    \"lang\": \"en\",\n    \"text\": \"will help their child,\"\n  },\n  {\n    \"start\": \"00:00:57,498\",\n    \"end\": \"00:00:58,278\",\n    \"lang\": \"en\",\n    \"text\": \"Benjamin,\"\n  },\n  {\n    \"start\": \"00:00:58,778\",\n    \"end\": \"00:01:03,778\",\n    \"lang\": \"en\",\n    \"text\": \"to pick up his hand\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,440",
+            "en": "This is a video",
+            "zh": "这是一个视频",
+            "ar": "هذا فيديو"
+        },
+        {
+            "start": "00:00:01,922",
+            "end": "00:00:05,222",
+            "en": "story of Harvard.",
+            "zh": "哈佛的故事。",
+            "ar": "قصة هارفارد."
+        },
+        {
+            "start": "00:00:05,922",
+            "end": "00:00:07,142",
+            "en": "We determine",
+            "zh": "我们决定",
+            "ar": "ناتحدد"
+        },
+        {
+            "start": "00:00:07,170",
+            "end": "00:00:08,290",
+            "en": "So, um...",
+            "zh": "所以，呃...",
+            "ar": "إذن، ..."
+        },
+        {
+            "start": "00:00:09,186",
+            "end": "00:00:09,706",
+            "en": "This is a video",
+            "zh": "这是一个视频",
+            "ar": "فیدو"
+        },
+        {
+            "start": "00:00:11,490",
+            "end": "00:00:14,010",
+            "en": "He is an education expert.",
+            "zh": "他是一个教育专家。",
+            "ar": "هو خبير تعليمي."
+        },
+        {
+            "start": "00:00:14,650",
+            "end": "00:00:19,790",
+            "en": "So when he was in China, he met...",
+            "zh": "所以当他在中国时，他遇见了...",
+            "ar": "فعندما كان في الصين، التقى..."
+        },
+        {
+            "start": "00:00:20,418",
+            "end": "00:00:22,018",
+            "en": "The meaning is, Nanjing",
+            "zh": "意思是，南京",
+            "ar": "معناه هو، نانجينغ"
+        },
+        {
+            "start": "00:00:22,722",
+            "end": "00:00:23,222",
+            "en": "It's money.",
+            "zh": "它是钱。",
+            "ar": "هو المال."
+        },
+        {
+            "start": "00:00:24,082",
+            "end": "00:00:28,362",
+            "en": "So, they live in a hotel.",
+            "zh": "所以，他们住在一个酒店里。",
+            "ar": "إذن، يعيشون في فندق."
+        },
+        {
+            "start": "00:00:30,050",
+            "end": "00:00:30,310",
+            "en": "Style",
+            "zh": "风格",
+            "ar": "الأسلوب"
+        },
+        {
+            "start": "00:00:32,418",
+            "end": "00:00:33,618",
+            "en": "There are some sounds.",
+            "zh": "有一些声音。",
+            "ar": "هناك بعض الأصوات."
+        },
+        {
+            "start": "00:00:34,530",
+            "end": "00:00:35,070",
+            "en": "Listen again",
+            "zh": "再聽一遍",
+            "ar": "استمع مرة أخرى"
+        },
+        {
+            "start": "00:00:35,938",
+            "end": "00:00:44,738",
+            "en": "when they check out from the hotel, not just leave the hotel, they should put the key in a box.",
+            "zh": "当他们从酒店退房时，不仅仅是离开酒店，他们应该把钥匙放在一个盒子里。",
+            "ar": "عندما يخرجون من الفندق، ليس مجرد مغادرة الفندق، يجب أن يضعوا المفتاح في صندوق."
+        },
+        {
+            "start": "00:00:45,518",
+            "end": "00:00:48,798",
+            "en": "So, however,",
+            "zh": "所以，然而，",
+            "ar": "إذن، مع ذلك،"
+        },
+        {
+            "start": "00:00:49,698",
+            "end": "00:01:03,778",
+            "en": "noticed that the servant of the hotel will help their child, Benjamin, to pick up his hand",
+            "zh": "注意到酒店的服务员将帮助他们的孩子，本杰明，抬起他的手",
+            "ar": "لاحظوا أن خادم الفندق سيساعد طفلهم، بنجامين، على رفع يده"
+        }
+    ]
+}

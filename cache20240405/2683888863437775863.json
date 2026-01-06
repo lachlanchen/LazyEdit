@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,860\",\n    \"lang\": \"ja\",\n    \"text\": \"こんにちは\"\n  },\n  {\n    \"start\": \"00:00:04,290\",\n    \"end\": \"00:00:10,630\",\n    \"lang\": \"en\",\n    \"text\": \"This is our special Chongqing flavored potato.\"\n  },\n  {\n    \"start\": \"00:00:12,130\",\n    \"end\": \"00:00:12,770\",\n    \"lang\": \"en\",\n    \"text\": \"The taste,\"\n  },\n  {\n    \"start\": \"00:00:12,770\",\n    \"end\": \"00:00:13,650\",\n    \"lang\": \"en\",\n    \"text\": \"the smell,\"\n  },\n  {\n    \"start\": \"00:00:13,650\",\n    \"end\": \"00:00:17,530\",\n    \"lang\": \"en\",\n    \"text\": \"the water factory sense,\"\n  },\n  {\n    \"start\": \"00:00:18,450\",\n    \"end\": \"00:00:19,250\",\n    \"lang\": \"en\",\n    \"text\": \"experience,\"\n  },\n  {\n    \"start\": \"00:00:19,250\",\n    \"end\": \"00:00:20,850\",\n    \"lang\": \"en\",\n    \"text\": \"water factory,\"\n  },\n  {\n    \"start\": \"00:00:20,850\",\n    \"end\": \"00:00:21,630\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:00:22,970\",\n    \"end\": \"00:00:23,310\",\n    \"lang\": \"en\",\n    \"text\": \"Water,\"\n  },\n  {\n    \"start\": \"00:00:23,310\",\n    \"end\": \"00:00:24,370\",\n    \"lang\": \"en\",\n    \"text\": \"water factory.\"\n  },\n  {\n    \"start\": \"00:00:28,990\",\n    \"end\": \"00:00:29,790\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:29,790\",\n    \"end\": \"00:00:31,230\",\n    \"lang\": \"en\",\n    \"text\": \"let me taste it.\"\n  },\n  {\n    \"start\": \"00:00:36,569\",\n    \"end\": \"00:00:37,370\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:00:37,370\",\n    \"end\": \"00:00:38,730\",\n    \"lang\": \"en\",\n    \"text\": \"this is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:48,270\",\n    \"end\": \"00:00:48,670\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:48,670\",\n    \"end\": \"00:00:51,250\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't make potato crab.\"\n  },\n  {\n    \"start\": \"00:00:52,770\",\n    \"end\": \"00:00:54,070\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道土豆泥怎么说\"\n  },\n  {\n    \"start\": \"00:00:55,266\",\n    \"end\": \"00:01:06,586\",\n    \"lang\": \"en\",\n    \"text\": \"So I only make this fragment because I believe if it's a potato crumb,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,860",
+            "ja": "こんにちは"
+        },
+        {
+            "start": "00:00:04,290",
+            "end": "00:00:10,630",
+            "ja": "これは私たちの特別な重慶(ちょうけい)風味のポテトです。"
+        },
+        {
+            "start": "00:00:12,130",
+            "end": "00:00:12,770",
+            "ja": "その味、"
+        },
+        {
+            "start": "00:00:12,770",
+            "end": "00:00:13,650",
+            "ja": "その香り、"
+        },
+        {
+            "start": "00:00:13,650",
+            "end": "00:00:17,530",
+            "ja": "独特の感覚、"
+        },
+        {
+            "start": "00:00:18,450",
+            "end": "00:00:19,250",
+            "ja": "体験、"
+        },
+        {
+            "start": "00:00:19,250",
+            "end": "00:00:20,850",
+            "ja": "独自の要素、"
+        },
+        {
+            "start": "00:00:20,850",
+            "end": "00:00:21,630",
+            "ja": "でしょう？"
+        },
+        {
+            "start": "00:00:22,970",
+            "end": "00:00:23,310",
+            "ja": "水、"
+        },
+        {
+            "start": "00:00:23,310",
+            "end": "00:00:24,370",
+            "ja": "独自の要素。"
+        },
+        {
+            "start": "00:00:28,990",
+            "end": "00:00:29,790",
+            "ja": "では、"
+        },
+        {
+            "start": "00:00:29,790",
+            "end": "00:00:31,230",
+            "ja": "試食します。"
+        },
+        {
+            "start": "00:00:36,569",
+            "end": "00:00:37,370",
+            "ja": "おや、"
+        },
+        {
+            "start": "00:00:37,370",
+            "end": "00:00:38,730",
+            "ja": "これは素晴らしい。"
+        },
+        {
+            "start": "00:00:48,270",
+            "end": "00:00:48,670",
+            "ja": "だから、"
+        },
+        {
+            "start": "00:00:48,670",
+            "end": "00:00:51,250",
+            "ja": "ポテトクラブを作らなかったんです。"
+        },
+        {
+            "start": "00:00:52,770",
+            "end": "00:00:54,070",
+            "ja": "私はマッシュポテトの作り方を知りません"
+        },
+        {
+            "start": "00:00:55,266",
+            "end": "00:01:06,586",
+            "ja": "だから、もしポテトクラムであれば、この断片(かけら)しか作らないと信じています。"
+        }
+    ]
+}

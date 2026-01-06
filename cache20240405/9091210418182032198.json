@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,738\",\n    \"end\": \"00:01:03,678\",\n    \"lang\": \"en\",\n    \"text\": \"but the taste is really good.\"\n  },\n  {\n    \"start\": \"00:01:05,117\",\n    \"end\": \"00:01:07,498\",\n    \"lang\": \"en\",\n    \"text\": \"I don't have the necessity to lie.\"\n  },\n  {\n    \"start\": \"00:01:09,538\",\n    \"end\": \"00:01:11,918\",\n    \"lang\": \"ja\",\n    \"text\": \"今夜は必要ない\"\n  },\n  {\n    \"start\": \"00:01:14,850\",\n    \"end\": \"00:01:15,230\",\n    \"lang\": \"en\",\n    \"text\": \"Wow.\"\n  },\n  {\n    \"start\": \"00:01:20,840\",\n    \"end\": \"00:01:22,410\",\n    \"lang\": \"en\",\n    \"text\": \"This is really the best thing.\"\n  },\n  {\n    \"start\": \"00:01:23,610\",\n    \"end\": \"00:01:24,670\",\n    \"lang\": \"en\",\n    \"text\": \"The best chicken noodles.\"\n  },\n  {\n    \"start\": \"00:01:31,554\",\n    \"end\": \"00:01:34,494\",\n    \"lang\": \"ja\",\n    \"text\": \"私はピンクジュースを飲んでいます\"\n  },\n  {\n    \"start\": \"00:01:39,234\",\n    \"end\": \"00:01:48,614\",\n    \"lang\": \"en\",\n    \"text\": \"I have this lactose intolerance and gluten intolerance.\"\n  },\n  {\n    \"start\": \"00:01:49,314\",\n    \"end\": \"00:01:55,434\",\n    \"lang\": \"en\",\n    \"text\": \"So I only drink bean juice and I don't like eating bread.\"\n  },\n  {\n    \"start\": \"00:01:56,334\",\n    \"end\": \"00:01:58,634\",\n    \"lang\": \"en\",\n    \"text\": \"And I also have...\"\n  },\n  {\n    \"start\": \"00:01:58,634\",\n    \"end\": \"00:02:02,614\",\n    \"lang\": \"en\",\n    \"text\": \"I'm intolerant to fruity sugar.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,738",
+            "end": "00:01:03,678",
+            "ja": "でも、味は本当に良いです。"
+        },
+        {
+            "start": "00:01:05,117",
+            "end": "00:01:07,498",
+            "ja": "嘘をつく必要はないんです。"
+        },
+        {
+            "start": "00:01:09,538",
+            "end": "00:01:11,918",
+            "ja": "今夜は必要ないです。"
+        },
+        {
+            "start": "00:01:14,850",
+            "end": "00:01:15,230",
+            "ja": "わあ。"
+        },
+        {
+            "start": "00:01:20,840",
+            "end": "00:01:22,410",
+            "ja": "これは本当に最高のものです。"
+        },
+        {
+            "start": "00:01:23,610",
+            "end": "00:01:24,670",
+            "ja": "最高のチキンヌードルです。"
+        },
+        {
+            "start": "00:01:31,554",
+            "end": "00:01:34,494",
+            "ja": "私はピンクのジュースを飲んでいます。"
+        },
+        {
+            "start": "00:01:39,234",
+            "end": "00:01:48,614",
+            "ja": "乳糖不耐症とグルテン不耐症があります。"
+        },
+        {
+            "start": "00:01:49,314",
+            "end": "00:01:55,434",
+            "ja": "だから豆のジュースしか飲まず、パンを食べるのが好きではありません。"
+        },
+        {
+            "start": "00:01:56,334",
+            "end": "00:01:58,634",
+            "ja": "そして私はまた持っています..."
+        },
+        {
+            "start": "00:01:58,634",
+            "end": "00:02:02,614",
+            "ja": "果糖に対しても不耐症があります。"
+        }
+    ]
+}

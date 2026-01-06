@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,060\",\n    \"lang\": \"en\",\n    \"text\": \"Welcome back to the dog club.\"\n  },\n  {\n    \"start\": \"00:00:04,680\",\n    \"end\": \"00:00:07,820\",\n    \"lang\": \"en\",\n    \"text\": \"They are so cute and so happy.\"\n  },\n  {\n    \"start\": \"00:00:11,234\",\n    \"end\": \"00:00:12,454\",\n    \"lang\": \"zh\",\n    \"text\": \"咱去狗顿那吃一碗\"\n  },\n  {\n    \"start\": \"00:00:13,174\",\n    \"end\": \"00:00:13,454\",\n    \"lang\": \"zh\",\n    \"text\": \"好\"\n  },\n  {\n    \"start\": \"00:00:16,482\",\n    \"end\": \"00:00:18,002\",\n    \"lang\": \"en\",\n    \"text\": \"It's a dog club.\"\n  },\n  {\n    \"start\": \"00:00:18,802\",\n    \"end\": \"00:00:20,552\",\n    \"lang\": \"en\",\n    \"text\": \"They are making friends with each other.\"\n  },\n  {\n    \"start\": \"00:00:23,852\",\n    \"end\": \"00:00:24,662\",\n    \"lang\": \"en\",\n    \"text\": \"So gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:25,282\",\n    \"end\": \"00:00:25,802\",\n    \"lang\": \"en\",\n    \"text\": \"Fabulous.\"\n  },\n  {\n    \"start\": \"00:00:28,098\",\n    \"end\": \"00:00:28,658\",\n    \"lang\": \"zh\",\n    \"text\": \"走到那边去\"\n  },\n  {\n    \"start\": \"00:00:32,218\",\n    \"end\": \"00:00:32,778\",\n    \"lang\": \"zh\",\n    \"text\": \"这个叫\"\n  },\n  {\n    \"start\": \"00:00:33,957\",\n    \"end\": \"00:00:34,238\",\n    \"lang\": \"zh\",\n    \"text\": \"这个叫\"\n  },\n  {\n    \"start\": \"00:00:34,274\",\n    \"end\": \"00:00:36,594\",\n    \"lang\": \"en\",\n    \"text\": \"here's a bee nime\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,060",
+            "ja": "犬クラブへようこそ。"
+        },
+        {
+            "start": "00:00:04,680",
+            "end": "00:00:07,820",
+            "ja": "とてもかわいくて、とても幸せ。"
+        },
+        {
+            "start": "00:00:11,234",
+            "end": "00:00:12,454",
+            "ja": "犬のカフェで何か食べよう。"
+        },
+        {
+            "start": "00:00:13,174",
+            "end": "00:00:13,454",
+            "ja": "いいね。"
+        },
+        {
+            "start": "00:00:16,482",
+            "end": "00:00:18,002",
+            "ja": "ここは犬クラブです。"
+        },
+        {
+            "start": "00:00:18,802",
+            "end": "00:00:20,552",
+            "ja": "彼らはお互いに友達を作っています。"
+        },
+        {
+            "start": "00:00:23,852",
+            "end": "00:00:24,662",
+            "ja": "とても素敵。"
+        },
+        {
+            "start": "00:00:25,282",
+            "end": "00:00:25,802",
+            "ja": "素晴らしい。"
+        },
+        {
+            "start": "00:00:28,098",
+            "end": "00:00:28,658",
+            "ja": "あっちに行こう。"
+        },
+        {
+            "start": "00:00:32,218",
+            "end": "00:00:32,778",
+            "ja": "これは"
+        },
+        {
+            "start": "00:00:33,957",
+            "end": "00:00:34,238",
+            "ja": "これは"
+        },
+        {
+            "start": "00:00:34,274",
+            "end": "00:00:36,594",
+            "ja": "こちらはビー・アニメです。"
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,920\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our lunch today.\"\n  },\n  {\n    \"start\": \"00:00:03,138\",\n    \"end\": \"00:00:04,438\",\n    \"lang\": \"ja\",\n    \"text\": \"私は…\"\n  },\n  {\n    \"start\": \"00:00:05,282\",\n    \"end\": \"00:00:08,402\",\n    \"lang\": \"ja\",\n    \"text\": \"犬ご飯を作ります\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,920",
+            "ja": "これが今日のランチです。"
+        },
+        {
+            "start": "00:00:03,138",
+            "end": "00:00:04,438",
+            "ja": "私は…"
+        },
+        {
+            "start": "00:00:05,282",
+            "end": "00:00:08,402",
+            "ja": "犬ご飯を作ります"
+        }
+    ]
+}

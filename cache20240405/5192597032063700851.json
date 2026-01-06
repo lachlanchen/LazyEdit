@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:03,782\",\n    \"end\": \"00:02:04,642\",\n    \"lang\": \"en\",\n    \"text\": \"who you are,\"\n  },\n  {\n    \"start\": \"00:02:04,642\",\n    \"end\": \"00:02:05,882\",\n    \"lang\": \"en\",\n    \"text\": \"what's your achievement,\"\n  },\n  {\n    \"start\": \"00:02:05,882\",\n    \"end\": \"00:02:11,182\",\n    \"lang\": \"en\",\n    \"text\": \"at the end we will become dust.\"\n  },\n  {\n    \"start\": \"00:02:11,182\",\n    \"end\": \"00:02:16,922\",\n    \"lang\": \"en\",\n    \"text\": \"We will return everything\"\n  },\n  {\n    \"start\": \"00:02:16,922\",\n    \"end\": \"00:02:18,942\",\n    \"lang\": \"en\",\n    \"text\": \"that we have to the universe.\"\n  },\n  {\n    \"start\": \"00:02:18,942\",\n    \"end\": \"00:02:29,542\",\n    \"lang\": \"en\",\n    \"text\": \"So enjoy the experience in this journey and make it better.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:03,782",
+            "end": "00:02:04,642",
+            "en": "who you are,",
+            "zh": "你是谁，",
+            "ar": "من أنت،"
+        },
+        {
+            "start": "00:02:04,642",
+            "end": "00:02:05,882",
+            "en": "what's your achievement,",
+            "zh": "你的成就是什么，",
+            "ar": "ما هي إنجازاتك،"
+        },
+        {
+            "start": "00:02:05,882",
+            "end": "00:02:11,182",
+            "en": "at the end we will become dust.",
+            "zh": "最终我们都将化为尘土。",
+            "ar": "في النهاية سنصبح غباراً."
+        },
+        {
+            "start": "00:02:11,182",
+            "end": "00:02:16,922",
+            "en": "We will return everything",
+            "zh": "我们会归还一切",
+            "ar": "سنعيد كل شيء"
+        },
+        {
+            "start": "00:02:16,922",
+            "end": "00:02:18,942",
+            "en": "that we have to the universe.",
+            "zh": "我们所拥有的一切给宇宙。",
+            "ar": "التي لدينا إلى الكون."
+        },
+        {
+            "start": "00:02:18,942",
+            "end": "00:02:29,542",
+            "en": "So enjoy the experience in this journey and make it better.",
+            "zh": "所以享受这段旅程中的体验，并让它变得更好。",
+            "ar": "فاستمتع بالتجربة في هذه الرحلة واجعلها أفضل."
+        }
+    ]
+}

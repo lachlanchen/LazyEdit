@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:06,354\",\n    \"end\": \"00:01:08,554\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:01:08,554\",\n    \"end\": \"00:01:13,034\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:13,974\",\n    \"end\": \"00:01:17,794\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:01:42,094\",\n    \"end\": \"00:01:43,494\",\n    \"lang\": \"zh\",\n    \"text\": \"谢谢观看 欢迎订阅\"\n  },\n  {\n    \"start\": \"00:01:43,522\",\n    \"end\": \"00:01:45,762\",\n    \"lang\": \"ja\",\n    \"text\": \"まだ完璧から遠いので、\"\n  },\n  {\n    \"start\": \"00:01:49,662\",\n    \"end\": \"00:01:51,882\",\n    \"lang\": \"ja\",\n    \"text\": \"まだ練習が必要です。\"\n  },\n  {\n    \"start\": \"00:01:53,250\",\n    \"end\": \"00:01:55,490\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:56,110\",\n    \"end\": \"00:01:58,210\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树岗\"\n  },\n  {\n    \"start\": \"00:01:58,670\",\n    \"end\": \"00:02:01,150\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:01,850\",\n    \"end\": \"00:02:04,370\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树岗\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:06,354",
+            "end": "00:01:08,554",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:01:08,554",
+            "end": "00:01:13,034",
+            "vi": "Không có hương hoa"
+        },
+        {
+            "start": "00:01:13,974",
+            "end": "00:01:17,794",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:01:42,094",
+            "end": "00:01:43,494",
+            "vi": "Cảm ơn đã xem. Xin mời đăng ký"
+        },
+        {
+            "start": "00:01:43,522",
+            "end": "00:01:45,762",
+            "vi": "Vẫn còn xa mới đạt được sự hoàn hảo,"
+        },
+        {
+            "start": "00:01:49,662",
+            "end": "00:01:51,882",
+            "vi": "Vẫn còn cần luyện tập."
+        },
+        {
+            "start": "00:01:53,250",
+            "end": "00:01:55,490",
+            "vi": "Không có hương hoa"
+        },
+        {
+            "start": "00:01:56,110",
+            "end": "00:01:58,210",
+            "vi": "Không có cây cao"
+        },
+        {
+            "start": "00:01:58,670",
+            "end": "00:02:01,150",
+            "vi": "Không có hương hoa"
+        },
+        {
+            "start": "00:02:01,850",
+            "end": "00:02:04,370",
+            "vi": "Không có cây cao"
+        }
+    ]
+}

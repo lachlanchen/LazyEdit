@@ -1,0 +1,45 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Preserve the original timestamps. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,680\",\n    \"ja\": \"とっても<可愛>[]い！\"\n  },\n  {\n    \"start\": \"00:00:03,266\",\n    \"end\": \"00:00:04,126\",\n    \"ja\": \"この<子>[]、<本当>[]に<可愛>[]いね\"\n  },\n  {\n    \"start\": \"00:00:04,994\",\n    \"end\": \"00:00:05,234\",\n    \"ja\": \"こんにちは。\"\n  },\n  {\n    \"start\": \"00:00:06,014\",\n    \"end\": \"00:00:06,534\",\n    \"ja\": \"こんにちは。\"\n  },\n  {\n    \"start\": \"00:00:07,394\",\n    \"end\": \"00:00:08,093\",\n    \"ja\": \"こんにちは。\"\n  },\n  {\n    \"start\": \"00:00:08,794\",\n    \"end\": \"00:00:09,134\",\n    \"ja\": \"こんにちは（<アンニョンハセヨ>[]）。\"\n  },\n  {\n    \"start\": \"00:00:12,482\",\n    \"end\": \"00:00:13,722\",\n    \"ja\": \"<チーズソース>[]がはねた\"\n  },\n  {\n    \"start\": \"00:00:14,681\",\n    \"end\": \"00:00:16,001\",\n    \"ja\": \"この<犬>[]はとても<可愛>[]いです\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,680",
+            "ja": "とっても<可愛>[かわい]い！"
+        },
+        {
+            "start": "00:00:03,266",
+            "end": "00:00:04,126",
+            "ja": "この<子>[こ]、<本当>[ほんとう]に<可愛>[かわい]いね"
+        },
+        {
+            "start": "00:00:04,994",
+            "end": "00:00:05,234",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:06,014",
+            "end": "00:00:06,534",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:07,394",
+            "end": "00:00:08,093",
+            "ja": "こんにちは。"
+        },
+        {
+            "start": "00:00:08,794",
+            "end": "00:00:09,134",
+            "ja": "こんにちは（<アンニョンハセヨ>[]）。"
+        },
+        {
+            "start": "00:00:12,482",
+            "end": "00:00:13,722",
+            "ja": "<チーズソース>[ちーずそーす]がはねた"
+        },
+        {
+            "start": "00:00:14,681",
+            "end": "00:00:16,001",
+            "ja": "この<犬>[いぬ]はとても<可愛>[かわい]いです"
+        }
+    ]
+}

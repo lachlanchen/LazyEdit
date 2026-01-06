@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,499\",\n    \"end\": \"00:00:03,000\",\n    \"lang\": \"zh\",\n    \"text\": \"那个牛屎等官是不是能等的啊?\"\n  },\n  {\n    \"start\": \"00:00:04,200\",\n    \"end\": \"00:00:06,100\",\n    \"lang\": \"zh\",\n    \"text\": \"老汉还叫他弄到外头,\"\n  },\n  {\n    \"start\": \"00:00:06,100\",\n    \"end\": \"00:00:07,940\",\n    \"lang\": \"zh\",\n    \"text\": \"官让那个牛屎糊到外头\"\n  },\n  {\n    \"start\": \"00:00:08,740\",\n    \"end\": \"00:00:09,900\",\n    \"lang\": \"zh\",\n    \"text\": \"我说糊到外头,\"\n  },\n  {\n    \"start\": \"00:00:09,900\",\n    \"end\": \"00:00:10,680\",\n    \"lang\": \"zh\",\n    \"text\": \"哪个得啊?\"\n  },\n  {\n    \"start\": \"00:00:12,460\",\n    \"end\": \"00:00:13,240\",\n    \"lang\": \"zh\",\n    \"text\": \"你看看,\"\n  },\n  {\n    \"start\": \"00:00:13,240\",\n    \"end\": \"00:00:14,080\",\n    \"lang\": \"zh\",\n    \"text\": \"还糊到外头,\"\n  },\n  {\n    \"start\": \"00:00:14,080\",\n    \"end\": \"00:00:15,480\",\n    \"lang\": \"zh\",\n    \"text\": \"这个牛屎烧得那么\"\n  },\n  {\n    \"start\": \"00:00:17,474\",\n    \"end\": \"00:00:17,974\",\n    \"lang\": \"en\",\n    \"text\": \"mongol\"\n  },\n  {\n    \"start\": \"00:00:24,418\",\n    \"end\": \"00:00:25,418\",\n    \"lang\": \"zh\",\n    \"text\": \"是不是这么担心吗\"\n  },\n  {\n    \"start\": \"00:00:26,138\",\n    \"end\": \"00:00:27,658\",\n    \"lang\": \"zh\",\n    \"text\": \"已经担出来一个\"\n  },\n  {\n    \"start\": \"00:00:41,538\",\n    \"end\": \"00:00:43,098\",\n    \"lang\": \"zh\",\n    \"text\": \"那个牛屎巴担得住\"\n  },\n  {\n    \"start\": \"00:00:43,098\",\n    \"end\": \"00:00:44,918\",\n    \"lang\": \"zh\",\n    \"text\": \"那个草菜不怕牛屎吃吧\"\n  },\n  {\n    \"start\": \"00:00:54,658\",\n    \"end\": \"00:00:55,798\",\n    \"lang\": \"en\",\n    \"text\": \"What would Tori say to Patsy?\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,499",
+            "end": "00:00:03,000",
+            "en": "Can that cow dung officer possibly be waiting?",
+            "zh": "那个牛屎等官是不是能等的啊?",
+            "ar": "هل يمكن أن يكون ذلك الضابط سماد الأبقار في انتظار؟"
+        },
+        {
+            "start": "00:00:04,200",
+            "end": "00:00:06,100",
+            "en": "The old man also asked him to take it outside,",
+            "zh": "老汉还叫他弄到外头,",
+            "ar": "كما طلب منه الرجل العجوز أن يأخذها خارجاً،"
+        },
+        {
+            "start": "00:00:06,100",
+            "end": "00:00:07,940",
+            "en": "the officer let that cow dung be smeared outside",
+            "zh": "官让那个牛屎糊到外头",
+            "ar": "الضابط سمح بتلطيخ ذلك السماد البقري خارجاً"
+        },
+        {
+            "start": "00:00:08,740",
+            "end": "00:00:09,900",
+            "en": "I said it's smeared outside,",
+            "zh": "我说糊到外头,",
+            "ar": "قلت إنه ملطخ خارجاً،"
+        },
+        {
+            "start": "00:00:09,900",
+            "end": "00:00:10,680",
+            "en": "who would get it?",
+            "zh": "哪个得啊?",
+            "ar": "من سيحصل عليه؟"
+        },
+        {
+            "start": "00:00:12,460",
+            "end": "00:00:13,240",
+            "en": "Take a look,",
+            "zh": "你看看,",
+            "ar": "ألق نظرة،"
+        },
+        {
+            "start": "00:00:13,240",
+            "end": "00:00:14,080",
+            "en": "it's still smeared outside,",
+            "zh": "还糊到外头,",
+            "ar": "لا يزال ملطخًا خارجاً،"
+        },
+        {
+            "start": "00:00:14,080",
+            "end": "00:00:15,480",
+            "en": "this cow dung is burning so",
+            "zh": "这个牛屎烧得那么",
+            "ar": "هذا سماد البقر يحترق لذا"
+        },
+        {
+            "start": "00:00:17,474",
+            "end": "00:00:17,974",
+            "en": "mangle",
+            "zh": "弄乱",
+            "ar": "يُعيث فسادًا"
+        },
+        {
+            "start": "00:00:24,418",
+            "end": "00:00:25,418",
+            "en": "Are you so worried?",
+            "zh": "是不是这么担心吗",
+            "ar": "هل أنت قلق للغاية؟"
+        },
+        {
+            "start": "00:00:26,138",
+            "end": "00:00:27,658",
+            "en": "Have already worried about one",
+            "zh": "已经担出来一个",
+            "ar": "قلق بالفعل بشأن واحد"
+        },
+        {
+            "start": "00:00:41,538",
+            "end": "00:00:43,098",
+            "en": "Can that cow dung hold up",
+            "zh": "那个牛屎巴担得住",
+            "ar": "هل يمكن لذلك سماد البقر أن يصمد"
+        },
+        {
+            "start": "00:00:43,098",
+            "end": "00:00:44,918",
+            "en": "The greens aren't afraid of the cow dung, right?",
+            "zh": "那个草菜不怕牛屎吃吧",
+            "ar": "الخضراوات ليست خائفة من سماد البقر، أليس كذلك؟"
+        },
+        {
+            "start": "00:00:54,658",
+            "end": "00:00:55,798",
+            "en": "What would Tori say to Patsy?",
+            "zh": "托里会对帕西说什么？",
+            "ar": "ماذا ستقول توري لباتسي؟"
+        }
+    ]
+}

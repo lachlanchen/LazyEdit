@@ -1,0 +1,83 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,522\",\n    \"end\": \"00:00:13,882\",\n    \"lang\": \"en\",\n    \"text\": \"I have finished running at the coastline.\"\n  },\n  {\n    \"start\": \"00:00:17,742\",\n    \"end\": \"00:00:29,442\",\n    \"lang\": \"en\",\n    \"text\": \"So your lifestyle could be something that influences other people.\"\n  },\n  {\n    \"start\": \"00:00:29,442\",\n    \"end\": \"00:00:30,682\",\n    \"lang\": \"en\",\n    \"text\": \"You live with happiness,\"\n  },\n  {\n    \"start\": \"00:00:30,682\",\n    \"end\": \"00:00:32,262\",\n    \"lang\": \"en\",\n    \"text\": \"you live with joy.\"\n  },\n  {\n    \"start\": \"00:00:35,502\",\n    \"end\": \"00:00:41,762\",\n    \"lang\": \"en\",\n    \"text\": \"Your life per se can be your work,\"\n  },\n  {\n    \"start\": \"00:00:41,762\",\n    \"end\": \"00:00:44,242\",\n    \"lang\": \"en\",\n    \"text\": \"can be your creation.\"\n  },\n  {\n    \"start\": \"00:00:47,942\",\n    \"end\": \"00:00:48,542\",\n    \"lang\": \"en\",\n    \"text\": \"Muah!\"\n  },\n  {\n    \"start\": \"00:00:55,822\",\n    \"end\": \"00:00:56,662\",\n    \"lang\": \"en\",\n    \"text\": \"Yummy yummy.\"\n  },\n  {\n    \"start\": \"00:00:56,662\",\n    \"end\": \"00:00:57,462\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:57,462\",\n    \"end\": \"00:00:58,182\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,460",
+            "en": "Good morning",
+            "zh": "早上好",
+            "ar": "صباح الخير",
+            "ja": "おはようございます"
+        },
+        {
+            "start": "00:00:03,522",
+            "end": "00:00:13,882",
+            "en": "I have finished running at the coastline.",
+            "zh": "我已经在海岸线跑完了。",
+            "ar": "لقد انتهيت من الركض على الساحل."
+        },
+        {
+            "start": "00:00:17,742",
+            "end": "00:00:29,442",
+            "en": "So your lifestyle could be something that influences other people.",
+            "zh": "所以你的生活方式可能会影响其他人。",
+            "ar": "لذا، يمكن أن يكون أسلوب حياتك شيئًا يؤثر على الآخرين."
+        },
+        {
+            "start": "00:00:29,442",
+            "end": "00:00:30,682",
+            "en": "You live with happiness,",
+            "zh": "你与快乐共存，",
+            "ar": "أنت تعيش بسعادة،"
+        },
+        {
+            "start": "00:00:30,682",
+            "end": "00:00:32,262",
+            "en": "you live with joy.",
+            "zh": "你与欢乐共存。",
+            "ar": "أنت تعيش بفرح."
+        },
+        {
+            "start": "00:00:35,502",
+            "end": "00:00:41,762",
+            "en": "Your life per se can be your work,",
+            "zh": "你的生活本身可以是你的工作，",
+            "ar": "يمكن أن تكون حياتك بحد ذاتها عملك،"
+        },
+        {
+            "start": "00:00:41,762",
+            "end": "00:00:44,242",
+            "en": "can be your creation.",
+            "zh": "可以是你的创造。",
+            "ar": "يمكن أن تكون خلقتك."
+        },
+        {
+            "start": "00:00:47,942",
+            "end": "00:00:48,542",
+            "en": "Muah!",
+            "zh": "么么哒！",
+            "ar": "مواه!"
+        },
+        {
+            "start": "00:00:55,822",
+            "end": "00:00:56,662",
+            "en": "Yummy yummy.",
+            "zh": "好吃好吃。",
+            "ar": "لذيذ لذيذ."
+        },
+        {
+            "start": "00:00:56,662",
+            "end": "00:00:57,462",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:57,462",
+            "end": "00:00:58,182",
+            "en": "see you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقًا."
+        }
+    ]
+}

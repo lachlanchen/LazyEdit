@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"en\",\n    \"text\": \"So I forget to say,\"\n  },\n  {\n    \"start\": \"00:00:01,460\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"we also have this small tomato.\"\n  },\n  {\n    \"start\": \"00:00:07,586\",\n    \"end\": \"00:00:09,706\",\n    \"lang\": \"zh\",\n    \"text\": \"生驴果 我跟你说 好多生\"\n  },\n  {\n    \"start\": \"00:00:09,986\",\n    \"end\": \"00:00:11,186\",\n    \"lang\": \"zh\",\n    \"text\": \"生驴果\"\n  },\n  {\n    \"start\": \"00:00:14,178\",\n    \"end\": \"00:00:14,698\",\n    \"lang\": \"en\",\n    \"text\": \"And the grapes.\"\n  },\n  {\n    \"start\": \"00:00:39,746\",\n    \"end\": \"00:00:39,966\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,460",
+            "en": "So I forget to say,",
+            "zh": "所以我忘了说，",
+            "ar": "لذا نسيت أن أقول،"
+        },
+        {
+            "start": "00:00:01,460",
+            "end": "00:00:05,000",
+            "en": "we also have this small tomato.",
+            "zh": "我们还有这个小西红柿。",
+            "ar": "لدينا أيضا هذا الطماطم الصغير."
+        },
+        {
+            "start": "00:00:07,586",
+            "end": "00:00:09,706",
+            "en": "Wild kiwifruit, I tell you, so many wild",
+            "zh": "生驴果 我跟你说 好多生",
+            "ar": "الكيوي البري، أقول لك، الكثير من البري"
+        },
+        {
+            "start": "00:00:09,986",
+            "end": "00:00:11,186",
+            "en": "Wild kiwifruit",
+            "zh": "生驴果",
+            "ar": "الكيوي البري"
+        },
+        {
+            "start": "00:00:14,178",
+            "end": "00:00:14,698",
+            "en": "And the grapes.",
+            "zh": "和葡萄。",
+            "ar": "والعنب."
+        },
+        {
+            "start": "00:00:39,746",
+            "end": "00:00:39,966",
+            "en": "See you.",
+            "zh": "再见。",
+            "ar": "أراك لاحقاً."
+        }
+    ]
+}

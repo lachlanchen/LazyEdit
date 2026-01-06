@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:05,478\",\n    \"end\": \"00:03:09,138\",\n    \"lang\": \"en\",\n    \"text\": \"It's far more fluent than before.\"\n  },\n  {\n    \"start\": \"00:03:09,998\",\n    \"end\": \"00:03:10,718\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:03:10,718\",\n    \"end\": \"00:03:14,018\",\n    \"lang\": \"en\",\n    \"text\": \"I like it.\"\n  },\n  {\n    \"start\": \"00:03:14,078\",\n    \"end\": \"00:03:15,438\",\n    \"lang\": \"en\",\n    \"text\": \"I like the small progress.\"\n  },\n  {\n    \"start\": \"00:03:15,938\",\n    \"end\": \"00:03:18,018\",\n    \"lang\": \"en\",\n    \"text\": \"I'm glad I can finally handle it.\"\n  },\n  {\n    \"start\": \"00:03:19,578\",\n    \"end\": \"00:03:20,298\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:03:20,298\",\n    \"end\": \"00:03:20,478\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:03:21,078\",\n    \"end\": \"00:03:21,338\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:05,478",
+            "end": "00:03:09,138",
+            "ko": "이전보다 훨씬 더 유창해졌어."
+        },
+        {
+            "start": "00:03:09,998",
+            "end": "00:03:10,718",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:03:10,718",
+            "end": "00:03:14,018",
+            "ko": "맘에 들어."
+        },
+        {
+            "start": "00:03:14,078",
+            "end": "00:03:15,438",
+            "ko": "작은 진전이 좋아."
+        },
+        {
+            "start": "00:03:15,938",
+            "end": "00:03:18,018",
+            "ko": "드디어 다룰 수 있게 되어서 기뻐."
+        },
+        {
+            "start": "00:03:19,578",
+            "end": "00:03:20,298",
+            "ko": "알겠어."
+        },
+        {
+            "start": "00:03:20,298",
+            "end": "00:03:20,478",
+            "ko": "알겠어."
+        },
+        {
+            "start": "00:03:21,078",
+            "end": "00:03:21,338",
+            "ko": "알겠어."
+        }
+    ]
+}

@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,980\",\n    \"lang\": \"en\",\n    \"text\": \"it seems that I catch the code\"\n  },\n  {\n    \"start\": \"00:00:06,050\",\n    \"end\": \"00:00:07,770\",\n    \"lang\": \"zh\",\n    \"text\": \"我爱看其他科威的\"\n  },\n  {\n    \"start\": \"00:00:08,738\",\n    \"end\": \"00:00:10,698\",\n    \"lang\": \"en\",\n    \"text\": \"the coronavirus\"\n  },\n  {\n    \"start\": \"00:00:10,698\",\n    \"end\": \"00:00:15,598\",\n    \"lang\": \"en\",\n    \"text\": \"I have this sore throat\"\n  },\n  {\n    \"start\": \"00:00:15,598\",\n    \"end\": \"00:00:18,038\",\n    \"lang\": \"en\",\n    \"text\": \"and it hurts my swan\"\n  },\n  {\n    \"start\": \"00:00:22,078\",\n    \"end\": \"00:00:24,078\",\n    \"lang\": \"en\",\n    \"text\": \"It's not...\"\n  },\n  {\n    \"start\": \"00:00:25,958\",\n    \"end\": \"00:00:28,118\",\n    \"lang\": \"en\",\n    \"text\": \"Currently it's getting a slight...\"\n  },\n  {\n    \"start\": \"00:00:28,878\",\n    \"end\": \"00:00:29,718\",\n    \"lang\": \"en\",\n    \"text\": \"slighting level\"\n  },\n  {\n    \"start\": \"00:00:30,858\",\n    \"end\": \"00:00:33,858\",\n    \"lang\": \"en\",\n    \"text\": \"But I don't know if it will get him...\"\n  },\n  {\n    \"start\": \"00:00:33,858\",\n    \"end\": \"00:00:35,578\",\n    \"lang\": \"en\",\n    \"text\": \"get him severe\"\n  },\n  {\n    \"start\": \"00:00:36,838\",\n    \"end\": \"00:00:37,338\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:00:37,798\",\n    \"end\": \"00:00:38,378\",\n    \"lang\": \"en\",\n    \"text\": \"Severe\"\n  },\n  {\n    \"start\": \"00:00:38,378\",\n    \"end\": \"00:00:39,178\",\n    \"lang\": \"en\",\n    \"text\": \"Severe\"\n  },\n  {\n    \"start\": \"00:00:39,878\",\n    \"end\": \"00:00:40,698\",\n    \"lang\": \"en\",\n    \"text\": \"Severe\"\n  },\n  {\n    \"start\": \"00:00:40,698\",\n    \"end\": \"00:00:41,397\",\n    \"lang\": \"en\",\n    \"text\": \"Okee?\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,980",
+            "vi": "có vẻ như tôi bị cảm"
+        },
+        {
+            "start": "00:00:06,050",
+            "end": "00:00:07,770",
+            "vi": "tôi thích xem các khoa khác của Koweit"
+        },
+        {
+            "start": "00:00:08,738",
+            "end": "00:00:10,698",
+            "vi": "virus corona"
+        },
+        {
+            "start": "00:00:10,698",
+            "end": "00:00:15,598",
+            "vi": "Tôi bị đau họng"
+        },
+        {
+            "start": "00:00:15,598",
+            "end": "00:00:18,038",
+            "vi": "và nó làm tôi đau họng"
+        },
+        {
+            "start": "00:00:22,078",
+            "end": "00:00:24,078",
+            "vi": "Nó không phải..."
+        },
+        {
+            "start": "00:00:25,958",
+            "end": "00:00:28,118",
+            "vi": "Hiện tại nó đang có một chút..."
+        },
+        {
+            "start": "00:00:28,878",
+            "end": "00:00:29,718",
+            "vi": "mức độ nhẹ nhàng"
+        },
+        {
+            "start": "00:00:30,858",
+            "end": "00:00:33,858",
+            "vi": "Nhưng tôi không biết nó có trở nên nghiêm trọng không..."
+        },
+        {
+            "start": "00:00:33,858",
+            "end": "00:00:35,578",
+            "vi": "trở nên nghiêm trọng"
+        },
+        {
+            "start": "00:00:36,838",
+            "end": "00:00:37,338",
+            "vi": "Phải không?"
+        },
+        {
+            "start": "00:00:37,798",
+            "end": "00:00:38,378",
+            "vi": "Nghiêm trọng"
+        },
+        {
+            "start": "00:00:38,378",
+            "end": "00:00:39,178",
+            "vi": "Nghiêm trọng"
+        },
+        {
+            "start": "00:00:39,878",
+            "end": "00:00:40,698",
+            "vi": "Nghiêm trọng"
+        },
+        {
+            "start": "00:00:40,698",
+            "end": "00:00:41,397",
+            "vi": "Ổn không?"
+        }
+    ]
+}

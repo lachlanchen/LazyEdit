@@ -1,0 +1,15 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,840\",\n    \"lang\": \"en\",\n    \"text\": \"This bird just get this carrot.\"\n  },\n  {\n    \"start\": \"00:00:04,760\",\n    \"end\": \"00:00:07,860\",\n    \"lang\": \"en\",\n    \"text\": \"She is so beautiful with yellow eyes.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,840",
+            "vi": "Con chim này vừa lấy được cà rốt."
+        },
+        {
+            "start": "00:00:04,760",
+            "end": "00:00:07,860",
+            "vi": "Nó đẹp quá với đôi mắt màu vàng."
+        }
+    ]
+}

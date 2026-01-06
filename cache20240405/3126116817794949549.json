@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,700\",\n    \"lang\": \"ja\",\n    \"text\": \"私はあそ…\"\n  },\n  {\n    \"start\": \"00:00:02,700\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"ja\",\n    \"text\": \"あそに…\"\n  },\n  {\n    \"start\": \"00:00:04,610\",\n    \"end\": \"00:00:08,850\",\n    \"lang\": \"ja\",\n    \"text\": \"私は外で遊んでいます\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,700",
+            "ko": "저는 저기…"
+        },
+        {
+            "start": "00:00:02,700",
+            "end": "00:00:03,780",
+            "ko": "저기에…"
+        },
+        {
+            "start": "00:00:04,610",
+            "end": "00:00:08,850",
+            "ko": "저는 밖에서 놀고 있어요"
+        }
+    ]
+}

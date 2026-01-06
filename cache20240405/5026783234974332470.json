@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,000\",\n    \"lang\": \"zh\",\n    \"text\": \"这个写的很有趣\"\n  },\n  {\n    \"start\": \"00:00:01,499\",\n    \"end\": \"00:00:03,460\",\n    \"lang\": \"zh\",\n    \"text\": \"超自然现象有防御局\"\n  },\n  {\n    \"start\": \"00:00:04,322\",\n    \"end\": \"00:00:04,722\",\n    \"lang\": \"ja\",\n    \"text\": \"を迈 Staff\"\n  },\n  {\n    \"start\": \"00:00:04,902\",\n    \"end\": \"00:00:06,282\",\n    \"lang\": \"zh\",\n    \"text\": \"这个写的很有趣\"\n  },\n  {\n    \"start\": \"00:00:06,781\",\n    \"end\": \"00:00:08,722\",\n    \"lang\": \"zh\",\n    \"text\": \"超自然现象与防御局\"\n  },\n  {\n    \"start\": \"00:00:09,570\",\n    \"end\": \"00:00:10,070\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,000",
+            "ja": "これはとても面白く書かれている"
+        },
+        {
+            "start": "00:00:01,499",
+            "end": "00:00:03,460",
+            "ja": "超自然現象には防衛局がある"
+        },
+        {
+            "start": "00:00:04,322",
+            "end": "00:00:04,722",
+            "ja": "をマイスタッフ"
+        },
+        {
+            "start": "00:00:04,902",
+            "end": "00:00:06,282",
+            "ja": "これはとても面白く書かれている"
+        },
+        {
+            "start": "00:00:06,781",
+            "end": "00:00:08,722",
+            "ja": "超自然現象と防衛局"
+        },
+        {
+            "start": "00:00:09,570",
+            "end": "00:00:10,070",
+            "ja": "なんてこった。"
+        }
+    ]
+}

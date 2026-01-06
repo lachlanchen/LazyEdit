@@ -1,0 +1,124 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:13,478\",\n    \"end\": \"00:02:13,798\",\n    \"lang\": \"zh\",\n    \"text\": \"字幕by索兰娅^^\"\n  },\n  {\n    \"start\": \"00:02:15,362\",\n    \"end\": \"00:02:15,862\",\n    \"lang\": \"zh\",\n    \"text\": \"uè68 我是主角\"\n  },\n  {\n    \"start\": \"00:02:15,862\",\n    \"end\": \"00:02:16,602\",\n    \"lang\": \"en\",\n    \"text\": \"hiçcheering nice time\"\n  },\n  {\n    \"start\": \"00:02:19,101\",\n    \"end\": \"00:02:20,382\",\n    \"lang\": \"en\",\n    \"text\": \"Meillblowing\"\n  },\n  {\n    \"start\": \"00:02:21,422\",\n    \"end\": \"00:02:21,422\",\n    \"lang\": \"en\",\n    \"text\": \"味 masuk\"\n  },\n  {\n    \"start\": \"00:02:21,442\",\n    \"end\": \"00:02:23,382\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:24,002\",\n    \"end\": \"00:02:26,242\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:02:26,242\",\n    \"end\": \"00:02:28,742\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:29,302\",\n    \"end\": \"00:02:31,622\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:02:31,622\",\n    \"end\": \"00:02:34,742\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:35,522\",\n    \"end\": \"00:02:37,742\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:02:51,442\",\n    \"end\": \"00:02:53,042\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:53,682\",\n    \"end\": \"00:02:56,102\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:02:57,058\",\n    \"end\": \"00:02:57,298\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:57,298\",\n    \"end\": \"00:02:58,978\",\n    \"lang\": \"en\",\n    \"text\": \"this time is far much better.\"\n  },\n  {\n    \"start\": \"00:02:59,118\",\n    \"end\": \"00:02:59,218\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:59,218\",\n    \"end\": \"00:02:59,438\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and MUST output JSON format (return empty if not provided):\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:13,478",
+            "end": "00:02:13,798",
+            "es": "Subtítulos por Solanya^^",
+            "fr": "Sous-titres par Solanya^^",
+            "uk": "Субтитри від Солані^^"
+        },
+        {
+            "start": "00:02:15,362",
+            "end": "00:02:15,862",
+            "es": "Yo soy el protagonista",
+            "fr": "Je suis le personnage principal",
+            "uk": "Я головний герой"
+        },
+        {
+            "start": "00:02:15,862",
+            "end": "00:02:16,602",
+            "es": "aplausos, qué buen momento",
+            "fr": "applaudissements, quel bon moment",
+            "uk": "аплодисменти, чудовий час"
+        },
+        {
+            "start": "00:02:19,101",
+            "end": "00:02:20,382",
+            "es": "Soprendente",
+            "fr": "Étonnant",
+            "uk": "Дивовижно"
+        },
+        {
+            "start": "00:02:21,422",
+            "end": "00:02:21,422",
+            "es": "sabor entra",
+            "fr": "saveur entre",
+            "uk": "смак входить"
+        },
+        {
+            "start": "00:02:21,442",
+            "end": "00:02:23,382",
+            "es": "No hay fragancia de flores",
+            "fr": "Pas de parfum de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:02:24,002",
+            "end": "00:02:26,242",
+            "es": "No hay árboles altos",
+            "fr": "Pas de grands arbres",
+            "uk": "Немає високих дерев"
+        },
+        {
+            "start": "00:02:26,242",
+            "end": "00:02:28,742",
+            "es": "No hay fragancia de flores",
+            "fr": "Pas de parfum de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:02:29,302",
+            "end": "00:02:31,622",
+            "es": "No hay árboles altos",
+            "fr": "Pas de grands arbres",
+            "uk": "Немає високих дерев"
+        },
+        {
+            "start": "00:02:31,622",
+            "end": "00:02:34,742",
+            "es": "No hay fragancia de flores",
+            "fr": "Pas de parfum de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:02:35,522",
+            "end": "00:02:37,742",
+            "es": "No hay árboles altos",
+            "fr": "Pas de grands arbres",
+            "uk": "Немає високих дерев"
+        },
+        {
+            "start": "00:02:51,442",
+            "end": "00:02:53,042",
+            "es": "No hay fragancia de flores",
+            "fr": "Pas de parfum de fleurs",
+            "uk": "Немає запаху квітів"
+        },
+        {
+            "start": "00:02:53,682",
+            "end": "00:02:56,102",
+            "es": "No hay árboles altos",
+            "fr": "Pas de grands arbres",
+            "uk": "Немає високих дерев"
+        },
+        {
+            "start": "00:02:57,058",
+            "end": "00:02:57,298",
+            "es": "Okay,",
+            "fr": "D'accord,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:02:57,298",
+            "end": "00:02:58,978",
+            "es": "esta vez es mucho mejor.",
+            "fr": "cette fois-ci est bien meilleure.",
+            "uk": "цього разу набагато краще."
+        },
+        {
+            "start": "00:02:59,118",
+            "end": "00:02:59,218",
+            "es": "Okay,",
+            "fr": "D'accord,",
+            "uk": "Гаразд,"
+        },
+        {
+            "start": "00:02:59,218",
+            "end": "00:02:59,438",
+            "es": "nos vemos.",
+            "fr": "au revoir.",
+            "uk": "побачимося."
+        }
+    ]
+}

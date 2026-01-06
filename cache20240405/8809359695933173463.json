@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,100\",\n    \"lang\": \"en\",\n    \"text\": \"Oh no.\"\n  },\n  {\n    \"start\": \"00:00:04,866\",\n    \"end\": \"00:00:05,806\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:06,665\",\n    \"end\": \"00:00:07,926\",\n    \"lang\": \"ja\",\n    \"text\": \"私の名前は\"\n  },\n  {\n    \"start\": \"00:00:11,010\",\n    \"end\": \"00:00:11,570\",\n    \"lang\": \"ja\",\n    \"text\": \"です\"\n  },\n  {\n    \"start\": \"00:00:12,962\",\n    \"end\": \"00:00:13,102\",\n    \"lang\": \"en\",\n    \"text\": \"So.\"\n  },\n  {\n    \"start\": \"00:00:13,538\",\n    \"end\": \"00:00:14,118\",\n    \"lang\": \"zh\",\n    \"text\": \"還好沒死\"\n  },\n  {\n    \"start\": \"00:00:15,522\",\n    \"end\": \"00:00:19,802\",\n    \"lang\": \"en\",\n    \"text\": \"I have difficulty in pronouncing the L initial word.\"\n  },\n  {\n    \"start\": \"00:00:27,321\",\n    \"end\": \"00:00:29,642\",\n    \"lang\": \"en\",\n    \"text\": \"Nothing specific to share today.\"\n  },\n  {\n    \"start\": \"00:00:30,682\",\n    \"end\": \"00:00:31,642\",\n    \"lang\": \"en\",\n    \"text\": \"Just a normal day.\"\n  },\n  {\n    \"start\": \"00:00:32,782\",\n    \"end\": \"00:00:36,582\",\n    \"lang\": \"en\",\n    \"text\": \"And maybe today I will focus more on research.\"\n  },\n  {\n    \"start\": \"00:00:46,961\",\n    \"end\": \"00:00:47,922\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:53,541\",\n    \"end\": \"00:00:54,502\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:54,502\",\n    \"end\": \"00:00:55,462\",\n    \"lang\": \"en\",\n    \"text\": \"And what?\"\n  },\n  {\n    \"start\": \"00:00:56,242\",\n    \"end\": \"00:00:57,262\",\n    \"lang\": \"en\",\n    \"text\": \"And nothing new.\"\n  },\n  {\n    \"start\": \"00:00:58,042\",\n    \"end\": \"00:01:00,062\",\n    \"lang\": \"en\",\n    \"text\": \"No words in my mind.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,100",
+            "es": "Oh no.",
+            "fr": "Oh non.",
+            "uk": "О ні."
+        },
+        {
+            "start": "00:00:04,866",
+            "end": "00:00:05,806",
+            "es": "Buenos días.",
+            "fr": "Bonjour.",
+            "uk": "Доброго ранку."
+        },
+        {
+            "start": "00:00:06,665",
+            "end": "00:00:07,926",
+            "es": "Mi nombre es",
+            "fr": "Mon nom est",
+            "uk": "Мене звати"
+        },
+        {
+            "start": "00:00:11,010",
+            "end": "00:00:11,570",
+            "es": "es",
+            "fr": "c'est",
+            "uk": "це"
+        },
+        {
+            "start": "00:00:12,962",
+            "end": "00:00:13,102",
+            "es": "Entonces.",
+            "fr": "Alors.",
+            "uk": "Отже."
+        },
+        {
+            "start": "00:00:13,538",
+            "end": "00:00:14,118",
+            "es": "Menos mal que no morí.",
+            "fr": "Heureusement, je ne suis pas mort.",
+            "uk": "Добре, що не помер."
+        },
+        {
+            "start": "00:00:15,522",
+            "end": "00:00:19,802",
+            "es": "Tengo dificultades para pronunciar palabras que empiezan con L.",
+            "fr": "J'ai du mal à prononcer les mots commençant par L.",
+            "uk": "У мене труднощі з вимовою слів на літеру Л."
+        },
+        {
+            "start": "00:00:27,321",
+            "end": "00:00:29,642",
+            "es": "Nada específico para compartir hoy.",
+            "fr": "Rien de spécifique à partager aujourd'hui.",
+            "uk": "Немає нічого конкретного для обговорення сьогодні."
+        },
+        {
+            "start": "00:00:30,682",
+            "end": "00:00:31,642",
+            "es": "Solo un día normal.",
+            "fr": "Juste une journée normale.",
+            "uk": "Просто звичайний день."
+        },
+        {
+            "start": "00:00:32,782",
+            "end": "00:00:36,582",
+            "es": "Y quizás hoy me centraré más en la investigación.",
+            "fr": "Et peut-être que je me concentrerai davantage sur la recherche aujourd'hui.",
+            "uk": "І, можливо, сьогодні я зосереджусь більше на дослідженні."
+        },
+        {
+            "start": "00:00:46,961",
+            "end": "00:00:47,922",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        },
+        {
+            "start": "00:00:53,541",
+            "end": "00:00:54,502",
+            "es": "Y...",
+            "fr": "Et...",
+            "uk": "І..."
+        },
+        {
+            "start": "00:00:54,502",
+            "end": "00:00:55,462",
+            "es": "¿Y qué?",
+            "fr": "Et alors ?",
+            "uk": "І що?"
+        },
+        {
+            "start": "00:00:56,242",
+            "end": "00:00:57,262",
+            "es": "Y nada nuevo.",
+            "fr": "Et rien de nouveau.",
+            "uk": "І нічого нового."
+        },
+        {
+            "start": "00:00:58,042",
+            "end": "00:01:00,062",
+            "es": "No tengo palabras en mi mente.",
+            "fr": "Je n'ai pas de mots en tête.",
+            "uk": "В мене немає слів у голові."
+        }
+    ]
+}

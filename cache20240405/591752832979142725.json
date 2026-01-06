@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,540\",\n    \"lang\": \"en\",\n    \"text\": \"This is not a bad breakfast,\"\n  },\n  {\n    \"start\": \"00:00:02,540\",\n    \"end\": \"00:00:06,680\",\n    \"lang\": \"en\",\n    \"text\": \"but every bite is painful.\"\n  },\n  {\n    \"start\": \"00:00:07,240\",\n    \"end\": \"00:00:07,860\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,540",
+            "ja": "これは悪くない朝食だけど、"
+        },
+        {
+            "start": "00:00:02,540",
+            "end": "00:00:06,680",
+            "ja": "でも一口ごとに痛みがある。"
+        },
+        {
+            "start": "00:00:07,240",
+            "end": "00:00:07,860",
+            "ja": "おやおや。"
+        }
+    ]
+}

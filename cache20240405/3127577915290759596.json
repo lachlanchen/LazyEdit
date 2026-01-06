@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:05,478\",\n    \"end\": \"00:03:09,138\",\n    \"lang\": \"en\",\n    \"text\": \"It's far more fluent than before.\"\n  },\n  {\n    \"start\": \"00:03:09,998\",\n    \"end\": \"00:03:10,718\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:03:10,718\",\n    \"end\": \"00:03:14,018\",\n    \"lang\": \"en\",\n    \"text\": \"I like it.\"\n  },\n  {\n    \"start\": \"00:03:14,078\",\n    \"end\": \"00:03:15,438\",\n    \"lang\": \"en\",\n    \"text\": \"I like the small progress.\"\n  },\n  {\n    \"start\": \"00:03:15,938\",\n    \"end\": \"00:03:18,018\",\n    \"lang\": \"en\",\n    \"text\": \"I'm glad I can finally handle it.\"\n  },\n  {\n    \"start\": \"00:03:19,578\",\n    \"end\": \"00:03:20,298\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:03:20,298\",\n    \"end\": \"00:03:20,478\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:03:21,078\",\n    \"end\": \"00:03:21,338\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:05,478",
+            "end": "00:03:09,138",
+            "es": "Es mucho más fluido que antes.",
+            "fr": "C'est bien plus fluide qu'avant.",
+            "uk": "Це набагато плинніше, ніж раніше."
+        },
+        {
+            "start": "00:03:09,998",
+            "end": "00:03:10,718",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:03:10,718",
+            "end": "00:03:14,018",
+            "es": "Me gusta.",
+            "fr": "J'aime ça.",
+            "uk": "Мені подобається."
+        },
+        {
+            "start": "00:03:14,078",
+            "end": "00:03:15,438",
+            "es": "Me gustan los pequeños progresos.",
+            "fr": "J'aime les petits progrès.",
+            "uk": "Мені подобаються невеликі успіхи."
+        },
+        {
+            "start": "00:03:15,938",
+            "end": "00:03:18,018",
+            "es": "Me alegra finalmente poder manejarlo.",
+            "fr": "Je suis content de pouvoir enfin le gérer.",
+            "uk": "Я радий, що нарешті можу це впоратися."
+        },
+        {
+            "start": "00:03:19,578",
+            "end": "00:03:20,298",
+            "es": "Está bien.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:03:20,298",
+            "end": "00:03:20,478",
+            "es": "Está bien.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:03:21,078",
+            "end": "00:03:21,338",
+            "es": "Está bien.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        }
+    ]
+}

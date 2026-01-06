@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,540\",\n    \"lang\": \"ja\",\n    \"text\": \"ありがとうございます\"\n  },\n  {\n    \"start\": \"00:00:03,490\",\n    \"end\": \"00:00:13,490\",\n    \"lang\": \"en\",\n    \"text\": \"So yesterday I watched a video of Britain and they mocked that the American English,\"\n  },\n  {\n    \"start\": \"00:00:13,890\",\n    \"end\": \"00:00:14,790\",\n    \"lang\": \"en\",\n    \"text\": \"so they say,\"\n  },\n  {\n    \"start\": \"00:00:14,790\",\n    \"end\": \"00:00:17,250\",\n    \"lang\": \"en\",\n    \"text\": \"like the pavement,\"\n  },\n  {\n    \"start\": \"00:00:17,250\",\n    \"end\": \"00:00:20,550\",\n    \"lang\": \"en\",\n    \"text\": \"in American English it becomes sidewalk.\"\n  },\n  {\n    \"start\": \"00:00:21,370\",\n    \"end\": \"00:00:23,030\",\n    \"lang\": \"en\",\n    \"text\": \"And also the bin,\"\n  },\n  {\n    \"start\": \"00:00:23,030\",\n    \"end\": \"00:00:32,150\",\n    \"lang\": \"en\",\n    \"text\": \"in British it becomes a waste paper basket in American English.\"\n  },\n  {\n    \"start\": \"00:00:32,150\",\n    \"end\": \"00:00:33,410\",\n    \"lang\": \"en\",\n    \"text\": \"And they mocked that,\"\n  },\n  {\n    \"start\": \"00:00:33,410\",\n    \"end\": \"00:00:35,330\",\n    \"lang\": \"en\",\n    \"text\": \"that since Americans,\"\n  },\n  {\n    \"start\": \"00:00:35,330\",\n    \"end\": \"00:00:40,090\",\n    \"lang\": \"en\",\n    \"text\": \"they cannot directly understand English.\"\n  },\n  {\n    \"start\": \"00:00:41,410\",\n    \"end\": \"00:00:42,430\",\n    \"lang\": \"en\",\n    \"text\": \"So there is a,\"\n  },\n  {\n    \"start\": \"00:00:42,430\",\n    \"end\": \"00:00:48,150\",\n    \"lang\": \"en\",\n    \"text\": \"and also like another example is horse riding.\"\n  },\n  {\n    \"start\": \"00:00:49,170\",\n    \"end\": \"00:00:55,750\",\n    \"lang\": \"en\",\n    \"text\": \"They mocked that American English changed to horseback riding.\"\n  },\n  {\n    \"start\": \"00:00:55,750\",\n    \"end\": \"00:00:56,610\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:56,610\",\n    \"end\": \"00:01:02,930\",\n    \"lang\": \"en\",\n    \"text\": \"and I say there is a discrimination chain,\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,540",
+            "ja": "ありがとうございます"
+        },
+        {
+            "start": "00:00:03,490",
+            "end": "00:00:13,490",
+            "ja": "昨日、イギリスのビデオを見ました。そこでは、アメリカ英語をからかっていました。"
+        },
+        {
+            "start": "00:00:13,890",
+            "end": "00:00:14,790",
+            "ja": "彼らが言うには、"
+        },
+        {
+            "start": "00:00:14,790",
+            "end": "00:00:17,250",
+            "ja": "例えば「pavement」が、"
+        },
+        {
+            "start": "00:00:17,250",
+            "end": "00:00:20,550",
+            "ja": "アメリカ英語では「sidewalk」になる。"
+        },
+        {
+            "start": "00:00:21,370",
+            "end": "00:00:23,030",
+            "ja": "そして「bin」も、"
+        },
+        {
+            "start": "00:00:23,030",
+            "end": "00:00:32,150",
+            "ja": "イギリス英語では、アメリカ英語で「waste paper basket」になります。"
+        },
+        {
+            "start": "00:00:32,150",
+            "end": "00:00:33,410",
+            "ja": "そしてそれをからかって、"
+        },
+        {
+            "start": "00:00:33,410",
+            "end": "00:00:35,330",
+            "ja": "アメリカ人は、"
+        },
+        {
+            "start": "00:00:35,330",
+            "end": "00:00:40,090",
+            "ja": "直接的に英語を理解できないと。"
+        },
+        {
+            "start": "00:00:41,410",
+            "end": "00:00:42,430",
+            "ja": "だから、"
+        },
+        {
+            "start": "00:00:42,430",
+            "end": "00:00:48,150",
+            "ja": "もう一つの例として、馬乗りがあります。"
+        },
+        {
+            "start": "00:00:49,170",
+            "end": "00:00:55,750",
+            "ja": "アメリカ英語では「horse riding」を「horseback riding」と変えたとからかわれています。"
+        },
+        {
+            "start": "00:00:55,750",
+            "end": "00:00:56,610",
+            "ja": "つまり、"
+        },
+        {
+            "start": "00:00:56,610",
+            "end": "00:01:02,930",
+            "ja": "差別の連鎖がある、と私は言っています。"
+        }
+    ]
+}

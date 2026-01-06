@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,906\",\n    \"end\": \"00:01:02,766\",\n    \"lang\": \"en\",\n    \"text\": \"juicy,\"\n  },\n  {\n    \"start\": \"00:01:02,766\",\n    \"end\": \"00:01:04,506\",\n    \"lang\": \"en\",\n    \"text\": \"and spicy.\"\n  },\n  {\n    \"start\": \"00:01:10,114\",\n    \"end\": \"00:01:10,574\",\n    \"lang\": \"ja\",\n    \"text\": \"美味しい\"\n  },\n  {\n    \"start\": \"00:01:11,170\",\n    \"end\": \"00:01:12,330\",\n    \"lang\": \"en\",\n    \"text\": \"Let's eat it\"\n  },\n  {\n    \"start\": \"00:01:17,089\",\n    \"end\": \"00:01:17,690\",\n    \"lang\": \"en\",\n    \"text\": \"Wow\"\n  },\n  {\n    \"start\": \"00:01:24,089\",\n    \"end\": \"00:01:27,050\",\n    \"lang\": \"en\",\n    \"text\": \"Please put this as a teaser and a cover\"\n  },\n  {\n    \"start\": \"00:01:27,769\",\n    \"end\": \"00:01:28,990\",\n    \"lang\": \"en\",\n    \"text\": \"This is delicious\"\n  },\n  {\n    \"start\": \"00:01:30,269\",\n    \"end\": \"00:01:31,210\",\n    \"lang\": \"en\",\n    \"text\": \"It's juicy,\"\n  },\n  {\n    \"start\": \"00:01:31,210\",\n    \"end\": \"00:01:32,590\",\n    \"lang\": \"en\",\n    \"text\": \"really juicy\"\n  },\n  {\n    \"start\": \"00:01:39,149\",\n    \"end\": \"00:01:41,330\",\n    \"lang\": \"en\",\n    \"text\": \"This is the best chicken wing ever\"\n  },\n  {\n    \"start\": \"00:01:45,229\",\n    \"end\": \"00:01:45,950\",\n    \"lang\": \"en\",\n    \"text\": \"I need to go\"\n  },\n  {\n    \"start\": \"00:01:48,409\",\n    \"end\": \"00:01:48,830\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,906",
+            "end": "00:01:02,766",
+            "vi": "ngon,"
+        },
+        {
+            "start": "00:01:02,766",
+            "end": "00:01:04,506",
+            "vi": "và cay."
+        },
+        {
+            "start": "00:01:10,114",
+            "end": "00:01:10,574",
+            "vi": "ngon quá"
+        },
+        {
+            "start": "00:01:11,170",
+            "end": "00:01:12,330",
+            "vi": "Cùng ăn nào"
+        },
+        {
+            "start": "00:01:17,089",
+            "end": "00:01:17,690",
+            "vi": "Ồ"
+        },
+        {
+            "start": "00:01:24,089",
+            "end": "00:01:27,050",
+            "vi": "Làm ơn đặt cái này làm video giới thiệu và bìa"
+        },
+        {
+            "start": "00:01:27,769",
+            "end": "00:01:28,990",
+            "vi": "Món này ngon quá"
+        },
+        {
+            "start": "00:01:30,269",
+            "end": "00:01:31,210",
+            "vi": "Nó ngon,"
+        },
+        {
+            "start": "00:01:31,210",
+            "end": "00:01:32,590",
+            "vi": "thực sự rất ngon"
+        },
+        {
+            "start": "00:01:39,149",
+            "end": "00:01:41,330",
+            "vi": "Đây là chiếc cánh gà ngon nhất từ trước tới giờ"
+        },
+        {
+            "start": "00:01:45,229",
+            "end": "00:01:45,950",
+            "vi": "Tôi cần đi"
+        },
+        {
+            "start": "00:01:48,409",
+            "end": "00:01:48,830",
+            "vi": "Hẹn gặp lại"
+        }
+    ]
+}

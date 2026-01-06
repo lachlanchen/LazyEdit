@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:09,394\",\n    \"end\": \"00:02:11,974\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi re mi\"\n  },\n  {\n    \"start\": \"00:02:12,884\",\n    \"end\": \"00:02:19,764\",\n    \"lang\": \"en\",\n    \"text\": \"I promise that I'm far much better when I play on my own.\"\n  },\n  {\n    \"start\": \"00:02:22,994\",\n    \"end\": \"00:02:26,874\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi re mi\"\n  },\n  {\n    \"start\": \"00:02:26,874\",\n    \"end\": \"00:02:29,534\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi re mi\"\n  },\n  {\n    \"start\": \"00:02:29,534\",\n    \"end\": \"00:02:32,254\",\n    \"lang\": \"en\",\n    \"text\": \"Na na mi re mi\"\n  },\n  {\n    \"start\": \"00:02:32,254\",\n    \"end\": \"00:02:35,294\",\n    \"lang\": \"en\",\n    \"text\": \"Na na tu si la la\"\n  },\n  {\n    \"start\": \"00:02:35,294\",\n    \"end\": \"00:02:36,194\",\n    \"lang\": \"en\",\n    \"text\": \"Now,\"\n  },\n  {\n    \"start\": \"00:02:36,194\",\n    \"end\": \"00:02:37,114\",\n    \"lang\": \"en\",\n    \"text\": \"I am,\"\n  },\n  {\n    \"start\": \"00:02:37,114\",\n    \"end\": \"00:02:38,454\",\n    \"lang\": \"en\",\n    \"text\": \"I am\"\n  },\n  {\n    \"start\": \"00:02:42,754\",\n    \"end\": \"00:02:43,394\",\n    \"lang\": \"en\",\n    \"text\": \"No,\"\n  },\n  {\n    \"start\": \"00:02:43,394\",\n    \"end\": \"00:02:44,034\",\n    \"lang\": \"en\",\n    \"text\": \"I am not.\"\n  },\n  {\n    \"start\": \"00:02:56,065\",\n    \"end\": \"00:02:58,866\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香,没有书稿。\"\n  },\n  {\n    \"start\": \"00:03:05,410\",\n    \"end\": \"00:03:05,650\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:03:05,650\",\n    \"end\": \"00:03:09,010\",\n    \"lang\": \"en\",\n    \"text\": \"and then end up with the...\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:09,394",
+            "end": "00:02:11,974",
+            "ko": "나 나 미 레 미"
+        },
+        {
+            "start": "00:02:12,884",
+            "end": "00:02:19,764",
+            "ko": "혼자 할 때 더 잘한다는 걸 약속해."
+        },
+        {
+            "start": "00:02:22,994",
+            "end": "00:02:26,874",
+            "ko": "나 나 미 레 미"
+        },
+        {
+            "start": "00:02:26,874",
+            "end": "00:02:29,534",
+            "ko": "나 나 미 레 미"
+        },
+        {
+            "start": "00:02:29,534",
+            "end": "00:02:32,254",
+            "ko": "나 나 미 레 미"
+        },
+        {
+            "start": "00:02:32,254",
+            "end": "00:02:35,294",
+            "ko": "나 나 투 시 라 라"
+        },
+        {
+            "start": "00:02:35,294",
+            "end": "00:02:36,194",
+            "ko": "이제,"
+        },
+        {
+            "start": "00:02:36,194",
+            "end": "00:02:37,114",
+            "ko": "나는,"
+        },
+        {
+            "start": "00:02:37,114",
+            "end": "00:02:38,454",
+            "ko": "나는"
+        },
+        {
+            "start": "00:02:42,754",
+            "end": "00:02:43,394",
+            "ko": "아니,"
+        },
+        {
+            "start": "00:02:43,394",
+            "end": "00:02:44,034",
+            "ko": "나는 아니야."
+        },
+        {
+            "start": "00:02:56,065",
+            "end": "00:02:58,866",
+            "ko": "꽃향기도 없고, 책 원고도 없어."
+        },
+        {
+            "start": "00:03:05,410",
+            "end": "00:03:05,650",
+            "ko": "좋아,"
+        },
+        {
+            "start": "00:03:05,650",
+            "end": "00:03:09,010",
+            "ko": "그리고 마지막엔..."
+        }
+    ]
+}

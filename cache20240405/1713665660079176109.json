@@ -1,0 +1,159 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,800\",\n    \"end\": \"00:00:01,500\",\n    \"lang\": \"en\",\n    \"text\": \"maintenant\"\n  },\n  {\n    \"start\": \"00:00:01,500\",\n    \"end\": \"00:00:04,780\",\n    \"lang\": \"en\",\n    \"text\": \"ce n'\"\n  },\n  {\n    \"start\": \"00:00:04,880\",\n    \"end\": \"00:00:06,000\",\n    \"lang\": \"en\",\n    \"text\": \"est histoire\"\n  },\n  {\n    \"start\": \"00:00:07,074\",\n    \"end\": \"00:00:08,074\",\n    \"lang\": \"zh\",\n    \"text\": \"買個漂泊溜嘛\"\n  },\n  {\n    \"start\": \"00:00:09,685\",\n    \"end\": \"00:00:10,466\",\n    \"lang\": \"en\",\n    \"text\": \"Very good.\"\n  },\n  {\n    \"start\": \"00:00:10,726\",\n    \"end\": \"00:00:11,126\",\n    \"lang\": \"en\",\n    \"text\": \"This is.\"\n  },\n  {\n    \"start\": \"00:00:11,286\",\n    \"end\": \"00:00:11,966\",\n    \"lang\": \"en\",\n    \"text\": \"See you tonight.\"\n  },\n  {\n    \"start\": \"00:00:12,482\",\n    \"end\": \"00:00:16,202\",\n    \"lang\": \"zh\",\n    \"text\": \"我本來要先弄盆整的然後再往裡倒\"\n  },\n  {\n    \"start\": \"00:00:16,202\",\n    \"end\": \"00:00:18,242\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有了有了\"\n  },\n  {\n    \"start\": \"00:00:18,841\",\n    \"end\": \"00:00:20,862\",\n    \"lang\": \"zh\",\n    \"text\": \"不然走腳走不動\"\n  },\n  {\n    \"start\": \"00:00:20,862\",\n    \"end\": \"00:00:23,022\",\n    \"lang\": \"zh\",\n    \"text\": \"還有肉票撐到你去行得了\"\n  },\n  {\n    \"start\": \"00:00:23,461\",\n    \"end\": \"00:00:26,422\",\n    \"lang\": \"zh\",\n    \"text\": \"弄不定我曉得都有停停\"\n  },\n  {\n    \"start\": \"00:00:26,422\",\n    \"end\": \"00:00:27,242\",\n    \"lang\": \"zh\",\n    \"text\": \"多了有好多停停\"\n  },\n  {\n    \"start\": \"00:00:29,581\",\n    \"end\": \"00:00:31,382\",\n    \"lang\": \"zh\",\n    \"text\": \"弄盆了我再弄盆弄大\"\n  },\n  {\n    \"start\": \"00:00:31,382\",\n    \"end\": \"00:00:33,642\",\n    \"lang\": \"zh\",\n    \"text\": \"那你不是去弄那個泥的嘛\"\n  },\n  {\n    \"start\": \"00:00:33,642\",\n    \"end\": \"00:00:36,362\",\n    \"lang\": \"zh\",\n    \"text\": \"弄大了我就把它泥切進去沒有停\"\n  },\n  {\n    \"start\": \"00:00:40,226\",\n    \"end\": \"00:00:40,826\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  },\n  {\n    \"start\": \"00:00:42,242\",\n    \"end\": \"00:00:44,162\",\n    \"lang\": \"zh\",\n    \"text\": \"那你要不要?\"\n  },\n  {\n    \"start\": \"00:00:44,162\",\n    \"end\": \"00:00:44,842\",\n    \"lang\": \"zh\",\n    \"text\": \"要不要的?\"\n  },\n  {\n    \"start\": \"00:00:45,002\",\n    \"end\": \"00:00:45,602\",\n    \"lang\": \"zh\",\n    \"text\": \"要的\"\n  },\n  {\n    \"start\": \"00:00:45,602\",\n    \"end\": \"00:00:46,662\",\n    \"lang\": \"zh\",\n    \"text\": \"那这个不要\"\n  },\n  {\n    \"start\": \"00:00:47,842\",\n    \"end\": \"00:00:48,702\",\n    \"lang\": \"zh\",\n    \"text\": \"要不要我给你割\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,800",
+            "end": "00:00:01,500",
+            "en": "now",
+            "zh": "现在",
+            "ar": "الآن"
+        },
+        {
+            "start": "00:00:01,500",
+            "end": "00:00:04,780",
+            "en": "this isn't",
+            "zh": "这不是",
+            "ar": "هذا ليس"
+        },
+        {
+            "start": "00:00:04,880",
+            "end": "00:00:06,000",
+            "en": "a story",
+            "zh": "一个故事",
+            "ar": "قصة"
+        },
+        {
+            "start": "00:00:07,074",
+            "end": "00:00:08,074",
+            "en": "Buy a wandering ticket, won't you?",
+            "zh": "买个漂泊的票吧？",
+            "ar": "اشتر تذكرة تائهة، ألن تفعل؟"
+        },
+        {
+            "start": "00:00:09,685",
+            "end": "00:00:10,466",
+            "en": "Very good.",
+            "zh": "非常好。",
+            "ar": "جيد جدا."
+        },
+        {
+            "start": "00:00:10,726",
+            "end": "00:00:11,126",
+            "en": "This is.",
+            "zh": "这是。",
+            "ar": "هذا هو."
+        },
+        {
+            "start": "00:00:11,286",
+            "end": "00:00:11,966",
+            "en": "See you tonight.",
+            "zh": "今晚见。",
+            "ar": "أراك الليلة."
+        },
+        {
+            "start": "00:00:12,482",
+            "end": "00:00:16,202",
+            "en": "I was going to set up the pot first and then pour into it",
+            "zh": "我本来要先弄好盆子然后再倒进去",
+            "ar": "كنت سأعد القدر أولاً ثم أسكب فيه"
+        },
+        {
+            "start": "00:00:16,202",
+            "end": "00:00:18,242",
+            "en": "It's gone, and now it's here",
+            "zh": "没了，现在又有了",
+            "ar": "لقد ذهب، والآن هو هنا"
+        },
+        {
+            "start": "00:00:18,841",
+            "end": "00:00:20,862",
+            "en": "Otherwise, I can't move",
+            "zh": "不然我走不动",
+            "ar": "وإلا لا أستطيع التحرك"
+        },
+        {
+            "start": "00:00:20,862",
+            "end": "00:00:23,022",
+            "en": "And there's a meat voucher to support your journey",
+            "zh": "还有肉票支撑你去行走",
+            "ar": "وهناك قسيمة لحم لدعم رحلتك"
+        },
+        {
+            "start": "00:00:23,461",
+            "end": "00:00:26,422",
+            "en": "I know it's tough, there are stops",
+            "zh": "我知道很难，都有停顿",
+            "ar": "أعلم أنه صعب، هناك توقفات"
+        },
+        {
+            "start": "00:00:26,422",
+            "end": "00:00:27,242",
+            "en": "There are a lot of stops",
+            "zh": "有很多停顿",
+            "ar": "هناك الكثير من التوقفات"
+        },
+        {
+            "start": "00:00:29,581",
+            "end": "00:00:31,382",
+            "en": "I've managed the pot, now I'll get a bigger one",
+            "zh": "我弄好了这个盆子，现在我要弄个更大的",
+            "ar": "لقد أدرت القدر، الآن سأحصل على واحد أكبر"
+        },
+        {
+            "start": "00:00:31,382",
+            "end": "00:00:33,642",
+            "en": "Then aren't you going to deal with the mud?",
+            "zh": "那你不是去弄那个泥的吗？",
+            "ar": "ألن تتعامل مع الطين إذن؟"
+        },
+        {
+            "start": "00:00:33,642",
+            "end": "00:00:36,362",
+            "en": "Once it's big, I'll cut it into the mud without stopping",
+            "zh": "弄大了我就把它切进泥里，不停地",
+            "ar": "متى كبرت، سأقطعها في الطين بدون توقف"
+        },
+        {
+            "start": "00:00:40,226",
+            "end": "00:00:40,826",
+            "en": "you",
+            "zh": "你",
+            "ar": "أنت"
+        },
+        {
+            "start": "00:00:42,242",
+            "end": "00:00:44,162",
+            "en": "Do you want it or not?",
+            "zh": "你要还是不要？",
+            "ar": "هل تريدها أم لا؟"
+        },
+        {
+            "start": "00:00:44,162",
+            "end": "00:00:44,842",
+            "en": "Do you want it or not?",
+            "zh": "要不要的？",
+            "ar": "هل تريدها أم لا؟"
+        },
+        {
+            "start": "00:00:45,002",
+            "end": "00:00:45,602",
+            "en": "I want it",
+            "zh": "要的",
+            "ar": "أريدها"
+        },
+        {
+            "start": "00:00:45,602",
+            "end": "00:00:46,662",
+            "en": "But not this one",
+            "zh": "但这个不要",
+            "ar": "لكن ليس هذا"
+        },
+        {
+            "start": "00:00:47,842",
+            "end": "00:00:48,702",
+            "en": "Do you want me to cut it for you?",
+            "zh": "要不要我给你割？",
+            "ar": "هل تريد مني أن أقطعها لك؟"
+        }
+    ]
+}

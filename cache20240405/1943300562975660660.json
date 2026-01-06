@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:03,746\",\n    \"end\": \"00:02:04,366\",\n    \"lang\": \"en\",\n    \"text\": \"I'll sing it simply,\"\n  },\n  {\n    \"start\": \"00:02:04,366\",\n    \"end\": \"00:02:05,046\",\n    \"lang\": \"en\",\n    \"text\": \"what do you want me to write?\"\n  },\n  {\n    \"start\": \"00:02:05,486\",\n    \"end\": \"00:02:07,566\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:07,566\",\n    \"end\": \"00:02:08,425\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:08,425\",\n    \"end\": \"00:02:11,486\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:11,486\",\n    \"end\": \"00:02:14,346\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:14,346\",\n    \"end\": \"00:02:15,086\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:15,086\",\n    \"end\": \"00:02:18,746\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:24,966\",\n    \"end\": \"00:02:25,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:25,686\",\n    \"end\": \"00:02:27,146\",\n    \"lang\": \"en\",\n    \"text\": \"play some chords\"\n  },\n  {\n    \"start\": \"00:02:27,146\",\n    \"end\": \"00:02:29,826\",\n    \"lang\": \"en\",\n    \"text\": \"Don't write me back so much,\"\n  },\n  {\n    \"start\": \"00:02:29,826\",\n    \"end\": \"00:02:29,826\",\n    \"lang\": \"en\",\n    \"text\": \"don't\"\n  },\n  {\n    \"start\": \"00:02:29,826\",\n    \"end\": \"00:02:32,066\",\n    \"lang\": \"en\",\n    \"text\": \"Don't see much of my love at all\"\n  },\n  {\n    \"start\": \"00:02:32,994\",\n    \"end\": \"00:02:35,634\",\n    \"lang\": \"ja\",\n    \"text\": \"バリナスティー10マウンス\"\n  },\n  {\n    \"start\": \"00:02:36,418\",\n    \"end\": \"00:02:40,298\",\n    \"lang\": \"en\",\n    \"text\": \"I mainly focus on playing the chords.\"\n  },\n  {\n    \"start\": \"00:02:41,418\",\n    \"end\": \"00:02:42,138\",\n    \"lang\": \"en\",\n    \"text\": \"Hèxiǎn.\"\n  },\n  {\n    \"start\": \"00:02:43,874\",\n    \"end\": \"00:02:45,054\",\n    \"lang\": \"zh\",\n    \"text\": \"好想要试裤子\"\n  },\n  {\n    \"start\": \"00:02:46,093\",\n    \"end\": \"00:02:47,594\",\n    \"lang\": \"zh\",\n    \"text\": \"好想用英语怎么说\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:03,746",
+            "end": "00:02:04,366",
+            "es": "Lo cantaré simplemente,",
+            "fr": "Je vais le chanter simplement,",
+            "uk": "Я співатиму просто,"
+        },
+        {
+            "start": "00:02:04,366",
+            "end": "00:02:05,046",
+            "es": "¿qué quieres que escriba?",
+            "fr": "que veux-tu que j'écrive ?",
+            "uk": "що ти хочеш, щоб я написав?"
+        },
+        {
+            "start": "00:02:05,486",
+            "end": "00:02:07,566",
+            "es": "No me respondas tanto,",
+            "fr": "Ne me réponds pas tant,",
+            "uk": "Не відповідай мені так багато,"
+        },
+        {
+            "start": "00:02:07,566",
+            "end": "00:02:08,425",
+            "es": "no",
+            "fr": "ne pas",
+            "uk": "не"
+        },
+        {
+            "start": "00:02:08,425",
+            "end": "00:02:11,486",
+            "es": "No veas mucho de mi amor en absoluto",
+            "fr": "Ne vois pas beaucoup de mon amour du tout",
+            "uk": "Не бач багато моєї любові взагалі"
+        },
+        {
+            "start": "00:02:11,486",
+            "end": "00:02:14,346",
+            "es": "No me respondas tanto,",
+            "fr": "Ne me réponds pas tant,",
+            "uk": "Не відповідай мені так багато,"
+        },
+        {
+            "start": "00:02:14,346",
+            "end": "00:02:15,086",
+            "es": "no",
+            "fr": "ne pas",
+            "uk": "не"
+        },
+        {
+            "start": "00:02:15,086",
+            "end": "00:02:18,746",
+            "es": "No veas mucho de mi amor en absoluto",
+            "fr": "Ne vois pas beaucoup de mon amour du tout",
+            "uk": "Не бач багато моєї любові взагалі"
+        },
+        {
+            "start": "00:02:24,966",
+            "end": "00:02:25,686",
+            "es": "Ok,",
+            "fr": "Ok,",
+            "uk": "Ок,"
+        },
+        {
+            "start": "00:02:25,686",
+            "end": "00:02:27,146",
+            "es": "toca algunos acordes",
+            "fr": "joue quelques accords",
+            "uk": "зіграй кілька акордів"
+        },
+        {
+            "start": "00:02:27,146",
+            "end": "00:02:29,826",
+            "es": "No me respondas tanto,",
+            "fr": "Ne me réponds pas tant,",
+            "uk": "Не відповідай мені так багато,"
+        },
+        {
+            "start": "00:02:29,826",
+            "end": "00:02:29,826",
+            "es": "no",
+            "fr": "ne pas",
+            "uk": "не"
+        },
+        {
+            "start": "00:02:29,826",
+            "end": "00:02:32,066",
+            "es": "No veas mucho de mi amor en absoluto",
+            "fr": "Ne vois pas beaucoup de mon amour du tout",
+            "uk": "Не бач багато моєї любові взагалі"
+        },
+        {
+            "start": "00:02:32,994",
+            "end": "00:02:35,634",
+            "es": "Valentía 10 montañas",
+            "fr": "Courage 10 montagnes",
+            "uk": "Відвага 10 гір"
+        },
+        {
+            "start": "00:02:36,418",
+            "end": "00:02:40,298",
+            "es": "Me enfoco principalmente en tocar los acordes.",
+            "fr": "Je me concentre principalement sur le jeu des accords.",
+            "uk": "Я головним чином зосереджуюся на грі акордів."
+        },
+        {
+            "start": "00:02:41,418",
+            "end": "00:02:42,138",
+            "es": "Cuerda.",
+            "fr": "Corde.",
+            "uk": "Струна."
+        },
+        {
+            "start": "00:02:43,874",
+            "end": "00:02:45,054",
+            "es": "Realmente quiero probarme pantalones",
+            "fr": "Je veux vraiment essayer des pantalons",
+            "uk": "Дуже хочу приміряти штани"
+        },
+        {
+            "start": "00:02:46,093",
+            "end": "00:02:47,594",
+            "es": "¿Cómo se dice \"quiero usar \" en inglés?",
+            "fr": "Comment dit-on \"Je veux utiliser\" en anglais ?",
+            "uk": "Як сказати \"я хочу використати\" англійською?"
+        }
+    ]
+}

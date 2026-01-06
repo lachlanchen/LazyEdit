@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:41,634\",\n    \"end\": \"00:02:42,674\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness,\"\n  },\n  {\n    \"start\": \"00:02:42,674\",\n    \"end\": \"00:02:43,134\",\n    \"lang\": \"en\",\n    \"text\": \"sorry.\"\n  },\n  {\n    \"start\": \"00:02:47,214\",\n    \"end\": \"00:02:47,894\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:47,894\",\n    \"end\": \"00:02:50,514\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  },\n  {\n    \"start\": \"00:02:54,294\",\n    \"end\": \"00:02:56,114\",\n    \"lang\": \"en\",\n    \"text\": \"Let me record another video.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:41,634",
+            "end": "00:02:42,674",
+            "es": "Ay, Dios mío,",
+            "fr": "Oh mon Dieu,",
+            "uk": "О, Боже мій,"
+        },
+        {
+            "start": "00:02:42,674",
+            "end": "00:02:43,134",
+            "es": "lo siento.",
+            "fr": "désolé.",
+            "uk": "вибачте."
+        },
+        {
+            "start": "00:02:47,214",
+            "end": "00:02:47,894",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:02:47,894",
+            "end": "00:02:50,514",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "uk": "побачимось."
+        },
+        {
+            "start": "00:02:54,294",
+            "end": "00:02:56,114",
+            "es": "Déjame grabar otro vídeo.",
+            "fr": "Laissez-moi enregistrer une autre vidéo.",
+            "uk": "Дозвольте мені записати ще одне відео."
+        }
+    ]
+}

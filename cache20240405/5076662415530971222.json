@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,540\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"zh\",\n    \"text\": \"恭喜您完全成功\"\n  },\n  {\n    \"start\": \"00:00:01,980\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"zh\",\n    \"text\": \"这一单楼是最难的一单楼\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:05,460\",\n    \"lang\": \"zh\",\n    \"text\": \"看到没有\"\n  },\n  {\n    \"start\": \"00:00:06,050\",\n    \"end\": \"00:00:06,890\",\n    \"lang\": \"en\",\n    \"text\": \"You zip\"\n  },\n  {\n    \"start\": \"00:00:07,682\",\n    \"end\": \"00:00:08,762\",\n    \"lang\": \"zh\",\n    \"text\": \"有时候嚼啪的\"\n  },\n  {\n    \"start\": \"00:00:10,121\",\n    \"end\": \"00:00:12,142\",\n    \"lang\": \"zh\",\n    \"text\": \"嚼啪的软就是那个蛋豆\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,540",
+            "end": "00:00:01,980",
+            "es": "Felicidades por su éxito completo",
+            "fr": "Félicitations pour votre succès total",
+            "uk": "Вітаємо з повним успіхом"
+        },
+        {
+            "start": "00:00:01,980",
+            "end": "00:00:04,540",
+            "es": "Este es el piso más difícil de todos",
+            "fr": "Cet étage est le plus difficile de tous",
+            "uk": "Цей поверх є найскладнішим з усіх"
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:05,460",
+            "es": "¿Ves?",
+            "fr": "Tu vois ?",
+            "uk": "Ти бачиш?"
+        },
+        {
+            "start": "00:00:06,050",
+            "end": "00:00:06,890",
+            "es": "Te mueves rápidamente",
+            "fr": "Tu te déplaces rapidement",
+            "uk": "Ти швидко рухаєшся"
+        },
+        {
+            "start": "00:00:07,682",
+            "end": "00:00:08,762",
+            "es": "A veces hace crujir",
+            "fr": "Parfois ça craque",
+            "uk": "Іноді хрумтить"
+        },
+        {
+            "start": "00:00:10,121",
+            "end": "00:00:12,142",
+            "es": "El crujido suave es ese frijol de huevo",
+            "fr": "Le craquement doux, c'est ce haricot d'œuf",
+            "uk": "Легкий хрускіт - це той яєчний біб"
+        }
+    ]
+}

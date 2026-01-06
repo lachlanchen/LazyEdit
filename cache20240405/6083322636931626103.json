@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:05,154\",\n    \"end\": \"00:02:05,454\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  },\n  {\n    \"start\": \"00:02:06,234\",\n    \"end\": \"00:02:06,854\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:02:11,574\",\n    \"end\": \"00:02:13,214\",\n    \"lang\": \"en\",\n    \"text\": \"freedom is a great thing\"\n  },\n  {\n    \"start\": \"00:02:18,673\",\n    \"end\": \"00:02:19,193\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:02:19,193\",\n    \"end\": \"00:02:19,674\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:02:20,993\",\n    \"end\": \"00:02:22,234\",\n    \"lang\": \"en\",\n    \"text\": \"so this is a poem\"\n  },\n  {\n    \"start\": \"00:02:23,593\",\n    \"end\": \"00:02:24,734\",\n    \"lang\": \"en\",\n    \"text\": \"this is a poem\"\n  },\n  {\n    \"start\": \"00:02:25,254\",\n    \"end\": \"00:02:26,414\",\n    \"lang\": \"en\",\n    \"text\": \"where is the poem?\"\n  },\n  {\n    \"start\": \"00:02:28,334\",\n    \"end\": \"00:02:28,874\",\n    \"lang\": \"en\",\n    \"text\": \"what is the poem?\"\n  },\n  {\n    \"start\": \"00:02:30,306\",\n    \"end\": \"00:02:38,026\",\n    \"lang\": \"ja\",\n    \"text\": \"助かる私はあなたと共に高く飛びたい この青波の上でこの青い空の下で\"\n  },\n  {\n    \"start\": \"00:02:55,506\",\n    \"end\": \"00:02:56,426\",\n    \"lang\": \"ja\",\n    \"text\": \"ok さあ行こう\"\n  },\n  {\n    \"start\": \"00:02:56,450\",\n    \"end\": \"00:02:56,630\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:05,154",
+            "end": "00:02:05,454",
+            "es": "vale",
+            "fr": "d'accord",
+            "uk": "добре"
+        },
+        {
+            "start": "00:02:06,234",
+            "end": "00:02:06,854",
+            "es": "entonces",
+            "fr": "alors",
+            "uk": "отже"
+        },
+        {
+            "start": "00:02:11,574",
+            "end": "00:02:13,214",
+            "es": "la libertad es algo maravilloso",
+            "fr": "la liberté est une chose magnifique",
+            "uk": "свобода - це чудова річ"
+        },
+        {
+            "start": "00:02:18,673",
+            "end": "00:02:19,193",
+            "es": "entonces",
+            "fr": "alors",
+            "uk": "отже"
+        },
+        {
+            "start": "00:02:19,193",
+            "end": "00:02:19,674",
+            "es": "entonces",
+            "fr": "alors",
+            "uk": "отже"
+        },
+        {
+            "start": "00:02:20,993",
+            "end": "00:02:22,234",
+            "es": "entonces esto es un poema",
+            "fr": "alors ceci est un poème",
+            "uk": "отже це вірш"
+        },
+        {
+            "start": "00:02:23,593",
+            "end": "00:02:24,734",
+            "es": "esto es un poema",
+            "fr": "ceci est un poème",
+            "uk": "це вірш"
+        },
+        {
+            "start": "00:02:25,254",
+            "end": "00:02:26,414",
+            "es": "¿dónde está el poema?",
+            "fr": "où est le poème?",
+            "uk": "де вірш?"
+        },
+        {
+            "start": "00:02:28,334",
+            "end": "00:02:28,874",
+            "es": "¿qué es el poema?",
+            "fr": "qu'est-ce que le poème?",
+            "uk": "що таке вірш?"
+        },
+        {
+            "start": "00:02:30,306",
+            "end": "00:02:38,026",
+            "es": "Quisiera volar alto contigo, sobre estas olas azules, bajo este cielo azul",
+            "fr": "Je souhaite voler haut avec toi, sur ces vagues bleues, sous ce ciel bleu",
+            "uk": "Я хочу летіти високо з тобою, над цими блакитними хвилями, під цим блакитним небом"
+        },
+        {
+            "start": "00:02:55,506",
+            "end": "00:02:56,426",
+            "es": "vale, vamos",
+            "fr": "d'accord, allons-y",
+            "uk": "добре, поїхали"
+        },
+        {
+            "start": "00:02:56,450",
+            "end": "00:02:56,630",
+            "es": "Nos vemos.",
+            "fr": "À bientôt.",
+            "uk": "До зустрічі."
+        }
+    ]
+}

@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,880\",\n    \"end\": \"00:00:02,460\",\n    \"lang\": \"en\",\n    \"text\": \"It's time for the sock shoot.\"\n  },\n  {\n    \"start\": \"00:00:03,440\",\n    \"end\": \"00:00:04,360\",\n    \"lang\": \"en\",\n    \"text\": \"I'm so lazy.\"\n  },\n  {\n    \"start\": \"00:00:04,360\",\n    \"end\": \"00:00:05,560\",\n    \"lang\": \"en\",\n    \"text\": \"Lazy boy.\"\n  },\n  {\n    \"start\": \"00:00:06,900\",\n    \"end\": \"00:00:08,440\",\n    \"lang\": \"en\",\n    \"text\": \"It's time for the sock shoot.\"\n  },\n  {\n    \"start\": \"00:00:09,440\",\n    \"end\": \"00:00:10,380\",\n    \"lang\": \"en\",\n    \"text\": \"I'm so lazy.\"\n  },\n  {\n    \"start\": \"00:00:10,380\",\n    \"end\": \"00:00:11,540\",\n    \"lang\": \"en\",\n    \"text\": \"Lazy boy.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                \"vi\": \"Vietnamese text\"  // Vietnamese translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,880",
+            "end": "00:00:02,460",
+            "es": "Es hora de la sesión de fotos con calcetines.",
+            "fr": "C'est l'heure de la séance photo avec des chaussettes.",
+            "vi": "Đã đến lúc cho buổi chụp hình với tất."
+        },
+        {
+            "start": "00:00:03,440",
+            "end": "00:00:04,360",
+            "es": "Estoy tan perezoso.",
+            "fr": "Je suis tellement paresseux.",
+            "vi": "Tôi rất lười biếng."
+        },
+        {
+            "start": "00:00:04,360",
+            "end": "00:00:05,560",
+            "es": "Chico perezoso.",
+            "fr": "Garçon paresseux.",
+            "vi": "Chàng trai lười biếng."
+        },
+        {
+            "start": "00:00:06,900",
+            "end": "00:00:08,440",
+            "es": "Es hora de la sesión de fotos con calcetines.",
+            "fr": "C'est l'heure de la séance photo avec des chaussettes.",
+            "vi": "Đã đến lúc cho buổi chụp hình với tất."
+        },
+        {
+            "start": "00:00:09,440",
+            "end": "00:00:10,380",
+            "es": "Estoy tan perezoso.",
+            "fr": "Je suis tellement paresseux.",
+            "vi": "Tôi rất lười biếng."
+        },
+        {
+            "start": "00:00:10,380",
+            "end": "00:00:11,540",
+            "es": "Chico perezoso.",
+            "fr": "Garçon paresseux.",
+            "vi": "Chàng trai lười biếng."
+        }
+    ]
+}

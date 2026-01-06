@@ -1,0 +1,118 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:05,480\",\n    \"lang\": \"en\",\n    \"text\": \"I have two little sisters and I believe they...\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:06,294\",\n    \"lang\": \"zh\",\n    \"text\": \"不死人\"\n  },\n  {\n    \"start\": \"00:00:06,850\",\n    \"end\": \"00:00:07,310\",\n    \"lang\": \"en\",\n    \"text\": \"genius.\"\n  },\n  {\n    \"start\": \"00:00:07,310\",\n    \"end\": \"00:00:11,270\",\n    \"lang\": \"en\",\n    \"text\": \"So one made this great cake,\"\n  },\n  {\n    \"start\": \"00:00:11,270\",\n    \"end\": \"00:00:17,170\",\n    \"lang\": \"en\",\n    \"text\": \"and another made this great handcraft.\"\n  },\n  {\n    \"start\": \"00:00:17,170\",\n    \"end\": \"00:00:19,010\",\n    \"lang\": \"en\",\n    \"text\": \"This cake,\"\n  },\n  {\n    \"start\": \"00:00:19,010\",\n    \"end\": \"00:00:19,350\",\n    \"lang\": \"en\",\n    \"text\": \"this\"\n  },\n  {\n    \"start\": \"00:00:19,350\",\n    \"end\": \"00:00:21,330\",\n    \"lang\": \"en\",\n    \"text\": \"is white strawberry.\"\n  },\n  {\n    \"start\": \"00:00:21,330\",\n    \"end\": \"00:00:24,170\",\n    \"lang\": \"en\",\n    \"text\": \"This is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:24,170\",\n    \"end\": \"00:00:28,130\",\n    \"lang\": \"en\",\n    \"text\": \"This is the best cake I've ever seen.\"\n  },\n  {\n    \"start\": \"00:00:28,130\",\n    \"end\": \"00:00:29,750\",\n    \"lang\": \"en\",\n    \"text\": \"And I know\"\n  },\n  {\n    \"start\": \"00:00:29,750\",\n    \"end\": \"00:00:32,130\",\n    \"lang\": \"en\",\n    \"text\": \"it must taste the best.\"\n  },\n  {\n    \"start\": \"00:00:32,130\",\n    \"end\": \"00:00:39,350\",\n    \"lang\": \"en\",\n    \"text\": \"Because I had tasted the cooking of my little sister.\"\n  },\n  {\n    \"start\": \"00:00:41,730\",\n    \"end\": \"00:00:42,570\",\n    \"lang\": \"ja\",\n    \"text\": \"美しい\"\n  },\n  {\n    \"start\": \"00:00:44,098\",\n    \"end\": \"00:00:48,918\",\n    \"lang\": \"en\",\n    \"text\": \"It's a pastry dessert and a bakery.\"\n  },\n  {\n    \"start\": \"00:00:50,938\",\n    \"end\": \"00:00:51,618\",\n    \"lang\": \"en\",\n    \"text\": \"OK.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:05,480",
+            "en": "I have two little sisters and I believe they...",
+            "zh": "我有两个妹妹，我相信他们...",
+            "ar": "لدي أختان صغيرتان وأعتقد أنهما..."
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:06,294",
+            "en": "are geniuses.",
+            "zh": "是天才。",
+            "ar": "هم عباقرة."
+        },
+        {
+            "start": "00:00:06,850",
+            "end": "00:00:07,310",
+            "en": "Genius.",
+            "zh": "天才。",
+            "ar": "عبقري."
+        },
+        {
+            "start": "00:00:07,310",
+            "end": "00:00:11,270",
+            "en": "So one made this great cake,",
+            "zh": "所以一个人做了这个很棒的蛋糕，",
+            "ar": "لذا قامت واحدة بصنع هذه الكعكة الرائعة،"
+        },
+        {
+            "start": "00:00:11,270",
+            "end": "00:00:17,170",
+            "en": "and another made this great handcraft.",
+            "zh": "另一个人做了这个很棒的手工。",
+            "ar": "وقامت الأخرى بصنع هذه الحرفة اليدوية الرائعة."
+        },
+        {
+            "start": "00:00:17,170",
+            "end": "00:00:19,010",
+            "en": "This cake,",
+            "zh": "这个蛋糕，",
+            "ar": "هذه الكعكة،"
+        },
+        {
+            "start": "00:00:19,010",
+            "end": "00:00:19,350",
+            "en": "this",
+            "zh": "这个",
+            "ar": "هذا"
+        },
+        {
+            "start": "00:00:19,350",
+            "end": "00:00:21,330",
+            "en": "is white strawberry.",
+            "zh": "是白草莓的。",
+            "ar": "هو فراولة بيضاء."
+        },
+        {
+            "start": "00:00:21,330",
+            "end": "00:00:24,170",
+            "en": "This is gorgeous.",
+            "zh": "这太美了。",
+            "ar": "هذا رائع."
+        },
+        {
+            "start": "00:00:24,170",
+            "end": "00:00:28,130",
+            "en": "This is the best cake I've ever seen.",
+            "zh": "这是我见过的最好的蛋糕。",
+            "ar": "هذه أفضل كعكة رأيتها في حياتي."
+        },
+        {
+            "start": "00:00:28,130",
+            "end": "00:00:29,750",
+            "en": "And I know",
+            "zh": "而且我知道",
+            "ar": "وأنا أعلم"
+        },
+        {
+            "start": "00:00:29,750",
+            "end": "00:00:32,130",
+            "en": "it must taste the best.",
+            "zh": "它一定是味道最好的。",
+            "ar": "يجب أن يكون طعمها الأفضل."
+        },
+        {
+            "start": "00:00:32,130",
+            "end": "00:00:39,350",
+            "en": "Because I had tasted the cooking of my little sister.",
+            "zh": "因为我尝过我妹妹的烹饪。",
+            "ar": "لأنني تذوقت طبخ أختي الصغرى."
+        },
+        {
+            "start": "00:00:41,730",
+            "end": "00:00:42,570",
+            "en": "Beautiful.",
+            "zh": "美丽的。",
+            "ar": "جميلة.",
+            "ja": "美しい"
+        },
+        {
+            "start": "00:00:44,098",
+            "end": "00:00:48,918",
+            "en": "It's a pastry dessert and a bakery.",
+            "zh": "这是一种糕点甜品和面包店。",
+            "ar": "إنه حلوى معجنات ومخبز."
+        },
+        {
+            "start": "00:00:50,938",
+            "end": "00:00:51,618",
+            "en": "OK.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

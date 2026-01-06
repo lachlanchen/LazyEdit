@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"So I share a trick to remember this Arabic letter.\"\n  },\n  {\n    \"start\": \"00:00:04,740\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"Four.\"\n  },\n  {\n    \"start\": \"00:00:05,620\",\n    \"end\": \"00:00:08,740\",\n    \"lang\": \"en\",\n    \"text\": \"So this looks quite like a people that fell down.\"\n  },\n  {\n    \"start\": \"00:00:09,780\",\n    \"end\": \"00:00:13,560\",\n    \"lang\": \"en\",\n    \"text\": \"So it's a four,\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:14,300\",\n    \"lang\": \"en\",\n    \"text\": \"fall down.\"\n  },\n  {\n    \"start\": \"00:00:16,059\",\n    \"end\": \"00:00:16,700\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:00:18,020\",\n    \"end\": \"00:00:18,660\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "vi": "Vì vậy, tôi chia sẻ một mẹo nhớ chữ cái tiếng Ả Rập này."
+        },
+        {
+            "start": "00:00:04,740",
+            "end": "00:00:05,000",
+            "vi": "Bốn."
+        },
+        {
+            "start": "00:00:05,620",
+            "end": "00:00:08,740",
+            "vi": "Nên cái này trông khá giống một người đã ngã xuống."
+        },
+        {
+            "start": "00:00:09,780",
+            "end": "00:00:13,560",
+            "vi": "Vì vậy, đó là một cái bốn,"
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:14,300",
+            "vi": "ngã xuống."
+        },
+        {
+            "start": "00:00:16,059",
+            "end": "00:00:16,700",
+            "vi": "Phải không?"
+        },
+        {
+            "start": "00:00:18,020",
+            "end": "00:00:18,660",
+            "vi": "Được."
+        }
+    ]
+}

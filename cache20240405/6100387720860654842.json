@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,320\",\n    \"lang\": \"zh\",\n    \"text\": \"一副Normal Music太难听\"\n  },\n  {\n    \"start\": \"00:00:03,458\",\n    \"end\": \"00:00:06,458\",\n    \"lang\": \"en\",\n    \"text\": \"at 1 to 100 scale.\"\n  },\n  {\n    \"start\": \"00:00:06,458\",\n    \"end\": \"00:00:10,378\",\n    \"lang\": \"en\",\n    \"text\": \"I must be negative 100.\"\n  },\n  {\n    \"start\": \"00:00:10,378\",\n    \"end\": \"00:00:13,878\",\n    \"lang\": \"en\",\n    \"text\": \"So I cannot sing,\"\n  },\n  {\n    \"start\": \"00:00:13,878\",\n    \"end\": \"00:00:15,358\",\n    \"lang\": \"en\",\n    \"text\": \"cannot catch the tone,\"\n  },\n  {\n    \"start\": \"00:00:15,358\",\n    \"end\": \"00:00:18,498\",\n    \"lang\": \"en\",\n    \"text\": \"cannot\"\n  },\n  {\n    \"start\": \"00:00:48,498\",\n    \"end\": \"00:00:49,178\",\n    \"lang\": \"en\",\n    \"text\": \"sing.\"\n  },\n  {\n    \"start\": \"00:00:49,178\",\n    \"end\": \"00:00:50,778\",\n    \"lang\": \"en\",\n    \"text\": \"Not perfectly 100,\"\n  },\n  {\n    \"start\": \"00:00:50,778\",\n    \"end\": \"00:00:57,358\",\n    \"lang\": \"en\",\n    \"text\": \"but just I will sing 100.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,320",
+            "ko": "일반 음악은 너무 듣기 힘들어"
+        },
+        {
+            "start": "00:00:03,458",
+            "end": "00:00:06,458",
+            "ko": "1에서 100까지의 척도로."
+        },
+        {
+            "start": "00:00:06,458",
+            "end": "00:00:10,378",
+            "ko": "나는 마이너스 100이어야 해."
+        },
+        {
+            "start": "00:00:10,378",
+            "end": "00:00:13,878",
+            "ko": "그래서 난 노래할 수 없어,"
+        },
+        {
+            "start": "00:00:13,878",
+            "end": "00:00:15,358",
+            "ko": "음을 맞출 수 없어,"
+        },
+        {
+            "start": "00:00:15,358",
+            "end": "00:00:18,498",
+            "ko": "할 수 없어"
+        },
+        {
+            "start": "00:00:48,498",
+            "end": "00:00:49,178",
+            "ko": "노래할."
+        },
+        {
+            "start": "00:00:49,178",
+            "end": "00:00:50,778",
+            "ko": "완벽하게 100은 아니지만,"
+        },
+        {
+            "start": "00:00:50,778",
+            "end": "00:00:57,358",
+            "ko": "하지만 나는 100을 노래할 거야."
+        }
+    ]
+}

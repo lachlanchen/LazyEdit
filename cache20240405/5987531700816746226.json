@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:03,340\",\n    \"end\": \"00:01:11,980\",\n    \"lang\": \"en\",\n    \"text\": \"The point is that the American cannot directly sense the meaning from English.\"\n  },\n  {\n    \"start\": \"00:01:12,120\",\n    \"end\": \"00:01:14,740\",\n    \"lang\": \"en\",\n    \"text\": \"But they have to make it frank.\"\n  },\n  {\n    \"start\": \"00:01:21,218\",\n    \"end\": \"00:01:22,698\",\n    \"lang\": \"en\",\n    \"text\": \"Give myself a hug国айangel\"\n  },\n  {\n    \"start\": \"00:01:22,698\",\n    \"end\": \"00:01:22,858\",\n    \"lang\": \"en\",\n    \"text\": \"urgghh\"\n  },\n  {\n    \"start\": \"00:01:22,882\",\n    \"end\": \"00:01:23,062\",\n    \"lang\": \"en\",\n    \"text\": \"Is it me?\"\n  },\n  {\n    \"start\": \"00:01:24,402\",\n    \"end\": \"00:01:25,122\",\n    \"lang\": \"en\",\n    \"text\": \"OK.\"\n  },\n  {\n    \"start\": \"00:01:26,182\",\n    \"end\": \"00:01:26,922\",\n    \"lang\": \"en\",\n    \"text\": \"Trick or treat?\"\n  },\n  {\n    \"start\": \"00:01:26,946\",\n    \"end\": \"00:01:28,066\",\n    \"lang\": \"ja\",\n    \"text\": \"かなり覚えられそう\"\n  },\n  {\n    \"start\": \"00:01:29,442\",\n    \"end\": \"00:01:31,022\",\n    \"lang\": \"en\",\n    \"text\": \"It's a discrimination team.\"\n  },\n  {\n    \"start\": \"00:01:32,610\",\n    \"end\": \"00:01:33,410\",\n    \"lang\": \"zh\",\n    \"text\": \"很迷稳 look nice\"\n  },\n  {\n    \"start\": \"00:01:34,690\",\n    \"end\": \"00:01:42,130\",\n    \"lang\": \"en\",\n    \"text\": \"Even if you want to stop discrimination,\"\n  },\n  {\n    \"start\": \"00:01:42,130\",\n    \"end\": \"00:01:45,830\",\n    \"lang\": \"en\",\n    \"text\": \"you can't avoid discrimination in others'\"\n  },\n  {\n    \"start\": \"00:01:46,010\",\n    \"end\": \"00:01:46,250\",\n    \"lang\": \"en\",\n    \"text\": \"mind.\"\n  },\n  {\n    \"start\": \"00:01:46,510\",\n    \"end\": \"00:01:50,810\",\n    \"lang\": \"en\",\n    \"text\": \"But I think the best part of the US civilization,\"\n  },\n  {\n    \"start\": \"00:01:50,810\",\n    \"end\": \"00:01:52,130\",\n    \"lang\": \"en\",\n    \"text\": \"US culture,\"\n  },\n  {\n    \"start\": \"00:01:52,130\",\n    \"end\": \"00:01:58,750\",\n    \"lang\": \"en\",\n    \"text\": \"US society is that as long as you don't harm my benefit,\"\n  },\n  {\n    \"start\": \"00:01:58,750\",\n    \"end\": \"00:01:59,490\",\n    \"lang\": \"en\",\n    \"text\": \"it's ok.\"\n  },\n  {\n    \"start\": \"00:02:00,530\",\n    \"end\": \"00:02:04,230\",\n    \"lang\": \"en\",\n    \"text\": \"The point is not to stop discrimination in mind,\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:03,340",
+            "end": "00:01:11,980",
+            "es": "El punto es que el estadounidense no puede percibir directamente el significado del inglés.",
+            "fr": "Le point est que l'Américain ne peut pas directement saisir le sens de l'anglais.",
+            "uk": "Суть в тому, що американець не може безпосередньо вловити значення англійської мови."
+        },
+        {
+            "start": "00:01:12,120",
+            "end": "00:01:14,740",
+            "es": "Pero tienen que hacerlo franco.",
+            "fr": "Mais ils doivent le rendre franc.",
+            "uk": "Але вони мають зробити це відкрито."
+        },
+        {
+            "start": "00:01:21,218",
+            "end": "00:01:22,698",
+            "es": "Darme un abrazo a mí mismo.",
+            "fr": "Me donner un câlin.",
+            "uk": "Обійняти самого себе."
+        },
+        {
+            "start": "00:01:22,698",
+            "end": "00:01:22,858",
+            "es": "urgghh",
+            "fr": "urgghh",
+            "uk": "урггх"
+        },
+        {
+            "start": "00:01:22,882",
+            "end": "00:01:23,062",
+            "es": "¿Soy yo?",
+            "fr": "C'est moi ?",
+            "uk": "Це я?"
+        },
+        {
+            "start": "00:01:24,402",
+            "end": "00:01:25,122",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:01:26,182",
+            "end": "00:01:26,922",
+            "es": "¿Truco o trato?",
+            "fr": "Des bonbons ou un sort ?",
+            "uk": "Годівниця чи пустощі?"
+        },
+        {
+            "start": "00:01:26,946",
+            "end": "00:01:28,066",
+            "es": "Parece ser bastante memorizable.",
+            "fr": "Cela semble assez mémorisable.",
+            "uk": "Здається, це досить легко запам'ятати."
+        },
+        {
+            "start": "00:01:29,442",
+            "end": "00:01:31,022",
+            "es": "Es un equipo de discriminación.",
+            "fr": "C'est une équipe de discrimination.",
+            "uk": "Це команда дискримінації."
+        },
+        {
+            "start": "00:01:32,610",
+            "end": "00:01:33,410",
+            "es": "Muy confuso para verse bien",
+            "fr": "Très confus mais joli",
+            "uk": "Дуже заплутаний, але гарний"
+        },
+        {
+            "start": "00:01:34,690",
+            "end": "00:01:42,130",
+            "es": "Incluso si quieres detener la discriminación,",
+            "fr": "Même si vous voulez arrêter la discrimination,",
+            "uk": "Навіть якщо ви хочете зупинити дискримінацію,"
+        },
+        {
+            "start": "00:01:42,130",
+            "end": "00:01:45,830",
+            "es": "no puedes evitar la discriminación en la mente de otros.",
+            "fr": "vous ne pouvez pas éviter la discrimination dans l'esprit des autres.",
+            "uk": "ви не можете уникнути дискримінації в думках інших."
+        },
+        {
+            "start": "00:01:46,010",
+            "end": "00:01:46,250",
+            "es": "mente.",
+            "fr": "esprit.",
+            "uk": "розумі."
+        },
+        {
+            "start": "00:01:46,510",
+            "end": "00:01:50,810",
+            "es": "Pero creo que la mejor parte de la civilización de EE.UU.,",
+            "fr": "Mais je pense que la meilleure partie de la civilisation américaine,",
+            "uk": "Але я думаю, що найкраща частина цивілізації США,"
+        },
+        {
+            "start": "00:01:50,810",
+            "end": "00:01:52,130",
+            "es": "la cultura de EE.UU.,",
+            "fr": "la culture américaine,",
+            "uk": "культура США,"
+        },
+        {
+            "start": "00:01:52,130",
+            "end": "00:01:58,750",
+            "es": "la sociedad de EE.UU. es que mientras no dañes mi beneficio,",
+            "fr": "la société américaine, c'est que tant que vous ne nuites pas à mon intérêt,",
+            "uk": "суспільство США полягає в тому, що доки ви не зашкодите моїй вигоді,"
+        },
+        {
+            "start": "00:01:58,750",
+            "end": "00:01:59,490",
+            "es": "está bien.",
+            "fr": "c'est bon.",
+            "uk": "все добре."
+        },
+        {
+            "start": "00:02:00,530",
+            "end": "00:02:04,230",
+            "es": "El punto no es detener la discriminación en mente,",
+            "fr": "Le point n'est pas d'arrêter la discrimination dans l'esprit,",
+            "uk": "Суть не в тому, щоб зупинити дискримінацію в думках,"
+        }
+    ]
+}

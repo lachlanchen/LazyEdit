@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,839\",\n    \"end\": \"00:00:03,460\",\n    \"lang\": \"en\",\n    \"text\": \"Our society has too many restrictions,\"\n  },\n  {\n    \"start\": \"00:00:03,460\",\n    \"end\": \"00:00:09,240\",\n    \"lang\": \"en\",\n    \"text\": \"so if you cannot really have some breakthrough creation,\"\n  },\n  {\n    \"start\": \"00:00:10,839\",\n    \"end\": \"00:00:15,060\",\n    \"lang\": \"en\",\n    \"text\": \"I suggest that just set some basic guidelines,\"\n  },\n  {\n    \"start\": \"00:00:15,060\",\n    \"end\": \"00:00:16,079\",\n    \"lang\": \"en\",\n    \"text\": \"basic principles,\"\n  },\n  {\n    \"start\": \"00:00:16,079\",\n    \"end\": \"00:00:19,280\",\n    \"lang\": \"en\",\n    \"text\": \"such as that you don't hurt other people,\"\n  },\n  {\n    \"start\": \"00:00:19,280\",\n    \"end\": \"00:00:20,800\",\n    \"lang\": \"en\",\n    \"text\": \"and then it's okay,\"\n  },\n  {\n    \"start\": \"00:00:20,800\",\n    \"end\": \"00:00:21,820\",\n    \"lang\": \"en\",\n    \"text\": \"do anything you want.\"\n  },\n  {\n    \"start\": \"00:00:21,820\",\n    \"end\": \"00:00:24,120\",\n    \"lang\": \"en\",\n    \"text\": \"Remove these taboos,\"\n  },\n  {\n    \"start\": \"00:00:24,120\",\n    \"end\": \"00:00:26,520\",\n    \"lang\": \"en\",\n    \"text\": \"remove these moral violence.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,839",
+            "end": "00:00:03,460",
+            "en": "Our society has too many restrictions,",
+            "zh": "我们的社会有太多的限制，",
+            "ar": "مجتمعنا لديه الكثير من القيود،"
+        },
+        {
+            "start": "00:00:03,460",
+            "end": "00:00:09,240",
+            "en": "so if you cannot really have some breakthrough creation,",
+            "zh": "所以，如果你真的不能有一些突破性的创造，",
+            "ar": "لذا، إذا كنت لا تستطيع حقًا أن تكون لديك بعض الإبداعات الرائدة،"
+        },
+        {
+            "start": "00:00:10,839",
+            "end": "00:00:15,060",
+            "en": "I suggest that just set some basic guidelines,",
+            "zh": "我建议只设定一些基本指导方针，",
+            "ar": "أقترح أن نضع مجموعة من الإرشادات الأساسية،"
+        },
+        {
+            "start": "00:00:15,060",
+            "end": "00:00:16,079",
+            "en": "basic principles,",
+            "zh": "基本原则，",
+            "ar": "مبادئ أساسية،"
+        },
+        {
+            "start": "00:00:16,079",
+            "end": "00:00:19,280",
+            "en": "such as that you don't hurt other people,",
+            "zh": "比如你不伤害其他人，",
+            "ar": "مثل أنك لا تؤذي الآخرين،"
+        },
+        {
+            "start": "00:00:19,280",
+            "end": "00:00:20,800",
+            "en": "and then it's okay,",
+            "zh": "然后这样就可以了，",
+            "ar": "وبعد ذلك، كل شيء على ما يرام،"
+        },
+        {
+            "start": "00:00:20,800",
+            "end": "00:00:21,820",
+            "en": "do anything you want.",
+            "zh": "做任何你想做的事。",
+            "ar": "افعل ما تريد."
+        },
+        {
+            "start": "00:00:21,820",
+            "end": "00:00:24,120",
+            "en": "Remove these taboos,",
+            "zh": "去除这些禁忌，",
+            "ar": "إزالة هذه المحرمات،"
+        },
+        {
+            "start": "00:00:24,120",
+            "end": "00:00:26,520",
+            "en": "remove these moral violence.",
+            "zh": "去除这些道德暴力。",
+            "ar": "إزالة هذه العنف الأخلاقي."
+        }
+    ]
+}

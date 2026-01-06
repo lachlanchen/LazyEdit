@@ -1,0 +1,173 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,480\",\n    \"lang\": \"zh\",\n    \"text\": \"今天學兩個單詞\"\n  },\n  {\n    \"start\": \"00:00:02,460\",\n    \"end\": \"00:00:03,440\",\n    \"lang\": \"zh\",\n    \"text\": \"這個豆芽\"\n  },\n  {\n    \"start\": \"00:00:03,440\",\n    \"end\": \"00:00:04,800\",\n    \"lang\": \"zh\",\n    \"text\": \"用英語怎麼說\"\n  },\n  {\n    \"start\": \"00:00:06,779\",\n    \"end\": \"00:00:07,420\",\n    \"lang\": \"zh\",\n    \"text\": \"豆芽\"\n  },\n  {\n    \"start\": \"00:00:07,420\",\n    \"end\": \"00:00:08,160\",\n    \"lang\": \"zh\",\n    \"text\": \"牙齒在什麼\"\n  },\n  {\n    \"start\": \"00:00:08,160\",\n    \"end\": \"00:00:08,840\",\n    \"lang\": \"zh\",\n    \"text\": \"牙齒\"\n  },\n  {\n    \"start\": \"00:00:10,860\",\n    \"end\": \"00:00:12,200\",\n    \"lang\": \"zh\",\n    \"text\": \"怎麼突然想不起來\"\n  },\n  {\n    \"start\": \"00:00:14,220\",\n    \"end\": \"00:00:15,280\",\n    \"lang\": \"zh\",\n    \"text\": \"後面兩個\"\n  },\n  {\n    \"start\": \"00:00:15,280\",\n    \"end\": \"00:00:17,100\",\n    \"lang\": \"zh\",\n    \"text\": \"肯定是u和d結尾的\"\n  },\n  {\n    \"start\": \"00:00:17,826\",\n    \"end\": \"00:00:19,486\",\n    \"lang\": \"ar\",\n    \"text\": \"ماذا؟ ماذا سنلنى؟\"\n  },\n  {\n    \"start\": \"00:00:20,258\",\n    \"end\": \"00:00:20,598\",\n    \"lang\": \"en\",\n    \"text\": \"BAM!\"\n  },\n  {\n    \"start\": \"00:00:20,598\",\n    \"end\": \"00:00:21,578\",\n    \"lang\": \"en\",\n    \"text\": \"BAM!\"\n  },\n  {\n    \"start\": \"00:00:23,298\",\n    \"end\": \"00:00:24,818\",\n    \"lang\": \"en\",\n    \"text\": \"And then...\"\n  },\n  {\n    \"start\": \"00:00:24,818\",\n    \"end\": \"00:00:25,978\",\n    \"lang\": \"en\",\n    \"text\": \"Another word is...\"\n  },\n  {\n    \"start\": \"00:00:26,434\",\n    \"end\": \"00:00:27,214\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜\"\n  },\n  {\n    \"start\": \"00:00:27,693\",\n    \"end\": \"00:00:28,934\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜用英语咋说\"\n  },\n  {\n    \"start\": \"00:00:29,453\",\n    \"end\": \"00:00:32,113\",\n    \"lang\": \"zh\",\n    \"text\": \"我觉得菠菜里面它是含铁比较高\"\n  },\n  {\n    \"start\": \"00:00:32,113\",\n    \"end\": \"00:00:34,454\",\n    \"lang\": \"zh\",\n    \"text\": \"所以它好像它里面的雌根是不是有一个铁\"\n  },\n  {\n    \"start\": \"00:00:35,170\",\n    \"end\": \"00:00:36,110\",\n    \"lang\": \"en\",\n    \"text\": \"Your F.E.R.\"\n  },\n  {\n    \"start\": \"00:00:43,906\",\n    \"end\": \"00:00:44,226\",\n    \"lang\": \"zh\",\n    \"text\": \"是吗\"\n  },\n  {\n    \"start\": \"00:00:50,434\",\n    \"end\": \"00:00:51,434\",\n    \"lang\": \"zh\",\n    \"text\": \"哇真的太好吃了\"\n  },\n  {\n    \"start\": \"00:00:52,494\",\n    \"end\": \"00:00:52,994\",\n    \"lang\": \"zh\",\n    \"text\": \"多汁\"\n  },\n  {\n    \"start\": \"00:00:53,874\",\n    \"end\": \"00:00:54,574\",\n    \"lang\": \"zh\",\n    \"text\": \"够味\"\n  },\n  {\n    \"start\": \"00:00:55,114\",\n    \"end\": \"00:00:56,034\",\n    \"lang\": \"zh\",\n    \"text\": \"麻辣\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,480",
+            "es": "Hoy aprendemos dos palabras",
+            "fr": "Aujourd'hui, nous apprenons deux mots",
+            "uk": "Сьогодні вчимо два слова"
+        },
+        {
+            "start": "00:00:02,460",
+            "end": "00:00:03,440",
+            "es": "Este brote de soja",
+            "fr": "Cette pousse de soja",
+            "uk": "Цей соєвий паросток"
+        },
+        {
+            "start": "00:00:03,440",
+            "end": "00:00:04,800",
+            "es": "¿Cómo se dice en inglés?",
+            "fr": "Comment dit-on en anglais ?",
+            "uk": "Як це сказати англійською?"
+        },
+        {
+            "start": "00:00:06,779",
+            "end": "00:00:07,420",
+            "es": "Brote de soja",
+            "fr": "Pousse de soja",
+            "uk": "Соя паросток"
+        },
+        {
+            "start": "00:00:07,420",
+            "end": "00:00:08,160",
+            "es": "Los dientes están en qué",
+            "fr": "Les dents sont dans quoi",
+            "uk": "Зуби в чому"
+        },
+        {
+            "start": "00:00:08,160",
+            "end": "00:00:08,840",
+            "es": "Dientes",
+            "fr": "Dents",
+            "uk": "Зуби"
+        },
+        {
+            "start": "00:00:10,860",
+            "end": "00:00:12,200",
+            "es": "¿Cómo de repente no puedo recordarlo?",
+            "fr": "Comment ai-je soudain oublié?",
+            "uk": "Як я раптом не можу згадати?"
+        },
+        {
+            "start": "00:00:14,220",
+            "end": "00:00:15,280",
+            "es": "Los dos últimos",
+            "fr": "Les deux derniers",
+            "uk": "Останні два"
+        },
+        {
+            "start": "00:00:15,280",
+            "end": "00:00:17,100",
+            "es": "Definitivamente terminan en u y d",
+            "fr": "Définitivement finissent par u et d",
+            "uk": "Однозначно закінчуються на u та d"
+        },
+        {
+            "start": "00:00:17,826",
+            "end": "00:00:19,486",
+            "es": "¿Qué? ¿Qué aprenderemos?",
+            "fr": "Quoi? Que allons-nous apprendre?",
+            "uk": "Що? Що ми вивчимо?"
+        },
+        {
+            "start": "00:00:20,258",
+            "end": "00:00:20,598",
+            "es": "¡BAM!",
+            "fr": "BAM!",
+            "uk": "БАМ!"
+        },
+        {
+            "start": "00:00:20,598",
+            "end": "00:00:21,578",
+            "es": "¡BAM!",
+            "fr": "BAM!",
+            "uk": "БАМ!"
+        },
+        {
+            "start": "00:00:23,298",
+            "end": "00:00:24,818",
+            "es": "Y entonces...",
+            "fr": "Et puis...",
+            "uk": "І тоді..."
+        },
+        {
+            "start": "00:00:24,818",
+            "end": "00:00:25,978",
+            "es": "Otra palabra es...",
+            "fr": "Un autre mot est...",
+            "uk": "Інше слово..."
+        },
+        {
+            "start": "00:00:26,434",
+            "end": "00:00:27,214",
+            "es": "Espinaca",
+            "fr": "Épinard",
+            "uk": "Шпинат"
+        },
+        {
+            "start": "00:00:27,693",
+            "end": "00:00:28,934",
+            "es": "¿Cómo se dice espinaca en inglés?",
+            "fr": "Comment dit-on épinard en anglais?",
+            "uk": "Як сказати шпинат англійською?"
+        },
+        {
+            "start": "00:00:29,453",
+            "end": "00:00:32,113",
+            "es": "Creo que la espinaca tiene un alto contenido de hierro",
+            "fr": "Je pense que l'épinard a une teneur élevée en fer",
+            "uk": "Я думаю, що шпинат має високий вміст заліза"
+        },
+        {
+            "start": "00:00:32,113",
+            "end": "00:00:34,454",
+            "es": "Así que parece que tiene un hierro en su estigma ¿no?",
+            "fr": "Donc, il semble qu'il ait un fer dans son stigma, n'est-ce pas?",
+            "uk": "Отже, видається, він має залізо в своєму стигмі, чи не так?"
+        },
+        {
+            "start": "00:00:35,170",
+            "end": "00:00:36,110",
+            "es": "Tu F.E.R.",
+            "fr": "Votre F.E.R.",
+            "uk": "Ваш F.E.R."
+        },
+        {
+            "start": "00:00:43,906",
+            "end": "00:00:44,226",
+            "es": "¿De verdad?",
+            "fr": "Vraiment?",
+            "uk": "Справді?"
+        },
+        {
+            "start": "00:00:50,434",
+            "end": "00:00:51,434",
+            "es": "Wow, realmente delicioso",
+            "fr": "Wow, vraiment délicieux",
+            "uk": "Вау, дійсно смачно"
+        },
+        {
+            "start": "00:00:52,494",
+            "end": "00:00:52,994",
+            "es": "Jugoso",
+            "fr": "Juteux",
+            "uk": "Соковитий"
+        },
+        {
+            "start": "00:00:53,874",
+            "end": "00:00:54,574",
+            "es": "Sabroso",
+            "fr": "Savoureux",
+            "uk": "Смачний"
+        },
+        {
+            "start": "00:00:55,114",
+            "end": "00:00:56,034",
+            "es": "Picante",
+            "fr": "Épicé",
+            "uk": "Гострий"
+        }
+    ]
+}

@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,140\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"I believe I have some progress,\"\n  },\n  {\n    \"start\": \"00:00:05,140\",\n    \"end\": \"00:00:08,160\",\n    \"lang\": \"en\",\n    \"text\": \"so record it.\"\n  },\n  {\n    \"start\": \"00:00:09,980\",\n    \"end\": \"00:00:15,840\",\n    \"lang\": \"en\",\n    \"text\": \"And I see a problem in recent content creating.\"\n  },\n  {\n    \"start\": \"00:00:15,840\",\n    \"end\": \"00:00:18,640\",\n    \"lang\": \"en\",\n    \"text\": \"Some content creators,\"\n  },\n  {\n    \"start\": \"00:00:18,640\",\n    \"end\": \"00:00:29,720\",\n    \"lang\": \"en\",\n    \"text\": \"they just firstly find the audience,\"\n  },\n  {\n    \"start\": \"00:00:29,720\",\n    \"end\": \"00:00:32,220\",\n    \"lang\": \"en\",\n    \"text\": \"make the audience,\"\n  },\n  {\n    \"start\": \"00:00:32,220\",\n    \"end\": \"00:00:35,540\",\n    \"lang\": \"en\",\n    \"text\": \"and then cater the taste.\"\n  },\n  {\n    \"start\": \"00:00:35,540\",\n    \"end\": \"00:00:38,500\",\n    \"lang\": \"en\",\n    \"text\": \"And use their work,\"\n  },\n  {\n    \"start\": \"00:00:38,500\",\n    \"end\": \"00:00:39,600\",\n    \"lang\": \"en\",\n    \"text\": \"product,\"\n  },\n  {\n    \"start\": \"00:00:39,600\",\n    \"end\": \"00:00:42,800\",\n    \"lang\": \"en\",\n    \"text\": \"to please the audience.\"\n  },\n  {\n    \"start\": \"00:00:43,780\",\n    \"end\": \"00:00:45,320\",\n    \"lang\": \"en\",\n    \"text\": \"This causes a problem.\"\n  },\n  {\n    \"start\": \"00:00:45,320\",\n    \"end\": \"00:00:57,480\",\n    \"lang\": \"en\",\n    \"text\": \"The problem is that we should focus on what we like to do.\"\n  },\n  {\n    \"start\": \"00:00:59,746\",\n    \"end\": \"00:01:00,386\",\n    \"lang\": \"ja\",\n    \"text\": \"ゆりこみ\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,140",
+            "end": "00:00:05,140",
+            "ko": "진전이 있는 것 같습니다,"
+        },
+        {
+            "start": "00:00:05,140",
+            "end": "00:00:08,160",
+            "ko": "기록하세요."
+        },
+        {
+            "start": "00:00:09,980",
+            "end": "00:00:15,840",
+            "ko": "그리고 최근 콘텐츠 제작에 문제가 있다는 것을 봅니다."
+        },
+        {
+            "start": "00:00:15,840",
+            "end": "00:00:18,640",
+            "ko": "일부 콘텐츠 제작자들은,"
+        },
+        {
+            "start": "00:00:18,640",
+            "end": "00:00:29,720",
+            "ko": "그들은 먼저 대상 시청자를 찾고,"
+        },
+        {
+            "start": "00:00:29,720",
+            "end": "00:00:32,220",
+            "ko": "시청자를 만들고,"
+        },
+        {
+            "start": "00:00:32,220",
+            "end": "00:00:35,540",
+            "ko": "그리고 그들의 취향에 맞춥니다."
+        },
+        {
+            "start": "00:00:35,540",
+            "end": "00:00:38,500",
+            "ko": "그리고 그들의 작업,"
+        },
+        {
+            "start": "00:00:38,500",
+            "end": "00:00:39,600",
+            "ko": "제품,"
+        },
+        {
+            "start": "00:00:39,600",
+            "end": "00:00:42,800",
+            "ko": "을 사용하여 시청자를 만족시킵니다."
+        },
+        {
+            "start": "00:00:43,780",
+            "end": "00:00:45,320",
+            "ko": "이것은 문제를 일으킵니다."
+        },
+        {
+            "start": "00:00:45,320",
+            "end": "00:00:57,480",
+            "ko": "문제는 우리가 우리가 하고 싶은 것에 초점을 맞춰야 한다는 것입니다."
+        },
+        {
+            "start": "00:00:59,746",
+            "end": "00:01:00,386",
+            "ko": "유리코미"
+        }
+    ]
+}

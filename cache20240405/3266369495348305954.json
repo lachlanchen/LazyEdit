@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:04,819\",\n    \"end\": \"00:00:10,160\",\n    \"lang\": \"ja\",\n    \"text\": \"このポテトは野菜です\"\n  },\n  {\n    \"start\": \"00:00:14,038\",\n    \"end\": \"00:00:17,118\",\n    \"lang\": \"ja\",\n    \"text\": \"このボンボンは太ももです\"\n  },\n  {\n    \"start\": \"00:00:17,118\",\n    \"end\": \"00:00:24,578\",\n    \"lang\": \"ja\",\n    \"text\": \"この肉は肉です\"\n  },\n  {\n    \"start\": \"00:00:25,538\",\n    \"end\": \"00:00:26,518\",\n    \"lang\": \"en\",\n    \"text\": \"So is that correct?\"\n  },\n  {\n    \"start\": \"00:00:27,298\",\n    \"end\": \"00:00:31,398\",\n    \"lang\": \"en\",\n    \"text\": \"So this potato is a vegetable,\"\n  },\n  {\n    \"start\": \"00:00:31,778\",\n    \"end\": \"00:00:32,738\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry is a fruit,\"\n  },\n  {\n    \"start\": \"00:00:33,118\",\n    \"end\": \"00:00:37,878\",\n    \"lang\": \"en\",\n    \"text\": \"and the beef is meat.\"\n  },\n  {\n    \"start\": \"00:00:39,938\",\n    \"end\": \"00:00:40,558\",\n    \"lang\": \"en\",\n    \"text\": \"And now,\"\n  },\n  {\n    \"start\": \"00:00:41,346\",\n    \"end\": \"00:00:45,306\",\n    \"lang\": \"ja\",\n    \"text\": \"この卵は卵です\"\n  },\n  {\n    \"start\": \"00:00:47,970\",\n    \"end\": \"00:00:48,170\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:04,819",
+            "end": "00:00:10,160",
+            "vi": "Những củ khoai tây này là rau củ"
+        },
+        {
+            "start": "00:00:14,038",
+            "end": "00:00:17,118",
+            "vi": "Những viên kẹo này là đùi gà"
+        },
+        {
+            "start": "00:00:17,118",
+            "end": "00:00:24,578",
+            "vi": "Thịt này là thịt"
+        },
+        {
+            "start": "00:00:25,538",
+            "end": "00:00:26,518",
+            "vi": "Vậy có đúng không?"
+        },
+        {
+            "start": "00:00:27,298",
+            "end": "00:00:31,398",
+            "vi": "Vậy củ khoai tây này là rau củ,"
+        },
+        {
+            "start": "00:00:31,778",
+            "end": "00:00:32,738",
+            "vi": "quả việt quất là trái cây,"
+        },
+        {
+            "start": "00:00:33,118",
+            "end": "00:00:37,878",
+            "vi": "và thịt bò là thịt."
+        },
+        {
+            "start": "00:00:39,938",
+            "end": "00:00:40,558",
+            "vi": "Và bây giờ,"
+        },
+        {
+            "start": "00:00:41,346",
+            "end": "00:00:45,306",
+            "vi": "quả trứng này là trứng"
+        },
+        {
+            "start": "00:00:47,970",
+            "end": "00:00:48,170",
+            "vi": "Được."
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:05,046\",\n    \"end\": \"00:01:08,526\",\n    \"lang\": \"en\",\n    \"text\": \"This combination is great\"\n  },\n  {\n    \"start\": \"00:01:19,926\",\n    \"end\": \"00:01:21,326\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:21,326\",\n    \"end\": \"00:01:22,886\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:05,046",
+            "end": "00:01:08,526",
+            "ja": "この組み合わせは最高です"
+        },
+        {
+            "start": "00:01:19,926",
+            "end": "00:01:21,326",
+            "ja": "わかった、"
+        },
+        {
+            "start": "00:01:21,326",
+            "end": "00:01:22,886",
+            "ja": "じゃあね"
+        }
+    ]
+}

@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,606\",\n    \"end\": \"00:01:04,806\",\n    \"lang\": \"en\",\n    \"text\": \"So my own flavor also contribute a lot.\"\n  },\n  {\n    \"start\": \"00:01:04,806\",\n    \"end\": \"00:01:05,746\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:05,746\",\n    \"end\": \"00:01:13,526\",\n    \"lang\": \"en\",\n    \"text\": \"this flavor that they blend together create this unique flavor.\"\n  },\n  {\n    \"start\": \"00:01:20,956\",\n    \"end\": \"00:01:23,006\",\n    \"lang\": \"en\",\n    \"text\": \"I have this intuition.\"\n  },\n  {\n    \"start\": \"00:01:24,036\",\n    \"end\": \"00:01:30,906\",\n    \"lang\": \"en\",\n    \"text\": \"What kind of flavor that they can work together.\"\n  },\n  {\n    \"start\": \"00:01:31,446\",\n    \"end\": \"00:01:39,966\",\n    \"lang\": \"en\",\n    \"text\": \"So I discard two flavor bags that I think is not appropriate and use my own flavor.\"\n  },\n  {\n    \"start\": \"00:01:42,286\",\n    \"end\": \"00:01:43,566\",\n    \"lang\": \"en\",\n    \"text\": \"So it's like a music.\"\n  },\n  {\n    \"start\": \"00:01:44,606\",\n    \"end\": \"00:01:46,186\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this is my talent.\"\n  },\n  {\n    \"start\": \"00:01:46,426\",\n    \"end\": \"00:01:47,706\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not humble on this.\"\n  },\n  {\n    \"start\": \"00:01:48,886\",\n    \"end\": \"00:01:53,266\",\n    \"lang\": \"en\",\n    \"text\": \"I'm quite confident and I'm sure I have this capability.\"\n  },\n  {\n    \"start\": \"00:01:53,266\",\n    \"end\": \"00:01:57,486\",\n    \"lang\": \"en\",\n    \"text\": \"Whenever I taste some food,\"\n  },\n  {\n    \"start\": \"00:01:57,486\",\n    \"end\": \"00:02:05,606\",\n    \"lang\": \"en\",\n    \"text\": \"I can copy that taste and also to refine it based on the taste.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,606",
+            "end": "00:01:04,806",
+            "es": "Así que mi propio sabor también contribuye mucho.",
+            "fr": "Alors, ma propre saveur contribue également beaucoup.",
+            "uk": "Отже, мій власний смак також багато вносить."
+        },
+        {
+            "start": "00:01:04,806",
+            "end": "00:01:05,746",
+            "es": "Así que,",
+            "fr": "Alors,",
+            "uk": "Отже,"
+        },
+        {
+            "start": "00:01:05,746",
+            "end": "00:01:13,526",
+            "es": "este sabor que mezclan juntos crea este sabor único.",
+            "fr": "cette saveur qu'ils mélangent ensemble crée cette saveur unique.",
+            "uk": "цей смак, який вони змішують разом, створює цей унікальний смак."
+        },
+        {
+            "start": "00:01:20,956",
+            "end": "00:01:23,006",
+            "es": "Tengo esta intuición.",
+            "fr": "J'ai cette intuition.",
+            "uk": "У мене є ця інтуїція."
+        },
+        {
+            "start": "00:01:24,036",
+            "end": "00:01:30,906",
+            "es": "Qué tipo de sabor pueden trabajar juntos.",
+            "fr": "Quel type de saveur peuvent travailler ensemble.",
+            "uk": "Який тип смаку вони можуть працювати разом."
+        },
+        {
+            "start": "00:01:31,446",
+            "end": "00:01:39,966",
+            "es": "Así que descarto dos bolsas de sabores que creo que no son apropiadas y uso mi propio sabor.",
+            "fr": "J'écarte donc deux sachets de saveurs que je pense inappropriés et j'utilise ma propre saveur.",
+            "uk": "Тож я відкидаю два пакети зі смаками, які, на мою думку, недоречні, і використовую свій власний смак."
+        },
+        {
+            "start": "00:01:42,286",
+            "end": "00:01:43,566",
+            "es": "Así que es como una música.",
+            "fr": "Alors, c'est comme une musique.",
+            "uk": "Отже, це як музика."
+        },
+        {
+            "start": "00:01:44,606",
+            "end": "00:01:46,186",
+            "es": "Creo que esto es mi talento.",
+            "fr": "Je crois que c'est mon talent.",
+            "uk": "Я вважаю, що це мій талант."
+        },
+        {
+            "start": "00:01:46,426",
+            "end": "00:01:47,706",
+            "es": "No soy humilde en esto.",
+            "fr": "Je ne suis pas humble à ce sujet.",
+            "uk": "Я не скромний у цьому."
+        },
+        {
+            "start": "00:01:48,886",
+            "end": "00:01:53,266",
+            "es": "Estoy bastante seguro y estoy seguro de que tengo esta capacidad.",
+            "fr": "Je suis assez confiant et je suis sûr d'avoir cette capacité.",
+            "uk": "Я досить впевнений, і я впевнений, що маю цю здатність."
+        },
+        {
+            "start": "00:01:53,266",
+            "end": "00:01:57,486",
+            "es": "Cada vez que pruebo alguna comida,",
+            "fr": "Chaque fois que je goûte de la nourriture,",
+            "uk": "Кожного разу, коли я пробую якусь їжу,"
+        },
+        {
+            "start": "00:01:57,486",
+            "end": "00:02:05,606",
+            "es": "Puedo copiar ese sabor y también refinarlo basado en el sabor.",
+            "fr": "Je peux copier ce goût et aussi l'affiner basé sur le goût.",
+            "uk": "Я можу скопіювати цей смак, а також удосконалити його на основі смаку."
+        }
+    ]
+}

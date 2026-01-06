@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,060\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:01,060\",\n    \"end\": \"00:00:02,360\",\n    \"lang\": \"en\",\n    \"text\": \"this is UDM.\"\n  },\n  {\n    \"start\": \"00:00:02,946\",\n    \"end\": \"00:00:03,446\",\n    \"lang\": \"zh\",\n    \"text\": \"但是\"\n  },\n  {\n    \"start\": \"00:00:04,545\",\n    \"end\": \"00:00:05,246\",\n    \"lang\": \"zh\",\n    \"text\": \"不用\"\n  },\n  {\n    \"start\": \"00:00:06,306\",\n    \"end\": \"00:00:07,686\",\n    \"lang\": \"en\",\n    \"text\": \"eat around the world,\"\n  },\n  {\n    \"start\": \"00:00:07,686\",\n    \"end\": \"00:00:10,046\",\n    \"lang\": \"en\",\n    \"text\": \"that's the best flavor is the sword.\"\n  },\n  {\n    \"start\": \"00:00:11,650\",\n    \"end\": \"00:00:11,890\",\n    \"lang\": \"en\",\n    \"text\": \"start\"\n  },\n  {\n    \"start\": \"00:00:12,386\",\n    \"end\": \"00:00:13,666\",\n    \"lang\": \"en\",\n    \"text\": \"walk around the world,\"\n  },\n  {\n    \"start\": \"00:00:14,786\",\n    \"end\": \"00:00:17,506\",\n    \"lang\": \"en\",\n    \"text\": \"and the best people is your mom.\"\n  },\n  {\n    \"start\": \"00:00:18,786\",\n    \"end\": \"00:00:20,366\",\n    \"lang\": \"en\",\n    \"text\": \"So this book,\"\n  },\n  {\n    \"start\": \"00:00:20,366\",\n    \"end\": \"00:00:20,966\",\n    \"lang\": \"en\",\n    \"text\": \"I think,\"\n  },\n  {\n    \"start\": \"00:00:21,986\",\n    \"end\": \"00:00:22,506\",\n    \"lang\": \"zh\",\n    \"text\": \"frame 里面 现在 what\"\n  },\n  {\n    \"start\": \"00:00:24,226\",\n    \"end\": \"00:00:25,086\",\n    \"lang\": \"en\",\n    \"text\": \"a salty culture,\"\n  },\n  {\n    \"start\": \"00:00:25,086\",\n    \"end\": \"00:00:26,306\",\n    \"lang\": \"en\",\n    \"text\": \"S-A-L-T,\"\n  },\n  {\n    \"start\": \"00:00:26,306\",\n    \"end\": \"00:00:28,326\",\n    \"lang\": \"en\",\n    \"text\": \"salty culture in my hometown.\"\n  },\n  {\n    \"start\": \"00:00:30,594\",\n    \"end\": \"00:00:32,774\",\n    \"lang\": \"zh\",\n    \"text\": \"我们的麻辣烧鱼汤很出名\"\n  },\n  {\n    \"start\": \"00:00:35,490\",\n    \"end\": \"00:00:37,030\",\n    \"lang\": \"en\",\n    \"text\": \"and it's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:38,250\",\n    \"end\": \"00:00:38,890\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,060",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:00:01,060",
+            "end": "00:00:02,360",
+            "vi": "đây là UDM."
+        },
+        {
+            "start": "00:00:02,946",
+            "end": "00:00:03,446",
+            "vi": "nhưng là"
+        },
+        {
+            "start": "00:00:04,545",
+            "end": "00:00:05,246",
+            "vi": "không cần"
+        },
+        {
+            "start": "00:00:06,306",
+            "end": "00:00:07,686",
+            "vi": "ăn quanh thế giới,"
+        },
+        {
+            "start": "00:00:07,686",
+            "end": "00:00:10,046",
+            "vi": "hương vị tốt nhất chính là thanh kiếm."
+        },
+        {
+            "start": "00:00:11,650",
+            "end": "00:00:11,890",
+            "vi": "bắt đầu"
+        },
+        {
+            "start": "00:00:12,386",
+            "end": "00:00:13,666",
+            "vi": "đi quanh thế giới,"
+        },
+        {
+            "start": "00:00:14,786",
+            "end": "00:00:17,506",
+            "vi": "và người tốt nhất là mẹ bạn."
+        },
+        {
+            "start": "00:00:18,786",
+            "end": "00:00:20,366",
+            "vi": "Vậy nên cuốn sách này,"
+        },
+        {
+            "start": "00:00:20,366",
+            "end": "00:00:20,966",
+            "vi": "tôi nghĩ,"
+        },
+        {
+            "start": "00:00:21,986",
+            "end": "00:00:22,506",
+            "vi": "trong khung giờ này bây giờ là gì"
+        },
+        {
+            "start": "00:00:24,226",
+            "end": "00:00:25,086",
+            "vi": "một nền văn hoá mặn,"
+        },
+        {
+            "start": "00:00:25,086",
+            "end": "00:00:26,306",
+            "vi": "S-A-L-T,"
+        },
+        {
+            "start": "00:00:26,306",
+            "end": "00:00:28,326",
+            "vi": "nền văn hoá mặn ở quê hương tôi."
+        },
+        {
+            "start": "00:00:30,594",
+            "end": "00:00:32,774",
+            "vi": "súp cá lóc ma la của chúng tôi rất nổi tiếng"
+        },
+        {
+            "start": "00:00:35,490",
+            "end": "00:00:37,030",
+            "vi": "và nó tuyệt vời."
+        },
+        {
+            "start": "00:00:38,250",
+            "end": "00:00:38,890",
+            "vi": "Được."
+        }
+    ]
+}

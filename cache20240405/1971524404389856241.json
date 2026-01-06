@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,080\",\n    \"lang\": \"zh\",\n    \"text\": \"这个好可爱\"\n  },\n  {\n    \"start\": \"00:00:01,920\",\n    \"end\": \"00:00:03,300\",\n    \"lang\": \"zh\",\n    \"text\": \"这个也好可爱\"\n  },\n  {\n    \"start\": \"00:00:04,059\",\n    \"end\": \"00:00:05,420\",\n    \"lang\": \"zh\",\n    \"text\": \"那个也好可爱\"\n  },\n  {\n    \"start\": \"00:00:05,420\",\n    \"end\": \"00:00:06,280\",\n    \"lang\": \"zh\",\n    \"text\": \"买一个买一个\"\n  },\n  {\n    \"start\": \"00:00:07,060\",\n    \"end\": \"00:00:08,160\",\n    \"lang\": \"zh\",\n    \"text\": \"哈喽哈喽\"\n  },\n  {\n    \"start\": \"00:00:08,160\",\n    \"end\": \"00:00:08,960\",\n    \"lang\": \"zh\",\n    \"text\": \"这是什么犬呢\"\n  },\n  {\n    \"start\": \"00:00:08,960\",\n    \"end\": \"00:00:09,560\",\n    \"lang\": \"zh\",\n    \"text\": \"这是什么犬\"\n  },\n  {\n    \"start\": \"00:00:11,020\",\n    \"end\": \"00:00:12,020\",\n    \"lang\": \"zh\",\n    \"text\": \"这是什么犬\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,080",
+            "vi": "Cái này dễ thương quá"
+        },
+        {
+            "start": "00:00:01,920",
+            "end": "00:00:03,300",
+            "vi": "Cái này cũng dễ thương quá"
+        },
+        {
+            "start": "00:00:04,059",
+            "end": "00:00:05,420",
+            "vi": "Cái kia cũng dễ thương quá"
+        },
+        {
+            "start": "00:00:05,420",
+            "end": "00:00:06,280",
+            "vi": "Mua một cái, mua một cái"
+        },
+        {
+            "start": "00:00:07,060",
+            "end": "00:00:08,160",
+            "vi": "Xin chào, xin chào"
+        },
+        {
+            "start": "00:00:08,160",
+            "end": "00:00:08,960",
+            "vi": "Đây là giống chó gì vậy"
+        },
+        {
+            "start": "00:00:08,960",
+            "end": "00:00:09,560",
+            "vi": "Đây là giống chó gì"
+        },
+        {
+            "start": "00:00:11,020",
+            "end": "00:00:12,020",
+            "vi": "Đây là giống chó gì"
+        }
+    ]
+}

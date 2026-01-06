@@ -1,0 +1,75 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,878\",\n    \"end\": \"00:01:01,158\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:04,958\",\n    \"end\": \"00:01:05,418\",\n    \"lang\": \"en\",\n    \"text\": \"Let me,\"\n  },\n  {\n    \"start\": \"00:01:06,187\",\n    \"end\": \"00:01:07,758\",\n    \"lang\": \"en\",\n    \"text\": \"I slightly changed the\"\n  },\n  {\n    \"start\": \"00:01:10,082\",\n    \"end\": \"00:01:11,242\",\n    \"lang\": \"ja\",\n    \"text\": \"プレゼンテーション\"\n  },\n  {\n    \"start\": \"00:01:12,450\",\n    \"end\": \"00:01:18,410\",\n    \"lang\": \"en\",\n    \"text\": \"Vietnamese and Korean and he uses the chiu ha,\"\n  },\n  {\n    \"start\": \"00:01:18,410\",\n    \"end\": \"00:01:23,690\",\n    \"lang\": \"en\",\n    \"text\": \"which is a Vietnamese thing of changing\"\n  },\n  {\n    \"start\": \"00:01:23,690\",\n    \"end\": \"00:01:24,110\",\n    \"lang\": \"en\",\n    \"text\": \"the character.\"\n  },\n  {\n    \"start\": \"00:01:25,154\",\n    \"end\": \"00:01:25,754\",\n    \"lang\": \"zh\",\n    \"text\": \"出汗\"\n  },\n  {\n    \"start\": \"00:01:25,754\",\n    \"end\": \"00:01:26,894\",\n    \"lang\": \"zh\",\n    \"text\": \"啊在汗夹\"\n  },\n  {\n    \"start\": \"00:01:26,894\",\n    \"end\": \"00:01:27,554\",\n    \"lang\": \"zh\",\n    \"text\": \"汗夹\"\n  },\n  {\n    \"start\": \"00:01:28,194\",\n    \"end\": \"00:01:35,694\",\n    \"lang\": \"en\",\n    \"text\": \"I'm using these characters to help me learn Vietnamese and Korean more easily.\"\n  },\n  {\n    \"start\": \"00:01:45,834\",\n    \"end\": \"00:01:46,434\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:47,794\",\n    \"end\": \"00:01:48,514\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  },\n  {\n    \"start\": \"00:01:52,994\",\n    \"end\": \"00:01:53,274\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,878",
+            "end": "00:01:01,158",
+            "vi": "Ổn."
+        },
+        {
+            "start": "00:01:04,958",
+            "end": "00:01:05,418",
+            "vi": "Để tôi,"
+        },
+        {
+            "start": "00:01:06,187",
+            "end": "00:01:07,758",
+            "vi": "Tôi đã thay đổi một chút"
+        },
+        {
+            "start": "00:01:10,082",
+            "end": "00:01:11,242",
+            "vi": "bài trình bày"
+        },
+        {
+            "start": "00:01:12,450",
+            "end": "00:01:18,410",
+            "vi": "Việt Nam và Hàn Quốc và anh ấy sử dụng chiêu hạ,"
+        },
+        {
+            "start": "00:01:18,410",
+            "end": "00:01:23,690",
+            "vi": "đó là một thứ của người Việt trong việc thay đổi"
+        },
+        {
+            "start": "00:01:23,690",
+            "end": "00:01:24,110",
+            "vi": "những nhân vật."
+        },
+        {
+            "start": "00:01:25,154",
+            "end": "00:01:25,754",
+            "vi": "Đang toát mồ hôi"
+        },
+        {
+            "start": "00:01:25,754",
+            "end": "00:01:26,894",
+            "vi": "Ah, toát mồ hôi nè"
+        },
+        {
+            "start": "00:01:26,894",
+            "end": "00:01:27,554",
+            "vi": "Mồ hôi cái nè"
+        },
+        {
+            "start": "00:01:28,194",
+            "end": "00:01:35,694",
+            "vi": "Tôi sử dụng những nhân vật này giúp tôi học tiếng Việt và tiếng Hàn dễ dàng hơn."
+        },
+        {
+            "start": "00:01:45,834",
+            "end": "00:01:46,434",
+            "vi": "Ổn."
+        },
+        {
+            "start": "00:01:47,794",
+            "end": "00:01:48,514",
+            "vi": "Hẹn gặp lại."
+        },
+        {
+            "start": "00:01:52,994",
+            "end": "00:01:53,274",
+            "vi": "Hẹn gặp lại."
+        }
+    ]
+}

@@ -1,0 +1,117 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:10,406\",\n    \"end\": \"00:01:13,086\",\n    \"lang\": \"en\",\n    \"text\": \"I used to have a dream that I could build a building\"\n  },\n  {\n    \"start\": \"00:01:13,516\",\n    \"end\": \"00:01:15,086\",\n    \"lang\": \"en\",\n    \"text\": \"with 23 floors.\"\n  },\n  {\n    \"start\": \"00:01:15,706\",\n    \"end\": \"00:01:20,546\",\n    \"lang\": \"en\",\n    \"text\": \"So the top floor is letting me eat per weather food\"\n  },\n  {\n    \"start\": \"00:01:21,026\",\n    \"end\": \"00:01:24,926\",\n    \"lang\": \"en\",\n    \"text\": \"and without price and no need to pay.\"\n  },\n  {\n    \"start\": \"00:01:25,366\",\n    \"end\": \"00:01:30,606\",\n    \"lang\": \"en\",\n    \"text\": \"It's an invitation mechanism.\"\n  },\n  {\n    \"start\": \"00:01:31,166\",\n    \"end\": \"00:01:32,546\",\n    \"lang\": \"en\",\n    \"text\": \"So only you are invited,\"\n  },\n  {\n    \"start\": \"00:01:32,666\",\n    \"end\": \"00:01:35,806\",\n    \"lang\": \"en\",\n    \"text\": \"you can enjoy the food at the 23rd floor\"\n  },\n  {\n    \"start\": \"00:01:39,466\",\n    \"end\": \"00:01:40,266\",\n    \"lang\": \"en\",\n    \"text\": \"in this building.\"\n  },\n  {\n    \"start\": \"00:01:41,186\",\n    \"end\": \"00:01:47,426\",\n    \"lang\": \"en\",\n    \"text\": \"And I will recruit the best chef around the world\"\n  },\n  {\n    \"start\": \"00:01:47,716\",\n    \"end\": \"00:01:52,146\",\n    \"lang\": \"en\",\n    \"text\": \"and give them extremely high salary.\"\n  },\n  {\n    \"start\": \"00:01:56,156\",\n    \"end\": \"00:01:59,046\",\n    \"lang\": \"en\",\n    \"text\": \"And they didn't care about KPI,\"\n  },\n  {\n    \"start\": \"00:01:59,046\",\n    \"end\": \"00:02:00,205\",\n    \"lang\": \"en\",\n    \"text\": \"performance,\"\n  },\n  {\n    \"start\": \"00:02:00,446\",\n    \"end\": \"00:02:01,546\",\n    \"lang\": \"en\",\n    \"text\": \"all these things,\"\n  },\n  {\n    \"start\": \"00:02:01,546\",\n    \"end\": \"00:02:03,546\",\n    \"lang\": \"en\",\n    \"text\": \"they just focus on\"\n  },\n  {\n    \"start\": \"00:02:04,096\",\n    \"end\": \"00:02:06,186\",\n    \"lang\": \"en\",\n    \"text\": \"provide the best food ever.\"\n  },\n  {\n    \"start\": \"00:02:06,946\",\n    \"end\": \"00:02:07,546\",\n    \"lang\": \"en\",\n    \"text\": \"That's my dream.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:10,406",
+            "end": "00:01:13,086",
+            "es": "Solía tener un sueño de poder construir un edificio",
+            "fr": "J'avais autrefois un rêve que je pourrais construire un bâtiment",
+            "uk": "Я колись мріяв, що можу побудувати будівлю"
+        },
+        {
+            "start": "00:01:13,516",
+            "end": "00:01:15,086",
+            "es": "de 23 pisos.",
+            "fr": "de 23 étages.",
+            "uk": "з 23 поверхами."
+        },
+        {
+            "start": "00:01:15,706",
+            "end": "00:01:20,546",
+            "es": "Así que el último piso me permitiría comer comida según el clima",
+            "fr": "Donc, le dernier étage me permettrait de manger de la nourriture en fonction du temps",
+            "uk": "Отже, останній поверх дозволяв би мені їсти їжу залежно від погоди"
+        },
+        {
+            "start": "00:01:21,026",
+            "end": "00:01:24,926",
+            "es": "y sin precio ni necesidad de pagar.",
+            "fr": "et sans prix et pas besoin de payer.",
+            "uk": "і без ціни та необхідності платити."
+        },
+        {
+            "start": "00:01:25,366",
+            "end": "00:01:30,606",
+            "es": "Es un mecanismo de invitación.",
+            "fr": "C'est un mécanisme d'invitation.",
+            "uk": "Це механізм запрошення."
+        },
+        {
+            "start": "00:01:31,166",
+            "end": "00:01:32,546",
+            "es": "Así que solo si estás invitado,",
+            "fr": "Donc, seulement si vous êtes invité,",
+            "uk": "Отже, лише якщо вас запрошено,"
+        },
+        {
+            "start": "00:01:32,666",
+            "end": "00:01:35,806",
+            "es": "puedes disfrutar de la comida en el piso 23",
+            "fr": "vous pouvez profiter de la nourriture au 23e étage",
+            "uk": "ви можете насолоджуватися їжею на 23 поверсі"
+        },
+        {
+            "start": "00:01:39,466",
+            "end": "00:01:40,266",
+            "es": "en este edificio.",
+            "fr": "dans cet immeuble.",
+            "uk": "у цій будівлі."
+        },
+        {
+            "start": "00:01:41,186",
+            "end": "00:01:47,426",
+            "es": "Y reclutaré al mejor chef de todo el mundo",
+            "fr": "Et je recruterai le meilleur chef du monde",
+            "uk": "І я найму найкращого шеф-кухаря в світі"
+        },
+        {
+            "start": "00:01:47,716",
+            "end": "00:01:52,146",
+            "es": "y les daré un salario extremadamente alto.",
+            "fr": "et leur donnerai un salaire extrêmement élevé.",
+            "uk": "і дам їм надзвичайно високу зарплату."
+        },
+        {
+            "start": "00:01:56,156",
+            "end": "00:01:59,046",
+            "es": "Y a ellos no les importaba el KPI,",
+            "fr": "Et ils ne se souciaient pas des KPI,",
+            "uk": "І їм було байдуже до KPI,"
+        },
+        {
+            "start": "00:01:59,046",
+            "end": "00:02:00,205",
+            "es": "rendimiento,",
+            "fr": "performance,",
+            "uk": "ефективність,"
+        },
+        {
+            "start": "00:02:00,446",
+            "end": "00:02:01,546",
+            "es": "todas esas cosas,",
+            "fr": "toutes ces choses,",
+            "uk": "всі ці речі,"
+        },
+        {
+            "start": "00:02:01,546",
+            "end": "00:02:03,546",
+            "es": "solo se concentraban en",
+            "fr": "ils se concentraient juste sur",
+            "uk": "їхнє єдине зосередження -"
+        },
+        {
+            "start": "00:02:04,096",
+            "end": "00:02:06,186",
+            "es": "proveer la mejor comida.",
+            "fr": "fournir la meilleure nourriture.",
+            "uk": "забезпечити найкращу їжу."
+        },
+        {
+            "start": "00:02:06,946",
+            "end": "00:02:07,546",
+            "es": "Eso es mi sueño.",
+            "fr": "C'est mon rêve.",
+            "uk": "Це моя мрія."
+        }
+    ]
+}

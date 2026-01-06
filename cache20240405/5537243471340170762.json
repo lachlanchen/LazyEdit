@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:29,062\",\n    \"end\": \"00:02:33,422\",\n    \"lang\": \"en\",\n    \"text\": \"When you resort to something outside,\"\n  },\n  {\n    \"start\": \"00:02:33,422\",\n    \"end\": \"00:02:36,282\",\n    \"lang\": \"en\",\n    \"text\": \"be external to this existence.\"\n  },\n  {\n    \"start\": \"00:02:36,282\",\n    \"end\": \"00:02:37,702\",\n    \"lang\": \"en\",\n    \"text\": \"It's like,\"\n  },\n  {\n    \"start\": \"00:02:37,702\",\n    \"end\": \"00:02:40,182\",\n    \"lang\": \"en\",\n    \"text\": \"as the saying goes,\"\n  },\n  {\n    \"start\": \"00:02:40,182\",\n    \"end\": \"00:02:44,102\",\n    \"lang\": \"en\",\n    \"text\": \"you are fishing on the tree.\"\n  },\n  {\n    \"start\": \"00:02:48,738\",\n    \"end\": \"00:02:49,358\",\n    \"lang\": \"ja\",\n    \"text\": \"よーし、\"\n  },\n  {\n    \"start\": \"00:02:49,358\",\n    \"end\": \"00:02:49,818\",\n    \"lang\": \"ja\",\n    \"text\": \"完成\"\n  },\n  {\n    \"start\": \"00:02:51,554\",\n    \"end\": \"00:02:59,414\",\n    \"lang\": \"en\",\n    \"text\": \"superficial stuff and ignore the essence.\"\n  },\n  {\n    \"start\": \"00:03:01,698\",\n    \"end\": \"00:03:03,558\",\n    \"lang\": \"zh\",\n    \"text\": \"In Chinese phrase it's\"\n  },\n  {\n    \"start\": \"00:03:04,318\",\n    \"end\": \"00:03:05,238\",\n    \"lang\": \"zh\",\n    \"text\": \"少本著墨,\"\n  },\n  {\n    \"start\": \"00:03:05,238\",\n    \"end\": \"00:03:07,038\",\n    \"lang\": \"zh\",\n    \"text\": \"圓莫求魚。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:29,062",
+            "end": "00:02:33,422",
+            "vi": "Khi bạn tìm đến thứ gì đó bên ngoài,"
+        },
+        {
+            "start": "00:02:33,422",
+            "end": "00:02:36,282",
+            "vi": "tức là bên ngoài cái sự tồn tại này."
+        },
+        {
+            "start": "00:02:36,282",
+            "end": "00:02:37,702",
+            "vi": "Nó giống như,"
+        },
+        {
+            "start": "00:02:37,702",
+            "end": "00:02:40,182",
+            "vi": "như câu nói,"
+        },
+        {
+            "start": "00:02:40,182",
+            "end": "00:02:44,102",
+            "vi": "bạn đang câu cá trên cây."
+        },
+        {
+            "start": "00:02:48,738",
+            "end": "00:02:49,358",
+            "vi": "Được rồi,"
+        },
+        {
+            "start": "00:02:49,358",
+            "end": "00:02:49,818",
+            "vi": "hoàn thành"
+        },
+        {
+            "start": "00:02:51,554",
+            "end": "00:02:59,414",
+            "vi": "những thứ hời hợt mà bỏ qua bản chất."
+        },
+        {
+            "start": "00:03:01,698",
+            "end": "00:03:03,558",
+            "vi": "Trong cụm từ Tiếng Trung, đó là"
+        },
+        {
+            "start": "00:03:04,318",
+            "end": "00:03:05,238",
+            "vi": "ít tập trung vào bổn phận,"
+        },
+        {
+            "start": "00:03:05,238",
+            "end": "00:03:07,038",
+            "vi": "đuôi tròn không nên câu cá."
+        }
+    ]
+}

@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,560\",\n    \"lang\": \"ja\",\n    \"text\": \"あの、\"\n  },\n  {\n    \"start\": \"00:00:00,560\",\n    \"end\": \"00:00:02,860\",\n    \"lang\": \"ja\",\n    \"text\": \"この猫は可愛いです\"\n  },\n  {\n    \"start\": \"00:00:16,161\",\n    \"end\": \"00:00:16,622\",\n    \"lang\": \"zh\",\n    \"text\": \"交个朋友\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,560",
+            "ko": "저기,"
+        },
+        {
+            "start": "00:00:00,560",
+            "end": "00:00:02,860",
+            "ko": "이 고양이는 귀여워요"
+        },
+        {
+            "start": "00:00:16,161",
+            "end": "00:00:16,622",
+            "ko": "친구를 사귀자"
+        }
+    ]
+}

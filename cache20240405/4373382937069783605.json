@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,440\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,440\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"en\",\n    \"text\": \"so first,\"\n  },\n  {\n    \"start\": \"00:00:01,460\",\n    \"end\": \"00:00:03,860\",\n    \"lang\": \"en\",\n    \"text\": \"let me put this on.\"\n  },\n  {\n    \"start\": \"00:00:05,600\",\n    \"end\": \"00:00:06,380\",\n    \"lang\": \"en\",\n    \"text\": \"One more.\"\n  },\n  {\n    \"start\": \"00:00:08,194\",\n    \"end\": \"00:00:09,514\",\n    \"lang\": \"zh\",\n    \"text\": \"木瓜油\"\n  },\n  {\n    \"start\": \"00:00:09,514\",\n    \"end\": \"00:00:12,314\",\n    \"lang\": \"en\",\n    \"text\": \"还burger\"\n  },\n  {\n    \"start\": \"00:00:16,738\",\n    \"end\": \"00:00:16,938\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:18,917\",\n    \"end\": \"00:00:20,478\",\n    \"lang\": \"en\",\n    \"text\": \"this is our\"\n  },\n  {\n    \"start\": \"00:00:20,478\",\n    \"end\": \"00:00:21,438\",\n    \"lang\": \"en\",\n    \"text\": \"flavor\"\n  },\n  {\n    \"start\": \"00:00:38,568\",\n    \"end\": \"00:00:40,218\",\n    \"lang\": \"en\",\n    \"text\": \"and our chicken\"\n  },\n  {\n    \"start\": \"00:00:52,678\",\n    \"end\": \"00:00:56,038\",\n    \"lang\": \"en\",\n    \"text\": \"now we add tarragon\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,440",
+            "ja": "オーケー、"
+        },
+        {
+            "start": "00:00:00,440",
+            "end": "00:00:01,460",
+            "ja": "まず最初に、"
+        },
+        {
+            "start": "00:00:01,460",
+            "end": "00:00:03,860",
+            "ja": "これを着けましょう。"
+        },
+        {
+            "start": "00:00:05,600",
+            "end": "00:00:06,380",
+            "ja": "もう一つ。"
+        },
+        {
+            "start": "00:00:08,194",
+            "end": "00:00:09,514",
+            "ja": "パパイヤ油"
+        },
+        {
+            "start": "00:00:09,514",
+            "end": "00:00:12,314",
+            "ja": "そしてバーガー"
+        },
+        {
+            "start": "00:00:16,738",
+            "end": "00:00:16,938",
+            "ja": "そう"
+        },
+        {
+            "start": "00:00:18,917",
+            "end": "00:00:20,478",
+            "ja": "これが私たちの"
+        },
+        {
+            "start": "00:00:20,478",
+            "end": "00:00:21,438",
+            "ja": "フレーバー"
+        },
+        {
+            "start": "00:00:38,568",
+            "end": "00:00:40,218",
+            "ja": "そして私たちのチキン"
+        },
+        {
+            "start": "00:00:52,678",
+            "end": "00:00:56,038",
+            "ja": "今、タラゴンを加えます"
+        }
+    ]
+}

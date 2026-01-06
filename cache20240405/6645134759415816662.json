@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:07,540\",\n    \"lang\": \"en\",\n    \"text\": \"so it has been a long time that I didn't use this code test\"\n  },\n  {\n    \"start\": \"00:00:08,320\",\n    \"end\": \"00:00:14,080\",\n    \"lang\": \"en\",\n    \"text\": \"it seems that they add flu A,\"\n  },\n  {\n    \"start\": \"00:00:14,080\",\n    \"end\": \"00:00:14,640\",\n    \"lang\": \"en\",\n    \"text\": \"flu B,\"\n  },\n  {\n    \"start\": \"00:00:14,640\",\n    \"end\": \"00:00:15,380\",\n    \"lang\": \"en\",\n    \"text\": \"RSA,\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:15,700\",\n    \"lang\": \"en\",\n    \"text\": \"ADA,\"\n  },\n  {\n    \"start\": \"00:00:15,700\",\n    \"end\": \"00:00:16,379\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know\"\n  },\n  {\n    \"start\": \"00:00:16,379\",\n    \"end\": \"00:00:19,460\",\n    \"lang\": \"en\",\n    \"text\": \"it's a mini oh my goodness\"\n  },\n  {\n    \"start\": \"00:00:22,620\",\n    \"end\": \"00:00:24,400\",\n    \"lang\": \"en\",\n    \"text\": \"this almost kills me\"\n  },\n  {\n    \"start\": \"00:00:31,800\",\n    \"end\": \"00:00:41,240\",\n    \"lang\": \"en\",\n    \"text\": \"I thought my immune system is strong because I work out every day and take a\"\n  },\n  {\n    \"start\": \"00:00:41,240\",\n    \"end\": \"00:00:43,960\",\n    \"lang\": \"en\",\n    \"text\": \"cold bath but I don't know\"\n  },\n  {\n    \"start\": \"00:00:46,880\",\n    \"end\": \"00:00:48,500\",\n    \"lang\": \"en\",\n    \"text\": \"I'm still vulnerable.\"\n  },\n  {\n    \"start\": \"00:00:48,500\",\n    \"end\": \"00:00:51,800\",\n    \"lang\": \"en\",\n    \"text\": \"This might be normal\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:07,540",
+            "ko": "오랜만에 이 코드 테스트를 사용하지 않았어요"
+        },
+        {
+            "start": "00:00:08,320",
+            "end": "00:00:14,080",
+            "ko": "그들이 A형 독감,"
+        },
+        {
+            "start": "00:00:14,080",
+            "end": "00:00:14,640",
+            "ko": "B형 독감,"
+        },
+        {
+            "start": "00:00:14,640",
+            "end": "00:00:15,380",
+            "ko": "RSA,"
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:15,700",
+            "ko": "ADA,"
+        },
+        {
+            "start": "00:00:15,700",
+            "end": "00:00:16,379",
+            "ko": "모르겠어요"
+        },
+        {
+            "start": "00:00:16,379",
+            "end": "00:00:19,460",
+            "ko": "이건 정말 놀라워요"
+        },
+        {
+            "start": "00:00:22,620",
+            "end": "00:00:24,400",
+            "ko": "이게 거의 날 죽일 뻔했어요"
+        },
+        {
+            "start": "00:00:31,800",
+            "end": "00:00:41,240",
+            "ko": "매일 운동하고 찬물 목욕을 하기 때문에 내 면역 체계가 강하다고 생각했어요"
+        },
+        {
+            "start": "00:00:41,240",
+            "end": "00:00:43,960",
+            "ko": "하지만 잘 모르겠어요"
+        },
+        {
+            "start": "00:00:46,880",
+            "end": "00:00:48,500",
+            "ko": "나도 여전히 취약해요."
+        },
+        {
+            "start": "00:00:48,500",
+            "end": "00:00:51,800",
+            "ko": "이건 정상일 수 있어요"
+        }
+    ]
+}

@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,640\",\n    \"lang\": \"en\",\n    \"text\": \"It's the fourth day.\"\n  },\n  {\n    \"start\": \"00:00:04,066\",\n    \"end\": \"00:00:05,286\",\n    \"lang\": \"ja\",\n    \"text\": \"これは恋だ\"\n  },\n  {\n    \"start\": \"00:00:05,986\",\n    \"end\": \"00:00:10,646\",\n    \"lang\": \"en\",\n    \"text\": \"the symptoms that he transmitted to source throat that he\"\n  },\n  {\n    \"start\": \"00:00:10,946\",\n    \"end\": \"00:00:11,546\",\n    \"lang\": \"en\",\n    \"text\": \"It hurts,\"\n  },\n  {\n    \"start\": \"00:00:11,546\",\n    \"end\": \"00:00:13,246\",\n    \"lang\": \"en\",\n    \"text\": \"I swallowed\"\n  },\n  {\n    \"start\": \"00:00:17,366\",\n    \"end\": \"00:00:18,086\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  },\n  {\n    \"start\": \"00:00:26,754\",\n    \"end\": \"00:00:27,274\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:27,274\",\n    \"end\": \"00:00:28,514\",\n    \"lang\": \"en\",\n    \"text\": \"it hurts.\"\n  },\n  {\n    \"start\": \"00:00:30,653\",\n    \"end\": \"00:00:31,054\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:31,054\",\n    \"end\": \"00:00:32,354\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  },\n  {\n    \"start\": \"00:00:38,294\",\n    \"end\": \"00:00:41,234\",\n    \"lang\": \"en\",\n    \"text\": \"Please add the teaser and the cover.\"\n  },\n  {\n    \"start\": \"00:00:42,354\",\n    \"end\": \"00:00:42,694\",\n    \"lang\": \"en\",\n    \"text\": \"Please.\"\n  },\n  {\n    \"start\": \"00:00:43,814\",\n    \"end\": \"00:00:46,354\",\n    \"lang\": \"en\",\n    \"text\": \"Because this is our vitamin.\"\n  },\n  {\n    \"start\": \"00:00:48,794\",\n    \"end\": \"00:00:49,494\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my goodness,\"\n  },\n  {\n    \"start\": \"00:00:49,494\",\n    \"end\": \"00:00:51,454\",\n    \"lang\": \"en\",\n    \"text\": \"it's not clean.\"\n  },\n  {\n    \"start\": \"00:00:53,494\",\n    \"end\": \"00:00:53,894\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:53,894\",\n    \"end\": \"00:00:54,574\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,640",
+            "vi": "Đã là ngày thứ tư."
+        },
+        {
+            "start": "00:00:04,066",
+            "end": "00:00:05,286",
+            "vi": "Đây là tình yêu."
+        },
+        {
+            "start": "00:00:05,986",
+            "end": "00:00:10,646",
+            "vi": "những triệu chứng mà anh ấy truyền đến cổ họng rằng anh ấy"
+        },
+        {
+            "start": "00:00:10,946",
+            "end": "00:00:11,546",
+            "vi": "Nó đau,"
+        },
+        {
+            "start": "00:00:11,546",
+            "end": "00:00:13,246",
+            "vi": "Tôi đã nuốt"
+        },
+        {
+            "start": "00:00:17,366",
+            "end": "00:00:18,086",
+            "vi": "được rồi"
+        },
+        {
+            "start": "00:00:26,754",
+            "end": "00:00:27,274",
+            "vi": "Ồ,"
+        },
+        {
+            "start": "00:00:27,274",
+            "end": "00:00:28,514",
+            "vi": "nó đau."
+        },
+        {
+            "start": "00:00:30,653",
+            "end": "00:00:31,054",
+            "vi": "Được rồi,"
+        },
+        {
+            "start": "00:00:31,054",
+            "end": "00:00:32,354",
+            "vi": "hẹn gặp lại."
+        },
+        {
+            "start": "00:00:38,294",
+            "end": "00:00:41,234",
+            "vi": "Vui lòng thêm đoạn giới thiệu và bìa."
+        },
+        {
+            "start": "00:00:42,354",
+            "end": "00:00:42,694",
+            "vi": "Làm ơn."
+        },
+        {
+            "start": "00:00:43,814",
+            "end": "00:00:46,354",
+            "vi": "Bởi vì đây là vitamin của chúng ta."
+        },
+        {
+            "start": "00:00:48,794",
+            "end": "00:00:49,494",
+            "vi": "Ôi trời ơi,"
+        },
+        {
+            "start": "00:00:49,494",
+            "end": "00:00:51,454",
+            "vi": "nó không sạch."
+        },
+        {
+            "start": "00:00:53,494",
+            "end": "00:00:53,894",
+            "vi": "Được rồi,"
+        },
+        {
+            "start": "00:00:53,894",
+            "end": "00:00:54,574",
+            "vi": "hẹn gặp lại."
+        }
+    ]
+}

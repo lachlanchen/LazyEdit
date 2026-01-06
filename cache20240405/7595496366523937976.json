@@ -1,0 +1,176 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:05,398\",\n    \"end\": \"00:04:07,578\",\n    \"lang\": \"en\",\n    \"text\": \"you are everything,\"\n  },\n  {\n    \"start\": \"00:04:07,578\",\n    \"end\": \"00:04:14,918\",\n    \"lang\": \"en\",\n    \"text\": \"but in fact no matter how\"\n  },\n  {\n    \"start\": \"00:04:14,918\",\n    \"end\": \"00:04:16,017\",\n    \"lang\": \"en\",\n    \"text\": \"much you learn,\"\n  },\n  {\n    \"start\": \"00:04:16,017\",\n    \"end\": \"00:04:19,317\",\n    \"lang\": \"en\",\n    \"text\": \"you still you are ignored,\"\n  },\n  {\n    \"start\": \"00:04:19,317\",\n    \"end\": \"00:04:20,178\",\n    \"lang\": \"en\",\n    \"text\": \"right?\"\n  },\n  {\n    \"start\": \"00:04:20,178\",\n    \"end\": \"00:04:25,058\",\n    \"lang\": \"en\",\n    \"text\": \"We are still...\"\n  },\n  {\n    \"start\": \"00:04:27,010\",\n    \"end\": \"00:04:27,950\",\n    \"lang\": \"ja\",\n    \"text\": \"ちゃってー\"\n  },\n  {\n    \"start\": \"00:04:29,698\",\n    \"end\": \"00:04:32,278\",\n    \"lang\": \"en\",\n    \"text\": \"obsessed in our own illusion,\"\n  },\n  {\n    \"start\": \"00:04:32,278\",\n    \"end\": \"00:04:35,618\",\n    \"lang\": \"en\",\n    \"text\": \"our own imagination,\"\n  },\n  {\n    \"start\": \"00:04:35,618\",\n    \"end\": \"00:04:38,938\",\n    \"lang\": \"en\",\n    \"text\": \"that we understand the world,\"\n  },\n  {\n    \"start\": \"00:04:38,938\",\n    \"end\": \"00:04:39,778\",\n    \"lang\": \"en\",\n    \"text\": \"understand the\"\n  },\n  {\n    \"start\": \"00:04:39,778\",\n    \"end\": \"00:04:40,138\",\n    \"lang\": \"en\",\n    \"text\": \"universe.\"\n  },\n  {\n    \"start\": \"00:04:40,138\",\n    \"end\": \"00:04:41,298\",\n    \"lang\": \"en\",\n    \"text\": \"But it's a fact,\"\n  },\n  {\n    \"start\": \"00:04:41,298\",\n    \"end\": \"00:04:41,898\",\n    \"lang\": \"en\",\n    \"text\": \"it's not.\"\n  },\n  {\n    \"start\": \"00:04:41,898\",\n    \"end\": \"00:04:43,898\",\n    \"lang\": \"en\",\n    \"text\": \"No matter how much you learn,\"\n  },\n  {\n    \"start\": \"00:04:43,898\",\n    \"end\": \"00:04:45,498\",\n    \"lang\": \"en\",\n    \"text\": \"you are a physicist,\"\n  },\n  {\n    \"start\": \"00:04:45,498\",\n    \"end\": \"00:04:46,858\",\n    \"lang\": \"en\",\n    \"text\": \"you\"\n  },\n  {\n    \"start\": \"00:04:46,858\",\n    \"end\": \"00:04:49,278\",\n    \"lang\": \"en\",\n    \"text\": \"are a Nobel Prize laureate,\"\n  },\n  {\n    \"start\": \"00:04:49,278\",\n    \"end\": \"00:04:51,818\",\n    \"lang\": \"en\",\n    \"text\": \"it's useless.\"\n  },\n  {\n    \"start\": \"00:04:51,818\",\n    \"end\": \"00:04:57,518\",\n    \"lang\": \"en\",\n    \"text\": \"It still can't solve the core problem that\"\n  },\n  {\n    \"start\": \"00:04:58,466\",\n    \"end\": \"00:04:58,886\",\n    \"lang\": \"ja\",\n    \"text\": \"We are\"\n  },\n  {\n    \"start\": \"00:04:58,926\",\n    \"end\": \"00:04:59,406\",\n    \"lang\": \"ja\",\n    \"text\": \"勇猛なって\"\n  },\n  {\n    \"start\": \"00:05:01,218\",\n    \"end\": \"00:05:04,698\",\n    \"lang\": \"en\",\n    \"text\": \"So just enjoy life everyday.\"\n  },\n  {\n    \"start\": \"00:05:04,698\",\n    \"end\": \"00:05:06,118\",\n    \"lang\": \"en\",\n    \"text\": \"Enjoy life,\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:04:05,398",
+            "end": "00:04:07,578",
+            "en": "you are everything,",
+            "zh": "你是一切，",
+            "ar": "أنت كل شيء،"
+        },
+        {
+            "start": "00:04:07,578",
+            "end": "00:04:14,918",
+            "en": "but in fact no matter how",
+            "zh": "但实际上无论怎样",
+            "ar": "ولكن في الواقع مهما"
+        },
+        {
+            "start": "00:04:14,918",
+            "end": "00:04:16,017",
+            "en": "much you learn,",
+            "zh": "你学了多少，",
+            "ar": "مهما تعلمت،"
+        },
+        {
+            "start": "00:04:16,017",
+            "end": "00:04:19,317",
+            "en": "you still you are ignored,",
+            "zh": "你仍然被忽视了，",
+            "ar": "لا يزال يتم تجاهلك،"
+        },
+        {
+            "start": "00:04:19,317",
+            "end": "00:04:20,178",
+            "en": "right?",
+            "zh": "对吧？",
+            "ar": "أليس كذلك؟"
+        },
+        {
+            "start": "00:04:20,178",
+            "end": "00:04:25,058",
+            "en": "We are still...",
+            "zh": "我们还是...",
+            "ar": "ما زلنا..."
+        },
+        {
+            "start": "00:04:27,010",
+            "end": "00:04:27,950",
+            "en": "Let's do it",
+            "zh": "让我们做吧",
+            "ar": "هيا نفعل ذلك",
+            "ja": "ちゃってー"
+        },
+        {
+            "start": "00:04:29,698",
+            "end": "00:04:32,278",
+            "en": "obsessed in our own illusion,",
+            "zh": "沉迷于我们自己的幻觉中，",
+            "ar": "مهووسون في وهمنا الخاص،"
+        },
+        {
+            "start": "00:04:32,278",
+            "end": "00:04:35,618",
+            "en": "our own imagination,",
+            "zh": "我们自己的想象，",
+            "ar": "خيالنا الخاص،"
+        },
+        {
+            "start": "00:04:35,618",
+            "end": "00:04:38,938",
+            "en": "that we understand the world,",
+            "zh": "我们以为我们了解这个世界，",
+            "ar": "أننا نفهم العالم،"
+        },
+        {
+            "start": "00:04:38,938",
+            "end": "00:04:39,778",
+            "en": "understand the",
+            "zh": "了解",
+            "ar": "فهم"
+        },
+        {
+            "start": "00:04:39,778",
+            "end": "00:04:40,138",
+            "en": "universe.",
+            "zh": "宇宙。",
+            "ar": "الكون."
+        },
+        {
+            "start": "00:04:40,138",
+            "end": "00:04:41,298",
+            "en": "But it's a fact,",
+            "zh": "但这是一个事实，",
+            "ar": "ولكن هذه حقيقة،"
+        },
+        {
+            "start": "00:04:41,298",
+            "end": "00:04:41,898",
+            "en": "it's not.",
+            "zh": "这是不对的。",
+            "ar": "هذا ليس صحيحا."
+        },
+        {
+            "start": "00:04:41,898",
+            "end": "00:04:43,898",
+            "en": "No matter how much you learn,",
+            "zh": "无论你学了多少，",
+            "ar": "مهما تعلمت،"
+        },
+        {
+            "start": "00:04:43,898",
+            "end": "00:04:45,498",
+            "en": "you are a physicist,",
+            "zh": "你是一位物理学家，",
+            "ar": "أنت عالم فيزياء،"
+        },
+        {
+            "start": "00:04:45,498",
+            "end": "00:04:46,858",
+            "en": "you",
+            "zh": "你",
+            "ar": "أنت"
+        },
+        {
+            "start": "00:04:46,858",
+            "end": "00:04:49,278",
+            "en": "are a Nobel Prize laureate,",
+            "zh": "是诺贝尔奖得主，",
+            "ar": "حاصل على جائزة نوبل،"
+        },
+        {
+            "start": "00:04:49,278",
+            "end": "00:04:51,818",
+            "en": "it's useless.",
+            "zh": "这是无用的。",
+            "ar": "إنه لا يجدي نفعا."
+        },
+        {
+            "start": "00:04:51,818",
+            "end": "00:04:57,518",
+            "en": "It still can't solve the core problem that",
+            "zh": "它仍然不能解决核心问题，那就是",
+            "ar": "ما زال لا يمكنه حل المشكلة الأساسية التي"
+        },
+        {
+            "start": "00:04:58,466",
+            "end": "00:04:58,886",
+            "en": "We are",
+            "zh": "我们是",
+            "ar": "نحن",
+            "ja": "We are"
+        },
+        {
+            "start": "00:04:58,926",
+            "end": "00:04:59,406",
+            "en": "brave",
+            "zh": "勇敢的",
+            "ar": "شجاع",
+            "ja": "勇猛なって"
+        },
+        {
+            "start": "00:05:01,218",
+            "end": "00:05:04,698",
+            "en": "So just enjoy life everyday.",
+            "zh": "所以就每天享受生活吧。",
+            "ar": "لذا استمتع بالحياة يوميًا."
+        },
+        {
+            "start": "00:05:04,698",
+            "end": "00:05:06,118",
+            "en": "Enjoy life,",
+            "zh": "享受生活，",
+            "ar": "تمتع بالحياة،"
+        }
+    ]
+}

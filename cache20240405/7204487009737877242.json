@@ -1,0 +1,90 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,640\",\n    \"end\": \"00:00:03,880\",\n    \"lang\": \"ja\",\n    \"text\": \"私は靴にをかりました。\"\n  },\n  {\n    \"start\": \"00:00:05,520\",\n    \"end\": \"00:00:07,180\",\n    \"lang\": \"ja\",\n    \"text\": \"靴にをかいています。\"\n  },\n  {\n    \"start\": \"00:00:08,930\",\n    \"end\": \"00:00:10,050\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if this works,\"\n  },\n  {\n    \"start\": \"00:00:10,050\",\n    \"end\": \"00:00:15,170\",\n    \"lang\": \"en\",\n    \"text\": \"but my immune system can't handle this disease anymore.\"\n  },\n  {\n    \"start\": \"00:00:16,329\",\n    \"end\": \"00:00:18,250\",\n    \"lang\": \"en\",\n    \"text\": \"And the fever,\"\n  },\n  {\n    \"start\": \"00:00:18,250\",\n    \"end\": \"00:00:23,350\",\n    \"lang\": \"en\",\n    \"text\": \"the fever that he already,\"\n  },\n  {\n    \"start\": \"00:00:23,350\",\n    \"end\": \"00:00:32,430\",\n    \"lang\": \"en\",\n    \"text\": \"the fever disappeared one day ago,\"\n  },\n  {\n    \"start\": \"00:00:32,430\",\n    \"end\": \"00:00:33,230\",\n    \"lang\": \"en\",\n    \"text\": \"but it\"\n  },\n  {\n    \"start\": \"00:00:38,069\",\n    \"end\": \"00:00:38,510\",\n    \"lang\": \"en\",\n    \"text\": \"recurred.\"\n  },\n  {\n    \"start\": \"00:00:38,510\",\n    \"end\": \"00:00:41,130\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's okay.\"\n  },\n  {\n    \"start\": \"00:00:42,274\",\n    \"end\": \"00:00:43,074\",\n    \"lang\": \"zh\",\n    \"text\": \"又复发了\"\n  },\n  {\n    \"start\": \"00:00:44,453\",\n    \"end\": \"00:00:46,174\",\n    \"lang\": \"zh\",\n    \"text\": \"哎抓不住了\"\n  },\n  {\n    \"start\": \"00:00:46,914\",\n    \"end\": \"00:00:48,434\",\n    \"lang\": \"zh\",\n    \"text\": \"买点药试一试\"\n  },\n  {\n    \"start\": \"00:00:49,194\",\n    \"end\": \"00:00:50,774\",\n    \"lang\": \"zh\",\n    \"text\": \"还有这个COVID test\"\n  },\n  {\n    \"start\": \"00:00:53,674\",\n    \"end\": \"00:00:54,554\",\n    \"lang\": \"zh\",\n    \"text\": \"检测一下\"\n  },\n  {\n    \"start\": \"00:00:55,906\",\n    \"end\": \"00:00:56,266\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:56,266\",\n    \"end\": \"00:00:58,726\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,640",
+            "end": "00:00:03,880",
+            "vi": "Tôi đã mượn giày."
+        },
+        {
+            "start": "00:00:05,520",
+            "end": "00:00:07,180",
+            "vi": "Tôi đang mặc giày."
+        },
+        {
+            "start": "00:00:08,930",
+            "end": "00:00:10,050",
+            "vi": "Tôi không biết nếu điều này có hiệu quả,"
+        },
+        {
+            "start": "00:00:10,050",
+            "end": "00:00:15,170",
+            "vi": "nhưng hệ miễn dịch của tôi không thể chống lại bệnh này nữa."
+        },
+        {
+            "start": "00:00:16,329",
+            "end": "00:00:18,250",
+            "vi": "Và cơn sốt,"
+        },
+        {
+            "start": "00:00:18,250",
+            "end": "00:00:23,350",
+            "vi": "cơn sốt đã qua,"
+        },
+        {
+            "start": "00:00:23,350",
+            "end": "00:00:32,430",
+            "vi": "cơn sốt biến mất một ngày trước đó,"
+        },
+        {
+            "start": "00:00:32,430",
+            "end": "00:00:33,230",
+            "vi": "nhưng nó"
+        },
+        {
+            "start": "00:00:38,069",
+            "end": "00:00:38,510",
+            "vi": "tái phát."
+        },
+        {
+            "start": "00:00:38,510",
+            "end": "00:00:41,130",
+            "vi": "Tôi không biết nếu nó ổn."
+        },
+        {
+            "start": "00:00:42,274",
+            "end": "00:00:43,074",
+            "vi": "Nó tái phát rồi"
+        },
+        {
+            "start": "00:00:44,453",
+            "end": "00:00:46,174",
+            "vi": "Ồ, nó trốn mất tiêu rồi."
+        },
+        {
+            "start": "00:00:46,914",
+            "end": "00:00:48,434",
+            "vi": "Mua một số thuốc thử xem."
+        },
+        {
+            "start": "00:00:49,194",
+            "end": "00:00:50,774",
+            "vi": "Và cái bộ kiểm tra COVID này nữa."
+        },
+        {
+            "start": "00:00:53,674",
+            "end": "00:00:54,554",
+            "vi": "Kiểm tra xem."
+        },
+        {
+            "start": "00:00:55,906",
+            "end": "00:00:56,266",
+            "vi": "Okay,"
+        },
+        {
+            "start": "00:00:56,266",
+            "end": "00:00:58,726",
+            "vi": "hẹn gặp lại."
+        }
+    ]
+}

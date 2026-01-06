@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,080\",\n    \"lang\": \"en\",\n    \"text\": \"Can you see the fork?\"\n  },\n  {\n    \"start\": \"00:00:02,580\",\n    \"end\": \"00:00:07,440\",\n    \"lang\": \"en\",\n    \"text\": \"So this is the rice noodles\"\n  },\n  {\n    \"start\": \"00:00:08,800\",\n    \"end\": \"00:00:11,920\",\n    \"lang\": \"en\",\n    \"text\": \"with a special recipe and\"\n  },\n  {\n    \"start\": \"00:00:13,060\",\n    \"end\": \"00:00:15,580\",\n    \"lang\": \"en\",\n    \"text\": \"Coriander and spinach\"\n  },\n  {\n    \"start\": \"00:00:16,720\",\n    \"end\": \"00:00:17,280\",\n    \"lang\": \"en\",\n    \"text\": \"sprouts\"\n  },\n  {\n    \"start\": \"00:00:18,660\",\n    \"end\": \"00:00:23,140\",\n    \"lang\": \"en\",\n    \"text\": \"I decided not to use the flavor bag it provided.\"\n  },\n  {\n    \"start\": \"00:00:23,140\",\n    \"end\": \"00:00:25,400\",\n    \"lang\": \"en\",\n    \"text\": \"I use my own flavor\"\n  },\n  {\n    \"start\": \"00:00:26,400\",\n    \"end\": \"00:00:26,900\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,080",
+            "en": "Can you see the fork?",
+            "zh": "你能看到叉子吗？",
+            "ar": "هل يمكنك رؤية الشوكة؟"
+        },
+        {
+            "start": "00:00:02,580",
+            "end": "00:00:07,440",
+            "en": "So this is the rice noodles",
+            "zh": "所以这是米粉",
+            "ar": "إذن هذه هي شعيرية الأرز"
+        },
+        {
+            "start": "00:00:08,800",
+            "end": "00:00:11,920",
+            "en": "with a special recipe and",
+            "zh": "用一个特别的食谱和",
+            "ar": "مع وصفة خاصة و"
+        },
+        {
+            "start": "00:00:13,060",
+            "end": "00:00:15,580",
+            "en": "Coriander and spinach",
+            "zh": "香菜和菠菜",
+            "ar": "الكزبرة والسبانخ"
+        },
+        {
+            "start": "00:00:16,720",
+            "end": "00:00:17,280",
+            "en": "sprouts",
+            "zh": "芽",
+            "ar": "البراعم"
+        },
+        {
+            "start": "00:00:18,660",
+            "end": "00:00:23,140",
+            "en": "I decided not to use the flavor bag it provided.",
+            "zh": "我决定不使用它提供的调味包。",
+            "ar": "قررت عدم استخدام كيس التوابل المقدم."
+        },
+        {
+            "start": "00:00:23,140",
+            "end": "00:00:25,400",
+            "en": "I use my own flavor",
+            "zh": "我用自己的调味品",
+            "ar": "أستخدم نكهتي الخاصة"
+        },
+        {
+            "start": "00:00:26,400",
+            "end": "00:00:26,900",
+            "en": "Okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        }
+    ]
+}

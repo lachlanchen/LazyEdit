@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,840\",\n    \"lang\": \"en\",\n    \"text\": \"Another ordinary day with some little progress,\"\n  },\n  {\n    \"start\": \"00:00:04,840\",\n    \"end\": \"00:00:06,000\",\n    \"lang\": \"en\",\n    \"text\": \"little improvement\"\n  },\n  {\n    \"start\": \"00:00:15,520\",\n    \"end\": \"00:00:16,100\",\n    \"lang\": \"en\",\n    \"text\": \"It's very good\"\n  },\n  {\n    \"start\": \"00:00:16,129\",\n    \"end\": \"00:00:16,810\",\n    \"lang\": \"zh\",\n    \"text\": \"小鱼死鱼飞\"\n  },\n  {\n    \"start\": \"00:00:17,698\",\n    \"end\": \"00:00:18,498\",\n    \"lang\": \"en\",\n    \"text\": \"in her grasp\"\n  },\n  {\n    \"start\": \"00:00:30,377\",\n    \"end\": \"00:00:31,217\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:31,217\",\n    \"end\": \"00:00:33,258\",\n    \"lang\": \"en\",\n    \"text\": \"let's get it perfectly wrong,\"\n  },\n  {\n    \"start\": \"00:00:33,258\",\n    \"end\": \"00:00:34,598\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  },\n  {\n    \"start\": \"00:00:54,338\",\n    \"end\": \"00:00:57,118\",\n    \"lang\": \"en\",\n    \"text\": \"Okay this around a the perfect,\"\n  },\n  {\n    \"start\": \"00:00:57,118\",\n    \"end\": \"00:00:58,858\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,840",
+            "es": "Otro día ordinario con un pequeño progreso,",
+            "fr": "Une autre journée ordinaire avec un peu de progrès,",
+            "uk": "Ще один звичайний день з деяким прогресом,"
+        },
+        {
+            "start": "00:00:04,840",
+            "end": "00:00:06,000",
+            "es": "pequeña mejora",
+            "fr": "petite amélioration",
+            "uk": "невелике поліпшення"
+        },
+        {
+            "start": "00:00:15,520",
+            "end": "00:00:16,100",
+            "es": "Está muy bien",
+            "fr": "C'est très bien",
+            "uk": "Це дуже добре"
+        },
+        {
+            "start": "00:00:16,129",
+            "end": "00:00:16,810",
+            "es": "pequeños peces, peces voladores",
+            "fr": "petits poissons, poissons volants",
+            "uk": "маленькі риби, літаючі риби"
+        },
+        {
+            "start": "00:00:17,698",
+            "end": "00:00:18,498",
+            "es": "en su poder",
+            "fr": "dans sa prise",
+            "uk": "в її владі"
+        },
+        {
+            "start": "00:00:30,377",
+            "end": "00:00:31,217",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:31,217",
+            "end": "00:00:33,258",
+            "es": "hagámoslo perfectamente incorrecto,",
+            "fr": "faisons-le parfaitement mal,",
+            "uk": "зробімо це абсолютно неправильно,"
+        },
+        {
+            "start": "00:00:33,258",
+            "end": "00:00:34,598",
+            "es": "vale",
+            "fr": "d'accord",
+            "uk": "добре"
+        },
+        {
+            "start": "00:00:54,338",
+            "end": "00:00:57,118",
+            "es": "Vale, esta vuelta es la perfecta,",
+            "fr": "D'accord, cette fois c'est la parfaite,",
+            "uk": "Добре, цей раз ідеально,"
+        },
+        {
+            "start": "00:00:57,118",
+            "end": "00:00:58,858",
+            "es": "vale",
+            "fr": "d'accord",
+            "uk": "добре"
+        }
+    ]
+}

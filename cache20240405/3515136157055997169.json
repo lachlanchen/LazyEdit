@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,060\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:01,060\",\n    \"end\": \"00:00:02,360\",\n    \"lang\": \"en\",\n    \"text\": \"this is UDM.\"\n  },\n  {\n    \"start\": \"00:00:02,946\",\n    \"end\": \"00:00:03,446\",\n    \"lang\": \"zh\",\n    \"text\": \"但是\"\n  },\n  {\n    \"start\": \"00:00:04,545\",\n    \"end\": \"00:00:05,246\",\n    \"lang\": \"zh\",\n    \"text\": \"不用\"\n  },\n  {\n    \"start\": \"00:00:06,306\",\n    \"end\": \"00:00:07,686\",\n    \"lang\": \"en\",\n    \"text\": \"eat around the world,\"\n  },\n  {\n    \"start\": \"00:00:07,686\",\n    \"end\": \"00:00:10,046\",\n    \"lang\": \"en\",\n    \"text\": \"that's the best flavor is the sword.\"\n  },\n  {\n    \"start\": \"00:00:11,650\",\n    \"end\": \"00:00:11,890\",\n    \"lang\": \"en\",\n    \"text\": \"start\"\n  },\n  {\n    \"start\": \"00:00:12,386\",\n    \"end\": \"00:00:13,666\",\n    \"lang\": \"en\",\n    \"text\": \"walk around the world,\"\n  },\n  {\n    \"start\": \"00:00:14,786\",\n    \"end\": \"00:00:17,506\",\n    \"lang\": \"en\",\n    \"text\": \"and the best people is your mom.\"\n  },\n  {\n    \"start\": \"00:00:18,786\",\n    \"end\": \"00:00:20,366\",\n    \"lang\": \"en\",\n    \"text\": \"So this book,\"\n  },\n  {\n    \"start\": \"00:00:20,366\",\n    \"end\": \"00:00:20,966\",\n    \"lang\": \"en\",\n    \"text\": \"I think,\"\n  },\n  {\n    \"start\": \"00:00:21,986\",\n    \"end\": \"00:00:22,506\",\n    \"lang\": \"zh\",\n    \"text\": \"frame 里面 现在 what\"\n  },\n  {\n    \"start\": \"00:00:24,226\",\n    \"end\": \"00:00:25,086\",\n    \"lang\": \"en\",\n    \"text\": \"a salty culture,\"\n  },\n  {\n    \"start\": \"00:00:25,086\",\n    \"end\": \"00:00:26,306\",\n    \"lang\": \"en\",\n    \"text\": \"S-A-L-T,\"\n  },\n  {\n    \"start\": \"00:00:26,306\",\n    \"end\": \"00:00:28,326\",\n    \"lang\": \"en\",\n    \"text\": \"salty culture in my hometown.\"\n  },\n  {\n    \"start\": \"00:00:30,594\",\n    \"end\": \"00:00:32,774\",\n    \"lang\": \"zh\",\n    \"text\": \"我们的麻辣烧鱼汤很出名\"\n  },\n  {\n    \"start\": \"00:00:35,490\",\n    \"end\": \"00:00:37,030\",\n    \"lang\": \"en\",\n    \"text\": \"and it's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:38,250\",\n    \"end\": \"00:00:38,890\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,060",
+            "en": "So,",
+            "zh": "所以，",
+            "ar": "إذاً،"
+        },
+        {
+            "start": "00:00:01,060",
+            "end": "00:00:02,360",
+            "en": "this is UDM.",
+            "zh": "这是UDM。",
+            "ar": "هذا هو UDM."
+        },
+        {
+            "start": "00:00:02,946",
+            "end": "00:00:03,446",
+            "en": "But",
+            "zh": "但是",
+            "ar": "لكن"
+        },
+        {
+            "start": "00:00:04,545",
+            "end": "00:00:05,246",
+            "en": "No need",
+            "zh": "不用",
+            "ar": "لا داعي"
+        },
+        {
+            "start": "00:00:06,306",
+            "end": "00:00:07,686",
+            "en": "eat around the world,",
+            "zh": "吃遍全世界，",
+            "ar": "أكل من حول العالم،"
+        },
+        {
+            "start": "00:00:07,686",
+            "end": "00:00:10,046",
+            "en": "that's the best flavor is the sword.",
+            "zh": "那是最好的味道就是剑。",
+            "ar": "هذا هو أفضل مذاق هو السيف."
+        },
+        {
+            "start": "00:00:11,650",
+            "end": "00:00:11,890",
+            "en": "start",
+            "zh": "开始",
+            "ar": "ابدأ"
+        },
+        {
+            "start": "00:00:12,386",
+            "end": "00:00:13,666",
+            "en": "walk around the world,",
+            "zh": "环游世界，",
+            "ar": "السير حول العالم،"
+        },
+        {
+            "start": "00:00:14,786",
+            "end": "00:00:17,506",
+            "en": "and the best people is your mom.",
+            "zh": "最好的人是你妈妈。",
+            "ar": "وأفضل الناس هي أمك."
+        },
+        {
+            "start": "00:00:18,786",
+            "end": "00:00:20,366",
+            "en": "So this book,",
+            "zh": "所以这本书，",
+            "ar": "فهذا الكتاب،"
+        },
+        {
+            "start": "00:00:20,366",
+            "end": "00:00:20,966",
+            "en": "I think,",
+            "zh": "我认为，",
+            "ar": "أعتقد،"
+        },
+        {
+            "start": "00:00:21,986",
+            "end": "00:00:22,506",
+            "en": "what's now inside the frame",
+            "zh": "frame 里面 现在 what",
+            "ar": "ما الذي بداخل الإطار الآن"
+        },
+        {
+            "start": "00:00:24,226",
+            "end": "00:00:25,086",
+            "en": "a salty culture,",
+            "zh": "一种咸的文化，",
+            "ar": "ثقافة مالحة،"
+        },
+        {
+            "start": "00:00:25,086",
+            "end": "00:00:26,306",
+            "en": "S-A-L-T,",
+            "zh": "S-A-L-T，",
+            "ar": "S-A-L-T،"
+        },
+        {
+            "start": "00:00:26,306",
+            "end": "00:00:28,326",
+            "en": "salty culture in my hometown.",
+            "zh": "我家乡的咸文化。",
+            "ar": "ثقافة مالحة في مسقط رأسي."
+        },
+        {
+            "start": "00:00:30,594",
+            "end": "00:00:32,774",
+            "en": "Our spicy and sour fish soup is famous",
+            "zh": "我们的麻辣烧鱼汤很出名",
+            "ar": "حساء السمك الحار والحامض الخاص بنا مشهور"
+        },
+        {
+            "start": "00:00:35,490",
+            "end": "00:00:37,030",
+            "en": "and it's gorgeous.",
+            "zh": "而且它非常美。",
+            "ar": "وهو رائع."
+        },
+        {
+            "start": "00:00:38,250",
+            "end": "00:00:38,890",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

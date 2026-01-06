@@ -1,0 +1,106 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,780\",\n    \"lang\": \"zh\",\n    \"text\": \"我在想這個豆芽用英語怎麼說\"\n  },\n  {\n    \"start\": \"00:00:03,560\",\n    \"end\": \"00:00:05,060\",\n    \"lang\": \"zh\",\n    \"text\": \"我實在不知道啊\"\n  },\n  {\n    \"start\": \"00:00:05,060\",\n    \"end\": \"00:00:05,860\",\n    \"lang\": \"zh\",\n    \"text\": \"我給你們編一個\"\n  },\n  {\n    \"start\": \"00:00:05,860\",\n    \"end\": \"00:00:09,160\",\n    \"lang\": \"zh\",\n    \"text\": \"叫做baby\"\n  },\n  {\n    \"start\": \"00:00:10,242\",\n    \"end\": \"00:00:10,922\",\n    \"lang\": \"en\",\n    \"text\": \"Babybin\"\n  },\n  {\n    \"start\": \"00:00:13,538\",\n    \"end\": \"00:00:14,698\",\n    \"lang\": \"zh\",\n    \"text\": \"冰子baby上\"\n  },\n  {\n    \"start\": \"00:00:26,658\",\n    \"end\": \"00:00:27,738\",\n    \"lang\": \"en\",\n    \"text\": \"INFINITY B\"\n  },\n  {\n    \"start\": \"00:00:33,097\",\n    \"end\": \"00:00:33,818\",\n    \"lang\": \"zh\",\n    \"text\": \"婴儿大豆\"\n  },\n  {\n    \"start\": \"00:00:34,882\",\n    \"end\": \"00:00:36,382\",\n    \"lang\": \"zh\",\n    \"text\": \"因为大豆这个东西是豆芽\"\n  },\n  {\n    \"start\": \"00:00:43,242\",\n    \"end\": \"00:00:43,642\",\n    \"lang\": \"zh\",\n    \"text\": \"可以\"\n  },\n  {\n    \"start\": \"00:00:56,514\",\n    \"end\": \"00:00:57,134\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜我也不知道\"\n  },\n  {\n    \"start\": \"00:00:57,698\",\n    \"end\": \"00:00:58,598\",\n    \"lang\": \"ja\",\n    \"text\": \"シャトンスウィッツ\"\n  },\n  {\n    \"start\": \"00:00:58,918\",\n    \"end\": \"00:00:59,578\",\n    \"lang\": \"ja\",\n    \"text\": \"スウィッツ\"\n  },\n  {\n    \"start\": \"00:00:59,578\",\n    \"end\": \"00:01:00,138\",\n    \"lang\": \"ja\",\n    \"text\": \"スウィッツパル\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,780",
+            "en": "I was wondering how to say bean sprouts in English",
+            "zh": "我在想這個豆芽用英語怎麼說",
+            "ar": "كنت أتساءل كيف أقول براعم الفاصوليا بالإنجليزية"
+        },
+        {
+            "start": "00:00:03,560",
+            "end": "00:00:05,060",
+            "en": "I really don't know",
+            "zh": "我實在不知道啊",
+            "ar": "أنا حقا لا أعرف"
+        },
+        {
+            "start": "00:00:05,060",
+            "end": "00:00:05,860",
+            "en": "I'll make one up for you",
+            "zh": "我給你們編一個",
+            "ar": "سأخترع واحدة لك"
+        },
+        {
+            "start": "00:00:05,860",
+            "end": "00:00:09,160",
+            "en": "Call it 'baby'",
+            "zh": "叫做baby",
+            "ar": "نسميها 'طفل'"
+        },
+        {
+            "start": "00:00:10,242",
+            "end": "00:00:10,922",
+            "en": "Baby Bean",
+            "zh": "小豆豆",
+            "ar": "فول الطفل"
+        },
+        {
+            "start": "00:00:13,538",
+            "end": "00:00:14,698",
+            "en": "Ice baby up",
+            "zh": "冰子baby上",
+            "ar": "طفل الجليد للأعلى"
+        },
+        {
+            "start": "00:00:26,658",
+            "end": "00:00:27,738",
+            "en": "Infinity Baby",
+            "zh": "无限宝宝",
+            "ar": "طفل لا نهائي"
+        },
+        {
+            "start": "00:00:33,097",
+            "end": "00:00:33,818",
+            "en": "Baby soybeans",
+            "zh": "婴儿大豆",
+            "ar": "فول الصويا الطفل"
+        },
+        {
+            "start": "00:00:34,882",
+            "end": "00:00:36,382",
+            "en": "Because soybeans are bean sprouts",
+            "zh": "因为大豆这个东西是豆芽",
+            "ar": "لأن حبوب الصويا هي براعم الفاصوليا"
+        },
+        {
+            "start": "00:00:43,242",
+            "end": "00:00:43,642",
+            "en": "Can do",
+            "zh": "可以",
+            "ar": "يمكن أن تفعل"
+        },
+        {
+            "start": "00:00:56,514",
+            "end": "00:00:57,134",
+            "en": "I also don't know about spinach",
+            "zh": "菠菜我也不知道",
+            "ar": "أنا أيضا لا أعرف عن السبانخ"
+        },
+        {
+            "start": "00:00:57,698",
+            "end": "00:00:58,598",
+            "en": "Swiss Chard",
+            "zh": "瑞士甜菜",
+            "ar": "السلق السويسري",
+            "ja": "シャトンスウィッツ"
+        },
+        {
+            "start": "00:00:58,918",
+            "end": "00:00:59,578",
+            "en": "Swiss",
+            "zh": "瑞士",
+            "ar": "سويسري",
+            "ja": "スウィッツ"
+        },
+        {
+            "start": "00:00:59,578",
+            "end": "00:01:00,138",
+            "en": "Swiss Pal",
+            "zh": "瑞士伙伴",
+            "ar": "الصديق السويسري",
+            "ja": "スウィッツパル"
+        }
+    ]
+}

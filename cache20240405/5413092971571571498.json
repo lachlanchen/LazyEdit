@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:04,230\",\n    \"end\": \"00:02:10,250\",\n    \"lang\": \"en\",\n    \"text\": \"but to stop discrimination in the infrastructure,\"\n  },\n  {\n    \"start\": \"00:02:10,250\",\n    \"end\": \"00:02:12,730\",\n    \"lang\": \"en\",\n    \"text\": \"in the institution.\"\n  },\n  {\n    \"start\": \"00:02:14,310\",\n    \"end\": \"00:02:16,070\",\n    \"lang\": \"en\",\n    \"text\": \"From the institution perspective,\"\n  },\n  {\n    \"start\": \"00:02:16,070\",\n    \"end\": \"00:02:22,930\",\n    \"lang\": \"en\",\n    \"text\": \"to stop the discrimination rather than from the moral perspective.\"\n  },\n  {\n    \"start\": \"00:02:23,930\",\n    \"end\": \"00:02:25,030\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:02:25,030\",\n    \"end\": \"00:02:29,310\",\n    \"lang\": \"en\",\n    \"text\": \"the little thing don't really matter.\"\n  },\n  {\n    \"start\": \"00:02:30,270\",\n    \"end\": \"00:02:31,990\",\n    \"lang\": \"en\",\n    \"text\": \"So it's great.\"\n  },\n  {\n    \"start\": \"00:02:31,990\",\n    \"end\": \"00:02:35,490\",\n    \"lang\": \"en\",\n    \"text\": \"It's practical.\"\n  },\n  {\n    \"start\": \"00:02:35,490\",\n    \"end\": \"00:02:42,950\",\n    \"lang\": \"en\",\n    \"text\": \"It's not something that is too aggressive or restrictive.\"\n  },\n  {\n    \"start\": \"00:02:42,950\",\n    \"end\": \"00:02:43,130\",\n    \"lang\": \"en\",\n    \"text\": \"Thank you.\"\n  },\n  {\n    \"start\": \"00:02:51,890\",\n    \"end\": \"00:02:55,450\",\n    \"lang\": \"zh\",\n    \"text\": \"那个 那是柴犬\"\n  },\n  {\n    \"start\": \"00:02:55,450\",\n    \"end\": \"00:02:56,850\",\n    \"lang\": \"zh\",\n    \"text\": \"柴犬的英语怎么说\"\n  },\n  {\n    \"start\": \"00:02:57,450\",\n    \"end\": \"00:02:57,950\",\n    \"lang\": \"zh\",\n    \"text\": \"柴犬\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:04,230",
+            "end": "00:02:10,250",
+            "ko": "인프라에서 차별을 멈추려는 것이지,"
+        },
+        {
+            "start": "00:02:10,250",
+            "end": "00:02:12,730",
+            "ko": "기관 내에서요."
+        },
+        {
+            "start": "00:02:14,310",
+            "end": "00:02:16,070",
+            "ko": "기관의 관점에서,"
+        },
+        {
+            "start": "00:02:16,070",
+            "end": "00:02:22,930",
+            "ko": "도덕적 관점이 아닌 차별을 멈추려는 것입니다."
+        },
+        {
+            "start": "00:02:23,930",
+            "end": "00:02:25,030",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:02:25,030",
+            "end": "00:02:29,310",
+            "ko": "작은 것들은 정말 중요하지 않습니다."
+        },
+        {
+            "start": "00:02:30,270",
+            "end": "00:02:31,990",
+            "ko": "그래서 좋습니다."
+        },
+        {
+            "start": "00:02:31,990",
+            "end": "00:02:35,490",
+            "ko": "실용적입니다."
+        },
+        {
+            "start": "00:02:35,490",
+            "end": "00:02:42,950",
+            "ko": "너무 공격적이거나 제한적인 것이 아닙니다."
+        },
+        {
+            "start": "00:02:42,950",
+            "end": "00:02:43,130",
+            "ko": "감사합니다."
+        },
+        {
+            "start": "00:02:51,890",
+            "end": "00:02:55,450",
+            "ko": "저것은 시바견입니다."
+        },
+        {
+            "start": "00:02:55,450",
+            "end": "00:02:56,850",
+            "ko": "시바견을 영어로 어떻게 말하죠?"
+        },
+        {
+            "start": "00:02:57,450",
+            "end": "00:02:57,950",
+            "ko": "시바견"
+        }
+    ]
+}

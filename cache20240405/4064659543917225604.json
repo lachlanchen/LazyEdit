@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,980\",\n    \"end\": \"00:00:04,600\",\n    \"lang\": \"en\",\n    \"text\": \"I want to share that after eating this pepper,\"\n  },\n  {\n    \"start\": \"00:00:04,600\",\n    \"end\": \"00:00:10,260\",\n    \"lang\": \"en\",\n    \"text\": \"ginger and garlic fragments\"\n  },\n  {\n    \"start\": \"00:00:10,850\",\n    \"end\": \"00:00:12,050\",\n    \"lang\": \"zh\",\n    \"text\": \"碎辣椒\"\n  },\n  {\n    \"start\": \"00:00:12,710\",\n    \"end\": \"00:00:13,770\",\n    \"lang\": \"zh\",\n    \"text\": \"碎辣椒,\"\n  },\n  {\n    \"start\": \"00:00:13,770\",\n    \"end\": \"00:00:14,810\",\n    \"lang\": \"zh\",\n    \"text\": \"吃了之后\"\n  },\n  {\n    \"start\": \"00:00:14,810\",\n    \"end\": \"00:00:17,330\",\n    \"lang\": \"zh\",\n    \"text\": \"我的新冠症状似乎\"\n  },\n  {\n    \"start\": \"00:00:18,050\",\n    \"end\": \"00:00:18,690\",\n    \"lang\": \"en\",\n    \"text\": \"Temporarily,\"\n  },\n  {\n    \"start\": \"00:00:18,690\",\n    \"end\": \"00:00:23,530\",\n    \"lang\": \"en\",\n    \"text\": \"my cold symptoms get elevated\"\n  },\n  {\n    \"start\": \"00:00:25,190\",\n    \"end\": \"00:00:27,170\",\n    \"lang\": \"en\",\n    \"text\": \"And my mouth is watering\"\n  },\n  {\n    \"start\": \"00:00:30,270\",\n    \"end\": \"00:00:31,190\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:31,190\",\n    \"end\": \"00:00:32,509\",\n    \"lang\": \"en\",\n    \"text\": \"so delicious\"\n  },\n  {\n    \"start\": \"00:00:38,890\",\n    \"end\": \"00:00:39,810\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:39,810\",\n    \"end\": \"00:00:41,150\",\n    \"lang\": \"en\",\n    \"text\": \"I like this\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,980",
+            "end": "00:00:04,600",
+            "en": "I want to share that after eating this pepper,",
+            "zh": "我想分享一下，吃了这个辣椒之后，",
+            "ar": "أريد أن أشارك أنه بعد تناول هذا الفلفل،"
+        },
+        {
+            "start": "00:00:04,600",
+            "end": "00:00:10,260",
+            "en": "ginger and garlic fragments",
+            "zh": "生姜和大蒜碎片",
+            "ar": "قطع الزنجبيل والثوم"
+        },
+        {
+            "start": "00:00:10,850",
+            "end": "00:00:12,050",
+            "en": "Crushed chili",
+            "zh": "碎辣椒",
+            "ar": "الفلفل المطحون"
+        },
+        {
+            "start": "00:00:12,710",
+            "end": "00:00:13,770",
+            "en": "Crushed chili,",
+            "zh": "碎辣椒,",
+            "ar": "الفلفل المطحون,"
+        },
+        {
+            "start": "00:00:13,770",
+            "end": "00:00:14,810",
+            "en": "after eating",
+            "zh": "吃了之后",
+            "ar": "بعد تناول الطعام"
+        },
+        {
+            "start": "00:00:14,810",
+            "end": "00:00:17,330",
+            "en": "my COVID-19 symptoms seem",
+            "zh": "我的新冠症状似乎",
+            "ar": "أعراض كوفيد-19 الخاصة بي تبدو"
+        },
+        {
+            "start": "00:00:18,050",
+            "end": "00:00:18,690",
+            "en": "Temporarily,",
+            "zh": "暂时地，",
+            "ar": "مؤقتًا،"
+        },
+        {
+            "start": "00:00:18,690",
+            "end": "00:00:23,530",
+            "en": "my cold symptoms get elevated",
+            "zh": "我的感冒症状有所加重",
+            "ar": "تزداد أعراض البرد لدي"
+        },
+        {
+            "start": "00:00:25,190",
+            "end": "00:00:27,170",
+            "en": "And my mouth is watering",
+            "zh": "而且我口水直流",
+            "ar": "وفمي يسيل"
+        },
+        {
+            "start": "00:00:30,270",
+            "end": "00:00:31,190",
+            "en": "Wow,",
+            "zh": "哇，",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:00:31,190",
+            "end": "00:00:32,509",
+            "en": "so delicious",
+            "zh": "太美味了",
+            "ar": "لذيذ جدًا"
+        },
+        {
+            "start": "00:00:38,890",
+            "end": "00:00:39,810",
+            "en": "Wow,",
+            "zh": "哇，",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:00:39,810",
+            "end": "00:00:41,150",
+            "en": "I like this",
+            "zh": "我喜欢这个",
+            "ar": "أنا أحب هذا"
+        }
+    ]
+}

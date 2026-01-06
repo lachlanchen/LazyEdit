@@ -1,0 +1,91 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:05,446\",\n    \"end\": \"00:03:06,566\",\n    \"lang\": \"en\",\n    \"text\": \"education concepts.\"\n  },\n  {\n    \"start\": \"00:03:07,746\",\n    \"end\": \"00:03:08,186\",\n    \"lang\": \"ja\",\n    \"text\": \"コンセプト\"\n  },\n  {\n    \"start\": \"00:03:10,082\",\n    \"end\": \"00:03:12,602\",\n    \"lang\": \"en\",\n    \"text\": \"So firstly,\"\n  },\n  {\n    \"start\": \"00:03:12,602\",\n    \"end\": \"00:03:15,182\",\n    \"lang\": \"en\",\n    \"text\": \"when I learn guitar,\"\n  },\n  {\n    \"start\": \"00:03:15,182\",\n    \"end\": \"00:03:17,922\",\n    \"lang\": \"en\",\n    \"text\": \"I focus on repetition.\"\n  },\n  {\n    \"start\": \"00:03:18,462\",\n    \"end\": \"00:03:27,882\",\n    \"lang\": \"en\",\n    \"text\": \"So I just repetitively practice the skill until I can\"\n  },\n  {\n    \"start\": \"00:03:32,642\",\n    \"end\": \"00:03:34,502\",\n    \"lang\": \"zh\",\n    \"text\": \"愛看順死人啊\"\n  },\n  {\n    \"start\": \"00:03:37,442\",\n    \"end\": \"00:03:38,162\",\n    \"lang\": \"en\",\n    \"text\": \"the art.\"\n  },\n  {\n    \"start\": \"00:03:40,542\",\n    \"end\": \"00:03:42,802\",\n    \"lang\": \"en\",\n    \"text\": \"It's hard for me to explain this.\"\n  },\n  {\n    \"start\": \"00:03:51,962\",\n    \"end\": \"00:03:53,082\",\n    \"lang\": \"en\",\n    \"text\": \"It's wrong.\"\n  },\n  {\n    \"start\": \"00:03:53,582\",\n    \"end\": \"00:03:54,002\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:03:54,982\",\n    \"end\": \"00:03:55,302\",\n    \"lang\": \"en\",\n    \"text\": \"It's wrong.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:03:05,446",
+            "end": "00:03:06,566",
+            "en": "education concepts.",
+            "zh": "教育概念。",
+            "ar": "مفاهيم التعليم."
+        },
+        {
+            "start": "00:03:07,746",
+            "end": "00:03:08,186",
+            "en": "Concepts",
+            "zh": "概念",
+            "ar": "المفاهيم",
+            "ja": "コンセプト"
+        },
+        {
+            "start": "00:03:10,082",
+            "end": "00:03:12,602",
+            "en": "So firstly,",
+            "zh": "首先，",
+            "ar": "إذًا أولاً،"
+        },
+        {
+            "start": "00:03:12,602",
+            "end": "00:03:15,182",
+            "en": "when I learn guitar,",
+            "zh": "当我学吉他时，",
+            "ar": "عندما أتعلم الجيتار،"
+        },
+        {
+            "start": "00:03:15,182",
+            "end": "00:03:17,922",
+            "en": "I focus on repetition.",
+            "zh": "我专注于重复。",
+            "ar": "أركز على التكرار."
+        },
+        {
+            "start": "00:03:18,462",
+            "end": "00:03:27,882",
+            "en": "So I just repetitively practice the skill until I can",
+            "zh": "所以我就重复练习这个技能直到我能",
+            "ar": "لذا أنا فقط أمارس المهارة بتكرار حتى أستطيع"
+        },
+        {
+            "start": "00:03:32,642",
+            "end": "00:03:34,502",
+            "en": "play it effortlessly.",
+            "zh": "轻松地弹奏它。",
+            "ar": "أعزفها بسهولة.",
+            "zh_comment": "修正了明显的语音识别错误，原文“愛看順死人啊”是不合逻辑的输出。"
+        },
+        {
+            "start": "00:03:37,442",
+            "end": "00:03:38,162",
+            "en": "the art.",
+            "zh": "这门艺术。",
+            "ar": "الفن."
+        },
+        {
+            "start": "00:03:40,542",
+            "end": "00:03:42,802",
+            "en": "It's hard for me to explain this.",
+            "zh": "这对我来说很难解释。",
+            "ar": "من الصعب علي أن أشرح هذا."
+        },
+        {
+            "start": "00:03:51,962",
+            "end": "00:03:53,082",
+            "en": "It's wrong.",
+            "zh": "这是错的。",
+            "ar": "هذا خطأ."
+        },
+        {
+            "start": "00:03:53,582",
+            "end": "00:03:54,002",
+            "en": "Sorry.",
+            "zh": "对不起。",
+            "ar": "آسف."
+        },
+        {
+            "start": "00:03:54,982",
+            "end": "00:03:55,302",
+            "en": "It's wrong.",
+            "zh": "这是错的。",
+            "ar": "هذا خطأ."
+        }
+    ]
+}

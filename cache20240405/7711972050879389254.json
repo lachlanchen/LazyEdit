@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:26,906\",\n    \"end\": \"00:03:29,046\",\n    \"lang\": \"en\",\n    \"text\": \"That's my unique journey.\"\n  },\n  {\n    \"start\": \"00:03:30,806\",\n    \"end\": \"00:03:32,866\",\n    \"lang\": \"en\",\n    \"text\": \"I have my own story.\"\n  },\n  {\n    \"start\": \"00:03:37,526\",\n    \"end\": \"00:03:38,986\",\n    \"lang\": \"en\",\n    \"text\": \"A unique story.\"\n  },\n  {\n    \"start\": \"00:03:40,186\",\n    \"end\": \"00:03:45,446\",\n    \"lang\": \"en\",\n    \"text\": \"And it can also help others to make the world better.\"\n  },\n  {\n    \"start\": \"00:03:50,966\",\n    \"end\": \"00:03:56,726\",\n    \"lang\": \"en\",\n    \"text\": \"Please put the rainbow as our cover.\"\n  },\n  {\n    \"start\": \"00:03:57,266\",\n    \"end\": \"00:03:59,106\",\n    \"lang\": \"en\",\n    \"text\": \"Put this rainbow as our cover.\"\n  },\n  {\n    \"start\": \"00:03:59,626\",\n    \"end\": \"00:04:00,666\",\n    \"lang\": \"en\",\n    \"text\": \"And as our teaser.\"\n  },\n  {\n    \"start\": \"00:04:01,846\",\n    \"end\": \"00:04:02,606\",\n    \"lang\": \"en\",\n    \"text\": \"Please.\"\n  },\n  {\n    \"start\": \"00:04:03,986\",\n    \"end\": \"00:04:05,466\",\n    \"lang\": \"en\",\n    \"text\": \"This is our teaser.\"\n  },\n  {\n    \"start\": \"00:04:06,246\",\n    \"end\": \"00:04:06,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:04:06,686\",\n    \"end\": \"00:04:06,686\",\n    \"lang\": \"en\",\n    \"text\": \"this is our teaser.\"\n  },\n  {\n    \"start\": \"00:04:07,646\",\n    \"end\": \"00:04:08,086\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:04:08,086\",\n    \"end\": \"00:04:08,986\",\n    \"lang\": \"en\",\n    \"text\": \"this is our...\"\n  },\n  {\n    \"start\": \"00:04:10,086\",\n    \"end\": \"00:04:10,526\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:04:10,526\",\n    \"end\": \"00:04:11,026\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:26,906",
+            "end": "00:03:29,046",
+            "ja": "それが私のユニークな旅です。"
+        },
+        {
+            "start": "00:03:30,806",
+            "end": "00:03:32,866",
+            "ja": "私には自分だけの物語があります。"
+        },
+        {
+            "start": "00:03:37,526",
+            "end": "00:03:38,986",
+            "ja": "ユニークな物語。"
+        },
+        {
+            "start": "00:03:40,186",
+            "end": "00:03:45,446",
+            "ja": "そして、それは他の人々を助けて、世界をより良くすることもできます。"
+        },
+        {
+            "start": "00:03:50,966",
+            "end": "00:03:56,726",
+            "ja": "虹を私たちのカバーとしてください。"
+        },
+        {
+            "start": "00:03:57,266",
+            "end": "00:03:59,106",
+            "ja": "この虹を私たちのカバーとしてください。"
+        },
+        {
+            "start": "00:03:59,626",
+            "end": "00:04:00,666",
+            "ja": "そして、私たちのティーザーとしても。"
+        },
+        {
+            "start": "00:04:01,846",
+            "end": "00:04:02,606",
+            "ja": "お願いします。"
+        },
+        {
+            "start": "00:04:03,986",
+            "end": "00:04:05,466",
+            "ja": "これが私たちのティーザーです。"
+        },
+        {
+            "start": "00:04:06,246",
+            "end": "00:04:06,686",
+            "ja": "オーケー、"
+        },
+        {
+            "start": "00:04:06,686",
+            "end": "00:04:06,686",
+            "ja": "これが私たちのティーザーです。"
+        },
+        {
+            "start": "00:04:07,646",
+            "end": "00:04:08,086",
+            "ja": "オーケー、"
+        },
+        {
+            "start": "00:04:08,086",
+            "end": "00:04:08,986",
+            "ja": "これが私たちの…"
+        },
+        {
+            "start": "00:04:10,086",
+            "end": "00:04:10,526",
+            "ja": "オーケー、"
+        },
+        {
+            "start": "00:04:10,526",
+            "end": "00:04:11,026",
+            "ja": "またね。"
+        }
+    ]
+}

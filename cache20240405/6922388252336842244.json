@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:05,641\",\n    \"end\": \"00:02:06,461\",\n    \"lang\": \"zh\",\n    \"text\": \"放心哦\"\n  },\n  {\n    \"start\": \"00:02:07,266\",\n    \"end\": \"00:02:08,086\",\n    \"lang\": \"en\",\n    \"text\": \"different flavor\"\n  },\n  {\n    \"start\": \"00:02:12,446\",\n    \"end\": \"00:02:15,066\",\n    \"lang\": \"en\",\n    \"text\": \"So that's my talent\"\n  },\n  {\n    \"start\": \"00:02:16,002\",\n    \"end\": \"00:02:16,342\",\n    \"lang\": \"en\",\n    \"text\": \"ir Vera\"\n  },\n  {\n    \"start\": \"00:02:26,498\",\n    \"end\": \"00:02:28,498\",\n    \"lang\": \"zh\",\n    \"text\": \"我现在在烹饪\"\n  },\n  {\n    \"start\": \"00:02:29,218\",\n    \"end\": \"00:02:30,738\",\n    \"lang\": \"en\",\n    \"text\": \"This is really delicious.\"\n  },\n  {\n    \"start\": \"00:02:32,078\",\n    \"end\": \"00:02:38,838\",\n    \"lang\": \"en\",\n    \"text\": \"How about I put this rice and the baozi that I left in this morning?\"\n  },\n  {\n    \"start\": \"00:02:40,438\",\n    \"end\": \"00:02:42,358\",\n    \"lang\": \"en\",\n    \"text\": \"Maybe temporarily not at the end,\"\n  },\n  {\n    \"start\": \"00:02:42,358\",\n    \"end\": \"00:02:43,078\",\n    \"lang\": \"en\",\n    \"text\": \"I might try that.\"\n  },\n  {\n    \"start\": \"00:02:43,478\",\n    \"end\": \"00:02:43,698\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:05,641",
+            "end": "00:02:06,461",
+            "en": "Don't worry",
+            "zh": "放心哦",
+            "ar": "لا تقلق"
+        },
+        {
+            "start": "00:02:07,266",
+            "end": "00:02:08,086",
+            "en": "Different flavor",
+            "zh": "不同的味道",
+            "ar": "نكهة مختلفة"
+        },
+        {
+            "start": "00:02:12,446",
+            "end": "00:02:15,066",
+            "en": "So that's my talent",
+            "zh": "所以那是我的天赋",
+            "ar": "إذاً هذه موهبتي"
+        },
+        {
+            "start": "00:02:16,002",
+            "end": "00:02:16,342",
+            "en": "It's Vera",
+            "zh": "是维拉",
+            "ar": "إنها فيرا"
+        },
+        {
+            "start": "00:02:26,498",
+            "end": "00:02:28,498",
+            "en": "I'm cooking now",
+            "zh": "我现在在烹饪",
+            "ar": "أنا أطبخ الآن"
+        },
+        {
+            "start": "00:02:29,218",
+            "end": "00:02:30,738",
+            "en": "This is really delicious.",
+            "zh": "这确实很美味。",
+            "ar": "هذا لذيذ حقاً."
+        },
+        {
+            "start": "00:02:32,078",
+            "end": "00:02:38,838",
+            "en": "How about I put this rice and the baozi that I left in this morning?",
+            "zh": "我把这些米饭和我今天早上留下的包子放进去怎么样？",
+            "ar": "ماذا لو وضعت هذا الأرز والباوزي الذي تركته صباحاً؟"
+        },
+        {
+            "start": "00:02:40,438",
+            "end": "00:02:42,358",
+            "en": "Maybe temporarily not at the end,",
+            "zh": "也许暂时不是在最后，",
+            "ar": "ربما مؤقتًا ليس في النهاية،"
+        },
+        {
+            "start": "00:02:42,358",
+            "end": "00:02:43,078",
+            "en": "I might try that.",
+            "zh": "我可能会尝试那个。",
+            "ar": "قد أجرب ذلك."
+        },
+        {
+            "start": "00:02:43,478",
+            "end": "00:02:43,698",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:26,954\",\n    \"end\": \"00:03:28,354\",\n    \"lang\": \"zh\",\n    \"text\": \"感谢观看\"\n  },\n  {\n    \"start\": \"00:03:28,378\",\n    \"end\": \"00:03:28,938\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:03:29,058\",\n    \"end\": \"00:03:29,678\",\n    \"lang\": \"zh\",\n    \"text\": \"我的另一首歌\"\n  },\n  {\n    \"start\": \"00:03:49,338\",\n    \"end\": \"00:03:52,718\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:52,718\",\n    \"end\": \"00:03:55,178\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:03:55,178\",\n    \"end\": \"00:03:58,058\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:58,058\",\n    \"end\": \"00:03:59,038\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:03:59,038\",\n    \"end\": \"00:04:00,338\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:04:01,038\",\n    \"end\": \"00:04:02,878\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:04:02,878\",\n    \"end\": \"00:04:05,258\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:04:05,258\",\n    \"end\": \"00:04:07,178\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:04:07,178\",\n    \"end\": \"00:04:07,938\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树干\"\n  },\n  {\n    \"start\": \"00:04:09,038\",\n    \"end\": \"00:04:11,458\",\n    \"lang\": \"zh\",\n    \"text\": \"那是所有正确的歌词\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:26,954",
+            "end": "00:03:28,354",
+            "vi": "Cảm ơn đã xem"
+        },
+        {
+            "start": "00:03:28,378",
+            "end": "00:03:28,938",
+            "vi": "Được."
+        },
+        {
+            "start": "00:03:29,058",
+            "end": "00:03:29,678",
+            "vi": "Bài hát khác của tôi"
+        },
+        {
+            "start": "00:03:49,338",
+            "end": "00:03:52,718",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:03:52,718",
+            "end": "00:03:55,178",
+            "vi": "Không có thân cây"
+        },
+        {
+            "start": "00:03:55,178",
+            "end": "00:03:58,058",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:03:58,058",
+            "end": "00:03:59,038",
+            "vi": "Không có thân cây"
+        },
+        {
+            "start": "00:03:59,038",
+            "end": "00:04:00,338",
+            "vi": "Không có thân cây"
+        },
+        {
+            "start": "00:04:01,038",
+            "end": "00:04:02,878",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:04:02,878",
+            "end": "00:04:05,258",
+            "vi": "Không có thân cây"
+        },
+        {
+            "start": "00:04:05,258",
+            "end": "00:04:07,178",
+            "vi": "Không có mùi hoa"
+        },
+        {
+            "start": "00:04:07,178",
+            "end": "00:04:07,938",
+            "vi": "Không có thân cây"
+        },
+        {
+            "start": "00:04:09,038",
+            "end": "00:04:11,458",
+            "vi": "Đó là tất cả lời bài hát đúng"
+        }
+    ]
+}

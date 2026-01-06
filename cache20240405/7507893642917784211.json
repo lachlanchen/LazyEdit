@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps. If a subtitle is already in English, provide the corresponding Chinese and Arabic translation, and vice versa. For subtitles in any other language, keep the original text but also provide translations in English, Chinese and Arabic. \n\nFullfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language. Correct some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:25,046\",\n    \"end\": \"00:03:25,746\",\n    \"lang\": \"en\",\n    \"text\": \"the\"\n  },\n  {\n    \"start\": \"00:03:25,746\",\n    \"end\": \"00:03:26,586\",\n    \"lang\": \"en\",\n    \"text\": \"the real\"\n  },\n  {\n    \"start\": \"00:03:26,586\",\n    \"end\": \"00:03:26,606\",\n    \"lang\": \"en\",\n    \"text\": \"the real\"\n  },\n  {\n    \"start\": \"00:03:26,626\",\n    \"end\": \"00:03:30,666\",\n    \"lang\": \"en\",\n    \"text\": \"I didn't see the voice recordings.\"\n  },\n  {\n    \"start\": \"00:03:31,522\",\n    \"end\": \"00:03:35,942\",\n    \"lang\": \"en\",\n    \"text\": \"software recognized the language of this voice\"\n  },\n  {\n    \"start\": \"00:03:35,942\",\n    \"end\": \"00:03:40,142\",\n    \"lang\": \"en\",\n    \"text\": \"so I put a symbol at that language before it\"\n  },\n  {\n    \"start\": \"00:03:40,142\",\n    \"end\": \"00:03:45,222\",\n    \"lang\": \"en\",\n    \"text\": \"so when you see the voice symbol\"\n  },\n  {\n    \"start\": \"00:03:45,222\",\n    \"end\": \"00:03:48,062\",\n    \"lang\": \"en\",\n    \"text\": \"it means this language is\"\n  },\n  {\n    \"start\": \"00:03:50,582\",\n    \"end\": \"00:03:54,162\",\n    \"lang\": \"en\",\n    \"text\": \"automatically recognized software\"\n  },\n  {\n    \"start\": \"00:03:55,742\",\n    \"end\": \"00:03:59,302\",\n    \"lang\": \"en\",\n    \"text\": \"detected language for this line\"\n  },\n  {\n    \"start\": \"00:03:59,302\",\n    \"end\": \"00:04:01,702\",\n    \"lang\": \"en\",\n    \"text\": \"okey\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:03:25,046",
+            "end": "00:03:25,746",
+            "en": "the",
+            "zh": "那",
+            "ar": "ال"
+        },
+        {
+            "start": "00:03:25,746",
+            "end": "00:03:26,586",
+            "en": "the real",
+            "zh": "真正的",
+            "ar": "الحقيقي"
+        },
+        {
+            "start": "00:03:26,586",
+            "end": "00:03:26,606",
+            "en": "the real",
+            "zh": "真正的",
+            "ar": "الحقيقي"
+        },
+        {
+            "start": "00:03:26,626",
+            "end": "00:03:30,666",
+            "en": "I didn't see the voice recordings.",
+            "zh": "我没看到语音记录。",
+            "ar": "لم أرَ التسجيلات الصوتية."
+        },
+        {
+            "start": "00:03:31,522",
+            "end": "00:03:35,942",
+            "en": "software recognized the language of this voice",
+            "zh": "软件识别了这个声音的语言",
+            "ar": "البرمجيات تعرفت على لغة هذا الصوت"
+        },
+        {
+            "start": "00:03:35,942",
+            "end": "00:03:40,142",
+            "en": "so I put a symbol at that language before it",
+            "zh": "所以我在它之前为那种语言放置了一个符号",
+            "ar": "لذا وضعت رمزًا عند تلك اللغة قبله"
+        },
+        {
+            "start": "00:03:40,142",
+            "end": "00:03:45,222",
+            "en": "so when you see the voice symbol",
+            "zh": "所以当你看到语音符号时",
+            "ar": "فعندما ترى رمز الصوت"
+        },
+        {
+            "start": "00:03:45,222",
+            "end": "00:03:48,062",
+            "en": "it means this language is",
+            "zh": "这意味着这种语言是",
+            "ar": "هذا يعني أن هذه اللغة هي"
+        },
+        {
+            "start": "00:03:50,582",
+            "end": "00:03:54,162",
+            "en": "automatically recognized software",
+            "zh": "自动识别软件",
+            "ar": "البرمجيات المعترف بها تلقائيًا"
+        },
+        {
+            "start": "00:03:55,742",
+            "end": "00:03:59,302",
+            "en": "detected language for this line",
+            "zh": "检测到这一行的语言",
+            "ar": "اللغة المكتشفة لهذا الخط"
+        },
+        {
+            "start": "00:03:59,302",
+            "end": "00:04:01,702",
+            "en": "okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        }
+    ]
+}

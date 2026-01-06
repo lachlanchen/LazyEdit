@@ -1,0 +1,159 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:05:06,118\",\n    \"end\": \"00:05:07,718\",\n    \"lang\": \"en\",\n    \"text\": \"life everyday.\"\n  },\n  {\n    \"start\": \"00:05:08,398\",\n    \"end\": \"00:05:09,578\",\n    \"lang\": \"en\",\n    \"text\": \"And um...\"\n  },\n  {\n    \"start\": \"00:05:10,210\",\n    \"end\": \"00:05:10,930\",\n    \"lang\": \"ja\",\n    \"text\": \"みくねっす、\"\n  },\n  {\n    \"start\": \"00:05:10,930\",\n    \"end\": \"00:05:11,830\",\n    \"lang\": \"ja\",\n    \"text\": \"ほうちゅるり、\"\n  },\n  {\n    \"start\": \"00:05:11,830\",\n    \"end\": \"00:05:12,410\",\n    \"lang\": \"ja\",\n    \"text\": \"ぴー\"\n  },\n  {\n    \"start\": \"00:05:15,746\",\n    \"end\": \"00:05:16,766\",\n    \"lang\": \"en\",\n    \"text\": \"be comprehensive,\"\n  },\n  {\n    \"start\": \"00:05:16,766\",\n    \"end\": \"00:05:19,006\",\n    \"lang\": \"en\",\n    \"text\": \"inclusive,\"\n  },\n  {\n    \"start\": \"00:05:19,006\",\n    \"end\": \"00:05:20,746\",\n    \"lang\": \"en\",\n    \"text\": \"and fantastic.\"\n  },\n  {\n    \"start\": \"00:05:22,986\",\n    \"end\": \"00:05:26,206\",\n    \"lang\": \"en\",\n    \"text\": \"I believe that's the right thing to do.\"\n  },\n  {\n    \"start\": \"00:05:26,506\",\n    \"end\": \"00:05:29,646\",\n    \"lang\": \"en\",\n    \"text\": \"But it doesn't mean that you don't learn,\"\n  },\n  {\n    \"start\": \"00:05:29,646\",\n    \"end\": \"00:05:30,606\",\n    \"lang\": \"en\",\n    \"text\": \"don't study.\"\n  },\n  {\n    \"start\": \"00:05:30,886\",\n    \"end\": \"00:05:31,726\",\n    \"lang\": \"en\",\n    \"text\": \"You can still study,\"\n  },\n  {\n    \"start\": \"00:05:31,726\",\n    \"end\": \"00:05:32,666\",\n    \"lang\": \"en\",\n    \"text\": \"you can still learn.\"\n  },\n  {\n    \"start\": \"00:05:33,386\",\n    \"end\": \"00:05:37,866\",\n    \"lang\": \"en\",\n    \"text\": \"It's a thing that is deep in your mind,\"\n  },\n  {\n    \"start\": \"00:05:39,466\",\n    \"end\": \"00:05:42,426\",\n    \"lang\": \"en\",\n    \"text\": \"for which you are desperate,\"\n  },\n  {\n    \"start\": \"00:05:42,426\",\n    \"end\": \"00:05:43,606\",\n    \"lang\": \"en\",\n    \"text\": \"you are crazy,\"\n  },\n  {\n    \"start\": \"00:05:43,606\",\n    \"end\": \"00:05:44,886\",\n    \"lang\": \"en\",\n    \"text\": \"you are eager.\"\n  },\n  {\n    \"start\": \"00:05:46,265\",\n    \"end\": \"00:05:48,126\",\n    \"lang\": \"en\",\n    \"text\": \"So you can still do it,\"\n  },\n  {\n    \"start\": \"00:05:48,126\",\n    \"end\": \"00:05:51,266\",\n    \"lang\": \"en\",\n    \"text\": \"you can still learn things,\"\n  },\n  {\n    \"start\": \"00:05:51,586\",\n    \"end\": \"00:05:55,746\",\n    \"lang\": \"en\",\n    \"text\": \"but it's not a thing that you escape from reality.\"\n  },\n  {\n    \"start\": \"00:05:56,525\",\n    \"end\": \"00:05:57,046\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:05:57,046\",\n    \"end\": \"00:05:58,706\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:05:06,118",
+            "end": "00:05:07,718",
+            "es": "la vida todos los días.",
+            "fr": "la vie tous les jours.",
+            "uk": "життя щодня."
+        },
+        {
+            "start": "00:05:08,398",
+            "end": "00:05:09,578",
+            "es": "Y ehm...",
+            "fr": "Et euh...",
+            "uk": "І ем..."
+        },
+        {
+            "start": "00:05:10,210",
+            "end": "00:05:10,930",
+            "es": "complexidad,",
+            "fr": "complexité,",
+            "uk": "складність,"
+        },
+        {
+            "start": "00:05:10,930",
+            "end": "00:05:11,830",
+            "es": "persistencia,",
+            "fr": "persistance,",
+            "uk": "наполегливість,"
+        },
+        {
+            "start": "00:05:11,830",
+            "end": "00:05:12,410",
+            "es": "paz",
+            "fr": "paix",
+            "uk": "мир"
+        },
+        {
+            "start": "00:05:15,746",
+            "end": "00:05:16,766",
+            "es": "ser comprensivo,",
+            "fr": "être compréhensif,",
+            "uk": "бути всебічним,"
+        },
+        {
+            "start": "00:05:16,766",
+            "end": "00:05:19,006",
+            "es": "inclusivo,",
+            "fr": "inclusif,",
+            "uk": "включно,"
+        },
+        {
+            "start": "00:05:19,006",
+            "end": "00:05:20,746",
+            "es": "y fantástico.",
+            "fr": "et fantastique.",
+            "uk": "і фантастично."
+        },
+        {
+            "start": "00:05:22,986",
+            "end": "00:05:26,206",
+            "es": "Creo que es lo correcto.",
+            "fr": "Je crois que c'est la bonne chose à faire.",
+            "uk": "Я вважаю, що це правильно."
+        },
+        {
+            "start": "00:05:26,506",
+            "end": "00:05:29,646",
+            "es": "Pero eso no significa que no aprendas,",
+            "fr": "Mais cela ne signifie pas que vous n'apprenez pas,",
+            "uk": "Але це не означає, що ви не вчитеся,"
+        },
+        {
+            "start": "00:05:29,646",
+            "end": "00:05:30,606",
+            "es": "no estudies.",
+            "fr": "ne pas étudier.",
+            "uk": "не вчитись."
+        },
+        {
+            "start": "00:05:30,886",
+            "end": "00:05:31,726",
+            "es": "Todavía puedes estudiar,",
+            "fr": "Vous pouvez encore étudier,",
+            "uk": "Ви все ще можете вчитися,"
+        },
+        {
+            "start": "00:05:31,726",
+            "end": "00:05:32,666",
+            "es": "todavía puedes aprender.",
+            "fr": "vous pouvez encore apprendre.",
+            "uk": "ви все ще можете вчитися."
+        },
+        {
+            "start": "00:05:33,386",
+            "end": "00:05:37,866",
+            "es": "Es algo que está profundo en tu mente,",
+            "fr": "C'est quelque chose qui est profond dans votre esprit,",
+            "uk": "Це те, що глибоко в твоїй свідомості,"
+        },
+        {
+            "start": "00:05:39,466",
+            "end": "00:05:42,426",
+            "es": "por lo cual estás desesperado,",
+            "fr": "pour lequel vous êtes désespéré,",
+            "uk": "за яке ти відчайдушно,"
+        },
+        {
+            "start": "00:05:42,426",
+            "end": "00:05:43,606",
+            "es": "estás loco,",
+            "fr": "vous êtes fou,",
+            "uk": "ти збожеволів,"
+        },
+        {
+            "start": "00:05:43,606",
+            "end": "00:05:44,886",
+            "es": "tienes ansias.",
+            "fr": "vous êtes impatient.",
+            "uk": "ти прагнеш."
+        },
+        {
+            "start": "00:05:46,265",
+            "end": "00:05:48,126",
+            "es": "Así que todavía puedes hacerlo,",
+            "fr": "Donc, vous pouvez encore le faire,",
+            "uk": "Так що ти все ще можеш це робити,"
+        },
+        {
+            "start": "00:05:48,126",
+            "end": "00:05:51,266",
+            "es": "todavía puedes aprender cosas,",
+            "fr": "vous pouvez encore apprendre des choses,",
+            "uk": "ти ще можеш вчитися,"
+        },
+        {
+            "start": "00:05:51,586",
+            "end": "00:05:55,746",
+            "es": "pero no es algo de lo que escapar de la realidad.",
+            "fr": "mais ce n'est pas quelque chose dont vous échappez à la réalité.",
+            "uk": "але це не те, від чого ти уникаєш реальності."
+        },
+        {
+            "start": "00:05:56,525",
+            "end": "00:05:57,046",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:05:57,046",
+            "end": "00:05:58,706",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "uk": "бачимось."
+        }
+    ]
+}

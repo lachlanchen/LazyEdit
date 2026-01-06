@@ -1,0 +1,138 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. \n\nNote that the original timestamps should be PRESERVED for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,700\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:01,314\",\n    \"end\": \"00:00:02,094\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,490\",\n    \"end\": \"00:00:05,170\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our lunch.\"\n  },\n  {\n    \"start\": \"00:00:05,870\",\n    \"end\": \"00:00:06,270\",\n    \"lang\": \"en\",\n    \"text\": \"Lunch.\"\n  },\n  {\n    \"start\": \"00:00:09,450\",\n    \"end\": \"00:00:10,710\",\n    \"lang\": \"en\",\n    \"text\": \"And then...\"\n  },\n  {\n    \"start\": \"00:00:10,710\",\n    \"end\": \"00:00:11,110\",\n    \"lang\": \"en\",\n    \"text\": \"Actually,\"\n  },\n  {\n    \"start\": \"00:00:11,110\",\n    \"end\": \"00:00:13,270\",\n    \"lang\": \"en\",\n    \"text\": \"it's the first part of the lunch.\"\n  },\n  {\n    \"start\": \"00:00:14,090\",\n    \"end\": \"00:00:14,490\",\n    \"lang\": \"en\",\n    \"text\": \"Because,\"\n  },\n  {\n    \"start\": \"00:00:14,490\",\n    \"end\": \"00:00:15,490\",\n    \"lang\": \"en\",\n    \"text\": \"um...\"\n  },\n  {\n    \"start\": \"00:00:15,490\",\n    \"end\": \"00:00:17,770\",\n    \"lang\": \"en\",\n    \"text\": \"Another part is the potato.\"\n  },\n  {\n    \"start\": \"00:00:18,570\",\n    \"end\": \"00:00:19,150\",\n    \"lang\": \"en\",\n    \"text\": \"This is,\"\n  },\n  {\n    \"start\": \"00:00:19,150\",\n    \"end\": \"00:00:20,390\",\n    \"lang\": \"en\",\n    \"text\": \"um...\"\n  },\n  {\n    \"start\": \"00:00:20,390\",\n    \"end\": \"00:00:21,050\",\n    \"lang\": \"en\",\n    \"text\": \"Air fryer.\"\n  },\n  {\n    \"start\": \"00:00:22,070\",\n    \"end\": \"00:00:22,410\",\n    \"lang\": \"en\",\n    \"text\": \"I mean,\"\n  },\n  {\n    \"start\": \"00:00:22,410\",\n    \"end\": \"00:00:23,250\",\n    \"lang\": \"en\",\n    \"text\": \"air fryer.\"\n  },\n  {\n    \"start\": \"00:00:29,110\",\n    \"end\": \"00:00:29,890\",\n    \"lang\": \"en\",\n    \"text\": \"No,\"\n  },\n  {\n    \"start\": \"00:00:29,890\",\n    \"end\": \"00:00:30,810\",\n    \"lang\": \"en\",\n    \"text\": \"it's overflowing.\"\n  },\n  {\n    \"start\": \"00:00:34,350\",\n    \"end\": \"00:00:35,470\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:35,470\",\n    \"end\": \"00:00:36,990\",\n    \"lang\": \"en\",\n    \"text\": \"I need some pinches.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,700",
+            "es": "Vale.",
+            "fr": "D'accord.",
+            "uk": "Добре."
+        },
+        {
+            "start": "00:00:01,314",
+            "end": "00:00:02,094",
+            "es": "Buenos días.",
+            "fr": "Bonjour.",
+            "uk": "Доброго ранку."
+        },
+        {
+            "start": "00:00:03,490",
+            "end": "00:00:05,170",
+            "es": "Entonces, este es nuestro almuerzo.",
+            "fr": "Alors, ceci est notre déjeuner.",
+            "uk": "Отже, це наш обід."
+        },
+        {
+            "start": "00:00:05,870",
+            "end": "00:00:06,270",
+            "es": "Almuerzo.",
+            "fr": "Déjeuner.",
+            "uk": "Обід."
+        },
+        {
+            "start": "00:00:09,450",
+            "end": "00:00:10,710",
+            "es": "Y luego...",
+            "fr": "Et puis...",
+            "uk": "А потім..."
+        },
+        {
+            "start": "00:00:10,710",
+            "end": "00:00:11,110",
+            "es": "De hecho,",
+            "fr": "En réalité,",
+            "uk": "Насправді,"
+        },
+        {
+            "start": "00:00:11,110",
+            "end": "00:00:13,270",
+            "es": "es la primera parte del almuerzo.",
+            "fr": "c'est la première partie du déjeuner.",
+            "uk": "це перша частина обіду."
+        },
+        {
+            "start": "00:00:14,090",
+            "end": "00:00:14,490",
+            "es": "Porque,",
+            "fr": "Parce que,",
+            "uk": "Тому що,"
+        },
+        {
+            "start": "00:00:14,490",
+            "end": "00:00:15,490",
+            "es": "um...",
+            "fr": "euh...",
+            "uk": "ем..."
+        },
+        {
+            "start": "00:00:15,490",
+            "end": "00:00:17,770",
+            "es": "Otra parte es la patata.",
+            "fr": "Une autre partie est la pomme de terre.",
+            "uk": "Інша частина - це картопля."
+        },
+        {
+            "start": "00:00:18,570",
+            "end": "00:00:19,150",
+            "es": "Esto es,",
+            "fr": "Ceci est,",
+            "uk": "Це є,"
+        },
+        {
+            "start": "00:00:19,150",
+            "end": "00:00:20,390",
+            "es": "um...",
+            "fr": "euh...",
+            "uk": "ем..."
+        },
+        {
+            "start": "00:00:20,390",
+            "end": "00:00:21,050",
+            "es": "Freidora de aire.",
+            "fr": "Friteuse à air.",
+            "uk": "Повітряна фритюрниця."
+        },
+        {
+            "start": "00:00:22,070",
+            "end": "00:00:22,410",
+            "es": "Quiero decir,",
+            "fr": "Je veux dire,",
+            "uk": "Маю на увазі,"
+        },
+        {
+            "start": "00:00:22,410",
+            "end": "00:00:23,250",
+            "es": "freidora de aire.",
+            "fr": "friteuse à air.",
+            "uk": "повітряна фритюрниця."
+        },
+        {
+            "start": "00:00:29,110",
+            "end": "00:00:29,890",
+            "es": "No,",
+            "fr": "Non,",
+            "uk": "Ні,"
+        },
+        {
+            "start": "00:00:29,890",
+            "end": "00:00:30,810",
+            "es": "se está desbordando.",
+            "fr": "ça déborde.",
+            "uk": "це переливається."
+        },
+        {
+            "start": "00:00:34,350",
+            "end": "00:00:35,470",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:35,470",
+            "end": "00:00:36,990",
+            "es": "necesito unas pizcas.",
+            "fr": "j'ai besoin de quelques pincées.",
+            "uk": "мені потрібно кілька щіпок."
+        }
+    ]
+}

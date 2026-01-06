@@ -1,0 +1,76 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,960\",\n    \"lang\": \"en\",\n    \"text\": \"I'll share another trick to remember this Arabic letter,\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"en\",\n    \"text\": \"do,\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:06,100\",\n    \"lang\": \"en\",\n    \"text\": \"d-a-l.\"\n  },\n  {\n    \"start\": \"00:00:06,660\",\n    \"end\": \"00:00:09,200\",\n    \"lang\": \"en\",\n    \"text\": \"So this is quite looks like this.\"\n  },\n  {\n    \"start\": \"00:00:09,666\",\n    \"end\": \"00:00:10,046\",\n    \"lang\": \"ja\",\n    \"text\": \"これは\"\n  },\n  {\n    \"start\": \"00:00:11,618\",\n    \"end\": \"00:00:12,598\",\n    \"lang\": \"zh\",\n    \"text\": \"那些是在動啊\"\n  },\n  {\n    \"start\": \"00:00:12,834\",\n    \"end\": \"00:00:15,434\",\n    \"lang\": \"en\",\n    \"text\": \"door handler so this is a door\"\n  },\n  {\n    \"start\": \"00:00:16,073\",\n    \"end\": \"00:00:17,794\",\n    \"lang\": \"en\",\n    \"text\": \"door door\"\n  },\n  {\n    \"start\": \"00:00:19,073\",\n    \"end\": \"00:00:20,194\",\n    \"lang\": \"en\",\n    \"text\": \"is that similar?\"\n  },\n  {\n    \"start\": \"00:00:20,194\",\n    \"end\": \"00:00:21,414\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,960",
+            "en": "I'll share another trick to remember this Arabic letter,",
+            "zh": "我将分享另一个技巧来记住这个阿拉伯字母，",
+            "ar": "سأشارك حيلة أخرى لتذكر هذه الحرف العربية،"
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:04,540",
+            "en": "do,",
+            "zh": "做，",
+            "ar": "افعل،"
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:06,100",
+            "en": "d-a-l.",
+            "zh": "د-أ-ل.",
+            "ar": "د-ا-ل."
+        },
+        {
+            "start": "00:00:06,660",
+            "end": "00:00:09,200",
+            "en": "So this is quite looks like this.",
+            "zh": "所以这看起来很像这样。",
+            "ar": "فهذا يبدو مثل هذا تمامًا."
+        },
+        {
+            "start": "00:00:09,666",
+            "end": "00:00:10,046",
+            "en": "So this is",
+            "zh": "所以这是",
+            "ar": "إذن هذا هو",
+            "ja": "これは"
+        },
+        {
+            "start": "00:00:11,618",
+            "end": "00:00:12,598",
+            "en": "Those are moving.",
+            "zh": "那些是在動啊",
+            "ar": "هؤلاء يتحركون."
+        },
+        {
+            "start": "00:00:12,834",
+            "end": "00:00:15,434",
+            "en": "door handler so this is a door",
+            "zh": "门把手，所以这是一扇门",
+            "ar": "مقبض الباب، إذاً هذا باب"
+        },
+        {
+            "start": "00:00:16,073",
+            "end": "00:00:17,794",
+            "en": "door door",
+            "zh": "門門",
+            "ar": "باب باب"
+        },
+        {
+            "start": "00:00:19,073",
+            "end": "00:00:20,194",
+            "en": "is that similar?",
+            "zh": "那相似吗？",
+            "ar": "هل هذا مشابه؟"
+        },
+        {
+            "start": "00:00:20,194",
+            "end": "00:00:21,414",
+            "en": "okay",
+            "zh": "好的",
+            "ar": "حسنًا"
+        }
+    ]
+}

@@ -1,0 +1,85 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,720\",\n    \"lang\": \"ja\",\n    \"text\": \"あらなしい日です\"\n  },\n  {\n    \"start\": \"00:00:03,640\",\n    \"end\": \"00:00:05,740\",\n    \"lang\": \"ja\",\n    \"text\": \"今日はあらなしい日です\"\n  },\n  {\n    \"start\": \"00:00:06,299\",\n    \"end\": \"00:00:08,920\",\n    \"lang\": \"ja\",\n    \"text\": \"私は朝ごはんを食べています\"\n  },\n  {\n    \"start\": \"00:00:10,978\",\n    \"end\": \"00:00:18,598\",\n    \"lang\": \"en\",\n    \"text\": \"So I wish my video that it can at least encourage people to play terrible guitar,\"\n  },\n  {\n    \"start\": \"00:00:18,598\",\n    \"end\": \"00:00:20,198\",\n    \"lang\": \"en\",\n    \"text\": \"that they\"\n  },\n  {\n    \"start\": \"00:00:20,198\",\n    \"end\": \"00:00:21,378\",\n    \"lang\": \"en\",\n    \"text\": \"speak broken English,\"\n  },\n  {\n    \"start\": \"00:00:21,378\",\n    \"end\": \"00:00:22,998\",\n    \"lang\": \"en\",\n    \"text\": \"broken Japanese,\"\n  },\n  {\n    \"start\": \"00:00:22,998\",\n    \"end\": \"00:00:27,057\",\n    \"lang\": \"en\",\n    \"text\": \"broken Cantonese,\"\n  },\n  {\n    \"start\": \"00:00:27,057\",\n    \"end\": \"00:00:30,458\",\n    \"lang\": \"en\",\n    \"text\": \"broken Vietnamese.\"\n  },\n  {\n    \"start\": \"00:00:39,058\",\n    \"end\": \"00:00:41,498\",\n    \"lang\": \"en\",\n    \"text\": \"So to encourage people,\"\n  },\n  {\n    \"start\": \"00:00:41,498\",\n    \"end\": \"00:00:43,597\",\n    \"lang\": \"en\",\n    \"text\": \"even terrible as it is,\"\n  },\n  {\n    \"start\": \"00:00:43,597\",\n    \"end\": \"00:00:47,018\",\n    \"lang\": \"en\",\n    \"text\": \"I can present myself to the world.\"\n  },\n  {\n    \"start\": \"00:00:48,642\",\n    \"end\": \"00:00:49,262\",\n    \"lang\": \"zh\",\n    \"text\": \"蛮有趣的\"\n  },\n  {\n    \"start\": \"00:00:50,498\",\n    \"end\": \"00:00:51,358\",\n    \"lang\": \"en\",\n    \"text\": \"present yourself,\"\n  },\n  {\n    \"start\": \"00:00:51,358\",\n    \"end\": \"00:00:54,978\",\n    \"lang\": \"en\",\n    \"text\": \"your product to this world,\"\n  },\n  {\n    \"start\": \"00:00:55,258\",\n    \"end\": \"00:00:55,858\",\n    \"lang\": \"en\",\n    \"text\": \"to this universe.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,720",
+            "ja": "あらなしい日です"
+        },
+        {
+            "start": "00:00:03,640",
+            "end": "00:00:05,740",
+            "ja": "今日はあらなしい日です"
+        },
+        {
+            "start": "00:00:06,299",
+            "end": "00:00:08,920",
+            "ja": "私は朝ごはんを食べています"
+        },
+        {
+            "start": "00:00:10,978",
+            "end": "00:00:18,598",
+            "ja": "だから私のビデオが、少なくとも人々がひどいギターを弾くことを奨励できればと願っています、"
+        },
+        {
+            "start": "00:00:18,598",
+            "end": "00:00:20,198",
+            "ja": "彼らが"
+        },
+        {
+            "start": "00:00:20,198",
+            "end": "00:00:21,378",
+            "ja": "拙い英語を話し、"
+        },
+        {
+            "start": "00:00:21,378",
+            "end": "00:00:22,998",
+            "ja": "拙い日本語、"
+        },
+        {
+            "start": "00:00:22,998",
+            "end": "00:00:27,057",
+            "ja": "拙い広東語、"
+        },
+        {
+            "start": "00:00:27,057",
+            "end": "00:00:30,458",
+            "ja": "拙いベトナム語。"
+        },
+        {
+            "start": "00:00:39,058",
+            "end": "00:00:41,498",
+            "ja": "だから人々を奨励するために、"
+        },
+        {
+            "start": "00:00:41,498",
+            "end": "00:00:43,597",
+            "ja": "たとえそれがひどいものでも、"
+        },
+        {
+            "start": "00:00:43,597",
+            "end": "00:00:47,018",
+            "ja": "私は自分自身を世界に提示できます。"
+        },
+        {
+            "start": "00:00:48,642",
+            "end": "00:00:49,262",
+            "ja": "なかなか面白い"
+        },
+        {
+            "start": "00:00:50,498",
+            "end": "00:00:51,358",
+            "ja": "自分自身、"
+        },
+        {
+            "start": "00:00:51,358",
+            "end": "00:00:54,978",
+            "ja": "あなたの商品をこの世界に、"
+        },
+        {
+            "start": "00:00:55,258",
+            "end": "00:00:55,858",
+            "ja": "この宇宙に提示する。"
+        }
+    ]
+}

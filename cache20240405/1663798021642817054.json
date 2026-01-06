@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with Spanish (es), French (fr), and Vietnamese (vi) translations, maintaining the original timestamps. If a subtitle is already in one of these languages, provide the corresponding translations in the other two languages. Fulfill the instructions/requests in subtitles per se for other languages with iso_code_639_1 language key. If I said in subtitles that I want to know or I don't know how to say something, provide the whole subtitles in that language.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:09,698\",\n    \"end\": \"00:02:10,437\",\n    \"lang\": \"zh\",\n    \"text\": \"玚家\"\n  },\n  {\n    \"start\": \"00:02:10,877\",\n    \"end\": \"00:02:11,438\",\n    \"lang\": \"zh\",\n    \"text\": \"玚家\"\n  },\n  {\n    \"start\": \"00:02:11,438\",\n    \"end\": \"00:02:11,998\",\n    \"lang\": \"zh\",\n    \"text\": \"玚家\"\n  },\n  {\n    \"start\": \"00:02:12,898\",\n    \"end\": \"00:02:21,538\",\n    \"lang\": \"en\",\n    \"text\": \"replace those Korean that it has a challenging origin.\"\n  },\n  {\n    \"start\": \"00:02:22,378\",\n    \"end\": \"00:02:26,518\",\n    \"lang\": \"en\",\n    \"text\": \"So to make myself learning easier,\"\n  },\n  {\n    \"start\": \"00:02:27,098\",\n    \"end\": \"00:02:33,418\",\n    \"lang\": \"en\",\n    \"text\": \"so there's no any other intention like so-called lower\"\n  },\n  {\n    \"start\": \"00:02:34,538\",\n    \"end\": \"00:02:35,618\",\n    \"lang\": \"en\",\n    \"text\": \"the Korean.\"\n  },\n  {\n    \"start\": \"00:02:35,958\",\n    \"end\": \"00:02:37,298\",\n    \"lang\": \"en\",\n    \"text\": \"That's not my purpose.\"\n  },\n  {\n    \"start\": \"00:02:37,658\",\n    \"end\": \"00:02:41,158\",\n    \"lang\": \"en\",\n    \"text\": \"I just want to make Korean,\"\n  },\n  {\n    \"start\": \"00:02:41,158\",\n    \"end\": \"00:02:41,818\",\n    \"lang\": \"en\",\n    \"text\": \"Japanese,\"\n  },\n  {\n    \"start\": \"00:02:41,818\",\n    \"end\": \"00:02:44,378\",\n    \"lang\": \"en\",\n    \"text\": \"and Vietnamese together\"\n  },\n  {\n    \"start\": \"00:02:45,238\",\n    \"end\": \"00:02:46,498\",\n    \"lang\": \"en\",\n    \"text\": \"being more easy.\"\n  },\n  {\n    \"start\": \"00:03:00,158\",\n    \"end\": \"00:03:00,558\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:03:00,558\",\n    \"end\": \"00:03:01,418\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"es\": \"Spanish text\",  // Spanish translation\n                \"fr\": \"French text\",   // French translation\n                \"vi\": \"Vietnamese text\"  // Vietnamese translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:02:09,698",
+            "end": "00:02:10,437",
+            "es": "Casa luminosa",
+            "fr": "Maison lumineuse",
+            "vi": "Nhà sáng"
+        },
+        {
+            "start": "00:02:10,877",
+            "end": "00:02:11,438",
+            "es": "Casa luminosa",
+            "fr": "Maison lumineuse",
+            "vi": "Nhà sáng"
+        },
+        {
+            "start": "00:02:11,438",
+            "end": "00:02:11,998",
+            "es": "Casa luminosa",
+            "fr": "Maison lumineuse",
+            "vi": "Nhà sáng"
+        },
+        {
+            "start": "00:02:12,898",
+            "end": "00:02:21,538",
+            "es": "reemplaza esos coreanos que tienen un origen desafiante.",
+            "fr": "remplace ces coréens qui ont une origine difficile.",
+            "vi": "thay thế những người Hàn Quốc có nguồn gốc khó khăn."
+        },
+        {
+            "start": "00:02:22,378",
+            "end": "00:02:26,518",
+            "es": "Así para hacer mi aprendizaje más fácil,",
+            "fr": "Ainsi pour rendre mon apprentissage plus facile,",
+            "vi": "Vì vậy để làm cho việc học của tôi dễ dàng hơn,"
+        },
+        {
+            "start": "00:02:27,098",
+            "end": "00:02:33,418",
+            "es": "así que no hay ninguna otra intención como la llamada menor",
+            "fr": "donc il n'y a pas d'autre intention comme celle dite inférieure",
+            "vi": "vì vậy không có bất kỳ ý định nào khác như cái gọi là thấp hơn"
+        },
+        {
+            "start": "00:02:34,538",
+            "end": "00:02:35,618",
+            "es": "el coreano.",
+            "fr": "le coréen.",
+            "vi": "người Hàn Quốc."
+        },
+        {
+            "start": "00:02:35,958",
+            "end": "00:02:37,298",
+            "es": "Ese no es mi propósito.",
+            "fr": "Ce n'est pas mon but.",
+            "vi": "Đó không phải là mục đích của tôi."
+        },
+        {
+            "start": "00:02:37,658",
+            "end": "00:02:41,158",
+            "es": "Solo quiero hacer coreano,",
+            "fr": "Je veux juste faire du coréen,",
+            "vi": "Tôi chỉ muốn học tiếng Hàn,"
+        },
+        {
+            "start": "00:02:41,158",
+            "end": "00:02:41,818",
+            "es": "japonés,",
+            "fr": "japonais,",
+            "vi": "tiếng Nhật,"
+        },
+        {
+            "start": "00:02:41,818",
+            "end": "00:02:44,378",
+            "es": "y vietnamita juntos",
+            "fr": "et vietnamien ensemble",
+            "vi": "và tiếng Việt cùng nhau"
+        },
+        {
+            "start": "00:02:45,238",
+            "end": "00:02:46,498",
+            "es": "siendo más fácil.",
+            "fr": "être plus facile.",
+            "vi": "dễ dàng hơn."
+        },
+        {
+            "start": "00:03:00,158",
+            "end": "00:03:00,558",
+            "es": "OK,",
+            "fr": "D'accord,",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:03:00,558",
+            "end": "00:03:01,418",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "vi": "hẹn gặp lại."
+        }
+    ]
+}

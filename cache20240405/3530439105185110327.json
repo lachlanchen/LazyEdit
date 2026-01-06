@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,520\",\n    \"lang\": \"en\",\n    \"text\": \"happiness doesn't have an if condition.\"\n  },\n  {\n    \"start\": \"00:00:05,420\",\n    \"end\": \"00:00:09,340\",\n    \"lang\": \"en\",\n    \"text\": \"If your happiness doesn't have an if condition,\"\n  },\n  {\n    \"start\": \"00:00:10,440\",\n    \"end\": \"00:00:12,480\",\n    \"lang\": \"en\",\n    \"text\": \"it can never be true happiness.\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:21,540\",\n    \"lang\": \"en\",\n    \"text\": \"Because no matter how you match this if condition,\"\n  },\n  {\n    \"start\": \"00:00:23,580\",\n    \"end\": \"00:00:28,780\",\n    \"lang\": \"en\",\n    \"text\": \"you will never find another if that's still unmatched.\"\n  },\n  {\n    \"start\": \"00:00:30,320\",\n    \"end\": \"00:00:31,180\",\n    \"lang\": \"en\",\n    \"text\": \"That's what I think.\"\n  },\n  {\n    \"start\": \"00:00:31,180\",\n    \"end\": \"00:00:31,620\",\n    \"lang\": \"en\",\n    \"text\": \"See you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,520",
+            "vi": "hạnh phúc không có điều kiện nếu nào cả."
+        },
+        {
+            "start": "00:00:05,420",
+            "end": "00:00:09,340",
+            "vi": "Nếu hạnh phúc của bạn không có điều kiện nếu nào,"
+        },
+        {
+            "start": "00:00:10,440",
+            "end": "00:00:12,480",
+            "vi": "nó không thể là hạnh phúc thực sự."
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:21,540",
+            "vi": "Bởi vì không quan trọng bạn làm thế nào để đáp ứng điều kiện nếu này,"
+        },
+        {
+            "start": "00:00:23,580",
+            "end": "00:00:28,780",
+            "vi": "bạn sẽ không bao giờ tìm thấy một điều kiện nếu khác vẫn chưa được đáp ứng."
+        },
+        {
+            "start": "00:00:30,320",
+            "end": "00:00:31,180",
+            "vi": "Đó là những gì tôi nghĩ."
+        },
+        {
+            "start": "00:00:31,180",
+            "end": "00:00:31,620",
+            "vi": "Hẹn gặp lại."
+        }
+    ]
+}

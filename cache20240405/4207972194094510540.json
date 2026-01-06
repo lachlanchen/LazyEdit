@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:29,038\",\n    \"end\": \"00:01:31,698\",\n    \"lang\": \"en\",\n    \"text\": \"As I shared in the morning running,\"\n  },\n  {\n    \"start\": \"00:01:31,698\",\n    \"end\": \"00:01:35,658\",\n    \"lang\": \"en\",\n    \"text\": \"we all have our unique talent,\"\n  },\n  {\n    \"start\": \"00:01:35,658\",\n    \"end\": \"00:01:37,038\",\n    \"lang\": \"en\",\n    \"text\": \"our unique strength,\"\n  },\n  {\n    \"start\": \"00:01:38,438\",\n    \"end\": \"00:01:39,598\",\n    \"lang\": \"en\",\n    \"text\": \"our unique journey,\"\n  },\n  {\n    \"start\": \"00:01:39,598\",\n    \"end\": \"00:01:41,378\",\n    \"lang\": \"en\",\n    \"text\": \"our unique story.\"\n  },\n  {\n    \"start\": \"00:01:45,118\",\n    \"end\": \"00:01:52,098\",\n    \"lang\": \"en\",\n    \"text\": \"So there is no necessity to admire or to be proud of it.\"\n  },\n  {\n    \"start\": \"00:01:52,130\",\n    \"end\": \"00:01:53,570\",\n    \"lang\": \"zh\",\n    \"text\": \"尽量的是我们的阿灯玻璃\"\n  },\n  {\n    \"start\": \"00:02:11,202\",\n    \"end\": \"00:02:12,282\",\n    \"lang\": \"en\",\n    \"text\": \"And all your life,\"\n  },\n  {\n    \"start\": \"00:02:12,282\",\n    \"end\": \"00:02:14,042\",\n    \"lang\": \"en\",\n    \"text\": \"when you disappear,\"\n  },\n  {\n    \"start\": \"00:02:14,042\",\n    \"end\": \"00:02:22,762\",\n    \"lang\": \"en\",\n    \"text\": \"it can only happen inside this existence.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:29,038",
+            "end": "00:01:31,698",
+            "es": "Como compartí en la carrera matutina,",
+            "fr": "Comme je l'ai partagé ce matin en courant,",
+            "uk": "Як я поділився вранці під час бігу,"
+        },
+        {
+            "start": "00:01:31,698",
+            "end": "00:01:35,658",
+            "es": "todos tenemos nuestro talento único,",
+            "fr": "nous avons tous notre talent unique,",
+            "uk": "у кожного з нас є свій унікальний талант,"
+        },
+        {
+            "start": "00:01:35,658",
+            "end": "00:01:37,038",
+            "es": "nuestra fuerza única,",
+            "fr": "notre force unique,",
+            "uk": "нашу унікальну силу,"
+        },
+        {
+            "start": "00:01:38,438",
+            "end": "00:01:39,598",
+            "es": "nuestro viaje único,",
+            "fr": "notre parcours unique,",
+            "uk": "наш унікальний шлях,"
+        },
+        {
+            "start": "00:01:39,598",
+            "end": "00:01:41,378",
+            "es": "nuestra historia única.",
+            "fr": "notre histoire unique.",
+            "uk": "нашу унікальну історію."
+        },
+        {
+            "start": "00:01:45,118",
+            "end": "00:01:52,098",
+            "es": "Así que no hay necesidad de admirarlo o estar orgulloso de ello.",
+            "fr": "Il n'y a donc pas besoin de l'admirer ou d'en être fier.",
+            "uk": "Так що немає необхідності захоплюватись цим або пишатися цим."
+        },
+        {
+            "start": "00:01:52,130",
+            "end": "00:01:53,570",
+            "es": "Tratemos de ser nuestra mejor versión.",
+            "fr": "Essayons d'être notre meilleure version.",
+            "uk": "Прагнімо бути нашою найкращою версією."
+        },
+        {
+            "start": "00:02:11,202",
+            "end": "00:02:12,282",
+            "es": "Y toda tu vida,",
+            "fr": "Et toute votre vie,",
+            "uk": "І всього твого життя,"
+        },
+        {
+            "start": "00:02:12,282",
+            "end": "00:02:14,042",
+            "es": "cuando desaparezcas,",
+            "fr": "quand vous disparaîtrez,",
+            "uk": "коли ти зникнеш,"
+        },
+        {
+            "start": "00:02:14,042",
+            "end": "00:02:22,762",
+            "es": "solo puede suceder dentro de esta existencia.",
+            "fr": "cela ne peut se produire que dans cette existence.",
+            "uk": "це може статися лише в межах цього існування."
+        }
+    ]
+}

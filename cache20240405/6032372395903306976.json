@@ -1,0 +1,55 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:06,610\",\n    \"end\": \"00:02:09,050\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:10,130\",\n    \"end\": \"00:02:12,230\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:02:13,070\",\n    \"end\": \"00:02:15,750\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树岗\"\n  },\n  {\n    \"start\": \"00:02:47,382\",\n    \"end\": \"00:02:50,182\",\n    \"lang\": \"en\",\n    \"text\": \"once around\"\n  },\n  {\n    \"start\": \"00:02:50,182\",\n    \"end\": \"00:02:54,382\",\n    \"lang\": \"en\",\n    \"text\": \"And I wish the guitar company to correct me.\"\n  },\n  {\n    \"start\": \"00:02:55,982\",\n    \"end\": \"00:02:56,762\",\n    \"lang\": \"en\",\n    \"text\": \"First night.\"\n  },\n  {\n    \"start\": \"00:02:58,562\",\n    \"end\": \"00:03:00,782\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:00,782\",\n    \"end\": \"00:03:03,502\",\n    \"lang\": \"zh\",\n    \"text\": \"没有双钢\"\n  },\n  {\n    \"start\": \"00:03:03,502\",\n    \"end\": \"00:03:06,182\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:06,182\",\n    \"end\": \"00:03:07,362\",\n    \"lang\": \"zh\",\n    \"text\": \"没有双钢\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:06,610",
+            "end": "00:02:09,050",
+            "vi": "Không có mùi hương của hoa"
+        },
+        {
+            "start": "00:02:10,130",
+            "end": "00:02:12,230",
+            "vi": "Không có mùi hương của hoa"
+        },
+        {
+            "start": "00:02:13,070",
+            "end": "00:02:15,750",
+            "vi": "Không có cây cầu"
+        },
+        {
+            "start": "00:02:47,382",
+            "end": "00:02:50,182",
+            "vi": "một vòng quanh"
+        },
+        {
+            "start": "00:02:50,182",
+            "end": "00:02:54,382",
+            "vi": "Và tôi hi vọng công ty đàn ghi-ta sẽ sửa chữa cho tôi."
+        },
+        {
+            "start": "00:02:55,982",
+            "end": "00:02:56,762",
+            "vi": "Đêm đầu tiên."
+        },
+        {
+            "start": "00:02:58,562",
+            "end": "00:03:00,782",
+            "vi": "Không có mùi hương của hoa"
+        },
+        {
+            "start": "00:03:00,782",
+            "end": "00:03:03,502",
+            "vi": "Không có chướng ngại vật"
+        },
+        {
+            "start": "00:03:03,502",
+            "end": "00:03:06,182",
+            "vi": "Không có mùi hương của hoa"
+        },
+        {
+            "start": "00:03:06,182",
+            "end": "00:03:07,362",
+            "vi": "Không có chướng ngại vật"
+        }
+    ]
+}

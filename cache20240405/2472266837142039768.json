@@ -1,0 +1,153 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,160\",\n    \"lang\": \"en\",\n    \"text\": \"Konnichiwa!\"\n  },\n  {\n    \"start\": \"00:00:02,420\",\n    \"end\": \"00:00:05,520\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our chicken wing noodles.\"\n  },\n  {\n    \"start\": \"00:00:05,820\",\n    \"end\": \"00:00:07,520\",\n    \"lang\": \"en\",\n    \"text\": \"Let me try this fried chicken.\"\n  },\n  {\n    \"start\": \"00:00:08,180\",\n    \"end\": \"00:00:09,340\",\n    \"lang\": \"en\",\n    \"text\": \"Grilled chicken.\"\n  },\n  {\n    \"start\": \"00:00:11,240\",\n    \"end\": \"00:00:11,480\",\n    \"lang\": \"en\",\n    \"text\": \"Wow!\"\n  },\n  {\n    \"start\": \"00:00:16,040\",\n    \"end\": \"00:00:19,460\",\n    \"lang\": \"en\",\n    \"text\": \"It's not crispy,\"\n  },\n  {\n    \"start\": \"00:00:19,460\",\n    \"end\": \"00:00:22,200\",\n    \"lang\": \"en\",\n    \"text\": \"but a little bit below crispy.\"\n  },\n  {\n    \"start\": \"00:00:23,540\",\n    \"end\": \"00:00:25,200\",\n    \"lang\": \"en\",\n    \"text\": \"And tender,\"\n  },\n  {\n    \"start\": \"00:00:25,200\",\n    \"end\": \"00:00:26,500\",\n    \"lang\": \"en\",\n    \"text\": \"and spicy,\"\n  },\n  {\n    \"start\": \"00:00:26,500\",\n    \"end\": \"00:00:27,840\",\n    \"lang\": \"en\",\n    \"text\": \"and tasty.\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:30,880\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god!\"\n  },\n  {\n    \"start\": \"00:00:30,880\",\n    \"end\": \"00:00:32,200\",\n    \"lang\": \"en\",\n    \"text\": \"This is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:33,560\",\n    \"end\": \"00:00:33,880\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:33,880\",\n    \"end\": \"00:00:34,520\",\n    \"lang\": \"en\",\n    \"text\": \"see you!\"\n  },\n  {\n    \"start\": \"00:00:36,300\",\n    \"end\": \"00:00:37,240\",\n    \"lang\": \"en\",\n    \"text\": \"Let me try this.\"\n  },\n  {\n    \"start\": \"00:00:39,560\",\n    \"end\": \"00:00:40,240\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm!\"\n  },\n  {\n    \"start\": \"00:00:40,240\",\n    \"end\": \"00:00:41,580\",\n    \"lang\": \"en\",\n    \"text\": \"Juicy,\"\n  },\n  {\n    \"start\": \"00:00:41,580\",\n    \"end\": \"00:00:43,080\",\n    \"lang\": \"en\",\n    \"text\": \"and spicy,\"\n  },\n  {\n    \"start\": \"00:00:43,080\",\n    \"end\": \"00:00:44,160\",\n    \"lang\": \"en\",\n    \"text\": \"and tasty.\"\n  },\n  {\n    \"start\": \"00:00:47,000\",\n    \"end\": \"00:00:47,420\",\n    \"lang\": \"en\",\n    \"text\": \"Gorgeous!\"\n  },\n  {\n    \"start\": \"00:00:47,458\",\n    \"end\": \"00:00:48,878\",\n    \"lang\": \"ja\",\n    \"text\": \"この手羽先美味しいです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,160",
+            "en": "Konnichiwa!",
+            "zh": "你好！",
+            "ar": "こんにちは!"
+        },
+        {
+            "start": "00:00:02,420",
+            "end": "00:00:05,520",
+            "en": "So this is our chicken wing noodles.",
+            "zh": "这是我们的鸡翅面。",
+            "ar": "إذاً هذه هي نودلز أجنحة الدجاج لدينا."
+        },
+        {
+            "start": "00:00:05,820",
+            "end": "00:00:07,520",
+            "en": "Let me try this fried chicken.",
+            "zh": "让我尝尝这个炸鸡。",
+            "ar": "دعني أجرب هذا الدجاج المقلي."
+        },
+        {
+            "start": "00:00:08,180",
+            "end": "00:00:09,340",
+            "en": "Grilled chicken.",
+            "zh": "烤鸡。",
+            "ar": "دجاج مشوي."
+        },
+        {
+            "start": "00:00:11,240",
+            "end": "00:00:11,480",
+            "en": "Wow!",
+            "zh": "哇！",
+            "ar": "واو!"
+        },
+        {
+            "start": "00:00:16,040",
+            "end": "00:00:19,460",
+            "en": "It's not crispy,",
+            "zh": "它不脆，",
+            "ar": "ليست مقرمشة،"
+        },
+        {
+            "start": "00:00:19,460",
+            "end": "00:00:22,200",
+            "en": "but a little bit below crispy.",
+            "zh": "但有点儿不够脆。",
+            "ar": "لكنها قليلاً أقل من المقرمشة."
+        },
+        {
+            "start": "00:00:23,540",
+            "end": "00:00:25,200",
+            "en": "And tender,",
+            "zh": "并且嫩，",
+            "ar": "وطري،"
+        },
+        {
+            "start": "00:00:25,200",
+            "end": "00:00:26,500",
+            "en": "and spicy,",
+            "zh": "并且辣，",
+            "ar": "وحار،"
+        },
+        {
+            "start": "00:00:26,500",
+            "end": "00:00:27,840",
+            "en": "and tasty.",
+            "zh": "并且好吃。",
+            "ar": "ولذيذ."
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:30,880",
+            "en": "Oh my god!",
+            "zh": "哦，我的天！",
+            "ar": "يا إلهي!"
+        },
+        {
+            "start": "00:00:30,880",
+            "end": "00:00:32,200",
+            "en": "This is gorgeous.",
+            "zh": "这太美了。",
+            "ar": "هذا رائع."
+        },
+        {
+            "start": "00:00:33,560",
+            "end": "00:00:33,880",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسناً،"
+        },
+        {
+            "start": "00:00:33,880",
+            "end": "00:00:34,520",
+            "en": "see you!",
+            "zh": "再见！",
+            "ar": "أراك لاحقاً!"
+        },
+        {
+            "start": "00:00:36,300",
+            "end": "00:00:37,240",
+            "en": "Let me try this.",
+            "zh": "让我尝尝这个。",
+            "ar": "دعني أجرب هذا."
+        },
+        {
+            "start": "00:00:39,560",
+            "end": "00:00:40,240",
+            "en": "Mmm!",
+            "zh": "嗯！",
+            "ar": "ممم!"
+        },
+        {
+            "start": "00:00:40,240",
+            "end": "00:00:41,580",
+            "en": "Juicy,",
+            "zh": "多汁，",
+            "ar": "عصيري،"
+        },
+        {
+            "start": "00:00:41,580",
+            "end": "00:00:43,080",
+            "en": "and spicy,",
+            "zh": "又辣，",
+            "ar": "وحار،"
+        },
+        {
+            "start": "00:00:43,080",
+            "end": "00:00:44,160",
+            "en": "and tasty.",
+            "zh": "又好吃。",
+            "ar": "ولذيذ."
+        },
+        {
+            "start": "00:00:47,000",
+            "end": "00:00:47,420",
+            "en": "Gorgeous!",
+            "zh": "太美了！",
+            "ar": "رائع!"
+        },
+        {
+            "start": "00:00:47,458",
+            "end": "00:00:48,878",
+            "en": "These chicken wings are delicious.",
+            "zh": "这些鸡翅很好吃。",
+            "ar": "هذه أجنحة الدجاج لذيذة.",
+            "ja": "この手羽先美味しいです"
+        }
+    ]
+}

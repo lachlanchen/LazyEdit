@@ -1,0 +1,40 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:16,790\",\n    \"end\": \"00:04:18,190\",\n    \"ja\": \"はい\"\n  },\n  {\n    \"start\": \"00:04:21,122\",\n    \"end\": \"00:04:23,442\",\n    \"ja\": \"これは<私>[]が<一人>[]の<時>[]に<起>[]こることです。\"\n  },\n  {\n    \"start\": \"00:04:24,290\",\n    \"end\": \"00:04:24,630\",\n    \"ja\": \"あなたがいない\"\n  },\n  {\n    \"start\": \"00:04:25,986\",\n    \"end\": \"00:04:28,506\",\n    \"ja\": \"これを<思>[]い<出>[]した<時>[]、\"\n  },\n  {\n    \"start\": \"00:04:28,506\",\n    \"end\": \"00:04:31,006\",\n    \"ja\": \"<ガードナー>[]<教授>[]、\"\n  },\n  {\n    \"start\": \"00:04:32,026\",\n    \"end\": \"00:04:33,066\",\n    \"ja\": \"これは<同>[]じです。\"\n  },\n  {\n    \"start\": \"00:04:34,006\",\n    \"end\": \"00:04:34,366\",\n    \"ja\": \"OK。\"\n  }\n]\n\nPRESERVE the original timestamps. \n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:04:16,790",
+            "end": "00:04:18,190",
+            "ja": "はい"
+        },
+        {
+            "start": "00:04:21,122",
+            "end": "00:04:23,442",
+            "ja": "これは<私>[わたし]が<一人>[ひとり]の<時>[とき]に<起>[お]こることです。"
+        },
+        {
+            "start": "00:04:24,290",
+            "end": "00:04:24,630",
+            "ja": "あなたがいない"
+        },
+        {
+            "start": "00:04:25,986",
+            "end": "00:04:28,506",
+            "ja": "これを<思>[おも]い<出>[だ]した<時>[とき]、"
+        },
+        {
+            "start": "00:04:28,506",
+            "end": "00:04:31,006",
+            "ja": "<ガードナー>[ガードナー]<教授>[きょうじゅ]、"
+        },
+        {
+            "start": "00:04:32,026",
+            "end": "00:04:33,066",
+            "ja": "これは<同>[おな]じです。"
+        },
+        {
+            "start": "00:04:34,006",
+            "end": "00:04:34,366",
+            "ja": "OK。"
+        }
+    ]
+}

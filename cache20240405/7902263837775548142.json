@@ -1,0 +1,60 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:04,342\",\n    \"end\": \"00:01:13,622\",\n    \"lang\": \"en\",\n    \"text\": \"the most important thing is that you have food.\"\n  },\n  {\n    \"start\": \"00:01:15,121\",\n    \"end\": \"00:01:16,422\",\n    \"lang\": \"en\",\n    \"text\": \"Don't get cold.\"\n  },\n  {\n    \"start\": \"00:01:17,442\",\n    \"end\": \"00:01:19,002\",\n    \"lang\": \"en\",\n    \"text\": \"And when you die,\"\n  },\n  {\n    \"start\": \"00:01:19,002\",\n    \"end\": \"00:01:19,922\",\n    \"lang\": \"en\",\n    \"text\": \"die peacefully.\"\n  },\n  {\n    \"start\": \"00:01:21,378\",\n    \"end\": \"00:01:22,898\",\n    \"lang\": \"ar\",\n    \"text\": \"هذا هو المسجد\"\n  },\n  {\n    \"start\": \"00:01:23,586\",\n    \"end\": \"00:01:24,886\",\n    \"lang\": \"en\",\n    \"text\": \"Two or three important things.\"\n  },\n  {\n    \"start\": \"00:01:25,326\",\n    \"end\": \"00:01:25,646\",\n    \"lang\": \"en\",\n    \"text\": \"Food,\"\n  },\n  {\n    \"start\": \"00:01:25,646\",\n    \"end\": \"00:01:27,166\",\n    \"lang\": \"en\",\n    \"text\": \"die peacefully.\"\n  },\n  {\n    \"start\": \"00:01:28,566\",\n    \"end\": \"00:01:32,866\",\n    \"lang\": \"en\",\n    \"text\": \"Don't die from cancer.\"\n  },\n  {\n    \"start\": \"00:01:38,498\",\n    \"end\": \"00:01:39,338\",\n    \"lang\": \"zh\",\n    \"text\": \"大家可以試試看\"\n  },\n  {\n    \"start\": \"00:01:47,250\",\n    \"end\": \"00:01:47,950\",\n    \"lang\": \"en\",\n    \"text\": \"OK\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:04,342",
+            "end": "00:01:13,622",
+            "vi": "điều quan trọng nhất là bạn phải có thức ăn."
+        },
+        {
+            "start": "00:01:15,121",
+            "end": "00:01:16,422",
+            "vi": "Đừng để bản thân bị lạnh."
+        },
+        {
+            "start": "00:01:17,442",
+            "end": "00:01:19,002",
+            "vi": "Và khi bạn qua đời,"
+        },
+        {
+            "start": "00:01:19,002",
+            "end": "00:01:19,922",
+            "vi": "hãy qua đời một cách thanh thản."
+        },
+        {
+            "start": "00:01:21,378",
+            "end": "00:01:22,898",
+            "vi": "Đây là nhà thờ Hồi giáo"
+        },
+        {
+            "start": "00:01:23,586",
+            "end": "00:01:24,886",
+            "vi": "Hai hoặc ba điều quan trọng."
+        },
+        {
+            "start": "00:01:25,326",
+            "end": "00:01:25,646",
+            "vi": "Thức ăn,"
+        },
+        {
+            "start": "00:01:25,646",
+            "end": "00:01:27,166",
+            "vi": "qua đời một cách thanh thản."
+        },
+        {
+            "start": "00:01:28,566",
+            "end": "00:01:32,866",
+            "vi": "Đừng để qua đời vì ung thư."
+        },
+        {
+            "start": "00:01:38,498",
+            "end": "00:01:39,338",
+            "vi": "Mọi người có thể thử xem"
+        },
+        {
+            "start": "00:01:47,250",
+            "end": "00:01:47,950",
+            "vi": "Được"
+        }
+    ]
+}

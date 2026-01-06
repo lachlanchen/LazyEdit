@@ -1,0 +1,110 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,160\",\n    \"lang\": \"en\",\n    \"text\": \"Konnichiwa!\"\n  },\n  {\n    \"start\": \"00:00:02,420\",\n    \"end\": \"00:00:05,520\",\n    \"lang\": \"en\",\n    \"text\": \"So this is our chicken wing noodles.\"\n  },\n  {\n    \"start\": \"00:00:05,820\",\n    \"end\": \"00:00:07,520\",\n    \"lang\": \"en\",\n    \"text\": \"Let me try this fried chicken.\"\n  },\n  {\n    \"start\": \"00:00:08,180\",\n    \"end\": \"00:00:09,340\",\n    \"lang\": \"en\",\n    \"text\": \"Grilled chicken.\"\n  },\n  {\n    \"start\": \"00:00:11,240\",\n    \"end\": \"00:00:11,480\",\n    \"lang\": \"en\",\n    \"text\": \"Wow!\"\n  },\n  {\n    \"start\": \"00:00:16,040\",\n    \"end\": \"00:00:19,460\",\n    \"lang\": \"en\",\n    \"text\": \"It's not crispy,\"\n  },\n  {\n    \"start\": \"00:00:19,460\",\n    \"end\": \"00:00:22,200\",\n    \"lang\": \"en\",\n    \"text\": \"but a little bit below crispy.\"\n  },\n  {\n    \"start\": \"00:00:23,540\",\n    \"end\": \"00:00:25,200\",\n    \"lang\": \"en\",\n    \"text\": \"And tender,\"\n  },\n  {\n    \"start\": \"00:00:25,200\",\n    \"end\": \"00:00:26,500\",\n    \"lang\": \"en\",\n    \"text\": \"and spicy,\"\n  },\n  {\n    \"start\": \"00:00:26,500\",\n    \"end\": \"00:00:27,840\",\n    \"lang\": \"en\",\n    \"text\": \"and tasty.\"\n  },\n  {\n    \"start\": \"00:00:30,000\",\n    \"end\": \"00:00:30,880\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god!\"\n  },\n  {\n    \"start\": \"00:00:30,880\",\n    \"end\": \"00:00:32,200\",\n    \"lang\": \"en\",\n    \"text\": \"This is gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:33,560\",\n    \"end\": \"00:00:33,880\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:33,880\",\n    \"end\": \"00:00:34,520\",\n    \"lang\": \"en\",\n    \"text\": \"see you!\"\n  },\n  {\n    \"start\": \"00:00:36,300\",\n    \"end\": \"00:00:37,240\",\n    \"lang\": \"en\",\n    \"text\": \"Let me try this.\"\n  },\n  {\n    \"start\": \"00:00:39,560\",\n    \"end\": \"00:00:40,240\",\n    \"lang\": \"en\",\n    \"text\": \"Mmm!\"\n  },\n  {\n    \"start\": \"00:00:40,240\",\n    \"end\": \"00:00:41,580\",\n    \"lang\": \"en\",\n    \"text\": \"Juicy,\"\n  },\n  {\n    \"start\": \"00:00:41,580\",\n    \"end\": \"00:00:43,080\",\n    \"lang\": \"en\",\n    \"text\": \"and spicy,\"\n  },\n  {\n    \"start\": \"00:00:43,080\",\n    \"end\": \"00:00:44,160\",\n    \"lang\": \"en\",\n    \"text\": \"and tasty.\"\n  },\n  {\n    \"start\": \"00:00:47,000\",\n    \"end\": \"00:00:47,420\",\n    \"lang\": \"en\",\n    \"text\": \"Gorgeous!\"\n  },\n  {\n    \"start\": \"00:00:47,458\",\n    \"end\": \"00:00:48,878\",\n    \"lang\": \"ja\",\n    \"text\": \"この手羽先美味しいです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,160",
+            "vi": "Xin chào!"
+        },
+        {
+            "start": "00:00:02,420",
+            "end": "00:00:05,520",
+            "vi": "Vậy đây là mì cánh gà của chúng tôi."
+        },
+        {
+            "start": "00:00:05,820",
+            "end": "00:00:07,520",
+            "vi": "Để tôi thử miếng gà rán này."
+        },
+        {
+            "start": "00:00:08,180",
+            "end": "00:00:09,340",
+            "vi": "Gà nướng."
+        },
+        {
+            "start": "00:00:11,240",
+            "end": "00:00:11,480",
+            "vi": "Ôi!"
+        },
+        {
+            "start": "00:00:16,040",
+            "end": "00:00:19,460",
+            "vi": "Nó không giòn,"
+        },
+        {
+            "start": "00:00:19,460",
+            "end": "00:00:22,200",
+            "vi": "nhưng hơi dưới mức giòn."
+        },
+        {
+            "start": "00:00:23,540",
+            "end": "00:00:25,200",
+            "vi": "Và mềm,"
+        },
+        {
+            "start": "00:00:25,200",
+            "end": "00:00:26,500",
+            "vi": "và cay,"
+        },
+        {
+            "start": "00:00:26,500",
+            "end": "00:00:27,840",
+            "vi": "và ngon."
+        },
+        {
+            "start": "00:00:30,000",
+            "end": "00:00:30,880",
+            "vi": "Trời ơi!"
+        },
+        {
+            "start": "00:00:30,880",
+            "end": "00:00:32,200",
+            "vi": "Quá tuyệt vời."
+        },
+        {
+            "start": "00:00:33,560",
+            "end": "00:00:33,880",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:00:33,880",
+            "end": "00:00:34,520",
+            "vi": "hẹn gặp lại!"
+        },
+        {
+            "start": "00:00:36,300",
+            "end": "00:00:37,240",
+            "vi": "Để tôi thử cái này."
+        },
+        {
+            "start": "00:00:39,560",
+            "end": "00:00:40,240",
+            "vi": "Mmm!"
+        },
+        {
+            "start": "00:00:40,240",
+            "end": "00:00:41,580",
+            "vi": "Ngon miệng,"
+        },
+        {
+            "start": "00:00:41,580",
+            "end": "00:00:43,080",
+            "vi": "và cay,"
+        },
+        {
+            "start": "00:00:43,080",
+            "end": "00:00:44,160",
+            "vi": "và ngon."
+        },
+        {
+            "start": "00:00:47,000",
+            "end": "00:00:47,420",
+            "vi": "Tuyệt vời!"
+        },
+        {
+            "start": "00:00:47,458",
+            "end": "00:00:48,878",
+            "vi": "Cánh gà này ngon quá"
+        }
+    ]
+}

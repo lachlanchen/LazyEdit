@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,240\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます\"\n  },\n  {\n    \"start\": \"00:00:03,420\",\n    \"end\": \"00:00:03,780\",\n    \"lang\": \"ja\",\n    \"text\": \"はい、\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:05,400\",\n    \"lang\": \"ja\",\n    \"text\": \"これはコロナです\"\n  },\n  {\n    \"start\": \"00:00:05,400\",\n    \"end\": \"00:00:06,840\",\n    \"lang\": \"ja\",\n    \"text\": \"私をほぼ殺しています\"\n  },\n  {\n    \"start\": \"00:00:08,066\",\n    \"end\": \"00:00:08,526\",\n    \"lang\": \"en\",\n    \"text\": \"I'm dying\"\n  },\n  {\n    \"start\": \"00:00:10,082\",\n    \"end\": \"00:00:12,382\",\n    \"lang\": \"ja\",\n    \"text\": \"ラスティナイはフェイバー\"\n  },\n  {\n    \"start\": \"00:00:13,314\",\n    \"end\": \"00:00:20,654\",\n    \"lang\": \"en\",\n    \"text\": \"and muscle pain and also sore throat.\"\n  },\n  {\n    \"start\": \"00:00:21,506\",\n    \"end\": \"00:00:21,666\",\n    \"lang\": \"ja\",\n    \"text\": \"はい\"\n  },\n  {\n    \"start\": \"00:00:23,105\",\n    \"end\": \"00:00:23,886\",\n    \"lang\": \"ja\",\n    \"text\": \"バリーズ\"\n  },\n  {\n    \"start\": \"00:00:24,802\",\n    \"end\": \"00:00:26,162\",\n    \"lang\": \"en\",\n    \"text\": \"It's a mess.\"\n  },\n  {\n    \"start\": \"00:00:26,162\",\n    \"end\": \"00:00:32,281\",\n    \"lang\": \"en\",\n    \"text\": \"It's a mess severer than the first time that he catches this disease.\"\n  },\n  {\n    \"start\": \"00:00:34,850\",\n    \"end\": \"00:00:37,630\",\n    \"lang\": \"ja\",\n    \"text\": \"今まで downtownでは気分が悪い\"\n  },\n  {\n    \"start\": \"00:00:46,690\",\n    \"end\": \"00:00:50,170\",\n    \"lang\": \"en\",\n    \"text\": \"Hope this vitamin can help me cure.\"\n  },\n  {\n    \"start\": \"00:00:56,590\",\n    \"end\": \"00:00:57,550\",\n    \"lang\": \"en\",\n    \"text\": \"See you!\"\n  },\n  {\n    \"start\": \"00:00:57,550\",\n    \"end\": \"00:00:58,450\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,240",
+            "vi": "Chào buổi sáng"
+        },
+        {
+            "start": "00:00:03,420",
+            "end": "00:00:03,780",
+            "vi": "Vâng,"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:05,400",
+            "vi": "Đây là Corona"
+        },
+        {
+            "start": "00:00:05,400",
+            "end": "00:00:06,840",
+            "vi": "Nó gần như giết chết tôi"
+        },
+        {
+            "start": "00:00:08,066",
+            "end": "00:00:08,526",
+            "vi": "Tôi đang chết"
+        },
+        {
+            "start": "00:00:10,082",
+            "end": "00:00:12,382",
+            "vi": "Đêm qua tôi bị sốt"
+        },
+        {
+            "start": "00:00:13,314",
+            "end": "00:00:20,654",
+            "vi": "và đau cơ cũng như đau họng."
+        },
+        {
+            "start": "00:00:21,506",
+            "end": "00:00:21,666",
+            "vi": "Vâng"
+        },
+        {
+            "start": "00:00:23,105",
+            "end": "00:00:23,886",
+            "vi": "Rất tệ"
+        },
+        {
+            "start": "00:00:24,802",
+            "end": "00:00:26,162",
+            "vi": "Thật là một mớ bòng bong."
+        },
+        {
+            "start": "00:00:26,162",
+            "end": "00:00:32,281",
+            "vi": "Mớ bòng bong tồi tệ hơn lần đầu tiên anh ấy mắc bệnh này."
+        },
+        {
+            "start": "00:00:34,850",
+            "end": "00:00:37,630",
+            "vi": "Bây giờ cảm thấy không khỏe ở khu trung tâm"
+        },
+        {
+            "start": "00:00:46,690",
+            "end": "00:00:50,170",
+            "vi": "Hy vọng vitamin này có thể giúp tôi khỏi bệnh."
+        },
+        {
+            "start": "00:00:56,590",
+            "end": "00:00:57,550",
+            "vi": "Hẹn gặp lại!"
+        },
+        {
+            "start": "00:00:57,550",
+            "end": "00:00:58,450",
+            "vi": "Được."
+        }
+    ]
+}

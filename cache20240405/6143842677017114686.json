@@ -1,0 +1,27 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,520\",\n    \"end\": \"00:00:03,340\",\n    \"lang\": \"en\",\n    \"text\": \"How can I let the people around the world to know?\"\n  },\n  {\n    \"start\": \"00:00:04,898\",\n    \"end\": \"00:00:05,238\",\n    \"lang\": \"zh\",\n    \"text\": \"这个肉 Christians\"\n  },\n  {\n    \"start\": \"00:00:08,738\",\n    \"end\": \"00:00:10,258\",\n    \"lang\": \"en\",\n    \"text\": \"This is the best potato ever!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,520",
+            "end": "00:00:03,340",
+            "en": "How can I let the people around the world to know?",
+            "zh": "我怎样才能让世界各地的人们知道？",
+            "ar": "كيف يمكنني أن أجعل الناس حول العالم يعرفون؟"
+        },
+        {
+            "start": "00:00:04,898",
+            "end": "00:00:05,238",
+            "en": "This meat",
+            "zh": "这个肉",
+            "ar": "هذه اللحمة",
+            "other": "Christians"
+        },
+        {
+            "start": "00:00:08,738",
+            "end": "00:00:10,258",
+            "en": "This is the best potato ever!",
+            "zh": "这是有史以来最好的土豆！",
+            "ar": "هذه هي أفضل بطاطس على الإطلاق!"
+        }
+    ]
+}

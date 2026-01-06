@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:07,394\",\n    \"end\": \"00:03:08,794\",\n    \"lang\": \"zh\",\n    \"text\": \"放不掉\"\n  },\n  {\n    \"start\": \"00:03:11,298\",\n    \"end\": \"00:03:13,178\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道五音不全用英语怎么说\"\n  },\n  {\n    \"start\": \"00:03:13,178\",\n    \"end\": \"00:03:14,078\",\n    \"lang\": \"zh\",\n    \"text\": \"五音不全\"\n  },\n  {\n    \"start\": \"00:03:14,078\",\n    \"end\": \"00:03:15,838\",\n    \"lang\": \"zh\",\n    \"text\": \"我就是那个五音不全的人\"\n  },\n  {\n    \"start\": \"00:03:23,682\",\n    \"end\": \"00:03:24,602\",\n    \"lang\": \"en\",\n    \"text\": \"is incorrect.\"\n  },\n  {\n    \"start\": \"00:03:24,602\",\n    \"end\": \"00:03:29,022\",\n    \"lang\": \"en\",\n    \"text\": \"Another...what's in are incorrect.\"\n  },\n  {\n    \"start\": \"00:03:29,022\",\n    \"end\": \"00:03:30,722\",\n    \"lang\": \"en\",\n    \"text\": \"Let's try it again.\"\n  },\n  {\n    \"start\": \"00:03:31,554\",\n    \"end\": \"00:03:33,734\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:34,734\",\n    \"end\": \"00:03:37,474\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:38,094\",\n    \"end\": \"00:03:40,654\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书皋\"\n  },\n  {\n    \"start\": \"00:03:47,034\",\n    \"end\": \"00:03:49,594\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:49,594\",\n    \"end\": \"00:03:52,334\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书糕\"\n  },\n  {\n    \"start\": \"00:03:52,994\",\n    \"end\": \"00:03:55,434\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:03:55,434\",\n    \"end\": \"00:03:58,174\",\n    \"lang\": \"zh\",\n    \"text\": \"没有书糕\"\n  },\n  {\n    \"start\": \"00:03:58,174\",\n    \"end\": \"00:04:00,574\",\n    \"lang\": \"zh\",\n    \"text\": \"没有\"\n  },\n  {\n    \"start\": \"00:04:00,794\",\n    \"end\": \"00:04:02,974\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:04:03,374\",\n    \"end\": \"00:04:05,694\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:04:06,474\",\n    \"end\": \"00:04:08,734\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:07,394",
+            "end": "00:03:08,794",
+            "es": "No puedo dejarlo ir",
+            "fr": "Je ne peux pas lâcher",
+            "uk": "Не можу відпустити"
+        },
+        {
+            "start": "00:03:11,298",
+            "end": "00:03:13,178",
+            "es": "No sé cómo decir en inglés que estoy desafinado",
+            "fr": "Je ne sais pas comment dire en anglais que je suis désaccordé",
+            "uk": "Не знаю, як сказати англійською, що я без слуху"
+        },
+        {
+            "start": "00:03:13,178",
+            "end": "00:03:14,078",
+            "es": "Desafinado",
+            "fr": "Désaccordé",
+            "uk": "Без слуху"
+        },
+        {
+            "start": "00:03:14,078",
+            "end": "00:03:15,838",
+            "es": "Soy esa persona desafinada",
+            "fr": "Je suis cette personne désaccordée",
+            "uk": "Я та людина, що без слуху"
+        },
+        {
+            "start": "00:03:23,682",
+            "end": "00:03:24,602",
+            "es": "es incorrecto.",
+            "fr": "est incorrect.",
+            "uk": "неправильно."
+        },
+        {
+            "start": "00:03:24,602",
+            "end": "00:03:29,022",
+            "es": "Otro... lo que está dentro es incorrecto.",
+            "fr": "Un autre... ce qui est dedans est incorrect.",
+            "uk": "Інший... те, що всередині неправильно."
+        },
+        {
+            "start": "00:03:29,022",
+            "end": "00:03:30,722",
+            "es": "Intentémoslo de nuevo.",
+            "fr": "Essayons à nouveau.",
+            "uk": "Спробуймо ще раз."
+        },
+        {
+            "start": "00:03:31,554",
+            "end": "00:03:33,734",
+            "es": "No hay fragancia de flores",
+            "fr": "Il n'y a pas de parfum de fleurs",
+            "uk": "Немає аромату квітів"
+        },
+        {
+            "start": "00:03:34,734",
+            "end": "00:03:37,474",
+            "es": "No hay fragancia de flores",
+            "fr": "Il n'y a pas de parfum de fleurs",
+            "uk": "Немає аромату квітів"
+        },
+        {
+            "start": "00:03:38,094",
+            "end": "00:03:40,654",
+            "es": "No hay cuadernos",
+            "fr": "Il n'y a pas de cahiers",
+            "uk": "Немає зошитів"
+        },
+        {
+            "start": "00:03:47,034",
+            "end": "00:03:49,594",
+            "es": "No hay fragancia de flores",
+            "fr": "Il n'y a pas de parfum de fleurs",
+            "uk": "Немає аромату квітів"
+        },
+        {
+            "start": "00:03:49,594",
+            "end": "00:03:52,334",
+            "es": "No hay pasteles de arroz",
+            "fr": "Il n'y a pas de gâteaux de riz",
+            "uk": "Немає рисових тортів"
+        },
+        {
+            "start": "00:03:52,994",
+            "end": "00:03:55,434",
+            "es": "No hay fragancia de flores",
+            "fr": "Il n'y a pas de parfum de fleurs",
+            "uk": "Немає аромату квітів"
+        },
+        {
+            "start": "00:03:55,434",
+            "end": "00:03:58,174",
+            "es": "No hay pasteles de arroz",
+            "fr": "Il n'y a pas de gâteaux de riz",
+            "uk": "Немає рисових тортів"
+        },
+        {
+            "start": "00:03:58,174",
+            "end": "00:04:00,574",
+            "es": "No hay",
+            "fr": "Il n'y a pas",
+            "uk": "Немає"
+        },
+        {
+            "start": "00:04:00,794",
+            "end": "00:04:02,974",
+            "es": "No hay fragancia de flores",
+            "fr": "Il n'y a pas de parfum de fleurs",
+            "uk": "Немає аромату квітів"
+        },
+        {
+            "start": "00:04:03,374",
+            "end": "00:04:05,694",
+            "es": "No hay fragancia de flores",
+            "fr": "Il n'y a pas de parfum de fleurs",
+            "uk": "Немає аромату квітів"
+        },
+        {
+            "start": "00:04:06,474",
+            "end": "00:04:08,734",
+            "es": "No hay árboles altos",
+            "fr": "Il n'y a pas d'arbres hauts",
+            "uk": "Немає високих дерев"
+        }
+    ]
+}

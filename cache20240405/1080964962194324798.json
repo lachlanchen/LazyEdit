@@ -1,0 +1,35 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,180\",\n    \"lang\": \"ja\",\n    \"text\": \"これは手羽先と\"\n  },\n  {\n    \"start\": \"00:00:03,202\",\n    \"end\": \"00:00:05,002\",\n    \"lang\": \"en\",\n    \"text\": \"papyrus and carrot.\"\n  },\n  {\n    \"start\": \"00:00:05,902\",\n    \"end\": \"00:00:06,862\",\n    \"lang\": \"en\",\n    \"text\": \"This.\"\n  },\n  {\n    \"start\": \"00:00:08,738\",\n    \"end\": \"00:00:09,458\",\n    \"lang\": \"en\",\n    \"text\": \"Inaudible\"\n  },\n  {\n    \"start\": \"00:00:11,970\",\n    \"end\": \"00:00:13,330\",\n    \"lang\": \"ja\",\n    \"text\": \"次のステージは、\"\n  },\n  {\n    \"start\": \"00:00:13,330\",\n    \"end\": \"00:00:15,110\",\n    \"lang\": \"ja\",\n    \"text\": \"福建武道館です。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,180",
+            "ko": "이것은 닭날개와"
+        },
+        {
+            "start": "00:00:03,202",
+            "end": "00:00:05,002",
+            "ko": "파피루스와 당근입니다."
+        },
+        {
+            "start": "00:00:05,902",
+            "end": "00:00:06,862",
+            "ko": "이것."
+        },
+        {
+            "start": "00:00:08,738",
+            "end": "00:00:09,458",
+            "ko": "듣기 어려움"
+        },
+        {
+            "start": "00:00:11,970",
+            "end": "00:00:13,330",
+            "ko": "다음 단계는,"
+        },
+        {
+            "start": "00:00:13,330",
+            "end": "00:00:15,110",
+            "ko": "복건 무도관입니다."
+        }
+    ]
+}

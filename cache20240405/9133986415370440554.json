@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:26,906\",\n    \"end\": \"00:03:29,046\",\n    \"lang\": \"en\",\n    \"text\": \"That's my unique journey.\"\n  },\n  {\n    \"start\": \"00:03:30,806\",\n    \"end\": \"00:03:32,866\",\n    \"lang\": \"en\",\n    \"text\": \"I have my own story.\"\n  },\n  {\n    \"start\": \"00:03:37,526\",\n    \"end\": \"00:03:38,986\",\n    \"lang\": \"en\",\n    \"text\": \"A unique story.\"\n  },\n  {\n    \"start\": \"00:03:40,186\",\n    \"end\": \"00:03:45,446\",\n    \"lang\": \"en\",\n    \"text\": \"And it can also help others to make the world better.\"\n  },\n  {\n    \"start\": \"00:03:50,966\",\n    \"end\": \"00:03:56,726\",\n    \"lang\": \"en\",\n    \"text\": \"Please put the rainbow as our cover.\"\n  },\n  {\n    \"start\": \"00:03:57,266\",\n    \"end\": \"00:03:59,106\",\n    \"lang\": \"en\",\n    \"text\": \"Put this rainbow as our cover.\"\n  },\n  {\n    \"start\": \"00:03:59,626\",\n    \"end\": \"00:04:00,666\",\n    \"lang\": \"en\",\n    \"text\": \"And as our teaser.\"\n  },\n  {\n    \"start\": \"00:04:01,846\",\n    \"end\": \"00:04:02,606\",\n    \"lang\": \"en\",\n    \"text\": \"Please.\"\n  },\n  {\n    \"start\": \"00:04:03,986\",\n    \"end\": \"00:04:05,466\",\n    \"lang\": \"en\",\n    \"text\": \"This is our teaser.\"\n  },\n  {\n    \"start\": \"00:04:06,246\",\n    \"end\": \"00:04:06,686\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:04:06,686\",\n    \"end\": \"00:04:06,686\",\n    \"lang\": \"en\",\n    \"text\": \"this is our teaser.\"\n  },\n  {\n    \"start\": \"00:04:07,646\",\n    \"end\": \"00:04:08,086\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:04:08,086\",\n    \"end\": \"00:04:08,986\",\n    \"lang\": \"en\",\n    \"text\": \"this is our...\"\n  },\n  {\n    \"start\": \"00:04:10,086\",\n    \"end\": \"00:04:10,526\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:04:10,526\",\n    \"end\": \"00:04:11,026\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:26,906",
+            "end": "00:03:29,046",
+            "es": "Ese es mi viaje único.",
+            "fr": "C'est mon parcours unique.",
+            "uk": "Це моя унікальна подорож."
+        },
+        {
+            "start": "00:03:30,806",
+            "end": "00:03:32,866",
+            "es": "Tengo mi propia historia.",
+            "fr": "J'ai ma propre histoire.",
+            "uk": "У мене є своя історія."
+        },
+        {
+            "start": "00:03:37,526",
+            "end": "00:03:38,986",
+            "es": "Una historia única.",
+            "fr": "Une histoire unique.",
+            "uk": "Унікальна історія."
+        },
+        {
+            "start": "00:03:40,186",
+            "end": "00:03:45,446",
+            "es": "Y también puede ayudar a otros a hacer del mundo un lugar mejor.",
+            "fr": "Et cela peut aussi aider les autres à rendre le monde meilleur.",
+            "uk": "І це також може допомогти іншим зробити світ кращим."
+        },
+        {
+            "start": "00:03:50,966",
+            "end": "00:03:56,726",
+            "es": "Por favor, pongan el arcoíris como nuestra portada.",
+            "fr": "S'il vous plaît, mettez l'arc-en-ciel comme notre couverture.",
+            "uk": "Будь ласка, поставте веселку нашою обкладинкою."
+        },
+        {
+            "start": "00:03:57,266",
+            "end": "00:03:59,106",
+            "es": "Pongan este arcoíris como nuestra portada.",
+            "fr": "Mettez cet arc-en-ciel comme notre couverture.",
+            "uk": "Поставте цю веселку нашою обкладинкою."
+        },
+        {
+            "start": "00:03:59,626",
+            "end": "00:04:00,666",
+            "es": "Y como nuestro teaser.",
+            "fr": "Et comme notre teaser.",
+            "uk": "І як наш тизер."
+        },
+        {
+            "start": "00:04:01,846",
+            "end": "00:04:02,606",
+            "es": "Por favor.",
+            "fr": "S'il vous plaît.",
+            "uk": "Будь ласка."
+        },
+        {
+            "start": "00:04:03,986",
+            "end": "00:04:05,466",
+            "es": "Este es nuestro teaser.",
+            "fr": "Ceci est notre teaser.",
+            "uk": "Це наш тизер."
+        },
+        {
+            "start": "00:04:06,246",
+            "end": "00:04:06,686",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:04:06,686",
+            "end": "00:04:06,686",
+            "es": "este es nuestro teaser.",
+            "fr": "c'est notre teaser.",
+            "uk": "це наш тизер."
+        },
+        {
+            "start": "00:04:07,646",
+            "end": "00:04:08,086",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:04:08,086",
+            "end": "00:04:08,986",
+            "es": "esto es nuestro...",
+            "fr": "c'est notre...",
+            "uk": "це наше..."
+        },
+        {
+            "start": "00:04:10,086",
+            "end": "00:04:10,526",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:04:10,526",
+            "end": "00:04:11,026",
+            "es": "nos vemos.",
+            "fr": "à bientôt.",
+            "uk": "до побачення."
+        }
+    ]
+}

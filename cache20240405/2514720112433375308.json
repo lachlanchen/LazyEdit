@@ -1,0 +1,70 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,300\",\n    \"end\": \"00:01:04,019\",\n    \"lang\": \"en\",\n    \"text\": \"It's a biological age.\"\n  },\n  {\n    \"start\": \"00:01:11,940\",\n    \"end\": \"00:01:14,880\",\n    \"lang\": \"en\",\n    \"text\": \"As time is imaginary,\"\n  },\n  {\n    \"start\": \"00:01:14,880\",\n    \"end\": \"00:01:18,420\",\n    \"lang\": \"en\",\n    \"text\": \"time is physical,\"\n  },\n  {\n    \"start\": \"00:01:18,420\",\n    \"end\": \"00:01:22,040\",\n    \"lang\": \"en\",\n    \"text\": \"but it's also the metric of time.\"\n  },\n  {\n    \"start\": \"00:01:22,040\",\n    \"end\": \"00:01:23,560\",\n    \"lang\": \"en\",\n    \"text\": \"It's imaginary.\"\n  },\n  {\n    \"start\": \"00:01:24,300\",\n    \"end\": \"00:01:24,460\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:24,460\",\n    \"end\": \"00:01:39,860\",\n    \"lang\": \"en\",\n    \"text\": \"if you use the life of a subatomic particle,\"\n  },\n  {\n    \"start\": \"00:01:39,860\",\n    \"end\": \"00:01:42,440\",\n    \"lang\": \"en\",\n    \"text\": \"our life is infinity.\"\n  },\n  {\n    \"start\": \"00:01:42,440\",\n    \"end\": \"00:01:44,300\",\n    \"lang\": \"en\",\n    \"text\": \"Our life is infinity.\"\n  },\n  {\n    \"start\": \"00:01:44,840\",\n    \"end\": \"00:01:48,940\",\n    \"lang\": \"en\",\n    \"text\": \"But if you use the time of the universe as a metric,\"\n  },\n  {\n    \"start\": \"00:01:48,940\",\n    \"end\": \"00:01:56,360\",\n    \"lang\": \"en\",\n    \"text\": \"our lifetime is a blink of an eye.\"\n  },\n  {\n    \"start\": \"00:01:57,440\",\n    \"end\": \"00:01:58,340\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:58,340\",\n    \"end\": \"00:02:03,940\",\n    \"lang\": \"en\",\n    \"text\": \"time is relative and don't be too obsessed with it.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:02,300",
+            "end": "00:01:04,019",
+            "ko": "그것은 생물학적 나이입니다."
+        },
+        {
+            "start": "00:01:11,940",
+            "end": "00:01:14,880",
+            "ko": "시간은 상상일 뿐이고,"
+        },
+        {
+            "start": "00:01:14,880",
+            "end": "00:01:18,420",
+            "ko": "시간은 물리적이며,"
+        },
+        {
+            "start": "00:01:18,420",
+            "end": "00:01:22,040",
+            "ko": "하지만 시간의 척도이기도 합니다."
+        },
+        {
+            "start": "00:01:22,040",
+            "end": "00:01:23,560",
+            "ko": "그것은 상상적인 것입니다."
+        },
+        {
+            "start": "00:01:24,300",
+            "end": "00:01:24,460",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:01:24,460",
+            "end": "00:01:39,860",
+            "ko": "만약 당신이 아원자 입자의 수명을 사용한다면,"
+        },
+        {
+            "start": "00:01:39,860",
+            "end": "00:01:42,440",
+            "ko": "우리의 삶은 무한합니다."
+        },
+        {
+            "start": "00:01:42,440",
+            "end": "00:01:44,300",
+            "ko": "우리의 삶은 무한합니다."
+        },
+        {
+            "start": "00:01:44,840",
+            "end": "00:01:48,940",
+            "ko": "하지만 만약 당신이 우주의 시간을 척도로 사용한다면,"
+        },
+        {
+            "start": "00:01:48,940",
+            "end": "00:01:56,360",
+            "ko": "우리의 수명은 눈 깜짝할 사이입니다."
+        },
+        {
+            "start": "00:01:57,440",
+            "end": "00:01:58,340",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:01:58,340",
+            "end": "00:02:03,940",
+            "ko": "시간은 상대적이며 그것에 너무 집착하지 마십시오."
+        }
+    ]
+}

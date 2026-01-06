@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,540\",\n    \"end\": \"00:00:02,020\",\n    \"lang\": \"en\",\n    \"text\": \"So that's the first step,\"\n  },\n  {\n    \"start\": \"00:00:02,020\",\n    \"end\": \"00:00:03,460\",\n    \"lang\": \"en\",\n    \"text\": \"main rhythm.\"\n  },\n  {\n    \"start\": \"00:00:05,240\",\n    \"end\": \"00:00:05,760\",\n    \"lang\": \"en\",\n    \"text\": \"Na,\"\n  },\n  {\n    \"start\": \"00:00:05,760\",\n    \"end\": \"00:00:06,260\",\n    \"lang\": \"en\",\n    \"text\": \"Na,\"\n  },\n  {\n    \"start\": \"00:00:06,260\",\n    \"end\": \"00:00:06,660\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:06,660\",\n    \"end\": \"00:00:07,180\",\n    \"lang\": \"en\",\n    \"text\": \"Mi,\"\n  },\n  {\n    \"start\": \"00:00:07,180\",\n    \"end\": \"00:00:07,660\",\n    \"lang\": \"en\",\n    \"text\": \"Na,\"\n  },\n  {\n    \"start\": \"00:00:07,660\",\n    \"end\": \"00:00:08,500\",\n    \"lang\": \"en\",\n    \"text\": \"Na,\"\n  },\n  {\n    \"start\": \"00:00:08,500\",\n    \"end\": \"00:00:09,380\",\n    \"lang\": \"en\",\n    \"text\": \"Mi,\"\n  },\n  {\n    \"start\": \"00:00:09,380\",\n    \"end\": \"00:00:09,760\",\n    \"lang\": \"en\",\n    \"text\": \"Na,\"\n  },\n  {\n    \"start\": \"00:00:09,760\",\n    \"end\": \"00:00:10,480\",\n    \"lang\": \"en\",\n    \"text\": \"Mi.\"\n  },\n  {\n    \"start\": \"00:00:11,700\",\n    \"end\": \"00:00:11,900\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:11,900\",\n    \"end\": \"00:00:12,760\",\n    \"lang\": \"en\",\n    \"text\": \"it's feeling correct.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,540",
+            "end": "00:00:02,020",
+            "en": "So that's the first step,",
+            "zh": "所以这是第一步，",
+            "ar": "إذًا هذه هي الخطوة الأولى،"
+        },
+        {
+            "start": "00:00:02,020",
+            "end": "00:00:03,460",
+            "en": "main rhythm.",
+            "zh": "主要节奏。",
+            "ar": "الإيقاع الرئيسي."
+        },
+        {
+            "start": "00:00:05,240",
+            "end": "00:00:05,760",
+            "en": "Na,",
+            "zh": "娜，",
+            "ar": "نا،"
+        },
+        {
+            "start": "00:00:05,760",
+            "end": "00:00:06,260",
+            "en": "Na,",
+            "zh": "娜，",
+            "ar": "نا،"
+        },
+        {
+            "start": "00:00:06,260",
+            "end": "00:00:06,660",
+            "en": "So,",
+            "zh": "所，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:00:06,660",
+            "end": "00:00:07,180",
+            "en": "Mi,",
+            "zh": "米，",
+            "ar": "مي،"
+        },
+        {
+            "start": "00:00:07,180",
+            "end": "00:00:07,660",
+            "en": "Na,",
+            "zh": "娜，",
+            "ar": "نا،"
+        },
+        {
+            "start": "00:00:07,660",
+            "end": "00:00:08,500",
+            "en": "Na,",
+            "zh": "娜，",
+            "ar": "نا،"
+        },
+        {
+            "start": "00:00:08,500",
+            "end": "00:00:09,380",
+            "en": "Mi,",
+            "zh": "米，",
+            "ar": "مي،"
+        },
+        {
+            "start": "00:00:09,380",
+            "end": "00:00:09,760",
+            "en": "Na,",
+            "zh": "娜，",
+            "ar": "نا،"
+        },
+        {
+            "start": "00:00:09,760",
+            "end": "00:00:10,480",
+            "en": "Mi.",
+            "zh": "米。",
+            "ar": "مي."
+        },
+        {
+            "start": "00:00:11,700",
+            "end": "00:00:11,900",
+            "en": "So,",
+            "zh": "所，",
+            "ar": "إذًا،"
+        },
+        {
+            "start": "00:00:11,900",
+            "end": "00:00:12,760",
+            "en": "it's feeling correct.",
+            "zh": "感觉正确。",
+            "ar": "الشعور صحيح."
+        }
+    ]
+}

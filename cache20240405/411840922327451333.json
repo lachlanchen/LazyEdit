@@ -1,0 +1,132 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,650\",\n    \"end\": \"00:01:05,430\",\n    \"lang\": \"en\",\n    \"text\": \"I don't like it in two points.\"\n  },\n  {\n    \"start\": \"00:01:05,430\",\n    \"end\": \"00:01:06,110\",\n    \"lang\": \"en\",\n    \"text\": \"Firstly,\"\n  },\n  {\n    \"start\": \"00:01:06,110\",\n    \"end\": \"00:01:07,870\",\n    \"lang\": \"en\",\n    \"text\": \"it is incorrect name.\"\n  },\n  {\n    \"start\": \"00:01:08,802\",\n    \"end\": \"00:01:09,462\",\n    \"lang\": \"ja\",\n    \"text\": \"一斉に\"\n  },\n  {\n    \"start\": \"00:01:10,978\",\n    \"end\": \"00:01:18,738\",\n    \"lang\": \"en\",\n    \"text\": \"It means that if you are a people that are above other people,\"\n  },\n  {\n    \"start\": \"00:01:18,738\",\n    \"end\": \"00:01:20,878\",\n    \"lang\": \"en\",\n    \"text\": \"that is a good thing.\"\n  },\n  {\n    \"start\": \"00:01:22,658\",\n    \"end\": \"00:01:27,798\",\n    \"lang\": \"en\",\n    \"text\": \"If it doesn't have to be a good thing,\"\n  },\n  {\n    \"start\": \"00:01:27,798\",\n    \"end\": \"00:01:31,358\",\n    \"lang\": \"en\",\n    \"text\": \"you are a happy people,\"\n  },\n  {\n    \"start\": \"00:01:31,358\",\n    \"end\": \"00:01:36,818\",\n    \"lang\": \"en\",\n    \"text\": \"you are a full-blown life,\"\n  },\n  {\n    \"start\": \"00:01:36,818\",\n    \"end\": \"00:01:38,418\",\n    \"lang\": \"en\",\n    \"text\": \"full-blown creature,\"\n  },\n  {\n    \"start\": \"00:01:38,418\",\n    \"end\": \"00:01:42,118\",\n    \"lang\": \"en\",\n    \"text\": \"that's a good thing.\"\n  },\n  {\n    \"start\": \"00:01:42,118\",\n    \"end\": \"00:01:46,138\",\n    \"lang\": \"en\",\n    \"text\": \"That's the most important thing that you should do.\"\n  },\n  {\n    \"start\": \"00:01:47,738\",\n    \"end\": \"00:01:53,498\",\n    \"lang\": \"en\",\n    \"text\": \"And the second part is that if you suffer more,\"\n  },\n  {\n    \"start\": \"00:01:53,498\",\n    \"end\": \"00:01:54,698\",\n    \"lang\": \"en\",\n    \"text\": \"then you keep suffering.\"\n  },\n  {\n    \"start\": \"00:01:55,658\",\n    \"end\": \"00:01:57,258\",\n    \"lang\": \"en\",\n    \"text\": \"It doesn't mean that you are getting better.\"\n  },\n  {\n    \"start\": \"00:01:57,258\",\n    \"end\": \"00:02:00,778\",\n    \"lang\": \"en\",\n    \"text\": \"If you are a people that keep suffering,\"\n  },\n  {\n    \"start\": \"00:02:00,778\",\n    \"end\": \"00:02:02,578\",\n    \"lang\": \"en\",\n    \"text\": \"keep suffering,\"\n  },\n  {\n    \"start\": \"00:02:02,578\",\n    \"end\": \"00:02:10,198\",\n    \"lang\": \"en\",\n    \"text\": \"then what you produce is also suffering.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:02,650",
+            "end": "00:01:05,430",
+            "en": "I don't like it in two points.",
+            "zh": "我在两点上不喜欢它。",
+            "ar": "لا يعجبني في نقطتين."
+        },
+        {
+            "start": "00:01:05,430",
+            "end": "00:01:06,110",
+            "en": "Firstly,",
+            "zh": "首先，",
+            "ar": "أولاً،"
+        },
+        {
+            "start": "00:01:06,110",
+            "end": "00:01:07,870",
+            "en": "it is incorrect name.",
+            "zh": "这是不正确的名称。",
+            "ar": "إنه اسم غير صحيح."
+        },
+        {
+            "start": "00:01:08,802",
+            "end": "00:01:09,462",
+            "en": "All at once",
+            "zh": "一斉に",
+            "ar": "جميعًا في وقت واحد",
+            "ja": "一斉に"
+        },
+        {
+            "start": "00:01:10,978",
+            "end": "00:01:18,738",
+            "en": "It means that if you are a people that are above other people,",
+            "zh": "这意味着，如果你是一个高人一等的人，",
+            "ar": "هذا يعني أنه إذا كنت من الناس الذين فوق الآخرين،"
+        },
+        {
+            "start": "00:01:18,738",
+            "end": "00:01:20,878",
+            "en": "that is a good thing.",
+            "zh": "那是好事。",
+            "ar": "هذا شيء جيد."
+        },
+        {
+            "start": "00:01:22,658",
+            "end": "00:01:27,798",
+            "en": "If it doesn't have to be a good thing,",
+            "zh": "如果它不一定是好事，",
+            "ar": "إذا لم يكن يجب أن يكون شيئًا جيدًا،"
+        },
+        {
+            "start": "00:01:27,798",
+            "end": "00:01:31,358",
+            "en": "you are a happy people,",
+            "zh": "你是快乐的人，",
+            "ar": "أنت شعب سعيد،"
+        },
+        {
+            "start": "00:01:31,358",
+            "end": "00:01:36,818",
+            "en": "you are a full-blown life,",
+            "zh": "你是充满生命的人，",
+            "ar": "أنت حياة مزدهرة،"
+        },
+        {
+            "start": "00:01:36,818",
+            "end": "00:01:38,418",
+            "en": "full-blown creature,",
+            "zh": "充满生命的生物，",
+            "ar": "كائن متكامل،"
+        },
+        {
+            "start": "00:01:38,418",
+            "end": "00:01:42,118",
+            "en": "that's a good thing.",
+            "zh": "那是好事。",
+            "ar": "هذا شيء جيد."
+        },
+        {
+            "start": "00:01:42,118",
+            "end": "00:01:46,138",
+            "en": "That's the most important thing that you should do.",
+            "zh": "这是你应该做的最重要的事情。",
+            "ar": "هذا هو أهم شيء يجب أن تفعله."
+        },
+        {
+            "start": "00:01:47,738",
+            "end": "00:01:53,498",
+            "en": "And the second part is that if you suffer more,",
+            "zh": "第二部分是，如果你受苦更多，",
+            "ar": "والجزء الثاني هو أنه إذا عانيت أكثر،"
+        },
+        {
+            "start": "00:01:53,498",
+            "end": "00:01:54,698",
+            "en": "then you keep suffering.",
+            "zh": "那么你就会继续受苦。",
+            "ar": "ثم تستمر في المعاناة."
+        },
+        {
+            "start": "00:01:55,658",
+            "end": "00:01:57,258",
+            "en": "It doesn't mean that you are getting better.",
+            "zh": "这并不意味着你正在变得更好。",
+            "ar": "هذا لا يعني أنك تصبح أفضل."
+        },
+        {
+            "start": "00:01:57,258",
+            "end": "00:02:00,778",
+            "en": "If you are a people that keep suffering,",
+            "zh": "如果你是一个不断受苦的人，",
+            "ar": "إذا كنت من الناس الذين يستمرون في المعاناة،"
+        },
+        {
+            "start": "00:02:00,778",
+            "end": "00:02:02,578",
+            "en": "keep suffering,",
+            "zh": "继续受苦，",
+            "ar": "استمر في المعاناة،"
+        },
+        {
+            "start": "00:02:02,578",
+            "end": "00:02:10,198",
+            "en": "then what you produce is also suffering.",
+            "zh": "那么你产生的也是苦难。",
+            "ar": "ثم ما تنتجه أيضًا هو المعاناة."
+        }
+    ]
+}

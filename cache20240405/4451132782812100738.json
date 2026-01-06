@@ -1,0 +1,45 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,240\",\n    \"end\": \"00:00:03,380\",\n    \"ja\": \"<今日>[]は<ランデル>[]の<日>[]です!\"\n  },\n  {\n    \"start\": \"00:00:03,780\",\n    \"end\": \"00:00:04,660\",\n    \"ja\": \"<ランデル>[]をやっています!\"\n  },\n  {\n    \"start\": \"00:00:05,666\",\n    \"end\": \"00:00:06,946\",\n    \"ja\": \"<雰囲気>[]はどうだろう\"\n  },\n  {\n    \"start\": \"00:00:06,946\",\n    \"end\": \"00:00:08,226\",\n    \"ja\": \"<強度>[]は<高>[]い\"\n  },\n  {\n    \"start\": \"00:00:09,025\",\n    \"end\": \"00:00:09,685\",\n    \"ja\": \"<ドカン>[]\"\n  },\n  {\n    \"start\": \"00:00:09,685\",\n    \"end\": \"00:00:10,546\",\n    \"ja\": \"<バン>[]\"\n  },\n  {\n    \"start\": \"00:00:11,746\",\n    \"end\": \"00:00:12,806\",\n    \"ja\": \"<最初>[]の<一手>[]。\"\n  },\n  {\n    \"start\": \"00:00:13,286\",\n    \"end\": \"00:00:13,746\",\n    \"ja\": \"ありがとうございます。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,240",
+            "end": "00:00:03,380",
+            "ja": "<今日>[きょう]は<ランデブー>[ランデブー]の<日>[ひ]です!"
+        },
+        {
+            "start": "00:00:03,780",
+            "end": "00:00:04,660",
+            "ja": "<ランデブー>[ランデブー]をやっています!"
+        },
+        {
+            "start": "00:00:05,666",
+            "end": "00:00:06,946",
+            "ja": "<雰囲気>[ふんいき]はどうだろう"
+        },
+        {
+            "start": "00:00:06,946",
+            "end": "00:00:08,226",
+            "ja": "<強度>[きょうど]は<高>[たか]い"
+        },
+        {
+            "start": "00:00:09,025",
+            "end": "00:00:09,685",
+            "ja": "<ドカン>[]"
+        },
+        {
+            "start": "00:00:09,685",
+            "end": "00:00:10,546",
+            "ja": "<バン>[]"
+        },
+        {
+            "start": "00:00:11,746",
+            "end": "00:00:12,806",
+            "ja": "<最初>[さいしょ]の<一手>[いって]。"
+        },
+        {
+            "start": "00:00:13,286",
+            "end": "00:00:13,746",
+            "ja": "ありがとうございます。"
+        }
+    ]
+}

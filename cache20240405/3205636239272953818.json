@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,960\",\n    \"lang\": \"zh\",\n    \"text\": \"虽然没有家里的好吃,\"\n  },\n  {\n    \"start\": \"00:00:01,960\",\n    \"end\": \"00:00:04,240\",\n    \"lang\": \"zh\",\n    \"text\": \"但是已经很好吃了。\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:05,440\",\n    \"lang\": \"zh\",\n    \"text\": \"红薯粉条。\"\n  },\n  {\n    \"start\": \"00:00:06,360\",\n    \"end\": \"00:00:07,720\",\n    \"lang\": \"zh\",\n    \"text\": \"我不知道英语怎么说。\"\n  },\n  {\n    \"start\": \"00:00:08,360\",\n    \"end\": \"00:00:09,240\",\n    \"lang\": \"en\",\n    \"text\": \"Potato noodles。\"\n  },\n  {\n    \"start\": \"00:00:11,760\",\n    \"end\": \"00:00:12,760\",\n    \"lang\": \"en\",\n    \"text\": \"And...\"\n  },\n  {\n    \"start\": \"00:00:12,760\",\n    \"end\": \"00:00:14,400\",\n    \"lang\": \"zh\",\n    \"text\": \"红薯粉条。\"\n  },\n  {\n    \"start\": \"00:00:14,600\",\n    \"end\": \"00:00:15,060\",\n    \"lang\": \"en\",\n    \"text\": \"Vegetables.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,960",
+            "en": "Although it's not as delicious as the one at home,",
+            "zh": "虽然没有家里的好吃,",
+            "ar": "على الرغم من أنها ليست لذيذة مثل الطعام في المنزل،"
+        },
+        {
+            "start": "00:00:01,960",
+            "end": "00:00:04,240",
+            "en": "it's already very delicious.",
+            "zh": "但是已经很好吃了。",
+            "ar": "إنها بالفعل لذيذة جدا."
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:05,440",
+            "en": "Sweet potato noodles.",
+            "zh": "红薯粉条。",
+            "ar": "معكرونة البطاطا الحلوة."
+        },
+        {
+            "start": "00:00:06,360",
+            "end": "00:00:07,720",
+            "en": "I don't know how to say it in English.",
+            "zh": "我不知道英语怎么说。",
+            "ar": "لا أعرف كيف أقول ذلك بالإنجليزية."
+        },
+        {
+            "start": "00:00:08,360",
+            "end": "00:00:09,240",
+            "en": "Potato noodles.",
+            "zh": "红薯粉条。",
+            "ar": "معكرونة البطاطس."
+        },
+        {
+            "start": "00:00:11,760",
+            "end": "00:00:12,760",
+            "en": "And...",
+            "zh": "和...",
+            "ar": "و..."
+        },
+        {
+            "start": "00:00:12,760",
+            "end": "00:00:14,400",
+            "en": "Sweet potato noodles.",
+            "zh": "红薯粉条。",
+            "ar": "معكرونة البطاطا الحلوة."
+        },
+        {
+            "start": "00:00:14,600",
+            "end": "00:00:15,060",
+            "en": "Vegetables.",
+            "zh": "蔬菜。",
+            "ar": "الخضروات."
+        }
+    ]
+}

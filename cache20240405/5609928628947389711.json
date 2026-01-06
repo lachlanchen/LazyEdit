@@ -1,0 +1,125 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,480\",\n    \"lang\": \"zh\",\n    \"text\": \"今天學兩個單詞\"\n  },\n  {\n    \"start\": \"00:00:02,460\",\n    \"end\": \"00:00:03,440\",\n    \"lang\": \"zh\",\n    \"text\": \"這個豆芽\"\n  },\n  {\n    \"start\": \"00:00:03,440\",\n    \"end\": \"00:00:04,800\",\n    \"lang\": \"zh\",\n    \"text\": \"用英語怎麼說\"\n  },\n  {\n    \"start\": \"00:00:06,779\",\n    \"end\": \"00:00:07,420\",\n    \"lang\": \"zh\",\n    \"text\": \"豆芽\"\n  },\n  {\n    \"start\": \"00:00:07,420\",\n    \"end\": \"00:00:08,160\",\n    \"lang\": \"zh\",\n    \"text\": \"牙齒在什麼\"\n  },\n  {\n    \"start\": \"00:00:08,160\",\n    \"end\": \"00:00:08,840\",\n    \"lang\": \"zh\",\n    \"text\": \"牙齒\"\n  },\n  {\n    \"start\": \"00:00:10,860\",\n    \"end\": \"00:00:12,200\",\n    \"lang\": \"zh\",\n    \"text\": \"怎麼突然想不起來\"\n  },\n  {\n    \"start\": \"00:00:14,220\",\n    \"end\": \"00:00:15,280\",\n    \"lang\": \"zh\",\n    \"text\": \"後面兩個\"\n  },\n  {\n    \"start\": \"00:00:15,280\",\n    \"end\": \"00:00:17,100\",\n    \"lang\": \"zh\",\n    \"text\": \"肯定是u和d結尾的\"\n  },\n  {\n    \"start\": \"00:00:17,826\",\n    \"end\": \"00:00:19,486\",\n    \"lang\": \"ar\",\n    \"text\": \"ماذا؟ ماذا سنلنى؟\"\n  },\n  {\n    \"start\": \"00:00:20,258\",\n    \"end\": \"00:00:20,598\",\n    \"lang\": \"en\",\n    \"text\": \"BAM!\"\n  },\n  {\n    \"start\": \"00:00:20,598\",\n    \"end\": \"00:00:21,578\",\n    \"lang\": \"en\",\n    \"text\": \"BAM!\"\n  },\n  {\n    \"start\": \"00:00:23,298\",\n    \"end\": \"00:00:24,818\",\n    \"lang\": \"en\",\n    \"text\": \"And then...\"\n  },\n  {\n    \"start\": \"00:00:24,818\",\n    \"end\": \"00:00:25,978\",\n    \"lang\": \"en\",\n    \"text\": \"Another word is...\"\n  },\n  {\n    \"start\": \"00:00:26,434\",\n    \"end\": \"00:00:27,214\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜\"\n  },\n  {\n    \"start\": \"00:00:27,693\",\n    \"end\": \"00:00:28,934\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜用英语咋说\"\n  },\n  {\n    \"start\": \"00:00:29,453\",\n    \"end\": \"00:00:32,113\",\n    \"lang\": \"zh\",\n    \"text\": \"我觉得菠菜里面它是含铁比较高\"\n  },\n  {\n    \"start\": \"00:00:32,113\",\n    \"end\": \"00:00:34,454\",\n    \"lang\": \"zh\",\n    \"text\": \"所以它好像它里面的雌根是不是有一个铁\"\n  },\n  {\n    \"start\": \"00:00:35,170\",\n    \"end\": \"00:00:36,110\",\n    \"lang\": \"en\",\n    \"text\": \"Your F.E.R.\"\n  },\n  {\n    \"start\": \"00:00:43,906\",\n    \"end\": \"00:00:44,226\",\n    \"lang\": \"zh\",\n    \"text\": \"是吗\"\n  },\n  {\n    \"start\": \"00:00:50,434\",\n    \"end\": \"00:00:51,434\",\n    \"lang\": \"zh\",\n    \"text\": \"哇真的太好吃了\"\n  },\n  {\n    \"start\": \"00:00:52,494\",\n    \"end\": \"00:00:52,994\",\n    \"lang\": \"zh\",\n    \"text\": \"多汁\"\n  },\n  {\n    \"start\": \"00:00:53,874\",\n    \"end\": \"00:00:54,574\",\n    \"lang\": \"zh\",\n    \"text\": \"够味\"\n  },\n  {\n    \"start\": \"00:00:55,114\",\n    \"end\": \"00:00:56,034\",\n    \"lang\": \"zh\",\n    \"text\": \"麻辣\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,480",
+            "vi": "Hôm nay học hai từ vựng"
+        },
+        {
+            "start": "00:00:02,460",
+            "end": "00:00:03,440",
+            "vi": "Cái này là giá đỗ"
+        },
+        {
+            "start": "00:00:03,440",
+            "end": "00:00:04,800",
+            "vi": "Bằng tiếng Anh là gì"
+        },
+        {
+            "start": "00:00:06,779",
+            "end": "00:00:07,420",
+            "vi": "Giá đỗ"
+        },
+        {
+            "start": "00:00:07,420",
+            "end": "00:00:08,160",
+            "vi": "Răng ở đâu"
+        },
+        {
+            "start": "00:00:08,160",
+            "end": "00:00:08,840",
+            "vi": "Răng"
+        },
+        {
+            "start": "00:00:10,860",
+            "end": "00:00:12,200",
+            "vi": "Sao tự dưng nhớ không ra"
+        },
+        {
+            "start": "00:00:14,220",
+            "end": "00:00:15,280",
+            "vi": "Hai cái sau"
+        },
+        {
+            "start": "00:00:15,280",
+            "end": "00:00:17,100",
+            "vi": "Chắc chắn là kết thúc bằng u và d"
+        },
+        {
+            "start": "00:00:17,826",
+            "end": "00:00:19,486",
+            "vi": "Gì cơ? Chúng ta sẽ học gì?"
+        },
+        {
+            "start": "00:00:20,258",
+            "end": "00:00:20,598",
+            "vi": "BỐC!"
+        },
+        {
+            "start": "00:00:20,598",
+            "end": "00:00:21,578",
+            "vi": "BỐC!"
+        },
+        {
+            "start": "00:00:23,298",
+            "end": "00:00:24,818",
+            "vi": "Và sau đó..."
+        },
+        {
+            "start": "00:00:24,818",
+            "end": "00:00:25,978",
+            "vi": "Một từ khác là..."
+        },
+        {
+            "start": "00:00:26,434",
+            "end": "00:00:27,214",
+            "vi": "Rau chân vịt"
+        },
+        {
+            "start": "00:00:27,693",
+            "end": "00:00:28,934",
+            "vi": "Rau chân vịt bằng tiếng Anh là gì"
+        },
+        {
+            "start": "00:00:29,453",
+            "end": "00:00:32,113",
+            "vi": "Tôi nghĩ rau chân vịt chứa nhiều sắt"
+        },
+        {
+            "start": "00:00:32,113",
+            "end": "00:00:34,454",
+            "vi": "Nên có lẽ bên trong nó có chứa một loại ion sắt"
+        },
+        {
+            "start": "00:00:35,170",
+            "end": "00:00:36,110",
+            "vi": "Sắt của bạn"
+        },
+        {
+            "start": "00:00:43,906",
+            "end": "00:00:44,226",
+            "vi": "Phải không"
+        },
+        {
+            "start": "00:00:50,434",
+            "end": "00:00:51,434",
+            "vi": "Wow, thật là ngon quá"
+        },
+        {
+            "start": "00:00:52,494",
+            "end": "00:00:52,994",
+            "vi": "Nhiều nước"
+        },
+        {
+            "start": "00:00:53,874",
+            "end": "00:00:54,574",
+            "vi": "Đậm đà"
+        },
+        {
+            "start": "00:00:55,114",
+            "end": "00:00:56,034",
+            "vi": "Cay nồng"
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,480\",\n    \"lang\": \"en\",\n    \"text\": \"Live happy and die peacefully.\"\n  },\n  {\n    \"start\": \"00:00:05,794\",\n    \"end\": \"00:00:06,554\",\n    \"lang\": \"ja\",\n    \"text\": \"リヴハイピー\"\n  },\n  {\n    \"start\": \"00:00:06,978\",\n    \"end\": \"00:00:07,778\",\n    \"lang\": \"en\",\n    \"text\": \"and die peacefully.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,480",
+            "es": "Vive feliz y muere en paz.",
+            "fr": "Vivez heureux et mourrez en paix.",
+            "uk": "Живи щасливо і помри мирно."
+        },
+        {
+            "start": "00:00:05,794",
+            "end": "00:00:06,554",
+            "es": "Vive feliz",
+            "fr": "Vivez heureux",
+            "uk": "Живи щасливо"
+        },
+        {
+            "start": "00:00:06,978",
+            "end": "00:00:07,778",
+            "es": "y muere en paz.",
+            "fr": "et mourrez en paix.",
+            "uk": "і помри мирно."
+        }
+    ]
+}

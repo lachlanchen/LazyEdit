@@ -1,0 +1,48 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,880\",\n    \"lang\": \"en\",\n    \"text\": \"Everything,\"\n  },\n  {\n    \"start\": \"00:00:00,880\",\n    \"end\": \"00:00:02,920\",\n    \"lang\": \"en\",\n    \"text\": \"I have this little progress.\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"en\",\n    \"text\": \"Bye bye!\"\n  },\n  {\n    \"start\": \"00:00:06,146\",\n    \"end\": \"00:00:08,806\",\n    \"lang\": \"ar\",\n    \"text\": \"أنا أبني وعكا فنري هندريد\"\n  },\n  {\n    \"start\": \"00:00:26,786\",\n    \"end\": \"00:00:27,426\",\n    \"lang\": \"en\",\n    \"text\": \"This is cool.\"\n  },\n  {\n    \"start\": \"00:00:27,806\",\n    \"end\": \"00:00:28,106\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,880",
+            "en": "Everything,",
+            "zh": "一切，",
+            "ar": "كل شيء،"
+        },
+        {
+            "start": "00:00:00,880",
+            "end": "00:00:02,920",
+            "en": "I have this little progress.",
+            "zh": "我有这么一点进步。",
+            "ar": "لدي هذا التقدم البسيط."
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:04,540",
+            "en": "Bye bye!",
+            "zh": "再见！",
+            "ar": "مع السلامة!"
+        },
+        {
+            "start": "00:00:06,146",
+            "end": "00:00:08,806",
+            "en": "I am building Windrider 100.",
+            "zh": "我在建造Windrider 100。",
+            "ar": "أنا أبني وعكا فنري هندريد",
+            "original": "أنا أبني وعكا فنري هندريد"
+        },
+        {
+            "start": "00:00:26,786",
+            "end": "00:00:27,426",
+            "en": "This is cool.",
+            "zh": "这很酷。",
+            "ar": "هذا رائع."
+        },
+        {
+            "start": "00:00:27,806",
+            "end": "00:00:28,106",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

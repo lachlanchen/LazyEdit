@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:28,174\",\n    \"end\": \"00:04:28,194\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香 没有花香 没有树高\"\n  },\n  {\n    \"start\": \"00:04:28,194\",\n    \"end\": \"00:04:28,254\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香 没有花香 没有树高\"\n  },\n  {\n    \"start\": \"00:04:28,290\",\n    \"end\": \"00:04:28,730\",\n    \"lang\": \"en\",\n    \"text\": \"Anyway,\"\n  },\n  {\n    \"start\": \"00:04:28,730\",\n    \"end\": \"00:04:30,390\",\n    \"lang\": \"en\",\n    \"text\": \"it's still imperfect.\"\n  },\n  {\n    \"start\": \"00:04:32,229\",\n    \"end\": \"00:04:35,270\",\n    \"lang\": \"en\",\n    \"text\": \"I promise that when I practice alone,\"\n  },\n  {\n    \"start\": \"00:04:35,270\",\n    \"end\": \"00:04:37,330\",\n    \"lang\": \"en\",\n    \"text\": \"it's kind of a little bit,\"\n  },\n  {\n    \"start\": \"00:04:37,330\",\n    \"end\": \"00:04:38,670\",\n    \"lang\": \"en\",\n    \"text\": \"somewhat better.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:04:28,174",
+            "end": "00:04:28,254",
+            "en": "No fragrance of flowers, no height of trees",
+            "zh": "没有花香 没有树高",
+            "ar": "لا عطر للزهور، ولا ارتفاع للأشجار"
+        },
+        {
+            "start": "00:04:28,290",
+            "end": "00:04:28,730",
+            "en": "Anyway,",
+            "zh": "无论如何，",
+            "ar": "على أي حال،"
+        },
+        {
+            "start": "00:04:28,730",
+            "end": "00:04:30,390",
+            "en": "it's still imperfect.",
+            "zh": "它仍然不完美。",
+            "ar": "لا يزال غير مكتمل."
+        },
+        {
+            "start": "00:04:32,229",
+            "end": "00:04:35,270",
+            "en": "I promise that when I practice alone,",
+            "zh": "我保证当我独自练习时，",
+            "ar": "أعدكم عندما أتدرب بمفردي،"
+        },
+        {
+            "start": "00:04:35,270",
+            "end": "00:04:37,330",
+            "en": "it's kind of a little bit,",
+            "zh": "这有点儿，",
+            "ar": "إنه نوع من القليل،"
+        },
+        {
+            "start": "00:04:37,330",
+            "end": "00:04:38,670",
+            "en": "somewhat better.",
+            "zh": "有些更好。",
+            "ar": "أفضل إلى حد ما."
+        }
+    ]
+}

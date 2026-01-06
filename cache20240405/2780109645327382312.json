@@ -1,0 +1,75 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,960\",\n    \"lang\": \"en\",\n    \"text\": \"I'll share another trick to remember this Arabic letter,\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:04,540\",\n    \"lang\": \"en\",\n    \"text\": \"do,\"\n  },\n  {\n    \"start\": \"00:00:04,540\",\n    \"end\": \"00:00:06,100\",\n    \"lang\": \"en\",\n    \"text\": \"d-a-l.\"\n  },\n  {\n    \"start\": \"00:00:06,660\",\n    \"end\": \"00:00:09,200\",\n    \"lang\": \"en\",\n    \"text\": \"So this is quite looks like this.\"\n  },\n  {\n    \"start\": \"00:00:09,666\",\n    \"end\": \"00:00:10,046\",\n    \"lang\": \"ja\",\n    \"text\": \"これは\"\n  },\n  {\n    \"start\": \"00:00:11,618\",\n    \"end\": \"00:00:12,598\",\n    \"lang\": \"zh\",\n    \"text\": \"那些是在動啊\"\n  },\n  {\n    \"start\": \"00:00:12,834\",\n    \"end\": \"00:00:15,434\",\n    \"lang\": \"en\",\n    \"text\": \"door handler so this is a door\"\n  },\n  {\n    \"start\": \"00:00:16,073\",\n    \"end\": \"00:00:17,794\",\n    \"lang\": \"en\",\n    \"text\": \"door door\"\n  },\n  {\n    \"start\": \"00:00:19,073\",\n    \"end\": \"00:00:20,194\",\n    \"lang\": \"en\",\n    \"text\": \"is that similar?\"\n  },\n  {\n    \"start\": \"00:00:20,194\",\n    \"end\": \"00:00:21,414\",\n    \"lang\": \"en\",\n    \"text\": \"okay\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,960",
+            "es": "Compartiré otro truco para recordar esta letra árabe,",
+            "fr": "Je vais partager une autre astuce pour se souvenir de cette lettre arabe,",
+            "uk": "Я поділюся ще одним трюком, щоб запам'ятати цю арабську літеру,"
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:04,540",
+            "es": "hacer,",
+            "fr": "faire,",
+            "uk": "робити,"
+        },
+        {
+            "start": "00:00:04,540",
+            "end": "00:00:06,100",
+            "es": "d-a-l.",
+            "fr": "d-a-l.",
+            "uk": "д-а-л."
+        },
+        {
+            "start": "00:00:06,660",
+            "end": "00:00:09,200",
+            "es": "Entonces esto se parece bastante a esto.",
+            "fr": "Alors ça ressemble beaucoup à ça.",
+            "uk": "Отже, це дуже схоже на це."
+        },
+        {
+            "start": "00:00:09,666",
+            "end": "00:00:10,046",
+            "es": "esto es",
+            "fr": "c'est ça",
+            "uk": "це є"
+        },
+        {
+            "start": "00:00:11,618",
+            "end": "00:00:12,598",
+            "es": "esos se están moviendo",
+            "fr": "ceux-ci bougent",
+            "uk": "те рухається"
+        },
+        {
+            "start": "00:00:12,834",
+            "end": "00:00:15,434",
+            "es": "manija de la puerta, así que esto es una puerta",
+            "fr": "poignée de porte, alors ceci est une porte",
+            "uk": "дверна ручка, отже, це двері"
+        },
+        {
+            "start": "00:00:16,073",
+            "end": "00:00:17,794",
+            "es": "puerta puerta",
+            "fr": "porte porte",
+            "uk": "двері двері"
+        },
+        {
+            "start": "00:00:19,073",
+            "end": "00:00:20,194",
+            "es": "¿es eso similar?",
+            "fr": "est-ce similaire ?",
+            "uk": "це схоже?"
+        },
+        {
+            "start": "00:00:20,194",
+            "end": "00:00:21,414",
+            "es": "vale",
+            "fr": "d'accord",
+            "uk": "добре"
+        }
+    ]
+}

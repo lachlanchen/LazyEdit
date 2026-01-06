@@ -1,0 +1,52 @@
+{
+    "prompt": "For words that have etymological Chu-Han alternative (due to their Sino-Vietnamese origin), I want to find the corresponding Chinese origin to replace the Viet WORDS (provide consecutive words if exist). However, it's crucial that the Viet in parenthesis followed by these traditional Chu-Han are put in brackets to maintain clarity. Like this example: (viet)[chuhan].\n\nVietnamese to be annotated: vậy nghĩa là tôi nghĩ đó là một cái mát với 19 ồ cái đơn giản là khá\n\nI don't need step by step explanation. ONLY and ALWAYS return a valid JSON back:\n```json\n{\n  \"viet_with_annotation\": \"\",\n  \"viet_chuhan_pairs\": [\n    {\n      \"viet_part\": \"\",\n      \"chuhan\": \"\"\n    }\n  ]\n}\n```",
+    "response": {
+        "viet_with_annotation": "vậy (vậy)[如此] nghĩa là (nghĩa)[義] (là)[是] tôi nghĩ (tôi)[我] (nghĩ)[思] đó là (đó)[那] (là)[是] một (một)[一] cái (cái)[個] mát (mát)[涼] với (với)[與] 19 ồ cái (cái)[個] đơn giản (đơn)[單] (giản)[簡] là (là)[是] khá (khá)[可]",
+        "viet_chuhan_pairs": [
+            {
+                "viet_part": "vậy",
+                "chuhan": "如此"
+            },
+            {
+                "viet_part": "nghĩa là",
+                "chuhan": "義是"
+            },
+            {
+                "viet_part": "tôi nghĩ",
+                "chuhan": "我思"
+            },
+            {
+                "viet_part": "đó là",
+                "chuhan": "那是"
+            },
+            {
+                "viet_part": "một cái",
+                "chuhan": "一個"
+            },
+            {
+                "viet_part": "mát",
+                "chuhan": "涼"
+            },
+            {
+                "viet_part": "với",
+                "chuhan": "與"
+            },
+            {
+                "viet_part": "cái",
+                "chuhan": "個"
+            },
+            {
+                "viet_part": "đơn giản",
+                "chuhan": "單簡"
+            },
+            {
+                "viet_part": "là",
+                "chuhan": "是"
+            },
+            {
+                "viet_part": "khá",
+                "chuhan": "可"
+            }
+        ]
+    }
+}

@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,890\",\n    \"end\": \"00:01:03,170\",\n    \"lang\": \"en\",\n    \"text\": \"Let's play the little stones.\"\n  },\n  {\n    \"start\": \"00:01:06,114\",\n    \"end\": \"00:01:06,794\",\n    \"lang\": \"zh\",\n    \"text\": \"一山一山 兩千斤\"\n  },\n  {\n    \"start\": \"00:01:07,374\",\n    \"end\": \"00:01:10,494\",\n    \"lang\": \"zh\",\n    \"text\": \"滿天都是小星星\"\n  },\n  {\n    \"start\": \"00:01:10,924\",\n    \"end\": \"00:01:12,714\",\n    \"lang\": \"zh\",\n    \"text\": \"花在天上\"\n  },\n  {\n    \"start\": \"00:01:12,874\",\n    \"end\": \"00:01:14,334\",\n    \"lang\": \"zh\",\n    \"text\": \"黃昏裡\"\n  },\n  {\n    \"start\": \"00:01:14,734\",\n    \"end\": \"00:01:17,974\",\n    \"lang\": \"zh\",\n    \"text\": \"芳香千萬小點心\"\n  },\n  {\n    \"start\": \"00:01:17,974\",\n    \"end\": \"00:01:20,534\",\n    \"lang\": \"zh\",\n    \"text\": \"一山一山\"\n  },\n  {\n    \"start\": \"00:01:20,794\",\n    \"end\": \"00:01:22,054\",\n    \"lang\": \"zh\",\n    \"text\": \"兩千斤\"\n  },\n  {\n    \"start\": \"00:01:22,694\",\n    \"end\": \"00:01:25,734\",\n    \"lang\": \"zh\",\n    \"text\": \"滿天都是小星星\"\n  },\n  {\n    \"start\": \"00:01:27,382\",\n    \"end\": \"00:01:27,882\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  },\n  {\n    \"start\": \"00:01:35,321\",\n    \"end\": \"00:01:36,022\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,890",
+            "end": "00:01:03,170",
+            "es": "Juguemos a las piedrecitas.",
+            "fr": "Jouons aux petits cailloux.",
+            "uk": "Граймо в камінчики."
+        },
+        {
+            "start": "00:01:06,114",
+            "end": "00:01:06,794",
+            "es": "Una montaña tras otra, dos mil jin.",
+            "fr": "Une montagne après l'autre, deux mille jin.",
+            "uk": "Одна гора за іншою, дві тисячі джин."
+        },
+        {
+            "start": "00:01:07,374",
+            "end": "00:01:10,494",
+            "es": "El cielo está lleno de pequeñas estrellas.",
+            "fr": "Le ciel est plein de petites étoiles.",
+            "uk": "Небо повне маленьких зірок."
+        },
+        {
+            "start": "00:01:10,924",
+            "end": "00:01:12,714",
+            "es": "Flores en el cielo.",
+            "fr": "Des fleurs dans le ciel.",
+            "uk": "Квіти на небі."
+        },
+        {
+            "start": "00:01:12,874",
+            "end": "00:01:14,334",
+            "es": "Al atardecer.",
+            "fr": "Au crépuscule.",
+            "uk": "У сутінках."
+        },
+        {
+            "start": "00:01:14,734",
+            "end": "00:01:17,974",
+            "es": "Aromas de miles de pequeños pasteles.",
+            "fr": "Arômes de milliers de petits gâteaux.",
+            "uk": "Аромати тисяч маленьких пиріжків."
+        },
+        {
+            "start": "00:01:17,974",
+            "end": "00:01:20,534",
+            "es": "Una montaña tras otra.",
+            "fr": "Une montagne après l'autre.",
+            "uk": "Одна гора за іншою."
+        },
+        {
+            "start": "00:01:20,794",
+            "end": "00:01:22,054",
+            "es": "Dos mil jin.",
+            "fr": "Deux mille jin.",
+            "uk": "Дві тисячі джин."
+        },
+        {
+            "start": "00:01:22,694",
+            "end": "00:01:25,734",
+            "es": "El cielo está lleno de pequeñas estrellas.",
+            "fr": "Le ciel est plein de petites étoiles.",
+            "uk": "Небо повне маленьких зірок."
+        },
+        {
+            "start": "00:01:27,382",
+            "end": "00:01:27,882",
+            "es": "De acuerdo",
+            "fr": "D'accord",
+            "uk": "Гаразд"
+        },
+        {
+            "start": "00:01:35,321",
+            "end": "00:01:36,022",
+            "es": "Nos vemos",
+            "fr": "À bientôt",
+            "uk": "До побачення"
+        }
+    ]
+}

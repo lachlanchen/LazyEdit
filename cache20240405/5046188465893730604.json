@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:10,826\",\n    \"end\": \"00:01:12,026\",\n    \"lang\": \"en\",\n    \"text\": \"Oh,\"\n  },\n  {\n    \"start\": \"00:01:12,026\",\n    \"end\": \"00:01:13,346\",\n    \"lang\": \"en\",\n    \"text\": \"it smells so good.\"\n  },\n  {\n    \"start\": \"00:01:19,166\",\n    \"end\": \"00:01:22,166\",\n    \"lang\": \"en\",\n    \"text\": \"This water factory.\"\n  },\n  {\n    \"start\": \"00:01:23,446\",\n    \"end\": \"00:01:25,146\",\n    \"lang\": \"en\",\n    \"text\": \"It's a water factory.\"\n  },\n  {\n    \"start\": \"00:01:27,866\",\n    \"end\": \"00:01:29,946\",\n    \"lang\": \"en\",\n    \"text\": \"Since it's gorgeous.\"\n  },\n  {\n    \"start\": \"00:01:31,186\",\n    \"end\": \"00:01:31,366\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:01:32,726\",\n    \"end\": \"00:01:35,466\",\n    \"lang\": \"en\",\n    \"text\": \"So next day is bean juice,\"\n  },\n  {\n    \"start\": \"00:01:35,466\",\n    \"end\": \"00:01:39,586\",\n    \"lang\": \"en\",\n    \"text\": \"and then we finish our lunch.\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:10,826",
+            "end": "00:01:12,026",
+            "en": "Oh,",
+            "zh": "哦，",
+            "ar": "أوه،"
+        },
+        {
+            "start": "00:01:12,026",
+            "end": "00:01:13,346",
+            "en": "it smells so good.",
+            "zh": "闻起来真好。",
+            "ar": "رائحته جيدة جدا."
+        },
+        {
+            "start": "00:01:19,166",
+            "end": "00:01:22,166",
+            "en": "This water factory.",
+            "zh": "这个净水厂。",
+            "ar": "هذا مصنع المياه."
+        },
+        {
+            "start": "00:01:23,446",
+            "end": "00:01:25,146",
+            "en": "It's a water factory.",
+            "zh": "这是一个净水厂。",
+            "ar": "إنه مصنع مياه."
+        },
+        {
+            "start": "00:01:27,866",
+            "end": "00:01:29,946",
+            "en": "Since it's gorgeous.",
+            "zh": "因为它很美。",
+            "ar": "لأنه رائع."
+        },
+        {
+            "start": "00:01:31,186",
+            "end": "00:01:31,366",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنا."
+        },
+        {
+            "start": "00:01:32,726",
+            "end": "00:01:35,466",
+            "en": "So next day is bean juice,",
+            "zh": "所以接下来是豆浆，",
+            "ar": "لذا اليوم التالي هو عصير الفول،"
+        },
+        {
+            "start": "00:01:35,466",
+            "end": "00:01:39,586",
+            "en": "and then we finish our lunch.",
+            "zh": "然后我们完成我们的午餐。",
+            "ar": "وبعد ذلك ننهي غداءنا."
+        }
+    ]
+}

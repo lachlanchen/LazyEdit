@@ -1,0 +1,15 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:06,520\",\n    \"end\": \"00:00:09,280\",\n    \"lang\": \"zh\",\n    \"text\": \"我来帮帮我\"\n  },\n  {\n    \"start\": \"00:00:10,500\",\n    \"end\": \"00:00:12,340\",\n    \"lang\": \"zh\",\n    \"text\": \"我来帮帮你\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:06,520",
+            "end": "00:00:09,280",
+            "ja": "私が助けに来たよ"
+        },
+        {
+            "start": "00:00:10,500",
+            "end": "00:00:12,340",
+            "ja": "私があなたを助けに来たよ"
+        }
+    ]
+}

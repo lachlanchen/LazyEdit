@@ -1,0 +1,20 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:34,014\",\n    \"end\": \"00:03:36,814\",\n    \"lang\": \"en\",\n    \"text\": \"저는 일iem Indeed,\"\n  },\n  {\n    \"start\": \"00:03:36,814\",\n    \"end\": \"00:03:36,814\",\n    \"lang\": \"en\",\n    \"text\": \"medicine\"\n  },\n  {\n    \"start\": \"00:03:42,474\",\n    \"end\": \"00:03:43,874\",\n    \"lang\": \"en\",\n    \"text\": \"crown\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:34,014",
+            "end": "00:03:36,814",
+            "ja": "私は医者です"
+        },
+        {
+            "start": "00:03:36,814",
+            "end": "00:03:36,814",
+            "ja": "の薬"
+        },
+        {
+            "start": "00:03:42,474",
+            "end": "00:03:43,874",
+            "ja": "の冠"
+        }
+    ]
+}

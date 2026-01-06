@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,180\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:00,180\",\n    \"end\": \"00:00:01,900\",\n    \"lang\": \"en\",\n    \"text\": \"it's a golden retriever.\"\n  },\n  {\n    \"start\": \"00:00:02,880\",\n    \"end\": \"00:00:03,500\",\n    \"lang\": \"en\",\n    \"text\": \"So cool.\"\n  },\n  {\n    \"start\": \"00:00:03,522\",\n    \"end\": \"00:00:05,702\",\n    \"lang\": \"ja\",\n    \"text\": \"やっぱおっさんがもう忘れてた\"\n  },\n  {\n    \"start\": \"00:00:05,702\",\n    \"end\": \"00:00:10,162\",\n    \"lang\": \"ja\",\n    \"text\": \"投げ応援と呼んで\"\n  },\n  {\n    \"start\": \"00:00:10,162\",\n    \"end\": \"00:00:10,182\",\n    \"lang\": \"ja\",\n    \"text\": \"そういう気持ちで\"\n  },\n  {\n    \"start\": \"00:00:11,554\",\n    \"end\": \"00:00:12,674\",\n    \"lang\": \"en\",\n    \"text\": \"we have this eye contact\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,180",
+            "es": "Guau,",
+            "fr": "Waouh,",
+            "uk": "Вау,"
+        },
+        {
+            "start": "00:00:00,180",
+            "end": "00:00:01,900",
+            "es": "es un golden retriever.",
+            "fr": "c'est un golden retriever.",
+            "uk": "це золотистий ретривер."
+        },
+        {
+            "start": "00:00:02,880",
+            "end": "00:00:03,500",
+            "es": "Qué guay.",
+            "fr": "Trop cool.",
+            "uk": "Як круто."
+        },
+        {
+            "start": "00:00:03,522",
+            "end": "00:00:05,702",
+            "es": "Justo como el viejo había olvidado",
+            "fr": "C'est juste que le vieux avait oublié",
+            "uk": "Саме так, старий забув"
+        },
+        {
+            "start": "00:00:05,702",
+            "end": "00:00:10,162",
+            "es": "llamándolo animación de apoyo",
+            "fr": "l'appelant encouragement de lancer",
+            "uk": "називаючи це підтримкою кидка"
+        },
+        {
+            "start": "00:00:10,162",
+            "end": "00:00:10,182",
+            "es": "con ese sentimiento",
+            "fr": "avec ce sentiment",
+            "uk": "з таким почуттям"
+        },
+        {
+            "start": "00:00:11,554",
+            "end": "00:00:12,674",
+            "es": "tenemos este contacto visual",
+            "fr": "nous avons ce contact visuel",
+            "uk": "ми маємо цей зоровий контакт"
+        }
+    ]
+}

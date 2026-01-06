@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"zh\",\n    \"text\": \"这颗鸡好可爱\"\n  },\n  {\n    \"start\": \"00:00:03,339\",\n    \"end\": \"00:00:04,200\",\n    \"lang\": \"zh\",\n    \"text\": \"没有尾巴\"\n  },\n  {\n    \"start\": \"00:00:06,379\",\n    \"end\": \"00:00:08,440\",\n    \"lang\": \"zh\",\n    \"text\": \"这颗鸡好可爱\"\n  },\n  {\n    \"start\": \"00:00:10,020\",\n    \"end\": \"00:00:10,880\",\n    \"lang\": \"zh\",\n    \"text\": \"没有尾巴\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,460",
+            "vi": "Con gà này dễ thương quá"
+        },
+        {
+            "start": "00:00:03,339",
+            "end": "00:00:04,200",
+            "vi": "Không có đuôi"
+        },
+        {
+            "start": "00:00:06,379",
+            "end": "00:00:08,440",
+            "vi": "Con gà này dễ thương quá"
+        },
+        {
+            "start": "00:00:10,020",
+            "end": "00:00:10,880",
+            "vi": "Không có đuôi"
+        }
+    ]
+}

@@ -1,0 +1,44 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,880\",\n    \"lang\": \"ja\",\n    \"text\": \"ここに、\"\n  },\n  {\n    \"start\": \"00:00:00,880\",\n    \"end\": \"00:00:02,180\",\n    \"lang\": \"ja\",\n    \"text\": \"ここに、\"\n  },\n  {\n    \"start\": \"00:00:02,180\",\n    \"end\": \"00:00:05,720\",\n    \"lang\": \"ja\",\n    \"text\": \"死の犬が2匹います。\"\n  },\n  {\n    \"start\": \"00:00:07,330\",\n    \"end\": \"00:00:08,390\",\n    \"lang\": \"en\",\n    \"text\": \"We have this eye contact.\"\n  },\n  {\n    \"start\": \"00:00:09,282\",\n    \"end\": \"00:00:11,642\",\n    \"lang\": \"ja\",\n    \"text\": \"この犬は可愛いです\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,880",
+            "en": "Here,",
+            "zh": "这里，",
+            "ar": "هنا،",
+            "ja": "ここに、"
+        },
+        {
+            "start": "00:00:00,880",
+            "end": "00:00:02,180",
+            "en": "Here,",
+            "zh": "这里，",
+            "ar": "هنا،",
+            "ja": "ここに、"
+        },
+        {
+            "start": "00:00:02,180",
+            "end": "00:00:05,720",
+            "en": "there are two dead dogs.",
+            "zh": "有两只死狗。",
+            "ar": "هناك كلبان ميتان.",
+            "ja": "死の犬が2匹います。"
+        },
+        {
+            "start": "00:00:07,330",
+            "end": "00:00:08,390",
+            "en": "We have this eye contact.",
+            "zh": "我们有眼神接触。",
+            "ar": "لدينا هذا التواصل البصري."
+        },
+        {
+            "start": "00:00:09,282",
+            "end": "00:00:11,642",
+            "en": "This dog is cute.",
+            "zh": "这只狗很可爱。",
+            "ar": "هذا الكلب لطيف.",
+            "ja": "この犬は可愛いです"
+        }
+    ]
+}

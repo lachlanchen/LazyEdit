@@ -1,0 +1,89 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:08,786\",\n    \"end\": \"00:01:09,986\",\n    \"lang\": \"en\",\n    \"text\": \"It's not necessary,\"\n  },\n  {\n    \"start\": \"00:01:09,986\",\n    \"end\": \"00:01:13,546\",\n    \"lang\": \"en\",\n    \"text\": \"it's unnecessary to regret it for the past.\"\n  },\n  {\n    \"start\": \"00:01:15,234\",\n    \"end\": \"00:01:15,594\",\n    \"lang\": \"zh\",\n    \"text\": \"多謝\"\n  },\n  {\n    \"start\": \"00:01:15,634\",\n    \"end\": \"00:01:15,754\",\n    \"lang\": \"zh\",\n    \"text\": \"思\"\n  },\n  {\n    \"start\": \"00:01:21,314\",\n    \"end\": \"00:01:26,134\",\n    \"lang\": \"en\",\n    \"text\": \"to this imaginary\"\n  },\n  {\n    \"start\": \"00:01:29,378\",\n    \"end\": \"00:01:29,678\",\n    \"lang\": \"zh\",\n    \"text\": \"拼!\"\n  },\n  {\n    \"start\": \"00:01:31,298\",\n    \"end\": \"00:01:31,758\",\n    \"lang\": \"en\",\n    \"text\": \"obsessed\"\n  },\n  {\n    \"start\": \"00:01:34,594\",\n    \"end\": \"00:01:35,574\",\n    \"lang\": \"zh\",\n    \"text\": \"冰淫大警惕\"\n  },\n  {\n    \"start\": \"00:01:35,574\",\n    \"end\": \"00:01:36,754\",\n    \"lang\": \"zh\",\n    \"text\": \"冰淫大警惕應該\"\n  },\n  {\n    \"start\": \"00:01:38,850\",\n    \"end\": \"00:01:39,970\",\n    \"lang\": \"en\",\n    \"text\": \"imaginary or future.\"\n  },\n  {\n    \"start\": \"00:01:40,770\",\n    \"end\": \"00:01:41,010\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:41,010\",\n    \"end\": \"00:01:42,250\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:08,786",
+            "end": "00:01:09,986",
+            "en": "It's not necessary,",
+            "zh": "不必要，",
+            "ar": "ليس ضروريًا،"
+        },
+        {
+            "start": "00:01:09,986",
+            "end": "00:01:13,546",
+            "en": "it's unnecessary to regret it for the past.",
+            "zh": "对过去的遗憾是没必要的。",
+            "ar": "لا داعي للأسف على الماضي."
+        },
+        {
+            "start": "00:01:15,234",
+            "end": "00:01:15,594",
+            "en": "Thank you",
+            "zh": "多謝",
+            "ar": "شكراً"
+        },
+        {
+            "start": "00:01:15,634",
+            "end": "00:01:15,754",
+            "en": "Si",
+            "zh": "思",
+            "ar": "سي"
+        },
+        {
+            "start": "00:01:21,314",
+            "end": "00:01:26,134",
+            "en": "to this imaginary",
+            "zh": "对这个虚构的",
+            "ar": "لهذا الخيالي"
+        },
+        {
+            "start": "00:01:29,378",
+            "end": "00:01:29,678",
+            "en": "Fight!",
+            "zh": "拼!",
+            "ar": "إلى القتال!"
+        },
+        {
+            "start": "00:01:31,298",
+            "end": "00:01:31,758",
+            "en": "obsessed",
+            "zh": "着迷",
+            "ar": "مهووس"
+        },
+        {
+            "start": "00:01:34,594",
+            "end": "00:01:35,574",
+            "en": "Be highly vigilant against ice addiction",
+            "zh": "冰淫大警惕",
+            "ar": "كن يقظًا للغاية ضد إدمان الثلج"
+        },
+        {
+            "start": "00:01:35,574",
+            "end": "00:01:36,754",
+            "en": "Be highly vigilant against ice addiction should",
+            "zh": "冰淫大警惕應該",
+            "ar": "يجب أن نكون حذرين جدا ضد إدمان الثلج"
+        },
+        {
+            "start": "00:01:38,850",
+            "end": "00:01:39,970",
+            "en": "imaginary or future.",
+            "zh": "虚构或未来。",
+            "ar": "خيالي أو مستقبلي."
+        },
+        {
+            "start": "00:01:40,770",
+            "end": "00:01:41,010",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:01:41,010",
+            "end": "00:01:42,250",
+            "en": "see you.",
+            "zh": "见到你。",
+            "ar": "أراك لاحقًا."
+        }
+    ]
+}

@@ -1,0 +1,95 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:02,540\",\n    \"end\": \"00:00:03,620\",\n    \"lang\": \"en\",\n    \"text\": \"Hey guys,\"\n  },\n  {\n    \"start\": \"00:00:03,620\",\n    \"end\": \"00:00:04,260\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:04,674\",\n    \"end\": \"00:00:06,574\",\n    \"lang\": \"ja\",\n    \"text\": \"質問したいです\"\n  },\n  {\n    \"start\": \"00:00:08,846\",\n    \"end\": \"00:00:15,246\",\n    \"lang\": \"ja\",\n    \"text\": \"こちらの音はセンサーのギターの音です声は\"\n  },\n  {\n    \"start\": \"00:00:15,246\",\n    \"end\": \"00:00:16,226\",\n    \"lang\": \"ja\",\n    \"text\": \"ドリンクと輸出をつけているといこと\"\n  },\n  {\n    \"start\": \"00:00:16,226\",\n    \"end\": \"00:00:16,286\",\n    \"lang\": \"ja\",\n    \"text\": \"謝れ\"\n  },\n  {\n    \"start\": \"00:00:16,642\",\n    \"end\": \"00:00:17,882\",\n    \"lang\": \"zh\",\n    \"text\": \"一起库尔\"\n  },\n  {\n    \"start\": \"00:00:18,722\",\n    \"end\": \"00:00:23,862\",\n    \"lang\": \"en\",\n    \"text\": \"so how many strings are needed to play this chord?\"\n  },\n  {\n    \"start\": \"00:00:24,362\",\n    \"end\": \"00:00:27,882\",\n    \"lang\": \"en\",\n    \"text\": \"so I asked ChetGBT that he said\"\n  },\n  {\n    \"start\": \"00:00:28,872\",\n    \"end\": \"00:00:35,722\",\n    \"lang\": \"en\",\n    \"text\": \"if for 4 over 4 time signature that it will be this\"\n  },\n  {\n    \"start\": \"00:00:37,332\",\n    \"end\": \"00:00:43,042\",\n    \"lang\": \"en\",\n    \"text\": \"first is a down-strong and then it's a down-up-strong for the second beat and\"\n  },\n  {\n    \"start\": \"00:00:43,042\",\n    \"end\": \"00:00:47,982\",\n    \"lang\": \"en\",\n    \"text\": \"then it's up-down-up-strong for the last two beats\"\n  },\n  {\n    \"start\": \"00:00:48,582\",\n    \"end\": \"00:00:50,602\",\n    \"lang\": \"en\",\n    \"text\": \"so is this correct?\"\n  },\n  {\n    \"start\": \"00:00:51,142\",\n    \"end\": \"00:00:56,782\",\n    \"lang\": \"en\",\n    \"text\": \"so I just put my right hand\"\n  },\n  {\n    \"start\": \"00:00:56,782\",\n    \"end\": \"00:00:57,702\",\n    \"lang\": \"en\",\n    \"text\": \"I put it\"\n  },\n  {\n    \"start\": \"00:00:59,394\",\n    \"end\": \"00:01:00,194\",\n    \"lang\": \"en\",\n    \"text\": \"6th,\"\n  },\n  {\n    \"start\": \"00:01:00,194\",\n    \"end\": \"00:01:00,894\",\n    \"lang\": \"en\",\n    \"text\": \"6th times.\"\n  },\n  {\n    \"start\": \"00:01:01,214\",\n    \"end\": \"00:01:01,794\",\n    \"lang\": \"en\",\n    \"text\": \"on these\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:02,540",
+            "end": "00:00:03,620",
+            "ko": "여러분 안녕하세요,"
+        },
+        {
+            "start": "00:00:03,620",
+            "end": "00:00:04,260",
+            "ko": "그래서"
+        },
+        {
+            "start": "00:00:04,674",
+            "end": "00:00:06,574",
+            "ko": "질문하고 싶어요"
+        },
+        {
+            "start": "00:00:08,846",
+            "end": "00:00:15,246",
+            "ko": "이 소리는 센서 기타의 소리입니다, 목소리는"
+        },
+        {
+            "start": "00:00:15,246",
+            "end": "00:00:16,226",
+            "ko": "음료와 수출을 추가하는 것입니다"
+        },
+        {
+            "start": "00:00:16,226",
+            "end": "00:00:16,286",
+            "ko": "사과하세요"
+        },
+        {
+            "start": "00:00:16,642",
+            "end": "00:00:17,882",
+            "ko": "함께 쿨하게"
+        },
+        {
+            "start": "00:00:18,722",
+            "end": "00:00:23,862",
+            "ko": "이 코드를 연주하기 위해 몇 개의 줄이 필요한가요?"
+        },
+        {
+            "start": "00:00:24,362",
+            "end": "00:00:27,882",
+            "ko": "그래서 저는 ChetGBT에게 물었고, 그는 말했습니다"
+        },
+        {
+            "start": "00:00:28,872",
+            "end": "00:00:35,722",
+            "ko": "4/4 박자의 경우 이렇게 될 것입니다"
+        },
+        {
+            "start": "00:00:37,332",
+            "end": "00:00:43,042",
+            "ko": "첫 번째는 다운스트로크이고, 두 번째 박자에는 다운-업-스트로크입니다."
+        },
+        {
+            "start": "00:00:43,042",
+            "end": "00:00:47,982",
+            "ko": "그리고 마지막 두 박자에는 업-다운-업-스트로크입니다"
+        },
+        {
+            "start": "00:00:48,582",
+            "end": "00:00:50,602",
+            "ko": "그래서 이게 맞나요?"
+        },
+        {
+            "start": "00:00:51,142",
+            "end": "00:00:56,782",
+            "ko": "그래서 저는 제 오른손을"
+        },
+        {
+            "start": "00:00:56,782",
+            "end": "00:00:57,702",
+            "ko": "저는 그것을"
+        },
+        {
+            "start": "00:00:59,394",
+            "end": "00:01:00,194",
+            "ko": "6번,"
+        },
+        {
+            "start": "00:01:00,194",
+            "end": "00:01:00,894",
+            "ko": "6번 누르세요."
+        },
+        {
+            "start": "00:01:01,214",
+            "end": "00:01:01,794",
+            "ko": "이것들에"
+        }
+    ]
+}

@@ -1,0 +1,57 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,180\",\n    \"lang\": \"en\",\n    \"text\": \"Wow,\"\n  },\n  {\n    \"start\": \"00:00:00,180\",\n    \"end\": \"00:00:01,900\",\n    \"lang\": \"en\",\n    \"text\": \"it's a golden retriever.\"\n  },\n  {\n    \"start\": \"00:00:02,880\",\n    \"end\": \"00:00:03,500\",\n    \"lang\": \"en\",\n    \"text\": \"So cool.\"\n  },\n  {\n    \"start\": \"00:00:03,522\",\n    \"end\": \"00:00:05,702\",\n    \"lang\": \"ja\",\n    \"text\": \"やっぱおっさんがもう忘れてた\"\n  },\n  {\n    \"start\": \"00:00:05,702\",\n    \"end\": \"00:00:10,162\",\n    \"lang\": \"ja\",\n    \"text\": \"投げ応援と呼んで\"\n  },\n  {\n    \"start\": \"00:00:10,162\",\n    \"end\": \"00:00:10,182\",\n    \"lang\": \"ja\",\n    \"text\": \"そういう気持ちで\"\n  },\n  {\n    \"start\": \"00:00:11,554\",\n    \"end\": \"00:00:12,674\",\n    \"lang\": \"en\",\n    \"text\": \"we have this eye contact\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,180",
+            "en": "Wow,",
+            "zh": "哇，",
+            "ar": "واو،"
+        },
+        {
+            "start": "00:00:00,180",
+            "end": "00:00:01,900",
+            "en": "it's a golden retriever.",
+            "zh": "这是一只金毛寻回犬。",
+            "ar": "إنه مسترد ذهبي."
+        },
+        {
+            "start": "00:00:02,880",
+            "end": "00:00:03,500",
+            "en": "So cool.",
+            "zh": "太酷了。",
+            "ar": "جدا رائع."
+        },
+        {
+            "start": "00:00:03,522",
+            "end": "00:00:05,702",
+            "en": "After all, the old man had forgotten.",
+            "zh": "毕竟，老人已经忘记了。",
+            "ar": "بعد كل شيء، الرجل العجوز كان قد نسي.",
+            "ja": "やっぱおっさんがもう忘れてた"
+        },
+        {
+            "start": "00:00:05,702",
+            "end": "00:00:10,162",
+            "en": "Calling it throwing support",
+            "zh": "称之为投掷支持",
+            "ar": "يسميها دعم الرمي",
+            "ja": "投げ応援と呼んで"
+        },
+        {
+            "start": "00:00:10,162",
+            "end": "00:00:10,182",
+            "en": "With that kind of feeling",
+            "zh": "怀着那种感觉",
+            "ar": "بهذا النوع من الشعور",
+            "ja": "そういう気持ちで"
+        },
+        {
+            "start": "00:00:11,554",
+            "end": "00:00:12,674",
+            "en": "we have this eye contact",
+            "zh": "我们有这样的眼神交流",
+            "ar": "لدينا هذا التواصل البصري"
+        }
+    ]
+}

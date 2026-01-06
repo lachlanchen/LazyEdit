@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,760\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:00,760\",\n    \"end\": \"00:00:04,059\",\n    \"lang\": \"en\",\n    \"text\": \"I believe we have some small improvement,\"\n  },\n  {\n    \"start\": \"00:00:04,059\",\n    \"end\": \"00:00:05,860\",\n    \"lang\": \"en\",\n    \"text\": \"small progress.\"\n  },\n  {\n    \"start\": \"00:00:07,040\",\n    \"end\": \"00:00:07,160\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:00:07,160\",\n    \"end\": \"00:00:09,000\",\n    \"lang\": \"en\",\n    \"text\": \"our glass,\"\n  },\n  {\n    \"start\": \"00:00:09,000\",\n    \"end\": \"00:00:11,100\",\n    \"lang\": \"en\",\n    \"text\": \"this is some little glass.\"\n  },\n  {\n    \"start\": \"00:00:12,240\",\n    \"end\": \"00:00:12,620\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:15,380\",\n    \"end\": \"00:00:16,460\",\n    \"lang\": \"en\",\n    \"text\": \"I'm going to put it here.\"\n  },\n  {\n    \"start\": \"00:00:16,482\",\n    \"end\": \"00:00:17,482\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花,\"\n  },\n  {\n    \"start\": \"00:00:17,482\",\n    \"end\": \"00:00:20,242\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香,\"\n  },\n  {\n    \"start\": \"00:00:20,242\",\n    \"end\": \"00:00:22,902\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树根\"\n  },\n  {\n    \"start\": \"00:00:24,802\",\n    \"end\": \"00:00:27,022\",\n    \"lang\": \"zh\",\n    \"text\": \"我是一个无人知道的小草\"\n  },\n  {\n    \"start\": \"00:00:51,162\",\n    \"end\": \"00:00:52,542\",\n    \"lang\": \"zh\",\n    \"text\": \"谢谢观看\"\n  },\n  {\n    \"start\": \"00:00:52,578\",\n    \"end\": \"00:00:54,838\",\n    \"lang\": \"en\",\n    \"text\": \"not perfect but there is still some improvement.\"\n  },\n  {\n    \"start\": \"00:00:54,838\",\n    \"end\": \"00:01:00,078\",\n    \"lang\": \"en\",\n    \"text\": \"And I can't catch the tune when singing it\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,760",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:00:00,760",
+            "end": "00:00:04,059",
+            "ko": "우리는 조금의 개선이 있었다고 믿습니다,"
+        },
+        {
+            "start": "00:00:04,059",
+            "end": "00:00:05,860",
+            "ko": "작은 진전이요."
+        },
+        {
+            "start": "00:00:07,040",
+            "end": "00:00:07,160",
+            "ko": "그래서,"
+        },
+        {
+            "start": "00:00:07,160",
+            "end": "00:00:09,000",
+            "ko": "우리 유리,"
+        },
+        {
+            "start": "00:00:09,000",
+            "end": "00:00:11,100",
+            "ko": "이건 조그만한 유리입니다."
+        },
+        {
+            "start": "00:00:12,240",
+            "end": "00:00:12,620",
+            "ko": "알겠습니다."
+        },
+        {
+            "start": "00:00:15,380",
+            "end": "00:00:16,460",
+            "ko": "여기에 둘게요."
+        },
+        {
+            "start": "00:00:16,482",
+            "end": "00:00:17,482",
+            "ko": "꽃이 없고,"
+        },
+        {
+            "start": "00:00:17,482",
+            "end": "00:00:20,242",
+            "ko": "향기도 없고,"
+        },
+        {
+            "start": "00:00:20,242",
+            "end": "00:00:22,902",
+            "ko": "나무 뿌리도 없습니다"
+        },
+        {
+            "start": "00:00:24,802",
+            "end": "00:00:27,022",
+            "ko": "나는 아무도 모르는 작은 풀입니다"
+        },
+        {
+            "start": "00:00:51,162",
+            "end": "00:00:52,542",
+            "ko": "감사합니다"
+        },
+        {
+            "start": "00:00:52,578",
+            "end": "00:00:54,838",
+            "ko": "완벽하지는 않지만 여전히 어느 정도의 개선은 있습니다."
+        },
+        {
+            "start": "00:00:54,838",
+            "end": "00:01:00,078",
+            "ko": "그리고 노래할 때 멜로디를 따라가지 못해요"
+        }
+    ]
+}

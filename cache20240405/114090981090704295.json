@@ -1,0 +1,48 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,040\",\n    \"lang\": \"en\",\n    \"text\": \"so my suggestion to remember this word\"\n  },\n  {\n    \"start\": \"00:00:04,386\",\n    \"end\": \"00:00:04,746\",\n    \"lang\": \"ja\",\n    \"text\": \"いっす\"\n  },\n  {\n    \"start\": \"00:00:05,858\",\n    \"end\": \"00:00:06,758\",\n    \"lang\": \"en\",\n    \"text\": \"Don't you remember it?\"\n  },\n  {\n    \"start\": \"00:00:08,378\",\n    \"end\": \"00:00:10,678\",\n    \"lang\": \"en\",\n    \"text\": \"It's a useless,\"\n  },\n  {\n    \"start\": \"00:00:10,678\",\n    \"end\": \"00:00:13,058\",\n    \"lang\": \"en\",\n    \"text\": \"useless word.\"\n  },\n  {\n    \"start\": \"00:00:13,478\",\n    \"end\": \"00:00:13,718\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,040",
+            "en": "so my suggestion to remember this word",
+            "zh": "所以我提议记住这个词",
+            "ar": "لذا اقتراحي هو تذكر هذه الكلمة"
+        },
+        {
+            "start": "00:00:04,386",
+            "end": "00:00:04,746",
+            "en": "Yes",
+            "zh": "是的",
+            "ar": "نعم",
+            "ja": "いっす"
+        },
+        {
+            "start": "00:00:05,858",
+            "end": "00:00:06,758",
+            "en": "Don't you remember it?",
+            "zh": "你不记得吗？",
+            "ar": "ألا تتذكره؟"
+        },
+        {
+            "start": "00:00:08,378",
+            "end": "00:00:10,678",
+            "en": "It's a useless,",
+            "zh": "这是无用的，",
+            "ar": "إنها بلا فائدة،"
+        },
+        {
+            "start": "00:00:10,678",
+            "end": "00:00:13,058",
+            "en": "useless word.",
+            "zh": "无用的词。",
+            "ar": "كلمة بلا فائدة."
+        },
+        {
+            "start": "00:00:13,478",
+            "end": "00:00:13,718",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

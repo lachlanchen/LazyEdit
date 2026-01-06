@@ -1,0 +1,26 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,520\",\n    \"end\": \"00:00:01,620\",\n    \"lang\": \"ja\",\n    \"text\": \"おはようございます。\"\n  },\n  {\n    \"start\": \"00:00:01,620\",\n    \"end\": \"00:00:03,420\",\n    \"lang\": \"ja\",\n    \"text\": \"私は海岸線を走ります。\"\n  },\n  {\n    \"start\": \"00:00:05,020\",\n    \"end\": \"00:00:06,700\",\n    \"lang\": \"ja\",\n    \"text\": \"今日は悲しい日です。\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,520",
+            "end": "00:00:01,620",
+            "en": "Good morning.",
+            "zh": "早上好。",
+            "ar": "صباح الخير."
+        },
+        {
+            "start": "00:00:01,620",
+            "end": "00:00:03,420",
+            "en": "I run along the coastline.",
+            "zh": "我沿着海岸线跑。",
+            "ar": "أنا أركض على طول الساحل."
+        },
+        {
+            "start": "00:00:05,020",
+            "end": "00:00:06,700",
+            "en": "Today is a sad day.",
+            "zh": "今天是悲伤的一天。",
+            "ar": "اليوم يوم حزين."
+        }
+    ]
+}

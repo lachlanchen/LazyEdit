@@ -1,0 +1,110 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,120\",\n    \"end\": \"00:00:07,160\",\n    \"lang\": \"en\",\n    \"text\": \"So this morning I regret that I didn't take a video of this kite dog.\"\n  },\n  {\n    \"start\": \"00:00:07,880\",\n    \"end\": \"00:00:12,480\",\n    \"lang\": \"en\",\n    \"text\": \"This dog that he climbed on this kind of height.\"\n  },\n  {\n    \"start\": \"00:00:14,210\",\n    \"end\": \"00:00:14,510\",\n    \"lang\": \"ar\",\n    \"text\": \"فنت\"\n  },\n  {\n    \"start\": \"00:00:15,266\",\n    \"end\": \"00:00:16,265\",\n    \"lang\": \"en\",\n    \"text\": \"in Fins,\"\n  },\n  {\n    \"start\": \"00:00:16,265\",\n    \"end\": \"00:00:16,586\",\n    \"lang\": \"en\",\n    \"text\": \"sorry,\"\n  },\n  {\n    \"start\": \"00:00:16,586\",\n    \"end\": \"00:00:17,006\",\n    \"lang\": \"en\",\n    \"text\": \"Fins.\"\n  },\n  {\n    \"start\": \"00:00:17,666\",\n    \"end\": \"00:00:18,686\",\n    \"lang\": \"en\",\n    \"text\": \"in one jump,\"\n  },\n  {\n    \"start\": \"00:00:18,686\",\n    \"end\": \"00:00:19,906\",\n    \"lang\": \"en\",\n    \"text\": \"in a single jump.\"\n  },\n  {\n    \"start\": \"00:00:20,686\",\n    \"end\": \"00:00:22,146\",\n    \"lang\": \"en\",\n    \"text\": \"So he's so agile.\"\n  },\n  {\n    \"start\": \"00:00:23,106\",\n    \"end\": \"00:00:25,666\",\n    \"lang\": \"en\",\n    \"text\": \"I regret that I didn't take a photo,\"\n  },\n  {\n    \"start\": \"00:00:25,666\",\n    \"end\": \"00:00:28,246\",\n    \"lang\": \"en\",\n    \"text\": \"take a video for it.\"\n  },\n  {\n    \"start\": \"00:00:29,066\",\n    \"end\": \"00:00:34,216\",\n    \"lang\": \"en\",\n    \"text\": \"But I comfort myself.\"\n  },\n  {\n    \"start\": \"00:00:36,994\",\n    \"end\": \"00:00:37,594\",\n    \"lang\": \"zh\",\n    \"text\": \"又一定要停\"\n  },\n  {\n    \"start\": \"00:00:38,786\",\n    \"end\": \"00:00:42,926\",\n    \"lang\": \"en\",\n    \"text\": \"The past has passed and the future has not yet come.\"\n  },\n  {\n    \"start\": \"00:00:43,966\",\n    \"end\": \"00:00:46,886\",\n    \"lang\": \"en\",\n    \"text\": \"So even I regret it.\"\n  },\n  {\n    \"start\": \"00:00:50,446\",\n    \"end\": \"00:00:54,266\",\n    \"lang\": \"en\",\n    \"text\": \"There is this Eustrohitch sentence,\"\n  },\n  {\n    \"start\": \"00:00:54,266\",\n    \"end\": \"00:00:55,946\",\n    \"lang\": \"en\",\n    \"text\": \"that live in the present.\"\n  },\n  {\n    \"start\": \"00:00:58,006\",\n    \"end\": \"00:00:59,946\",\n    \"lang\": \"en\",\n    \"text\": \"It's not that this is wrong,\"\n  },\n  {\n    \"start\": \"00:00:59,946\",\n    \"end\": \"00:01:04,385\",\n    \"lang\": \"en\",\n    \"text\": \"because it's just only present you can live.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:01,120",
+            "end": "00:00:07,160",
+            "en": "So this morning I regret that I didn't take a video of this kite dog.",
+            "zh": "所以今天早上我后悔没有拍下这只风筝狗的视频。",
+            "ar": "إذًا هذا الصباح أندم على أنني لم ألتقط فيديو لهذا الكلب الطائر."
+        },
+        {
+            "start": "00:00:07,880",
+            "end": "00:00:12,480",
+            "en": "This dog that he climbed on this kind of height.",
+            "zh": "这只狗它爬上了这样的高度。",
+            "ar": "هذا الكلب الذي تسلق هذا النوع من الارتفاع."
+        },
+        {
+            "start": "00:00:14,210",
+            "end": "00:00:14,510",
+            "en": "Oops,",
+            "zh": "哎呀，",
+            "ar": "فنت"
+        },
+        {
+            "start": "00:00:15,266",
+            "end": "00:00:16,265",
+            "en": "in Fins,",
+            "zh": "在Fins，",
+            "ar": "في فنز،"
+        },
+        {
+            "start": "00:00:16,265",
+            "end": "00:00:16,586",
+            "en": "sorry,",
+            "zh": "抱歉，",
+            "ar": "آسف،"
+        },
+        {
+            "start": "00:00:16,586",
+            "end": "00:00:17,006",
+            "en": "Fins.",
+            "zh": "鳍。",
+            "ar": "زعانف."
+        },
+        {
+            "start": "00:00:17,666",
+            "end": "00:00:19,906",
+            "en": "in one jump, in a single jump.",
+            "zh": "一跃而上，一次跳跃。",
+            "ar": "في قفزة واحدة، بقفزة واحدة."
+        },
+        {
+            "start": "00:00:20,686",
+            "end": "00:00:22,146",
+            "en": "So he's so agile.",
+            "zh": "所以它非常灵活。",
+            "ar": "إذًا هو رشيق جدًا."
+        },
+        {
+            "start": "00:00:23,106",
+            "end": "00:00:28,246",
+            "en": "I regret that I didn't take a photo, take a video for it.",
+            "zh": "我后悔没有为它拍照，拍视频。",
+            "ar": "أنا أندم على أنني لم ألتقط صورة، ألتقط فيديو له."
+        },
+        {
+            "start": "00:00:29,066",
+            "end": "00:00:34,216",
+            "en": "But I comfort myself.",
+            "zh": "但我安慰自己。",
+            "ar": "لكن أسلي نفسي."
+        },
+        {
+            "start": "00:00:36,994",
+            "end": "00:00:37,594",
+            "en": "We must stop.",
+            "zh": "又一定要停",
+            "ar": "يجب أن نتوقف."
+        },
+        {
+            "start": "00:00:38,786",
+            "end": "00:00:42,926",
+            "en": "The past has passed and the future has not yet come.",
+            "zh": "过去的已经过去，未来的还未到来。",
+            "ar": "الماضي قد مضى والمستقبل لم يأت بعد."
+        },
+        {
+            "start": "00:00:43,966",
+            "end": "00:00:46,886",
+            "en": "So even I regret it.",
+            "zh": "所以即使我后悔。",
+            "ar": "إذًا حتى أنا أندم عليه."
+        },
+        {
+            "start": "00:00:50,446",
+            "end": "00:00:55,946",
+            "en": "There is this Eustrohitch sentence, that live in the present.",
+            "zh": "有这样一句欧斯特赫奇话，活在当下。",
+            "ar": "هناك هذه الجملة من يوستروهيتش، أن تعيش في الحاضر."
+        },
+        {
+            "start": "00:00:58,006",
+            "end": "00:01:04,385",
+            "en": "It's not that this is wrong, because it's just only present you can live.",
+            "zh": "这并不是说这是错的，因为你只能活在当下。",
+            "ar": "ليس الأمر أن هذا خاطئ، لأنك يمكنك فقط أن تعيش في الحاضر."
+        }
+    ]
+}

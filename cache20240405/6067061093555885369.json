@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:03,280\",\n    \"end\": \"00:00:05,540\",\n    \"lang\": \"ja\",\n    \"text\": \"今日はこのディオティックアウトを見てみました\"\n  },\n  {\n    \"start\": \"00:00:08,642\",\n    \"end\": \"00:00:09,242\",\n    \"lang\": \"ja\",\n    \"text\": \"おまえくるりんす\"\n  },\n  {\n    \"start\": \"00:00:14,050\",\n    \"end\": \"00:00:15,130\",\n    \"lang\": \"en\",\n    \"text\": \"So I don't know.\"\n  },\n  {\n    \"start\": \"00:00:15,930\",\n    \"end\": \"00:00:19,270\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if you caught a video of doing this.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:03,280",
+            "end": "00:00:05,540",
+            "ja": "今日はこのディオティックアウトを見てみました"
+        },
+        {
+            "start": "00:00:08,642",
+            "end": "00:00:09,242",
+            "ja": "おまえくるりんす"
+        },
+        {
+            "start": "00:00:14,050",
+            "end": "00:00:15,130",
+            "ja": "だからわからない"
+        },
+        {
+            "start": "00:00:15,930",
+            "end": "00:00:19,270",
+            "ja": "このやり方のビデオを見たかどうかわからない"
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,880\",\n    \"end\": \"00:00:04,040\",\n    \"lang\": \"zh\",\n    \"text\": \"最奇怪的那个绳子上面\"\n  },\n  {\n    \"start\": \"00:00:05,260\",\n    \"end\": \"00:00:06,620\",\n    \"lang\": \"zh\",\n    \"text\": \"多么大一个它牙\"\n  },\n  {\n    \"start\": \"00:00:06,620\",\n    \"end\": \"00:00:09,080\",\n    \"lang\": \"zh\",\n    \"text\": \"它还没把它牙别没爆呢\"\n  },\n  {\n    \"start\": \"00:00:10,178\",\n    \"end\": \"00:00:10,998\",\n    \"lang\": \"en\",\n    \"text\": \"miyaball\"\n  },\n  {\n    \"start\": \"00:00:12,290\",\n    \"end\": \"00:00:14,130\",\n    \"lang\": \"zh\",\n    \"text\": \"哪一个还是勇猛龟\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,880",
+            "end": "00:00:04,040",
+            "vi": "Cái dây kỳ lạ nhất trên đó"
+        },
+        {
+            "start": "00:00:05,260",
+            "end": "00:00:06,620",
+            "vi": "Cái răng của nó to biết bao"
+        },
+        {
+            "start": "00:00:06,620",
+            "end": "00:00:09,080",
+            "vi": "Nó vẫn chưa làm răng mình nổ bung ra"
+        },
+        {
+            "start": "00:00:10,178",
+            "end": "00:00:10,998",
+            "vi": "miyaball"
+        },
+        {
+            "start": "00:00:12,290",
+            "end": "00:00:14,130",
+            "vi": "Cái nào cũng là rùa dũng cảm"
+        }
+    ]
+}

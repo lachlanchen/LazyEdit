@@ -1,0 +1,124 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:03,380\",\n    \"end\": \"00:00:06,480\",\n    \"lang\": \"en\",\n    \"text\": \"I like this rainbow,\"\n  },\n  {\n    \"start\": \"00:00:06,480\",\n    \"end\": \"00:00:08,160\",\n    \"lang\": \"en\",\n    \"text\": \"it's so beautiful.\"\n  },\n  {\n    \"start\": \"00:00:10,720\",\n    \"end\": \"00:00:11,500\",\n    \"lang\": \"en\",\n    \"text\": \"Yesterday,\"\n  },\n  {\n    \"start\": \"00:00:11,500\",\n    \"end\": \"00:00:16,940\",\n    \"lang\": \"en\",\n    \"text\": \"I watched a talk show of Trevor Noah,\"\n  },\n  {\n    \"start\": \"00:00:16,940\",\n    \"end\": \"00:00:23,420\",\n    \"lang\": \"en\",\n    \"text\": \"and I have some thoughts about that.\"\n  },\n  {\n    \"start\": \"00:00:24,600\",\n    \"end\": \"00:00:29,580\",\n    \"lang\": \"en\",\n    \"text\": \"I found that these people,\"\n  },\n  {\n    \"start\": \"00:00:29,580\",\n    \"end\": \"00:00:31,780\",\n    \"lang\": \"en\",\n    \"text\": \"like Trevor Noah,\"\n  },\n  {\n    \"start\": \"00:00:31,780\",\n    \"end\": \"00:00:35,580\",\n    \"lang\": \"en\",\n    \"text\": \"they have a talent in language,\"\n  },\n  {\n    \"start\": \"00:00:35,580\",\n    \"end\": \"00:00:37,800\",\n    \"lang\": \"en\",\n    \"text\": \"and they can never surpass.\"\n  },\n  {\n    \"start\": \"00:00:38,480\",\n    \"end\": \"00:00:40,640\",\n    \"lang\": \"en\",\n    \"text\": \"It seems that every night,\"\n  },\n  {\n    \"start\": \"00:00:40,640\",\n    \"end\": \"00:00:43,140\",\n    \"lang\": \"en\",\n    \"text\": \"every word they say is funny,\"\n  },\n  {\n    \"start\": \"00:00:43,140\",\n    \"end\": \"00:00:43,960\",\n    \"lang\": \"en\",\n    \"text\": \"it's interesting.\"\n  },\n  {\n    \"start\": \"00:00:45,560\",\n    \"end\": \"00:00:46,920\",\n    \"lang\": \"en\",\n    \"text\": \"They make puns every time,\"\n  },\n  {\n    \"start\": \"00:00:46,920\",\n    \"end\": \"00:00:47,500\",\n    \"lang\": \"en\",\n    \"text\": \"everywhere,\"\n  },\n  {\n    \"start\": \"00:00:47,500\",\n    \"end\": \"00:00:49,700\",\n    \"lang\": \"en\",\n    \"text\": \"every occasion.\"\n  },\n  {\n    \"start\": \"00:00:53,599\",\n    \"end\": \"00:00:58,700\",\n    \"lang\": \"en\",\n    \"text\": \"I was on a journey on a peanut street,\"\n  },\n  {\n    \"start\": \"00:00:58,700\",\n    \"end\": \"00:01:06,040\",\n    \"lang\": \"en\",\n    \"text\": \"because every inch of a hurt skin is made of diamond.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:03,380",
+            "end": "00:00:06,480",
+            "es": "Me gusta este arcoíris,",
+            "fr": "J'aime cet arc-en-ciel,",
+            "uk": "Мені подобається ця веселка,"
+        },
+        {
+            "start": "00:00:06,480",
+            "end": "00:00:08,160",
+            "es": "es tan hermoso.",
+            "fr": "il est si beau.",
+            "uk": "вона така красива."
+        },
+        {
+            "start": "00:00:10,720",
+            "end": "00:00:11,500",
+            "es": "Ayer,",
+            "fr": "Hier,",
+            "uk": "Вчора,"
+        },
+        {
+            "start": "00:00:11,500",
+            "end": "00:00:16,940",
+            "es": "vi un talk show de Trevor Noah,",
+            "fr": "j'ai regardé un talk-show de Trevor Noah,",
+            "uk": "я дивився ток-шоу Тревора Ноа,"
+        },
+        {
+            "start": "00:00:16,940",
+            "end": "00:00:23,420",
+            "es": "y tengo algunas reflexiones al respecto.",
+            "fr": "et j'ai quelques réflexions à ce sujet.",
+            "uk": "і в мене є деякі думки з цього приводу."
+        },
+        {
+            "start": "00:00:24,600",
+            "end": "00:00:29,580",
+            "es": "Encontré que estas personas,",
+            "fr": "J'ai trouvé que ces gens,",
+            "uk": "Я виявив, що ці люди,"
+        },
+        {
+            "start": "00:00:29,580",
+            "end": "00:00:31,780",
+            "es": "como Trevor Noah,",
+            "fr": "comme Trevor Noah,",
+            "uk": "як Тревор Ноа,"
+        },
+        {
+            "start": "00:00:31,780",
+            "end": "00:00:35,580",
+            "es": "tienen un talento en el lenguaje,",
+            "fr": "ont un talent dans le langage,",
+            "uk": "мають талант до мови,"
+        },
+        {
+            "start": "00:00:35,580",
+            "end": "00:00:37,800",
+            "es": "y nunca pueden ser superados.",
+            "fr": "et ils ne peuvent jamais être surpassés.",
+            "uk": "і їх ніколи не можна перевершити."
+        },
+        {
+            "start": "00:00:38,480",
+            "end": "00:00:40,640",
+            "es": "Parece que cada noche,",
+            "fr": "Il semble que chaque soir,",
+            "uk": "Здається, що кожної ночі,"
+        },
+        {
+            "start": "00:00:40,640",
+            "end": "00:00:43,140",
+            "es": "cada palabra que dicen es divertida,",
+            "fr": "chaque mot qu'ils disent est drôle,",
+            "uk": "кожне слово, яке вони кажуть, смішне,"
+        },
+        {
+            "start": "00:00:43,140",
+            "end": "00:00:43,960",
+            "es": "es interesante.",
+            "fr": "c'est intéressant.",
+            "uk": "це цікаво."
+        },
+        {
+            "start": "00:00:45,560",
+            "end": "00:00:46,920",
+            "es": "Hacen juegos de palabras cada vez,",
+            "fr": "Ils font des jeux de mots à chaque fois,",
+            "uk": "Вони грають словами кожного разу,"
+        },
+        {
+            "start": "00:00:46,920",
+            "end": "00:00:47,500",
+            "es": "en todas partes,",
+            "fr": "partout,",
+            "uk": "скрізь,"
+        },
+        {
+            "start": "00:00:47,500",
+            "end": "00:00:49,700",
+            "es": "en cada ocasión.",
+            "fr": "à chaque occasion.",
+            "uk": "при кожній нагоді."
+        },
+        {
+            "start": "00:00:53,599",
+            "end": "00:00:58,700",
+            "es": "Estaba en un viaje en una calle de maní,",
+            "fr": "J'étais en voyage dans une rue de cacahuète,",
+            "uk": "Я був у подорожі на вулиці арахісу,"
+        },
+        {
+            "start": "00:00:58,700",
+            "end": "00:01:06,040",
+            "es": "porque cada pulgada de una piel herida está hecha de diamante.",
+            "fr": "parce que chaque pouce d'une peau blessée est fait de diamant.",
+            "uk": "тому що кожен дюйм пораненої шкіри зроблений з діаманта."
+        }
+    ]
+}

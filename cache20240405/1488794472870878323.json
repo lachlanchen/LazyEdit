@@ -1,0 +1,80 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,922\",\n    \"end\": \"00:01:02,262\",\n    \"lang\": \"ja\",\n    \"text\": \"これは\"\n  },\n  {\n    \"start\": \"00:01:03,618\",\n    \"end\": \"00:01:04,697\",\n    \"lang\": \"en\",\n    \"text\": \"Strawberry,\"\n  },\n  {\n    \"start\": \"00:01:04,697\",\n    \"end\": \"00:01:05,158\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:01:05,158\",\n    \"end\": \"00:01:06,758\",\n    \"lang\": \"en\",\n    \"text\": \"peach and nuts.\"\n  },\n  {\n    \"start\": \"00:01:08,386\",\n    \"end\": \"00:01:09,906\",\n    \"lang\": \"zh\",\n    \"text\": \"妖蛊用英语怎么说\"\n  },\n  {\n    \"start\": \"00:01:10,066\",\n    \"end\": \"00:01:11,086\",\n    \"lang\": \"zh\",\n    \"text\": \"妖蛊 不知道\"\n  },\n  {\n    \"start\": \"00:01:12,026\",\n    \"end\": \"00:01:18,106\",\n    \"lang\": \"en\",\n    \"text\": \"and only another two eggs in the steam cooker\"\n  },\n  {\n    \"start\": \"00:01:23,846\",\n    \"end\": \"00:01:24,286\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:24,286\",\n    \"end\": \"00:01:25,886\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  },\n  {\n    \"start\": \"00:01:31,766\",\n    \"end\": \"00:01:32,586\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god,\"\n  },\n  {\n    \"start\": \"00:01:32,586\",\n    \"end\": \"00:01:33,606\",\n    \"lang\": \"en\",\n    \"text\": \"oh my god,\"\n  },\n  {\n    \"start\": \"00:01:33,606\",\n    \"end\": \"00:01:37,046\",\n    \"lang\": \"en\",\n    \"text\": \"this is a rotten strawberry,\"\n  },\n  {\n    \"start\": \"00:01:37,046\",\n    \"end\": \"00:01:38,406\",\n    \"lang\": \"en\",\n    \"text\": \"whatever\"\n  },\n  {\n    \"start\": \"00:01:46,746\",\n    \"end\": \"00:01:47,886\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:01:47,886\",\n    \"end\": \"00:01:49,146\",\n    \"lang\": \"en\",\n    \"text\": \"see you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,922",
+            "end": "00:01:02,262",
+            "vi": "Đây là"
+        },
+        {
+            "start": "00:01:03,618",
+            "end": "00:01:04,697",
+            "vi": "Dâu tây,"
+        },
+        {
+            "start": "00:01:04,697",
+            "end": "00:01:05,158",
+            "vi": "việt quất,"
+        },
+        {
+            "start": "00:01:05,158",
+            "end": "00:01:06,758",
+            "vi": "đào và hạt."
+        },
+        {
+            "start": "00:01:08,386",
+            "end": "00:01:09,906",
+            "vi": "Yêu cầu bằng tiếng Anh là gì"
+        },
+        {
+            "start": "00:01:10,066",
+            "end": "00:01:11,086",
+            "vi": "Yêu cầu? Không biết."
+        },
+        {
+            "start": "00:01:12,026",
+            "end": "00:01:18,106",
+            "vi": "và chỉ còn hai quả trứng trong máy hấp"
+        },
+        {
+            "start": "00:01:23,846",
+            "end": "00:01:24,286",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:01:24,286",
+            "end": "00:01:25,886",
+            "vi": "gặp lại"
+        },
+        {
+            "start": "00:01:31,766",
+            "end": "00:01:32,586",
+            "vi": "Ôi trời ơi,"
+        },
+        {
+            "start": "00:01:32,586",
+            "end": "00:01:33,606",
+            "vi": "ôi trời ơi,"
+        },
+        {
+            "start": "00:01:33,606",
+            "end": "00:01:37,046",
+            "vi": "đây là một quả dâu tây thối,"
+        },
+        {
+            "start": "00:01:37,046",
+            "end": "00:01:38,406",
+            "vi": "bất kể"
+        },
+        {
+            "start": "00:01:46,746",
+            "end": "00:01:47,886",
+            "vi": "Được,"
+        },
+        {
+            "start": "00:01:47,886",
+            "end": "00:01:49,146",
+            "vi": "gặp lại"
+        }
+    ]
+}

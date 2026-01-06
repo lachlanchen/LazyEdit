@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:01,140\",\n    \"end\": \"00:00:05,140\",\n    \"lang\": \"en\",\n    \"text\": \"I believe I have some progress,\"\n  },\n  {\n    \"start\": \"00:00:05,140\",\n    \"end\": \"00:00:08,160\",\n    \"lang\": \"en\",\n    \"text\": \"so record it.\"\n  },\n  {\n    \"start\": \"00:00:09,980\",\n    \"end\": \"00:00:15,840\",\n    \"lang\": \"en\",\n    \"text\": \"And I see a problem in recent content creating.\"\n  },\n  {\n    \"start\": \"00:00:15,840\",\n    \"end\": \"00:00:18,640\",\n    \"lang\": \"en\",\n    \"text\": \"Some content creators,\"\n  },\n  {\n    \"start\": \"00:00:18,640\",\n    \"end\": \"00:00:29,720\",\n    \"lang\": \"en\",\n    \"text\": \"they just firstly find the audience,\"\n  },\n  {\n    \"start\": \"00:00:29,720\",\n    \"end\": \"00:00:32,220\",\n    \"lang\": \"en\",\n    \"text\": \"make the audience,\"\n  },\n  {\n    \"start\": \"00:00:32,220\",\n    \"end\": \"00:00:35,540\",\n    \"lang\": \"en\",\n    \"text\": \"and then cater the taste.\"\n  },\n  {\n    \"start\": \"00:00:35,540\",\n    \"end\": \"00:00:38,500\",\n    \"lang\": \"en\",\n    \"text\": \"And use their work,\"\n  },\n  {\n    \"start\": \"00:00:38,500\",\n    \"end\": \"00:00:39,600\",\n    \"lang\": \"en\",\n    \"text\": \"product,\"\n  },\n  {\n    \"start\": \"00:00:39,600\",\n    \"end\": \"00:00:42,800\",\n    \"lang\": \"en\",\n    \"text\": \"to please the audience.\"\n  },\n  {\n    \"start\": \"00:00:43,780\",\n    \"end\": \"00:00:45,320\",\n    \"lang\": \"en\",\n    \"text\": \"This causes a problem.\"\n  },\n  {\n    \"start\": \"00:00:45,320\",\n    \"end\": \"00:00:57,480\",\n    \"lang\": \"en\",\n    \"text\": \"The problem is that we should focus on what we like to do.\"\n  },\n  {\n    \"start\": \"00:00:59,746\",\n    \"end\": \"00:01:00,386\",\n    \"lang\": \"ja\",\n    \"text\": \"ゆりこみ\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:01,140",
+            "end": "00:00:05,140",
+            "es": "Creo que he progresado,",
+            "fr": "Je crois que j'ai fait des progrès,",
+            "uk": "Я вірю, що я досягнув прогресу,"
+        },
+        {
+            "start": "00:00:05,140",
+            "end": "00:00:08,160",
+            "es": "así que regístralo.",
+            "fr": "donc enregistrez-le.",
+            "uk": "отже, запишіть це."
+        },
+        {
+            "start": "00:00:09,980",
+            "end": "00:00:15,840",
+            "es": "Y veo un problema en la creación de contenido reciente.",
+            "fr": "Et je vois un problème dans la création de contenu récent.",
+            "uk": "І я бачу проблему в недавньому створенні контенту."
+        },
+        {
+            "start": "00:00:15,840",
+            "end": "00:00:18,640",
+            "es": "Algunos creadores de contenido,",
+            "fr": "Certains créateurs de contenu,",
+            "uk": "Деякі творці контенту,"
+        },
+        {
+            "start": "00:00:18,640",
+            "end": "00:00:29,720",
+            "es": "primero encuentran la audiencia,",
+            "fr": "trouvent d'abord l'audience,",
+            "uk": "спочатку знаходять аудиторію,"
+        },
+        {
+            "start": "00:00:29,720",
+            "end": "00:00:32,220",
+            "es": "crean la audiencia,",
+            "fr": "créent l'audience,",
+            "uk": "створюють аудиторію,"
+        },
+        {
+            "start": "00:00:32,220",
+            "end": "00:00:35,540",
+            "es": "y luego satisfacen el gusto.",
+            "fr": "et puis satisfont le goût.",
+            "uk": "а потім задовольняють смак."
+        },
+        {
+            "start": "00:00:35,540",
+            "end": "00:00:38,500",
+            "es": "Y usan su trabajo,",
+            "fr": "Et utilisent leur travail,",
+            "uk": "І використовують свою роботу,"
+        },
+        {
+            "start": "00:00:38,500",
+            "end": "00:00:39,600",
+            "es": "producto,",
+            "fr": "produit,",
+            "uk": "продукт,"
+        },
+        {
+            "start": "00:00:39,600",
+            "end": "00:00:42,800",
+            "es": "para complacer a la audiencia.",
+            "fr": "pour plaire à l'audience.",
+            "uk": "щоб задовольнити аудиторію."
+        },
+        {
+            "start": "00:00:43,780",
+            "end": "00:00:45,320",
+            "es": "Esto provoca un problema.",
+            "fr": "Cela pose un problème.",
+            "uk": "Це створює проблему."
+        },
+        {
+            "start": "00:00:45,320",
+            "end": "00:00:57,480",
+            "es": "El problema es que deberíamos centrarnos en lo que nos gusta hacer.",
+            "fr": "Le problème est que nous devrions nous concentrer sur ce que nous aimons faire.",
+            "uk": "Проблема в тому, що ми повинні зосередитися на тому, що нам подобається робити."
+        },
+        {
+            "start": "00:00:59,746",
+            "end": "00:01:00,386",
+            "es": "Compromiso",
+            "fr": "Engagement",
+            "uk": "Зобов'язання"
+        }
+    ]
+}

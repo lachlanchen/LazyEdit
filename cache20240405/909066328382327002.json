@@ -1,0 +1,40 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:04,140\",\n    \"lang\": \"ja\",\n    \"text\": \"私は夕ご飯を作っています\"\n  },\n  {\n    \"start\": \"00:00:06,679\",\n    \"end\": \"00:00:08,200\",\n    \"lang\": \"ja\",\n    \"text\": \"これは手羽先です\"\n  },\n  {\n    \"start\": \"00:00:08,200\",\n    \"end\": \"00:00:09,500\",\n    \"lang\": \"ja\",\n    \"text\": \"これはフニバレスです\"\n  },\n  {\n    \"start\": \"00:00:09,500\",\n    \"end\": \"00:00:11,260\",\n    \"lang\": \"ja\",\n    \"text\": \"これはパークルスとカロリー\"\n  },\n  {\n    \"start\": \"00:00:13,259\",\n    \"end\": \"00:00:14,800\",\n    \"lang\": \"ja\",\n    \"text\": \"これはクランドです\"\n  },\n  {\n    \"start\": \"00:00:17,186\",\n    \"end\": \"00:00:21,486\",\n    \"lang\": \"en\",\n    \"text\": \"This chicken wing honey bee already removed its bones.\"\n  },\n  {\n    \"start\": \"00:00:22,066\",\n    \"end\": \"00:00:24,466\",\n    \"lang\": \"en\",\n    \"text\": \"So let's do it.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:04,140",
+            "vi": "Tôi đang nấu bữa tối"
+        },
+        {
+            "start": "00:00:06,679",
+            "end": "00:00:08,200",
+            "vi": "Đây là cánh gà"
+        },
+        {
+            "start": "00:00:08,200",
+            "end": "00:00:09,500",
+            "vi": "Đây là phô mai viên"
+        },
+        {
+            "start": "00:00:09,500",
+            "end": "00:00:11,260",
+            "vi": "Đây là bọc phô mai và kẹo dẻo"
+        },
+        {
+            "start": "00:00:13,259",
+            "end": "00:00:14,800",
+            "vi": "Đây là món salad"
+        },
+        {
+            "start": "00:00:17,186",
+            "end": "00:00:21,486",
+            "vi": "Cánh gà này đã được gỡ xương."
+        },
+        {
+            "start": "00:00:22,066",
+            "end": "00:00:24,466",
+            "vi": "Vậy thì bắt đầu nào."
+        }
+    ]
+}

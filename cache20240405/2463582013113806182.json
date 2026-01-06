@@ -1,0 +1,50 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:02:01,782\",\n    \"end\": \"00:02:03,642\",\n    \"lang\": \"en\",\n    \"text\": \"it's not an action.\"\n  },\n  {\n    \"start\": \"00:02:04,122\",\n    \"end\": \"00:02:08,662\",\n    \"lang\": \"en\",\n    \"text\": \"It's a consequence of you make proper decisions.\"\n  },\n  {\n    \"start\": \"00:02:09,082\",\n    \"end\": \"00:02:10,901\",\n    \"lang\": \"en\",\n    \"text\": \"So you give up something,\"\n  },\n  {\n    \"start\": \"00:02:10,901\",\n    \"end\": \"00:02:11,902\",\n    \"lang\": \"en\",\n    \"text\": \"you make the trade off,\"\n  },\n  {\n    \"start\": \"00:02:11,902\",\n    \"end\": \"00:02:13,222\",\n    \"lang\": \"en\",\n    \"text\": \"you balance something,\"\n  },\n  {\n    \"start\": \"00:02:13,222\",\n    \"end\": \"00:02:16,122\",\n    \"lang\": \"en\",\n    \"text\": \"you accept something,\"\n  },\n  {\n    \"start\": \"00:02:18,402\",\n    \"end\": \"00:02:23,682\",\n    \"lang\": \"en\",\n    \"text\": \"then you reach a state of peaceful and free freedom.\"\n  },\n  {\n    \"start\": \"00:02:26,402\",\n    \"end\": \"00:02:26,982\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:02:26,982\",\n    \"end\": \"00:02:28,502\",\n    \"lang\": \"en\",\n    \"text\": \"see you.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:02:01,782",
+            "end": "00:02:03,642",
+            "ja": "それは行動ではありません。"
+        },
+        {
+            "start": "00:02:04,122",
+            "end": "00:02:08,662",
+            "ja": "適切な決断をすることの結果です。"
+        },
+        {
+            "start": "00:02:09,082",
+            "end": "00:02:10,901",
+            "ja": "だからあなたは何かを諦めます、"
+        },
+        {
+            "start": "00:02:10,901",
+            "end": "00:02:11,902",
+            "ja": "交換条件を作ります、"
+        },
+        {
+            "start": "00:02:11,902",
+            "end": "00:02:13,222",
+            "ja": "何かをバランスします、"
+        },
+        {
+            "start": "00:02:13,222",
+            "end": "00:02:16,122",
+            "ja": "何かを受け入れます、"
+        },
+        {
+            "start": "00:02:18,402",
+            "end": "00:02:23,682",
+            "ja": "そうすれば、平和で自由な状態に達します。"
+        },
+        {
+            "start": "00:02:26,402",
+            "end": "00:02:26,982",
+            "ja": "わかりました、"
+        },
+        {
+            "start": "00:02:26,982",
+            "end": "00:02:28,502",
+            "ja": "またね。"
+        }
+    ]
+}

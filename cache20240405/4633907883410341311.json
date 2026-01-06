@@ -1,0 +1,65 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,240\",\n    \"lang\": \"ar\",\n    \"text\": \"وشكراً على المشاهدة\"\n  },\n  {\n    \"start\": \"00:00:02,274\",\n    \"end\": \"00:00:17,054\",\n    \"lang\": \"en\",\n    \"text\": \"The vegetable has been put in the refrigerator for about one month,\"\n  },\n  {\n    \"start\": \"00:00:17,054\",\n    \"end\": \"00:00:18,214\",\n    \"lang\": \"en\",\n    \"text\": \"maybe two months.\"\n  },\n  {\n    \"start\": \"00:00:18,854\",\n    \"end\": \"00:00:20,354\",\n    \"lang\": \"en\",\n    \"text\": \"Then it has these holes.\"\n  },\n  {\n    \"start\": \"00:00:21,494\",\n    \"end\": \"00:00:25,194\",\n    \"lang\": \"en\",\n    \"text\": \"And then it says that it's a microbe and it doesn't want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:25,194\",\n    \"end\": \"00:00:27,874\",\n    \"lang\": \"en\",\n    \"text\": \"The bacteria don't want to eat it.\"\n  },\n  {\n    \"start\": \"00:00:28,294\",\n    \"end\": \"00:00:29,994\",\n    \"lang\": \"en\",\n    \"text\": \"So the people eat it.\"\n  },\n  {\n    \"start\": \"00:00:32,094\",\n    \"end\": \"00:00:32,514\",\n    \"lang\": \"en\",\n    \"text\": \"OK,\"\n  },\n  {\n    \"start\": \"00:00:32,514\",\n    \"end\": \"00:00:34,254\",\n    \"lang\": \"en\",\n    \"text\": \"this is our flavor.\"\n  },\n  {\n    \"start\": \"00:00:35,394\",\n    \"end\": \"00:00:39,754\",\n    \"lang\": \"en\",\n    \"text\": \"And I will make chicken noodles,\"\n  },\n  {\n    \"start\": \"00:00:39,754\",\n    \"end\": \"00:00:41,334\",\n    \"lang\": \"en\",\n    \"text\": \"chicken and carrot noodles.\"\n  },\n  {\n    \"start\": \"00:00:43,054\",\n    \"end\": \"00:00:44,894\",\n    \"lang\": \"en\",\n    \"text\": \"And with apricots.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,240",
+            "ja": "ご視聴いただきありがとうございます"
+        },
+        {
+            "start": "00:00:02,274",
+            "end": "00:00:17,054",
+            "ja": "その野菜は約1ヶ月間、冷蔵庫に入れられました、"
+        },
+        {
+            "start": "00:00:17,054",
+            "end": "00:00:18,214",
+            "ja": "多分2ヶ月間です。"
+        },
+        {
+            "start": "00:00:18,854",
+            "end": "00:00:20,354",
+            "ja": "それから、それには穴が空いています。"
+        },
+        {
+            "start": "00:00:21,494",
+            "end": "00:00:25,194",
+            "ja": "そしてそれは微生物であり、食べたくないと言っています。"
+        },
+        {
+            "start": "00:00:25,194",
+            "end": "00:00:27,874",
+            "ja": "バクテリアはそれを食べたくないのです。"
+        },
+        {
+            "start": "00:00:28,294",
+            "end": "00:00:29,994",
+            "ja": "だから人々はそれを食べます。"
+        },
+        {
+            "start": "00:00:32,094",
+            "end": "00:00:32,514",
+            "ja": "OK、"
+        },
+        {
+            "start": "00:00:32,514",
+            "end": "00:00:34,254",
+            "ja": "これが私たちのフレーバーです。"
+        },
+        {
+            "start": "00:00:35,394",
+            "end": "00:00:39,754",
+            "ja": "そして、チキンヌードルを作ります、"
+        },
+        {
+            "start": "00:00:39,754",
+            "end": "00:00:41,334",
+            "ja": "チキンとキャロットヌードル。"
+        },
+        {
+            "start": "00:00:43,054",
+            "end": "00:00:44,894",
+            "ja": "そしてアプリコットを添えて。"
+        }
+    ]
+}

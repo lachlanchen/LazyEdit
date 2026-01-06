@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:57,158\",\n    \"end\": \"00:03:57,198\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:03:57,218\",\n    \"end\": \"00:03:57,238\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:04:11,238\",\n    \"end\": \"00:04:12,638\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:04:13,918\",\n    \"end\": \"00:04:15,318\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:03:57,158",
+            "end": "00:03:57,198",
+            "ko": "알겠어."
+        },
+        {
+            "start": "00:03:57,218",
+            "end": "00:03:57,238",
+            "ko": "알겠어."
+        },
+        {
+            "start": "00:04:11,238",
+            "end": "00:04:12,638",
+            "ko": "알겠어."
+        },
+        {
+            "start": "00:04:13,918",
+            "end": "00:04:15,318",
+            "ko": "알겠어."
+        }
+    ]
+}

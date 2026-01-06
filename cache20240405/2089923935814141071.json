@@ -1,0 +1,103 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,780\",\n    \"lang\": \"zh\",\n    \"text\": \"我在想這個豆芽用英語怎麼說\"\n  },\n  {\n    \"start\": \"00:00:03,560\",\n    \"end\": \"00:00:05,060\",\n    \"lang\": \"zh\",\n    \"text\": \"我實在不知道啊\"\n  },\n  {\n    \"start\": \"00:00:05,060\",\n    \"end\": \"00:00:05,860\",\n    \"lang\": \"zh\",\n    \"text\": \"我給你們編一個\"\n  },\n  {\n    \"start\": \"00:00:05,860\",\n    \"end\": \"00:00:09,160\",\n    \"lang\": \"zh\",\n    \"text\": \"叫做baby\"\n  },\n  {\n    \"start\": \"00:00:10,242\",\n    \"end\": \"00:00:10,922\",\n    \"lang\": \"en\",\n    \"text\": \"Babybin\"\n  },\n  {\n    \"start\": \"00:00:13,538\",\n    \"end\": \"00:00:14,698\",\n    \"lang\": \"zh\",\n    \"text\": \"冰子baby上\"\n  },\n  {\n    \"start\": \"00:00:26,658\",\n    \"end\": \"00:00:27,738\",\n    \"lang\": \"en\",\n    \"text\": \"INFINITY B\"\n  },\n  {\n    \"start\": \"00:00:33,097\",\n    \"end\": \"00:00:33,818\",\n    \"lang\": \"zh\",\n    \"text\": \"婴儿大豆\"\n  },\n  {\n    \"start\": \"00:00:34,882\",\n    \"end\": \"00:00:36,382\",\n    \"lang\": \"zh\",\n    \"text\": \"因为大豆这个东西是豆芽\"\n  },\n  {\n    \"start\": \"00:00:43,242\",\n    \"end\": \"00:00:43,642\",\n    \"lang\": \"zh\",\n    \"text\": \"可以\"\n  },\n  {\n    \"start\": \"00:00:56,514\",\n    \"end\": \"00:00:57,134\",\n    \"lang\": \"zh\",\n    \"text\": \"菠菜我也不知道\"\n  },\n  {\n    \"start\": \"00:00:57,698\",\n    \"end\": \"00:00:58,598\",\n    \"lang\": \"ja\",\n    \"text\": \"シャトンスウィッツ\"\n  },\n  {\n    \"start\": \"00:00:58,918\",\n    \"end\": \"00:00:59,578\",\n    \"lang\": \"ja\",\n    \"text\": \"スウィッツ\"\n  },\n  {\n    \"start\": \"00:00:59,578\",\n    \"end\": \"00:01:00,138\",\n    \"lang\": \"ja\",\n    \"text\": \"スウィッツパル\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,780",
+            "es": "Me estoy preguntando cómo se dice este brote de soja en inglés",
+            "fr": "Je me demande comment on dit ce germe de soja en anglais",
+            "uk": "Я замислююсь, як сказати цей паросток сої англійською"
+        },
+        {
+            "start": "00:00:03,560",
+            "end": "00:00:05,060",
+            "es": "Realmente no lo sé",
+            "fr": "Je ne sais vraiment pas",
+            "uk": "Я справді не знаю"
+        },
+        {
+            "start": "00:00:05,060",
+            "end": "00:00:05,860",
+            "es": "Les inventaré uno",
+            "fr": "Je vais vous en inventer un",
+            "uk": "Я придумаю вам один"
+        },
+        {
+            "start": "00:00:05,860",
+            "end": "00:00:09,160",
+            "es": "Llamémoslo baby",
+            "fr": "Appelons-le baby",
+            "uk": "Назвемо це дитинкою"
+        },
+        {
+            "start": "00:00:10,242",
+            "end": "00:00:10,922",
+            "es": "Babybin",
+            "fr": "Babybin",
+            "uk": "Бейбібін"
+        },
+        {
+            "start": "00:00:13,538",
+            "end": "00:00:14,698",
+            "es": "Cubo de bebé en hielo",
+            "fr": "Bébé cube sur glace",
+            "uk": "Кубик дитини на льоду"
+        },
+        {
+            "start": "00:00:26,658",
+            "end": "00:00:27,738",
+            "es": "INFINITY B",
+            "fr": "INFINITY B",
+            "uk": "INFINITY B"
+        },
+        {
+            "start": "00:00:33,097",
+            "end": "00:00:33,818",
+            "es": "Soja bebé",
+            "fr": "Soja bébé",
+            "uk": "Соя-немовля"
+        },
+        {
+            "start": "00:00:34,882",
+            "end": "00:00:36,382",
+            "es": "Porque la soja es un tipo de brote de soja",
+            "fr": "Parce que le soja est un type de germe de soja",
+            "uk": "Тому що соя є типом соєвого паростка"
+        },
+        {
+            "start": "00:00:43,242",
+            "end": "00:00:43,642",
+            "es": "Se puede",
+            "fr": "Ça marche",
+            "uk": "Можна"
+        },
+        {
+            "start": "00:00:56,514",
+            "end": "00:00:57,134",
+            "es": "Espinaca, tampoco lo sé",
+            "fr": "Épinard, je ne sais pas non plus",
+            "uk": "Щодо шпинату, я також не знаю"
+        },
+        {
+            "start": "00:00:57,698",
+            "end": "00:00:58,598",
+            "es": "Chatón suizo",
+            "fr": "Chaton suisse",
+            "uk": "Швейцарський кошеня"
+        },
+        {
+            "start": "00:00:58,918",
+            "end": "00:00:59,578",
+            "es": "Suizo",
+            "fr": "Suisse",
+            "uk": "Швейцарець"
+        },
+        {
+            "start": "00:00:59,578",
+            "end": "00:01:00,138",
+            "es": "Suizo pal",
+            "fr": "Copain suisse",
+            "uk": "Швейцарський товариш"
+        }
+    ]
+}

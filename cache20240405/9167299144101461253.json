@@ -1,0 +1,96 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,100\",\n    \"lang\": \"en\",\n    \"text\": \"Hello,\"\n  },\n  {\n    \"start\": \"00:00:01,100\",\n    \"end\": \"00:00:04,380\",\n    \"lang\": \"en\",\n    \"text\": \"so this is our lunch.\"\n  },\n  {\n    \"start\": \"00:00:07,220\",\n    \"end\": \"00:00:09,360\",\n    \"lang\": \"en\",\n    \"text\": \"Just eat,\"\n  },\n  {\n    \"start\": \"00:00:09,360\",\n    \"end\": \"00:00:10,380\",\n    \"lang\": \"en\",\n    \"text\": \"sleep,\"\n  },\n  {\n    \"start\": \"00:00:10,380\",\n    \"end\": \"00:00:11,300\",\n    \"lang\": \"en\",\n    \"text\": \"eat.\"\n  },\n  {\n    \"start\": \"00:00:20,034\",\n    \"end\": \"00:00:20,894\",\n    \"lang\": \"zh\",\n    \"text\": \"这是牛肉面\"\n  },\n  {\n    \"start\": \"00:00:21,826\",\n    \"end\": \"00:00:23,646\",\n    \"lang\": \"en\",\n    \"text\": \"So this is beef noodles.\"\n  },\n  {\n    \"start\": \"00:00:25,166\",\n    \"end\": \"00:00:26,726\",\n    \"lang\": \"en\",\n    \"text\": \"This is a gorgeous beef.\"\n  },\n  {\n    \"start\": \"00:00:30,606\",\n    \"end\": \"00:00:30,926\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry,\"\n  },\n  {\n    \"start\": \"00:00:30,926\",\n    \"end\": \"00:00:32,006\",\n    \"lang\": \"en\",\n    \"text\": \"it's over-salted.\"\n  },\n  {\n    \"start\": \"00:00:34,186\",\n    \"end\": \"00:00:35,626\",\n    \"lang\": \"en\",\n    \"text\": \"I put too much salt.\"\n  },\n  {\n    \"start\": \"00:00:43,266\",\n    \"end\": \"00:00:43,906\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:43,906\",\n    \"end\": \"00:00:44,366\",\n    \"lang\": \"en\",\n    \"text\": \"see you!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,100",
+            "en": "Hello,",
+            "zh": "你好，",
+            "ar": "مرحبًا،"
+        },
+        {
+            "start": "00:00:01,100",
+            "end": "00:00:04,380",
+            "en": "so this is our lunch.",
+            "zh": "所以这是我们的午餐。",
+            "ar": "إذاً، هذا غداؤنا."
+        },
+        {
+            "start": "00:00:07,220",
+            "end": "00:00:09,360",
+            "en": "Just eat,",
+            "zh": "就吃吧，",
+            "ar": "فقط تناول الطعام،"
+        },
+        {
+            "start": "00:00:09,360",
+            "end": "00:00:10,380",
+            "en": "sleep,",
+            "zh": "睡觉，",
+            "ar": "نوم،"
+        },
+        {
+            "start": "00:00:10,380",
+            "end": "00:00:11,300",
+            "en": "eat.",
+            "zh": "吃。",
+            "ar": "أكل."
+        },
+        {
+            "start": "00:00:20,034",
+            "end": "00:00:20,894",
+            "en": "This is beef noodles.",
+            "zh": "这是牛肉面",
+            "ar": "هذا هو نودلز اللحم."
+        },
+        {
+            "start": "00:00:21,826",
+            "end": "00:00:23,646",
+            "en": "So this is beef noodles.",
+            "zh": "所以这是牛肉面。",
+            "ar": "إذاً، هذه نودلز اللحم."
+        },
+        {
+            "start": "00:00:25,166",
+            "end": "00:00:26,726",
+            "en": "This is a gorgeous beef.",
+            "zh": "这是一块漂亮的牛肉。",
+            "ar": "هذا لحم بقر رائع."
+        },
+        {
+            "start": "00:00:30,606",
+            "end": "00:00:30,926",
+            "en": "Sorry,",
+            "zh": "对不起，",
+            "ar": "آسف،"
+        },
+        {
+            "start": "00:00:30,926",
+            "end": "00:00:32,006",
+            "en": "it's over-salted.",
+            "zh": "太咸了。",
+            "ar": "مالح جداً."
+        },
+        {
+            "start": "00:00:34,186",
+            "end": "00:00:35,626",
+            "en": "I put too much salt.",
+            "zh": "我放太多盐了。",
+            "ar": "لقد وضعت الكثير من الملح."
+        },
+        {
+            "start": "00:00:43,266",
+            "end": "00:00:43,906",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:43,906",
+            "end": "00:00:44,366",
+            "en": "see you!",
+            "zh": "再见！",
+            "ar": "أراك لاحقًا!"
+        }
+    ]
+}

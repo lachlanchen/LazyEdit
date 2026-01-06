@@ -1,0 +1,56 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:04:28,230\",\n    \"end\": \"00:04:30,030\",\n    \"lang\": \"en\",\n    \"text\": \"Oh my god\"\n  },\n  {\n    \"start\": \"00:04:30,030\",\n    \"end\": \"00:04:30,570\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  },\n  {\n    \"start\": \"00:04:34,670\",\n    \"end\": \"00:04:34,930\",\n    \"lang\": \"en\",\n    \"text\": \"Oh\"\n  },\n  {\n    \"start\": \"00:04:34,930\",\n    \"end\": \"00:04:35,310\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks for watching\"\n  },\n  {\n    \"start\": \"00:04:36,770\",\n    \"end\": \"00:04:38,630\",\n    \"lang\": \"ja\",\n    \"text\": \"この出まさき麺美味しいです\"\n  },\n  {\n    \"start\": \"00:04:44,449\",\n    \"end\": \"00:04:48,090\",\n    \"lang\": \"ja\",\n    \"text\": \"この出まさき麺とても美味しいです\"\n  },\n  {\n    \"start\": \"00:04:54,786\",\n    \"end\": \"00:04:57,186\",\n    \"lang\": \"en\",\n    \"text\": \"Please add the teaser and the cover,\"\n  },\n  {\n    \"start\": \"00:04:57,186\",\n    \"end\": \"00:04:57,546\",\n    \"lang\": \"en\",\n    \"text\": \"please.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:04:28,230",
+            "end": "00:04:30,030",
+            "en": "Oh my god",
+            "zh": "哦，我的天",
+            "ar": "يا إلهي"
+        },
+        {
+            "start": "00:04:30,030",
+            "end": "00:04:30,570",
+            "en": "See you",
+            "zh": "再见",
+            "ar": "أراك لاحقًا"
+        },
+        {
+            "start": "00:04:34,670",
+            "end": "00:04:34,930",
+            "en": "Oh",
+            "zh": "哦",
+            "ar": "أوه"
+        },
+        {
+            "start": "00:04:34,930",
+            "end": "00:04:35,310",
+            "en": "Thanks for watching",
+            "zh": "感谢观看",
+            "ar": "شكراً على المشاهدة"
+        },
+        {
+            "start": "00:04:36,770",
+            "end": "00:04:38,630",
+            "en": "This starting ramen is delicious",
+            "zh": "这碗起始的拉面很美味",
+            "ar": "هذا الرامين الأولي لذيذ",
+            "ja": "この出まさき麺美味しいです"
+        },
+        {
+            "start": "00:04:44,449",
+            "end": "00:04:48,090",
+            "en": "This starting ramen is very delicious",
+            "zh": "这碗起始的拉面非常美味",
+            "ar": "هذا الرامين الأولي لذيذ جداً",
+            "ja": "この出まさき麺とても美味しいです"
+        },
+        {
+            "start": "00:04:54,786",
+            "end": "00:04:57,546",
+            "en": "Please add the teaser and the cover, please.",
+            "zh": "请添加预告片和封面，谢谢。",
+            "ar": "الرجاء إضافة الإعلان التشويقي والغلاف، من فضلك."
+        }
+    ]
+}

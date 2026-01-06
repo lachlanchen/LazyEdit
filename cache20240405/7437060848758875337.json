@@ -1,0 +1,194 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,562\",\n    \"end\": \"00:01:02,062\",\n    \"lang\": \"en\",\n    \"text\": \"Bye.\"\n  },\n  {\n    \"start\": \"00:01:02,082\",\n    \"end\": \"00:01:02,802\",\n    \"lang\": \"ja\",\n    \"text\": \"勝手にもう\"\n  },\n  {\n    \"start\": \"00:01:06,122\",\n    \"end\": \"00:01:07,722\",\n    \"lang\": \"ja\",\n    \"text\": \"さぁ\"\n  },\n  {\n    \"start\": \"00:01:07,722\",\n    \"end\": \"00:01:08,102\",\n    \"lang\": \"ja\",\n    \"text\": \"あ\"\n  },\n  {\n    \"start\": \"00:01:09,142\",\n    \"end\": \"00:01:09,542\",\n    \"lang\": \"ja\",\n    \"text\": \"どうすら良いんですかね\"\n  },\n  {\n    \"start\": \"00:01:09,570\",\n    \"end\": \"00:01:18,690\",\n    \"lang\": \"en\",\n    \"text\": \"Today I recorded this poem.\"\n  },\n  {\n    \"start\": \"00:01:19,746\",\n    \"end\": \"00:01:20,206\",\n    \"lang\": \"zh\",\n    \"text\": \"好耶\"\n  },\n  {\n    \"start\": \"00:01:22,178\",\n    \"end\": \"00:01:22,618\",\n    \"lang\": \"en\",\n    \"text\": \"The Nub.\"\n  },\n  {\n    \"start\": \"00:01:24,838\",\n    \"end\": \"00:01:26,358\",\n    \"lang\": \"en\",\n    \"text\": \"The Nub is a venuble.\"\n  },\n  {\n    \"start\": \"00:01:26,838\",\n    \"end\": \"00:01:27,358\",\n    \"lang\": \"en\",\n    \"text\": \"Nub.\"\n  },\n  {\n    \"start\": \"00:01:27,678\",\n    \"end\": \"00:01:27,918\",\n    \"lang\": \"en\",\n    \"text\": \"Yeah.\"\n  },\n  {\n    \"start\": \"00:01:28,198\",\n    \"end\": \"00:01:28,918\",\n    \"lang\": \"en\",\n    \"text\": \"And the,\"\n  },\n  {\n    \"start\": \"00:01:28,918\",\n    \"end\": \"00:01:30,378\",\n    \"lang\": \"en\",\n    \"text\": \"the...\"\n  },\n  {\n    \"start\": \"00:01:31,650\",\n    \"end\": \"00:01:32,910\",\n    \"lang\": \"zh\",\n    \"text\": \"好今天的视频就到这\"\n  },\n  {\n    \"start\": \"00:01:32,930\",\n    \"end\": \"00:01:33,690\",\n    \"lang\": \"en\",\n    \"text\": \"The knife,\"\n  },\n  {\n    \"start\": \"00:01:33,690\",\n    \"end\": \"00:01:34,450\",\n    \"lang\": \"en\",\n    \"text\": \"the knife,\"\n  },\n  {\n    \"start\": \"00:01:34,450\",\n    \"end\": \"00:01:35,110\",\n    \"lang\": \"en\",\n    \"text\": \"the knife,\"\n  },\n  {\n    \"start\": \"00:01:35,110\",\n    \"end\": \"00:01:36,630\",\n    \"lang\": \"en\",\n    \"text\": \"the knife is in my nipple.\"\n  },\n  {\n    \"start\": \"00:01:37,330\",\n    \"end\": \"00:01:38,930\",\n    \"lang\": \"en\",\n    \"text\": \"But he...\"\n  },\n  {\n    \"start\": \"00:01:40,450\",\n    \"end\": \"00:01:42,230\",\n    \"lang\": \"ja\",\n    \"text\": \"なぁもプレッシャーズ\"\n  },\n  {\n    \"start\": \"00:01:43,150\",\n    \"end\": \"00:01:43,570\",\n    \"lang\": \"ja\",\n    \"text\": \"イブ\"\n  },\n  {\n    \"start\": \"00:01:46,754\",\n    \"end\": \"00:01:47,874\",\n    \"lang\": \"en\",\n    \"text\": \"if...\"\n  },\n  {\n    \"start\": \"00:01:49,073\",\n    \"end\": \"00:01:50,654\",\n    \"lang\": \"en\",\n    \"text\": \"so this is so...\"\n  },\n  {\n    \"start\": \"00:01:51,453\",\n    \"end\": \"00:01:54,534\",\n    \"lang\": \"en\",\n    \"text\": \"so not like a poem\"\n  },\n  {\n    \"start\": \"00:01:55,733\",\n    \"end\": \"00:01:57,374\",\n    \"lang\": \"en\",\n    \"text\": \"so if for freedom\"\n  },\n  {\n    \"start\": \"00:01:57,374\",\n    \"end\": \"00:01:59,054\",\n    \"lang\": \"en\",\n    \"text\": \"what is to say is\"\n  },\n  {\n    \"start\": \"00:01:59,054\",\n    \"end\": \"00:02:00,634\",\n    \"lang\": \"en\",\n    \"text\": \"can they give the up?\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:01,562",
+            "end": "00:01:02,062",
+            "es": "Adiós.",
+            "fr": "Au revoir.",
+            "uk": "Бувай."
+        },
+        {
+            "start": "00:01:02,082",
+            "end": "00:01:02,802",
+            "es": "Hazlo por tu cuenta ya.",
+            "fr": "Fais-le par toi-même maintenant.",
+            "uk": "Роби це сам вже."
+        },
+        {
+            "start": "00:01:06,122",
+            "end": "00:01:07,722",
+            "es": "Vamos.",
+            "fr": "Allons-y.",
+            "uk": "Гайда."
+        },
+        {
+            "start": "00:01:07,722",
+            "end": "00:01:08,102",
+            "es": "Ah.",
+            "fr": "Ah.",
+            "uk": "Ага."
+        },
+        {
+            "start": "00:01:09,142",
+            "end": "00:01:09,542",
+            "es": "¿Qué se supone que debo hacer?",
+            "fr": "Que suis-je censé faire?",
+            "uk": "Що мені робити?"
+        },
+        {
+            "start": "00:01:09,570",
+            "end": "00:01:18,690",
+            "es": "Hoy grabé este poema.",
+            "fr": "Aujourd'hui, j'ai enregistré ce poème.",
+            "uk": "Сьогодні я записав цей вірш."
+        },
+        {
+            "start": "00:01:19,746",
+            "end": "00:01:20,206",
+            "es": "Genial.",
+            "fr": "Super.",
+            "uk": "Чудово."
+        },
+        {
+            "start": "00:01:22,178",
+            "end": "00:01:22,618",
+            "es": "El Nub.",
+            "fr": "Le Nub.",
+            "uk": "Наб."
+        },
+        {
+            "start": "00:01:24,838",
+            "end": "00:01:26,358",
+            "es": "El Nub es venerable.",
+            "fr": "Le Nub est vénérable.",
+            "uk": "Наб - це шанобливо."
+        },
+        {
+            "start": "00:01:26,838",
+            "end": "00:01:27,358",
+            "es": "Nub.",
+            "fr": "Nub.",
+            "uk": "Наб."
+        },
+        {
+            "start": "00:01:27,678",
+            "end": "00:01:27,918",
+            "es": "Sí.",
+            "fr": "Oui.",
+            "uk": "Так."
+        },
+        {
+            "start": "00:01:28,198",
+            "end": "00:01:28,918",
+            "es": "Y el,",
+            "fr": "Et le,",
+            "uk": "І,"
+        },
+        {
+            "start": "00:01:28,918",
+            "end": "00:01:30,378",
+            "es": "el...",
+            "fr": "le...",
+            "uk": "той..."
+        },
+        {
+            "start": "00:01:31,650",
+            "end": "00:01:32,910",
+            "es": "Bien, el video de hoy termina aquí.",
+            "fr": "Bien, la vidéo d'aujourd'hui se termine ici.",
+            "uk": "Добре, сьогоднішнє відео завершується тут."
+        },
+        {
+            "start": "00:01:32,930",
+            "end": "00:01:33,690",
+            "es": "El cuchillo,",
+            "fr": "Le couteau,",
+            "uk": "Ніж,"
+        },
+        {
+            "start": "00:01:33,690",
+            "end": "00:01:34,450",
+            "es": "el cuchillo,",
+            "fr": "le couteau,",
+            "uk": "ніж,"
+        },
+        {
+            "start": "00:01:34,450",
+            "end": "00:01:35,110",
+            "es": "el cuchillo,",
+            "fr": "le couteau,",
+            "uk": "ніж,"
+        },
+        {
+            "start": "00:01:35,110",
+            "end": "00:01:36,630",
+            "es": "el cuchillo está en mi pezón.",
+            "fr": "le couteau est dans mon téton.",
+            "uk": "ніж у моєму соску."
+        },
+        {
+            "start": "00:01:37,330",
+            "end": "00:01:38,930",
+            "es": "Pero él...",
+            "fr": "Mais lui...",
+            "uk": "Але він..."
+        },
+        {
+            "start": "00:01:40,450",
+            "end": "00:01:42,230",
+            "es": "Bajo presión.",
+            "fr": "Sous pression.",
+            "uk": "Під тиском."
+        },
+        {
+            "start": "00:01:43,150",
+            "end": "00:01:43,570",
+            "es": "Víspera.",
+            "fr": "Veille.",
+            "uk": "Переддень."
+        },
+        {
+            "start": "00:01:46,754",
+            "end": "00:01:47,874",
+            "es": "si...",
+            "fr": "si...",
+            "uk": "якщо..."
+        },
+        {
+            "start": "00:01:49,073",
+            "end": "00:01:50,654",
+            "es": "así que esto es así...",
+            "fr": "donc ceci est ainsi...",
+            "uk": "отже це так..."
+        },
+        {
+            "start": "00:01:51,453",
+            "end": "00:01:54,534",
+            "es": "no es como un poema",
+            "fr": "ce n'est pas comme un poème",
+            "uk": "це не як вірш"
+        },
+        {
+            "start": "00:01:55,733",
+            "end": "00:01:57,374",
+            "es": "así que si por libertad",
+            "fr": "donc si pour la liberté",
+            "uk": "отже, якщо за свободу"
+        },
+        {
+            "start": "00:01:57,374",
+            "end": "00:01:59,054",
+            "es": "lo que quiere decir es",
+            "fr": "ce que veut dire c'est",
+            "uk": "то, що мається на увазі, це"
+        },
+        {
+            "start": "00:01:59,054",
+            "end": "00:02:00,634",
+            "es": "¿pueden renunciar a eso?",
+            "fr": "peuvent-ils y renoncer?",
+            "uk": "чи можуть вони відмовитися від цього?"
+        }
+    ]
+}

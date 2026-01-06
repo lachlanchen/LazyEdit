@@ -1,0 +1,82 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:00,440\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:00,440\",\n    \"end\": \"00:00:01,460\",\n    \"lang\": \"en\",\n    \"text\": \"so first,\"\n  },\n  {\n    \"start\": \"00:00:01,460\",\n    \"end\": \"00:00:03,860\",\n    \"lang\": \"en\",\n    \"text\": \"let me put this on.\"\n  },\n  {\n    \"start\": \"00:00:05,600\",\n    \"end\": \"00:00:06,380\",\n    \"lang\": \"en\",\n    \"text\": \"One more.\"\n  },\n  {\n    \"start\": \"00:00:08,194\",\n    \"end\": \"00:00:09,514\",\n    \"lang\": \"zh\",\n    \"text\": \"木瓜油\"\n  },\n  {\n    \"start\": \"00:00:09,514\",\n    \"end\": \"00:00:12,314\",\n    \"lang\": \"en\",\n    \"text\": \"还burger\"\n  },\n  {\n    \"start\": \"00:00:16,738\",\n    \"end\": \"00:00:16,938\",\n    \"lang\": \"en\",\n    \"text\": \"so\"\n  },\n  {\n    \"start\": \"00:00:18,917\",\n    \"end\": \"00:00:20,478\",\n    \"lang\": \"en\",\n    \"text\": \"this is our\"\n  },\n  {\n    \"start\": \"00:00:20,478\",\n    \"end\": \"00:00:21,438\",\n    \"lang\": \"en\",\n    \"text\": \"flavor\"\n  },\n  {\n    \"start\": \"00:00:38,568\",\n    \"end\": \"00:00:40,218\",\n    \"lang\": \"en\",\n    \"text\": \"and our chicken\"\n  },\n  {\n    \"start\": \"00:00:52,678\",\n    \"end\": \"00:00:56,038\",\n    \"lang\": \"en\",\n    \"text\": \"now we add tarragon\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:00,440",
+            "es": "Vale,",
+            "fr": "D'accord,",
+            "uk": "Добре,"
+        },
+        {
+            "start": "00:00:00,440",
+            "end": "00:00:01,460",
+            "es": "entonces primero,",
+            "fr": "alors d'abord,",
+            "uk": "отже спочатку,"
+        },
+        {
+            "start": "00:00:01,460",
+            "end": "00:00:03,860",
+            "es": "déjame ponerme esto.",
+            "fr": "laisse-moi mettre ça.",
+            "uk": "дозвольте мені це надіти."
+        },
+        {
+            "start": "00:00:05,600",
+            "end": "00:00:06,380",
+            "es": "Una más.",
+            "fr": "Encore un.",
+            "uk": "Ще одне."
+        },
+        {
+            "start": "00:00:08,194",
+            "end": "00:00:09,514",
+            "es": "Aceite de papaya",
+            "fr": "Huile de papaye",
+            "uk": "Масло папаї"
+        },
+        {
+            "start": "00:00:09,514",
+            "end": "00:00:12,314",
+            "es": "y una hamburguesa",
+            "fr": "et un hamburger",
+            "uk": "і бургер"
+        },
+        {
+            "start": "00:00:16,738",
+            "end": "00:00:16,938",
+            "es": "entonces",
+            "fr": "alors",
+            "uk": "отже"
+        },
+        {
+            "start": "00:00:18,917",
+            "end": "00:00:20,478",
+            "es": "esto es nuestro",
+            "fr": "c'est notre",
+            "uk": "це наш"
+        },
+        {
+            "start": "00:00:20,478",
+            "end": "00:00:21,438",
+            "es": "sabor",
+            "fr": "saveur",
+            "uk": "смак"
+        },
+        {
+            "start": "00:00:38,568",
+            "end": "00:00:40,218",
+            "es": "y nuestro pollo",
+            "fr": "et notre poulet",
+            "uk": "та наш курячий"
+        },
+        {
+            "start": "00:00:52,678",
+            "end": "00:00:56,038",
+            "es": "ahora añadimos el estragón",
+            "fr": "maintenant nous ajoutons de l'estragon",
+            "uk": "тепер тархун додаємо"
+        }
+    ]
+}

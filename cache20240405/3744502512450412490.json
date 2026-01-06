@@ -1,0 +1,61 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,080\",\n    \"lang\": \"en\",\n    \"text\": \"Can you see the fork?\"\n  },\n  {\n    \"start\": \"00:00:02,580\",\n    \"end\": \"00:00:07,440\",\n    \"lang\": \"en\",\n    \"text\": \"So this is the rice noodles\"\n  },\n  {\n    \"start\": \"00:00:08,800\",\n    \"end\": \"00:00:11,920\",\n    \"lang\": \"en\",\n    \"text\": \"with a special recipe and\"\n  },\n  {\n    \"start\": \"00:00:13,060\",\n    \"end\": \"00:00:15,580\",\n    \"lang\": \"en\",\n    \"text\": \"Coriander and spinach\"\n  },\n  {\n    \"start\": \"00:00:16,720\",\n    \"end\": \"00:00:17,280\",\n    \"lang\": \"en\",\n    \"text\": \"sprouts\"\n  },\n  {\n    \"start\": \"00:00:18,660\",\n    \"end\": \"00:00:23,140\",\n    \"lang\": \"en\",\n    \"text\": \"I decided not to use the flavor bag it provided.\"\n  },\n  {\n    \"start\": \"00:00:23,140\",\n    \"end\": \"00:00:25,400\",\n    \"lang\": \"en\",\n    \"text\": \"I use my own flavor\"\n  },\n  {\n    \"start\": \"00:00:26,400\",\n    \"end\": \"00:00:26,900\",\n    \"lang\": \"en\",\n    \"text\": \"Okay\"\n  }\n]\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,080",
+            "es": "¿Puedes ver el tenedor?",
+            "fr": "Peux-tu voir la fourchette ?",
+            "uk": "Ти бачиш виделку?"
+        },
+        {
+            "start": "00:00:02,580",
+            "end": "00:00:07,440",
+            "es": "Así que estos son los fideos de arroz",
+            "fr": "Alors, voici les nouilles de riz",
+            "uk": "Отже, це рисові локшина"
+        },
+        {
+            "start": "00:00:08,800",
+            "end": "00:00:11,920",
+            "es": "con una receta especial y",
+            "fr": "avec une recette spéciale et",
+            "uk": "з особливим рецептом і"
+        },
+        {
+            "start": "00:00:13,060",
+            "end": "00:00:15,580",
+            "es": "Cilantro y espinacas",
+            "fr": "Coriandre et épinards",
+            "uk": "Коріандр та шпинат"
+        },
+        {
+            "start": "00:00:16,720",
+            "end": "00:00:17,280",
+            "es": "brotes",
+            "fr": "pousses",
+            "uk": "паростки"
+        },
+        {
+            "start": "00:00:18,660",
+            "end": "00:00:23,140",
+            "es": "Decidí no usar la bolsa de sabor que proporcionaba.",
+            "fr": "J'ai décidé de ne pas utiliser le sachet d'assaisonnement fourni.",
+            "uk": "Я вирішив не використовувати наданий пакетик зі смаколиками."
+        },
+        {
+            "start": "00:00:23,140",
+            "end": "00:00:25,400",
+            "es": "Utilizo mi propio sabor",
+            "fr": "J'utilise mon propre assaisonnement",
+            "uk": "Я використовую свій власний смак"
+        },
+        {
+            "start": "00:00:26,400",
+            "end": "00:00:26,900",
+            "es": "Vale",
+            "fr": "D'accord",
+            "uk": "Добре"
+        }
+    ]
+}

@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,180\",\n    \"lang\": \"en\",\n    \"text\": \"I'm not joking.\"\n  },\n  {\n    \"start\": \"00:00:01,180\",\n    \"end\": \"00:00:08,039\",\n    \"lang\": \"en\",\n    \"text\": \"This chicken is really the best chicken I've ever cooked.\"\n  },\n  {\n    \"start\": \"00:00:16,580\",\n    \"end\": \"00:00:21,740\",\n    \"lang\": \"en\",\n    \"text\": \"Even though my cooking skill baseline is quite high,\"\n  },\n  {\n    \"start\": \"00:00:21,740\",\n    \"end\": \"00:00:24,420\",\n    \"lang\": \"en\",\n    \"text\": \"this is high over the high.\"\n  },\n  {\n    \"start\": \"00:00:34,940\",\n    \"end\": \"00:00:36,060\",\n    \"lang\": \"en\",\n    \"text\": \"It's so delicious.\"\n  },\n  {\n    \"start\": \"00:00:42,400\",\n    \"end\": \"00:00:47,140\",\n    \"lang\": \"en\",\n    \"text\": \"I should let the people around the world know my cooking skill.\"\n  },\n  {\n    \"start\": \"00:00:53,506\",\n    \"end\": \"00:00:54,286\",\n    \"lang\": \"ja\",\n    \"text\": \"今日のページ\"\n  },\n  {\n    \"start\": \"00:00:55,106\",\n    \"end\": \"00:00:55,886\",\n    \"lang\": \"en\",\n    \"text\": \"Give me a platform,\"\n  },\n  {\n    \"start\": \"00:00:55,886\",\n    \"end\": \"00:00:58,406\",\n    \"lang\": \"en\",\n    \"text\": \"let me serve you guys.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,180",
+            "es": "No estoy bromeando.",
+            "fr": "Je ne plaisante pas.",
+            "uk": "Я не жартую."
+        },
+        {
+            "start": "00:00:01,180",
+            "end": "00:00:08,039",
+            "es": "Este pollo es realmente el mejor pollo que he cocinado.",
+            "fr": "Ce poulet est vraiment le meilleur poulet que j'ai jamais cuisiné.",
+            "uk": "Цей курча справді найкраще, яке я коли-небудь готував."
+        },
+        {
+            "start": "00:00:16,580",
+            "end": "00:00:21,740",
+            "es": "Aunque mi nivel de habilidad en la cocina es bastante alto,",
+            "fr": "Même si mon niveau de compétence en cuisine est assez élevé,",
+            "uk": "Хоча мій базовий рівень кулінарних навичок досить високий,"
+        },
+        {
+            "start": "00:00:21,740",
+            "end": "00:00:24,420",
+            "es": "esto está por encima de lo alto.",
+            "fr": "c'est au-dessus du haut.",
+            "uk": "це вище за високе."
+        },
+        {
+            "start": "00:00:34,940",
+            "end": "00:00:36,060",
+            "es": "Es tan delicioso.",
+            "fr": "C'est tellement délicieux.",
+            "uk": "Це так смачно."
+        },
+        {
+            "start": "00:00:42,400",
+            "end": "00:00:47,140",
+            "es": "Debería dejar que la gente de todo el mundo conozca mi habilidad culinaria.",
+            "fr": "Je devrais laisser le monde entier connaître mon talent culinaire.",
+            "uk": "Я маю повідомити людям по всьому світі про мої кулінарні навички."
+        },
+        {
+            "start": "00:00:53,506",
+            "end": "00:00:54,286",
+            "es": "La página de hoy",
+            "fr": "La page d'aujourd'hui",
+            "uk": "Сьогоднішня сторінка"
+        },
+        {
+            "start": "00:00:55,106",
+            "end": "00:00:55,886",
+            "es": "Dame una plataforma,",
+            "fr": "Donne-moi une plateforme,",
+            "uk": "Дайте мені платформу,"
+        },
+        {
+            "start": "00:00:55,886",
+            "end": "00:00:58,406",
+            "es": "permítanme servirles.",
+            "fr": "laissez-moi vous servir.",
+            "uk": "дозвольте мені вам послужити."
+        }
+    ]
+}

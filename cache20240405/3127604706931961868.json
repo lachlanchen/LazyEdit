@@ -1,0 +1,77 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,699\",\n    \"end\": \"00:00:01,980\",\n    \"lang\": \"en\",\n    \"text\": \"so let me try this\"\n  },\n  {\n    \"start\": \"00:00:04,674\",\n    \"end\": \"00:00:05,094\",\n    \"lang\": \"zh\",\n    \"text\": \"س平ين\"\n  },\n  {\n    \"start\": \"00:00:13,154\",\n    \"end\": \"00:00:14,814\",\n    \"lang\": \"zh\",\n    \"text\": \"冒菜是一个人的火锅\"\n  },\n  {\n    \"start\": \"00:00:15,213\",\n    \"end\": \"00:00:17,134\",\n    \"lang\": \"zh\",\n    \"text\": \"火锅是一群人的冒菜\"\n  },\n  {\n    \"start\": \"00:00:20,514\",\n    \"end\": \"00:00:20,794\",\n    \"lang\": \"ja\",\n    \"text\": \"うん、\"\n  },\n  {\n    \"start\": \"00:00:20,794\",\n    \"end\": \"00:00:21,354\",\n    \"lang\": \"ja\",\n    \"text\": \"はい\"\n  },\n  {\n    \"start\": \"00:00:23,618\",\n    \"end\": \"00:00:23,818\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:23,818\",\n    \"end\": \"00:00:24,058\",\n    \"lang\": \"en\",\n    \"text\": \"okay.\"\n  },\n  {\n    \"start\": \"00:00:24,058\",\n    \"end\": \"00:00:24,698\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:00:24,698\",\n    \"end\": \"00:00:25,038\",\n    \"lang\": \"en\",\n    \"text\": \"See you\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,699",
+            "end": "00:00:01,980",
+            "en": "so let me try this",
+            "zh": "让我试试这个",
+            "ar": "دعني أحاول هذا"
+        },
+        {
+            "start": "00:00:04,674",
+            "end": "00:00:05,094",
+            "en": "Delicious",
+            "zh": "好吃",
+            "ar": "لذيذ"
+        },
+        {
+            "start": "00:00:13,154",
+            "end": "00:00:14,814",
+            "en": "Mao cai is hot pot for one person",
+            "zh": "冒菜是一个人的火锅",
+            "ar": "ماو تساي هو الهوت بوت لشخص واحد"
+        },
+        {
+            "start": "00:00:15,213",
+            "end": "00:00:17,134",
+            "en": "Hot pot is mao cai for a group of people",
+            "zh": "火锅是一群人的冒菜",
+            "ar": "الهوت بوت هو ماو تساي لمجموعة من الناس"
+        },
+        {
+            "start": "00:00:20,514",
+            "end": "00:00:20,794",
+            "en": "Yes,",
+            "zh": "嗯、",
+            "ar": "نعم،",
+            "ja": "うん、"
+        },
+        {
+            "start": "00:00:20,794",
+            "end": "00:00:21,354",
+            "en": "Okay",
+            "zh": "好的",
+            "ar": "حسنًا",
+            "ja": "はい"
+        },
+        {
+            "start": "00:00:23,618",
+            "end": "00:00:23,818",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنًا،"
+        },
+        {
+            "start": "00:00:23,818",
+            "end": "00:00:24,058",
+            "en": "okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:24,058",
+            "end": "00:00:24,698",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:00:24,698",
+            "end": "00:00:25,038",
+            "en": "See you",
+            "zh": "再见",
+            "ar": "أراك لاحقًا"
+        }
+    ]
+}

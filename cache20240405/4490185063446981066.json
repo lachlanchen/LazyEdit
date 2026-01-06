@@ -1,0 +1,45 @@
+{
+    "prompt": "Translate the following subtitles into Vietnamese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:00,578\",\n    \"end\": \"00:01:03,398\",\n    \"lang\": \"en\",\n    \"text\": \"So we have tamago,\"\n  },\n  {\n    \"start\": \"00:01:03,398\",\n    \"end\": \"00:01:04,697\",\n    \"lang\": \"en\",\n    \"text\": \"blueberry,\"\n  },\n  {\n    \"start\": \"00:01:04,697\",\n    \"end\": \"00:01:05,678\",\n    \"lang\": \"en\",\n    \"text\": \"strawberry,\"\n  },\n  {\n    \"start\": \"00:01:05,678\",\n    \"end\": \"00:01:07,918\",\n    \"lang\": \"en\",\n    \"text\": \"chestnut,\"\n  },\n  {\n    \"start\": \"00:01:07,918\",\n    \"end\": \"00:01:10,958\",\n    \"lang\": \"en\",\n    \"text\": \"and sweet potato,\"\n  },\n  {\n    \"start\": \"00:01:10,958\",\n    \"end\": \"00:01:12,178\",\n    \"lang\": \"en\",\n    \"text\": \"and peach.\"\n  },\n  {\n    \"start\": \"00:01:13,958\",\n    \"end\": \"00:01:14,358\",\n    \"lang\": \"en\",\n    \"text\": \"So,\"\n  },\n  {\n    \"start\": \"00:01:14,358\",\n    \"end\": \"00:01:15,298\",\n    \"lang\": \"en\",\n    \"text\": \"see you!\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"vi\": \"Vietnamese text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:01:00,578",
+            "end": "00:01:03,398",
+            "vi": "Vậy chúng ta có tamago,"
+        },
+        {
+            "start": "00:01:03,398",
+            "end": "00:01:04,697",
+            "vi": "quả việt quất,"
+        },
+        {
+            "start": "00:01:04,697",
+            "end": "00:01:05,678",
+            "vi": "dâu tây,"
+        },
+        {
+            "start": "00:01:05,678",
+            "end": "00:01:07,918",
+            "vi": "hạt dẻ,"
+        },
+        {
+            "start": "00:01:07,918",
+            "end": "00:01:10,958",
+            "vi": "và khoai lang,"
+        },
+        {
+            "start": "00:01:10,958",
+            "end": "00:01:12,178",
+            "vi": "và đào."
+        },
+        {
+            "start": "00:01:13,958",
+            "end": "00:01:14,358",
+            "vi": "Vậy,"
+        },
+        {
+            "start": "00:01:14,358",
+            "end": "00:01:15,298",
+            "vi": "hẹn gặp lại!"
+        }
+    ]
+}

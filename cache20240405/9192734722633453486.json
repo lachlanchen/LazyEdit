@@ -1,0 +1,54 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"So I share a trick to remember this Arabic letter.\"\n  },\n  {\n    \"start\": \"00:00:04,740\",\n    \"end\": \"00:00:05,000\",\n    \"lang\": \"en\",\n    \"text\": \"Four.\"\n  },\n  {\n    \"start\": \"00:00:05,620\",\n    \"end\": \"00:00:08,740\",\n    \"lang\": \"en\",\n    \"text\": \"So this looks quite like a people that fell down.\"\n  },\n  {\n    \"start\": \"00:00:09,780\",\n    \"end\": \"00:00:13,560\",\n    \"lang\": \"en\",\n    \"text\": \"So it's a four,\"\n  },\n  {\n    \"start\": \"00:00:13,560\",\n    \"end\": \"00:00:14,300\",\n    \"lang\": \"en\",\n    \"text\": \"fall down.\"\n  },\n  {\n    \"start\": \"00:00:16,059\",\n    \"end\": \"00:00:16,700\",\n    \"lang\": \"en\",\n    \"text\": \"Right?\"\n  },\n  {\n    \"start\": \"00:00:18,020\",\n    \"end\": \"00:00:18,660\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "en": "So I share a trick to remember this Arabic letter.",
+            "zh": "所以我分享一个记住这个阿拉伯字母的技巧。",
+            "ar": "لذا، أنا أشارك حيلة لتذكر هذا الحرف العربي."
+        },
+        {
+            "start": "00:00:04,740",
+            "end": "00:00:05,000",
+            "en": "Four.",
+            "zh": "四。",
+            "ar": "أربعة."
+        },
+        {
+            "start": "00:00:05,620",
+            "end": "00:00:08,740",
+            "en": "So this looks quite like a people that fell down.",
+            "zh": "所以这看起来很像倒下的人。",
+            "ar": "لذا، هذا يبدو وكأن شخصاً قد سقط."
+        },
+        {
+            "start": "00:00:09,780",
+            "end": "00:00:13,560",
+            "en": "So it's a four,",
+            "zh": "所以这是一个四，",
+            "ar": "لذا، إنها أربعة،"
+        },
+        {
+            "start": "00:00:13,560",
+            "end": "00:00:14,300",
+            "en": "fall down.",
+            "zh": "跌倒。",
+            "ar": "يسقط."
+        },
+        {
+            "start": "00:00:16,059",
+            "end": "00:00:16,700",
+            "en": "Right?",
+            "zh": "对吧？",
+            "ar": "أليس كذلك؟"
+        },
+        {
+            "start": "00:00:18,020",
+            "end": "00:00:18,660",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}

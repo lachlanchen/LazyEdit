@@ -1,0 +1,68 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:01,282\",\n    \"end\": \"00:01:03,282\",\n    \"lang\": \"zh\",\n    \"text\": \"没有花香\"\n  },\n  {\n    \"start\": \"00:01:04,361\",\n    \"end\": \"00:01:07,162\",\n    \"lang\": \"zh\",\n    \"text\": \"没有树高\"\n  },\n  {\n    \"start\": \"00:01:27,473\",\n    \"end\": \"00:01:28,374\",\n    \"lang\": \"en\",\n    \"text\": \"I don't know if it's right here.\"\n  },\n  {\n    \"start\": \"00:01:30,978\",\n    \"end\": \"00:01:35,618\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香 沒有樹高\"\n  },\n  {\n    \"start\": \"00:01:36,618\",\n    \"end\": \"00:01:39,158\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香\"\n  },\n  {\n    \"start\": \"00:01:39,718\",\n    \"end\": \"00:01:42,398\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有樹高\"\n  },\n  {\n    \"start\": \"00:01:42,398\",\n    \"end\": \"00:01:45,038\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香\"\n  },\n  {\n    \"start\": \"00:01:45,858\",\n    \"end\": \"00:01:48,138\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有樹高\"\n  },\n  {\n    \"start\": \"00:01:49,778\",\n    \"end\": \"00:01:55,338\",\n    \"lang\": \"zh\",\n    \"text\": \"沒有花香 沒有樹高\"\n  }\n]\n\nONlY and MUST output JSON format:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:01,282",
+            "end": "00:01:03,282",
+            "en": "No fragrance of flowers",
+            "zh": "没有花香",
+            "ar": "لا رائحة للزهور"
+        },
+        {
+            "start": "00:01:04,361",
+            "end": "00:01:07,162",
+            "en": "No height of trees",
+            "zh": "没有树高",
+            "ar": "لا ارتفاع للأشجار"
+        },
+        {
+            "start": "00:01:27,473",
+            "end": "00:01:28,374",
+            "en": "I don't know if it's right here.",
+            "zh": "我不知道这里是否正确。",
+            "ar": "لا أعرف إذا كان هذا صحيحًا هنا."
+        },
+        {
+            "start": "00:01:30,978",
+            "end": "00:01:35,618",
+            "en": "No fragrance of flowers, no height of trees",
+            "zh": "沒有花香 沒有樹高",
+            "ar": "لا رائحة للزهور، لا ارتفاع للأشجار"
+        },
+        {
+            "start": "00:01:36,618",
+            "end": "00:01:39,158",
+            "en": "No fragrance of flowers",
+            "zh": "沒有花香",
+            "ar": "لا رائحة للزهور"
+        },
+        {
+            "start": "00:01:39,718",
+            "end": "00:01:42,398",
+            "en": "No height of trees",
+            "zh": "沒有樹高",
+            "ar": "لا ارتفاع للأشجار"
+        },
+        {
+            "start": "00:01:42,398",
+            "end": "00:01:45,038",
+            "en": "No fragrance of flowers",
+            "zh": "沒有花香",
+            "ar": "لا رائحة للزهور"
+        },
+        {
+            "start": "00:01:45,858",
+            "end": "00:01:48,138",
+            "en": "No height of trees",
+            "zh": "沒有樹高",
+            "ar": "لا ارتفاع للأشجار"
+        },
+        {
+            "start": "00:01:49,778",
+            "end": "00:01:55,338",
+            "en": "No fragrance of flowers, no height of trees",
+            "zh": "沒有花香 沒有樹高",
+            "ar": "لا رائحة للزهور، لا ارتفاع للأشجار"
+        }
+    ]
+}

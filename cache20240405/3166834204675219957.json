@@ -1,0 +1,40 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,680\",\n    \"lang\": \"en\",\n    \"text\": \"There is no such thing as happiness after suffering.\"\n  },\n  {\n    \"start\": \"00:00:03,960\",\n    \"end\": \"00:00:04,520\",\n    \"lang\": \"en\",\n    \"text\": \"If you suffer,\"\n  },\n  {\n    \"start\": \"00:00:04,520\",\n    \"end\": \"00:00:05,060\",\n    \"lang\": \"en\",\n    \"text\": \"you suffer.\"\n  },\n  {\n    \"start\": \"00:00:07,460\",\n    \"end\": \"00:00:10,920\",\n    \"lang\": \"en\",\n    \"text\": \"If you can't enjoy your life now,\"\n  },\n  {\n    \"start\": \"00:00:10,920\",\n    \"end\": \"00:00:14,400\",\n    \"lang\": \"en\",\n    \"text\": \"then you will never enjoy it until you can enjoy it.\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,680",
+            "es": "No existe tal cosa como la felicidad después del sufrimiento.",
+            "fr": "Il n'y a pas de bonheur après la souffrance.",
+            "uk": "Немає такої речі як щастя після страждань."
+        },
+        {
+            "start": "00:00:03,960",
+            "end": "00:00:04,520",
+            "es": "Si sufres,",
+            "fr": "Si vous souffrez,",
+            "uk": "Якщо ти страждаєш,"
+        },
+        {
+            "start": "00:00:04,520",
+            "end": "00:00:05,060",
+            "es": "sufres.",
+            "fr": "vous souffrez.",
+            "uk": "ти страждаєш."
+        },
+        {
+            "start": "00:00:07,460",
+            "end": "00:00:10,920",
+            "es": "Si no puedes disfrutar tu vida ahora,",
+            "fr": "Si vous ne pouvez pas profiter de votre vie maintenant,",
+            "uk": "Якщо ти не можеш насолоджуватися своїм життям зараз,"
+        },
+        {
+            "start": "00:00:10,920",
+            "end": "00:00:14,400",
+            "es": "entonces nunca la disfrutarás hasta que puedas disfrutarla.",
+            "fr": "alors vous ne l'apprécierez jamais jusqu'à ce que vous puissiez en profiter.",
+            "uk": "тоді ти ніколи не насолодишся нею, доки не зможеш насолоджуватися."
+        }
+    ]
+}

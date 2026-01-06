@@ -1,0 +1,15 @@
+{
+    "prompt": "Translate the following subtitles into Japanese. \n\nPlease PRESERVE ALL the original timestamps for EACH ENTRY.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:03,479\",\n    \"end\": \"00:00:08,860\",\n    \"lang\": \"zh\",\n    \"text\": \"老板家的这个肥肠好做又好吃\"\n  },\n  {\n    \"start\": \"00:00:12,639\",\n    \"end\": \"00:00:14,380\",\n    \"lang\": \"zh\",\n    \"text\": \"会回购哦\"\n  }\n]\n\nONLY and ALWAYS return a valid JSON back:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with optional furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:03,479",
+            "end": "00:00:08,860",
+            "ja": "老板家のこの脂肪腸は作るのも食べるのもいいです"
+        },
+        {
+            "start": "00:00:12,639",
+            "end": "00:00:14,380",
+            "ja": "リピート買いしますよ"
+        }
+    ]
+}

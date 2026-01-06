@@ -1,0 +1,30 @@
+{
+    "prompt": "Given the Japanese subtitles, add furigana annotations correctly based on the context. Use the format '<Kanji>[Furigana]' for annotations. Correct any speech recognition errors and inconsistencies based on context.\n\nPRESERVE the original timestamps. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,320\",\n    \"ja\": \"<車窓>[]からの<景色>[]\"\n  },\n  {\n    \"start\": \"00:00:02,320\",\n    \"end\": \"00:00:02,420\",\n    \"ja\": \"<富士山>[]を<過>[]ぎて\"\n  },\n  {\n    \"start\": \"00:00:02,420\",\n    \"end\": \"00:00:03,060\",\n    \"ja\": \"<金色>[]の<巨大>[]なものが\"\n  },\n  {\n    \"start\": \"00:00:06,114\",\n    \"end\": \"00:00:07,014\",\n    \"ja\": \"<悪>[]くない、\"\n  },\n  {\n    \"start\": \"00:00:07,014\",\n    \"end\": \"00:00:07,294\",\n    \"ja\": \"<全然悪>[]くない。\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ja\": \"Japanese text with furigana annotations\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,320",
+            "ja": "<車窓>[しゃそう]からの<景色>[けしき]"
+        },
+        {
+            "start": "00:00:02,320",
+            "end": "00:00:02,420",
+            "ja": "<富士山>[ふじさん]を<過>[す]ぎて"
+        },
+        {
+            "start": "00:00:02,420",
+            "end": "00:00:03,060",
+            "ja": "<金色>[こんじき]の<巨大>[きょだい]なものが"
+        },
+        {
+            "start": "00:00:06,114",
+            "end": "00:00:07,014",
+            "ja": "<悪>[わる]くない、"
+        },
+        {
+            "start": "00:00:07,014",
+            "end": "00:00:07,294",
+            "ja": "<全然悪>[ぜんぜんわる]くない。"
+        }
+    ]
+}

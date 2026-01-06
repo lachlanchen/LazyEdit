@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:02,040\",\n    \"lang\": \"en\",\n    \"text\": \"Okay,\"\n  },\n  {\n    \"start\": \"00:00:02,040\",\n    \"end\": \"00:00:03,600\",\n    \"lang\": \"en\",\n    \"text\": \"Konnichiwa.\"\n  },\n  {\n    \"start\": \"00:00:03,600\",\n    \"end\": \"00:00:10,220\",\n    \"lang\": \"en\",\n    \"text\": \"It takes about one hour to cook these fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:11,670\",\n    \"end\": \"00:00:14,560\",\n    \"lang\": \"en\",\n    \"text\": \"This is snow fast noodles.\"\n  },\n  {\n    \"start\": \"00:00:14,560\",\n    \"end\": \"00:00:17,340\",\n    \"lang\": \"en\",\n    \"text\": \"Sorry.\"\n  },\n  {\n    \"start\": \"00:00:18,670\",\n    \"end\": \"00:00:27,200\",\n    \"lang\": \"en\",\n    \"text\": \"Another thing that has this duality of slowness and fastness is my YouTube channel.\"\n  },\n  {\n    \"start\": \"00:00:27,200\",\n    \"end\": \"00:00:33,720\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks for the guy that now it surpassed 50.\"\n  },\n  {\n    \"start\": \"00:00:34,340\",\n    \"end\": \"00:00:36,180\",\n    \"lang\": \"en\",\n    \"text\": \"When I say 50,\"\n  },\n  {\n    \"start\": \"00:00:36,180\",\n    \"end\": \"00:00:37,720\",\n    \"lang\": \"en\",\n    \"text\": \"I don't mean it's half a million.\"\n  },\n  {\n    \"start\": \"00:00:37,720\",\n    \"end\": \"00:00:39,040\",\n    \"lang\": \"en\",\n    \"text\": \"It's really 50.\"\n  },\n  {\n    \"start\": \"00:00:39,040\",\n    \"end\": \"00:00:40,620\",\n    \"lang\": \"en\",\n    \"text\": \"Thanks.\"\n  },\n  {\n    \"start\": \"00:00:42,080\",\n    \"end\": \"00:00:43,500\",\n    \"lang\": \"en\",\n    \"text\": \"I believe 50 is enough.\"\n  },\n  {\n    \"start\": \"00:00:43,500\",\n    \"end\": \"00:00:44,860\",\n    \"lang\": \"en\",\n    \"text\": \"If I serve this,\"\n  },\n  {\n    \"start\": \"00:00:44,860\",\n    \"end\": \"00:00:46,020\",\n    \"lang\": \"en\",\n    \"text\": \"50 people will.\"\n  },\n  {\n    \"start\": \"00:00:46,020\",\n    \"end\": \"00:00:47,520\",\n    \"lang\": \"en\",\n    \"text\": \"It's gorgeous.\"\n  },\n  {\n    \"start\": \"00:00:52,039\",\n    \"end\": \"00:00:56,800\",\n    \"lang\": \"en\",\n    \"text\": \"I believe this guy,\"\n  },\n  {\n    \"start\": \"00:00:56,800\",\n    \"end\": \"00:00:59,280\",\n    \"lang\": \"en\",\n    \"text\": \"someone that followed me,\"\n  },\n  {\n    \"start\": \"00:00:59,280\",\n    \"end\": \"00:01:00,400\",\n    \"lang\": \"en\",\n    \"text\": \"subscribed my channel.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:02,040",
+            "en": "Okay,",
+            "zh": "好的，",
+            "ar": "حسنا،"
+        },
+        {
+            "start": "00:00:02,040",
+            "end": "00:00:03,600",
+            "en": "Hello.",
+            "zh": "你好。",
+            "ar": "مرحبا."
+        },
+        {
+            "start": "00:00:03,600",
+            "end": "00:00:10,220",
+            "en": "It takes about one hour to cook these instant noodles.",
+            "zh": "这些速食面需要大约一个小时来烹饪。",
+            "ar": "يستغرق طهي هذه النودلز السريعة حوالي ساعة واحدة."
+        },
+        {
+            "start": "00:00:11,670",
+            "end": "00:00:14,560",
+            "en": "These are instant snow noodles.",
+            "zh": "这些是即食雪面。",
+            "ar": "هذه هي نودلز الثلج الفورية."
+        },
+        {
+            "start": "00:00:14,560",
+            "end": "00:00:17,340",
+            "en": "Sorry.",
+            "zh": "对不起。",
+            "ar": "آسف."
+        },
+        {
+            "start": "00:00:18,670",
+            "end": "00:00:27,200",
+            "en": "Another thing that has this duality of slowness and speed is my YouTube channel.",
+            "zh": "另一样具有缓慢和速度双重性的东西是我的YouTube频道。",
+            "ar": "شيء آخر يتمتع بهذا الثنائية من البطء والسرعة هو قناتي على يوتيوب."
+        },
+        {
+            "start": "00:00:27,200",
+            "end": "00:00:33,720",
+            "en": "Thanks to everyone, now it has surpassed 50.",
+            "zh": "感谢大家，现在它已经超过了50。",
+            "ar": "شكرا للجميع، لقد تجاوز الآن 50."
+        },
+        {
+            "start": "00:00:34,340",
+            "end": "00:00:36,180",
+            "en": "When I say 50,",
+            "zh": "当我说50时，",
+            "ar": "عندما أقول 50،"
+        },
+        {
+            "start": "00:00:36,180",
+            "end": "00:00:37,720",
+            "en": "I don't mean it's half a million.",
+            "zh": "我不是说它是五十万。",
+            "ar": "لا أعني أنها نصف مليون."
+        },
+        {
+            "start": "00:00:37,720",
+            "end": "00:00:39,040",
+            "en": "It's really 50.",
+            "zh": "真的是50。",
+            "ar": "إنها حقا 50."
+        },
+        {
+            "start": "00:00:39,040",
+            "end": "00:00:40,620",
+            "en": "Thanks.",
+            "zh": "谢谢。",
+            "ar": "شكرا."
+        },
+        {
+            "start": "00:00:42,080",
+            "end": "00:00:43,500",
+            "en": "I believe 50 is enough.",
+            "zh": "我相信50就足够了。",
+            "ar": "أعتقد أن 50 كافية."
+        },
+        {
+            "start": "00:00:43,500",
+            "end": "00:00:44,860",
+            "en": "If I serve this,",
+            "zh": "如果我提供这个，",
+            "ar": "إذا قدمت هذا،"
+        },
+        {
+            "start": "00:00:44,860",
+            "end": "00:00:46,020",
+            "en": "50 people will be satisfied.",
+            "zh": "50人将会满意。",
+            "ar": "سيكون 50 شخصًا راضين."
+        },
+        {
+            "start": "00:00:46,020",
+            "end": "00:00:47,520",
+            "en": "It's gorgeous.",
+            "zh": "它非常美。",
+            "ar": "إنه رائع."
+        },
+        {
+            "start": "00:00:52,039",
+            "end": "00:00:56,800",
+            "en": "I believe this person,",
+            "zh": "我相信这个人，",
+            "ar": "أعتقد هذا الشخص،"
+        },
+        {
+            "start": "00:00:56,800",
+            "end": "00:00:59,280",
+            "en": "someone that followed me,",
+            "zh": "有人跟随了我，",
+            "ar": "شخص تابعني،"
+        },
+        {
+            "start": "00:00:59,280",
+            "end": "00:01:00,400",
+            "en": "subscribed to my channel.",
+            "zh": "订阅了我的频道。",
+            "ar": "اشترك في قناتي."
+        }
+    ]
+}

@@ -1,0 +1,47 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:01:02,930\",\n    \"end\": \"00:01:13,730\",\n    \"lang\": \"en\",\n    \"text\": \"so French speakers may think that English pronunciation is vascular.\"\n  },\n  {\n    \"start\": \"00:01:13,730\",\n    \"end\": \"00:01:23,430\",\n    \"lang\": \"en\",\n    \"text\": \"And the British think the American accent is vascular.\"\n  },\n  {\n    \"start\": \"00:01:23,430\",\n    \"end\": \"00:01:28,050\",\n    \"lang\": \"en\",\n    \"text\": \"It's not a horse talks.\"\n  },\n  {\n    \"start\": \"00:01:30,274\",\n    \"end\": \"00:01:30,494\",\n    \"lang\": \"zh\",\n    \"text\": \"再見\"\n  },\n  {\n    \"start\": \"00:01:32,514\",\n    \"end\": \"00:01:40,154\",\n    \"lang\": \"en\",\n    \"text\": \"was a great great what a what a noble it's not a noble so the british thing\"\n  },\n  {\n    \"start\": \"00:01:40,154\",\n    \"end\": \"00:01:42,034\",\n    \"lang\": \"en\",\n    \"text\": \"and him the british accent is\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:01:02,930",
+            "end": "00:01:13,730",
+            "en": "so French speakers may think that English pronunciation is peculiar.",
+            "zh": "所以法语使用者可能认为英语发音很特别。",
+            "ar": "لذا قد يعتقد متحدثو الفرنسية أن نطق الإنجليزية غريب."
+        },
+        {
+            "start": "00:01:13,730",
+            "end": "00:01:23,430",
+            "en": "And the British think the American accent is peculiar.",
+            "zh": "而英国人认为美国口音很特别。",
+            "ar": "ويعتقد البريطانيون أن اللهجة الأمريكية غريبة."
+        },
+        {
+            "start": "00:01:23,430",
+            "end": "00:01:28,050",
+            "en": "It's not how a horse talks.",
+            "zh": "这不是马如何讲话。",
+            "ar": "ليس هذا كيف يتحدث الحصان."
+        },
+        {
+            "start": "00:01:30,274",
+            "end": "00:01:30,494",
+            "en": "Goodbye",
+            "zh": "再见",
+            "ar": "وداعا"
+        },
+        {
+            "start": "00:01:32,514",
+            "end": "00:01:40,154",
+            "en": "it was a great, great, what a noble it's not noble so the British think",
+            "zh": "这是很伟大、很高贵的，不是高贵的，所以英国人认为",
+            "ar": "كان عظيماً، عظيماً، ما هو نبيل هذا ليس نبيلاً لذا يعتقد البريطانيون"
+        },
+        {
+            "start": "00:01:40,154",
+            "end": "00:01:42,034",
+            "en": "and they think the British accent is",
+            "zh": "他们认为英国口音是",
+            "ar": "ويعتقدون أن اللهجة البريطانية هي"
+        }
+    ]
+}

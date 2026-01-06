@@ -1,0 +1,131 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with translations in Spanish, French, and Ukrainian, maintaining the original timestamps. \n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example. Note that the original timestamps should be preserved for each entry.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:01,940\",\n    \"lang\": \"en\",\n    \"text\": \"This is my dinner tonight.\"\n  },\n  {\n    \"start\": \"00:00:02,594\",\n    \"end\": \"00:00:03,014\",\n    \"lang\": \"zh\",\n    \"text\": \"愛你\"\n  },\n  {\n    \"start\": \"00:00:03,414\",\n    \"end\": \"00:00:04,374\",\n    \"lang\": \"zh\",\n    \"text\": \"太酷了\"\n  },\n  {\n    \"start\": \"00:00:04,930\",\n    \"end\": \"00:00:05,350\",\n    \"lang\": \"en\",\n    \"text\": \"Can't deem.\"\n  },\n  {\n    \"start\": \"00:00:06,786\",\n    \"end\": \"00:00:09,046\",\n    \"lang\": \"zh\",\n    \"text\": \"这个是我也不知道发的对不对哈\"\n  },\n  {\n    \"start\": \"00:00:09,046\",\n    \"end\": \"00:00:10,706\",\n    \"lang\": \"zh\",\n    \"text\": \"港大的太古食堂\"\n  },\n  {\n    \"start\": \"00:00:11,246\",\n    \"end\": \"00:00:14,286\",\n    \"lang\": \"zh\",\n    \"text\": \"这个云南米线还挺出名的\"\n  },\n  {\n    \"start\": \"00:00:15,606\",\n    \"end\": \"00:00:17,466\",\n    \"lang\": \"zh\",\n    \"text\": \"上次吃还挺好吃的\"\n  },\n  {\n    \"start\": \"00:00:17,466\",\n    \"end\": \"00:00:19,006\",\n    \"lang\": \"zh\",\n    \"text\": \"做的也太潦草了\"\n  },\n  {\n    \"start\": \"00:00:19,086\",\n    \"end\": \"00:00:20,446\",\n    \"lang\": \"zh\",\n    \"text\": \"这个还是生的\"\n  },\n  {\n    \"start\": \"00:00:21,326\",\n    \"end\": \"00:00:22,246\",\n    \"lang\": \"zh\",\n    \"text\": \"无所谓了\"\n  },\n  {\n    \"start\": \"00:00:22,826\",\n    \"end\": \"00:00:23,646\",\n    \"lang\": \"zh\",\n    \"text\": \"相信它吧\"\n  },\n  {\n    \"start\": \"00:00:24,866\",\n    \"end\": \"00:00:25,446\",\n    \"lang\": \"en\",\n    \"text\": \"What the d traffic light?\"\n  },\n  {\n    \"start\": \"00:00:25,954\",\n    \"end\": \"00:00:26,274\",\n    \"lang\": \"zh\",\n    \"text\": \"OK\"\n  },\n  {\n    \"start\": \"00:00:26,754\",\n    \"end\": \"00:00:27,874\",\n    \"lang\": \"zh\",\n    \"text\": \"看着好美味\"\n  },\n  {\n    \"start\": \"00:00:28,094\",\n    \"end\": \"00:00:28,674\",\n    \"lang\": \"zh\",\n    \"text\": \"太美味了\"\n  },\n  {\n    \"start\": \"00:00:28,714\",\n    \"end\": \"00:00:29,374\",\n    \"lang\": \"zh\",\n    \"text\": \"口水都流出来了\"\n  },\n  {\n    \"start\": \"00:00:30,946\",\n    \"end\": \"00:00:32,286\",\n    \"lang\": \"en\",\n    \"text\": \"My mouth is watering.\"\n  }\n]\n\nOutput JSON format only:\n```json[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"es\": \"spanish text\",\n    \"fr\": \"french text\",\n    \"uk\": \"ukrainian text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:01,940",
+            "es": "Esta es mi cena de esta noche.",
+            "fr": "C'est mon dîner ce soir.",
+            "uk": "Це моя вечеря на сьогодні."
+        },
+        {
+            "start": "00:00:02,594",
+            "end": "00:00:03,014",
+            "es": "Te amo",
+            "fr": "Je t'aime",
+            "uk": "Я тебе люблю"
+        },
+        {
+            "start": "00:00:03,414",
+            "end": "00:00:04,374",
+            "es": "Es genial",
+            "fr": "C'est génial",
+            "uk": "Це круто"
+        },
+        {
+            "start": "00:00:04,930",
+            "end": "00:00:05,350",
+            "es": "No puedo entender.",
+            "fr": "Je ne peux pas comprendre.",
+            "uk": "Я не можу зрозуміти."
+        },
+        {
+            "start": "00:00:06,786",
+            "end": "00:00:09,046",
+            "es": "No sé si esto es correcto, ja",
+            "fr": "Je ne sais pas si c'est correct, haha",
+            "uk": "Я не впевнений, чи це правильно, ха"
+        },
+        {
+            "start": "00:00:09,046",
+            "end": "00:00:10,706",
+            "es": "El comedor de Taikoo en la Universidad de Hong Kong",
+            "fr": "La cafétéria Taikoo à l'Université de Hong Kong",
+            "uk": "Столова Тайку в Гонконзькому університеті"
+        },
+        {
+            "start": "00:00:11,246",
+            "end": "00:00:14,286",
+            "es": "Este fideo de arroz de Yunnan es bastante famoso",
+            "fr": "Ce riz nouilles de Yunnan est assez célèbre",
+            "uk": "Ці рисові локшина з Юннаня досить відомі"
+        },
+        {
+            "start": "00:00:15,606",
+            "end": "00:00:17,466",
+            "es": "La última vez que comí estaba muy bueno",
+            "fr": "La dernière fois que j'ai mangé, c'était très bon",
+            "uk": "Останній раз, коли я їв, було дуже смачно"
+        },
+        {
+            "start": "00:00:17,466",
+            "end": "00:00:19,006",
+            "es": "Está hecho de manera muy descuidada",
+            "fr": "C'est fait de manière négligée",
+            "uk": "Зроблено дуже недбало"
+        },
+        {
+            "start": "00:00:19,086",
+            "end": "00:00:20,446",
+            "es": "Esto todavía está crudo",
+            "fr": "C'est encore cru",
+            "uk": "Це ще сире"
+        },
+        {
+            "start": "00:00:21,326",
+            "end": "00:00:22,246",
+            "es": "No importa",
+            "fr": "Peu importe",
+            "uk": "Неважливо"
+        },
+        {
+            "start": "00:00:22,826",
+            "end": "00:00:23,646",
+            "es": "Confía en ello",
+            "fr": "Faites-lui confiance",
+            "uk": "Довіряйте цьому"
+        },
+        {
+            "start": "00:00:24,866",
+            "end": "00:00:25,446",
+            "es": "¿Qué pasa con el semáforo?",
+            "fr": "Qu'est-ce qui se passe avec le feu de circulation ?",
+            "uk": "Що зі світлофором?"
+        },
+        {
+            "start": "00:00:25,954",
+            "end": "00:00:26,274",
+            "es": "OK",
+            "fr": "D'accord",
+            "uk": "Добре"
+        },
+        {
+            "start": "00:00:26,754",
+            "end": "00:00:27,874",
+            "es": "Parece muy delicioso",
+            "fr": "Ça a l'air très délicieux",
+            "uk": "Це виглядає дуже смачно"
+        },
+        {
+            "start": "00:00:28,094",
+            "end": "00:00:28,674",
+            "es": "Es demasiado delicioso",
+            "fr": "C'est trop délicieux",
+            "uk": "Це надто смачно"
+        },
+        {
+            "start": "00:00:28,714",
+            "end": "00:00:29,374",
+            "es": "Se me hace agua la boca",
+            "fr": "J'en ai l'eau à la bouche",
+            "uk": "В мене текуть слинки"
+        },
+        {
+            "start": "00:00:30,946",
+            "end": "00:00:32,286",
+            "es": "Se me hace agua la boca.",
+            "fr": "J'ai l'eau à la bouche.",
+            "uk": "В мене текуть слинки."
+        }
+    ]
+}

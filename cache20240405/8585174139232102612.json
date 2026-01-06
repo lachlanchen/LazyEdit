@@ -1,0 +1,25 @@
+{
+    "prompt": "Translate the following subtitles into Korean. \n\nCorrect speech recognition errors and inconsistencies based on context.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS. \n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:00:00,000\",\n    \"end\": \"00:00:03,580\",\n    \"lang\": \"en\",\n    \"text\": \"Can you see the fork on top of this?\"\n  },\n  {\n    \"start\": \"00:00:06,178\",\n    \"end\": \"00:00:06,858\",\n    \"lang\": \"ja\",\n    \"text\": \"言えません\"\n  },\n  {\n    \"start\": \"00:00:07,842\",\n    \"end\": \"00:00:25,322\",\n    \"lang\": \"en\",\n    \"text\": \"I put this flavor in a freezer compartment so that it can keep the food longer.\"\n  },\n  {\n    \"start\": \"00:00:28,002\",\n    \"end\": \"00:00:29,222\",\n    \"lang\": \"en\",\n    \"text\": \"And that's it.\"\n  }\n]\n\nOutput JSON format only:\n```json\n[\n  {\n    \"start\": \"timestamp\",\n    \"end\": \"timestamp\",\n    \"ko\": \"Korean text\"\n  }\n]\n```",
+    "response": [
+        {
+            "start": "00:00:00,000",
+            "end": "00:00:03,580",
+            "ko": "이 위에 포크를 볼 수 있나요?"
+        },
+        {
+            "start": "00:00:06,178",
+            "end": "00:00:06,858",
+            "ko": "말할 수 없어요"
+        },
+        {
+            "start": "00:00:07,842",
+            "end": "00:00:25,322",
+            "ko": "이 향을 냉동실에 넣어서 음식을 더 오래 보관할 수 있도록 했어요."
+        },
+        {
+            "start": "00:00:28,002",
+            "end": "00:00:29,222",
+            "ko": "그게 다에요."
+        }
+    ]
+}

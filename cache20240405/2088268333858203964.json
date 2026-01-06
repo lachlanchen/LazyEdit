@@ -1,0 +1,33 @@
+{
+    "prompt": "Below are mixed language subtitles extracted from a video, including timestamps, language indicators, and the subtitle text itself. The task is to ensure that each subtitle is presented with English (en), Chinese (zh), and Arabic (ar) translations, maintaining the original timestamps.\n\nCorrect some apparent speech recognition error and inconsistencies, especially homonym and mumble in both origin and its translation based on the context.\n\nProcess the following subtitles, ensuring translations are accurate and coherent, and format the output as shown in the example.\n\nNote that the original timestamps should be PRESERVED for each entry.\n\nPLEASE DON'T CHANGE ORIGINAL TIMESTAMPS.\n\nSubtitles to process:\n[\n  {\n    \"start\": \"00:03:57,158\",\n    \"end\": \"00:03:57,198\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:03:57,218\",\n    \"end\": \"00:03:57,238\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:04:11,238\",\n    \"end\": \"00:04:12,638\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  },\n  {\n    \"start\": \"00:04:13,918\",\n    \"end\": \"00:04:15,318\",\n    \"lang\": \"en\",\n    \"text\": \"Okay.\"\n  }\n]\n\nOutput JSON format only:\n```json\n        [\n            {\n                \"start\": \"timestamp\",  // Start time of the subtitle\n                \"end\": \"timestamp\",    // End time of the subtitle\n                \"en\": \"English text\",  // English translation\n                \"zh\": \"Chinese text\",  // Chinese translation\n                \"ar\": \"Arabic text\",    // Arabic translation\n                // \"...\": \"Text in the original language, if not in the listed before.\"\n            }\n        ]\n        \n```",
+    "response": [
+        {
+            "start": "00:03:57,158",
+            "end": "00:03:57,198",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:03:57,218",
+            "end": "00:03:57,238",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:04:11,238",
+            "end": "00:04:12,638",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        },
+        {
+            "start": "00:04:13,918",
+            "end": "00:04:15,318",
+            "en": "Okay.",
+            "zh": "好的。",
+            "ar": "حسنًا."
+        }
+    ]
+}
