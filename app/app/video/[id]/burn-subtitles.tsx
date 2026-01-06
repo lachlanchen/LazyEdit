@@ -668,7 +668,7 @@ export default function BurnSubtitlesScreen() {
               {status.output_url ? (
                 <View style={styles.previewBox}>
                   {React.createElement('video', {
-                    src: `${API_URL}${status.output_url}`,
+                    src: `${API_URL}${status.output_url}?t=${status.id}`,
                     controls: true,
                     style: {
                       width: '100%',
