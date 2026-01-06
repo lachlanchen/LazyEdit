@@ -86,7 +86,7 @@ GRAMMAR_PALETTE_DIR = os.path.join(
 DEFAULT_TRANSLATION_STYLE = {
     "outlineEnabled": True,
     "shadowEnabled": True,
-    "outlineThickness": 1.5,
+    "outlineThickness": 10.0,
     "paletteMode": "base",
     "bgColor": "#000000",
     "bgOpacity": 0.5,
@@ -126,7 +126,7 @@ def _sanitize_translation_style(payload: dict | None) -> dict:
         outline_thickness = float(payload.get("outlineThickness", DEFAULT_TRANSLATION_STYLE["outlineThickness"]))
     except Exception:
         outline_thickness = DEFAULT_TRANSLATION_STYLE["outlineThickness"]
-    outline_thickness = min(max(outline_thickness, 0.0), 4.0)
+    outline_thickness = min(max(outline_thickness, 0.0), 20.0)
 
     return {
         "outlineEnabled": bool(payload.get("outlineEnabled", DEFAULT_TRANSLATION_STYLE["outlineEnabled"])),

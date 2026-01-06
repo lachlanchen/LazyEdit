@@ -342,7 +342,7 @@ export default function TranslationsScreen() {
   const [palette, setPalette] = useState<GrammarPalette | null>(null);
   const [outlineEnabled, setOutlineEnabled] = useState(true);
   const [shadowEnabled, setShadowEnabled] = useState(true);
-  const [outlineThickness, setOutlineThickness] = useState(1.5);
+  const [outlineThickness, setOutlineThickness] = useState(10);
   const [paletteMode, setPaletteMode] = useState('base');
   const [bgColor, setBgColor] = useState('#000000');
   const [bgOpacity, setBgOpacity] = useState('0.5');
@@ -616,8 +616,8 @@ export default function TranslationsScreen() {
             label="Outline thickness"
             value={outlineThickness}
             min={0}
-            max={4}
-            step={0.2}
+            max={20}
+            step={1}
             onChange={setOutlineThickness}
           />
         </View>
