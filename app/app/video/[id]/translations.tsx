@@ -70,10 +70,13 @@ const PALETTE_OPTIONS: SelectOption[] = [
 
 const BG_COLOR_OPTIONS: SelectOption[] = [
   { value: '#000000', label: 'Black' },
+  { value: '#ffffff', label: 'White' },
   { value: '#0f172a', label: 'Slate' },
   { value: '#111827', label: 'Charcoal' },
   { value: '#1e293b', label: 'Midnight' },
   { value: '#1f2937', label: 'Graphite' },
+  { value: '#dbeafe', label: 'Light blue' },
+  { value: '#fef9c3', label: 'Light yellow' },
 ];
 
 const BG_OPACITY_OPTIONS: SelectOption[] = [
