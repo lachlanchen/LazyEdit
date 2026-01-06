@@ -16,6 +16,8 @@ type BurnSlot = {
   slot: number;
   language: string | null;
   fontScale?: number;
+  romaji?: boolean;
+  pinyin?: boolean;
 };
 
 type BurnStatus = {
@@ -69,10 +71,10 @@ const DEFAULT_ROMAJI = true;
 const DEFAULT_PINYIN = true;
 
 const DEFAULT_SLOTS: BurnSlot[] = [
-  { slot: 1, language: null, fontScale: 1 },
-  { slot: 2, language: 'en', fontScale: 1 },
-  { slot: 3, language: 'ja', fontScale: 1 },
-  { slot: 4, language: null, fontScale: 1 },
+  { slot: 1, language: null, fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN },
+  { slot: 2, language: 'en', fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN },
+  { slot: 3, language: 'ja', fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN },
+  { slot: 4, language: null, fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN },
 ];
 
 const ROW_OPTIONS: SelectOption[] = Array.from({ length: 6 }, (_, idx) => ({
@@ -90,6 +92,9 @@ const formatSlotLabel = (slotId: number, rows: number, cols: number) => {
   const row = Math.floor((slotId - 1) / cols) + 1;
   return `Slot ${slotId} · Row ${row} · Col ${col}`;
 };
+
+const isJapanese = (lang?: string | null) => lang === 'ja';
+const isChinese = (lang?: string | null) => lang === 'zh' || lang === 'zh-Hant' || lang === 'zh-Hans';
 
 const shortLabelForLanguage = (lang?: string | null) => {
   if (!lang) return '—';
@@ -218,8 +223,6 @@ export default function BurnSubtitlesScreen() {
   const [rows, setRows] = useState(DEFAULT_ROWS);
   const [cols, setCols] = useState(DEFAULT_COLS);
   const [liftSlots, setLiftSlots] = useState(DEFAULT_LIFT_SLOTS);
-  const [romajiEnabled, setRomajiEnabled] = useState(DEFAULT_ROMAJI);
-  const [pinyinEnabled, setPinyinEnabled] = useState(DEFAULT_PINYIN);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoAspect, setVideoAspect] = useState<number | null>(null);
   const [previewWidth, setPreviewWidth] = useState(0);
@@ -252,7 +255,13 @@ export default function BurnSubtitlesScreen() {
     const next: BurnSlot[] = [];
     for (let slotId = 1; slotId <= total; slotId += 1) {
       const existing = map.get(slotId);
-      next.push({ slot: slotId, language: existing?.language ?? null, fontScale: existing?.fontScale ?? 1 });
+      next.push({
+        slot: slotId,
+        language: existing?.language ?? null,
+        fontScale: existing?.fontScale ?? 1,
+        romaji: existing?.romaji ?? DEFAULT_ROMAJI,
+        pinyin: existing?.pinyin ?? DEFAULT_PINYIN,
+      });
     }
     return next;
   };
@@ -303,6 +312,8 @@ export default function BurnSubtitlesScreen() {
             slot: slot.slot,
             language: slot.language || null,
             fontScale: typeof slot.fontScale === 'number' ? slot.fontScale : 1,
+            romaji: typeof slot.romaji === 'boolean' ? slot.romaji : DEFAULT_ROMAJI,
+            pinyin: typeof slot.pinyin === 'boolean' ? slot.pinyin : DEFAULT_PINYIN,
           }));
         const total = nextRows * nextCols;
         if (normalized.length) setSlots(buildSlotList(normalized, total));
@@ -312,12 +323,6 @@ export default function BurnSubtitlesScreen() {
       }
       if (typeof value?.liftSlots === 'number') {
         setLiftSlots(value.liftSlots);
-      }
-      if (typeof value?.romajiEnabled === 'boolean') {
-        setRomajiEnabled(value.romajiEnabled);
-      }
-      if (typeof value?.pinyinEnabled === 'boolean') {
-        setPinyinEnabled(value.pinyinEnabled);
       }
     } catch (_err) {
       // ignore
@@ -359,7 +364,7 @@ export default function BurnSubtitlesScreen() {
 
   useEffect(() => {
     if (!layoutLoaded) return;
-    const payload = { slots, heightRatio, rows, cols, liftSlots, romajiEnabled, pinyinEnabled };
+    const payload = { slots, heightRatio, rows, cols, liftSlots };
     const timeout = setTimeout(async () => {
       try {
         await fetch(`${API_URL}/api/ui-settings/burn_layout`, {
@@ -372,7 +377,7 @@ export default function BurnSubtitlesScreen() {
       }
     }, 200);
     return () => clearTimeout(timeout);
-  }, [slots, heightRatio, rows, cols, liftSlots, romajiEnabled, pinyinEnabled, layoutLoaded]);
+  }, [slots, heightRatio, rows, cols, liftSlots, layoutLoaded]);
 
   useEffect(() => {
     if (!layoutLoaded) return;
@@ -389,6 +394,12 @@ export default function BurnSubtitlesScreen() {
   const updateSlotScale = (slotId: number, scale: number) => {
     setSlots((prev) =>
       prev.map((slot) => (slot.slot === slotId ? { ...slot, fontScale: scale } : slot))
+    );
+  };
+
+  const updateSlotToggle = (slotId: number, field: 'romaji' | 'pinyin', value: boolean) => {
+    setSlots((prev) =>
+      prev.map((slot) => (slot.slot === slotId ? { ...slot, [field]: value } : slot))
     );
   };
 
@@ -419,7 +430,7 @@ export default function BurnSubtitlesScreen() {
       const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols, liftSlots, romajiEnabled, pinyinEnabled } }),
+        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols, liftSlots } }),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -502,6 +513,34 @@ export default function BurnSubtitlesScreen() {
                   onChange={(value) => updateSlotScale(slot.slot, value)}
                   formatValue={(value) => `${value.toFixed(2)}x`}
                 />
+                {isJapanese(slot.language) ? (
+                  <View style={styles.slotToggleRow}>
+                    <View style={styles.slotToggleText}>
+                      <Text style={styles.slotToggleLabel}>Romaji</Text>
+                      <Text style={styles.slotToggleHint}>Above kana-only words</Text>
+                    </View>
+                    <Switch
+                      value={slot.romaji ?? DEFAULT_ROMAJI}
+                      onValueChange={(value) => updateSlotToggle(slot.slot, 'romaji', value)}
+                      trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                      thumbColor={slot.romaji ?? DEFAULT_ROMAJI ? '#f8fafc' : '#f1f5f9'}
+                    />
+                  </View>
+                ) : null}
+                {isChinese(slot.language) ? (
+                  <View style={styles.slotToggleRow}>
+                    <View style={styles.slotToggleText}>
+                      <Text style={styles.slotToggleLabel}>Pinyin</Text>
+                      <Text style={styles.slotToggleHint}>Above Chinese text</Text>
+                    </View>
+                    <Switch
+                      value={slot.pinyin ?? DEFAULT_PINYIN}
+                      onValueChange={(value) => updateSlotToggle(slot.slot, 'pinyin', value)}
+                      trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                      thumbColor={slot.pinyin ?? DEFAULT_PINYIN ? '#f8fafc' : '#f1f5f9'}
+                    />
+                  </View>
+                ) : null}
               </View>
             ))}
           </View>
@@ -515,33 +554,6 @@ export default function BurnSubtitlesScreen() {
             onChange={setHeightRatio}
             formatValue={(value) => `${Math.round(value * 100)}%`}
           />
-
-          <View style={styles.toggleGroup}>
-            <View style={[styles.toggleRow, { marginBottom: 0 }]}>
-              <View style={styles.toggleText}>
-                <Text style={styles.toggleLabel}>Japanese romaji</Text>
-                <Text style={styles.toggleHint}>Show romaji above kana-only words</Text>
-              </View>
-              <Switch
-                value={romajiEnabled}
-                onValueChange={setRomajiEnabled}
-                trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
-                thumbColor={romajiEnabled ? '#f8fafc' : '#f1f5f9'}
-              />
-            </View>
-            <View style={styles.toggleRow}>
-              <View style={styles.toggleText}>
-                <Text style={styles.toggleLabel}>Chinese pinyin</Text>
-                <Text style={styles.toggleHint}>Show pinyin above Chinese text</Text>
-              </View>
-              <Switch
-                value={pinyinEnabled}
-                onValueChange={setPinyinEnabled}
-                trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
-                thumbColor={pinyinEnabled ? '#f8fafc' : '#f1f5f9'}
-              />
-            </View>
-          </View>
 
           <View style={styles.previewCard}>
             <Text style={styles.previewTitle}>Layout preview</Text>
@@ -731,23 +743,15 @@ const styles = StyleSheet.create({
     marginTop: 12,
     flexDirection: 'row',
   },
-  toggleGroup: {
-    marginTop: 12,
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    backgroundColor: '#f8fafc',
-  },
-  toggleRow: {
+  slotToggleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 10,
+    marginTop: 10,
   },
-  toggleText: { flex: 1, paddingRight: 12 },
-  toggleLabel: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
-  toggleHint: { fontSize: 11, color: '#64748b', marginTop: 2 },
+  slotToggleText: { flex: 1, paddingRight: 12 },
+  slotToggleLabel: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  slotToggleHint: { fontSize: 11, color: '#64748b', marginTop: 2 },
   select: {
     borderWidth: 1,
     borderColor: '#cbd5f5',
