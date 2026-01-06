@@ -63,6 +63,7 @@ const SLOT_COLORS = ['#22c55e', '#60a5fa', '#f59e0b', '#f472b6', '#a78bfa', '#34
 const DEFAULT_ROWS = 4;
 const DEFAULT_COLS = 1;
 const DEFAULT_HEIGHT_RATIO = 0.5;
+const DEFAULT_LIFT_SLOTS = 1;
 
 const DEFAULT_SLOTS: BurnSlot[] = [
   { slot: 1, language: null },
@@ -213,6 +214,10 @@ export default function BurnSubtitlesScreen() {
   const [heightRatio, setHeightRatio] = useState(DEFAULT_HEIGHT_RATIO);
   const [rows, setRows] = useState(DEFAULT_ROWS);
   const [cols, setCols] = useState(DEFAULT_COLS);
+  const [liftSlots, setLiftSlots] = useState(DEFAULT_LIFT_SLOTS);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoAspect, setVideoAspect] = useState<number | null>(null);
+  const [previewWidth, setPreviewWidth] = useState(0);
   const [status, setStatus] = useState<BurnStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [burning, setBurning] = useState(false);
@@ -262,6 +267,20 @@ export default function BurnSubtitlesScreen() {
     }
   };
 
+  const loadVideoDetails = async () => {
+    if (!id) return;
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}`);
+      const json = await resp.json();
+      if (!resp.ok) return;
+      if (json.media_url) {
+        setVideoUrl(`${API_URL}${json.media_url}`);
+      }
+    } catch (_err) {
+      // ignore
+    }
+  };
+
   const loadLayout = async () => {
     try {
       const resp = await fetch(`${API_URL}/api/ui-settings/burn_layout`);
@@ -284,6 +303,9 @@ export default function BurnSubtitlesScreen() {
       }
       if (typeof value?.heightRatio === 'number') {
         setHeightRatio(value.heightRatio);
+      }
+      if (typeof value?.liftSlots === 'number') {
+        setLiftSlots(value.liftSlots);
       }
     } catch (_err) {
       // ignore
@@ -315,6 +337,7 @@ export default function BurnSubtitlesScreen() {
   useEffect(() => {
     (async () => {
       setLoading(true);
+      await loadVideoDetails();
       await loadTranslations();
       await loadLayout();
       await loadBurnStatus();
@@ -324,7 +347,7 @@ export default function BurnSubtitlesScreen() {
 
   useEffect(() => {
     if (!layoutLoaded) return;
-    const payload = { slots, heightRatio, rows, cols };
+    const payload = { slots, heightRatio, rows, cols, liftSlots };
     const timeout = setTimeout(async () => {
       try {
         await fetch(`${API_URL}/api/ui-settings/burn_layout`, {
@@ -337,7 +360,7 @@ export default function BurnSubtitlesScreen() {
       }
     }, 200);
     return () => clearTimeout(timeout);
-  }, [slots, heightRatio, rows, cols, layoutLoaded]);
+  }, [slots, heightRatio, rows, cols, liftSlots, layoutLoaded]);
 
   useEffect(() => {
     if (!layoutLoaded) return;
@@ -353,8 +376,9 @@ export default function BurnSubtitlesScreen() {
 
   const isProcessing = status?.status === 'processing';
   const progressValue = typeof status?.progress === 'number' ? status.progress : null;
-  const previewHeight = 180;
-  const previewBandHeight = Math.max(20, Math.round(previewHeight * heightRatio));
+  const aspectRatio = videoAspect && videoAspect > 0 ? videoAspect : 16 / 9;
+  const previewStageHeight = previewWidth > 0 ? Math.round(previewWidth / aspectRatio) : 180;
+  const previewBandHeight = Math.max(12, Math.round(previewStageHeight * heightRatio));
   const previewCellWidth = `${Math.floor(100 / Math.max(cols, 1))}%`;
   const density = Math.min(1, previewBandHeight / Math.max(rows * 26, 1));
   const previewBandPadding = Math.max(2, Math.round(8 * density));
@@ -362,8 +386,12 @@ export default function BurnSubtitlesScreen() {
   const previewColGap = Math.max(1, Math.round(6 * density));
   const availableHeight =
     previewBandHeight - previewBandPadding * 2 - previewRowGap * (Math.max(rows, 1) - 1);
-  const previewCellHeight = Math.max(6, Math.floor(availableHeight / Math.max(rows, 1)));
-  const previewValueSize = Math.max(8, Math.min(14, Math.round(previewCellHeight * 0.65)));
+  const previewCellHeight = Math.max(2, Math.floor(availableHeight / Math.max(rows, 1)));
+  const previewValueSize = Math.max(7, Math.min(14, Math.round(previewCellHeight * 0.9)));
+  const previewLift = Math.min(
+    Math.max(0, previewStageHeight - previewBandHeight),
+    (previewCellHeight + previewRowGap) * Math.max(0, liftSlots),
+  );
 
   const burnSubtitles = async () => {
     if (!id || burning) return;
@@ -373,7 +401,7 @@ export default function BurnSubtitlesScreen() {
       const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols } }),
+        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols, liftSlots } }),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -437,16 +465,6 @@ export default function BurnSubtitlesScreen() {
             </View>
           </View>
 
-          <SliderControl
-            label="Layout height"
-            value={heightRatio}
-            min={0.2}
-            max={0.6}
-            step={0.01}
-            onChange={setHeightRatio}
-            formatValue={(value) => `${Math.round(value * 100)}%`}
-          />
-
           <View style={styles.slotGrid}>
             {sortedSlots.map((slot) => (
               <View key={slot.slot} style={styles.slotCard}>
@@ -461,15 +479,35 @@ export default function BurnSubtitlesScreen() {
             ))}
           </View>
 
+          <SliderControl
+            label="Layout height"
+            value={heightRatio}
+            min={0.2}
+            max={0.6}
+            step={0.01}
+            onChange={setHeightRatio}
+            formatValue={(value) => `${Math.round(value * 100)}%`}
+          />
+
           <View style={styles.previewCard}>
             <Text style={styles.previewTitle}>Layout preview</Text>
-            <View style={[styles.previewStage, { height: previewHeight }]}>
-              <View style={[styles.previewBand, { height: previewBandHeight, padding: previewBandPadding }]}>
+            <View
+              style={[styles.previewStage, { height: previewStageHeight }]}
+              onLayout={(event) => setPreviewWidth(event.nativeEvent.layout.width)}
+            >
+              <View
+                style={[
+                  styles.previewBand,
+                  { height: previewBandHeight, padding: previewBandPadding, bottom: previewLift },
+                ]}
+              >
                 <View style={styles.previewGrid}>
                   {sortedSlots.map((slot) => {
                     const label = shortLabelForLanguage(slot.language);
                     const colIndex = (slot.slot - 1) % Math.max(cols, 1);
                     const isLastCol = colIndex === Math.max(cols, 1) - 1;
+                    const rowIndex = Math.floor((slot.slot - 1) / Math.max(cols, 1));
+                    const isLastRow = rowIndex === Math.max(rows, 1) - 1;
                     const slotColor = SLOT_COLORS[(slot.slot - 1) % SLOT_COLORS.length];
                     return (
                       <View
@@ -479,7 +517,7 @@ export default function BurnSubtitlesScreen() {
                           {
                             width: previewCellWidth,
                             height: previewCellHeight,
-                            marginBottom: previewRowGap,
+                            marginBottom: isLastRow ? 0 : previewRowGap,
                             marginRight: isLastCol ? 0 : previewColGap,
                             backgroundColor: toRgba(slotColor, slot.language ? 0.32 : 0.12),
                           },
@@ -496,6 +534,23 @@ export default function BurnSubtitlesScreen() {
               Layout height is the subtitle band as % of full video height: {Math.round(heightRatio * 100)}%.
             </Text>
           </View>
+
+          {videoUrl
+            ? React.createElement('video', {
+                src: videoUrl,
+                preload: 'metadata',
+                style: { display: 'none' },
+                onLoadedMetadata: (event: any) => {
+                  const target = event?.target;
+                  if (target?.videoWidth && target?.videoHeight) {
+                    const ratio = target.videoWidth / target.videoHeight;
+                    if (ratio && ratio !== videoAspect) {
+                      setVideoAspect(ratio);
+                    }
+                  }
+                },
+              })
+            : null}
 
           <Pressable
             style={[styles.btnPrimary, (burning || isProcessing) && styles.btnDisabled]}
