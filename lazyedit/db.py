@@ -157,6 +157,19 @@ def ensure_schema():
         CREATE INDEX IF NOT EXISTS idx_subtitle_translations_video_lang
             ON subtitle_translations (video_id, language_code, created_at DESC);
         """,
+        # Burned subtitle videos
+        """
+        CREATE TABLE IF NOT EXISTS subtitle_burns (
+            id SERIAL PRIMARY KEY,
+            video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+            status TEXT NOT NULL,
+            output_path TEXT,
+            config JSONB,
+            error TEXT,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_subtitle_burns_video_created ON subtitle_burns (video_id, created_at DESC);",
         # UI preference storage (e.g., translation display styles)
         """
         CREATE TABLE IF NOT EXISTS ui_preferences (
@@ -275,6 +288,49 @@ def get_subtitle_translations_for_video(video_id: int) -> list[tuple]:
             (video_id,),
         )
         return cur.fetchall()
+
+
+def add_subtitle_burn(
+    video_id: int,
+    status: str,
+    output_path: str | None,
+    config: dict | None,
+    error: str | None,
+) -> int:
+    """Insert a subtitle burn row and return its ID."""
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO subtitle_burns (
+                video_id,
+                status,
+                output_path,
+                config,
+                error
+            )
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (video_id, status, output_path, json.dumps(config or {}), error),
+        )
+        (burn_id,) = cur.fetchone()
+        return burn_id
+
+
+def get_latest_subtitle_burn(video_id: int) -> tuple | None:
+    """Return latest subtitle burn row for the video."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT id, status, output_path, config, error, created_at
+            FROM subtitle_burns
+            WHERE video_id = %s
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (video_id,),
+        )
+        return cur.fetchone()
 
 
 def get_ui_preference(key: str) -> dict | None:

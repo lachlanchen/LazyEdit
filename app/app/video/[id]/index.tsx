@@ -728,6 +728,15 @@ export default function VideoDetailScreen() {
         {translateStatus ? <Text style={[styles.status, translateStatusStyle]}>{translateStatus}</Text> : null}
 
         <Pressable
+          style={styles.btnSecondaryAlt}
+          onPress={() => router.push({ pathname: '/video/[id]/burn-subtitles', params: { id: String(video.id) } })}
+        >
+          <View style={styles.btnContent}>
+            <Text style={styles.btnText}>Burn subtitles</Text>
+          </View>
+        </Pressable>
+
+        <Pressable
           style={[styles.btnSecondaryAlt, extractingKeyframes && styles.btnDisabled]}
           onPress={extractKeyframes}
           disabled={extractingKeyframes}

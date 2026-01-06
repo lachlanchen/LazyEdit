@@ -30,6 +30,7 @@ from lazyedit.subtitle_translate import SubtitlesTranslator
 from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
 from lazyedit.chinese_simplify import convert_items_to_simplified
+from lazyedit.subtitles_burner import BurnSlotConfig, burn_video_with_slots
 
 from pprint import pprint
 import json5
@@ -95,6 +96,14 @@ DEFAULT_TRANSLATION_STYLE = {
     "bgOpacity": 0.5,
 }
 DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
+DEFAULT_BURN_LAYOUT = {
+    "slots": [
+        {"slot": 1, "language": "en"},
+        {"slot": 2, "language": "ja"},
+        {"slot": 3, "language": None},
+        {"slot": 4, "language": None},
+    ]
+}
 
 
 def load_grammar_palette(lang):
@@ -192,6 +201,37 @@ def _sanitize_translation_languages(payload) -> list[str]:
         if code and code not in cleaned:
             cleaned.append(code)
     return cleaned or DEFAULT_TRANSLATION_LANGUAGES.copy()
+
+
+def _sanitize_burn_layout(payload: dict | list | None) -> dict:
+    if payload is None:
+        return DEFAULT_BURN_LAYOUT.copy()
+
+    slots_payload = None
+    if isinstance(payload, dict):
+        slots_payload = payload.get("slots")
+    elif isinstance(payload, list):
+        slots_payload = payload
+
+    if not isinstance(slots_payload, list):
+        return DEFAULT_BURN_LAYOUT.copy()
+
+    normalized_slots = []
+    for idx in range(4):
+        slot_id = idx + 1
+        language = None
+        if idx < len(slots_payload):
+            entry = slots_payload[idx]
+            if isinstance(entry, dict):
+                slot_id = int(entry.get("slot") or slot_id)
+                language = entry.get("language")
+            else:
+                language = entry
+        normalized = _normalize_translation_language(language) if language else None
+        normalized_slots.append({"slot": slot_id, "language": normalized})
+
+    normalized_slots.sort(key=lambda item: item["slot"])
+    return {"slots": normalized_slots}
 
 
 
@@ -1956,6 +1996,18 @@ def burn_subtitles(video_path, sub_path, output_path):
         print(f"Error executing FFmpeg command: {e}")
 
 
+def mux_audio(rendered_video_path: str, source_video_path: str, output_path: str):
+    audio_bitrate = get_audio_bitrate(source_video_path)
+    command = (
+        f'ffmpeg -y -i "{rendered_video_path}" -i "{source_video_path}" '
+        f'-c:v copy -c:a aac -b:a {audio_bitrate} '
+        f'-map 0:v:0 -map 1:a:0? -shortest '
+        f'"{output_path}"'
+    )
+    print("Executing command:", command)
+    subprocess.run(command, shell=True, check=True)
+
+
 # def burn_subtitles(video_path, sub_path, output_path):
 #     """
 #     Burns subtitles into a video using MoviePy and FFmpeg.
@@ -2241,7 +2293,7 @@ class GrammarPaletteHandler(CorsMixin, tornado.web.RequestHandler):
 class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self, key):
         ldb.ensure_schema()
-        if key not in {"translation_style", "translation_languages"}:
+        if key not in {"translation_style", "translation_languages", "burn_layout"}:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
         saved = ldb.get_ui_preference(key)
@@ -2249,13 +2301,17 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_TRANSLATION_STYLE})
             return self.write({"key": key, "value": _sanitize_translation_style(saved)})
+        if key == "burn_layout":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_BURN_LAYOUT})
+            return self.write({"key": key, "value": _sanitize_burn_layout(saved)})
         if not saved:
             return self.write({"key": key, "value": DEFAULT_TRANSLATION_LANGUAGES})
         return self.write({"key": key, "value": _sanitize_translation_languages(saved)})
 
     def post(self, key):
         ldb.ensure_schema()
-        if key not in {"translation_style", "translation_languages"}:
+        if key not in {"translation_style", "translation_languages", "burn_layout"}:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
         try:
@@ -2264,6 +2320,8 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             data = {}
         if key == "translation_style":
             cleaned = _sanitize_translation_style(data)
+        elif key == "burn_layout":
+            cleaned = _sanitize_burn_layout(data)
         else:
             cleaned = _sanitize_translation_languages(data)
         ldb.set_ui_preference(key, cleaned)
@@ -2980,6 +3038,146 @@ class VideoTranslationHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        ldb.ensure_schema()
+        row = ldb.get_latest_subtitle_burn(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "burn not found"})
+        burn_id, status, output_path, config, error, created_at = row
+        self.write({
+            "id": burn_id,
+            "video_id": video_id_i,
+            "status": status,
+            "output_path": output_path,
+            "output_url": media_url_for_path(output_path),
+            "config": config,
+            "error": error,
+            "created_at": created_at.isoformat() if created_at else None,
+        })
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        layout_config = _sanitize_burn_layout(data.get("layout") or data.get("slots") or data)
+        slots_config = layout_config.get("slots") or []
+
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        video_path = row[0]
+        if not video_path or not os.path.exists(video_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        assignments: list[BurnSlotConfig] = []
+        for slot in slots_config:
+            if not isinstance(slot, dict):
+                continue
+            language = slot.get("language")
+            slot_id = int(slot.get("slot") or 0)
+            if not language or slot_id <= 0:
+                continue
+
+            lang = _normalize_translation_language(language)
+            if not lang:
+                continue
+
+            translation_row = ldb.get_latest_subtitle_translation(video_id_i, lang)
+            if not translation_row and lang == "zh-Hant":
+                translation_row = ldb.get_latest_subtitle_translation(video_id_i, "zh")
+            if not translation_row:
+                self.set_status(400)
+                return self.write({"error": f"translation missing for {lang}"})
+            _, _, status, output_json_path, _, _, error, _ = translation_row
+            if status != "completed" or not output_json_path or not os.path.exists(output_json_path):
+                self.set_status(400)
+                return self.write({"error": f"translation not ready for {lang}", "details": error})
+
+            if lang in {"zh-Hant", "zh-Hans"}:
+                text_key = "zh"
+            else:
+                text_key = lang
+
+            palette = load_grammar_palette(lang)
+            auto_ruby = lang == "ja"
+            assignments.append(
+                BurnSlotConfig(
+                    slot_id=slot_id,
+                    language=lang,
+                    json_path=output_json_path,
+                    text_key=text_key,
+                    ruby_key="ruby" if lang == "ja" else None,
+                    palette=palette,
+                    auto_ruby=auto_ruby,
+                )
+            )
+
+        if not assignments:
+            self.set_status(400)
+            return self.write({"error": "no valid subtitle slots configured"})
+
+        output_folder = os.path.dirname(video_path)
+        base_name = os.path.splitext(os.path.basename(video_path))[0]
+        temp_output = os.path.join(output_folder, f"{base_name}_subtitles_render.mp4")
+        output_path = os.path.join(output_folder, f"{base_name}_subtitles.mp4")
+
+        status = "completed"
+        error_message = None
+        try:
+            burn_video_with_slots(video_path, temp_output, assignments)
+            mux_audio(temp_output, video_path, output_path)
+        except Exception as exc:
+            status = "failed"
+            error_message = str(exc)
+
+        if os.path.exists(temp_output):
+            try:
+                os.remove(temp_output)
+            except Exception:
+                pass
+
+        burn_id = ldb.add_subtitle_burn(
+            video_id_i,
+            status,
+            output_path if status == "completed" else None,
+            layout_config,
+            error_message,
+        )
+        if status != "completed":
+            self.set_status(500)
+            return self.write({"error": "burn failed", "details": error_message, "id": burn_id})
+
+        self.write({
+            "id": burn_id,
+            "video_id": video_id_i,
+            "status": status,
+            "output_path": output_path,
+            "output_url": media_url_for_path(output_path),
+            "config": layout_config,
+        })
+
+
 class VideoKeyframesHandler(CorsMixin, tornado.web.RequestHandler):
     def post(self, video_id):
         try:
@@ -3441,6 +3639,7 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/translate", VideoTranslateHandler),
         (r"/api/videos/(\d+)/translation", VideoTranslationHandler),
         (r"/api/videos/(\d+)/translations", VideoTranslationsHandler),
+        (r"/api/videos/(\d+)/burn-subtitles", VideoSubtitleBurnHandler),
         (r"/api/videos/(\d+)/captions", CaptionsHandler),
         (r"/media/(.*)", MediaHandler, {"path": upload_folder}),
     ])
