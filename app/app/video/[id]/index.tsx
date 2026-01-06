@@ -108,6 +108,8 @@ export default function VideoDetailScreen() {
   const [previewLang, setPreviewLang] = useState<'ja' | 'en'>('ja');
   const [translateLangsLoaded, setTranslateLangsLoaded] = useState(false);
   const [lightbox, setLightbox] = useState<{ url: string; label?: string } | null>(null);
+  const [previewHeight, setPreviewHeight] = useState(220);
+  const [previewFit, setPreviewFit] = useState<'cover' | 'contain'>('cover');
 
   const mediaSrc = useMemo(() => {
     if (!video?.media_url) return null;
@@ -129,6 +131,21 @@ export default function VideoDetailScreen() {
       setPreviewLang(selectedTranslateLangs[0]);
     }
   }, [selectedTranslateLangs, previewLang]);
+
+  const handlePreviewMetadata = (event: any) => {
+    const videoEl = event?.currentTarget;
+    if (!videoEl) return;
+    const width = Number(videoEl.videoWidth);
+    const height = Number(videoEl.videoHeight);
+    if (!width || !height) return;
+    if (height > width) {
+      setPreviewHeight(360);
+      setPreviewFit('contain');
+    } else {
+      setPreviewHeight(220);
+      setPreviewFit('cover');
+    }
+  };
 
   const loadTranscription = async () => {
     if (!id) return;
@@ -504,15 +521,16 @@ export default function VideoDetailScreen() {
           <Text style={styles.title}>{video.title || `Video #${video.id}`}</Text>
           <Text style={styles.meta}>{video.file_path}</Text>
           <Text style={styles.meta}>{formatTimestamp(video.created_at)}</Text>
-          <View style={styles.preview}>
+          <View style={[styles.preview, { height: previewHeight }]}>
             {Platform.OS === 'web' && mediaSrc ? (
               React.createElement('video', {
                 src: mediaSrc,
-                style: { width: '100%', height: '100%', borderRadius: 14, objectFit: 'cover' },
+                style: { width: '100%', height: '100%', borderRadius: 14, objectFit: previewFit },
                 controls: true,
                 muted: true,
                 playsInline: true,
                 preload: 'metadata',
+                onLoadedMetadata: handlePreviewMetadata,
               })
             ) : (
               <Text style={styles.previewLabel}>Preview</Text>
