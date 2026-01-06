@@ -156,16 +156,16 @@ export default function VideoDetailScreen() {
   const headerTitle = video?.title ? video.title : 'Video';
   const captionFrameItems = caption?.frames || [];
   const translateLangOptions: Array<{ code: TranslateLang; label: string }> = [
-    { code: 'ja', label: TRANSLATE_LANG_LABELS.ja },
     { code: 'en', label: TRANSLATE_LANG_LABELS.en },
+    { code: 'zh-Hant', label: TRANSLATE_LANG_LABELS['zh-Hant'] },
+    { code: 'zh-Hans', label: TRANSLATE_LANG_LABELS['zh-Hans'] },
+    { code: 'ja', label: TRANSLATE_LANG_LABELS.ja },
     { code: 'ar', label: TRANSLATE_LANG_LABELS.ar },
     { code: 'vi', label: TRANSLATE_LANG_LABELS.vi },
     { code: 'ko', label: TRANSLATE_LANG_LABELS.ko },
     { code: 'es', label: TRANSLATE_LANG_LABELS.es },
     { code: 'fr', label: TRANSLATE_LANG_LABELS.fr },
     { code: 'ru', label: TRANSLATE_LANG_LABELS.ru },
-    { code: 'zh-Hant', label: TRANSLATE_LANG_LABELS['zh-Hant'] },
-    { code: 'zh-Hans', label: TRANSLATE_LANG_LABELS['zh-Hans'] },
   ];
   const previewTranslation = translations.find((item) => item.language_code === previewLang) || null;
   const previewLabel = TRANSLATE_LANG_LABELS[previewLang] || previewLang;
