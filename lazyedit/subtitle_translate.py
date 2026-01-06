@@ -861,6 +861,67 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return plain_items, json_items
 
+    def translate_and_merge_subtitles_vi_single_pass(self, subtitles, idx):
+        """Single-pass Vietnamese translation using template prompt + schema."""
+        print("Translating subtitles to Vietnamese (single pass)...")
+
+        prompt_bundle = self._load_template_json("vietnamese_translation/prompt.json")
+        schema = self._load_template_json("vietnamese_translation/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get("system", "You are an expert Vietnamese translator.")
+        prompt = user_template.replace(
+            "{{SUBTITLES_JSON}}",
+            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="vi_single", idx=idx),
+            schema_name="vietnamese_translation_single_pass",
+        )
+
+        items = response.get("items", [])
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            text = item.get("vi") or ""
+            plain_items.append({"start": start, "end": end, "vi": text})
+            json_items.append({"start": start, "end": end, "vi": text})
+
+        return {
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_vietnamese_translation_single_pass(self):
+        """Translate Vietnamese subtitles line-by-line."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        plain_items = []
+        json_items = []
+
+        line_counter = 0
+        for batch in batches:
+            for subtitle in batch:
+                result = self.translate_and_merge_subtitles_vi_single_pass([subtitle], line_counter)
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                line_counter += 1
+
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return plain_items, json_items
+
     def translate_and_merge_subtitles_zh_hant_single_pass(self, subtitles, idx):
         """Single-pass Traditional Chinese translation using template prompt + schema."""
         print("Translating subtitles to Traditional Chinese (single pass)...")

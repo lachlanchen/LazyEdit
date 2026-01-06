@@ -72,7 +72,7 @@ type TranslationDetail = {
   created_at?: string | null;
 };
 
-type TranslateLang = 'ja' | 'en' | 'ar' | 'zh-Hant' | 'zh-Hans';
+type TranslateLang = 'ja' | 'en' | 'ar' | 'vi' | 'zh-Hant' | 'zh-Hans';
 
 const formatTimestamp = (value?: string | null) =>
   value ? value.slice(0, 19).replace('T', ' ') : 'Unknown time';
@@ -81,6 +81,7 @@ const TRANSLATE_LANG_LABELS: Record<TranslateLang, string> = {
   ja: 'Japanese',
   en: 'English',
   ar: 'Arabic',
+  vi: 'Vietnamese',
   'zh-Hant': 'Chinese (Traditional)',
   'zh-Hans': 'Chinese (Simplified)',
 };
@@ -90,6 +91,7 @@ const normalizeTranslateLang = (value: string): TranslateLang | null => {
   if (lowered === 'ja') return 'ja';
   if (lowered === 'en') return 'en';
   if (lowered === 'ar' || lowered === 'arabic') return 'ar';
+  if (lowered === 'vi' || lowered === 'vietnamese') return 'vi';
   if (['zh', 'zh-hant', 'zh_hant', 'zh-tw', 'zh-hk', 'zh-mo'].includes(lowered)) {
     return 'zh-Hant';
   }
@@ -149,6 +151,7 @@ export default function VideoDetailScreen() {
     { code: 'ja', label: TRANSLATE_LANG_LABELS.ja },
     { code: 'en', label: TRANSLATE_LANG_LABELS.en },
     { code: 'ar', label: TRANSLATE_LANG_LABELS.ar },
+    { code: 'vi', label: TRANSLATE_LANG_LABELS.vi },
     { code: 'zh-Hant', label: TRANSLATE_LANG_LABELS['zh-Hant'] },
     { code: 'zh-Hans', label: TRANSLATE_LANG_LABELS['zh-Hans'] },
   ];
