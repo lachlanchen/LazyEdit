@@ -365,7 +365,6 @@ export default function BurnSubtitlesScreen() {
       (previewBandHeight - previewBandPadding * 2 - previewRowGap * (Math.max(rows, 1) - 1)) / Math.max(rows, 1)
     )
   );
-  const previewLabelSize = Math.max(8, Math.min(11, Math.round(previewCellHeight * 0.3)));
   const previewValueSize = Math.max(10, Math.min(14, Math.round(previewCellHeight * 0.5)));
 
   const burnSubtitles = async () => {
@@ -459,7 +458,6 @@ export default function BurnSubtitlesScreen() {
                           },
                         ]}
                       >
-                        <Text style={[styles.previewCellLabel, { fontSize: previewLabelSize }]}>S{slot.slot}</Text>
                         <Text style={[styles.previewCellValue, { fontSize: previewValueSize }]}>{label}</Text>
                       </View>
                     );
@@ -620,7 +618,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 0,
   },
-  previewCellLabel: { fontSize: 10, color: '#cbd5f5', marginBottom: 2, textTransform: 'uppercase' },
   previewCellValue: { fontSize: 12, color: '#f8fafc', fontWeight: '700', textAlign: 'center' },
   previewHint: { marginTop: 8, fontSize: 11, color: '#64748b' },
   optionRow: {
