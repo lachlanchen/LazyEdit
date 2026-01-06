@@ -21,6 +21,7 @@ type BurnSlot = {
   ipa?: boolean;
   romaja?: boolean;
   jyutping?: boolean;
+  arabicTranslit?: boolean;
 };
 
 type BurnStatus = {
@@ -75,6 +76,7 @@ const DEFAULT_ROMAJI = true;
 const DEFAULT_PINYIN = true;
 const DEFAULT_JYUTPING = false;
 const DEFAULT_ROMAJA = false;
+const DEFAULT_ARABIC_TRANSLIT = false;
 
 const DEFAULT_SLOTS: BurnSlot[] = [
   {
@@ -86,6 +88,7 @@ const DEFAULT_SLOTS: BurnSlot[] = [
     ipa: false,
     romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
+    arabicTranslit: DEFAULT_ARABIC_TRANSLIT,
   },
   {
     slot: 2,
@@ -96,6 +99,7 @@ const DEFAULT_SLOTS: BurnSlot[] = [
     ipa: false,
     romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
+    arabicTranslit: DEFAULT_ARABIC_TRANSLIT,
   },
   {
     slot: 3,
@@ -106,6 +110,7 @@ const DEFAULT_SLOTS: BurnSlot[] = [
     ipa: false,
     romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
+    arabicTranslit: DEFAULT_ARABIC_TRANSLIT,
   },
   {
     slot: 4,
@@ -116,10 +121,11 @@ const DEFAULT_SLOTS: BurnSlot[] = [
     ipa: false,
     romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
+    arabicTranslit: DEFAULT_ARABIC_TRANSLIT,
   },
 ];
 
-const ROW_OPTIONS: SelectOption[] = Array.from({ length: 6 }, (_, idx) => ({
+const ROW_OPTIONS: SelectOption[] = Array.from({ length: 10 }, (_, idx) => ({
   value: String(idx + 1),
   label: String(idx + 1),
 }));
@@ -140,6 +146,7 @@ const isChinese = (lang?: string | null) => lang === 'zh' || lang === 'zh-Hant' 
 const isIpaLanguage = (lang?: string | null) => lang === 'en' || lang === 'fr';
 const isKorean = (lang?: string | null) => lang === 'ko';
 const isCantonese = (lang?: string | null) => lang === 'yue';
+const isArabic = (lang?: string | null) => lang === 'ar';
 
 const shortLabelForLanguage = (lang?: string | null) => {
   if (!lang) return '—';
@@ -309,6 +316,7 @@ export default function BurnSubtitlesScreen() {
         ipa: existing?.ipa ?? false,
         romaja: existing?.romaja ?? DEFAULT_ROMAJA,
         jyutping: existing?.jyutping ?? DEFAULT_JYUTPING,
+        arabicTranslit: existing?.arabicTranslit ?? DEFAULT_ARABIC_TRANSLIT,
       });
     }
     return next;
@@ -365,6 +373,8 @@ export default function BurnSubtitlesScreen() {
             ipa: typeof slot.ipa === 'boolean' ? slot.ipa : false,
             romaja: typeof slot.romaja === 'boolean' ? slot.romaja : DEFAULT_ROMAJA,
             jyutping: typeof slot.jyutping === 'boolean' ? slot.jyutping : DEFAULT_JYUTPING,
+            arabicTranslit:
+              typeof slot.arabicTranslit === 'boolean' ? slot.arabicTranslit : DEFAULT_ARABIC_TRANSLIT,
           }));
         const total = nextRows * nextCols;
         if (normalized.length) setSlots(buildSlotList(normalized, total));
@@ -450,7 +460,7 @@ export default function BurnSubtitlesScreen() {
 
   const updateSlotToggle = (
     slotId: number,
-    field: 'romaji' | 'pinyin' | 'ipa' | 'jyutping' | 'romaja',
+    field: 'romaji' | 'pinyin' | 'ipa' | 'jyutping' | 'romaja' | 'arabicTranslit',
     value: boolean,
   ) => {
     setSlots((prev) =>
@@ -635,6 +645,20 @@ export default function BurnSubtitlesScreen() {
                       onValueChange={(value) => updateSlotToggle(slot.slot, 'jyutping', value)}
                       trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
                       thumbColor={slot.jyutping ?? DEFAULT_JYUTPING ? '#f8fafc' : '#f1f5f9'}
+                    />
+                  </View>
+                ) : null}
+                {isArabic(slot.language) ? (
+                  <View style={styles.slotToggleRow}>
+                    <View style={styles.slotToggleText}>
+                      <Text style={styles.slotToggleLabel}>Transliteration</Text>
+                      <Text style={styles.slotToggleHint}>Buckwalter above Arabic</Text>
+                    </View>
+                    <Switch
+                      value={slot.arabicTranslit ?? DEFAULT_ARABIC_TRANSLIT}
+                      onValueChange={(value) => updateSlotToggle(slot.slot, 'arabicTranslit', value)}
+                      trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                      thumbColor={slot.arabicTranslit ?? DEFAULT_ARABIC_TRANSLIT ? '#f8fafc' : '#f1f5f9'}
                     />
                   </View>
                 ) : null}

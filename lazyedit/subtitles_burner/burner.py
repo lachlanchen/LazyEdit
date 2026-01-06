@@ -26,6 +26,7 @@ class BurnSlotConfig:
     ipa: bool = False
     jyutping: bool = False
     korean_romaja: bool = False
+    arabic_translit: bool = False
 
 
 def _load_burner_module():
@@ -103,6 +104,7 @@ def burn_video_with_slots(
                 ipa_lang = "fr-fr"
         jyutping = slot.jyutping and slot.language == "yue"
         korean_romaja = slot.korean_romaja and slot.language == "ko"
+        arabic_translit = slot.arabic_translit and slot.language == "ar"
         assignments.append(
             SlotAssignment(
                 slot_id=slot.slot_id,
@@ -121,6 +123,7 @@ def burn_video_with_slots(
                 ipa_lang=ipa_lang,
                 jyutping=jyutping,
                 korean_romaja=korean_romaja,
+                arabic_translit=arabic_translit,
             )
         )
 

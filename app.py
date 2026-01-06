@@ -102,10 +102,46 @@ DEFAULT_BURN_LAYOUT = {
     "cols": 1,
     "liftSlots": 1,
     "slots": [
-        {"slot": 1, "language": None, "romaji": True, "pinyin": True, "ipa": False, "jyutping": False, "romaja": False},
-        {"slot": 2, "language": "en", "romaji": True, "pinyin": True, "ipa": False, "jyutping": False, "romaja": False},
-        {"slot": 3, "language": "ja", "romaji": True, "pinyin": True, "ipa": False, "jyutping": False, "romaja": False},
-        {"slot": 4, "language": None, "romaji": True, "pinyin": True, "ipa": False, "jyutping": False, "romaja": False},
+        {
+            "slot": 1,
+            "language": None,
+            "romaji": True,
+            "pinyin": True,
+            "ipa": False,
+            "jyutping": False,
+            "romaja": False,
+            "arabicTranslit": False,
+        },
+        {
+            "slot": 2,
+            "language": "en",
+            "romaji": True,
+            "pinyin": True,
+            "ipa": False,
+            "jyutping": False,
+            "romaja": False,
+            "arabicTranslit": False,
+        },
+        {
+            "slot": 3,
+            "language": "ja",
+            "romaji": True,
+            "pinyin": True,
+            "ipa": False,
+            "jyutping": False,
+            "romaja": False,
+            "arabicTranslit": False,
+        },
+        {
+            "slot": 4,
+            "language": None,
+            "romaji": True,
+            "pinyin": True,
+            "ipa": False,
+            "jyutping": False,
+            "romaja": False,
+            "arabicTranslit": False,
+        },
     ]
 }
 
@@ -259,7 +295,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         return DEFAULT_BURN_LAYOUT.copy()
 
     height_ratio = min(max(height_ratio, 0.2), 0.6)
-    rows = min(max(rows, 1), 6)
+    rows = min(max(rows, 1), 10)
     cols = min(max(cols, 1), 4)
     lift_slots = min(max(lift_slots, 0), rows)
     slot_count = rows * cols
@@ -274,6 +310,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         ipa = False
         jyutping = False
         romaja = False
+        arabic_translit = False
         if isinstance(entry, dict):
             try:
                 slot_id = int(entry.get("slot") or slot_id)
@@ -294,6 +331,8 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 jyutping = entry.get("jyutping")
             if isinstance(entry.get("romaja"), bool):
                 romaja = entry.get("romaja")
+            if isinstance(entry.get("arabicTranslit"), bool):
+                arabic_translit = entry.get("arabicTranslit")
         else:
             language = entry
         if slot_id < 1 or slot_id > slot_count:
@@ -308,6 +347,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
             "ipa": ipa,
             "jyutping": jyutping,
             "romaja": romaja,
+            "arabicTranslit": arabic_translit,
         }
 
     normalized_slots = []
@@ -322,6 +362,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 "ipa": False,
                 "jyutping": False,
                 "romaja": False,
+                "arabicTranslit": False,
             },
         )
         normalized_slots.append(
@@ -334,6 +375,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 "ipa": entry.get("ipa", False),
                 "jyutping": entry.get("jyutping", False),
                 "romaja": entry.get("romaja", False),
+                "arabicTranslit": entry.get("arabicTranslit", False),
             }
         )
 
@@ -3227,6 +3269,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             ipa = slot.get("ipa") if isinstance(slot.get("ipa"), bool) else False
             jyutping = slot.get("jyutping") if isinstance(slot.get("jyutping"), bool) else False
             romaja = slot.get("romaja") if isinstance(slot.get("romaja"), bool) else False
+            arabic_translit = slot.get("arabicTranslit") if isinstance(slot.get("arabicTranslit"), bool) else False
             try:
                 font_scale = float(slot.get("fontScale", 1.0))
             except Exception:
@@ -3273,6 +3316,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     ipa=ipa and lang in {"en", "fr"},
                     jyutping=jyutping and lang == "yue",
                     korean_romaja=romaja and lang == "ko",
+                    arabic_translit=arabic_translit and lang == "ar",
                 )
             )
 
