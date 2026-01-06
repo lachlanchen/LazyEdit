@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 from openai import OpenAI
 import json
+import json5
 import traceback
 from lazyedit.openai_request_json import OpenAIRequestJSONBase, JSONParsingError, JSONValidationError
 import glob
@@ -307,10 +308,8 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
     ):
         prompt_path = os.path.join(template_dir, "prompt.json")
         schema_path = os.path.join(template_dir, "schema.json")
-        with open(prompt_path, "r", encoding="utf-8") as handle:
-            prompt_payload = json.load(handle)
-        with open(schema_path, "r", encoding="utf-8") as handle:
-            json_schema = json.load(handle)
+        prompt_payload = self._load_json_file(prompt_path)
+        json_schema = self._load_json_file(schema_path)
 
         system_content = prompt_payload.get("system") or "You are an AI assistant."
         user_template = prompt_payload.get("user") or ""
@@ -340,6 +339,18 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
         for key, value in values.items():
             rendered = rendered.replace(f"{{{{{key}}}}}", value)
         return rendered
+
+    @staticmethod
+    def _load_json_file(path: str) -> dict:
+        try:
+            with open(path, "r", encoding="utf-8") as handle:
+                return json.load(handle)
+        except json.JSONDecodeError:
+            try:
+                with open(path, "r", encoding="utf-8") as handle:
+                    return json5.load(handle)
+            except Exception as exc:
+                raise RuntimeError(f"Failed to parse JSON template: {path}") from exc
 
 
 if __name__ == "__main__":
