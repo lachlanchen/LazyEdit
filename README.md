@@ -2,6 +2,19 @@
   <img src="https://raw.githubusercontent.com/lachlanchen/lachlanchen/main/logos/banner.png" alt="LazyingArt banner" />
 </p>
 
+<p>
+  <b>Languages:</b>
+  <a href="README.md">English</a>
+  · <a href="i18n/README.zh-Hant.md">中文（繁體）</a>
+  · <a href="i18n/README.zh-Hans.md">中文 (简体)</a>
+  · <a href="i18n/README.ja.md">日本語</a>
+  · <a href="i18n/README.ko.md">한국어</a>
+  · <a href="i18n/README.vi.md">Tiếng Việt</a>
+  · <a href="i18n/README.ar.md">العربية</a>
+  · <a href="i18n/README.fr.md">Français</a>
+  · <a href="i18n/README.es.md">Español</a>
+</p>
+
 # LazyEdit
 
 LazyEdit is an AI-powered automatic video editing tool that processes videos to add professional-quality subtitles, highlights, word cards, and metadata. It streamlines the video editing workflow using advanced AI techniques to automate labor-intensive tasks.
