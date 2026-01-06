@@ -104,7 +104,11 @@ export default function VideoDetailScreen() {
   const [translateStatus, setTranslateStatus] = useState('');
   const [translateTone, setTranslateTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [disableTranslateCache, setDisableTranslateCache] = useState(false);
-  const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<Array<'ja' | 'en' | 'zh'>>(['ja', 'en']);
+  const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<Array<'ja' | 'en' | 'zh'>>([
+    'ja',
+    'en',
+    'zh',
+  ]);
   const [previewLang, setPreviewLang] = useState<'ja' | 'en' | 'zh'>('ja');
   const [translateLangsLoaded, setTranslateLangsLoaded] = useState(false);
   const [lightbox, setLightbox] = useState<{ url: string; label?: string } | null>(null);
