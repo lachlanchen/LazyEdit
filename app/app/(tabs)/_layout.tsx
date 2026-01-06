@@ -1,7 +1,7 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -18,6 +18,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const logoSource = require('../../assets/images/logo.png');
 
   return (
     <Tabs
@@ -31,6 +32,19 @@ export default function TabLayout() {
           borderTopWidth: 0,
           elevation: 0,
         },
+        headerTitleAlign: 'left',
+        headerTitle: () => (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image
+              source={logoSource}
+              style={{ height: 42, width: 54, resizeMode: 'contain', marginRight: 8 }}
+              accessibilityLabel="LazyEdit logo"
+            />
+            <Text style={{ fontSize: 16, fontWeight: '700', color: '#0f172a' }}>
+              LazyEdit - Powered by LazyingArt
+            </Text>
+          </View>
+        ),
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),

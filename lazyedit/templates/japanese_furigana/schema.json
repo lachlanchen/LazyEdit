@@ -1,0 +1,95 @@
+{
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$"
+          },
+          "end": {
+            "type": "string",
+            "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$"
+          },
+          "ja": {
+            "type": "string"
+          },
+          "ruby": {
+            "type": "string"
+          },
+          "tokens": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "word": {
+                  "type": "string"
+                },
+                "reading": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "subject",
+                    "object",
+                    "topic",
+                    "predicate",
+                    "noun",
+                    "pronoun",
+                    "verb",
+                    "i_adjective",
+                    "na_adjective",
+                    "adverb",
+                    "particle_wa",
+                    "particle_ga",
+                    "particle_wo",
+                    "particle_ni",
+                    "particle_de",
+                    "particle_to",
+                    "particle_no",
+                    "particle_he",
+                    "particle_kara",
+                    "particle_made",
+                    "particle_yori",
+                    "particle_mo",
+                    "particle_ka",
+                    "particle_ya",
+                    "particle_demo",
+                    "particle_dake",
+                    "particle_shika",
+                    "particle_nado",
+                    "particle_other",
+                    "auxiliary",
+                    "conjunction",
+                    "copula",
+                    "honorific",
+                    "humble",
+                    "counter",
+                    "number",
+                    "demonstrative",
+                    "question_word",
+                    "interjection",
+                    "prefix",
+                    "suffix",
+                    "punctuation",
+                    "other"
+                  ]
+                }
+              },
+              "required": ["word", "reading", "type"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["start", "end", "ja", "ruby", "tokens"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["items"],
+  "additionalProperties": false
+}

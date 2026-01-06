@@ -96,6 +96,66 @@ def ensure_schema():
         # Backfill/updates for evolving schema
         "ALTER TABLE generated_videos ADD COLUMN IF NOT EXISTS request_hash TEXT;",
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_generated_videos_request_hash ON generated_videos (request_hash);",
+        # Transcriptions table for raw speech-to-text outputs
+        """
+        CREATE TABLE IF NOT EXISTS transcriptions (
+            id SERIAL PRIMARY KEY,
+            video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+            language_code TEXT NOT NULL,
+            status TEXT NOT NULL,
+            output_json_path TEXT,
+            output_srt_path TEXT,
+            output_md_path TEXT,
+            error TEXT,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_transcriptions_video_created ON transcriptions (video_id, created_at DESC);",
+        # Frame captions (visual captioning) outputs
+        """
+        CREATE TABLE IF NOT EXISTS frame_captions (
+            id SERIAL PRIMARY KEY,
+            video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+            status TEXT NOT NULL,
+            output_json_path TEXT,
+            output_srt_path TEXT,
+            output_md_path TEXT,
+            error TEXT,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_frame_captions_video_created ON frame_captions (video_id, created_at DESC);",
+        # Keyframe extraction outputs
+        """
+        CREATE TABLE IF NOT EXISTS keyframe_extractions (
+            id SERIAL PRIMARY KEY,
+            video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+            status TEXT NOT NULL,
+            output_dir TEXT,
+            frame_count INTEGER,
+            error TEXT,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_keyframe_extractions_video_created ON keyframe_extractions (video_id, created_at DESC);",
+        # Subtitle translations (e.g., Japanese with furigana)
+        """
+        CREATE TABLE IF NOT EXISTS subtitle_translations (
+            id SERIAL PRIMARY KEY,
+            video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+            language_code TEXT NOT NULL,
+            status TEXT NOT NULL,
+            output_json_path TEXT,
+            output_srt_path TEXT,
+            output_ass_path TEXT,
+            error TEXT,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        """,
+        """
+        CREATE INDEX IF NOT EXISTS idx_subtitle_translations_video_lang
+            ON subtitle_translations (video_id, language_code, created_at DESC);
+        """,
     ]
 
     with get_cursor(commit=True) as cur:
@@ -136,6 +196,232 @@ def get_captions_for_video(video_id: int) -> list[tuple]:
             (video_id,),
         )
         return cur.fetchall()
+
+
+def add_subtitle_translation(
+    video_id: int,
+    language_code: str,
+    status: str,
+    output_json_path: str | None = None,
+    output_srt_path: str | None = None,
+    output_ass_path: str | None = None,
+    error: str | None = None,
+) -> int:
+    """Insert a subtitle translation row and return its ID."""
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO subtitle_translations (
+                video_id,
+                language_code,
+                status,
+                output_json_path,
+                output_srt_path,
+                output_ass_path,
+                error
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                video_id,
+                language_code,
+                status,
+                output_json_path,
+                output_srt_path,
+                output_ass_path,
+                error,
+            ),
+        )
+        (translation_id,) = cur.fetchone()
+        return translation_id
+
+
+def get_latest_subtitle_translation(video_id: int, language_code: str) -> tuple | None:
+    """Return the most recent subtitle translation row for the video/language, or None."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT id, language_code, status, output_json_path, output_srt_path, output_ass_path, error, created_at
+            FROM subtitle_translations
+            WHERE video_id = %s AND language_code = %s
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (video_id, language_code),
+        )
+        return cur.fetchone()
+
+
+def get_subtitle_translations_for_video(video_id: int) -> list[tuple]:
+    """Return list of subtitle translations for the video."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT id, language_code, status, output_json_path, output_srt_path, output_ass_path, error, created_at
+            FROM subtitle_translations
+            WHERE video_id = %s
+            ORDER BY id DESC
+            """,
+            (video_id,),
+        )
+        return cur.fetchall()
+
+
+def add_transcription(
+    video_id: int,
+    language_code: str,
+    status: str,
+    output_json_path: str | None = None,
+    output_srt_path: str | None = None,
+    output_md_path: str | None = None,
+    error: str | None = None,
+) -> int:
+    """Insert a transcription row and return its ID."""
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO transcriptions (
+                video_id,
+                language_code,
+                status,
+                output_json_path,
+                output_srt_path,
+                output_md_path,
+                error
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                video_id,
+                language_code,
+                status,
+                output_json_path,
+                output_srt_path,
+                output_md_path,
+                error,
+            ),
+        )
+        (transcription_id,) = cur.fetchone()
+        return transcription_id
+
+
+def get_latest_transcription(video_id: int) -> tuple | None:
+    """Return the most recent transcription row for the video, or None."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT id, language_code, status, output_json_path, output_srt_path, output_md_path, error, created_at
+            FROM transcriptions
+            WHERE video_id = %s
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (video_id,),
+        )
+        return cur.fetchone()
+
+
+def add_frame_caption(
+    video_id: int,
+    status: str,
+    output_json_path: str | None = None,
+    output_srt_path: str | None = None,
+    output_md_path: str | None = None,
+    error: str | None = None,
+) -> int:
+    """Insert a frame caption row and return its ID."""
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO frame_captions (
+                video_id,
+                status,
+                output_json_path,
+                output_srt_path,
+                output_md_path,
+                error
+            )
+            VALUES (%s, %s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                video_id,
+                status,
+                output_json_path,
+                output_srt_path,
+                output_md_path,
+                error,
+            ),
+        )
+        (caption_id,) = cur.fetchone()
+        return caption_id
+
+
+def get_latest_frame_caption(video_id: int) -> tuple | None:
+    """Return the most recent frame caption row for the video, or None."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT id, status, output_json_path, output_srt_path, output_md_path, error, created_at
+            FROM frame_captions
+            WHERE video_id = %s
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (video_id,),
+        )
+        return cur.fetchone()
+
+
+def add_keyframe_extraction(
+    video_id: int,
+    status: str,
+    output_dir: str | None = None,
+    frame_count: int | None = None,
+    error: str | None = None,
+) -> int:
+    """Insert a keyframe extraction row and return its ID."""
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO keyframe_extractions (
+                video_id,
+                status,
+                output_dir,
+                frame_count,
+                error
+            )
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                video_id,
+                status,
+                output_dir,
+                frame_count,
+                error,
+            ),
+        )
+        (extract_id,) = cur.fetchone()
+        return extract_id
+
+
+def get_latest_keyframe_extraction(video_id: int) -> tuple | None:
+    """Return the most recent keyframe extraction row for the video, or None."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT id, status, output_dir, frame_count, error, created_at
+            FROM keyframe_extractions
+            WHERE video_id = %s
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (video_id,),
+        )
+        return cur.fetchone()
 
 
 # --- Generated video helpers (Sora) ---

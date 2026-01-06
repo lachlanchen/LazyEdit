@@ -1,0 +1,4 @@
+{
+  "system": "You are an expert Japanese translator and furigana annotator.",
+  "user": "You are given subtitle lines as JSON.\nFor each line:\n- If text is already Japanese, polish lightly to natural Japanese without changing meaning.\n- If text is not Japanese, translate to natural Japanese.\n- Provide tokens in order with furigana readings.\n\nReturn JSON that matches the provided schema.\nRules:\n- Preserve the original start/end timestamps exactly.\n- ja: clean Japanese text (no ruby markup).\n- ruby: the same line with \"<word>[reading]\" for tokens that need furigana; keep punctuation as plain characters.\n- tokens: list of {word, reading, type} in order. reading must be hiragana. For kana-only words, reading equals the word. For punctuation, reading equals the punctuation and type is \"punctuation\".\n- type must be one of the schema enum values; if unsure use \"other\".\n- Do not add or remove lines.\n\nSubtitles:\n{{SUBTITLES_JSON}}\n"
+}

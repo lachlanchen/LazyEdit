@@ -23,6 +23,7 @@ from pprint import pprint
 import cjkwrap
 
 import glob
+from pathlib import Path
 
 import numpy as np
 
@@ -127,6 +128,90 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     def is_video_landscape(self):
         """Determine if the video is landscape or portrait based on class variables."""
         return self.video_width > self.video_height
+
+    def _templates_root(self) -> Path:
+        return Path(__file__).resolve().parent / "templates"
+
+    def _load_template_json(self, relative_path: str) -> dict:
+        path = self._templates_root() / relative_path
+        with path.open("r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+    @staticmethod
+    def _is_punctuation_token(text: str) -> bool:
+        if not text:
+            return False
+        for char in text:
+            if char.isspace():
+                continue
+            if not unicodedata.category(char).startswith("P"):
+                return False
+        return True
+
+    def _build_ruby_from_pairs(self, pairs):
+        parts = []
+        for pair in pairs or []:
+            if not isinstance(pair, (list, tuple)) or len(pair) < 2:
+                continue
+            word = str(pair[0])
+            reading = str(pair[1])
+            if not word:
+                continue
+            if self._is_punctuation_token(word) and reading == word:
+                parts.append(word)
+            else:
+                parts.append(f"<{word}>[{reading}]")
+        return "".join(parts)
+
+    @staticmethod
+    def _build_plain_from_pairs(pairs):
+        parts = []
+        for pair in pairs or []:
+            if not isinstance(pair, (list, tuple)) or len(pair) < 1:
+                continue
+            word = str(pair[0])
+            if not word:
+                continue
+            parts.append(word)
+        return "".join(parts)
+
+    @staticmethod
+    def _normalize_tokens(tokens):
+        cleaned = []
+        for token in tokens or []:
+            if not isinstance(token, dict):
+                continue
+            word = str(token.get("word") or "").strip()
+            if not word:
+                continue
+            reading = token.get("reading")
+            reading = str(reading) if reading is not None else ""
+            if not reading:
+                reading = word
+            token_type = str(token.get("type") or "other").strip() or "other"
+            cleaned.append({
+                "word": word,
+                "reading": reading,
+                "type": token_type,
+            })
+        return cleaned
+
+    @staticmethod
+    def _tokens_from_pairs(pairs):
+        tokens = []
+        for pair in pairs or []:
+            if not isinstance(pair, (list, tuple)) or len(pair) < 2:
+                continue
+            word = str(pair[0] or "").strip()
+            if not word:
+                continue
+            reading = str(pair[1] or "").strip() or word
+            tokens.append({
+                "word": word,
+                "reading": reading,
+                "type": "other",
+            })
+        return tokens
 
     def get_filename(self, lang="ja", idx=0, timestamp=None):
         base_filename = self.base_filename
@@ -568,6 +653,115 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         pprint(translated_subtitles)
 
         return translated_subtitles
+
+    def translate_and_merge_subtitles_ja_furigana_single_pass(self, subtitles, idx):
+        """Single-pass Japanese translation + furigana using template prompt + schema."""
+        print("Translating subtitles to Japanese with furigana (single pass)...")
+
+        prompt_bundle = self._load_template_json("japanese_furigana/prompt.json")
+        schema = self._load_template_json("japanese_furigana/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get(
+            "system",
+            "You are an expert Japanese translator and furigana annotator.",
+        )
+        prompt = user_template.replace(
+            "{{SUBTITLES_JSON}}",
+            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="ja_furigana_single", idx=idx),
+            schema_name="japanese_furigana_single_pass",
+        )
+
+        items = response.get("items", [])
+        ruby_items = []
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            tokens = self._normalize_tokens(item.get("tokens") or [])
+            pairs = [(token["word"], token["reading"]) for token in tokens]
+            if not pairs:
+                legacy_pairs = item.get("furigana_pairs") or []
+                if legacy_pairs:
+                    tokens = self._tokens_from_pairs(legacy_pairs)
+                    pairs = [(token["word"], token["reading"]) for token in tokens]
+            ruby_text = item.get("ruby") or self._build_ruby_from_pairs(pairs)
+            plain_text = item.get("ja") or self._build_plain_from_pairs(pairs) or self.strip_brackets(ruby_text)
+            ruby_items.append({"start": start, "end": end, "ja": ruby_text})
+            plain_items.append({"start": start, "end": end, "ja": plain_text})
+            json_items.append({
+                "start": start,
+                "end": end,
+                "ja": plain_text,
+                "ruby": ruby_text,
+                "tokens": tokens,
+                "furigana_pairs": pairs,
+            })
+
+        return {
+            "ruby": ruby_items,
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_japanese_furigana_single_pass(self):
+        """Translate + furigana annotate Japanese subtitles in batches."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        ruby_items = []
+        plain_items = []
+        json_items = []
+
+        line_counter = 0
+        for batch in batches:
+            for subtitle in batch:
+                result = self.translate_and_merge_subtitles_ja_furigana_single_pass([subtitle], line_counter)
+                ruby_items.extend(result["ruby"])
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                line_counter += 1
+
+        ruby_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return ruby_items, plain_items, json_items
+
+    def save_translated_subtitles_to_srt_path(self, translated_subtitles, output_path):
+        original = self.output_sub_path
+        self.output_sub_path = output_path
+        try:
+            self.save_translated_subtitles_to_srt(translated_subtitles)
+        finally:
+            self.output_sub_path = original
+
+    def save_translated_subtitles_to_ass_path(self, translated_subtitles, output_path):
+        original = self.output_sub_path
+        self.output_sub_path = output_path
+        try:
+            self.save_translated_subtitles_to_ass(translated_subtitles)
+        finally:
+            self.output_sub_path = original
+
+    def save_translated_subtitles_to_json_path(self, translated_subtitles, output_path):
+        original = self.output_json_path
+        self.output_json_path = output_path
+        try:
+            self.save_translated_subtitles_to_json(translated_subtitles)
+        finally:
+            self.output_json_path = original
 
     def translate_and_merge_subtitles_ko(self, subtitles, idx):
         """Request Korean subtitles with structured outputs."""

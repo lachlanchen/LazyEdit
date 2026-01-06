@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, Switch, FlatList } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 
@@ -8,7 +8,23 @@ type Lang = { code: string; name: string; plugin: string; rtl?: boolean };
 export default function SettingsScreen() {
   const [langs, setLangs] = useState<Lang[]>([]);
   const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const preferred = useMemo(
+    () => ['en', 'zh-Hant', 'zh-Hans', 'ja', 'ko', 'vi', 'ar', 'fr', 'es', 'ru'],
+    [],
+  );
   const selectedList = useMemo(() => Object.keys(selected).filter((k) => selected[k]), [selected]);
+  const orderedLangs = useMemo(() => {
+    const byCode = new Map(langs.map((lang) => [lang.code, lang]));
+    const ordered: Lang[] = [];
+    preferred.forEach((code) => {
+      const item = byCode.get(code);
+      if (item) ordered.push(item);
+    });
+    langs.forEach((lang) => {
+      if (!preferred.includes(lang.code)) ordered.push(lang);
+    });
+    return ordered;
+  }, [langs, preferred]);
 
   useEffect(() => {
     (async () => {
@@ -32,19 +48,21 @@ export default function SettingsScreen() {
 
       <FlatList
         style={{ marginTop: 12 }}
-        data={langs}
+        data={orderedLangs}
         keyExtractor={(x) => x.code}
         renderItem={({ item }) => (
-          <View style={styles.row}>
+          <Pressable
+            style={styles.row}
+            onPress={() => setSelected((s) => ({ ...s, [item.code]: !s[item.code] }))}
+          >
+            <View style={[styles.checkbox, selected[item.code] && styles.checkboxChecked]}>
+              {selected[item.code] ? <View style={styles.checkboxDot} /> : null}
+            </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.langName}>{item.name}</Text>
               <Text style={styles.langCode}>{item.code}{item.rtl ? ' · RTL' : ''}</Text>
             </View>
-            <Switch
-              value={!!selected[item.code]}
-              onValueChange={(v) => setSelected((s) => ({ ...s, [item.code]: v }))}
-            />
-          </View>
+          </Pressable>
         )}
         ListEmptyComponent={<Text style={styles.empty}>Loading languages...</Text>}
       />
@@ -64,6 +82,27 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#e2e8f0',
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#94a3b8',
+    marginRight: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f8fafc',
+  },
+  checkboxChecked: {
+    borderColor: '#2563eb',
+    backgroundColor: '#dbeafe',
+  },
+  checkboxDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 3,
+    backgroundColor: '#2563eb',
   },
   langName: { fontSize: 16, fontWeight: '600', color: '#0f172a' },
   langCode: { fontSize: 12, color: '#64748b' },

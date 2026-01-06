@@ -1,6 +1,8 @@
 LANGUAGES = {
     "en": "english",
     "zh": "chinese",
+    "zh-Hant": "chinese_traditional",
+    "zh-Hans": "chinese_simplified",
     "de": "german",
     "es": "spanish",
     "ru": "russian",
@@ -116,4 +118,6 @@ TO_LANGUAGE_CODE = {
     "sinhalese": "si",
     "castilian": "es",
     "mandarin": "zh",
+    "chinese traditional": "zh-Hant",
+    "chinese simplified": "zh-Hans",
 }
