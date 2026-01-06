@@ -19,6 +19,7 @@ class BurnSlotConfig:
     pairs_key: str = "furigana_pairs"
     palette: Optional[dict[str, Any]] = None
     auto_ruby: bool = False
+    strip_kana: bool = False
 
 
 def _load_burner_module():
@@ -93,6 +94,7 @@ def burn_video_with_slots(
                 palette=slot.palette,
                 style=TextStyle(),
                 auto_ruby=slot.auto_ruby,
+                strip_kana=slot.strip_kana,
             )
         )
 

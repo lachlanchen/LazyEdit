@@ -3180,6 +3180,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     ruby_key="ruby" if lang == "ja" else None,
                     palette=palette,
                     auto_ruby=auto_ruby,
+                    strip_kana=lang == "ja",
                 )
             )
 
