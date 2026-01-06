@@ -811,7 +811,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     backgroundColor: '#f8fafc',
   },
-  langTabActive: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
+  langTabActive: { backgroundColor: '#0f766e', borderColor: '#0f766e' },
   langTabText: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
   langTabTextActive: { color: '#f8fafc' },
   langChecklist: {
@@ -842,7 +842,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
     backgroundColor: 'white',
   },
-  langCheckBoxActive: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
+  langCheckBoxActive: { backgroundColor: '#0f766e', borderColor: '#0f766e' },
   langCheckMark: { color: 'white', fontSize: 10, fontWeight: '700' },
   langCheckLabel: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
   sectionCard: {
