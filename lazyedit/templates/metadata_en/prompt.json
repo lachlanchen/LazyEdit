@@ -1,3 +1,4 @@
 {
   "system": "You are an expert YouTube metadata editor.",
   "user": "You are given:\n- Audio transcription (primary source)\n- Keyframe captions (secondary visual source)\n- Optional creator notes\n\nUse the transcription first and only use keyframe captions for visual details. If a section is missing, make a best effort.\n\nWrite metadata in English for YouTube:\n- Title: <= 20 words\n- Brief description: <= 80 words\n- Middle description: <= 250 words\n- Long description: <= 500 words\n- Tags: 10 short tags related to the video\n- english_words_to_learn: 5 English words or phrases with timestamp_range\n- teaser: a 2-4 second range that captures the essence\n- cover: the best timestamp for a cover image\n\nCreator notes (optional): {{CUSTOM_NOTES}}\n\nKeyframe captions:\n{{CAPTIONS}}\n\nTranscription:\n{{TRANSCRIPTION}}\n\nReturn JSON that matches the provided schema. Do not add extra fields."
+}
