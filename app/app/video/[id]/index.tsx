@@ -104,6 +104,7 @@ export default function VideoDetailScreen() {
   const [translateStatus, setTranslateStatus] = useState('');
   const [translateTone, setTranslateTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [disableTranslateCache, setDisableTranslateCache] = useState(false);
+  const [translateLang, setTranslateLang] = useState<'ja' | 'en'>('ja');
   const [lightbox, setLightbox] = useState<{ url: string; label?: string } | null>(null);
 
   const mediaSrc = useMemo(() => {
@@ -113,7 +114,8 @@ export default function VideoDetailScreen() {
 
   const headerTitle = video?.title ? video.title : 'Video';
   const captionFrameItems = caption?.frames || [];
-  const japaneseTranslation = translations.find((item) => item.language_code === 'ja') || null;
+  const selectedTranslation = translations.find((item) => item.language_code === translateLang) || null;
+  const translateLangLabel = translateLang === 'ja' ? 'Japanese' : 'English';
 
   const loadTranscription = async () => {
     if (!id) return;
@@ -314,16 +316,16 @@ export default function VideoDetailScreen() {
     }
   };
 
-  const translateJapanese = async () => {
+  const translateSubtitles = async () => {
     if (!video || translating) return;
     setTranslating(true);
-    setTranslateStatus('Translating to Japanese with furigana...');
+    setTranslateStatus(`Translating to ${translateLangLabel}...`);
     setTranslateTone('neutral');
     try {
       const resp = await fetch(`${API_URL}/api/videos/${video.id}/translate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ language: 'ja', use_cache: !disableTranslateCache }),
+        body: JSON.stringify({ language: translateLang, use_cache: !disableTranslateCache }),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -331,7 +333,7 @@ export default function VideoDetailScreen() {
         setTranslateTone('bad');
         return;
       }
-      setTranslateStatus('Japanese translation complete.');
+      setTranslateStatus(`${translateLangLabel} translation complete.`);
       setTranslateTone('good');
       await loadTranslations();
     } catch (e: any) {
@@ -511,43 +513,59 @@ export default function VideoDetailScreen() {
 
         {transcribeStatus ? <Text style={[styles.status, transcribeStatusStyle]}>{transcribeStatus}</Text> : null}
 
-        <View style={styles.toggleRow}>
-          <View style={styles.toggleTextWrap}>
-            <Text style={styles.toggleTitle}>Bypass cache</Text>
-            <Text style={styles.toggleHint}>Force a fresh translation</Text>
-          </View>
+        <View style={styles.toggleRowInline}>
           <Switch
             value={disableTranslateCache}
             onValueChange={setDisableTranslateCache}
             trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
             thumbColor={disableTranslateCache ? '#f8fafc' : '#f1f5f9'}
           />
+          <View style={styles.toggleInlineText}>
+            <Text style={styles.toggleTitle}>Bypass cache</Text>
+            <Text style={styles.toggleHint}>Force a fresh translation</Text>
+          </View>
         </View>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.langTabs}>
+          {(['ja', 'en'] as const).map((lang) => {
+            const isActive = translateLang === lang;
+            const label = lang === 'ja' ? 'Japanese' : 'English';
+            return (
+              <Pressable
+                key={lang}
+                style={[styles.langTab, isActive && styles.langTabActive]}
+                onPress={() => setTranslateLang(lang)}
+              >
+                <Text style={[styles.langTabText, isActive && styles.langTabTextActive]}>{label}</Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
 
         <Pressable
           style={[styles.btnSecondaryAlt, translating && styles.btnDisabled]}
-          onPress={translateJapanese}
+          onPress={translateSubtitles}
           disabled={translating}
         >
           <View style={styles.btnContent}>
             {translating && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-            <Text style={styles.btnText}>{translating ? 'Translating...' : 'Translate to Japanese + furigana'}</Text>
+            <Text style={styles.btnText}>{translating ? 'Translating...' : 'Translate'}</Text>
           </View>
         </Pressable>
 
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Japanese translation preview</Text>
+          <Text style={styles.sectionTitle}>{translateLangLabel} translation preview</Text>
           {translationsLoading ? (
             <ActivityIndicator />
-          ) : japaneseTranslation ? (
+          ) : selectedTranslation ? (
             <>
-              <Text style={styles.sectionMeta}>Status: {japaneseTranslation.status}</Text>
-              {japaneseTranslation.preview_text ? (
-                <Text style={styles.previewText}>{japaneseTranslation.preview_text}</Text>
+              <Text style={styles.sectionMeta}>Status: {selectedTranslation.status}</Text>
+              {selectedTranslation.preview_text ? (
+                <Text style={styles.previewText}>{selectedTranslation.preview_text}</Text>
               ) : (
                 <Text style={styles.previewEmpty}>No preview available.</Text>
               )}
-              {japaneseTranslation.error ? <Text style={styles.previewError}>{japaneseTranslation.error}</Text> : null}
+              {selectedTranslation.error ? <Text style={styles.previewError}>{selectedTranslation.error}</Text> : null}
               <Pressable
                 style={styles.previewBtn}
                 onPress={() => router.push({ pathname: '/video/[id]/translations', params: { id: String(video.id) } })}
@@ -730,15 +748,27 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignSelf: 'flex-start',
   },
-  toggleRow: {
+  toggleRowInline: {
     marginTop: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
   },
-  toggleTextWrap: { flex: 1, marginRight: 12 },
+  toggleInlineText: { marginLeft: 12 },
   toggleTitle: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
   toggleHint: { fontSize: 11, color: '#64748b', marginTop: 2 },
+  langTabs: { marginTop: 10, flexGrow: 0 },
+  langTab: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginRight: 8,
+    backgroundColor: '#f8fafc',
+  },
+  langTabActive: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
+  langTabText: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
+  langTabTextActive: { color: '#f8fafc' },
   sectionCard: {
     marginTop: 16,
     padding: 14,

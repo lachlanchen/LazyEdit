@@ -293,9 +293,10 @@ export default function TranslationsScreen() {
   const [palette, setPalette] = useState<GrammarPalette | null>(null);
   const [outlineEnabled, setOutlineEnabled] = useState(true);
   const [shadowEnabled, setShadowEnabled] = useState(true);
-  const [paletteMode, setPaletteMode] = useState('deep');
+  const [paletteMode, setPaletteMode] = useState('base');
   const [bgColor, setBgColor] = useState('#000000');
   const [bgOpacity, setBgOpacity] = useState('0.5');
+  const [styleLoaded, setStyleLoaded] = useState(false);
 
   const headerTitle = useMemo(() => 'Translations', []);
 
@@ -368,6 +369,50 @@ export default function TranslationsScreen() {
       }
     })();
   }, [activeLang]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch(`${API_URL}/api/ui-settings/translation_style`);
+        const json = await resp.json();
+        if (!resp.ok) return;
+        const value = json.value || {};
+        if (typeof value.outlineEnabled === 'boolean') setOutlineEnabled(value.outlineEnabled);
+        if (typeof value.shadowEnabled === 'boolean') setShadowEnabled(value.shadowEnabled);
+        if (typeof value.paletteMode === 'string') setPaletteMode(value.paletteMode);
+        if (typeof value.bgColor === 'string') setBgColor(value.bgColor);
+        if (typeof value.bgOpacity === 'number') setBgOpacity(String(value.bgOpacity));
+        if (typeof value.bgOpacity === 'string') setBgOpacity(value.bgOpacity);
+      } catch (_err) {
+        // ignore load failures; keep defaults
+      } finally {
+        setStyleLoaded(true);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!styleLoaded) return;
+    const payload = {
+      outlineEnabled,
+      shadowEnabled,
+      paletteMode,
+      bgColor,
+      bgOpacity: Number(bgOpacity),
+    };
+    const timeout = setTimeout(async () => {
+      try {
+        await fetch(`${API_URL}/api/ui-settings/translation_style`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      } catch (_err) {
+        // ignore save failures
+      }
+    }, 250);
+    return () => clearTimeout(timeout);
+  }, [outlineEnabled, shadowEnabled, paletteMode, bgColor, bgOpacity, styleLoaded]);
 
   if (loading) {
     return (

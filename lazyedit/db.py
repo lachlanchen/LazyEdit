@@ -1,4 +1,5 @@
 import os
+import json
 import psycopg2
 from contextlib import contextmanager
 
@@ -156,6 +157,14 @@ def ensure_schema():
         CREATE INDEX IF NOT EXISTS idx_subtitle_translations_video_lang
             ON subtitle_translations (video_id, language_code, created_at DESC);
         """,
+        # UI preference storage (e.g., translation display styles)
+        """
+        CREATE TABLE IF NOT EXISTS ui_preferences (
+            key TEXT PRIMARY KEY,
+            value JSONB NOT NULL,
+            updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        """,
     ]
 
     with get_cursor(commit=True) as cur:
@@ -266,6 +275,35 @@ def get_subtitle_translations_for_video(video_id: int) -> list[tuple]:
             (video_id,),
         )
         return cur.fetchall()
+
+
+def get_ui_preference(key: str) -> dict | None:
+    with get_cursor() as cur:
+        cur.execute("SELECT value FROM ui_preferences WHERE key = %s", (key,))
+        row = cur.fetchone()
+    if not row:
+        return None
+    value = row[0]
+    if isinstance(value, dict):
+        return value
+    try:
+        return json.loads(value)
+    except Exception:
+        return None
+
+
+def set_ui_preference(key: str, value: dict) -> None:
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO ui_preferences (key, value, updated_at)
+            VALUES (%s, %s, NOW())
+            ON CONFLICT (key) DO UPDATE SET
+                value = EXCLUDED.value,
+                updated_at = EXCLUDED.updated_at
+            """,
+            (key, json.dumps(value)),
+        )
 
 
 def add_transcription(

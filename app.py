@@ -83,6 +83,14 @@ GRAMMAR_PALETTE_DIR = os.path.join(
     "grammar_palettes",
 )
 
+DEFAULT_TRANSLATION_STYLE = {
+    "outlineEnabled": True,
+    "shadowEnabled": True,
+    "paletteMode": "base",
+    "bgColor": "#000000",
+    "bgOpacity": 0.5,
+}
+
 
 def load_grammar_palette(lang):
     safe_lang = re.sub(r"[^a-zA-Z0-9_-]", "", lang or "").strip() or "default"
@@ -92,6 +100,33 @@ def load_grammar_palette(lang):
             with open(path, "r", encoding="utf-8") as handle:
                 return json.load(handle)
     return None
+
+
+def _sanitize_translation_style(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        return DEFAULT_TRANSLATION_STYLE.copy()
+
+    palette_mode = str(payload.get("paletteMode") or DEFAULT_TRANSLATION_STYLE["paletteMode"])
+    if palette_mode not in {"base", "deep", "soft", "mono"}:
+        palette_mode = DEFAULT_TRANSLATION_STYLE["paletteMode"]
+
+    bg_color = str(payload.get("bgColor") or DEFAULT_TRANSLATION_STYLE["bgColor"]).strip()
+    if not bg_color.startswith("#") or len(bg_color) not in {4, 7}:
+        bg_color = DEFAULT_TRANSLATION_STYLE["bgColor"]
+
+    try:
+        bg_opacity = float(payload.get("bgOpacity", DEFAULT_TRANSLATION_STYLE["bgOpacity"]))
+    except Exception:
+        bg_opacity = DEFAULT_TRANSLATION_STYLE["bgOpacity"]
+    bg_opacity = min(max(bg_opacity, 0.0), 1.0)
+
+    return {
+        "outlineEnabled": bool(payload.get("outlineEnabled", DEFAULT_TRANSLATION_STYLE["outlineEnabled"])),
+        "shadowEnabled": bool(payload.get("shadowEnabled", DEFAULT_TRANSLATION_STYLE["shadowEnabled"])),
+        "paletteMode": palette_mode,
+        "bgColor": bg_color,
+        "bgOpacity": bg_opacity,
+    }
 
 
 
@@ -2138,6 +2173,31 @@ class GrammarPaletteHandler(CorsMixin, tornado.web.RequestHandler):
         self.write(palette)
 
 
+class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, key):
+        ldb.ensure_schema()
+        if key != "translation_style":
+            self.set_status(404)
+            return self.write({"error": "unknown settings key"})
+        saved = ldb.get_ui_preference(key)
+        if not saved:
+            return self.write({"key": key, "value": DEFAULT_TRANSLATION_STYLE})
+        return self.write({"key": key, "value": _sanitize_translation_style(saved)})
+
+    def post(self, key):
+        ldb.ensure_schema()
+        if key != "translation_style":
+            self.set_status(404)
+            return self.write({"error": "unknown settings key"})
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+        cleaned = _sanitize_translation_style(data)
+        ldb.set_ui_preference(key, cleaned)
+        self.write({"key": key, "value": cleaned})
+
+
 class VideosHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self):
         # Return recent videos from DB
@@ -2553,7 +2613,7 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             or self.get_argument("lang", default=None)
             or "ja"
         )
-        if lang != "ja":
+        if lang not in {"ja", "en"}:
             self.set_status(400)
             return self.write({"error": f"language '{lang}' not supported yet"})
 
@@ -2594,14 +2654,19 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(400)
             return self.write({"error": "transcription missing; run Transcribe first"})
 
-        translations_dir = os.path.join(output_folder, "translations", "ja")
+        translations_dir = os.path.join(output_folder, "translations", lang)
         os.makedirs(translations_dir, exist_ok=True)
-        output_json_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.json")
-        output_srt_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.srt")
-        output_ass_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.ass")
+        if lang == "ja":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.srt")
+            output_ass_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.ass")
+        else:
+            output_json_path = os.path.join(translations_dir, f"{base_name}_en.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_en.srt")
+            output_ass_path = None
 
         for path in (output_json_path, output_srt_path, output_ass_path):
-            if os.path.exists(path):
+            if path and os.path.exists(path):
                 os.remove(path)
 
         try:
@@ -2618,10 +2683,15 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                 video_height=video_height,
                 use_cache=use_cache,
             )
-            ruby_items, plain_items, json_items = translator.process_japanese_furigana_single_pass()
-            translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-            translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
-            translator.save_translated_subtitles_to_ass_path(ruby_items, output_ass_path)
+            if lang == "ja":
+                ruby_items, plain_items, json_items = translator.process_japanese_furigana_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                translator.save_translated_subtitles_to_ass_path(ruby_items, output_ass_path)
+            else:
+                plain_items, json_items = translator.process_english_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
 
             status = "completed" if json_items else "empty"
             error_message = None
@@ -3195,6 +3265,7 @@ def make_app(upload_folder):
         # Lightweight JSON APIs for the Expo app
         (r"/api/languages", LanguagesHandler),
         (r"/api/grammar-palettes/([A-Za-z0-9_-]+)", GrammarPaletteHandler),
+        (r"/api/ui-settings/([A-Za-z0-9_-]+)", UISettingsHandler),
         (r"/api/videos", VideosHandler),
         (r"/api/videos/(\d+)", VideoDetailHandler),
         (r"/api/videos/(\d+)/transcribe", VideoTranscribeHandler),
