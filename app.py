@@ -100,6 +100,7 @@ DEFAULT_BURN_LAYOUT = {
     "heightRatio": 0.5,
     "rows": 4,
     "cols": 1,
+    "liftSlots": 1,
     "slots": [
         {"slot": 1, "language": None},
         {"slot": 2, "language": "en"},
@@ -216,6 +217,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     height_ratio = DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5)
     rows = DEFAULT_BURN_LAYOUT.get("rows", 4)
     cols = DEFAULT_BURN_LAYOUT.get("cols", 1)
+    lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 1)
     if isinstance(payload, dict):
         slots_payload = payload.get("slots")
         if "heightRatio" in payload:
@@ -233,6 +235,11 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 cols = int(payload.get("cols"))
             except Exception:
                 cols = DEFAULT_BURN_LAYOUT.get("cols", 1)
+        if "liftSlots" in payload:
+            try:
+                lift_slots = int(payload.get("liftSlots"))
+            except Exception:
+                lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 1)
     elif isinstance(payload, list):
         slots_payload = payload
 
@@ -242,6 +249,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     height_ratio = min(max(height_ratio, 0.2), 0.6)
     rows = min(max(rows, 1), 6)
     cols = min(max(cols, 1), 4)
+    lift_slots = min(max(lift_slots, 0), rows)
     slot_count = rows * cols
 
     slot_map: dict[int, str | None] = {}
@@ -270,6 +278,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         "heightRatio": height_ratio,
         "rows": rows,
         "cols": cols,
+        "liftSlots": lift_slots,
     }
 
 
@@ -3180,11 +3189,12 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
 
         output_folder = os.path.dirname(video_path)
         base_name = os.path.splitext(os.path.basename(video_path))[0]
-        temp_output = os.path.join(output_folder, f"{base_name}_subtitles_render.mp4")
+        temp_output = os.path.join(output_folder, f"{base_name}_subtitles_render.avi")
         output_path = os.path.join(output_folder, f"{base_name}_subtitles.mp4")
         height_ratio = layout_config.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5))
         rows = layout_config.get("rows", DEFAULT_BURN_LAYOUT.get("rows", 4))
         cols = layout_config.get("cols", DEFAULT_BURN_LAYOUT.get("cols", 1))
+        lift_slots = layout_config.get("liftSlots", DEFAULT_BURN_LAYOUT.get("liftSlots", 1))
 
         burn_id = ldb.add_subtitle_burn(
             video_id_i,
@@ -3212,6 +3222,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     height_ratio=height_ratio,
                     rows=rows,
                     cols=cols,
+                    lift_slots=lift_slots,
                     progress_callback=_update_progress,
                 )
                 mux_audio(temp_output, video_path, output_path)

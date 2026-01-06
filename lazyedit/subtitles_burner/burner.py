@@ -62,6 +62,7 @@ def burn_video_with_slots(
     cols: int = 2,
     margin: int = 24,
     gutter: int = 12,
+    lift_slots: int = 1,
     progress_callback: Optional[Callable[[int], None]] = None,
 ) -> None:
     BurnLayout, SlotAssignment, TextStyle, build_bottom_slot_layout, burn_subtitles_with_layout = _load_burner_module()
@@ -75,6 +76,7 @@ def burn_video_with_slots(
         height_ratio=height_ratio,
         margin=margin,
         gutter=gutter,
+        lift_slots=lift_slots,
     )
 
     assignments: list[SlotAssignment] = []

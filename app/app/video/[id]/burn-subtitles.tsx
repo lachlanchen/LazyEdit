@@ -323,6 +323,17 @@ export default function BurnSubtitlesScreen() {
   const previewHeight = 180;
   const previewBandHeight = Math.max(64, Math.round(previewHeight * heightRatio));
   const previewCellWidth = `${Math.floor(100 / Math.max(cols, 1))}%`;
+  const previewRowGap = 6;
+  const previewColGap = 6;
+  const previewBandPadding = 8;
+  const previewCellHeight = Math.max(
+    18,
+    Math.floor(
+      (previewBandHeight - previewBandPadding * 2 - previewRowGap * (Math.max(rows, 1) - 1)) / Math.max(rows, 1)
+    )
+  );
+  const previewLabelSize = Math.max(8, Math.min(11, Math.round(previewCellHeight * 0.32)));
+  const previewValueSize = Math.max(9, Math.min(12, Math.round(previewCellHeight * 0.45)));
 
   const burnSubtitles = async () => {
     if (!id || burning) return;
@@ -394,14 +405,29 @@ export default function BurnSubtitlesScreen() {
           <View style={styles.previewCard}>
             <Text style={styles.previewTitle}>Layout preview</Text>
             <View style={[styles.previewStage, { height: previewHeight }]}>
-              <View style={[styles.previewBand, { height: previewBandHeight }]}>
+              <View style={[styles.previewBand, { height: previewBandHeight, padding: previewBandPadding }]}>
                 <View style={styles.previewGrid}>
                   {sortedSlots.map((slot) => {
                     const label = slot.language ? (LANG_LABELS[slot.language] || slot.language) : 'Empty';
+                    const colIndex = (slot.slot - 1) % Math.max(cols, 1);
+                    const isLastCol = colIndex === Math.max(cols, 1) - 1;
                     return (
-                      <View key={slot.slot} style={[styles.previewCell, { width: previewCellWidth }]}>
-                        <Text style={styles.previewCellLabel}>{formatSlotLabel(slot.slot, rows, cols)}</Text>
-                        <Text style={styles.previewCellValue}>{label}</Text>
+                      <View
+                        key={slot.slot}
+                        style={[
+                          styles.previewCell,
+                          {
+                            width: previewCellWidth,
+                            height: previewCellHeight,
+                            marginBottom: previewRowGap,
+                            marginRight: isLastCol ? 0 : previewColGap,
+                          },
+                        ]}
+                      >
+                        <Text style={[styles.previewCellLabel, { fontSize: previewLabelSize }]}>
+                          {formatSlotLabel(slot.slot, rows, cols)}
+                        </Text>
+                        <Text style={[styles.previewCellValue, { fontSize: previewValueSize }]}>{label}</Text>
                       </View>
                     );
                   })}
@@ -557,7 +583,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 8,
     backgroundColor: 'rgba(15, 23, 42, 0.75)',
-    marginBottom: 8,
+    marginBottom: 0,
   },
   previewCellLabel: { fontSize: 10, color: '#94a3b8', marginBottom: 4 },
   previewCellValue: { fontSize: 12, color: '#f8fafc', fontWeight: '600' },
