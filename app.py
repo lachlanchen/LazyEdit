@@ -97,13 +97,16 @@ DEFAULT_TRANSLATION_STYLE = {
 }
 DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
 DEFAULT_BURN_LAYOUT = {
+    "heightRatio": 0.28,
     "slots": [
-        {"slot": 1, "language": "en"},
-        {"slot": 2, "language": "ja"},
-        {"slot": 3, "language": None},
+        {"slot": 1, "language": None},
+        {"slot": 2, "language": "en"},
+        {"slot": 3, "language": "ja"},
         {"slot": 4, "language": None},
     ]
 }
+
+BURN_EXECUTOR = ThreadPoolExecutor(max_workers=1)
 
 
 def load_grammar_palette(lang):
@@ -208,13 +211,21 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         return DEFAULT_BURN_LAYOUT.copy()
 
     slots_payload = None
+    height_ratio = DEFAULT_BURN_LAYOUT.get("heightRatio", 0.28)
     if isinstance(payload, dict):
         slots_payload = payload.get("slots")
+        if "heightRatio" in payload:
+            try:
+                height_ratio = float(payload.get("heightRatio"))
+            except Exception:
+                height_ratio = DEFAULT_BURN_LAYOUT.get("heightRatio", 0.28)
     elif isinstance(payload, list):
         slots_payload = payload
 
     if not isinstance(slots_payload, list):
         return DEFAULT_BURN_LAYOUT.copy()
+
+    height_ratio = min(max(height_ratio, 0.18), 0.45)
 
     normalized_slots = []
     for idx in range(4):
@@ -231,7 +242,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         normalized_slots.append({"slot": slot_id, "language": normalized})
 
     normalized_slots.sort(key=lambda item: item["slot"])
-    return {"slots": normalized_slots}
+    return {"slots": normalized_slots, "heightRatio": height_ratio}
 
 
 
@@ -3051,13 +3062,14 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         if not row:
             self.set_status(404)
             return self.write({"error": "burn not found"})
-        burn_id, status, output_path, config, error, created_at = row
+        burn_id, status, output_path, progress, config, error, created_at = row
         self.write({
             "id": burn_id,
             "video_id": video_id_i,
             "status": status,
             "output_path": output_path,
             "output_url": media_url_for_path(output_path),
+            "progress": progress,
             "config": config,
             "error": error,
             "created_at": created_at.isoformat() if created_at else None,
@@ -3141,40 +3153,68 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         base_name = os.path.splitext(os.path.basename(video_path))[0]
         temp_output = os.path.join(output_folder, f"{base_name}_subtitles_render.mp4")
         output_path = os.path.join(output_folder, f"{base_name}_subtitles.mp4")
-
-        status = "completed"
-        error_message = None
-        try:
-            burn_video_with_slots(video_path, temp_output, assignments)
-            mux_audio(temp_output, video_path, output_path)
-        except Exception as exc:
-            status = "failed"
-            error_message = str(exc)
-
-        if os.path.exists(temp_output):
-            try:
-                os.remove(temp_output)
-            except Exception:
-                pass
+        height_ratio = layout_config.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.28))
 
         burn_id = ldb.add_subtitle_burn(
             video_id_i,
-            status,
-            output_path if status == "completed" else None,
+            "processing",
+            None,
             layout_config,
-            error_message,
+            None,
+            progress=0,
         )
-        if status != "completed":
-            self.set_status(500)
-            return self.write({"error": "burn failed", "details": error_message, "id": burn_id})
+
+        def _update_progress(value: int) -> None:
+            try:
+                ldb.update_subtitle_burn_progress(burn_id, value)
+            except Exception:
+                pass
+
+        def _run_burn() -> None:
+            status = "completed"
+            error_message = None
+            try:
+                burn_video_with_slots(
+                    video_path,
+                    temp_output,
+                    assignments,
+                    height_ratio=height_ratio,
+                    progress_callback=_update_progress,
+                )
+                mux_audio(temp_output, video_path, output_path)
+            except Exception as exc:
+                status = "failed"
+                error_message = str(exc)
+            finally:
+                if os.path.exists(temp_output):
+                    try:
+                        os.remove(temp_output)
+                    except Exception:
+                        pass
+            if status == "completed":
+                ldb.finalize_subtitle_burn(burn_id, status, output_path, None, progress=100)
+            else:
+                ldb.finalize_subtitle_burn(burn_id, status, None, error_message, progress=0)
+
+        BURN_EXECUTOR.submit(_run_burn)
+
+        created_at = None
+        try:
+            latest = ldb.get_latest_subtitle_burn(video_id_i)
+            if latest and latest[0] == burn_id:
+                created_at = latest[-1]
+        except Exception:
+            created_at = None
 
         self.write({
             "id": burn_id,
             "video_id": video_id_i,
-            "status": status,
-            "output_path": output_path,
-            "output_url": media_url_for_path(output_path),
+            "status": "processing",
+            "progress": 0,
+            "output_path": None,
+            "output_url": None,
             "config": layout_config,
+            "created_at": created_at.isoformat() if created_at else None,
         })
 
 

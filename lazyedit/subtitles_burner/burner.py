@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 import cv2
 
@@ -60,6 +60,7 @@ def burn_video_with_slots(
     height_ratio: float = 0.28,
     margin: int = 24,
     gutter: int = 12,
+    progress_callback: Optional[Callable[[int], None]] = None,
 ) -> None:
     BurnLayout, SlotAssignment, TextStyle, build_bottom_slot_layout, burn_subtitles_with_layout = _load_burner_module()
 
@@ -91,4 +92,10 @@ def burn_video_with_slots(
             )
         )
 
-    burn_subtitles_with_layout(video_path, output_path, layout, assignments)
+    burn_subtitles_with_layout(
+        video_path,
+        output_path,
+        layout,
+        assignments,
+        progress_callback=progress_callback,
+    )

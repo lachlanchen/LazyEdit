@@ -21,9 +21,10 @@ type BurnStatus = {
   id: number;
   status: string;
   output_url?: string | null;
+  progress?: number | null;
   error?: string | null;
   created_at?: string | null;
-  config?: { slots?: BurnSlot[] } | null;
+  config?: { slots?: BurnSlot[]; heightRatio?: number } | null;
 };
 
 type SelectOption = {
@@ -52,9 +53,9 @@ const SLOT_LABELS: Record<number, string> = {
 };
 
 const DEFAULT_SLOTS: BurnSlot[] = [
-  { slot: 1, language: 'en' },
-  { slot: 2, language: 'ja' },
-  { slot: 3, language: null },
+  { slot: 1, language: null },
+  { slot: 2, language: 'en' },
+  { slot: 3, language: 'ja' },
   { slot: 4, language: null },
 ];
 
@@ -105,6 +106,57 @@ const OptionSelect = ({
   );
 };
 
+const SliderControl = ({
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+  formatValue,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: number) => void;
+  formatValue?: (value: number) => string;
+}) => {
+  const [trackWidth, setTrackWidth] = useState(1);
+  const ratio = Math.min(Math.max((value - min) / (max - min), 0), 1);
+
+  const updateFromEvent = (event: any) => {
+    const { locationX, offsetX } = event.nativeEvent || {};
+    const x = typeof locationX === 'number' ? locationX : offsetX;
+    if (typeof x !== 'number') return;
+    const nextRatio = Math.min(Math.max(x / trackWidth, 0), 1);
+    const raw = min + nextRatio * (max - min);
+    const stepped = Math.round(raw / step) * step;
+    onChange(Number(stepped.toFixed(2)));
+  };
+
+  return (
+    <View style={styles.sliderRow}>
+      <View style={styles.sliderHeader}>
+        <Text style={styles.sliderLabel}>{label}</Text>
+        <Text style={styles.sliderValue}>{formatValue ? formatValue(value) : value.toFixed(2)}</Text>
+      </View>
+      <View
+        style={styles.sliderTrack}
+        onLayout={(event) => setTrackWidth(event.nativeEvent.layout.width)}
+        onStartShouldSetResponder={() => true}
+        onResponderMove={updateFromEvent}
+        onResponderRelease={updateFromEvent}
+        onResponderGrant={updateFromEvent}
+      >
+        <View style={[styles.sliderFill, { width: `${ratio * 100}%` }]} />
+        <View style={[styles.sliderThumb, { left: `${ratio * 100}%` }]} />
+      </View>
+    </View>
+  );
+};
+
 const formatTimestamp = (value?: string | null) =>
   value ? value.slice(0, 19).replace('T', ' ') : 'Unknown time';
 
@@ -112,6 +164,7 @@ export default function BurnSubtitlesScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [translations, setTranslations] = useState<TranslationDetail[]>([]);
   const [slots, setSlots] = useState<BurnSlot[]>(DEFAULT_SLOTS);
+  const [heightRatio, setHeightRatio] = useState(0.28);
   const [status, setStatus] = useState<BurnStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [burning, setBurning] = useState(false);
@@ -132,6 +185,8 @@ export default function BurnSubtitlesScreen() {
     }
     return base;
   }, [translations]);
+
+  const sortedSlots = useMemo(() => [...slots].sort((a, b) => a.slot - b.slot), [slots]);
 
   const loadTranslations = async () => {
     if (!id) return;
@@ -162,6 +217,9 @@ export default function BurnSubtitlesScreen() {
             language: slot.language || null,
           }));
         if (normalized.length) setSlots(normalized);
+      }
+      if (typeof value?.heightRatio === 'number') {
+        setHeightRatio(value.heightRatio);
       }
     } catch (_err) {
       // ignore
@@ -202,7 +260,7 @@ export default function BurnSubtitlesScreen() {
 
   useEffect(() => {
     if (!layoutLoaded) return;
-    const payload = { slots };
+    const payload = { slots, heightRatio };
     const timeout = setTimeout(async () => {
       try {
         await fetch(`${API_URL}/api/ui-settings/burn_layout`, {
@@ -215,13 +273,18 @@ export default function BurnSubtitlesScreen() {
       }
     }, 200);
     return () => clearTimeout(timeout);
-  }, [slots, layoutLoaded]);
+  }, [slots, heightRatio, layoutLoaded]);
 
   const updateSlot = (slotId: number, language: string) => {
     setSlots((prev) =>
       prev.map((slot) => (slot.slot === slotId ? { ...slot, language: language || null } : slot))
     );
   };
+
+  const isProcessing = status?.status === 'processing';
+  const progressValue = typeof status?.progress === 'number' ? status.progress : null;
+  const previewHeight = 180;
+  const previewBandHeight = Math.max(64, Math.round(previewHeight * heightRatio));
 
   const burnSubtitles = async () => {
     if (!id || burning) return;
@@ -231,7 +294,7 @@ export default function BurnSubtitlesScreen() {
       const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ slots }),
+        body: JSON.stringify({ layout: { slots, heightRatio } }),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -240,13 +303,23 @@ export default function BurnSubtitlesScreen() {
         return;
       }
       setStatus(json);
-      setMessage('Burn complete.');
+      setMessage(json.status === 'processing' ? 'Burn started.' : 'Burn complete.');
+      await loadBurnStatus();
     } catch (err: any) {
       setMessage(err?.message || 'Burn failed');
     } finally {
       setBurning(false);
     }
   };
+
+  useEffect(() => {
+    if (!id) return;
+    if (status?.status !== 'processing') return;
+    const interval = setInterval(() => {
+      loadBurnStatus();
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [id, status?.status]);
 
   if (loading) {
     return (
@@ -280,8 +353,45 @@ export default function BurnSubtitlesScreen() {
             ))}
           </View>
 
-          <Pressable style={[styles.btnPrimary, burning && styles.btnDisabled]} onPress={burnSubtitles}>
-            <Text style={styles.btnText}>{burning ? 'Burning…' : 'Burn subtitles'}</Text>
+          <View style={styles.previewCard}>
+            <Text style={styles.previewTitle}>Layout preview</Text>
+            <View style={[styles.previewStage, { height: previewHeight }]}>
+              <View style={[styles.previewBand, { height: previewBandHeight }]}>
+                <View style={styles.previewGrid}>
+                  {sortedSlots.map((slot) => {
+                    const label = slot.language ? (LANG_LABELS[slot.language] || slot.language) : 'Empty';
+                    return (
+                      <View key={slot.slot} style={styles.previewCell}>
+                        <Text style={styles.previewCellLabel}>{SLOT_LABELS[slot.slot]}</Text>
+                        <Text style={styles.previewCellValue}>{label}</Text>
+                      </View>
+                    );
+                  })}
+                </View>
+              </View>
+            </View>
+            <Text style={styles.previewHint}>
+              Bottom band height: {Math.round(heightRatio * 100)}%
+            </Text>
+          </View>
+
+          <SliderControl
+            label="Layout height"
+            value={heightRatio}
+            min={0.18}
+            max={0.45}
+            step={0.01}
+            onChange={setHeightRatio}
+            formatValue={(value) => `${Math.round(value * 100)}%`}
+          />
+
+          <Pressable
+            style={[styles.btnPrimary, (burning || isProcessing) && styles.btnDisabled]}
+            onPress={burnSubtitles}
+          >
+            <Text style={styles.btnText}>
+              {burning ? 'Burning…' : isProcessing ? 'Burning…' : 'Burn subtitles'}
+            </Text>
           </Pressable>
 
           {message ? <Text style={styles.status}>{message}</Text> : null}
@@ -293,6 +403,16 @@ export default function BurnSubtitlesScreen() {
             <>
               <Text style={styles.meta}>Status: {status.status}</Text>
               <Text style={styles.meta}>Updated: {formatTimestamp(status.created_at)}</Text>
+              {status.status === 'processing' ? (
+                <View style={styles.progressWrap}>
+                  <View style={styles.progressTrack}>
+                    <View style={[styles.progressFill, { width: `${progressValue ?? 0}%` }]} />
+                  </View>
+                  <Text style={styles.progressText}>
+                    Progress: {progressValue ?? 0}%
+                  </Text>
+                </View>
+              ) : null}
               {status.error ? <Text style={styles.error}>{status.error}</Text> : null}
               {status.output_url ? (
                 <View style={styles.previewBox}>
@@ -345,6 +465,48 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   slotTitle: { fontSize: 13, fontWeight: '600', color: '#0f172a', marginBottom: 6 },
+  previewCard: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  previewTitle: { fontSize: 13, fontWeight: '700', color: '#0f172a', marginBottom: 8 },
+  previewStage: {
+    borderRadius: 12,
+    backgroundColor: '#0f172a',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  previewBand: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(148, 163, 184, 0.25)',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(148, 163, 184, 0.6)',
+    padding: 8,
+  },
+  previewGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  previewCell: {
+    flexBasis: '48%',
+    borderWidth: 1,
+    borderColor: 'rgba(226, 232, 240, 0.7)',
+    borderRadius: 10,
+    padding: 8,
+    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+    marginBottom: 8,
+  },
+  previewCellLabel: { fontSize: 10, color: '#94a3b8', marginBottom: 4 },
+  previewCellValue: { fontSize: 12, color: '#f8fafc', fontWeight: '600' },
+  previewHint: { marginTop: 8, fontSize: 11, color: '#64748b' },
   select: {
     borderWidth: 1,
     borderColor: '#cbd5f5',
@@ -366,6 +528,19 @@ const styles = StyleSheet.create({
   btnText: { color: '#f8fafc', fontWeight: '700' },
   status: { marginTop: 10, fontSize: 12, color: '#0f172a' },
   error: { marginTop: 8, color: '#b91c1c', fontSize: 12 },
+  progressWrap: { marginTop: 10 },
+  progressTrack: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: '#e2e8f0',
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: '#22c55e',
+  },
+  progressText: { marginTop: 6, fontSize: 12, color: '#0f172a' },
   previewBox: { marginTop: 12 },
   modalBackdrop: {
     flex: 1,
@@ -386,4 +561,29 @@ const styles = StyleSheet.create({
   modalOptionActive: { backgroundColor: '#eff6ff' },
   modalOptionText: { color: '#0f172a', fontSize: 13 },
   modalOptionTextActive: { fontWeight: '700' },
+  sliderRow: { marginTop: 12 },
+  sliderHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
+  sliderLabel: { fontSize: 12, color: '#0f172a', fontWeight: '600' },
+  sliderValue: { fontSize: 12, color: '#475569' },
+  sliderTrack: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: '#e2e8f0',
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  sliderFill: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: '#2563eb',
+  },
+  sliderThumb: {
+    position: 'absolute',
+    top: -4,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#2563eb',
+    marginLeft: -8,
+  },
 });

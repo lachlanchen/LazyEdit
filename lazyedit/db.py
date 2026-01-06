@@ -164,12 +164,14 @@ def ensure_schema():
             video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
             status TEXT NOT NULL,
             output_path TEXT,
+            progress INTEGER NOT NULL DEFAULT 0,
             config JSONB,
             error TEXT,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
         """,
         "CREATE INDEX IF NOT EXISTS idx_subtitle_burns_video_created ON subtitle_burns (video_id, created_at DESC);",
+        "ALTER TABLE subtitle_burns ADD COLUMN IF NOT EXISTS progress INTEGER DEFAULT 0;",
         # UI preference storage (e.g., translation display styles)
         """
         CREATE TABLE IF NOT EXISTS ui_preferences (
@@ -296,6 +298,7 @@ def add_subtitle_burn(
     output_path: str | None,
     config: dict | None,
     error: str | None,
+    progress: int = 0,
 ) -> int:
     """Insert a subtitle burn row and return its ID."""
     with get_cursor(commit=True) as cur:
@@ -305,13 +308,14 @@ def add_subtitle_burn(
                 video_id,
                 status,
                 output_path,
+                progress,
                 config,
                 error
             )
-            VALUES (%s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
-            (video_id, status, output_path, json.dumps(config or {}), error),
+            (video_id, status, output_path, progress, json.dumps(config or {}), error),
         )
         (burn_id,) = cur.fetchone()
         return burn_id
@@ -322,7 +326,7 @@ def get_latest_subtitle_burn(video_id: int) -> tuple | None:
     with get_cursor() as cur:
         cur.execute(
             """
-            SELECT id, status, output_path, config, error, created_at
+            SELECT id, status, output_path, progress, config, error, created_at
             FROM subtitle_burns
             WHERE video_id = %s
             ORDER BY id DESC
@@ -331,6 +335,52 @@ def get_latest_subtitle_burn(video_id: int) -> tuple | None:
             (video_id,),
         )
         return cur.fetchone()
+
+
+def update_subtitle_burn_progress(burn_id: int, progress: int) -> None:
+    progress_value = max(0, min(100, int(progress)))
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            "UPDATE subtitle_burns SET progress = %s WHERE id = %s",
+            (progress_value, burn_id),
+        )
+
+
+def finalize_subtitle_burn(
+    burn_id: int,
+    status: str,
+    output_path: str | None,
+    error: str | None,
+    progress: int | None = None,
+) -> None:
+    progress_value = None
+    if progress is not None:
+        progress_value = max(0, min(100, int(progress)))
+
+    with get_cursor(commit=True) as cur:
+        if progress_value is None:
+            cur.execute(
+                """
+                UPDATE subtitle_burns
+                SET status = %s,
+                    output_path = %s,
+                    error = %s
+                WHERE id = %s
+                """,
+                (status, output_path, error, burn_id),
+            )
+        else:
+            cur.execute(
+                """
+                UPDATE subtitle_burns
+                SET status = %s,
+                    output_path = %s,
+                    error = %s,
+                    progress = %s
+                WHERE id = %s
+                """,
+                (status, output_path, error, progress_value, burn_id),
+            )
 
 
 def get_ui_preference(key: str) -> dict | None:
