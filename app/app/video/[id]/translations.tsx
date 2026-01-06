@@ -79,6 +79,14 @@ const BG_COLOR_OPTIONS: SelectOption[] = [
   { value: '#fef9c3', label: 'Light yellow' },
 ];
 
+const OUTLINE_COLOR_OPTIONS: SelectOption[] = [
+  { value: '#000000', label: 'Black' },
+  { value: '#0f172a', label: 'Navy' },
+  { value: '#111827', label: 'Charcoal' },
+  { value: '#1f2937', label: 'Graphite' },
+  { value: '#334155', label: 'Slate' },
+];
+
 const BG_OPACITY_OPTIONS: SelectOption[] = [
   { value: '0.2', label: '20%' },
   { value: '0.35', label: '35%' },
@@ -346,6 +354,7 @@ export default function TranslationsScreen() {
   const [outlineEnabled, setOutlineEnabled] = useState(true);
   const [shadowEnabled, setShadowEnabled] = useState(true);
   const [outlineThickness, setOutlineThickness] = useState(10);
+  const [outlineColorHex, setOutlineColorHex] = useState('#000000');
   const [paletteMode, setPaletteMode] = useState('base');
   const [bgColor, setBgColor] = useState('#000000');
   const [bgOpacity, setBgOpacity] = useState('0.5');
@@ -433,6 +442,7 @@ export default function TranslationsScreen() {
         if (typeof value.outlineEnabled === 'boolean') setOutlineEnabled(value.outlineEnabled);
         if (typeof value.shadowEnabled === 'boolean') setShadowEnabled(value.shadowEnabled);
         if (typeof value.outlineThickness === 'number') setOutlineThickness(value.outlineThickness);
+        if (typeof value.outlineColor === 'string') setOutlineColorHex(value.outlineColor);
         if (typeof value.paletteMode === 'string') setPaletteMode(value.paletteMode);
         if (typeof value.bgColor === 'string') setBgColor(value.bgColor);
         if (typeof value.bgOpacity === 'number') setBgOpacity(String(value.bgOpacity));
@@ -451,6 +461,7 @@ export default function TranslationsScreen() {
       outlineEnabled,
       shadowEnabled,
       outlineThickness,
+      outlineColor: outlineColorHex,
       paletteMode,
       bgColor,
       bgOpacity: Number(bgOpacity),
@@ -467,7 +478,7 @@ export default function TranslationsScreen() {
       }
     }, 250);
     return () => clearTimeout(timeout);
-  }, [outlineEnabled, shadowEnabled, outlineThickness, paletteMode, bgColor, bgOpacity, styleLoaded]);
+  }, [outlineEnabled, shadowEnabled, outlineThickness, outlineColorHex, paletteMode, bgColor, bgOpacity, styleLoaded]);
 
   if (loading) {
     return (
@@ -506,7 +517,7 @@ export default function TranslationsScreen() {
     return applyPaletteMode(base);
   };
 
-  const outlineColor = 'rgba(0, 0, 0, 0.85)';
+  const outlineColor = rgbaFromHex(outlineColorHex, 0.85);
   const shadowColor = 'rgba(0, 0, 0, 0.55)';
   const buildTextStyle = (baseStyle: any, color: string) => {
     if (outlineEnabled) {
@@ -598,6 +609,13 @@ export default function TranslationsScreen() {
               value={paletteMode}
               options={PALETTE_OPTIONS}
               onChange={setPaletteMode}
+              containerStyle={styles.optionItem}
+            />
+            <OptionSelect
+              label="Outline color"
+              value={outlineColorHex}
+              options={OUTLINE_COLOR_OPTIONS}
+              onChange={setOutlineColorHex}
               containerStyle={styles.optionItem}
             />
             <OptionSelect

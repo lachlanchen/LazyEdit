@@ -87,6 +87,7 @@ DEFAULT_TRANSLATION_STYLE = {
     "outlineEnabled": True,
     "shadowEnabled": True,
     "outlineThickness": 10.0,
+    "outlineColor": "#000000",
     "paletteMode": "base",
     "bgColor": "#000000",
     "bgOpacity": 0.5,
@@ -128,10 +129,15 @@ def _sanitize_translation_style(payload: dict | None) -> dict:
         outline_thickness = DEFAULT_TRANSLATION_STYLE["outlineThickness"]
     outline_thickness = min(max(outline_thickness, 0.0), 20.0)
 
+    outline_color = str(payload.get("outlineColor") or DEFAULT_TRANSLATION_STYLE["outlineColor"]).strip()
+    if not outline_color.startswith("#") or len(outline_color) not in {4, 7}:
+        outline_color = DEFAULT_TRANSLATION_STYLE["outlineColor"]
+
     return {
         "outlineEnabled": bool(payload.get("outlineEnabled", DEFAULT_TRANSLATION_STYLE["outlineEnabled"])),
         "shadowEnabled": bool(payload.get("shadowEnabled", DEFAULT_TRANSLATION_STYLE["shadowEnabled"])),
         "outlineThickness": outline_thickness,
+        "outlineColor": outline_color,
         "paletteMode": palette_mode,
         "bgColor": bg_color,
         "bgOpacity": bg_opacity,
