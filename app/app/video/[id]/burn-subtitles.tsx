@@ -45,6 +45,21 @@ const LANG_LABELS: Record<string, string> = {
   'zh-Hans': 'Chinese (Simplified)',
 };
 
+const LANG_SHORT: Record<string, string> = {
+  en: 'EN',
+  ja: 'JA',
+  ar: 'AR',
+  vi: 'VI',
+  ko: 'KO',
+  es: 'ES',
+  fr: 'FR',
+  ru: 'RU',
+  'zh-Hant': 'ZH-T',
+  'zh-Hans': 'ZH-S',
+};
+
+const SLOT_COLORS = ['#22c55e', '#60a5fa', '#f59e0b', '#f472b6', '#a78bfa', '#34d399', '#fb7185', '#38bdf8'];
+
 const DEFAULT_ROWS = 4;
 const DEFAULT_COLS = 1;
 const DEFAULT_HEIGHT_RATIO = 0.5;
@@ -70,6 +85,24 @@ const formatSlotLabel = (slotId: number, rows: number, cols: number) => {
   const col = ((slotId - 1) % cols) + 1;
   const row = Math.floor((slotId - 1) / cols) + 1;
   return `Slot ${slotId} · Row ${row} · Col ${col}`;
+};
+
+const shortLabelForLanguage = (lang?: string | null) => {
+  if (!lang) return '—';
+  return LANG_SHORT[lang] || lang.slice(0, 3).toUpperCase();
+};
+
+const toRgba = (hex: string, alpha: number) => {
+  const normalized = hex.replace('#', '');
+  const value =
+    normalized.length === 3
+      ? normalized.split('').map((char) => char + char).join('')
+      : normalized;
+  if (value.length !== 6) return `rgba(148, 163, 184, ${alpha})`;
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
 const OptionSelect = ({
@@ -332,8 +365,8 @@ export default function BurnSubtitlesScreen() {
       (previewBandHeight - previewBandPadding * 2 - previewRowGap * (Math.max(rows, 1) - 1)) / Math.max(rows, 1)
     )
   );
-  const previewLabelSize = Math.max(8, Math.min(11, Math.round(previewCellHeight * 0.32)));
-  const previewValueSize = Math.max(9, Math.min(12, Math.round(previewCellHeight * 0.45)));
+  const previewLabelSize = Math.max(8, Math.min(11, Math.round(previewCellHeight * 0.3)));
+  const previewValueSize = Math.max(10, Math.min(14, Math.round(previewCellHeight * 0.5)));
 
   const burnSubtitles = async () => {
     if (!id || burning) return;
@@ -408,9 +441,10 @@ export default function BurnSubtitlesScreen() {
               <View style={[styles.previewBand, { height: previewBandHeight, padding: previewBandPadding }]}>
                 <View style={styles.previewGrid}>
                   {sortedSlots.map((slot) => {
-                    const label = slot.language ? (LANG_LABELS[slot.language] || slot.language) : 'Empty';
+                    const label = shortLabelForLanguage(slot.language);
                     const colIndex = (slot.slot - 1) % Math.max(cols, 1);
                     const isLastCol = colIndex === Math.max(cols, 1) - 1;
+                    const slotColor = SLOT_COLORS[(slot.slot - 1) % SLOT_COLORS.length];
                     return (
                       <View
                         key={slot.slot}
@@ -421,12 +455,11 @@ export default function BurnSubtitlesScreen() {
                             height: previewCellHeight,
                             marginBottom: previewRowGap,
                             marginRight: isLastCol ? 0 : previewColGap,
+                            backgroundColor: toRgba(slotColor, slot.language ? 0.32 : 0.12),
                           },
                         ]}
                       >
-                        <Text style={[styles.previewCellLabel, { fontSize: previewLabelSize }]}>
-                          {formatSlotLabel(slot.slot, rows, cols)}
-                        </Text>
+                        <Text style={[styles.previewCellLabel, { fontSize: previewLabelSize }]}>S{slot.slot}</Text>
                         <Text style={[styles.previewCellValue, { fontSize: previewValueSize }]}>{label}</Text>
                       </View>
                     );
@@ -435,7 +468,7 @@ export default function BurnSubtitlesScreen() {
               </View>
             </View>
             <Text style={styles.previewHint}>
-              Bottom band height: {Math.round(heightRatio * 100)}%
+              Layout height is the subtitle band as % of full video height: {Math.round(heightRatio * 100)}%.
             </Text>
           </View>
 
@@ -582,11 +615,10 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(226, 232, 240, 0.7)',
     borderRadius: 10,
     padding: 8,
-    backgroundColor: 'rgba(15, 23, 42, 0.75)',
     marginBottom: 0,
   },
-  previewCellLabel: { fontSize: 10, color: '#94a3b8', marginBottom: 4 },
-  previewCellValue: { fontSize: 12, color: '#f8fafc', fontWeight: '600' },
+  previewCellLabel: { fontSize: 10, color: '#cbd5f5', marginBottom: 2, textTransform: 'uppercase' },
+  previewCellValue: { fontSize: 12, color: '#f8fafc', fontWeight: '700', textAlign: 'center' },
   previewHint: { marginTop: 8, fontSize: 11, color: '#64748b' },
   optionRow: {
     marginTop: 12,
