@@ -97,7 +97,9 @@ DEFAULT_TRANSLATION_STYLE = {
 }
 DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
 DEFAULT_BURN_LAYOUT = {
-    "heightRatio": 0.28,
+    "heightRatio": 0.5,
+    "rows": 4,
+    "cols": 1,
     "slots": [
         {"slot": 1, "language": None},
         {"slot": 2, "language": "en"},
@@ -211,38 +213,64 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         return DEFAULT_BURN_LAYOUT.copy()
 
     slots_payload = None
-    height_ratio = DEFAULT_BURN_LAYOUT.get("heightRatio", 0.28)
+    height_ratio = DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5)
+    rows = DEFAULT_BURN_LAYOUT.get("rows", 4)
+    cols = DEFAULT_BURN_LAYOUT.get("cols", 1)
     if isinstance(payload, dict):
         slots_payload = payload.get("slots")
         if "heightRatio" in payload:
             try:
                 height_ratio = float(payload.get("heightRatio"))
             except Exception:
-                height_ratio = DEFAULT_BURN_LAYOUT.get("heightRatio", 0.28)
+                height_ratio = DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5)
+        if "rows" in payload:
+            try:
+                rows = int(payload.get("rows"))
+            except Exception:
+                rows = DEFAULT_BURN_LAYOUT.get("rows", 4)
+        if "cols" in payload:
+            try:
+                cols = int(payload.get("cols"))
+            except Exception:
+                cols = DEFAULT_BURN_LAYOUT.get("cols", 1)
     elif isinstance(payload, list):
         slots_payload = payload
 
     if not isinstance(slots_payload, list):
         return DEFAULT_BURN_LAYOUT.copy()
 
-    height_ratio = min(max(height_ratio, 0.18), 0.45)
+    height_ratio = min(max(height_ratio, 0.2), 0.6)
+    rows = min(max(rows, 1), 6)
+    cols = min(max(cols, 1), 4)
+    slot_count = rows * cols
 
-    normalized_slots = []
-    for idx in range(4):
+    slot_map: dict[int, str | None] = {}
+    for idx, entry in enumerate(slots_payload):
         slot_id = idx + 1
         language = None
-        if idx < len(slots_payload):
-            entry = slots_payload[idx]
-            if isinstance(entry, dict):
+        if isinstance(entry, dict):
+            try:
                 slot_id = int(entry.get("slot") or slot_id)
-                language = entry.get("language")
-            else:
-                language = entry
+            except Exception:
+                slot_id = idx + 1
+            language = entry.get("language")
+        else:
+            language = entry
+        if slot_id < 1 or slot_id > slot_count:
+            continue
         normalized = _normalize_translation_language(language) if language else None
-        normalized_slots.append({"slot": slot_id, "language": normalized})
+        slot_map[slot_id] = normalized
 
-    normalized_slots.sort(key=lambda item: item["slot"])
-    return {"slots": normalized_slots, "heightRatio": height_ratio}
+    normalized_slots = []
+    for slot_id in range(1, slot_count + 1):
+        normalized_slots.append({"slot": slot_id, "language": slot_map.get(slot_id)})
+
+    return {
+        "slots": normalized_slots,
+        "heightRatio": height_ratio,
+        "rows": rows,
+        "cols": cols,
+    }
 
 
 
@@ -2011,7 +2039,8 @@ def mux_audio(rendered_video_path: str, source_video_path: str, output_path: str
     audio_bitrate = get_audio_bitrate(source_video_path)
     command = (
         f'ffmpeg -y -i "{rendered_video_path}" -i "{source_video_path}" '
-        f'-c:v copy -c:a aac -b:a {audio_bitrate} '
+        f'-c:v libx264 -pix_fmt yuv420p -crf 18 -preset medium '
+        f'-c:a aac -b:a {audio_bitrate} '
         f'-map 0:v:0 -map 1:a:0? -shortest '
         f'"{output_path}"'
     )
@@ -3153,7 +3182,9 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         base_name = os.path.splitext(os.path.basename(video_path))[0]
         temp_output = os.path.join(output_folder, f"{base_name}_subtitles_render.mp4")
         output_path = os.path.join(output_folder, f"{base_name}_subtitles.mp4")
-        height_ratio = layout_config.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.28))
+        height_ratio = layout_config.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5))
+        rows = layout_config.get("rows", DEFAULT_BURN_LAYOUT.get("rows", 4))
+        cols = layout_config.get("cols", DEFAULT_BURN_LAYOUT.get("cols", 1))
 
         burn_id = ldb.add_subtitle_burn(
             video_id_i,
@@ -3179,6 +3210,8 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     temp_output,
                     assignments,
                     height_ratio=height_ratio,
+                    rows=rows,
+                    cols=cols,
                     progress_callback=_update_progress,
                 )
                 mux_audio(temp_output, video_path, output_path)

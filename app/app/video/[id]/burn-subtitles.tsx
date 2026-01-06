@@ -24,7 +24,7 @@ type BurnStatus = {
   progress?: number | null;
   error?: string | null;
   created_at?: string | null;
-  config?: { slots?: BurnSlot[]; heightRatio?: number } | null;
+  config?: { slots?: BurnSlot[]; heightRatio?: number; rows?: number; cols?: number } | null;
 };
 
 type SelectOption = {
@@ -45,12 +45,9 @@ const LANG_LABELS: Record<string, string> = {
   'zh-Hans': 'Chinese (Simplified)',
 };
 
-const SLOT_LABELS: Record<number, string> = {
-  1: 'Slot 1 · Top left',
-  2: 'Slot 2 · Top right',
-  3: 'Slot 3 · Bottom left',
-  4: 'Slot 4 · Bottom right',
-};
+const DEFAULT_ROWS = 4;
+const DEFAULT_COLS = 1;
+const DEFAULT_HEIGHT_RATIO = 0.5;
 
 const DEFAULT_SLOTS: BurnSlot[] = [
   { slot: 1, language: null },
@@ -58,6 +55,22 @@ const DEFAULT_SLOTS: BurnSlot[] = [
   { slot: 3, language: 'ja' },
   { slot: 4, language: null },
 ];
+
+const ROW_OPTIONS: SelectOption[] = Array.from({ length: 6 }, (_, idx) => ({
+  value: String(idx + 1),
+  label: String(idx + 1),
+}));
+
+const COL_OPTIONS: SelectOption[] = Array.from({ length: 4 }, (_, idx) => ({
+  value: String(idx + 1),
+  label: String(idx + 1),
+}));
+
+const formatSlotLabel = (slotId: number, rows: number, cols: number) => {
+  const col = ((slotId - 1) % cols) + 1;
+  const row = Math.floor((slotId - 1) / cols) + 1;
+  return `Slot ${slotId} · Row ${row} · Col ${col}`;
+};
 
 const OptionSelect = ({
   label,
@@ -164,7 +177,9 @@ export default function BurnSubtitlesScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [translations, setTranslations] = useState<TranslationDetail[]>([]);
   const [slots, setSlots] = useState<BurnSlot[]>(DEFAULT_SLOTS);
-  const [heightRatio, setHeightRatio] = useState(0.28);
+  const [heightRatio, setHeightRatio] = useState(DEFAULT_HEIGHT_RATIO);
+  const [rows, setRows] = useState(DEFAULT_ROWS);
+  const [cols, setCols] = useState(DEFAULT_COLS);
   const [status, setStatus] = useState<BurnStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [burning, setBurning] = useState(false);
@@ -188,6 +203,17 @@ export default function BurnSubtitlesScreen() {
 
   const sortedSlots = useMemo(() => [...slots].sort((a, b) => a.slot - b.slot), [slots]);
 
+  const buildSlotList = (current: BurnSlot[], total: number) => {
+    const map = new Map<number, BurnSlot>();
+    current.forEach((slot) => map.set(slot.slot, slot));
+    const next: BurnSlot[] = [];
+    for (let slotId = 1; slotId <= total; slotId += 1) {
+      const existing = map.get(slotId);
+      next.push({ slot: slotId, language: existing?.language ?? null });
+    }
+    return next;
+  };
+
   const loadTranslations = async () => {
     if (!id) return;
     try {
@@ -209,6 +235,10 @@ export default function BurnSubtitlesScreen() {
       const json = await resp.json();
       if (!resp.ok) return;
       const value = json.value;
+      const nextRows = typeof value?.rows === 'number' ? value.rows : DEFAULT_ROWS;
+      const nextCols = typeof value?.cols === 'number' ? value.cols : DEFAULT_COLS;
+      setRows(nextRows);
+      setCols(nextCols);
       if (value?.slots && Array.isArray(value.slots)) {
         const normalized = value.slots
           .filter((slot: BurnSlot) => typeof slot.slot === 'number')
@@ -216,7 +246,8 @@ export default function BurnSubtitlesScreen() {
             slot: slot.slot,
             language: slot.language || null,
           }));
-        if (normalized.length) setSlots(normalized);
+        const total = nextRows * nextCols;
+        if (normalized.length) setSlots(buildSlotList(normalized, total));
       }
       if (typeof value?.heightRatio === 'number') {
         setHeightRatio(value.heightRatio);
@@ -260,7 +291,7 @@ export default function BurnSubtitlesScreen() {
 
   useEffect(() => {
     if (!layoutLoaded) return;
-    const payload = { slots, heightRatio };
+    const payload = { slots, heightRatio, rows, cols };
     const timeout = setTimeout(async () => {
       try {
         await fetch(`${API_URL}/api/ui-settings/burn_layout`, {
@@ -273,7 +304,13 @@ export default function BurnSubtitlesScreen() {
       }
     }, 200);
     return () => clearTimeout(timeout);
-  }, [slots, heightRatio, layoutLoaded]);
+  }, [slots, heightRatio, rows, cols, layoutLoaded]);
+
+  useEffect(() => {
+    if (!layoutLoaded) return;
+    const total = rows * cols;
+    setSlots((prev) => buildSlotList(prev, total));
+  }, [rows, cols, layoutLoaded]);
 
   const updateSlot = (slotId: number, language: string) => {
     setSlots((prev) =>
@@ -285,6 +322,7 @@ export default function BurnSubtitlesScreen() {
   const progressValue = typeof status?.progress === 'number' ? status.progress : null;
   const previewHeight = 180;
   const previewBandHeight = Math.max(64, Math.round(previewHeight * heightRatio));
+  const previewCellWidth = `${Math.floor(100 / Math.max(cols, 1))}%`;
 
   const burnSubtitles = async () => {
     if (!id || burning) return;
@@ -294,7 +332,7 @@ export default function BurnSubtitlesScreen() {
       const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ layout: { slots, heightRatio } }),
+        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols } }),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -340,9 +378,9 @@ export default function BurnSubtitlesScreen() {
           <Text style={styles.meta}>Assign languages to the 4-slot bottom grid.</Text>
 
           <View style={styles.slotGrid}>
-            {slots.map((slot) => (
+            {sortedSlots.map((slot) => (
               <View key={slot.slot} style={styles.slotCard}>
-                <Text style={styles.slotTitle}>{SLOT_LABELS[slot.slot] || `Slot ${slot.slot}`}</Text>
+                <Text style={styles.slotTitle}>{formatSlotLabel(slot.slot, rows, cols)}</Text>
                 <OptionSelect
                   label="Language"
                   value={slot.language || ''}
@@ -361,8 +399,8 @@ export default function BurnSubtitlesScreen() {
                   {sortedSlots.map((slot) => {
                     const label = slot.language ? (LANG_LABELS[slot.language] || slot.language) : 'Empty';
                     return (
-                      <View key={slot.slot} style={styles.previewCell}>
-                        <Text style={styles.previewCellLabel}>{SLOT_LABELS[slot.slot]}</Text>
+                      <View key={slot.slot} style={[styles.previewCell, { width: previewCellWidth }]}>
+                        <Text style={styles.previewCellLabel}>{formatSlotLabel(slot.slot, rows, cols)}</Text>
                         <Text style={styles.previewCellValue}>{label}</Text>
                       </View>
                     );
@@ -375,11 +413,30 @@ export default function BurnSubtitlesScreen() {
             </Text>
           </View>
 
+          <View style={styles.optionRow}>
+            <View style={{ flex: 1, marginRight: 10 }}>
+              <OptionSelect
+                label="Rows"
+                value={String(rows)}
+                options={ROW_OPTIONS}
+                onChange={(value) => setRows(Number(value) || DEFAULT_ROWS)}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <OptionSelect
+                label="Columns"
+                value={String(cols)}
+                options={COL_OPTIONS}
+                onChange={(value) => setCols(Number(value) || DEFAULT_COLS)}
+              />
+            </View>
+          </View>
+
           <SliderControl
             label="Layout height"
             value={heightRatio}
-            min={0.18}
-            max={0.45}
+            min={0.2}
+            max={0.6}
             step={0.01}
             onChange={setHeightRatio}
             formatValue={(value) => `${Math.round(value * 100)}%`}
@@ -493,10 +550,8 @@ const styles = StyleSheet.create({
   previewGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
   },
   previewCell: {
-    flexBasis: '48%',
     borderWidth: 1,
     borderColor: 'rgba(226, 232, 240, 0.7)',
     borderRadius: 10,
@@ -507,6 +562,10 @@ const styles = StyleSheet.create({
   previewCellLabel: { fontSize: 10, color: '#94a3b8', marginBottom: 4 },
   previewCellValue: { fontSize: 12, color: '#f8fafc', fontWeight: '600' },
   previewHint: { marginTop: 8, fontSize: 11, color: '#64748b' },
+  optionRow: {
+    marginTop: 12,
+    flexDirection: 'row',
+  },
   select: {
     borderWidth: 1,
     borderColor: '#cbd5f5',
