@@ -23,6 +23,7 @@ class BurnSlotConfig:
     font_scale: float = 1.0
     kana_romaji: bool = False
     pinyin: bool = False
+    ipa: bool = False
 
 
 def _load_burner_module():
@@ -92,6 +93,12 @@ def burn_video_with_slots(
             ruby_font_size=max(8, int(round(TextStyle().ruby_font_size * scale))),
             stroke_width=stroke_width,
         )
+        ipa_lang = None
+        if slot.ipa:
+            if slot.language == "en":
+                ipa_lang = "en-us"
+            elif slot.language == "fr":
+                ipa_lang = "fr-fr"
         assignments.append(
             SlotAssignment(
                 slot_id=slot.slot_id,
@@ -107,6 +114,7 @@ def burn_video_with_slots(
                 strip_kana=slot.strip_kana,
                 kana_romaji=slot.kana_romaji,
                 pinyin=slot.pinyin,
+                ipa_lang=ipa_lang,
             )
         )
 

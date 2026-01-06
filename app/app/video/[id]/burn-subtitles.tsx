@@ -18,6 +18,7 @@ type BurnSlot = {
   fontScale?: number;
   romaji?: boolean;
   pinyin?: boolean;
+  ipa?: boolean;
 };
 
 type BurnStatus = {
@@ -71,10 +72,10 @@ const DEFAULT_ROMAJI = true;
 const DEFAULT_PINYIN = true;
 
 const DEFAULT_SLOTS: BurnSlot[] = [
-  { slot: 1, language: null, fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN },
-  { slot: 2, language: 'en', fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN },
-  { slot: 3, language: 'ja', fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN },
-  { slot: 4, language: null, fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN },
+  { slot: 1, language: null, fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN, ipa: false },
+  { slot: 2, language: 'en', fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN, ipa: false },
+  { slot: 3, language: 'ja', fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN, ipa: false },
+  { slot: 4, language: null, fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN, ipa: false },
 ];
 
 const ROW_OPTIONS: SelectOption[] = Array.from({ length: 6 }, (_, idx) => ({
@@ -95,6 +96,7 @@ const formatSlotLabel = (slotId: number, rows: number, cols: number) => {
 
 const isJapanese = (lang?: string | null) => lang === 'ja';
 const isChinese = (lang?: string | null) => lang === 'zh' || lang === 'zh-Hant' || lang === 'zh-Hans';
+const isIpaLanguage = (lang?: string | null) => lang === 'en' || lang === 'fr';
 
 const shortLabelForLanguage = (lang?: string | null) => {
   if (!lang) return '—';
@@ -261,6 +263,7 @@ export default function BurnSubtitlesScreen() {
         fontScale: existing?.fontScale ?? 1,
         romaji: existing?.romaji ?? DEFAULT_ROMAJI,
         pinyin: existing?.pinyin ?? DEFAULT_PINYIN,
+        ipa: existing?.ipa ?? false,
       });
     }
     return next;
@@ -314,6 +317,7 @@ export default function BurnSubtitlesScreen() {
             fontScale: typeof slot.fontScale === 'number' ? slot.fontScale : 1,
             romaji: typeof slot.romaji === 'boolean' ? slot.romaji : DEFAULT_ROMAJI,
             pinyin: typeof slot.pinyin === 'boolean' ? slot.pinyin : DEFAULT_PINYIN,
+            ipa: typeof slot.ipa === 'boolean' ? slot.ipa : false,
           }));
         const total = nextRows * nextCols;
         if (normalized.length) setSlots(buildSlotList(normalized, total));
@@ -397,7 +401,7 @@ export default function BurnSubtitlesScreen() {
     );
   };
 
-  const updateSlotToggle = (slotId: number, field: 'romaji' | 'pinyin', value: boolean) => {
+  const updateSlotToggle = (slotId: number, field: 'romaji' | 'pinyin' | 'ipa', value: boolean) => {
     setSlots((prev) =>
       prev.map((slot) => (slot.slot === slotId ? { ...slot, [field]: value } : slot))
     );
@@ -538,6 +542,20 @@ export default function BurnSubtitlesScreen() {
                       onValueChange={(value) => updateSlotToggle(slot.slot, 'pinyin', value)}
                       trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
                       thumbColor={slot.pinyin ?? DEFAULT_PINYIN ? '#f8fafc' : '#f1f5f9'}
+                    />
+                  </View>
+                ) : null}
+                {isIpaLanguage(slot.language) ? (
+                  <View style={styles.slotToggleRow}>
+                    <View style={styles.slotToggleText}>
+                      <Text style={styles.slotToggleLabel}>IPA</Text>
+                      <Text style={styles.slotToggleHint}>Pronunciation above words</Text>
+                    </View>
+                    <Switch
+                      value={slot.ipa ?? false}
+                      onValueChange={(value) => updateSlotToggle(slot.slot, 'ipa', value)}
+                      trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                      thumbColor={slot.ipa ? '#f8fafc' : '#f1f5f9'}
                     />
                   </View>
                 ) : null}
