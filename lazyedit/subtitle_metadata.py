@@ -345,12 +345,13 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
         try:
             with open(path, "r", encoding="utf-8") as handle:
                 return json.load(handle)
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as exc:
+            print(f"JSON parse error for template {path}: {exc}")
             try:
                 with open(path, "r", encoding="utf-8") as handle:
                     return json5.load(handle)
             except Exception as exc:
-                raise RuntimeError(f"Failed to parse JSON template: {path}") from exc
+                raise RuntimeError(f"Failed to parse JSON template: {path} ({exc})") from exc
 
 
 if __name__ == "__main__":
