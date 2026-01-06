@@ -90,6 +90,7 @@ DEFAULT_TRANSLATION_STYLE = {
     "bgColor": "#000000",
     "bgOpacity": 0.5,
 }
+DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en"]
 
 
 def load_grammar_palette(lang):
@@ -127,6 +128,18 @@ def _sanitize_translation_style(payload: dict | None) -> dict:
         "bgColor": bg_color,
         "bgOpacity": bg_opacity,
     }
+
+
+def _sanitize_translation_languages(payload) -> list[str]:
+    if not isinstance(payload, (list, tuple)):
+        return DEFAULT_TRANSLATION_LANGUAGES.copy()
+    allowed = {"ja", "en"}
+    cleaned = []
+    for item in payload:
+        code = str(item).strip().lower()
+        if code in allowed and code not in cleaned:
+            cleaned.append(code)
+    return cleaned or DEFAULT_TRANSLATION_LANGUAGES.copy()
 
 
 
@@ -2176,24 +2189,31 @@ class GrammarPaletteHandler(CorsMixin, tornado.web.RequestHandler):
 class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self, key):
         ldb.ensure_schema()
-        if key != "translation_style":
+        if key not in {"translation_style", "translation_languages"}:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
         saved = ldb.get_ui_preference(key)
+        if key == "translation_style":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_TRANSLATION_STYLE})
+            return self.write({"key": key, "value": _sanitize_translation_style(saved)})
         if not saved:
-            return self.write({"key": key, "value": DEFAULT_TRANSLATION_STYLE})
-        return self.write({"key": key, "value": _sanitize_translation_style(saved)})
+            return self.write({"key": key, "value": DEFAULT_TRANSLATION_LANGUAGES})
+        return self.write({"key": key, "value": _sanitize_translation_languages(saved)})
 
     def post(self, key):
         ldb.ensure_schema()
-        if key != "translation_style":
+        if key not in {"translation_style", "translation_languages"}:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
         try:
             data = json.loads(self.request.body or b"{}")
         except Exception:
             data = {}
-        cleaned = _sanitize_translation_style(data)
+        if key == "translation_style":
+            cleaned = _sanitize_translation_style(data)
+        else:
+            cleaned = _sanitize_translation_languages(data)
         ldb.set_ui_preference(key, cleaned)
         self.write({"key": key, "value": cleaned})
 

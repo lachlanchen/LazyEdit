@@ -104,8 +104,9 @@ export default function VideoDetailScreen() {
   const [translateStatus, setTranslateStatus] = useState('');
   const [translateTone, setTranslateTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [disableTranslateCache, setDisableTranslateCache] = useState(false);
-  const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<Array<'ja' | 'en'>>(['ja']);
+  const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<Array<'ja' | 'en'>>(['ja', 'en']);
   const [previewLang, setPreviewLang] = useState<'ja' | 'en'>('ja');
+  const [translateLangsLoaded, setTranslateLangsLoaded] = useState(false);
   const [lightbox, setLightbox] = useState<{ url: string; label?: string } | null>(null);
 
   const mediaSrc = useMemo(() => {
@@ -251,6 +252,45 @@ export default function VideoDetailScreen() {
       }
     })();
   }, [id]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch(`${API_URL}/api/ui-settings/translation_languages`);
+        const json = await resp.json();
+        if (!resp.ok) return;
+        const value = Array.isArray(json.value) ? json.value : [];
+        const cleaned = value.filter((item: string) => item === 'ja' || item === 'en') as Array<'ja' | 'en'>;
+        if (cleaned.length) {
+          setSelectedTranslateLangs(cleaned);
+          if (!cleaned.includes(previewLang)) {
+            setPreviewLang(cleaned[0]);
+          }
+        }
+      } catch (_err) {
+        // ignore load failures; keep defaults
+      } finally {
+        setTranslateLangsLoaded(true);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (!translateLangsLoaded) return;
+    const payload = selectedTranslateLangs;
+    const timeout = setTimeout(async () => {
+      try {
+        await fetch(`${API_URL}/api/ui-settings/translation_languages`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      } catch (_err) {
+        // ignore save failures
+      }
+    }, 200);
+    return () => clearTimeout(timeout);
+  }, [selectedTranslateLangs, translateLangsLoaded]);
 
   useEffect(() => {
     loadTranscription();
