@@ -24,6 +24,7 @@ class BurnSlotConfig:
     kana_romaji: bool = False
     pinyin: bool = False
     ipa: bool = False
+    jyutping: bool = False
 
 
 def _load_burner_module():
@@ -99,6 +100,7 @@ def burn_video_with_slots(
                 ipa_lang = "en-us"
             elif slot.language == "fr":
                 ipa_lang = "fr-fr"
+        jyutping = slot.jyutping and slot.language == "yue"
         assignments.append(
             SlotAssignment(
                 slot_id=slot.slot_id,
@@ -115,6 +117,7 @@ def burn_video_with_slots(
                 kana_romaji=slot.kana_romaji,
                 pinyin=slot.pinyin,
                 ipa_lang=ipa_lang,
+                jyutping=jyutping,
             )
         )
 

@@ -19,6 +19,7 @@ type BurnSlot = {
   romaji?: boolean;
   pinyin?: boolean;
   ipa?: boolean;
+  jyutping?: boolean;
 };
 
 type BurnStatus = {
@@ -71,12 +72,45 @@ const DEFAULT_HEIGHT_RATIO = 0.5;
 const DEFAULT_LIFT_SLOTS = 1;
 const DEFAULT_ROMAJI = true;
 const DEFAULT_PINYIN = true;
+const DEFAULT_JYUTPING = false;
 
 const DEFAULT_SLOTS: BurnSlot[] = [
-  { slot: 1, language: null, fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN, ipa: false },
-  { slot: 2, language: 'en', fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN, ipa: false },
-  { slot: 3, language: 'ja', fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN, ipa: false },
-  { slot: 4, language: null, fontScale: 1, romaji: DEFAULT_ROMAJI, pinyin: DEFAULT_PINYIN, ipa: false },
+  {
+    slot: 1,
+    language: null,
+    fontScale: 1,
+    romaji: DEFAULT_ROMAJI,
+    pinyin: DEFAULT_PINYIN,
+    ipa: false,
+    jyutping: DEFAULT_JYUTPING,
+  },
+  {
+    slot: 2,
+    language: 'en',
+    fontScale: 1,
+    romaji: DEFAULT_ROMAJI,
+    pinyin: DEFAULT_PINYIN,
+    ipa: false,
+    jyutping: DEFAULT_JYUTPING,
+  },
+  {
+    slot: 3,
+    language: 'ja',
+    fontScale: 1,
+    romaji: DEFAULT_ROMAJI,
+    pinyin: DEFAULT_PINYIN,
+    ipa: false,
+    jyutping: DEFAULT_JYUTPING,
+  },
+  {
+    slot: 4,
+    language: null,
+    fontScale: 1,
+    romaji: DEFAULT_ROMAJI,
+    pinyin: DEFAULT_PINYIN,
+    ipa: false,
+    jyutping: DEFAULT_JYUTPING,
+  },
 ];
 
 const ROW_OPTIONS: SelectOption[] = Array.from({ length: 6 }, (_, idx) => ({
@@ -98,6 +132,7 @@ const formatSlotLabel = (slotId: number, rows: number, cols: number) => {
 const isJapanese = (lang?: string | null) => lang === 'ja';
 const isChinese = (lang?: string | null) => lang === 'zh' || lang === 'zh-Hant' || lang === 'zh-Hans';
 const isIpaLanguage = (lang?: string | null) => lang === 'en' || lang === 'fr';
+const isCantonese = (lang?: string | null) => lang === 'yue';
 
 const shortLabelForLanguage = (lang?: string | null) => {
   if (!lang) return '—';
@@ -265,6 +300,7 @@ export default function BurnSubtitlesScreen() {
         romaji: existing?.romaji ?? DEFAULT_ROMAJI,
         pinyin: existing?.pinyin ?? DEFAULT_PINYIN,
         ipa: existing?.ipa ?? false,
+        jyutping: existing?.jyutping ?? DEFAULT_JYUTPING,
       });
     }
     return next;
@@ -319,6 +355,7 @@ export default function BurnSubtitlesScreen() {
             romaji: typeof slot.romaji === 'boolean' ? slot.romaji : DEFAULT_ROMAJI,
             pinyin: typeof slot.pinyin === 'boolean' ? slot.pinyin : DEFAULT_PINYIN,
             ipa: typeof slot.ipa === 'boolean' ? slot.ipa : false,
+            jyutping: typeof slot.jyutping === 'boolean' ? slot.jyutping : DEFAULT_JYUTPING,
           }));
         const total = nextRows * nextCols;
         if (normalized.length) setSlots(buildSlotList(normalized, total));
@@ -402,7 +439,7 @@ export default function BurnSubtitlesScreen() {
     );
   };
 
-  const updateSlotToggle = (slotId: number, field: 'romaji' | 'pinyin' | 'ipa', value: boolean) => {
+  const updateSlotToggle = (slotId: number, field: 'romaji' | 'pinyin' | 'ipa' | 'jyutping', value: boolean) => {
     setSlots((prev) =>
       prev.map((slot) => (slot.slot === slotId ? { ...slot, [field]: value } : slot))
     );
@@ -557,6 +594,20 @@ export default function BurnSubtitlesScreen() {
                       onValueChange={(value) => updateSlotToggle(slot.slot, 'ipa', value)}
                       trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
                       thumbColor={slot.ipa ? '#f8fafc' : '#f1f5f9'}
+                    />
+                  </View>
+                ) : null}
+                {isCantonese(slot.language) ? (
+                  <View style={styles.slotToggleRow}>
+                    <View style={styles.slotToggleText}>
+                      <Text style={styles.slotToggleLabel}>Jyutping</Text>
+                      <Text style={styles.slotToggleHint}>Pronunciation above Cantonese</Text>
+                    </View>
+                    <Switch
+                      value={slot.jyutping ?? DEFAULT_JYUTPING}
+                      onValueChange={(value) => updateSlotToggle(slot.slot, 'jyutping', value)}
+                      trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                      thumbColor={slot.jyutping ?? DEFAULT_JYUTPING ? '#f8fafc' : '#f1f5f9'}
                     />
                   </View>
                 ) : null}
