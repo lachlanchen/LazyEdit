@@ -104,7 +104,8 @@ export default function VideoDetailScreen() {
   const [translateStatus, setTranslateStatus] = useState('');
   const [translateTone, setTranslateTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [disableTranslateCache, setDisableTranslateCache] = useState(false);
-  const [translateLang, setTranslateLang] = useState<'ja' | 'en'>('ja');
+  const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<Array<'ja' | 'en'>>(['ja']);
+  const [previewLang, setPreviewLang] = useState<'ja' | 'en'>('ja');
   const [lightbox, setLightbox] = useState<{ url: string; label?: string } | null>(null);
 
   const mediaSrc = useMemo(() => {
@@ -114,8 +115,19 @@ export default function VideoDetailScreen() {
 
   const headerTitle = video?.title ? video.title : 'Video';
   const captionFrameItems = caption?.frames || [];
-  const selectedTranslation = translations.find((item) => item.language_code === translateLang) || null;
-  const translateLangLabel = translateLang === 'ja' ? 'Japanese' : 'English';
+  const translateLangOptions: Array<{ code: 'ja' | 'en'; label: string }> = [
+    { code: 'ja', label: 'Japanese' },
+    { code: 'en', label: 'English' },
+  ];
+  const previewTranslation = translations.find((item) => item.language_code === previewLang) || null;
+  const previewLabel = previewLang === 'ja' ? 'Japanese' : 'English';
+
+  useEffect(() => {
+    if (!selectedTranslateLangs.length) return;
+    if (!selectedTranslateLangs.includes(previewLang)) {
+      setPreviewLang(selectedTranslateLangs[0]);
+    }
+  }, [selectedTranslateLangs, previewLang]);
 
   const loadTranscription = async () => {
     if (!id) return;
@@ -318,24 +330,34 @@ export default function VideoDetailScreen() {
 
   const translateSubtitles = async () => {
     if (!video || translating) return;
+    if (!selectedTranslateLangs.length) {
+      setTranslateStatus('Select at least one language.');
+      setTranslateTone('bad');
+      return;
+    }
     setTranslating(true);
-    setTranslateStatus(`Translating to ${translateLangLabel}...`);
+    setTranslateStatus('Starting translations...');
     setTranslateTone('neutral');
     try {
-      const resp = await fetch(`${API_URL}/api/videos/${video.id}/translate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ language: translateLang, use_cache: !disableTranslateCache }),
-      });
-      const json = await resp.json();
-      if (!resp.ok) {
-        setTranslateStatus(json.error || json.details || 'Translation failed');
-        setTranslateTone('bad');
-        return;
+      for (let i = 0; i < selectedTranslateLangs.length; i += 1) {
+        const lang = selectedTranslateLangs[i];
+        const label = lang === 'ja' ? 'Japanese' : 'English';
+        setTranslateStatus(`Translating ${label} (${i + 1}/${selectedTranslateLangs.length})...`);
+        const resp = await fetch(`${API_URL}/api/videos/${video.id}/translate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ language: lang, use_cache: !disableTranslateCache }),
+        });
+        const json = await resp.json();
+        if (!resp.ok) {
+          setTranslateStatus(json.error || json.details || `Translation failed for ${label}`);
+          setTranslateTone('bad');
+          return;
+        }
+        await loadTranslations();
       }
-      setTranslateStatus(`${translateLangLabel} translation complete.`);
+      setTranslateStatus('Translations complete.');
       setTranslateTone('good');
-      await loadTranslations();
     } catch (e: any) {
       setTranslateStatus(`Translation failed: ${e?.message || String(e)}`);
       setTranslateTone('bad');
@@ -526,21 +548,30 @@ export default function VideoDetailScreen() {
           </View>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.langTabs}>
-          {(['ja', 'en'] as const).map((lang) => {
-            const isActive = translateLang === lang;
-            const label = lang === 'ja' ? 'Japanese' : 'English';
+        <View style={styles.langChecklist}>
+          {translateLangOptions.map((option) => {
+            const isChecked = selectedTranslateLangs.includes(option.code);
             return (
               <Pressable
-                key={lang}
-                style={[styles.langTab, isActive && styles.langTabActive]}
-                onPress={() => setTranslateLang(lang)}
+                key={option.code}
+                style={styles.langCheckItem}
+                onPress={() => {
+                  setSelectedTranslateLangs((prev) => {
+                    if (prev.includes(option.code)) {
+                      return prev.filter((lang) => lang !== option.code);
+                    }
+                    return [...prev, option.code];
+                  });
+                }}
               >
-                <Text style={[styles.langTabText, isActive && styles.langTabTextActive]}>{label}</Text>
+                <View style={[styles.langCheckBox, isChecked && styles.langCheckBoxActive]}>
+                  {isChecked ? <Text style={styles.langCheckMark}>✓</Text> : null}
+                </View>
+                <Text style={styles.langCheckLabel}>{option.label}</Text>
               </Pressable>
             );
           })}
-        </ScrollView>
+        </View>
 
         <Pressable
           style={[styles.btnSecondaryAlt, translating && styles.btnDisabled]}
@@ -554,18 +585,32 @@ export default function VideoDetailScreen() {
         </Pressable>
 
         <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>{translateLangLabel} translation preview</Text>
+          <Text style={styles.sectionTitle}>Translation preview</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.langTabs}>
+            {translateLangOptions.map((option) => {
+              const isActive = previewLang === option.code;
+              return (
+                <Pressable
+                  key={option.code}
+                  style={[styles.langTab, isActive && styles.langTabActive]}
+                  onPress={() => setPreviewLang(option.code)}
+                >
+                  <Text style={[styles.langTabText, isActive && styles.langTabTextActive]}>{option.label}</Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
           {translationsLoading ? (
             <ActivityIndicator />
-          ) : selectedTranslation ? (
+          ) : previewTranslation ? (
             <>
-              <Text style={styles.sectionMeta}>Status: {selectedTranslation.status}</Text>
-              {selectedTranslation.preview_text ? (
-                <Text style={styles.previewText}>{selectedTranslation.preview_text}</Text>
+              <Text style={styles.sectionMeta}>Status: {previewTranslation.status}</Text>
+              {previewTranslation.preview_text ? (
+                <Text style={styles.previewText}>{previewTranslation.preview_text}</Text>
               ) : (
                 <Text style={styles.previewEmpty}>No preview available.</Text>
               )}
-              {selectedTranslation.error ? <Text style={styles.previewError}>{selectedTranslation.error}</Text> : null}
+              {previewTranslation.error ? <Text style={styles.previewError}>{previewTranslation.error}</Text> : null}
               <Pressable
                 style={styles.previewBtn}
                 onPress={() => router.push({ pathname: '/video/[id]/translations', params: { id: String(video.id) } })}
@@ -574,7 +619,7 @@ export default function VideoDetailScreen() {
               </Pressable>
             </>
           ) : (
-            <Text style={styles.previewEmpty}>No translations yet. Tap Translate to generate.</Text>
+            <Text style={styles.previewEmpty}>No translations yet for {previewLabel}. Tap Translate to generate.</Text>
           )}
         </View>
 
@@ -769,6 +814,37 @@ const styles = StyleSheet.create({
   langTabActive: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
   langTabText: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
   langTabTextActive: { color: '#f8fafc' },
+  langChecklist: {
+    marginTop: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  langCheckItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+    marginRight: 10,
+    marginBottom: 10,
+  },
+  langCheckBox: {
+    width: 16,
+    height: 16,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#94a3b8',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 6,
+    backgroundColor: 'white',
+  },
+  langCheckBoxActive: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
+  langCheckMark: { color: 'white', fontSize: 10, fontWeight: '700' },
+  langCheckLabel: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
   sectionCard: {
     marginTop: 16,
     padding: 14,
