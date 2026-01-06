@@ -213,6 +213,7 @@ const SliderControl = ({
   max,
   step,
   onChange,
+  formatValue,
 }: {
   label: string;
   value: number;
@@ -220,6 +221,7 @@ const SliderControl = ({
   max: number;
   step: number;
   onChange: (value: number) => void;
+  formatValue?: (value: number) => string;
 }) => {
   const [trackWidth, setTrackWidth] = useState(1);
   const ratio = Math.min(Math.max((value - min) / (max - min), 0), 1);
@@ -238,7 +240,7 @@ const SliderControl = ({
     <View style={styles.sliderRow}>
       <View style={styles.sliderHeader}>
         <Text style={styles.sliderLabel}>{label}</Text>
-        <Text style={styles.sliderValue}>{value.toFixed(1)}</Text>
+        <Text style={styles.sliderValue}>{formatValue ? formatValue(value) : value.toFixed(1)}</Text>
       </View>
       <View
         style={styles.sliderTrack}
@@ -354,6 +356,7 @@ export default function TranslationsScreen() {
   const [outlineEnabled, setOutlineEnabled] = useState(true);
   const [shadowEnabled, setShadowEnabled] = useState(true);
   const [outlineThickness, setOutlineThickness] = useState(10);
+  const [outlineStrength, setOutlineStrength] = useState(0.85);
   const [outlineColorHex, setOutlineColorHex] = useState('#000000');
   const [paletteMode, setPaletteMode] = useState('base');
   const [bgColor, setBgColor] = useState('#000000');
@@ -442,6 +445,7 @@ export default function TranslationsScreen() {
         if (typeof value.outlineEnabled === 'boolean') setOutlineEnabled(value.outlineEnabled);
         if (typeof value.shadowEnabled === 'boolean') setShadowEnabled(value.shadowEnabled);
         if (typeof value.outlineThickness === 'number') setOutlineThickness(value.outlineThickness);
+        if (typeof value.outlineStrength === 'number') setOutlineStrength(value.outlineStrength);
         if (typeof value.outlineColor === 'string') setOutlineColorHex(value.outlineColor);
         if (typeof value.paletteMode === 'string') setPaletteMode(value.paletteMode);
         if (typeof value.bgColor === 'string') setBgColor(value.bgColor);
@@ -461,6 +465,7 @@ export default function TranslationsScreen() {
       outlineEnabled,
       shadowEnabled,
       outlineThickness,
+      outlineStrength,
       outlineColor: outlineColorHex,
       paletteMode,
       bgColor,
@@ -478,7 +483,17 @@ export default function TranslationsScreen() {
       }
     }, 250);
     return () => clearTimeout(timeout);
-  }, [outlineEnabled, shadowEnabled, outlineThickness, outlineColorHex, paletteMode, bgColor, bgOpacity, styleLoaded]);
+  }, [
+    outlineEnabled,
+    shadowEnabled,
+    outlineThickness,
+    outlineStrength,
+    outlineColorHex,
+    paletteMode,
+    bgColor,
+    bgOpacity,
+    styleLoaded,
+  ]);
 
   if (loading) {
     return (
@@ -517,7 +532,7 @@ export default function TranslationsScreen() {
     return applyPaletteMode(base);
   };
 
-  const outlineColor = rgbaFromHex(outlineColorHex, 0.85);
+  const outlineColor = rgbaFromHex(outlineColorHex, Math.min(Math.max(outlineStrength, 0), 1));
   const shadowColor = 'rgba(0, 0, 0, 0.55)';
   const buildTextStyle = (baseStyle: any, color: string) => {
     if (outlineEnabled) {
@@ -640,6 +655,15 @@ export default function TranslationsScreen() {
             max={20}
             step={1}
             onChange={setOutlineThickness}
+          />
+          <SliderControl
+            label="Outline strength"
+            value={outlineStrength}
+            min={0.1}
+            max={1}
+            step={0.05}
+            onChange={setOutlineStrength}
+            formatValue={(value) => `${Math.round(value * 100)}%`}
           />
         </View>
 
