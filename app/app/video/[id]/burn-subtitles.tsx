@@ -45,6 +45,7 @@ const LANG_LABELS: Record<string, string> = {
   es: 'Spanish',
   fr: 'French',
   ru: 'Russian',
+  yue: 'Cantonese',
   'zh-Hant': 'Chinese (Traditional)',
   'zh-Hans': 'Chinese (Simplified)',
 };

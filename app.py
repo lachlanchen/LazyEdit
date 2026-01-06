@@ -191,6 +191,8 @@ def _normalize_translation_language(value: object | None) -> str | None:
         return "fr"
     if lowered in {"ru", "russian"}:
         return "ru"
+    if lowered in {"yue", "cantonese", "zh-yue", "zh-yue-hk"}:
+        return "yue"
     if lowered in {"zh", "zh-hant", "zh_hant", "zh-tw", "zh-hk", "zh-mo"}:
         return "zh-Hant"
     if lowered in {"zh-hans", "zh_hans", "zh-cn"}:
@@ -2921,6 +2923,10 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             output_json_path = os.path.join(translations_dir, f"{base_name}_ru.json")
             output_srt_path = os.path.join(translations_dir, f"{base_name}_ru.srt")
             output_ass_path = None
+        elif lang == "yue":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_yue.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_yue.srt")
+            output_ass_path = None
         elif lang == "zh-Hant":
             output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hant.json")
             output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hant.srt")
@@ -2982,6 +2988,10 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                 translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
             elif lang == "ru":
                 plain_items, json_items = translator.process_russian_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            elif lang == "yue":
+                plain_items, json_items = translator.process_cantonese_translation_single_pass()
                 translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
                 translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
             elif lang == "zh-Hant":

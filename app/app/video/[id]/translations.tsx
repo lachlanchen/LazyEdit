@@ -59,6 +59,7 @@ const LANG_LABELS: Record<string, string> = {
   fr: 'French',
   es: 'Spanish',
   ru: 'Russian',
+  yue: 'Cantonese',
 };
 
 const PALETTE_OPTIONS: SelectOption[] = [
