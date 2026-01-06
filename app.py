@@ -252,26 +252,39 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     lift_slots = min(max(lift_slots, 0), rows)
     slot_count = rows * cols
 
-    slot_map: dict[int, str | None] = {}
+    slot_map: dict[int, dict[str, object]] = {}
     for idx, entry in enumerate(slots_payload):
         slot_id = idx + 1
         language = None
+        font_scale = 1.0
         if isinstance(entry, dict):
             try:
                 slot_id = int(entry.get("slot") or slot_id)
             except Exception:
                 slot_id = idx + 1
             language = entry.get("language")
+            try:
+                font_scale = float(entry.get("fontScale", 1.0))
+            except Exception:
+                font_scale = 1.0
         else:
             language = entry
         if slot_id < 1 or slot_id > slot_count:
             continue
         normalized = _normalize_translation_language(language) if language else None
-        slot_map[slot_id] = normalized
+        font_scale = min(max(font_scale, 0.6), 1.6)
+        slot_map[slot_id] = {"language": normalized, "fontScale": font_scale}
 
     normalized_slots = []
     for slot_id in range(1, slot_count + 1):
-        normalized_slots.append({"slot": slot_id, "language": slot_map.get(slot_id)})
+        entry = slot_map.get(slot_id, {"language": None, "fontScale": 1.0})
+        normalized_slots.append(
+            {
+                "slot": slot_id,
+                "language": entry.get("language"),
+                "fontScale": entry.get("fontScale", 1.0),
+            }
+        )
 
     return {
         "slots": normalized_slots,
@@ -3146,6 +3159,11 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                 continue
             language = slot.get("language")
             slot_id = int(slot.get("slot") or 0)
+            try:
+                font_scale = float(slot.get("fontScale", 1.0))
+            except Exception:
+                font_scale = 1.0
+            font_scale = min(max(font_scale, 0.6), 1.6)
             if not language or slot_id <= 0:
                 continue
 
@@ -3181,6 +3199,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     palette=palette,
                     auto_ruby=auto_ruby,
                     strip_kana=lang == "ja",
+                    font_scale=font_scale,
                 )
             )
 

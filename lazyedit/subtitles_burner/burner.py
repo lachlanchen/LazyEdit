@@ -20,6 +20,7 @@ class BurnSlotConfig:
     palette: Optional[dict[str, Any]] = None
     auto_ruby: bool = False
     strip_kana: bool = False
+    font_scale: float = 1.0
 
 
 def _load_burner_module():
@@ -82,6 +83,13 @@ def burn_video_with_slots(
 
     assignments: list[SlotAssignment] = []
     for slot in slots:
+        scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
+        stroke_width = max(1, int(round(TextStyle().stroke_width * scale)))
+        style = TextStyle(
+            main_font_size=max(12, int(round(TextStyle().main_font_size * scale))),
+            ruby_font_size=max(8, int(round(TextStyle().ruby_font_size * scale))),
+            stroke_width=stroke_width,
+        )
         assignments.append(
             SlotAssignment(
                 slot_id=slot.slot_id,
@@ -92,7 +100,7 @@ def burn_video_with_slots(
                 tokens_key=slot.tokens_key,
                 pairs_key=slot.pairs_key,
                 palette=slot.palette,
-                style=TextStyle(),
+                style=style,
                 auto_ruby=slot.auto_ruby,
                 strip_kana=slot.strip_kana,
             )

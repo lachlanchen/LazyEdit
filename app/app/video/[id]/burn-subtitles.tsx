@@ -15,6 +15,7 @@ type TranslationDetail = {
 type BurnSlot = {
   slot: number;
   language: string | null;
+  fontScale?: number;
 };
 
 type BurnStatus = {
@@ -66,10 +67,10 @@ const DEFAULT_HEIGHT_RATIO = 0.5;
 const DEFAULT_LIFT_SLOTS = 1;
 
 const DEFAULT_SLOTS: BurnSlot[] = [
-  { slot: 1, language: null },
-  { slot: 2, language: 'en' },
-  { slot: 3, language: 'ja' },
-  { slot: 4, language: null },
+  { slot: 1, language: null, fontScale: 1 },
+  { slot: 2, language: 'en', fontScale: 1 },
+  { slot: 3, language: 'ja', fontScale: 1 },
+  { slot: 4, language: null, fontScale: 1 },
 ];
 
 const ROW_OPTIONS: SelectOption[] = Array.from({ length: 6 }, (_, idx) => ({
@@ -247,7 +248,7 @@ export default function BurnSubtitlesScreen() {
     const next: BurnSlot[] = [];
     for (let slotId = 1; slotId <= total; slotId += 1) {
       const existing = map.get(slotId);
-      next.push({ slot: slotId, language: existing?.language ?? null });
+      next.push({ slot: slotId, language: existing?.language ?? null, fontScale: existing?.fontScale ?? 1 });
     }
     return next;
   };
@@ -297,6 +298,7 @@ export default function BurnSubtitlesScreen() {
           .map((slot: BurnSlot) => ({
             slot: slot.slot,
             language: slot.language || null,
+            fontScale: typeof slot.fontScale === 'number' ? slot.fontScale : 1,
           }));
         const total = nextRows * nextCols;
         if (normalized.length) setSlots(buildSlotList(normalized, total));
@@ -371,6 +373,12 @@ export default function BurnSubtitlesScreen() {
   const updateSlot = (slotId: number, language: string) => {
     setSlots((prev) =>
       prev.map((slot) => (slot.slot === slotId ? { ...slot, language: language || null } : slot))
+    );
+  };
+
+  const updateSlotScale = (slotId: number, scale: number) => {
+    setSlots((prev) =>
+      prev.map((slot) => (slot.slot === slotId ? { ...slot, fontScale: scale } : slot))
     );
   };
 
@@ -474,6 +482,15 @@ export default function BurnSubtitlesScreen() {
                   value={slot.language || ''}
                   options={availableOptions}
                   onChange={(value) => updateSlot(slot.slot, value)}
+                />
+                <SliderControl
+                  label="Font scale"
+                  value={slot.fontScale ?? 1}
+                  min={0.6}
+                  max={1.6}
+                  step={0.05}
+                  onChange={(value) => updateSlotScale(slot.slot, value)}
+                  formatValue={(value) => `${value.toFixed(2)}x`}
                 />
               </View>
             ))}
