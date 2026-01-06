@@ -195,6 +195,55 @@ const OptionSelect = ({
   );
 };
 
+const SliderControl = ({
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: number) => void;
+}) => {
+  const [trackWidth, setTrackWidth] = useState(1);
+  const ratio = Math.min(Math.max((value - min) / (max - min), 0), 1);
+
+  const updateFromEvent = (event: any) => {
+    const { locationX, offsetX } = event.nativeEvent || {};
+    const x = typeof locationX === 'number' ? locationX : offsetX;
+    if (typeof x !== 'number') return;
+    const nextRatio = Math.min(Math.max(x / trackWidth, 0), 1);
+    const raw = min + nextRatio * (max - min);
+    const stepped = Math.round(raw / step) * step;
+    onChange(Number(stepped.toFixed(2)));
+  };
+
+  return (
+    <View style={styles.sliderRow}>
+      <View style={styles.sliderHeader}>
+        <Text style={styles.sliderLabel}>{label}</Text>
+        <Text style={styles.sliderValue}>{value.toFixed(1)}</Text>
+      </View>
+      <View
+        style={styles.sliderTrack}
+        onLayout={(event) => setTrackWidth(event.nativeEvent.layout.width)}
+        onStartShouldSetResponder={() => true}
+        onResponderMove={updateFromEvent}
+        onResponderRelease={updateFromEvent}
+        onResponderGrant={updateFromEvent}
+      >
+        <View style={[styles.sliderFill, { width: `${ratio * 100}%` }]} />
+        <View style={[styles.sliderThumb, { left: `${ratio * 100}%` }]} />
+      </View>
+    </View>
+  );
+};
+
 const isKanaChar = (char: string) => /[\u3040-\u30ff]/.test(char);
 const hasKanji = (text: string) => /[\u4e00-\u9faf]/.test(text);
 
@@ -293,6 +342,7 @@ export default function TranslationsScreen() {
   const [palette, setPalette] = useState<GrammarPalette | null>(null);
   const [outlineEnabled, setOutlineEnabled] = useState(true);
   const [shadowEnabled, setShadowEnabled] = useState(true);
+  const [outlineThickness, setOutlineThickness] = useState(1.5);
   const [paletteMode, setPaletteMode] = useState('base');
   const [bgColor, setBgColor] = useState('#000000');
   const [bgOpacity, setBgOpacity] = useState('0.5');
@@ -379,6 +429,7 @@ export default function TranslationsScreen() {
         const value = json.value || {};
         if (typeof value.outlineEnabled === 'boolean') setOutlineEnabled(value.outlineEnabled);
         if (typeof value.shadowEnabled === 'boolean') setShadowEnabled(value.shadowEnabled);
+        if (typeof value.outlineThickness === 'number') setOutlineThickness(value.outlineThickness);
         if (typeof value.paletteMode === 'string') setPaletteMode(value.paletteMode);
         if (typeof value.bgColor === 'string') setBgColor(value.bgColor);
         if (typeof value.bgOpacity === 'number') setBgOpacity(String(value.bgOpacity));
@@ -396,6 +447,7 @@ export default function TranslationsScreen() {
     const payload = {
       outlineEnabled,
       shadowEnabled,
+      outlineThickness,
       paletteMode,
       bgColor,
       bgOpacity: Number(bgOpacity),
@@ -412,7 +464,7 @@ export default function TranslationsScreen() {
       }
     }, 250);
     return () => clearTimeout(timeout);
-  }, [outlineEnabled, shadowEnabled, paletteMode, bgColor, bgOpacity, styleLoaded]);
+  }, [outlineEnabled, shadowEnabled, outlineThickness, paletteMode, bgColor, bgOpacity, styleLoaded]);
 
   if (loading) {
     return (
@@ -460,8 +512,8 @@ export default function TranslationsScreen() {
         {
           color,
           textShadowColor: outlineColor,
-          textShadowOffset: { width: 1, height: 0 },
-          textShadowRadius: 0,
+          textShadowOffset: { width: 0, height: 0 },
+          textShadowRadius: outlineThickness,
         },
       ];
     }
@@ -560,6 +612,14 @@ export default function TranslationsScreen() {
               containerStyle={styles.optionItem}
             />
           </View>
+          <SliderControl
+            label="Outline thickness"
+            value={outlineThickness}
+            min={0}
+            max={4}
+            step={0.2}
+            onChange={setOutlineThickness}
+          />
         </View>
 
         {contentLoading ? (
@@ -739,6 +799,35 @@ const styles = StyleSheet.create({
   modalOptionActive: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
   modalOptionText: { fontSize: 13, color: '#0f172a', fontWeight: '600' },
   modalOptionTextActive: { color: '#f8fafc' },
+  sliderRow: { marginTop: 8 },
+  sliderHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 },
+  sliderLabel: { fontSize: 11, color: '#64748b' },
+  sliderValue: { fontSize: 11, fontWeight: '600', color: '#0f172a' },
+  sliderTrack: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: '#e2e8f0',
+    overflow: 'hidden',
+    justifyContent: 'center',
+  },
+  sliderFill: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: '#0f766e',
+  },
+  sliderThumb: {
+    position: 'absolute',
+    width: 18,
+    height: 18,
+    borderRadius: 999,
+    backgroundColor: '#0f766e',
+    borderWidth: 2,
+    borderColor: 'white',
+    top: -5,
+    marginLeft: -9,
+  },
   empty: { color: '#64748b', marginTop: 8 },
   error: { fontSize: 12, color: '#b91c1c', marginTop: 8 },
   loadingText: { marginTop: 8, color: '#475569' },
