@@ -1,4 +1,5 @@
 import os
+import hashlib
 
 os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
@@ -27,6 +28,7 @@ from lazyedit.autocut_processor import AutocutProcessor
 from lazyedit.subtitle_metadata import Subtitle2Metadata
 from lazyedit.words_card import VideoAddWordsCard, overlay_word_card_on_cover
 from lazyedit.subtitle_translate import SubtitlesTranslator
+from lazyedit.video_prompt_generator import VideoPromptGenerator
 from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
 from lazyedit.chinese_simplify import convert_items_to_simplified
@@ -76,6 +78,7 @@ from lazyedit.handbrake import preprocess_video
 from lazyedit.video_utils import preprocess_if_needed
 from lazyedit import db as ldb
 from lazyedit.plugins.languages import list_languages
+from agi.video_requests import create_poll_and_download
 
 
 GRAMMAR_PALETTE_DIR = os.path.join(
@@ -93,6 +96,7 @@ METADATA_TEMPLATE_MAP = {
     "zh": "metadata_zh",
     "en": "metadata_en",
 }
+VIDEO_PROMPT_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_prompt")
 
 DEFAULT_TRANSLATION_STYLE = {
     "outlineEnabled": True,
@@ -187,6 +191,24 @@ def _read_text_file(path: str | None, max_chars: int = 12000) -> str:
         return content[:max_chars]
     except Exception:
         return ""
+
+
+def _parse_bool(value, default=True):
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    value_str = str(value).strip().lower()
+    if value_str in {"1", "true", "yes", "y", "on"}:
+        return True
+    if value_str in {"0", "false", "no", "n", "off"}:
+        return False
+    return default
+
+
+def _slugify(value: str) -> str:
+    cleaned = re.sub(r"[^a-zA-Z0-9]+", "-", value or "").strip("-").lower()
+    return cleaned or "generated"
 
 
 def _load_metadata_templates(lang_code: str) -> tuple[dict, dict]:
@@ -3097,6 +3119,128 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class VideoPromptHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        prompt_spec = data.get("prompt_spec") or data.get("spec") or data.get("input") or ""
+        if isinstance(prompt_spec, (dict, list)):
+            prompt_spec_text = json.dumps(prompt_spec, ensure_ascii=False, indent=2)
+        else:
+            prompt_spec_text = str(prompt_spec)
+
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+        if not os.path.isdir(VIDEO_PROMPT_TEMPLATE_DIR):
+            self.set_status(500)
+            return self.write({"error": "video prompt template missing"})
+
+        try:
+            generator = VideoPromptGenerator(
+                template_dir=VIDEO_PROMPT_TEMPLATE_DIR,
+                use_cache=use_cache,
+                cache_dir="cache/video_prompts",
+            )
+            result = generator.generate(prompt_spec_text)
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "prompt generation failed", "details": str(exc)})
+
+        self.write({
+            "prompt_spec": prompt_spec_text,
+            "prompt": result.get("prompt"),
+            "negative_prompt": result.get("negative_prompt"),
+            "model": result.get("model"),
+            "size": result.get("size"),
+            "seconds": result.get("seconds"),
+            "result": result,
+        })
+
+
+class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        prompt = data.get("prompt") or ""
+        if not isinstance(prompt, str) or not prompt.strip():
+            self.set_status(400)
+            return self.write({"error": "prompt required"})
+
+        model = str(data.get("model") or "sora-2").strip()
+        if model not in {"sora-2", "sora-2-pro"}:
+            model = "sora-2"
+
+        size = str(data.get("size") or "1280x720").strip()
+        if size not in {"1280x720", "1920x1080", "1024x576", "720x1280", "1080x1920"}:
+            size = "1280x720"
+
+        try:
+            seconds = int(data.get("seconds") or 8)
+        except Exception:
+            seconds = 8
+        seconds = min(max(seconds, 4), 20)
+
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+        title = data.get("title") or data.get("name") or "Generated video"
+        if not isinstance(title, str):
+            title = str(title)
+
+        output_dir = os.path.join(UPLOAD_FOLDER, "generated")
+        os.makedirs(output_dir, exist_ok=True)
+        slug = _slugify(title)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:10]
+        output_path = os.path.join(output_dir, f"{slug}_{timestamp}_{prompt_hash}.mp4")
+
+        try:
+            output_path = create_poll_and_download(
+                prompt=prompt.strip(),
+                model=model,
+                size=size,
+                seconds=seconds,
+                output=output_path,
+                use_cache=use_cache,
+            )
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "video generation failed", "details": str(exc)})
+
+        if not output_path or not os.path.exists(output_path):
+            self.set_status(500)
+            return self.write({"error": "generated video missing", "path": output_path})
+
+        if not media_url_for_path(output_path):
+            dest_name = os.path.basename(output_path) or f"{slug}_{timestamp}_{prompt_hash}.mp4"
+            dest_path = os.path.join(output_dir, dest_name)
+            if os.path.abspath(output_path) != os.path.abspath(dest_path):
+                shutil.copy2(output_path, dest_path)
+            output_path = dest_path
+
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT id FROM videos WHERE file_path = %s", (output_path,))
+            row = cur.fetchone()
+        if row:
+            video_id = row[0]
+        else:
+            video_id = ldb.add_video(output_path, title)
+
+        self.write({
+            "video_id": video_id,
+            "file_path": output_path,
+            "media_url": media_url_for_path(output_path),
+            "title": title,
+            "model": model,
+            "size": size,
+            "seconds": seconds,
+        })
+
+
 class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
     def post(self, video_id):
         try:
@@ -4067,6 +4211,8 @@ def make_app(upload_folder):
         (r"/api/languages", LanguagesHandler),
         (r"/api/grammar-palettes/([A-Za-z0-9_-]+)", GrammarPaletteHandler),
         (r"/api/ui-settings/([A-Za-z0-9_-]+)", UISettingsHandler),
+        (r"/api/video-prompts", VideoPromptHandler),
+        (r"/api/videos/generate", VideoGenerateHandler),
         (r"/api/videos", VideosHandler),
         (r"/api/videos/(\d+)", VideoDetailHandler),
         (r"/api/videos/(\d+)/transcribe", VideoTranscribeHandler),

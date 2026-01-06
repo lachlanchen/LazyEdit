@@ -72,9 +72,17 @@ class OpenAIRequestJSONBase:
     def load_from_cache(self, prompt, filename=None):
         file_path = self.get_cache_file_path(prompt, filename=filename)
         if os.path.exists(file_path):
-            with open(file_path, 'r', encoding='utf-8') as file:
-                cached_data = json.load(file)
-                return cached_data["response"]
+            try:
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    cached_data = json.load(file)
+                    return cached_data.get("response")
+            except json.JSONDecodeError:
+                print(f"Cache file invalid JSON, ignoring: {file_path}")
+                try:
+                    os.remove(file_path)
+                except Exception:
+                    pass
+                return None
         return None
 
     def send_request_with_json_schema(self, prompt, json_schema, system_content="You are an AI.", filename=None, schema_name="response"):

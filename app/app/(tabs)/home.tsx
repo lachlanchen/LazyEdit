@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 
@@ -19,12 +19,30 @@ const formatBytes = (bytes?: number | null) => {
   return `${size.toFixed(decimals)} ${units[unitIndex]}`;
 };
 
+const DEFAULT_PROMPT_SPEC = `{\n  \"title\": \"Mist Valley Oracle\",\n  \"subject\": \"A fictional oracle in a silver robe, fully clothed\",\n  \"action\": \"She senses the future as mist drifts through the valley\",\n  \"environment\": \"Dawn light, floating isles, ancient ruins in fog\",\n  \"camera\": \"Slow orbit, smooth tracking, 35mm lens\",\n  \"lighting\": \"Soft sunrise glow, volumetric mist\",\n  \"mood\": \"Serene, mysterious, hopeful\",\n  \"style\": \"Cinematic, high detail, natural color grading\",\n  \"duration_seconds\": 8,\n  \"aspect_ratio\": \"16:9\",\n  \"negative\": \"no text, no logos, no gore\"\n}`;
+
 export default function HomeScreen() {
   const [picked, setPicked] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [status, setStatus] = useState<string>('');
   const [statusTone, setStatusTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [promptSpec, setPromptSpec] = useState<string>(DEFAULT_PROMPT_SPEC);
+  const [promptResult, setPromptResult] = useState<{
+    prompt?: string;
+    negativePrompt?: string;
+    model?: string;
+    size?: string;
+    seconds?: number;
+  } | null>(null);
+  const [promptOutput, setPromptOutput] = useState<string>('');
+  const [prompting, setPrompting] = useState(false);
+  const [promptStatus, setPromptStatus] = useState<string>('');
+  const [promptTone, setPromptTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [generatingVideo, setGeneratingVideo] = useState(false);
+  const [videoStatus, setVideoStatus] = useState<string>('');
+  const [videoTone, setVideoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -114,14 +132,105 @@ export default function HomeScreen() {
     }
   };
 
-  const statusStyle =
-    statusTone === 'good' ? styles.statusGood : statusTone === 'bad' ? styles.statusBad : styles.statusNeutral;
+  const toneStyle = (tone: 'neutral' | 'good' | 'bad') =>
+    tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
+
+  const statusStyle = toneStyle(statusTone);
+
+  const parseSpecJson = () => {
+    try {
+      return JSON.parse(promptSpec);
+    } catch {
+      return null;
+    }
+  };
+
+  const generatePrompt = async () => {
+    if (prompting) return;
+    setPrompting(true);
+    setPromptStatus('Generating prompt...');
+    setPromptTone('neutral');
+    try {
+      const resp = await fetch(`${API_URL}/api/video-prompts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt_spec: promptSpec }),
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        setPromptStatus(`Prompt failed: ${json.error || json.message || resp.statusText}`);
+        setPromptTone('bad');
+        return;
+      }
+      const result = json.result || json;
+      const promptText = result.prompt || json.prompt || '';
+      setPromptOutput(promptText);
+      setPromptResult({
+        prompt: promptText,
+        negativePrompt: result.negative_prompt || json.negative_prompt,
+        model: result.model || json.model,
+        size: result.size || json.size,
+        seconds: result.seconds || json.seconds,
+      });
+      setPromptStatus('Prompt ready. You can edit before generating.');
+      setPromptTone('good');
+    } catch (e: any) {
+      setPromptStatus(`Prompt failed: ${e?.message || String(e)}`);
+      setPromptTone('bad');
+    } finally {
+      setPrompting(false);
+    }
+  };
+
+  const generateVideo = async () => {
+    if (generatingVideo) return;
+    if (!promptOutput.trim()) {
+      setVideoStatus('Add a prompt first.');
+      setVideoTone('bad');
+      return;
+    }
+    setGeneratingVideo(true);
+    setVideoStatus('Generating video... this can take a few minutes.');
+    setVideoTone('neutral');
+    try {
+      const spec = parseSpecJson();
+      const title = spec?.title || spec?.name || 'Generated video';
+      const resp = await fetch(`${API_URL}/api/videos/generate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: promptOutput.trim(),
+          model: promptResult?.model,
+          size: promptResult?.size,
+          seconds: promptResult?.seconds,
+          title,
+        }),
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        setVideoStatus(`Generation failed: ${json.error || json.message || resp.statusText}`);
+        setVideoTone('bad');
+        return;
+      }
+      const mediaUrl = json.media_url ? `${API_URL}${json.media_url}` : null;
+      setGeneratedVideoUrl(mediaUrl);
+      const idLabel = json.video_id ? ` (id: ${json.video_id})` : '';
+      setVideoStatus(`Video ready${idLabel}. Added to library.`);
+      setVideoTone('good');
+    } catch (e: any) {
+      setVideoStatus(`Generation failed: ${e?.message || String(e)}`);
+      setVideoTone('bad');
+    } finally {
+      setGeneratingVideo(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>LazyEdit</Text>
-        <Text style={styles.subtitle}>Multilingual Video Editor</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        <View style={styles.content}>
+          <Text style={styles.title}>LazyEdit</Text>
+          <Text style={styles.subtitle}>Multilingual Video Editor</Text>
 
         <View style={styles.stepRow}>
           <View style={styles.stepBadge}>
@@ -181,9 +290,88 @@ export default function HomeScreen() {
           </View>
         </Pressable>
 
-        {status ? <Text style={[styles.status, statusStyle]}>{status}</Text> : null}
-      </View>
-      <Text style={styles.help}>Backend: {API_URL}</Text>
+          {status ? <Text style={[styles.status, statusStyle]}>{status}</Text> : null}
+
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Generate video</Text>
+            <Text style={styles.sectionSubtitle}>Draft a Sora prompt, edit it, then render a video.</Text>
+
+            <Text style={styles.fieldLabel}>Prompt spec (JSON)</Text>
+            <TextInput
+              style={styles.textArea}
+              value={promptSpec}
+              onChangeText={setPromptSpec}
+              multiline
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+
+            <Pressable style={styles.btnAccent} onPress={generatePrompt} disabled={prompting}>
+              <View style={styles.btnContent}>
+                {prompting && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                <Text style={styles.btnText}>{prompting ? 'Generating prompt...' : 'Generate prompt'}</Text>
+              </View>
+            </Pressable>
+
+            {promptStatus ? (
+              <Text style={[styles.status, toneStyle(promptTone)]}>{promptStatus}</Text>
+            ) : null}
+
+            <Text style={styles.fieldLabel}>Generated prompt</Text>
+            <TextInput
+              style={styles.textArea}
+              value={promptOutput}
+              onChangeText={setPromptOutput}
+              placeholder="Generate a prompt above, then edit it here."
+              multiline
+            />
+
+            {promptResult?.model || promptResult?.size || promptResult?.seconds ? (
+              <Text style={styles.metaText}>
+                Suggested settings: {promptResult?.model || 'sora-2'} · {promptResult?.size || '1280x720'} ·{' '}
+                {promptResult?.seconds || 8}s
+              </Text>
+            ) : null}
+            {promptResult?.negativePrompt ? (
+              <Text style={styles.metaText}>Negative: {promptResult.negativePrompt}</Text>
+            ) : null}
+
+            <Pressable
+              style={[styles.btnSuccess, generatingVideo && styles.btnDisabled]}
+              onPress={generateVideo}
+              disabled={generatingVideo}
+            >
+              <View style={styles.btnContent}>
+                {generatingVideo && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                <Text style={styles.btnText}>{generatingVideo ? 'Generating video...' : 'Generate video'}</Text>
+              </View>
+            </Pressable>
+
+            {videoStatus ? (
+              <Text style={[styles.status, toneStyle(videoTone)]}>{videoStatus}</Text>
+            ) : null}
+
+            {generatedVideoUrl ? (
+              <View style={styles.card}>
+                <Text style={styles.cardTitle}>Generated video preview</Text>
+                {Platform.OS === 'web' ? (
+                  <View style={styles.previewBox}>
+                    {React.createElement('video', {
+                      src: generatedVideoUrl,
+                      style: { width: '100%', borderRadius: 12, maxHeight: 300 },
+                      controls: true,
+                      preload: 'metadata',
+                    })}
+                  </View>
+                ) : (
+                  <Text style={styles.previewHint}>Preview available on web.</Text>
+                )}
+              </View>
+            ) : null}
+          </View>
+        </View>
+        <Text style={styles.help}>Backend: {API_URL}</Text>
+      </ScrollView>
     </View>
   );
 }
@@ -193,6 +381,9 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 24,
     backgroundColor: '#fbfdff',
+  },
+  scrollContent: {
+    paddingBottom: 32,
   },
   content: {
     flex: 1,
@@ -235,6 +426,22 @@ const styles = StyleSheet.create({
   },
   btnSecondary: {
     backgroundColor: '#fc8eac',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  btnAccent: {
+    marginTop: 10,
+    backgroundColor: '#0ea5e9',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  btnSuccess: {
+    marginTop: 10,
+    backgroundColor: '#16a34a',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 12,
@@ -285,6 +492,44 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: '#475569',
     fontSize: 12,
+  },
+  section: {
+    marginTop: 28,
+    paddingTop: 18,
+    borderTopWidth: 1,
+    borderTopColor: '#e2e8f0',
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+  sectionSubtitle: {
+    marginTop: 4,
+    fontSize: 13,
+    color: '#475569',
+  },
+  fieldLabel: {
+    marginTop: 14,
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  textArea: {
+    marginTop: 8,
+    minHeight: 120,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 12,
+    padding: 12,
+    backgroundColor: 'white',
+    color: '#111827',
+    textAlignVertical: 'top',
+  },
+  metaText: {
+    marginTop: 8,
+    fontSize: 12,
+    color: '#475569',
   },
   status: {
     marginTop: 14,
