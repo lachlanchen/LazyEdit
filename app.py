@@ -29,6 +29,7 @@ from lazyedit.words_card import VideoAddWordsCard, overlay_word_card_on_cover
 from lazyedit.subtitle_translate import SubtitlesTranslator
 from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
+from lazyedit.chinese_simplify import convert_items_to_simplified
 
 from pprint import pprint
 import json5
@@ -92,7 +93,7 @@ DEFAULT_TRANSLATION_STYLE = {
     "bgColor": "#000000",
     "bgOpacity": 0.5,
 }
-DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh"]
+DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "zh-Hans"]
 
 
 def load_grammar_palette(lang):
@@ -144,14 +145,31 @@ def _sanitize_translation_style(payload: dict | None) -> dict:
     }
 
 
+def _normalize_translation_language(value: object | None) -> str | None:
+    if value is None:
+        return None
+    raw = str(value).strip()
+    if not raw:
+        return None
+    lowered = raw.lower()
+    if lowered == "ja":
+        return "ja"
+    if lowered == "en":
+        return "en"
+    if lowered in {"zh", "zh-hant", "zh_hant", "zh-tw", "zh-hk", "zh-mo"}:
+        return "zh-Hant"
+    if lowered in {"zh-hans", "zh_hans", "zh-cn"}:
+        return "zh-Hans"
+    return None
+
+
 def _sanitize_translation_languages(payload) -> list[str]:
     if not isinstance(payload, (list, tuple)):
         return DEFAULT_TRANSLATION_LANGUAGES.copy()
-    allowed = {"ja", "en", "zh"}
     cleaned = []
     for item in payload:
-        code = str(item).strip().lower()
-        if code in allowed and code not in cleaned:
+        code = _normalize_translation_language(item)
+        if code and code not in cleaned:
             cleaned.append(code)
     return cleaned or DEFAULT_TRANSLATION_LANGUAGES.copy()
 
@@ -2641,15 +2659,16 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             data = {}
 
-        lang = (
+        raw_lang = (
             data.get("language")
             or data.get("lang")
             or self.get_argument("lang", default=None)
             or "ja"
         )
-        if lang not in {"ja", "en", "zh"}:
+        lang = _normalize_translation_language(raw_lang)
+        if not lang:
             self.set_status(400)
-            return self.write({"error": f"language '{lang}' not supported yet"})
+            return self.write({"error": f"language '{raw_lang}' not supported yet"})
 
         def parse_bool(value, default=True):
             if value is None:
@@ -2690,6 +2709,7 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
 
         translations_dir = os.path.join(output_folder, "translations", lang)
         os.makedirs(translations_dir, exist_ok=True)
+        traditional_json_path = None
         if lang == "ja":
             output_json_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.json")
             output_srt_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.srt")
@@ -2698,10 +2718,16 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             output_json_path = os.path.join(translations_dir, f"{base_name}_en.json")
             output_srt_path = os.path.join(translations_dir, f"{base_name}_en.srt")
             output_ass_path = None
-        else:
-            output_json_path = os.path.join(translations_dir, f"{base_name}_zh.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_zh.srt")
+        elif lang == "zh-Hant":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hant.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hant.srt")
             output_ass_path = None
+        else:
+            output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hans.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hans.srt")
+            output_ass_path = None
+            traditional_dir = os.path.join(output_folder, "translations", "zh-Hant")
+            traditional_json_path = os.path.join(traditional_dir, f"{base_name}_zh_hant.json")
 
         for path in (output_json_path, output_srt_path, output_ass_path):
             if path and os.path.exists(path):
@@ -2721,6 +2747,7 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                 video_height=video_height,
                 use_cache=use_cache,
             )
+            json_items = []
             if lang == "ja":
                 ruby_items, plain_items, json_items = translator.process_japanese_furigana_single_pass()
                 translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
@@ -2730,10 +2757,33 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                 plain_items, json_items = translator.process_english_translation_single_pass()
                 translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
                 translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
-            else:
-                plain_items, json_items = translator.process_chinese_translation_single_pass()
+            elif lang == "zh-Hant":
+                plain_items, json_items = translator.process_chinese_traditional_translation_single_pass()
                 translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
                 translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            else:
+                traditional_items = None
+                if use_cache and traditional_json_path and os.path.exists(traditional_json_path):
+                    try:
+                        with open(traditional_json_path, "r", encoding="utf-8") as handle:
+                            data = json.load(handle)
+                        if isinstance(data, list):
+                            traditional_items = data
+                    except Exception:
+                        traditional_items = None
+
+                if traditional_items is None:
+                    plain_items, json_items = translator.process_chinese_traditional_translation_single_pass()
+                    traditional_items = json_items
+                else:
+                    plain_items = traditional_items
+                    json_items = traditional_items
+
+                simplified_plain_items = convert_items_to_simplified(plain_items)
+                simplified_json_items = convert_items_to_simplified(json_items)
+                translator.save_translated_subtitles_to_json_path(simplified_json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(simplified_plain_items, output_srt_path)
+                json_items = simplified_json_items
 
             status = "completed" if json_items else "empty"
             error_message = None
@@ -2824,8 +2874,14 @@ class VideoTranslationHandler(CorsMixin, tornado.web.RequestHandler):
         if not lang:
             self.set_status(400)
             return self.write({"error": "lang required"})
+        lang = _normalize_translation_language(lang)
+        if not lang:
+            self.set_status(400)
+            return self.write({"error": "unsupported lang"})
         ldb.ensure_schema()
         row = ldb.get_latest_subtitle_translation(video_id_i, lang)
+        if not row and lang == "zh-Hant":
+            row = ldb.get_latest_subtitle_translation(video_id_i, "zh")
         if not row:
             self.set_status(404)
             return self.write({"error": "translation not found"})

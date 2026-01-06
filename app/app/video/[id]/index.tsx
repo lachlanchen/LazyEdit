@@ -72,8 +72,30 @@ type TranslationDetail = {
   created_at?: string | null;
 };
 
+type TranslateLang = 'ja' | 'en' | 'zh-Hant' | 'zh-Hans';
+
 const formatTimestamp = (value?: string | null) =>
   value ? value.slice(0, 19).replace('T', ' ') : 'Unknown time';
+
+const TRANSLATE_LANG_LABELS: Record<TranslateLang, string> = {
+  ja: 'Japanese',
+  en: 'English',
+  'zh-Hant': 'Chinese (Traditional)',
+  'zh-Hans': 'Chinese (Simplified)',
+};
+
+const normalizeTranslateLang = (value: string): TranslateLang | null => {
+  const lowered = value.trim().toLowerCase();
+  if (lowered === 'ja') return 'ja';
+  if (lowered === 'en') return 'en';
+  if (['zh', 'zh-hant', 'zh_hant', 'zh-tw', 'zh-hk', 'zh-mo'].includes(lowered)) {
+    return 'zh-Hant';
+  }
+  if (['zh-hans', 'zh_hans', 'zh-cn'].includes(lowered)) {
+    return 'zh-Hans';
+  }
+  return null;
+};
 
 export default function VideoDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -104,12 +126,13 @@ export default function VideoDetailScreen() {
   const [translateStatus, setTranslateStatus] = useState('');
   const [translateTone, setTranslateTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [disableTranslateCache, setDisableTranslateCache] = useState(false);
-  const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<Array<'ja' | 'en' | 'zh'>>([
+  const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<TranslateLang[]>([
     'ja',
     'en',
-    'zh',
+    'zh-Hant',
+    'zh-Hans',
   ]);
-  const [previewLang, setPreviewLang] = useState<'ja' | 'en' | 'zh'>('ja');
+  const [previewLang, setPreviewLang] = useState<TranslateLang>('ja');
   const [translateLangsLoaded, setTranslateLangsLoaded] = useState(false);
   const [lightbox, setLightbox] = useState<{ url: string; label?: string } | null>(null);
 
@@ -120,14 +143,14 @@ export default function VideoDetailScreen() {
 
   const headerTitle = video?.title ? video.title : 'Video';
   const captionFrameItems = caption?.frames || [];
-  const translateLangOptions: Array<{ code: 'ja' | 'en' | 'zh'; label: string }> = [
-    { code: 'ja', label: 'Japanese' },
-    { code: 'en', label: 'English' },
-    { code: 'zh', label: 'Chinese' },
+  const translateLangOptions: Array<{ code: TranslateLang; label: string }> = [
+    { code: 'ja', label: TRANSLATE_LANG_LABELS.ja },
+    { code: 'en', label: TRANSLATE_LANG_LABELS.en },
+    { code: 'zh-Hant', label: TRANSLATE_LANG_LABELS['zh-Hant'] },
+    { code: 'zh-Hans', label: TRANSLATE_LANG_LABELS['zh-Hans'] },
   ];
   const previewTranslation = translations.find((item) => item.language_code === previewLang) || null;
-  const previewLabel =
-    previewLang === 'ja' ? 'Japanese' : previewLang === 'en' ? 'English' : 'Chinese';
+  const previewLabel = TRANSLATE_LANG_LABELS[previewLang] || previewLang;
 
   useEffect(() => {
     if (!selectedTranslateLangs.length) return;
@@ -227,7 +250,15 @@ export default function VideoDetailScreen() {
         setTranslations([]);
         return;
       }
-      setTranslations(json.translations || []);
+      const items: TranslationDetail[] = Array.isArray(json.translations) ? json.translations : [];
+      const hasZhHant = items.some((item) => item.language_code === 'zh-Hant');
+      const normalizedItems = items.map((item) => {
+        if (item.language_code === 'zh' && !hasZhHant) {
+          return { ...item, language_code: 'zh-Hant' };
+        }
+        return item;
+      });
+      setTranslations(normalizedItems);
     } catch (e: any) {
       setTranslateStatus(e?.message || 'Failed to load translations');
       setTranslateTone('bad');
@@ -267,9 +298,13 @@ export default function VideoDetailScreen() {
         const json = await resp.json();
         if (!resp.ok) return;
         const value = Array.isArray(json.value) ? json.value : [];
-        const cleaned = value.filter((item: string) => item === 'ja' || item === 'en' || item === 'zh') as Array<
-          'ja' | 'en' | 'zh'
-        >;
+        const cleaned: TranslateLang[] = [];
+        value.forEach((item) => {
+          const normalized = normalizeTranslateLang(String(item));
+          if (normalized && !cleaned.includes(normalized)) {
+            cleaned.push(normalized);
+          }
+        });
         if (cleaned.length) {
           setSelectedTranslateLangs(cleaned);
           if (!cleaned.includes(previewLang)) {
@@ -390,7 +425,7 @@ export default function VideoDetailScreen() {
     try {
       for (let i = 0; i < selectedTranslateLangs.length; i += 1) {
         const lang = selectedTranslateLangs[i];
-        const label = lang === 'ja' ? 'Japanese' : lang === 'en' ? 'English' : 'Chinese';
+        const label = TRANSLATE_LANG_LABELS[lang] || lang;
         setTranslateStatus(`Translating ${label} (${i + 1}/${selectedTranslateLangs.length})...`);
         const resp = await fetch(`${API_URL}/api/videos/${video.id}/translate`, {
           method: 'POST',

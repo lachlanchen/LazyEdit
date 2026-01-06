@@ -800,12 +800,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return plain_items, json_items
 
-    def translate_and_merge_subtitles_zh_single_pass(self, subtitles, idx):
-        """Single-pass Chinese translation using template prompt + schema."""
-        print("Translating subtitles to Chinese (single pass)...")
+    def translate_and_merge_subtitles_zh_hant_single_pass(self, subtitles, idx):
+        """Single-pass Traditional Chinese translation using template prompt + schema."""
+        print("Translating subtitles to Traditional Chinese (single pass)...")
 
-        prompt_bundle = self._load_template_json("chinese_translation/prompt.json")
-        schema = self._load_template_json("chinese_translation/schema.json")
+        prompt_bundle = self._load_template_json("chinese_traditional_translation/prompt.json")
+        schema = self._load_template_json("chinese_traditional_translation/schema.json")
 
         user_template = prompt_bundle.get("user", "")
         system_content = prompt_bundle.get("system", "You are an expert Chinese translator.")
@@ -818,8 +818,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             prompt=prompt,
             json_schema=schema,
             system_content=system_content,
-            filename=self.get_filename(lang="zh_single", idx=idx),
-            schema_name="chinese_translation_single_pass",
+            filename=self.get_filename(lang="zh_hant_single", idx=idx),
+            schema_name="chinese_traditional_translation_single_pass",
         )
 
         items = response.get("items", [])
@@ -839,8 +839,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             "json": json_items,
         }
 
-    def process_chinese_translation_single_pass(self):
-        """Translate Chinese subtitles line-by-line."""
+    def process_chinese_traditional_translation_single_pass(self):
+        """Translate Traditional Chinese subtitles line-by-line."""
         subtitles = self.load_subtitles_from_json()
         self.subtitles = subtitles
 
@@ -851,7 +851,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for subtitle in batch:
-                result = self.translate_and_merge_subtitles_zh_single_pass([subtitle], line_counter)
+                result = self.translate_and_merge_subtitles_zh_hant_single_pass([subtitle], line_counter)
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
                 line_counter += 1
