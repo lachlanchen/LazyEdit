@@ -142,7 +142,7 @@ export default function VideoDetailScreen() {
     'ja',
     'en',
     'zh-Hant',
-    'zh-Hans',
+    'fr',
   ]);
   const [previewLang, setPreviewLang] = useState<TranslateLang>('ja');
   const [translateLangsLoaded, setTranslateLangsLoaded] = useState(false);

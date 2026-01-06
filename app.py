@@ -93,7 +93,7 @@ DEFAULT_TRANSLATION_STYLE = {
     "bgColor": "#000000",
     "bgOpacity": 0.5,
 }
-DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "zh-Hans"]
+DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
 
 
 def load_grammar_palette(lang):
