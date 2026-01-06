@@ -101,6 +101,8 @@ DEFAULT_BURN_LAYOUT = {
     "rows": 4,
     "cols": 1,
     "liftSlots": 1,
+    "romajiEnabled": True,
+    "pinyinEnabled": True,
     "slots": [
         {"slot": 1, "language": None},
         {"slot": 2, "language": "en"},
@@ -218,6 +220,8 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     rows = DEFAULT_BURN_LAYOUT.get("rows", 4)
     cols = DEFAULT_BURN_LAYOUT.get("cols", 1)
     lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 1)
+    romaji_enabled = DEFAULT_BURN_LAYOUT.get("romajiEnabled", True)
+    pinyin_enabled = DEFAULT_BURN_LAYOUT.get("pinyinEnabled", True)
     if isinstance(payload, dict):
         slots_payload = payload.get("slots")
         if "heightRatio" in payload:
@@ -240,6 +244,14 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 lift_slots = int(payload.get("liftSlots"))
             except Exception:
                 lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 1)
+        if "romajiEnabled" in payload:
+            value = payload.get("romajiEnabled")
+            if isinstance(value, bool):
+                romaji_enabled = value
+        if "pinyinEnabled" in payload:
+            value = payload.get("pinyinEnabled")
+            if isinstance(value, bool):
+                pinyin_enabled = value
     elif isinstance(payload, list):
         slots_payload = payload
 
@@ -292,6 +304,8 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         "rows": rows,
         "cols": cols,
         "liftSlots": lift_slots,
+        "romajiEnabled": romaji_enabled,
+        "pinyinEnabled": pinyin_enabled,
     }
 
 
@@ -3140,6 +3154,8 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
 
         layout_config = _sanitize_burn_layout(data.get("layout") or data.get("slots") or data)
         slots_config = layout_config.get("slots") or []
+        romaji_enabled = bool(layout_config.get("romajiEnabled", True))
+        pinyin_enabled = bool(layout_config.get("pinyinEnabled", True))
 
         ldb.ensure_schema()
         with ldb.get_cursor() as cur:
@@ -3200,6 +3216,8 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     auto_ruby=auto_ruby,
                     strip_kana=lang == "ja",
                     font_scale=font_scale,
+                    kana_romaji=romaji_enabled and lang == "ja",
+                    pinyin=pinyin_enabled and lang in {"zh", "zh-Hant", "zh-Hans"},
                 )
             )
 

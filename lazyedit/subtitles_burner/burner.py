@@ -21,6 +21,8 @@ class BurnSlotConfig:
     auto_ruby: bool = False
     strip_kana: bool = False
     font_scale: float = 1.0
+    kana_romaji: bool = False
+    pinyin: bool = False
 
 
 def _load_burner_module():
@@ -103,6 +105,8 @@ def burn_video_with_slots(
                 style=style,
                 auto_ruby=slot.auto_ruby,
                 strip_kana=slot.strip_kana,
+                kana_romaji=slot.kana_romaji,
+                pinyin=slot.pinyin,
             )
         )
 

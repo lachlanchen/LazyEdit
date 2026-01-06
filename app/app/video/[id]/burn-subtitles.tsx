@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
@@ -65,6 +65,8 @@ const DEFAULT_ROWS = 4;
 const DEFAULT_COLS = 1;
 const DEFAULT_HEIGHT_RATIO = 0.5;
 const DEFAULT_LIFT_SLOTS = 1;
+const DEFAULT_ROMAJI = true;
+const DEFAULT_PINYIN = true;
 
 const DEFAULT_SLOTS: BurnSlot[] = [
   { slot: 1, language: null, fontScale: 1 },
@@ -216,6 +218,8 @@ export default function BurnSubtitlesScreen() {
   const [rows, setRows] = useState(DEFAULT_ROWS);
   const [cols, setCols] = useState(DEFAULT_COLS);
   const [liftSlots, setLiftSlots] = useState(DEFAULT_LIFT_SLOTS);
+  const [romajiEnabled, setRomajiEnabled] = useState(DEFAULT_ROMAJI);
+  const [pinyinEnabled, setPinyinEnabled] = useState(DEFAULT_PINYIN);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoAspect, setVideoAspect] = useState<number | null>(null);
   const [previewWidth, setPreviewWidth] = useState(0);
@@ -309,6 +313,12 @@ export default function BurnSubtitlesScreen() {
       if (typeof value?.liftSlots === 'number') {
         setLiftSlots(value.liftSlots);
       }
+      if (typeof value?.romajiEnabled === 'boolean') {
+        setRomajiEnabled(value.romajiEnabled);
+      }
+      if (typeof value?.pinyinEnabled === 'boolean') {
+        setPinyinEnabled(value.pinyinEnabled);
+      }
     } catch (_err) {
       // ignore
     } finally {
@@ -349,7 +359,7 @@ export default function BurnSubtitlesScreen() {
 
   useEffect(() => {
     if (!layoutLoaded) return;
-    const payload = { slots, heightRatio, rows, cols, liftSlots };
+    const payload = { slots, heightRatio, rows, cols, liftSlots, romajiEnabled, pinyinEnabled };
     const timeout = setTimeout(async () => {
       try {
         await fetch(`${API_URL}/api/ui-settings/burn_layout`, {
@@ -362,7 +372,7 @@ export default function BurnSubtitlesScreen() {
       }
     }, 200);
     return () => clearTimeout(timeout);
-  }, [slots, heightRatio, rows, cols, liftSlots, layoutLoaded]);
+  }, [slots, heightRatio, rows, cols, liftSlots, romajiEnabled, pinyinEnabled, layoutLoaded]);
 
   useEffect(() => {
     if (!layoutLoaded) return;
@@ -409,7 +419,7 @@ export default function BurnSubtitlesScreen() {
       const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols, liftSlots } }),
+        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols, liftSlots, romajiEnabled, pinyinEnabled } }),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -505,6 +515,33 @@ export default function BurnSubtitlesScreen() {
             onChange={setHeightRatio}
             formatValue={(value) => `${Math.round(value * 100)}%`}
           />
+
+          <View style={styles.toggleGroup}>
+            <View style={[styles.toggleRow, { marginBottom: 0 }]}>
+              <View style={styles.toggleText}>
+                <Text style={styles.toggleLabel}>Japanese romaji</Text>
+                <Text style={styles.toggleHint}>Show romaji above kana-only words</Text>
+              </View>
+              <Switch
+                value={romajiEnabled}
+                onValueChange={setRomajiEnabled}
+                trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                thumbColor={romajiEnabled ? '#f8fafc' : '#f1f5f9'}
+              />
+            </View>
+            <View style={styles.toggleRow}>
+              <View style={styles.toggleText}>
+                <Text style={styles.toggleLabel}>Chinese pinyin</Text>
+                <Text style={styles.toggleHint}>Show pinyin above Chinese text</Text>
+              </View>
+              <Switch
+                value={pinyinEnabled}
+                onValueChange={setPinyinEnabled}
+                trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                thumbColor={pinyinEnabled ? '#f8fafc' : '#f1f5f9'}
+              />
+            </View>
+          </View>
 
           <View style={styles.previewCard}>
             <Text style={styles.previewTitle}>Layout preview</Text>
@@ -694,6 +731,23 @@ const styles = StyleSheet.create({
     marginTop: 12,
     flexDirection: 'row',
   },
+  toggleGroup: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  toggleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  toggleText: { flex: 1, paddingRight: 12 },
+  toggleLabel: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  toggleHint: { fontSize: 11, color: '#64748b', marginTop: 2 },
   select: {
     borderWidth: 1,
     borderColor: '#cbd5f5',
