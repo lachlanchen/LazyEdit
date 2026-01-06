@@ -84,6 +84,15 @@ GRAMMAR_PALETTE_DIR = os.path.join(
     "templates",
     "grammar_palettes",
 )
+METADATA_TEMPLATE_DIR = os.path.join(
+    os.path.dirname(__file__),
+    "lazyedit",
+    "templates",
+)
+METADATA_TEMPLATE_MAP = {
+    "zh": "metadata_zh",
+    "en": "metadata_en",
+}
 
 DEFAULT_TRANSLATION_STYLE = {
     "outlineEnabled": True,
@@ -156,6 +165,44 @@ def load_grammar_palette(lang):
             with open(path, "r", encoding="utf-8") as handle:
                 return json.load(handle)
     return None
+
+
+def _normalize_metadata_language(value: str | None) -> str | None:
+    if not value:
+        return None
+    lowered = str(value).strip().lower()
+    if lowered in {"zh", "zh-cn", "zh-hans", "chinese", "cn"}:
+        return "zh"
+    if lowered in {"en", "english"}:
+        return "en"
+    return None
+
+
+def _read_text_file(path: str | None, max_chars: int = 12000) -> str:
+    if not path or not os.path.exists(path):
+        return ""
+    try:
+        with open(path, "r", encoding="utf-8", errors="ignore") as handle:
+            content = handle.read()
+        return content[:max_chars]
+    except Exception:
+        return ""
+
+
+def _load_metadata_templates(lang_code: str) -> tuple[dict, dict]:
+    template_key = METADATA_TEMPLATE_MAP.get(lang_code)
+    if not template_key:
+        raise ValueError(f"unsupported metadata language: {lang_code}")
+    template_dir = os.path.join(METADATA_TEMPLATE_DIR, template_key)
+    prompt_path = os.path.join(template_dir, "prompt.json")
+    schema_path = os.path.join(template_dir, "schema.json")
+    if not os.path.exists(prompt_path) or not os.path.exists(schema_path):
+        raise FileNotFoundError(f"metadata template missing for {lang_code}")
+    with open(prompt_path, "r", encoding="utf-8") as handle:
+        prompt_payload = json.load(handle)
+    with open(schema_path, "r", encoding="utf-8") as handle:
+        schema_payload = json.load(handle)
+    return prompt_payload, schema_payload
 
 
 def _sanitize_translation_style(payload: dict | None) -> dict:
@@ -2881,6 +2928,175 @@ class VideoCaptionHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        lang = _normalize_metadata_language(self.get_argument("lang", default=None))
+        if not lang:
+            self.set_status(400)
+            return self.write({"error": "lang required"})
+
+        ldb.ensure_schema()
+        row = ldb.get_latest_video_metadata(video_id_i, lang)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "metadata not found"})
+
+        metadata_id, language_code, status, output_json_path, error, created_at = row
+        metadata_payload = None
+        if output_json_path and os.path.exists(output_json_path):
+            try:
+                with open(output_json_path, "r", encoding="utf-8") as handle:
+                    metadata_payload = json.load(handle)
+            except Exception:
+                metadata_payload = None
+
+        self.write({
+            "id": metadata_id,
+            "video_id": video_id_i,
+            "language_code": language_code,
+            "status": status,
+            "output_json_path": output_json_path,
+            "json_url": media_url_for_path(output_json_path),
+            "metadata": metadata_payload,
+            "error": error,
+            "created_at": created_at.isoformat() if created_at else None,
+        })
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        raw_lang = data.get("lang") or data.get("language") or self.get_argument("lang", default=None)
+        lang = _normalize_metadata_language(raw_lang)
+        if not lang:
+            self.set_status(400)
+            return self.write({"error": f"language '{raw_lang}' not supported"})
+
+        def parse_bool(value, default=True):
+            if value is None:
+                return default
+            if isinstance(value, bool):
+                return value
+            value_str = str(value).strip().lower()
+            if value_str in {"1", "true", "yes", "y", "on"}:
+                return True
+            if value_str in {"0", "false", "no", "n", "off"}:
+                return False
+            return default
+
+        use_cache = parse_bool(data.get("use_cache", self.get_argument("use_cache", default=None)), default=True)
+        custom_notes = data.get("notes") or data.get("custom_notes") or ""
+        if not isinstance(custom_notes, str):
+            custom_notes = str(custom_notes)
+
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        file_path = row[0]
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        input_file = preprocess_if_needed(file_path)
+        base_name, _ = os.path.splitext(os.path.basename(input_file))
+        output_folder = os.path.dirname(input_file)
+
+        transcription_row = ldb.get_latest_transcription(video_id_i)
+        if not transcription_row:
+            self.set_status(400)
+            return self.write({"error": "transcription missing; run Transcribe first"})
+        (
+            _transcription_id,
+            _language_code,
+            transcription_status,
+            _output_json_path,
+            output_srt_path,
+            output_md_path,
+            _error,
+            _created_at,
+        ) = transcription_row
+        if transcription_status == "failed":
+            self.set_status(400)
+            return self.write({"error": "transcription failed; run Transcribe again"})
+
+        transcription_text = _read_text_file(output_md_path) or _read_text_file(output_srt_path)
+        if not transcription_text:
+            self.set_status(400)
+            return self.write({"error": "transcription missing; run Transcribe first"})
+
+        caption_text = ""
+        caption_row = ldb.get_latest_frame_caption(video_id_i)
+        if caption_row:
+            _, caption_status, _, caption_srt_path, caption_md_path, _, _ = caption_row
+            if caption_status != "failed":
+                caption_text = _read_text_file(caption_md_path) or _read_text_file(caption_srt_path)
+
+        metadata_dir = os.path.join(output_folder, "metadata", lang)
+        os.makedirs(metadata_dir, exist_ok=True)
+        output_json_path = os.path.join(metadata_dir, f"{base_name}_metadata_{lang}.json")
+        if os.path.exists(output_json_path):
+            os.remove(output_json_path)
+
+        status = "completed"
+        error_message = None
+        metadata_payload = None
+        try:
+            template_dir = os.path.join(METADATA_TEMPLATE_DIR, METADATA_TEMPLATE_MAP.get(lang, ""))
+            generator = Subtitle2Metadata(OpenAI(), use_cache=use_cache, cache_dir="cache/metadata")
+            metadata_payload = generator.generate_metadata_from_template(
+                template_dir=template_dir,
+                transcription_text=transcription_text,
+                caption_text=caption_text,
+                custom_notes=custom_notes,
+                output_path=output_json_path,
+            )
+            with open(output_json_path, "w", encoding="utf-8") as handle:
+                json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
+        except Exception as exc:
+            status = "failed"
+            error_message = str(exc)
+
+        metadata_id = ldb.add_video_metadata(
+            video_id_i,
+            lang,
+            status,
+            output_json_path if status == "completed" else None,
+            error_message,
+        )
+
+        if status != "completed":
+            self.set_status(500)
+            return self.write({"error": "metadata generation failed", "details": error_message, "id": metadata_id})
+
+        self.write({
+            "id": metadata_id,
+            "video_id": video_id_i,
+            "language_code": lang,
+            "status": status,
+            "output_json_path": output_json_path,
+            "json_url": media_url_for_path(output_json_path),
+            "metadata": metadata_payload,
+            "error": error_message,
+        })
+
+
 class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
     def post(self, video_id):
         try:
@@ -3856,6 +4072,7 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/transcribe", VideoTranscribeHandler),
         (r"/api/videos/(\d+)/transcription", VideoTranscriptionHandler),
         (r"/api/videos/(\d+)/caption", VideoCaptionHandler),
+        (r"/api/videos/(\d+)/metadata", VideoMetadataHandler),
         (r"/api/videos/(\d+)/keyframes", VideoKeyframesHandler),
         (r"/api/videos/(\d+)/translate", VideoTranslateHandler),
         (r"/api/videos/(\d+)/translation", VideoTranslationHandler),

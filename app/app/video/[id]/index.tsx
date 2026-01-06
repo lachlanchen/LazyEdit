@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Switch,
+  TextInput,
   Text,
   View,
 } from 'react-native';
@@ -68,6 +69,35 @@ type TranslationDetail = {
   json_url?: string | null;
   srt_url?: string | null;
   ass_url?: string | null;
+  error?: string | null;
+  created_at?: string | null;
+};
+
+type MetadataWord = {
+  word: string;
+  timestamp_range: {
+    start: string;
+    end: string;
+  };
+};
+
+type MetadataPayload = {
+  title: string;
+  brief_description: string;
+  middle_description: string;
+  long_description: string;
+  tags: string[];
+  english_words_to_learn: MetadataWord[];
+  teaser: { start: string; end: string };
+  cover: string;
+};
+
+type MetadataDetail = {
+  id: number;
+  status: string;
+  language_code: 'zh' | 'en';
+  metadata?: MetadataPayload | null;
+  json_url?: string | null;
   error?: string | null;
   created_at?: string | null;
 };
@@ -140,6 +170,17 @@ export default function VideoDetailScreen() {
   const [translateStatus, setTranslateStatus] = useState('');
   const [translateTone, setTranslateTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [disableTranslateCache, setDisableTranslateCache] = useState(false);
+  const [metadataNotes, setMetadataNotes] = useState('');
+  const [metadataZh, setMetadataZh] = useState<MetadataDetail | null>(null);
+  const [metadataEn, setMetadataEn] = useState<MetadataDetail | null>(null);
+  const [metadataLoading, setMetadataLoading] = useState(true);
+  const [metadataGenerating, setMetadataGenerating] = useState<Record<'zh' | 'en', boolean>>({
+    zh: false,
+    en: false,
+  });
+  const [metadataStatus, setMetadataStatus] = useState('');
+  const [metadataTone, setMetadataTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [metadataTab, setMetadataTab] = useState<'zh' | 'en'>('zh');
   const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<TranslateLang[]>([
     'ja',
     'en',
@@ -172,6 +213,12 @@ export default function VideoDetailScreen() {
   ];
   const previewTranslation = translations.find((item) => item.language_code === previewLang) || null;
   const previewLabel = TRANSLATE_LANG_LABELS[previewLang] || previewLang;
+  const metadataTabs: Array<{ code: 'zh' | 'en'; label: string }> = [
+    { code: 'zh', label: 'Chinese social' },
+    { code: 'en', label: 'English YouTube' },
+  ];
+  const activeMetadata = metadataTab === 'zh' ? metadataZh : metadataEn;
+  const activeMetadataLabel = metadataTab === 'zh' ? 'Chinese social' : 'English YouTube';
 
   useEffect(() => {
     if (!selectedTranslateLangs.length) return;
@@ -289,6 +336,34 @@ export default function VideoDetailScreen() {
     }
   };
 
+  const loadMetadata = async (lang: 'zh' | 'en') => {
+    if (!id) return null;
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}/metadata?lang=${lang}`);
+      if (resp.status === 404) {
+        if (lang === 'zh') setMetadataZh(null);
+        if (lang === 'en') setMetadataEn(null);
+        return null;
+      }
+      const json = await resp.json();
+      if (!resp.ok) {
+        return null;
+      }
+      if (lang === 'zh') setMetadataZh(json);
+      if (lang === 'en') setMetadataEn(json);
+      return json as MetadataDetail;
+    } catch (_err) {
+      return null;
+    }
+  };
+
+  const loadAllMetadata = async () => {
+    if (!id) return;
+    setMetadataLoading(true);
+    await Promise.all([loadMetadata('zh'), loadMetadata('en')]);
+    setMetadataLoading(false);
+  };
+
   useEffect(() => {
     if (!id) return;
     (async () => {
@@ -362,6 +437,7 @@ export default function VideoDetailScreen() {
     loadCaption();
     loadKeyframes();
     loadTranslations();
+    loadAllMetadata();
   }, [id]);
 
   const processVideo = async () => {
@@ -481,6 +557,8 @@ export default function VideoDetailScreen() {
     keyframesTone === 'good' ? styles.statusGood : keyframesTone === 'bad' ? styles.statusBad : styles.statusNeutral;
   const translateStatusStyle =
     translateTone === 'good' ? styles.statusGood : translateTone === 'bad' ? styles.statusBad : styles.statusNeutral;
+  const metadataStatusStyle =
+    metadataTone === 'good' ? styles.statusGood : metadataTone === 'bad' ? styles.statusBad : styles.statusNeutral;
 
   const captionFrames = async () => {
     if (!video || captioning) return;
@@ -515,6 +593,95 @@ export default function VideoDetailScreen() {
     } finally {
       setCaptioning(false);
     }
+  };
+
+  const generateMetadata = async (lang: 'zh' | 'en') => {
+    if (!video || metadataGenerating[lang]) return;
+    setMetadataGenerating((prev) => ({ ...prev, [lang]: true }));
+    setMetadataStatus(
+      lang === 'zh' ? 'Generating Chinese social metadata...' : 'Generating English YouTube metadata...'
+    );
+    setMetadataTone('neutral');
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${video.id}/metadata`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lang, notes: metadataNotes }),
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        setMetadataStatus(json.error || json.details || 'Metadata generation failed');
+        setMetadataTone('bad');
+        return;
+      }
+      if (lang === 'zh') setMetadataZh(json);
+      if (lang === 'en') setMetadataEn(json);
+      setMetadataTab(lang);
+      setMetadataStatus('Metadata generated.');
+      setMetadataTone('good');
+    } catch (err: any) {
+      setMetadataStatus(err?.message || 'Metadata generation failed');
+      setMetadataTone('bad');
+    } finally {
+      setMetadataGenerating((prev) => ({ ...prev, [lang]: false }));
+    }
+  };
+
+  const renderMetadataContent = (detail: MetadataDetail | null) => {
+    if (!detail) {
+      return <Text style={styles.previewEmpty}>No metadata yet for {activeMetadataLabel}. Tap generate.</Text>;
+    }
+    const data = detail.metadata;
+    return (
+      <>
+        <Text style={styles.sectionMeta}>Status: {detail.status}</Text>
+        {data ? (
+          <>
+            <Text style={styles.metadataTitle}>{data.title}</Text>
+            <Text style={styles.metadataLabel}>Brief</Text>
+            <Text style={styles.metadataText}>{data.brief_description}</Text>
+            <Text style={styles.metadataLabel}>Middle</Text>
+            <Text style={styles.metadataText}>{data.middle_description}</Text>
+            <Text style={styles.metadataLabel}>Long</Text>
+            <Text style={styles.metadataText}>{data.long_description}</Text>
+            <Text style={styles.metadataLabel}>Tags</Text>
+            <View style={styles.tagRow}>
+              {(data.tags || []).map((tag, idx) => (
+                <View key={`${tag}-${idx}`} style={styles.tagChip}>
+                  <Text style={styles.tagChipText}>{tag}</Text>
+                </View>
+              ))}
+            </View>
+            <View style={styles.metadataInlineRow}>
+              <View style={styles.metadataInlineItem}>
+                <Text style={styles.metadataInlineLabel}>Teaser</Text>
+                <Text style={styles.metadataInlineValue}>
+                  {data.teaser?.start} → {data.teaser?.end}
+                </Text>
+              </View>
+              <View style={styles.metadataInlineItem}>
+                <Text style={styles.metadataInlineLabel}>Cover</Text>
+                <Text style={styles.metadataInlineValue}>{data.cover}</Text>
+              </View>
+            </View>
+            <Text style={styles.metadataLabel}>Word list</Text>
+            <View style={styles.wordList}>
+              {(data.english_words_to_learn || []).map((item, idx) => (
+                <View key={`${item.word}-${idx}`} style={styles.wordItem}>
+                  <Text style={styles.wordItemTitle}>{item.word}</Text>
+                  <Text style={styles.wordItemTime}>
+                    {item.timestamp_range?.start} → {item.timestamp_range?.end}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </>
+        ) : (
+          <Text style={styles.previewEmpty}>Metadata payload not available.</Text>
+        )}
+        {detail.error ? <Text style={styles.previewError}>{detail.error}</Text> : null}
+      </>
+    );
   };
 
   const extractKeyframes = async () => {
@@ -843,6 +1010,68 @@ export default function VideoDetailScreen() {
         </View>
 
         {captionStatus ? <Text style={[styles.status, captionStatusStyle]}>{captionStatus}</Text> : null}
+
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Metadata generator</Text>
+          <Text style={styles.sectionMeta}>
+            Use the transcription and keyframe captions to draft metadata for Chinese social platforms and YouTube.
+          </Text>
+          <TextInput
+            style={styles.metadataInput}
+            value={metadataNotes}
+            onChangeText={setMetadataNotes}
+            placeholder="Add optional notes about the video (context, tone, audience, keywords)."
+            placeholderTextColor="#94a3b8"
+            multiline
+            textAlignVertical="top"
+          />
+          <View style={styles.metaButtonRow}>
+            <Pressable
+              style={[styles.btnSecondary, styles.metaButton, metadataGenerating.zh && styles.btnDisabled]}
+              onPress={() => generateMetadata('zh')}
+              disabled={metadataGenerating.zh}
+            >
+              <View style={styles.btnContent}>
+                {metadataGenerating.zh && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                <Text style={styles.btnText}>
+                  {metadataGenerating.zh ? 'Generating...' : 'Generate Chinese metadata'}
+                </Text>
+              </View>
+            </Pressable>
+            <Pressable
+              style={[styles.btnSecondaryAlt, styles.metaButton, { marginRight: 0 }, metadataGenerating.en && styles.btnDisabled]}
+              onPress={() => generateMetadata('en')}
+              disabled={metadataGenerating.en}
+            >
+              <View style={styles.btnContent}>
+                {metadataGenerating.en && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                <Text style={styles.btnText}>
+                  {metadataGenerating.en ? 'Generating...' : 'Generate English metadata'}
+                </Text>
+              </View>
+            </Pressable>
+          </View>
+          <View style={styles.metadataPreviewHeader}>
+            <Text style={styles.sectionTitle}>Metadata preview</Text>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.langTabs}>
+            {metadataTabs.map((tab) => {
+              const isActive = metadataTab === tab.code;
+              return (
+                <Pressable
+                  key={tab.code}
+                  style={[styles.langTab, isActive && styles.langTabActive]}
+                  onPress={() => setMetadataTab(tab.code)}
+                >
+                  <Text style={[styles.langTabText, isActive && styles.langTabTextActive]}>{tab.label}</Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+          {metadataLoading ? <ActivityIndicator /> : renderMetadataContent(activeMetadata)}
+        </View>
+
+        {metadataStatus ? <Text style={[styles.status, metadataStatusStyle]}>{metadataStatus}</Text> : null}
       </ScrollView>
       <Modal transparent visible={!!lightbox} animationType="fade" onRequestClose={() => setLightbox(null)}>
         <Pressable style={styles.lightboxBackdrop} onPress={() => setLightbox(null)}>
@@ -969,6 +1198,72 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { fontSize: 14, fontWeight: '700', color: '#0f172a', marginBottom: 6 },
   sectionMeta: { fontSize: 12, color: '#475569', marginBottom: 8 },
+  metadataInput: {
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    borderRadius: 12,
+    padding: 10,
+    minHeight: 80,
+    fontSize: 12,
+    color: '#0f172a',
+    backgroundColor: '#f8fafc',
+  },
+  metaButtonRow: {
+    marginTop: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  metaButton: {
+    flexGrow: 1,
+    minWidth: 200,
+    marginRight: 12,
+  },
+  metadataPreviewHeader: {
+    marginTop: 12,
+  },
+  metadataTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: 8,
+  },
+  metadataLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0f172a',
+    marginTop: 8,
+  },
+  metadataText: { fontSize: 12, color: '#1e293b', marginTop: 4 },
+  tagRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 6,
+  },
+  tagChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: '#e2e8f0',
+    marginRight: 6,
+    marginBottom: 6,
+  },
+  tagChipText: { fontSize: 11, fontWeight: '600', color: '#1e293b' },
+  metadataInlineRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+  },
+  metadataInlineItem: { marginRight: 16, marginBottom: 6 },
+  metadataInlineLabel: { fontSize: 11, color: '#64748b' },
+  metadataInlineValue: { fontSize: 12, fontWeight: '600', color: '#0f172a', marginTop: 2 },
+  wordList: { marginTop: 6 },
+  wordItem: {
+    paddingVertical: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e2e8f0',
+  },
+  wordItemTitle: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
+  wordItemTime: { fontSize: 11, color: '#64748b', marginTop: 2 },
   previewText: { fontSize: 12, color: '#0f172a' },
   previewEmpty: { fontSize: 12, color: '#64748b' },
   previewError: { fontSize: 12, color: '#b91c1c', marginTop: 6 },

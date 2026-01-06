@@ -296,6 +296,51 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
         self.validate_metadata(result)
         return result
 
+    def generate_metadata_from_template(
+        self,
+        template_dir: str,
+        transcription_text: str,
+        caption_text: str,
+        custom_notes: str | None,
+        output_path: str,
+        schema_name: str = "video_metadata",
+    ):
+        prompt_path = os.path.join(template_dir, "prompt.json")
+        schema_path = os.path.join(template_dir, "schema.json")
+        with open(prompt_path, "r", encoding="utf-8") as handle:
+            prompt_payload = json.load(handle)
+        with open(schema_path, "r", encoding="utf-8") as handle:
+            json_schema = json.load(handle)
+
+        system_content = prompt_payload.get("system") or "You are an AI assistant."
+        user_template = prompt_payload.get("user") or ""
+        notes_value = (custom_notes or "").strip() or "None"
+        prompt = self._render_prompt_template(
+            user_template,
+            {
+                "TRANSCRIPTION": transcription_text or "No transcription available.",
+                "CAPTIONS": caption_text or "No keyframe captions available.",
+                "CUSTOM_NOTES": notes_value,
+            },
+        )
+
+        result = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=json_schema,
+            system_content=system_content,
+            filename=output_path,
+            schema_name=schema_name,
+        )
+        self.validate_metadata(result)
+        return result
+
+    @staticmethod
+    def _render_prompt_template(template: str, values: dict[str, str]) -> str:
+        rendered = template
+        for key, value in values.items():
+            rendered = rendered.replace(f"{{{{{key}}}}}", value)
+        return rendered
+
 
 if __name__ == "__main__":
     from io import StringIO

@@ -157,6 +157,22 @@ def ensure_schema():
         CREATE INDEX IF NOT EXISTS idx_subtitle_translations_video_lang
             ON subtitle_translations (video_id, language_code, created_at DESC);
         """,
+        # Video metadata (e.g., Chinese social, YouTube)
+        """
+        CREATE TABLE IF NOT EXISTS video_metadata (
+            id SERIAL PRIMARY KEY,
+            video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+            language_code TEXT NOT NULL,
+            status TEXT NOT NULL,
+            output_json_path TEXT,
+            error TEXT,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        """,
+        """
+        CREATE INDEX IF NOT EXISTS idx_video_metadata_video_lang
+            ON video_metadata (video_id, language_code, created_at DESC);
+        """,
         # Burned subtitle videos
         """
         CREATE TABLE IF NOT EXISTS subtitle_burns (
@@ -290,6 +306,55 @@ def get_subtitle_translations_for_video(video_id: int) -> list[tuple]:
             (video_id,),
         )
         return cur.fetchall()
+
+
+def add_video_metadata(
+    video_id: int,
+    language_code: str,
+    status: str,
+    output_json_path: str | None = None,
+    error: str | None = None,
+) -> int:
+    """Insert a video metadata row and return its ID."""
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO video_metadata (
+                video_id,
+                language_code,
+                status,
+                output_json_path,
+                error
+            )
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                video_id,
+                language_code,
+                status,
+                output_json_path,
+                error,
+            ),
+        )
+        (metadata_id,) = cur.fetchone()
+        return metadata_id
+
+
+def get_latest_video_metadata(video_id: int, language_code: str) -> tuple | None:
+    """Return latest metadata row for the video/language."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT id, language_code, status, output_json_path, error, created_at
+            FROM video_metadata
+            WHERE video_id = %s AND language_code = %s
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            (video_id, language_code),
+        )
+        return cur.fetchone()
 
 
 def add_subtitle_burn(
