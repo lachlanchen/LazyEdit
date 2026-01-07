@@ -15,22 +15,6 @@
   · <a href="i18n/README.es.md">Español</a>
 </p>
 
-# LazyEdit
-
-LazyEdit is an AI-powered automatic video editing tool that processes videos to add professional-quality subtitles, highlights, word cards, and metadata. It streamlines the video editing workflow using advanced AI techniques to automate labor-intensive tasks.
-
-## Features
-
-- **Auto-Transcription**: Automatically transcribes video audio using AI
-- **Auto-Caption**: Generates descriptive captions for video content
-- **Auto-Subtitle**: Creates and burns subtitles directly onto videos
-- **Auto-Highlight**: Identifies and visually highlights key words during playback
-- **Auto-Metadata**: Extracts and generates metadata from video content
-- **Word Cards**: Adds educational word cards for language learning
-- **Teaser Generation**: Creates intelligent teasers by repeating key segments at the start
-- **Multi-language Support**: Handles various languages including English and Chinese
-- **Cover Image Generation**: Extracts optimal cover images with word overlays
-
 ## Demos
 
 <table>
@@ -79,6 +63,22 @@ LazyEdit is an AI-powered automatic video editing tool that processes videos to 
     </td>
   </tr>
 </table>
+
+# LazyEdit
+
+LazyEdit is an AI-powered automatic video editing tool that processes videos to add professional-quality subtitles, highlights, word cards, and metadata. It streamlines the video editing workflow using advanced AI techniques to automate labor-intensive tasks.
+
+## Features
+
+- **Auto-Transcription**: Automatically transcribes video audio using AI
+- **Auto-Caption**: Generates descriptive captions for video content
+- **Auto-Subtitle**: Creates and burns subtitles directly onto videos
+- **Auto-Highlight**: Identifies and visually highlights key words during playback
+- **Auto-Metadata**: Extracts and generates metadata from video content
+- **Word Cards**: Adds educational word cards for language learning
+- **Teaser Generation**: Creates intelligent teasers by repeating key segments at the start
+- **Multi-language Support**: Handles various languages including English and Chinese
+- **Cover Image Generation**: Extracts optimal cover images with word overlays
 
 ## Installation
 
