@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {
   ActivityIndicator,
   Modal,
@@ -134,6 +135,12 @@ const HistorySelect = ({
   onChange: (value: string) => void;
 }) => (
   <SelectControl label={label} value={value} options={options} onChange={onChange} hideIfSingle />
+);
+
+const ResetButton = ({ onPress }: { onPress: () => void }) => (
+  <Pressable style={styles.resetButton} onPress={onPress} accessibilityLabel="Reset">
+    <FontAwesome name="undo" size={14} style={styles.resetButtonIcon} />
+  </Pressable>
 );
 
 const DEFAULT_PROMPT_HISTORY = {
@@ -815,9 +822,7 @@ export default function HomeScreen() {
                   onChangeText={(v) => updateSpec('title', v)}
                   editable={!promptSpec.autoTitle}
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('title')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('title')} />
               </View>
               <View style={styles.toggleRow}>
                 <View>
@@ -843,9 +848,7 @@ export default function HomeScreen() {
                     onChange={(value) => updateSpec('audioLanguage', value)}
                   />
                 </View>
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('audioLanguage')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('audioLanguage')} />
               </View>
               {renderHistory('audioLanguage', (value) => updateSpec('audioLanguage', value))}
 
@@ -857,9 +860,7 @@ export default function HomeScreen() {
                   onChangeText={(v) => updateSpec('subject', v)}
                   multiline
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('subject')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('subject')} />
               </View>
               {renderHistory('subject', (value) => updateSpec('subject', value))}
 
@@ -871,9 +872,7 @@ export default function HomeScreen() {
                   onChangeText={(v) => updateSpec('action', v)}
                   multiline
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('action')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('action')} />
               </View>
               {renderHistory('action', (value) => updateSpec('action', value))}
 
@@ -885,9 +884,7 @@ export default function HomeScreen() {
                   onChangeText={(v) => updateSpec('environment', v)}
                   multiline
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('environment')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('environment')} />
               </View>
               {renderHistory('environment', (value) => updateSpec('environment', value))}
 
@@ -898,9 +895,7 @@ export default function HomeScreen() {
                   value={promptSpec.camera}
                   onChangeText={(v) => updateSpec('camera', v)}
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('camera')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('camera')} />
               </View>
               {renderHistory('camera', (value) => updateSpec('camera', value))}
 
@@ -911,9 +906,7 @@ export default function HomeScreen() {
                   value={promptSpec.lighting}
                   onChangeText={(v) => updateSpec('lighting', v)}
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('lighting')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('lighting')} />
               </View>
               {renderHistory('lighting', (value) => updateSpec('lighting', value))}
 
@@ -924,9 +917,7 @@ export default function HomeScreen() {
                   value={promptSpec.mood}
                   onChangeText={(v) => updateSpec('mood', v)}
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('mood')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('mood')} />
               </View>
               {renderHistory('mood', (value) => updateSpec('mood', value))}
 
@@ -938,9 +929,7 @@ export default function HomeScreen() {
                   onChangeText={(v) => updateSpec('style', v)}
                   multiline
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('style')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('style')} />
               </View>
               {renderHistory('style', (value) => updateSpec('style', value))}
 
@@ -952,9 +941,7 @@ export default function HomeScreen() {
                   onChangeText={(v) => updateSpec('spokenWords', v)}
                   multiline
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('spokenWords')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('spokenWords')} />
               </View>
               {renderHistory('spokenWords', (value) => updateSpec('spokenWords', value))}
 
@@ -966,9 +953,7 @@ export default function HomeScreen() {
                   onChangeText={(value) => updateSpec('sceneCount', value.replace(/[^\d]/g, ''))}
                   keyboardType="numeric"
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('sceneCount')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('sceneCount')} />
               </View>
               {renderHistory('sceneCount', (value) => updateSpec('sceneCount', value))}
 
@@ -980,9 +965,7 @@ export default function HomeScreen() {
                   onChangeText={(v) => updateSpec('extraRequirements', v)}
                   multiline
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('extraRequirements')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('extraRequirements')} />
               </View>
               {renderHistory('extraRequirements', (value) => updateSpec('extraRequirements', value))}
 
@@ -994,9 +977,7 @@ export default function HomeScreen() {
                   onChangeText={(v) => updateSpec('negative', v)}
                   multiline
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('negative')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('negative')} />
               </View>
               {renderHistory('negative', (value) => updateSpec('negative', value))}
             </View>
@@ -1024,9 +1005,7 @@ export default function HomeScreen() {
                     );
                   })}
                 </View>
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('aspectRatio')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('aspectRatio')} />
               </View>
 
               <Text style={styles.fieldLabel}>Length (seconds)</Text>
@@ -1037,9 +1016,7 @@ export default function HomeScreen() {
                   onChangeText={(value) => updateSpec('durationSeconds', value.replace(/[^\d]/g, ''))}
                   keyboardType="numeric"
                 />
-                <Pressable style={styles.resetButton} onPress={() => resetSpec('durationSeconds')}>
-                  <Text style={styles.resetButtonText}>Reset</Text>
-                </Pressable>
+                <ResetButton onPress={() => resetSpec('durationSeconds')} />
               </View>
             </View>
 
@@ -1512,16 +1489,17 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   resetButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 10,
+    width: 34,
+    height: 34,
+    borderRadius: 17,
     borderWidth: 1,
     borderColor: '#cbd5f5',
     backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
-  resetButtonText: {
-    fontSize: 11,
-    fontWeight: '600',
+  resetButtonIcon: {
     color: '#1e293b',
   },
   chipRow: {
