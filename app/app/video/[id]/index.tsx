@@ -195,6 +195,7 @@ export default function VideoDetailScreen() {
     zh: false,
     en: false,
   });
+  const [metadataGeneratingAll, setMetadataGeneratingAll] = useState(false);
   const [metadataStatus, setMetadataStatus] = useState('');
   const [metadataTone, setMetadataTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [metadataTab, setMetadataTab] = useState<'zh' | 'en'>('zh');
@@ -333,8 +334,8 @@ export default function VideoDetailScreen() {
     }
   };
 
-  const loadTranslations = async () => {
-    if (!id) return;
+  const loadTranslations = async (): Promise<TranslationDetail[]> => {
+    if (!id) return [];
     setTranslationsLoading(true);
     try {
       const resp = await fetch(`${API_URL}/api/videos/${id}/translations`);
@@ -343,7 +344,7 @@ export default function VideoDetailScreen() {
         setTranslateStatus(json.error || 'Failed to load translations');
         setTranslateTone('bad');
         setTranslations([]);
-        return;
+        return [];
       }
       const items: TranslationDetail[] = Array.isArray(json.translations) ? json.translations : [];
       const hasZhHant = items.some((item) => item.language_code === 'zh-Hant');
@@ -354,10 +355,12 @@ export default function VideoDetailScreen() {
         return item;
       });
       setTranslations(normalizedItems);
+      return normalizedItems;
     } catch (e: any) {
       setTranslateStatus(e?.message || 'Failed to load translations');
       setTranslateTone('bad');
       setTranslations([]);
+      return [];
     } finally {
       setTranslationsLoading(false);
     }
@@ -399,15 +402,12 @@ export default function VideoDetailScreen() {
         const resp = await fetch(`${API_URL}/api/videos/${id}`);
         const json = await resp.json();
         if (!resp.ok) {
-          setProcessStatus(json.error || 'Failed to load video');
-          setProcessTone('bad');
           setVideo(null);
         } else {
           setVideo(json);
         }
       } catch (e: any) {
-        setProcessStatus(e?.message || 'Failed to load video');
-        setProcessTone('bad');
+        setVideo(null);
       } finally {
         setLoading(false);
       }
@@ -472,8 +472,8 @@ export default function VideoDetailScreen() {
     router.push({ pathname: '/video/[id]/process', params: { id: String(video.id) } });
   };
 
-  const transcribeVideo = async () => {
-    if (!video || transcribing) return;
+  const runTranscription = async (): Promise<boolean> => {
+    if (!video || transcribing) return false;
     setTranscribing(true);
     setTranscribeStatus('Transcribing... this can take a few minutes.');
     setTranscribeTone('neutral');
@@ -483,39 +483,55 @@ export default function VideoDetailScreen() {
       if (!resp.ok) {
         setTranscribeStatus(json.error || json.details || 'Transcription failed');
         setTranscribeTone('bad');
-        return;
+        return false;
       }
       setTranscription(json);
       if (json.status === 'no_audio') {
         setTranscribeStatus('No audio detected in this video.');
         setTranscribeTone('bad');
-      } else {
-        setTranscribeStatus('Transcription complete.');
-        setTranscribeTone('good');
+        return false;
       }
+      setTranscribeStatus('Transcription complete.');
+      setTranscribeTone('good');
+      return true;
     } catch (e: any) {
       setTranscribeStatus(`Transcription failed: ${e?.message || String(e)}`);
       setTranscribeTone('bad');
+      return false;
     } finally {
       setTranscribing(false);
     }
   };
 
-  const translateSubtitles = async () => {
-    if (!video || translating) return;
-    if (!selectedTranslateLangs.length) {
+  const ensureTranscription = async (): Promise<boolean> => {
+    if (transcription?.status === 'completed') {
+      setTranscribeStatus('Transcription already complete.');
+      setTranscribeTone('good');
+      return true;
+    }
+    if (transcription?.status === 'no_audio') {
+      setTranscribeStatus('No audio detected in this video.');
+      setTranscribeTone('bad');
+      return false;
+    }
+    return runTranscription();
+  };
+
+  const runTranslations = async (languages: TranslateLang[]): Promise<boolean> => {
+    if (!video || translating) return false;
+    if (!languages.length) {
       setTranslateStatus('Select at least one language.');
       setTranslateTone('bad');
-      return;
+      return false;
     }
     setTranslating(true);
     setTranslateStatus('Starting translations...');
     setTranslateTone('neutral');
     try {
-      for (let i = 0; i < selectedTranslateLangs.length; i += 1) {
-        const lang = selectedTranslateLangs[i];
+      for (let i = 0; i < languages.length; i += 1) {
+        const lang = languages[i];
         const label = TRANSLATE_LANG_LABELS[lang] || lang;
-        setTranslateStatus(`Translating ${label} (${i + 1}/${selectedTranslateLangs.length})...`);
+        setTranslateStatus(`Translating ${label} (${i + 1}/${languages.length})...`);
         const resp = await fetch(`${API_URL}/api/videos/${video.id}/translate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -525,18 +541,56 @@ export default function VideoDetailScreen() {
         if (!resp.ok) {
           setTranslateStatus(json.error || json.details || `Translation failed for ${label}`);
           setTranslateTone('bad');
-          return;
+          return false;
         }
         await loadTranslations();
       }
       setTranslateStatus('Translations complete.');
       setTranslateTone('good');
+      return true;
     } catch (e: any) {
       setTranslateStatus(`Translation failed: ${e?.message || String(e)}`);
       setTranslateTone('bad');
+      return false;
     } finally {
       setTranslating(false);
     }
+  };
+
+  const ensureTranslationsReady = async (languages: TranslateLang[]): Promise<boolean> => {
+    if (!languages.length) {
+      setTranslateStatus('Select at least one language.');
+      setTranslateTone('bad');
+      return false;
+    }
+    const existing = await loadTranslations();
+    const completed = new Set(
+      existing.filter((item) => item.status === 'completed').map((item) => item.language_code)
+    );
+    const pending = languages.filter((lang) => !completed.has(lang));
+    if (!pending.length) {
+      setTranslateStatus('Translations already complete.');
+      setTranslateTone('good');
+      return true;
+    }
+    return runTranslations(pending);
+  };
+
+  const transcribeVideo = async () => {
+    await runTranscription();
+  };
+
+  const translateSubtitles = async () => {
+    await runTranslations(selectedTranslateLangs);
+  };
+
+  const openBurnPage = async () => {
+    if (!video) return;
+    const transcriptionReady = await ensureTranscription();
+    if (!transcriptionReady) return;
+    const translationsReady = await ensureTranslationsReady(selectedTranslateLangs);
+    if (!translationsReady) return;
+    router.push({ pathname: '/video/[id]/burn-subtitles', params: { id: String(video.id) } });
   };
 
   const transcribeStatusStyle =
@@ -550,8 +604,8 @@ export default function VideoDetailScreen() {
   const metadataStatusStyle =
     metadataTone === 'good' ? styles.statusGood : metadataTone === 'bad' ? styles.statusBad : styles.statusNeutral;
 
-  const captionFrames = async () => {
-    if (!video || captioning) return;
+  const runCaptionFrames = async (): Promise<boolean> => {
+    if (!video || captioning) return false;
     setCaptioning(true);
     setCaptionStatus('Captioning frames... this can take a few minutes.');
     setCaptionTone('neutral');
@@ -561,32 +615,65 @@ export default function VideoDetailScreen() {
       if (!resp.ok) {
         setCaptionStatus(json.error || json.details || 'Captioning failed');
         setCaptionTone('bad');
-        return;
+        return false;
       }
       setCaption(json);
       if (json.status === 'not_configured') {
         setCaptionStatus(json.error || 'Captioner not configured.');
         setCaptionTone('bad');
-      } else if (json.status === 'failed') {
+        return false;
+      }
+      if (json.status === 'failed') {
         setCaptionStatus(json.error || 'Captioning failed.');
         setCaptionTone('bad');
-      } else if (json.status === 'empty') {
+        return false;
+      }
+      if (json.status === 'empty') {
         setCaptionStatus('No captions generated for this video.');
         setCaptionTone('bad');
-      } else {
-        setCaptionStatus('Captioning complete.');
-        setCaptionTone('good');
+        return false;
       }
+      setCaptionStatus('Captioning complete.');
+      setCaptionTone('good');
+      return true;
     } catch (e: any) {
       setCaptionStatus(`Captioning failed: ${e?.message || String(e)}`);
       setCaptionTone('bad');
+      return false;
     } finally {
       setCaptioning(false);
     }
   };
 
-  const generateMetadata = async (lang: 'zh' | 'en') => {
-    if (!video || metadataGenerating[lang]) return;
+  const ensureCaptionReady = async (): Promise<boolean> => {
+    if (caption?.status === 'completed') {
+      setCaptionStatus('Captions already complete.');
+      setCaptionTone('good');
+      return true;
+    }
+    const keyframesReady = await ensureKeyframesReady();
+    if (!keyframesReady) return false;
+    return runCaptionFrames();
+  };
+
+  const captionFrames = async () => {
+    await ensureCaptionReady();
+  };
+
+  const ensureMetadataDependencies = async (): Promise<boolean> => {
+    const transcriptionReady = await ensureTranscription();
+    if (!transcriptionReady) return false;
+    const captionReady = await ensureCaptionReady();
+    if (!captionReady) return false;
+    return true;
+  };
+
+  const generateMetadata = async (lang: 'zh' | 'en', options?: { skipDeps?: boolean }) => {
+    if (!video || metadataGenerating[lang]) return false;
+    if (!options?.skipDeps) {
+      const depsReady = await ensureMetadataDependencies();
+      if (!depsReady) return false;
+    }
     setMetadataGenerating((prev) => ({ ...prev, [lang]: true }));
     setMetadataStatus(
       lang === 'zh' ? 'Generating Chinese social metadata...' : 'Generating English YouTube metadata...'
@@ -603,19 +690,34 @@ export default function VideoDetailScreen() {
         const details = json.details ? `${json.error || 'Metadata generation failed'}: ${json.details}` : null;
         setMetadataStatus(details || json.error || 'Metadata generation failed');
         setMetadataTone('bad');
-        return;
+        return false;
       }
       if (lang === 'zh') setMetadataZh(json);
       if (lang === 'en') setMetadataEn(json);
       setMetadataTab(lang);
       setMetadataStatus('Metadata generated.');
       setMetadataTone('good');
+      return true;
     } catch (err: any) {
       setMetadataStatus(err?.message || 'Metadata generation failed');
       setMetadataTone('bad');
+      return false;
     } finally {
       setMetadataGenerating((prev) => ({ ...prev, [lang]: false }));
     }
+  };
+
+  const generateMetadataAll = async () => {
+    if (metadataGeneratingAll || !video) return;
+    setMetadataGeneratingAll(true);
+    const depsReady = await ensureMetadataDependencies();
+    if (!depsReady) {
+      setMetadataGeneratingAll(false);
+      return;
+    }
+    await generateMetadata('zh', { skipDeps: true });
+    await generateMetadata('en', { skipDeps: true });
+    setMetadataGeneratingAll(false);
   };
 
   const renderMetadataContent = (detail: MetadataDetail | null) => {
@@ -675,8 +777,8 @@ export default function VideoDetailScreen() {
     );
   };
 
-  const extractKeyframes = async () => {
-    if (!video || extractingKeyframes) return;
+  const runKeyframes = async (): Promise<boolean> => {
+    if (!video || extractingKeyframes) return false;
     setExtractingKeyframes(true);
     setKeyframesStatus('Extracting key frames...');
     setKeyframesTone('neutral');
@@ -686,17 +788,32 @@ export default function VideoDetailScreen() {
       if (!resp.ok) {
         setKeyframesStatus(json.error || json.details || 'Keyframe extraction failed');
         setKeyframesTone('bad');
-        return;
+        return false;
       }
       setKeyframes(json);
       setKeyframesStatus('Keyframes ready.');
       setKeyframesTone('good');
+      return true;
     } catch (e: any) {
       setKeyframesStatus(`Keyframe extraction failed: ${e?.message || String(e)}`);
       setKeyframesTone('bad');
+      return false;
     } finally {
       setExtractingKeyframes(false);
     }
+  };
+
+  const ensureKeyframesReady = async (): Promise<boolean> => {
+    if (keyframes?.status === 'completed') {
+      setKeyframesStatus('Keyframes already ready.');
+      setKeyframesTone('good');
+      return true;
+    }
+    return runKeyframes();
+  };
+
+  const extractKeyframes = async () => {
+    await runKeyframes();
   };
 
   if (loading) {
@@ -751,160 +868,170 @@ export default function VideoDetailScreen() {
           </View>
         </Pressable>
 
-        <Pressable
-          style={[styles.btnSecondary, transcribing && styles.btnDisabled]}
-          onPress={transcribeVideo}
-          disabled={transcribing}
-        >
-          <View style={styles.btnContent}>
-            {transcribing && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-            <Text style={styles.btnText}>{transcribing ? 'Transcribing...' : 'Transcribe'}</Text>
+        <View style={styles.groupCard}>
+          <View style={styles.groupHeader}>
+            <Text style={styles.groupTitle}>Subtitles</Text>
+            <Text style={styles.groupHint}>Transcribe → translate → burn subtitles.</Text>
           </View>
-        </Pressable>
+          <Pressable
+            style={[styles.btnSecondary, transcribing && styles.btnDisabled]}
+            onPress={transcribeVideo}
+            disabled={transcribing}
+          >
+            <View style={styles.btnContent}>
+              {transcribing && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+              <Text style={styles.btnText}>{transcribing ? 'Transcribing...' : 'Transcribe'}</Text>
+            </View>
+          </Pressable>
 
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Transcription preview</Text>
-          {transcriptionLoading ? (
-            <ActivityIndicator />
-          ) : transcription ? (
-            <>
-              <Text style={styles.sectionMeta}>
-                Status: {transcription.status}
-              </Text>
-              {transcriptionLanguages ? (
-                <Text style={styles.sectionMeta}>{transcriptionLanguages}</Text>
-              ) : null}
-              {transcription.preview_text ? (
-                <Text style={styles.previewText}>{transcription.preview_text}</Text>
-              ) : (
-                <Text style={styles.previewEmpty}>No preview available.</Text>
-              )}
-              {transcription.error ? <Text style={styles.previewError}>{transcription.error}</Text> : null}
-              <Pressable
-                style={styles.previewBtn}
-                onPress={() =>
-                  router.push({ pathname: '/video/[id]/transcription', params: { id: String(video.id) } })
-                }
-              >
-                <Text style={styles.previewBtnText}>Preview transcription</Text>
-              </Pressable>
-            </>
-          ) : (
-            <Text style={styles.previewEmpty}>No transcription yet. Tap Transcribe.</Text>
-          )}
-        </View>
-
-        {transcribeStatus ? <Text style={[styles.status, transcribeStatusStyle]}>{transcribeStatus}</Text> : null}
-
-        <View style={styles.toggleRowInline}>
-          <Switch
-            value={disableTranslateCache}
-            onValueChange={setDisableTranslateCache}
-            trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
-            thumbColor={disableTranslateCache ? '#f8fafc' : '#f1f5f9'}
-          />
-          <View style={styles.toggleInlineText}>
-            <Text style={styles.toggleTitle}>Bypass cache</Text>
-            <Text style={styles.toggleHint}>Force a fresh translation</Text>
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionTitle}>Transcription preview</Text>
+            {transcriptionLoading ? (
+              <ActivityIndicator />
+            ) : transcription ? (
+              <>
+                <Text style={styles.sectionMeta}>
+                  Status: {transcription.status}
+                </Text>
+                {transcriptionLanguages ? (
+                  <Text style={styles.sectionMeta}>{transcriptionLanguages}</Text>
+                ) : null}
+                {transcription.preview_text ? (
+                  <Text style={styles.previewText}>{transcription.preview_text}</Text>
+                ) : (
+                  <Text style={styles.previewEmpty}>No preview available.</Text>
+                )}
+                {transcription.error ? <Text style={styles.previewError}>{transcription.error}</Text> : null}
+                <Pressable
+                  style={styles.previewBtn}
+                  onPress={() =>
+                    router.push({ pathname: '/video/[id]/transcription', params: { id: String(video.id) } })
+                  }
+                >
+                  <Text style={styles.previewBtnText}>Preview transcription</Text>
+                </Pressable>
+              </>
+            ) : (
+              <Text style={styles.previewEmpty}>No transcription yet. Tap Transcribe.</Text>
+            )}
           </View>
-        </View>
 
-        <View style={styles.langChecklist}>
-          {translateLangOptions.map((option) => {
-            const isChecked = selectedTranslateLangs.includes(option.code);
-            return (
-              <Pressable
-                key={option.code}
-                style={styles.langCheckItem}
-                onPress={() => {
-                  setSelectedTranslateLangs((prev) => {
-                    if (prev.includes(option.code)) {
-                      return prev.filter((lang) => lang !== option.code);
-                    }
-                    return [...prev, option.code];
-                  });
-                }}
-              >
-                <View style={[styles.langCheckBox, isChecked && styles.langCheckBoxActive]}>
-                  {isChecked ? <Text style={styles.langCheckMark}>✓</Text> : null}
-                </View>
-                <Text style={styles.langCheckLabel}>{option.label}</Text>
-              </Pressable>
-            );
-          })}
-        </View>
+          {transcribeStatus ? <Text style={[styles.status, transcribeStatusStyle]}>{transcribeStatus}</Text> : null}
 
-        <Pressable
-          style={[styles.btnSecondaryAlt, translating && styles.btnDisabled]}
-          onPress={translateSubtitles}
-          disabled={translating}
-        >
-          <View style={styles.btnContent}>
-            {translating && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-            <Text style={styles.btnText}>{translating ? 'Translating...' : 'Translate'}</Text>
+          <View style={styles.toggleRowInline}>
+            <Switch
+              value={disableTranslateCache}
+              onValueChange={setDisableTranslateCache}
+              trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+              thumbColor={disableTranslateCache ? '#f8fafc' : '#f1f5f9'}
+            />
+            <View style={styles.toggleInlineText}>
+              <Text style={styles.toggleTitle}>Bypass cache</Text>
+              <Text style={styles.toggleHint}>Force a fresh translation</Text>
+            </View>
           </View>
-        </Pressable>
 
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Translation preview</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.langTabs}>
+          <View style={styles.langChecklist}>
             {translateLangOptions.map((option) => {
-              const isActive = previewLang === option.code;
+              const isChecked = selectedTranslateLangs.includes(option.code);
               return (
                 <Pressable
                   key={option.code}
-                  style={[styles.langTab, isActive && styles.langTabActive]}
-                  onPress={() => setPreviewLang(option.code)}
+                  style={styles.langCheckItem}
+                  onPress={() => {
+                    setSelectedTranslateLangs((prev) => {
+                      if (prev.includes(option.code)) {
+                        return prev.filter((lang) => lang !== option.code);
+                      }
+                      return [...prev, option.code];
+                    });
+                  }}
                 >
-                  <Text style={[styles.langTabText, isActive && styles.langTabTextActive]}>{option.label}</Text>
+                  <View style={[styles.langCheckBox, isChecked && styles.langCheckBoxActive]}>
+                    {isChecked ? <Text style={styles.langCheckMark}>✓</Text> : null}
+                  </View>
+                  <Text style={styles.langCheckLabel}>{option.label}</Text>
                 </Pressable>
               );
             })}
-          </ScrollView>
-          {translationsLoading ? (
-            <ActivityIndicator />
-          ) : previewTranslation ? (
-            <>
-              <Text style={styles.sectionMeta}>Status: {previewTranslation.status}</Text>
-              {previewTranslation.preview_text ? (
-                <Text style={styles.previewText}>{previewTranslation.preview_text}</Text>
-              ) : (
-                <Text style={styles.previewEmpty}>No preview available.</Text>
-              )}
-              {previewTranslation.error ? <Text style={styles.previewError}>{previewTranslation.error}</Text> : null}
-              <Pressable
-                style={styles.previewBtn}
-                onPress={() => router.push({ pathname: '/video/[id]/translations', params: { id: String(video.id) } })}
-              >
-                <Text style={styles.previewBtnText}>View translations</Text>
-              </Pressable>
-            </>
-          ) : (
-            <Text style={styles.previewEmpty}>No translations yet for {previewLabel}. Tap Translate to generate.</Text>
-          )}
+          </View>
+
+          <Pressable
+            style={[styles.btnSecondaryAlt, translating && styles.btnDisabled]}
+            onPress={translateSubtitles}
+            disabled={translating}
+          >
+            <View style={styles.btnContent}>
+              {translating && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+              <Text style={styles.btnText}>{translating ? 'Translating...' : 'Translate'}</Text>
+            </View>
+          </Pressable>
+
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionTitle}>Translation preview</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.langTabs}>
+              {translateLangOptions.map((option) => {
+                const isActive = previewLang === option.code;
+                return (
+                  <Pressable
+                    key={option.code}
+                    style={[styles.langTab, isActive && styles.langTabActive]}
+                    onPress={() => setPreviewLang(option.code)}
+                  >
+                    <Text style={[styles.langTabText, isActive && styles.langTabTextActive]}>{option.label}</Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+            {translationsLoading ? (
+              <ActivityIndicator />
+            ) : previewTranslation ? (
+              <>
+                <Text style={styles.sectionMeta}>Status: {previewTranslation.status}</Text>
+                {previewTranslation.preview_text ? (
+                  <Text style={styles.previewText}>{previewTranslation.preview_text}</Text>
+                ) : (
+                  <Text style={styles.previewEmpty}>No preview available.</Text>
+                )}
+                {previewTranslation.error ? <Text style={styles.previewError}>{previewTranslation.error}</Text> : null}
+                <Pressable
+                  style={styles.previewBtn}
+                  onPress={() =>
+                    router.push({ pathname: '/video/[id]/translations', params: { id: String(video.id) } })
+                  }
+                >
+                  <Text style={styles.previewBtnText}>View translations</Text>
+                </Pressable>
+              </>
+            ) : (
+              <Text style={styles.previewEmpty}>No translations yet for {previewLabel}. Tap Translate to generate.</Text>
+            )}
+          </View>
+
+          {translateStatus ? <Text style={[styles.status, translateStatusStyle]}>{translateStatus}</Text> : null}
+
+          <Pressable style={styles.btnSecondaryAlt} onPress={openBurnPage}>
+            <View style={styles.btnContent}>
+              <Text style={styles.btnText}>Burn subtitles</Text>
+            </View>
+          </Pressable>
         </View>
 
-        {translateStatus ? <Text style={[styles.status, translateStatusStyle]}>{translateStatus}</Text> : null}
-
-        <Pressable
-          style={styles.btnSecondaryAlt}
-          onPress={() => router.push({ pathname: '/video/[id]/burn-subtitles', params: { id: String(video.id) } })}
-        >
-          <View style={styles.btnContent}>
-            <Text style={styles.btnText}>Burn subtitles</Text>
+        <View style={styles.groupCard}>
+          <View style={styles.groupHeader}>
+            <Text style={styles.groupTitle}>Captions</Text>
+            <Text style={styles.groupHint}>Extract key frames → caption frames.</Text>
           </View>
-        </Pressable>
-
-        <Pressable
-          style={[styles.btnSecondaryAlt, extractingKeyframes && styles.btnDisabled]}
-          onPress={extractKeyframes}
-          disabled={extractingKeyframes}
-        >
-          <View style={styles.btnContent}>
-            {extractingKeyframes && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-            <Text style={styles.btnText}>{extractingKeyframes ? 'Extracting...' : 'Extract key frames'}</Text>
-          </View>
-        </Pressable>
+          <Pressable
+            style={[styles.btnSecondaryAlt, extractingKeyframes && styles.btnDisabled]}
+            onPress={extractKeyframes}
+            disabled={extractingKeyframes}
+          >
+            <View style={styles.btnContent}>
+              {extractingKeyframes && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+              <Text style={styles.btnText}>{extractingKeyframes ? 'Extracting...' : 'Extract key frames'}</Text>
+            </View>
+          </Pressable>
 
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Key frames preview</Text>
@@ -999,6 +1126,7 @@ export default function VideoDetailScreen() {
         </View>
 
         {captionStatus ? <Text style={[styles.status, captionStatusStyle]}>{captionStatus}</Text> : null}
+        </View>
 
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Metadata generator</Text>
@@ -1028,7 +1156,12 @@ export default function VideoDetailScreen() {
               </View>
             </Pressable>
             <Pressable
-              style={[styles.btnSecondaryAlt, styles.metaButton, { marginRight: 0 }, metadataGenerating.en && styles.btnDisabled]}
+              style={[
+                styles.btnSecondaryAlt,
+                styles.metaButton,
+                { marginRight: 0 },
+                metadataGenerating.en && styles.btnDisabled,
+              ]}
               onPress={() => generateMetadata('en')}
               disabled={metadataGenerating.en}
             >
@@ -1040,6 +1173,18 @@ export default function VideoDetailScreen() {
               </View>
             </Pressable>
           </View>
+          <Pressable
+            style={[styles.btnSecondaryAlt, styles.metaButtonFull, metadataGeneratingAll && styles.btnDisabled]}
+            onPress={generateMetadataAll}
+            disabled={metadataGeneratingAll}
+          >
+            <View style={styles.btnContent}>
+              {metadataGeneratingAll && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+              <Text style={styles.btnText}>
+                {metadataGeneratingAll ? 'Generating metadata...' : 'Generate metadata'}
+              </Text>
+            </View>
+          </Pressable>
           <View style={styles.metadataPreviewHeader}>
             <Text style={styles.sectionTitle}>Metadata preview</Text>
           </View>
@@ -1100,7 +1245,7 @@ const styles = StyleSheet.create({
   previewLabel: { color: '#cbd5f5', fontSize: 12, fontWeight: '600' },
   btn: {
     marginTop: 16,
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#1d4ed8',
     paddingVertical: 12,
     paddingHorizontal: 18,
     borderRadius: 12,
@@ -1111,7 +1256,7 @@ const styles = StyleSheet.create({
   btnText: { color: 'white', fontWeight: '600' },
   btnSecondary: {
     marginTop: 10,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#1d4ed8',
     paddingVertical: 12,
     paddingHorizontal: 18,
     borderRadius: 12,
@@ -1143,7 +1288,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
     backgroundColor: '#f8fafc',
   },
-  langTabActive: { backgroundColor: '#0f766e', borderColor: '#0f766e' },
+  langTabActive: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
   langTabText: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
   langTabTextActive: { color: '#f8fafc' },
   langChecklist: {
@@ -1174,7 +1319,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
     backgroundColor: 'white',
   },
-  langCheckBoxActive: { backgroundColor: '#0f766e', borderColor: '#0f766e' },
+  langCheckBoxActive: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
   langCheckMark: { color: 'white', fontSize: 10, fontWeight: '700' },
   langCheckLabel: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
   sectionCard: {
@@ -1185,6 +1330,17 @@ const styles = StyleSheet.create({
     borderColor: '#e2e8f0',
     backgroundColor: 'white',
   },
+  groupCard: {
+    marginTop: 16,
+    padding: 14,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  groupHeader: { marginBottom: 10 },
+  groupTitle: { fontSize: 16, fontWeight: '700', color: '#0f172a' },
+  groupHint: { fontSize: 12, color: '#64748b', marginTop: 4 },
   sectionTitle: { fontSize: 14, fontWeight: '700', color: '#0f172a', marginBottom: 6 },
   sectionMeta: { fontSize: 12, color: '#475569', marginBottom: 8 },
   metadataInput: {
@@ -1207,6 +1363,7 @@ const styles = StyleSheet.create({
     minWidth: 200,
     marginRight: 12,
   },
+  metaButtonFull: { marginTop: 10, width: '100%' },
   metadataPreviewHeader: {
     marginTop: 12,
   },
