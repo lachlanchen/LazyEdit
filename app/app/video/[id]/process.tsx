@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
   settingHint: { fontSize: 11, color: '#64748b', marginTop: 2 },
   btnPrimary: {
     marginTop: 4,
-    backgroundColor: '#f28c8c',
+    backgroundColor: '#a855f7',
     paddingVertical: 12,
     borderRadius: 999,
     alignItems: 'center',
