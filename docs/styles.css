@@ -268,6 +268,10 @@ main {
   box-shadow: var(--shadow);
 }
 
+.hero__content .hero-card {
+  margin-top: 24px;
+}
+
 .hero-card__header {
   display: flex;
   justify-content: space-between;
