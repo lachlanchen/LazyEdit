@@ -1205,7 +1205,6 @@ export default function HomeScreen() {
             </View>
           ) : null}
         </View>
-        <Text style={styles.help}>Backend: {API_URL}</Text>
       </ScrollView>
     </View>
   );

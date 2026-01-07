@@ -68,6 +68,7 @@ export default function SettingsScreen() {
       />
 
       <Text style={styles.selected}>Selected: {selectedList.join(', ') || 'none'}</Text>
+      <Text style={styles.backend}>Backend: {API_URL}</Text>
     </View>
   );
 }
@@ -108,4 +109,5 @@ const styles = StyleSheet.create({
   langCode: { fontSize: 12, color: '#64748b' },
   empty: { marginTop: 16, color: '#64748b' },
   selected: { marginTop: 12, color: '#0f172a' },
+  backend: { marginTop: 12, color: '#64748b', fontSize: 12 },
 });
