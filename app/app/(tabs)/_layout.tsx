@@ -86,7 +86,7 @@ export default function TabLayout() {
         name="home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -107,14 +107,14 @@ export default function TabLayout() {
         name="library"
         options={{
           title: 'Studio',
-          tabBarIcon: ({ color }) => <TabBarIcon name="folder" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="film" color={color} />,
         }}
       />
       <Tabs.Screen
         name="editor"
         options={{
           title: 'Publish',
-          tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="upload" color={color} />,
         }}
       />
       <Tabs.Screen
