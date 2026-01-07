@@ -28,6 +28,14 @@ UPLOAD_FOLDER = os.getenv("LAZYEDIT_UPLOAD_DIR") or str(BASE_DIR / "DATA")
 # Backend port (matches existing env usage).
 PORT = int(os.getenv("PORT") or os.getenv("LAZYEDIT_PORT") or 8787)
 
+# Autopublish endpoint (AutoPublication service).
+AUTOPUBLISH_URL = (
+    os.getenv("LAZYEDIT_AUTOPUBLISH_URL")
+    or os.getenv("AUTOPUBLISH_URL")
+    or "http://localhost:8081/publish"
+)
+AUTOPUBLISH_TIMEOUT = int(os.getenv("LAZYEDIT_AUTOPUBLISH_TIMEOUT") or 60)
+
 # Captioning configuration (frame captions).
 CAPTION_PYTHON = os.getenv("LAZYEDIT_CAPTION_PYTHON") or "/home/lachlan/miniconda3/envs/caption/bin/python"
 CAPTION_PRIMARY_SCRIPT = (

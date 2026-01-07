@@ -5,11 +5,12 @@ os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 
 from lazyedit.openai_version_check import OpenAI
-from config import UPLOAD_FOLDER, PORT
+from config import UPLOAD_FOLDER, PORT, AUTOPUBLISH_URL, AUTOPUBLISH_TIMEOUT
 
 
 
 import shlex
+import threading
 import subprocess
 
 from concurrent.futures import ThreadPoolExecutor
@@ -31,7 +32,7 @@ from lazyedit.subtitle_translate import SubtitlesTranslator
 from lazyedit.video_prompt_generator import VideoPromptGenerator
 from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
-from lazyedit.chinese_simplify import convert_items_to_simplified
+from lazyedit.chinese_simplify import convert_items_to_simplified, convert_traditional_to_simplified
 from lazyedit.subtitles_burner import BurnSlotConfig, burn_video_with_slots
 
 from pprint import pprint
@@ -2558,6 +2559,63 @@ def media_url_for_path(file_path: str | None) -> str | None:
     return f"/media/{quote(relative.as_posix())}"
 
 
+def _load_json_payload(path: str | None) -> dict | None:
+    if not path or not os.path.exists(path):
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except Exception:
+        return None
+
+
+def _get_video_row(video_id: int) -> tuple | None:
+    ldb.ensure_schema()
+    with ldb.get_cursor() as cur:
+        cur.execute("SELECT id, file_path, title, created_at FROM videos WHERE id = %s", (video_id,))
+        return cur.fetchone()
+
+
+def _get_latest_metadata_payload(video_id: int, lang: str) -> tuple[dict | None, str | None]:
+    row = ldb.get_latest_video_metadata(video_id, lang)
+    if not row:
+        return None, None
+    _, _, status, output_json_path, _, _ = row
+    if status != "completed":
+        return None, None
+    payload = _load_json_payload(output_json_path)
+    return payload, output_json_path
+
+
+def _get_publish_dir(video_path: str) -> str:
+    base_dir = os.path.dirname(video_path)
+    publish_dir = os.path.join(base_dir, "publish")
+    os.makedirs(publish_dir, exist_ok=True)
+    return publish_dir
+
+
+def _pick_publish_video_path(video_id: int, fallback_path: str) -> str:
+    latest_burn = ldb.get_latest_subtitle_burn(video_id)
+    if latest_burn:
+        _, status, output_path, _, _, _, _ = latest_burn
+        if status == "completed" and output_path and os.path.exists(output_path):
+            return output_path
+    return fallback_path
+
+
+def _simplify_metadata_payload(metadata: dict) -> dict:
+    simplified = dict(metadata or {})
+    for key in ("title", "brief_description", "middle_description", "long_description"):
+        if isinstance(simplified.get(key), str):
+            simplified[key] = convert_traditional_to_simplified(simplified[key])
+    tags = simplified.get("tags")
+    if isinstance(tags, list):
+        simplified["tags"] = [
+            convert_traditional_to_simplified(tag) if isinstance(tag, str) else tag for tag in tags
+        ]
+    return simplified
+
+
 class CorsMixin:
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -3268,6 +3326,252 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
             "metadata": metadata_payload,
             "error": error_message,
         })
+
+
+class VideoCoverHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        row = _get_video_row(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        _, file_path, _, _ = row
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        base_name = os.path.splitext(os.path.basename(file_path))[0]
+        publish_dir = _get_publish_dir(file_path)
+        cover_filename = f"{base_name}_cover.jpg"
+        cover_path = os.path.join(publish_dir, cover_filename)
+        legacy_cover_path = os.path.join(os.path.dirname(file_path), cover_filename)
+        if not os.path.exists(cover_path) and os.path.exists(legacy_cover_path):
+            shutil.copy2(legacy_cover_path, cover_path)
+
+        if not os.path.exists(cover_path):
+            self.set_status(404)
+            return self.write({"error": "cover not found"})
+
+        self.write({
+            "status": "completed",
+            "cover_path": cover_path,
+            "cover_url": media_url_for_path(cover_path),
+        })
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        lang = _normalize_metadata_language(data.get("lang") or data.get("language") or "zh") or "zh"
+        row = _get_video_row(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        _, file_path, _, _ = row
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        metadata_payload, _ = _get_latest_metadata_payload(video_id_i, lang)
+        if not metadata_payload and lang != "en":
+            metadata_payload, _ = _get_latest_metadata_payload(video_id_i, "en")
+        if not metadata_payload:
+            self.set_status(400)
+            return self.write({"error": "metadata missing; generate metadata first"})
+
+        cover_timestamp_raw = metadata_payload.get("cover")
+        if not cover_timestamp_raw:
+            self.set_status(400)
+            return self.write({"error": "cover timestamp missing in metadata"})
+
+        base_name = os.path.splitext(os.path.basename(file_path))[0]
+        publish_dir = _get_publish_dir(file_path)
+        cover_filename = f"{base_name}_cover.jpg"
+        cover_path = os.path.join(publish_dir, cover_filename)
+        cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
+        video_for_cover = _pick_publish_video_path(video_id_i, file_path)
+
+        try:
+            extract_cover(video_for_cover, cover_path, cover_timestamp)
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "cover extraction failed", "details": str(exc)})
+
+        self.write({
+            "status": "completed",
+            "cover_path": cover_path,
+            "cover_url": media_url_for_path(cover_path),
+            "timestamp": cover_timestamp,
+        })
+
+
+class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        platforms_raw = data.get("platforms") or data.get("publish") or {}
+        platform_flags: dict[str, bool] = {}
+        if isinstance(platforms_raw, list):
+            platform_flags = {str(item): True for item in platforms_raw}
+        elif isinstance(platforms_raw, dict):
+            platform_flags = {str(key): bool(value) for key, value in platforms_raw.items()}
+
+        if not platform_flags:
+            platform_flags = {
+                "xiaohongshu": bool(data.get("publish_xhs")),
+                "douyin": bool(data.get("publish_douyin")),
+                "bilibili": bool(data.get("publish_bilibili")),
+                "shipinhao": bool(data.get("publish_shipinhao")),
+                "youtube": bool(data.get("publish_youtube")),
+            }
+
+        has_target = any(platform_flags.values())
+        if not has_target:
+            self.set_status(400)
+            return self.write({"error": "no platforms selected"})
+
+        test_mode = _parse_bool(data.get("test"), default=False)
+        wait_for_result = _parse_bool(data.get("wait"), default=False)
+
+        row = _get_video_row(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        _, file_path, _, _ = row
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        metadata_zh, _ = _get_latest_metadata_payload(video_id_i, "zh")
+        if not metadata_zh:
+            self.set_status(400)
+            return self.write({"error": "Chinese metadata missing; generate metadata first"})
+
+        metadata_en, _ = _get_latest_metadata_payload(video_id_i, "en")
+        if not metadata_en:
+            metadata_en = metadata_zh
+
+        metadata_payload = _simplify_metadata_payload(metadata_zh)
+        metadata_payload["english_version"] = metadata_en
+
+        base_name = os.path.splitext(os.path.basename(file_path))[0]
+        publish_dir = _get_publish_dir(file_path)
+        video_filename = f"{base_name}_highlighted.mp4"
+        cover_filename = f"{base_name}_cover.jpg"
+        metadata_filename = f"{base_name}_metadata.json"
+
+        metadata_payload["video_filename"] = video_filename
+        metadata_payload["cover_filename"] = cover_filename
+
+        video_to_publish = _pick_publish_video_path(video_id_i, file_path)
+        cover_path = os.path.join(publish_dir, cover_filename)
+        if not os.path.exists(cover_path):
+            cover_timestamp_raw = metadata_payload.get("cover") or "00:00:01,000"
+            cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
+            try:
+                extract_cover(video_to_publish, cover_path, cover_timestamp)
+            except Exception as exc:
+                self.set_status(500)
+                return self.write({"error": "cover extraction failed", "details": str(exc)})
+
+        metadata_path = os.path.join(publish_dir, metadata_filename)
+        with open(metadata_path, "w", encoding="utf-8") as handle:
+            json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
+
+        zip_path = os.path.join(publish_dir, f"{base_name}.zip")
+        extra_files = [
+            os.path.join(os.path.dirname(file_path), f"{base_name}_mixed.json"),
+            os.path.join(os.path.dirname(file_path), f"{base_name}_mixed.srt"),
+        ]
+        with zipfile.ZipFile(zip_path, "w") as zipf:
+            zipf.write(video_to_publish, arcname=video_filename)
+            if os.path.exists(cover_path):
+                zipf.write(cover_path, arcname=cover_filename)
+            zipf.write(metadata_path, arcname=metadata_filename)
+            for extra in extra_files:
+                if os.path.exists(extra):
+                    zipf.write(extra, arcname=os.path.basename(extra))
+
+        zip_url = media_url_for_path(zip_path)
+        response_payload = {
+            "status": "ready",
+            "zip_path": zip_path,
+            "zip_url": zip_url,
+            "metadata_path": metadata_path,
+            "cover_path": cover_path if os.path.exists(cover_path) else None,
+            "video_path": video_to_publish,
+            "platforms": platform_flags,
+        }
+
+        if not AUTOPUBLISH_URL:
+            response_payload["warning"] = "autopublish url not configured"
+            return self.write(response_payload)
+
+        params = {
+            "filename": os.path.basename(zip_path),
+            "publish_xhs": str(platform_flags.get("xiaohongshu", False)).lower(),
+            "publish_douyin": str(platform_flags.get("douyin", False)).lower(),
+            "publish_bilibili": str(platform_flags.get("bilibili", False)).lower(),
+            "publish_shipinhao": str(platform_flags.get("shipinhao", False)).lower(),
+            "publish_y2b": str(platform_flags.get("youtube", False)).lower(),
+            "test": str(test_mode).lower(),
+        }
+
+        def _post_zip():
+            with open(zip_path, "rb") as handle:
+                resp = requests.post(
+                    AUTOPUBLISH_URL,
+                    params=params,
+                    data=handle.read(),
+                    headers={"Content-Type": "application/octet-stream"},
+                    timeout=AUTOPUBLISH_TIMEOUT,
+                )
+            return resp
+
+        if wait_for_result:
+            try:
+                resp = _post_zip()
+                response_payload["autopublish_status"] = resp.status_code
+                response_payload["autopublish_response"] = resp.text
+                response_payload["status"] = "published" if resp.ok else "failed"
+            except Exception as exc:
+                response_payload["status"] = "failed"
+                response_payload["autopublish_error"] = str(exc)
+            return self.write(response_payload)
+
+        def _async_worker():
+            try:
+                resp = _post_zip()
+                if not resp.ok:
+                    print(f"Autopublish failed: {resp.status_code} {resp.text}")
+            except Exception as exc:
+                print(f"Autopublish request failed: {exc}")
+
+        threading.Thread(target=_async_worker, daemon=True).start()
+        response_payload["status"] = "queued"
+        self.write(response_payload)
 
 
 class VideoPromptHandler(CorsMixin, tornado.web.RequestHandler):
@@ -4422,11 +4726,13 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/transcription", VideoTranscriptionHandler),
         (r"/api/videos/(\d+)/caption", VideoCaptionHandler),
         (r"/api/videos/(\d+)/metadata", VideoMetadataHandler),
+        (r"/api/videos/(\d+)/cover", VideoCoverHandler),
         (r"/api/videos/(\d+)/keyframes", VideoKeyframesHandler),
         (r"/api/videos/(\d+)/translate", VideoTranslateHandler),
         (r"/api/videos/(\d+)/translation", VideoTranslationHandler),
         (r"/api/videos/(\d+)/translations", VideoTranslationsHandler),
         (r"/api/videos/(\d+)/burn-subtitles", VideoSubtitleBurnHandler),
+        (r"/api/videos/(\d+)/publish", VideoPublishHandler),
         (r"/api/videos/(\d+)/captions", CaptionsHandler),
         (r"/media/(.*)", MediaHandler, {"path": upload_folder}),
     ])
