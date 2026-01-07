@@ -658,10 +658,10 @@ export default function ProcessVideoScreen() {
         </Pressable>
         <View style={styles.previewCard}>
           <Text style={styles.sectionTitle}>Burn preview</Text>
-          {previewVideoUrl ? (
+          {(burnPreviewUrl || previewVideoUrl) ? (
             <View style={styles.videoWrap}>
               {React.createElement('video', {
-                src: previewVideoUrl,
+                src: burnPreviewUrl || previewVideoUrl,
                 style: { width: '100%', height: '100%', borderRadius: 12, objectFit: 'contain' },
                 controls: true,
                 muted: true,
