@@ -567,6 +567,15 @@ export default function HomeScreen() {
               <Text style={styles.panelTitle}>Video content</Text>
               <Text style={styles.panelHint}>Describe the scene, action, and visual tone.</Text>
 
+              <Text style={styles.fieldLabel}>Audio language</Text>
+              <SelectControl
+                label="Audio language"
+                value={promptSpec.audioLanguage}
+                options={AUDIO_LANGUAGE_OPTIONS}
+                onChange={(value) => updateSpec('audioLanguage', value)}
+              />
+              {renderHistory('audioLanguage', (value) => updateSpec('audioLanguage', value))}
+
               <Text style={styles.fieldLabel}>Title</Text>
               <TextInput
                 style={[styles.input, promptSpec.autoTitle && styles.inputDisabled]}
@@ -640,29 +649,6 @@ export default function HomeScreen() {
               />
               {renderHistory('style', (value) => updateSpec('style', value))}
 
-              <Text style={styles.fieldLabel}>Negative prompt</Text>
-              <TextInput
-                style={styles.textArea}
-                value={promptSpec.negative}
-                onChangeText={(v) => updateSpec('negative', v)}
-                multiline
-              />
-              {renderHistory('negative', (value) => updateSpec('negative', value))}
-            </View>
-
-            <View style={styles.panel}>
-              <Text style={styles.panelTitle}>Controls</Text>
-              <Text style={styles.panelHint}>Tune aspect ratio and length.</Text>
-
-              <Text style={styles.fieldLabel}>Audio language</Text>
-              <SelectControl
-                label="Audio language"
-                value={promptSpec.audioLanguage}
-                options={AUDIO_LANGUAGE_OPTIONS}
-                onChange={(value) => updateSpec('audioLanguage', value)}
-              />
-              {renderHistory('audioLanguage', (value) => updateSpec('audioLanguage', value))}
-
               <Text style={styles.fieldLabel}>Spoken words (optional)</Text>
               <TextInput
                 style={styles.textArea}
@@ -689,6 +675,20 @@ export default function HomeScreen() {
                 multiline
               />
               {renderHistory('extraRequirements', (value) => updateSpec('extraRequirements', value))}
+
+              <Text style={styles.fieldLabel}>Negative prompt</Text>
+              <TextInput
+                style={styles.textArea}
+                value={promptSpec.negative}
+                onChangeText={(v) => updateSpec('negative', v)}
+                multiline
+              />
+              {renderHistory('negative', (value) => updateSpec('negative', value))}
+            </View>
+
+            <View style={styles.panel}>
+              <Text style={styles.panelTitle}>Controls</Text>
+              <Text style={styles.panelHint}>Tune aspect ratio and length.</Text>
 
               <Text style={styles.fieldLabel}>Aspect ratio</Text>
               <View style={styles.chipRow}>
