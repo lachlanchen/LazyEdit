@@ -567,15 +567,6 @@ export default function HomeScreen() {
               <Text style={styles.panelTitle}>Video content</Text>
               <Text style={styles.panelHint}>Describe the scene, action, and visual tone.</Text>
 
-              <Text style={styles.fieldLabel}>Audio language</Text>
-              <SelectControl
-                label="Audio language"
-                value={promptSpec.audioLanguage}
-                options={AUDIO_LANGUAGE_OPTIONS}
-                onChange={(value) => updateSpec('audioLanguage', value)}
-              />
-              {renderHistory('audioLanguage', (value) => updateSpec('audioLanguage', value))}
-
               <Text style={styles.fieldLabel}>Title</Text>
               <TextInput
                 style={[styles.input, promptSpec.autoTitle && styles.inputDisabled]}
@@ -596,6 +587,15 @@ export default function HomeScreen() {
                 />
               </View>
               {!promptSpec.autoTitle ? renderHistory('title', (value) => updateSpec('title', value)) : null}
+
+              <Text style={styles.fieldLabel}>Audio language</Text>
+              <SelectControl
+                label="Audio language"
+                value={promptSpec.audioLanguage}
+                options={AUDIO_LANGUAGE_OPTIONS}
+                onChange={(value) => updateSpec('audioLanguage', value)}
+              />
+              {renderHistory('audioLanguage', (value) => updateSpec('audioLanguage', value))}
 
               <Text style={styles.fieldLabel}>Subject</Text>
               <TextInput
