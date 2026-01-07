@@ -237,6 +237,12 @@ def _slugify(value: str) -> str:
     return cleaned or "generated"
 
 
+def _sanitize_title(value: str) -> str:
+    cleaned = re.sub(r"[\r\n\t]+", " ", value or "")
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned or "Generated video"
+
+
 def _load_metadata_templates(lang_code: str) -> tuple[dict, dict]:
     template_key = METADATA_TEMPLATE_MAP.get(lang_code)
     if not template_key:
@@ -3248,10 +3254,20 @@ class VideoPromptHandler(CorsMixin, tornado.web.RequestHandler):
             data = {}
 
         prompt_spec = data.get("prompt_spec") or data.get("spec") or data.get("input") or ""
-        if isinstance(prompt_spec, (dict, list)):
+        prompt_spec_obj = None
+        if isinstance(prompt_spec, dict):
+            prompt_spec_obj = prompt_spec
+            prompt_spec_text = json.dumps(prompt_spec, ensure_ascii=False, indent=2)
+        elif isinstance(prompt_spec, list):
             prompt_spec_text = json.dumps(prompt_spec, ensure_ascii=False, indent=2)
         else:
             prompt_spec_text = str(prompt_spec)
+            try:
+                parsed = json.loads(prompt_spec_text)
+                if isinstance(parsed, dict):
+                    prompt_spec_obj = parsed
+            except Exception:
+                prompt_spec_obj = None
 
         use_cache = _parse_bool(data.get("use_cache"), default=True)
         if not os.path.isdir(VIDEO_PROMPT_TEMPLATE_DIR):
@@ -3269,8 +3285,13 @@ class VideoPromptHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "prompt generation failed", "details": str(exc)})
 
+        title = None
+        if isinstance(prompt_spec_obj, dict):
+            title = prompt_spec_obj.get("title") or prompt_spec_obj.get("name")
+
         self.write({
             "prompt_spec": prompt_spec_text,
+            "title": result.get("title") or title,
             "prompt": result.get("prompt"),
             "negative_prompt": result.get("negative_prompt"),
             "model": result.get("model"),
@@ -3307,15 +3328,17 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
         seconds = min(max(seconds, 4), 20)
 
         use_cache = _parse_bool(data.get("use_cache"), default=True)
-        title = data.get("title") or data.get("name") or "Generated video"
-        if not isinstance(title, str):
-            title = str(title)
+        title_input = data.get("title") or data.get("name") or "Generated video"
+        if not isinstance(title_input, str):
+            title_input = str(title_input)
 
+        title_base = _sanitize_title(title_input)
+        prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:8]
+        title = f"{title_base} {prompt_hash}"
         output_dir = os.path.join(UPLOAD_FOLDER, "generated")
         os.makedirs(output_dir, exist_ok=True)
-        slug = _slugify(title)
+        slug = _slugify(title_base)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:10]
         output_path = os.path.join(output_dir, f"{slug}_{timestamp}_{prompt_hash}.mp4")
 
         try:

@@ -1,6 +1,10 @@
 {
   "type": "object",
   "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short descriptive title for the video"
+    },
     "prompt": {
       "type": "string",
       "description": "Final production-ready video prompt"
@@ -23,6 +27,6 @@
       "maximum": 20
     }
   },
-  "required": ["prompt", "model", "size", "seconds"],
+  "required": ["title", "prompt", "model", "size", "seconds"],
   "additionalProperties": false
 }

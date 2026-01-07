@@ -114,6 +114,7 @@ export default function HomeScreen() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [promptSpec, setPromptSpec] = useState(DEFAULT_PROMPT_SPEC);
   const [promptResult, setPromptResult] = useState<{
+    title?: string;
     prompt?: string;
     negativePrompt?: string;
     model?: string;
@@ -371,6 +372,7 @@ export default function HomeScreen() {
       const promptText = result.prompt || json.prompt || '';
       setPromptOutput(promptText);
       setPromptResult({
+        title: result.title || json.title,
         prompt: promptText,
         negativePrompt: result.negative_prompt || json.negative_prompt,
         model: result.model || json.model,
@@ -400,7 +402,7 @@ export default function HomeScreen() {
     setVideoTone('neutral');
     try {
       const spec = buildPromptSpecPayload();
-      const title = promptSpec.autoTitle ? 'Generated video' : spec.title || 'Generated video';
+      const title = promptResult?.title || (promptSpec.autoTitle ? 'Generated video' : spec.title || 'Generated video');
       const resp = await fetch(`${API_URL}/api/videos/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -643,6 +645,9 @@ export default function HomeScreen() {
                 Suggested settings: {promptResult?.model || 'sora-2'} · {promptResult?.size || '1280x720'} ·{' '}
                 {promptResult?.seconds || 8}s
               </Text>
+            ) : null}
+            {promptResult?.title ? (
+              <Text style={styles.metaText}>Suggested title: {promptResult.title}</Text>
             ) : null}
             {promptResult?.negativePrompt ? (
               <Text style={styles.metaText}>Negative: {promptResult.negativePrompt}</Text>
