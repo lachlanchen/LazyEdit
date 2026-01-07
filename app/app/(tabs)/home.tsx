@@ -750,7 +750,7 @@ export default function HomeScreen() {
           {activeTab === 'generate' ? (
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Generate video</Text>
-              <Text style={styles.sectionSubtitle}>Build specs, generate a prompt, then render a video.</Text>
+              <Text style={styles.sectionSubtitle}>Stage A: idea → specs. Stage B: specs → prompt. Stage C: prompt → video.</Text>
 
             <View style={styles.panel}>
               <View style={styles.panelHeader}>
@@ -785,9 +785,9 @@ export default function HomeScreen() {
             <View style={styles.panel}>
               <View style={styles.panelHeader}>
                 <Text style={styles.stageBadge}>Stage B</Text>
-                <Text style={styles.panelTitle}>Specs</Text>
+                <Text style={styles.panelTitle}>Specs → Prompt</Text>
               </View>
-              <Text style={styles.panelHint}>Describe the scene, action, and visual tone.</Text>
+              <Text style={styles.panelHint}>Refine the scene, action, and visual tone that drive the prompt.</Text>
 
               <Text style={styles.fieldLabel}>Title</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
@@ -1025,75 +1025,87 @@ export default function HomeScreen() {
               </View>
             </View>
 
-            <Pressable style={styles.btnAccent} onPress={generatePrompt} disabled={prompting}>
-              <View style={styles.btnContent}>
-                {prompting && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                <Text style={styles.btnText}>{prompting ? 'Generating prompt...' : 'Generate prompt'}</Text>
+            <View style={styles.panel}>
+              <View style={styles.panelHeader}>
+                <Text style={styles.stageBadge}>Stage B</Text>
+                <Text style={styles.panelTitle}>Generate prompt</Text>
               </View>
-            </Pressable>
+              <Text style={styles.panelHint}>Use the specs above to draft a prompt you can refine.</Text>
 
-            {promptStatus ? (
-              <Text style={[styles.status, toneStyle(promptTone)]}>{promptStatus}</Text>
-            ) : null}
+              <Pressable style={styles.btnAccent} onPress={generatePrompt} disabled={prompting}>
+                <View style={styles.btnContent}>
+                  {prompting && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                  <Text style={styles.btnText}>{prompting ? 'Generating prompt...' : 'Generate prompt'}</Text>
+                </View>
+              </Pressable>
 
-            <View style={styles.panelHeader}>
-              <Text style={styles.stageBadge}>Stage C</Text>
-              <Text style={styles.panelTitle}>Video prompt</Text>
+              {promptStatus ? (
+                <Text style={[styles.status, toneStyle(promptTone)]}>{promptStatus}</Text>
+              ) : null}
             </View>
-            <Text style={styles.fieldLabel}>Generated prompt</Text>
-            <TextInput
-              style={styles.textAreaLarge}
-              value={promptOutput}
-              onChangeText={setPromptOutput}
-              placeholder="Generate a prompt above, then edit it here."
-              multiline
-            />
 
-            {promptResult?.model || promptResult?.size || promptResult?.seconds ? (
-              <Text style={styles.metaText}>
-                Suggested settings: {promptResult?.model || 'sora-2'} · {promptResult?.size || '1280x720'} ·{' '}
-                {promptResult?.seconds || 8}s
-              </Text>
-            ) : null}
-            {promptResult?.title ? (
-              <Text style={styles.metaText}>Suggested title: {promptResult.title}</Text>
-            ) : null}
-            {promptResult?.negativePrompt ? (
-              <Text style={styles.metaText}>Negative: {promptResult.negativePrompt}</Text>
-            ) : null}
-
-            <Pressable
-              style={[styles.btnSuccess, generatingVideo && styles.btnDisabled]}
-              onPress={generateVideo}
-              disabled={generatingVideo}
-            >
-              <View style={styles.btnContent}>
-                {generatingVideo && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                <Text style={styles.btnText}>{generatingVideo ? 'Generating video...' : 'Generate video'}</Text>
+            <View style={styles.panel}>
+              <View style={styles.panelHeader}>
+                <Text style={styles.stageBadge}>Stage C</Text>
+                <Text style={styles.panelTitle}>Prompt → Video</Text>
               </View>
-            </Pressable>
+              <Text style={styles.panelHint}>Edit the prompt, then render the video.</Text>
 
-            {videoStatus ? (
-              <Text style={[styles.status, toneStyle(videoTone)]}>{videoStatus}</Text>
-            ) : null}
+              <Text style={styles.fieldLabel}>Generated prompt</Text>
+              <TextInput
+                style={styles.textAreaLarge}
+                value={promptOutput}
+                onChangeText={setPromptOutput}
+                placeholder="Generate a prompt above, then edit it here."
+                multiline
+              />
 
-            {generatedVideoUrl ? (
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>Generated video preview</Text>
-                {Platform.OS === 'web' ? (
-                  <View style={styles.previewBox}>
-                    {React.createElement('video', {
-                      src: generatedVideoUrl,
-                      style: { width: '100%', borderRadius: 12, maxHeight: 300 },
-                      controls: true,
-                      preload: 'metadata',
-                    })}
-                  </View>
-                ) : (
-                  <Text style={styles.previewHint}>Preview available on web.</Text>
-                )}
-              </View>
-            ) : null}
+              {promptResult?.model || promptResult?.size || promptResult?.seconds ? (
+                <Text style={styles.metaText}>
+                  Suggested settings: {promptResult?.model || 'sora-2'} · {promptResult?.size || '1280x720'} ·{' '}
+                  {promptResult?.seconds || 8}s
+                </Text>
+              ) : null}
+              {promptResult?.title ? (
+                <Text style={styles.metaText}>Suggested title: {promptResult.title}</Text>
+              ) : null}
+              {promptResult?.negativePrompt ? (
+                <Text style={styles.metaText}>Negative: {promptResult.negativePrompt}</Text>
+              ) : null}
+
+              <Pressable
+                style={[styles.btnSuccess, generatingVideo && styles.btnDisabled]}
+                onPress={generateVideo}
+                disabled={generatingVideo}
+              >
+                <View style={styles.btnContent}>
+                  {generatingVideo && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                  <Text style={styles.btnText}>{generatingVideo ? 'Generating video...' : 'Generate video'}</Text>
+                </View>
+              </Pressable>
+
+              {videoStatus ? (
+                <Text style={[styles.status, toneStyle(videoTone)]}>{videoStatus}</Text>
+              ) : null}
+
+              {generatedVideoUrl ? (
+                <View style={styles.card}>
+                  <Text style={styles.cardTitle}>Generated video preview</Text>
+                  {Platform.OS === 'web' ? (
+                    <View style={styles.previewBox}>
+                      {React.createElement('video', {
+                        src: generatedVideoUrl,
+                        style: { width: '100%', borderRadius: 12, maxHeight: 300 },
+                        controls: true,
+                        preload: 'metadata',
+                      })}
+                    </View>
+                  ) : (
+                    <Text style={styles.previewHint}>Preview available on web.</Text>
+                  )}
+                </View>
+              ) : null}
+            </View>
           </View>
           ) : null}
 
