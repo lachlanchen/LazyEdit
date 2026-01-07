@@ -19,7 +19,25 @@ const formatBytes = (bytes?: number | null) => {
   return `${size.toFixed(decimals)} ${units[unitIndex]}`;
 };
 
-const DEFAULT_PROMPT_SPEC = `{\n  \"title\": \"Mist Valley Oracle\",\n  \"subject\": \"A fictional oracle in a silver robe, fully clothed\",\n  \"action\": \"She senses the future as mist drifts through the valley\",\n  \"environment\": \"Dawn light, floating isles, ancient ruins in fog\",\n  \"camera\": \"Slow orbit, smooth tracking, 35mm lens\",\n  \"lighting\": \"Soft sunrise glow, volumetric mist\",\n  \"mood\": \"Serene, mysterious, hopeful\",\n  \"style\": \"Cinematic, high detail, natural color grading\",\n  \"duration_seconds\": 8,\n  \"aspect_ratio\": \"16:9\",\n  \"negative\": \"no text, no logos, no gore\"\n}`;
+const DEFAULT_PROMPT_SPEC = {
+  title: 'Mist Valley Oracle',
+  subject: 'A fictional oracle in a silver robe, fully clothed',
+  action: 'She senses the future as mist drifts through the valley',
+  environment: 'Dawn light, floating isles, ancient ruins in fog',
+  camera: 'Slow orbit, smooth tracking, 35mm lens',
+  lighting: 'Soft sunrise glow, volumetric mist',
+  mood: 'Serene, mysterious, hopeful',
+  style: 'Cinematic, high detail, natural color grading',
+  aspectRatio: '16:9',
+  durationSeconds: '8',
+  negative: 'no text, no logos, no gore',
+};
+
+const ASPECT_OPTIONS = [
+  { value: '16:9', label: '16:9 Landscape' },
+  { value: '9:16', label: '9:16 Portrait' },
+  { value: 'auto', label: 'Auto' },
+];
 
 export default function HomeScreen() {
   const [picked, setPicked] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
@@ -27,7 +45,7 @@ export default function HomeScreen() {
   const [statusTone, setStatusTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [promptSpec, setPromptSpec] = useState<string>(DEFAULT_PROMPT_SPEC);
+  const [promptSpec, setPromptSpec] = useState(DEFAULT_PROMPT_SPEC);
   const [promptResult, setPromptResult] = useState<{
     prompt?: string;
     negativePrompt?: string;
@@ -137,12 +155,35 @@ export default function HomeScreen() {
 
   const statusStyle = toneStyle(statusTone);
 
-  const parseSpecJson = () => {
-    try {
-      return JSON.parse(promptSpec);
-    } catch {
-      return null;
+  const updateSpec = (key: keyof typeof DEFAULT_PROMPT_SPEC, value: string) => {
+    setPromptSpec((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const buildPromptSpecPayload = () => {
+    const payload: Record<string, string | number> = {};
+    const assign = (key: string, value: string) => {
+      if (!value) return;
+      const cleaned = value.trim();
+      if (!cleaned) return;
+      payload[key] = cleaned;
+    };
+    assign('title', promptSpec.title);
+    assign('subject', promptSpec.subject);
+    assign('action', promptSpec.action);
+    assign('environment', promptSpec.environment);
+    assign('camera', promptSpec.camera);
+    assign('lighting', promptSpec.lighting);
+    assign('mood', promptSpec.mood);
+    assign('style', promptSpec.style);
+    assign('negative', promptSpec.negative);
+    const duration = parseInt(promptSpec.durationSeconds, 10);
+    if (!Number.isNaN(duration)) {
+      payload.duration_seconds = duration;
     }
+    if (promptSpec.aspectRatio !== 'auto') {
+      payload.aspect_ratio = promptSpec.aspectRatio;
+    }
+    return payload;
   };
 
   const generatePrompt = async () => {
@@ -154,7 +195,7 @@ export default function HomeScreen() {
       const resp = await fetch(`${API_URL}/api/video-prompts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt_spec: promptSpec }),
+        body: JSON.stringify({ prompt_spec: buildPromptSpecPayload() }),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -193,8 +234,8 @@ export default function HomeScreen() {
     setVideoStatus('Generating video... this can take a few minutes.');
     setVideoTone('neutral');
     try {
-      const spec = parseSpecJson();
-      const title = spec?.title || spec?.name || 'Generated video';
+      const spec = buildPromptSpecPayload();
+      const title = spec.title || 'Generated video';
       const resp = await fetch(`${API_URL}/api/videos/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -296,15 +337,95 @@ export default function HomeScreen() {
             <Text style={styles.sectionTitle}>Generate video</Text>
             <Text style={styles.sectionSubtitle}>Draft a Sora prompt, edit it, then render a video.</Text>
 
-            <Text style={styles.fieldLabel}>Prompt spec (JSON)</Text>
-            <TextInput
-              style={styles.textArea}
-              value={promptSpec}
-              onChangeText={setPromptSpec}
-              multiline
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
+            <View style={styles.panel}>
+              <Text style={styles.panelTitle}>Video content</Text>
+              <Text style={styles.panelHint}>Describe the scene, action, and visual tone.</Text>
+
+              <Text style={styles.fieldLabel}>Title</Text>
+              <TextInput style={styles.input} value={promptSpec.title} onChangeText={(v) => updateSpec('title', v)} />
+
+              <Text style={styles.fieldLabel}>Subject</Text>
+              <TextInput
+                style={styles.textArea}
+                value={promptSpec.subject}
+                onChangeText={(v) => updateSpec('subject', v)}
+                multiline
+              />
+
+              <Text style={styles.fieldLabel}>Action</Text>
+              <TextInput
+                style={styles.textArea}
+                value={promptSpec.action}
+                onChangeText={(v) => updateSpec('action', v)}
+                multiline
+              />
+
+              <Text style={styles.fieldLabel}>Environment</Text>
+              <TextInput
+                style={styles.textArea}
+                value={promptSpec.environment}
+                onChangeText={(v) => updateSpec('environment', v)}
+                multiline
+              />
+
+              <Text style={styles.fieldLabel}>Camera</Text>
+              <TextInput style={styles.input} value={promptSpec.camera} onChangeText={(v) => updateSpec('camera', v)} />
+
+              <Text style={styles.fieldLabel}>Lighting</Text>
+              <TextInput
+                style={styles.input}
+                value={promptSpec.lighting}
+                onChangeText={(v) => updateSpec('lighting', v)}
+              />
+
+              <Text style={styles.fieldLabel}>Mood</Text>
+              <TextInput style={styles.input} value={promptSpec.mood} onChangeText={(v) => updateSpec('mood', v)} />
+
+              <Text style={styles.fieldLabel}>Style</Text>
+              <TextInput
+                style={styles.textArea}
+                value={promptSpec.style}
+                onChangeText={(v) => updateSpec('style', v)}
+                multiline
+              />
+
+              <Text style={styles.fieldLabel}>Negative prompt</Text>
+              <TextInput
+                style={styles.textArea}
+                value={promptSpec.negative}
+                onChangeText={(v) => updateSpec('negative', v)}
+                multiline
+              />
+            </View>
+
+            <View style={styles.panel}>
+              <Text style={styles.panelTitle}>Controls</Text>
+              <Text style={styles.panelHint}>Tune aspect ratio and length.</Text>
+
+              <Text style={styles.fieldLabel}>Aspect ratio</Text>
+              <View style={styles.chipRow}>
+                {ASPECT_OPTIONS.map((option) => {
+                  const isActive = promptSpec.aspectRatio === option.value;
+                  return (
+                    <Pressable
+                      key={option.value}
+                      style={[styles.chip, isActive && styles.chipActive]}
+                      onPress={() => updateSpec('aspectRatio', option.value)}
+                    >
+                      <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{option.label}</Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              <Text style={styles.fieldLabel}>Length (seconds)</Text>
+              <TextInput
+                style={styles.input}
+                value={promptSpec.durationSeconds}
+                onChangeText={(value) => updateSpec('durationSeconds', value.replace(/[^\d]/g, ''))}
+                keyboardType="numeric"
+              />
+            </View>
 
             <Pressable style={styles.btnAccent} onPress={generatePrompt} disabled={prompting}>
               <View style={styles.btnContent}>
@@ -319,7 +440,7 @@ export default function HomeScreen() {
 
             <Text style={styles.fieldLabel}>Generated prompt</Text>
             <TextInput
-              style={styles.textArea}
+              style={styles.textAreaLarge}
               value={promptOutput}
               onChangeText={setPromptOutput}
               placeholder="Generate a prompt above, then edit it here."
@@ -515,9 +636,31 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#0f172a',
   },
+  input: {
+    marginTop: 8,
+    minHeight: 44,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: 'white',
+    color: '#111827',
+  },
   textArea: {
     marginTop: 8,
-    minHeight: 120,
+    minHeight: 80,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 12,
+    padding: 12,
+    backgroundColor: 'white',
+    color: '#111827',
+    textAlignVertical: 'top',
+  },
+  textAreaLarge: {
+    marginTop: 8,
+    minHeight: 140,
     borderWidth: 1,
     borderColor: '#e2e8f0',
     borderRadius: 12,
@@ -530,6 +673,51 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     color: '#475569',
+  },
+  panel: {
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  panelTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+  panelHint: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#64748b',
+  },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 8,
+  },
+  chip: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    backgroundColor: 'white',
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  chipActive: {
+    backgroundColor: '#0f172a',
+    borderColor: '#0f172a',
+  },
+  chipText: {
+    fontSize: 12,
+    color: '#1e293b',
+    fontWeight: '600',
+  },
+  chipTextActive: {
+    color: 'white',
   },
   status: {
     marginTop: 14,
