@@ -1252,7 +1252,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   btnDisabled: { opacity: 0.6 },
-  btnContent: { flexDirection: 'row', alignItems: 'center' },
+  btnContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   btnText: { color: 'white', fontWeight: '600' },
   btnSecondary: {
     marginTop: 10,
