@@ -88,6 +88,20 @@ const formatPercent = (value?: number, fallback = 0) =>
 const formatLanguages = (codes: string[]) =>
   codes.map((code) => LANG_LABELS[code] || code).join(', ');
 
+type VideoDetail = {
+  id: number;
+  title: string | null;
+  media_url?: string | null;
+};
+
+const LOG_TABS = ['transcription', 'translations', 'captions', 'metadata'] as const;
+const LOG_TAB_LABELS: Record<typeof LOG_TABS[number], string> = {
+  transcription: 'Transcriptions',
+  translations: 'Translations',
+  captions: 'Captions',
+  metadata: 'Metadata',
+};
+
 export default function ProcessVideoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [selectedSteps, setSelectedSteps] = useState<Record<StepKey, boolean>>(defaultSelections);
@@ -98,6 +112,9 @@ export default function ProcessVideoScreen() {
   const [loading, setLoading] = useState(true);
   const [translationLanguages, setTranslationLanguages] = useState<string[]>([]);
   const [burnLayout, setBurnLayout] = useState<BurnLayout | null>(null);
+  const [video, setVideo] = useState<VideoDetail | null>(null);
+  const [burnPreviewUrl, setBurnPreviewUrl] = useState<string | null>(null);
+  const [activeLogTab, setActiveLogTab] = useState<typeof LOG_TABS[number]>('transcription');
 
   const burnSummary = useMemo(() => {
     const layout = burnLayout || {};
@@ -111,6 +128,25 @@ export default function ProcessVideoScreen() {
     });
     return { rows, cols, heightRatio, liftRatio, slots };
   }, [burnLayout]);
+
+  const previewVideoUrl = useMemo(() => {
+    if (!video?.media_url) return null;
+    return `${API_URL}${video.media_url}`;
+  }, [video]);
+
+  const refreshBurnPreview = async () => {
+    if (!id) return;
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`);
+      if (!resp.ok) return;
+      const json = await resp.json();
+      if (json?.output_url) {
+        setBurnPreviewUrl(`${API_URL}${json.output_url}`);
+      }
+    } catch (_err) {
+      // ignore
+    }
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -126,19 +162,35 @@ export default function ProcessVideoScreen() {
           if (Array.isArray(json.value)) {
             setTranslationLanguages(json.value);
           }
+      }
+      if (layoutResp.ok) {
+        const json = await layoutResp.json();
+        if (json.value) {
+          setBurnLayout(json.value);
         }
-        if (layoutResp.ok) {
-          const json = await layoutResp.json();
-          if (json.value) {
-            setBurnLayout(json.value);
-          }
+      }
+    } catch (_err) {
+      // ignore
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, [id]);
+
+  useEffect(() => {
+    if (!id) return;
+    (async () => {
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${id}`);
+        if (resp.ok) {
+          const json = await resp.json();
+          setVideo(json);
         }
       } catch (_err) {
         // ignore
-      } finally {
-        setLoading(false);
       }
     })();
+    refreshBurnPreview();
   }, [id]);
 
   const slotLanguages = useMemo(() => {
@@ -159,6 +211,53 @@ export default function ProcessVideoScreen() {
       setStepDetail((prev) => ({ ...prev, [step]: detail }));
     }
   };
+
+  const logEntries = useMemo(() => {
+    return {
+      transcription: [
+        {
+          title: 'Transcribe',
+          status: stepStatus.transcribe,
+          detail: stepDetail.transcribe,
+        },
+      ],
+      translations: [
+        {
+          title: 'Translate',
+          status: stepStatus.translate,
+          detail:
+            stepDetail.translate ||
+            (translationTargetLanguages.length
+              ? `Languages: ${translationTargetLanguages.join(', ')}`
+              : 'No languages selected'),
+        },
+      ],
+      captions: [
+        {
+          title: 'Key frames',
+          status: stepStatus.keyframes,
+          detail: stepDetail.keyframes,
+        },
+        {
+          title: 'Captions',
+          status: stepStatus.caption,
+          detail: stepDetail.caption,
+        },
+      ],
+      metadata: [
+        {
+          title: 'Chinese metadata',
+          status: stepStatus.metadataZh,
+          detail: stepDetail.metadataZh,
+        },
+        {
+          title: 'English metadata',
+          status: stepStatus.metadataEn,
+          detail: stepDetail.metadataEn,
+        },
+      ],
+    };
+  }, [stepStatus, stepDetail, translationTargetLanguages]);
 
   const ensureTranscription = async () => {
     if (!id) return false;
@@ -251,10 +350,13 @@ export default function ProcessVideoScreen() {
       if (statusJson.status === 'processing') {
         continue;
       }
-      if (statusJson.status === 'completed') {
-        updateStatus('burn', 'done', 'Burn complete');
-        done = true;
-        continue;
+    if (statusJson.status === 'completed') {
+      updateStatus('burn', 'done', 'Burn complete');
+      if (statusJson.output_url) {
+        setBurnPreviewUrl(`${API_URL}${statusJson.output_url}`);
+      }
+      done = true;
+      continue;
       }
       updateStatus('burn', 'error', statusJson.error || 'Burn failed');
       return false;
@@ -305,6 +407,17 @@ export default function ProcessVideoScreen() {
     return true;
   };
 
+  const renderLogContent = () => {
+    const items = logEntries[activeLogTab];
+    return items.map((item, index) => (
+      <View key={`${item.title}-${index}`} style={styles.logRow}>
+        <Text style={styles.logLabel}>{item.title}</Text>
+        <Text style={styles.logStatus}>{item.status}</Text>
+        {item.detail ? <Text style={styles.logDetail}>{item.detail}</Text> : null}
+      </View>
+    ));
+  };
+
   const runPipeline = async () => {
     if (!id || running) return;
     setRunning(true);
@@ -348,6 +461,7 @@ export default function ProcessVideoScreen() {
           setMessage('Stopped: burn failed.');
           return;
         }
+        await refreshBurnPreview();
       } else {
         updateStatus('burn', 'skipped', 'Skipped');
       }
@@ -471,6 +585,45 @@ export default function ProcessVideoScreen() {
         <Pressable style={[styles.btnPrimary, running && styles.btnDisabled]} onPress={runPipeline}>
           <Text style={styles.btnText}>{running ? 'Processing…' : 'Process video'}</Text>
         </Pressable>
+        <View style={styles.previewCard}>
+          <Text style={styles.sectionTitle}>Burn preview</Text>
+          {previewVideoUrl ? (
+            <View style={styles.videoWrap}>
+              {React.createElement('video', {
+                src: previewVideoUrl,
+                style: { width: '100%', height: '100%', borderRadius: 12, objectFit: 'contain' },
+                controls: true,
+                muted: true,
+                playsInline: true,
+                preload: 'metadata',
+              })}
+            </View>
+          ) : (
+            <Text style={styles.previewEmpty}>No burn available yet. Run the pipeline or burn subtitles to see a preview.</Text>
+          )}
+          <View style={styles.logTabRow}>
+            {LOG_TABS.map((tab) => (
+              <Pressable
+                key={tab}
+                style={[
+                  styles.logTab,
+                  activeLogTab === tab && styles.logTabActive,
+                ]}
+                onPress={() => setActiveLogTab(tab)}
+              >
+                <Text
+                  style={[
+                    styles.logTabText,
+                    activeLogTab === tab && styles.logTabTextActive,
+                  ]}
+                >
+                  {LOG_TAB_LABELS[tab]}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+          <View style={styles.logContent}>{renderLogContent()}</View>
+        </View>
         {message ? <Text style={styles.status}>{message}</Text> : null}
       </ScrollView>
     </View>
@@ -521,4 +674,57 @@ const styles = StyleSheet.create({
   btnDisabled: { opacity: 0.6 },
   btnText: { color: '#f8fafc', fontWeight: '700' },
   status: { marginTop: 10, fontSize: 12, color: '#0f172a' },
+  previewCard: {
+    marginTop: 16,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: 'white',
+  },
+  videoWrap: {
+    marginTop: 8,
+    borderRadius: 14,
+    overflow: 'hidden',
+    height: 220,
+    backgroundColor: '#0f172a',
+  },
+  logTabRow: {
+    marginTop: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  logTab: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  logTabActive: {
+    backgroundColor: '#1d4ed8',
+    borderColor: '#1d4ed8',
+  },
+  logTabText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  logTabTextActive: {
+    color: '#f8fafc',
+  },
+  logContent: {
+    marginTop: 10,
+  },
+  logRow: {
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e2e8f0',
+  },
+  logLabel: { fontSize: 13, fontWeight: '700', color: '#0f172a' },
+  logStatus: { fontSize: 11, fontWeight: '600', color: '#0f766e', marginTop: 2 },
+  logDetail: { fontSize: 11, color: '#475569', marginTop: 4 },
 });
