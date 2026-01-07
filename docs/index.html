@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>LazyEdit Studio - Multilingual Video Editor</title>
+    <meta
+      name="description"
+      content="LazyEdit Studio is a multilingual video editor that automates transcription, translation, keyframes, and subtitle burning with a clean, modern workflow."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg">
+      <div class="orb orb--one"></div>
+      <div class="orb orb--two"></div>
+      <div class="orb orb--three"></div>
+      <div class="grid"></div>
+    </div>
+
+    <header class="site-header">
+      <div class="brand">
+        <img src="assets/logo.svg" alt="LazyingArt logo" class="brand__mark" />
+        <div class="brand__text">
+          <span class="brand__name">LazyEdit Studio</span>
+          <span class="brand__tag">Multilingual Video Editor</span>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#demos">Demos</a>
+        <a href="#workflow">Workflow</a>
+        <a href="#features">Features</a>
+        <a href="#get-started">Get Started</a>
+      </nav>
+      <a class="cta cta--ghost" href="#get-started">Open Studio</a>
+    </header>
+
+    <main>
+      <section class="hero" id="top">
+        <div class="hero__content" data-reveal style="--delay: 0.05s">
+          <p class="eyebrow">LazyEdit Studio</p>
+          <h1>Turn multilingual videos into polished stories in minutes.</h1>
+          <p class="lede">
+            LazyEdit Studio automates transcription, translation, keyframe analysis, captions, and subtitle burning so
+            teams can edit fast and publish globally.
+          </p>
+          <div class="hero__actions">
+            <a class="cta" href="#demos">View demos</a>
+            <a class="cta cta--ghost" href="#workflow">See workflow</a>
+          </div>
+          <div class="hero__stats">
+            <div class="stat">
+              <span class="stat__value">11+</span>
+              <span class="stat__label">Languages supported</span>
+            </div>
+            <div class="stat">
+              <span class="stat__value">AI-first</span>
+              <span class="stat__label">Transcribe to burn</span>
+            </div>
+            <div class="stat">
+              <span class="stat__value">Studio</span>
+              <span class="stat__label">One screen, full pipeline</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero__visual" data-reveal style="--delay: 0.2s">
+          <div class="hero-card">
+            <div class="hero-card__header">
+              <span>Live pipeline</span>
+              <span class="pulse"></span>
+            </div>
+            <div class="hero-card__body">
+              <div class="hero-chip">Upload</div>
+              <div class="hero-chip">Transcribe</div>
+              <div class="hero-chip">Translate</div>
+              <div class="hero-chip">Burn</div>
+              <div class="hero-chip">Publish</div>
+            </div>
+            <div class="hero-card__footer">
+              Built for global video teams and solo creators.
+            </div>
+          </div>
+          <div class="hero-preview">
+            <img src="demos/demo_08_burn_layout.png" alt="Subtitle layout preview" />
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="demos">
+        <div class="section__header" data-reveal>
+          <h2>Product demos</h2>
+          <p>Explore the end-to-end workflow from upload to burning multilingual subtitles.</p>
+        </div>
+        <div class="demo-grid">
+          <figure class="demo" data-reveal data-zoom data-src="demos/demo_01_home_upload.png" data-caption="Home - Upload">
+            <img src="demos/demo_01_home_upload.png" alt="Home upload" />
+            <figcaption>Home - Upload</figcaption>
+          </figure>
+          <figure class="demo" data-reveal data-zoom data-src="demos/demo_02_home_generate.png" data-caption="Home - Generate">
+            <img src="demos/demo_02_home_generate.png" alt="Home generate" />
+            <figcaption>Home - Generate</figcaption>
+          </figure>
+          <figure class="demo" data-reveal data-zoom data-src="demos/demo_03_home_remix.png" data-caption="Home - Remix">
+            <img src="demos/demo_03_home_remix.png" alt="Home remix" />
+            <figcaption>Home - Remix</figcaption>
+          </figure>
+          <figure class="demo" data-reveal data-zoom data-src="demos/demo_04_library.png" data-caption="Library">
+            <img src="demos/demo_04_library.png" alt="Library list" />
+            <figcaption>Library</figcaption>
+          </figure>
+          <figure class="demo" data-reveal data-zoom data-src="demos/demo_05_video_overview.png" data-caption="Video overview">
+            <img src="demos/demo_05_video_overview.png" alt="Video overview" />
+            <figcaption>Video overview</figcaption>
+          </figure>
+          <figure
+            class="demo"
+            data-reveal
+            data-zoom
+            data-src="demos/demo_06_translation_preview.png"
+            data-caption="Translation preview"
+          >
+            <img src="demos/demo_06_translation_preview.png" alt="Translation preview" />
+            <figcaption>Translation preview</figcaption>
+          </figure>
+          <figure class="demo" data-reveal data-zoom data-src="demos/demo_07_burn_slots.png" data-caption="Burn slots">
+            <img src="demos/demo_07_burn_slots.png" alt="Burn slots" />
+            <figcaption>Burn slots</figcaption>
+          </figure>
+          <figure class="demo" data-reveal data-zoom data-src="demos/demo_08_burn_layout.png" data-caption="Burn layout">
+            <img src="demos/demo_08_burn_layout.png" alt="Burn layout" />
+            <figcaption>Burn layout</figcaption>
+          </figure>
+          <figure
+            class="demo"
+            data-reveal
+            data-zoom
+            data-src="demos/demo_09_keyframes_captions.png"
+            data-caption="Keyframes and captions"
+          >
+            <img src="demos/demo_09_keyframes_captions.png" alt="Keyframes and captions" />
+            <figcaption>Keyframes + captions</figcaption>
+          </figure>
+          <figure
+            class="demo"
+            data-reveal
+            data-zoom
+            data-src="demos/demo_10_metadata_generator.png"
+            data-caption="Metadata generator"
+          >
+            <img src="demos/demo_10_metadata_generator.png" alt="Metadata generator" />
+            <figcaption>Metadata generator</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="section" id="workflow">
+        <div class="section__header" data-reveal>
+          <h2>Studio workflow</h2>
+          <p>Every stage is designed to reduce manual effort and keep multilingual content consistent.</p>
+        </div>
+        <div class="workflow">
+          <div class="workflow__item" data-reveal>
+            <h3>1. Upload or generate</h3>
+            <p>Bring in existing footage, generate new clips, or remix sequences with the AI tools.</p>
+          </div>
+          <div class="workflow__item" data-reveal>
+            <h3>2. Transcribe and translate</h3>
+            <p>Auto transcription and multi-language translation keep subtitle tracks aligned with timecodes.</p>
+          </div>
+          <div class="workflow__item" data-reveal>
+            <h3>3. Burn and publish</h3>
+            <p>Assign subtitle layouts, preview keyframes, and burn the final subtitle stack.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="features">
+        <div class="section__header" data-reveal>
+          <h2>Highlights</h2>
+          <p>Built to keep complex subtitle pipelines clean, readable, and production ready.</p>
+        </div>
+        <div class="feature-grid">
+          <div class="feature" data-reveal>
+            <h3>AI subtitle engine</h3>
+            <p>Transcribe, translate, and align subtitles with consistent language styling and cache controls.</p>
+          </div>
+          <div class="feature" data-reveal>
+            <h3>Keyframe intelligence</h3>
+            <p>Extract keyframes, caption them, and reuse the results for metadata and publishing.</p>
+          </div>
+          <div class="feature" data-reveal>
+            <h3>Burn layout studio</h3>
+            <p>Assign multiple languages to stacked slots with layout previews, IPA, romaji, and pinyin options.</p>
+          </div>
+          <div class="feature" data-reveal>
+            <h3>Metadata generator</h3>
+            <p>Draft Chinese social and English YouTube metadata directly from transcription and captions.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta-section" id="get-started">
+        <div class="cta-card" data-reveal>
+          <div>
+            <h2>Ready to ship multilingual video edits?</h2>
+            <p>Launch LazyEdit Studio locally or connect the backend for production workflows.</p>
+          </div>
+          <div class="cta-stack">
+            <a class="cta" href="https://github.com/lachlanchen/LazyEdit" target="_blank" rel="noreferrer">
+              View on GitHub
+            </a>
+            <a class="cta cta--ghost" href="#top">Back to top</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>LazyEdit Studio</span>
+      <span>edit.lazying.art</span>
+    </footer>
+
+    <div class="lightbox" id="lightbox" aria-hidden="true">
+      <div class="lightbox__backdrop" data-close></div>
+      <div class="lightbox__content" role="dialog" aria-modal="true">
+        <button class="lightbox__close" type="button" aria-label="Close" data-close>Close</button>
+        <img class="lightbox__image" id="lightboxImage" src="" alt="" />
+        <p class="lightbox__caption" id="lightboxCaption"></p>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
