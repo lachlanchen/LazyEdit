@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useI18n } from '@/components/I18nProvider';
+
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 
 type Lang = { code: string; name: string; plugin: string; rtl?: boolean };
@@ -8,6 +10,7 @@ type Lang = { code: string; name: string; plugin: string; rtl?: boolean };
 export default function SettingsScreen() {
   const [langs, setLangs] = useState<Lang[]>([]);
   const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const { t } = useI18n();
   const preferred = useMemo(
     () => ['en', 'zh-Hant', 'zh-Hans', 'ja', 'ko', 'vi', 'ar', 'fr', 'es', 'ru'],
     [],
@@ -43,8 +46,8 @@ export default function SettingsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
-      <Text style={styles.sub}>Select target languages for subtitles and features.</Text>
+      <Text style={styles.title}>{t('settings_title')}</Text>
+      <Text style={styles.sub}>{t('settings_subtitle')}</Text>
 
       <FlatList
         style={{ marginTop: 12 }}
@@ -64,11 +67,13 @@ export default function SettingsScreen() {
             </View>
           </Pressable>
         )}
-        ListEmptyComponent={<Text style={styles.empty}>Loading languages...</Text>}
+        ListEmptyComponent={<Text style={styles.empty}>{t('settings_loading')}</Text>}
       />
 
-      <Text style={styles.selected}>Selected: {selectedList.join(', ') || 'none'}</Text>
-      <Text style={styles.backend}>Backend: {API_URL}</Text>
+      <Text style={styles.selected}>
+        {t('label_selected', { value: selectedList.join(', ') || t('label_none') })}
+      </Text>
+      <Text style={styles.backend}>{t('settings_backend_label', { value: API_URL })}</Text>
     </View>
   );
 }

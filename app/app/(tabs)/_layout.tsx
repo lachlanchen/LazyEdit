@@ -4,9 +4,11 @@ import { Link, Tabs, usePathname, useRouter } from 'expo-router';
 import { Image, Platform, Pressable, Text, View } from 'react-native';
 
 import Colors from '@/constants/Colors';
+import { useI18n } from '@/components/I18nProvider';
 import { useColorScheme } from '@/components/useColorScheme';
 import { useClientOnlyValue } from '@/components/useClientOnlyValue';
 import GradientTabBar from '@/components/GradientTabBar';
+import LanguagePicker from '@/components/LanguagePicker';
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -21,6 +23,7 @@ export default function TabLayout() {
   const logoSource = require('../../assets/images/logo.png');
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useI18n();
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -66,8 +69,25 @@ export default function TabLayout() {
               accessibilityLabel="LazyEdit logo"
             />
             <Text style={{ fontSize: 16, fontWeight: '700', color: '#0f172a' }}>
-              LazyEdit - Powered by LazyingArt
+              {t('header_title')}
             </Text>
+          </View>
+        ),
+        headerRight: () => (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginRight: 12 }}>
+            <LanguagePicker />
+            <Link href="/modal" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="info-circle"
+                    size={22}
+                    color={Colors[colorScheme ?? 'light'].text}
+                    style={{ opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
           </View>
         ),
         // Disable the static render of the header on web
@@ -85,42 +105,28 @@ export default function TabLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: 'Home',
+          title: t('tab_home'),
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
         }}
       />
       <Tabs.Screen
         name="library"
         options={{
-          title: 'Studio',
+          title: t('tab_studio'),
           tabBarIcon: ({ color }) => <TabBarIcon name="film" color={color} />,
         }}
       />
       <Tabs.Screen
         name="editor"
         options={{
-          title: 'Publish',
+          title: t('tab_publish'),
           tabBarIcon: ({ color }) => <TabBarIcon name="upload" color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
-          title: 'Settings',
+          title: t('tab_settings'),
           tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
         }}
       />

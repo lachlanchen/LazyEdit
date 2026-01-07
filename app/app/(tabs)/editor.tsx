@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { useI18n } from '@/components/I18nProvider';
+
 const PLATFORMS = [
   { key: 'douyin', label: 'Douyin' },
   { key: 'xiaohongshu', label: 'Xiaohongshu' },
@@ -17,6 +19,7 @@ export default function EditorScreen() {
     bilibili: false,
     youtube: false,
   });
+  const { t } = useI18n();
 
   const selectedList = useMemo(
     () => PLATFORMS.filter((platform) => selected[platform.key]).map((platform) => platform.label),
@@ -25,14 +28,12 @@ export default function EditorScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>AutoPublish pipeline</Text>
-      <Text style={styles.sub}>Choose target platforms and publish when ready.</Text>
+      <Text style={styles.title}>{t('publish_title')}</Text>
+      <Text style={styles.sub}>{t('publish_subtitle')}</Text>
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Select platforms</Text>
-        <Text style={styles.sectionHint}>
-          Pick the channels to publish. You can review metadata before publishing.
-        </Text>
+        <Text style={styles.sectionTitle}>{t('publish_select_title')}</Text>
+        <Text style={styles.sectionHint}>{t('publish_select_hint')}</Text>
 
         <View style={styles.platformGrid}>
           {PLATFORMS.map((platform) => {
@@ -54,15 +55,17 @@ export default function EditorScreen() {
         </View>
 
         <Text style={styles.selectedText}>
-          Selected: {selectedList.length ? selectedList.join(', ') : 'none'}
+          {t('label_selected', {
+            value: selectedList.length ? selectedList.join(', ') : t('label_none'),
+          })}
         </Text>
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Manual publish</Text>
-        <Text style={styles.sectionHint}>Trigger publishing to the selected platforms.</Text>
+        <Text style={styles.sectionTitle}>{t('publish_manual_title')}</Text>
+        <Text style={styles.sectionHint}>{t('publish_manual_hint')}</Text>
         <Pressable style={styles.publishButton}>
-          <Text style={styles.publishButtonText}>Publish now</Text>
+          <Text style={styles.publishButtonText}>{t('publish_button')}</Text>
         </Pressable>
       </View>
     </View>

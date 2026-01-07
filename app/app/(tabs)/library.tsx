@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { FlatList, Platform, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
+import { useI18n } from '@/components/I18nProvider';
+
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 
 type Video = {
@@ -16,6 +18,7 @@ export default function LibraryScreen() {
   const [items, setItems] = useState<Video[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { t } = useI18n();
 
   const load = async () => {
     setLoading(true);
@@ -42,7 +45,7 @@ export default function LibraryScreen() {
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
         renderItem={({ item }) => {
           const mediaSrc = item.media_url ? `${API_URL}${item.media_url}` : null;
-          const title = item.title || `Video #${item.id}`;
+          const title = item.title || t('library_video_fallback', { id: item.id });
           return (
             <Pressable
               style={styles.row}
@@ -58,7 +61,7 @@ export default function LibraryScreen() {
                     preload: 'metadata',
                   })
                 ) : (
-                  <Text style={styles.previewLabel}>Preview</Text>
+                  <Text style={styles.previewLabel}>{t('library_preview')}</Text>
                 )}
               </View>
               <View style={styles.meta}>
@@ -69,7 +72,7 @@ export default function LibraryScreen() {
             </Pressable>
           );
         }}
-        ListEmptyComponent={<Text style={styles.empty}>No videos yet. Upload one from Home.</Text>}
+        ListEmptyComponent={<Text style={styles.empty}>{t('library_empty')}</Text>}
       />
     </View>
   );

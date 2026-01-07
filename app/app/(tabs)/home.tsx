@@ -15,6 +15,8 @@ import {
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 
+import { useI18n } from '@/components/I18nProvider';
+
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 
 const formatBytes = (bytes?: number | null) => {
@@ -49,23 +51,6 @@ const DEFAULT_PROMPT_SPEC = {
   extraRequirements: 'Let the model invent distinct moments and symbolism while keeping a coherent arc.',
   negative: 'no text, no logos, no gore, no real people',
 };
-
-const ASPECT_OPTIONS = [
-  { value: '16:9', label: '16:9 Landscape' },
-  { value: '9:16', label: '9:16 Portrait' },
-  { value: 'auto', label: 'Auto' },
-];
-const AUDIO_LANGUAGE_OPTIONS = [
-  { value: 'auto', label: 'Auto (model decides)' },
-  { value: 'en', label: 'English' },
-  { value: 'zh', label: 'Chinese' },
-  { value: 'ja', label: 'Japanese' },
-  { value: 'ko', label: 'Korean' },
-  { value: 'vi', label: 'Vietnamese' },
-  { value: 'ar', label: 'Arabic' },
-  { value: 'fr', label: 'French' },
-  { value: 'es', label: 'Spanish' },
-];
 
 type PromptSpec = typeof DEFAULT_PROMPT_SPEC;
 type HistoryKey = keyof typeof DEFAULT_PROMPT_HISTORY;
@@ -160,6 +145,7 @@ const DEFAULT_PROMPT_HISTORY = {
 };
 
 export default function HomeScreen() {
+  const { t } = useI18n();
   const [picked, setPicked] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [status, setStatus] = useState<string>('');
   const [statusTone, setStatusTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -205,6 +191,28 @@ export default function HomeScreen() {
   const [videoStatus, setVideoStatus] = useState<string>('');
   const [videoTone, setVideoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
+  const aspectOptions = useMemo(
+    () => [
+      { value: '16:9', label: t('aspect_ratio_landscape') },
+      { value: '9:16', label: t('aspect_ratio_portrait') },
+      { value: 'auto', label: t('aspect_ratio_auto') },
+    ],
+    [t],
+  );
+  const audioLanguageOptions = useMemo(
+    () => [
+      { value: 'auto', label: t('audio_language_auto') },
+      { value: 'en', label: t('audio_language_en') },
+      { value: 'zh', label: t('audio_language_zh') },
+      { value: 'ja', label: t('audio_language_ja') },
+      { value: 'ko', label: t('audio_language_ko') },
+      { value: 'vi', label: t('audio_language_vi') },
+      { value: 'ar', label: t('audio_language_ar') },
+      { value: 'fr', label: t('audio_language_fr') },
+      { value: 'es', label: t('audio_language_es') },
+    ],
+    [t],
+  );
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -276,7 +284,7 @@ export default function HomeScreen() {
   const upload = async () => {
     if (!picked || uploading) return;
     setUploading(true);
-    setStatus('Uploading...');
+    setStatus(t('home_uploading'));
     setStatusTone('neutral');
     try {
       if (Platform.OS === 'web') {
@@ -336,7 +344,7 @@ export default function HomeScreen() {
   const uploadRemix = async () => {
     if (!remixPicked || remixUploading) return;
     setRemixUploading(true);
-    setRemixStatus('Uploading for remix...');
+    setRemixStatus(t('remix_uploading'));
     setRemixTone('neutral');
     const notes = remixNotes.trim();
     try {
@@ -515,7 +523,7 @@ export default function HomeScreen() {
   };
 
   const historyOptions = (items: string[]) => [
-    { value: '', label: 'Select history' },
+    { value: '', label: t('history_select') },
     ...items.map((item) => ({
       value: item,
       label: item.length > 60 ? `${item.slice(0, 60)}…` : item,
@@ -525,7 +533,7 @@ export default function HomeScreen() {
   const renderHistory = (key: HistoryKey, onPick: (value: string) => void) => {
     const items = promptHistory[key] || [];
     if (!items.length) return null;
-    return <HistorySelect label="History" value="" options={historyOptions(items)} onChange={onPick} />;
+    return <HistorySelect label={t('history_label')} value="" options={historyOptions(items)} onChange={onPick} />;
   };
 
   const loadPromptSettings = async () => {
@@ -573,7 +581,7 @@ export default function HomeScreen() {
     if (prompting) return;
     recordHistory();
     setPrompting(true);
-    setPromptStatus('Generating prompt...');
+    setPromptStatus(t('generate_prompt_progress'));
     setPromptTone('neutral');
     try {
       const resp = await fetch(`${API_URL}/api/video-prompts`, {
@@ -611,7 +619,7 @@ export default function HomeScreen() {
   const generateSpecs = async () => {
     if (specGenerating) return;
     setSpecGenerating(true);
-    setSpecStatus('Generating specs...');
+    setSpecStatus(t('generate_specs_progress'));
     setSpecTone('neutral');
     try {
       const resp = await fetch(`${API_URL}/api/video-specs`, {
@@ -648,7 +656,7 @@ export default function HomeScreen() {
     }
     recordHistory();
     setGeneratingVideo(true);
-    setVideoStatus('Generating video... this can take a few minutes.');
+    setVideoStatus(t('generate_video_progress'));
     setVideoTone('neutral');
     try {
       const spec = buildPromptSpecPayload();
@@ -691,9 +699,9 @@ export default function HomeScreen() {
 
           <View style={styles.tabRow}>
             {[
-              { key: 'upload', label: 'Upload' },
-              { key: 'generate', label: 'Generate' },
-              { key: 'remix', label: 'Remix' },
+              { key: 'upload', label: t('home_tab_upload') },
+              { key: 'generate', label: t('home_tab_generate') },
+              { key: 'remix', label: t('home_tab_remix') },
             ].map((tab) => {
               const isActive = activeTab === tab.key;
               return (
@@ -711,62 +719,64 @@ export default function HomeScreen() {
           {activeTab === 'upload' ? (
             <>
               <View style={styles.stepRow}>
-          <View style={styles.stepBadge}>
-            <Text style={styles.stepText}>1</Text>
-          </View>
-          <Text style={styles.stepLabel}>Pick a video</Text>
-        </View>
-
-        <Pressable style={styles.btnPrimary} onPress={pick}>
-          <Text style={styles.btnText}>{picked ? 'Pick another video' : 'Pick a video'}</Text>
-        </Pressable>
-
-        <View style={styles.card}>
-          {picked ? (
-            <>
-              <Text style={styles.cardTitle}>Selected video</Text>
-              <Text style={styles.fileName} numberOfLines={1}>
-                {fileLabel}
-              </Text>
-              <Text style={styles.fileMeta}>{fileMeta}</Text>
-              {Platform.OS === 'web' && previewUrl ? (
-                <View style={styles.previewBox}>
-                  {React.createElement('video', {
-                    src: previewUrl,
-                    style: { width: '100%', borderRadius: 12, maxHeight: 260 },
-                    controls: true,
-                    preload: 'metadata',
-                  })}
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepText}>1</Text>
                 </View>
-              ) : (
-                <Text style={styles.previewHint}>Preview available on web. Ready to upload.</Text>
-              )}
-            </>
-          ) : (
-            <>
-              <Text style={styles.cardTitle}>No video selected</Text>
-              <Text style={styles.previewHint}>Pick a video to preview and upload.</Text>
-            </>
-          )}
-        </View>
+                <Text style={styles.stepLabel}>{t('home_step_pick')}</Text>
+              </View>
 
-        <View style={styles.stepRow}>
-          <View style={styles.stepBadge}>
-            <Text style={styles.stepText}>2</Text>
-          </View>
-          <Text style={styles.stepLabel}>Upload to backend</Text>
-        </View>
+              <Pressable style={styles.btnPrimary} onPress={pick}>
+                <Text style={styles.btnText}>
+                  {picked ? t('home_pick_another') : t('home_pick_button')}
+                </Text>
+              </Pressable>
 
-        <Pressable
-          disabled={!picked || uploading}
-          style={[styles.btnSecondary, (!picked || uploading) && styles.btnDisabled]}
-          onPress={upload}
-        >
-          <View style={styles.btnContent}>
-            {uploading && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-            <Text style={styles.btnText}>{uploading ? 'Uploading...' : 'Upload'}</Text>
-          </View>
-        </Pressable>
+              <View style={styles.card}>
+                {picked ? (
+                  <>
+                    <Text style={styles.cardTitle}>{t('home_selected_video')}</Text>
+                    <Text style={styles.fileName} numberOfLines={1}>
+                      {fileLabel}
+                    </Text>
+                    <Text style={styles.fileMeta}>{fileMeta}</Text>
+                    {Platform.OS === 'web' && previewUrl ? (
+                      <View style={styles.previewBox}>
+                        {React.createElement('video', {
+                          src: previewUrl,
+                          style: { width: '100%', borderRadius: 12, maxHeight: 260 },
+                          controls: true,
+                          preload: 'metadata',
+                        })}
+                      </View>
+                    ) : (
+                      <Text style={styles.previewHint}>{t('home_preview_web')}</Text>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.cardTitle}>{t('home_no_video')}</Text>
+                    <Text style={styles.previewHint}>{t('home_pick_hint')}</Text>
+                  </>
+                )}
+              </View>
+
+              <View style={styles.stepRow}>
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepText}>2</Text>
+                </View>
+                <Text style={styles.stepLabel}>{t('home_upload_step')}</Text>
+              </View>
+
+              <Pressable
+                disabled={!picked || uploading}
+                style={[styles.btnSecondary, (!picked || uploading) && styles.btnDisabled]}
+                onPress={upload}
+              >
+                <View style={styles.btnContent}>
+                  {uploading && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                  <Text style={styles.btnText}>{uploading ? t('home_uploading') : t('home_upload_button')}</Text>
+                </View>
+              </Pressable>
 
               {status ? <Text style={[styles.status, statusStyle]}>{status}</Text> : null}
             </>
@@ -774,31 +784,31 @@ export default function HomeScreen() {
 
           {activeTab === 'generate' ? (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Generate video</Text>
-              <Text style={styles.sectionSubtitle}>Stage A: idea → specs. Stage B: specs → prompt. Stage C: prompt → video.</Text>
+              <Text style={styles.sectionTitle}>{t('generate_title')}</Text>
+              <Text style={styles.sectionSubtitle}>{t('generate_subtitle')}</Text>
 
             <View style={styles.panel}>
               <View style={styles.panelHeader}>
-                <Text style={styles.stageBadge}>Stage A</Text>
-                <Text style={styles.panelTitle}>Idea → Specs (optional)</Text>
+                <Text style={styles.stageBadge}>{t('stage_a_label')}</Text>
+                <Text style={styles.panelTitle}>{t('stage_a_title')}</Text>
               </View>
-              <Text style={styles.panelHint}>
-                Provide a loose idea and let the model draft detailed specs. Skip this if you prefer manual edits.
-              </Text>
+              <Text style={styles.panelHint}>{t('stage_a_hint')}</Text>
 
-              <Text style={styles.fieldLabel}>Idea prompt</Text>
+              <Text style={styles.fieldLabel}>{t('idea_prompt_label')}</Text>
               <TextInput
                 style={styles.textArea}
                 value={ideaPrompt}
                 onChangeText={setIdeaPrompt}
-                placeholder="Epic fantasy vision in a vast world with poetic dialogue and cinematic scale."
+                placeholder={t('idea_prompt_placeholder')}
                 multiline
               />
 
               <Pressable style={styles.btnAccent} onPress={generateSpecs} disabled={specGenerating}>
                 <View style={styles.btnContent}>
                   {specGenerating && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                  <Text style={styles.btnText}>{specGenerating ? 'Generating specs...' : 'Generate specs'}</Text>
+                  <Text style={styles.btnText}>
+                    {specGenerating ? t('generate_specs_progress') : t('generate_specs_button')}
+                  </Text>
                 </View>
               </Pressable>
 
@@ -809,12 +819,12 @@ export default function HomeScreen() {
 
             <View style={styles.panel}>
               <View style={styles.panelHeader}>
-                <Text style={styles.stageBadge}>Stage B</Text>
-                <Text style={styles.panelTitle}>Specs → Prompt</Text>
+                <Text style={styles.stageBadge}>{t('stage_b_label')}</Text>
+                <Text style={styles.panelTitle}>{t('stage_b_title')}</Text>
               </View>
-              <Text style={styles.panelHint}>Refine the scene, action, and visual tone that drive the prompt.</Text>
+              <Text style={styles.panelHint}>{t('stage_b_hint')}</Text>
 
-              <Text style={styles.fieldLabel}>Title</Text>
+              <Text style={styles.fieldLabel}>{t('field_title')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
                 <TextInput
                   style={[styles.input, styles.inputFlex, promptSpec.autoTitle && styles.inputDisabled]}
@@ -826,8 +836,8 @@ export default function HomeScreen() {
               </View>
               <View style={styles.toggleRow}>
                 <View>
-                  <Text style={styles.toggleLabel}>Auto title</Text>
-                  <Text style={styles.toggleHint}>Let the model name the scene</Text>
+                  <Text style={styles.toggleLabel}>{t('field_auto_title')}</Text>
+                  <Text style={styles.toggleHint}>{t('field_auto_title_hint')}</Text>
                 </View>
                 <Switch
                   value={promptSpec.autoTitle}
@@ -838,13 +848,13 @@ export default function HomeScreen() {
               </View>
               {!promptSpec.autoTitle ? renderHistory('title', (value) => updateSpec('title', value)) : null}
 
-              <Text style={styles.fieldLabel}>Audio language</Text>
+              <Text style={styles.fieldLabel}>{t('field_audio_language')}</Text>
               <View style={styles.inputRow}>
                 <View style={styles.inputFlex}>
                   <SelectControl
-                    label="Audio language"
+                    label={t('field_audio_language')}
                     value={promptSpec.audioLanguage}
-                    options={AUDIO_LANGUAGE_OPTIONS}
+                    options={audioLanguageOptions}
                     onChange={(value) => updateSpec('audioLanguage', value)}
                   />
                 </View>
@@ -852,7 +862,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('audioLanguage', (value) => updateSpec('audioLanguage', value))}
 
-              <Text style={styles.fieldLabel}>Subject</Text>
+              <Text style={styles.fieldLabel}>{t('field_subject')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
                 <TextInput
                   style={[styles.textArea, styles.inputFlex]}
@@ -864,7 +874,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('subject', (value) => updateSpec('subject', value))}
 
-              <Text style={styles.fieldLabel}>Action</Text>
+              <Text style={styles.fieldLabel}>{t('field_action')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
                 <TextInput
                   style={[styles.textArea, styles.inputFlex]}
@@ -876,7 +886,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('action', (value) => updateSpec('action', value))}
 
-              <Text style={styles.fieldLabel}>Environment</Text>
+              <Text style={styles.fieldLabel}>{t('field_environment')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
                 <TextInput
                   style={[styles.textArea, styles.inputFlex]}
@@ -888,7 +898,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('environment', (value) => updateSpec('environment', value))}
 
-              <Text style={styles.fieldLabel}>Camera</Text>
+              <Text style={styles.fieldLabel}>{t('field_camera')}</Text>
               <View style={styles.inputRow}>
                 <TextInput
                   style={[styles.input, styles.inputFlex]}
@@ -899,7 +909,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('camera', (value) => updateSpec('camera', value))}
 
-              <Text style={styles.fieldLabel}>Lighting</Text>
+              <Text style={styles.fieldLabel}>{t('field_lighting')}</Text>
               <View style={styles.inputRow}>
                 <TextInput
                   style={[styles.input, styles.inputFlex]}
@@ -910,7 +920,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('lighting', (value) => updateSpec('lighting', value))}
 
-              <Text style={styles.fieldLabel}>Mood</Text>
+              <Text style={styles.fieldLabel}>{t('field_mood')}</Text>
               <View style={styles.inputRow}>
                 <TextInput
                   style={[styles.input, styles.inputFlex]}
@@ -921,7 +931,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('mood', (value) => updateSpec('mood', value))}
 
-              <Text style={styles.fieldLabel}>Style</Text>
+              <Text style={styles.fieldLabel}>{t('field_style')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
                 <TextInput
                   style={[styles.textArea, styles.inputFlex]}
@@ -933,7 +943,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('style', (value) => updateSpec('style', value))}
 
-              <Text style={styles.fieldLabel}>Spoken words (optional)</Text>
+              <Text style={styles.fieldLabel}>{t('field_spoken_words')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
                 <TextInput
                   style={[styles.textArea, styles.inputFlex]}
@@ -945,7 +955,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('spokenWords', (value) => updateSpec('spokenWords', value))}
 
-              <Text style={styles.fieldLabel}>Scene count (optional)</Text>
+              <Text style={styles.fieldLabel}>{t('field_scene_count')}</Text>
               <View style={styles.inputRow}>
                 <TextInput
                   style={[styles.input, styles.inputFlex]}
@@ -957,7 +967,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('sceneCount', (value) => updateSpec('sceneCount', value))}
 
-              <Text style={styles.fieldLabel}>Extra requirements</Text>
+              <Text style={styles.fieldLabel}>{t('field_extra_requirements')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
                 <TextInput
                   style={[styles.textArea, styles.inputFlex]}
@@ -969,7 +979,7 @@ export default function HomeScreen() {
               </View>
               {renderHistory('extraRequirements', (value) => updateSpec('extraRequirements', value))}
 
-              <Text style={styles.fieldLabel}>Negative prompt</Text>
+              <Text style={styles.fieldLabel}>{t('field_negative_prompt')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
                 <TextInput
                   style={[styles.textArea, styles.inputFlex]}
@@ -984,15 +994,15 @@ export default function HomeScreen() {
 
             <View style={styles.panel}>
               <View style={styles.panelHeader}>
-                <Text style={styles.stageBadge}>Stage B</Text>
-                <Text style={styles.panelTitle}>Controls</Text>
+                <Text style={styles.stageBadge}>{t('stage_b_label')}</Text>
+                <Text style={styles.panelTitle}>{t('controls_title')}</Text>
               </View>
-              <Text style={styles.panelHint}>Tune aspect ratio and length.</Text>
+              <Text style={styles.panelHint}>{t('controls_hint')}</Text>
 
-              <Text style={styles.fieldLabel}>Aspect ratio</Text>
+              <Text style={styles.fieldLabel}>{t('field_aspect_ratio')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
                 <View style={[styles.chipRow, styles.inputFlex]}>
-                  {ASPECT_OPTIONS.map((option) => {
+                  {aspectOptions.map((option) => {
                     const isActive = promptSpec.aspectRatio === option.value;
                     return (
                       <Pressable
@@ -1008,7 +1018,7 @@ export default function HomeScreen() {
                 <ResetButton onPress={() => resetSpec('aspectRatio')} />
               </View>
 
-              <Text style={styles.fieldLabel}>Length (seconds)</Text>
+              <Text style={styles.fieldLabel}>{t('field_length_seconds')}</Text>
               <View style={styles.inputRow}>
                 <TextInput
                   style={[styles.input, styles.inputFlex]}
@@ -1022,15 +1032,17 @@ export default function HomeScreen() {
 
             <View style={styles.panel}>
               <View style={styles.panelHeader}>
-                <Text style={styles.stageBadge}>Stage B</Text>
-                <Text style={styles.panelTitle}>Generate prompt</Text>
+                <Text style={styles.stageBadge}>{t('stage_b_label')}</Text>
+                <Text style={styles.panelTitle}>{t('stage_b_generate_title')}</Text>
               </View>
-              <Text style={styles.panelHint}>Use the specs above to draft a prompt you can refine.</Text>
+              <Text style={styles.panelHint}>{t('stage_b_generate_hint')}</Text>
 
               <Pressable style={styles.btnAccent} onPress={generatePrompt} disabled={prompting}>
                 <View style={styles.btnContent}>
                   {prompting && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                  <Text style={styles.btnText}>{prompting ? 'Generating prompt...' : 'Generate prompt'}</Text>
+                  <Text style={styles.btnText}>
+                    {prompting ? t('generate_prompt_progress') : t('generate_prompt_button')}
+                  </Text>
                 </View>
               </Pressable>
 
@@ -1041,17 +1053,17 @@ export default function HomeScreen() {
 
             <View style={styles.panel}>
               <View style={styles.panelHeader}>
-                <Text style={styles.stageBadge}>Stage C</Text>
-                <Text style={styles.panelTitle}>Prompt → Video</Text>
+                <Text style={styles.stageBadge}>{t('stage_c_label')}</Text>
+                <Text style={styles.panelTitle}>{t('stage_c_title')}</Text>
               </View>
-              <Text style={styles.panelHint}>Edit the prompt, then render the video.</Text>
+              <Text style={styles.panelHint}>{t('stage_c_hint')}</Text>
 
-              <Text style={styles.fieldLabel}>Generated prompt</Text>
+              <Text style={styles.fieldLabel}>{t('field_generated_prompt')}</Text>
               <TextInput
                 style={styles.textAreaLarge}
                 value={promptOutput}
                 onChangeText={setPromptOutput}
-                placeholder="Generate a prompt above, then edit it here."
+                placeholder={t('prompt_placeholder')}
                 multiline
               />
 
@@ -1075,7 +1087,9 @@ export default function HomeScreen() {
               >
                 <View style={styles.btnContent}>
                   {generatingVideo && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                  <Text style={styles.btnText}>{generatingVideo ? 'Generating video...' : 'Generate video'}</Text>
+                  <Text style={styles.btnText}>
+                    {generatingVideo ? t('generate_video_progress') : t('generate_video_button')}
+                  </Text>
                 </View>
               </Pressable>
 
@@ -1085,7 +1099,7 @@ export default function HomeScreen() {
 
               {generatedVideoUrl ? (
                 <View style={styles.card}>
-                  <Text style={styles.cardTitle}>Generated video preview</Text>
+                  <Text style={styles.cardTitle}>{t('generated_video_preview')}</Text>
                   {Platform.OS === 'web' ? (
                     <View style={styles.previewBox}>
                       {React.createElement('video', {
@@ -1096,7 +1110,7 @@ export default function HomeScreen() {
                       })}
                     </View>
                   ) : (
-                    <Text style={styles.previewHint}>Preview available on web.</Text>
+                    <Text style={styles.previewHint}>{t('preview_web_generic')}</Text>
                   )}
                 </View>
               ) : null}
@@ -1106,26 +1120,26 @@ export default function HomeScreen() {
 
           {activeTab === 'remix' ? (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Remix video</Text>
-              <Text style={styles.sectionSubtitle}>
-                Upload a video and provide remix directions for audio and scene changes.
-              </Text>
+              <Text style={styles.sectionTitle}>{t('remix_title')}</Text>
+              <Text style={styles.sectionSubtitle}>{t('remix_subtitle')}</Text>
 
               <View style={styles.stepRow}>
                 <View style={styles.stepBadge}>
                   <Text style={styles.stepText}>1</Text>
                 </View>
-                <Text style={styles.stepLabel}>Pick a video</Text>
+                <Text style={styles.stepLabel}>{t('remix_pick_step')}</Text>
               </View>
 
               <Pressable style={styles.btnPrimary} onPress={pickRemix}>
-                <Text style={styles.btnText}>{remixPicked ? 'Pick another video' : 'Pick a video'}</Text>
+                <Text style={styles.btnText}>
+                  {remixPicked ? t('remix_pick_another') : t('remix_pick_button')}
+                </Text>
               </Pressable>
 
               <View style={styles.card}>
                 {remixPicked ? (
                   <>
-                    <Text style={styles.cardTitle}>Selected video</Text>
+                    <Text style={styles.cardTitle}>{t('remix_selected_video')}</Text>
                     <Text style={styles.fileName} numberOfLines={1}>
                       {remixFileLabel}
                     </Text>
@@ -1140,23 +1154,23 @@ export default function HomeScreen() {
                         })}
                       </View>
                     ) : (
-                      <Text style={styles.previewHint}>Preview available on web. Ready to remix.</Text>
+                      <Text style={styles.previewHint}>{t('home_preview_web_remix')}</Text>
                     )}
                   </>
                 ) : (
                   <>
-                    <Text style={styles.cardTitle}>No video selected</Text>
-                    <Text style={styles.previewHint}>Pick a video to preview and remix.</Text>
+                    <Text style={styles.cardTitle}>{t('remix_no_video')}</Text>
+                    <Text style={styles.previewHint}>{t('remix_pick_hint')}</Text>
                   </>
                 )}
               </View>
 
-              <Text style={styles.fieldLabel}>Remix directions (optional)</Text>
+              <Text style={styles.fieldLabel}>{t('remix_directions_label')}</Text>
               <TextInput
                 style={styles.textArea}
                 value={remixNotes}
                 onChangeText={setRemixNotes}
-                placeholder="Describe changes to audio, dialogue, pacing, or scene style."
+                placeholder={t('remix_directions_placeholder')}
                 multiline
               />
 
@@ -1164,7 +1178,7 @@ export default function HomeScreen() {
                 <View style={styles.stepBadge}>
                   <Text style={styles.stepText}>2</Text>
                 </View>
-                <Text style={styles.stepLabel}>Upload for remix</Text>
+                <Text style={styles.stepLabel}>{t('remix_upload_step')}</Text>
               </View>
 
               <Pressable
@@ -1174,7 +1188,9 @@ export default function HomeScreen() {
               >
                 <View style={styles.btnContent}>
                   {remixUploading && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                  <Text style={styles.btnText}>{remixUploading ? 'Uploading...' : 'Upload for remix'}</Text>
+                  <Text style={styles.btnText}>
+                    {remixUploading ? t('remix_uploading') : t('remix_upload_button')}
+                  </Text>
                 </View>
               </Pressable>
 
