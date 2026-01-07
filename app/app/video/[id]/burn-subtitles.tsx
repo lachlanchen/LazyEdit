@@ -37,6 +37,7 @@ type BurnStatus = {
 type SelectOption = {
   value: string;
   label: string;
+  available?: boolean;
 };
 
 const LANG_LABELS: Record<string, string> = {
@@ -62,6 +63,7 @@ const LANG_SHORT: Record<string, string> = {
   es: 'ES',
   fr: 'FR',
   ru: 'RU',
+  yue: 'YUE',
   'zh-Hant': 'ZH-T',
   'zh-Hans': 'ZH-S',
 };
@@ -74,51 +76,66 @@ const DEFAULT_HEIGHT_RATIO = 0.5;
 const DEFAULT_LIFT_RATIO = 0.1;
 const DEFAULT_ROMAJI = true;
 const DEFAULT_PINYIN = true;
+const DEFAULT_IPA = true;
 const DEFAULT_JYUTPING = false;
 const DEFAULT_ROMAJA = false;
 const DEFAULT_ARABIC_TRANSLIT = false;
 
+const LANGUAGE_OPTIONS: SelectOption[] = [
+  { value: 'en', label: LANG_LABELS.en },
+  { value: 'ja', label: LANG_LABELS.ja },
+  { value: 'zh-Hant', label: LANG_LABELS['zh-Hant'] },
+  { value: 'zh-Hans', label: LANG_LABELS['zh-Hans'] },
+  { value: 'yue', label: LANG_LABELS.yue },
+  { value: 'ar', label: LANG_LABELS.ar },
+  { value: 'vi', label: LANG_LABELS.vi },
+  { value: 'ko', label: LANG_LABELS.ko },
+  { value: 'es', label: LANG_LABELS.es },
+  { value: 'fr', label: LANG_LABELS.fr },
+  { value: 'ru', label: LANG_LABELS.ru },
+];
+
 const DEFAULT_SLOTS: BurnSlot[] = [
   {
     slot: 1,
-    language: null,
+    language: 'en',
     fontScale: 1,
     romaji: DEFAULT_ROMAJI,
     pinyin: DEFAULT_PINYIN,
-    ipa: false,
+    ipa: DEFAULT_IPA,
     romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
     arabicTranslit: DEFAULT_ARABIC_TRANSLIT,
   },
   {
     slot: 2,
-    language: 'en',
+    language: 'ja',
     fontScale: 1,
     romaji: DEFAULT_ROMAJI,
     pinyin: DEFAULT_PINYIN,
-    ipa: false,
+    ipa: DEFAULT_IPA,
     romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
     arabicTranslit: DEFAULT_ARABIC_TRANSLIT,
   },
   {
     slot: 3,
-    language: 'ja',
+    language: 'zh-Hant',
     fontScale: 1,
     romaji: DEFAULT_ROMAJI,
     pinyin: DEFAULT_PINYIN,
-    ipa: false,
+    ipa: DEFAULT_IPA,
     romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
     arabicTranslit: DEFAULT_ARABIC_TRANSLIT,
   },
   {
     slot: 4,
-    language: null,
+    language: 'fr',
     fontScale: 1,
     romaji: DEFAULT_ROMAJI,
     pinyin: DEFAULT_PINYIN,
-    ipa: false,
+    ipa: DEFAULT_IPA,
     romaja: DEFAULT_ROMAJA,
     jyutping: DEFAULT_JYUTPING,
     arabicTranslit: DEFAULT_ARABIC_TRANSLIT,
@@ -178,12 +195,16 @@ const OptionSelect = ({
   onChange: (next: string) => void;
 }) => {
   const [open, setOpen] = useState(false);
+  const selected = options.find((opt) => opt.value === value);
+  const fallbackLabel = value ? LANG_LABELS[value] || value : 'None';
+  const displayLabel = selected?.label || fallbackLabel;
+  const isMissing = Boolean(selected && selected.available === false);
 
   return (
     <>
       <Pressable style={styles.select} onPress={() => setOpen(true)}>
         <Text style={styles.selectLabel}>{label}</Text>
-        <Text style={styles.selectValue}>{options.find((opt) => opt.value === value)?.label || 'None'}</Text>
+        <Text style={[styles.selectValue, isMissing && styles.selectValueMuted]}>{displayLabel}</Text>
       </Pressable>
       <Modal visible={open} transparent animationType="fade">
         <Pressable style={styles.modalBackdrop} onPress={() => setOpen(false)}>
@@ -192,6 +213,7 @@ const OptionSelect = ({
             <ScrollView style={{ maxHeight: 280 }}>
               {options.map((option) => {
                 const active = option.value === value;
+                const missing = option.available === false;
                 return (
                   <Pressable
                     key={option.value}
@@ -201,7 +223,15 @@ const OptionSelect = ({
                       setOpen(false);
                     }}
                   >
-                    <Text style={[styles.modalOptionText, active && styles.modalOptionTextActive]}>{option.label}</Text>
+                    <Text
+                      style={[
+                        styles.modalOptionText,
+                        active && styles.modalOptionTextActive,
+                        missing && styles.modalOptionTextMuted,
+                      ]}
+                    >
+                      {option.label}
+                    </Text>
                   </Pressable>
                 );
               })}
@@ -284,20 +314,22 @@ export default function BurnSubtitlesScreen() {
   const [message, setMessage] = useState('');
   const [layoutLoaded, setLayoutLoaded] = useState(false);
 
-  const availableOptions = useMemo(() => {
-    const base: SelectOption[] = [{ value: '', label: 'None' }];
-    const seen = new Set<string>();
-    const available = translations.filter((item) => item.status === 'completed');
-    for (const item of available) {
-      if (seen.has(item.language_code)) continue;
-      seen.add(item.language_code);
-      base.push({
-        value: item.language_code,
-        label: LANG_LABELS[item.language_code] || item.language_code,
-      });
+  const availableLanguages = useMemo(() => {
+    const set = new Set<string>();
+    for (const item of translations) {
+      if (item.status !== 'completed') continue;
+      set.add(item.language_code);
+    }
+    return set;
+  }, [translations]);
+
+  const languageOptions = useMemo(() => {
+    const base: SelectOption[] = [{ value: '', label: 'None', available: true }];
+    for (const option of LANGUAGE_OPTIONS) {
+      base.push({ ...option, available: availableLanguages.has(option.value) });
     }
     return base;
-  }, [translations]);
+  }, [availableLanguages]);
 
   const sortedSlots = useMemo(() => [...slots].sort((a, b) => a.slot - b.slot), [slots]);
 
@@ -313,7 +345,7 @@ export default function BurnSubtitlesScreen() {
         fontScale: existing?.fontScale ?? 1,
         romaji: existing?.romaji ?? DEFAULT_ROMAJI,
         pinyin: existing?.pinyin ?? DEFAULT_PINYIN,
-        ipa: existing?.ipa ?? false,
+        ipa: existing?.ipa ?? DEFAULT_IPA,
         romaja: existing?.romaja ?? DEFAULT_ROMAJA,
         jyutping: existing?.jyutping ?? DEFAULT_JYUTPING,
         arabicTranslit: existing?.arabicTranslit ?? DEFAULT_ARABIC_TRANSLIT,
@@ -323,17 +355,20 @@ export default function BurnSubtitlesScreen() {
   };
 
   const loadTranslations = async () => {
-    if (!id) return;
+    if (!id) return [];
     try {
       const resp = await fetch(`${API_URL}/api/videos/${id}/translations`);
       const json = await resp.json();
       if (!resp.ok) {
         setTranslations([]);
-        return;
+        return [];
       }
-      setTranslations(json.translations || []);
+      const items = json.translations || [];
+      setTranslations(items);
+      return items as TranslationDetail[];
     } catch (_err) {
       setTranslations([]);
+      return [];
     }
   };
 
@@ -370,7 +405,7 @@ export default function BurnSubtitlesScreen() {
             fontScale: typeof slot.fontScale === 'number' ? slot.fontScale : 1,
             romaji: typeof slot.romaji === 'boolean' ? slot.romaji : DEFAULT_ROMAJI,
             pinyin: typeof slot.pinyin === 'boolean' ? slot.pinyin : DEFAULT_PINYIN,
-            ipa: typeof slot.ipa === 'boolean' ? slot.ipa : false,
+            ipa: typeof slot.ipa === 'boolean' ? slot.ipa : DEFAULT_IPA,
             romaja: typeof slot.romaja === 'boolean' ? slot.romaja : DEFAULT_ROMAJA,
             jyutping: typeof slot.jyutping === 'boolean' ? slot.jyutping : DEFAULT_JYUTPING,
             arabicTranslit:
@@ -415,6 +450,72 @@ export default function BurnSubtitlesScreen() {
     } catch (err: any) {
       setMessage(err?.message || 'Failed to load burn status');
     }
+  };
+
+  const ensureTranscription = async () => {
+    if (!id) return false;
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}/transcription`);
+      if (resp.ok) {
+        const json = await resp.json();
+        if (json.status === 'completed') {
+          return true;
+        }
+        if (json.status === 'no_audio') {
+          setMessage('No audio detected in this video.');
+          return false;
+        }
+      }
+    } catch (_err) {
+      // fall through to transcribe
+    }
+
+    setMessage('Transcribing audio...');
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}/transcribe`, { method: 'POST' });
+      const json = await resp.json();
+      if (!resp.ok) {
+        setMessage(json.error || json.details || 'Transcription failed');
+        return false;
+      }
+      if (json.status !== 'completed') {
+        setMessage(json.error || 'Transcription incomplete');
+        return false;
+      }
+      return true;
+    } catch (err: any) {
+      setMessage(err?.message || 'Transcription failed');
+      return false;
+    }
+  };
+
+  const ensureTranslations = async (languages: string[]) => {
+    if (!id || !languages.length) return true;
+    const existing = await loadTranslations();
+    const completed = new Set(
+      existing.filter((item) => item.status === 'completed').map((item) => item.language_code)
+    );
+    const pending = languages.filter((lang) => !completed.has(lang));
+    for (const lang of pending) {
+      setMessage(`Translating ${LANG_LABELS[lang] || lang}...`);
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${id}/translate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ language: lang, use_cache: true }),
+        });
+        const json = await resp.json();
+        if (!resp.ok) {
+          setMessage(json.error || json.details || `Translation failed for ${lang}`);
+          return false;
+        }
+      } catch (err: any) {
+        setMessage(err?.message || `Translation failed for ${lang}`);
+        return false;
+      }
+    }
+    await loadTranslations();
+    return true;
   };
 
   useEffect(() => {
@@ -495,8 +596,24 @@ export default function BurnSubtitlesScreen() {
   const burnSubtitles = async () => {
     if (!id || burning) return;
     setBurning(true);
-    setMessage('Burning subtitles... this can take a few minutes.');
     try {
+      setMessage('Checking prerequisites...');
+      const transcriptionReady = await ensureTranscription();
+      if (!transcriptionReady) {
+        setBurning(false);
+        return;
+      }
+
+      const uniqueLangs = Array.from(
+        new Set(slots.map((slot) => slot.language).filter((lang): lang is string => Boolean(lang)))
+      );
+      const translationsReady = await ensureTranslations(uniqueLangs);
+      if (!translationsReady) {
+        setBurning(false);
+        return;
+      }
+
+      setMessage('Burning subtitles... this can take a few minutes.');
       const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -565,15 +682,30 @@ export default function BurnSubtitlesScreen() {
           </View>
 
           <View style={styles.slotGrid}>
-            {sortedSlots.map((slot) => (
-              <View key={slot.slot} style={styles.slotCard}>
-                <Text style={styles.slotTitle}>{formatSlotLabel(slot.slot, rows, cols)}</Text>
-                <OptionSelect
-                  label="Language"
-                  value={slot.language || ''}
-                  options={availableOptions}
-                  onChange={(value) => updateSlot(slot.slot, value)}
-                />
+            {sortedSlots.map((slot) => {
+              const isAvailable = slot.language ? availableLanguages.has(slot.language) : false;
+              const statusText = slot.language
+                ? isAvailable
+                  ? 'Available'
+                  : 'Missing translation'
+                : 'No language selected';
+              return (
+                <View key={slot.slot} style={styles.slotCard}>
+                  <Text style={styles.slotTitle}>{formatSlotLabel(slot.slot, rows, cols)}</Text>
+                  <OptionSelect
+                    label="Language"
+                    value={slot.language || ''}
+                    options={languageOptions}
+                    onChange={(value) => updateSlot(slot.slot, value)}
+                  />
+                  <Text
+                    style={[
+                      styles.slotStatus,
+                      slot.language ? (isAvailable ? styles.slotStatusReady : styles.slotStatusMissing) : styles.slotStatusMuted,
+                    ]}
+                  >
+                    {statusText}
+                  </Text>
                 <SliderControl
                   label="Font scale"
                   value={slot.fontScale ?? 1}
@@ -618,10 +750,10 @@ export default function BurnSubtitlesScreen() {
                       <Text style={styles.slotToggleHint}>Pronunciation above words</Text>
                     </View>
                     <Switch
-                      value={slot.ipa ?? false}
+                      value={slot.ipa ?? DEFAULT_IPA}
                       onValueChange={(value) => updateSlotToggle(slot.slot, 'ipa', value)}
                       trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
-                      thumbColor={slot.ipa ? '#f8fafc' : '#f1f5f9'}
+                      thumbColor={slot.ipa ?? DEFAULT_IPA ? '#f8fafc' : '#f1f5f9'}
                     />
                   </View>
                 ) : null}
@@ -668,7 +800,8 @@ export default function BurnSubtitlesScreen() {
                   </View>
                 ) : null}
               </View>
-            ))}
+            );
+            })}
           </View>
 
           <SliderControl
@@ -836,6 +969,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   slotTitle: { fontSize: 13, fontWeight: '600', color: '#0f172a', marginBottom: 6 },
+  slotStatus: { fontSize: 11, marginTop: 6 },
+  slotStatusReady: { color: '#0f172a', fontWeight: '600' },
+  slotStatusMissing: { color: '#94a3b8' },
+  slotStatusMuted: { color: '#cbd5e1' },
   previewCard: {
     marginTop: 12,
     padding: 12,
@@ -900,6 +1037,7 @@ const styles = StyleSheet.create({
   },
   selectLabel: { fontSize: 11, textTransform: 'uppercase', color: '#64748b', marginBottom: 2 },
   selectValue: { fontSize: 14, color: '#0f172a', fontWeight: '600' },
+  selectValueMuted: { color: '#94a3b8' },
   btnPrimary: {
     marginTop: 12,
     backgroundColor: '#1d4ed8',
@@ -944,6 +1082,7 @@ const styles = StyleSheet.create({
   modalOptionActive: { backgroundColor: '#eff6ff' },
   modalOptionText: { color: '#0f172a', fontSize: 13 },
   modalOptionTextActive: { fontWeight: '700' },
+  modalOptionTextMuted: { color: '#94a3b8' },
   sliderRow: { marginTop: 12 },
   sliderHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
   sliderLabel: { fontSize: 12, color: '#0f172a', fontWeight: '600' },

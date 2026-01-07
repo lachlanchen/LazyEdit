@@ -1089,20 +1089,19 @@ def _prepare_speaker_json(
             continue
 
         key = text_key or "text"
+        text_value = None
         if key in item and isinstance(item[key], str):
-            text_value = item[key].lstrip()
-            if text_value.startswith(icon):
-                continue
-            item[key] = f"{icon} {text_value}"
+            text_value = item[key]
+        elif "text" in item and isinstance(item["text"], str):
+            text_value = item["text"]
+
+        if text_value:
+            item["tokens"] = [
+                {"text": icon, "type": "speaker"},
+                {"text": text_value},
+            ]
             modified = True
             continue
-
-        if "text" in item and isinstance(item["text"], str):
-            text_value = item["text"].lstrip()
-            if text_value.startswith(icon):
-                continue
-            item["text"] = f"{icon} {text_value}"
-            modified = True
 
     if not modified:
         return json_path
