@@ -27,6 +27,6 @@
       "maximum": 20
     }
   },
-  "required": ["title", "prompt", "model", "size", "seconds"],
+  "required": ["title", "prompt", "negative_prompt", "model", "size", "seconds"],
   "additionalProperties": false
 }
