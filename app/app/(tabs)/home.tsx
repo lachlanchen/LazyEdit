@@ -32,20 +32,20 @@ const formatBytes = (bytes?: number | null) => {
 
 const DEFAULT_PROMPT_SPEC = {
   autoTitle: true,
-  title: 'Oracle of the Mist Valley',
-  subject: 'A fictional oracle in a silver robe, fully clothed',
-  action: 'She senses the future and delivers a short philosophical line to the viewer',
-  environment: 'Dawn light, floating isles, ancient ruins in fog',
-  camera: 'Slow orbit, gentle push-in, 35mm lens',
-  lighting: 'Soft sunrise glow, volumetric mist',
-  mood: 'Serene, mysterious, hopeful',
-  style: 'Cinematic, high detail, natural color grading',
+  title: 'Epic Vision',
+  subject: 'A fictional protagonist in a vast imagined world',
+  action: 'They confront a revelation that changes their journey',
+  environment: 'An epic, timeless setting (mythic history or distant planet) with sweeping scale',
+  camera: 'Cinematic movement that reveals scale and detail',
+  lighting: 'Atmospheric, dramatic lighting with soft volumetric depth',
+  mood: 'Epic, awe-inspiring, contemplative',
+  style: 'Cinematic, richly detailed, timeless tone',
   aspectRatio: '16:9',
   durationSeconds: '10',
   audioLanguage: 'auto',
-  sceneCount: '2',
+  sceneCount: '',
   spokenWords: 'Include a short original philosophical line of dialogue.',
-  extraRequirements: 'Complete micro-story arc with a calm reveal at the end.',
+  extraRequirements: 'Let the model invent distinct moments and symbolism while keeping a coherent arc.',
   negative: 'no text, no logos, no gore, no real people',
 };
 
@@ -274,6 +274,10 @@ export default function HomeScreen() {
 
   const updateSpec = (key: keyof typeof DEFAULT_PROMPT_SPEC, value: string | boolean) => {
     setPromptSpec((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const resetSpec = (key: keyof typeof DEFAULT_PROMPT_SPEC) => {
+    setPromptSpec((prev) => ({ ...prev, [key]: DEFAULT_PROMPT_SPEC[key] }));
   };
 
   const buildPromptSpecPayload = () => {
@@ -568,12 +572,17 @@ export default function HomeScreen() {
               <Text style={styles.panelHint}>Describe the scene, action, and visual tone.</Text>
 
               <Text style={styles.fieldLabel}>Title</Text>
-              <TextInput
-                style={[styles.input, promptSpec.autoTitle && styles.inputDisabled]}
-                value={promptSpec.title}
-                onChangeText={(v) => updateSpec('title', v)}
-                editable={!promptSpec.autoTitle}
-              />
+              <View style={[styles.inputRow, styles.inputRowTop]}>
+                <TextInput
+                  style={[styles.input, styles.inputFlex, promptSpec.autoTitle && styles.inputDisabled]}
+                  value={promptSpec.title}
+                  onChangeText={(v) => updateSpec('title', v)}
+                  editable={!promptSpec.autoTitle}
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('title')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               <View style={styles.toggleRow}>
                 <View>
                   <Text style={styles.toggleLabel}>Auto title</Text>
@@ -589,100 +598,170 @@ export default function HomeScreen() {
               {!promptSpec.autoTitle ? renderHistory('title', (value) => updateSpec('title', value)) : null}
 
               <Text style={styles.fieldLabel}>Audio language</Text>
-              <SelectControl
-                label="Audio language"
-                value={promptSpec.audioLanguage}
-                options={AUDIO_LANGUAGE_OPTIONS}
-                onChange={(value) => updateSpec('audioLanguage', value)}
-              />
+              <View style={styles.inputRow}>
+                <View style={styles.inputFlex}>
+                  <SelectControl
+                    label="Audio language"
+                    value={promptSpec.audioLanguage}
+                    options={AUDIO_LANGUAGE_OPTIONS}
+                    onChange={(value) => updateSpec('audioLanguage', value)}
+                  />
+                </View>
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('audioLanguage')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('audioLanguage', (value) => updateSpec('audioLanguage', value))}
 
               <Text style={styles.fieldLabel}>Subject</Text>
-              <TextInput
-                style={styles.textArea}
-                value={promptSpec.subject}
-                onChangeText={(v) => updateSpec('subject', v)}
-                multiline
-              />
+              <View style={[styles.inputRow, styles.inputRowTop]}>
+                <TextInput
+                  style={[styles.textArea, styles.inputFlex]}
+                  value={promptSpec.subject}
+                  onChangeText={(v) => updateSpec('subject', v)}
+                  multiline
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('subject')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('subject', (value) => updateSpec('subject', value))}
 
               <Text style={styles.fieldLabel}>Action</Text>
-              <TextInput
-                style={styles.textArea}
-                value={promptSpec.action}
-                onChangeText={(v) => updateSpec('action', v)}
-                multiline
-              />
+              <View style={[styles.inputRow, styles.inputRowTop]}>
+                <TextInput
+                  style={[styles.textArea, styles.inputFlex]}
+                  value={promptSpec.action}
+                  onChangeText={(v) => updateSpec('action', v)}
+                  multiline
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('action')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('action', (value) => updateSpec('action', value))}
 
               <Text style={styles.fieldLabel}>Environment</Text>
-              <TextInput
-                style={styles.textArea}
-                value={promptSpec.environment}
-                onChangeText={(v) => updateSpec('environment', v)}
-                multiline
-              />
+              <View style={[styles.inputRow, styles.inputRowTop]}>
+                <TextInput
+                  style={[styles.textArea, styles.inputFlex]}
+                  value={promptSpec.environment}
+                  onChangeText={(v) => updateSpec('environment', v)}
+                  multiline
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('environment')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('environment', (value) => updateSpec('environment', value))}
 
               <Text style={styles.fieldLabel}>Camera</Text>
-              <TextInput style={styles.input} value={promptSpec.camera} onChangeText={(v) => updateSpec('camera', v)} />
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={[styles.input, styles.inputFlex]}
+                  value={promptSpec.camera}
+                  onChangeText={(v) => updateSpec('camera', v)}
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('camera')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('camera', (value) => updateSpec('camera', value))}
 
               <Text style={styles.fieldLabel}>Lighting</Text>
-              <TextInput
-                style={styles.input}
-                value={promptSpec.lighting}
-                onChangeText={(v) => updateSpec('lighting', v)}
-              />
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={[styles.input, styles.inputFlex]}
+                  value={promptSpec.lighting}
+                  onChangeText={(v) => updateSpec('lighting', v)}
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('lighting')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('lighting', (value) => updateSpec('lighting', value))}
 
               <Text style={styles.fieldLabel}>Mood</Text>
-              <TextInput style={styles.input} value={promptSpec.mood} onChangeText={(v) => updateSpec('mood', v)} />
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={[styles.input, styles.inputFlex]}
+                  value={promptSpec.mood}
+                  onChangeText={(v) => updateSpec('mood', v)}
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('mood')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('mood', (value) => updateSpec('mood', value))}
 
               <Text style={styles.fieldLabel}>Style</Text>
-              <TextInput
-                style={styles.textArea}
-                value={promptSpec.style}
-                onChangeText={(v) => updateSpec('style', v)}
-                multiline
-              />
+              <View style={[styles.inputRow, styles.inputRowTop]}>
+                <TextInput
+                  style={[styles.textArea, styles.inputFlex]}
+                  value={promptSpec.style}
+                  onChangeText={(v) => updateSpec('style', v)}
+                  multiline
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('style')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('style', (value) => updateSpec('style', value))}
 
               <Text style={styles.fieldLabel}>Spoken words (optional)</Text>
-              <TextInput
-                style={styles.textArea}
-                value={promptSpec.spokenWords}
-                onChangeText={(v) => updateSpec('spokenWords', v)}
-                multiline
-              />
+              <View style={[styles.inputRow, styles.inputRowTop]}>
+                <TextInput
+                  style={[styles.textArea, styles.inputFlex]}
+                  value={promptSpec.spokenWords}
+                  onChangeText={(v) => updateSpec('spokenWords', v)}
+                  multiline
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('spokenWords')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('spokenWords', (value) => updateSpec('spokenWords', value))}
 
               <Text style={styles.fieldLabel}>Scene count (optional)</Text>
-              <TextInput
-                style={styles.input}
-                value={promptSpec.sceneCount}
-                onChangeText={(value) => updateSpec('sceneCount', value.replace(/[^\d]/g, ''))}
-                keyboardType="numeric"
-              />
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={[styles.input, styles.inputFlex]}
+                  value={promptSpec.sceneCount}
+                  onChangeText={(value) => updateSpec('sceneCount', value.replace(/[^\d]/g, ''))}
+                  keyboardType="numeric"
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('sceneCount')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('sceneCount', (value) => updateSpec('sceneCount', value))}
 
               <Text style={styles.fieldLabel}>Extra requirements</Text>
-              <TextInput
-                style={styles.textArea}
-                value={promptSpec.extraRequirements}
-                onChangeText={(v) => updateSpec('extraRequirements', v)}
-                multiline
-              />
+              <View style={[styles.inputRow, styles.inputRowTop]}>
+                <TextInput
+                  style={[styles.textArea, styles.inputFlex]}
+                  value={promptSpec.extraRequirements}
+                  onChangeText={(v) => updateSpec('extraRequirements', v)}
+                  multiline
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('extraRequirements')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('extraRequirements', (value) => updateSpec('extraRequirements', value))}
 
               <Text style={styles.fieldLabel}>Negative prompt</Text>
-              <TextInput
-                style={styles.textArea}
-                value={promptSpec.negative}
-                onChangeText={(v) => updateSpec('negative', v)}
-                multiline
-              />
+              <View style={[styles.inputRow, styles.inputRowTop]}>
+                <TextInput
+                  style={[styles.textArea, styles.inputFlex]}
+                  value={promptSpec.negative}
+                  onChangeText={(v) => updateSpec('negative', v)}
+                  multiline
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('negative')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
               {renderHistory('negative', (value) => updateSpec('negative', value))}
             </View>
 
@@ -691,28 +770,38 @@ export default function HomeScreen() {
               <Text style={styles.panelHint}>Tune aspect ratio and length.</Text>
 
               <Text style={styles.fieldLabel}>Aspect ratio</Text>
-              <View style={styles.chipRow}>
-                {ASPECT_OPTIONS.map((option) => {
-                  const isActive = promptSpec.aspectRatio === option.value;
-                  return (
-                    <Pressable
-                      key={option.value}
-                      style={[styles.chip, isActive && styles.chipActive]}
-                      onPress={() => updateSpec('aspectRatio', option.value)}
-                    >
-                      <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{option.label}</Text>
-                    </Pressable>
-                  );
-                })}
+              <View style={[styles.inputRow, styles.inputRowTop]}>
+                <View style={[styles.chipRow, styles.inputFlex]}>
+                  {ASPECT_OPTIONS.map((option) => {
+                    const isActive = promptSpec.aspectRatio === option.value;
+                    return (
+                      <Pressable
+                        key={option.value}
+                        style={[styles.chip, isActive && styles.chipActive]}
+                        onPress={() => updateSpec('aspectRatio', option.value)}
+                      >
+                        <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{option.label}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('aspectRatio')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
               </View>
 
               <Text style={styles.fieldLabel}>Length (seconds)</Text>
-              <TextInput
-                style={styles.input}
-                value={promptSpec.durationSeconds}
-                onChangeText={(value) => updateSpec('durationSeconds', value.replace(/[^\d]/g, ''))}
-                keyboardType="numeric"
-              />
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={[styles.input, styles.inputFlex]}
+                  value={promptSpec.durationSeconds}
+                  onChangeText={(value) => updateSpec('durationSeconds', value.replace(/[^\d]/g, ''))}
+                  keyboardType="numeric"
+                />
+                <Pressable style={styles.resetButton} onPress={() => resetSpec('durationSeconds')}>
+                  <Text style={styles.resetButtonText}>Reset</Text>
+                </Pressable>
+              </View>
             </View>
 
             <Pressable style={styles.btnAccent} onPress={generatePrompt} disabled={prompting}>
@@ -987,8 +1076,19 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#64748b',
   },
-  selectRow: {
+  inputRow: {
     marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  inputRowTop: {
+    alignItems: 'flex-start',
+  },
+  inputFlex: {
+    flex: 1,
+  },
+  selectRow: {
     paddingVertical: 10,
     paddingHorizontal: 12,
     borderRadius: 12,
@@ -1037,6 +1137,19 @@ const styles = StyleSheet.create({
   },
   modalOptionTextActive: {
     color: 'white',
+  },
+  resetButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    backgroundColor: 'white',
+  },
+  resetButtonText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#1e293b',
   },
   chipRow: {
     flexDirection: 'row',
