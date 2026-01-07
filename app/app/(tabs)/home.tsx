@@ -662,8 +662,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
-          <Text style={styles.title}>LazyEdit</Text>
-          <Text style={styles.subtitle}>Multilingual Video Editor</Text>
+          <Text style={styles.title}>LazyEdit Studio</Text>
 
           <View style={styles.tabRow}>
             {[
