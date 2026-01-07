@@ -158,7 +158,16 @@ export default function HomeScreen() {
   const [statusTone, setStatusTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'upload' | 'generate' | 'remix'>('upload');
+  const [activeTab, setActiveTab] = useState<'upload' | 'generate' | 'remix'>(() => {
+    if (Platform.OS !== 'web') return 'upload';
+    try {
+      const saved = localStorage.getItem('lazyedit:homeTab');
+      if (saved === 'upload' || saved === 'generate' || saved === 'remix') return saved;
+    } catch (_err) {
+      // ignore storage errors
+    }
+    return 'upload';
+  });
   const [remixPicked, setRemixPicked] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [remixStatus, setRemixStatus] = useState('');
   const [remixTone, setRemixTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -531,6 +540,15 @@ export default function HomeScreen() {
     loadPromptSettings();
     loadPromptHistory();
   }, []);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    try {
+      localStorage.setItem('lazyedit:homeTab', activeTab);
+    } catch (_err) {
+      // ignore storage errors
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     if (!promptSpecLoaded) return;

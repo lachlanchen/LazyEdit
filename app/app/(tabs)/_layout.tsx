@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Link, Tabs, usePathname, useRouter } from 'expo-router';
+import { Image, Platform, Pressable, Text, View } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
@@ -19,6 +19,31 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   const colorScheme = useColorScheme();
   const logoSource = require('../../assets/images/logo.png');
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    if (!pathname) return;
+    try {
+      localStorage.setItem('lazyedit:lastTab', pathname);
+    } catch (_err) {
+      // ignore storage errors
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    try {
+      if (pathname !== '/' && pathname !== '') return;
+      const saved = localStorage.getItem('lazyedit:lastTab');
+      if (saved && saved !== pathname) {
+        router.replace(saved);
+      }
+    } catch (_err) {
+      // ignore storage errors
+    }
+  }, [pathname, router]);
 
   return (
     <Tabs
@@ -75,14 +100,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="library"
         options={{
-          title: 'Library',
+          title: 'Studio',
           tabBarIcon: ({ color }) => <TabBarIcon name="folder" color={color} />,
         }}
       />
       <Tabs.Screen
         name="editor"
         options={{
-          title: 'Editor',
+          title: 'Publish',
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
