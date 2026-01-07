@@ -860,7 +860,7 @@ export default function VideoDetailScreen() {
         </View>
 
         <Pressable
-          style={styles.btn}
+          style={[styles.btn, styles.btnAccentPrimary]}
           onPress={openProcessPage}
         >
           <View style={styles.btnContent}>
@@ -1250,6 +1250,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     borderRadius: 12,
     alignSelf: 'flex-start',
+  },
+  btnAccentPrimary: {
+    backgroundColor: '#a855f7',
   },
   btnDisabled: { opacity: 0.6 },
   btnContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
