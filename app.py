@@ -123,7 +123,7 @@ DEFAULT_VIDEO_PROMPT_SPEC = {
     "durationSeconds": "10",
     "audioLanguage": "auto",
     "sceneCount": "2",
-    "spokenWords": "She says, \"In the mist, the future listens.\"",
+    "spokenWords": "Include a short original philosophical line of dialogue.",
     "extraRequirements": "Complete micro-story arc with a calm reveal at the end.",
     "negative": "no text, no logos, no gore, no real people",
 }
