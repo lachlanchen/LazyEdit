@@ -20,6 +20,7 @@ import tornado.web
 from tornado import gen
 import tornado.autoreload
 from tornado.concurrent import run_on_executor
+import tornado.httpclient
 
 
 import zipfile  # for creating zip files
@@ -153,40 +154,40 @@ DEFAULT_BURN_LAYOUT = {
     "slots": [
         {
             "slot": 1,
-            "language": None,
+            "language": "en",
             "romaji": True,
             "pinyin": True,
-            "ipa": False,
+            "ipa": True,
             "jyutping": False,
             "romaja": False,
             "arabicTranslit": False,
         },
         {
             "slot": 2,
-            "language": "en",
+            "language": "ja",
             "romaji": True,
             "pinyin": True,
-            "ipa": False,
+            "ipa": True,
             "jyutping": False,
             "romaja": False,
             "arabicTranslit": False,
         },
         {
             "slot": 3,
-            "language": "ja",
+            "language": "zh-Hant",
             "romaji": True,
             "pinyin": True,
-            "ipa": False,
+            "ipa": True,
             "jyutping": False,
             "romaja": False,
             "arabicTranslit": False,
         },
         {
             "slot": 4,
-            "language": None,
+            "language": "fr",
             "romaji": True,
             "pinyin": True,
-            "ipa": False,
+            "ipa": True,
             "jyutping": False,
             "romaja": False,
             "arabicTranslit": False,
@@ -356,6 +357,20 @@ def _sanitize_translation_languages(payload) -> list[str]:
         if code and code not in cleaned:
             cleaned.append(code)
     return cleaned or DEFAULT_TRANSLATION_LANGUAGES.copy()
+
+
+def _load_translation_languages_setting() -> list[str]:
+    saved = ldb.get_ui_preference("translation_languages")
+    if saved is None:
+        return DEFAULT_TRANSLATION_LANGUAGES.copy()
+    return _sanitize_translation_languages(saved)
+
+
+def _load_burn_layout_setting() -> dict:
+    saved = ldb.get_ui_preference("burn_layout")
+    if saved is None:
+        return DEFAULT_BURN_LAYOUT.copy()
+    return _sanitize_burn_layout(saved)
 
 
 def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
@@ -1084,7 +1099,7 @@ def _prepare_speaker_json(
         if isinstance(tokens, list):
             if tokens and isinstance(tokens[0], dict) and tokens[0].get("type") == "speaker":
                 continue
-            item["tokens"] = [{"text": icon, "type": "speaker"}] + tokens
+            item["tokens"] = [{"text": "", "type": "speaker"}] + tokens
             modified = True
             continue
 
@@ -1097,7 +1112,7 @@ def _prepare_speaker_json(
 
         if text_value:
             item["tokens"] = [
-                {"text": icon, "type": "speaker"},
+                {"text": "", "type": "speaker"},
                 {"text": text_value},
             ]
             modified = True
@@ -4460,6 +4475,177 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        steps_raw = data.get("steps")
+        if isinstance(steps_raw, (list, tuple)):
+            selected_steps = {str(step).lower() for step in steps_raw}
+        else:
+            selected_steps = set()
+
+        def wants(step: str) -> bool:
+            return not selected_steps or step in selected_steps
+
+        needs_transcribe = wants("transcribe") or wants("translate") or wants("burn") or wants("metadata_zh") or wants("metadata_en")
+        needs_translate = wants("translate") or wants("burn")
+        needs_caption = wants("caption") or wants("metadata_zh") or wants("metadata_en")
+
+        translation_languages = _load_translation_languages_setting()
+        burn_layout = _load_burn_layout_setting()
+        notes = data.get("notes") or data.get("custom_notes") or ""
+
+        statuses: dict[str, dict] = {}
+
+        async def call_json(method: str, path: str, payload: dict | None = None):
+            url = f"http://localhost:{PORT}{path}"
+            body = json.dumps(payload).encode("utf-8") if payload is not None else None
+            headers = {"Content-Type": "application/json"} if payload is not None else None
+            request = tornado.httpclient.HTTPRequest(
+                url=url,
+                method=method,
+                body=body,
+                headers=headers,
+                request_timeout=7200,
+            )
+            response = await tornado.httpclient.AsyncHTTPClient().fetch(request, raise_error=False)
+            try:
+                data_out = json.loads(response.body or b"{}")
+            except Exception:
+                data_out = {}
+            return response.code, data_out
+
+        async def mark(step: str, status: str, detail: str | None = None):
+            statuses[step] = {"status": status, "detail": detail}
+
+        if needs_transcribe:
+            await mark("transcribe", "working", "Transcribing")
+            code, payload = await call_json("POST", f"/api/videos/{video_id_i}/transcribe")
+            if code >= 400:
+                await mark("transcribe", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "transcription failed", "steps": statuses})
+            await mark("transcribe", "done", "Completed")
+        else:
+            await mark("transcribe", "skipped", "Skipped")
+
+        if needs_translate:
+            if not translation_languages:
+                await mark("translate", "skipped", "No languages selected")
+            else:
+                await mark("translate", "working", "Translating")
+                for lang in translation_languages:
+                    code, payload = await call_json(
+                        "POST",
+                        f"/api/videos/{video_id_i}/translate",
+                        {"language": lang, "use_cache": True},
+                    )
+                    if code >= 400:
+                        await mark(
+                            "translate",
+                            "error",
+                            payload.get("error") or payload.get("details") or f"Failed: {lang}",
+                        )
+                        self.set_status(500)
+                        return self.write({"error": "translation failed", "steps": statuses})
+                await mark("translate", "done", "Completed")
+        else:
+            await mark("translate", "skipped", "Skipped")
+
+        if wants("burn"):
+            await mark("burn", "working", "Burning subtitles")
+            code, payload = await call_json(
+                "POST",
+                f"/api/videos/{video_id_i}/burn-subtitles",
+                {"layout": burn_layout},
+            )
+            if code >= 400:
+                await mark("burn", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "burn failed", "steps": statuses})
+
+            while True:
+                await gen.sleep(2)
+                code, status_payload = await call_json("GET", f"/api/videos/{video_id_i}/burn-subtitles")
+                if code >= 400:
+                    await mark("burn", "error", status_payload.get("error") or "Failed")
+                    self.set_status(500)
+                    return self.write({"error": "burn failed", "steps": statuses})
+                if status_payload.get("status") == "processing":
+                    continue
+                if status_payload.get("status") == "completed":
+                    await mark("burn", "done", "Completed")
+                    break
+                await mark("burn", "error", status_payload.get("error") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "burn failed", "steps": statuses})
+        else:
+            await mark("burn", "skipped", "Skipped")
+
+        if wants("keyframes"):
+            await mark("keyframes", "working", "Extracting")
+            code, payload = await call_json("POST", f"/api/videos/{video_id_i}/keyframes")
+            if code >= 400:
+                await mark("keyframes", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "keyframes failed", "steps": statuses})
+            await mark("keyframes", "done", "Completed")
+        else:
+            await mark("keyframes", "skipped", "Skipped")
+
+        if needs_caption:
+            await mark("caption", "working", "Captioning")
+            code, payload = await call_json("POST", f"/api/videos/{video_id_i}/caption")
+            if code >= 400:
+                await mark("caption", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "caption failed", "steps": statuses})
+            await mark("caption", "done", "Completed")
+        else:
+            await mark("caption", "skipped", "Skipped")
+
+        if wants("metadata_zh"):
+            await mark("metadata_zh", "working", "Generating")
+            code, payload = await call_json(
+                "POST",
+                f"/api/videos/{video_id_i}/metadata",
+                {"lang": "zh", "use_cache": True, "notes": notes},
+            )
+            if code >= 400:
+                await mark("metadata_zh", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "metadata zh failed", "steps": statuses})
+            await mark("metadata_zh", "done", "Completed")
+        else:
+            await mark("metadata_zh", "skipped", "Skipped")
+
+        if wants("metadata_en"):
+            await mark("metadata_en", "working", "Generating")
+            code, payload = await call_json(
+                "POST",
+                f"/api/videos/{video_id_i}/metadata",
+                {"lang": "en", "use_cache": True, "notes": notes},
+            )
+            if code >= 400:
+                await mark("metadata_en", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "metadata en failed", "steps": statuses})
+            await mark("metadata_en", "done", "Completed")
+        else:
+            await mark("metadata_en", "skipped", "Skipped")
+
+        self.write({"video_id": video_id_i, "steps": statuses})
+
 class VideoKeyframesHandler(CorsMixin, tornado.web.RequestHandler):
     def post(self, video_id):
         try:
@@ -4927,6 +5113,7 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/translation", VideoTranslationHandler),
         (r"/api/videos/(\d+)/translations", VideoTranslationsHandler),
         (r"/api/videos/(\d+)/burn-subtitles", VideoSubtitleBurnHandler),
+        (r"/api/videos/(\d+)/process", VideoProcessHandler),
         (r"/api/videos/(\d+)/publish", VideoPublishHandler),
         (r"/api/videos/(\d+)/captions", CaptionsHandler),
         (r"/media/(.*)", MediaHandler, {"path": upload_folder}),

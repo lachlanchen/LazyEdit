@@ -166,9 +166,6 @@ export default function VideoDetailScreen() {
   const router = useRouter();
   const [video, setVideo] = useState<VideoDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [processing, setProcessing] = useState(false);
-  const [processStatus, setProcessStatus] = useState<string>('');
-  const [processTone, setProcessTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [transcription, setTranscription] = useState<TranscriptionDetail | null>(null);
   const [transcriptionLoading, setTranscriptionLoading] = useState(true);
   const [transcribing, setTranscribing] = useState(false);
@@ -470,44 +467,9 @@ export default function VideoDetailScreen() {
     loadAllMetadata();
   }, [id]);
 
-  const processVideo = async () => {
-    if (!video || processing) return;
-    setProcessing(true);
-    setProcessStatus('Processing... this can take several minutes.');
-    setProcessTone('neutral');
-    try {
-      const body = new URLSearchParams({ file_path: video.file_path });
-      const resp = await fetch(`${API_URL}/video-processing`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: body.toString(),
-      });
-      if (!resp.ok) {
-        const errText = await resp.text();
-        setProcessStatus(`Processing failed: ${errText}`);
-        setProcessTone('bad');
-        return;
-      }
-      if (Platform.OS === 'web') {
-        const blob = await resp.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `lazyedit_${video.id}.zip`;
-        a.click();
-        URL.revokeObjectURL(url);
-        setProcessStatus('Processing complete. Download started.');
-        setProcessTone('good');
-      } else {
-        setProcessStatus('Processing complete.');
-        setProcessTone('good');
-      }
-    } catch (e: any) {
-      setProcessStatus(`Processing failed: ${e?.message || String(e)}`);
-      setProcessTone('bad');
-    } finally {
-      setProcessing(false);
-    }
+  const openProcessPage = () => {
+    if (!video) return;
+    router.push({ pathname: '/video/[id]/process', params: { id: String(video.id) } });
   };
 
   const transcribeVideo = async () => {
@@ -577,8 +539,6 @@ export default function VideoDetailScreen() {
     }
   };
 
-  const processStatusStyle =
-    processTone === 'good' ? styles.statusGood : processTone === 'bad' ? styles.statusBad : styles.statusNeutral;
   const transcribeStatusStyle =
     transcribeTone === 'good' ? styles.statusGood : transcribeTone === 'bad' ? styles.statusBad : styles.statusNeutral;
   const captionStatusStyle =
@@ -754,7 +714,6 @@ export default function VideoDetailScreen() {
       <View style={styles.container}>
         <Stack.Screen options={{ title: headerTitle, headerBackTitle: 'Videos' }} />
         <Text style={styles.title}>Video not found</Text>
-        {processStatus ? <Text style={[styles.status, processStatusStyle]}>{processStatus}</Text> : null}
       </View>
     );
   }
@@ -784,17 +743,13 @@ export default function VideoDetailScreen() {
         </View>
 
         <Pressable
-          style={[styles.btn, processing && styles.btnDisabled]}
-          onPress={processVideo}
-          disabled={processing}
+          style={styles.btn}
+          onPress={openProcessPage}
         >
           <View style={styles.btnContent}>
-            {processing && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-            <Text style={styles.btnText}>{processing ? 'Processing...' : 'Process video'}</Text>
+            <Text style={styles.btnText}>Process video</Text>
           </View>
         </Pressable>
-
-        {processStatus ? <Text style={[styles.status, processStatusStyle]}>{processStatus}</Text> : null}
 
         <Pressable
           style={[styles.btnSecondary, transcribing && styles.btnDisabled]}
