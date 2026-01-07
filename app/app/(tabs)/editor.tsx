@@ -285,7 +285,7 @@ export default function EditorScreen() {
             </View>
           </Pressable>
           {coverUrl ? (
-            <Image source={{ uri: coverUrl }} style={styles.coverPreview} />
+            <Image source={{ uri: coverUrl }} style={styles.coverPreview} resizeMode="contain" />
           ) : (
             <Text style={styles.empty}>{t('publish_cover_empty')}</Text>
           )}
@@ -420,6 +420,7 @@ const styles = StyleSheet.create({
     height: 180,
     borderRadius: 14,
     backgroundColor: '#0f172a',
+    overflow: 'hidden',
   },
   empty: { marginTop: 12, color: '#64748b', fontSize: 12 },
   publishButton: {
