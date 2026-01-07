@@ -158,6 +158,13 @@ export default function HomeScreen() {
   const [statusTone, setStatusTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'upload' | 'generate' | 'remix'>('upload');
+  const [remixPicked, setRemixPicked] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const [remixStatus, setRemixStatus] = useState('');
+  const [remixTone, setRemixTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [remixUploading, setRemixUploading] = useState(false);
+  const [remixPreviewUrl, setRemixPreviewUrl] = useState<string | null>(null);
+  const [remixNotes, setRemixNotes] = useState('');
   const [promptSpec, setPromptSpec] = useState(DEFAULT_PROMPT_SPEC);
   const [promptResult, setPromptResult] = useState<{
     title?: string;
@@ -199,6 +206,22 @@ export default function HomeScreen() {
     return () => URL.revokeObjectURL(url);
   }, [picked]);
 
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    if (!remixPicked) {
+      setRemixPreviewUrl(null);
+      return;
+    }
+    const file = (remixPicked as any).file as File | undefined;
+    if (!file) {
+      setRemixPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setRemixPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [remixPicked]);
+
   const fileLabel = useMemo(() => {
     if (!picked) return null;
     return picked.name || 'Untitled video';
@@ -210,6 +233,18 @@ export default function HomeScreen() {
     const type = picked.mimeType || 'video';
     return `${size} · ${type}`;
   }, [picked]);
+
+  const remixFileLabel = useMemo(() => {
+    if (!remixPicked) return null;
+    return remixPicked.name || 'Untitled video';
+  }, [remixPicked]);
+
+  const remixFileMeta = useMemo(() => {
+    if (!remixPicked) return null;
+    const size = formatBytes(remixPicked.size);
+    const type = remixPicked.mimeType || 'video';
+    return `${size} · ${type}`;
+  }, [remixPicked]);
 
   const pick = async () => {
     const res = await DocumentPicker.getDocumentAsync({
@@ -271,10 +306,76 @@ export default function HomeScreen() {
     }
   };
 
+  const pickRemix = async () => {
+    const res = await DocumentPicker.getDocumentAsync({
+      multiple: false,
+      type: ['video/*'],
+    });
+    if (res.canceled) return;
+    setRemixPicked(res.assets[0]);
+    setRemixStatus('Selected. Ready to upload for remix.');
+    setRemixTone('neutral');
+  };
+
+  const uploadRemix = async () => {
+    if (!remixPicked || remixUploading) return;
+    setRemixUploading(true);
+    setRemixStatus('Uploading for remix...');
+    setRemixTone('neutral');
+    const notes = remixNotes.trim();
+    try {
+      if (Platform.OS === 'web') {
+        const file = remixPicked as any;
+        const form = new FormData();
+        form.append('video', (file.file as File) ?? (file as any), remixPicked.name || 'video.mp4');
+        if (notes) {
+          form.append('remix_notes', notes);
+        }
+        const resp = await fetch(`${API_URL}/upload`, { method: 'POST', body: form as any });
+        const json = await resp.json();
+        if (!resp.ok) {
+          setRemixStatus(`Upload failed: ${json.error || json.message || resp.statusText}`);
+          setRemixTone('bad');
+          return;
+        }
+        const label = json.file_path || json.message || 'Upload complete';
+        const id = json.video_id ? ` (id: ${json.video_id})` : '';
+        setRemixStatus(`Uploaded: ${label}${id}. Remix pipeline will run once connected.`);
+        setRemixTone('good');
+      } else {
+        const resp = await FileSystem.uploadAsync(`${API_URL}/upload`, remixPicked.uri, {
+          fieldName: 'video',
+          httpMethod: 'POST',
+          uploadType: 'multipart' as any,
+          parameters: {
+            filename: remixPicked.name || 'video.mp4',
+            ...(notes ? { remix_notes: notes } : {}),
+          },
+        });
+        const json = JSON.parse(resp.body);
+        if (resp.status >= 400) {
+          setRemixStatus(`Upload failed: ${json.error || json.message || `HTTP ${resp.status}`}`);
+          setRemixTone('bad');
+          return;
+        }
+        const label = json.file_path || json.message || 'Upload complete';
+        const id = json.video_id ? ` (id: ${json.video_id})` : '';
+        setRemixStatus(`Uploaded: ${label}${id}. Remix pipeline will run once connected.`);
+        setRemixTone('good');
+      }
+    } catch (e: any) {
+      setRemixStatus(`Upload failed: ${e?.message || String(e)}`);
+      setRemixTone('bad');
+    } finally {
+      setRemixUploading(false);
+    }
+  };
+
   const toneStyle = (tone: 'neutral' | 'good' | 'bad') =>
     tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
 
   const statusStyle = toneStyle(statusTone);
+  const remixStatusStyle = toneStyle(remixTone);
 
   const updateSpec = (key: keyof typeof DEFAULT_PROMPT_SPEC, value: string | boolean) => {
     setPromptSpec((prev) => ({ ...prev, [key]: value }));
@@ -564,7 +665,28 @@ export default function HomeScreen() {
           <Text style={styles.title}>LazyEdit</Text>
           <Text style={styles.subtitle}>Multilingual Video Editor</Text>
 
-        <View style={styles.stepRow}>
+          <View style={styles.tabRow}>
+            {[
+              { key: 'upload', label: 'Upload' },
+              { key: 'generate', label: 'Generate' },
+              { key: 'remix', label: 'Remix' },
+            ].map((tab) => {
+              const isActive = activeTab === tab.key;
+              return (
+                <Pressable
+                  key={tab.key}
+                  style={[styles.tabButton, isActive && styles.tabButtonActive]}
+                  onPress={() => setActiveTab(tab.key as 'upload' | 'generate' | 'remix')}
+                >
+                  <Text style={[styles.tabButtonText, isActive && styles.tabButtonTextActive]}>{tab.label}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
+
+          {activeTab === 'upload' ? (
+            <>
+              <View style={styles.stepRow}>
           <View style={styles.stepBadge}>
             <Text style={styles.stepText}>1</Text>
           </View>
@@ -622,11 +744,14 @@ export default function HomeScreen() {
           </View>
         </Pressable>
 
-          {status ? <Text style={[styles.status, statusStyle]}>{status}</Text> : null}
+              {status ? <Text style={[styles.status, statusStyle]}>{status}</Text> : null}
+            </>
+          ) : null}
 
+          {activeTab === 'generate' ? (
             <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Generate video</Text>
-            <Text style={styles.sectionSubtitle}>Build specs, generate a prompt, then render a video.</Text>
+              <Text style={styles.sectionTitle}>Generate video</Text>
+              <Text style={styles.sectionSubtitle}>Build specs, generate a prompt, then render a video.</Text>
 
             <View style={styles.panel}>
               <View style={styles.panelHeader}>
@@ -971,6 +1096,85 @@ export default function HomeScreen() {
               </View>
             ) : null}
           </View>
+          ) : null}
+
+          {activeTab === 'remix' ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Remix video</Text>
+              <Text style={styles.sectionSubtitle}>
+                Upload a video and provide remix directions for audio and scene changes.
+              </Text>
+
+              <View style={styles.stepRow}>
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepText}>1</Text>
+                </View>
+                <Text style={styles.stepLabel}>Pick a video</Text>
+              </View>
+
+              <Pressable style={styles.btnPrimary} onPress={pickRemix}>
+                <Text style={styles.btnText}>{remixPicked ? 'Pick another video' : 'Pick a video'}</Text>
+              </Pressable>
+
+              <View style={styles.card}>
+                {remixPicked ? (
+                  <>
+                    <Text style={styles.cardTitle}>Selected video</Text>
+                    <Text style={styles.fileName} numberOfLines={1}>
+                      {remixFileLabel}
+                    </Text>
+                    <Text style={styles.fileMeta}>{remixFileMeta}</Text>
+                    {Platform.OS === 'web' && remixPreviewUrl ? (
+                      <View style={styles.previewBox}>
+                        {React.createElement('video', {
+                          src: remixPreviewUrl,
+                          style: { width: '100%', borderRadius: 12, maxHeight: 260 },
+                          controls: true,
+                          preload: 'metadata',
+                        })}
+                      </View>
+                    ) : (
+                      <Text style={styles.previewHint}>Preview available on web. Ready to remix.</Text>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.cardTitle}>No video selected</Text>
+                    <Text style={styles.previewHint}>Pick a video to preview and remix.</Text>
+                  </>
+                )}
+              </View>
+
+              <Text style={styles.fieldLabel}>Remix directions (optional)</Text>
+              <TextInput
+                style={styles.textArea}
+                value={remixNotes}
+                onChangeText={setRemixNotes}
+                placeholder="Describe changes to audio, dialogue, pacing, or scene style."
+                multiline
+              />
+
+              <View style={styles.stepRow}>
+                <View style={styles.stepBadge}>
+                  <Text style={styles.stepText}>2</Text>
+                </View>
+                <Text style={styles.stepLabel}>Upload for remix</Text>
+              </View>
+
+              <Pressable
+                disabled={!remixPicked || remixUploading}
+                style={[styles.btnSecondary, (!remixPicked || remixUploading) && styles.btnDisabled]}
+                onPress={uploadRemix}
+              >
+                <View style={styles.btnContent}>
+                  {remixUploading && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                  <Text style={styles.btnText}>{remixUploading ? 'Uploading...' : 'Upload for remix'}</Text>
+                </View>
+              </Pressable>
+
+              {remixStatus ? <Text style={[styles.status, remixStatusStyle]}>{remixStatus}</Text> : null}
+            </View>
+          ) : null}
         </View>
         <Text style={styles.help}>Backend: {API_URL}</Text>
       </ScrollView>
@@ -1001,6 +1205,32 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: '#334155',
+  },
+  tabRow: {
+    marginTop: 16,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  tabButton: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    backgroundColor: 'white',
+  },
+  tabButtonActive: {
+    backgroundColor: '#0f172a',
+    borderColor: '#0f172a',
+  },
+  tabButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#1e293b',
+  },
+  tabButtonTextActive: {
+    color: 'white',
   },
   stepRow: {
     flexDirection: 'row',
