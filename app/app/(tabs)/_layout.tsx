@@ -77,6 +77,12 @@ export default function TabLayout() {
       tabBar={(props) => <GradientTabBar {...props} />}
     >
       <Tabs.Screen
+        name="index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
         name="home"
         options={{
           title: 'Home',
