@@ -1,3 +1,6 @@
 [submodule "furigana"]
 	path = furigana
 	url = git@github.com:lachlanchen/FuriganaSubtitles.git
+[submodule "AutoPublish"]
+	path = AutoPublish
+	url = git@github.com:lachlanchen/AutoPublish.git

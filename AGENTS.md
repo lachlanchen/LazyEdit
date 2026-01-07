@@ -32,6 +32,15 @@ Note on symlinks: Never edit files inside symlinked directories from this reposi
   ./start_lazyedit.sh  # starts tmux session "lazyedit"
   ```
 
+## AutoPublish Submodule Sync
+- `AutoPublish/` is tracked as a git submodule (GitHub: `git@github.com:lachlanchen/AutoPublish.git`).
+- After pushing AutoPublish changes from this repo, pull them on the Raspberry Pi:
+  ```bash
+  ssh lachlan@lazyingart
+  cd ~/Projects/auto-publish
+  git pull github main
+  ```
+
 ## Coding Style & Naming Conventions
 - Python 3.10+, PEP 8, 4‑space indentation.
 - Filenames/functions: snake_case (e.g., `subtitle_metadata.py`). Classes: CapWords. Constants: UPPER_CASE.
