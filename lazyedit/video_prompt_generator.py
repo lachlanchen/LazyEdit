@@ -37,7 +37,10 @@ class VideoPromptGenerator(OpenAIRequestJSONBase):
         user_template = prompt_payload.get("user") or ""
         prompt = self._render_prompt_template(
             user_template,
-            {"PROMPT_SPEC": prompt_spec or "None"},
+            {
+                "PROMPT_SPEC": prompt_spec or "None",
+                "IDEA_PROMPT": prompt_spec or "None",
+            },
         )
         return self.send_request_with_json_schema(
             prompt=prompt,
