@@ -31,6 +31,8 @@ type TranscriptionDetail = {
   md_url?: string | null;
   srt_url?: string | null;
   json_url?: string | null;
+  primary_language?: string | null;
+  language_summary?: { language: string; count: number }[];
   error?: string | null;
   created_at?: string | null;
 };
@@ -119,6 +121,24 @@ const TRANSLATE_LANG_LABELS: Record<TranslateLang, string> = {
   yue: 'Cantonese',
   'zh-Hant': 'Chinese (Traditional)',
   'zh-Hans': 'Chinese (Simplified)',
+};
+
+const AUDIO_LANG_LABELS: Record<string, string> = {
+  en: 'English',
+  ja: 'Japanese',
+  zh: 'Chinese',
+  yue: 'Cantonese',
+  ko: 'Korean',
+  vi: 'Vietnamese',
+  ar: 'Arabic',
+  fr: 'French',
+  es: 'Spanish',
+  ru: 'Russian',
+};
+
+const formatAudioLanguage = (code: string) => {
+  const label = AUDIO_LANG_LABELS[code] || code.toUpperCase();
+  return `${label} (${code})`;
 };
 
 const normalizeTranslateLang = (value: string): TranslateLang | null => {
@@ -213,6 +233,16 @@ export default function VideoDetailScreen() {
   ];
   const previewTranslation = translations.find((item) => item.language_code === previewLang) || null;
   const previewLabel = TRANSLATE_LANG_LABELS[previewLang] || previewLang;
+  const transcriptionLanguages = useMemo(() => {
+    if (!transcription) return null;
+    if (transcription.primary_language) {
+      return `Language: ${formatAudioLanguage(transcription.primary_language)}`;
+    }
+    const summary = transcription.language_summary || [];
+    if (!summary.length) return null;
+    const labels = summary.map((item) => formatAudioLanguage(item.language));
+    return `Languages: ${labels.join(', ')}`;
+  }, [transcription]);
   const metadataTabs: Array<{ code: 'zh' | 'en'; label: string }> = [
     { code: 'zh', label: 'Chinese social' },
     { code: 'en', label: 'English YouTube' },
@@ -786,6 +816,9 @@ export default function VideoDetailScreen() {
               <Text style={styles.sectionMeta}>
                 Status: {transcription.status}
               </Text>
+              {transcriptionLanguages ? (
+                <Text style={styles.sectionMeta}>{transcriptionLanguages}</Text>
+              ) : null}
               {transcription.preview_text ? (
                 <Text style={styles.previewText}>{transcription.preview_text}</Text>
               ) : (

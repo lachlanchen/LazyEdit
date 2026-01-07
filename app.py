@@ -946,6 +946,179 @@ def find_latest_transcription_outputs(output_folder, base_name):
     return latest_json, latest_srt
 
 
+def _normalize_transcription_language(value: object | None) -> str | None:
+    if value is None:
+        return None
+    raw = str(value).strip().lower()
+    if not raw:
+        return None
+    if raw in {"yue", "zh-yue", "yue-hk", "zh-yue-hk"}:
+        return "yue"
+    if raw in {"zh", "zho", "cmn", "zh-cn", "zh-tw", "zh-hk", "zh-mo", "zh-hans", "zh-hant"}:
+        return "zh"
+    if raw in {"en", "ja", "ko", "vi", "ar", "fr", "es", "ru"}:
+        return raw
+    return raw
+
+
+def _summarize_transcription_languages(json_path: str | None) -> tuple[str | None, list[dict[str, int]]]:
+    if not json_path or not os.path.exists(json_path):
+        return None, []
+    try:
+        with open(json_path, "r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except Exception:
+        return None, []
+
+    if isinstance(payload, dict):
+        items = payload.get("items") or payload.get("subtitles") or payload.get("segments") or []
+    elif isinstance(payload, list):
+        items = payload
+    else:
+        items = []
+
+    counts: dict[str, int] = {}
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        lang = _normalize_transcription_language(item.get("lang") or item.get("language"))
+        if not lang:
+            continue
+        counts[lang] = counts.get(lang, 0) + 1
+
+    if not counts:
+        return None, []
+
+    primary = max(counts.items(), key=lambda pair: pair[1])[0]
+    summary = [
+        {"language": lang, "count": count}
+        for lang, count in sorted(counts.items(), key=lambda pair: (-pair[1], pair[0]))
+    ]
+    return primary, summary
+
+
+def _build_transcription_language_map(json_path: str | None) -> dict[tuple[str, str], str]:
+    if not json_path or not os.path.exists(json_path):
+        return {}
+    try:
+        with open(json_path, "r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except Exception:
+        return {}
+
+    if isinstance(payload, dict):
+        items = payload.get("items") or payload.get("subtitles") or payload.get("segments") or []
+    elif isinstance(payload, list):
+        items = payload
+    else:
+        items = []
+
+    mapping: dict[tuple[str, str], str] = {}
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        start = item.get("start")
+        end = item.get("end")
+        if not start or not end:
+            continue
+        lang = _normalize_transcription_language(item.get("lang") or item.get("language"))
+        if not lang:
+            continue
+        mapping[(str(start), str(end))] = lang
+    return mapping
+
+
+def _speaker_lang_key(value: str | None) -> str | None:
+    if not value:
+        return None
+    raw = str(value).strip().lower()
+    if raw in {"zh", "zh-hant", "zh_hant", "zh-hans", "zh_hans", "zh-cn", "zh-tw", "zh-hk", "zh-mo"}:
+        return "zh"
+    if raw in {"yue", "zh-yue", "yue-hk", "zh-yue-hk"}:
+        return "yue"
+    return raw
+
+
+def _prepare_speaker_json(
+    json_path: str,
+    output_dir: str,
+    slot_language: str,
+    text_key: str | None,
+    speaker_map: dict[tuple[str, str], str],
+    icon: str = "🔊",
+) -> str:
+    if not speaker_map or not json_path or not os.path.exists(json_path):
+        return json_path
+    try:
+        with open(json_path, "r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except Exception:
+        return json_path
+
+    if isinstance(payload, dict):
+        items = payload.get("items") or payload.get("subtitles") or payload.get("segments") or []
+        container = payload
+    elif isinstance(payload, list):
+        items = payload
+        container = None
+    else:
+        return json_path
+
+    slot_key = _speaker_lang_key(slot_language)
+    if not slot_key:
+        return json_path
+
+    modified = False
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        start = item.get("start")
+        end = item.get("end")
+        if not start or not end:
+            continue
+        original_lang = _speaker_lang_key(speaker_map.get((str(start), str(end))))
+        if not original_lang or original_lang != slot_key:
+            continue
+
+        tokens = item.get("tokens")
+        if isinstance(tokens, list):
+            if tokens and isinstance(tokens[0], dict) and tokens[0].get("type") == "speaker":
+                continue
+            item["tokens"] = [{"text": icon, "type": "speaker"}] + tokens
+            modified = True
+            continue
+
+        key = text_key or "text"
+        if key in item and isinstance(item[key], str):
+            text_value = item[key].lstrip()
+            if text_value.startswith(icon):
+                continue
+            item[key] = f"{icon} {text_value}"
+            modified = True
+            continue
+
+        if "text" in item and isinstance(item["text"], str):
+            text_value = item["text"].lstrip()
+            if text_value.startswith(icon):
+                continue
+            item["text"] = f"{icon} {text_value}"
+            modified = True
+
+    if not modified:
+        return json_path
+
+    os.makedirs(output_dir, exist_ok=True)
+    base_name = os.path.splitext(os.path.basename(json_path))[0]
+    safe_lang = slot_language.replace("/", "_")
+    output_path = os.path.join(output_dir, f"{base_name}_speaker_{safe_lang}.json")
+    try:
+        with open(output_path, "w", encoding="utf-8") as handle:
+            json.dump(container if container is not None else items, handle, ensure_ascii=False, indent=2)
+    except Exception:
+        return json_path
+    return output_path
+
+
 def build_srt_preview_with_timestamps(srt_path, max_entries=6):
     if not srt_path or not os.path.exists(srt_path):
         return None
@@ -2857,6 +3030,7 @@ class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
                 output_md_mixed,
                 message,
             )
+            primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
             return self.write({
                 "id": transcription_id,
                 "video_id": video_id_i,
@@ -2869,6 +3043,8 @@ class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
                 "srt_url": media_url_for_path(output_srt_mixed),
                 "md_url": media_url_for_path(output_md_mixed),
                 "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
+                "primary_language": primary_lang,
+                "language_summary": language_summary,
             })
 
         # Clear stale outputs to avoid returning old data if transcription fails.
@@ -2904,6 +3080,7 @@ class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
                 output_md_mixed,
                 None,
             )
+            primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
             self.write({
                 "id": transcription_id,
                 "video_id": video_id_i,
@@ -2915,6 +3092,8 @@ class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
                 "srt_url": media_url_for_path(output_srt_mixed),
                 "md_url": media_url_for_path(output_md_mixed),
                 "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
+                "primary_language": primary_lang,
+                "language_summary": language_summary,
             })
         except Exception as e:
             transcription_id = ldb.add_transcription(
@@ -2952,6 +3131,7 @@ class VideoTranscriptionHandler(CorsMixin, tornado.web.RequestHandler):
             error,
             created_at,
         ) = row
+        primary_lang, language_summary = _summarize_transcription_languages(output_json_path)
         self.write({
             "id": transcription_id,
             "video_id": video_id_i,
@@ -2966,6 +3146,8 @@ class VideoTranscriptionHandler(CorsMixin, tornado.web.RequestHandler):
             "error": error,
             "created_at": created_at.isoformat() if created_at else None,
             "preview_text": build_transcription_preview(output_md_path, output_srt_path),
+            "primary_language": primary_lang,
+            "language_summary": language_summary,
         })
 
 
@@ -4122,6 +4304,15 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(404)
             return self.write({"error": "video file missing"})
 
+        output_folder = os.path.dirname(video_path)
+        base_name = os.path.splitext(os.path.basename(video_path))[0]
+        speaker_output_dir = os.path.join(output_folder, "burn")
+        transcription_row = ldb.get_latest_transcription(video_id_i)
+        speaker_map: dict[tuple[str, str], str] = {}
+        if transcription_row:
+            transcription_json_path = transcription_row[3]
+            speaker_map = _build_transcription_language_map(transcription_json_path)
+
         assignments: list[BurnSlotConfig] = []
         for slot in slots_config:
             if not isinstance(slot, dict):
@@ -4164,11 +4355,18 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
 
             palette = load_grammar_palette(lang)
             auto_ruby = lang == "ja"
+            speaker_json_path = _prepare_speaker_json(
+                output_json_path,
+                speaker_output_dir,
+                lang,
+                text_key,
+                speaker_map,
+            )
             assignments.append(
                 BurnSlotConfig(
                     slot_id=slot_id,
                     language=lang,
-                    json_path=output_json_path,
+                    json_path=speaker_json_path,
                     text_key=text_key,
                     ruby_key="ruby" if lang == "ja" else None,
                     palette=palette,
@@ -4188,8 +4386,6 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(400)
             return self.write({"error": "no valid subtitle slots configured"})
 
-        output_folder = os.path.dirname(video_path)
-        base_name = os.path.splitext(os.path.basename(video_path))[0]
         temp_output = os.path.join(output_folder, f"{base_name}_subtitles_render.avi")
         output_path = os.path.join(output_folder, f"{base_name}_subtitles.mp4")
         height_ratio = layout_config.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5))

@@ -10,12 +10,32 @@ type TranscriptionDetail = {
   md_url?: string | null;
   srt_url?: string | null;
   json_url?: string | null;
+  primary_language?: string | null;
+  language_summary?: { language: string; count: number }[];
   error?: string | null;
   created_at?: string | null;
 };
 
 const formatTimestamp = (value?: string | null) =>
   value ? value.slice(0, 19).replace('T', ' ') : 'Unknown time';
+
+const AUDIO_LANG_LABELS: Record<string, string> = {
+  en: 'English',
+  ja: 'Japanese',
+  zh: 'Chinese',
+  yue: 'Cantonese',
+  ko: 'Korean',
+  vi: 'Vietnamese',
+  ar: 'Arabic',
+  fr: 'French',
+  es: 'Spanish',
+  ru: 'Russian',
+};
+
+const formatAudioLanguage = (code: string) => {
+  const label = AUDIO_LANG_LABELS[code] || code.toUpperCase();
+  return `${label} (${code})`;
+};
 
 export default function TranscriptionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -25,6 +45,16 @@ export default function TranscriptionScreen() {
   const [error, setError] = useState<string>('');
 
   const headerTitle = useMemo(() => 'Transcription', []);
+  const languageLine = useMemo(() => {
+    if (!transcription) return null;
+    if (transcription.primary_language) {
+      return `Language: ${formatAudioLanguage(transcription.primary_language)}`;
+    }
+    const summary = transcription.language_summary || [];
+    if (!summary.length) return null;
+    const labels = summary.map((item) => formatAudioLanguage(item.language));
+    return `Languages: ${labels.join(', ')}`;
+  }, [transcription]);
 
   useEffect(() => {
     if (!id) return;
@@ -82,6 +112,7 @@ export default function TranscriptionScreen() {
       <Stack.Screen options={{ title: headerTitle, headerBackTitle: 'Video' }} />
       <Text style={styles.title}>Transcription</Text>
       <Text style={styles.meta}>Status: {transcription.status}</Text>
+      {languageLine ? <Text style={styles.meta}>{languageLine}</Text> : null}
       <Text style={styles.meta}>Created: {formatTimestamp(transcription.created_at)}</Text>
       {transcription.error ? <Text style={styles.error}>{transcription.error}</Text> : null}
       <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 24 }}>
