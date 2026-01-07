@@ -32,21 +32,21 @@ const formatBytes = (bytes?: number | null) => {
 
 const DEFAULT_PROMPT_SPEC = {
   autoTitle: true,
-  title: 'Mist Valley Oracle',
+  title: 'Oracle of the Mist Valley',
   subject: 'A fictional oracle in a silver robe, fully clothed',
-  action: 'She senses the future as mist drifts through the valley',
+  action: 'She senses the future and delivers a short philosophical line to the viewer',
   environment: 'Dawn light, floating isles, ancient ruins in fog',
-  camera: 'Slow orbit, smooth tracking, 35mm lens',
+  camera: 'Slow orbit, gentle push-in, 35mm lens',
   lighting: 'Soft sunrise glow, volumetric mist',
   mood: 'Serene, mysterious, hopeful',
   style: 'Cinematic, high detail, natural color grading',
   aspectRatio: '16:9',
-  durationSeconds: '8',
+  durationSeconds: '10',
   audioLanguage: 'auto',
-  sceneCount: '',
-  spokenWords: '',
-  extraRequirements: '',
-  negative: 'no text, no logos, no gore',
+  sceneCount: '2',
+  spokenWords: 'She says, "In the mist, the future listens."',
+  extraRequirements: 'Complete micro-story arc with a calm reveal at the end.',
+  negative: 'no text, no logos, no gore, no real people',
 };
 
 const ASPECT_OPTIONS = [
