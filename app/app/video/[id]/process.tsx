@@ -141,6 +141,18 @@ export default function ProcessVideoScreen() {
     })();
   }, [id]);
 
+  const slotLanguages = useMemo(() => {
+    const slots = burnLayout?.slots || [];
+    return slots
+      .map((slot) => slot.language)
+      .filter((lang): lang is string => Boolean(lang));
+  }, [burnLayout]);
+
+  const translationTargetLanguages = useMemo(() => {
+    const combined = [...translationLanguages, ...slotLanguages];
+    return Array.from(new Set(combined.filter(Boolean)));
+  }, [translationLanguages, slotLanguages]);
+
   const updateStatus = (step: StepKey, status: StepState, detail?: string) => {
     setStepStatus((prev) => ({ ...prev, [step]: status }));
     if (detail) {
@@ -180,7 +192,7 @@ export default function ProcessVideoScreen() {
 
   const ensureTranslations = async () => {
     if (!id) return true;
-    const languages = translationLanguages || [];
+    const languages = translationTargetLanguages || [];
     if (!languages.length) {
       updateStatus('translate', 'skipped', 'No languages selected');
       return true;
