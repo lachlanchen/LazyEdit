@@ -1010,7 +1010,7 @@ export default function VideoDetailScreen() {
 
           {translateStatus ? <Text style={[styles.status, translateStatusStyle]}>{translateStatus}</Text> : null}
 
-          <Pressable style={[styles.btnGreen, styles.btnCenter]} onPress={openBurnPage}>
+          <Pressable style={[styles.btnAccent, styles.btnCenter]} onPress={openBurnPage}>
             <View style={styles.btnContent}>
               <Text style={styles.btnText}>Burn subtitles</Text>
             </View>
@@ -1174,7 +1174,7 @@ export default function VideoDetailScreen() {
             </Pressable>
           </View>
           <Pressable
-            style={[styles.btnGreen, styles.metaButtonFull, styles.btnCenter, metadataGeneratingAll && styles.btnDisabled]}
+            style={[styles.btnAccent, styles.metaButtonFull, styles.btnCenter, metadataGeneratingAll && styles.btnDisabled]}
             onPress={generateMetadataAll}
             disabled={metadataGeneratingAll}
           >
@@ -1262,9 +1262,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignSelf: 'flex-start',
   },
-  btnGreen: {
+  btnAccent: {
     marginTop: 10,
-    backgroundColor: '#16a34a',
+    backgroundColor: '#06b6d4',
     paddingVertical: 12,
     paddingHorizontal: 18,
     borderRadius: 12,
