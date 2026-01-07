@@ -31,6 +31,55 @@ LazyEdit is an AI-powered automatic video editing tool that processes videos to 
 - **Multi-language Support**: Handles various languages including English and Chinese
 - **Cover Image Generation**: Extracts optimal cover images with word overlays
 
+## Demos
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="figs/demos/demo_01_home_upload.png" alt="Home upload" width="240" />
+      <br /><sub>Home · Upload</sub>
+    </td>
+    <td align="center">
+      <img src="figs/demos/demo_02_home_generate.png" alt="Home generate" width="240" />
+      <br /><sub>Home · Generate</sub>
+    </td>
+    <td align="center">
+      <img src="figs/demos/demo_03_home_remix.png" alt="Home remix" width="240" />
+      <br /><sub>Home · Remix</sub>
+    </td>
+    <td align="center">
+      <img src="figs/demos/demo_04_library.png" alt="Library list" width="240" />
+      <br /><sub>Library</sub>
+    </td>
+    <td align="center">
+      <img src="figs/demos/demo_05_video_overview.png" alt="Video overview" width="240" />
+      <br /><sub>Video overview</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="figs/demos/demo_06_translation_preview.png" alt="Translation preview" width="240" />
+      <br /><sub>Translation preview</sub>
+    </td>
+    <td align="center">
+      <img src="figs/demos/demo_07_burn_slots.png" alt="Burn slots" width="240" />
+      <br /><sub>Burn slots</sub>
+    </td>
+    <td align="center">
+      <img src="figs/demos/demo_08_burn_layout.png" alt="Burn layout" width="240" />
+      <br /><sub>Burn layout</sub>
+    </td>
+    <td align="center">
+      <img src="figs/demos/demo_09_keyframes_captions.png" alt="Keyframes and captions" width="240" />
+      <br /><sub>Keyframes + captions</sub>
+    </td>
+    <td align="center">
+      <img src="figs/demos/demo_10_metadata_generator.png" alt="Metadata generator" width="240" />
+      <br /><sub>Metadata generator</sub>
+    </td>
+  </tr>
+</table>
+
 ## Installation
 
 ### Prerequisites
