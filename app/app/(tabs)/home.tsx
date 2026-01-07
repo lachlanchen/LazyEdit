@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 
@@ -20,6 +20,7 @@ const formatBytes = (bytes?: number | null) => {
 };
 
 const DEFAULT_PROMPT_SPEC = {
+  autoTitle: true,
   title: 'Mist Valley Oracle',
   subject: 'A fictional oracle in a silver robe, fully clothed',
   action: 'She senses the future as mist drifts through the valley',
@@ -57,6 +58,7 @@ export default function HomeScreen() {
   const [prompting, setPrompting] = useState(false);
   const [promptStatus, setPromptStatus] = useState<string>('');
   const [promptTone, setPromptTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [promptSpecLoaded, setPromptSpecLoaded] = useState(false);
   const [generatingVideo, setGeneratingVideo] = useState(false);
   const [videoStatus, setVideoStatus] = useState<string>('');
   const [videoTone, setVideoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -155,7 +157,7 @@ export default function HomeScreen() {
 
   const statusStyle = toneStyle(statusTone);
 
-  const updateSpec = (key: keyof typeof DEFAULT_PROMPT_SPEC, value: string) => {
+  const updateSpec = (key: keyof typeof DEFAULT_PROMPT_SPEC, value: string | boolean) => {
     setPromptSpec((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -167,7 +169,9 @@ export default function HomeScreen() {
       if (!cleaned) return;
       payload[key] = cleaned;
     };
-    assign('title', promptSpec.title);
+    if (!promptSpec.autoTitle) {
+      assign('title', promptSpec.title);
+    }
     assign('subject', promptSpec.subject);
     assign('action', promptSpec.action);
     assign('environment', promptSpec.environment);
@@ -185,6 +189,37 @@ export default function HomeScreen() {
     }
     return payload;
   };
+
+  const loadPromptSettings = async () => {
+    try {
+      const resp = await fetch(`${API_URL}/api/ui-settings/video_prompt`);
+      const json = await resp.json();
+      if (!resp.ok) return;
+      if (json.value) {
+        setPromptSpec({ ...DEFAULT_PROMPT_SPEC, ...json.value });
+      }
+    } catch (_err) {
+      // ignore
+    } finally {
+      setPromptSpecLoaded(true);
+    }
+  };
+
+  useEffect(() => {
+    loadPromptSettings();
+  }, []);
+
+  useEffect(() => {
+    if (!promptSpecLoaded) return;
+    const timeout = setTimeout(() => {
+      fetch(`${API_URL}/api/ui-settings/video_prompt`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(promptSpec),
+      }).catch(() => {});
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [promptSpec, promptSpecLoaded]);
 
   const generatePrompt = async () => {
     if (prompting) return;
@@ -235,7 +270,7 @@ export default function HomeScreen() {
     setVideoTone('neutral');
     try {
       const spec = buildPromptSpecPayload();
-      const title = spec.title || 'Generated video';
+      const title = promptSpec.autoTitle ? 'Generated video' : spec.title || 'Generated video';
       const resp = await fetch(`${API_URL}/api/videos/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -342,7 +377,24 @@ export default function HomeScreen() {
               <Text style={styles.panelHint}>Describe the scene, action, and visual tone.</Text>
 
               <Text style={styles.fieldLabel}>Title</Text>
-              <TextInput style={styles.input} value={promptSpec.title} onChangeText={(v) => updateSpec('title', v)} />
+              <TextInput
+                style={[styles.input, promptSpec.autoTitle && styles.inputDisabled]}
+                value={promptSpec.title}
+                onChangeText={(v) => updateSpec('title', v)}
+                editable={!promptSpec.autoTitle}
+              />
+              <View style={styles.toggleRow}>
+                <View>
+                  <Text style={styles.toggleLabel}>Auto title</Text>
+                  <Text style={styles.toggleHint}>Let the model name the scene</Text>
+                </View>
+                <Switch
+                  value={promptSpec.autoTitle}
+                  onValueChange={(value) => updateSpec('autoTitle', value)}
+                  trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                  thumbColor={promptSpec.autoTitle ? '#f8fafc' : '#f1f5f9'}
+                />
+              </View>
 
               <Text style={styles.fieldLabel}>Subject</Text>
               <TextInput
@@ -647,6 +699,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     color: '#111827',
   },
+  inputDisabled: {
+    backgroundColor: '#f1f5f9',
+    color: '#94a3b8',
+  },
   textArea: {
     marginTop: 8,
     minHeight: 80,
@@ -718,6 +774,21 @@ const styles = StyleSheet.create({
   },
   chipTextActive: {
     color: 'white',
+  },
+  toggleRow: {
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  toggleLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  toggleHint: {
+    fontSize: 11,
+    color: '#64748b',
   },
   status: {
     marginTop: 14,

@@ -109,6 +109,20 @@ DEFAULT_TRANSLATION_STYLE = {
     "bgOpacity": 0.5,
 }
 DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
+DEFAULT_VIDEO_PROMPT_SPEC = {
+    "autoTitle": True,
+    "title": "Mist Valley Oracle",
+    "subject": "A fictional oracle in a silver robe, fully clothed",
+    "action": "She senses the future as mist drifts through the valley",
+    "environment": "Dawn light, floating isles, ancient ruins in fog",
+    "camera": "Slow orbit, smooth tracking, 35mm lens",
+    "lighting": "Soft sunrise glow, volumetric mist",
+    "mood": "Serene, mysterious, hopeful",
+    "style": "Cinematic, high detail, natural color grading",
+    "aspectRatio": "16:9",
+    "durationSeconds": "8",
+    "negative": "no text, no logos, no gore",
+}
 DEFAULT_BURN_LAYOUT = {
     "heightRatio": 0.5,
     "rows": 4,
@@ -315,6 +329,45 @@ def _sanitize_translation_languages(payload) -> list[str]:
         if code and code not in cleaned:
             cleaned.append(code)
     return cleaned or DEFAULT_TRANSLATION_LANGUAGES.copy()
+
+
+def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        return DEFAULT_VIDEO_PROMPT_SPEC.copy()
+
+    def _string(key: str, fallback: str) -> str:
+        value = payload.get(key, fallback)
+        if value is None:
+            return fallback
+        text = str(value).strip()
+        return text or fallback
+
+    auto_title = payload.get("autoTitle")
+    auto_title = bool(auto_title) if isinstance(auto_title, bool) else DEFAULT_VIDEO_PROMPT_SPEC["autoTitle"]
+
+    aspect_ratio = str(payload.get("aspectRatio") or DEFAULT_VIDEO_PROMPT_SPEC["aspectRatio"])
+    if aspect_ratio not in {"16:9", "9:16", "auto"}:
+        aspect_ratio = DEFAULT_VIDEO_PROMPT_SPEC["aspectRatio"]
+
+    duration_value = str(payload.get("durationSeconds") or DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
+    duration_value = "".join(ch for ch in duration_value if ch.isdigit())
+    if not duration_value:
+        duration_value = str(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
+
+    return {
+        "autoTitle": auto_title,
+        "title": _string("title", DEFAULT_VIDEO_PROMPT_SPEC["title"]),
+        "subject": _string("subject", DEFAULT_VIDEO_PROMPT_SPEC["subject"]),
+        "action": _string("action", DEFAULT_VIDEO_PROMPT_SPEC["action"]),
+        "environment": _string("environment", DEFAULT_VIDEO_PROMPT_SPEC["environment"]),
+        "camera": _string("camera", DEFAULT_VIDEO_PROMPT_SPEC["camera"]),
+        "lighting": _string("lighting", DEFAULT_VIDEO_PROMPT_SPEC["lighting"]),
+        "mood": _string("mood", DEFAULT_VIDEO_PROMPT_SPEC["mood"]),
+        "style": _string("style", DEFAULT_VIDEO_PROMPT_SPEC["style"]),
+        "aspectRatio": aspect_ratio,
+        "durationSeconds": duration_value,
+        "negative": _string("negative", DEFAULT_VIDEO_PROMPT_SPEC["negative"]),
+    }
 
 
 def _sanitize_burn_layout(payload: dict | list | None) -> dict:
@@ -2534,7 +2587,7 @@ class GrammarPaletteHandler(CorsMixin, tornado.web.RequestHandler):
 class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self, key):
         ldb.ensure_schema()
-        if key not in {"translation_style", "translation_languages", "burn_layout"}:
+        if key not in {"translation_style", "translation_languages", "burn_layout", "video_prompt"}:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
         saved = ldb.get_ui_preference(key)
@@ -2546,13 +2599,17 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_BURN_LAYOUT})
             return self.write({"key": key, "value": _sanitize_burn_layout(saved)})
+        if key == "video_prompt":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_VIDEO_PROMPT_SPEC})
+            return self.write({"key": key, "value": _sanitize_video_prompt_spec(saved)})
         if not saved:
             return self.write({"key": key, "value": DEFAULT_TRANSLATION_LANGUAGES})
         return self.write({"key": key, "value": _sanitize_translation_languages(saved)})
 
     def post(self, key):
         ldb.ensure_schema()
-        if key not in {"translation_style", "translation_languages", "burn_layout"}:
+        if key not in {"translation_style", "translation_languages", "burn_layout", "video_prompt"}:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
         try:
@@ -2563,6 +2620,8 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             cleaned = _sanitize_translation_style(data)
         elif key == "burn_layout":
             cleaned = _sanitize_burn_layout(data)
+        elif key == "video_prompt":
+            cleaned = _sanitize_video_prompt_spec(data)
         else:
             cleaned = _sanitize_translation_languages(data)
         ldb.set_ui_preference(key, cleaned)
