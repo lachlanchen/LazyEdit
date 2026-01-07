@@ -42,6 +42,10 @@ const DEFAULT_PROMPT_SPEC = {
   style: 'Cinematic, high detail, natural color grading',
   aspectRatio: '16:9',
   durationSeconds: '8',
+  audioLanguage: 'auto',
+  sceneCount: '',
+  spokenWords: '',
+  extraRequirements: '',
   negative: 'no text, no logos, no gore',
 };
 
@@ -50,25 +54,38 @@ const ASPECT_OPTIONS = [
   { value: '9:16', label: '9:16 Portrait' },
   { value: 'auto', label: 'Auto' },
 ];
+const AUDIO_LANGUAGE_OPTIONS = [
+  { value: 'auto', label: 'Auto (model decides)' },
+  { value: 'en', label: 'English' },
+  { value: 'zh', label: 'Chinese' },
+  { value: 'ja', label: 'Japanese' },
+  { value: 'ko', label: 'Korean' },
+  { value: 'vi', label: 'Vietnamese' },
+  { value: 'ar', label: 'Arabic' },
+  { value: 'fr', label: 'French' },
+  { value: 'es', label: 'Spanish' },
+];
 
 type PromptSpec = typeof DEFAULT_PROMPT_SPEC;
 type HistoryKey = keyof typeof DEFAULT_PROMPT_HISTORY;
 type HistoryState = typeof DEFAULT_PROMPT_HISTORY;
 
-const HistorySelect = ({
+const SelectControl = ({
   label,
   value,
   options,
   onChange,
+  hideIfSingle = false,
 }: {
   label: string;
   value: string;
   options: { value: string; label: string }[];
   onChange: (value: string) => void;
+  hideIfSingle?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const current = options.find((option) => option.value === value) || options[0];
-  if (options.length <= 1) return null;
+  if (hideIfSingle && options.length <= 1) return null;
   return (
     <>
       <Pressable style={styles.selectRow} onPress={() => setOpen(true)}>
@@ -105,6 +122,20 @@ const HistorySelect = ({
   );
 };
 
+const HistorySelect = ({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+}) => (
+  <SelectControl label={label} value={value} options={options} onChange={onChange} hideIfSingle />
+);
+
 const DEFAULT_PROMPT_HISTORY = {
   title: [],
   subject: [],
@@ -114,6 +145,10 @@ const DEFAULT_PROMPT_HISTORY = {
   lighting: [],
   mood: [],
   style: [],
+  audioLanguage: [],
+  sceneCount: [],
+  spokenWords: [],
+  extraRequirements: [],
   negative: [],
 };
 
@@ -260,9 +295,18 @@ export default function HomeScreen() {
     assign('mood', promptSpec.mood);
     assign('style', promptSpec.style);
     assign('negative', promptSpec.negative);
+    assign('spoken_words', promptSpec.spokenWords);
+    assign('extra_requirements', promptSpec.extraRequirements);
     const duration = parseInt(promptSpec.durationSeconds, 10);
     if (!Number.isNaN(duration)) {
       payload.duration_seconds = duration;
+    }
+    if (promptSpec.audioLanguage) {
+      payload.audio_language = promptSpec.audioLanguage;
+    }
+    const sceneCount = parseInt(promptSpec.sceneCount, 10);
+    if (!Number.isNaN(sceneCount)) {
+      payload.scene_count = sceneCount;
     }
     if (promptSpec.aspectRatio !== 'auto') {
       payload.aspect_ratio = promptSpec.aspectRatio;
@@ -305,6 +349,10 @@ export default function HomeScreen() {
     next = pushHistoryValue(next, 'lighting', promptSpec.lighting);
     next = pushHistoryValue(next, 'mood', promptSpec.mood);
     next = pushHistoryValue(next, 'style', promptSpec.style);
+    next = pushHistoryValue(next, 'audioLanguage', promptSpec.audioLanguage);
+    next = pushHistoryValue(next, 'sceneCount', promptSpec.sceneCount);
+    next = pushHistoryValue(next, 'spokenWords', promptSpec.spokenWords);
+    next = pushHistoryValue(next, 'extraRequirements', promptSpec.extraRequirements);
     next = pushHistoryValue(next, 'negative', promptSpec.negative);
     setPromptHistory(next);
     if (!promptHistoryLoaded) return;
@@ -605,6 +653,42 @@ export default function HomeScreen() {
             <View style={styles.panel}>
               <Text style={styles.panelTitle}>Controls</Text>
               <Text style={styles.panelHint}>Tune aspect ratio and length.</Text>
+
+              <Text style={styles.fieldLabel}>Audio language</Text>
+              <SelectControl
+                label="Audio language"
+                value={promptSpec.audioLanguage}
+                options={AUDIO_LANGUAGE_OPTIONS}
+                onChange={(value) => updateSpec('audioLanguage', value)}
+              />
+              {renderHistory('audioLanguage', (value) => updateSpec('audioLanguage', value))}
+
+              <Text style={styles.fieldLabel}>Spoken words (optional)</Text>
+              <TextInput
+                style={styles.textArea}
+                value={promptSpec.spokenWords}
+                onChangeText={(v) => updateSpec('spokenWords', v)}
+                multiline
+              />
+              {renderHistory('spokenWords', (value) => updateSpec('spokenWords', value))}
+
+              <Text style={styles.fieldLabel}>Scene count (optional)</Text>
+              <TextInput
+                style={styles.input}
+                value={promptSpec.sceneCount}
+                onChangeText={(value) => updateSpec('sceneCount', value.replace(/[^\d]/g, ''))}
+                keyboardType="numeric"
+              />
+              {renderHistory('sceneCount', (value) => updateSpec('sceneCount', value))}
+
+              <Text style={styles.fieldLabel}>Extra requirements</Text>
+              <TextInput
+                style={styles.textArea}
+                value={promptSpec.extraRequirements}
+                onChangeText={(v) => updateSpec('extraRequirements', v)}
+                multiline
+              />
+              {renderHistory('extraRequirements', (value) => updateSpec('extraRequirements', value))}
 
               <Text style={styles.fieldLabel}>Aspect ratio</Text>
               <View style={styles.chipRow}>

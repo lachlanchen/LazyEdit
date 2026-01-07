@@ -121,6 +121,10 @@ DEFAULT_VIDEO_PROMPT_SPEC = {
     "style": "Cinematic, high detail, natural color grading",
     "aspectRatio": "16:9",
     "durationSeconds": "8",
+    "audioLanguage": "auto",
+    "sceneCount": "",
+    "spokenWords": "",
+    "extraRequirements": "",
     "negative": "no text, no logos, no gore",
 }
 DEFAULT_VIDEO_PROMPT_HISTORY = {
@@ -132,6 +136,10 @@ DEFAULT_VIDEO_PROMPT_HISTORY = {
     "lighting": [],
     "mood": [],
     "style": [],
+    "audioLanguage": [],
+    "sceneCount": [],
+    "spokenWords": [],
+    "extraRequirements": [],
     "negative": [],
 }
 DEFAULT_BURN_LAYOUT = {
@@ -371,6 +379,13 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
     if not duration_value:
         duration_value = str(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
 
+    audio_language = str(payload.get("audioLanguage") or DEFAULT_VIDEO_PROMPT_SPEC["audioLanguage"])
+    if audio_language not in {"auto", "en", "zh", "ja", "ko", "vi", "ar", "fr", "es"}:
+        audio_language = DEFAULT_VIDEO_PROMPT_SPEC["audioLanguage"]
+
+    scene_count = str(payload.get("sceneCount") or "").strip()
+    scene_count = "".join(ch for ch in scene_count if ch.isdigit())
+
     return {
         "autoTitle": auto_title,
         "title": _string("title", DEFAULT_VIDEO_PROMPT_SPEC["title"]),
@@ -383,6 +398,10 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
         "style": _string("style", DEFAULT_VIDEO_PROMPT_SPEC["style"]),
         "aspectRatio": aspect_ratio,
         "durationSeconds": duration_value,
+        "audioLanguage": audio_language,
+        "sceneCount": scene_count,
+        "spokenWords": _string("spokenWords", DEFAULT_VIDEO_PROMPT_SPEC["spokenWords"]),
+        "extraRequirements": _string("extraRequirements", DEFAULT_VIDEO_PROMPT_SPEC["extraRequirements"]),
         "negative": _string("negative", DEFAULT_VIDEO_PROMPT_SPEC["negative"]),
     }
 
@@ -411,6 +430,10 @@ def _sanitize_video_prompt_history(payload: dict | None) -> dict:
         "lighting": _clean_list(payload.get("lighting")),
         "mood": _clean_list(payload.get("mood")),
         "style": _clean_list(payload.get("style")),
+        "audioLanguage": _clean_list(payload.get("audioLanguage")),
+        "sceneCount": _clean_list(payload.get("sceneCount")),
+        "spokenWords": _clean_list(payload.get("spokenWords")),
+        "extraRequirements": _clean_list(payload.get("extraRequirements")),
         "negative": _clean_list(payload.get("negative")),
     }
 
