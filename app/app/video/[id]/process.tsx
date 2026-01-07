@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
@@ -67,6 +67,8 @@ const LANG_LABELS: Record<string, string> = {
   'zh-Hans': 'Chinese (Simplified)',
 };
 
+const STORAGE_PREFIX = 'lazyedit_process_state';
+
 const defaultStepState = STEP_ORDER.reduce((acc, key) => {
   acc[key] = 'idle';
   return acc;
@@ -102,6 +104,23 @@ const LOG_TAB_LABELS: Record<typeof LOG_TABS[number], string> = {
   metadata: 'Metadata',
 };
 
+const buildStorageKey = (videoId?: string) => {
+  if (typeof window === 'undefined' || !videoId) return null;
+  return `${STORAGE_PREFIX}_${videoId}`;
+};
+
+const readStoredProcessState = (videoId?: string) => {
+  const key = buildStorageKey(videoId);
+  if (!key) return null;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (_err) {
+    return null;
+  }
+};
+
 export default function ProcessVideoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [selectedSteps, setSelectedSteps] = useState<Record<StepKey, boolean>>(defaultSelections);
@@ -115,6 +134,34 @@ export default function ProcessVideoScreen() {
   const [video, setVideo] = useState<VideoDetail | null>(null);
   const [burnPreviewUrl, setBurnPreviewUrl] = useState<string | null>(null);
   const [activeLogTab, setActiveLogTab] = useState<typeof LOG_TABS[number]>('transcription');
+  const processStateRef = useRef({
+    stepStatus: defaultStepState,
+    stepDetail: {} as Record<StepKey, string>,
+    message: '',
+    burnPreviewUrl: null as string | null,
+  });
+
+  const persistProcessState = () => {
+    const key = buildStorageKey(id);
+    if (!key || typeof window === 'undefined') return;
+    try {
+      window.localStorage.setItem(key, JSON.stringify(processStateRef.current));
+    } catch (_err) {
+      // ignore
+    }
+  };
+
+  const updateStoredMessage = (text: string) => {
+    setMessage(text);
+    processStateRef.current.message = text;
+    persistProcessState();
+  };
+
+  const updateBurnPreview = (url: string | null) => {
+    setBurnPreviewUrl(url);
+    processStateRef.current.burnPreviewUrl = url;
+    persistProcessState();
+  };
 
   const burnSummary = useMemo(() => {
     const layout = burnLayout || {};
@@ -141,12 +188,31 @@ export default function ProcessVideoScreen() {
       if (!resp.ok) return;
       const json = await resp.json();
       if (json?.output_url) {
-        setBurnPreviewUrl(`${API_URL}${json.output_url}`);
+        updateBurnPreview(`${API_URL}${json.output_url}`);
       }
     } catch (_err) {
       // ignore
     }
   };
+
+  useEffect(() => {
+    if (!id) return;
+    const stored = readStoredProcessState(id);
+    if (stored) {
+      const baselineStatus = { ...defaultStepState, ...(stored.stepStatus || {}) };
+      const baselineDetail = { ...(stored.stepDetail || {}) };
+      setStepStatus(baselineStatus);
+      setStepDetail(baselineDetail);
+      setMessage(stored.message || '');
+      setBurnPreviewUrl(stored.burnPreviewUrl || null);
+      processStateRef.current = {
+        stepStatus: baselineStatus,
+        stepDetail: baselineDetail,
+        message: stored.message || '',
+        burnPreviewUrl: stored.burnPreviewUrl || null,
+      };
+    }
+  }, [id]);
 
   useEffect(() => {
     if (!id) return;
@@ -162,7 +228,7 @@ export default function ProcessVideoScreen() {
           if (Array.isArray(json.value)) {
             setTranslationLanguages(json.value);
           }
-      }
+        }
       if (layoutResp.ok) {
         const json = await layoutResp.json();
         if (json.value) {
@@ -206,10 +272,15 @@ export default function ProcessVideoScreen() {
   }, [translationLanguages, slotLanguages]);
 
   const updateStatus = (step: StepKey, status: StepState, detail?: string) => {
-    setStepStatus((prev) => ({ ...prev, [step]: status }));
+    const nextStatus = { ...processStateRef.current.stepStatus, [step]: status };
+    processStateRef.current.stepStatus = nextStatus;
+    setStepStatus(nextStatus);
     if (detail) {
-      setStepDetail((prev) => ({ ...prev, [step]: detail }));
+      const nextDetail = { ...processStateRef.current.stepDetail, [step]: detail };
+      processStateRef.current.stepDetail = nextDetail;
+      setStepDetail(nextDetail);
     }
+    persistProcessState();
   };
 
   const logEntries = useMemo(() => {
@@ -350,13 +421,13 @@ export default function ProcessVideoScreen() {
       if (statusJson.status === 'processing') {
         continue;
       }
-    if (statusJson.status === 'completed') {
-      updateStatus('burn', 'done', 'Burn complete');
-      if (statusJson.output_url) {
-        setBurnPreviewUrl(`${API_URL}${statusJson.output_url}`);
-      }
-      done = true;
-      continue;
+      if (statusJson.status === 'completed') {
+        updateStatus('burn', 'done', 'Burn complete');
+        if (statusJson.output_url) {
+          updateBurnPreview(`${API_URL}${statusJson.output_url}`);
+        }
+        done = true;
+        continue;
       }
       updateStatus('burn', 'error', statusJson.error || 'Burn failed');
       return false;
@@ -421,7 +492,7 @@ export default function ProcessVideoScreen() {
   const runPipeline = async () => {
     if (!id || running) return;
     setRunning(true);
-    setMessage('');
+    updateStoredMessage('');
     setStepStatus(defaultStepState);
     setStepDetail({});
 
@@ -438,7 +509,7 @@ export default function ProcessVideoScreen() {
       if (needsTranscribe) {
         const ok = await ensureTranscription();
         if (!ok) {
-          setMessage('Stopped: transcription failed.');
+          updateStoredMessage('Stopped: transcription failed.');
           return;
         }
       } else {
@@ -448,7 +519,7 @@ export default function ProcessVideoScreen() {
       if (needsTranslate) {
         const ok = await ensureTranslations();
         if (!ok) {
-          setMessage('Stopped: translation failed.');
+          updateStoredMessage('Stopped: translation failed.');
           return;
         }
       } else {
@@ -458,7 +529,7 @@ export default function ProcessVideoScreen() {
       if (selectedSteps.burn) {
         const ok = await runBurn();
         if (!ok) {
-          setMessage('Stopped: burn failed.');
+          updateStoredMessage('Stopped: burn failed.');
           return;
         }
         await refreshBurnPreview();
@@ -469,7 +540,7 @@ export default function ProcessVideoScreen() {
       if (selectedSteps.keyframes) {
         const ok = await runKeyframes();
         if (!ok) {
-          setMessage('Stopped: keyframe extraction failed.');
+          updateStoredMessage('Stopped: keyframe extraction failed.');
           return;
         }
       } else {
@@ -479,7 +550,7 @@ export default function ProcessVideoScreen() {
       if (needsCaption) {
         const ok = await runCaption();
         if (!ok) {
-          setMessage('Stopped: captioning failed.');
+          updateStoredMessage('Stopped: captioning failed.');
           return;
         }
       } else {
@@ -489,7 +560,7 @@ export default function ProcessVideoScreen() {
       if (selectedSteps.metadataZh) {
         const ok = await runMetadata('zh', 'metadataZh');
         if (!ok) {
-          setMessage('Stopped: Chinese metadata failed.');
+          updateStoredMessage('Stopped: Chinese metadata failed.');
           return;
         }
       } else {
@@ -499,14 +570,14 @@ export default function ProcessVideoScreen() {
       if (selectedSteps.metadataEn) {
         const ok = await runMetadata('en', 'metadataEn');
         if (!ok) {
-          setMessage('Stopped: English metadata failed.');
+          updateStoredMessage('Stopped: English metadata failed.');
           return;
         }
       } else {
         updateStatus('metadataEn', 'skipped', 'Skipped');
       }
 
-      setMessage('Process complete.');
+      updateStoredMessage('Process complete.');
     } finally {
       setRunning(false);
     }
