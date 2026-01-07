@@ -174,6 +174,10 @@ export default function HomeScreen() {
   const [promptSpecLoaded, setPromptSpecLoaded] = useState(false);
   const [promptHistory, setPromptHistory] = useState(DEFAULT_PROMPT_HISTORY);
   const [promptHistoryLoaded, setPromptHistoryLoaded] = useState(false);
+  const [ideaPrompt, setIdeaPrompt] = useState('');
+  const [specGenerating, setSpecGenerating] = useState(false);
+  const [specStatus, setSpecStatus] = useState('');
+  const [specTone, setSpecTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [generatingVideo, setGeneratingVideo] = useState(false);
   const [videoStatus, setVideoStatus] = useState<string>('');
   const [videoTone, setVideoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -367,6 +371,32 @@ export default function HomeScreen() {
     }).catch(() => {});
   };
 
+  const recordHistoryForSpec = (spec: typeof DEFAULT_PROMPT_SPEC) => {
+    let next = { ...promptHistory };
+    if (!spec.autoTitle) {
+      next = pushHistoryValue(next, 'title', spec.title);
+    }
+    next = pushHistoryValue(next, 'subject', spec.subject);
+    next = pushHistoryValue(next, 'action', spec.action);
+    next = pushHistoryValue(next, 'environment', spec.environment);
+    next = pushHistoryValue(next, 'camera', spec.camera);
+    next = pushHistoryValue(next, 'lighting', spec.lighting);
+    next = pushHistoryValue(next, 'mood', spec.mood);
+    next = pushHistoryValue(next, 'style', spec.style);
+    next = pushHistoryValue(next, 'audioLanguage', spec.audioLanguage);
+    next = pushHistoryValue(next, 'sceneCount', spec.sceneCount);
+    next = pushHistoryValue(next, 'spokenWords', spec.spokenWords);
+    next = pushHistoryValue(next, 'extraRequirements', spec.extraRequirements);
+    next = pushHistoryValue(next, 'negative', spec.negative);
+    setPromptHistory(next);
+    if (!promptHistoryLoaded) return;
+    fetch(`${API_URL}/api/ui-settings/video_prompt_history`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(next),
+    }).catch(() => {});
+  };
+
   const historyOptions = (items: string[]) => [
     { value: '', label: 'Select history' },
     ...items.map((item) => ({
@@ -449,6 +479,37 @@ export default function HomeScreen() {
       setPromptTone('bad');
     } finally {
       setPrompting(false);
+    }
+  };
+
+  const generateSpecs = async () => {
+    if (specGenerating) return;
+    setSpecGenerating(true);
+    setSpecStatus('Generating specs...');
+    setSpecTone('neutral');
+    try {
+      const resp = await fetch(`${API_URL}/api/video-specs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idea: ideaPrompt }),
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        setSpecStatus(json.error || json.details || 'Spec generation failed');
+        setSpecTone('bad');
+        return;
+      }
+      const spec = json.spec || json.result || {};
+      const merged = { ...DEFAULT_PROMPT_SPEC, ...spec };
+      setPromptSpec(merged);
+      recordHistoryForSpec(merged);
+      setSpecStatus('Specs generated. Review and adjust as needed.');
+      setSpecTone('good');
+    } catch (e: any) {
+      setSpecStatus(e?.message || 'Spec generation failed');
+      setSpecTone('bad');
+    } finally {
+      setSpecGenerating(false);
     }
   };
 
@@ -563,12 +624,45 @@ export default function HomeScreen() {
 
           {status ? <Text style={[styles.status, statusStyle]}>{status}</Text> : null}
 
-          <View style={styles.section}>
+            <View style={styles.section}>
             <Text style={styles.sectionTitle}>Generate video</Text>
-            <Text style={styles.sectionSubtitle}>Draft a Sora prompt, edit it, then render a video.</Text>
+            <Text style={styles.sectionSubtitle}>Build specs, generate a prompt, then render a video.</Text>
 
             <View style={styles.panel}>
-              <Text style={styles.panelTitle}>Video content</Text>
+              <View style={styles.panelHeader}>
+                <Text style={styles.stageBadge}>Stage A</Text>
+                <Text style={styles.panelTitle}>Idea → Specs (optional)</Text>
+              </View>
+              <Text style={styles.panelHint}>
+                Provide a loose idea and let the model draft detailed specs. Skip this if you prefer manual edits.
+              </Text>
+
+              <Text style={styles.fieldLabel}>Idea prompt</Text>
+              <TextInput
+                style={styles.textArea}
+                value={ideaPrompt}
+                onChangeText={setIdeaPrompt}
+                placeholder="Epic fantasy vision in a vast world with poetic dialogue and cinematic scale."
+                multiline
+              />
+
+              <Pressable style={styles.btnAccent} onPress={generateSpecs} disabled={specGenerating}>
+                <View style={styles.btnContent}>
+                  {specGenerating && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                  <Text style={styles.btnText}>{specGenerating ? 'Generating specs...' : 'Generate specs'}</Text>
+                </View>
+              </Pressable>
+
+              {specStatus ? (
+                <Text style={[styles.status, toneStyle(specTone)]}>{specStatus}</Text>
+              ) : null}
+            </View>
+
+            <View style={styles.panel}>
+              <View style={styles.panelHeader}>
+                <Text style={styles.stageBadge}>Stage B</Text>
+                <Text style={styles.panelTitle}>Specs</Text>
+              </View>
               <Text style={styles.panelHint}>Describe the scene, action, and visual tone.</Text>
 
               <Text style={styles.fieldLabel}>Title</Text>
@@ -766,7 +860,10 @@ export default function HomeScreen() {
             </View>
 
             <View style={styles.panel}>
-              <Text style={styles.panelTitle}>Controls</Text>
+              <View style={styles.panelHeader}>
+                <Text style={styles.stageBadge}>Stage B</Text>
+                <Text style={styles.panelTitle}>Controls</Text>
+              </View>
               <Text style={styles.panelHint}>Tune aspect ratio and length.</Text>
 
               <Text style={styles.fieldLabel}>Aspect ratio</Text>
@@ -815,6 +912,10 @@ export default function HomeScreen() {
               <Text style={[styles.status, toneStyle(promptTone)]}>{promptStatus}</Text>
             ) : null}
 
+            <View style={styles.panelHeader}>
+              <Text style={styles.stageBadge}>Stage C</Text>
+              <Text style={styles.panelTitle}>Video prompt</Text>
+            </View>
             <Text style={styles.fieldLabel}>Generated prompt</Text>
             <TextInput
               style={styles.textAreaLarge}
@@ -1075,6 +1176,20 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
     color: '#64748b',
+  },
+  panelHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  stageBadge: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#0f172a',
+    backgroundColor: '#e2e8f0',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 999,
   },
   inputRow: {
     marginTop: 8,

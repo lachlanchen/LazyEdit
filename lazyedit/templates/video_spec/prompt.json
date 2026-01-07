@@ -1,0 +1,11 @@
+{
+  "system": "You are a creative video spec designer. Produce general, inspiring specs that encourage variety.",
+  "user": "You are given a short idea prompt. Convert it into a video spec JSON with the exact fields in the schema.\n\nIdea prompt:\n{{IDEA_PROMPT}}\n\nGuidelines:\n- Keep specs general and evocative, not overly specific.
+- Use broad creative direction (tone, genre, scale), not fixed details.
+- If an audio language is not specified, set audioLanguage to \"auto\".
+- If spokenWords are not specified, provide guidance (not a fixed quote).
+- If sceneCount is unknown, use an empty string.
+- Choose aspectRatio and durationSeconds from the allowed enums.
+- Avoid real people, copyrighted characters, or unsafe content.
+\nReturn JSON that matches the provided schema. Do not add extra fields."
+}

@@ -97,6 +97,7 @@ METADATA_TEMPLATE_MAP = {
     "en": "metadata_en",
 }
 VIDEO_PROMPT_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_prompt")
+VIDEO_SPEC_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_spec")
 
 DEFAULT_TRANSLATION_STYLE = {
     "outlineEnabled": True,
@@ -3324,6 +3325,38 @@ class VideoPromptHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class VideoSpecHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea_prompt = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea_prompt, str):
+            idea_prompt = str(idea_prompt)
+        idea_prompt = idea_prompt.strip() or "Create an evocative, cinematic short video spec."
+
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+        if not os.path.isdir(VIDEO_SPEC_TEMPLATE_DIR):
+            self.set_status(500)
+            return self.write({"error": "video spec template missing"})
+
+        try:
+            generator = VideoPromptGenerator(
+                template_dir=VIDEO_SPEC_TEMPLATE_DIR,
+                use_cache=use_cache,
+                cache_dir="cache/video_specs",
+            )
+            result = generator.generate(idea_prompt, schema_name="video_spec")
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "spec generation failed", "details": str(exc)})
+
+        spec = _sanitize_video_prompt_spec(result)
+        self.write({"idea": idea_prompt, "spec": spec, "result": result})
+
+
 class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
     def post(self):
         try:
@@ -4380,6 +4413,7 @@ def make_app(upload_folder):
         (r"/api/languages", LanguagesHandler),
         (r"/api/grammar-palettes/([A-Za-z0-9_-]+)", GrammarPaletteHandler),
         (r"/api/ui-settings/([A-Za-z0-9_-]+)", UISettingsHandler),
+        (r"/api/video-specs", VideoSpecHandler),
         (r"/api/video-prompts", VideoPromptHandler),
         (r"/api/videos/generate", VideoGenerateHandler),
         (r"/api/videos", VideosHandler),
