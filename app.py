@@ -123,6 +123,17 @@ DEFAULT_VIDEO_PROMPT_SPEC = {
     "durationSeconds": "8",
     "negative": "no text, no logos, no gore",
 }
+DEFAULT_VIDEO_PROMPT_HISTORY = {
+    "title": [],
+    "subject": [],
+    "action": [],
+    "environment": [],
+    "camera": [],
+    "lighting": [],
+    "mood": [],
+    "style": [],
+    "negative": [],
+}
 DEFAULT_BURN_LAYOUT = {
     "heightRatio": 0.5,
     "rows": 4,
@@ -367,6 +378,34 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
         "aspectRatio": aspect_ratio,
         "durationSeconds": duration_value,
         "negative": _string("negative", DEFAULT_VIDEO_PROMPT_SPEC["negative"]),
+    }
+
+
+def _sanitize_video_prompt_history(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        return DEFAULT_VIDEO_PROMPT_HISTORY.copy()
+
+    def _clean_list(value) -> list[str]:
+        if not isinstance(value, (list, tuple)):
+            return []
+        cleaned = []
+        for item in value:
+            text = str(item).strip()
+            if not text or text in cleaned:
+                continue
+            cleaned.append(text)
+        return cleaned[:20]
+
+    return {
+        "title": _clean_list(payload.get("title")),
+        "subject": _clean_list(payload.get("subject")),
+        "action": _clean_list(payload.get("action")),
+        "environment": _clean_list(payload.get("environment")),
+        "camera": _clean_list(payload.get("camera")),
+        "lighting": _clean_list(payload.get("lighting")),
+        "mood": _clean_list(payload.get("mood")),
+        "style": _clean_list(payload.get("style")),
+        "negative": _clean_list(payload.get("negative")),
     }
 
 
@@ -2587,7 +2626,7 @@ class GrammarPaletteHandler(CorsMixin, tornado.web.RequestHandler):
 class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self, key):
         ldb.ensure_schema()
-        if key not in {"translation_style", "translation_languages", "burn_layout", "video_prompt"}:
+        if key not in {"translation_style", "translation_languages", "burn_layout", "video_prompt", "video_prompt_history"}:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
         saved = ldb.get_ui_preference(key)
@@ -2603,13 +2642,17 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_VIDEO_PROMPT_SPEC})
             return self.write({"key": key, "value": _sanitize_video_prompt_spec(saved)})
+        if key == "video_prompt_history":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_VIDEO_PROMPT_HISTORY})
+            return self.write({"key": key, "value": _sanitize_video_prompt_history(saved)})
         if not saved:
             return self.write({"key": key, "value": DEFAULT_TRANSLATION_LANGUAGES})
         return self.write({"key": key, "value": _sanitize_translation_languages(saved)})
 
     def post(self, key):
         ldb.ensure_schema()
-        if key not in {"translation_style", "translation_languages", "burn_layout", "video_prompt"}:
+        if key not in {"translation_style", "translation_languages", "burn_layout", "video_prompt", "video_prompt_history"}:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
         try:
@@ -2622,6 +2665,8 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             cleaned = _sanitize_burn_layout(data)
         elif key == "video_prompt":
             cleaned = _sanitize_video_prompt_spec(data)
+        elif key == "video_prompt_history":
+            cleaned = _sanitize_video_prompt_history(data)
         else:
             cleaned = _sanitize_translation_languages(data)
         ldb.set_ui_preference(key, cleaned)

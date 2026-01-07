@@ -40,6 +40,72 @@ const ASPECT_OPTIONS = [
   { value: 'auto', label: 'Auto' },
 ];
 
+type PromptSpec = typeof DEFAULT_PROMPT_SPEC;
+type HistoryKey = keyof typeof DEFAULT_PROMPT_HISTORY;
+type HistoryState = typeof DEFAULT_PROMPT_HISTORY;
+
+const HistorySelect = ({
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+  const current = options.find((option) => option.value === value) || options[0];
+  if (options.length <= 1) return null;
+  return (
+    <>
+      <Pressable style={styles.selectRow} onPress={() => setOpen(true)}>
+        <Text style={styles.selectLabel}>{label}</Text>
+        <Text style={styles.selectValue}>{current?.label}</Text>
+      </Pressable>
+      <Modal transparent animationType="fade" visible={open} onRequestClose={() => setOpen(false)}>
+        <Pressable style={styles.modalBackdrop} onPress={() => setOpen(false)}>
+          <Pressable style={styles.modalCard} onPress={() => {}}>
+            <Text style={styles.modalTitle}>{label}</Text>
+            <ScrollView style={{ maxHeight: 260 }}>
+              {options.map((option) => {
+                const active = option.value === value;
+                return (
+                  <Pressable
+                    key={option.value}
+                    style={[styles.modalOption, active && styles.modalOptionActive]}
+                    onPress={() => {
+                      onChange(option.value);
+                      setOpen(false);
+                    }}
+                  >
+                    <Text style={[styles.modalOptionText, active && styles.modalOptionTextActive]}>
+                      {option.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </>
+  );
+};
+
+const DEFAULT_PROMPT_HISTORY = {
+  title: [],
+  subject: [],
+  action: [],
+  environment: [],
+  camera: [],
+  lighting: [],
+  mood: [],
+  style: [],
+  negative: [],
+};
+
 export default function HomeScreen() {
   const [picked, setPicked] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [status, setStatus] = useState<string>('');
@@ -59,6 +125,8 @@ export default function HomeScreen() {
   const [promptStatus, setPromptStatus] = useState<string>('');
   const [promptTone, setPromptTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [promptSpecLoaded, setPromptSpecLoaded] = useState(false);
+  const [promptHistory, setPromptHistory] = useState(DEFAULT_PROMPT_HISTORY);
+  const [promptHistoryLoaded, setPromptHistoryLoaded] = useState(false);
   const [generatingVideo, setGeneratingVideo] = useState(false);
   const [videoStatus, setVideoStatus] = useState<string>('');
   const [videoTone, setVideoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -190,6 +258,65 @@ export default function HomeScreen() {
     return payload;
   };
 
+  const loadPromptHistory = async () => {
+    try {
+      const resp = await fetch(`${API_URL}/api/ui-settings/video_prompt_history`);
+      const json = await resp.json();
+      if (!resp.ok) return;
+      if (json.value) {
+        setPromptHistory({ ...DEFAULT_PROMPT_HISTORY, ...json.value });
+      }
+    } catch (_err) {
+      // ignore
+    } finally {
+      setPromptHistoryLoaded(true);
+    }
+  };
+
+  const pushHistoryValue = (history: HistoryState, key: HistoryKey, value: string) => {
+    const cleaned = value.trim();
+    if (!cleaned) return history;
+    const current = history[key] || [];
+    const next = [cleaned, ...current.filter((item) => item !== cleaned)].slice(0, 20);
+    return { ...history, [key]: next };
+  };
+
+  const recordHistory = () => {
+    let next = { ...promptHistory };
+    if (!promptSpec.autoTitle) {
+      next = pushHistoryValue(next, 'title', promptSpec.title);
+    }
+    next = pushHistoryValue(next, 'subject', promptSpec.subject);
+    next = pushHistoryValue(next, 'action', promptSpec.action);
+    next = pushHistoryValue(next, 'environment', promptSpec.environment);
+    next = pushHistoryValue(next, 'camera', promptSpec.camera);
+    next = pushHistoryValue(next, 'lighting', promptSpec.lighting);
+    next = pushHistoryValue(next, 'mood', promptSpec.mood);
+    next = pushHistoryValue(next, 'style', promptSpec.style);
+    next = pushHistoryValue(next, 'negative', promptSpec.negative);
+    setPromptHistory(next);
+    if (!promptHistoryLoaded) return;
+    fetch(`${API_URL}/api/ui-settings/video_prompt_history`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(next),
+    }).catch(() => {});
+  };
+
+  const historyOptions = (items: string[]) => [
+    { value: '', label: 'Select history' },
+    ...items.map((item) => ({
+      value: item,
+      label: item.length > 60 ? `${item.slice(0, 60)}…` : item,
+    })),
+  ];
+
+  const renderHistory = (key: HistoryKey, onPick: (value: string) => void) => {
+    const items = promptHistory[key] || [];
+    if (!items.length) return null;
+    return <HistorySelect label="History" value="" options={historyOptions(items)} onChange={onPick} />;
+  };
+
   const loadPromptSettings = async () => {
     try {
       const resp = await fetch(`${API_URL}/api/ui-settings/video_prompt`);
@@ -207,6 +334,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     loadPromptSettings();
+    loadPromptHistory();
   }, []);
 
   useEffect(() => {
@@ -223,6 +351,7 @@ export default function HomeScreen() {
 
   const generatePrompt = async () => {
     if (prompting) return;
+    recordHistory();
     setPrompting(true);
     setPromptStatus('Generating prompt...');
     setPromptTone('neutral');
@@ -265,6 +394,7 @@ export default function HomeScreen() {
       setVideoTone('bad');
       return;
     }
+    recordHistory();
     setGeneratingVideo(true);
     setVideoStatus('Generating video... this can take a few minutes.');
     setVideoTone('neutral');
@@ -395,6 +525,7 @@ export default function HomeScreen() {
                   thumbColor={promptSpec.autoTitle ? '#f8fafc' : '#f1f5f9'}
                 />
               </View>
+              {!promptSpec.autoTitle ? renderHistory('title', (value) => updateSpec('title', value)) : null}
 
               <Text style={styles.fieldLabel}>Subject</Text>
               <TextInput
@@ -403,6 +534,7 @@ export default function HomeScreen() {
                 onChangeText={(v) => updateSpec('subject', v)}
                 multiline
               />
+              {renderHistory('subject', (value) => updateSpec('subject', value))}
 
               <Text style={styles.fieldLabel}>Action</Text>
               <TextInput
@@ -411,6 +543,7 @@ export default function HomeScreen() {
                 onChangeText={(v) => updateSpec('action', v)}
                 multiline
               />
+              {renderHistory('action', (value) => updateSpec('action', value))}
 
               <Text style={styles.fieldLabel}>Environment</Text>
               <TextInput
@@ -419,9 +552,11 @@ export default function HomeScreen() {
                 onChangeText={(v) => updateSpec('environment', v)}
                 multiline
               />
+              {renderHistory('environment', (value) => updateSpec('environment', value))}
 
               <Text style={styles.fieldLabel}>Camera</Text>
               <TextInput style={styles.input} value={promptSpec.camera} onChangeText={(v) => updateSpec('camera', v)} />
+              {renderHistory('camera', (value) => updateSpec('camera', value))}
 
               <Text style={styles.fieldLabel}>Lighting</Text>
               <TextInput
@@ -429,9 +564,11 @@ export default function HomeScreen() {
                 value={promptSpec.lighting}
                 onChangeText={(v) => updateSpec('lighting', v)}
               />
+              {renderHistory('lighting', (value) => updateSpec('lighting', value))}
 
               <Text style={styles.fieldLabel}>Mood</Text>
               <TextInput style={styles.input} value={promptSpec.mood} onChangeText={(v) => updateSpec('mood', v)} />
+              {renderHistory('mood', (value) => updateSpec('mood', value))}
 
               <Text style={styles.fieldLabel}>Style</Text>
               <TextInput
@@ -440,6 +577,7 @@ export default function HomeScreen() {
                 onChangeText={(v) => updateSpec('style', v)}
                 multiline
               />
+              {renderHistory('style', (value) => updateSpec('style', value))}
 
               <Text style={styles.fieldLabel}>Negative prompt</Text>
               <TextInput
@@ -448,6 +586,7 @@ export default function HomeScreen() {
                 onChangeText={(v) => updateSpec('negative', v)}
                 multiline
               />
+              {renderHistory('negative', (value) => updateSpec('negative', value))}
             </View>
 
             <View style={styles.panel}>
@@ -747,6 +886,57 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 12,
     color: '#64748b',
+  },
+  selectRow: {
+    marginTop: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: 'white',
+  },
+  selectLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#64748b',
+  },
+  selectValue: {
+    fontSize: 12,
+    color: '#0f172a',
+    marginTop: 4,
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  modalCard: {
+    borderRadius: 16,
+    backgroundColor: '#fff',
+    padding: 16,
+  },
+  modalTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0f172a',
+    marginBottom: 8,
+  },
+  modalOption: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+  },
+  modalOptionActive: {
+    backgroundColor: '#0f172a',
+  },
+  modalOptionText: {
+    fontSize: 13,
+    color: '#0f172a',
+  },
+  modalOptionTextActive: {
+    color: 'white',
   },
   chipRow: {
     flexDirection: 'row',
