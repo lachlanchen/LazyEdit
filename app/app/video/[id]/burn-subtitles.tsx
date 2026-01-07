@@ -31,7 +31,7 @@ type BurnStatus = {
   progress?: number | null;
   error?: string | null;
   created_at?: string | null;
-  config?: { slots?: BurnSlot[]; heightRatio?: number; rows?: number; cols?: number } | null;
+  config?: { slots?: BurnSlot[]; heightRatio?: number; rows?: number; cols?: number; liftRatio?: number } | null;
 };
 
 type SelectOption = {
@@ -71,7 +71,7 @@ const SLOT_COLORS = ['#22c55e', '#60a5fa', '#f59e0b', '#f472b6', '#a78bfa', '#34
 const DEFAULT_ROWS = 4;
 const DEFAULT_COLS = 1;
 const DEFAULT_HEIGHT_RATIO = 0.5;
-const DEFAULT_LIFT_SLOTS = 1;
+const DEFAULT_LIFT_RATIO = 0.1;
 const DEFAULT_ROMAJI = true;
 const DEFAULT_PINYIN = true;
 const DEFAULT_JYUTPING = false;
@@ -274,7 +274,7 @@ export default function BurnSubtitlesScreen() {
   const [heightRatio, setHeightRatio] = useState(DEFAULT_HEIGHT_RATIO);
   const [rows, setRows] = useState(DEFAULT_ROWS);
   const [cols, setCols] = useState(DEFAULT_COLS);
-  const [liftSlots, setLiftSlots] = useState(DEFAULT_LIFT_SLOTS);
+  const [liftRatio, setLiftRatio] = useState(DEFAULT_LIFT_RATIO);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoAspect, setVideoAspect] = useState<number | null>(null);
   const [previewWidth, setPreviewWidth] = useState(0);
@@ -379,11 +379,16 @@ export default function BurnSubtitlesScreen() {
         const total = nextRows * nextCols;
         if (normalized.length) setSlots(buildSlotList(normalized, total));
       }
+      let nextHeightRatio = heightRatio;
       if (typeof value?.heightRatio === 'number') {
+        nextHeightRatio = value.heightRatio;
         setHeightRatio(value.heightRatio);
       }
-      if (typeof value?.liftSlots === 'number') {
-        setLiftSlots(value.liftSlots);
+      if (typeof value?.liftRatio === 'number') {
+        setLiftRatio(value.liftRatio);
+      } else if (typeof value?.liftSlots === 'number') {
+        const ratioFromSlots = (nextHeightRatio / Math.max(nextRows, 1)) * value.liftSlots;
+        setLiftRatio(Math.min(Math.max(ratioFromSlots, 0), 0.4));
       }
     } catch (_err) {
       // ignore
@@ -425,7 +430,7 @@ export default function BurnSubtitlesScreen() {
 
   useEffect(() => {
     if (!layoutLoaded) return;
-    const payload = { slots, heightRatio, rows, cols, liftSlots };
+    const payload = { slots, heightRatio, rows, cols, liftRatio };
     const timeout = setTimeout(async () => {
       try {
         await fetch(`${API_URL}/api/ui-settings/burn_layout`, {
@@ -438,7 +443,7 @@ export default function BurnSubtitlesScreen() {
       }
     }, 200);
     return () => clearTimeout(timeout);
-  }, [slots, heightRatio, rows, cols, liftSlots, layoutLoaded]);
+  }, [slots, heightRatio, rows, cols, liftRatio, layoutLoaded]);
 
   useEffect(() => {
     if (!layoutLoaded) return;
@@ -484,7 +489,7 @@ export default function BurnSubtitlesScreen() {
   const previewValueSize = Math.max(7, Math.min(14, Math.round(previewCellHeight * 0.9)));
   const previewLift = Math.min(
     Math.max(0, previewStageHeight - previewBandHeight),
-    (previewCellHeight + previewRowGap) * Math.max(0, liftSlots),
+    Math.round(previewStageHeight * liftRatio),
   );
 
   const burnSubtitles = async () => {
@@ -495,7 +500,7 @@ export default function BurnSubtitlesScreen() {
       const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols, liftSlots } }),
+        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols, liftRatio } }),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -675,6 +680,15 @@ export default function BurnSubtitlesScreen() {
             onChange={setHeightRatio}
             formatValue={(value) => `${Math.round(value * 100)}%`}
           />
+          <SliderControl
+            label="Vertical shift"
+            value={liftRatio}
+            min={0}
+            max={0.3}
+            step={0.01}
+            onChange={setLiftRatio}
+            formatValue={(value) => `${Math.round(value * 100)}%`}
+          />
 
           <View style={styles.previewCard}>
             <Text style={styles.previewTitle}>Layout preview</Text>
@@ -719,6 +733,9 @@ export default function BurnSubtitlesScreen() {
             </View>
             <Text style={styles.previewHint}>
               Layout height is the subtitle band as % of full video height: {Math.round(heightRatio * 100)}%.
+            </Text>
+            <Text style={styles.previewHint}>
+              Vertical shift lifts the entire band by % of full video height: {Math.round(liftRatio * 100)}%.
             </Text>
           </View>
 

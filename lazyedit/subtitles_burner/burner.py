@@ -40,6 +40,7 @@ def _load_burner_module():
     try:
         from subtitles_burner.burner import (
             BurnLayout,
+            Slot,
             SlotAssignment,
             TextStyle,
             build_bottom_slot_layout,
@@ -48,7 +49,7 @@ def _load_burner_module():
     except Exception as exc:
         raise RuntimeError(f"Failed to import subtitles_burner: {exc}") from exc
 
-    return BurnLayout, SlotAssignment, TextStyle, build_bottom_slot_layout, burn_subtitles_with_layout
+    return BurnLayout, Slot, SlotAssignment, TextStyle, build_bottom_slot_layout, burn_subtitles_with_layout
 
 
 def _get_video_resolution(video_path: str) -> tuple[int, int]:
@@ -71,21 +72,46 @@ def burn_video_with_slots(
     margin: int = 24,
     gutter: int = 12,
     lift_slots: int = 1,
+    lift_ratio: float | None = None,
     progress_callback: Optional[Callable[[int], None]] = None,
 ) -> None:
-    BurnLayout, SlotAssignment, TextStyle, build_bottom_slot_layout, burn_subtitles_with_layout = _load_burner_module()
+    (
+        BurnLayout,
+        Slot,
+        SlotAssignment,
+        TextStyle,
+        build_bottom_slot_layout,
+        burn_subtitles_with_layout,
+    ) = _load_burner_module()
 
     width, height = _get_video_resolution(video_path)
-    layout = build_bottom_slot_layout(
-        width,
-        height,
-        rows=rows,
-        cols=cols,
-        height_ratio=height_ratio,
-        margin=margin,
-        gutter=gutter,
-        lift_slots=lift_slots,
-    )
+    if lift_ratio is not None:
+        lift_ratio = max(0.0, float(lift_ratio))
+        lift_pixels = int(height * lift_ratio)
+        bottom_height = int(height * height_ratio)
+        slot_height = max(1, (bottom_height - gutter * (rows - 1)) // rows)
+        slot_width = max(1, (width - gutter * (cols - 1) - margin * 2) // cols)
+        top_y = max(0, height - bottom_height - lift_pixels)
+        slots_layout: list[Slot] = []
+        slot_id = 1
+        for row in range(rows):
+            for col in range(cols):
+                x = margin + col * (slot_width + gutter)
+                y = top_y + row * (slot_height + gutter)
+                slots_layout.append(Slot(slot_id=slot_id, x=x, y=y, width=slot_width, height=slot_height))
+                slot_id += 1
+        layout = BurnLayout(slots=slots_layout)
+    else:
+        layout = build_bottom_slot_layout(
+            width,
+            height,
+            rows=rows,
+            cols=cols,
+            height_ratio=height_ratio,
+            margin=margin,
+            gutter=gutter,
+            lift_slots=lift_slots,
+        )
 
     assignments: list[SlotAssignment] = []
     for slot in slots:

@@ -113,7 +113,8 @@ DEFAULT_BURN_LAYOUT = {
     "heightRatio": 0.5,
     "rows": 4,
     "cols": 1,
-    "liftSlots": 1,
+    "liftRatio": 0.1,
+    "liftSlots": 0,
     "slots": [
         {
             "slot": 1,
@@ -324,7 +325,8 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     height_ratio = DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5)
     rows = DEFAULT_BURN_LAYOUT.get("rows", 4)
     cols = DEFAULT_BURN_LAYOUT.get("cols", 1)
-    lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 1)
+    lift_ratio = DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1)
+    lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 0)
     romaji_default = DEFAULT_BURN_LAYOUT.get("romajiEnabled", True)
     pinyin_default = DEFAULT_BURN_LAYOUT.get("pinyinEnabled", True)
     if isinstance(payload, dict):
@@ -344,11 +346,16 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 cols = int(payload.get("cols"))
             except Exception:
                 cols = DEFAULT_BURN_LAYOUT.get("cols", 1)
+        if "liftRatio" in payload:
+            try:
+                lift_ratio = float(payload.get("liftRatio"))
+            except Exception:
+                lift_ratio = DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1)
         if "liftSlots" in payload:
             try:
                 lift_slots = int(payload.get("liftSlots"))
             except Exception:
-                lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 1)
+                lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 0)
         if "romajiEnabled" in payload:
             value = payload.get("romajiEnabled")
             if isinstance(value, bool):
@@ -367,6 +374,13 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     rows = min(max(rows, 1), 10)
     cols = min(max(cols, 1), 4)
     lift_slots = min(max(lift_slots, 0), rows)
+    if lift_ratio is None:
+        lift_ratio = DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1)
+    if not isinstance(lift_ratio, (int, float)):
+        lift_ratio = DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1)
+    if "liftRatio" not in (payload or {}) and lift_slots:
+        lift_ratio = (height_ratio / max(rows, 1)) * lift_slots
+    lift_ratio = min(max(float(lift_ratio), 0.0), 0.4)
     slot_count = rows * cols
 
     slot_map: dict[int, dict[str, object]] = {}
@@ -453,6 +467,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         "heightRatio": height_ratio,
         "rows": rows,
         "cols": cols,
+        "liftRatio": lift_ratio,
         "liftSlots": lift_slots,
         "romajiEnabled": romaji_default,
         "pinyinEnabled": pinyin_default,
@@ -3693,7 +3708,8 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         height_ratio = layout_config.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5))
         rows = layout_config.get("rows", DEFAULT_BURN_LAYOUT.get("rows", 4))
         cols = layout_config.get("cols", DEFAULT_BURN_LAYOUT.get("cols", 1))
-        lift_slots = layout_config.get("liftSlots", DEFAULT_BURN_LAYOUT.get("liftSlots", 1))
+        lift_ratio = layout_config.get("liftRatio", DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1))
+        lift_slots = layout_config.get("liftSlots", DEFAULT_BURN_LAYOUT.get("liftSlots", 0))
 
         burn_id = ldb.add_subtitle_burn(
             video_id_i,
@@ -3722,6 +3738,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     rows=rows,
                     cols=cols,
                     lift_slots=lift_slots,
+                    lift_ratio=lift_ratio,
                     progress_callback=_update_progress,
                 )
                 mux_audio(temp_output, video_path, output_path)
