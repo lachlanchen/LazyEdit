@@ -146,17 +146,24 @@ def burn_video_with_slots(
             or slot.korean_romaja
             or slot.arabic_translit
         )
-        # Prevent visual overlap between stacked slots by ensuring the rendered text
-        # stays within the slot's vertical bounds, even when users increase fontScale.
+        # Keep main text centered and consistent across slots: avoid shrinking main
+        # differently per-language. Instead, clamp ruby/transliteration so the whole
+        # rendered subtitle fits within the slot height (prevents ugly overlaps).
         safe_height = max(1, int(slot_height * 0.92))
-        estimated_main_h = int(round(main_font_size * default_style.line_spacing))
-        estimated_ruby_h = int(round(ruby_font_size * (1.0 + default_style.ruby_spacing))) if expects_ruby else 0
-        estimated_total_h = estimated_main_h + estimated_ruby_h + stroke_width * 4 + 16
-        if estimated_total_h > safe_height:
-            shrink = safe_height / float(estimated_total_h)
-            main_font_size = max(12, int(round(main_font_size * shrink)))
-            ruby_font_size = max(8, min(main_font_size - 2, int(round(ruby_font_size * shrink))))
-            stroke_width = max(1, int(round(stroke_width * shrink)))
+        padding = max(12, stroke_width * 2)
+        main_h_est = main_font_size
+        overhead = padding * 2 + stroke_width * 2 + 4
+        remaining = safe_height - (main_h_est + overhead)
+        if expects_ruby:
+            if remaining <= 0:
+                ruby_font_size = 0
+            else:
+                max_ruby = int(remaining / max(1.0, (1.0 + default_style.ruby_spacing)))
+                ruby_font_size = max(0, min(ruby_font_size, max_ruby, main_font_size - 2))
+                if ruby_font_size < 8:
+                    ruby_font_size = 0
+        else:
+            ruby_font_size = 0
         style = TextStyle(
             main_font_size=main_font_size,
             ruby_font_size=ruby_font_size,
