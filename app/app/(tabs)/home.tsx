@@ -1266,7 +1266,6 @@ export default function HomeScreen() {
                 <Text style={styles.stageBadge}>{t('stage_b_label')}</Text>
                 <Text style={styles.panelTitle}>{t('controls_title')}</Text>
               </View>
-              <Text style={styles.panelHint}>{t('controls_hint')}</Text>
               {specHistoryOptions.length > 1 ? (
                 <HistorySelect
                   label={t('history_ai_specs')}
@@ -1275,6 +1274,7 @@ export default function HomeScreen() {
                   onChange={applySpecHistory}
                 />
               ) : null}
+              <Text style={styles.panelHint}>{t('controls_hint')}</Text>
 
               <SelectControl
                 label={t('field_model')}
