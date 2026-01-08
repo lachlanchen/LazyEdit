@@ -113,9 +113,6 @@ def burn_video_with_slots(
     ) = _load_burner_module()
 
     width, height = _get_video_resolution(video_path)
-    base_bottom_height_px = int(height * float(height_ratio))
-    base_slot_height_px = max(1, (base_bottom_height_px - gutter * (rows - 1)) // max(rows, 1))
-    base_slot_width_px = max(1, (width - gutter * (cols - 1) - margin * 2) // max(cols, 1))
 
     # When users increase per-slot fontScale, the subtitle block can become taller
     # than the slot and visually overlap into adjacent rows. To keep scaling
@@ -129,10 +126,7 @@ def burn_video_with_slots(
         required_slot_height = 1
         for slot in slots:
             scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
-            # Base sizing is locked to the original (user-configured) slot
-            # geometry so auto-expanding the subtitle band creates more room
-            # without also inflating font sizes.
-            base_main = int(round(min(base_slot_height_px * 0.38, base_slot_width_px * 0.07)))
+            base_main = int(round(min(slot_height_px * 0.38, slot_width_px * 0.07)))
             base_main = max(14, min(base_main, 220))
             base_ruby = int(round(base_main * 0.6))
 
@@ -174,10 +168,10 @@ def burn_video_with_slots(
         return required_bottom / float(height) if height else current_ratio
 
     effective_height_ratio = float(height_ratio)
-    for _ in range(6):
+    for _ in range(3):
         needed = _estimate_required_height_ratio(effective_height_ratio)
         next_ratio = max(effective_height_ratio, float(height_ratio), needed)
-        next_ratio = min(next_ratio, 0.92)
+        next_ratio = min(next_ratio, 0.85)
         if next_ratio - effective_height_ratio < 0.005:
             break
         effective_height_ratio = next_ratio
@@ -224,7 +218,7 @@ def burn_video_with_slots(
         # subtitle readability stays consistent across high-resolution inputs.
         # The coefficients were tuned so that 720p/1080p outputs remain close to
         # the historical defaults, while 4K+ inputs scale up appropriately.
-        base_main = int(round(min(base_slot_height_px * 0.38, base_slot_width_px * 0.07)))
+        base_main = int(round(min(slot_height * 0.38, slot_width * 0.07)))
         base_main = max(14, min(base_main, 220))
         base_ruby = int(round(base_main * 0.6))
         base_ruby = max(10, min(base_ruby, base_main - 2))
