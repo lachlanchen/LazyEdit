@@ -94,6 +94,7 @@ type VideoDetail = {
   id: number;
   title: string | null;
   media_url?: string | null;
+  preview_media_url?: string | null;
 };
 
 const LOG_TABS = ['transcription', 'translations', 'captions', 'metadata'] as const;
@@ -179,8 +180,9 @@ export default function ProcessVideoScreen() {
   }, [burnLayout]);
 
   const previewVideoUrl = useMemo(() => {
-    if (!video?.media_url) return null;
-    return `${API_URL}${video.media_url}`;
+    const path = video?.preview_media_url || video?.media_url;
+    if (!path) return null;
+    return `${API_URL}${path}`;
   }, [video]);
 
   const createProxyPreview = async () => {
@@ -674,13 +676,13 @@ export default function ProcessVideoScreen() {
           )}
         </View>
 
-        <Pressable style={[styles.btnPrimary, running && styles.btnDisabled]} onPress={runPipeline}>
-          <Text style={styles.btnText}>{running ? 'Processing…' : 'Process video'}</Text>
-        </Pressable>
         <Pressable style={styles.btnSecondary} onPress={createProxyPreview}>
           <Text style={styles.btnSecondaryText}>Create preview proxy (fix black iPhone videos)</Text>
         </Pressable>
         {proxyStatus ? <Text style={styles.status}>{proxyStatus}</Text> : null}
+        <Pressable style={[styles.btnPrimary, running && styles.btnDisabled]} onPress={runPipeline}>
+          <Text style={styles.btnText}>{running ? 'Processing…' : 'Process video'}</Text>
+        </Pressable>
         <View style={styles.previewCard}>
           <Text style={styles.sectionTitle}>Burn preview</Text>
           {(burnPreviewUrl || proxyPreviewUrl || previewVideoUrl) ? (

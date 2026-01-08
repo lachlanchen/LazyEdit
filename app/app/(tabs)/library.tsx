@@ -11,6 +11,7 @@ type Video = {
   title: string | null;
   file_path: string;
   media_url?: string | null;
+  preview_media_url?: string | null;
   created_at?: string;
 };
 
@@ -44,7 +45,8 @@ export default function LibraryScreen() {
         keyExtractor={(x) => String(x.id)}
         refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
         renderItem={({ item }) => {
-          const mediaSrc = item.media_url ? `${API_URL}${item.media_url}` : null;
+          const mediaPath = item.preview_media_url || item.media_url;
+          const mediaSrc = mediaPath ? `${API_URL}${mediaPath}` : null;
           const title = item.title || t('library_video_fallback', { id: item.id });
           return (
             <Pressable

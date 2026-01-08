@@ -3011,11 +3011,21 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
         with ldb.get_cursor() as cur:
             cur.execute("SELECT id, file_path, title, created_at FROM videos ORDER BY id DESC LIMIT 100")
             rows = cur.fetchall()
+
+        proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+
+        def preview_media_url(video_id: int, file_path: str) -> str | None:
+            proxy_path = os.path.join(proxies_dir, f"video_{video_id}_proxy.mp4")
+            if os.path.exists(proxy_path):
+                return media_url_for_path(proxy_path)
+            return media_url_for_path(file_path)
+
         videos = [
             {
                 "id": r[0],
                 "file_path": r[1],
                 "media_url": media_url_for_path(r[1]),
+                "preview_media_url": preview_media_url(r[0], r[1]),
                 "title": r[2],
                 "created_at": r[3].isoformat() if r[3] else None,
             }
@@ -3053,10 +3063,15 @@ class VideoDetailHandler(CorsMixin, tornado.web.RequestHandler):
         if not row:
             self.set_status(404)
             return self.write({"error": "not found"})
+
+        proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+        proxy_path = os.path.join(proxies_dir, f"video_{row[0]}_proxy.mp4")
+        preview_url = media_url_for_path(proxy_path) if os.path.exists(proxy_path) else media_url_for_path(row[1])
         self.write({
             "id": row[0],
             "file_path": row[1],
             "media_url": media_url_for_path(row[1]),
+            "preview_media_url": preview_url,
             "title": row[2],
             "created_at": row[3].isoformat() if row[3] else None,
         })

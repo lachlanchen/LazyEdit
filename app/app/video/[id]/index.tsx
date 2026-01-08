@@ -21,6 +21,7 @@ type VideoDetail = {
   title: string | null;
   file_path: string;
   media_url?: string | null;
+  preview_media_url?: string | null;
   created_at?: string;
 };
 
@@ -165,6 +166,7 @@ export default function VideoDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [video, setVideo] = useState<VideoDetail | null>(null);
+  const [proxyStatus, setProxyStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [transcription, setTranscription] = useState<TranscriptionDetail | null>(null);
   const [transcriptionLoading, setTranscriptionLoading] = useState(true);
@@ -210,9 +212,43 @@ export default function VideoDetailScreen() {
   const [lightbox, setLightbox] = useState<{ url: string; label?: string } | null>(null);
 
   const mediaSrc = useMemo(() => {
-    if (!video?.media_url) return null;
-    return `${API_URL}${video.media_url}`;
+    const path = video?.preview_media_url || video?.media_url;
+    if (!path) return null;
+    return `${API_URL}${path}`;
   }, [video]);
+
+  const loadVideo = async () => {
+    if (!id) return;
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}`);
+      const json = await resp.json();
+      if (!resp.ok) {
+        setVideo(null);
+      } else {
+        setVideo(json);
+      }
+    } catch (_err) {
+      setVideo(null);
+    }
+  };
+
+  const createProxyPreview = async () => {
+    if (!id) return;
+    setProxyStatus('Creating preview proxy…');
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}/proxy`, { method: 'POST' });
+      const json = await resp.json();
+      if (!resp.ok) {
+        const details = json.details ? `: ${json.details}` : '';
+        setProxyStatus(`Proxy failed: ${json.error || json.message || resp.statusText}${details}`);
+        return;
+      }
+      setProxyStatus('Proxy ready.');
+      await loadVideo();
+    } catch (err: any) {
+      setProxyStatus(`Proxy failed: ${err?.message || String(err)}`);
+    }
+  };
 
   const headerTitle = video?.title ? video.title : 'Video';
   const captionFrameItems = caption?.frames || [];
@@ -399,13 +435,7 @@ export default function VideoDetailScreen() {
     (async () => {
       setLoading(true);
       try {
-        const resp = await fetch(`${API_URL}/api/videos/${id}`);
-        const json = await resp.json();
-        if (!resp.ok) {
-          setVideo(null);
-        } else {
-          setVideo(json);
-        }
+        await loadVideo();
       } catch (e: any) {
         setVideo(null);
       } finally {
@@ -864,9 +894,16 @@ export default function VideoDetailScreen() {
           onPress={openProcessPage}
         >
           <View style={styles.btnContent}>
-            <Text style={styles.btnText}>Process video</Text>
+            <Text style={styles.btnText}>Process pipeline</Text>
           </View>
         </Pressable>
+
+        <Pressable style={[styles.btnSecondary, styles.btnCenter]} onPress={createProxyPreview}>
+          <View style={styles.btnContent}>
+            <Text style={styles.btnText}>Create preview proxy (fix black iPhone videos)</Text>
+          </View>
+        </Pressable>
+        {proxyStatus ? <Text style={styles.statusNeutral}>{proxyStatus}</Text> : null}
 
         <View style={styles.groupCard}>
           <View style={styles.groupHeader}>
