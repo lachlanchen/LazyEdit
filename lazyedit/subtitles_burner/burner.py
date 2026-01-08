@@ -232,14 +232,20 @@ def burn_video_with_slots(
         # inside each slot's height. We prefer to keep the main font size stable
         # across languages/slots; if the user scales up beyond what the slot can
         # fit, we clamp ruby first, and only then shrink both proportionally.
-        safe_height = max(1, int(slot_height * 0.92))
+        safe_height = max(1, int(slot_height * 0.98))
         padding = max(max(6, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
-        overhead = padding * 2 + stroke_width * 2 + 6
+        is_cjk = (slot.language or "").lower() in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"}
+        sample_text = "漢字" if is_cjk else "Sample"
+        sample_ruby = "かんじ" if is_cjk else "sam-pəl"
 
-        def estimate_total_height(main_size: int, ruby_size: int, has_ruby: bool) -> int:
-            main_h = int(round(main_size * default_style.line_spacing))
-            ruby_h = int(round(ruby_size * (1.0 + default_style.ruby_spacing))) if has_ruby and ruby_size > 0 else 0
-            return main_h + ruby_h + overhead
+        def render_height(main_size: int, ruby_size: int, stroke: int, pad: int, include_ruby: bool) -> int:
+            style = TextStyle(main_font_size=main_size, ruby_font_size=ruby_size, stroke_width=stroke)
+            renderer = RubyRenderer(style)
+            tokens = [RubyToken(text=sample_text)]
+            if include_ruby and ruby_size > 0:
+                tokens = [RubyToken(text=sample_text, ruby=sample_ruby)]
+            img = renderer.render_tokens(tokens, padding=pad)
+            return int(img.size[1])
 
         has_ruby = expects_ruby
         if not has_ruby:
@@ -249,19 +255,14 @@ def burn_video_with_slots(
         # main size independent of ruby toggles. We compute the fill ratio from a
         # *main-only* render and then scale ruby proportionally.
         ruby_ratio = (ruby_font_size / float(main_font_size)) if (has_ruby and ruby_font_size > 0) else 0.0
-        try:
-            is_cjk = (slot.language or "").lower() in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"}
-            sample_text = "漢字" if is_cjk else "Sample"
-            main_only_style = TextStyle(main_font_size=main_font_size, ruby_font_size=0, stroke_width=stroke_width)
-            main_only_renderer = RubyRenderer(main_only_style)
-            main_only_img = main_only_renderer.render_tokens([RubyToken(text=sample_text)], padding=padding)
-            main_only_render_h = int(main_only_img.size[1])
-        except Exception:
-            main_only_render_h = 0
 
-        if main_only_render_h > 0:
-            target = safe_height * 0.96
-            grow = target / float(main_only_render_h)
+        try:
+            main_only_h = render_height(main_font_size, 0, stroke_width, padding, include_ruby=False)
+        except Exception:
+            main_only_h = 0
+        if main_only_h > 0 and main_only_h < safe_height:
+            target = safe_height * 0.98
+            grow = target / float(main_only_h)
             if grow > 1.02:
                 main_font_size = max(12, int(round(main_font_size * grow)))
                 stroke_width = max(1, int(round(stroke_width * grow)))
@@ -270,15 +271,18 @@ def burn_video_with_slots(
                 else:
                     ruby_font_size = 0
 
-        total_h = estimate_total_height(main_font_size, ruby_font_size, has_ruby and ruby_font_size > 0)
-        if total_h > safe_height:
-            shrink = safe_height / float(total_h)
+        try:
+            full_h = render_height(main_font_size, ruby_font_size, stroke_width, padding, include_ruby=has_ruby)
+        except Exception:
+            full_h = 0
+        if full_h > safe_height and full_h > 0:
+            shrink = safe_height / float(full_h)
             main_font_size = max(12, int(round(main_font_size * shrink)))
+            stroke_width = max(1, int(round(stroke_width * shrink)))
             if has_ruby and ruby_font_size > 0:
-                ruby_font_size = max(8, min(main_font_size - 2, int(round(ruby_font_size * shrink))))
+                ruby_font_size = max(8, min(main_font_size - 2, int(round(main_font_size * ruby_ratio))))
             else:
                 ruby_font_size = 0
-            stroke_width = max(1, int(round(stroke_width * shrink)))
         style = TextStyle(
             main_font_size=main_font_size,
             ruby_font_size=ruby_font_size,
