@@ -127,6 +127,7 @@ def burn_video_with_slots(
         for slot in slots:
             scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
             base_main = int(round(min(slot_height_px * 0.38, slot_width_px * 0.07)))
+            base_main = int(round(base_main * _language_visual_scale(slot.language)))
             base_main = max(14, min(base_main, 220))
             base_ruby = int(round(base_main * 0.6))
 
@@ -209,6 +210,13 @@ def burn_video_with_slots(
     }
     default_style = TextStyle()
 
+    def _language_visual_scale(lang: str) -> float:
+        """Compensate for fonts where CJK glyphs appear visually smaller than Latin."""
+        normalized = (lang or "").strip().lower()
+        if normalized in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"}:
+            return 1.15
+        return 1.0
+
     assignments: list[SlotAssignment] = []
     for slot in slots:
         scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
@@ -219,6 +227,7 @@ def burn_video_with_slots(
         # The coefficients were tuned so that 720p/1080p outputs remain close to
         # the historical defaults, while 4K+ inputs scale up appropriately.
         base_main = int(round(min(slot_height * 0.38, slot_width * 0.07)))
+        base_main = int(round(base_main * _language_visual_scale(slot.language)))
         base_main = max(14, min(base_main, 220))
         base_ruby = int(round(base_main * 0.6))
         base_ruby = max(10, min(base_ruby, base_main - 2))
