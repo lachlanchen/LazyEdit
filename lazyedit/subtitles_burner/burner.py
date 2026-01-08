@@ -113,6 +113,9 @@ def burn_video_with_slots(
     ) = _load_burner_module()
 
     width, height = _get_video_resolution(video_path)
+    base_bottom_height_px = int(height * float(height_ratio))
+    base_slot_height_px = max(1, (base_bottom_height_px - gutter * (rows - 1)) // max(rows, 1))
+    base_slot_width_px = max(1, (width - gutter * (cols - 1) - margin * 2) // max(cols, 1))
 
     def _language_visual_scale(lang: str) -> float:
         """Compensate for fonts where CJK glyphs appear visually smaller than Latin."""
