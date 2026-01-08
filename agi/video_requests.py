@@ -147,13 +147,16 @@ def create_poll_and_download(
             print(f"Cache lookup error (non-fatal): {e}")
 
     video = create_video(client, prompt=prompt, model=model, size=size, seconds=seconds)
-    print("Video generation started:", video)
+    vid0 = getattr(video, "id", None) or (video.get("id") if isinstance(video, dict) else None)
+    status0 = getattr(video, "status", None) or (video.get("status") if isinstance(video, dict) else "queued")
+    progress0 = getattr(video, "progress", None) or (video.get("progress") if isinstance(video, dict) else 0)
+    seconds0 = getattr(video, "seconds", None) or (video.get("seconds") if isinstance(video, dict) else seconds)
+    size0 = getattr(video, "size", None) or (video.get("size") if isinstance(video, dict) else size)
+    model0 = getattr(video, "model", None) or (video.get("model") if isinstance(video, dict) else model)
+    print(f"Video generation started: id={vid0} model={model0} size={size0} seconds={seconds0} status={status0}")
 
     # Record job in Postgres cache
     try:
-        vid0 = getattr(video, "id", None) or (video.get("id") if isinstance(video, dict) else None)
-        status0 = getattr(video, "status", None) or (video.get("status") if isinstance(video, dict) else "queued")
-        progress0 = getattr(video, "progress", None) or (video.get("progress") if isinstance(video, dict) else 0)
         ldb.record_generated_video(
             job_id=str(vid0),
             model=model,
@@ -171,6 +174,9 @@ def create_poll_and_download(
     # Normalize response across SDK/HTTP
     progress = (getattr(video, "progress", None) or (video.get("progress") if isinstance(video, dict) else 0) or 0)
     bar_len = 30
+    interactive = sys.stdout.isatty()
+    last_status = None
+    last_progress_int = None
 
     def _status(v):
         return getattr(v, "status", None) or (v.get("status") if isinstance(v, dict) else None)
@@ -179,12 +185,22 @@ def create_poll_and_download(
         if time.time() - start > timeout_seconds:
             raise TimeoutError("Timed out waiting for video to complete")
 
-        # progress bar
-        filled = int((float(progress) / 100.0) * bar_len)
-        bar = "=" * filled + "-" * (bar_len - filled)
         status_txt = "Queued" if _status(video) == "queued" else "Processing"
-        sys.stdout.write(f"\r{status_txt}: [{bar}] {progress:.1f}%")
-        sys.stdout.flush()
+        try:
+            progress_float = float(progress)
+        except Exception:
+            progress_float = 0.0
+        progress_int = int(progress_float)
+        if interactive:
+            filled = int((progress_float / 100.0) * bar_len)
+            bar = "=" * filled + "-" * (bar_len - filled)
+            sys.stdout.write(f"\r{status_txt}: [{bar}] {progress_float:.1f}%")
+            sys.stdout.flush()
+        else:
+            if status_txt != last_status or progress_int != last_progress_int:
+                print(f"{status_txt}: {progress_int}%")
+                last_status = status_txt
+                last_progress_int = progress_int
 
         time.sleep(poll_interval)
         vid = getattr(video, "id", None) or (video.get("id") if isinstance(video, dict) else None)
@@ -199,8 +215,9 @@ def create_poll_and_download(
         except Exception as e:
             print(f"DB update error (non-fatal): {e}")
 
-    # end of loop – newline for cleanliness
-    sys.stdout.write("\n")
+    # end of loop – newline for cleanliness (TTY only)
+    if interactive:
+        sys.stdout.write("\n")
 
     if _status(video) == "failed":
         err = None
