@@ -121,6 +121,10 @@ def burn_video_with_slots(
             return 1.15
         return 1.0
 
+    base_bottom_height_px = int(height * float(height_ratio))
+    base_slot_height_px = max(1, (base_bottom_height_px - gutter * (rows - 1)) // max(rows, 1))
+    base_slot_width_px = max(1, (width - gutter * (cols - 1) - margin * 2) // max(cols, 1))
+
     # When users increase per-slot fontScale, the subtitle block can become taller
     # than the slot and visually overlap into adjacent rows. To keep scaling
     # readable (including ruby/pinyin) without overlap, expand the bottom subtitle
@@ -133,16 +137,6 @@ def burn_video_with_slots(
         required_slot_height = 1
         for slot in slots:
             scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
-            base_main = int(round(min(slot_height_px * 0.38, slot_width_px * 0.07)))
-            base_main = int(round(base_main * _language_visual_scale(slot.language)))
-            base_main = max(14, min(base_main, 220))
-            base_ruby = int(round(base_main * 0.6))
-
-            main_size = max(12, int(round(base_main * scale)))
-            ruby_size = max(8, int(round(base_ruby * scale)))
-            default_style = TextStyle()
-            stroke = max(1, int(round(default_style.stroke_width * (main_size / default_style.main_font_size))))
-
             expects_ruby = bool(
                 slot.ruby_key
                 or slot.auto_ruby
@@ -153,6 +147,17 @@ def burn_video_with_slots(
                 or slot.korean_romaja
                 or slot.arabic_translit
             )
+            base_main_ref_h = base_slot_height_px if expects_ruby else slot_height_px
+            base_main_ref_w = base_slot_width_px if expects_ruby else slot_width_px
+            base_main = int(round(min(base_main_ref_h * 0.38, base_main_ref_w * 0.07)))
+            base_main = int(round(base_main * _language_visual_scale(slot.language)))
+            base_main = max(14, min(base_main, 220))
+            base_ruby = int(round(base_main * 0.6))
+
+            main_size = max(12, int(round(base_main * scale)))
+            ruby_size = max(8, int(round(base_ruby * scale)))
+            default_style = TextStyle()
+            stroke = max(1, int(round(default_style.stroke_width * (main_size / default_style.main_font_size))))
             if not expects_ruby:
                 ruby_size = 0
 
@@ -176,10 +181,10 @@ def burn_video_with_slots(
         return required_bottom / float(height) if height else current_ratio
 
     effective_height_ratio = float(height_ratio)
-    for _ in range(3):
+    for _ in range(6):
         needed = _estimate_required_height_ratio(effective_height_ratio)
         next_ratio = max(effective_height_ratio, float(height_ratio), needed)
-        next_ratio = min(next_ratio, 0.85)
+        next_ratio = min(next_ratio, 0.92)
         if next_ratio - effective_height_ratio < 0.005:
             break
         effective_height_ratio = next_ratio
@@ -222,20 +227,6 @@ def burn_video_with_slots(
         scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
         slot_width, slot_height = slot_geometry.get(slot.slot_id, (width, max(1, int(height * height_ratio))))
 
-        # Derive font sizes from the pixel geometry of each slot so that
-        # subtitle readability stays consistent across high-resolution inputs.
-        # The coefficients were tuned so that 720p/1080p outputs remain close to
-        # the historical defaults, while 4K+ inputs scale up appropriately.
-        base_main = int(round(min(slot_height * 0.38, slot_width * 0.07)))
-        base_main = int(round(base_main * _language_visual_scale(slot.language)))
-        base_main = max(14, min(base_main, 220))
-        base_ruby = int(round(base_main * 0.6))
-        base_ruby = max(10, min(base_ruby, base_main - 2))
-
-        main_font_size = max(12, int(round(base_main * scale)))
-        ruby_font_size = max(8, int(round(base_ruby * scale)))
-        stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
-
         expects_ruby = bool(
             slot.ruby_key
             or slot.auto_ruby
@@ -246,6 +237,23 @@ def burn_video_with_slots(
             or slot.korean_romaja
             or slot.arabic_translit
         )
+
+        # Derive font sizes from the pixel geometry of each slot so that
+        # subtitle readability stays consistent across high-resolution inputs.
+        # The coefficients were tuned so that 720p/1080p outputs remain close to
+        # the historical defaults, while 4K+ inputs scale up appropriately.
+        base_main_ref_h = base_slot_height_px if expects_ruby else slot_height
+        base_main_ref_w = base_slot_width_px if expects_ruby else slot_width
+        base_main = int(round(min(base_main_ref_h * 0.38, base_main_ref_w * 0.07)))
+        base_main = int(round(base_main * _language_visual_scale(slot.language)))
+        base_main = max(14, min(base_main, 220))
+        base_ruby = int(round(base_main * 0.6))
+        base_ruby = max(10, min(base_ruby, base_main - 2))
+
+        main_font_size = max(12, int(round(base_main * scale)))
+        ruby_font_size = max(8, int(round(base_ruby * scale)))
+        stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
+
         # Prevent overlap between stacked slots by ensuring rendered subtitles fit
         # inside each slot's height. We prefer to keep the main font size stable
         # across languages/slots; if the user scales up beyond what the slot can
