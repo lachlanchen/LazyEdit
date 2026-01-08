@@ -393,7 +393,12 @@ def burn_video_with_slots(
         sample_ruby = "かんじ" if is_cjk else "sam-pəl"
 
         def render_height(main_size: int, ruby_size: int, stroke: int, pad: int, include_ruby: bool) -> int:
-            style = TextStyle(main_font_size=main_size, ruby_font_size=ruby_size, stroke_width=stroke)
+            style = TextStyle(
+                main_font_size=main_size,
+                ruby_font_size=ruby_size,
+                stroke_width=stroke,
+                ruby_spacing=0.05,
+            )
             renderer = RubyRenderer(style)
             tokens = [RubyToken(text=sample_text)]
             if include_ruby and ruby_size > 0:
@@ -437,6 +442,7 @@ def burn_video_with_slots(
             main_font_size=main_font_size,
             ruby_font_size=ruby_font_size,
             stroke_width=stroke_width,
+            ruby_spacing=0.05,
         )
         ipa_lang = None
         if slot.ipa:
