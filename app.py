@@ -3965,8 +3965,14 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
                 use_cache=use_cache,
             )
         except Exception as exc:
+            print("Video generation failed.")
+            traceback.print_exc()
             self.set_status(500)
-            return self.write({"error": "video generation failed", "details": str(exc)})
+            return self.write({
+                "error": "video generation failed",
+                "details": str(exc),
+                "requested": {"model": model, "size": size, "seconds": seconds},
+            })
 
         if not output_path or not os.path.exists(output_path):
             self.set_status(500)

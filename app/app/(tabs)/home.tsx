@@ -1057,7 +1057,8 @@ const HISTORY_KEYS = {
       });
       const json = await resp.json();
       if (!resp.ok) {
-        setVideoStatus(`Generation failed: ${json.error || json.message || resp.statusText}`);
+        const details = json.details ? `: ${json.details}` : '';
+        setVideoStatus(`Generation failed: ${json.error || json.message || resp.statusText}${details}`);
         setVideoTone('bad');
         return;
       }
