@@ -40,6 +40,8 @@ def _load_burner_module():
     try:
         from subtitles_burner.burner import (
             BurnLayout,
+            RubyRenderer,
+            RubyToken,
             Slot,
             SlotAssignment,
             TextStyle,
@@ -49,7 +51,16 @@ def _load_burner_module():
     except Exception as exc:
         raise RuntimeError(f"Failed to import subtitles_burner: {exc}") from exc
 
-    return BurnLayout, Slot, SlotAssignment, TextStyle, build_bottom_slot_layout, burn_subtitles_with_layout
+    return (
+        BurnLayout,
+        RubyRenderer,
+        RubyToken,
+        Slot,
+        SlotAssignment,
+        TextStyle,
+        build_bottom_slot_layout,
+        burn_subtitles_with_layout,
+    )
 
 
 def _get_video_resolution(video_path: str) -> tuple[int, int]:
@@ -77,6 +88,8 @@ def burn_video_with_slots(
 ) -> None:
     (
         BurnLayout,
+        RubyRenderer,
+        RubyToken,
         Slot,
         SlotAssignment,
         TextStyle,
@@ -104,9 +117,8 @@ def burn_video_with_slots(
 
             main_size = max(12, int(round(base_main * scale)))
             ruby_size = max(8, int(round(base_ruby * scale)))
-            stroke = max(1, int(round(TextStyle().stroke_width * (main_size / TextStyle().main_font_size))))
-            pad = max(12, stroke * 2)
-            overhead = pad * 2 + stroke * 2 + 6
+            default_style = TextStyle()
+            stroke = max(1, int(round(default_style.stroke_width * (main_size / default_style.main_font_size))))
 
             expects_ruby = bool(
                 slot.ruby_key
@@ -121,10 +133,20 @@ def burn_video_with_slots(
             if not expects_ruby:
                 ruby_size = 0
 
-            main_h = int(round(main_size * TextStyle().line_spacing))
-            ruby_h = int(round(ruby_size * (1.0 + TextStyle().ruby_spacing))) if ruby_size > 0 else 0
-            total_h = main_h + ruby_h + overhead
-            # Add slack for rounding and centering, and undo the 0.92 safety factor used later.
+            style = TextStyle(
+                main_font_size=main_size,
+                ruby_font_size=ruby_size,
+                stroke_width=stroke,
+            )
+            renderer = RubyRenderer(style)
+            sample_tokens = [RubyToken(text="🔊", token_type="speaker")]
+            if ruby_size > 0:
+                sample_tokens.append(RubyToken(text="漢字", ruby="かんじ"))
+            else:
+                sample_tokens.append(RubyToken(text="Sample"))
+            img = renderer.render_tokens(sample_tokens, padding=16)
+            total_h = int(img.size[1])
+            # Undo the 0.92 safety factor used later and add slack for rounding/centering.
             required_slot_height = max(required_slot_height, int((total_h / 0.92) + 2))
 
         required_bottom = required_slot_height * rows + gutter * (rows - 1)

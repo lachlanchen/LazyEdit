@@ -593,6 +593,59 @@ export default function BurnSubtitlesScreen() {
     Math.round(previewStageHeight * liftRatio),
   );
 
+  const previewTypography = (slot: BurnSlot) => {
+    const scale = typeof slot.fontScale === 'number' ? slot.fontScale : 1.0;
+    const hasRuby = Boolean(
+      slot.romaji ||
+        slot.pinyin ||
+        slot.ipa ||
+        slot.jyutping ||
+        slot.romaja ||
+        slot.arabicTranslit ||
+        (slot.language && ['ja', 'zh', 'zh-Hant', 'zh-Hans', 'yue', 'ko', 'ar'].includes(slot.language)),
+    );
+
+    const mainBase = Math.max(10, Math.round(previewCellHeight * 0.62));
+    const rubyBase = Math.max(7, Math.round(mainBase * 0.5));
+
+    let mainSize = Math.max(10, Math.round(mainBase * scale));
+    let rubySize = hasRuby ? Math.max(7, Math.round(rubyBase * scale)) : 0;
+
+    const safeHeight = Math.max(2, Math.floor(previewCellHeight * 0.9));
+    const estimatedMainH = mainSize;
+    const estimatedRubyH = rubySize ? Math.round(rubySize * 1.2) : 0;
+    const total = estimatedMainH + estimatedRubyH + 6;
+
+    if (total > safeHeight && rubySize) {
+      const remaining = safeHeight - estimatedMainH - 6;
+      rubySize = remaining > 0 ? Math.max(0, Math.min(rubySize, remaining)) : 0;
+      if (rubySize < 7) rubySize = 0;
+    }
+
+    const lang = slot.language || '';
+    if (lang === 'ja') return { main: '漢字', ruby: rubySize ? 'かんじ' : '', mainSize, rubySize };
+    if (lang === 'zh' || lang === 'zh-Hant' || lang === 'zh-Hans')
+      return { main: '中文', ruby: rubySize ? 'zhong1 wen2' : '', mainSize, rubySize };
+    if (lang === 'yue') return { main: '廣東話', ruby: rubySize ? 'gwong2 dung1 waa2' : '', mainSize, rubySize };
+    if (lang === 'ko') return { main: '한국어', ruby: rubySize ? 'hangug-eo' : '', mainSize, rubySize };
+    if (lang === 'ar') return { main: 'العربية', ruby: rubySize ? 'al-ʿarabiyya' : '', mainSize, rubySize };
+    if (lang === 'fr')
+      return {
+        main: 'Bonjour',
+        ruby: rubySize && slot.ipa ? 'bɔ̃.ʒuʁ' : '',
+        mainSize,
+        rubySize: rubySize && slot.ipa ? rubySize : 0,
+      };
+    if (lang === 'en')
+      return {
+        main: 'Hello',
+        ruby: rubySize && slot.ipa ? 'həˈloʊ' : '',
+        mainSize,
+        rubySize: rubySize && slot.ipa ? rubySize : 0,
+      };
+    return { main: lang ? 'Sample' : '', ruby: '', mainSize, rubySize: 0 };
+  };
+
   const burnSubtitles = async () => {
     if (!id || burning) return;
     setBurning(true);
@@ -838,6 +891,7 @@ export default function BurnSubtitlesScreen() {
                 <View style={styles.previewGrid}>
                   {sortedSlots.map((slot) => {
                     const label = shortLabelForLanguage(slot.language);
+                    const typography = previewTypography(slot);
                     const colIndex = (slot.slot - 1) % Math.max(cols, 1);
                     const isLastCol = colIndex === Math.max(cols, 1) - 1;
                     const rowIndex = Math.floor((slot.slot - 1) / Math.max(cols, 1));
@@ -858,6 +912,23 @@ export default function BurnSubtitlesScreen() {
                         ]}
                       >
                         <Text style={[styles.previewCellValue, { fontSize: previewValueSize }]}>{label}</Text>
+                        {typography.main ? (
+                          <View style={styles.previewTypography}>
+                            {typography.ruby && typography.rubySize ? (
+                              <Text style={[styles.previewRuby, { fontSize: typography.rubySize }]}>
+                                {typography.ruby}
+                              </Text>
+                            ) : null}
+                            <Text style={[styles.previewMain, { fontSize: typography.mainSize }]}>
+                              {typography.main}
+                            </Text>
+                            {typeof slot.fontScale === 'number' ? (
+                              <Text style={styles.previewScale}>
+                                x{slot.fontScale.toFixed(2)} · {typography.mainSize}/{typography.rubySize || 0}
+                              </Text>
+                            ) : null}
+                          </View>
+                        ) : null}
                       </View>
                     );
                   })}
@@ -1013,6 +1084,14 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   previewCellValue: { fontSize: 12, color: '#f8fafc', fontWeight: '700', textAlign: 'center' },
+  previewTypography: {
+    marginTop: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  previewRuby: { color: '#e2e8f0', fontWeight: '600', textAlign: 'center' },
+  previewMain: { color: '#ffffff', fontWeight: '800', textAlign: 'center' },
+  previewScale: { marginTop: 2, fontSize: 9, color: '#e2e8f0', opacity: 0.9 },
   previewHint: { marginTop: 8, fontSize: 11, color: '#64748b' },
   optionRow: {
     marginTop: 12,
