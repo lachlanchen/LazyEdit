@@ -52,10 +52,8 @@ def _load_burner_module():
     except Exception as exc:
         raise RuntimeError(f"Failed to import subtitles_burner: {exc}") from exc
 
-    # LazyEdit patch: the upstream burner pads each rendered subtitle by
-    # `slot.height` above and below, which guarantees overlap between stacked
-    # slots on landscape/square videos. We keep the upstream dependency
-    # read-only and patch the behavior at import time instead.
+    # LazyEdit patch: keep the upstream dependency read-only and patch behavior
+    # at import time instead.
     try:
         if getattr(burner_mod, "_lazyedit_padding_patch", False) is not True and hasattr(burner_mod, "_append_padding"):
             def _append_padding_passthrough(img, _padding_top: int, _padding_bottom: int):
@@ -64,6 +62,43 @@ def _load_burner_module():
             burner_mod._append_padding = _append_padding_passthrough  # type: ignore[attr-defined]
             burner_mod._lazyedit_padding_patch = True
     except Exception:
+        pass
+
+    # LazyEdit patch: upstream render defaults to a fixed 16px padding around
+    # subtitles. That wastes a large fraction of short landscape slots and makes
+    # text look tiny. Use padding proportional to slot height instead.
+    try:
+        if getattr(burner_mod, "_lazyedit_dynamic_padding_patch", False) is not True and hasattr(burner_mod, "SubtitleTrack"):
+            OriginalSubtitleTrack = burner_mod.SubtitleTrack
+            original_render_segment = OriginalSubtitleTrack.render_segment
+
+            def _dynamic_padding_for_slot(slot_height: int, stroke_width: int) -> int:
+                base = int(round(max(1, slot_height) * 0.10))
+                base = max(6, min(base, 16))
+                return max(base, int(stroke_width) * 2)
+
+            def render_segment(self, seg):  # type: ignore[no-redef]
+                key = id(seg)
+                cached = self._render_cache.get(key)
+                if cached is not None:
+                    return cached
+
+                pad = _dynamic_padding_for_slot(int(self.slot.height), int(getattr(self.style, "stroke_width", 0)))
+                img = self.renderer.render_tokens(seg.tokens, padding=pad)
+                if img.width > self.slot.width:
+                    scale = min(1.0, self.slot.width / img.width)
+                    if scale > 0:
+                        new_size = (max(1, int(img.width * scale)), max(1, int(img.height * scale)))
+                        resample = burner_mod.Image.Resampling.LANCZOS if hasattr(burner_mod.Image, "Resampling") else burner_mod.Image.LANCZOS
+                        img = img.resize(new_size, resample)
+                img = burner_mod._append_padding(img, self.slot.height, self.slot.height)
+                self._render_cache[key] = img
+                return img
+
+            OriginalSubtitleTrack.render_segment = render_segment
+            burner_mod._lazyedit_dynamic_padding_patch = True
+    except Exception:
+        # If patching fails, fall back to upstream behavior.
         pass
 
     return (
@@ -198,7 +233,7 @@ def burn_video_with_slots(
         # across languages/slots; if the user scales up beyond what the slot can
         # fit, we clamp ruby first, and only then shrink both proportionally.
         safe_height = max(1, int(slot_height * 0.92))
-        padding = max(12, stroke_width * 2)
+        padding = max(max(6, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
         overhead = padding * 2 + stroke_width * 2 + 6
 
         def estimate_total_height(main_size: int, ruby_size: int, has_ruby: bool) -> int:
@@ -219,7 +254,7 @@ def burn_video_with_slots(
             sample_text = "漢字" if is_cjk else "Sample"
             main_only_style = TextStyle(main_font_size=main_font_size, ruby_font_size=0, stroke_width=stroke_width)
             main_only_renderer = RubyRenderer(main_only_style)
-            main_only_img = main_only_renderer.render_tokens([RubyToken(text=sample_text)], padding=16)
+            main_only_img = main_only_renderer.render_tokens([RubyToken(text=sample_text)], padding=padding)
             main_only_render_h = int(main_only_img.size[1])
         except Exception:
             main_only_render_h = 0
