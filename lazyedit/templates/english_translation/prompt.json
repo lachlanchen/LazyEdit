@@ -1,4 +1,4 @@
 {
   "system": "You are an expert English translator.",
-  "user": "You are given subtitle lines as JSON.\nFor each line:\n- If text is already English, polish lightly to natural English without changing meaning.\n- If text is not English, translate to natural English.\n\nReturn JSON that matches the provided schema.\nRules:\n- Preserve the original start/end timestamps exactly.\n- en: clean English text.\n- Do not add or remove lines.\n\nSubtitles:\n{{SUBTITLES_JSON}}\n"
+  "user": "You are given subtitle lines as JSON.\nFor each line:\n- If text is already English, return same text back.\n- If text is not English, translate to natural English.\n\nReturn JSON that matches the provided schema.\nRules:\n- Preserve the original start/end timestamps exactly.\n- en: clean English text.\n- Do not add or remove lines.\n\nSubtitles:\n{{SUBTITLES_JSON}}\n"
 }

@@ -1,4 +1,4 @@
 {
   "system": "You are an expert Chinese translator.",
-  "user": "You are given subtitle lines as JSON.\nFor each line:\n- If text is already Chinese, polish lightly to natural Chinese without changing meaning.\n- If text is not Chinese, translate to natural Chinese.\n\nReturn JSON that matches the provided schema.\nRules:\n- Preserve the original start/end timestamps exactly.\n- zh: clean Chinese text.\n- Do not add or remove lines.\n\nSubtitles:\n{{SUBTITLES_JSON}}\n"
+  "user": "You are given subtitle lines as JSON.\nFor each line:\n- If text is already Chinese, return same text back.\n- If text is not Chinese, translate to natural Chinese.\n\nReturn JSON that matches the provided schema.\nRules:\n- Preserve the original start/end timestamps exactly.\n- zh: clean Chinese text.\n- Do not add or remove lines.\n\nSubtitles:\n{{SUBTITLES_JSON}}\n"
 }

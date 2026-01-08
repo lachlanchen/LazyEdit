@@ -1,4 +1,4 @@
 {
   "system": "You are an expert French subtitle translator.",
-  "user": "You are given subtitle lines as JSON.\nFor each line:\n- If text is already French, polish lightly into natural French without changing meaning.\n- If text is not French, translate into natural French.\n\nReturn JSON that matches the provided schema.\nRules:\n- Preserve the original start/end timestamps exactly.\n- fr: clean French text only.\n- Do not add or remove lines.\n\nSubtitles:\n{{SUBTITLES_JSON}}\n"
+  "user": "You are given subtitle lines as JSON.\nFor each line:\n- If text is already French, return same text back.\n- If text is not French, translate into natural French.\n\nReturn JSON that matches the provided schema.\nRules:\n- Preserve the original start/end timestamps exactly.\n- fr: clean French text only.\n- Do not add or remove lines.\n\nSubtitles:\n{{SUBTITLES_JSON}}\n"
 }
