@@ -113,13 +113,31 @@ def burn_video_with_slots(
             lift_slots=lift_slots,
         )
 
+    slot_geometry: dict[int, tuple[int, int]] = {
+        slot_entry.slot_id: (int(slot_entry.width), int(slot_entry.height)) for slot_entry in layout.slots
+    }
+    default_style = TextStyle()
+
     assignments: list[SlotAssignment] = []
     for slot in slots:
         scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
-        stroke_width = max(1, int(round(TextStyle().stroke_width * scale)))
+        slot_width, slot_height = slot_geometry.get(slot.slot_id, (width, max(1, int(height * height_ratio))))
+
+        # Derive font sizes from the pixel geometry of each slot so that
+        # subtitle readability stays consistent across high-resolution inputs.
+        # The coefficients were tuned so that 720p/1080p outputs remain close to
+        # the historical defaults, while 4K+ inputs scale up appropriately.
+        base_main = int(round(min(slot_height * 0.38, slot_width * 0.07)))
+        base_main = max(14, min(base_main, 220))
+        base_ruby = int(round(base_main * 0.5))
+        base_ruby = max(10, min(base_ruby, base_main - 2))
+
+        main_font_size = max(12, int(round(base_main * scale)))
+        ruby_font_size = max(8, int(round(base_ruby * scale)))
+        stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
         style = TextStyle(
-            main_font_size=max(12, int(round(TextStyle().main_font_size * scale))),
-            ruby_font_size=max(8, int(round(TextStyle().ruby_font_size * scale))),
+            main_font_size=main_font_size,
+            ruby_font_size=ruby_font_size,
             stroke_width=stroke_width,
         )
         ipa_lang = None
