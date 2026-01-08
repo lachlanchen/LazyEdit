@@ -613,7 +613,27 @@ export default function HomeScreen() {
   }, [specHistoryList, t]);
   const promptTextHistoryOptions = historyOptions(promptTextHistory);
   const ideaHistoryOptions = historyOptions(ideaHistory);
-  const promptResultHistoryOptions = historyOptions(promptResultHistory);
+  const promptResultHistoryOptions = useMemo(() => {
+    const options: { value: string; label: string }[] = [];
+    promptResultHistory.forEach((item, idx) => {
+      let label = '';
+      try {
+        const parsed = JSON.parse(item);
+        if (parsed && typeof parsed === 'object' && parsed.title) {
+          label = String(parsed.title);
+        }
+      } catch (_err) {
+        // ignore
+      }
+      if (!label || !label.trim()) {
+        label = `Prompt ${idx + 1}`;
+      }
+      if (label.length > 60) label = `${label.slice(0, 60)}…`;
+      options.push({ value: item, label });
+    });
+    if (!options.length) return [{ value: '', label: t('history_select') }];
+    return [{ value: '', label: t('history_select') }, ...options];
+  }, [promptResultHistory, t]);
 
   const pushListValue = (list: string[], value: string) => {
     const cleaned = value.trim();
