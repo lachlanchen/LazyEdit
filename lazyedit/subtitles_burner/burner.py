@@ -135,6 +135,28 @@ def burn_video_with_slots(
         main_font_size = max(12, int(round(base_main * scale)))
         ruby_font_size = max(8, int(round(base_ruby * scale)))
         stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
+
+        expects_ruby = bool(
+            slot.ruby_key
+            or slot.auto_ruby
+            or slot.kana_romaji
+            or slot.pinyin
+            or slot.ipa
+            or slot.jyutping
+            or slot.korean_romaja
+            or slot.arabic_translit
+        )
+        # Prevent visual overlap between stacked slots by ensuring the rendered text
+        # stays within the slot's vertical bounds, even when users increase fontScale.
+        safe_height = max(1, int(slot_height * 0.92))
+        estimated_main_h = int(round(main_font_size * default_style.line_spacing))
+        estimated_ruby_h = int(round(ruby_font_size * (1.0 + default_style.ruby_spacing))) if expects_ruby else 0
+        estimated_total_h = estimated_main_h + estimated_ruby_h + stroke_width * 4 + 16
+        if estimated_total_h > safe_height:
+            shrink = safe_height / float(estimated_total_h)
+            main_font_size = max(12, int(round(main_font_size * shrink)))
+            ruby_font_size = max(8, min(main_font_size - 2, int(round(ruby_font_size * shrink))))
+            stroke_width = max(1, int(round(stroke_width * shrink)))
         style = TextStyle(
             main_font_size=main_font_size,
             ruby_font_size=ruby_font_size,

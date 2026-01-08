@@ -198,6 +198,98 @@ DEFAULT_BURN_LAYOUT = {
 }
 
 BURN_EXECUTOR = ThreadPoolExecutor(max_workers=1)
+PROXY_EXECUTOR = ThreadPoolExecutor(max_workers=1)
+
+
+def _should_create_preview_proxy(file_path: str) -> bool:
+    if not file_path:
+        return False
+    _, ext = os.path.splitext(file_path)
+    ext = (ext or "").lower()
+    if ext in {".mov"}:
+        return True
+    # Best-effort detection for HEVC/HDR in MP4/etc.
+    try:
+        probe = subprocess.run(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-select_streams",
+                "v:0",
+                "-show_entries",
+                "stream=codec_name,color_transfer",
+                "-of",
+                "json",
+                file_path,
+            ],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        payload = json.loads(probe.stdout.decode("utf-8", errors="replace") or "{}")
+        streams = payload.get("streams") or []
+        stream = streams[0] if streams else {}
+        codec = str(stream.get("codec_name") or "").lower()
+        transfer = str(stream.get("color_transfer") or "").lower()
+        if codec in {"hevc", "h265"}:
+            return True
+        if transfer in {"smpte2084", "arib-std-b67"}:
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _create_preview_proxy(video_id: int, input_path: str) -> str | None:
+    if not input_path or not os.path.exists(input_path):
+        return None
+    proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+    os.makedirs(proxies_dir, exist_ok=True)
+    output_path = os.path.join(proxies_dir, f"video_{video_id}_proxy.mp4")
+
+    try:
+        if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(input_path):
+            return output_path
+    except Exception:
+        pass
+
+    cmd = [
+        "ffmpeg",
+        "-y",
+        "-i",
+        input_path,
+        "-vf",
+        "scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "veryfast",
+        "-crf",
+        "22",
+        "-movflags",
+        "+faststart",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "128k",
+        output_path,
+    ]
+    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return output_path
+
+
+def _enqueue_preview_proxy(video_id: int, input_path: str) -> None:
+    if not _should_create_preview_proxy(input_path):
+        return
+
+    def _run() -> None:
+        try:
+            _create_preview_proxy(video_id, input_path)
+        except Exception as exc:
+            print(f"Proxy transcode failed for video {video_id}: {exc}")
+
+    PROXY_EXECUTOR.submit(_run)
 
 
 def load_grammar_palette(lang):
@@ -2911,6 +3003,8 @@ class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
                 "details": str(e),
             })
 
+        _enqueue_preview_proxy(video_id, input_file)
+
         # Respond with the path of the saved file
         self.write({
             'status': 'success',
@@ -3118,33 +3212,15 @@ class VideoProxyHandler(CorsMixin, tornado.web.RequestHandler):
             # If mtime checks fail, just regenerate.
             pass
 
-        cmd = [
-            "ffmpeg",
-            "-y",
-            "-i",
-            input_path,
-            "-vf",
-            "scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p",
-            "-c:v",
-            "libx264",
-            "-preset",
-            "veryfast",
-            "-crf",
-            "22",
-            "-movflags",
-            "+faststart",
-            "-c:a",
-            "aac",
-            "-b:a",
-            "128k",
-            output_path,
-        ]
         try:
-            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            _create_preview_proxy(video_id_i, input_path)
         except subprocess.CalledProcessError as exc:
             err = exc.stderr.decode("utf-8", errors="replace") if exc.stderr else str(exc)
             self.set_status(500)
             return self.write({"error": "proxy transcode failed", "details": err})
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "proxy transcode failed", "details": str(exc)})
 
         self.write({
             "video_id": video_id_i,
@@ -4987,6 +5063,7 @@ class FileUploadHandlerStream(CorsMixin, tornado.web.RequestHandler):
                     "error": "failed to save video in database",
                     "details": str(e),
                 })
+            _enqueue_preview_proxy(video_id, self.file_path)
             response = {
                 'status': 'success',
                 'message': f"Received {self.bytes_received} bytes.",
