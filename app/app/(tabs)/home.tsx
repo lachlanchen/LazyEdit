@@ -637,12 +637,29 @@ export default function HomeScreen() {
     return [{ value: '', label: t('history_select') }, ...options];
   }, [promptResultHistory, t]);
 
-  const pushListValue = (list: string[], value: string) => {
-    const cleaned = value.trim();
-    if (!cleaned) return list;
-    const next = [cleaned, ...list.filter((item) => item !== cleaned)];
-    return next.slice(0, 20);
-  };
+const pushListValue = (list: string[], value: string) => {
+  const cleaned = value.trim();
+  if (!cleaned) return list;
+  const next = [cleaned, ...list.filter((item) => item !== cleaned)];
+  return next.slice(0, 20);
+};
+const mergeHistory = (primary: string[], secondary: string[]) => {
+  const seen = new Set<string>();
+  const merged: string[] = [];
+  [...primary, ...secondary].forEach((item) => {
+    if (seen.has(item) || !item?.trim()) return;
+    seen.add(item);
+    merged.push(item);
+  });
+  return merged.slice(0, 50);
+};
+
+const HISTORY_KEYS = {
+  spec: 'video_spec_history',
+  promptText: 'video_prompt_text_history',
+  promptResult: 'video_prompt_result_history',
+  idea: 'video_idea_history',
+} as const;
 
   const loadPromptSettings = async () => {
     try {
@@ -663,11 +680,25 @@ export default function HomeScreen() {
     loadPromptSettings();
     loadPromptHistory();
     (async () => {
+      const loadLocal = (key: string) => {
+        if (Platform.OS !== 'web') return [];
+        try {
+          const raw = localStorage.getItem(`lazyedit:${key}`);
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (_err) {
+          return [];
+        }
+      };
       try {
         const resp = await fetch(`${API_URL}/api/ui-settings/video_spec_history`);
         const json = await resp.json();
+        const local = loadLocal(HISTORY_KEYS.spec);
         if (resp.ok && Array.isArray(json.value)) {
-          setSpecHistoryList(json.value);
+          setSpecHistoryList(mergeHistory(json.value, local));
+        } else {
+          setSpecHistoryList(local);
         }
       } catch (_err) {
         // ignore
@@ -677,8 +708,11 @@ export default function HomeScreen() {
       try {
         const resp = await fetch(`${API_URL}/api/ui-settings/video_prompt_text_history`);
         const json = await resp.json();
+        const local = loadLocal(HISTORY_KEYS.promptText);
         if (resp.ok && Array.isArray(json.value)) {
-          setPromptTextHistory(json.value);
+          setPromptTextHistory(mergeHistory(json.value, local));
+        } else {
+          setPromptTextHistory(local);
         }
       } catch (_err) {
         // ignore
@@ -688,8 +722,11 @@ export default function HomeScreen() {
       try {
         const resp = await fetch(`${API_URL}/api/ui-settings/video_prompt_result_history`);
         const json = await resp.json();
+        const local = loadLocal(HISTORY_KEYS.promptResult);
         if (resp.ok && Array.isArray(json.value)) {
-          setPromptResultHistory(json.value);
+          setPromptResultHistory(mergeHistory(json.value, local));
+        } else {
+          setPromptResultHistory(local);
         }
       } catch (_err) {
         // ignore
@@ -699,8 +736,11 @@ export default function HomeScreen() {
       try {
         const resp = await fetch(`${API_URL}/api/ui-settings/video_idea_history`);
         const json = await resp.json();
+        const local = loadLocal(HISTORY_KEYS.idea);
         if (resp.ok && Array.isArray(json.value)) {
-          setIdeaHistory(json.value);
+          setIdeaHistory(mergeHistory(json.value, local));
+        } else {
+          setIdeaHistory(local);
         }
       } catch (_err) {
         // ignore
@@ -827,6 +867,13 @@ export default function HomeScreen() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(next),
         }).catch(() => {});
+        if (Platform.OS === 'web') {
+          try {
+            localStorage.setItem(`lazyedit:${HISTORY_KEYS.spec}`, JSON.stringify(next));
+          } catch (_err) {
+            // ignore
+          }
+        }
       }
       if (promptTextHistoryLoaded) {
         const nextPromptHistory = pushListValue(promptTextHistory, promptText);
@@ -836,6 +883,13 @@ export default function HomeScreen() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(nextPromptHistory),
         }).catch(() => {});
+        if (Platform.OS === 'web') {
+          try {
+            localStorage.setItem(`lazyedit:${HISTORY_KEYS.promptText}`, JSON.stringify(nextPromptHistory));
+          } catch (_err) {
+            // ignore
+          }
+        }
       }
       if (promptResultHistoryLoaded) {
         const toStore = JSON.stringify({
@@ -852,6 +906,13 @@ export default function HomeScreen() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(nextPromptResultHistory),
         }).catch(() => {});
+        if (Platform.OS === 'web') {
+          try {
+            localStorage.setItem(`lazyedit:${HISTORY_KEYS.promptResult}`, JSON.stringify(nextPromptResultHistory));
+          } catch (_err) {
+            // ignore
+          }
+        }
       }
       setVideoSize(size);
       setVideoSeconds(String(seconds));
@@ -894,6 +955,13 @@ export default function HomeScreen() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(nextIdeaHistory),
         }).catch(() => {});
+        if (Platform.OS === 'web') {
+          try {
+            localStorage.setItem(`lazyedit:${HISTORY_KEYS.idea}`, JSON.stringify(nextIdeaHistory));
+          } catch (_err) {
+            // ignore
+          }
+        }
       }
       if (specHistoryLoaded) {
         const nextSpecHistory = pushListValue(specHistoryList, JSON.stringify(merged));
@@ -903,6 +971,13 @@ export default function HomeScreen() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(nextSpecHistory),
         }).catch(() => {});
+        if (Platform.OS === 'web') {
+          try {
+            localStorage.setItem(`lazyedit:${HISTORY_KEYS.spec}`, JSON.stringify(nextSpecHistory));
+          } catch (_err) {
+            // ignore
+          }
+        }
       }
       setSpecStatus('Specs generated. Review and adjust as needed.');
       setSpecTone('good');
