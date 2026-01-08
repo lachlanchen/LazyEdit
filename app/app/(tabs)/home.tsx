@@ -198,8 +198,10 @@ export default function HomeScreen() {
     size?: string;
     seconds?: number;
   } | null>(null);
+  const [promptResultHistory, setPromptResultHistory] = useState<string[]>([]);
   const [specHistoryList, setSpecHistoryList] = useState<string[]>([]);
   const [promptTextHistory, setPromptTextHistory] = useState<string[]>([]);
+  const [ideaHistory, setIdeaHistory] = useState<string[]>([]);
   const [promptOutput, setPromptOutput] = useState<string>('');
   const [prompting, setPrompting] = useState(false);
   const [promptStatus, setPromptStatus] = useState<string>('');
@@ -207,6 +209,8 @@ export default function HomeScreen() {
   const [promptSpecLoaded, setPromptSpecLoaded] = useState(false);
   const [specHistoryLoaded, setSpecHistoryLoaded] = useState(false);
   const [promptTextHistoryLoaded, setPromptTextHistoryLoaded] = useState(false);
+  const [promptResultHistoryLoaded, setPromptResultHistoryLoaded] = useState(false);
+  const [ideaHistoryLoaded, setIdeaHistoryLoaded] = useState(false);
   const [promptHistory, setPromptHistory] = useState(DEFAULT_PROMPT_HISTORY);
   const [promptHistoryLoaded, setPromptHistoryLoaded] = useState(false);
   const [ideaPrompt, setIdeaPrompt] = useState('');
@@ -588,6 +592,8 @@ export default function HomeScreen() {
 
   const specHistoryOptions = historyOptions(specHistoryList);
   const promptTextHistoryOptions = historyOptions(promptTextHistory);
+  const ideaHistoryOptions = historyOptions(ideaHistory);
+  const promptResultHistoryOptions = historyOptions(promptResultHistory);
 
   const pushListValue = (list: string[], value: string) => {
     const cleaned = value.trim();
@@ -637,6 +643,28 @@ export default function HomeScreen() {
       } finally {
         setPromptTextHistoryLoaded(true);
       }
+      try {
+        const resp = await fetch(`${API_URL}/api/ui-settings/video_prompt_result_history`);
+        const json = await resp.json();
+        if (resp.ok && Array.isArray(json.value)) {
+          setPromptResultHistory(json.value);
+        }
+      } catch (_err) {
+        // ignore
+      } finally {
+        setPromptResultHistoryLoaded(true);
+      }
+      try {
+        const resp = await fetch(`${API_URL}/api/ui-settings/video_idea_history`);
+        const json = await resp.json();
+        if (resp.ok && Array.isArray(json.value)) {
+          setIdeaHistory(json.value);
+        }
+      } catch (_err) {
+        // ignore
+      } finally {
+        setIdeaHistoryLoaded(true);
+      }
     })();
   }, []);
 
@@ -655,6 +683,26 @@ export default function HomeScreen() {
   const applyPromptHistory = (value: string) => {
     if (!value) return;
     setPromptOutput(value);
+  };
+
+  const applyPromptResultHistory = (value: string) => {
+    if (!value) return;
+    try {
+      const parsed = JSON.parse(value);
+      if (parsed && typeof parsed === 'object') {
+        setPromptResult(parsed);
+        if (parsed.prompt) setPromptOutput(parsed.prompt);
+        if (parsed.size) setVideoSize(parsed.size);
+        if (parsed.seconds) setVideoSeconds(String(parsed.seconds));
+      }
+    } catch (_err) {
+      // ignore malformed
+    }
+  };
+
+  const applyIdeaHistory = (value: string) => {
+    if (!value) return;
+    setIdeaPrompt(value);
   };
 
   useEffect(() => {
@@ -747,6 +795,22 @@ export default function HomeScreen() {
           body: JSON.stringify(nextPromptHistory),
         }).catch(() => {});
       }
+      if (promptResultHistoryLoaded) {
+        const toStore = JSON.stringify({
+          title: result.title || json.title,
+          prompt: promptText,
+          negativePrompt: result.negative_prompt || json.negative_prompt,
+          size,
+          seconds,
+        });
+        const nextPromptResultHistory = pushListValue(promptResultHistory, toStore);
+        setPromptResultHistory(nextPromptResultHistory);
+        fetch(`${API_URL}/api/ui-settings/video_prompt_result_history`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(nextPromptResultHistory),
+        }).catch(() => {});
+      }
       setVideoSize(size);
       setVideoSeconds(String(seconds));
       setPromptStatus('Prompt ready. You can edit before generating.');
@@ -780,6 +844,15 @@ export default function HomeScreen() {
       const merged = { ...DEFAULT_PROMPT_SPEC, ...spec };
       setPromptSpec(merged);
       recordHistoryForSpec(merged);
+      if (ideaHistoryLoaded) {
+        const nextIdeaHistory = pushListValue(ideaHistory, ideaPrompt);
+        setIdeaHistory(nextIdeaHistory);
+        fetch(`${API_URL}/api/ui-settings/video_idea_history`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(nextIdeaHistory),
+        }).catch(() => {});
+      }
       setSpecStatus('Specs generated. Review and adjust as needed.');
       setSpecTone('good');
     } catch (e: any) {
@@ -950,6 +1023,14 @@ export default function HomeScreen() {
                 placeholder={t('idea_prompt_placeholder')}
                 multiline
               />
+              {ideaHistoryOptions.length > 1 ? (
+                <HistorySelect
+                  label={t('history_ai_idea')}
+                  value=""
+                  options={ideaHistoryOptions}
+                  onChange={applyIdeaHistory}
+                />
+              ) : null}
 
               <Pressable style={styles.btnAccent} onPress={generateSpecs} disabled={specGenerating}>
                 <View style={styles.btnContent}>
@@ -1200,6 +1281,21 @@ export default function HomeScreen() {
                   </Text>
                 </View>
               </Pressable>
+              <Pressable
+                style={[styles.btnGhost, { marginTop: 8 }]}
+                onPress={() => {
+                  if (!promptOutput.trim() || !promptTextHistoryLoaded) return;
+                  const nextPromptHistory = pushListValue(promptTextHistory, promptOutput);
+                  setPromptTextHistory(nextPromptHistory);
+                  fetch(`${API_URL}/api/ui-settings/video_prompt_text_history`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(nextPromptHistory),
+                  }).catch(() => {});
+                }}
+              >
+                <Text style={styles.btnGhostText}>{t('save_prompt_history')}</Text>
+              </Pressable>
 
               {promptStatus ? (
                 <Text style={[styles.status, toneStyle(promptTone)]}>{promptStatus}</Text>
@@ -1253,6 +1349,14 @@ export default function HomeScreen() {
                   value=""
                   options={promptTextHistoryOptions}
                   onChange={applyPromptHistory}
+                />
+              ) : null}
+              {promptResultHistoryOptions.length > 1 ? (
+                <HistorySelect
+                  label={t('history_ai_prompt_result')}
+                  value=""
+                  options={promptResultHistoryOptions}
+                  onChange={applyPromptResultHistory}
                 />
               ) : null}
 
