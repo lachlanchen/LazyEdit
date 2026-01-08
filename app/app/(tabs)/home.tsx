@@ -799,11 +799,11 @@ const HISTORY_KEYS = {
   useEffect(() => {
     if (!promptResult) return;
     const model = normalizeModel(promptSpec.model);
-    const seconds = clampSecondsForModel(promptResult.seconds, model) ?? videoSeconds;
+    const seconds = clampSecondsForModel(promptResult.seconds, model) ?? parseSeconds(videoSeconds);
     setVideoSize(promptResult.size || sizeForAspectRatio(promptSpec.aspectRatio));
     if (seconds) setVideoSeconds(String(seconds));
-    setVideoModel(model);
-  }, [promptResult, promptSpec, videoSeconds]);
+    setVideoModel((prev) => (prev ? prev : model));
+  }, [promptResult]);
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
