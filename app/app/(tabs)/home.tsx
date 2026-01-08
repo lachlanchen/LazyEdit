@@ -602,8 +602,12 @@ export default function HomeScreen() {
       let label = '';
       try {
         const parsed = JSON.parse(item);
-        if (parsed && typeof parsed === 'object' && parsed.title) {
-          label = String(parsed.title);
+        const payload =
+          parsed && typeof parsed === 'object' && (parsed as any).response && typeof (parsed as any).response === 'object'
+            ? (parsed as any).response
+            : parsed;
+        if (payload && typeof payload === 'object' && (payload as any).title) {
+          label = String((payload as any).title);
         }
       } catch (_err) {
         // ignore parse errors

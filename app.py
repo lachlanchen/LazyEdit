@@ -393,6 +393,7 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
     if aspect_ratio not in {"16:9", "9:16", "auto"}:
         aspect_ratio = DEFAULT_VIDEO_PROMPT_SPEC["aspectRatio"]
 
+    model_provided = "model" in payload and payload.get("model") is not None
     model_value = str(payload.get("model") or DEFAULT_VIDEO_PROMPT_SPEC["model"])
     if model_value not in {"sora-2", "sora-2-pro"}:
         model_value = DEFAULT_VIDEO_PROMPT_SPEC["model"]
@@ -406,7 +407,7 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
             duration_int = int(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
     else:
         duration_int = int(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
-    max_seconds = 25 if model_value == "sora-2-pro" else 12
+    max_seconds = 25 if (model_provided and model_value == "sora-2-pro") or not model_provided else 12
     duration_int = min(max(duration_int, 4), max_seconds)
     duration_value = str(duration_int)
 
@@ -436,6 +437,22 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
         "extraRequirements": _string("extraRequirements", DEFAULT_VIDEO_PROMPT_SPEC["extraRequirements"]),
         "negative": _string("negative", DEFAULT_VIDEO_PROMPT_SPEC["negative"]),
     }
+
+
+def _sanitize_history_list(payload) -> list[str]:
+    if not isinstance(payload, (list, tuple)):
+        return []
+    cleaned: list[str] = []
+    for item in payload:
+        if item is None:
+            continue
+        text = str(item).strip()
+        if not text:
+            continue
+        if text in cleaned:
+            continue
+        cleaned.append(text)
+    return cleaned[:50]
 
 
 def _sanitize_video_prompt_history(payload: dict | None) -> dict:
@@ -2916,7 +2933,17 @@ class GrammarPaletteHandler(CorsMixin, tornado.web.RequestHandler):
 class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self, key):
         ldb.ensure_schema()
-        if key not in {"translation_style", "translation_languages", "burn_layout", "video_prompt", "video_prompt_history"}:
+        if key not in {
+            "translation_style",
+            "translation_languages",
+            "burn_layout",
+            "video_prompt",
+            "video_prompt_history",
+            "video_spec_history",
+            "video_prompt_text_history",
+            "video_prompt_result_history",
+            "video_idea_history",
+        }:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
         saved = ldb.get_ui_preference(key)
@@ -2936,13 +2963,25 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_VIDEO_PROMPT_HISTORY})
             return self.write({"key": key, "value": _sanitize_video_prompt_history(saved)})
+        if key in {"video_spec_history", "video_prompt_text_history", "video_prompt_result_history", "video_idea_history"}:
+            return self.write({"key": key, "value": _sanitize_history_list(saved)})
         if not saved:
             return self.write({"key": key, "value": DEFAULT_TRANSLATION_LANGUAGES})
         return self.write({"key": key, "value": _sanitize_translation_languages(saved)})
 
     def post(self, key):
         ldb.ensure_schema()
-        if key not in {"translation_style", "translation_languages", "burn_layout", "video_prompt", "video_prompt_history"}:
+        if key not in {
+            "translation_style",
+            "translation_languages",
+            "burn_layout",
+            "video_prompt",
+            "video_prompt_history",
+            "video_spec_history",
+            "video_prompt_text_history",
+            "video_prompt_result_history",
+            "video_idea_history",
+        }:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
         try:
@@ -2957,6 +2996,8 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             cleaned = _sanitize_video_prompt_spec(data)
         elif key == "video_prompt_history":
             cleaned = _sanitize_video_prompt_history(data)
+        elif key in {"video_spec_history", "video_prompt_text_history", "video_prompt_result_history", "video_idea_history"}:
+            cleaned = _sanitize_history_list(data)
         else:
             cleaned = _sanitize_translation_languages(data)
         ldb.set_ui_preference(key, cleaned)
