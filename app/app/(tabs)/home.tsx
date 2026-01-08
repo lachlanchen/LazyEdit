@@ -590,7 +590,27 @@ export default function HomeScreen() {
     return <HistorySelect label={t('history_label')} value="" options={historyOptions(items)} onChange={onPick} />;
   };
 
-  const specHistoryOptions = historyOptions(specHistoryList);
+  const specHistoryOptions = useMemo(() => {
+    const options: { value: string; label: string }[] = [];
+    specHistoryList.forEach((item, idx) => {
+      let label = '';
+      try {
+        const parsed = JSON.parse(item);
+        if (parsed && typeof parsed === 'object' && parsed.title) {
+          label = String(parsed.title);
+        }
+      } catch (_err) {
+        // ignore parse errors
+      }
+      if (!label || !label.trim()) {
+        label = `Spec ${idx + 1}`;
+      }
+      if (label.length > 60) label = `${label.slice(0, 60)}…`;
+      options.push({ value: item, label });
+    });
+    if (!options.length) return [{ value: '', label: t('history_select') }];
+    return [{ value: '', label: t('history_select') }, ...options];
+  }, [specHistoryList, t]);
   const promptTextHistoryOptions = historyOptions(promptTextHistory);
   const ideaHistoryOptions = historyOptions(ideaHistory);
   const promptResultHistoryOptions = historyOptions(promptResultHistory);
@@ -1227,6 +1247,14 @@ export default function HomeScreen() {
                 <Text style={styles.panelTitle}>{t('controls_title')}</Text>
               </View>
               <Text style={styles.panelHint}>{t('controls_hint')}</Text>
+              {specHistoryOptions.length > 1 ? (
+                <HistorySelect
+                  label={t('history_ai_specs')}
+                  value=""
+                  options={specHistoryOptions}
+                  onChange={applySpecHistory}
+                />
+              ) : null}
 
               <SelectControl
                 label={t('field_model')}
@@ -1299,15 +1327,6 @@ export default function HomeScreen() {
 
               {promptStatus ? (
                 <Text style={[styles.status, toneStyle(promptTone)]}>{promptStatus}</Text>
-              ) : null}
-
-              {specHistoryOptions.length > 1 ? (
-                <HistorySelect
-                  label={t('history_ai_specs')}
-                  value=""
-                  options={specHistoryOptions}
-                  onChange={applySpecHistory}
-                />
               ) : null}
             </View>
 
