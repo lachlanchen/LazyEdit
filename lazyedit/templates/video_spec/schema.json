@@ -1,7 +1,6 @@
 {
   "type": "object",
   "properties": {
-    "autoTitle": { "type": "boolean" },
     "title": { "type": "string" },
     "subject": { "type": "string" },
     "action": { "type": "string" },
@@ -11,7 +10,7 @@
     "mood": { "type": "string" },
     "style": { "type": "string" },
     "aspectRatio": { "type": "string", "enum": ["16:9", "9:16", "auto"] },
-    "durationSeconds": { "type": "string", "enum": ["6", "8", "10", "12", "15"] },
+    "durationSeconds": { "type": "string", "enum": ["4", "8", "12", "16", "20", "25"] },
     "audioLanguage": { "type": "string", "enum": ["auto", "en", "zh", "ja", "ko", "vi", "ar", "fr", "es"] },
     "sceneCount": { "type": "string" },
     "spokenWords": { "type": "string" },
@@ -19,7 +18,6 @@
     "negative": { "type": "string" }
   },
   "required": [
-    "autoTitle",
     "title",
     "subject",
     "action",

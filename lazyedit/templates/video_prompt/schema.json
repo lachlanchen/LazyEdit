@@ -24,7 +24,7 @@
     "seconds": {
       "type": "integer",
       "minimum": 4,
-      "maximum": 20
+      "maximum": 25
     }
   },
   "required": ["title", "prompt", "negative_prompt", "model", "size", "seconds"],

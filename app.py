@@ -113,7 +113,7 @@ DEFAULT_TRANSLATION_STYLE = {
 }
 DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
 DEFAULT_VIDEO_PROMPT_SPEC = {
-    "autoTitle": True,
+    "autoTitle": False,
     "title": "Epic Vision",
     "subject": "A fictional protagonist in a vast imagined world",
     "action": "They confront a revelation that changes their journey",
@@ -122,8 +122,9 @@ DEFAULT_VIDEO_PROMPT_SPEC = {
     "lighting": "Atmospheric, dramatic lighting with soft volumetric depth",
     "mood": "Epic, awe-inspiring, contemplative",
     "style": "Cinematic, richly detailed, timeless tone",
+    "model": "sora-2",
     "aspectRatio": "16:9",
-    "durationSeconds": "10",
+    "durationSeconds": "12",
     "audioLanguage": "auto",
     "sceneCount": "",
     "spokenWords": "Include a short original philosophical line of dialogue.",
@@ -139,6 +140,7 @@ DEFAULT_VIDEO_PROMPT_HISTORY = {
     "lighting": [],
     "mood": [],
     "style": [],
+    "model": [],
     "audioLanguage": [],
     "sceneCount": [],
     "spokenWords": [],
@@ -391,10 +393,22 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
     if aspect_ratio not in {"16:9", "9:16", "auto"}:
         aspect_ratio = DEFAULT_VIDEO_PROMPT_SPEC["aspectRatio"]
 
+    model_value = str(payload.get("model") or DEFAULT_VIDEO_PROMPT_SPEC["model"])
+    if model_value not in {"sora-2", "sora-2-pro"}:
+        model_value = DEFAULT_VIDEO_PROMPT_SPEC["model"]
+
     duration_value = str(payload.get("durationSeconds") or DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
     duration_value = "".join(ch for ch in duration_value if ch.isdigit())
-    if not duration_value:
-        duration_value = str(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
+    if duration_value:
+        try:
+            duration_int = int(duration_value)
+        except Exception:
+            duration_int = int(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
+    else:
+        duration_int = int(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
+    max_seconds = 25 if model_value == "sora-2-pro" else 12
+    duration_int = min(max(duration_int, 4), max_seconds)
+    duration_value = str(duration_int)
 
     audio_language = str(payload.get("audioLanguage") or DEFAULT_VIDEO_PROMPT_SPEC["audioLanguage"])
     if audio_language not in {"auto", "en", "zh", "ja", "ko", "vi", "ar", "fr", "es"}:
@@ -413,6 +427,7 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
         "lighting": _string("lighting", DEFAULT_VIDEO_PROMPT_SPEC["lighting"]),
         "mood": _string("mood", DEFAULT_VIDEO_PROMPT_SPEC["mood"]),
         "style": _string("style", DEFAULT_VIDEO_PROMPT_SPEC["style"]),
+        "model": model_value,
         "aspectRatio": aspect_ratio,
         "durationSeconds": duration_value,
         "audioLanguage": audio_language,
@@ -3881,7 +3896,9 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
             seconds = int(data.get("seconds") or 8)
         except Exception:
             seconds = 8
-        seconds = min(max(seconds, 4), 20)
+
+        max_seconds = 25 if model == "sora-2-pro" else 12
+        seconds = min(max(seconds, 4), max_seconds)
 
         use_cache = _parse_bool(data.get("use_cache"), default=True)
         title_input = data.get("title") or data.get("name") or "Generated video"

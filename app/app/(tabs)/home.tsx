@@ -33,8 +33,29 @@ const formatBytes = (bytes?: number | null) => {
   return `${size.toFixed(decimals)} ${units[unitIndex]}`;
 };
 
+const DEFAULT_MODEL = 'sora-2';
+const normalizeModel = (model?: string) => (model === 'sora-2' || model === 'sora-2-pro' ? model : DEFAULT_MODEL);
+const clampSecondsForModel = (seconds: number | null | undefined, model: string) => {
+  if (seconds === null || seconds === undefined || Number.isNaN(seconds)) return undefined;
+  const max = model === 'sora-2-pro' ? 25 : 12;
+  const min = 4;
+  return Math.min(Math.max(Math.trunc(seconds), min), max);
+};
+const parseSeconds = (value: unknown) => {
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string') {
+    const num = parseInt(value, 10);
+    return Number.isNaN(num) ? undefined : num;
+  }
+  return undefined;
+};
+const sizeForAspectRatio = (aspectRatio?: string) => {
+  if (aspectRatio === '9:16') return '720x1280';
+  return '1280x720';
+};
+
 const DEFAULT_PROMPT_SPEC = {
-  autoTitle: true,
+  autoTitle: false,
   title: 'Epic Vision',
   subject: 'A fictional protagonist in a vast imagined world',
   action: 'They confront a revelation that changes their journey',
@@ -43,8 +64,9 @@ const DEFAULT_PROMPT_SPEC = {
   lighting: 'Atmospheric, dramatic lighting with soft volumetric depth',
   mood: 'Epic, awe-inspiring, contemplative',
   style: 'Cinematic, richly detailed, timeless tone',
+  model: DEFAULT_MODEL,
   aspectRatio: '16:9',
-  durationSeconds: '10',
+  durationSeconds: '12',
   audioLanguage: 'auto',
   sceneCount: '',
   spokenWords: 'Include a short original philosophical line of dialogue.',
@@ -137,6 +159,7 @@ const DEFAULT_PROMPT_HISTORY = {
   lighting: [],
   mood: [],
   style: [],
+  model: [],
   audioLanguage: [],
   sceneCount: [],
   spokenWords: [],
@@ -196,6 +219,13 @@ export default function HomeScreen() {
       { value: '16:9', label: t('aspect_ratio_landscape') },
       { value: '9:16', label: t('aspect_ratio_portrait') },
       { value: 'auto', label: t('aspect_ratio_auto') },
+    ],
+    [t],
+  );
+  const modelOptions = useMemo(
+    () => [
+      { value: 'sora-2', label: t('model_sora2') },
+      { value: 'sora-2-pro', label: t('model_sora2_pro') },
     ],
     [t],
   );
@@ -430,8 +460,10 @@ export default function HomeScreen() {
     assign('negative', promptSpec.negative);
     assign('spoken_words', promptSpec.spokenWords);
     assign('extra_requirements', promptSpec.extraRequirements);
-    const duration = parseInt(promptSpec.durationSeconds, 10);
-    if (!Number.isNaN(duration)) {
+    const model = normalizeModel(promptSpec.model);
+    payload.model = model;
+    const duration = clampSecondsForModel(parseInt(promptSpec.durationSeconds, 10), model);
+    if (duration !== undefined) {
       payload.duration_seconds = duration;
     }
     if (promptSpec.audioLanguage) {
@@ -482,6 +514,7 @@ export default function HomeScreen() {
     next = pushHistoryValue(next, 'lighting', promptSpec.lighting);
     next = pushHistoryValue(next, 'mood', promptSpec.mood);
     next = pushHistoryValue(next, 'style', promptSpec.style);
+    next = pushHistoryValue(next, 'model', promptSpec.model);
     next = pushHistoryValue(next, 'audioLanguage', promptSpec.audioLanguage);
     next = pushHistoryValue(next, 'sceneCount', promptSpec.sceneCount);
     next = pushHistoryValue(next, 'spokenWords', promptSpec.spokenWords);
@@ -508,6 +541,7 @@ export default function HomeScreen() {
     next = pushHistoryValue(next, 'lighting', spec.lighting);
     next = pushHistoryValue(next, 'mood', spec.mood);
     next = pushHistoryValue(next, 'style', spec.style);
+    next = pushHistoryValue(next, 'model', spec.model);
     next = pushHistoryValue(next, 'audioLanguage', spec.audioLanguage);
     next = pushHistoryValue(next, 'sceneCount', spec.sceneCount);
     next = pushHistoryValue(next, 'spokenWords', spec.spokenWords);
@@ -597,14 +631,19 @@ export default function HomeScreen() {
       }
       const result = json.result || json;
       const promptText = result.prompt || json.prompt || '';
+      const selectedModel = normalizeModel(result.model || json.model || promptSpec.model);
+      const specSeconds = clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), selectedModel);
+      const rawSeconds = parseSeconds(result.seconds ?? json.seconds);
+      const seconds = clampSecondsForModel(rawSeconds ?? specSeconds, selectedModel) ?? specSeconds ?? 8;
+      const size = result.size || json.size || sizeForAspectRatio(promptSpec.aspectRatio);
       setPromptOutput(promptText);
       setPromptResult({
         title: result.title || json.title,
         prompt: promptText,
         negativePrompt: result.negative_prompt || json.negative_prompt,
-        model: result.model || json.model,
-        size: result.size || json.size,
-        seconds: result.seconds || json.seconds,
+        model: selectedModel,
+        size,
+        seconds,
       });
       setPromptStatus('Prompt ready. You can edit before generating.');
       setPromptTone('good');
@@ -661,14 +700,23 @@ export default function HomeScreen() {
     try {
       const spec = buildPromptSpecPayload();
       const title = promptResult?.title || (promptSpec.autoTitle ? 'Generated video' : spec.title || 'Generated video');
+      const selectedModel = normalizeModel(promptResult?.model || promptSpec.model);
+      const seconds =
+        clampSecondsForModel(
+          parseSeconds(
+            promptResult?.seconds ?? (spec as any).duration_seconds ?? promptSpec.durationSeconds,
+          ),
+          selectedModel,
+        ) ?? (selectedModel === 'sora-2-pro' ? 12 : 8);
+      const size = promptResult?.size || sizeForAspectRatio(promptSpec.aspectRatio);
       const resp = await fetch(`${API_URL}/api/videos/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: promptOutput.trim(),
-          model: promptResult?.model,
-          size: promptResult?.size,
-          seconds: promptResult?.seconds,
+          model: selectedModel,
+          size,
+          seconds,
           title,
         }),
       });
@@ -998,6 +1046,13 @@ export default function HomeScreen() {
                 <Text style={styles.panelTitle}>{t('controls_title')}</Text>
               </View>
               <Text style={styles.panelHint}>{t('controls_hint')}</Text>
+
+              <SelectControl
+                label={t('field_model')}
+                value={promptSpec.model}
+                options={modelOptions}
+                onChange={(value) => updateSpec('model', normalizeModel(value))}
+              />
 
               <Text style={styles.fieldLabel}>{t('field_aspect_ratio')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
