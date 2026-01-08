@@ -128,11 +128,13 @@ export default function ProcessVideoScreen() {
   const [stepDetail, setStepDetail] = useState<Record<StepKey, string>>({});
   const [running, setRunning] = useState(false);
   const [message, setMessage] = useState('');
+  const [proxyStatus, setProxyStatus] = useState('');
   const [loading, setLoading] = useState(true);
   const [translationLanguages, setTranslationLanguages] = useState<string[]>([]);
   const [burnLayout, setBurnLayout] = useState<BurnLayout | null>(null);
   const [video, setVideo] = useState<VideoDetail | null>(null);
   const [burnPreviewUrl, setBurnPreviewUrl] = useState<string | null>(null);
+  const [proxyPreviewUrl, setProxyPreviewUrl] = useState<string | null>(null);
   const [activeLogTab, setActiveLogTab] = useState<typeof LOG_TABS[number]>('transcription');
   const processStateRef = useRef({
     stepStatus: defaultStepState,
@@ -180,6 +182,25 @@ export default function ProcessVideoScreen() {
     if (!video?.media_url) return null;
     return `${API_URL}${video.media_url}`;
   }, [video]);
+
+  const createProxyPreview = async () => {
+    if (!id) return;
+    setProxyStatus('Creating preview proxy…');
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}/proxy`, { method: 'POST' });
+      const json = await resp.json();
+      if (!resp.ok) {
+        const details = json.details ? `: ${json.details}` : '';
+        setProxyStatus(`Proxy failed: ${json.error || json.message || resp.statusText}${details}`);
+        return;
+      }
+      const url = json.media_url ? `${API_URL}${json.media_url}` : null;
+      setProxyPreviewUrl(url);
+      setProxyStatus('Proxy ready.');
+    } catch (err: any) {
+      setProxyStatus(`Proxy failed: ${err?.message || String(err)}`);
+    }
+  };
 
   const refreshBurnPreview = async () => {
     if (!id) return;
@@ -656,12 +677,16 @@ export default function ProcessVideoScreen() {
         <Pressable style={[styles.btnPrimary, running && styles.btnDisabled]} onPress={runPipeline}>
           <Text style={styles.btnText}>{running ? 'Processing…' : 'Process video'}</Text>
         </Pressable>
+        <Pressable style={styles.btnSecondary} onPress={createProxyPreview}>
+          <Text style={styles.btnSecondaryText}>Create preview proxy (fix black iPhone videos)</Text>
+        </Pressable>
+        {proxyStatus ? <Text style={styles.status}>{proxyStatus}</Text> : null}
         <View style={styles.previewCard}>
           <Text style={styles.sectionTitle}>Burn preview</Text>
-          {(burnPreviewUrl || previewVideoUrl) ? (
+          {(burnPreviewUrl || proxyPreviewUrl || previewVideoUrl) ? (
             <View style={styles.videoWrap}>
               {React.createElement('video', {
-                src: burnPreviewUrl || previewVideoUrl,
+                src: burnPreviewUrl || proxyPreviewUrl || previewVideoUrl,
                 style: { width: '100%', height: '100%', borderRadius: 12, objectFit: 'contain' },
                 controls: true,
                 muted: true,
@@ -742,6 +767,16 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
   },
+  btnSecondary: {
+    marginTop: 10,
+    paddingVertical: 12,
+    borderRadius: 999,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#ffffff',
+  },
+  btnSecondaryText: { color: '#0f172a', fontWeight: '700' },
   btnDisabled: { opacity: 0.6 },
   btnText: { color: '#f8fafc', fontWeight: '700' },
   status: { marginTop: 10, fontSize: 12, color: '#0f172a' },

@@ -3062,6 +3062,77 @@ class VideoDetailHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class VideoProxyHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+
+        input_path = row[0]
+        if not input_path or not os.path.exists(input_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+        os.makedirs(proxies_dir, exist_ok=True)
+        output_path = os.path.join(proxies_dir, f"video_{video_id_i}_proxy.mp4")
+
+        try:
+            if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(input_path):
+                return self.write({
+                    "video_id": video_id_i,
+                    "file_path": output_path,
+                    "media_url": media_url_for_path(output_path),
+                })
+        except Exception:
+            # If mtime checks fail, just regenerate.
+            pass
+
+        cmd = [
+            "ffmpeg",
+            "-y",
+            "-i",
+            input_path,
+            "-vf",
+            "scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p",
+            "-c:v",
+            "libx264",
+            "-preset",
+            "veryfast",
+            "-crf",
+            "22",
+            "-movflags",
+            "+faststart",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "128k",
+            output_path,
+        ]
+        try:
+            subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError as exc:
+            err = exc.stderr.decode("utf-8", errors="replace") if exc.stderr else str(exc)
+            self.set_status(500)
+            return self.write({"error": "proxy transcode failed", "details": err})
+
+        self.write({
+            "video_id": video_id_i,
+            "file_path": output_path,
+            "media_url": media_url_for_path(output_path),
+        })
+
+
 class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
     def post(self, video_id):
         try:
@@ -5168,6 +5239,7 @@ def make_app(upload_folder):
         (r"/api/videos/generate", VideoGenerateHandler),
         (r"/api/videos", VideosHandler),
         (r"/api/videos/(\d+)", VideoDetailHandler),
+        (r"/api/videos/(\d+)/proxy", VideoProxyHandler),
         (r"/api/videos/(\d+)/transcribe", VideoTranscribeHandler),
         (r"/api/videos/(\d+)/transcription", VideoTranscriptionHandler),
         (r"/api/videos/(\d+)/caption", VideoCaptionHandler),
