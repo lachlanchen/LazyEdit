@@ -74,7 +74,7 @@ def _load_burner_module():
 
             def _dynamic_padding_for_slot(slot_height: int, stroke_width: int) -> int:
                 base = int(round(max(1, slot_height) * 0.10))
-                base = max(6, min(base, 16))
+                base = max(2, min(base, 16))
                 return max(base, int(stroke_width) * 2)
 
             def render_segment(self, seg):  # type: ignore[no-redef]
@@ -85,6 +85,62 @@ def _load_burner_module():
 
                 pad = _dynamic_padding_for_slot(int(self.slot.height), int(getattr(self.style, "stroke_width", 0)))
                 img = self.renderer.render_tokens(seg.tokens, padding=pad)
+
+                # If a single-line render exceeds slot width, avoid scaling down
+                # (which makes landscape/square subtitles look tiny) by wrapping
+                # into multiple lines that each fit the slot width.
+                try:
+                    if img.width > self.slot.width and getattr(seg, "tokens", None):
+                        tokens = list(seg.tokens)
+                        if (
+                            len(tokens) == 1
+                            and getattr(tokens[0], "ruby", None) in (None, "")
+                            and getattr(tokens[0], "token_type", None) not in ("speaker",)
+                            and hasattr(burner_mod, "_split_text_tokens_for_fit")
+                        ):
+                            try:
+                                tokens = list(burner_mod._split_text_tokens_for_fit(tokens[0].text or ""))  # type: ignore[attr-defined]
+                            except Exception:
+                                tokens = list(seg.tokens)
+                        max_width = int(self.slot.width)
+                        line_padding = max(2, min(pad, 8))
+                        line_gap = max(0, int(round(self.style.main_font_size * 0.10)))
+
+                        def fits_width(line_tokens):
+                            if not line_tokens:
+                                return True
+                            w, _h = self.renderer.measure_tokens(line_tokens)
+                            return (w + line_padding * 2) <= max_width
+
+                        lines = []
+                        current = []
+                        for tok in tokens:
+                            trial = current + [tok]
+                            if not current or fits_width(trial):
+                                current = trial
+                                continue
+                            # start new line
+                            lines.append(current)
+                            current = [tok]
+                        if current:
+                            lines.append(current)
+
+                        # Only use wrapping when it meaningfully reduces scaling
+                        # and the stacked lines can fit vertically.
+                        if 2 <= len(lines) <= 4 and all(line for line in lines):
+                            rendered = [self.renderer.render_tokens(line, padding=line_padding) for line in lines]
+                            stacked_w = max(r.width for r in rendered)
+                            stacked_h = sum(r.height for r in rendered) + line_gap * (len(rendered) - 1)
+                            if stacked_w <= max_width and stacked_h <= int(self.slot.height):
+                                canvas = burner_mod.Image.new("RGBA", (stacked_w, stacked_h), (0, 0, 0, 0))
+                                y = 0
+                                for r in rendered:
+                                    x = max(0, (stacked_w - r.width) // 2)
+                                    canvas.alpha_composite(r, (int(x), int(y)))
+                                    y += r.height + line_gap
+                                img = canvas
+                except Exception:
+                    pass
                 if img.width > self.slot.width:
                     scale = min(1.0, self.slot.width / img.width)
                     if scale > 0:
@@ -128,6 +184,57 @@ def _load_burner_module():
 
             OriginalRubyRenderer._build_layout = _build_layout_no_phantom_ruby_row
             burner_mod._lazyedit_no_phantom_ruby_row_patch = True
+    except Exception:
+        pass
+
+    # LazyEdit patch: allow subtitles to use the empty gutter between slots as
+    # extra vertical room, without changing the user-selected band height.
+    # We tag each Slot instance with per-row extra space, then shift the overlay
+    # accordingly.
+    try:
+        if getattr(burner_mod, "_lazyedit_gutter_overlay_patch", False) is not True and hasattr(burner_mod, "_overlay_image"):
+            original_overlay_image = burner_mod._overlay_image
+
+            def _overlay_image_with_gutter(frame, img, slot):  # type: ignore[no-redef]
+                extra_top = int(getattr(slot, "_lazyedit_extra_top", 0) or 0)
+                extra_bottom = int(getattr(slot, "_lazyedit_extra_bottom", 0) or 0)
+                try:
+                    overlay_img = img
+                    h, w = overlay_img.size[1], overlay_img.size[0]
+                    max_w = max(1, slot.width - 16)
+                    scale = min(1.0, max_w / w if w else 1.0)
+                    if scale < 1.0:
+                        new_w = max(1, int(w * scale))
+                        new_h = max(1, int(h * scale))
+                        overlay_img = overlay_img.resize((new_w, new_h), burner_mod.Image.LANCZOS)
+                        h, w = new_h, new_w
+                    overlay = burner_mod.cv2.cvtColor(burner_mod.np.array(overlay_img), burner_mod.cv2.COLOR_RGBA2BGRA)
+
+                    if slot.align == "left":
+                        x = slot.x
+                    elif slot.align == "right":
+                        x = slot.x + max(slot.width - w, 0)
+                    else:
+                        x = slot.x + max((slot.width - w) // 2, 0)
+
+                    virtual_y = slot.y - extra_top
+                    virtual_h = int(slot.height) + extra_top + extra_bottom
+                    y = virtual_y + (virtual_h - h) // 2
+
+                    x = max(0, min(int(x), frame.shape[1] - w))
+                    y = max(0, min(int(y), frame.shape[0] - h))
+
+                    alpha = overlay[:, :, 3] / 255.0
+                    alpha = burner_mod.np.stack([alpha] * 3, axis=2)
+                    region = frame[y : y + h, x : x + w]
+                    blended = region * (1 - alpha) + overlay[:, :, :3] * alpha
+                    frame[y : y + h, x : x + w] = blended.astype(burner_mod.np.uint8)
+                    return frame
+                except Exception:
+                    return original_overlay_image(frame, img, slot)
+
+            burner_mod._overlay_image = _overlay_image_with_gutter
+            burner_mod._lazyedit_gutter_overlay_patch = True
     except Exception:
         pass
 
@@ -188,48 +295,63 @@ def burn_video_with_slots(
         if normalized in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"}:
             return 1.15
         return 1.0
-    # Respect the user-specified subtitle band height. We scale text to fit within
-    # the resulting slot height (and clamp ruby if needed) rather than silently
-    # expanding the band, so layout height + vertical shift behave predictably.
+    # Respect the user-specified subtitle band height and vertical shift.
     effective_height_ratio = float(height_ratio)
+    bottom_height = int(height * effective_height_ratio)
+    available_h = max(1, bottom_height - gutter * (rows - 1))
+    slot_width = max(1, (width - gutter * (cols - 1) - margin * 2) // max(cols, 1))
+    base_slot_height = max(1, available_h // max(rows, 1))
+    row_heights = [base_slot_height for _ in range(max(rows, 1))]
+    # Distribute leftover pixels to top rows for deterministic packing.
+    remainder = available_h - base_slot_height * max(rows, 1)
+    for i in range(max(0, remainder)):
+        row_heights[i % len(row_heights)] += 1
 
     if lift_ratio is not None:
         lift_ratio = max(0.0, float(lift_ratio))
         lift_pixels = int(height * lift_ratio)
-        bottom_height = int(height * effective_height_ratio)
-        slot_height = max(1, (bottom_height - gutter * (rows - 1)) // rows)
-        slot_width = max(1, (width - gutter * (cols - 1) - margin * 2) // cols)
-        top_y = max(0, height - bottom_height - lift_pixels)
-        slots_layout: list[Slot] = []
-        slot_id = 1
-        for row in range(rows):
-            for col in range(cols):
-                x = margin + col * (slot_width + gutter)
-                y = top_y + row * (slot_height + gutter)
-                slots_layout.append(Slot(slot_id=slot_id, x=x, y=y, width=slot_width, height=slot_height))
-                slot_id += 1
-        layout = BurnLayout(slots=slots_layout)
     else:
-        layout = build_bottom_slot_layout(
-            width,
-            height,
-            rows=rows,
-            cols=cols,
-            height_ratio=effective_height_ratio,
-            margin=margin,
-            gutter=gutter,
-            lift_slots=lift_slots,
-        )
+        lift_slots = max(0, int(lift_slots))
+        lift_pixels = sum(row_heights[:lift_slots]) + gutter * lift_slots if lift_slots else 0
 
-    slot_geometry: dict[int, tuple[int, int]] = {
-        slot_entry.slot_id: (int(slot_entry.width), int(slot_entry.height)) for slot_entry in layout.slots
+    top_y = max(0, height - bottom_height - lift_pixels)
+
+    slots_layout: list[Slot] = []
+    slot_id = 1
+    y_cursor = top_y
+    for row in range(rows):
+        row_h = row_heights[row] if row < len(row_heights) else max(1, available_h // max(rows, 1))
+        for col in range(cols):
+            x = margin + col * (slot_width + gutter)
+            slot_obj = Slot(slot_id=slot_id, x=x, y=y_cursor, width=slot_width, height=row_h)
+            # Tag each slot with per-row extra room taken from the gutter so the
+            # renderer can place ruby without shrinking the main font.
+            extra_top = gutter // 2 if row > 0 else 0
+            extra_bottom = gutter - (gutter // 2) if row < rows - 1 else 0
+            setattr(slot_obj, "_lazyedit_extra_top", extra_top)
+            setattr(slot_obj, "_lazyedit_extra_bottom", extra_bottom)
+            slots_layout.append(slot_obj)
+            slot_id += 1
+        y_cursor += row_h + gutter
+    layout = BurnLayout(slots=slots_layout)
+
+    slot_geometry: dict[int, tuple[int, int, int, int]] = {
+        slot_entry.slot_id: (
+            int(slot_entry.width),
+            int(slot_entry.height),
+            int(getattr(slot_entry, "_lazyedit_extra_top", 0) or 0),
+            int(getattr(slot_entry, "_lazyedit_extra_bottom", 0) or 0),
+        )
+        for slot_entry in layout.slots
     }
     default_style = TextStyle()
 
     assignments: list[SlotAssignment] = []
     for slot in slots:
         scale = max(0.6, min(2.5, float(slot.font_scale or 1.0)))
-        slot_width, slot_height = slot_geometry.get(slot.slot_id, (width, max(1, int(height * height_ratio))))
+        slot_width, slot_height, extra_top, extra_bottom = slot_geometry.get(
+            slot.slot_id, (width, max(1, int(height * height_ratio)), 0, 0)
+        )
 
         expects_ruby = bool(
             slot.ruby_key
@@ -246,8 +368,9 @@ def burn_video_with_slots(
         # subtitle readability stays consistent across high-resolution inputs.
         # The coefficients were tuned so that 720p/1080p outputs remain close to
         # the historical defaults, while 4K+ inputs scale up appropriately.
-        base_main_ref_h = base_slot_height_px if expects_ruby else slot_height
-        base_main_ref_w = base_slot_width_px if expects_ruby else slot_width
+        # Main font sizing should not change when ruby is toggled on/off.
+        base_main_ref_h = slot_height
+        base_main_ref_w = slot_width
         base_main = int(round(min(base_main_ref_h * 0.38, base_main_ref_w * 0.07)))
         base_main = int(round(base_main * _language_visual_scale(slot.language)))
         base_main = max(14, min(base_main, 220))
@@ -259,11 +382,12 @@ def burn_video_with_slots(
         stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
 
         # Prevent overlap between stacked slots by ensuring rendered subtitles fit
-        # inside each slot's height. We prefer to keep the main font size stable
-        # across languages/slots; if the user scales up beyond what the slot can
-        # fit, we clamp ruby first, and only then shrink both proportionally.
-        safe_height = max(1, int(slot_height * 0.98))
-        padding = max(max(6, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
+        # inside each slot's height. Main font size should be independent of ruby
+        # toggles; we size main from a main-only render, then size ruby
+        # proportionally and shrink ruby first if needed.
+        virtual_slot_height = max(1, int(slot_height + max(0, extra_top) + max(0, extra_bottom)))
+        safe_height = virtual_slot_height
+        padding = max(max(2, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
         is_cjk = (slot.language or "").lower() in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"}
         sample_text = "漢字" if is_cjk else "Sample"
         sample_ruby = "かんじ" if is_cjk else "sam-pəl"
@@ -278,39 +402,75 @@ def burn_video_with_slots(
             return int(img.size[1])
 
         has_ruby = expects_ruby
-        if not has_ruby:
-            ruby_font_size = 0
+        ruby_ratio = 0.6 if has_ruby else 0.0
 
-        # Use the slot height more fully (especially landscape/square), while keeping
-        # main size independent of ruby toggles. We compute the fill ratio from a
-        # *main-only* render and then scale ruby proportionally.
-        ruby_ratio = (ruby_font_size / float(main_font_size)) if (has_ruby and ruby_font_size > 0) else 0.0
+        # 1) Fit main-only height to slot (grow or shrink as needed).
+        def _main_only_height() -> int:
+            return render_height(main_font_size, 0, stroke_width, padding, include_ruby=False)
 
         try:
-            main_only_h = render_height(main_font_size, 0, stroke_width, padding, include_ruby=False)
+            main_only_h = _main_only_height()
         except Exception:
             main_only_h = 0
-        if main_only_h > 0 and main_only_h < safe_height:
-            target = safe_height * 0.98
-            grow = target / float(main_only_h)
-            if grow > 1.02:
+
+        if main_only_h > 0:
+            target = safe_height
+            if main_only_h < target:
+                grow = target / float(main_only_h)
                 main_font_size = max(12, int(round(main_font_size * grow)))
                 stroke_width = max(1, int(round(stroke_width * grow)))
-                if ruby_ratio > 0:
-                    ruby_font_size = max(8, min(main_font_size - 2, int(round(main_font_size * ruby_ratio))))
-                else:
-                    ruby_font_size = 0
+                padding = max(max(2, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
+            else:
+                # If the main-only render is already too tall, shrink to fit.
+                if main_only_h > safe_height:
+                    shrink = safe_height / float(main_only_h)
+                    main_font_size = max(12, int(round(main_font_size * shrink)))
+                    stroke_width = max(1, int(round(stroke_width * shrink)))
+                    padding = max(max(2, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
 
+        # 2) Set ruby proportionally to main, but don't let ruby change main size.
+        if has_ruby:
+            ruby_font_size = max(8, min(main_font_size - 2, int(round(main_font_size * ruby_ratio))))
+        else:
+            ruby_font_size = 0
+
+        # 3) If ruby pushes the render too tall, shrink ruby first (keep main fixed).
+        def _full_height() -> int:
+            return render_height(main_font_size, ruby_font_size, stroke_width, padding, include_ruby=has_ruby)
+
+        if has_ruby and ruby_font_size > 0:
+            try:
+                full_h = _full_height()
+            except Exception:
+                full_h = 0
+            if full_h > safe_height and full_h > 0:
+                lo = 0
+                hi = ruby_font_size
+                while lo < hi:
+                    mid = (lo + hi) // 2
+                    ruby_font_size = mid
+                    try:
+                        h = _full_height()
+                    except Exception:
+                        h = safe_height + 1
+                    if h <= safe_height:
+                        lo = mid + 1
+                    else:
+                        hi = mid
+                ruby_font_size = max(0, lo - 1)
+
+        # 4) Final guard: if still too tall even with ruby shrunk, shrink main.
         try:
-            full_h = render_height(main_font_size, ruby_font_size, stroke_width, padding, include_ruby=has_ruby)
+            full_h = _full_height()
         except Exception:
             full_h = 0
         if full_h > safe_height and full_h > 0:
             shrink = safe_height / float(full_h)
             main_font_size = max(12, int(round(main_font_size * shrink)))
             stroke_width = max(1, int(round(stroke_width * shrink)))
-            if has_ruby and ruby_font_size > 0:
-                ruby_font_size = max(8, min(main_font_size - 2, int(round(main_font_size * ruby_ratio))))
+            padding = max(max(2, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
+            if has_ruby:
+                ruby_font_size = max(0, min(main_font_size - 2, int(round(main_font_size * ruby_ratio))))
             else:
                 ruby_font_size = 0
         style = TextStyle(
