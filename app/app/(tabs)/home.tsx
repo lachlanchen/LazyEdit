@@ -204,6 +204,10 @@ export default function HomeScreen() {
   const [specHistoryList, setSpecHistoryList] = useState<string[]>([]);
   const [promptTextHistory, setPromptTextHistory] = useState<string[]>([]);
   const [ideaHistory, setIdeaHistory] = useState<string[]>([]);
+  const [selectedSpecHistory, setSelectedSpecHistory] = useState('');
+  const [selectedPromptTextHistory, setSelectedPromptTextHistory] = useState('');
+  const [selectedPromptResultHistory, setSelectedPromptResultHistory] = useState('');
+  const [selectedIdeaHistory, setSelectedIdeaHistory] = useState('');
   const [promptOutput, setPromptOutput] = useState<string>('');
   const [prompting, setPrompting] = useState(false);
   const [promptStatus, setPromptStatus] = useState<string>('');
@@ -752,17 +756,19 @@ const HISTORY_KEYS = {
 
   const applySpecHistory = (value: string) => {
     if (!value) return;
+    setSelectedSpecHistory(value);
     try {
       const parsed = JSON.parse(value);
-      if (parsed && typeof parsed === 'object') {
-        const parsedSeconds = parseSeconds((parsed as any).durationSeconds);
+      const payload = parsed && typeof parsed === 'object' ? ((parsed as any).response && typeof (parsed as any).response === 'object' ? (parsed as any).response : parsed) : null;
+      if (payload && typeof payload === 'object') {
+        const parsedSeconds = parseSeconds((payload as any).durationSeconds);
         let model = normalizeModel((parsed as any).model || promptSpec.model);
         if (!('model' in (parsed as any)) && parsedSeconds && parsedSeconds > 12) {
           model = 'sora-2-pro';
         }
         const seconds = clampSecondsForModel(parsedSeconds, model) ?? clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), model) ?? 8;
-        const aspectRatio = (parsed as any).aspectRatio || promptSpec.aspectRatio;
-        const merged = { ...DEFAULT_PROMPT_SPEC, ...parsed, model, durationSeconds: String(seconds), aspectRatio };
+        const aspectRatio = (payload as any).aspectRatio || promptSpec.aspectRatio;
+        const merged = { ...DEFAULT_PROMPT_SPEC, ...payload, model, durationSeconds: String(seconds), aspectRatio };
         setPromptSpec(merged);
         setPromptResult(null);
         setVideoModel(model);
@@ -776,11 +782,13 @@ const HISTORY_KEYS = {
 
   const applyPromptHistory = (value: string) => {
     if (!value) return;
+    setSelectedPromptTextHistory(value);
     setPromptOutput(value);
   };
 
   const applyPromptResultHistory = (value: string) => {
     if (!value) return;
+    setSelectedPromptResultHistory(value);
     try {
       const parsed = JSON.parse(value);
       if (parsed && typeof parsed === 'object') {
@@ -796,6 +804,7 @@ const HISTORY_KEYS = {
 
   const applyIdeaHistory = (value: string) => {
     if (!value) return;
+    setSelectedIdeaHistory(value);
     setIdeaPrompt(value);
   };
 
@@ -1164,7 +1173,7 @@ const HISTORY_KEYS = {
               {ideaHistoryOptions.length > 1 ? (
                 <HistorySelect
                   label={t('history_ai_idea')}
-                  value=""
+                  value={selectedIdeaHistory}
                   options={ideaHistoryOptions}
                   onChange={applyIdeaHistory}
                 />
@@ -1192,7 +1201,7 @@ const HISTORY_KEYS = {
               <Text style={styles.panelHint}>{t('stage_b_hint')}</Text>
               <HistorySelect
                 label={t('history_ai_specs')}
-                value=""
+                value={selectedSpecHistory}
                 options={specHistoryOptions}
                 onChange={applySpecHistory}
                 hideIfSingle={false}
@@ -1371,15 +1380,6 @@ const HISTORY_KEYS = {
                 <Text style={styles.stageBadge}>{t('stage_b_label')}</Text>
                 <Text style={styles.panelTitle}>{t('controls_title')}</Text>
               </View>
-              {specHistoryOptions.length > 1 ? (
-              <HistorySelect
-                label={t('history_ai_specs')}
-                value=""
-                options={specHistoryOptions}
-                onChange={applySpecHistory}
-                hideIfSingle={false}
-              />
-              ) : null}
               <Text style={styles.panelHint}>{t('controls_hint')}</Text>
 
               <SelectControl
@@ -1464,7 +1464,7 @@ const HISTORY_KEYS = {
               <Text style={styles.panelHint}>{t('stage_c_hint')}</Text>
               <HistorySelect
                 label={t('history_ai_prompt_result')}
-                value=""
+                value={selectedPromptResultHistory}
                 options={promptResultHistoryOptions}
                 onChange={applyPromptResultHistory}
                 hideIfSingle={false}
@@ -1505,7 +1505,7 @@ const HISTORY_KEYS = {
               />
               <HistorySelect
                 label={t('history_ai_prompt')}
-                value=""
+                value={selectedPromptTextHistory}
                 options={promptTextHistoryOptions}
                 onChange={applyPromptHistory}
                 hideIfSingle={false}
