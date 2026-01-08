@@ -1103,6 +1103,13 @@ export default function HomeScreen() {
                 <Text style={styles.panelTitle}>{t('stage_b_title')}</Text>
               </View>
               <Text style={styles.panelHint}>{t('stage_b_hint')}</Text>
+              <HistorySelect
+                label={t('history_ai_specs')}
+                value=""
+                options={specHistoryOptions}
+                onChange={applySpecHistory}
+                hideIfSingle={false}
+              />
 
               <Text style={styles.fieldLabel}>{t('field_title')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
