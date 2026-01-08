@@ -255,26 +255,37 @@ def burn_video_with_slots(
             ruby_font_size = 0
 
         total_h = estimate_total_height(main_font_size, ruby_font_size, has_ruby)
-        if total_h > safe_height and has_ruby:
-            main_h_only = estimate_total_height(main_font_size, 0, False)
-            remaining = safe_height - main_h_only
-            if remaining <= 0:
-                ruby_font_size = 0
-            else:
-                max_ruby = int(remaining / max(1.0, (1.0 + default_style.ruby_spacing)))
-                ruby_font_size = max(0, min(ruby_font_size, max_ruby, main_font_size - 2))
-                if ruby_font_size < 8:
-                    ruby_font_size = 0
-            total_h = estimate_total_height(main_font_size, ruby_font_size, ruby_font_size > 0)
-
         if total_h > safe_height:
-            shrink = safe_height / float(total_h)
-            main_font_size = max(12, int(round(main_font_size * shrink)))
-            if has_ruby and ruby_font_size > 0:
-                ruby_font_size = max(8, min(main_font_size - 2, int(round(ruby_font_size * shrink))))
-            else:
-                ruby_font_size = 0
-            stroke_width = max(1, int(round(stroke_width * shrink)))
+            # Keep ruby the same scale as main whenever possible. If the combined
+            # block doesn't fit, shrink main just enough (and keep ruby/main ratio)
+            # instead of clamping ruby down to unreadable sizes.
+            ratio = (ruby_font_size / float(main_font_size)) if (has_ruby and ruby_font_size > 0) else 0.0
+            height_coeff = float(default_style.line_spacing)
+            if ratio > 0:
+                height_coeff += ratio * (1.0 + float(default_style.ruby_spacing))
+
+            max_main_by_height = None
+            available = safe_height - overhead
+            if available > 0 and height_coeff > 0:
+                max_main_by_height = int(available / height_coeff)
+
+            if max_main_by_height is not None:
+                main_font_size = max(12, min(main_font_size, max_main_by_height))
+                if ratio > 0:
+                    ruby_font_size = int(round(main_font_size * ratio))
+                    ruby_font_size = max(8, min(ruby_font_size, main_font_size - 2))
+                else:
+                    ruby_font_size = 0
+
+            total_h = estimate_total_height(main_font_size, ruby_font_size, has_ruby and ruby_font_size > 0)
+            if total_h > safe_height:
+                shrink = safe_height / float(total_h)
+                main_font_size = max(12, int(round(main_font_size * shrink)))
+                if has_ruby and ruby_font_size > 0:
+                    ruby_font_size = max(8, min(main_font_size - 2, int(round(ruby_font_size * shrink))))
+                else:
+                    ruby_font_size = 0
+                stroke_width = max(1, int(round(stroke_width * shrink)))
         style = TextStyle(
             main_font_size=main_font_size,
             ruby_font_size=ruby_font_size,
