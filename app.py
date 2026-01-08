@@ -1130,8 +1130,13 @@ def _prepare_speaker_json(
         tokens = item.get("tokens")
         if isinstance(tokens, list):
             if tokens and isinstance(tokens[0], dict) and tokens[0].get("type") == "speaker":
+                # Ensure the speaker token carries a non-empty glyph so downstream
+                # token normalization (e.g. kana-affix splitting) doesn't drop it.
+                if not tokens[0].get("text"):
+                    tokens[0]["text"] = icon
+                    modified = True
                 continue
-            item["tokens"] = [{"text": "", "type": "speaker"}] + tokens
+            item["tokens"] = [{"text": icon, "type": "speaker"}] + tokens
             modified = True
             continue
 
@@ -1144,7 +1149,7 @@ def _prepare_speaker_json(
 
         if text_value:
             item["tokens"] = [
-                {"text": "", "type": "speaker"},
+                {"text": icon, "type": "speaker"},
                 {"text": text_value},
             ]
             modified = True
