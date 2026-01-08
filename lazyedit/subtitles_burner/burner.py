@@ -101,6 +101,36 @@ def _load_burner_module():
         # If patching fails, fall back to upstream behavior.
         pass
 
+    # LazyEdit patch: upstream RubyRenderer reserves a "ruby row" height even
+    # when a token has no ruby text (because it always max()'s ruby_h with the
+    # ruby font metrics). That creates large empty vertical space (most obvious
+    # in landscape/square layouts) and prevents slots from being used fully.
+    # Keep the dependency read-only by monkeypatching at import time.
+    try:
+        if getattr(burner_mod, "_lazyedit_no_phantom_ruby_row_patch", False) is not True and hasattr(burner_mod, "RubyRenderer"):
+            OriginalRubyRenderer = burner_mod.RubyRenderer
+            original_build_layout = OriginalRubyRenderer._build_layout
+
+            def _build_layout_no_phantom_ruby_row(self, tokens):  # type: ignore[no-redef]
+                layout, total_width, max_ruby_h, max_main_h = original_build_layout(self, tokens)
+                any_ruby = False
+                for token, metrics in zip(tokens, layout):
+                    if getattr(token, "ruby", None):
+                        any_ruby = True
+                        continue
+                    metrics["ruby_w"] = 0
+                    metrics["ruby_h"] = 0
+                if not any_ruby:
+                    max_ruby_h = 0
+                else:
+                    max_ruby_h = max((m.get("ruby_h", 0) for m in layout), default=0)
+                return layout, total_width, max_ruby_h, max_main_h
+
+            OriginalRubyRenderer._build_layout = _build_layout_no_phantom_ruby_row
+            burner_mod._lazyedit_no_phantom_ruby_row_patch = True
+    except Exception:
+        pass
+
     return (
         BurnLayout,
         RubyRenderer,
