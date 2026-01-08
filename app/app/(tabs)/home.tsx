@@ -762,11 +762,20 @@ const HISTORY_KEYS = {
       const payload = parsed && typeof parsed === 'object' ? ((parsed as any).response && typeof (parsed as any).response === 'object' ? (parsed as any).response : parsed) : null;
       if (payload && typeof payload === 'object') {
         const parsedSeconds = parseSeconds((payload as any).durationSeconds);
-        let model = normalizeModel((parsed as any).model || promptSpec.model);
-        if (!('model' in (parsed as any)) && parsedSeconds && parsedSeconds > 12) {
+        const requestedModel = normalizeModel((payload as any).model);
+        let model = normalizeModel(promptSpec.model);
+        if (requestedModel === 'sora-2-pro') {
+          model = 'sora-2-pro';
+        } else if (requestedModel === 'sora-2' && model !== 'sora-2-pro') {
+          model = 'sora-2';
+        }
+        if (parsedSeconds && parsedSeconds > 12) {
           model = 'sora-2-pro';
         }
-        const seconds = clampSecondsForModel(parsedSeconds, model) ?? clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), model) ?? 8;
+        const seconds =
+          clampSecondsForModel(parsedSeconds, model) ??
+          clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), model) ??
+          8;
         const aspectRatio = (payload as any).aspectRatio || promptSpec.aspectRatio;
         const merged = { ...DEFAULT_PROMPT_SPEC, ...payload, model, durationSeconds: String(seconds), aspectRatio };
         setPromptSpec(merged);
@@ -881,7 +890,8 @@ const HISTORY_KEYS = {
         seconds,
       });
       if (specHistoryLoaded) {
-        const next = pushListValue(specHistoryList, JSON.stringify(promptSpec));
+        const { model: _model, ...specOnly } = promptSpec as any;
+        const next = pushListValue(specHistoryList, JSON.stringify(specOnly));
         setSpecHistoryList(next);
         fetch(`${API_URL}/api/ui-settings/video_spec_history`, {
           method: 'POST',
@@ -985,7 +995,8 @@ const HISTORY_KEYS = {
         }
       }
       if (specHistoryLoaded) {
-        const nextSpecHistory = pushListValue(specHistoryList, JSON.stringify(merged));
+        const { model: _model, ...specOnly } = merged as any;
+        const nextSpecHistory = pushListValue(specHistoryList, JSON.stringify(specOnly));
         setSpecHistoryList(nextSpecHistory);
         fetch(`${API_URL}/api/ui-settings/video_spec_history`, {
           method: 'POST',
