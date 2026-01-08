@@ -120,74 +120,10 @@ def burn_video_with_slots(
         if normalized in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"}:
             return 1.15
         return 1.0
-
-    base_bottom_height_px = int(height * float(height_ratio))
-    base_slot_height_px = max(1, (base_bottom_height_px - gutter * (rows - 1)) // max(rows, 1))
-    base_slot_width_px = max(1, (width - gutter * (cols - 1) - margin * 2) // max(cols, 1))
-
-    # When users increase per-slot fontScale, the subtitle block can become taller
-    # than the slot and visually overlap into adjacent rows. To keep scaling
-    # readable (including ruby/pinyin) without overlap, expand the bottom subtitle
-    # band height if needed (within a reasonable cap) before laying out slots.
-    def _estimate_required_height_ratio(current_ratio: float) -> float:
-        bottom_height_px = int(height * current_ratio)
-        slot_height_px = max(1, (bottom_height_px - gutter * (rows - 1)) // rows)
-        slot_width_px = max(1, (width - gutter * (cols - 1) - margin * 2) // cols)
-
-        required_slot_height = 1
-        for slot in slots:
-            scale = max(0.6, min(2.5, float(slot.font_scale or 1.0)))
-            expects_ruby = bool(
-                slot.ruby_key
-                or slot.auto_ruby
-                or slot.kana_romaji
-                or slot.pinyin
-                or slot.ipa
-                or slot.jyutping
-                or slot.korean_romaja
-                or slot.arabic_translit
-            )
-            base_main_ref_h = base_slot_height_px if expects_ruby else slot_height_px
-            base_main_ref_w = base_slot_width_px if expects_ruby else slot_width_px
-            base_main = int(round(min(base_main_ref_h * 0.38, base_main_ref_w * 0.07)))
-            base_main = int(round(base_main * _language_visual_scale(slot.language)))
-            base_main = max(14, min(base_main, 220))
-            base_ruby = int(round(base_main * 0.6))
-
-            main_size = max(12, int(round(base_main * scale)))
-            ruby_size = max(8, int(round(base_ruby * scale)))
-            default_style = TextStyle()
-            stroke = max(1, int(round(default_style.stroke_width * (main_size / default_style.main_font_size))))
-            if not expects_ruby:
-                ruby_size = 0
-
-            style = TextStyle(
-                main_font_size=main_size,
-                ruby_font_size=ruby_size,
-                stroke_width=stroke,
-            )
-            renderer = RubyRenderer(style)
-            sample_tokens = [RubyToken(text="🔊", token_type="speaker")]
-            if ruby_size > 0:
-                sample_tokens.append(RubyToken(text="漢字", ruby="かんじ"))
-            else:
-                sample_tokens.append(RubyToken(text="Sample"))
-            img = renderer.render_tokens(sample_tokens, padding=16)
-            total_h = int(img.size[1])
-            # Undo the 0.92 safety factor used later and add slack for rounding/centering.
-            required_slot_height = max(required_slot_height, int((total_h / 0.92) + 2))
-
-        required_bottom = required_slot_height * rows + gutter * (rows - 1)
-        return required_bottom / float(height) if height else current_ratio
-
+    # Respect the user-specified subtitle band height. We scale text to fit within
+    # the resulting slot height (and clamp ruby if needed) rather than silently
+    # expanding the band, so layout height + vertical shift behave predictably.
     effective_height_ratio = float(height_ratio)
-    for _ in range(6):
-        needed = _estimate_required_height_ratio(effective_height_ratio)
-        next_ratio = max(effective_height_ratio, float(height_ratio), needed)
-        next_ratio = min(next_ratio, 0.92)
-        if next_ratio - effective_height_ratio < 0.005:
-            break
-        effective_height_ratio = next_ratio
 
     if lift_ratio is not None:
         lift_ratio = max(0.0, float(lift_ratio))
