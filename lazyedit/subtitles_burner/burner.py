@@ -114,6 +114,13 @@ def burn_video_with_slots(
 
     width, height = _get_video_resolution(video_path)
 
+    def _language_visual_scale(lang: str) -> float:
+        """Compensate for fonts where CJK glyphs appear visually smaller than Latin."""
+        normalized = (lang or "").strip().lower()
+        if normalized in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"}:
+            return 1.15
+        return 1.0
+
     # When users increase per-slot fontScale, the subtitle block can become taller
     # than the slot and visually overlap into adjacent rows. To keep scaling
     # readable (including ruby/pinyin) without overlap, expand the bottom subtitle
@@ -209,13 +216,6 @@ def burn_video_with_slots(
         slot_entry.slot_id: (int(slot_entry.width), int(slot_entry.height)) for slot_entry in layout.slots
     }
     default_style = TextStyle()
-
-    def _language_visual_scale(lang: str) -> float:
-        """Compensate for fonts where CJK glyphs appear visually smaller than Latin."""
-        normalized = (lang or "").strip().lower()
-        if normalized in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"}:
-            return 1.15
-        return 1.0
 
     assignments: list[SlotAssignment] = []
     for slot in slots:
