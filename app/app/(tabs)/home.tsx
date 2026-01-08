@@ -755,13 +755,18 @@ const HISTORY_KEYS = {
     try {
       const parsed = JSON.parse(value);
       if (parsed && typeof parsed === 'object') {
-        const merged = { ...DEFAULT_PROMPT_SPEC, ...parsed };
+        const parsedSeconds = parseSeconds((parsed as any).durationSeconds);
+        let model = normalizeModel((parsed as any).model || promptSpec.model);
+        if (!('model' in (parsed as any)) && parsedSeconds && parsedSeconds > 12) {
+          model = 'sora-2-pro';
+        }
+        const seconds = clampSecondsForModel(parsedSeconds, model) ?? clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), model) ?? 8;
+        const aspectRatio = (parsed as any).aspectRatio || promptSpec.aspectRatio;
+        const merged = { ...DEFAULT_PROMPT_SPEC, ...parsed, model, durationSeconds: String(seconds), aspectRatio };
         setPromptSpec(merged);
         setPromptResult(null);
-        const model = normalizeModel((parsed as any).model || promptSpec.model);
-        const seconds = clampSecondsForModel(parseSeconds((parsed as any).durationSeconds), model);
         setVideoModel(model);
-        setVideoSize(sizeForAspectRatio((parsed as any).aspectRatio || promptSpec.aspectRatio));
+        setVideoSize(sizeForAspectRatio(aspectRatio));
         if (seconds) setVideoSeconds(String(seconds));
       }
     } catch (_err) {
