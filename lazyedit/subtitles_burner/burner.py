@@ -210,13 +210,25 @@ def burn_video_with_slots(
         if not has_ruby:
             ruby_font_size = 0
 
-        # Reduce large gaps by scaling text up to better fill the slot height.
-        # Crucially, base this on the main-text-only height so toggling
-        # ruby/pinyin/IPA does not change the main text size.
-        main_only_h = estimate_total_height(main_font_size, 0, False)
-        if main_only_h > 0 and main_only_h < safe_height * 0.82:
-            target = safe_height * 0.9
-            grow = min(target / float(main_only_h), 1.35)
+        # Fill the slot height more aggressively using real render metrics. We
+        # compute a growth factor from a *main-only* render so ruby toggles don't
+        # affect the main size, then apply the same factor to ruby (if enabled).
+        try:
+            sample_text = "漢字" if (slot.language or "").lower() in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"} else "Sample"
+            main_only_style = TextStyle(
+                main_font_size=main_font_size,
+                ruby_font_size=0,
+                stroke_width=stroke_width,
+            )
+            main_only_renderer = RubyRenderer(main_only_style)
+            main_only_img = main_only_renderer.render_tokens([RubyToken(text=sample_text)], padding=16)
+            main_only_render_h = int(main_only_img.size[1])
+        except Exception:
+            main_only_render_h = 0
+
+        if main_only_render_h > 0 and main_only_render_h < safe_height * 0.84:
+            target = safe_height * 0.92
+            grow = min(target / float(main_only_render_h), 1.6)
             if grow > 1.02:
                 main_font_size = max(12, int(round(main_font_size * grow)))
                 if ruby_font_size > 0:
