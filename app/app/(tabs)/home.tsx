@@ -1317,6 +1317,14 @@ export default function HomeScreen() {
                 <Text style={styles.panelTitle}>{t('stage_c_title')}</Text>
               </View>
               <Text style={styles.panelHint}>{t('stage_c_hint')}</Text>
+              {promptResultHistoryOptions.length > 1 ? (
+                <HistorySelect
+                  label={t('history_ai_prompt_result')}
+                  value=""
+                  options={promptResultHistoryOptions}
+                  onChange={applyPromptResultHistory}
+                />
+              ) : null}
 
               <SelectControl
                 label={t('field_video_size')}
@@ -1343,23 +1351,6 @@ export default function HomeScreen() {
                 <ResetButton onPress={() => setVideoSeconds(promptSpec.durationSeconds)} />
               </View>
 
-              {promptTextHistoryOptions.length > 1 ? (
-                <HistorySelect
-                  label={t('history_ai_prompt')}
-                  value=""
-                  options={promptTextHistoryOptions}
-                  onChange={applyPromptHistory}
-                />
-              ) : null}
-              {promptResultHistoryOptions.length > 1 ? (
-                <HistorySelect
-                  label={t('history_ai_prompt_result')}
-                  value=""
-                  options={promptResultHistoryOptions}
-                  onChange={applyPromptResultHistory}
-                />
-              ) : null}
-
               <Text style={styles.fieldLabel}>{t('field_generated_prompt')}</Text>
               <TextInput
                 style={styles.textAreaLarge}
@@ -1368,6 +1359,14 @@ export default function HomeScreen() {
                 placeholder={t('prompt_placeholder')}
                 multiline
               />
+              {promptTextHistoryOptions.length > 1 ? (
+                <HistorySelect
+                  label={t('history_ai_prompt')}
+                  value=""
+                  options={promptTextHistoryOptions}
+                  onChange={applyPromptHistory}
+                />
+              ) : null}
 
               {promptResult?.model || promptResult?.size || promptResult?.seconds ? (
                 <Text style={styles.metaText}>
