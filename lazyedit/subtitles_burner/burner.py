@@ -38,6 +38,7 @@ def _load_burner_module():
         sys.path.insert(0, furigana_path)
 
     try:
+        import subtitles_burner.burner as burner_mod
         from subtitles_burner.burner import (
             BurnLayout,
             RubyRenderer,
@@ -50,6 +51,20 @@ def _load_burner_module():
         )
     except Exception as exc:
         raise RuntimeError(f"Failed to import subtitles_burner: {exc}") from exc
+
+    # LazyEdit patch: the upstream burner pads each rendered subtitle by
+    # `slot.height` above and below, which guarantees overlap between stacked
+    # slots on landscape/square videos. We keep the upstream dependency
+    # read-only and patch the behavior at import time instead.
+    try:
+        if getattr(burner_mod, "_lazyedit_padding_patch", False) is not True and hasattr(burner_mod, "_append_padding"):
+            def _append_padding_passthrough(img, _padding_top: int, _padding_bottom: int):
+                return img
+
+            burner_mod._append_padding = _append_padding_passthrough  # type: ignore[attr-defined]
+            burner_mod._lazyedit_padding_patch = True
+    except Exception:
+        pass
 
     return (
         BurnLayout,
@@ -113,7 +128,7 @@ def burn_video_with_slots(
             scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
             base_main = int(round(min(slot_height_px * 0.38, slot_width_px * 0.07)))
             base_main = max(14, min(base_main, 220))
-            base_ruby = int(round(base_main * 0.5))
+            base_ruby = int(round(base_main * 0.6))
 
             main_size = max(12, int(round(base_main * scale)))
             ruby_size = max(8, int(round(base_ruby * scale)))
@@ -205,7 +220,7 @@ def burn_video_with_slots(
         # the historical defaults, while 4K+ inputs scale up appropriately.
         base_main = int(round(min(slot_height * 0.38, slot_width * 0.07)))
         base_main = max(14, min(base_main, 220))
-        base_ruby = int(round(base_main * 0.5))
+        base_ruby = int(round(base_main * 0.6))
         base_ruby = max(10, min(base_ruby, base_main - 2))
 
         main_font_size = max(12, int(round(base_main * scale)))
