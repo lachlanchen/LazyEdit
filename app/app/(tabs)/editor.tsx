@@ -20,6 +20,7 @@ type Video = {
   title: string | null;
   file_path: string;
   media_url?: string | null;
+  preview_media_url?: string | null;
   created_at?: string;
 };
 
@@ -196,7 +197,8 @@ export default function EditorScreen() {
           ) : videos.length ? (
             <View style={styles.videoList}>
               {videos.map((video) => {
-                const mediaSrc = video.media_url ? `${API_URL}${video.media_url}` : null;
+                const previewUrl = video.preview_media_url || video.media_url;
+                const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
                 const isActive = selectedVideoId === video.id;
                 const title = video.title || t('library_video_fallback', { id: video.id });
                 return (
