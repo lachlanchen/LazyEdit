@@ -146,15 +146,27 @@ def burn_video_with_slots(
             or slot.korean_romaja
             or slot.arabic_translit
         )
-        # Keep main text centered and consistent across slots: avoid shrinking main
-        # differently per-language. Instead, clamp ruby/transliteration so the whole
-        # rendered subtitle fits within the slot height (prevents ugly overlaps).
+        # Prevent overlap between stacked slots by ensuring rendered subtitles fit
+        # inside each slot's height. We prefer to keep the main font size stable
+        # across languages/slots; if the user scales up beyond what the slot can
+        # fit, we clamp ruby first, and only then shrink both proportionally.
         safe_height = max(1, int(slot_height * 0.92))
         padding = max(12, stroke_width * 2)
-        main_h_est = main_font_size
-        overhead = padding * 2 + stroke_width * 2 + 4
-        remaining = safe_height - (main_h_est + overhead)
-        if expects_ruby:
+        overhead = padding * 2 + stroke_width * 2 + 6
+
+        def estimate_total_height(main_size: int, ruby_size: int, has_ruby: bool) -> int:
+            main_h = int(round(main_size * default_style.line_spacing))
+            ruby_h = int(round(ruby_size * (1.0 + default_style.ruby_spacing))) if has_ruby and ruby_size > 0 else 0
+            return main_h + ruby_h + overhead
+
+        has_ruby = expects_ruby
+        if not has_ruby:
+            ruby_font_size = 0
+
+        total_h = estimate_total_height(main_font_size, ruby_font_size, has_ruby)
+        if total_h > safe_height and has_ruby:
+            main_h_only = estimate_total_height(main_font_size, 0, False)
+            remaining = safe_height - main_h_only
             if remaining <= 0:
                 ruby_font_size = 0
             else:
@@ -162,8 +174,16 @@ def burn_video_with_slots(
                 ruby_font_size = max(0, min(ruby_font_size, max_ruby, main_font_size - 2))
                 if ruby_font_size < 8:
                     ruby_font_size = 0
-        else:
-            ruby_font_size = 0
+            total_h = estimate_total_height(main_font_size, ruby_font_size, ruby_font_size > 0)
+
+        if total_h > safe_height:
+            shrink = safe_height / float(total_h)
+            main_font_size = max(12, int(round(main_font_size * shrink)))
+            if has_ruby and ruby_font_size > 0:
+                ruby_font_size = max(8, min(main_font_size - 2, int(round(ruby_font_size * shrink))))
+            else:
+                ruby_font_size = 0
+            stroke_width = max(1, int(round(stroke_width * shrink)))
         style = TextStyle(
             main_font_size=main_font_size,
             ruby_font_size=ruby_font_size,
