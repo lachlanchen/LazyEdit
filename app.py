@@ -3938,8 +3938,9 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             seconds = 8
 
-        max_seconds = 25 if model == "sora-2-pro" else 12
-        seconds = min(max(seconds, 4), max_seconds)
+        # OpenAI Sora currently supports only fixed durations (regardless of model).
+        allowed_seconds = (4, 8, 12)
+        seconds = min(allowed_seconds, key=lambda v: abs(v - seconds))
 
         use_cache = _parse_bool(data.get("use_cache"), default=True)
         title_input = data.get("title") or data.get("name") or "Generated video"

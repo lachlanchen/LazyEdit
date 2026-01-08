@@ -35,11 +35,11 @@ const formatBytes = (bytes?: number | null) => {
 
 const DEFAULT_MODEL = 'sora-2';
 const normalizeModel = (model?: string) => (model === 'sora-2' || model === 'sora-2-pro' ? model : DEFAULT_MODEL);
-const clampSecondsForModel = (seconds: number | null | undefined, model: string) => {
+const clampSecondsForModel = (seconds: number | null | undefined, _model: string) => {
   if (seconds === null || seconds === undefined || Number.isNaN(seconds)) return undefined;
-  const max = model === 'sora-2-pro' ? 25 : 12;
-  const min = 4;
-  return Math.min(Math.max(Math.trunc(seconds), min), max);
+  const allowed = [4, 8, 12];
+  const value = Math.trunc(seconds);
+  return allowed.reduce((best, current) => (Math.abs(current - value) < Math.abs(best - value) ? current : best), allowed[0]);
 };
 const parseSeconds = (value: unknown) => {
   if (typeof value === 'number') return value;

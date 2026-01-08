@@ -20,7 +20,8 @@
     "seconds": {
       "type": "integer",
       "minimum": 4,
-      "maximum": 25
+      "maximum": 12,
+      "enum": [4, 8, 12]
     }
   },
   "required": ["title", "prompt", "negative_prompt", "size", "seconds"],

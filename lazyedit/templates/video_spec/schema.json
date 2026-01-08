@@ -10,7 +10,7 @@
     "mood": { "type": "string" },
     "style": { "type": "string" },
     "aspectRatio": { "type": "string", "enum": ["16:9", "9:16", "auto"] },
-    "durationSeconds": { "type": "string", "enum": ["4", "8", "12", "16", "20", "25"] },
+    "durationSeconds": { "type": "string", "enum": ["4", "8", "12"] },
     "audioLanguage": { "type": "string", "enum": ["auto", "en", "zh", "ja", "ko", "vi", "ar", "fr", "es"] },
     "sceneCount": { "type": "string" },
     "spokenWords": { "type": "string" },
