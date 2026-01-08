@@ -198,11 +198,15 @@ export default function HomeScreen() {
     size?: string;
     seconds?: number;
   } | null>(null);
+  const [specHistoryList, setSpecHistoryList] = useState<string[]>([]);
+  const [promptTextHistory, setPromptTextHistory] = useState<string[]>([]);
   const [promptOutput, setPromptOutput] = useState<string>('');
   const [prompting, setPrompting] = useState(false);
   const [promptStatus, setPromptStatus] = useState<string>('');
   const [promptTone, setPromptTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [promptSpecLoaded, setPromptSpecLoaded] = useState(false);
+  const [specHistoryLoaded, setSpecHistoryLoaded] = useState(false);
+  const [promptTextHistoryLoaded, setPromptTextHistoryLoaded] = useState(false);
   const [promptHistory, setPromptHistory] = useState(DEFAULT_PROMPT_HISTORY);
   const [promptHistoryLoaded, setPromptHistoryLoaded] = useState(false);
   const [ideaPrompt, setIdeaPrompt] = useState('');
@@ -213,6 +217,7 @@ export default function HomeScreen() {
   const [videoStatus, setVideoStatus] = useState<string>('');
   const [videoTone, setVideoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
+  const [videoModel, setVideoModel] = useState(DEFAULT_MODEL);
   const [videoSize, setVideoSize] = useState(sizeForAspectRatio(DEFAULT_PROMPT_SPEC.aspectRatio));
   const [videoSeconds, setVideoSeconds] = useState(DEFAULT_PROMPT_SPEC.durationSeconds);
   const aspectOptions = useMemo(
@@ -581,6 +586,16 @@ export default function HomeScreen() {
     return <HistorySelect label={t('history_label')} value="" options={historyOptions(items)} onChange={onPick} />;
   };
 
+  const specHistoryOptions = historyOptions(specHistoryList);
+  const promptTextHistoryOptions = historyOptions(promptTextHistory);
+
+  const pushListValue = (list: string[], value: string) => {
+    const cleaned = value.trim();
+    if (!cleaned) return list;
+    const next = [cleaned, ...list.filter((item) => item !== cleaned)];
+    return next.slice(0, 20);
+  };
+
   const loadPromptSettings = async () => {
     try {
       const resp = await fetch(`${API_URL}/api/ui-settings/video_prompt`);
@@ -599,7 +614,48 @@ export default function HomeScreen() {
   useEffect(() => {
     loadPromptSettings();
     loadPromptHistory();
+    (async () => {
+      try {
+        const resp = await fetch(`${API_URL}/api/ui-settings/video_spec_history`);
+        const json = await resp.json();
+        if (resp.ok && Array.isArray(json.value)) {
+          setSpecHistoryList(json.value);
+        }
+      } catch (_err) {
+        // ignore
+      } finally {
+        setSpecHistoryLoaded(true);
+      }
+      try {
+        const resp = await fetch(`${API_URL}/api/ui-settings/video_prompt_text_history`);
+        const json = await resp.json();
+        if (resp.ok && Array.isArray(json.value)) {
+          setPromptTextHistory(json.value);
+        }
+      } catch (_err) {
+        // ignore
+      } finally {
+        setPromptTextHistoryLoaded(true);
+      }
+    })();
   }, []);
+
+  const applySpecHistory = (value: string) => {
+    if (!value) return;
+    try {
+      const parsed = JSON.parse(value);
+      if (parsed && typeof parsed === 'object') {
+        setPromptSpec({ ...DEFAULT_PROMPT_SPEC, ...parsed });
+      }
+    } catch (_err) {
+      // ignore malformed history
+    }
+  };
+
+  const applyPromptHistory = (value: string) => {
+    if (!value) return;
+    setPromptOutput(value);
+  };
 
   useEffect(() => {
     if (promptResult) return;
@@ -607,6 +663,7 @@ export default function HomeScreen() {
     const seconds = clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), model) ?? promptSpec.durationSeconds;
     setVideoSize(sizeForAspectRatio(promptSpec.aspectRatio));
     setVideoSeconds(String(seconds));
+    setVideoModel(model);
   }, [promptResult, promptSpec]);
 
   useEffect(() => {
@@ -615,6 +672,7 @@ export default function HomeScreen() {
     const seconds = clampSecondsForModel(promptResult.seconds, model) ?? videoSeconds;
     setVideoSize(promptResult.size || sizeForAspectRatio(promptSpec.aspectRatio));
     if (seconds) setVideoSeconds(String(seconds));
+    setVideoModel(model);
   }, [promptResult, promptSpec, videoSeconds]);
 
   useEffect(() => {
@@ -658,7 +716,7 @@ export default function HomeScreen() {
       }
       const result = json.result || json;
       const promptText = result.prompt || json.prompt || '';
-      const selectedModel = normalizeModel(promptSpec.model);
+      const selectedModel = normalizeModel(videoModel || promptSpec.model);
       const specSeconds = clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), selectedModel);
       const rawSeconds = parseSeconds(result.seconds ?? json.seconds);
       const seconds = clampSecondsForModel(rawSeconds ?? specSeconds, selectedModel) ?? specSeconds ?? 8;
@@ -671,6 +729,24 @@ export default function HomeScreen() {
         size,
         seconds,
       });
+      if (specHistoryLoaded) {
+        const next = pushListValue(specHistoryList, JSON.stringify(promptSpec));
+        setSpecHistoryList(next);
+        fetch(`${API_URL}/api/ui-settings/video_spec_history`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(next),
+        }).catch(() => {});
+      }
+      if (promptTextHistoryLoaded) {
+        const nextPromptHistory = pushListValue(promptTextHistory, promptText);
+        setPromptTextHistory(nextPromptHistory);
+        fetch(`${API_URL}/api/ui-settings/video_prompt_text_history`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(nextPromptHistory),
+        }).catch(() => {});
+      }
       setVideoSize(size);
       setVideoSeconds(String(seconds));
       setPromptStatus('Prompt ready. You can edit before generating.');
@@ -1128,6 +1204,15 @@ export default function HomeScreen() {
               {promptStatus ? (
                 <Text style={[styles.status, toneStyle(promptTone)]}>{promptStatus}</Text>
               ) : null}
+
+              {specHistoryOptions.length > 1 ? (
+                <HistorySelect
+                  label={t('history_ai_specs')}
+                  value=""
+                  options={specHistoryOptions}
+                  onChange={applySpecHistory}
+                />
+              ) : null}
             </View>
 
             <View style={styles.panel}>
@@ -1144,6 +1229,13 @@ export default function HomeScreen() {
                 onChange={setVideoSize}
               />
 
+              <SelectControl
+                label={t('field_model')}
+                value={videoModel}
+                options={modelOptions}
+                onChange={(value) => setVideoModel(normalizeModel(value))}
+              />
+
               <Text style={styles.fieldLabel}>{t('field_length_seconds')}</Text>
               <View style={styles.inputRow}>
                 <TextInput
@@ -1154,6 +1246,15 @@ export default function HomeScreen() {
                 />
                 <ResetButton onPress={() => setVideoSeconds(promptSpec.durationSeconds)} />
               </View>
+
+              {promptTextHistoryOptions.length > 1 ? (
+                <HistorySelect
+                  label={t('history_ai_prompt')}
+                  value=""
+                  options={promptTextHistoryOptions}
+                  onChange={applyPromptHistory}
+                />
+              ) : null}
 
               <Text style={styles.fieldLabel}>{t('field_generated_prompt')}</Text>
               <TextInput
