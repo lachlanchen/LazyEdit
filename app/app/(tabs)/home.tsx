@@ -195,7 +195,6 @@ export default function HomeScreen() {
     title?: string;
     prompt?: string;
     negativePrompt?: string;
-    model?: string;
     size?: string;
     seconds?: number;
   } | null>(null);
@@ -214,6 +213,8 @@ export default function HomeScreen() {
   const [videoStatus, setVideoStatus] = useState<string>('');
   const [videoTone, setVideoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
+  const [videoSize, setVideoSize] = useState(sizeForAspectRatio(DEFAULT_PROMPT_SPEC.aspectRatio));
+  const [videoSeconds, setVideoSeconds] = useState(DEFAULT_PROMPT_SPEC.durationSeconds);
   const aspectOptions = useMemo(
     () => [
       { value: '16:9', label: t('aspect_ratio_landscape') },
@@ -221,6 +222,16 @@ export default function HomeScreen() {
       { value: 'auto', label: t('aspect_ratio_auto') },
     ],
     [t],
+  );
+  const sizeOptions = useMemo(
+    () => [
+      { value: '1280x720', label: '1280x720' },
+      { value: '1920x1080', label: '1920x1080' },
+      { value: '1024x576', label: '1024x576' },
+      { value: '720x1280', label: '720x1280' },
+      { value: '1080x1920', label: '1080x1920' },
+    ],
+    [],
   );
   const modelOptions = useMemo(
     () => [
@@ -591,6 +602,22 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
+    if (promptResult) return;
+    const model = normalizeModel(promptSpec.model);
+    const seconds = clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), model) ?? promptSpec.durationSeconds;
+    setVideoSize(sizeForAspectRatio(promptSpec.aspectRatio));
+    setVideoSeconds(String(seconds));
+  }, [promptResult, promptSpec]);
+
+  useEffect(() => {
+    if (!promptResult) return;
+    const model = normalizeModel(promptSpec.model);
+    const seconds = clampSecondsForModel(promptResult.seconds, model) ?? videoSeconds;
+    setVideoSize(promptResult.size || sizeForAspectRatio(promptSpec.aspectRatio));
+    if (seconds) setVideoSeconds(String(seconds));
+  }, [promptResult, promptSpec, videoSeconds]);
+
+  useEffect(() => {
     if (Platform.OS !== 'web') return;
     try {
       localStorage.setItem('lazyedit:homeTab', activeTab);
@@ -631,7 +658,7 @@ export default function HomeScreen() {
       }
       const result = json.result || json;
       const promptText = result.prompt || json.prompt || '';
-      const selectedModel = normalizeModel(result.model || json.model || promptSpec.model);
+      const selectedModel = normalizeModel(promptSpec.model);
       const specSeconds = clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), selectedModel);
       const rawSeconds = parseSeconds(result.seconds ?? json.seconds);
       const seconds = clampSecondsForModel(rawSeconds ?? specSeconds, selectedModel) ?? specSeconds ?? 8;
@@ -641,10 +668,11 @@ export default function HomeScreen() {
         title: result.title || json.title,
         prompt: promptText,
         negativePrompt: result.negative_prompt || json.negative_prompt,
-        model: selectedModel,
         size,
         seconds,
       });
+      setVideoSize(size);
+      setVideoSeconds(String(seconds));
       setPromptStatus('Prompt ready. You can edit before generating.');
       setPromptTone('good');
     } catch (e: any) {
@@ -700,15 +728,11 @@ export default function HomeScreen() {
     try {
       const spec = buildPromptSpecPayload();
       const title = promptResult?.title || (promptSpec.autoTitle ? 'Generated video' : spec.title || 'Generated video');
-      const selectedModel = normalizeModel(promptResult?.model || promptSpec.model);
+      const selectedModel = normalizeModel(promptSpec.model);
       const seconds =
-        clampSecondsForModel(
-          parseSeconds(
-            promptResult?.seconds ?? (spec as any).duration_seconds ?? promptSpec.durationSeconds,
-          ),
-          selectedModel,
-        ) ?? (selectedModel === 'sora-2-pro' ? 12 : 8);
-      const size = promptResult?.size || sizeForAspectRatio(promptSpec.aspectRatio);
+        clampSecondsForModel(parseSeconds(videoSeconds) ?? parseSeconds(promptSpec.durationSeconds), selectedModel) ??
+        (selectedModel === 'sora-2-pro' ? 12 : 8);
+      const size = videoSize || sizeForAspectRatio(promptSpec.aspectRatio);
       const resp = await fetch(`${API_URL}/api/videos/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1112,6 +1136,24 @@ export default function HomeScreen() {
                 <Text style={styles.panelTitle}>{t('stage_c_title')}</Text>
               </View>
               <Text style={styles.panelHint}>{t('stage_c_hint')}</Text>
+
+              <SelectControl
+                label={t('field_video_size')}
+                value={videoSize}
+                options={sizeOptions}
+                onChange={setVideoSize}
+              />
+
+              <Text style={styles.fieldLabel}>{t('field_length_seconds')}</Text>
+              <View style={styles.inputRow}>
+                <TextInput
+                  style={[styles.input, styles.inputFlex]}
+                  value={videoSeconds}
+                  onChangeText={(value) => setVideoSeconds(value.replace(/[^\d]/g, ''))}
+                  keyboardType="numeric"
+                />
+                <ResetButton onPress={() => setVideoSeconds(promptSpec.durationSeconds)} />
+              </View>
 
               <Text style={styles.fieldLabel}>{t('field_generated_prompt')}</Text>
               <TextInput

@@ -13,10 +13,6 @@
       "type": "string",
       "description": "Short exclusions list"
     },
-    "model": {
-      "type": "string",
-      "enum": ["sora-2", "sora-2-pro"]
-    },
     "size": {
       "type": "string",
       "enum": ["1280x720", "1920x1080", "1024x576", "720x1280", "1080x1920"]
@@ -27,6 +23,6 @@
       "maximum": 25
     }
   },
-  "required": ["title", "prompt", "negative_prompt", "model", "size", "seconds"],
+  "required": ["title", "prompt", "negative_prompt", "size", "seconds"],
   "additionalProperties": false
 }
