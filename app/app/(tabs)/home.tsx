@@ -135,13 +135,15 @@ const HistorySelect = ({
   value,
   options,
   onChange,
+  hideIfSingle = true,
 }: {
   label: string;
   value: string;
   options: { value: string; label: string }[];
   onChange: (value: string) => void;
+  hideIfSingle?: boolean;
 }) => (
-  <SelectControl label={label} value={value} options={options} onChange={onChange} hideIfSingle />
+  <SelectControl label={label} value={value} options={options} onChange={onChange} hideIfSingle={hideIfSingle} />
 );
 
 const ResetButton = ({ onPress }: { onPress: () => void }) => (
@@ -1267,12 +1269,13 @@ export default function HomeScreen() {
                 <Text style={styles.panelTitle}>{t('controls_title')}</Text>
               </View>
               {specHistoryOptions.length > 1 ? (
-                <HistorySelect
-                  label={t('history_ai_specs')}
-                  value=""
-                  options={specHistoryOptions}
-                  onChange={applySpecHistory}
-                />
+              <HistorySelect
+                label={t('history_ai_specs')}
+                value=""
+                options={specHistoryOptions}
+                onChange={applySpecHistory}
+                hideIfSingle={false}
+              />
               ) : null}
               <Text style={styles.panelHint}>{t('controls_hint')}</Text>
 
@@ -1361,6 +1364,7 @@ export default function HomeScreen() {
                 value=""
                 options={promptResultHistoryOptions}
                 onChange={applyPromptResultHistory}
+                hideIfSingle={false}
               />
 
               <SelectControl
@@ -1401,6 +1405,7 @@ export default function HomeScreen() {
                 value=""
                 options={promptTextHistoryOptions}
                 onChange={applyPromptHistory}
+                hideIfSingle={false}
               />
 
               {promptResult?.model || promptResult?.size || promptResult?.seconds ? (
