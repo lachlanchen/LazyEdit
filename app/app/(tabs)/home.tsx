@@ -895,6 +895,15 @@ export default function HomeScreen() {
           body: JSON.stringify(nextIdeaHistory),
         }).catch(() => {});
       }
+      if (specHistoryLoaded) {
+        const nextSpecHistory = pushListValue(specHistoryList, JSON.stringify(merged));
+        setSpecHistoryList(nextSpecHistory);
+        fetch(`${API_URL}/api/ui-settings/video_spec_history`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(nextSpecHistory),
+        }).catch(() => {});
+      }
       setSpecStatus('Specs generated. Review and adjust as needed.');
       setSpecTone('good');
     } catch (e: any) {
