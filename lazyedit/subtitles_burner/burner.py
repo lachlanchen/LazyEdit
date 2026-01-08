@@ -85,10 +85,64 @@ def burn_video_with_slots(
     ) = _load_burner_module()
 
     width, height = _get_video_resolution(video_path)
+
+    # When users increase per-slot fontScale, the subtitle block can become taller
+    # than the slot and visually overlap into adjacent rows. To keep scaling
+    # readable (including ruby/pinyin) without overlap, expand the bottom subtitle
+    # band height if needed (within a reasonable cap) before laying out slots.
+    def _estimate_required_height_ratio(current_ratio: float) -> float:
+        bottom_height_px = int(height * current_ratio)
+        slot_height_px = max(1, (bottom_height_px - gutter * (rows - 1)) // rows)
+        slot_width_px = max(1, (width - gutter * (cols - 1) - margin * 2) // cols)
+
+        required_slot_height = 1
+        for slot in slots:
+            scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
+            base_main = int(round(min(slot_height_px * 0.38, slot_width_px * 0.07)))
+            base_main = max(14, min(base_main, 220))
+            base_ruby = int(round(base_main * 0.5))
+
+            main_size = max(12, int(round(base_main * scale)))
+            ruby_size = max(8, int(round(base_ruby * scale)))
+            stroke = max(1, int(round(TextStyle().stroke_width * (main_size / TextStyle().main_font_size))))
+            pad = max(12, stroke * 2)
+            overhead = pad * 2 + stroke * 2 + 6
+
+            expects_ruby = bool(
+                slot.ruby_key
+                or slot.auto_ruby
+                or slot.kana_romaji
+                or slot.pinyin
+                or slot.ipa
+                or slot.jyutping
+                or slot.korean_romaja
+                or slot.arabic_translit
+            )
+            if not expects_ruby:
+                ruby_size = 0
+
+            main_h = int(round(main_size * TextStyle().line_spacing))
+            ruby_h = int(round(ruby_size * (1.0 + TextStyle().ruby_spacing))) if ruby_size > 0 else 0
+            total_h = main_h + ruby_h + overhead
+            # Add slack for rounding and centering, and undo the 0.92 safety factor used later.
+            required_slot_height = max(required_slot_height, int((total_h / 0.92) + 2))
+
+        required_bottom = required_slot_height * rows + gutter * (rows - 1)
+        return required_bottom / float(height) if height else current_ratio
+
+    effective_height_ratio = float(height_ratio)
+    for _ in range(3):
+        needed = _estimate_required_height_ratio(effective_height_ratio)
+        next_ratio = max(effective_height_ratio, float(height_ratio), needed)
+        next_ratio = min(next_ratio, 0.85)
+        if next_ratio - effective_height_ratio < 0.005:
+            break
+        effective_height_ratio = next_ratio
+
     if lift_ratio is not None:
         lift_ratio = max(0.0, float(lift_ratio))
         lift_pixels = int(height * lift_ratio)
-        bottom_height = int(height * height_ratio)
+        bottom_height = int(height * effective_height_ratio)
         slot_height = max(1, (bottom_height - gutter * (rows - 1)) // rows)
         slot_width = max(1, (width - gutter * (cols - 1) - margin * 2) // cols)
         top_y = max(0, height - bottom_height - lift_pixels)
@@ -107,7 +161,7 @@ def burn_video_with_slots(
             height,
             rows=rows,
             cols=cols,
-            height_ratio=height_ratio,
+            height_ratio=effective_height_ratio,
             margin=margin,
             gutter=gutter,
             lift_slots=lift_slots,
