@@ -433,46 +433,6 @@ def burn_video_with_slots(
             ruby_font_size = max(8, min(main_font_size - 2, int(round(main_font_size * ruby_ratio))))
         else:
             ruby_font_size = 0
-
-        # 3) If ruby pushes the render too tall, shrink ruby first (keep main fixed).
-        def _full_height() -> int:
-            return render_height(main_font_size, ruby_font_size, stroke_width, padding, include_ruby=has_ruby)
-
-        if has_ruby and ruby_font_size > 0:
-            try:
-                full_h = _full_height()
-            except Exception:
-                full_h = 0
-            if full_h > safe_height and full_h > 0:
-                lo = 0
-                hi = ruby_font_size
-                while lo < hi:
-                    mid = (lo + hi) // 2
-                    ruby_font_size = mid
-                    try:
-                        h = _full_height()
-                    except Exception:
-                        h = safe_height + 1
-                    if h <= safe_height:
-                        lo = mid + 1
-                    else:
-                        hi = mid
-                ruby_font_size = max(0, lo - 1)
-
-        # 4) Final guard: if still too tall even with ruby shrunk, shrink main.
-        try:
-            full_h = _full_height()
-        except Exception:
-            full_h = 0
-        if full_h > safe_height and full_h > 0:
-            shrink = safe_height / float(full_h)
-            main_font_size = max(12, int(round(main_font_size * shrink)))
-            stroke_width = max(1, int(round(stroke_width * shrink)))
-            padding = max(max(2, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
-            if has_ruby:
-                ruby_font_size = max(0, min(main_font_size - 2, int(round(main_font_size * ruby_ratio))))
-            else:
-                ruby_font_size = 0
         style = TextStyle(
             main_font_size=main_font_size,
             ruby_font_size=ruby_font_size,
