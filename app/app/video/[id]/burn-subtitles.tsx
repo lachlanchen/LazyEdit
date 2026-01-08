@@ -763,7 +763,7 @@ export default function BurnSubtitlesScreen() {
                   label="Font scale"
                   value={slot.fontScale ?? 1}
                   min={0.6}
-                  max={1.6}
+                  max={2.5}
                   step={0.05}
                   onChange={(value) => updateSlotScale(slot.slot, value)}
                   formatValue={(value) => `${value.toFixed(2)}x`}

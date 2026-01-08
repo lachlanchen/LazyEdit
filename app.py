@@ -683,7 +683,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         if slot_id < 1 or slot_id > slot_count:
             continue
         normalized = _normalize_translation_language(language) if language else None
-        font_scale = min(max(font_scale, 0.6), 1.6)
+        font_scale = min(max(font_scale, 0.6), 2.5)
         slot_map[slot_id] = {
             "language": normalized,
             "fontScale": font_scale,
@@ -4575,7 +4575,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                 font_scale = float(slot.get("fontScale", 1.0))
             except Exception:
                 font_scale = 1.0
-            font_scale = min(max(font_scale, 0.6), 1.6)
+            font_scale = min(max(font_scale, 0.6), 2.5)
             if not language or slot_id <= 0:
                 continue
 

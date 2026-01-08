@@ -136,7 +136,7 @@ def burn_video_with_slots(
 
         required_slot_height = 1
         for slot in slots:
-            scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
+            scale = max(0.6, min(2.5, float(slot.font_scale or 1.0)))
             expects_ruby = bool(
                 slot.ruby_key
                 or slot.auto_ruby
@@ -224,7 +224,7 @@ def burn_video_with_slots(
 
     assignments: list[SlotAssignment] = []
     for slot in slots:
-        scale = max(0.6, min(1.6, float(slot.font_scale or 1.0)))
+        scale = max(0.6, min(2.5, float(slot.font_scale or 1.0)))
         slot_width, slot_height = slot_geometry.get(slot.slot_id, (width, max(1, int(height * height_ratio))))
 
         expects_ruby = bool(
@@ -272,6 +272,19 @@ def burn_video_with_slots(
             ruby_font_size = 0
 
         total_h = estimate_total_height(main_font_size, ruby_font_size, has_ruby)
+        if has_ruby and total_h > 0 and total_h < safe_height * 0.78:
+            # Ruby-enabled subtitles often under-fill the slot height, leaving
+            # large vertical gaps between rows. Grow the block to better use the
+            # slot height while keeping the ruby/main ratio intact. The later fit
+            # logic still prevents overflow.
+            target = safe_height * 0.9
+            grow = min(target / float(total_h), 1.35)
+            if grow > 1.02:
+                main_font_size = max(12, int(round(main_font_size * grow)))
+                if ruby_font_size > 0:
+                    ruby_font_size = max(8, min(main_font_size - 2, int(round(ruby_font_size * grow))))
+                stroke_width = max(1, int(round(stroke_width * grow)))
+                total_h = estimate_total_height(main_font_size, ruby_font_size, ruby_font_size > 0)
         if total_h > safe_height:
             # Keep ruby the same scale as main whenever possible. If the combined
             # block doesn't fit, shrink main just enough (and keep ruby/main ratio)
