@@ -755,7 +755,14 @@ const HISTORY_KEYS = {
     try {
       const parsed = JSON.parse(value);
       if (parsed && typeof parsed === 'object') {
-        setPromptSpec({ ...DEFAULT_PROMPT_SPEC, ...parsed });
+        const merged = { ...DEFAULT_PROMPT_SPEC, ...parsed };
+        setPromptSpec(merged);
+        setPromptResult(null);
+        const model = normalizeModel((parsed as any).model || promptSpec.model);
+        const seconds = clampSecondsForModel(parseSeconds((parsed as any).durationSeconds), model);
+        setVideoModel(model);
+        setVideoSize(sizeForAspectRatio((parsed as any).aspectRatio || promptSpec.aspectRatio));
+        if (seconds) setVideoSeconds(String(seconds));
       }
     } catch (_err) {
       // ignore malformed history
