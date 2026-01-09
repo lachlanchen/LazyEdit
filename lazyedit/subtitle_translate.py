@@ -148,27 +148,41 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         fallback = item.get("text")
         return str(fallback) if fallback is not None else ""
 
-    def _build_context_item(self, index: int, last_translation: str | None) -> dict:
+    @staticmethod
+    def _format_context_value(value: str | None) -> str:
+        if not value:
+            return ""
+        return str(value).strip()
+
+    def _build_context_strings(self, index: int, last_translation: str | None) -> tuple[str, str, str]:
         subtitles = self.subtitles or []
         if index < 0 or index >= len(subtitles):
-            return {}
+            return "", "", self._format_context_value(last_translation)
 
-        def _pack_text(item):
-            if not isinstance(item, dict):
-                return None
-            text = self._extract_subtitle_text(item)
-            return text or None
+        prev_text = self._extract_subtitle_text(subtitles[index - 1]) if index > 0 else ""
+        next_text = self._extract_subtitle_text(subtitles[index + 1]) if index + 1 < len(subtitles) else ""
+        return (
+            self._format_context_value(prev_text),
+            self._format_context_value(next_text),
+            self._format_context_value(last_translation),
+        )
 
-        current = subtitles[index]
-        payload = {
-            "start": current.get("start") if isinstance(current, dict) else None,
-            "end": current.get("end") if isinstance(current, dict) else None,
-            "text": _pack_text(current) or "",
-            "prev": _pack_text(subtitles[index - 1]) if index > 0 else None,
-            "next": _pack_text(subtitles[index + 1]) if index + 1 < len(subtitles) else None,
-            "prev_translation": last_translation if last_translation else None,
-        }
-        return payload
+    def _build_prompt_with_context(
+        self,
+        user_template: str,
+        subtitles,
+        prev_line: str | None,
+        next_line: str | None,
+        prev_translation: str | None,
+    ) -> str:
+        prompt = user_template.replace(
+            "{{SUBTITLES_JSON}}",
+            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        )
+        prompt = prompt.replace("{{PREV_LINE}}", self._format_context_value(prev_line))
+        prompt = prompt.replace("{{NEXT_LINE}}", self._format_context_value(next_line))
+        prompt = prompt.replace("{{PREV_TRANSLATION}}", self._format_context_value(prev_translation))
+        return prompt
 
     @staticmethod
     def _is_punctuation_token(text: str) -> bool:
@@ -687,7 +701,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return translated_subtitles
 
-    def translate_and_merge_subtitles_ja_furigana_single_pass(self, subtitles, idx):
+    def translate_and_merge_subtitles_ja_furigana_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
         """Single-pass Japanese translation + furigana using template prompt + schema."""
         print("Translating subtitles to Japanese with furigana (single pass)...")
 
@@ -699,9 +720,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             "system",
             "You are an expert Japanese translator and furigana annotator.",
         )
-        prompt = user_template.replace(
-            "{{SUBTITLES_JSON}}",
-            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -761,8 +785,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for _subtitle in batch:
-                context_item = self._build_context_item(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_ja_furigana_single_pass([context_item], line_counter)
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ja_furigana_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
                 ruby_items.extend(result["ruby"])
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
@@ -776,7 +806,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return ruby_items, plain_items, json_items
 
-    def translate_and_merge_subtitles_en_single_pass(self, subtitles, idx):
+    def translate_and_merge_subtitles_en_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
         """Single-pass English translation using template prompt + schema."""
         print("Translating subtitles to English (single pass)...")
 
@@ -785,9 +822,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         user_template = prompt_bundle.get("user", "")
         system_content = prompt_bundle.get("system", "You are an expert English translator.")
-        prompt = user_template.replace(
-            "{{SUBTITLES_JSON}}",
-            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -828,8 +868,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for _subtitle in batch:
-                context_item = self._build_context_item(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_en_single_pass([context_item], line_counter)
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_en_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
                 if result["plain"]:
@@ -841,7 +887,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return plain_items, json_items
 
-    def translate_and_merge_subtitles_ar_single_pass(self, subtitles, idx):
+    def translate_and_merge_subtitles_ar_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
         """Single-pass Arabic translation using template prompt + schema."""
         print("Translating subtitles to Arabic (single pass)...")
 
@@ -850,9 +903,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         user_template = prompt_bundle.get("user", "")
         system_content = prompt_bundle.get("system", "You are an expert Arabic translator.")
-        prompt = user_template.replace(
-            "{{SUBTITLES_JSON}}",
-            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -893,8 +949,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for _subtitle in batch:
-                context_item = self._build_context_item(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_ar_single_pass([context_item], line_counter)
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ar_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
                 if result["plain"]:
@@ -906,7 +968,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return plain_items, json_items
 
-    def translate_and_merge_subtitles_vi_single_pass(self, subtitles, idx):
+    def translate_and_merge_subtitles_vi_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
         """Single-pass Vietnamese translation using template prompt + schema."""
         print("Translating subtitles to Vietnamese (single pass)...")
 
@@ -915,9 +984,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         user_template = prompt_bundle.get("user", "")
         system_content = prompt_bundle.get("system", "You are an expert Vietnamese translator.")
-        prompt = user_template.replace(
-            "{{SUBTITLES_JSON}}",
-            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -958,8 +1030,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for _subtitle in batch:
-                context_item = self._build_context_item(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_vi_single_pass([context_item], line_counter)
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_vi_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
                 if result["plain"]:
@@ -971,7 +1049,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return plain_items, json_items
 
-    def translate_and_merge_subtitles_ko_single_pass(self, subtitles, idx):
+    def translate_and_merge_subtitles_ko_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
         """Single-pass Korean translation using template prompt + schema."""
         print("Translating subtitles to Korean (single pass)...")
 
@@ -980,9 +1065,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         user_template = prompt_bundle.get("user", "")
         system_content = prompt_bundle.get("system", "You are an expert Korean translator.")
-        prompt = user_template.replace(
-            "{{SUBTITLES_JSON}}",
-            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1023,8 +1111,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for _subtitle in batch:
-                context_item = self._build_context_item(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_ko_single_pass([context_item], line_counter)
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ko_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
                 if result["plain"]:
@@ -1036,7 +1130,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return plain_items, json_items
 
-    def translate_and_merge_subtitles_es_single_pass(self, subtitles, idx):
+    def translate_and_merge_subtitles_es_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
         """Single-pass Spanish translation using template prompt + schema."""
         print("Translating subtitles to Spanish (single pass)...")
 
@@ -1045,9 +1146,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         user_template = prompt_bundle.get("user", "")
         system_content = prompt_bundle.get("system", "You are an expert Spanish translator.")
-        prompt = user_template.replace(
-            "{{SUBTITLES_JSON}}",
-            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1088,8 +1192,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for _subtitle in batch:
-                context_item = self._build_context_item(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_es_single_pass([context_item], line_counter)
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_es_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
                 if result["plain"]:
@@ -1101,7 +1211,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return plain_items, json_items
 
-    def translate_and_merge_subtitles_fr_single_pass(self, subtitles, idx):
+    def translate_and_merge_subtitles_fr_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
         """Single-pass French translation using template prompt + schema."""
         print("Translating subtitles to French (single pass)...")
 
@@ -1110,9 +1227,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         user_template = prompt_bundle.get("user", "")
         system_content = prompt_bundle.get("system", "You are an expert French translator.")
-        prompt = user_template.replace(
-            "{{SUBTITLES_JSON}}",
-            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1153,8 +1273,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for _subtitle in batch:
-                context_item = self._build_context_item(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_fr_single_pass([context_item], line_counter)
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_fr_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
                 if result["plain"]:
@@ -1166,7 +1292,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return plain_items, json_items
 
-    def translate_and_merge_subtitles_ru_single_pass(self, subtitles, idx):
+    def translate_and_merge_subtitles_ru_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
         """Single-pass Russian translation using template prompt + schema."""
         print("Translating subtitles to Russian (single pass)...")
 
@@ -1175,9 +1308,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         user_template = prompt_bundle.get("user", "")
         system_content = prompt_bundle.get("system", "You are an expert Russian translator.")
-        prompt = user_template.replace(
-            "{{SUBTITLES_JSON}}",
-            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1205,7 +1341,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             "json": json_items,
         }
 
-    def translate_and_merge_subtitles_yue_single_pass(self, subtitles, idx):
+    def translate_and_merge_subtitles_yue_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
         """Single-pass Cantonese translation using template prompt + schema."""
         print("Translating subtitles to Cantonese (single pass)...")
 
@@ -1214,9 +1357,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         user_template = prompt_bundle.get("user", "")
         system_content = prompt_bundle.get("system", "You are an expert Cantonese translator.")
-        prompt = user_template.replace(
-            "{{SUBTITLES_JSON}}",
-            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1257,8 +1403,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for _subtitle in batch:
-                context_item = self._build_context_item(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_yue_single_pass([context_item], line_counter)
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_yue_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
                 if result["plain"]:
@@ -1283,8 +1435,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for _subtitle in batch:
-                context_item = self._build_context_item(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_ru_single_pass([context_item], line_counter)
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ru_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
                 if result["plain"]:
@@ -1296,7 +1454,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return plain_items, json_items
 
-    def translate_and_merge_subtitles_zh_hant_single_pass(self, subtitles, idx):
+    def translate_and_merge_subtitles_zh_hant_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
         """Single-pass Traditional Chinese translation using template prompt + schema."""
         print("Translating subtitles to Traditional Chinese (single pass)...")
 
@@ -1305,9 +1470,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         user_template = prompt_bundle.get("user", "")
         system_content = prompt_bundle.get("system", "You are an expert Chinese translator.")
-        prompt = user_template.replace(
-            "{{SUBTITLES_JSON}}",
-            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1348,8 +1516,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         line_counter = 0
         for batch in batches:
             for _subtitle in batch:
-                context_item = self._build_context_item(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_zh_hant_single_pass([context_item], line_counter)
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_zh_hant_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
                 if result["plain"]:
