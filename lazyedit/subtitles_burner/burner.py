@@ -85,62 +85,6 @@ def _load_burner_module():
 
                 pad = _dynamic_padding_for_slot(int(self.slot.height), int(getattr(self.style, "stroke_width", 0)))
                 img = self.renderer.render_tokens(seg.tokens, padding=pad)
-
-                # If a single-line render exceeds slot width, avoid scaling down
-                # (which makes landscape/square subtitles look tiny) by wrapping
-                # into multiple lines that each fit the slot width.
-                try:
-                    if img.width > self.slot.width and getattr(seg, "tokens", None):
-                        tokens = list(seg.tokens)
-                        if (
-                            len(tokens) == 1
-                            and getattr(tokens[0], "ruby", None) in (None, "")
-                            and getattr(tokens[0], "token_type", None) not in ("speaker",)
-                            and hasattr(burner_mod, "_split_text_tokens_for_fit")
-                        ):
-                            try:
-                                tokens = list(burner_mod._split_text_tokens_for_fit(tokens[0].text or ""))  # type: ignore[attr-defined]
-                            except Exception:
-                                tokens = list(seg.tokens)
-                        max_width = int(self.slot.width)
-                        line_padding = max(2, min(pad, 8))
-                        line_gap = max(0, int(round(self.style.main_font_size * 0.10)))
-
-                        def fits_width(line_tokens):
-                            if not line_tokens:
-                                return True
-                            w, _h = self.renderer.measure_tokens(line_tokens)
-                            return (w + line_padding * 2) <= max_width
-
-                        lines = []
-                        current = []
-                        for tok in tokens:
-                            trial = current + [tok]
-                            if not current or fits_width(trial):
-                                current = trial
-                                continue
-                            # start new line
-                            lines.append(current)
-                            current = [tok]
-                        if current:
-                            lines.append(current)
-
-                        # Only use wrapping when it meaningfully reduces scaling
-                        # and the stacked lines can fit vertically.
-                        if 2 <= len(lines) <= 4 and all(line for line in lines):
-                            rendered = [self.renderer.render_tokens(line, padding=line_padding) for line in lines]
-                            stacked_w = max(r.width for r in rendered)
-                            stacked_h = sum(r.height for r in rendered) + line_gap * (len(rendered) - 1)
-                            if stacked_w <= max_width and stacked_h <= int(self.slot.height):
-                                canvas = burner_mod.Image.new("RGBA", (stacked_w, stacked_h), (0, 0, 0, 0))
-                                y = 0
-                                for r in rendered:
-                                    x = max(0, (stacked_w - r.width) // 2)
-                                    canvas.alpha_composite(r, (int(x), int(y)))
-                                    y += r.height + line_gap
-                                img = canvas
-                except Exception:
-                    pass
                 if img.width > self.slot.width:
                     scale = min(1.0, self.slot.width / img.width)
                     if scale > 0:
@@ -155,6 +99,69 @@ def _load_burner_module():
             burner_mod._lazyedit_dynamic_padding_patch = True
     except Exception:
         # If patching fails, fall back to upstream behavior.
+        pass
+
+    # LazyEdit patch: upstream auto-splitting uses a 1.05 slack factor based on
+    # measured text width. With our dynamic padding/styling this can bypass
+    # splitting for near-limit lines, which then get scaled down at render time.
+    # Prefer time-splitting segments so font size stays consistent as fontScale
+    # changes.
+    try:
+        if getattr(burner_mod, "_lazyedit_strict_split_patch", False) is not True and hasattr(burner_mod, "_auto_split_segments_for_slot"):
+            SubtitleSegment = burner_mod.SubtitleSegment
+            RubyRenderer = burner_mod.RubyRenderer
+            _split_text_tokens_for_fit = burner_mod._split_text_tokens_for_fit
+            _tokens_fit_width = burner_mod._tokens_fit_width
+            _chunk_tokens_to_fit_width = burner_mod._chunk_tokens_to_fit_width
+            _split_segment_timing = burner_mod._split_segment_timing
+            _segment_text_from_tokens = burner_mod._segment_text_from_tokens
+            RENDER_PADDING = int(getattr(burner_mod, "RENDER_PADDING", 16))
+
+            def _auto_split_segments_for_slot_strict(segments, slot, style):  # type: ignore[no-redef]
+                renderer = RubyRenderer(style)
+                split_segments = []
+                for segment in segments:
+                    if not getattr(segment, "tokens", None):
+                        continue
+                    tokens = segment.tokens
+                    width, height = renderer.measure_tokens(tokens)
+                    # Never split vertically-overflowing segments here; let the upstream
+                    # chunking logic handle them conservatively.
+                    if height > slot.height:
+                        split_segments.append(segment)
+                        continue
+                    # If the rendered width plus padding does not fit, split.
+                    if (width + RENDER_PADDING * 2) <= slot.width:
+                        split_segments.append(segment)
+                        continue
+
+                    split_tokens = tokens
+                    if len(tokens) == 1 and not getattr(tokens[0], "ruby", None):
+                        text = getattr(tokens[0], "text", "") or getattr(segment, "text", "") or ""
+                        split_tokens = _split_text_tokens_for_fit(text)
+
+                    if not _tokens_fit_width(split_tokens, slot, renderer):
+                        chunks = _chunk_tokens_to_fit_width(split_tokens, slot, renderer)
+                        if len(chunks) > 1:
+                            split_segments.extend(_split_segment_timing(segment, chunks))
+                            continue
+
+                    if split_tokens is not tokens:
+                        split_segments.append(
+                            SubtitleSegment(
+                                start_time=segment.start_time,
+                                end_time=segment.end_time,
+                                tokens=split_tokens,
+                                text=_segment_text_from_tokens(split_tokens),
+                            )
+                        )
+                    else:
+                        split_segments.append(segment)
+                return split_segments
+
+            burner_mod._auto_split_segments_for_slot = _auto_split_segments_for_slot_strict
+            burner_mod._lazyedit_strict_split_patch = True
+    except Exception:
         pass
 
     # LazyEdit patch: upstream RubyRenderer inflates ruby row height using full
@@ -482,16 +489,23 @@ def burn_video_with_slots(
             main_only_h = 0
 
         if main_only_h > 0:
-            target = safe_height
+            # Make `font_scale` meaningful: at scale=1 we don't fully "max out"
+            # the slot; increasing scale fills more of the slot height.
+            # This keeps main readability consistent and allows long lines to be
+            # split into additional timestamped segments instead of shrinking.
+            scale_norm = (scale - 0.6) / (2.5 - 0.6)
+            scale_norm = min(max(scale_norm, 0.0), 1.0)
+            target_frac = 0.78 + 0.22 * scale_norm
+            target = max(1, int(round(safe_height * target_frac)))
             if main_only_h < target:
                 grow = target / float(main_only_h)
                 main_font_size = max(12, int(round(main_font_size * grow)))
                 stroke_width = max(1, int(round(stroke_width * grow)))
                 padding = max(max(2, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
             else:
-                # If the main-only render is already too tall, shrink to fit.
-                if main_only_h > safe_height:
-                    shrink = safe_height / float(main_only_h)
+                # If the main-only render is too tall, shrink to fit within target.
+                if main_only_h > target:
+                    shrink = target / float(main_only_h)
                     main_font_size = max(12, int(round(main_font_size * shrink)))
                     stroke_width = max(1, int(round(stroke_width * shrink)))
                     padding = max(max(2, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
