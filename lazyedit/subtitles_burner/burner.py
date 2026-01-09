@@ -84,12 +84,6 @@ def _load_burner_module():
 
                 pad = _dynamic_padding_for_slot(int(self.slot.height), int(getattr(self.style, "stroke_width", 0)))
                 img = self.renderer.render_tokens(seg.tokens, padding=pad)
-                if img.width > self.slot.width:
-                    scale = min(1.0, self.slot.width / img.width)
-                    if scale > 0:
-                        new_size = (max(1, int(img.width * scale)), max(1, int(img.height * scale)))
-                        resample = burner_mod.Image.Resampling.LANCZOS if hasattr(burner_mod.Image, "Resampling") else burner_mod.Image.LANCZOS
-                        img = img.resize(new_size, resample)
                 img = burner_mod._append_padding(img, self.slot.height, self.slot.height)
                 self._render_cache[key] = img
                 return img
@@ -114,8 +108,89 @@ def _load_burner_module():
             _trim_chunk = getattr(burner_mod, "_trim_chunk", None)
 
             def _auto_split_segments_for_slot_lazyedit(segments, slot, style):  # type: ignore[no-redef]
+                import re
+
                 renderer = RubyRenderer(style)
                 split_segments = []
+
+                def _split_ruby_token(token):
+                    """Split a single RubyToken into smaller RubyTokens while keeping ruby roughly aligned."""
+                    text = getattr(token, "text", "") or ""
+                    ruby = getattr(token, "ruby", None)
+                    color = getattr(token, "color", None)
+                    token_type = getattr(token, "token_type", None)
+                    split_text_tokens = _split_text_tokens_for_fit(text)
+                    if not ruby:
+                        return [
+                            burner_mod.RubyToken(text=t.text, ruby=None, color=color, token_type=token_type)  # type: ignore[attr-defined]
+                            for t in split_text_tokens
+                        ]
+
+                    ruby_parts = re.findall(r"\S+|\s+", str(ruby))
+                    ruby_words = [p for p in ruby_parts if not p.isspace()]
+                    text_words = [t for t in split_text_tokens if (t.text or "") and not (t.text or "").isspace()]
+
+                    # Best-effort mapping: when counts match, assign 1:1.
+                    mapping: list[str | None] = []
+                    if ruby_words and len(ruby_words) == len(text_words):
+                        mapping = list(ruby_words)
+                    elif ruby_words and len(text_words) > 1 and len(ruby_words) > 1:
+                        # Proportional allocation by visible text length.
+                        lengths = [len((t.text or "").strip()) for t in text_words]
+                        total = max(1, sum(lengths))
+                        remaining = len(ruby_words)
+                        allocations: list[int] = []
+                        for idx, ln in enumerate(lengths):
+                            if idx == len(lengths) - 1:
+                                take = remaining
+                            else:
+                                take = max(1, int(round(remaining * (ln / total))))
+                                take = min(take, remaining - (len(lengths) - idx - 1))
+                            allocations.append(take)
+                            remaining -= take
+                        cursor = 0
+                        for take in allocations:
+                            chunk = ruby_words[cursor : cursor + take]
+                            cursor += take
+                            mapping.append(" ".join(chunk).strip() or None)
+                    else:
+                        mapping = [str(ruby)]
+
+                    out = []
+                    word_idx = 0
+                    for t in split_text_tokens:
+                        token_text = t.text
+                        if not token_text:
+                            continue
+                        if token_text.isspace():
+                            out.append(burner_mod.RubyToken(text=token_text, ruby=None, color=color, token_type=token_type))  # type: ignore[attr-defined]
+                            continue
+                        ruby_piece = mapping[word_idx] if word_idx < len(mapping) else None
+                        out.append(burner_mod.RubyToken(text=token_text, ruby=ruby_piece, color=color, token_type=token_type))  # type: ignore[attr-defined]
+                        word_idx += 1
+                    return out or [token]
+
+                def _expand_tokens_for_width(tokens, max_w, pad):
+                    expanded = []
+                    for tok in tokens:
+                        if getattr(tok, "token_type", None) == "speaker":
+                            expanded.append(tok)
+                            continue
+                        try:
+                            w, _ = renderer.measure_tokens([tok])
+                        except Exception:
+                            expanded.append(tok)
+                            continue
+                        if (w + pad * 2) <= max_w:
+                            expanded.append(tok)
+                            continue
+                        parts = _split_ruby_token(tok)
+                        if len(parts) <= 1:
+                            expanded.append(tok)
+                        else:
+                            expanded.extend(parts)
+                    return expanded
+
                 for segment in segments:
                     if not getattr(segment, "tokens", None):
                         continue
@@ -125,22 +200,24 @@ def _load_burner_module():
                         split_segments.append(segment)
                         continue
                     stroke = int(getattr(style, "stroke_width", 0) or 0)
-                    base_pad = int(round(max(1, int(slot.height)) * 0.10))
-                    base_pad = max(2, min(base_pad, 16))
-                    pad = max(base_pad, stroke * 2)
-                    max_w = max(1, int(slot.width) - 16)
+                    pad = max(0, stroke * 2)
+                    max_w = max(1, int(slot.width))
                     if (width + pad * 2) <= max_w:
                         split_segments.append(segment)
                         continue
 
                     split_tokens = tokens
-                    if len(tokens) == 1 and not getattr(tokens[0], "ruby", None):
-                        text = getattr(tokens[0], "text", "") or getattr(segment, "text", "") or ""
-                        split_tokens = _split_text_tokens_for_fit(text)
+                    if len(tokens) == 1:
+                        tok = tokens[0]
+                        if getattr(tok, "token_type", None) != "speaker":
+                            split_tokens = _split_ruby_token(tok)
+                        else:
+                            split_tokens = tokens
 
                     # Greedy chunking by measured width with the same padding
                     # that render_segment uses. This yields stable chunk sizes
                     # as the user adjusts fontScale.
+                    split_tokens = _expand_tokens_for_width(split_tokens, max_w, pad)
                     chunks = []
                     current = []
                     for tok in split_tokens:
@@ -205,12 +282,13 @@ def _load_burner_module():
 
                 for token in tokens:
                     if getattr(token, "token_type", None) == "speaker":
-                        icon_size = max(1, int(self.style.main_font_size * 0.9))
+                        # Speaker icon should not affect centering; treat it as a
+                        # zero-width overlay rendered into padding.
+                        icon_size = max(1, int(self.style.main_font_size * 0.55))
                         main_w = main_h = icon_size
                         ruby_w = ruby_h = 0
                         prefix_w = core_w = suffix_w = 0
-                        column_w = main_w
-                        total_width += column_w
+                        column_w = 0
                         max_main_h = max(max_main_h, main_h)
                         layout.append(
                             {
@@ -271,6 +349,48 @@ def _load_burner_module():
                 return layout, total_width, max_ruby_h, max_main_h
 
             OriginalRubyRenderer._build_layout = _build_layout_compact_ruby
+
+            # Render speaker icon in the left padding so it doesn't consume
+            # horizontal centering space for the main text.
+            original_render_tokens = OriginalRubyRenderer.render_tokens
+
+            def render_tokens_lazyedit(self, tokens, padding=16):  # type: ignore[no-redef]
+                if not tokens:
+                    return original_render_tokens(self, tokens, padding=padding)
+                if getattr(tokens[0], "token_type", None) != "speaker":
+                    return original_render_tokens(self, tokens, padding=padding)
+
+                speaker = tokens[0]
+                rest = tokens[1:]
+                if not rest:
+                    return original_render_tokens(self, tokens, padding=padding)
+
+                # Ensure padding is large enough to fit the icon left of the first glyph.
+                gap = max(1, int(round(self.style.main_font_size * 0.06)))
+                icon_w = max(1, int(getattr(self.style, "main_font_size", 0) * 0.55))
+                padding = max(int(padding), int(self.style.stroke_width * 2), icon_w + gap + 2)
+
+                img = original_render_tokens(self, rest, padding=padding)
+                try:
+                    ascent, descent = self.main_font.getmetrics()
+                    # The main row is centered at padding + ruby_row + ascent/2; we use the same y math.
+                    _, _, max_ruby_h, _ = self._build_layout(rest)
+                    ruby_row = max_ruby_h + int(self.style.ruby_font_size * self.style.ruby_spacing) if max_ruby_h else 0
+                    start_y = padding
+                    main_row_center = start_y + ruby_row + (ascent + descent) / 2
+                    icon_y = main_row_center - icon_w / 2
+                    icon_x = max(0, padding - icon_w - gap)
+                    icon = self._load_speaker_icon(icon_w)
+                    if icon:
+                        img.alpha_composite(icon, (int(icon_x), int(round(icon_y))))
+                    else:
+                        draw = burner_mod.ImageDraw.Draw(img)
+                        draw.text((icon_x, icon_y), getattr(speaker, "text", None) or "🔊", font=self.main_font, fill=self.style.text_color)
+                except Exception:
+                    return original_render_tokens(self, tokens, padding=padding)
+                return img
+
+            OriginalRubyRenderer.render_tokens = render_tokens_lazyedit
             burner_mod._lazyedit_ruby_layout_patch = True
     except Exception:
         pass
@@ -289,13 +409,6 @@ def _load_burner_module():
                 try:
                     overlay_img = img
                     h, w = overlay_img.size[1], overlay_img.size[0]
-                    max_w = max(1, slot.width - 16)
-                    scale = min(1.0, max_w / w if w else 1.0)
-                    if scale < 1.0:
-                        new_w = max(1, int(w * scale))
-                        new_h = max(1, int(h * scale))
-                        overlay_img = overlay_img.resize((new_w, new_h), burner_mod.Image.LANCZOS)
-                        h, w = new_h, new_w
                     overlay = burner_mod.cv2.cvtColor(burner_mod.np.array(overlay_img), burner_mod.cv2.COLOR_RGBA2BGRA)
 
                     if slot.align == "left":
