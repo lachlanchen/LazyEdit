@@ -70,7 +70,6 @@ def _load_burner_module():
     try:
         if getattr(burner_mod, "_lazyedit_dynamic_padding_patch", False) is not True and hasattr(burner_mod, "SubtitleTrack"):
             OriginalSubtitleTrack = burner_mod.SubtitleTrack
-            original_render_segment = OriginalSubtitleTrack.render_segment
 
             def _dynamic_padding_for_slot(slot_height: int, stroke_width: int) -> int:
                 base = int(round(max(1, slot_height) * 0.10))
@@ -101,23 +100,20 @@ def _load_burner_module():
         # If patching fails, fall back to upstream behavior.
         pass
 
-    # LazyEdit patch: upstream auto-splitting uses a 1.05 slack factor based on
-    # measured text width. With our dynamic padding/styling this can bypass
-    # splitting for near-limit lines, which then get scaled down at render time.
-    # Prefer time-splitting segments so font size stays consistent as fontScale
-    # changes.
+    # LazyEdit patch: prefer time-splitting segments for long lines (instead of
+    # shrinking text to fit width). This keeps font size consistent and makes
+    # `fontScale` behave like a simple multiplier: larger scale => fewer words
+    # per timestamped chunk.
     try:
-        if getattr(burner_mod, "_lazyedit_strict_split_patch", False) is not True and hasattr(burner_mod, "_auto_split_segments_for_slot"):
+        if getattr(burner_mod, "_lazyedit_split_patch", False) is not True and hasattr(burner_mod, "_auto_split_segments_for_slot"):
             SubtitleSegment = burner_mod.SubtitleSegment
             RubyRenderer = burner_mod.RubyRenderer
             _split_text_tokens_for_fit = burner_mod._split_text_tokens_for_fit
-            _tokens_fit_width = burner_mod._tokens_fit_width
-            _chunk_tokens_to_fit_width = burner_mod._chunk_tokens_to_fit_width
             _split_segment_timing = burner_mod._split_segment_timing
             _segment_text_from_tokens = burner_mod._segment_text_from_tokens
-            RENDER_PADDING = int(getattr(burner_mod, "RENDER_PADDING", 16))
+            _trim_chunk = getattr(burner_mod, "_trim_chunk", None)
 
-            def _auto_split_segments_for_slot_strict(segments, slot, style):  # type: ignore[no-redef]
+            def _auto_split_segments_for_slot_lazyedit(segments, slot, style):  # type: ignore[no-redef]
                 renderer = RubyRenderer(style)
                 split_segments = []
                 for segment in segments:
@@ -125,13 +121,15 @@ def _load_burner_module():
                         continue
                     tokens = segment.tokens
                     width, height = renderer.measure_tokens(tokens)
-                    # Never split vertically-overflowing segments here; let the upstream
-                    # chunking logic handle them conservatively.
                     if height > slot.height:
                         split_segments.append(segment)
                         continue
-                    # If the rendered width plus padding does not fit, split.
-                    if (width + RENDER_PADDING * 2) <= slot.width:
+                    stroke = int(getattr(style, "stroke_width", 0) or 0)
+                    base_pad = int(round(max(1, int(slot.height)) * 0.10))
+                    base_pad = max(2, min(base_pad, 16))
+                    pad = max(base_pad, stroke * 2)
+                    max_w = max(1, int(slot.width) - 16)
+                    if (width + pad * 2) <= max_w:
                         split_segments.append(segment)
                         continue
 
@@ -140,11 +138,33 @@ def _load_burner_module():
                         text = getattr(tokens[0], "text", "") or getattr(segment, "text", "") or ""
                         split_tokens = _split_text_tokens_for_fit(text)
 
-                    if not _tokens_fit_width(split_tokens, slot, renderer):
-                        chunks = _chunk_tokens_to_fit_width(split_tokens, slot, renderer)
-                        if len(chunks) > 1:
-                            split_segments.extend(_split_segment_timing(segment, chunks))
+                    # Greedy chunking by measured width with the same padding
+                    # that render_segment uses. This yields stable chunk sizes
+                    # as the user adjusts fontScale.
+                    chunks = []
+                    current = []
+                    for tok in split_tokens:
+                        trial = current + [tok]
+                        w, _ = renderer.measure_tokens(trial)
+                        if current and (w + pad * 2) > max_w:
+                            chunk = current
+                            if callable(_trim_chunk):
+                                chunk = _trim_chunk(chunk)
+                            if chunk:
+                                chunks.append(chunk)
+                            current = [tok]
                             continue
+                        current = trial
+                    if current:
+                        chunk = current
+                        if callable(_trim_chunk):
+                            chunk = _trim_chunk(chunk)
+                        if chunk:
+                            chunks.append(chunk)
+
+                    if len(chunks) > 1:
+                        split_segments.extend(_split_segment_timing(segment, chunks))
+                        continue
 
                     if split_tokens is not tokens:
                         split_segments.append(
@@ -159,8 +179,8 @@ def _load_burner_module():
                         split_segments.append(segment)
                 return split_segments
 
-            burner_mod._auto_split_segments_for_slot = _auto_split_segments_for_slot_strict
-            burner_mod._lazyedit_strict_split_patch = True
+            burner_mod._auto_split_segments_for_slot = _auto_split_segments_for_slot_lazyedit
+            burner_mod._lazyedit_split_patch = True
     except Exception:
         pass
 
@@ -447,73 +467,51 @@ def burn_video_with_slots(
         base_ruby = int(round(base_main * 0.6))
         base_ruby = max(10, min(base_ruby, base_main - 2))
 
-        main_font_size = max(12, int(round(base_main * scale)))
-        ruby_font_size = max(8, int(round(base_ruby * scale)))
-        stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
+        # Choose a stable "base" font size that fits within the slot height at
+        # scale=1 (no aspect-ratio hardcoding), then apply `font_scale` as a
+        # simple multiplier. We intentionally do not shrink to fit at higher
+        # scales: overflow/overlap is acceptable, and long lines are split into
+        # timestamped chunks instead of shrinking.
+        safe_height = max(1, int(slot_height + max(0, extra_top) + max(0, extra_bottom)))
 
-        # Prevent overlap between stacked slots by ensuring rendered subtitles fit
-        # inside each slot's height. Main font size should be independent of ruby
-        # toggles; we size main from a main-only render, then size ruby
-        # proportionally and shrink ruby first if needed.
-        virtual_slot_height = max(1, int(slot_height + max(0, extra_top) + max(0, extra_bottom)))
-        safe_height = virtual_slot_height
-        padding = max(max(2, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
         is_cjk = (slot.language or "").lower() in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"}
         sample_text = "漢字" if is_cjk else "Sample"
         sample_ruby = "かんじ" if is_cjk else "sam-pəl"
 
-        def render_height(main_size: int, ruby_size: int, stroke: int, pad: int, include_ruby: bool) -> int:
-            style = TextStyle(
-                main_font_size=main_size,
-                ruby_font_size=ruby_size,
-                stroke_width=stroke,
-                ruby_spacing=ruby_spacing,
-            )
+        def _render_main_only_height(main_size: int) -> int:
+            stroke = max(1, int(round(default_style.stroke_width * (main_size / default_style.main_font_size))))
+            pad_base = int(round(max(1, slot_height) * 0.10))
+            pad_base = max(2, min(pad_base, 16))
+            pad = max(pad_base, stroke * 2)
+            style = TextStyle(main_font_size=main_size, ruby_font_size=0, stroke_width=stroke, ruby_spacing=ruby_spacing)
             renderer = RubyRenderer(style)
-            tokens = [RubyToken(text=sample_text)]
-            if include_ruby and ruby_size > 0:
-                tokens = [RubyToken(text=sample_text, ruby=sample_ruby)]
-            img = renderer.render_tokens(tokens, padding=pad)
+            img = renderer.render_tokens([RubyToken(text=sample_text)], padding=pad)
             return int(img.size[1])
 
-        has_ruby = expects_ruby
-        ruby_ratio = 0.6 if has_ruby else 0.0
-
-        # 1) Fit main-only height to slot (grow or shrink as needed).
-        def _main_only_height() -> int:
-            return render_height(main_font_size, 0, stroke_width, padding, include_ruby=False)
-
-        try:
-            main_only_h = _main_only_height()
-        except Exception:
-            main_only_h = 0
-
-        if main_only_h > 0:
-            # Make `font_scale` meaningful: at scale=1 we don't fully "max out"
-            # the slot; increasing scale fills more of the slot height.
-            # This keeps main readability consistent and allows long lines to be
-            # split into additional timestamped segments instead of shrinking.
-            scale_norm = (scale - 0.6) / (2.5 - 0.6)
-            scale_norm = min(max(scale_norm, 0.0), 1.0)
-            target_frac = 0.78 + 0.22 * scale_norm
-            target = max(1, int(round(safe_height * target_frac)))
-            if main_only_h < target:
-                grow = target / float(main_only_h)
-                main_font_size = max(12, int(round(main_font_size * grow)))
-                stroke_width = max(1, int(round(stroke_width * grow)))
-                padding = max(max(2, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
+        # Start from the heuristic size, then clamp to what fits at scale=1.
+        base_main_fit = max(12, int(round(base_main)))
+        lo, hi = 10, 260
+        while lo < hi:
+            mid = (lo + hi + 1) // 2
+            try:
+                h = _render_main_only_height(mid)
+            except Exception:
+                h = safe_height + 1
+            if h <= safe_height:
+                lo = mid
             else:
-                # If the main-only render is too tall, shrink to fit within target.
-                if main_only_h > target:
-                    shrink = target / float(main_only_h)
-                    main_font_size = max(12, int(round(main_font_size * shrink)))
-                    stroke_width = max(1, int(round(stroke_width * shrink)))
-                    padding = max(max(2, min(int(round(slot_height * 0.10)), 16)), stroke_width * 2)
+                hi = mid - 1
+        base_main_fit = max(12, min(lo, 260))
 
-        # 2) Set ruby proportionally to main, but don't let ruby change main size.
-        if has_ruby:
-            ruby_font_size = max(8, min(main_font_size - 2, int(round(main_font_size * ruby_ratio))))
-        else:
+        main_font_size = max(12, int(round(base_main_fit * scale)))
+        stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
+        ruby_font_size = max(0, int(round(main_font_size * 0.6)))
+        ruby_font_size = min(ruby_font_size, max(0, main_font_size - 2))
+
+        # Keep main font size independent of ruby toggles; ruby is just a
+        # proportional companion when enabled.
+        has_ruby = expects_ruby
+        if not has_ruby:
             ruby_font_size = 0
         style = TextStyle(
             main_font_size=main_font_size,
