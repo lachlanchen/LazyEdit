@@ -138,6 +138,38 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             return json.load(handle)
 
     @staticmethod
+    def _extract_subtitle_text(item: dict) -> str:
+        if not isinstance(item, dict):
+            return ""
+        for key in ("text", "ja", "en", "zh", "ar", "ko", "es", "fr", "ru", "vi", "yue"):
+            value = item.get(key)
+            if value:
+                return str(value)
+        fallback = item.get("text")
+        return str(fallback) if fallback is not None else ""
+
+    def _build_context_item(self, index: int, last_translation: str | None) -> dict:
+        subtitles = self.subtitles or []
+        if index < 0 or index >= len(subtitles):
+            return {}
+
+        def _pack(item):
+            if not isinstance(item, dict):
+                return None
+            return {
+                "start": item.get("start"),
+                "end": item.get("end"),
+                "lang": item.get("lang"),
+                "text": self._extract_subtitle_text(item),
+            }
+
+        payload = _pack(subtitles[index]) or {}
+        payload["prev"] = _pack(subtitles[index - 1]) if index > 0 else None
+        payload["next"] = _pack(subtitles[index + 1]) if index + 1 < len(subtitles) else None
+        payload["prev_translation"] = last_translation if last_translation else None
+        return payload
+
+    @staticmethod
     def _is_punctuation_token(text: str) -> bool:
         if not text:
             return False
@@ -724,13 +756,17 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
+        last_translation = None
         line_counter = 0
         for batch in batches:
-            for subtitle in batch:
-                result = self.translate_and_merge_subtitles_ja_furigana_single_pass([subtitle], line_counter)
+            for _subtitle in batch:
+                context_item = self._build_context_item(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ja_furigana_single_pass([context_item], line_counter)
                 ruby_items.extend(result["ruby"])
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("ja") or last_translation
                 line_counter += 1
 
         ruby_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -787,12 +823,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
+        last_translation = None
         line_counter = 0
         for batch in batches:
-            for subtitle in batch:
-                result = self.translate_and_merge_subtitles_en_single_pass([subtitle], line_counter)
+            for _subtitle in batch:
+                context_item = self._build_context_item(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_en_single_pass([context_item], line_counter)
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("en") or last_translation
                 line_counter += 1
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -848,12 +888,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
+        last_translation = None
         line_counter = 0
         for batch in batches:
-            for subtitle in batch:
-                result = self.translate_and_merge_subtitles_ar_single_pass([subtitle], line_counter)
+            for _subtitle in batch:
+                context_item = self._build_context_item(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ar_single_pass([context_item], line_counter)
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("ar") or last_translation
                 line_counter += 1
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -909,12 +953,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
+        last_translation = None
         line_counter = 0
         for batch in batches:
-            for subtitle in batch:
-                result = self.translate_and_merge_subtitles_vi_single_pass([subtitle], line_counter)
+            for _subtitle in batch:
+                context_item = self._build_context_item(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_vi_single_pass([context_item], line_counter)
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("vi") or last_translation
                 line_counter += 1
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -970,12 +1018,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
+        last_translation = None
         line_counter = 0
         for batch in batches:
-            for subtitle in batch:
-                result = self.translate_and_merge_subtitles_ko_single_pass([subtitle], line_counter)
+            for _subtitle in batch:
+                context_item = self._build_context_item(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ko_single_pass([context_item], line_counter)
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("ko") or last_translation
                 line_counter += 1
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1031,12 +1083,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
+        last_translation = None
         line_counter = 0
         for batch in batches:
-            for subtitle in batch:
-                result = self.translate_and_merge_subtitles_es_single_pass([subtitle], line_counter)
+            for _subtitle in batch:
+                context_item = self._build_context_item(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_es_single_pass([context_item], line_counter)
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("es") or last_translation
                 line_counter += 1
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1092,12 +1148,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
+        last_translation = None
         line_counter = 0
         for batch in batches:
-            for subtitle in batch:
-                result = self.translate_and_merge_subtitles_fr_single_pass([subtitle], line_counter)
+            for _subtitle in batch:
+                context_item = self._build_context_item(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_fr_single_pass([context_item], line_counter)
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("fr") or last_translation
                 line_counter += 1
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1192,12 +1252,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
+        last_translation = None
         line_counter = 0
         for batch in batches:
-            for subtitle in batch:
-                result = self.translate_and_merge_subtitles_yue_single_pass([subtitle], line_counter)
+            for _subtitle in batch:
+                context_item = self._build_context_item(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_yue_single_pass([context_item], line_counter)
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("yue") or last_translation
                 line_counter += 1
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1214,12 +1278,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
+        last_translation = None
         line_counter = 0
         for batch in batches:
-            for subtitle in batch:
-                result = self.translate_and_merge_subtitles_ru_single_pass([subtitle], line_counter)
+            for _subtitle in batch:
+                context_item = self._build_context_item(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ru_single_pass([context_item], line_counter)
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("ru") or last_translation
                 line_counter += 1
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1275,12 +1343,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
+        last_translation = None
         line_counter = 0
         for batch in batches:
-            for subtitle in batch:
-                result = self.translate_and_merge_subtitles_zh_hant_single_pass([subtitle], line_counter)
+            for _subtitle in batch:
+                context_item = self._build_context_item(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_zh_hant_single_pass([context_item], line_counter)
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("zh") or last_translation
                 line_counter += 1
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
