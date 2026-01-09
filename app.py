@@ -4105,8 +4105,18 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
         if model not in {"sora-2", "sora-2-pro"}:
             model = "sora-2"
 
+        # OpenAI Sora size options are fixed; normalize legacy UI values.
+        supported_sizes = {"720x1280", "1280x720", "1024x1792", "1792x1024"}
+        legacy_size_map = {
+            # Legacy 1080p selections (unsupported by Sora).
+            "1920x1080": "1792x1024",
+            "1080x1920": "1024x1792",
+            # Legacy low-res 16:9.
+            "1024x576": "1280x720",
+        }
         size = str(data.get("size") or "1280x720").strip()
-        if size not in {"1280x720", "1920x1080", "1024x576", "720x1280", "1080x1920"}:
+        size = legacy_size_map.get(size, size)
+        if size not in supported_sizes:
             size = "1280x720"
 
         try:

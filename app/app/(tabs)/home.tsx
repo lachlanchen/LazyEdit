@@ -41,6 +41,18 @@ const clampSecondsForModel = (seconds: number | null | undefined, _model: string
   const value = Math.trunc(seconds);
   return allowed.reduce((best, current) => (Math.abs(current - value) < Math.abs(best - value) ? current : best), allowed[0]);
 };
+const normalizeVideoSize = (size?: string) => {
+  if (!size) return undefined;
+  const trimmed = size.trim();
+  const supported = new Set(['720x1280', '1280x720', '1024x1792', '1792x1024']);
+  const legacyMap: Record<string, string> = {
+    '1920x1080': '1792x1024',
+    '1080x1920': '1024x1792',
+    '1024x576': '1280x720',
+  };
+  const normalized = legacyMap[trimmed] || trimmed;
+  return supported.has(normalized) ? normalized : '1280x720';
+};
 const parseSeconds = (value: unknown) => {
   if (typeof value === 'number') return value;
   if (typeof value === 'string') {
@@ -241,10 +253,9 @@ export default function HomeScreen() {
   const sizeOptions = useMemo(
     () => [
       { value: '1280x720', label: '1280x720' },
-      { value: '1920x1080', label: '1920x1080' },
-      { value: '1024x576', label: '1024x576' },
+      { value: '1792x1024', label: '1792x1024' },
       { value: '720x1280', label: '720x1280' },
-      { value: '1080x1920', label: '1080x1920' },
+      { value: '1024x1792', label: '1024x1792' },
     ],
     [],
   );
@@ -807,7 +818,7 @@ const HISTORY_KEYS = {
       if (parsed && typeof parsed === 'object') {
         setPromptResult(parsed);
         if (parsed.prompt) setPromptOutput(parsed.prompt);
-        if (parsed.size) setVideoSize(parsed.size);
+        if (parsed.size) setVideoSize(normalizeVideoSize(parsed.size));
         if (parsed.seconds) setVideoSeconds(String(parsed.seconds));
       }
     } catch (_err) {
@@ -834,7 +845,7 @@ const HISTORY_KEYS = {
     if (!promptResult) return;
     const model = normalizeModel(promptSpec.model);
     const seconds = clampSecondsForModel(promptResult.seconds, model) ?? parseSeconds(videoSeconds);
-    setVideoSize(promptResult.size || sizeForAspectRatio(promptSpec.aspectRatio));
+    setVideoSize(normalizeVideoSize(promptResult.size) || sizeForAspectRatio(promptSpec.aspectRatio));
     if (seconds) setVideoSeconds(String(seconds));
     setVideoModel((prev) => (prev ? prev : model));
   }, [promptResult]);
@@ -884,7 +895,9 @@ const HISTORY_KEYS = {
       const specSeconds = clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), selectedModel);
       const rawSeconds = parseSeconds(result.seconds ?? json.seconds);
       const seconds = clampSecondsForModel(rawSeconds ?? specSeconds, selectedModel) ?? specSeconds ?? 8;
-      const size = result.size || json.size || sizeForAspectRatio(promptSpec.aspectRatio);
+      const size =
+        normalizeVideoSize(result.size || json.size || sizeForAspectRatio(promptSpec.aspectRatio)) ||
+        sizeForAspectRatio(promptSpec.aspectRatio);
       setPromptOutput(promptText);
       setPromptResult({
         title: result.title || json.title,
@@ -1043,7 +1056,8 @@ const HISTORY_KEYS = {
       const seconds =
         clampSecondsForModel(parseSeconds(videoSeconds) ?? parseSeconds(promptSpec.durationSeconds), selectedModel) ??
         (selectedModel === 'sora-2-pro' ? 12 : 8);
-      const size = videoSize || sizeForAspectRatio(promptSpec.aspectRatio);
+      const size =
+        normalizeVideoSize(videoSize || sizeForAspectRatio(promptSpec.aspectRatio)) || sizeForAspectRatio(promptSpec.aspectRatio);
       const resp = await fetch(`${API_URL}/api/videos/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
