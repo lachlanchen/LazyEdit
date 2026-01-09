@@ -8,6 +8,9 @@ from typing import Any, Callable, Optional
 import cv2
 
 
+SPEAKER_ICON_COLOR = (33, 150, 243)
+
+
 @dataclass
 class BurnSlotConfig:
     slot_id: int
@@ -27,6 +30,12 @@ class BurnSlotConfig:
     jyutping: bool = False
     korean_romaja: bool = False
     arabic_translit: bool = False
+
+
+def _slot_padding_for_height(slot_height: int, stroke_width: int) -> int:
+    base = int(round(max(1, slot_height) * 0.10))
+    base = max(2, min(base, 16))
+    return max(base, int(stroke_width) * 2)
 
 
 def _load_burner_module():
@@ -71,18 +80,13 @@ def _load_burner_module():
         if getattr(burner_mod, "_lazyedit_dynamic_padding_patch", False) is not True and hasattr(burner_mod, "SubtitleTrack"):
             OriginalSubtitleTrack = burner_mod.SubtitleTrack
 
-            def _dynamic_padding_for_slot(slot_height: int, stroke_width: int) -> int:
-                base = int(round(max(1, slot_height) * 0.10))
-                base = max(2, min(base, 16))
-                return max(base, int(stroke_width) * 2)
-
             def render_segment(self, seg):  # type: ignore[no-redef]
                 key = id(seg)
                 cached = self._render_cache.get(key)
                 if cached is not None:
                     return cached
 
-                pad = _dynamic_padding_for_slot(int(self.slot.height), int(getattr(self.style, "stroke_width", 0)))
+                pad = _slot_padding_for_height(int(self.slot.height), int(getattr(self.style, "stroke_width", 0)))
                 img = self.renderer.render_tokens(seg.tokens, padding=pad)
                 img = burner_mod._append_padding(img, self.slot.height, self.slot.height)
                 self._render_cache[key] = img
@@ -112,6 +116,16 @@ def _load_burner_module():
 
                 renderer = RubyRenderer(style)
                 split_segments = []
+                max_w = max(1, int(slot.width))
+                stroke = int(getattr(style, "stroke_width", 0) or 0)
+
+                def _padding_for_tokens(tokens):
+                    pad = _slot_padding_for_height(int(slot.height), stroke)
+                    if tokens and getattr(tokens[0], "token_type", None) == "speaker":
+                        gap = max(1, int(round(getattr(style, "main_font_size", 0) * 0.06)))
+                        icon_w = max(1, int(getattr(style, "main_font_size", 0) * 0.55))
+                        pad = max(pad, stroke * 2, icon_w + gap + 2)
+                    return pad
 
                 def _split_ruby_token(token):
                     """Split a single RubyToken into smaller RubyTokens while keeping ruby roughly aligned."""
@@ -195,13 +209,8 @@ def _load_burner_module():
                     if not getattr(segment, "tokens", None):
                         continue
                     tokens = segment.tokens
-                    width, height = renderer.measure_tokens(tokens)
-                    if height > slot.height:
-                        split_segments.append(segment)
-                        continue
-                    stroke = int(getattr(style, "stroke_width", 0) or 0)
-                    pad = max(0, stroke * 2)
-                    max_w = max(1, int(slot.width))
+                    pad = _padding_for_tokens(tokens)
+                    width, _ = renderer.measure_tokens(tokens)
                     if (width + pad * 2) <= max_w:
                         split_segments.append(segment)
                         continue
@@ -382,10 +391,24 @@ def _load_burner_module():
                     icon_x = max(0, padding - icon_w - gap)
                     icon = self._load_speaker_icon(icon_w)
                     if icon:
+                        try:
+                            if icon.mode != "RGBA":
+                                icon = icon.convert("RGBA")
+                            alpha = icon.split()[-1]
+                            tinted = burner_mod.Image.new("RGBA", icon.size, (*SPEAKER_ICON_COLOR, 255))
+                            tinted.putalpha(alpha)
+                            icon = tinted
+                        except Exception:
+                            pass
                         img.alpha_composite(icon, (int(icon_x), int(round(icon_y))))
                     else:
                         draw = burner_mod.ImageDraw.Draw(img)
-                        draw.text((icon_x, icon_y), getattr(speaker, "text", None) or "🔊", font=self.main_font, fill=self.style.text_color)
+                        draw.text(
+                            (icon_x, icon_y),
+                            getattr(speaker, "text", None) or "🔊",
+                            font=self.main_font,
+                            fill=SPEAKER_ICON_COLOR,
+                        )
                 except Exception:
                     return original_render_tokens(self, tokens, padding=padding)
                 return img
