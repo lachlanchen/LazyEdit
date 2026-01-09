@@ -157,33 +157,94 @@ def _load_burner_module():
         # If patching fails, fall back to upstream behavior.
         pass
 
-    # LazyEdit patch: upstream RubyRenderer reserves a "ruby row" height even
-    # when a token has no ruby text (because it always max()'s ruby_h with the
-    # ruby font metrics). That creates large empty vertical space (most obvious
-    # in landscape/square layouts) and prevents slots from being used fully.
-    # Keep the dependency read-only by monkeypatching at import time.
+    # LazyEdit patch: upstream RubyRenderer inflates ruby row height using full
+    # font metrics (ascent+descent) even for small romanization like "ge ru",
+    # creating an overly large invisible gap between ruby and main text. It also
+    # previously reserved a ruby row even when ruby is absent. Keep dependency
+    # read-only by monkeypatching at import time.
     try:
-        if getattr(burner_mod, "_lazyedit_no_phantom_ruby_row_patch", False) is not True and hasattr(burner_mod, "RubyRenderer"):
+        if getattr(burner_mod, "_lazyedit_ruby_layout_patch", False) is not True and hasattr(burner_mod, "RubyRenderer"):
             OriginalRubyRenderer = burner_mod.RubyRenderer
-            original_build_layout = OriginalRubyRenderer._build_layout
 
-            def _build_layout_no_phantom_ruby_row(self, tokens):  # type: ignore[no-redef]
-                layout, total_width, max_ruby_h, max_main_h = original_build_layout(self, tokens)
-                any_ruby = False
-                for token, metrics in zip(tokens, layout):
-                    if getattr(token, "ruby", None):
-                        any_ruby = True
+            def _build_layout_compact_ruby(self, tokens):  # type: ignore[no-redef]
+                temp_img = burner_mod.Image.new("RGB", (1, 1))
+                draw = burner_mod.ImageDraw.Draw(temp_img)
+                main_ascent, main_descent = self.main_font.getmetrics()
+
+                layout = []
+                total_width = 0
+                max_ruby_h = 0
+                max_main_h = 0
+
+                for token in tokens:
+                    if getattr(token, "token_type", None) == "speaker":
+                        icon_size = max(1, int(self.style.main_font_size * 0.9))
+                        main_w = main_h = icon_size
+                        ruby_w = ruby_h = 0
+                        prefix_w = core_w = suffix_w = 0
+                        column_w = main_w
+                        total_width += column_w
+                        max_main_h = max(max_main_h, main_h)
+                        layout.append(
+                            {
+                                "main_w": main_w,
+                                "main_h": main_h,
+                                "ruby_w": ruby_w,
+                                "ruby_h": ruby_h,
+                                "prefix_w": prefix_w,
+                                "core_w": core_w,
+                                "suffix_w": suffix_w,
+                                "column_w": column_w,
+                            }
+                        )
                         continue
-                    metrics["ruby_w"] = 0
-                    metrics["ruby_h"] = 0
-                if not any_ruby:
-                    max_ruby_h = 0
-                else:
-                    max_ruby_h = max((m.get("ruby_h", 0) for m in layout), default=0)
+
+                    main_w, main_h = OriginalRubyRenderer._measure_text(draw, getattr(token, "text", "") or "", self.main_font)
+                    ruby_text = getattr(token, "ruby", None) or ""
+                    if ruby_text:
+                        ruby_w, ruby_h = OriginalRubyRenderer._measure_text(draw, ruby_text, self.ruby_font)
+                    else:
+                        ruby_w = ruby_h = 0
+
+                    # Keep main row stable, but keep ruby row compact by using bbox height.
+                    main_h = max(main_h, main_ascent + main_descent)
+
+                    prefix_w = core_w = suffix_w = 0
+                    if ruby_text and getattr(token, "text", None) and burner_mod._has_kanji(token.text):  # type: ignore[attr-defined]
+                        prefix, core, suffix = OriginalRubyRenderer._split_kana_affixes(token.text)
+                        prefix_w, _ = OriginalRubyRenderer._measure_text(draw, prefix, self.main_font)
+                        core_w, _ = OriginalRubyRenderer._measure_text(draw, core, self.main_font)
+                        suffix_w, _ = OriginalRubyRenderer._measure_text(draw, suffix, self.main_font)
+
+                    column_w = main_w
+                    if ruby_text:
+                        if core_w > 0:
+                            ruby_span = prefix_w + max(ruby_w, core_w) + suffix_w
+                        else:
+                            ruby_span = ruby_w
+                        column_w = max(main_w, ruby_span)
+
+                    total_width += column_w
+                    max_ruby_h = max(max_ruby_h, ruby_h)
+                    max_main_h = max(max_main_h, main_h)
+
+                    layout.append(
+                        {
+                            "main_w": main_w,
+                            "main_h": main_h,
+                            "ruby_w": ruby_w,
+                            "ruby_h": ruby_h,
+                            "prefix_w": prefix_w,
+                            "core_w": core_w,
+                            "suffix_w": suffix_w,
+                            "column_w": column_w,
+                        }
+                    )
+
                 return layout, total_width, max_ruby_h, max_main_h
 
-            OriginalRubyRenderer._build_layout = _build_layout_no_phantom_ruby_row
-            burner_mod._lazyedit_no_phantom_ruby_row_patch = True
+            OriginalRubyRenderer._build_layout = _build_layout_compact_ruby
+            burner_mod._lazyedit_ruby_layout_patch = True
     except Exception:
         pass
 
@@ -397,7 +458,7 @@ def burn_video_with_slots(
                 main_font_size=main_size,
                 ruby_font_size=ruby_size,
                 stroke_width=stroke,
-                ruby_spacing=0.05,
+                ruby_spacing=0.0,
             )
             renderer = RubyRenderer(style)
             tokens = [RubyToken(text=sample_text)]
@@ -442,7 +503,7 @@ def burn_video_with_slots(
             main_font_size=main_font_size,
             ruby_font_size=ruby_font_size,
             stroke_width=stroke_width,
-            ruby_spacing=0.05,
+            ruby_spacing=0.0,
         )
         ipa_lang = None
         if slot.ipa:
