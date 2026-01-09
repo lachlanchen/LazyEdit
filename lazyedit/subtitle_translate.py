@@ -153,20 +153,21 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         if index < 0 or index >= len(subtitles):
             return {}
 
-        def _pack(item):
+        def _pack_text(item):
             if not isinstance(item, dict):
                 return None
-            return {
-                "start": item.get("start"),
-                "end": item.get("end"),
-                "lang": item.get("lang"),
-                "text": self._extract_subtitle_text(item),
-            }
+            text = self._extract_subtitle_text(item)
+            return text or None
 
-        payload = _pack(subtitles[index]) or {}
-        payload["prev"] = _pack(subtitles[index - 1]) if index > 0 else None
-        payload["next"] = _pack(subtitles[index + 1]) if index + 1 < len(subtitles) else None
-        payload["prev_translation"] = last_translation if last_translation else None
+        current = subtitles[index]
+        payload = {
+            "start": current.get("start") if isinstance(current, dict) else None,
+            "end": current.get("end") if isinstance(current, dict) else None,
+            "text": _pack_text(current) or "",
+            "prev": _pack_text(subtitles[index - 1]) if index > 0 else None,
+            "next": _pack_text(subtitles[index + 1]) if index + 1 < len(subtitles) else None,
+            "prev_translation": last_translation if last_translation else None,
+        }
         return payload
 
     @staticmethod
