@@ -153,6 +153,7 @@ DEFAULT_BURN_LAYOUT = {
     "cols": 1,
     "liftRatio": 0.1,
     "liftSlots": 0,
+    "rubySpacing": 0.1,
     "slots": [
         {
             "slot": 1,
@@ -589,6 +590,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     cols = DEFAULT_BURN_LAYOUT.get("cols", 1)
     lift_ratio = DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1)
     lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 0)
+    ruby_spacing = DEFAULT_BURN_LAYOUT.get("rubySpacing", 0.1)
     romaji_default = DEFAULT_BURN_LAYOUT.get("romajiEnabled", True)
     pinyin_default = DEFAULT_BURN_LAYOUT.get("pinyinEnabled", True)
     if isinstance(payload, dict):
@@ -618,6 +620,11 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 lift_slots = int(payload.get("liftSlots"))
             except Exception:
                 lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 0)
+        if "rubySpacing" in payload:
+            try:
+                ruby_spacing = float(payload.get("rubySpacing"))
+            except Exception:
+                ruby_spacing = DEFAULT_BURN_LAYOUT.get("rubySpacing", 0.1)
         if "romajiEnabled" in payload:
             value = payload.get("romajiEnabled")
             if isinstance(value, bool):
@@ -643,6 +650,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     if "liftRatio" not in (payload or {}) and lift_slots:
         lift_ratio = (height_ratio / max(rows, 1)) * lift_slots
     lift_ratio = min(max(float(lift_ratio), 0.0), 0.4)
+    ruby_spacing = min(max(float(ruby_spacing), 0.0), 0.2)
     slot_count = rows * cols
 
     slot_map: dict[int, dict[str, object]] = {}
@@ -731,6 +739,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         "cols": cols,
         "liftRatio": lift_ratio,
         "liftSlots": lift_slots,
+        "rubySpacing": ruby_spacing,
         "romajiEnabled": romaji_default,
         "pinyinEnabled": pinyin_default,
     }
@@ -4639,6 +4648,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         cols = layout_config.get("cols", DEFAULT_BURN_LAYOUT.get("cols", 1))
         lift_ratio = layout_config.get("liftRatio", DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1))
         lift_slots = layout_config.get("liftSlots", DEFAULT_BURN_LAYOUT.get("liftSlots", 0))
+        ruby_spacing = layout_config.get("rubySpacing", DEFAULT_BURN_LAYOUT.get("rubySpacing", 0.1))
 
         burn_id = ldb.add_subtitle_burn(
             video_id_i,
@@ -4668,6 +4678,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     cols=cols,
                     lift_slots=lift_slots,
                     lift_ratio=lift_ratio,
+                    ruby_spacing=ruby_spacing,
                     progress_callback=_update_progress,
                 )
                 mux_audio(temp_output, video_path, output_path)

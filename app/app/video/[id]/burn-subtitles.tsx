@@ -31,7 +31,14 @@ type BurnStatus = {
   progress?: number | null;
   error?: string | null;
   created_at?: string | null;
-  config?: { slots?: BurnSlot[]; heightRatio?: number; rows?: number; cols?: number; liftRatio?: number } | null;
+  config?: {
+    slots?: BurnSlot[];
+    heightRatio?: number;
+    rows?: number;
+    cols?: number;
+    liftRatio?: number;
+    rubySpacing?: number;
+  } | null;
 };
 
 type SelectOption = {
@@ -74,6 +81,7 @@ const DEFAULT_ROWS = 4;
 const DEFAULT_COLS = 1;
 const DEFAULT_HEIGHT_RATIO = 0.5;
 const DEFAULT_LIFT_RATIO = 0.1;
+const DEFAULT_RUBY_SPACING = 0.1;
 const DEFAULT_ROMAJI = true;
 const DEFAULT_PINYIN = true;
 const DEFAULT_IPA = true;
@@ -305,6 +313,7 @@ export default function BurnSubtitlesScreen() {
   const [rows, setRows] = useState(DEFAULT_ROWS);
   const [cols, setCols] = useState(DEFAULT_COLS);
   const [liftRatio, setLiftRatio] = useState(DEFAULT_LIFT_RATIO);
+  const [rubySpacing, setRubySpacing] = useState(DEFAULT_RUBY_SPACING);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoAspect, setVideoAspect] = useState<number | null>(null);
   const [previewWidth, setPreviewWidth] = useState(0);
@@ -425,6 +434,9 @@ export default function BurnSubtitlesScreen() {
         const ratioFromSlots = (nextHeightRatio / Math.max(nextRows, 1)) * value.liftSlots;
         setLiftRatio(Math.min(Math.max(ratioFromSlots, 0), 0.4));
       }
+      if (typeof value?.rubySpacing === 'number') {
+        setRubySpacing(value.rubySpacing);
+      }
     } catch (_err) {
       // ignore
     } finally {
@@ -531,7 +543,7 @@ export default function BurnSubtitlesScreen() {
 
   useEffect(() => {
     if (!layoutLoaded) return;
-    const payload = { slots, heightRatio, rows, cols, liftRatio };
+    const payload = { slots, heightRatio, rows, cols, liftRatio, rubySpacing };
     const timeout = setTimeout(async () => {
       try {
         await fetch(`${API_URL}/api/ui-settings/burn_layout`, {
@@ -544,7 +556,7 @@ export default function BurnSubtitlesScreen() {
       }
     }, 200);
     return () => clearTimeout(timeout);
-  }, [slots, heightRatio, rows, cols, liftRatio, layoutLoaded]);
+  }, [slots, heightRatio, rows, cols, liftRatio, rubySpacing, layoutLoaded]);
 
   useEffect(() => {
     if (!layoutLoaded) return;
@@ -592,6 +604,7 @@ export default function BurnSubtitlesScreen() {
     Math.max(0, previewStageHeight - previewBandHeight),
     Math.round(previewStageHeight * liftRatio),
   );
+  const previewRubyGap = (rubySize: number) => Math.max(0, Math.round(rubySize * rubySpacing));
 
   const previewTypography = (slot: BurnSlot) => {
     const scale = typeof slot.fontScale === 'number' ? slot.fontScale : 1.0;
@@ -670,7 +683,7 @@ export default function BurnSubtitlesScreen() {
       const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols, liftRatio } }),
+        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols, liftRatio, rubySpacing } }),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -875,6 +888,15 @@ export default function BurnSubtitlesScreen() {
             onChange={setLiftRatio}
             formatValue={(value) => `${Math.round(value * 100)}%`}
           />
+          <SliderControl
+            label="Ruby spacing"
+            value={rubySpacing}
+            min={0}
+            max={0.2}
+            step={0.01}
+            onChange={setRubySpacing}
+            formatValue={(value) => value.toFixed(2)}
+          />
 
           <View style={styles.previewCard}>
             <Text style={styles.previewTitle}>Layout preview</Text>
@@ -915,7 +937,12 @@ export default function BurnSubtitlesScreen() {
                         {typography.main ? (
                           <View style={styles.previewTypography}>
                             {typography.ruby && typography.rubySize ? (
-                              <Text style={[styles.previewRuby, { fontSize: typography.rubySize }]}>
+                              <Text
+                                style={[
+                                  styles.previewRuby,
+                                  { fontSize: typography.rubySize, marginBottom: previewRubyGap(typography.rubySize) },
+                                ]}
+                              >
                                 {typography.ruby}
                               </Text>
                             ) : null}

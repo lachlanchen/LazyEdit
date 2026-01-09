@@ -26,6 +26,7 @@ type BurnLayout = {
   rows?: number;
   cols?: number;
   liftRatio?: number;
+  rubySpacing?: number;
 };
 
 type TranslationDetail = {

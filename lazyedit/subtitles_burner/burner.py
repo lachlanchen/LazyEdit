@@ -332,6 +332,7 @@ def burn_video_with_slots(
     gutter: int = 12,
     lift_slots: int = 1,
     lift_ratio: float | None = None,
+    ruby_spacing: float = 0.1,
     progress_callback: Optional[Callable[[int], None]] = None,
 ) -> None:
     (
@@ -408,6 +409,7 @@ def burn_video_with_slots(
     default_style = TextStyle()
 
     assignments: list[SlotAssignment] = []
+    ruby_spacing = min(max(float(ruby_spacing), 0.0), 0.2)
     for slot in slots:
         scale = max(0.6, min(2.5, float(slot.font_scale or 1.0)))
         slot_width, slot_height, extra_top, extra_bottom = slot_geometry.get(
@@ -458,7 +460,7 @@ def burn_video_with_slots(
                 main_font_size=main_size,
                 ruby_font_size=ruby_size,
                 stroke_width=stroke,
-                ruby_spacing=0.0,
+                ruby_spacing=ruby_spacing,
             )
             renderer = RubyRenderer(style)
             tokens = [RubyToken(text=sample_text)]
@@ -503,7 +505,7 @@ def burn_video_with_slots(
             main_font_size=main_font_size,
             ruby_font_size=ruby_font_size,
             stroke_width=stroke_width,
-            ruby_spacing=0.0,
+            ruby_spacing=ruby_spacing,
         )
         ipa_lang = None
         if slot.ipa:
