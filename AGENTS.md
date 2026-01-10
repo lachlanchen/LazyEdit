@@ -41,6 +41,12 @@ Note on symlinks: Never edit files inside symlinked directories from this reposi
   git pull github main
   ```
 
+## Deployment & Sync Locations
+- Development workspace: `/home/lachlan/ProjectsLFS/LazyEdit` (this repo; includes submodules `AutoPubMonitor/` and `AutoPublish/`).
+- Deployed LazyEdit backend + app: `/home/lachlan/DiskMech/Projects/lazyedit` (tmux session `la-lazyedit`; backend on port 8081, Expo app on port 8091 with `EXPO_PUBLIC_API_URL=http://localhost:8081`).
+- Deployed AutoPubMonitor: `/home/lachlan/DiskMech/Projects/autopub-monitor` (tmux sessions `am-*`; uses LazyEdit app API endpoints by default).
+- Publishing system (platforms incl. YouTube): `/home/lachlan/Projects/auto-publish` on `lazyingart` (pull after pushing AutoPublish changes).
+
 ## Coding Style & Naming Conventions
 - Python 3.10+, PEP 8, 4‑space indentation.
 - Filenames/functions: snake_case (e.g., `subtitle_metadata.py`). Classes: CapWords. Constants: UPPER_CASE.
