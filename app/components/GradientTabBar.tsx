@@ -27,6 +27,6 @@ const styles = StyleSheet.create({
   gradient: {
     ...StyleSheet.absoluteFillObject,
     height: Platform.select({ ios: 90, android: 70, default: 60 }),
-    opacity: 0.96,
+    opacity: 1,
   },
 });

@@ -1137,62 +1137,6 @@ const HISTORY_KEYS = {
         <View style={styles.content}>
           <Text style={styles.title}>LazyEdit Studio</Text>
 
-          <View style={styles.latestCard}>
-            <View style={styles.latestHeader}>
-              <Text style={styles.sectionTitle}>{t('home_latest_videos')}</Text>
-              <Pressable onPress={() => router.push('/library')}>
-                <Text style={styles.latestLink}>{t('tab_studio')}</Text>
-              </Pressable>
-            </View>
-            {latestLoading ? (
-              <ActivityIndicator style={{ marginTop: 8 }} />
-            ) : latestVideos.length ? (
-              <View style={styles.latestList}>
-                {latestVideos.map((video) => {
-                  const previewUrl = video.preview_media_url || video.media_url;
-                  const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
-                  const title = video.title || t('library_video_fallback', { id: video.id });
-                  return (
-                    <Pressable
-                      key={video.id}
-                      style={styles.latestRow}
-                      onPress={() =>
-                        router.push({ pathname: '/video/[id]', params: { id: String(video.id) } })
-                      }
-                    >
-                      <View style={styles.latestPreview}>
-                        {Platform.OS === 'web' && mediaSrc ? (
-                          React.createElement('video', {
-                            src: mediaSrc,
-                            style: { width: '100%', height: '100%', borderRadius: 10, objectFit: 'cover' },
-                            muted: true,
-                            playsInline: true,
-                            preload: 'metadata',
-                          })
-                        ) : (
-                          <Text style={styles.previewLabel}>{t('library_preview')}</Text>
-                        )}
-                      </View>
-                      <View style={styles.latestMeta}>
-                        <Text style={styles.latestTitle} numberOfLines={1}>
-                          {title}
-                        </Text>
-                        <Text style={styles.latestPath} numberOfLines={1}>
-                          {video.file_path}
-                        </Text>
-                        <Text style={styles.latestTime}>
-                          {video.created_at?.slice(0, 19).replace('T', ' ')}
-                        </Text>
-                      </View>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            ) : (
-              <Text style={styles.empty}>{t('library_empty')}</Text>
-            )}
-          </View>
-
           <View style={styles.tabRow}>
             {[
               { key: 'upload', label: t('home_tab_upload') },
@@ -1769,6 +1713,60 @@ const HISTORY_KEYS = {
               {remixStatus ? <Text style={[styles.status, remixStatusStyle]}>{remixStatus}</Text> : null}
             </View>
           ) : null}
+
+          <View style={styles.latestCard}>
+            <View style={styles.latestHeader}>
+              <Text style={styles.sectionTitle}>{t('home_latest_videos')}</Text>
+              <Pressable onPress={() => router.push('/library')}>
+                <Text style={styles.latestLink}>{t('tab_studio')}</Text>
+              </Pressable>
+            </View>
+            {latestLoading ? (
+              <ActivityIndicator style={{ marginTop: 8 }} />
+            ) : latestVideos.length ? (
+              <View style={styles.latestList}>
+                {latestVideos.map((video) => {
+                  const previewUrl = video.preview_media_url || video.media_url;
+                  const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
+                  const title = video.title || t('library_video_fallback', { id: video.id });
+                  return (
+                    <Pressable
+                      key={video.id}
+                      style={styles.latestRow}
+                      onPress={() => router.push('/library')}
+                    >
+                      <View style={styles.latestPreview}>
+                        {Platform.OS === 'web' && mediaSrc ? (
+                          React.createElement('video', {
+                            src: mediaSrc,
+                            style: { width: '100%', height: '100%', borderRadius: 10, objectFit: 'cover' },
+                            muted: true,
+                            playsInline: true,
+                            preload: 'metadata',
+                          })
+                        ) : (
+                          <Text style={styles.previewLabel}>{t('library_preview')}</Text>
+                        )}
+                      </View>
+                      <View style={styles.latestMeta}>
+                        <Text style={styles.latestTitle} numberOfLines={1}>
+                          {title}
+                        </Text>
+                        <Text style={styles.latestPath} numberOfLines={1}>
+                          {video.file_path}
+                        </Text>
+                        <Text style={styles.latestTime}>
+                          {video.created_at?.slice(0, 19).replace('T', ' ')}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            ) : (
+              <Text style={styles.empty}>{t('library_empty')}</Text>
+            )}
+          </View>
         </View>
       </ScrollView>
     </View>
