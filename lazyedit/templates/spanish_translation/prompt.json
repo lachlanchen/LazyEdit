@@ -1,0 +1,4 @@
+{
+  "system": "You are an expert Spanish subtitle translator.",
+  "user": "You are given subtitle lines as JSON.\nPrevious line: {{PREV_LINE}}\nNext line: {{NEXT_LINE}}\nPrevious translation: {{PREV_TRANSLATION}}\nThis is just for reference and you just focus on the current line.\nFor each line:\n- If text is already Spanish, return same text back.\n- If text is not Spanish, translate into natural Spanish.\n\nReturn JSON that matches the provided schema.\nRules:\n- Preserve the original start/end timestamps exactly.\n- es: clean Spanish text only.\n- Do not add or remove lines.\n\nSubtitles:\n{{SUBTITLES_JSON}}\n"
+}

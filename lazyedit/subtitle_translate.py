@@ -23,6 +23,7 @@ from pprint import pprint
 import cjkwrap
 
 import glob
+from pathlib import Path
 
 import numpy as np
 
@@ -128,6 +129,137 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     def is_video_landscape(self):
         """Determine if the video is landscape or portrait based on class variables."""
         return self.video_width > self.video_height
+
+    def _templates_root(self) -> Path:
+        return Path(__file__).resolve().parent / "templates"
+
+    def _load_template_json(self, relative_path: str) -> dict:
+        path = self._templates_root() / relative_path
+        with path.open("r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+    @staticmethod
+    def _extract_subtitle_text(item: dict) -> str:
+        if not isinstance(item, dict):
+            return ""
+        for key in ("text", "ja", "en", "zh", "ar", "ko", "es", "fr", "ru", "vi", "yue"):
+            value = item.get(key)
+            if value:
+                return str(value)
+        fallback = item.get("text")
+        return str(fallback) if fallback is not None else ""
+
+    @staticmethod
+    def _format_context_value(value: str | None) -> str:
+        if not value:
+            return ""
+        return str(value).strip()
+
+    def _build_context_strings(self, index: int, last_translation: str | None) -> tuple[str, str, str]:
+        subtitles = self.subtitles or []
+        if index < 0 or index >= len(subtitles):
+            return "", "", self._format_context_value(last_translation)
+
+        prev_text = self._extract_subtitle_text(subtitles[index - 1]) if index > 0 else ""
+        next_text = self._extract_subtitle_text(subtitles[index + 1]) if index + 1 < len(subtitles) else ""
+        return (
+            self._format_context_value(prev_text),
+            self._format_context_value(next_text),
+            self._format_context_value(last_translation),
+        )
+
+    def _build_prompt_with_context(
+        self,
+        user_template: str,
+        subtitles,
+        prev_line: str | None,
+        next_line: str | None,
+        prev_translation: str | None,
+    ) -> str:
+        prompt = user_template.replace(
+            "{{SUBTITLES_JSON}}",
+            json.dumps(subtitles, indent=2, ensure_ascii=False),
+        )
+        prompt = prompt.replace("{{PREV_LINE}}", self._format_context_value(prev_line))
+        prompt = prompt.replace("{{NEXT_LINE}}", self._format_context_value(next_line))
+        prompt = prompt.replace("{{PREV_TRANSLATION}}", self._format_context_value(prev_translation))
+        return prompt
+
+    @staticmethod
+    def _is_punctuation_token(text: str) -> bool:
+        if not text:
+            return False
+        for char in text:
+            if char.isspace():
+                continue
+            if not unicodedata.category(char).startswith("P"):
+                return False
+        return True
+
+    def _build_ruby_from_pairs(self, pairs):
+        parts = []
+        for pair in pairs or []:
+            if not isinstance(pair, (list, tuple)) or len(pair) < 2:
+                continue
+            word = str(pair[0])
+            reading = str(pair[1])
+            if not word:
+                continue
+            if self._is_punctuation_token(word) and reading == word:
+                parts.append(word)
+            else:
+                parts.append(f"<{word}>[{reading}]")
+        return "".join(parts)
+
+    @staticmethod
+    def _build_plain_from_pairs(pairs):
+        parts = []
+        for pair in pairs or []:
+            if not isinstance(pair, (list, tuple)) or len(pair) < 1:
+                continue
+            word = str(pair[0])
+            if not word:
+                continue
+            parts.append(word)
+        return "".join(parts)
+
+    @staticmethod
+    def _normalize_tokens(tokens):
+        cleaned = []
+        for token in tokens or []:
+            if not isinstance(token, dict):
+                continue
+            word = str(token.get("word") or "").strip()
+            if not word:
+                continue
+            reading = token.get("reading")
+            reading = str(reading) if reading is not None else ""
+            if not reading:
+                reading = word
+            token_type = str(token.get("type") or "other").strip() or "other"
+            cleaned.append({
+                "word": word,
+                "reading": reading,
+                "type": token_type,
+            })
+        return cleaned
+
+    @staticmethod
+    def _tokens_from_pairs(pairs):
+        tokens = []
+        for pair in pairs or []:
+            if not isinstance(pair, (list, tuple)) or len(pair) < 2:
+                continue
+            word = str(pair[0] or "").strip()
+            if not word:
+                continue
+            reading = str(pair[1] or "").strip() or word
+            tokens.append({
+                "word": word,
+                "reading": reading,
+                "type": "other",
+            })
+        return tokens
 
     def get_filename(self, lang="ja", idx=0, timestamp=None):
         base_filename = self.base_filename
@@ -743,6 +875,864 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         pprint(translated_subtitles)
 
         return translated_subtitles
+
+    def translate_and_merge_subtitles_ja_furigana_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
+        """Single-pass Japanese translation + furigana using template prompt + schema."""
+        print("Translating subtitles to Japanese with furigana (single pass)...")
+
+        prompt_bundle = self._load_template_json("japanese_furigana/prompt.json")
+        schema = self._load_template_json("japanese_furigana/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get(
+            "system",
+            "You are an expert Japanese translator and furigana annotator.",
+        )
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="ja_furigana_single", idx=idx),
+            schema_name="japanese_furigana_single_pass",
+        )
+
+        items = response.get("items", [])
+        ruby_items = []
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            tokens = self._normalize_tokens(item.get("tokens") or [])
+            pairs = [(token["word"], token["reading"]) for token in tokens]
+            if not pairs:
+                legacy_pairs = item.get("furigana_pairs") or []
+                if legacy_pairs:
+                    tokens = self._tokens_from_pairs(legacy_pairs)
+                    pairs = [(token["word"], token["reading"]) for token in tokens]
+            ruby_text = item.get("ruby") or self._build_ruby_from_pairs(pairs)
+            plain_text = item.get("ja") or self._build_plain_from_pairs(pairs) or self.strip_brackets(ruby_text)
+            ruby_items.append({"start": start, "end": end, "ja": ruby_text})
+            plain_items.append({"start": start, "end": end, "ja": plain_text})
+            json_items.append({
+                "start": start,
+                "end": end,
+                "ja": plain_text,
+                "ruby": ruby_text,
+                "tokens": tokens,
+                "furigana_pairs": pairs,
+            })
+
+        return {
+            "ruby": ruby_items,
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_japanese_furigana_single_pass(self):
+        """Translate + furigana annotate Japanese subtitles in batches."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        ruby_items = []
+        plain_items = []
+        json_items = []
+
+        last_translation = None
+        line_counter = 0
+        for batch in batches:
+            for _subtitle in batch:
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ja_furigana_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
+                ruby_items.extend(result["ruby"])
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("ja") or last_translation
+                line_counter += 1
+
+        ruby_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return ruby_items, plain_items, json_items
+
+    def translate_and_merge_subtitles_en_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
+        """Single-pass English translation using template prompt + schema."""
+        print("Translating subtitles to English (single pass)...")
+
+        prompt_bundle = self._load_template_json("english_translation/prompt.json")
+        schema = self._load_template_json("english_translation/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get("system", "You are an expert English translator.")
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="en_single", idx=idx),
+            schema_name="english_translation_single_pass",
+        )
+
+        items = response.get("items", [])
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            text = item.get("en") or ""
+            plain_items.append({"start": start, "end": end, "en": text})
+            json_items.append({"start": start, "end": end, "en": text})
+
+        return {
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_english_translation_single_pass(self):
+        """Translate English subtitles line-by-line."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        plain_items = []
+        json_items = []
+
+        last_translation = None
+        line_counter = 0
+        for batch in batches:
+            for _subtitle in batch:
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_en_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("en") or last_translation
+                line_counter += 1
+
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return plain_items, json_items
+
+    def translate_and_merge_subtitles_ar_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
+        """Single-pass Arabic translation using template prompt + schema."""
+        print("Translating subtitles to Arabic (single pass)...")
+
+        prompt_bundle = self._load_template_json("arabic_translation/prompt.json")
+        schema = self._load_template_json("arabic_translation/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get("system", "You are an expert Arabic translator.")
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="ar_single", idx=idx),
+            schema_name="arabic_translation_single_pass",
+        )
+
+        items = response.get("items", [])
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            text = item.get("ar") or ""
+            plain_items.append({"start": start, "end": end, "ar": text})
+            json_items.append({"start": start, "end": end, "ar": text})
+
+        return {
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_arabic_translation_single_pass(self):
+        """Translate Arabic subtitles line-by-line."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        plain_items = []
+        json_items = []
+
+        last_translation = None
+        line_counter = 0
+        for batch in batches:
+            for _subtitle in batch:
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ar_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("ar") or last_translation
+                line_counter += 1
+
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return plain_items, json_items
+
+    def translate_and_merge_subtitles_vi_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
+        """Single-pass Vietnamese translation using template prompt + schema."""
+        print("Translating subtitles to Vietnamese (single pass)...")
+
+        prompt_bundle = self._load_template_json("vietnamese_translation/prompt.json")
+        schema = self._load_template_json("vietnamese_translation/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get("system", "You are an expert Vietnamese translator.")
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="vi_single", idx=idx),
+            schema_name="vietnamese_translation_single_pass",
+        )
+
+        items = response.get("items", [])
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            text = item.get("vi") or ""
+            plain_items.append({"start": start, "end": end, "vi": text})
+            json_items.append({"start": start, "end": end, "vi": text})
+
+        return {
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_vietnamese_translation_single_pass(self):
+        """Translate Vietnamese subtitles line-by-line."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        plain_items = []
+        json_items = []
+
+        last_translation = None
+        line_counter = 0
+        for batch in batches:
+            for _subtitle in batch:
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_vi_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("vi") or last_translation
+                line_counter += 1
+
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return plain_items, json_items
+
+    def translate_and_merge_subtitles_ko_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
+        """Single-pass Korean translation using template prompt + schema."""
+        print("Translating subtitles to Korean (single pass)...")
+
+        prompt_bundle = self._load_template_json("korean_translation/prompt.json")
+        schema = self._load_template_json("korean_translation/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get("system", "You are an expert Korean translator.")
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="ko_single", idx=idx),
+            schema_name="korean_translation_single_pass",
+        )
+
+        items = response.get("items", [])
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            text = item.get("ko") or ""
+            plain_items.append({"start": start, "end": end, "ko": text})
+            json_items.append({"start": start, "end": end, "ko": text})
+
+        return {
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_korean_translation_single_pass(self):
+        """Translate Korean subtitles line-by-line."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        plain_items = []
+        json_items = []
+
+        last_translation = None
+        line_counter = 0
+        for batch in batches:
+            for _subtitle in batch:
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ko_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("ko") or last_translation
+                line_counter += 1
+
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return plain_items, json_items
+
+    def translate_and_merge_subtitles_es_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
+        """Single-pass Spanish translation using template prompt + schema."""
+        print("Translating subtitles to Spanish (single pass)...")
+
+        prompt_bundle = self._load_template_json("spanish_translation/prompt.json")
+        schema = self._load_template_json("spanish_translation/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get("system", "You are an expert Spanish translator.")
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="es_single", idx=idx),
+            schema_name="spanish_translation_single_pass",
+        )
+
+        items = response.get("items", [])
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            text = item.get("es") or ""
+            plain_items.append({"start": start, "end": end, "es": text})
+            json_items.append({"start": start, "end": end, "es": text})
+
+        return {
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_spanish_translation_single_pass(self):
+        """Translate Spanish subtitles line-by-line."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        plain_items = []
+        json_items = []
+
+        last_translation = None
+        line_counter = 0
+        for batch in batches:
+            for _subtitle in batch:
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_es_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("es") or last_translation
+                line_counter += 1
+
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return plain_items, json_items
+
+    def translate_and_merge_subtitles_fr_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
+        """Single-pass French translation using template prompt + schema."""
+        print("Translating subtitles to French (single pass)...")
+
+        prompt_bundle = self._load_template_json("french_translation/prompt.json")
+        schema = self._load_template_json("french_translation/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get("system", "You are an expert French translator.")
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="fr_single", idx=idx),
+            schema_name="french_translation_single_pass",
+        )
+
+        items = response.get("items", [])
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            text = item.get("fr") or ""
+            plain_items.append({"start": start, "end": end, "fr": text})
+            json_items.append({"start": start, "end": end, "fr": text})
+
+        return {
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_french_translation_single_pass(self):
+        """Translate French subtitles line-by-line."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        plain_items = []
+        json_items = []
+
+        last_translation = None
+        line_counter = 0
+        for batch in batches:
+            for _subtitle in batch:
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_fr_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("fr") or last_translation
+                line_counter += 1
+
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return plain_items, json_items
+
+    def translate_and_merge_subtitles_ru_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
+        """Single-pass Russian translation using template prompt + schema."""
+        print("Translating subtitles to Russian (single pass)...")
+
+        prompt_bundle = self._load_template_json("russian_translation/prompt.json")
+        schema = self._load_template_json("russian_translation/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get("system", "You are an expert Russian translator.")
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="ru_single", idx=idx),
+            schema_name="russian_translation_single_pass",
+        )
+
+        items = response.get("items", [])
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            text = item.get("ru") or ""
+            plain_items.append({"start": start, "end": end, "ru": text})
+            json_items.append({"start": start, "end": end, "ru": text})
+
+        return {
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def translate_and_merge_subtitles_yue_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
+        """Single-pass Cantonese translation using template prompt + schema."""
+        print("Translating subtitles to Cantonese (single pass)...")
+
+        prompt_bundle = self._load_template_json("cantonese_translation/prompt.json")
+        schema = self._load_template_json("cantonese_translation/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get("system", "You are an expert Cantonese translator.")
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="yue_single", idx=idx),
+            schema_name="cantonese_translation_single_pass",
+        )
+
+        items = response.get("items", [])
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            text = item.get("yue") or ""
+            plain_items.append({"start": start, "end": end, "yue": text})
+            json_items.append({"start": start, "end": end, "yue": text})
+
+        return {
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_cantonese_translation_single_pass(self):
+        """Translate Cantonese subtitles line-by-line."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        plain_items = []
+        json_items = []
+
+        last_translation = None
+        line_counter = 0
+        for batch in batches:
+            for _subtitle in batch:
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_yue_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("yue") or last_translation
+                line_counter += 1
+
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return plain_items, json_items
+
+    def process_russian_translation_single_pass(self):
+        """Translate Russian subtitles line-by-line."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        plain_items = []
+        json_items = []
+
+        last_translation = None
+        line_counter = 0
+        for batch in batches:
+            for _subtitle in batch:
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_ru_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("ru") or last_translation
+                line_counter += 1
+
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return plain_items, json_items
+
+    def translate_and_merge_subtitles_zh_hant_single_pass(
+        self,
+        subtitles,
+        idx,
+        prev_line: str | None = None,
+        next_line: str | None = None,
+        prev_translation: str | None = None,
+    ):
+        """Single-pass Traditional Chinese translation using template prompt + schema."""
+        print("Translating subtitles to Traditional Chinese (single pass)...")
+
+        prompt_bundle = self._load_template_json("chinese_traditional_translation/prompt.json")
+        schema = self._load_template_json("chinese_traditional_translation/schema.json")
+
+        user_template = prompt_bundle.get("user", "")
+        system_content = prompt_bundle.get("system", "You are an expert Chinese translator.")
+        prompt = self._build_prompt_with_context(
+            user_template,
+            subtitles,
+            prev_line,
+            next_line,
+            prev_translation,
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="zh_hant_single", idx=idx),
+            schema_name="chinese_traditional_translation_single_pass",
+        )
+
+        items = response.get("items", [])
+        plain_items = []
+        json_items = []
+        for item in items:
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            text = item.get("zh") or ""
+            plain_items.append({"start": start, "end": end, "zh": text})
+            json_items.append({"start": start, "end": end, "zh": text})
+
+        return {
+            "plain": plain_items,
+            "json": json_items,
+        }
+
+    def process_chinese_traditional_translation_single_pass(self):
+        """Translate Traditional Chinese subtitles line-by-line."""
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+
+        batches = self.split_subtitles_into_batches(subtitles)
+        plain_items = []
+        json_items = []
+
+        last_translation = None
+        line_counter = 0
+        for batch in batches:
+            for _subtitle in batch:
+                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
+                result = self.translate_and_merge_subtitles_zh_hant_single_pass(
+                    [_subtitle],
+                    line_counter,
+                    prev_line,
+                    next_line,
+                    prev_translation,
+                )
+                plain_items.extend(result["plain"])
+                json_items.extend(result["json"])
+                if result["plain"]:
+                    last_translation = result["plain"][-1].get("zh") or last_translation
+                line_counter += 1
+
+        plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+        json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
+
+        return plain_items, json_items
+
+    def save_translated_subtitles_to_srt_path(self, translated_subtitles, output_path):
+        original = self.output_sub_path
+        self.output_sub_path = output_path
+        try:
+            self.save_translated_subtitles_to_srt(translated_subtitles)
+        finally:
+            self.output_sub_path = original
+
+    def save_translated_subtitles_to_ass_path(self, translated_subtitles, output_path):
+        original = self.output_sub_path
+        self.output_sub_path = output_path
+        try:
+            self.save_translated_subtitles_to_ass(translated_subtitles)
+        finally:
+            self.output_sub_path = original
+
+    def save_translated_subtitles_to_json_path(self, translated_subtitles, output_path):
+        original = self.output_json_path
+        self.output_json_path = output_path
+        try:
+            self.save_translated_subtitles_to_json(translated_subtitles)
+        finally:
+            self.output_json_path = original
 
     def translate_and_merge_subtitles_ko(self, subtitles, idx):
         """Request Korean subtitles with structured outputs."""

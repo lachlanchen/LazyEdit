@@ -1,13 +1,16 @@
 import os
+import hashlib
 
 os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 
 from lazyedit.openai_version_check import OpenAI
+from config import UPLOAD_FOLDER, PORT, AUTOPUBLISH_URL, AUTOPUBLISH_TIMEOUT
 
 
 
 import shlex
+import threading
 import subprocess
 
 from concurrent.futures import ThreadPoolExecutor
@@ -17,6 +20,7 @@ import tornado.web
 from tornado import gen
 import tornado.autoreload
 from tornado.concurrent import run_on_executor
+import tornado.httpclient
 
 
 import zipfile  # for creating zip files
@@ -26,8 +30,11 @@ from lazyedit.autocut_processor import AutocutProcessor
 from lazyedit.subtitle_metadata import Subtitle2Metadata
 from lazyedit.words_card import VideoAddWordsCard, overlay_word_card_on_cover
 from lazyedit.subtitle_translate import SubtitlesTranslator
+from lazyedit.video_prompt_generator import VideoPromptGenerator
 from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
+from lazyedit.chinese_simplify import convert_items_to_simplified, convert_traditional_to_simplified
+from lazyedit.subtitles_burner import BurnSlotConfig, burn_video_with_slots
 
 from pprint import pprint
 import json5
@@ -35,6 +42,8 @@ import json
 
 import subprocess
 from urllib.parse import quote
+from pathlib import Path
+import re
 
 import cjkwrap
 from moviepy.editor import VideoFileClip
@@ -58,6 +67,7 @@ import json
 from datetime import datetime, timedelta
 
 import shutil
+import glob
 
 from lingua import Language, LanguageDetectorBuilder
 
@@ -68,7 +78,680 @@ import moviepy.editor as mp
 
 from lazyedit.handbrake import preprocess_video
 from lazyedit.video_utils import preprocess_if_needed
+from lazyedit import db as ldb
+from lazyedit.plugins.languages import list_languages
+from agi.video_requests import create_poll_and_download
 
+
+GRAMMAR_PALETTE_DIR = os.path.join(
+    os.path.dirname(__file__),
+    "lazyedit",
+    "templates",
+    "grammar_palettes",
+)
+METADATA_TEMPLATE_DIR = os.path.join(
+    os.path.dirname(__file__),
+    "lazyedit",
+    "templates",
+)
+METADATA_TEMPLATE_MAP = {
+    "zh": "metadata_zh",
+    "en": "metadata_en",
+}
+VIDEO_PROMPT_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_prompt")
+VIDEO_SPEC_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_spec")
+
+DEFAULT_TRANSLATION_STYLE = {
+    "outlineEnabled": True,
+    "shadowEnabled": True,
+    "outlineThickness": 10.0,
+    "outlineStrength": 0.85,
+    "outlineColor": "#000000",
+    "paletteMode": "base",
+    "bgColor": "#000000",
+    "bgOpacity": 0.5,
+}
+DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
+DEFAULT_VIDEO_PROMPT_SPEC = {
+    "autoTitle": False,
+    "title": "Epic Vision",
+    "subject": "A fictional protagonist in a vast imagined world",
+    "action": "They confront a revelation that changes their journey",
+    "environment": "An epic, timeless setting (mythic history or distant planet) with sweeping scale",
+    "camera": "Cinematic movement that reveals scale and detail",
+    "lighting": "Atmospheric, dramatic lighting with soft volumetric depth",
+    "mood": "Epic, awe-inspiring, contemplative",
+    "style": "Cinematic, richly detailed, timeless tone",
+    "model": "sora-2",
+    "aspectRatio": "16:9",
+    "durationSeconds": "12",
+    "audioLanguage": "auto",
+    "sceneCount": "",
+    "spokenWords": "Include a short original philosophical line of dialogue.",
+    "extraRequirements": "Let the model invent distinct moments and symbolism while keeping a coherent arc.",
+    "negative": "no text, no logos, no gore, no real people",
+}
+DEFAULT_VIDEO_PROMPT_HISTORY = {
+    "title": [],
+    "subject": [],
+    "action": [],
+    "environment": [],
+    "camera": [],
+    "lighting": [],
+    "mood": [],
+    "style": [],
+    "model": [],
+    "audioLanguage": [],
+    "sceneCount": [],
+    "spokenWords": [],
+    "extraRequirements": [],
+    "negative": [],
+}
+DEFAULT_BURN_LAYOUT = {
+    "heightRatio": 0.5,
+    "rows": 4,
+    "cols": 1,
+    "liftRatio": 0.1,
+    "liftSlots": 0,
+    "rubySpacing": 0.1,
+    "slots": [
+        {
+            "slot": 1,
+            "language": "en",
+            "romaji": True,
+            "pinyin": True,
+            "ipa": True,
+            "jyutping": False,
+            "romaja": False,
+            "arabicTranslit": False,
+        },
+        {
+            "slot": 2,
+            "language": "ja",
+            "romaji": True,
+            "pinyin": True,
+            "ipa": True,
+            "jyutping": False,
+            "romaja": False,
+            "arabicTranslit": False,
+        },
+        {
+            "slot": 3,
+            "language": "zh-Hant",
+            "romaji": True,
+            "pinyin": True,
+            "ipa": True,
+            "jyutping": False,
+            "romaja": False,
+            "arabicTranslit": False,
+        },
+        {
+            "slot": 4,
+            "language": "fr",
+            "romaji": True,
+            "pinyin": True,
+            "ipa": True,
+            "jyutping": False,
+            "romaja": False,
+            "arabicTranslit": False,
+        },
+    ]
+}
+
+BURN_EXECUTOR = ThreadPoolExecutor(max_workers=1)
+PROXY_EXECUTOR = ThreadPoolExecutor(max_workers=1)
+
+
+def _should_create_preview_proxy(file_path: str) -> bool:
+    if not file_path:
+        return False
+    _, ext = os.path.splitext(file_path)
+    ext = (ext or "").lower()
+    if ext in {".mov"}:
+        return True
+    # Best-effort detection for HEVC/HDR in MP4/etc.
+    try:
+        probe = subprocess.run(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-select_streams",
+                "v:0",
+                "-show_entries",
+                "stream=codec_name,color_transfer",
+                "-of",
+                "json",
+                file_path,
+            ],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        payload = json.loads(probe.stdout.decode("utf-8", errors="replace") or "{}")
+        streams = payload.get("streams") or []
+        stream = streams[0] if streams else {}
+        codec = str(stream.get("codec_name") or "").lower()
+        transfer = str(stream.get("color_transfer") or "").lower()
+        if codec in {"hevc", "h265"}:
+            return True
+        if transfer in {"smpte2084", "arib-std-b67"}:
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _create_preview_proxy(video_id: int, input_path: str) -> str | None:
+    if not input_path or not os.path.exists(input_path):
+        return None
+    proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+    os.makedirs(proxies_dir, exist_ok=True)
+    output_path = os.path.join(proxies_dir, f"video_{video_id}_proxy.mp4")
+
+    try:
+        if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(input_path):
+            return output_path
+    except Exception:
+        pass
+
+    cmd = [
+        "ffmpeg",
+        "-y",
+        "-i",
+        input_path,
+        "-vf",
+        "scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "veryfast",
+        "-crf",
+        "22",
+        "-movflags",
+        "+faststart",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "128k",
+        output_path,
+    ]
+    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return output_path
+
+
+def _enqueue_preview_proxy(video_id: int, input_path: str) -> None:
+    if not _should_create_preview_proxy(input_path):
+        return
+
+    def _run() -> None:
+        try:
+            _create_preview_proxy(video_id, input_path)
+        except Exception as exc:
+            print(f"Proxy transcode failed for video {video_id}: {exc}")
+
+    PROXY_EXECUTOR.submit(_run)
+
+
+def load_grammar_palette(lang):
+    safe_lang = re.sub(r"[^a-zA-Z0-9_-]", "", lang or "").strip() or "default"
+    for candidate in (safe_lang, "default"):
+        path = os.path.join(GRAMMAR_PALETTE_DIR, f"{candidate}.json")
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as handle:
+                return json.load(handle)
+    return None
+
+
+def _normalize_metadata_language(value: str | None) -> str | None:
+    if not value:
+        return None
+    lowered = str(value).strip().lower()
+    if lowered in {"zh", "zh-cn", "zh-hans", "chinese", "cn"}:
+        return "zh"
+    if lowered in {"en", "english"}:
+        return "en"
+    return None
+
+
+def _normalize_video_source(value: str | None) -> str | None:
+    if not value:
+        return None
+    lowered = str(value).strip().lower()
+    if lowered in {"upload", "generate", "remix", "api"}:
+        return lowered
+    return None
+
+
+def _read_text_file(path: str | None, max_chars: int = 12000) -> str:
+    if not path or not os.path.exists(path):
+        return ""
+    try:
+        with open(path, "r", encoding="utf-8", errors="ignore") as handle:
+            content = handle.read()
+        return content[:max_chars]
+    except Exception:
+        return ""
+
+
+def _parse_bool(value, default=True):
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    value_str = str(value).strip().lower()
+    if value_str in {"1", "true", "yes", "y", "on"}:
+        return True
+    if value_str in {"0", "false", "no", "n", "off"}:
+        return False
+    return default
+
+
+def _slugify(value: str) -> str:
+    cleaned = re.sub(r"[^a-zA-Z0-9]+", "-", value or "").strip("-").lower()
+    return cleaned or "generated"
+
+
+def _sanitize_title(value: str) -> str:
+    cleaned = re.sub(r"[\r\n\t]+", " ", value or "")
+    cleaned = re.sub(r"\s+", " ", cleaned).strip()
+    return cleaned or "Generated video"
+
+
+def _load_metadata_templates(lang_code: str) -> tuple[dict, dict]:
+    template_key = METADATA_TEMPLATE_MAP.get(lang_code)
+    if not template_key:
+        raise ValueError(f"unsupported metadata language: {lang_code}")
+    template_dir = os.path.join(METADATA_TEMPLATE_DIR, template_key)
+    prompt_path = os.path.join(template_dir, "prompt.json")
+    schema_path = os.path.join(template_dir, "schema.json")
+    if not os.path.exists(prompt_path) or not os.path.exists(schema_path):
+        raise FileNotFoundError(f"metadata template missing for {lang_code}")
+    with open(prompt_path, "r", encoding="utf-8") as handle:
+        prompt_payload = json.load(handle)
+    with open(schema_path, "r", encoding="utf-8") as handle:
+        schema_payload = json.load(handle)
+    return prompt_payload, schema_payload
+
+
+def _sanitize_translation_style(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        return DEFAULT_TRANSLATION_STYLE.copy()
+
+    palette_mode = str(payload.get("paletteMode") or DEFAULT_TRANSLATION_STYLE["paletteMode"])
+    if palette_mode not in {"base", "deep", "soft", "mono"}:
+        palette_mode = DEFAULT_TRANSLATION_STYLE["paletteMode"]
+
+    bg_color = str(payload.get("bgColor") or DEFAULT_TRANSLATION_STYLE["bgColor"]).strip()
+    if not bg_color.startswith("#") or len(bg_color) not in {4, 7}:
+        bg_color = DEFAULT_TRANSLATION_STYLE["bgColor"]
+
+    try:
+        bg_opacity = float(payload.get("bgOpacity", DEFAULT_TRANSLATION_STYLE["bgOpacity"]))
+    except Exception:
+        bg_opacity = DEFAULT_TRANSLATION_STYLE["bgOpacity"]
+    bg_opacity = min(max(bg_opacity, 0.0), 1.0)
+
+    try:
+        outline_thickness = float(payload.get("outlineThickness", DEFAULT_TRANSLATION_STYLE["outlineThickness"]))
+    except Exception:
+        outline_thickness = DEFAULT_TRANSLATION_STYLE["outlineThickness"]
+    outline_thickness = min(max(outline_thickness, 0.0), 20.0)
+
+    try:
+        outline_strength = float(payload.get("outlineStrength", DEFAULT_TRANSLATION_STYLE["outlineStrength"]))
+    except Exception:
+        outline_strength = DEFAULT_TRANSLATION_STYLE["outlineStrength"]
+    outline_strength = min(max(outline_strength, 0.0), 1.0)
+
+    outline_color = str(payload.get("outlineColor") or DEFAULT_TRANSLATION_STYLE["outlineColor"]).strip()
+    if not outline_color.startswith("#") or len(outline_color) not in {4, 7}:
+        outline_color = DEFAULT_TRANSLATION_STYLE["outlineColor"]
+
+    return {
+        "outlineEnabled": bool(payload.get("outlineEnabled", DEFAULT_TRANSLATION_STYLE["outlineEnabled"])),
+        "shadowEnabled": bool(payload.get("shadowEnabled", DEFAULT_TRANSLATION_STYLE["shadowEnabled"])),
+        "outlineThickness": outline_thickness,
+        "outlineStrength": outline_strength,
+        "outlineColor": outline_color,
+        "paletteMode": palette_mode,
+        "bgColor": bg_color,
+        "bgOpacity": bg_opacity,
+    }
+
+
+def _normalize_translation_language(value: object | None) -> str | None:
+    if value is None:
+        return None
+    raw = str(value).strip()
+    if not raw:
+        return None
+    lowered = raw.lower()
+    if lowered == "ja":
+        return "ja"
+    if lowered == "en":
+        return "en"
+    if lowered in {"ar", "arabic"}:
+        return "ar"
+    if lowered in {"vi", "vietnamese"}:
+        return "vi"
+    if lowered in {"ko", "korean"}:
+        return "ko"
+    if lowered in {"es", "spanish"}:
+        return "es"
+    if lowered in {"fr", "french"}:
+        return "fr"
+    if lowered in {"ru", "russian"}:
+        return "ru"
+    if lowered in {"yue", "cantonese", "zh-yue", "zh-yue-hk"}:
+        return "yue"
+    if lowered in {"zh", "zh-hant", "zh_hant", "zh-tw", "zh-hk", "zh-mo"}:
+        return "zh-Hant"
+    if lowered in {"zh-hans", "zh_hans", "zh-cn"}:
+        return "zh-Hans"
+    return None
+
+
+def _sanitize_translation_languages(payload) -> list[str]:
+    if not isinstance(payload, (list, tuple)):
+        return DEFAULT_TRANSLATION_LANGUAGES.copy()
+    cleaned = []
+    for item in payload:
+        code = _normalize_translation_language(item)
+        if code and code not in cleaned:
+            cleaned.append(code)
+    return cleaned or DEFAULT_TRANSLATION_LANGUAGES.copy()
+
+
+def _load_translation_languages_setting() -> list[str]:
+    saved = ldb.get_ui_preference("translation_languages")
+    if saved is None:
+        return DEFAULT_TRANSLATION_LANGUAGES.copy()
+    return _sanitize_translation_languages(saved)
+
+
+def _load_burn_layout_setting() -> dict:
+    saved = ldb.get_ui_preference("burn_layout")
+    if saved is None:
+        return DEFAULT_BURN_LAYOUT.copy()
+    return _sanitize_burn_layout(saved)
+
+
+def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        return DEFAULT_VIDEO_PROMPT_SPEC.copy()
+
+    def _string(key: str, fallback: str) -> str:
+        value = payload.get(key, fallback)
+        if value is None:
+            return fallback
+        text = str(value).strip()
+        return text or fallback
+
+    auto_title = payload.get("autoTitle")
+    auto_title = bool(auto_title) if isinstance(auto_title, bool) else DEFAULT_VIDEO_PROMPT_SPEC["autoTitle"]
+
+    aspect_ratio = str(payload.get("aspectRatio") or DEFAULT_VIDEO_PROMPT_SPEC["aspectRatio"])
+    if aspect_ratio not in {"16:9", "9:16", "auto"}:
+        aspect_ratio = DEFAULT_VIDEO_PROMPT_SPEC["aspectRatio"]
+
+    model_provided = "model" in payload and payload.get("model") is not None
+    model_value = str(payload.get("model") or DEFAULT_VIDEO_PROMPT_SPEC["model"])
+    if model_value not in {"sora-2", "sora-2-pro"}:
+        model_value = DEFAULT_VIDEO_PROMPT_SPEC["model"]
+
+    duration_value = str(payload.get("durationSeconds") or DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
+    duration_value = "".join(ch for ch in duration_value if ch.isdigit())
+    if duration_value:
+        try:
+            duration_int = int(duration_value)
+        except Exception:
+            duration_int = int(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
+    else:
+        duration_int = int(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
+    max_seconds = 25 if (model_provided and model_value == "sora-2-pro") or not model_provided else 12
+    duration_int = min(max(duration_int, 4), max_seconds)
+    duration_value = str(duration_int)
+
+    audio_language = str(payload.get("audioLanguage") or DEFAULT_VIDEO_PROMPT_SPEC["audioLanguage"])
+    if audio_language not in {"auto", "en", "zh", "ja", "ko", "vi", "ar", "fr", "es"}:
+        audio_language = DEFAULT_VIDEO_PROMPT_SPEC["audioLanguage"]
+
+    scene_count = str(payload.get("sceneCount") or "").strip()
+    scene_count = "".join(ch for ch in scene_count if ch.isdigit())
+
+    return {
+        "autoTitle": auto_title,
+        "title": _string("title", DEFAULT_VIDEO_PROMPT_SPEC["title"]),
+        "subject": _string("subject", DEFAULT_VIDEO_PROMPT_SPEC["subject"]),
+        "action": _string("action", DEFAULT_VIDEO_PROMPT_SPEC["action"]),
+        "environment": _string("environment", DEFAULT_VIDEO_PROMPT_SPEC["environment"]),
+        "camera": _string("camera", DEFAULT_VIDEO_PROMPT_SPEC["camera"]),
+        "lighting": _string("lighting", DEFAULT_VIDEO_PROMPT_SPEC["lighting"]),
+        "mood": _string("mood", DEFAULT_VIDEO_PROMPT_SPEC["mood"]),
+        "style": _string("style", DEFAULT_VIDEO_PROMPT_SPEC["style"]),
+        "model": model_value,
+        "aspectRatio": aspect_ratio,
+        "durationSeconds": duration_value,
+        "audioLanguage": audio_language,
+        "sceneCount": scene_count,
+        "spokenWords": _string("spokenWords", DEFAULT_VIDEO_PROMPT_SPEC["spokenWords"]),
+        "extraRequirements": _string("extraRequirements", DEFAULT_VIDEO_PROMPT_SPEC["extraRequirements"]),
+        "negative": _string("negative", DEFAULT_VIDEO_PROMPT_SPEC["negative"]),
+    }
+
+
+def _sanitize_history_list(payload) -> list[str]:
+    if not isinstance(payload, (list, tuple)):
+        return []
+    cleaned: list[str] = []
+    for item in payload:
+        if item is None:
+            continue
+        text = str(item).strip()
+        if not text:
+            continue
+        if text in cleaned:
+            continue
+        cleaned.append(text)
+    return cleaned[:50]
+
+
+def _sanitize_video_prompt_history(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        return DEFAULT_VIDEO_PROMPT_HISTORY.copy()
+
+    def _clean_list(value) -> list[str]:
+        if not isinstance(value, (list, tuple)):
+            return []
+        cleaned = []
+        for item in value:
+            text = str(item).strip()
+            if not text or text in cleaned:
+                continue
+            cleaned.append(text)
+        return cleaned[:20]
+
+    return {
+        "title": _clean_list(payload.get("title")),
+        "subject": _clean_list(payload.get("subject")),
+        "action": _clean_list(payload.get("action")),
+        "environment": _clean_list(payload.get("environment")),
+        "camera": _clean_list(payload.get("camera")),
+        "lighting": _clean_list(payload.get("lighting")),
+        "mood": _clean_list(payload.get("mood")),
+        "style": _clean_list(payload.get("style")),
+        "audioLanguage": _clean_list(payload.get("audioLanguage")),
+        "sceneCount": _clean_list(payload.get("sceneCount")),
+        "spokenWords": _clean_list(payload.get("spokenWords")),
+        "extraRequirements": _clean_list(payload.get("extraRequirements")),
+        "negative": _clean_list(payload.get("negative")),
+    }
+
+
+def _sanitize_burn_layout(payload: dict | list | None) -> dict:
+    if payload is None:
+        return DEFAULT_BURN_LAYOUT.copy()
+
+    slots_payload = None
+    height_ratio = DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5)
+    rows = DEFAULT_BURN_LAYOUT.get("rows", 4)
+    cols = DEFAULT_BURN_LAYOUT.get("cols", 1)
+    lift_ratio = DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1)
+    lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 0)
+    ruby_spacing = DEFAULT_BURN_LAYOUT.get("rubySpacing", 0.1)
+    romaji_default = DEFAULT_BURN_LAYOUT.get("romajiEnabled", True)
+    pinyin_default = DEFAULT_BURN_LAYOUT.get("pinyinEnabled", True)
+    if isinstance(payload, dict):
+        slots_payload = payload.get("slots")
+        if "heightRatio" in payload:
+            try:
+                height_ratio = float(payload.get("heightRatio"))
+            except Exception:
+                height_ratio = DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5)
+        if "rows" in payload:
+            try:
+                rows = int(payload.get("rows"))
+            except Exception:
+                rows = DEFAULT_BURN_LAYOUT.get("rows", 4)
+        if "cols" in payload:
+            try:
+                cols = int(payload.get("cols"))
+            except Exception:
+                cols = DEFAULT_BURN_LAYOUT.get("cols", 1)
+        if "liftRatio" in payload:
+            try:
+                lift_ratio = float(payload.get("liftRatio"))
+            except Exception:
+                lift_ratio = DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1)
+        if "liftSlots" in payload:
+            try:
+                lift_slots = int(payload.get("liftSlots"))
+            except Exception:
+                lift_slots = DEFAULT_BURN_LAYOUT.get("liftSlots", 0)
+        if "rubySpacing" in payload:
+            try:
+                ruby_spacing = float(payload.get("rubySpacing"))
+            except Exception:
+                ruby_spacing = DEFAULT_BURN_LAYOUT.get("rubySpacing", 0.1)
+        if "romajiEnabled" in payload:
+            value = payload.get("romajiEnabled")
+            if isinstance(value, bool):
+                romaji_default = value
+        if "pinyinEnabled" in payload:
+            value = payload.get("pinyinEnabled")
+            if isinstance(value, bool):
+                pinyin_default = value
+    elif isinstance(payload, list):
+        slots_payload = payload
+
+    if not isinstance(slots_payload, list):
+        return DEFAULT_BURN_LAYOUT.copy()
+
+    height_ratio = min(max(height_ratio, 0.2), 0.6)
+    rows = min(max(rows, 1), 10)
+    cols = min(max(cols, 1), 4)
+    lift_slots = min(max(lift_slots, 0), rows)
+    if lift_ratio is None:
+        lift_ratio = DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1)
+    if not isinstance(lift_ratio, (int, float)):
+        lift_ratio = DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1)
+    if "liftRatio" not in (payload or {}) and lift_slots:
+        lift_ratio = (height_ratio / max(rows, 1)) * lift_slots
+    lift_ratio = min(max(float(lift_ratio), 0.0), 0.4)
+    ruby_spacing = min(max(float(ruby_spacing), 0.0), 0.2)
+    slot_count = rows * cols
+
+    slot_map: dict[int, dict[str, object]] = {}
+    for idx, entry in enumerate(slots_payload):
+        slot_id = idx + 1
+        language = None
+        font_scale = 1.0
+        romaji = romaji_default
+        pinyin = pinyin_default
+        ipa = False
+        jyutping = False
+        romaja = False
+        arabic_translit = False
+        if isinstance(entry, dict):
+            try:
+                slot_id = int(entry.get("slot") or slot_id)
+            except Exception:
+                slot_id = idx + 1
+            language = entry.get("language")
+            try:
+                font_scale = float(entry.get("fontScale", 1.0))
+            except Exception:
+                font_scale = 1.0
+            if isinstance(entry.get("romaji"), bool):
+                romaji = entry.get("romaji")
+            if isinstance(entry.get("pinyin"), bool):
+                pinyin = entry.get("pinyin")
+            if isinstance(entry.get("ipa"), bool):
+                ipa = entry.get("ipa")
+            if isinstance(entry.get("jyutping"), bool):
+                jyutping = entry.get("jyutping")
+            if isinstance(entry.get("romaja"), bool):
+                romaja = entry.get("romaja")
+            if isinstance(entry.get("arabicTranslit"), bool):
+                arabic_translit = entry.get("arabicTranslit")
+        else:
+            language = entry
+        if slot_id < 1 or slot_id > slot_count:
+            continue
+        normalized = _normalize_translation_language(language) if language else None
+        font_scale = min(max(font_scale, 0.6), 2.5)
+        slot_map[slot_id] = {
+            "language": normalized,
+            "fontScale": font_scale,
+            "romaji": romaji,
+            "pinyin": pinyin,
+            "ipa": ipa,
+            "jyutping": jyutping,
+            "romaja": romaja,
+            "arabicTranslit": arabic_translit,
+        }
+
+    normalized_slots = []
+    for slot_id in range(1, slot_count + 1):
+        entry = slot_map.get(
+            slot_id,
+            {
+                "language": None,
+                "fontScale": 1.0,
+                "romaji": romaji_default,
+                "pinyin": pinyin_default,
+                "ipa": False,
+                "jyutping": False,
+                "romaja": False,
+                "arabicTranslit": False,
+            },
+        )
+        normalized_slots.append(
+            {
+                "slot": slot_id,
+                "language": entry.get("language"),
+                "fontScale": entry.get("fontScale", 1.0),
+                "romaji": entry.get("romaji", romaji_default),
+                "pinyin": entry.get("pinyin", pinyin_default),
+                "ipa": entry.get("ipa", False),
+                "jyutping": entry.get("jyutping", False),
+                "romaja": entry.get("romaja", False),
+                "arabicTranslit": entry.get("arabicTranslit", False),
+            }
+        )
+
+    return {
+        "slots": normalized_slots,
+        "heightRatio": height_ratio,
+        "rows": rows,
+        "cols": cols,
+        "liftRatio": lift_ratio,
+        "liftSlots": lift_slots,
+        "rubySpacing": ruby_spacing,
+        "romajiEnabled": romaji_default,
+        "pinyinEnabled": pinyin_default,
+    }
 
 
 
@@ -301,6 +984,546 @@ def get_video_resolution(video_path):
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     cap.release()
     return width, height
+
+
+def has_audio_stream(video_path):
+    command = (
+        f"ffprobe -v error -select_streams a "
+        f"-show_entries stream=codec_type -of csv=p=0 \"{video_path}\""
+    )
+    result = subprocess.run(
+        command,
+        shell=True,
+        text=True,
+        stderr=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        check=False,
+    )
+    return bool(result.stdout.strip())
+
+
+def write_empty_transcription_files(output_json_path, output_srt_path, output_md_path, message):
+    os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
+    with open(output_json_path, "w", encoding="utf-8") as json_file:
+        json.dump([], json_file)
+    with open(output_srt_path, "w", encoding="utf-8") as srt_file:
+        srt_file.write("")
+    with open(output_md_path, "w", encoding="utf-8") as md_file:
+        md_file.write(f"{message}\n")
+
+
+def write_markdown_from_srt(srt_path, md_path, empty_message="No transcription available."):
+    if not os.path.exists(srt_path):
+        with open(md_path, "w", encoding="utf-8") as md_file:
+            md_file.write(f"{empty_message}\n")
+        return
+    entries = []
+    current_time = None
+    current_text = []
+    with open(srt_path, "r", encoding="utf-8", errors="ignore") as srt_file:
+        for line in srt_file:
+            stripped = line.strip()
+            if not stripped:
+                if current_time and current_text:
+                    entries.append(f"- {current_time}: {' '.join(current_text)}")
+                current_time = None
+                current_text = []
+                continue
+            if stripped.isdigit():
+                continue
+            if "-->" in stripped:
+                current_time = stripped
+                current_text = []
+                continue
+            current_text.append(stripped)
+    if current_time and current_text:
+        entries.append(f"- {current_time}: {' '.join(current_text)}")
+    if not entries:
+        entries.append(empty_message)
+    with open(md_path, "w", encoding="utf-8") as md_file:
+        md_file.write("\n".join(entries) + "\n")
+
+
+def build_transcription_preview(md_path=None, srt_path=None, max_lines=6):
+    def read_lines(path):
+        if not path or not os.path.exists(path):
+            return None
+        lines = []
+        with open(path, "r", encoding="utf-8", errors="ignore") as handle:
+            for line in handle:
+                stripped = line.strip()
+                if not stripped:
+                    continue
+                lines.append(stripped)
+                if len(lines) >= max_lines:
+                    break
+        return "\n".join(lines) if lines else None
+
+    md_preview = read_lines(md_path)
+    if md_preview:
+        return md_preview
+
+    if not srt_path or not os.path.exists(srt_path):
+        return None
+    lines = []
+    with open(srt_path, "r", encoding="utf-8", errors="ignore") as srt_file:
+        for line in srt_file:
+            stripped = line.strip()
+            if not stripped or stripped.isdigit() or "-->" in stripped:
+                continue
+            lines.append(stripped)
+            if len(lines) >= max_lines:
+                break
+    return "\n".join(lines) if lines else None
+
+
+def find_latest_caption_outputs(output_folder, base_name):
+    srt_pattern = os.path.join(output_folder, f"{base_name}_caption_*.srt")
+    json_pattern = os.path.join(output_folder, f"{base_name}_caption_*.json")
+    srt_files = glob.glob(srt_pattern)
+    json_files = glob.glob(json_pattern)
+    latest_srt = max(srt_files, key=os.path.getmtime) if srt_files else None
+    latest_json = max(json_files, key=os.path.getmtime) if json_files else None
+    return latest_srt, latest_json
+
+
+def find_latest_transcription_outputs(output_folder, base_name):
+    if not output_folder or not base_name:
+        return None, None
+    default_json = os.path.join(output_folder, f"{base_name}_mixed.json")
+    default_srt = os.path.join(output_folder, f"{base_name}_mixed.srt")
+    if os.path.exists(default_json) and os.path.exists(default_srt):
+        return default_json, default_srt
+    json_pattern = os.path.join(output_folder, f"{base_name}_mixed*.json")
+    srt_pattern = os.path.join(output_folder, f"{base_name}_mixed*.srt")
+    json_files = glob.glob(json_pattern)
+    srt_files = glob.glob(srt_pattern)
+    latest_json = max(json_files, key=os.path.getmtime) if json_files else None
+    latest_srt = max(srt_files, key=os.path.getmtime) if srt_files else None
+    return latest_json, latest_srt
+
+
+def _normalize_transcription_language(value: object | None) -> str | None:
+    if value is None:
+        return None
+    raw = str(value).strip().lower()
+    if not raw:
+        return None
+    if raw in {"yue", "zh-yue", "yue-hk", "zh-yue-hk"}:
+        return "yue"
+    if raw in {"zh", "zho", "cmn", "zh-cn", "zh-tw", "zh-hk", "zh-mo", "zh-hans", "zh-hant"}:
+        return "zh"
+    if raw in {"en", "ja", "ko", "vi", "ar", "fr", "es", "ru"}:
+        return raw
+    return raw
+
+
+def _summarize_transcription_languages(json_path: str | None) -> tuple[str | None, list[dict[str, int]]]:
+    if not json_path or not os.path.exists(json_path):
+        return None, []
+    try:
+        with open(json_path, "r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except Exception:
+        return None, []
+
+    if isinstance(payload, dict):
+        items = payload.get("items") or payload.get("subtitles") or payload.get("segments") or []
+    elif isinstance(payload, list):
+        items = payload
+    else:
+        items = []
+
+    counts: dict[str, int] = {}
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        lang = _normalize_transcription_language(item.get("lang") or item.get("language"))
+        if not lang:
+            continue
+        counts[lang] = counts.get(lang, 0) + 1
+
+    if not counts:
+        return None, []
+
+    primary = max(counts.items(), key=lambda pair: pair[1])[0]
+    summary = [
+        {"language": lang, "count": count}
+        for lang, count in sorted(counts.items(), key=lambda pair: (-pair[1], pair[0]))
+    ]
+    return primary, summary
+
+
+def _build_transcription_language_map(json_path: str | None) -> dict[tuple[str, str], str]:
+    if not json_path or not os.path.exists(json_path):
+        return {}
+    try:
+        with open(json_path, "r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except Exception:
+        return {}
+
+    if isinstance(payload, dict):
+        items = payload.get("items") or payload.get("subtitles") or payload.get("segments") or []
+    elif isinstance(payload, list):
+        items = payload
+    else:
+        items = []
+
+    mapping: dict[tuple[str, str], str] = {}
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        start = item.get("start")
+        end = item.get("end")
+        if not start or not end:
+            continue
+        lang = _normalize_transcription_language(item.get("lang") or item.get("language"))
+        if not lang:
+            continue
+        mapping[(str(start), str(end))] = lang
+    return mapping
+
+
+def _speaker_lang_key(value: str | None) -> str | None:
+    if not value:
+        return None
+    raw = str(value).strip().lower()
+    if raw in {"zh", "zh-hant", "zh_hant", "zh-hans", "zh_hans", "zh-cn", "zh-tw", "zh-hk", "zh-mo"}:
+        return "zh"
+    if raw in {"yue", "zh-yue", "yue-hk", "zh-yue-hk"}:
+        return "yue"
+    return raw
+
+
+def _prepare_speaker_json(
+    json_path: str,
+    output_dir: str,
+    slot_language: str,
+    text_key: str | None,
+    speaker_map: dict[tuple[str, str], str],
+    icon: str = "🔊",
+) -> str:
+    if not speaker_map or not json_path or not os.path.exists(json_path):
+        return json_path
+    try:
+        with open(json_path, "r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except Exception:
+        return json_path
+
+    if isinstance(payload, dict):
+        items = payload.get("items") or payload.get("subtitles") or payload.get("segments") or []
+        container = payload
+    elif isinstance(payload, list):
+        items = payload
+        container = None
+    else:
+        return json_path
+
+    slot_key = _speaker_lang_key(slot_language)
+    if not slot_key:
+        return json_path
+
+    modified = False
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        start = item.get("start")
+        end = item.get("end")
+        if not start or not end:
+            continue
+        original_lang = _speaker_lang_key(speaker_map.get((str(start), str(end))))
+        if not original_lang or original_lang != slot_key:
+            continue
+
+        tokens = item.get("tokens")
+        if isinstance(tokens, list):
+            if tokens and isinstance(tokens[0], dict) and tokens[0].get("type") == "speaker":
+                # Ensure the speaker token carries a non-empty glyph so downstream
+                # token normalization (e.g. kana-affix splitting) doesn't drop it.
+                if not tokens[0].get("text"):
+                    tokens[0]["text"] = icon
+                    modified = True
+                continue
+            item["tokens"] = [{"text": icon, "type": "speaker"}] + tokens
+            modified = True
+            continue
+
+        key = text_key or "text"
+        text_value = None
+        if key in item and isinstance(item[key], str):
+            text_value = item[key]
+        elif "text" in item and isinstance(item["text"], str):
+            text_value = item["text"]
+
+        if text_value:
+            item["tokens"] = [
+                {"text": icon, "type": "speaker"},
+                {"text": text_value},
+            ]
+            modified = True
+            continue
+
+    if not modified:
+        return json_path
+
+    os.makedirs(output_dir, exist_ok=True)
+    base_name = os.path.splitext(os.path.basename(json_path))[0]
+    safe_lang = slot_language.replace("/", "_")
+    output_path = os.path.join(output_dir, f"{base_name}_speaker_{safe_lang}.json")
+    try:
+        with open(output_path, "w", encoding="utf-8") as handle:
+            json.dump(container if container is not None else items, handle, ensure_ascii=False, indent=2)
+    except Exception:
+        return json_path
+    return output_path
+
+
+def build_srt_preview_with_timestamps(srt_path, max_entries=6):
+    if not srt_path or not os.path.exists(srt_path):
+        return None
+    preview_lines = []
+    with open(srt_path, "r", encoding="utf-8", errors="ignore") as handle:
+        block = []
+        for raw in handle:
+            line = raw.strip()
+            if not line:
+                if block:
+                    preview_lines.append(block)
+                    block = []
+                continue
+            block.append(line)
+        if block:
+            preview_lines.append(block)
+
+    lines = []
+    for block in preview_lines:
+        if not block:
+            continue
+        time_line = next((b for b in block if "-->" in b), None)
+        if not time_line:
+            continue
+        parts = [p.strip() for p in time_line.split("-->")]
+        if len(parts) != 2:
+            continue
+        text_lines = [b for b in block if b != time_line and not b.isdigit()]
+        text = " ".join(text_lines).strip()
+        if not text:
+            continue
+        lines.append(f"- {parts[0]} --> {parts[1]}: {text}")
+        if len(lines) >= max_entries:
+            break
+    return "\n".join(lines) if lines else None
+
+
+def find_latest_caption_frames_dir(output_folder, base_name):
+    if not output_folder or not base_name:
+        return None
+    candidates = []
+    default_dir = os.path.join(output_folder, f"{base_name}_captioning_frames")
+    if os.path.isdir(default_dir):
+        candidates.append(default_dir)
+    pattern = os.path.join(output_folder, f"{base_name}_captioning_frames_*")
+    for path in glob.glob(pattern):
+        if os.path.isdir(path):
+            candidates.append(path)
+    if not candidates:
+        return None
+    scored = []
+    for path in candidates:
+        files = list_caption_frame_files(path)
+        if files:
+            scored.append((len(files), os.path.getmtime(path), path))
+    if scored:
+        scored.sort(reverse=True)
+        return scored[0][2]
+    return max(candidates, key=os.path.getmtime)
+
+
+def list_caption_frame_files(output_dir):
+    if not output_dir or not os.path.isdir(output_dir):
+        return []
+    files = [
+        os.path.join(output_dir, name)
+        for name in os.listdir(output_dir)
+        if name.lower().endswith((".jpg", ".jpeg", ".png"))
+    ]
+    files = sorted(files)
+    preferred = [path for path in files if "-R" not in os.path.basename(path)]
+    return preferred or files
+
+
+def load_caption_entries(json_path, srt_path):
+    if json_path and os.path.exists(json_path):
+        try:
+            with open(json_path, "r", encoding="utf-8") as handle:
+                data = json.load(handle)
+            entries = []
+            if isinstance(data, list):
+                for item in data:
+                    if not isinstance(item, dict):
+                        continue
+                    text = item.get("text") or item.get("caption")
+                    if not text:
+                        continue
+                    entries.append({
+                        "start": item.get("start"),
+                        "end": item.get("end"),
+                        "text": text,
+                    })
+            if entries:
+                return entries
+        except Exception:
+            pass
+    if not srt_path or not os.path.exists(srt_path):
+        return []
+    entries = []
+    current = None
+    buffer = []
+    with open(srt_path, "r", encoding="utf-8", errors="ignore") as handle:
+        for raw in handle:
+            line = raw.strip()
+            if not line:
+                if current:
+                    current["text"] = " ".join(buffer).strip()
+                    entries.append(current)
+                current = None
+                buffer = []
+                continue
+            if line.isdigit():
+                continue
+            if "-->" in line:
+                parts = [part.strip() for part in line.split("-->")]
+                if len(parts) == 2:
+                    current = {"start": parts[0], "end": parts[1], "text": ""}
+                continue
+            if current is not None:
+                buffer.append(line)
+    if current:
+        current["text"] = " ".join(buffer).strip()
+        entries.append(current)
+    return entries
+
+
+def build_caption_frame_payload(output_folder, base_name, json_path, srt_path):
+    frames_dir = find_latest_caption_frames_dir(output_folder, base_name)
+    frame_files = list_caption_frame_files(frames_dir)
+    entries = load_caption_entries(json_path, srt_path)
+    payload = []
+    for idx, path in enumerate(frame_files):
+        url = media_url_for_path(path)
+        if not url:
+            continue
+        entry = entries[idx] if idx < len(entries) else {}
+        payload.append({
+            "url": url,
+            "text": entry.get("text"),
+            "start": entry.get("start"),
+            "end": entry.get("end"),
+        })
+    return payload
+
+
+def list_keyframe_files(output_dir):
+    if not output_dir or not os.path.isdir(output_dir):
+        return []
+    files = [
+        os.path.join(output_dir, name)
+        for name in os.listdir(output_dir)
+        if name.lower().endswith((".jpg", ".jpeg", ".png"))
+    ]
+    return sorted(files)
+
+
+def clean_keyframe_dir(output_dir):
+    os.makedirs(output_dir, exist_ok=True)
+    for name in os.listdir(output_dir):
+        if name.lower().endswith((".jpg", ".jpeg", ".png")):
+            os.remove(os.path.join(output_dir, name))
+
+
+def extract_keyframes_scene(input_file, output_dir, scene_threshold=0.35):
+    command = (
+        f'ffmpeg -y -i "{input_file}" '
+        f'-vf "select=\'gt(scene,{scene_threshold})\',scale=480:-2" '
+        f'-vsync vfr -q:v 3 "{output_dir}/scene_%03d.jpg"'
+    )
+    subprocess.run(command, shell=True, check=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+
+
+def extract_keyframes_uniform(input_file, output_dir, target_count=8, duration=None):
+    if not duration or duration <= 0:
+        duration = None
+    if duration:
+        fps = target_count / duration
+        fps = max(min(fps, 8.0), 0.2)
+    else:
+        fps = 1.0
+    command = (
+        f'ffmpeg -y -i "{input_file}" '
+        f'-vf "fps={fps},scale=480:-2" '
+        f'-frames:v {target_count} -q:v 3 "{output_dir}/uniform_%03d.jpg"'
+    )
+    subprocess.run(command, shell=True, check=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+
+
+def extract_keyframes_opencv(input_file, output_dir, target_count=8):
+    cap = cv2.VideoCapture(input_file)
+    if not cap.isOpened():
+        raise RuntimeError("Failed to open video for keyframe extraction.")
+    total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    duration = None
+    if fps and fps > 0 and total_frames and total_frames > 0:
+        duration = total_frames / fps
+    if duration and duration > 0:
+        times = [(i + 0.5) * duration / target_count for i in range(target_count)]
+        for idx, t in enumerate(times):
+            cap.set(cv2.CAP_PROP_POS_MSEC, t * 1000)
+            ret, frame = cap.read()
+            if not ret:
+                continue
+            cv2.imwrite(os.path.join(output_dir, f"cv_{idx:03d}.jpg"), frame)
+    elif total_frames and total_frames > 0:
+        indices = [int((i + 0.5) * total_frames / target_count) for i in range(target_count)]
+        for idx, frame_idx in enumerate(indices):
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_idx)
+            ret, frame = cap.read()
+            if not ret:
+                continue
+            cv2.imwrite(os.path.join(output_dir, f"cv_{idx:03d}.jpg"), frame)
+    else:
+        cap.release()
+        raise RuntimeError("Unable to determine video duration for keyframes.")
+    cap.release()
+
+
+def extract_keyframes(input_file, output_dir, target_count=8):
+    clean_keyframe_dir(output_dir)
+    duration = get_video_length(input_file)
+
+    try:
+        extract_keyframes_scene(input_file, output_dir)
+        frames = list_keyframe_files(output_dir)
+        if len(frames) >= max(3, min(target_count, 6)):
+            return frames, "scene"
+    except Exception:
+        frames = []
+
+    clean_keyframe_dir(output_dir)
+    try:
+        extract_keyframes_uniform(input_file, output_dir, target_count=target_count, duration=duration)
+        frames = list_keyframe_files(output_dir)
+        if frames:
+            return frames, "uniform"
+    except Exception:
+        frames = []
+
+    clean_keyframe_dir(output_dir)
+    extract_keyframes_opencv(input_file, output_dir, target_count=target_count)
+    frames = list_keyframe_files(output_dir)
+    return frames, "opencv"
 
 
 
@@ -1470,6 +2693,19 @@ def burn_subtitles(video_path, sub_path, output_path):
         print(f"Error executing FFmpeg command: {e}")
 
 
+def mux_audio(rendered_video_path: str, source_video_path: str, output_path: str):
+    audio_bitrate = get_audio_bitrate(source_video_path)
+    command = (
+        f'ffmpeg -y -i "{rendered_video_path}" -i "{source_video_path}" '
+        f'-c:v libx264 -pix_fmt yuv420p -crf 18 -preset medium '
+        f'-c:a aac -b:a {audio_bitrate} '
+        f'-map 0:v:0 -map 1:a:0? -shortest '
+        f'"{output_path}"'
+    )
+    print("Executing command:", command)
+    subprocess.run(command, shell=True, check=True)
+
+
 # def burn_subtitles(video_path, sub_path, output_path):
 #     """
 #     Burns subtitles into a video using MoviePy and FFmpeg.
@@ -1645,20 +2881,116 @@ def copy_folder(output_folder, new_folder_name):
     shutil.copytree(output_folder, new_folder_name)
     print(f"Folder '{output_folder}' was copied to '{new_folder_name}'")
 
+def media_url_for_path(file_path: str | None) -> str | None:
+    if not file_path:
+        return None
+    try:
+        upload_root = Path(UPLOAD_FOLDER).resolve()
+        resolved = Path(file_path).resolve()
+        relative = resolved.relative_to(upload_root)
+    except Exception:
+        return None
+    return f"/media/{quote(relative.as_posix())}"
 
-class FileUploaderHandler(tornado.web.RequestHandler):
+
+def _load_json_payload(path: str | None) -> dict | None:
+    if not path or not os.path.exists(path):
+        return None
+    try:
+        with open(path, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+    except Exception:
+        return None
+
+
+def _get_video_row(video_id: int) -> tuple | None:
+    ldb.ensure_schema()
+    with ldb.get_cursor() as cur:
+        cur.execute("SELECT id, file_path, title, created_at FROM videos WHERE id = %s", (video_id,))
+        return cur.fetchone()
+
+
+def _get_latest_metadata_payload(video_id: int, lang: str) -> tuple[dict | None, str | None]:
+    row = ldb.get_latest_video_metadata(video_id, lang)
+    if not row:
+        return None, None
+    _, _, status, output_json_path, _, _ = row
+    if status != "completed":
+        return None, None
+    payload = _load_json_payload(output_json_path)
+    return payload, output_json_path
+
+
+def _get_publish_dir(video_path: str) -> str:
+    base_dir = os.path.dirname(video_path)
+    publish_dir = os.path.join(base_dir, "publish")
+    os.makedirs(publish_dir, exist_ok=True)
+    return publish_dir
+
+
+def _pick_publish_video_path(video_id: int, fallback_path: str) -> str:
+    latest_burn = ldb.get_latest_subtitle_burn(video_id)
+    if latest_burn:
+        _, status, output_path, _, _, _, _ = latest_burn
+        if status == "completed" and output_path and os.path.exists(output_path):
+            return output_path
+    return fallback_path
+
+
+def _simplify_metadata_payload(metadata: dict) -> dict:
+    simplified = dict(metadata or {})
+    for key in ("title", "brief_description", "middle_description", "long_description"):
+        if isinstance(simplified.get(key), str):
+            simplified[key] = convert_traditional_to_simplified(simplified[key])
+    tags = simplified.get("tags")
+    if isinstance(tags, list):
+        simplified["tags"] = [
+            convert_traditional_to_simplified(tag) if isinstance(tag, str) else tag for tag in tags
+        ]
+    return simplified
+
+
+class CorsMixin:
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT")
+        self.set_header("Access-Control-Allow-Headers", "content-type")
+
+    def options(self, *args, **kwargs):
+        self.set_status(204)
+        self.finish()
+
+
+class MediaHandler(tornado.web.StaticFileHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS")
+        self.set_header("Access-Control-Allow-Headers", "content-type, range")
+
+    def options(self, *args, **kwargs):
+        self.set_status(204)
+        self.finish()
+
+
+class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
     def initialize(self, upload_folder):
         self.upload_folder = upload_folder
 
     @gen.coroutine
     def post(self):
         # Extract video file from the request
-        video_file = self.request.files['video'][0]
+        video_files = self.request.files.get('video') or self.request.files.get('file')
+        if not video_files:
+            self.set_status(400)
+            return self.write({"error": "video file missing"})
+        video_file = video_files[0]
         original_fname = video_file['filename']
-        print("Filename: ", original_fname)
+        requested_name = self.get_argument('filename', default=None) or original_fname
+        safe_name = os.path.basename(requested_name) or original_fname
+        print("Filename: ", safe_name)
 
         # Determine the basename (without extension) and create a subfolder
-        base_name, _ = os.path.splitext(original_fname)
+        base_name, _ = os.path.splitext(safe_name)
         output_folder = os.path.join(self.upload_folder, base_name)
 
         # Check if the folder already exists
@@ -1677,33 +3009,2069 @@ class FileUploaderHandler(tornado.web.RequestHandler):
         os.makedirs(output_folder, exist_ok=True)
 
         # Define the full path for the incoming video
-        input_file = os.path.join(output_folder, original_fname)
+        input_file = os.path.join(output_folder, safe_name)
 
         # Write the incoming video to the file system
         with open(input_file, 'wb') as f:
             f.write(video_file['body'])
 
+        # Save a row in the database for the uploaded video
+        title = self.get_argument("title", default=None) or base_name
+        source = _normalize_video_source(self.get_argument("source", default=None)) or "upload"
+        try:
+            ldb.ensure_schema()
+            video_id = ldb.add_video(input_file, title, source)
+        except Exception as e:
+            self.set_status(500)
+            return self.write({
+                "error": "failed to save video in database",
+                "details": str(e),
+            })
+
+        _enqueue_preview_proxy(video_id, input_file)
+
         # Respond with the path of the saved file
         self.write({
             'status': 'success',
-            'message': f'File {original_fname} uploaded successfully.',
-            'file_path': input_file
+            'message': f'File {safe_name} uploaded successfully.',
+            'file_path': input_file,
+            'media_url': media_url_for_path(input_file),
+            'video_id': video_id,
         })
+
+
+class LanguagesHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self):
+        self.write({"languages": list_languages()})
+
+
+class GrammarPaletteHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, lang):
+        palette = load_grammar_palette(lang)
+        if not palette:
+            self.set_status(404)
+            return self.write({"error": "palette not found"})
+        self.write(palette)
+
+
+class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, key):
+        ldb.ensure_schema()
+        if key not in {
+            "translation_style",
+            "translation_languages",
+            "burn_layout",
+            "video_prompt",
+            "video_prompt_history",
+            "video_spec_history",
+            "video_prompt_text_history",
+            "video_prompt_result_history",
+            "video_idea_history",
+        }:
+            self.set_status(404)
+            return self.write({"error": "unknown settings key"})
+        saved = ldb.get_ui_preference(key)
+        if key == "translation_style":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_TRANSLATION_STYLE})
+            return self.write({"key": key, "value": _sanitize_translation_style(saved)})
+        if key == "burn_layout":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_BURN_LAYOUT})
+            return self.write({"key": key, "value": _sanitize_burn_layout(saved)})
+        if key == "video_prompt":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_VIDEO_PROMPT_SPEC})
+            return self.write({"key": key, "value": _sanitize_video_prompt_spec(saved)})
+        if key == "video_prompt_history":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_VIDEO_PROMPT_HISTORY})
+            return self.write({"key": key, "value": _sanitize_video_prompt_history(saved)})
+        if key in {"video_spec_history", "video_prompt_text_history", "video_prompt_result_history", "video_idea_history"}:
+            return self.write({"key": key, "value": _sanitize_history_list(saved)})
+        if not saved:
+            return self.write({"key": key, "value": DEFAULT_TRANSLATION_LANGUAGES})
+        return self.write({"key": key, "value": _sanitize_translation_languages(saved)})
+
+    def post(self, key):
+        ldb.ensure_schema()
+        if key not in {
+            "translation_style",
+            "translation_languages",
+            "burn_layout",
+            "video_prompt",
+            "video_prompt_history",
+            "video_spec_history",
+            "video_prompt_text_history",
+            "video_prompt_result_history",
+            "video_idea_history",
+        }:
+            self.set_status(404)
+            return self.write({"error": "unknown settings key"})
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+        if key == "translation_style":
+            cleaned = _sanitize_translation_style(data)
+        elif key == "burn_layout":
+            cleaned = _sanitize_burn_layout(data)
+        elif key == "video_prompt":
+            cleaned = _sanitize_video_prompt_spec(data)
+        elif key == "video_prompt_history":
+            cleaned = _sanitize_video_prompt_history(data)
+        elif key in {"video_spec_history", "video_prompt_text_history", "video_prompt_result_history", "video_idea_history"}:
+            cleaned = _sanitize_history_list(data)
+        else:
+            cleaned = _sanitize_translation_languages(data)
+        ldb.set_ui_preference(key, cleaned)
+        self.write({"key": key, "value": cleaned})
+
+
+class VideosHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self):
+        # Return recent videos from DB
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute(
+                "SELECT id, file_path, title, created_at, source FROM videos ORDER BY id DESC LIMIT 100"
+            )
+            rows = cur.fetchall()
+
+        proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+
+        def preview_media_url(video_id: int, file_path: str) -> str | None:
+            proxy_path = os.path.join(proxies_dir, f"video_{video_id}_proxy.mp4")
+            if os.path.exists(proxy_path):
+                return media_url_for_path(proxy_path)
+            return media_url_for_path(file_path)
+
+        videos = [
+            {
+                "id": r[0],
+                "file_path": r[1],
+                "media_url": media_url_for_path(r[1]),
+                "preview_media_url": preview_media_url(r[0], r[1]),
+                "title": r[2],
+                "created_at": r[3].isoformat() if r[3] else None,
+                "source": r[4],
+            }
+            for r in rows
+        ]
+        self.write({"videos": videos})
+
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid json"})
+        file_path = data.get("file_path")
+        title = data.get("title")
+        source = _normalize_video_source(data.get("source"))
+        if not file_path:
+            self.set_status(400)
+            return self.write({"error": "file_path required"})
+        ldb.ensure_schema()
+        vid = ldb.add_video(file_path, title, source)
+        self.write({"id": vid})
+
+
+class VideoDetailHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute(
+                "SELECT id, file_path, title, created_at, source FROM videos WHERE id = %s",
+                (video_id_i,),
+            )
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "not found"})
+
+        proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+        proxy_path = os.path.join(proxies_dir, f"video_{row[0]}_proxy.mp4")
+        preview_url = media_url_for_path(proxy_path) if os.path.exists(proxy_path) else media_url_for_path(row[1])
+        self.write({
+            "id": row[0],
+            "file_path": row[1],
+            "media_url": media_url_for_path(row[1]),
+            "preview_media_url": preview_url,
+            "title": row[2],
+            "created_at": row[3].isoformat() if row[3] else None,
+            "source": row[4],
+        })
+
+
+class VideoProxyHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+
+        input_path = row[0]
+        if not input_path or not os.path.exists(input_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+        os.makedirs(proxies_dir, exist_ok=True)
+        output_path = os.path.join(proxies_dir, f"video_{video_id_i}_proxy.mp4")
+
+        try:
+            if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(input_path):
+                return self.write({
+                    "video_id": video_id_i,
+                    "file_path": output_path,
+                    "media_url": media_url_for_path(output_path),
+                })
+        except Exception:
+            # If mtime checks fail, just regenerate.
+            pass
+
+        try:
+            _create_preview_proxy(video_id_i, input_path)
+        except subprocess.CalledProcessError as exc:
+            err = exc.stderr.decode("utf-8", errors="replace") if exc.stderr else str(exc)
+            self.set_status(500)
+            return self.write({"error": "proxy transcode failed", "details": err})
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "proxy transcode failed", "details": str(exc)})
+
+        self.write({
+            "video_id": video_id_i,
+            "file_path": output_path,
+            "media_url": media_url_for_path(output_path),
+        })
+
+
+class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        file_path = row[0]
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        input_file = preprocess_if_needed(file_path)
+        base_name, extension = os.path.splitext(os.path.basename(input_file))
+        output_folder = os.path.dirname(input_file)
+        output_json_mixed = f"{output_folder}/{base_name}_mixed.json"
+        output_srt_mixed = f"{output_folder}/{base_name}_mixed.srt"
+        output_md_mixed = f"{output_folder}/{base_name}_mixed.md"
+
+        if not has_audio_stream(input_file):
+            message = "No audio stream detected in video."
+            write_empty_transcription_files(output_json_mixed, output_srt_mixed, output_md_mixed, message)
+            transcription_id = ldb.add_transcription(
+                video_id_i,
+                "mixed",
+                "no_audio",
+                output_json_mixed,
+                output_srt_mixed,
+                output_md_mixed,
+                message,
+            )
+            primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
+            return self.write({
+                "id": transcription_id,
+                "video_id": video_id_i,
+                "status": "no_audio",
+                "error": message,
+                "output_json_path": output_json_mixed,
+                "output_srt_path": output_srt_mixed,
+                "output_md_path": output_md_mixed,
+                "json_url": media_url_for_path(output_json_mixed),
+                "srt_url": media_url_for_path(output_srt_mixed),
+                "md_url": media_url_for_path(output_md_mixed),
+                "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
+                "primary_language": primary_lang,
+                "language_summary": language_summary,
+            })
+
+        # Clear stale outputs to avoid returning old data if transcription fails.
+        for path in (output_json_mixed, output_srt_mixed, output_md_mixed):
+            if os.path.exists(path):
+                os.remove(path)
+
+        try:
+            autocut_processor = AutocutProcessor(input_file, output_folder, base_name, extension)
+            autocut_processor.run_autocut("mixed", 1)
+
+            if not os.path.exists(output_json_mixed) or not os.path.exists(output_srt_mixed):
+                message = "Transcription completed but output files were not found."
+                transcription_id = ldb.add_transcription(
+                    video_id_i,
+                    "mixed",
+                    "failed",
+                    None,
+                    None,
+                    None,
+                    message,
+                )
+                self.set_status(500)
+                return self.write({"error": message, "id": transcription_id})
+
+            write_markdown_from_srt(output_srt_mixed, output_md_mixed)
+            transcription_id = ldb.add_transcription(
+                video_id_i,
+                "mixed",
+                "completed",
+                output_json_mixed,
+                output_srt_mixed,
+                output_md_mixed,
+                None,
+            )
+            primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
+            self.write({
+                "id": transcription_id,
+                "video_id": video_id_i,
+                "status": "completed",
+                "output_json_path": output_json_mixed,
+                "output_srt_path": output_srt_mixed,
+                "output_md_path": output_md_mixed,
+                "json_url": media_url_for_path(output_json_mixed),
+                "srt_url": media_url_for_path(output_srt_mixed),
+                "md_url": media_url_for_path(output_md_mixed),
+                "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
+                "primary_language": primary_lang,
+                "language_summary": language_summary,
+            })
+        except Exception as e:
+            transcription_id = ldb.add_transcription(
+                video_id_i,
+                "mixed",
+                "failed",
+                None,
+                None,
+                None,
+                str(e),
+            )
+            self.set_status(500)
+            return self.write({"error": "transcription failed", "details": str(e), "id": transcription_id})
+
+
+class VideoTranscriptionHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        row = ldb.get_latest_transcription(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "transcription not found"})
+        (
+            transcription_id,
+            language_code,
+            status,
+            output_json_path,
+            output_srt_path,
+            output_md_path,
+            error,
+            created_at,
+        ) = row
+        primary_lang, language_summary = _summarize_transcription_languages(output_json_path)
+        self.write({
+            "id": transcription_id,
+            "video_id": video_id_i,
+            "language_code": language_code,
+            "status": status,
+            "output_json_path": output_json_path,
+            "output_srt_path": output_srt_path,
+            "output_md_path": output_md_path,
+            "json_url": media_url_for_path(output_json_path),
+            "srt_url": media_url_for_path(output_srt_path),
+            "md_url": media_url_for_path(output_md_path),
+            "error": error,
+            "created_at": created_at.isoformat() if created_at else None,
+            "preview_text": build_transcription_preview(output_md_path, output_srt_path),
+            "primary_language": primary_lang,
+            "language_summary": language_summary,
+        })
+
+
+class VideoCaptionHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        file_path = row[0]
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        input_file = preprocess_if_needed(file_path)
+        base_name, extension = os.path.splitext(os.path.basename(input_file))
+        output_folder = os.path.dirname(input_file)
+        output_json_caption = f"{output_folder}/{base_name}_caption.json"
+        output_srt_caption = f"{output_folder}/{base_name}_caption.srt"
+        output_md_caption = f"{output_folder}/{base_name}_caption.md"
+
+        for path in (output_json_caption, output_srt_caption, output_md_caption):
+            if os.path.exists(path):
+                os.remove(path)
+
+        num_frames_raw = self.get_argument("num_frames", default="7")
+        try:
+            num_frames = max(1, int(num_frames_raw))
+        except Exception:
+            num_frames = 7
+
+        try:
+            captioner = VideoCaptioner(input_file, output_folder, num_frames=num_frames)
+            if not captioner.is_configured():
+                message = "Captioner not configured. Set LAZYEDIT_CAPTION_PYTHON and script paths."
+                caption_id = ldb.add_frame_caption(
+                    video_id_i,
+                    "not_configured",
+                    None,
+                    None,
+                    None,
+                    message,
+                )
+                return self.write({
+                    "error": message,
+                    "id": caption_id,
+                    "status": "not_configured",
+                    "preview_text": message,
+                })
+            captioner.run_captioning()
+
+            if not os.path.exists(output_json_caption) or not os.path.exists(output_srt_caption):
+                latest_srt, latest_json = find_latest_caption_outputs(output_folder, base_name)
+                if latest_srt and not os.path.exists(output_srt_caption):
+                    shutil.copy2(latest_srt, output_srt_caption)
+                if latest_json and not os.path.exists(output_json_caption):
+                    shutil.copy2(latest_json, output_json_caption)
+                if not os.path.exists(output_json_caption) or not os.path.exists(output_srt_caption):
+                    message = "Captioning completed but output files were not found."
+                    caption_id = ldb.add_frame_caption(
+                        video_id_i,
+                        "failed",
+                        None,
+                        None,
+                        None,
+                        message,
+                    )
+                    self.set_status(500)
+                    return self.write({"error": message, "id": caption_id})
+
+            error_message = None
+            if captioner.last_error:
+                error_message = captioner.last_error
+                with open(output_md_caption, "w", encoding="utf-8") as md_file:
+                    md_file.write(f"Captioning failed: {error_message}\n")
+                status = "failed"
+            else:
+                write_markdown_from_srt(
+                    output_srt_caption,
+                    output_md_caption,
+                    empty_message="No captions generated for this video.",
+                )
+                status = "completed"
+                if os.path.getsize(output_srt_caption) == 0:
+                    status = "empty"
+            caption_id = ldb.add_frame_caption(
+                video_id_i,
+                status,
+                output_json_caption,
+                output_srt_caption,
+                output_md_caption,
+                error_message,
+            )
+            frames_payload = build_caption_frame_payload(
+                output_folder,
+                base_name,
+                output_json_caption,
+                output_srt_caption,
+            )
+            self.write({
+                "id": caption_id,
+                "video_id": video_id_i,
+                "status": status,
+                "output_json_path": output_json_caption,
+                "output_srt_path": output_srt_caption,
+                "output_md_path": output_md_caption,
+                "json_url": media_url_for_path(output_json_caption),
+                "srt_url": media_url_for_path(output_srt_caption),
+                "md_url": media_url_for_path(output_md_caption),
+                "preview_text": build_transcription_preview(output_md_caption, output_srt_caption),
+                "error": error_message,
+                "method": captioner.last_method,
+                "frames": frames_payload,
+            })
+        except Exception as e:
+            caption_id = ldb.add_frame_caption(
+                video_id_i,
+                "failed",
+                None,
+                None,
+                None,
+                str(e),
+            )
+            self.set_status(500)
+            return self.write({"error": "captioning failed", "details": str(e), "id": caption_id})
+
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        row = ldb.get_latest_frame_caption(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "caption not found"})
+        (
+            caption_id,
+            status,
+            output_json_path,
+            output_srt_path,
+            output_md_path,
+            error,
+            created_at,
+        ) = row
+        output_folder = None
+        base_name = None
+        if output_srt_path:
+            output_folder = os.path.dirname(output_srt_path)
+            base_name = os.path.splitext(os.path.basename(output_srt_path))[0]
+            if base_name.endswith("_caption"):
+                base_name = base_name[: -len("_caption")]
+        if not base_name:
+            with ldb.get_cursor() as cur:
+                cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+                video_row = cur.fetchone()
+            if video_row and video_row[0]:
+                output_folder = os.path.dirname(video_row[0])
+                base_name = os.path.splitext(os.path.basename(video_row[0]))[0]
+        frames_payload = build_caption_frame_payload(
+            output_folder,
+            base_name,
+            output_json_path,
+            output_srt_path,
+        )
+        self.write({
+            "id": caption_id,
+            "video_id": video_id_i,
+            "status": status,
+            "output_json_path": output_json_path,
+            "output_srt_path": output_srt_path,
+            "output_md_path": output_md_path,
+            "json_url": media_url_for_path(output_json_path),
+            "srt_url": media_url_for_path(output_srt_path),
+            "md_url": media_url_for_path(output_md_path),
+            "error": error,
+            "created_at": created_at.isoformat() if created_at else None,
+            "preview_text": build_transcription_preview(output_md_path, output_srt_path),
+            "frames": frames_payload,
+        })
+
+
+class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        lang = _normalize_metadata_language(self.get_argument("lang", default=None))
+        if not lang:
+            self.set_status(400)
+            return self.write({"error": "lang required"})
+
+        ldb.ensure_schema()
+        row = ldb.get_latest_video_metadata(video_id_i, lang)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "metadata not found"})
+
+        metadata_id, language_code, status, output_json_path, error, created_at = row
+        metadata_payload = None
+        if output_json_path and os.path.exists(output_json_path):
+            try:
+                with open(output_json_path, "r", encoding="utf-8") as handle:
+                    metadata_payload = json.load(handle)
+            except Exception:
+                metadata_payload = None
+
+        self.write({
+            "id": metadata_id,
+            "video_id": video_id_i,
+            "language_code": language_code,
+            "status": status,
+            "output_json_path": output_json_path,
+            "json_url": media_url_for_path(output_json_path),
+            "metadata": metadata_payload,
+            "error": error,
+            "created_at": created_at.isoformat() if created_at else None,
+        })
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        raw_lang = data.get("lang") or data.get("language") or self.get_argument("lang", default=None)
+        lang = _normalize_metadata_language(raw_lang)
+        if not lang:
+            self.set_status(400)
+            return self.write({"error": f"language '{raw_lang}' not supported"})
+
+        def parse_bool(value, default=True):
+            if value is None:
+                return default
+            if isinstance(value, bool):
+                return value
+            value_str = str(value).strip().lower()
+            if value_str in {"1", "true", "yes", "y", "on"}:
+                return True
+            if value_str in {"0", "false", "no", "n", "off"}:
+                return False
+            return default
+
+        use_cache = parse_bool(data.get("use_cache", self.get_argument("use_cache", default=None)), default=True)
+        custom_notes = data.get("notes") or data.get("custom_notes") or ""
+        if not isinstance(custom_notes, str):
+            custom_notes = str(custom_notes)
+
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        file_path = row[0]
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        input_file = preprocess_if_needed(file_path)
+        base_name, _ = os.path.splitext(os.path.basename(input_file))
+        output_folder = os.path.dirname(input_file)
+
+        transcription_row = ldb.get_latest_transcription(video_id_i)
+        if not transcription_row:
+            self.set_status(400)
+            return self.write({"error": "transcription missing; run Transcribe first"})
+        (
+            _transcription_id,
+            _language_code,
+            transcription_status,
+            _output_json_path,
+            output_srt_path,
+            output_md_path,
+            _error,
+            _created_at,
+        ) = transcription_row
+        if transcription_status == "failed":
+            self.set_status(400)
+            return self.write({"error": "transcription failed; run Transcribe again"})
+
+        transcription_text = _read_text_file(output_md_path) or _read_text_file(output_srt_path)
+        if not transcription_text:
+            self.set_status(400)
+            return self.write({"error": "transcription missing; run Transcribe first"})
+
+        caption_text = ""
+        caption_row = ldb.get_latest_frame_caption(video_id_i)
+        if caption_row:
+            _, caption_status, _, caption_srt_path, caption_md_path, _, _ = caption_row
+            if caption_status != "failed":
+                caption_text = _read_text_file(caption_md_path) or _read_text_file(caption_srt_path)
+
+        metadata_dir = os.path.join(output_folder, "metadata", lang)
+        os.makedirs(metadata_dir, exist_ok=True)
+        output_json_path = os.path.join(metadata_dir, f"{base_name}_metadata_{lang}.json")
+        if os.path.exists(output_json_path):
+            os.remove(output_json_path)
+
+        status = "completed"
+        error_message = None
+        metadata_payload = None
+        try:
+            template_dir = os.path.join(METADATA_TEMPLATE_DIR, METADATA_TEMPLATE_MAP.get(lang, ""))
+            generator = Subtitle2Metadata(OpenAI(), use_cache=use_cache, cache_dir="cache/metadata")
+            metadata_payload = generator.generate_metadata_from_template(
+                template_dir=template_dir,
+                transcription_text=transcription_text,
+                caption_text=caption_text,
+                custom_notes=custom_notes,
+                output_path=output_json_path,
+            )
+            with open(output_json_path, "w", encoding="utf-8") as handle:
+                json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
+        except Exception as exc:
+            status = "failed"
+            error_message = str(exc)
+            print(f"Metadata generation failed for {lang}: {error_message}")
+            traceback.print_exc()
+
+        metadata_id = ldb.add_video_metadata(
+            video_id_i,
+            lang,
+            status,
+            output_json_path if status == "completed" else None,
+            error_message,
+        )
+
+        if status != "completed":
+            self.set_status(500)
+            return self.write({"error": "metadata generation failed", "details": error_message, "id": metadata_id})
+
+        self.write({
+            "id": metadata_id,
+            "video_id": video_id_i,
+            "language_code": lang,
+            "status": status,
+            "output_json_path": output_json_path,
+            "json_url": media_url_for_path(output_json_path),
+            "metadata": metadata_payload,
+            "error": error_message,
+        })
+
+
+class VideoCoverHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        row = _get_video_row(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        _, file_path, _, _ = row
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        base_name = os.path.splitext(os.path.basename(file_path))[0]
+        publish_dir = _get_publish_dir(file_path)
+        cover_filename = f"{base_name}_cover.jpg"
+        cover_path = os.path.join(publish_dir, cover_filename)
+        legacy_cover_path = os.path.join(os.path.dirname(file_path), cover_filename)
+        if not os.path.exists(cover_path) and os.path.exists(legacy_cover_path):
+            shutil.copy2(legacy_cover_path, cover_path)
+
+        if not os.path.exists(cover_path):
+            self.set_status(404)
+            return self.write({"error": "cover not found"})
+
+        self.write({
+            "status": "completed",
+            "cover_path": cover_path,
+            "cover_url": media_url_for_path(cover_path),
+        })
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        lang = _normalize_metadata_language(data.get("lang") or data.get("language") or "zh") or "zh"
+        row = _get_video_row(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        _, file_path, _, _ = row
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        metadata_payload, _ = _get_latest_metadata_payload(video_id_i, lang)
+        if not metadata_payload and lang != "en":
+            metadata_payload, _ = _get_latest_metadata_payload(video_id_i, "en")
+        if not metadata_payload:
+            self.set_status(400)
+            return self.write({"error": "metadata missing; generate metadata first"})
+
+        cover_timestamp_raw = metadata_payload.get("cover")
+        if not cover_timestamp_raw:
+            self.set_status(400)
+            return self.write({"error": "cover timestamp missing in metadata"})
+
+        base_name = os.path.splitext(os.path.basename(file_path))[0]
+        publish_dir = _get_publish_dir(file_path)
+        cover_filename = f"{base_name}_cover.jpg"
+        cover_path = os.path.join(publish_dir, cover_filename)
+        cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
+        video_for_cover = _pick_publish_video_path(video_id_i, file_path)
+
+        try:
+            extract_cover(video_for_cover, cover_path, cover_timestamp)
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "cover extraction failed", "details": str(exc)})
+
+        self.write({
+            "status": "completed",
+            "cover_path": cover_path,
+            "cover_url": media_url_for_path(cover_path),
+            "timestamp": cover_timestamp,
+        })
+
+
+class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        platforms_raw = data.get("platforms") or data.get("publish") or {}
+        platform_flags: dict[str, bool] = {}
+        if isinstance(platforms_raw, list):
+            platform_flags = {str(item): True for item in platforms_raw}
+        elif isinstance(platforms_raw, dict):
+            platform_flags = {str(key): bool(value) for key, value in platforms_raw.items()}
+
+        if not platform_flags:
+            platform_flags = {
+                "xiaohongshu": bool(data.get("publish_xhs")),
+                "douyin": bool(data.get("publish_douyin")),
+                "bilibili": bool(data.get("publish_bilibili")),
+                "shipinhao": bool(data.get("publish_shipinhao")),
+                "youtube": bool(data.get("publish_youtube")),
+            }
+
+        has_target = any(platform_flags.values())
+        if not has_target:
+            self.set_status(400)
+            return self.write({"error": "no platforms selected"})
+
+        test_mode = _parse_bool(data.get("test"), default=False)
+        wait_for_result = _parse_bool(data.get("wait"), default=False)
+
+        row = _get_video_row(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        _, file_path, _, _ = row
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        metadata_zh, _ = _get_latest_metadata_payload(video_id_i, "zh")
+        if not metadata_zh:
+            self.set_status(400)
+            return self.write({"error": "Chinese metadata missing; generate metadata first"})
+
+        metadata_en, _ = _get_latest_metadata_payload(video_id_i, "en")
+        if not metadata_en:
+            metadata_en = metadata_zh
+
+        metadata_payload = _simplify_metadata_payload(metadata_zh)
+        metadata_payload["english_version"] = metadata_en
+
+        base_name = os.path.splitext(os.path.basename(file_path))[0]
+        publish_dir = _get_publish_dir(file_path)
+        video_filename = f"{base_name}_highlighted.mp4"
+        cover_filename = f"{base_name}_cover.jpg"
+        metadata_filename = f"{base_name}_metadata.json"
+
+        metadata_payload["video_filename"] = video_filename
+        metadata_payload["cover_filename"] = cover_filename
+
+        video_to_publish = _pick_publish_video_path(video_id_i, file_path)
+        cover_path = os.path.join(publish_dir, cover_filename)
+        if not os.path.exists(cover_path):
+            cover_timestamp_raw = metadata_payload.get("cover") or "00:00:01,000"
+            cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
+            try:
+                extract_cover(video_to_publish, cover_path, cover_timestamp)
+            except Exception as exc:
+                self.set_status(500)
+                return self.write({"error": "cover extraction failed", "details": str(exc)})
+
+        metadata_path = os.path.join(publish_dir, metadata_filename)
+        with open(metadata_path, "w", encoding="utf-8") as handle:
+            json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
+
+        zip_path = os.path.join(publish_dir, f"{base_name}.zip")
+        extra_files = [
+            os.path.join(os.path.dirname(file_path), f"{base_name}_mixed.json"),
+            os.path.join(os.path.dirname(file_path), f"{base_name}_mixed.srt"),
+        ]
+        with zipfile.ZipFile(zip_path, "w") as zipf:
+            zipf.write(video_to_publish, arcname=video_filename)
+            if os.path.exists(cover_path):
+                zipf.write(cover_path, arcname=cover_filename)
+            zipf.write(metadata_path, arcname=metadata_filename)
+            for extra in extra_files:
+                if os.path.exists(extra):
+                    zipf.write(extra, arcname=os.path.basename(extra))
+
+        zip_url = media_url_for_path(zip_path)
+        response_payload = {
+            "status": "ready",
+            "zip_path": zip_path,
+            "zip_url": zip_url,
+            "metadata_path": metadata_path,
+            "cover_path": cover_path if os.path.exists(cover_path) else None,
+            "video_path": video_to_publish,
+            "platforms": platform_flags,
+        }
+
+        if not AUTOPUBLISH_URL:
+            response_payload["warning"] = "autopublish url not configured"
+            return self.write(response_payload)
+
+        params = {
+            "filename": os.path.basename(zip_path),
+            "publish_xhs": str(platform_flags.get("xiaohongshu", False)).lower(),
+            "publish_douyin": str(platform_flags.get("douyin", False)).lower(),
+            "publish_bilibili": str(platform_flags.get("bilibili", False)).lower(),
+            "publish_shipinhao": str(platform_flags.get("shipinhao", False)).lower(),
+            "publish_y2b": str(platform_flags.get("youtube", False)).lower(),
+            "test": str(test_mode).lower(),
+        }
+
+        def _post_zip():
+            with open(zip_path, "rb") as handle:
+                resp = requests.post(
+                    AUTOPUBLISH_URL,
+                    params=params,
+                    data=handle.read(),
+                    headers={"Content-Type": "application/octet-stream"},
+                    timeout=AUTOPUBLISH_TIMEOUT,
+                )
+            return resp
+
+        if wait_for_result:
+            try:
+                resp = _post_zip()
+                response_payload["autopublish_status"] = resp.status_code
+                response_payload["autopublish_response"] = resp.text
+                response_payload["status"] = "published" if resp.ok else "failed"
+            except Exception as exc:
+                response_payload["status"] = "failed"
+                response_payload["autopublish_error"] = str(exc)
+            return self.write(response_payload)
+
+        def _async_worker():
+            try:
+                resp = _post_zip()
+                if not resp.ok:
+                    print(f"Autopublish failed: {resp.status_code} {resp.text}")
+            except Exception as exc:
+                print(f"Autopublish request failed: {exc}")
+
+        threading.Thread(target=_async_worker, daemon=True).start()
+        response_payload["status"] = "queued"
+        self.write(response_payload)
+
+
+class VideoPromptHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        prompt_spec = data.get("prompt_spec") or data.get("spec") or data.get("input") or ""
+        prompt_spec_obj = None
+        if isinstance(prompt_spec, dict):
+            prompt_spec_obj = prompt_spec
+            prompt_spec_text = json.dumps(prompt_spec, ensure_ascii=False, indent=2)
+        elif isinstance(prompt_spec, list):
+            prompt_spec_text = json.dumps(prompt_spec, ensure_ascii=False, indent=2)
+        else:
+            prompt_spec_text = str(prompt_spec)
+            try:
+                parsed = json.loads(prompt_spec_text)
+                if isinstance(parsed, dict):
+                    prompt_spec_obj = parsed
+            except Exception:
+                prompt_spec_obj = None
+
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+        if not os.path.isdir(VIDEO_PROMPT_TEMPLATE_DIR):
+            self.set_status(500)
+            return self.write({"error": "video prompt template missing"})
+
+        try:
+            generator = VideoPromptGenerator(
+                template_dir=VIDEO_PROMPT_TEMPLATE_DIR,
+                use_cache=use_cache,
+                cache_dir="cache/video_prompts",
+            )
+            result = generator.generate(prompt_spec_text)
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "prompt generation failed", "details": str(exc)})
+
+        title = None
+        if isinstance(prompt_spec_obj, dict):
+            title = prompt_spec_obj.get("title") or prompt_spec_obj.get("name")
+
+        self.write({
+            "prompt_spec": prompt_spec_text,
+            "title": result.get("title") or title,
+            "prompt": result.get("prompt"),
+            "negative_prompt": result.get("negative_prompt"),
+            "model": result.get("model"),
+            "size": result.get("size"),
+            "seconds": result.get("seconds"),
+            "result": result,
+        })
+
+
+class VideoSpecHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea_prompt = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea_prompt, str):
+            idea_prompt = str(idea_prompt)
+        idea_prompt = idea_prompt.strip() or "Create an evocative, cinematic short video spec."
+
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+        if not os.path.isdir(VIDEO_SPEC_TEMPLATE_DIR):
+            self.set_status(500)
+            return self.write({"error": "video spec template missing"})
+
+        try:
+            generator = VideoPromptGenerator(
+                template_dir=VIDEO_SPEC_TEMPLATE_DIR,
+                use_cache=use_cache,
+                cache_dir="cache/video_specs",
+            )
+            result = generator.generate(idea_prompt, schema_name="video_spec")
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "spec generation failed", "details": str(exc)})
+
+        spec = _sanitize_video_prompt_spec(result)
+        self.write({"idea": idea_prompt, "spec": spec, "result": result})
+
+
+class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        prompt = data.get("prompt") or ""
+        if not isinstance(prompt, str) or not prompt.strip():
+            self.set_status(400)
+            return self.write({"error": "prompt required"})
+
+        model = str(data.get("model") or "sora-2").strip()
+        if model not in {"sora-2", "sora-2-pro"}:
+            model = "sora-2"
+
+        # OpenAI Sora size options are fixed; normalize legacy UI values.
+        supported_sizes = {"720x1280", "1280x720", "1024x1792", "1792x1024"}
+        legacy_size_map = {
+            # Legacy 1080p selections (unsupported by Sora).
+            "1920x1080": "1792x1024",
+            "1080x1920": "1024x1792",
+            # Legacy low-res 16:9.
+            "1024x576": "1280x720",
+        }
+        size = str(data.get("size") or "1280x720").strip()
+        size = legacy_size_map.get(size, size)
+        if size not in supported_sizes:
+            size = "1280x720"
+
+        try:
+            seconds = int(data.get("seconds") or 8)
+        except Exception:
+            seconds = 8
+
+        # OpenAI Sora currently supports only fixed durations (regardless of model).
+        allowed_seconds = (4, 8, 12)
+        seconds = min(allowed_seconds, key=lambda v: abs(v - seconds))
+
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+        title_input = data.get("title") or data.get("name") or "Generated video"
+        if not isinstance(title_input, str):
+            title_input = str(title_input)
+
+        title_base = _sanitize_title(title_input)
+        prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:8]
+        title = f"{title_base} {prompt_hash}"
+        output_dir = os.path.join(UPLOAD_FOLDER, "generated")
+        os.makedirs(output_dir, exist_ok=True)
+        slug = _slugify(title_base)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_path = os.path.join(output_dir, f"{slug}_{timestamp}_{prompt_hash}.mp4")
+
+        try:
+            output_path = create_poll_and_download(
+                prompt=prompt.strip(),
+                model=model,
+                size=size,
+                seconds=seconds,
+                output=output_path,
+                use_cache=use_cache,
+            )
+        except Exception as exc:
+            print("Video generation failed.")
+            traceback.print_exc()
+            self.set_status(500)
+            return self.write({
+                "error": "video generation failed",
+                "details": str(exc),
+                "requested": {"model": model, "size": size, "seconds": seconds},
+            })
+
+        if not output_path or not os.path.exists(output_path):
+            self.set_status(500)
+            return self.write({"error": "generated video missing", "path": output_path})
+
+        if not media_url_for_path(output_path):
+            dest_name = os.path.basename(output_path) or f"{slug}_{timestamp}_{prompt_hash}.mp4"
+            dest_path = os.path.join(output_dir, dest_name)
+            if os.path.abspath(output_path) != os.path.abspath(dest_path):
+                shutil.copy2(output_path, dest_path)
+            output_path = dest_path
+
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT id FROM videos WHERE file_path = %s", (output_path,))
+            row = cur.fetchone()
+        if row:
+            video_id = row[0]
+        else:
+            video_id = ldb.add_video(output_path, title, "generate")
+
+        self.write({
+            "video_id": video_id,
+            "file_path": output_path,
+            "media_url": media_url_for_path(output_path),
+            "title": title,
+            "model": model,
+            "size": size,
+            "seconds": seconds,
+        })
+
+
+class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        raw_lang = (
+            data.get("language")
+            or data.get("lang")
+            or self.get_argument("lang", default=None)
+            or "ja"
+        )
+        lang = _normalize_translation_language(raw_lang)
+        if not lang:
+            self.set_status(400)
+            return self.write({"error": f"language '{raw_lang}' not supported yet"})
+
+        def parse_bool(value, default=True):
+            if value is None:
+                return default
+            if isinstance(value, bool):
+                return value
+            value_str = str(value).strip().lower()
+            if value_str in {"1", "true", "yes", "y", "on"}:
+                return True
+            if value_str in {"0", "false", "no", "n", "off"}:
+                return False
+            return default
+
+        use_cache = parse_bool(
+            data.get("use_cache", self.get_argument("use_cache", default=None)),
+            default=True,
+        )
+
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        file_path = row[0]
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        input_file = preprocess_if_needed(file_path)
+        base_name, _ = os.path.splitext(os.path.basename(input_file))
+        output_folder = os.path.dirname(input_file)
+        input_json, input_srt = find_latest_transcription_outputs(output_folder, base_name)
+        if not input_json or not input_srt or not os.path.exists(input_json) or not os.path.exists(input_srt):
+            self.set_status(400)
+            return self.write({"error": "transcription missing; run Transcribe first"})
+
+        translations_dir = os.path.join(output_folder, "translations", lang)
+        os.makedirs(translations_dir, exist_ok=True)
+        traditional_json_path = None
+        if lang == "ja":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.srt")
+            output_ass_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.ass")
+        elif lang == "en":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_en.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_en.srt")
+            output_ass_path = None
+        elif lang == "ar":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_ar.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_ar.srt")
+            output_ass_path = None
+        elif lang == "vi":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_vi.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_vi.srt")
+            output_ass_path = None
+        elif lang == "ko":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_ko.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_ko.srt")
+            output_ass_path = None
+        elif lang == "es":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_es.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_es.srt")
+            output_ass_path = None
+        elif lang == "fr":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_fr.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_fr.srt")
+            output_ass_path = None
+        elif lang == "ru":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_ru.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_ru.srt")
+            output_ass_path = None
+        elif lang == "yue":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_yue.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_yue.srt")
+            output_ass_path = None
+        elif lang == "zh-Hant":
+            output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hant.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hant.srt")
+            output_ass_path = None
+        else:
+            output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hans.json")
+            output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hans.srt")
+            output_ass_path = None
+            traditional_dir = os.path.join(output_folder, "translations", "zh-Hant")
+            traditional_json_path = os.path.join(traditional_dir, f"{base_name}_zh_hant.json")
+
+        for path in (output_json_path, output_srt_path, output_ass_path):
+            if path and os.path.exists(path):
+                os.remove(path)
+
+        try:
+            video_length = get_video_length(input_file)
+            video_width, video_height = get_video_resolution(input_file)
+            translator = SubtitlesTranslator(
+                OpenAI(),
+                input_json_path=input_json,
+                input_sub_path=input_srt,
+                output_json_path=output_json_path,
+                output_sub_path=output_srt_path,
+                video_length=video_length,
+                video_width=video_width,
+                video_height=video_height,
+                use_cache=use_cache,
+            )
+            json_items = []
+            if lang == "ja":
+                ruby_items, plain_items, json_items = translator.process_japanese_furigana_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                translator.save_translated_subtitles_to_ass_path(ruby_items, output_ass_path)
+            elif lang == "en":
+                plain_items, json_items = translator.process_english_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            elif lang == "ar":
+                plain_items, json_items = translator.process_arabic_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            elif lang == "vi":
+                plain_items, json_items = translator.process_vietnamese_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            elif lang == "ko":
+                plain_items, json_items = translator.process_korean_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            elif lang == "es":
+                plain_items, json_items = translator.process_spanish_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            elif lang == "fr":
+                plain_items, json_items = translator.process_french_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            elif lang == "ru":
+                plain_items, json_items = translator.process_russian_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            elif lang == "yue":
+                plain_items, json_items = translator.process_cantonese_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            elif lang == "zh-Hant":
+                plain_items, json_items = translator.process_chinese_traditional_translation_single_pass()
+                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+            else:
+                traditional_items = None
+                if use_cache and traditional_json_path and os.path.exists(traditional_json_path):
+                    try:
+                        with open(traditional_json_path, "r", encoding="utf-8") as handle:
+                            data = json.load(handle)
+                        if isinstance(data, list):
+                            traditional_items = data
+                    except Exception:
+                        traditional_items = None
+
+                if traditional_items is None:
+                    plain_items, json_items = translator.process_chinese_traditional_translation_single_pass()
+                    traditional_items = json_items
+                else:
+                    plain_items = traditional_items
+                    json_items = traditional_items
+
+                simplified_plain_items = convert_items_to_simplified(plain_items)
+                simplified_json_items = convert_items_to_simplified(json_items)
+                translator.save_translated_subtitles_to_json_path(simplified_json_items, output_json_path)
+                translator.save_translated_subtitles_to_srt_path(simplified_plain_items, output_srt_path)
+                json_items = simplified_json_items
+
+            status = "completed" if json_items else "empty"
+            error_message = None
+        except Exception as e:
+            status = "failed"
+            error_message = str(e)
+
+        translation_id = ldb.add_subtitle_translation(
+            video_id_i,
+            lang,
+            status,
+            output_json_path if status != "failed" else None,
+            output_srt_path if status != "failed" else None,
+            output_ass_path if status != "failed" else None,
+            error_message,
+        )
+        if status == "failed":
+            self.set_status(500)
+            return self.write({"error": "translation failed", "details": error_message, "id": translation_id})
+
+        self.write({
+            "id": translation_id,
+            "video_id": video_id_i,
+            "language_code": lang,
+            "status": status,
+            "output_json_path": output_json_path,
+            "output_srt_path": output_srt_path,
+            "output_ass_path": output_ass_path,
+            "json_url": media_url_for_path(output_json_path),
+            "srt_url": media_url_for_path(output_srt_path),
+            "ass_url": media_url_for_path(output_ass_path),
+            "preview_text": build_srt_preview_with_timestamps(output_srt_path),
+            "error": error_message,
+        })
+
+
+class VideoTranslationsHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        rows = ldb.get_subtitle_translations_for_video(video_id_i)
+        seen_languages = set()
+        translations = []
+        for row in rows:
+            (
+                translation_id,
+                language_code,
+                status,
+                output_json_path,
+                output_srt_path,
+                output_ass_path,
+                error,
+                created_at,
+            ) = row
+            if language_code in seen_languages:
+                continue
+            seen_languages.add(language_code)
+            translations.append({
+                "id": translation_id,
+                "video_id": video_id_i,
+                "language_code": language_code,
+                "status": status,
+                "output_json_path": output_json_path,
+                "output_srt_path": output_srt_path,
+                "output_ass_path": output_ass_path,
+                "json_url": media_url_for_path(output_json_path),
+                "srt_url": media_url_for_path(output_srt_path),
+                "ass_url": media_url_for_path(output_ass_path),
+                "error": error,
+                "created_at": created_at.isoformat() if created_at else None,
+                "preview_text": build_srt_preview_with_timestamps(output_srt_path),
+            })
+        self.write({"translations": translations})
+
+
+class VideoTranslationHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        lang = self.get_argument("lang", default=None)
+        if not lang:
+            self.set_status(400)
+            return self.write({"error": "lang required"})
+        lang = _normalize_translation_language(lang)
+        if not lang:
+            self.set_status(400)
+            return self.write({"error": "unsupported lang"})
+        ldb.ensure_schema()
+        row = ldb.get_latest_subtitle_translation(video_id_i, lang)
+        if not row and lang == "zh-Hant":
+            row = ldb.get_latest_subtitle_translation(video_id_i, "zh")
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "translation not found"})
+        (
+            translation_id,
+            language_code,
+            status,
+            output_json_path,
+            output_srt_path,
+            output_ass_path,
+            error,
+            created_at,
+        ) = row
+        self.write({
+            "id": translation_id,
+            "video_id": video_id_i,
+            "language_code": language_code,
+            "status": status,
+            "output_json_path": output_json_path,
+            "output_srt_path": output_srt_path,
+            "output_ass_path": output_ass_path,
+            "json_url": media_url_for_path(output_json_path),
+            "srt_url": media_url_for_path(output_srt_path),
+            "ass_url": media_url_for_path(output_ass_path),
+            "error": error,
+            "created_at": created_at.isoformat() if created_at else None,
+            "preview_text": build_srt_preview_with_timestamps(output_srt_path),
+        })
+
+
+class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        ldb.ensure_schema()
+        row = ldb.get_latest_subtitle_burn(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "burn not found"})
+        burn_id, status, output_path, progress, config, error, created_at = row
+        self.write({
+            "id": burn_id,
+            "video_id": video_id_i,
+            "status": status,
+            "output_path": output_path,
+            "output_url": media_url_for_path(output_path),
+            "progress": progress,
+            "config": config,
+            "error": error,
+            "created_at": created_at.isoformat() if created_at else None,
+        })
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        layout_config = _sanitize_burn_layout(data.get("layout") or data.get("slots") or data)
+        slots_config = layout_config.get("slots") or []
+        romaji_enabled = bool(layout_config.get("romajiEnabled", True))
+        pinyin_enabled = bool(layout_config.get("pinyinEnabled", True))
+
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        video_path = row[0]
+        if not video_path or not os.path.exists(video_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        output_folder = os.path.dirname(video_path)
+        base_name = os.path.splitext(os.path.basename(video_path))[0]
+        speaker_output_dir = os.path.join(output_folder, "burn")
+        transcription_row = ldb.get_latest_transcription(video_id_i)
+        speaker_map: dict[tuple[str, str], str] = {}
+        if transcription_row:
+            transcription_json_path = transcription_row[3]
+            speaker_map = _build_transcription_language_map(transcription_json_path)
+
+        assignments: list[BurnSlotConfig] = []
+        for slot in slots_config:
+            if not isinstance(slot, dict):
+                continue
+            language = slot.get("language")
+            slot_id = int(slot.get("slot") or 0)
+            romaji = slot.get("romaji") if isinstance(slot.get("romaji"), bool) else True
+            pinyin = slot.get("pinyin") if isinstance(slot.get("pinyin"), bool) else True
+            ipa = slot.get("ipa") if isinstance(slot.get("ipa"), bool) else False
+            jyutping = slot.get("jyutping") if isinstance(slot.get("jyutping"), bool) else False
+            romaja = slot.get("romaja") if isinstance(slot.get("romaja"), bool) else False
+            arabic_translit = slot.get("arabicTranslit") if isinstance(slot.get("arabicTranslit"), bool) else False
+            try:
+                font_scale = float(slot.get("fontScale", 1.0))
+            except Exception:
+                font_scale = 1.0
+            font_scale = min(max(font_scale, 0.6), 2.5)
+            if not language or slot_id <= 0:
+                continue
+
+            lang = _normalize_translation_language(language)
+            if not lang:
+                continue
+
+            translation_row = ldb.get_latest_subtitle_translation(video_id_i, lang)
+            if not translation_row and lang == "zh-Hant":
+                translation_row = ldb.get_latest_subtitle_translation(video_id_i, "zh")
+            if not translation_row:
+                self.set_status(400)
+                return self.write({"error": f"translation missing for {lang}"})
+            _, _, status, output_json_path, _, _, error, _ = translation_row
+            if status != "completed" or not output_json_path or not os.path.exists(output_json_path):
+                self.set_status(400)
+                return self.write({"error": f"translation not ready for {lang}", "details": error})
+
+            if lang in {"zh-Hant", "zh-Hans"}:
+                text_key = "zh"
+            else:
+                text_key = lang
+
+            palette = load_grammar_palette(lang)
+            auto_ruby = lang == "ja"
+            speaker_json_path = _prepare_speaker_json(
+                output_json_path,
+                speaker_output_dir,
+                lang,
+                text_key,
+                speaker_map,
+            )
+            assignments.append(
+                BurnSlotConfig(
+                    slot_id=slot_id,
+                    language=lang,
+                    json_path=speaker_json_path,
+                    text_key=text_key,
+                    ruby_key="ruby" if lang == "ja" else None,
+                    palette=palette,
+                    auto_ruby=auto_ruby,
+                    strip_kana=lang == "ja",
+                    font_scale=font_scale,
+                    kana_romaji=romaji and lang == "ja",
+                    pinyin=pinyin and lang in {"zh", "zh-Hant", "zh-Hans"},
+                    ipa=ipa and lang in {"en", "fr"},
+                    jyutping=jyutping and lang == "yue",
+                    korean_romaja=romaja and lang == "ko",
+                    arabic_translit=arabic_translit and lang == "ar",
+                )
+            )
+
+        if not assignments:
+            self.set_status(400)
+            return self.write({"error": "no valid subtitle slots configured"})
+
+        temp_output = os.path.join(output_folder, f"{base_name}_subtitles_render.avi")
+        output_path = os.path.join(output_folder, f"{base_name}_subtitles.mp4")
+        height_ratio = layout_config.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5))
+        rows = layout_config.get("rows", DEFAULT_BURN_LAYOUT.get("rows", 4))
+        cols = layout_config.get("cols", DEFAULT_BURN_LAYOUT.get("cols", 1))
+        lift_ratio = layout_config.get("liftRatio", DEFAULT_BURN_LAYOUT.get("liftRatio", 0.1))
+        lift_slots = layout_config.get("liftSlots", DEFAULT_BURN_LAYOUT.get("liftSlots", 0))
+        ruby_spacing = layout_config.get("rubySpacing", DEFAULT_BURN_LAYOUT.get("rubySpacing", 0.1))
+
+        burn_id = ldb.add_subtitle_burn(
+            video_id_i,
+            "processing",
+            None,
+            layout_config,
+            None,
+            progress=0,
+        )
+
+        def _update_progress(value: int) -> None:
+            try:
+                ldb.update_subtitle_burn_progress(burn_id, value)
+            except Exception:
+                pass
+
+        def _run_burn() -> None:
+            status = "completed"
+            error_message = None
+            try:
+                burn_video_with_slots(
+                    video_path,
+                    temp_output,
+                    assignments,
+                    height_ratio=height_ratio,
+                    rows=rows,
+                    cols=cols,
+                    lift_slots=lift_slots,
+                    lift_ratio=lift_ratio,
+                    ruby_spacing=ruby_spacing,
+                    progress_callback=_update_progress,
+                )
+                mux_audio(temp_output, video_path, output_path)
+            except Exception as exc:
+                status = "failed"
+                error_message = str(exc)
+            finally:
+                if os.path.exists(temp_output):
+                    try:
+                        os.remove(temp_output)
+                    except Exception:
+                        pass
+            if status == "completed":
+                ldb.finalize_subtitle_burn(burn_id, status, output_path, None, progress=100)
+            else:
+                ldb.finalize_subtitle_burn(burn_id, status, None, error_message, progress=0)
+
+        BURN_EXECUTOR.submit(_run_burn)
+
+        created_at = None
+        try:
+            latest = ldb.get_latest_subtitle_burn(video_id_i)
+            if latest and latest[0] == burn_id:
+                created_at = latest[-1]
+        except Exception:
+            created_at = None
+
+        self.write({
+            "id": burn_id,
+            "video_id": video_id_i,
+            "status": "processing",
+            "progress": 0,
+            "output_path": None,
+            "output_url": None,
+            "config": layout_config,
+            "created_at": created_at.isoformat() if created_at else None,
+        })
+
+
+class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        steps_raw = data.get("steps")
+        if isinstance(steps_raw, (list, tuple)):
+            selected_steps = {str(step).lower() for step in steps_raw}
+        else:
+            selected_steps = set()
+
+        def wants(step: str) -> bool:
+            return not selected_steps or step in selected_steps
+
+        needs_transcribe = wants("transcribe") or wants("translate") or wants("burn") or wants("metadata_zh") or wants("metadata_en")
+        needs_translate = wants("translate") or wants("burn")
+        needs_caption = wants("caption") or wants("metadata_zh") or wants("metadata_en")
+
+        translation_languages = _load_translation_languages_setting()
+        burn_layout = _load_burn_layout_setting()
+        notes = data.get("notes") or data.get("custom_notes") or ""
+
+        statuses: dict[str, dict] = {}
+
+        async def call_json(method: str, path: str, payload: dict | None = None):
+            url = f"http://localhost:{PORT}{path}"
+            body = json.dumps(payload).encode("utf-8") if payload is not None else None
+            headers = {"Content-Type": "application/json"} if payload is not None else None
+            request = tornado.httpclient.HTTPRequest(
+                url=url,
+                method=method,
+                body=body,
+                headers=headers,
+                request_timeout=7200,
+            )
+            response = await tornado.httpclient.AsyncHTTPClient().fetch(request, raise_error=False)
+            try:
+                data_out = json.loads(response.body or b"{}")
+            except Exception:
+                data_out = {}
+            return response.code, data_out
+
+        async def mark(step: str, status: str, detail: str | None = None):
+            statuses[step] = {"status": status, "detail": detail}
+
+        if needs_transcribe:
+            await mark("transcribe", "working", "Transcribing")
+            code, payload = await call_json("POST", f"/api/videos/{video_id_i}/transcribe")
+            if code >= 400:
+                await mark("transcribe", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "transcription failed", "steps": statuses})
+            await mark("transcribe", "done", "Completed")
+        else:
+            await mark("transcribe", "skipped", "Skipped")
+
+        if needs_translate:
+            if not translation_languages:
+                await mark("translate", "skipped", "No languages selected")
+            else:
+                await mark("translate", "working", "Translating")
+                for lang in translation_languages:
+                    code, payload = await call_json(
+                        "POST",
+                        f"/api/videos/{video_id_i}/translate",
+                        {"language": lang, "use_cache": True},
+                    )
+                    if code >= 400:
+                        await mark(
+                            "translate",
+                            "error",
+                            payload.get("error") or payload.get("details") or f"Failed: {lang}",
+                        )
+                        self.set_status(500)
+                        return self.write({"error": "translation failed", "steps": statuses})
+                await mark("translate", "done", "Completed")
+        else:
+            await mark("translate", "skipped", "Skipped")
+
+        if wants("burn"):
+            await mark("burn", "working", "Burning subtitles")
+            code, payload = await call_json(
+                "POST",
+                f"/api/videos/{video_id_i}/burn-subtitles",
+                {"layout": burn_layout},
+            )
+            if code >= 400:
+                await mark("burn", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "burn failed", "steps": statuses})
+
+            while True:
+                await gen.sleep(2)
+                code, status_payload = await call_json("GET", f"/api/videos/{video_id_i}/burn-subtitles")
+                if code >= 400:
+                    await mark("burn", "error", status_payload.get("error") or "Failed")
+                    self.set_status(500)
+                    return self.write({"error": "burn failed", "steps": statuses})
+                if status_payload.get("status") == "processing":
+                    continue
+                if status_payload.get("status") == "completed":
+                    await mark("burn", "done", "Completed")
+                    break
+                await mark("burn", "error", status_payload.get("error") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "burn failed", "steps": statuses})
+        else:
+            await mark("burn", "skipped", "Skipped")
+
+        if wants("keyframes"):
+            await mark("keyframes", "working", "Extracting")
+            code, payload = await call_json("POST", f"/api/videos/{video_id_i}/keyframes")
+            if code >= 400:
+                await mark("keyframes", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "keyframes failed", "steps": statuses})
+            await mark("keyframes", "done", "Completed")
+        else:
+            await mark("keyframes", "skipped", "Skipped")
+
+        if needs_caption:
+            await mark("caption", "working", "Captioning")
+            code, payload = await call_json("POST", f"/api/videos/{video_id_i}/caption")
+            if code >= 400:
+                await mark("caption", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "caption failed", "steps": statuses})
+            await mark("caption", "done", "Completed")
+        else:
+            await mark("caption", "skipped", "Skipped")
+
+        if wants("metadata_zh"):
+            await mark("metadata_zh", "working", "Generating")
+            code, payload = await call_json(
+                "POST",
+                f"/api/videos/{video_id_i}/metadata",
+                {"lang": "zh", "use_cache": True, "notes": notes},
+            )
+            if code >= 400:
+                await mark("metadata_zh", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "metadata zh failed", "steps": statuses})
+            await mark("metadata_zh", "done", "Completed")
+        else:
+            await mark("metadata_zh", "skipped", "Skipped")
+
+        if wants("metadata_en"):
+            await mark("metadata_en", "working", "Generating")
+            code, payload = await call_json(
+                "POST",
+                f"/api/videos/{video_id_i}/metadata",
+                {"lang": "en", "use_cache": True, "notes": notes},
+            )
+            if code >= 400:
+                await mark("metadata_en", "error", payload.get("error") or payload.get("details") or "Failed")
+                self.set_status(500)
+                return self.write({"error": "metadata en failed", "steps": statuses})
+            await mark("metadata_en", "done", "Completed")
+        else:
+            await mark("metadata_en", "skipped", "Skipped")
+
+        self.write({"video_id": video_id_i, "steps": statuses})
+
+class VideoKeyframesHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        file_path = row[0]
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        input_file = preprocess_if_needed(file_path)
+        base_name, _ = os.path.splitext(os.path.basename(input_file))
+        output_folder = os.path.dirname(input_file)
+        output_dir = os.path.join(output_folder, "keyframes")
+
+        target_count_raw = self.get_argument("count", default="8")
+        try:
+            target_count = max(1, int(target_count_raw))
+        except Exception:
+            target_count = 8
+
+        try:
+            frames, method = extract_keyframes(input_file, output_dir, target_count=target_count)
+            if not frames:
+                message = "Keyframe extraction produced no frames."
+                extract_id = ldb.add_keyframe_extraction(
+                    video_id_i,
+                    "failed",
+                    output_dir,
+                    0,
+                    message,
+                )
+                self.set_status(500)
+                return self.write({"error": message, "id": extract_id})
+
+            frame_urls = [media_url_for_path(path) for path in frames if media_url_for_path(path)]
+            extract_id = ldb.add_keyframe_extraction(
+                video_id_i,
+                "completed",
+                output_dir,
+                len(frame_urls),
+                None,
+            )
+            self.write({
+                "id": extract_id,
+                "video_id": video_id_i,
+                "status": "completed",
+                "frame_count": len(frame_urls),
+                "output_dir": output_dir,
+                "frame_urls": frame_urls,
+                "method": method,
+            })
+        except Exception as e:
+            extract_id = ldb.add_keyframe_extraction(
+                video_id_i,
+                "failed",
+                output_dir,
+                0,
+                str(e),
+            )
+            self.set_status(500)
+            return self.write({"error": "keyframe extraction failed", "details": str(e), "id": extract_id})
+
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        row = ldb.get_latest_keyframe_extraction(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "keyframes not found"})
+        extract_id, status, output_dir, frame_count, error, created_at = row
+        frames = list_keyframe_files(output_dir)
+        frame_urls = [media_url_for_path(path) for path in frames if media_url_for_path(path)]
+        self.write({
+            "id": extract_id,
+            "video_id": video_id_i,
+            "status": status,
+            "output_dir": output_dir,
+            "frame_count": frame_count if frame_count is not None else len(frame_urls),
+            "frame_urls": frame_urls,
+            "error": error,
+            "created_at": created_at.isoformat() if created_at else None,
+        })
+
+
+class CaptionsHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        rows = ldb.get_captions_for_video(video_id_i)
+        caps = [{"id": r[0], "language_code": r[1], "subtitle_path": r[2]} for r in rows]
+        self.write({"captions": caps})
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid json"})
+        lang = data.get("language_code")
+        path = data.get("subtitle_path")
+        if not (lang and path):
+            self.set_status(400)
+            return self.write({"error": "language_code and subtitle_path required"})
+        ldb.ensure_schema()
+        cid = ldb.add_caption(video_id_i, lang, path)
+        self.write({"id": cid})
 
 
 
 
 @tornado.web.stream_request_body
-class FileUploadHandlerStream(tornado.web.RequestHandler):
+class FileUploadHandlerStream(CorsMixin, tornado.web.RequestHandler):
     def initialize(self, upload_folder):
         self.bytes_received = 0
         self.file = None
         self.file_path = None
+        self.base_name = None
+        self.title = None
+        self.source = None
         self.upload_folder = upload_folder
 
     def prepare(self):
         filename = self.get_argument('filename', default='uploaded_file')
         base_name, _ = os.path.splitext(filename)
+        self.base_name = base_name
+        self.title = self.get_argument("title", default=None) or base_name
+        self.source = _normalize_video_source(self.get_argument("source", default=None)) or "upload"
         output_folder = os.path.join(self.upload_folder, base_name)
 
         # Check if the folder already exists
@@ -1733,10 +5101,22 @@ class FileUploadHandlerStream(tornado.web.RequestHandler):
         if self.file:
             self.file.close()
             self.file = None
+            try:
+                ldb.ensure_schema()
+                video_id = ldb.add_video(self.file_path, self.title, self.source)
+            except Exception as e:
+                self.set_status(500)
+                return self.write({
+                    "error": "failed to save video in database",
+                    "details": str(e),
+                })
+            _enqueue_preview_proxy(video_id, self.file_path)
             response = {
                 'status': 'success',
                 'message': f"Received {self.bytes_received} bytes.",
-                'file_path': self.file_path
+                'file_path': self.file_path,
+                'media_url': media_url_for_path(self.file_path),
+                'video_id': video_id,
             }
             self.write(response)
 
@@ -1994,6 +5374,30 @@ def make_app(upload_folder):
         (r"/upload", FileUploaderHandler, dict(upload_folder=upload_folder)),
         (r"/upload-stream", FileUploadHandlerStream, dict(upload_folder=upload_folder)),
         (r"/video-processing", AutomaticalVideoEditingHandler),
+        # Lightweight JSON APIs for the Expo app
+        (r"/api/languages", LanguagesHandler),
+        (r"/api/grammar-palettes/([A-Za-z0-9_-]+)", GrammarPaletteHandler),
+        (r"/api/ui-settings/([A-Za-z0-9_-]+)", UISettingsHandler),
+        (r"/api/video-specs", VideoSpecHandler),
+        (r"/api/video-prompts", VideoPromptHandler),
+        (r"/api/videos/generate", VideoGenerateHandler),
+        (r"/api/videos", VideosHandler),
+        (r"/api/videos/(\d+)", VideoDetailHandler),
+        (r"/api/videos/(\d+)/proxy", VideoProxyHandler),
+        (r"/api/videos/(\d+)/transcribe", VideoTranscribeHandler),
+        (r"/api/videos/(\d+)/transcription", VideoTranscriptionHandler),
+        (r"/api/videos/(\d+)/caption", VideoCaptionHandler),
+        (r"/api/videos/(\d+)/metadata", VideoMetadataHandler),
+        (r"/api/videos/(\d+)/cover", VideoCoverHandler),
+        (r"/api/videos/(\d+)/keyframes", VideoKeyframesHandler),
+        (r"/api/videos/(\d+)/translate", VideoTranslateHandler),
+        (r"/api/videos/(\d+)/translation", VideoTranslationHandler),
+        (r"/api/videos/(\d+)/translations", VideoTranslationsHandler),
+        (r"/api/videos/(\d+)/burn-subtitles", VideoSubtitleBurnHandler),
+        (r"/api/videos/(\d+)/process", VideoProcessHandler),
+        (r"/api/videos/(\d+)/publish", VideoPublishHandler),
+        (r"/api/videos/(\d+)/captions", CaptionsHandler),
+        (r"/media/(.*)", MediaHandler, {"path": upload_folder}),
     ])
 
 if __name__ == "__main__":
@@ -2001,14 +5405,12 @@ if __name__ == "__main__":
     # os.environ["OPENAI_MODEL"] = "gpt-4-0125-preview"
     os.environ["OPENAI_MODEL"] = "gpt-4o-mini"
     
-    # upload_folder = '/home/lachlan/ProjectsLFS/lazyedit/DATA'  # Folder where files will be uploaded
-    upload_folder = '/home/lachlan/ProjectsM/lazyedit/DATA'  # Folder where files will be uploaded
+    upload_folder = UPLOAD_FOLDER
     app = make_app(upload_folder)
-    app.listen(8081, max_body_size=10*1024 * 1024 * 1024)
+    port = PORT
+    app.listen(port, max_body_size=10*1024 * 1024 * 1024)
+    print(f"LazyEdit backend listening on port {port}")
     tornado.autoreload.start()
     # tornado.autoreload.watch('path/to/config.yaml')
     # tornado.autoreload.watch('path/to/static/file.html')
     tornado.ioloop.IOLoop.current().start()
-
-
-

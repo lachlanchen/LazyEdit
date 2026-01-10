@@ -1,5 +1,6 @@
 import os
 import json
+import hashlib
 import traceback
 from datetime import datetime
 from openai import OpenAI
@@ -45,6 +46,24 @@ class OpenAIRequestJSONBase:
         os.makedirs(cache_dir, exist_ok=True)
         return cache_path
 
+    def build_cache_filename(self, prompt, json_schema, system_content, schema_name, filename=None):
+        payload = json.dumps(
+            {
+                "prompt": prompt,
+                "system": system_content,
+                "schema": json_schema,
+                "schema_name": schema_name,
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        ext = os.path.splitext(filename or "")[1] or ".json"
+        dir_name = os.path.dirname(filename or "")
+        if dir_name:
+            return os.path.join(dir_name, f"{digest}{ext}")
+        return f"{digest}{ext}"
+
     def save_to_cache(self, prompt, response, filename=None):
         file_path = self.get_cache_file_path(prompt, filename=filename)
         with open(file_path, 'w', encoding='utf-8') as file:
@@ -53,9 +72,22 @@ class OpenAIRequestJSONBase:
     def load_from_cache(self, prompt, filename=None):
         file_path = self.get_cache_file_path(prompt, filename=filename)
         if os.path.exists(file_path):
-            with open(file_path, 'r', encoding='utf-8') as file:
-                cached_data = json.load(file)
-                return cached_data["response"]
+            try:
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    cached_data = json.load(file)
+                if not isinstance(cached_data, dict):
+                    raise ValueError("Cache payload is not an object")
+                response = cached_data.get("response")
+                if not isinstance(response, dict):
+                    raise ValueError("Cached response is not an object")
+                return response
+            except (json.JSONDecodeError, ValueError) as exc:
+                print(f"Cache file invalid ({exc}), ignoring: {file_path}")
+                try:
+                    os.remove(file_path)
+                except Exception:
+                    pass
+                return None
         return None
 
     def send_request_with_json_schema(self, prompt, json_schema, system_content="You are an AI.", filename=None, schema_name="response", model=None):
@@ -83,8 +115,16 @@ class OpenAIRequestJSONBase:
 
         print("self.use_cache: ", self.use_cache)
 
+        cache_filename = self.build_cache_filename(
+            prompt=prompt,
+            json_schema=json_schema,
+            system_content=system_content,
+            schema_name=schema_name,
+            filename=filename,
+        )
+
         if self.use_cache:
-            cached_response = self.load_from_cache(prompt, filename=filename)
+            cached_response = self.load_from_cache(prompt, filename=cache_filename)
             if cached_response:
                 print("OpenAI cache found. ")
                 return cached_response
@@ -117,7 +157,7 @@ class OpenAIRequestJSONBase:
                 
                 # Save to cache
                 if self.use_cache:
-                    self.save_to_cache(prompt, parsed_response, filename=filename)
+                    self.save_to_cache(prompt, parsed_response, filename=cache_filename)
                 
                 return parsed_response
 

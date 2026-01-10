@@ -1,0 +1,92 @@
+{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Video title"
+    },
+    "brief_description": {
+      "type": "string",
+      "description": "Brief description of the video"
+    },
+    "middle_description": {
+      "type": "string",
+      "description": "Medium length description of the video"
+    },
+    "long_description": {
+      "type": "string",
+      "description": "Detailed description of the video"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Array of tags related to the video content"
+    },
+    "english_words_to_learn": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "word": {
+            "type": "string",
+            "description": "English word or phrase to learn"
+          },
+          "timestamp_range": {
+            "type": "object",
+            "properties": {
+              "start": {
+                "type": "string",
+                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
+                "description": "Start timestamp in HH:MM:SS,mmm format"
+              },
+              "end": {
+                "type": "string",
+                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
+                "description": "End timestamp in HH:MM:SS,mmm format"
+              }
+            },
+            "required": ["start", "end"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["word", "timestamp_range"],
+        "additionalProperties": false
+      },
+      "description": "English words with timestamps"
+    },
+    "teaser": {
+      "type": "object",
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
+          "description": "Teaser start timestamp in HH:MM:SS,mmm format"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
+          "description": "Teaser end timestamp in HH:MM:SS,mmm format"
+        }
+      },
+      "required": ["start", "end"],
+      "additionalProperties": false,
+      "description": "Timestamp range for teaser"
+    },
+    "cover": {
+      "type": "string",
+      "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
+      "description": "Cover image timestamp in HH:MM:SS,mmm format"
+    }
+  },
+  "required": [
+    "title",
+    "brief_description",
+    "middle_description",
+    "long_description",
+    "tags",
+    "english_words_to_learn",
+    "teaser",
+    "cover"
+  ],
+  "additionalProperties": false
+}

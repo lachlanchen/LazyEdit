@@ -1,0 +1,29 @@
+{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short descriptive title for the video"
+    },
+    "prompt": {
+      "type": "string",
+      "description": "Final production-ready video prompt"
+    },
+    "negative_prompt": {
+      "type": "string",
+      "description": "Short exclusions list"
+    },
+    "size": {
+      "type": "string",
+      "enum": ["720x1280", "1280x720", "1024x1792", "1792x1024"]
+    },
+    "seconds": {
+      "type": "integer",
+      "minimum": 4,
+      "maximum": 12,
+      "enum": [4, 8, 12]
+    }
+  },
+  "required": ["title", "prompt", "negative_prompt", "size", "seconds"],
+  "additionalProperties": false
+}

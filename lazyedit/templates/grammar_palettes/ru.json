@@ -1,0 +1,61 @@
+{
+  "language": "ru",
+  "types": {
+    "noun": {
+      "label": "Noun",
+      "color": "#fde68a"
+    },
+    "pronoun": {
+      "label": "Pronoun",
+      "color": "#fcd34d"
+    },
+    "verb": {
+      "label": "Verb",
+      "color": "#86efac"
+    },
+    "adjective": {
+      "label": "Adjective",
+      "color": "#fdba74"
+    },
+    "adverb": {
+      "label": "Adverb",
+      "color": "#c4b5fd"
+    },
+    "particle": {
+      "label": "Particle",
+      "color": "#93c5fd"
+    },
+    "preposition": {
+      "label": "Preposition",
+      "color": "#67e8f9"
+    },
+    "conjunction": {
+      "label": "Conjunction",
+      "color": "#f9a8d4"
+    },
+    "determiner": {
+      "label": "Determiner",
+      "color": "#fecdd3"
+    },
+    "auxiliary": {
+      "label": "Auxiliary",
+      "color": "#bbf7d0"
+    },
+    "interjection": {
+      "label": "Interjection",
+      "color": "#fde047"
+    },
+    "number": {
+      "label": "Number",
+      "color": "#a7f3d0"
+    },
+    "punctuation": {
+      "label": "Punctuation",
+      "color": "#cbd5f5"
+    },
+    "other": {
+      "label": "Other",
+      "color": "#d1d5db"
+    }
+  }
+}

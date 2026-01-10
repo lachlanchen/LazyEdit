@@ -3,6 +3,7 @@ import re
 from datetime import datetime
 from openai import OpenAI
 import json
+import json5
 import traceback
 from lazyedit.openai_request_json import OpenAIRequestJSONBase, JSONParsingError, JSONValidationError
 import glob
@@ -295,6 +296,62 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
 
         self.validate_metadata(result)
         return result
+
+    def generate_metadata_from_template(
+        self,
+        template_dir: str,
+        transcription_text: str,
+        caption_text: str,
+        custom_notes: str | None,
+        output_path: str,
+        schema_name: str = "video_metadata",
+    ):
+        prompt_path = os.path.join(template_dir, "prompt.json")
+        schema_path = os.path.join(template_dir, "schema.json")
+        prompt_payload = self._load_json_file(prompt_path)
+        json_schema = self._load_json_file(schema_path)
+
+        system_content = prompt_payload.get("system") or "You are an AI assistant."
+        user_template = prompt_payload.get("user") or ""
+        notes_value = (custom_notes or "").strip() or "None"
+        prompt = self._render_prompt_template(
+            user_template,
+            {
+                "TRANSCRIPTION": transcription_text or "No transcription available.",
+                "CAPTIONS": caption_text or "No keyframe captions available.",
+                "CUSTOM_NOTES": notes_value,
+            },
+        )
+
+        result = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=json_schema,
+            system_content=system_content,
+            filename=output_path,
+            schema_name=schema_name,
+        )
+        self.validate_metadata(result)
+        return result
+
+    @staticmethod
+    def _render_prompt_template(template: str, values: dict[str, str]) -> str:
+        rendered = template
+        for key, value in values.items():
+            rendered = rendered.replace(f"{{{{{key}}}}}", value)
+        return rendered
+
+    @staticmethod
+    def _load_json_file(path: str) -> dict:
+        try:
+            with open(path, "r", encoding="utf-8") as handle:
+                return json.load(handle)
+        except json.JSONDecodeError as exc:
+            print(f"JSON parse error for template {path}: {exc}")
+            try:
+                with open(path, "r", encoding="utf-8") as handle:
+                    return json5.load(handle)
+            except Exception as exc:
+                raise RuntimeError(f"Failed to parse JSON template: {path} ({exc})") from exc
 
 
 if __name__ == "__main__":

@@ -1,0 +1,4 @@
+{
+  "system": "You are an expert Cantonese (yue) subtitle translator.",
+  "user": "You are given subtitle lines as JSON.\nPrevious line: {{PREV_LINE}}\nNext line: {{NEXT_LINE}}\nPrevious translation: {{PREV_TRANSLATION}}\nThis is just for reference and you just focus on the current line.\nFor each line:\n- If text is already Cantonese, return same text back.\n- If text is not Cantonese, translate into colloquial natural Hong Kong Cantonese.\n\nReturn JSON that matches the provided schema.\nRules:\n- Preserve the original start/end timestamps exactly.\n- yue: Cantonese text only in Traditional Chinese characters.\n- Do not add or remove lines.\n\nSubtitles:\n{{SUBTITLES_JSON}}\n"
+}

@@ -1,0 +1,38 @@
+{
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "subject": { "type": "string" },
+    "action": { "type": "string" },
+    "environment": { "type": "string" },
+    "camera": { "type": "string" },
+    "lighting": { "type": "string" },
+    "mood": { "type": "string" },
+    "style": { "type": "string" },
+    "aspectRatio": { "type": "string", "enum": ["16:9", "9:16", "auto"] },
+    "durationSeconds": { "type": "string", "enum": ["4", "8", "12"] },
+    "audioLanguage": { "type": "string", "enum": ["auto", "en", "zh", "ja", "ko", "vi", "ar", "fr", "es"] },
+    "sceneCount": { "type": "string" },
+    "spokenWords": { "type": "string" },
+    "extraRequirements": { "type": "string" },
+    "negative": { "type": "string" }
+  },
+  "required": [
+    "title",
+    "subject",
+    "action",
+    "environment",
+    "camera",
+    "lighting",
+    "mood",
+    "style",
+    "aspectRatio",
+    "durationSeconds",
+    "audioLanguage",
+    "sceneCount",
+    "spokenWords",
+    "extraRequirements",
+    "negative"
+  ],
+  "additionalProperties": false
+}

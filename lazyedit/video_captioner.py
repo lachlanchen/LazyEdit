@@ -9,6 +9,14 @@ import signal
 import time
 import traceback
 
+from config import (
+    CAPTION_FALLBACK_CWD,
+    CAPTION_FALLBACK_SCRIPT,
+    CAPTION_PRIMARY_ROOT,
+    CAPTION_PRIMARY_SCRIPT,
+    CAPTION_PYTHON,
+)
+
 
 # class VideoCaptioner:
 #     def __init__(self, video_path, output_folder, num_frames=3, model_size='L', checkpoint_name='model.pt', temperature=1.0):
@@ -37,7 +45,20 @@ import traceback
 
 
 class VideoCaptioner:
-    def __init__(self, video_path, output_folder, num_frames=3, model_size='L', checkpoint_name='model.pt', temperature=1.0):
+    def __init__(
+        self,
+        video_path,
+        output_folder,
+        num_frames=3,
+        model_size='L',
+        checkpoint_name='model.pt',
+        temperature=1.0,
+        python_path=None,
+        primary_root=None,
+        primary_script=None,
+        fallback_script=None,
+        fallback_cwd=None,
+    ):
         self.video_path = video_path
         self.output_folder = output_folder
         self.num_frames = num_frames
@@ -46,9 +67,60 @@ class VideoCaptioner:
         self.temperature = temperature
         self.caption_srt_path = os.path.splitext(video_path)[0] + "_caption.srt"
         self.caption_json_path = os.path.splitext(video_path)[0] + "_caption.json"
-        self.conda_env_path = "/home/lachlan/miniconda3/envs/caption/bin/python"
-        self.base_command = "/home/lachlan/Projects/vit-gpt2-image-captioning/vit_captioner_video.py"
-        self.alternate_command = "/home/lachlan/Projects/image_captioning/clip-gpt-captioning/src/v2c.py"
+        self.conda_env_path = python_path or CAPTION_PYTHON
+        self.primary_root = primary_root or CAPTION_PRIMARY_ROOT or self._find_primary_root()
+        self.base_command = self._resolve_primary_script(primary_script or CAPTION_PRIMARY_SCRIPT)
+        self.alternate_command = self._resolve_path(fallback_script or CAPTION_FALLBACK_SCRIPT)
+        self.fallback_cwd = (
+            fallback_cwd
+            or CAPTION_FALLBACK_CWD
+            or self._resolve_fallback_cwd(self.alternate_command)
+        )
+        self.last_error = None
+        self.last_method = None
+
+    def is_configured(self):
+        if not self.conda_env_path or not os.path.exists(self.conda_env_path):
+            return False
+        if self.base_command and os.path.exists(self.base_command):
+            return True
+        if self.primary_root and os.path.isdir(self.primary_root):
+            return True
+        return bool(self.alternate_command and os.path.exists(self.alternate_command))
+
+    def _resolve_path(self, path):
+        if not path:
+            return path
+        if os.path.exists(path):
+            return path
+        if "/Projects/" in path:
+            alt = path.replace("/Projects/", "/ProjectsLFS/")
+            if os.path.exists(alt):
+                return alt
+        return path
+
+    def _resolve_primary_script(self, path):
+        resolved = self._resolve_path(path)
+        if resolved and os.path.exists(resolved):
+            return resolved
+        return None
+
+    def _find_primary_root(self):
+        for root in (
+            "/home/lachlan/ProjectsLFS/vit-gpt2-image-captioning",
+            "/home/lachlan/Projects/vit-gpt2-image-captioning",
+        ):
+            if os.path.isdir(root):
+                return root
+        return None
+
+    def _resolve_fallback_cwd(self, script_path):
+        if not script_path:
+            return None
+        script_dir = os.path.dirname(script_path)
+        if os.path.basename(script_dir) == "src":
+            return os.path.dirname(script_dir)
+        return script_dir
 
     def vague_kill(self, command):
         # Kill processes based on the script path only
@@ -62,41 +134,99 @@ class VideoCaptioner:
         print(f"Executing: {kill_command}")
         os.system(kill_command)
 
+    def _build_command(self, script_path):
+        return f"{self.conda_env_path} {script_path} -V \"{self.video_path}\" -N {self.num_frames}"
+
+    def _build_module_command(self):
+        return (
+            f"{self.conda_env_path} -m vit_captioner.cli caption-video "
+            f"-V \"{self.video_path}\" -N {self.num_frames}"
+        )
+
+    def _ensure_fallback_weights_dir(self):
+        if not self.fallback_cwd:
+            return
+        weights_dir = os.path.join(self.fallback_cwd, "weights", "large")
+        os.makedirs(weights_dir, exist_ok=True)
+
+    def _run_command(self, command, cwd=None):
+        env = os.environ.copy()
+        if cwd:
+            existing = env.get("PYTHONPATH")
+            env["PYTHONPATH"] = f"{cwd}:{existing}" if existing else cwd
+        env.setdefault("MPLBACKEND", "Agg")
+        env.setdefault("QT_QPA_PLATFORM", "offscreen")
+        try:
+            return subprocess.run(
+                command,
+                shell=True,
+                check=True,
+                timeout=180,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                cwd=cwd,
+                env=env,
+            )
+        except subprocess.CalledProcessError as e:
+            output = (e.stdout or "").strip()
+            tail = output[-2000:] if output else ""
+            raise RuntimeError(f"{e}. Output: {tail}") from e
+
     def run_captioning(self):
-        # Clear all potential interfering processes initially
-        # self.vague_kill(self.base_command)
-        # self.vague_kill(self.alternate_command)
-        caption_command = f"{self.conda_env_path} {self.base_command} -V \"{self.video_path}\" -N {self.num_frames}"
-        alternative_command = f"{self.conda_env_path} {self.alternate_command} -V \"{self.video_path}\" -N {self.num_frames}"
+        if not self.is_configured():
+            raise RuntimeError(
+                "Captioner not configured. Set LAZYEDIT_CAPTION_PYTHON and script paths."
+            )
+
+        caption_command = None
+        alternative_command = None
+        if self.base_command and os.path.exists(self.base_command):
+            caption_command = self._build_command(self.base_command)
+        elif self.primary_root and os.path.isdir(self.primary_root):
+            caption_command = self._build_module_command()
+        if self.alternate_command and os.path.exists(self.alternate_command):
+            alternative_command = self._build_command(self.alternate_command)
         
         try:
-            print("Executing caption command: ", caption_command)
-            # First attempt to run the base command
-            result = subprocess.run(caption_command, shell=True, check=True, timeout=180)  # 180 seconds = 3 minutes
-            print(f"Captioning completed successfully, output saved to: {self.caption_srt_path}")
-            print(f"Captioning completed successfully, output saved to: {self.caption_json_path}")
-        # except subprocess.TimeoutExpired:
+            if alternative_command:
+                self._ensure_fallback_weights_dir()
+                print("Executing fallback command: ", alternative_command)
+                self._run_command(alternative_command, cwd=self.fallback_cwd)
+                print("Fallback captioning completed successfully.")
+                self.last_method = "fallback"
+                self.last_error = None
+                return
+            raise RuntimeError("Fallback caption script not available.")
         except Exception as e:
 
             traceback.print_exc()
+            self.last_error = str(e)
 
-            self.specific_kill(caption_command)
+            if alternative_command:
+                self.specific_kill(alternative_command)
 
-            print("First command timed out. Trying alternative command.")
+            print("Fallback command failed. Trying primary command.")
 
-            # Alternative command
+            # Primary command
             try:
-                print("Executing alternative command: ", alternative_command)
-                subprocess.run(alternative_command, shell=True, check=True, timeout=180)
-                print("Alternative captioning completed successfully.")
-            # except subprocess.TimeoutExpired:
+                if not caption_command:
+                    raise RuntimeError("Primary caption script not available.")
+                print("Executing primary command: ", caption_command)
+                self._run_command(caption_command, cwd=self.primary_root)
+                print(f"Captioning completed successfully, output saved to: {self.caption_srt_path}")
+                print(f"Captioning completed successfully, output saved to: {self.caption_json_path}")
+                self.last_method = "primary"
+                self.last_error = None
             except Exception as e:
 
                 traceback.print_exc()
+                self.last_error = str(e)
 
-                self.specific_kill(alternative_command)
+                if caption_command:
+                    self.specific_kill(caption_command)
 
-                print("Alternative command timed out. Saving empty file.")
+                print("Primary command failed. Saving empty file.")
                 
                 with open(self.caption_srt_path, 'w') as file:
                     file.write("")  # Create an empty file
@@ -105,8 +235,10 @@ class VideoCaptioner:
                     file.write("")  # Create an empty file
 
 
-        self.specific_kill(caption_command)
-        self.specific_kill(alternative_command)
+        if caption_command:
+            self.specific_kill(caption_command)
+        if alternative_command:
+            self.specific_kill(alternative_command)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Automate video captioning process using a specific conda environment")
