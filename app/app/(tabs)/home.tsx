@@ -199,11 +199,11 @@ export default function HomeScreen() {
   const [statusTone, setStatusTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'upload' | 'generate' | 'remix'>(() => {
+  const [activeTab, setActiveTab] = useState<'upload' | 'generate' | 'remix' | 'api'>(() => {
     if (Platform.OS !== 'web') return 'upload';
     try {
       const saved = localStorage.getItem('lazyedit:homeTab');
-      if (saved === 'upload' || saved === 'generate' || saved === 'remix') return saved;
+      if (saved === 'upload' || saved === 'generate' || saved === 'remix' || saved === 'api') return saved;
     } catch (_err) {
       // ignore storage errors
     }
@@ -1142,13 +1142,14 @@ const HISTORY_KEYS = {
               { key: 'upload', label: t('home_tab_upload') },
               { key: 'generate', label: t('home_tab_generate') },
               { key: 'remix', label: t('home_tab_remix') },
+              { key: 'api', label: t('home_tab_api') },
             ].map((tab) => {
               const isActive = activeTab === tab.key;
               return (
                 <Pressable
                   key={tab.key}
                   style={[styles.tabButton, isActive && styles.tabButtonActive]}
-                  onPress={() => setActiveTab(tab.key as 'upload' | 'generate' | 'remix')}
+                  onPress={() => setActiveTab(tab.key as 'upload' | 'generate' | 'remix' | 'api')}
                 >
                   <Text style={[styles.tabButtonText, isActive && styles.tabButtonTextActive]}>{tab.label}</Text>
                 </Pressable>
@@ -1714,6 +1715,38 @@ const HISTORY_KEYS = {
             </View>
           ) : null}
 
+          {activeTab === 'api' ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{t('api_title')}</Text>
+              <Text style={styles.sectionSubtitle}>{t('api_subtitle')}</Text>
+
+              <View style={styles.apiCard}>
+                <Text style={styles.apiMeta}>{t('api_base_url', { value: API_URL })}</Text>
+              </View>
+
+              <View style={styles.apiCard}>
+                <Text style={styles.apiHeading}>{t('api_upload_title')}</Text>
+                <Text style={styles.apiBody}>{t('api_upload_body')}</Text>
+                <View style={styles.apiCode}>
+                  <Text style={styles.apiCodeText}>{t('api_upload_example', { value: API_URL })}</Text>
+                </View>
+              </View>
+
+              <View style={styles.apiCard}>
+                <Text style={styles.apiHeading}>{t('api_process_title')}</Text>
+                <Text style={styles.apiBody}>{t('api_process_body')}</Text>
+                <View style={styles.apiCode}>
+                  <Text style={styles.apiCodeText}>{t('api_process_example', { value: API_URL })}</Text>
+                </View>
+              </View>
+
+              <View style={styles.apiCard}>
+                <Text style={styles.apiHeading}>{t('api_response_title')}</Text>
+                <Text style={styles.apiBody}>{t('api_response_body')}</Text>
+              </View>
+            </View>
+          ) : null}
+
           <View style={styles.latestCard}>
             <View style={styles.latestHeader}>
               <Text style={styles.sectionTitle}>{t('home_latest_videos')}</Text>
@@ -1975,6 +2008,41 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 13,
     color: '#475569',
+  },
+  apiCard: {
+    marginTop: 12,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: 'white',
+  },
+  apiMeta: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  apiHeading: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0f172a',
+  },
+  apiBody: {
+    marginTop: 6,
+    fontSize: 12,
+    color: '#475569',
+    lineHeight: 18,
+  },
+  apiCode: {
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 12,
+    backgroundColor: '#0f172a',
+  },
+  apiCodeText: {
+    fontSize: 11,
+    color: '#e2e8f0',
+    fontFamily: Platform.select({ ios: 'Menlo', android: 'monospace', default: 'monospace' }),
   },
   empty: { textAlign: 'center', marginTop: 12, color: '#64748b' },
   fieldLabel: {

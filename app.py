@@ -2970,12 +2970,18 @@ class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
     @gen.coroutine
     def post(self):
         # Extract video file from the request
-        video_file = self.request.files['video'][0]
+        video_files = self.request.files.get('video') or self.request.files.get('file')
+        if not video_files:
+            self.set_status(400)
+            return self.write({"error": "video file missing"})
+        video_file = video_files[0]
         original_fname = video_file['filename']
-        print("Filename: ", original_fname)
+        requested_name = self.get_argument('filename', default=None) or original_fname
+        safe_name = os.path.basename(requested_name) or original_fname
+        print("Filename: ", safe_name)
 
         # Determine the basename (without extension) and create a subfolder
-        base_name, _ = os.path.splitext(original_fname)
+        base_name, _ = os.path.splitext(safe_name)
         output_folder = os.path.join(self.upload_folder, base_name)
 
         # Check if the folder already exists
@@ -2994,7 +3000,7 @@ class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
         os.makedirs(output_folder, exist_ok=True)
 
         # Define the full path for the incoming video
-        input_file = os.path.join(output_folder, original_fname)
+        input_file = os.path.join(output_folder, safe_name)
 
         # Write the incoming video to the file system
         with open(input_file, 'wb') as f:
@@ -3017,7 +3023,7 @@ class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
         # Respond with the path of the saved file
         self.write({
             'status': 'success',
-            'message': f'File {original_fname} uploaded successfully.',
+            'message': f'File {safe_name} uploaded successfully.',
             'file_path': input_file,
             'media_url': media_url_for_path(input_file),
             'video_id': video_id,
