@@ -1,10 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, Platform, Pressable, RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 
 import { useI18n } from '@/components/I18nProvider';
+import { subscribeStudioRefresh } from '@/lib/studioRefresh';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+const PAGE_SIZE = 12;
 
 type Video = {
   id: number;
@@ -17,33 +19,67 @@ type Video = {
 
 export default function LibraryScreen() {
   const [items, setItems] = useState<Video[]>([]);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(false);
+  const [containerHeight, setContainerHeight] = useState(0);
+  const [contentHeight, setContentHeight] = useState(0);
   const router = useRouter();
   const { t } = useI18n();
 
-  const load = async () => {
-    setLoading(true);
+  const load = useCallback(async (silent?: boolean) => {
+    if (!silent) setLoading(true);
     try {
       const r = await fetch(`${API_URL}/api/videos`);
       const j = await r.json();
-      setItems(j.videos || []);
+      const nextItems = j.videos || [];
+      setItems(nextItems);
+      setVisibleCount(Math.min(PAGE_SIZE, nextItems.length));
     } catch (e) {
       // noop
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
-  };
+  }, []);
+
+  const visibleItems = useMemo(() => items.slice(0, visibleCount), [items, visibleCount]);
+  const hasMore = visibleCount < items.length;
+
+  const loadMore = useCallback(() => {
+    if (!hasMore) return;
+    setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, items.length));
+  }, [hasMore, items.length]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
+
+  useEffect(() => {
+    const unsubscribe = subscribeStudioRefresh(() => {
+      load(true);
+    });
+    return unsubscribe;
+  }, [load]);
+
+  useEffect(() => {
+    if (!hasMore) return;
+    if (!containerHeight || !contentHeight) return;
+    if (contentHeight <= containerHeight) {
+      loadMore();
+    }
+  }, [contentHeight, containerHeight, hasMore, loadMore]);
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={items}
+        data={visibleItems}
         keyExtractor={(x) => String(x.id)}
-        refreshControl={<RefreshControl refreshing={loading} onRefresh={load} />}
+        refreshControl={<RefreshControl refreshing={loading} onRefresh={() => load()} />}
+        onEndReached={() => {
+          if (hasMore) loadMore();
+        }}
+        onEndReachedThreshold={0.4}
+        onLayout={(event) => setContainerHeight(event.nativeEvent.layout.height)}
+        onContentSizeChange={(_width, height) => setContentHeight(height)}
         renderItem={({ item }) => {
           const mediaPath = item.preview_media_url || item.media_url;
           const mediaSrc = mediaPath ? `${API_URL}${mediaPath}` : null;
@@ -75,6 +111,15 @@ export default function LibraryScreen() {
           );
         }}
         ListEmptyComponent={<Text style={styles.empty}>{t('library_empty')}</Text>}
+        ListFooterComponent={
+          hasMore ? (
+            <Pressable style={styles.moreButton} onPress={loadMore}>
+              <Text style={styles.moreButtonText}>{t('list_more')}</Text>
+            </Pressable>
+          ) : (
+            <View style={styles.footerSpacer} />
+          )
+        }
       />
     </View>
   );
@@ -109,4 +154,17 @@ const styles = StyleSheet.create({
   sub: { color: '#64748b', fontSize: 12 },
   time: { color: '#334155', fontSize: 12, marginTop: 4 },
   empty: { textAlign: 'center', marginTop: 30, color: '#64748b' },
+  moreButton: {
+    marginTop: 8,
+    marginBottom: 20,
+    alignSelf: 'center',
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    backgroundColor: '#f8fafc',
+  },
+  moreButtonText: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  footerSpacer: { height: 12 },
 });

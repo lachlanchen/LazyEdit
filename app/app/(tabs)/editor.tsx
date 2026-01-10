@@ -1,7 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {
   ActivityIndicator,
+  FlatList,
   Image,
   Platform,
   Pressable,
@@ -12,8 +13,10 @@ import {
 } from 'react-native';
 
 import { useI18n } from '@/components/I18nProvider';
+import { subscribeStudioRefresh } from '@/lib/studioRefresh';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+const PAGE_SIZE = 8;
 
 type Video = {
   id: number;
@@ -41,6 +44,9 @@ export default function EditorScreen() {
     youtube: true,
   });
   const [videos, setVideos] = useState<Video[]>([]);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [listHeight, setListHeight] = useState(0);
+  const [listContentHeight, setListContentHeight] = useState(0);
   const [loadingVideos, setLoadingVideos] = useState(false);
   const [selectedVideoId, setSelectedVideoId] = useState<number | null>(null);
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
@@ -62,26 +68,34 @@ export default function EditorScreen() {
     () => videos.find((video) => video.id === selectedVideoId) || null,
     [videos, selectedVideoId],
   );
+  const visibleVideos = useMemo(() => videos.slice(0, visibleCount), [videos, visibleCount]);
+  const hasMoreVideos = visibleCount < videos.length;
+
+  const loadMoreVideos = useCallback(() => {
+    if (!hasMoreVideos) return;
+    setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, videos.length));
+  }, [hasMoreVideos, videos.length]);
 
   const toneStyle = (tone: 'neutral' | 'good' | 'bad') =>
     tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
 
-  const loadVideos = async () => {
-    setLoadingVideos(true);
+  const loadVideos = useCallback(async (silent?: boolean) => {
+    if (!silent) setLoadingVideos(true);
     try {
       const resp = await fetch(`${API_URL}/api/videos`);
       const json = await resp.json();
       const items = json.videos || [];
       setVideos(items);
+      setVisibleCount(Math.min(PAGE_SIZE, items.length));
       if (!selectedVideoId && items.length) {
         setSelectedVideoId(items[0].id);
       }
     } catch (_err) {
       // ignore fetch errors
     } finally {
-      setLoadingVideos(false);
+      if (!silent) setLoadingVideos(false);
     }
-  };
+  }, [selectedVideoId]);
 
   const loadCoverPreview = async (videoId: number) => {
     try {
@@ -98,7 +112,22 @@ export default function EditorScreen() {
 
   useEffect(() => {
     loadVideos();
-  }, []);
+  }, [loadVideos]);
+
+  useEffect(() => {
+    const unsubscribe = subscribeStudioRefresh(() => {
+      loadVideos(true);
+    });
+    return unsubscribe;
+  }, [loadVideos]);
+
+  useEffect(() => {
+    if (!hasMoreVideos) return;
+    if (!listHeight || !listContentHeight) return;
+    if (listContentHeight <= listHeight) {
+      loadMoreVideos();
+    }
+  }, [hasMoreVideos, listHeight, listContentHeight, loadMoreVideos]);
 
   useEffect(() => {
     if (!selectedVideoId) return;
@@ -195,8 +224,19 @@ export default function EditorScreen() {
           {loadingVideos ? (
             <ActivityIndicator style={{ marginTop: 12 }} />
           ) : videos.length ? (
-            <View style={styles.videoList}>
-              {videos.map((video) => {
+            <FlatList
+              data={visibleVideos}
+              keyExtractor={(video) => String(video.id)}
+              style={styles.videoListScroll}
+              contentContainerStyle={styles.videoList}
+              onEndReached={() => {
+                if (hasMoreVideos) loadMoreVideos();
+              }}
+              onEndReachedThreshold={0.4}
+              onLayout={(event) => setListHeight(event.nativeEvent.layout.height)}
+              onContentSizeChange={(_width, height) => setListContentHeight(height)}
+              nestedScrollEnabled
+              renderItem={({ item: video }) => {
                 const previewUrl = video.preview_media_url || video.media_url;
                 const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
                 const isActive = selectedVideoId === video.id;
@@ -236,8 +276,17 @@ export default function EditorScreen() {
                     </View>
                   </Pressable>
                 );
-              })}
-            </View>
+              }}
+              ListFooterComponent={
+                hasMoreVideos ? (
+                  <Pressable style={styles.moreButton} onPress={loadMoreVideos}>
+                    <Text style={styles.moreButtonText}>{t('list_more')}</Text>
+                  </Pressable>
+                ) : (
+                  <View style={styles.footerSpacer} />
+                )
+              }
+            />
           ) : (
             <Text style={styles.empty}>{t('publish_video_empty')}</Text>
           )}
@@ -344,7 +393,11 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { fontSize: 16, fontWeight: '700', color: '#0f172a' },
   sectionHint: { marginTop: 6, fontSize: 12, color: '#64748b' },
-  videoList: { marginTop: 12, gap: 12 },
+  videoListScroll: {
+    marginTop: 12,
+    maxHeight: 420,
+  },
+  videoList: { gap: 12, paddingBottom: 4 },
   videoRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -387,6 +440,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#2563eb',
     borderColor: '#2563eb',
   },
+  moreButton: {
+    marginTop: 4,
+    marginBottom: 4,
+    alignSelf: 'center',
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    backgroundColor: '#f8fafc',
+  },
+  moreButtonText: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  footerSpacer: { height: 8 },
   platformGrid: {
     marginTop: 12,
     flexDirection: 'row',

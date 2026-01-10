@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {
   ActivityIndicator,
@@ -14,8 +14,10 @@ import {
 } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
+import { useRouter } from 'expo-router';
 
 import { useI18n } from '@/components/I18nProvider';
+import { subscribeStudioRefresh, triggerStudioRefresh } from '@/lib/studioRefresh';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 
@@ -89,6 +91,14 @@ const DEFAULT_PROMPT_SPEC = {
 type PromptSpec = typeof DEFAULT_PROMPT_SPEC;
 type HistoryKey = keyof typeof DEFAULT_PROMPT_HISTORY;
 type HistoryState = typeof DEFAULT_PROMPT_HISTORY;
+type Video = {
+  id: number;
+  title: string | null;
+  file_path: string;
+  media_url?: string | null;
+  preview_media_url?: string | null;
+  created_at?: string;
+};
 
 const SelectControl = ({
   label,
@@ -183,6 +193,7 @@ const DEFAULT_PROMPT_HISTORY = {
 
 export default function HomeScreen() {
   const { t } = useI18n();
+  const router = useRouter();
   const [picked, setPicked] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [status, setStatus] = useState<string>('');
   const [statusTone, setStatusTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -205,6 +216,8 @@ export default function HomeScreen() {
   const [remixPreviewUrl, setRemixPreviewUrl] = useState<string | null>(null);
   const [remixNotes, setRemixNotes] = useState('');
   const [promptSpec, setPromptSpec] = useState(DEFAULT_PROMPT_SPEC);
+  const [latestVideos, setLatestVideos] = useState<Video[]>([]);
+  const [latestLoading, setLatestLoading] = useState(false);
   const [promptResult, setPromptResult] = useState<{
     title?: string;
     prompt?: string;
@@ -337,6 +350,30 @@ export default function HomeScreen() {
     return `${size} · ${type}`;
   }, [remixPicked]);
 
+  const loadLatestVideos = useCallback(async (silent?: boolean) => {
+    if (!silent) setLatestLoading(true);
+    try {
+      const resp = await fetch(`${API_URL}/api/videos`);
+      const json = await resp.json();
+      setLatestVideos((json.videos || []).slice(0, 5));
+    } catch (_err) {
+      // ignore
+    } finally {
+      if (!silent) setLatestLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadLatestVideos();
+  }, [loadLatestVideos]);
+
+  useEffect(() => {
+    const unsubscribe = subscribeStudioRefresh(() => {
+      loadLatestVideos(true);
+    });
+    return unsubscribe;
+  }, [loadLatestVideos]);
+
   const pick = async () => {
     const res = await DocumentPicker.getDocumentAsync({
       multiple: false,
@@ -370,6 +407,7 @@ export default function HomeScreen() {
         const id = json.video_id ? ` (id: ${json.video_id})` : '';
         setStatus(`Uploaded: ${label}${id}`);
         setStatusTone('good');
+        triggerStudioRefresh();
       } else {
         // Native: use FileSystem upload for reliability
         const resp = await FileSystem.uploadAsync(`${API_URL}/upload`, picked.uri, {
@@ -388,6 +426,7 @@ export default function HomeScreen() {
         const id = json.video_id ? ` (id: ${json.video_id})` : '';
         setStatus(`Uploaded: ${label}${id}`);
         setStatusTone('good');
+        triggerStudioRefresh();
       }
     } catch (e: any) {
       setStatus(`Upload failed: ${e?.message || String(e)}`);
@@ -433,6 +472,7 @@ export default function HomeScreen() {
         const id = json.video_id ? ` (id: ${json.video_id})` : '';
         setRemixStatus(`Uploaded: ${label}${id}. Remix pipeline will run once connected.`);
         setRemixTone('good');
+        triggerStudioRefresh();
       } else {
         const resp = await FileSystem.uploadAsync(`${API_URL}/upload`, remixPicked.uri, {
           fieldName: 'video',
@@ -453,6 +493,7 @@ export default function HomeScreen() {
         const id = json.video_id ? ` (id: ${json.video_id})` : '';
         setRemixStatus(`Uploaded: ${label}${id}. Remix pipeline will run once connected.`);
         setRemixTone('good');
+        triggerStudioRefresh();
       }
     } catch (e: any) {
       setRemixStatus(`Upload failed: ${e?.message || String(e)}`);
@@ -1081,6 +1122,7 @@ const HISTORY_KEYS = {
       const idLabel = json.video_id ? ` (id: ${json.video_id})` : '';
       setVideoStatus(`Video ready${idLabel}. Added to library.`);
       setVideoTone('good');
+      triggerStudioRefresh();
     } catch (e: any) {
       setVideoStatus(`Generation failed: ${e?.message || String(e)}`);
       setVideoTone('bad');
@@ -1094,6 +1136,62 @@ const HISTORY_KEYS = {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           <Text style={styles.title}>LazyEdit Studio</Text>
+
+          <View style={styles.latestCard}>
+            <View style={styles.latestHeader}>
+              <Text style={styles.sectionTitle}>{t('home_latest_videos')}</Text>
+              <Pressable onPress={() => router.push('/library')}>
+                <Text style={styles.latestLink}>{t('tab_studio')}</Text>
+              </Pressable>
+            </View>
+            {latestLoading ? (
+              <ActivityIndicator style={{ marginTop: 8 }} />
+            ) : latestVideos.length ? (
+              <View style={styles.latestList}>
+                {latestVideos.map((video) => {
+                  const previewUrl = video.preview_media_url || video.media_url;
+                  const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
+                  const title = video.title || t('library_video_fallback', { id: video.id });
+                  return (
+                    <Pressable
+                      key={video.id}
+                      style={styles.latestRow}
+                      onPress={() =>
+                        router.push({ pathname: '/video/[id]', params: { id: String(video.id) } })
+                      }
+                    >
+                      <View style={styles.latestPreview}>
+                        {Platform.OS === 'web' && mediaSrc ? (
+                          React.createElement('video', {
+                            src: mediaSrc,
+                            style: { width: '100%', height: '100%', borderRadius: 10, objectFit: 'cover' },
+                            muted: true,
+                            playsInline: true,
+                            preload: 'metadata',
+                          })
+                        ) : (
+                          <Text style={styles.previewLabel}>{t('library_preview')}</Text>
+                        )}
+                      </View>
+                      <View style={styles.latestMeta}>
+                        <Text style={styles.latestTitle} numberOfLines={1}>
+                          {title}
+                        </Text>
+                        <Text style={styles.latestPath} numberOfLines={1}>
+                          {video.file_path}
+                        </Text>
+                        <Text style={styles.latestTime}>
+                          {video.created_at?.slice(0, 19).replace('T', ' ')}
+                        </Text>
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            ) : (
+              <Text style={styles.empty}>{t('library_empty')}</Text>
+            )}
+          </View>
 
           <View style={styles.tabRow}>
             {[
@@ -1697,6 +1795,50 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#111827',
   },
+  latestCard: {
+    marginTop: 16,
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  latestHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  latestLink: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#2563eb',
+  },
+  latestList: { marginTop: 12, gap: 12 },
+  latestRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  latestPreview: {
+    width: 96,
+    height: 60,
+    borderRadius: 10,
+    backgroundColor: '#0f172a',
+    marginRight: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  previewLabel: { color: '#cbd5f5', fontSize: 11, fontWeight: '600' },
+  latestMeta: { flex: 1 },
+  latestTitle: { fontSize: 14, fontWeight: '600', color: '#0f172a' },
+  latestPath: { color: '#64748b', fontSize: 11 },
+  latestTime: { color: '#334155', fontSize: 11, marginTop: 4 },
   subtitle: {
     fontSize: 16,
     color: '#334155',
@@ -1836,6 +1978,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#475569',
   },
+  empty: { textAlign: 'center', marginTop: 12, color: '#64748b' },
   fieldLabel: {
     marginTop: 14,
     fontSize: 12,
