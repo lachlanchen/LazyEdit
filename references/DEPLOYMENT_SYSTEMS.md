@@ -5,14 +5,14 @@ This repo is the development source. The runtime deployments live in DiskMech an
 ## Systems Overview
 - Edit system (LazyEdit backend + Expo app)
   - Deployment path: `/home/lachlan/DiskMech/Projects/lazyedit`
-  - Backend port: 8081
-  - Expo app port: 8091
+  - Backend port: 18787
+  - Expo app port: 18791
   - tmux session: `la-lazyedit` (left pane backend, right pane app)
 
 - Monitor system (AutoPubMonitor)
   - Deployment path: `/home/lachlan/DiskMech/Projects/autopub-monitor`
   - tmux sessions: `am-*` (monitor, queue, sync, manual)
-  - Default API base: `http://localhost:8787`
+  - Default API base: `http://localhost:18787`
   - Flow: upload -> process -> publish via LazyEdit app API
 
 - Publication system (AutoPublish)
