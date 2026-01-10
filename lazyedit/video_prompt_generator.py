@@ -6,6 +6,17 @@ from lazyedit.openai_request_json import OpenAIRequestJSONBase
 
 
 class VideoPromptGenerator(OpenAIRequestJSONBase):
+    _AUDIO_LANGUAGE_NAMES = {
+        "en": "English",
+        "zh": "Chinese",
+        "ja": "Japanese",
+        "ko": "Korean",
+        "vi": "Vietnamese",
+        "ar": "Arabic",
+        "fr": "French",
+        "es": "Spanish",
+    }
+
     def __init__(
         self,
         template_dir: str,
@@ -35,11 +46,15 @@ class VideoPromptGenerator(OpenAIRequestJSONBase):
 
         system_content = prompt_payload.get("system") or "You are an AI assistant."
         user_template = prompt_payload.get("user") or ""
+        prompt_spec_text = prompt_spec if isinstance(prompt_spec, str) else json.dumps(prompt_spec, ensure_ascii=False, indent=2)
+        audio_language, audio_language_name = self._extract_audio_language(prompt_spec_text)
         prompt = self._render_prompt_template(
             user_template,
             {
-                "PROMPT_SPEC": prompt_spec or "None",
-                "IDEA_PROMPT": prompt_spec or "None",
+                "PROMPT_SPEC": prompt_spec_text or "None",
+                "IDEA_PROMPT": prompt_spec_text or "None",
+                "AUDIO_LANGUAGE": audio_language,
+                "AUDIO_LANGUAGE_NAME": audio_language_name,
             },
         )
         return self.send_request_with_json_schema(
@@ -48,6 +63,28 @@ class VideoPromptGenerator(OpenAIRequestJSONBase):
             system_content=system_content,
             schema_name=schema_name,
         )
+
+    @staticmethod
+    def _extract_audio_language(prompt_spec_text: str) -> tuple[str, str]:
+        audio_language = "auto"
+        try:
+            payload = json.loads(prompt_spec_text)
+        except Exception:
+            payload = None
+
+        value = None
+        if isinstance(payload, dict):
+            value = payload.get("audioLanguage") or payload.get("audio_language")
+        if isinstance(value, list):
+            value = value[0] if value else None
+        if isinstance(value, str) and value.strip():
+            audio_language = value.strip()
+
+        if audio_language == "auto":
+            audio_language_name = "auto (choose the most suitable language)"
+        else:
+            audio_language_name = VideoPromptGenerator._AUDIO_LANGUAGE_NAMES.get(audio_language, audio_language)
+        return audio_language, audio_language_name
 
     @staticmethod
     def _render_prompt_template(template: str, values: dict[str, str]) -> str:
