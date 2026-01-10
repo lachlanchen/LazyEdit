@@ -98,6 +98,7 @@ type Video = {
   media_url?: string | null;
   preview_media_url?: string | null;
   created_at?: string;
+  source?: string | null;
 };
 
 const SelectControl = ({
@@ -355,13 +356,27 @@ export default function HomeScreen() {
     try {
       const resp = await fetch(`${API_URL}/api/videos`);
       const json = await resp.json();
-      setLatestVideos((json.videos || []).slice(0, 5));
+      setLatestVideos(json.videos || []);
     } catch (_err) {
       // ignore
     } finally {
       if (!silent) setLatestLoading(false);
     }
   }, []);
+
+  const latestForTab = useMemo(() => {
+    if (!latestVideos.length) return null;
+    const target =
+      activeTab === 'generate' ? 'generate' : activeTab === 'remix' ? 'remix' : activeTab === 'api' ? 'api' : 'upload';
+    const resolveSource = (video: Video) => {
+      const raw = video.source?.toLowerCase();
+      if (raw && ['upload', 'generate', 'remix', 'api'].includes(raw)) return raw;
+      const path = video.file_path || '';
+      if (path.includes('/generated/') || path.includes('\\generated\\')) return 'generate';
+      return 'upload';
+    };
+    return latestVideos.find((video) => resolveSource(video) === target) || null;
+  }, [latestVideos, activeTab]);
 
   useEffect(() => {
     loadLatestVideos();
@@ -396,6 +411,7 @@ export default function HomeScreen() {
         const file = picked as any; // has .file property in web
         const form = new FormData();
         form.append('video', (file.file as File) ?? (file as any), picked.name || 'video.mp4');
+        form.append('source', 'upload');
         const resp = await fetch(`${API_URL}/upload`, { method: 'POST', body: form as any });
         const json = await resp.json();
         if (!resp.ok) {
@@ -414,7 +430,7 @@ export default function HomeScreen() {
           fieldName: 'video',
           httpMethod: 'POST',
           uploadType: 'multipart' as any,
-          parameters: { filename: picked.name || 'video.mp4' },
+          parameters: { filename: picked.name || 'video.mp4', source: 'upload' },
         });
         const json = JSON.parse(resp.body);
         if (resp.status >= 400) {
@@ -458,6 +474,7 @@ export default function HomeScreen() {
         const file = remixPicked as any;
         const form = new FormData();
         form.append('video', (file.file as File) ?? (file as any), remixPicked.name || 'video.mp4');
+        form.append('source', 'remix');
         if (notes) {
           form.append('remix_notes', notes);
         }
@@ -480,6 +497,7 @@ export default function HomeScreen() {
           uploadType: 'multipart' as any,
           parameters: {
             filename: remixPicked.name || 'video.mp4',
+            source: 'remix',
             ...(notes ? { remix_notes: notes } : {}),
           },
         });
@@ -1772,45 +1790,41 @@ const HISTORY_KEYS = {
             </View>
             {latestLoading ? (
               <ActivityIndicator style={{ marginTop: 8 }} />
-            ) : latestVideos.length ? (
+            ) : latestForTab ? (
               <View style={styles.latestList}>
-                {latestVideos.map((video) => {
-                  const previewUrl = video.preview_media_url || video.media_url;
-                  const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
-                  const title = video.title || t('library_video_fallback', { id: video.id });
-                  return (
-                    <Pressable
-                      key={video.id}
-                      style={styles.latestRow}
-                      onPress={() => router.push('/library')}
-                    >
-                      <View style={styles.latestPreview}>
-                        {Platform.OS === 'web' && mediaSrc ? (
-                          React.createElement('video', {
-                            src: mediaSrc,
-                            style: { width: '100%', height: '100%', borderRadius: 10, objectFit: 'cover' },
-                            muted: true,
-                            playsInline: true,
-                            preload: 'metadata',
-                          })
-                        ) : (
-                          <Text style={styles.previewLabel}>{t('library_preview')}</Text>
-                        )}
-                      </View>
-                      <View style={styles.latestMeta}>
-                        <Text style={styles.latestTitle} numberOfLines={1}>
-                          {title}
-                        </Text>
-                        <Text style={styles.latestPath} numberOfLines={1}>
-                          {video.file_path}
-                        </Text>
-                        <Text style={styles.latestTime}>
-                          {video.created_at?.slice(0, 19).replace('T', ' ')}
-                        </Text>
-                      </View>
-                    </Pressable>
-                  );
-                })}
+                <Pressable
+                  key={latestForTab.id}
+                  style={styles.latestRow}
+                  onPress={() => router.push('/library')}
+                >
+                  <View style={styles.latestPreview}>
+                    {(() => {
+                      const previewUrl = latestForTab.preview_media_url || latestForTab.media_url;
+                      const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
+                      if (Platform.OS === 'web' && mediaSrc) {
+                        return React.createElement('video', {
+                          src: mediaSrc,
+                          style: { width: '100%', height: '100%', borderRadius: 10, objectFit: 'cover' },
+                          muted: true,
+                          playsInline: true,
+                          preload: 'metadata',
+                        });
+                      }
+                      return <Text style={styles.previewLabel}>{t('library_preview')}</Text>;
+                    })()}
+                  </View>
+                  <View style={styles.latestMeta}>
+                    <Text style={styles.latestTitle} numberOfLines={1}>
+                      {latestForTab.title || t('library_video_fallback', { id: latestForTab.id })}
+                    </Text>
+                    <Text style={styles.latestPath} numberOfLines={1}>
+                      {latestForTab.file_path}
+                    </Text>
+                    <Text style={styles.latestTime}>
+                      {latestForTab.created_at?.slice(0, 19).replace('T', ' ')}
+                    </Text>
+                  </View>
+                </Pressable>
               </View>
             ) : (
               <Text style={styles.empty}>{t('library_empty')}</Text>

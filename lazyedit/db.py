@@ -59,6 +59,7 @@ def ensure_schema():
             id SERIAL PRIMARY KEY,
             file_path TEXT NOT NULL,
             title TEXT,
+            source TEXT,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
         """,
@@ -94,6 +95,7 @@ def ensure_schema():
             completed_at TIMESTAMPTZ
         );
         """,
+        "ALTER TABLE videos ADD COLUMN IF NOT EXISTS source TEXT;",
         # Backfill/updates for evolving schema
         "ALTER TABLE generated_videos ADD COLUMN IF NOT EXISTS request_hash TEXT;",
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_generated_videos_request_hash ON generated_videos (request_hash);",
@@ -203,12 +205,12 @@ def ensure_schema():
             cur.execute(ddl)
 
 
-def add_video(file_path: str, title: str | None = None) -> int:
+def add_video(file_path: str, title: str | None = None, source: str | None = None) -> int:
     """Insert a video row and return its ID."""
     with get_cursor(commit=True) as cur:
         cur.execute(
-            "INSERT INTO videos (file_path, title) VALUES (%s, %s) RETURNING id",
-            (file_path, title),
+            "INSERT INTO videos (file_path, title, source) VALUES (%s, %s, %s) RETURNING id",
+            (file_path, title, source),
         )
         (video_id,) = cur.fetchone()
         return video_id

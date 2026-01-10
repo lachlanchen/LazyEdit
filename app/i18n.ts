@@ -41,7 +41,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_subtitle: 'External upload endpoints (AutoPub Monitor compatible).',
     api_base_url: 'Base URL: {{value}}',
     api_upload_title: 'Upload video',
-    api_upload_body: 'POST /upload (multipart/form-data). Field: video (file). Optional: title, filename.',
+    api_upload_body: 'POST /upload (multipart/form-data). Field: video (file). Optional: title, filename, source.',
     api_upload_example: 'curl -F "video=@/path/to/video.mp4" {{value}}/upload',
     api_process_title: 'Process video',
     api_process_body:
@@ -199,7 +199,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_subtitle: '外部上傳端點（相容 AutoPub Monitor）。',
     api_base_url: '基底網址：{{value}}',
     api_upload_title: '上傳影片',
-    api_upload_body: 'POST /upload（multipart/form-data）。欄位：video（檔案）。可選：title、filename。',
+    api_upload_body: 'POST /upload（multipart/form-data）。欄位：video（檔案）。可選：title、filename、source。',
     api_upload_example: 'curl -F "video=@/path/to/video.mp4" {{value}}/upload',
     api_process_title: '處理影片',
     api_process_body:
@@ -356,7 +356,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_subtitle: '外部上传端点（兼容 AutoPub Monitor）。',
     api_base_url: '基础地址：{{value}}',
     api_upload_title: '上传视频',
-    api_upload_body: 'POST /upload（multipart/form-data）。字段：video（文件）。可选：title、filename。',
+    api_upload_body: 'POST /upload（multipart/form-data）。字段：video（文件）。可选：title、filename、source。',
     api_upload_example: 'curl -F "video=@/path/to/video.mp4" {{value}}/upload',
     api_process_title: '处理视频',
     api_process_body:
@@ -513,7 +513,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_subtitle: '外部アップロード向けのエンドポイント（AutoPub Monitor 対応）。',
     api_base_url: 'ベースURL：{{value}}',
     api_upload_title: '動画をアップロード',
-    api_upload_body: 'POST /upload（multipart/form-data）。項目：video（ファイル）。任意：title、filename。',
+    api_upload_body: 'POST /upload（multipart/form-data）。項目：video（ファイル）。任意：title、filename、source。',
     api_upload_example: 'curl -F "video=@/path/to/video.mp4" {{value}}/upload',
     api_process_title: '動画を処理',
     api_process_body:
@@ -670,7 +670,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_subtitle: '외부 업로드 엔드포인트 (AutoPub Monitor 호환).',
     api_base_url: '기본 URL: {{value}}',
     api_upload_title: '영상 업로드',
-    api_upload_body: 'POST /upload (multipart/form-data). 필드: video(파일). 선택: title, filename.',
+    api_upload_body: 'POST /upload (multipart/form-data). 필드: video(파일). 선택: title, filename, source.',
     api_upload_example: 'curl -F "video=@/path/to/video.mp4" {{value}}/upload',
     api_process_title: '영상 처리',
     api_process_body:
@@ -827,7 +827,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_subtitle: 'Endpoint tải lên bên ngoài (tương thích AutoPub Monitor).',
     api_base_url: 'Base URL: {{value}}',
     api_upload_title: 'Tải lên video',
-    api_upload_body: 'POST /upload (multipart/form-data). Trường: video (file). Tùy chọn: title, filename.',
+    api_upload_body: 'POST /upload (multipart/form-data). Trường: video (file). Tùy chọn: title, filename, source.',
     api_upload_example: 'curl -F "video=@/path/to/video.mp4" {{value}}/upload',
     api_process_title: 'Xử lý video',
     api_process_body:
@@ -984,7 +984,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_subtitle: 'نقاط رفع خارجية (متوافقة مع AutoPub Monitor).',
     api_base_url: 'العنوان الأساسي: {{value}}',
     api_upload_title: 'رفع الفيديو',
-    api_upload_body: 'POST /upload (multipart/form-data). الحقل: video (ملف). اختياري: title، filename.',
+    api_upload_body: 'POST /upload (multipart/form-data). الحقل: video (ملف). اختياري: title، filename، source.',
     api_upload_example: 'curl -F "video=@/path/to/video.mp4" {{value}}/upload',
     api_process_title: 'معالجة الفيديو',
     api_process_body:
@@ -1141,7 +1141,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_subtitle: 'Endpoints d\'upload externe (compatibles AutoPub Monitor).',
     api_base_url: 'URL de base : {{value}}',
     api_upload_title: 'Uploader une video',
-    api_upload_body: 'POST /upload (multipart/form-data). Champ : video (fichier). Optionnel : title, filename.',
+    api_upload_body: 'POST /upload (multipart/form-data). Champ : video (fichier). Optionnel : title, filename, source.',
     api_upload_example: 'curl -F "video=@/path/to/video.mp4" {{value}}/upload',
     api_process_title: 'Traiter la video',
     api_process_body:
@@ -1298,7 +1298,7 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_subtitle: 'Endpoints de carga externa (compatibles con AutoPub Monitor).',
     api_base_url: 'URL base: {{value}}',
     api_upload_title: 'Subir video',
-    api_upload_body: 'POST /upload (multipart/form-data). Campo: video (archivo). Opcional: title, filename.',
+    api_upload_body: 'POST /upload (multipart/form-data). Campo: video (archivo). Opcional: title, filename, source.',
     api_upload_example: 'curl -F "video=@/path/to/video.mp4" {{value}}/upload',
     api_process_title: 'Procesar video',
     api_process_body:

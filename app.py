@@ -314,6 +314,15 @@ def _normalize_metadata_language(value: str | None) -> str | None:
     return None
 
 
+def _normalize_video_source(value: str | None) -> str | None:
+    if not value:
+        return None
+    lowered = str(value).strip().lower()
+    if lowered in {"upload", "generate", "remix", "api"}:
+        return lowered
+    return None
+
+
 def _read_text_file(path: str | None, max_chars: int = 12000) -> str:
     if not path or not os.path.exists(path):
         return ""
@@ -3008,9 +3017,10 @@ class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
 
         # Save a row in the database for the uploaded video
         title = self.get_argument("title", default=None) or base_name
+        source = _normalize_video_source(self.get_argument("source", default=None)) or "upload"
         try:
             ldb.ensure_schema()
-            video_id = ldb.add_video(input_file, title)
+            video_id = ldb.add_video(input_file, title, source)
         except Exception as e:
             self.set_status(500)
             return self.write({
@@ -3123,7 +3133,9 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
         # Return recent videos from DB
         ldb.ensure_schema()
         with ldb.get_cursor() as cur:
-            cur.execute("SELECT id, file_path, title, created_at FROM videos ORDER BY id DESC LIMIT 100")
+            cur.execute(
+                "SELECT id, file_path, title, created_at, source FROM videos ORDER BY id DESC LIMIT 100"
+            )
             rows = cur.fetchall()
 
         proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
@@ -3142,6 +3154,7 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
                 "preview_media_url": preview_media_url(r[0], r[1]),
                 "title": r[2],
                 "created_at": r[3].isoformat() if r[3] else None,
+                "source": r[4],
             }
             for r in rows
         ]
@@ -3155,11 +3168,12 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": "invalid json"})
         file_path = data.get("file_path")
         title = data.get("title")
+        source = _normalize_video_source(data.get("source"))
         if not file_path:
             self.set_status(400)
             return self.write({"error": "file_path required"})
         ldb.ensure_schema()
-        vid = ldb.add_video(file_path, title)
+        vid = ldb.add_video(file_path, title, source)
         self.write({"id": vid})
 
 
@@ -3172,7 +3186,10 @@ class VideoDetailHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": "invalid id"})
         ldb.ensure_schema()
         with ldb.get_cursor() as cur:
-            cur.execute("SELECT id, file_path, title, created_at FROM videos WHERE id = %s", (video_id_i,))
+            cur.execute(
+                "SELECT id, file_path, title, created_at, source FROM videos WHERE id = %s",
+                (video_id_i,),
+            )
             row = cur.fetchone()
         if not row:
             self.set_status(404)
@@ -3188,6 +3205,7 @@ class VideoDetailHandler(CorsMixin, tornado.web.RequestHandler):
             "preview_media_url": preview_url,
             "title": row[2],
             "created_at": row[3].isoformat() if row[3] else None,
+            "source": row[4],
         })
 
 
@@ -4185,7 +4203,7 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
         if row:
             video_id = row[0]
         else:
-            video_id = ldb.add_video(output_path, title)
+            video_id = ldb.add_video(output_path, title, "generate")
 
         self.write({
             "video_id": video_id,
@@ -5045,6 +5063,7 @@ class FileUploadHandlerStream(CorsMixin, tornado.web.RequestHandler):
         self.file_path = None
         self.base_name = None
         self.title = None
+        self.source = None
         self.upload_folder = upload_folder
 
     def prepare(self):
@@ -5052,6 +5071,7 @@ class FileUploadHandlerStream(CorsMixin, tornado.web.RequestHandler):
         base_name, _ = os.path.splitext(filename)
         self.base_name = base_name
         self.title = self.get_argument("title", default=None) or base_name
+        self.source = _normalize_video_source(self.get_argument("source", default=None)) or "upload"
         output_folder = os.path.join(self.upload_folder, base_name)
 
         # Check if the folder already exists
@@ -5083,7 +5103,7 @@ class FileUploadHandlerStream(CorsMixin, tornado.web.RequestHandler):
             self.file = None
             try:
                 ldb.ensure_schema()
-                video_id = ldb.add_video(self.file_path, self.title)
+                video_id = ldb.add_video(self.file_path, self.title, self.source)
             except Exception as e:
                 self.set_status(500)
                 return self.write({
