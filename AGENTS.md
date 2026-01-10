@@ -44,7 +44,7 @@ Note on symlinks: Never edit files inside symlinked directories from this reposi
 ## Deployment & Sync Locations
 - Development workspace: `/home/lachlan/ProjectsLFS/LazyEdit` (this repo; includes submodules `AutoPubMonitor/` and `AutoPublish/`).
 - Deployed LazyEdit backend + app: `/home/lachlan/DiskMech/Projects/lazyedit` (tmux session `la-lazyedit`; backend on port 18787, Expo app on port 18791 with `EXPO_PUBLIC_API_URL=http://localhost:18787`).
-- Deployed AutoPubMonitor: `/home/lachlan/DiskMech/Projects/autopub-monitor` (tmux sessions `am-*`; uses LazyEdit app API endpoints by default).
+- Deployed AutoPubMonitor: `/home/lachlan/DiskMech/Projects/autopub-monitor` (tmux session `autopub-monitor`; uses LazyEdit app API endpoints by default).
 - Publishing system (platforms incl. YouTube): `/home/lachlan/Projects/auto-publish` on `lazyingart` (pull after pushing AutoPublish changes).
 
 ## Coding Style & Naming Conventions

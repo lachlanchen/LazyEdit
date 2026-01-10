@@ -4786,8 +4786,16 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
 
         async def call_json(method: str, path: str, payload: dict | None = None):
             url = f"http://localhost:{PORT}{path}"
-            body = json.dumps(payload).encode("utf-8") if payload is not None else None
-            headers = {"Content-Type": "application/json"} if payload is not None else None
+            if payload is None:
+                if method.upper() in ("POST", "PUT", "PATCH"):
+                    body = b"{}"
+                    headers = {"Content-Type": "application/json"}
+                else:
+                    body = None
+                    headers = None
+            else:
+                body = json.dumps(payload).encode("utf-8")
+                headers = {"Content-Type": "application/json"}
             request = tornado.httpclient.HTTPRequest(
                 url=url,
                 method=method,
