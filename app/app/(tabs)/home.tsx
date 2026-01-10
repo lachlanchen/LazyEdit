@@ -1741,6 +1741,22 @@ const HISTORY_KEYS = {
               </View>
 
               <View style={styles.apiCard}>
+                <Text style={styles.apiHeading}>{t('api_cover_title')}</Text>
+                <Text style={styles.apiBody}>{t('api_cover_body')}</Text>
+                <View style={styles.apiCode}>
+                  <Text style={styles.apiCodeText}>{t('api_cover_example', { value: API_URL })}</Text>
+                </View>
+              </View>
+
+              <View style={styles.apiCard}>
+                <Text style={styles.apiHeading}>{t('api_publish_title')}</Text>
+                <Text style={styles.apiBody}>{t('api_publish_body')}</Text>
+                <View style={styles.apiCode}>
+                  <Text style={styles.apiCodeText}>{t('api_publish_example', { value: API_URL })}</Text>
+                </View>
+              </View>
+
+              <View style={styles.apiCard}>
                 <Text style={styles.apiHeading}>{t('api_response_title')}</Text>
                 <Text style={styles.apiBody}>{t('api_response_body')}</Text>
               </View>

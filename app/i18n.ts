@@ -47,8 +47,16 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_process_body:
       'POST /video-processing (form data). Field: file_path (required), use_translation_cache, use_metadata_cache.',
     api_process_example: 'curl -X POST -d "file_path=/abs/path.mp4" {{value}}/video-processing',
-    api_response_title: 'Upload response',
-    api_response_body: 'Returns JSON with status, file_path, media_url, video_id.',
+    api_cover_title: 'Extract cover',
+    api_cover_body: 'POST /api/videos/{id}/cover. Optional JSON: {"lang":"zh"} (uses latest metadata).',
+    api_cover_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"lang\\":\\"zh\\"}" {{value}}/api/videos/123/cover',
+    api_publish_title: 'Publish package',
+    api_publish_body: 'POST /api/videos/{id}/publish. JSON body with platforms (object or list).',
+    api_publish_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"platforms\\":{\\"xiaohongshu\\":true,\\"douyin\\":true}}" {{value}}/api/videos/123/publish',
+    api_response_title: 'Responses',
+    api_response_body: 'Upload returns status, file_path, media_url, video_id. Cover returns cover_url. Publish returns status, zip_url.',
     home_step_pick: 'Pick a video',
     home_pick_button: 'Pick a video',
     home_pick_another: 'Pick another video',
@@ -197,8 +205,16 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_process_body:
       'POST /video-processing（表單）。欄位：file_path（必填）、use_translation_cache、use_metadata_cache。',
     api_process_example: 'curl -X POST -d "file_path=/abs/path.mp4" {{value}}/video-processing',
-    api_response_title: '上傳回應',
-    api_response_body: '回傳 JSON：status、file_path、media_url、video_id。',
+    api_cover_title: '擷取封面',
+    api_cover_body: 'POST /api/videos/{id}/cover。可選 JSON：{"lang":"zh"}（使用最新中繼資料）。',
+    api_cover_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"lang\\":\\"zh\\"}" {{value}}/api/videos/123/cover',
+    api_publish_title: '發佈打包',
+    api_publish_body: 'POST /api/videos/{id}/publish。JSON 內容為 platforms（物件或清單）。',
+    api_publish_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"platforms\\":{\\"xiaohongshu\\":true,\\"douyin\\":true}}" {{value}}/api/videos/123/publish',
+    api_response_title: '回應',
+    api_response_body: '上傳回傳 status、file_path、media_url、video_id。封面回傳 cover_url。發佈回傳 status、zip_url。',
     home_step_pick: '選取影片',
     home_pick_button: '選取影片',
     home_pick_another: '重新選取',
@@ -346,8 +362,16 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_process_body:
       'POST /video-processing（表单）。字段：file_path（必填）、use_translation_cache、use_metadata_cache。',
     api_process_example: 'curl -X POST -d "file_path=/abs/path.mp4" {{value}}/video-processing',
-    api_response_title: '上传响应',
-    api_response_body: '返回 JSON：status、file_path、media_url、video_id。',
+    api_cover_title: '提取封面',
+    api_cover_body: 'POST /api/videos/{id}/cover。可选 JSON：{"lang":"zh"}（使用最新元数据）。',
+    api_cover_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"lang\\":\\"zh\\"}" {{value}}/api/videos/123/cover',
+    api_publish_title: '发布打包',
+    api_publish_body: 'POST /api/videos/{id}/publish。JSON 内容为 platforms（对象或列表）。',
+    api_publish_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"platforms\\":{\\"xiaohongshu\\":true,\\"douyin\\":true}}" {{value}}/api/videos/123/publish',
+    api_response_title: '响应',
+    api_response_body: '上传返回 status、file_path、media_url、video_id。封面返回 cover_url。发布返回 status、zip_url。',
     home_step_pick: '选择视频',
     home_pick_button: '选择视频',
     home_pick_another: '重新选择',
@@ -495,8 +519,16 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_process_body:
       'POST /video-processing（フォーム）。項目：file_path（必須）、use_translation_cache、use_metadata_cache。',
     api_process_example: 'curl -X POST -d "file_path=/abs/path.mp4" {{value}}/video-processing',
-    api_response_title: 'アップロード結果',
-    api_response_body: 'JSON を返します：status、file_path、media_url、video_id。',
+    api_cover_title: 'カバー抽出',
+    api_cover_body: 'POST /api/videos/{id}/cover。任意のJSON: {"lang":"zh"}（最新メタデータを使用）。',
+    api_cover_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"lang\\":\\"zh\\"}" {{value}}/api/videos/123/cover',
+    api_publish_title: '公開パッケージ',
+    api_publish_body: 'POST /api/videos/{id}/publish。JSON の platforms（オブジェクトまたは配列）。',
+    api_publish_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"platforms\\":{\\"xiaohongshu\\":true,\\"douyin\\":true}}" {{value}}/api/videos/123/publish',
+    api_response_title: 'レスポンス',
+    api_response_body: 'Upload は status、file_path、media_url、video_id。Cover は cover_url。Publish は status、zip_url。',
     home_step_pick: '動画を選択',
     home_pick_button: '動画を選択',
     home_pick_another: '別の動画',
@@ -644,8 +676,16 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_process_body:
       'POST /video-processing (폼 데이터). 필드: file_path(필수), use_translation_cache, use_metadata_cache.',
     api_process_example: 'curl -X POST -d "file_path=/abs/path.mp4" {{value}}/video-processing',
-    api_response_title: '업로드 응답',
-    api_response_body: 'JSON 반환: status, file_path, media_url, video_id.',
+    api_cover_title: '커버 추출',
+    api_cover_body: 'POST /api/videos/{id}/cover. 선택 JSON: {"lang":"zh"} (최신 메타데이터 사용).',
+    api_cover_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"lang\\":\\"zh\\"}" {{value}}/api/videos/123/cover',
+    api_publish_title: '게시 패키지',
+    api_publish_body: 'POST /api/videos/{id}/publish. JSON의 platforms(객체 또는 리스트).',
+    api_publish_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"platforms\\":{\\"xiaohongshu\\":true,\\"douyin\\":true}}" {{value}}/api/videos/123/publish',
+    api_response_title: '응답',
+    api_response_body: '업로드는 status, file_path, media_url, video_id. 커버는 cover_url. 게시는 status, zip_url.',
     home_step_pick: '영상 선택',
     home_pick_button: '영상 선택',
     home_pick_another: '다른 영상',
@@ -793,8 +833,16 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_process_body:
       'POST /video-processing (form data). Trường: file_path (bắt buộc), use_translation_cache, use_metadata_cache.',
     api_process_example: 'curl -X POST -d "file_path=/abs/path.mp4" {{value}}/video-processing',
-    api_response_title: 'Phản hồi tải lên',
-    api_response_body: 'Trả về JSON: status, file_path, media_url, video_id.',
+    api_cover_title: 'Trích xuất ảnh bìa',
+    api_cover_body: 'POST /api/videos/{id}/cover. JSON tùy chọn: {"lang":"zh"} (dùng metadata mới nhất).',
+    api_cover_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"lang\\":\\"zh\\"}" {{value}}/api/videos/123/cover',
+    api_publish_title: 'Xuất bản gói',
+    api_publish_body: 'POST /api/videos/{id}/publish. JSON với platforms (object hoặc list).',
+    api_publish_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"platforms\\":{\\"xiaohongshu\\":true,\\"douyin\\":true}}" {{value}}/api/videos/123/publish',
+    api_response_title: 'Phản hồi',
+    api_response_body: 'Upload trả về status, file_path, media_url, video_id. Cover trả về cover_url. Publish trả về status, zip_url.',
     home_step_pick: 'Chọn video',
     home_pick_button: 'Chọn video',
     home_pick_another: 'Chọn lại',
@@ -942,8 +990,16 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_process_body:
       'POST /video-processing (بيانات نموذج). الحقول: file_path (إلزامي)، use_translation_cache، use_metadata_cache.',
     api_process_example: 'curl -X POST -d "file_path=/abs/path.mp4" {{value}}/video-processing',
-    api_response_title: 'استجابة الرفع',
-    api_response_body: 'يعيد JSON: status، file_path، media_url، video_id.',
+    api_cover_title: 'استخراج الغلاف',
+    api_cover_body: 'POST /api/videos/{id}/cover. JSON اختياري: {"lang":"zh"} (يستخدم أحدث بيانات وصفية).',
+    api_cover_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"lang\\":\\"zh\\"}" {{value}}/api/videos/123/cover',
+    api_publish_title: 'نشر الحزمة',
+    api_publish_body: 'POST /api/videos/{id}/publish. JSON مع platforms (كائن أو قائمة).',
+    api_publish_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"platforms\\":{\\"xiaohongshu\\":true,\\"douyin\\":true}}" {{value}}/api/videos/123/publish',
+    api_response_title: 'الاستجابات',
+    api_response_body: 'الرفع يعيد status، file_path، media_url، video_id. الغلاف يعيد cover_url. النشر يعيد status، zip_url.',
     home_step_pick: 'اختر فيديو',
     home_pick_button: 'اختر فيديو',
     home_pick_another: 'اختر فيديو آخر',
@@ -1091,8 +1147,16 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_process_body:
       'POST /video-processing (données de formulaire). Champs : file_path (obligatoire), use_translation_cache, use_metadata_cache.',
     api_process_example: 'curl -X POST -d "file_path=/abs/path.mp4" {{value}}/video-processing',
-    api_response_title: 'Réponse d\'upload',
-    api_response_body: 'Renvoie un JSON : status, file_path, media_url, video_id.',
+    api_cover_title: 'Extraire la couverture',
+    api_cover_body: 'POST /api/videos/{id}/cover. JSON optionnel : {"lang":"zh"} (utilise les dernières métadonnées).',
+    api_cover_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"lang\\":\\"zh\\"}" {{value}}/api/videos/123/cover',
+    api_publish_title: 'Publier le pack',
+    api_publish_body: 'POST /api/videos/{id}/publish. JSON avec platforms (objet ou liste).',
+    api_publish_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"platforms\\":{\\"xiaohongshu\\":true,\\"douyin\\":true}}" {{value}}/api/videos/123/publish',
+    api_response_title: 'Réponses',
+    api_response_body: 'Upload renvoie status, file_path, media_url, video_id. Cover renvoie cover_url. Publish renvoie status, zip_url.',
     home_step_pick: 'Choisir une vidéo',
     home_pick_button: 'Choisir une vidéo',
     home_pick_another: 'Choisir une autre',
@@ -1240,8 +1304,16 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     api_process_body:
       'POST /video-processing (form data). Campos: file_path (obligatorio), use_translation_cache, use_metadata_cache.',
     api_process_example: 'curl -X POST -d "file_path=/abs/path.mp4" {{value}}/video-processing',
-    api_response_title: 'Respuesta de carga',
-    api_response_body: 'Devuelve JSON: status, file_path, media_url, video_id.',
+    api_cover_title: 'Extraer portada',
+    api_cover_body: 'POST /api/videos/{id}/cover. JSON opcional: {"lang":"zh"} (usa los metadatos más recientes).',
+    api_cover_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"lang\\":\\"zh\\"}" {{value}}/api/videos/123/cover',
+    api_publish_title: 'Publicar paquete',
+    api_publish_body: 'POST /api/videos/{id}/publish. JSON con platforms (objeto o lista).',
+    api_publish_example:
+      'curl -X POST -H "Content-Type: application/json" -d "{\\"platforms\\":{\\"xiaohongshu\\":true,\\"douyin\\":true}}" {{value}}/api/videos/123/publish',
+    api_response_title: 'Respuestas',
+    api_response_body: 'Upload devuelve status, file_path, media_url, video_id. Cover devuelve cover_url. Publish devuelve status, zip_url.',
     home_step_pick: 'Elegir un video',
     home_pick_button: 'Elegir un video',
     home_pick_another: 'Elegir otro',
