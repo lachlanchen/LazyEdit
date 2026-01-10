@@ -1797,7 +1797,7 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
     def post(self):
         
         input_file = self.get_argument('file_path', None)
-        input_file = preprocess_if_needed(input_file)
+        # input_file = preprocess_if_needed(input_file)
         use_translation_cache = self.get_argument('use_translation_cache', "false").lower() == 'true'
         use_metadata_cache = self.get_argument('use_metadata_cache', "false").lower() == 'true'
         if not input_file or not os.path.exists(input_file):
@@ -1952,7 +1952,7 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
 
         # overlay_word_card_on_cover(word_card_image_path, cover_plain_image_path, cover_image_path, transparency=0.5)
         if word_card_image_path and os.path.exists(word_card_image_path):
-            overlay_word_card_on_cover(word_card_image_path, cover_plain_image_path, cover_image_path, transparency=0.5)
+            overlay_word_card_on_cover(word_card_image_path, cover_plain_image_path, cover_image_path, transparency=1)
         else:
             # If we don't have a valid word card image, skip overlay
             # or copy the plain cover

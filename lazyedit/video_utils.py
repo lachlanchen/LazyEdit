@@ -27,6 +27,7 @@ def ensure_video_compatibility(input_path: str, output_dir: str = None) -> str:
     
     # Create output path in the specified directory
     output_path = output_dir / f"{input_path.stem}_compatible{input_path.suffix}"
+    # output_path = output_dir / f"{input_path.stem}{input_path.suffix}"
     
     try:
         # Use the handbrake preprocessor

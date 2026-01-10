@@ -73,7 +73,8 @@ class VideoAddWordsCard:
                     scaled_overlay = scaled_overlay.convert('RGBA')
                 # Make the image semi-transparent (38% opacity)
                 pixels = scaled_overlay.getdata()
-                new_pixels = [(r, g, b, int(a * 0.38)) for r, g, b, a in pixels]
+                # new_pixels = [(r, g, b, int(a * 0.38)) for r, g, b, a in pixels]
+                new_pixels = [(r, g, b, int(a * 0.8)) for r, g, b, a in pixels]
                 scaled_overlay.putdata(new_pixels)
                 scaled_overlay.save(scaled_overlay_path, format="PNG")
                 
@@ -142,7 +143,7 @@ class VideoAddWordsCard:
         return first_frame_path
 
 
-def overlay_word_card_on_cover(words_card_path, cover_path, output_path, transparency=0.5):
+def overlay_word_card_on_cover(words_card_path, cover_path, output_path, transparency=1):
     """Overlay a word card image on a cover image with the specified transparency."""
     try:
         # Open the word card and the cover images

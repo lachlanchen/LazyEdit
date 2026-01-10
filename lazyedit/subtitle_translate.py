@@ -76,6 +76,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         self.flags = {
             'zh': '🇨🇳',  # China for Mandarin
+            'yue': '🇭🇰',  # Hong Kong for Cantonese
             'en': '🇬🇧',  # United Kingdom for English
             'ja': '🇯🇵',  # Japan
             'ar': '🇸🇦',  # Saudi Arabia for Arabic
@@ -208,6 +209,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         # Define a dictionary of language codes to their respective translation functions
         translation_tasks = {
             'major': self.translate_and_merge_subtitles_major_languages,
+            'yue': self.translate_and_merge_subtitles_yue,  # Add Cantonese
             'ja': self.translate_and_merge_subtitles_ja,
             'ko': self.translate_and_merge_subtitles_ko,
             'vi': self.translate_and_merge_subtitles_vi, 
@@ -299,11 +301,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         system_content = "Translate and merge mixed language subtitles into Chinese, English and Arabic, providing coherent and accurate translations."
         prompt = (
             "Below are mixed language subtitles extracted from a video, including timestamps, "
-            "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
+            "language indicators, and the subtitle text itself. "
+            "The task is to ensure that each subtitle "
             "is presented with English (en), Chinese (zh), and Arabic (ar) translations, "
             "maintaining the original timestamps.\n\n"
-            "Process the following subtitles, ensuring translations are accurate and coherent, "
-            "and format the output as shown in the example.\n\n"
+            # "Process the following subtitles, ensuring translations are accurate and coherent, "
+            # "and format the output as shown in the example.\n\n"
             "Please PRESERVE ALL the original timestamps for EACH ENTRY.\n\n"
             "Subtitles to process:\n"
             f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
@@ -314,7 +317,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             json_schema=major_languages_schema,
             system_content=system_content,
             filename=self.get_filename(lang="major", idx=idx),
-            schema_name="major_languages_translation"
+            schema_name="major_languages_translation",
+            model="gpt-4o"
         )
 
         # Extract the subtitles array from the response object
@@ -329,6 +333,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         translate_and_merge_subtitles_with_specified_languages function."""
 
         # Define the list of minor languages to translate to
+        # minor_languages = ["Chinese", "English", "Arabic", "Spanish", "French", "Russian"]
         minor_languages = ["Spanish", "French", "Russian"]
         
         # Call the translate_and_merge_subtitles_with_specified_languages function with the minor languages
@@ -396,11 +401,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         system_content = f"Translate mixed language subtitles into {languages_list_str}, providing coherent and accurate translations."
         prompt = (
             "Below are mixed language subtitles extracted from a video, including timestamps, "
-            "language indicators, and the subtitle text itself. The task is to ensure that each subtitle "
+            "language indicators, and the subtitle text itself. "
+            "The task is to ensure that each subtitle "
             f"is presented with translations in {languages_list_str}, "
             "maintaining the original timestamps.\n\n"
-            "Process the following subtitles, ensuring translations are accurate and coherent, "
-            "and format the output as shown in the example.\n\n"
+            # "Process the following subtitles, ensuring translations are accurate and coherent, "
+            # "and format the output as shown in the example.\n\n"
             "Please PRESERVE ALL the original timestamps for EACH ENTRY.\n\n"
             "Subtitles to process:\n"
             f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
@@ -412,7 +418,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             json_schema=specified_languages_schema,
             system_content=system_content,
             filename=self.get_filename(lang=lang_str, idx=idx),
-            schema_name="specified_languages_translation"
+            schema_name="specified_languages_translation",
+            model="gpt-4o-mini"
         )
 
         # Extract the subtitles array from the response object
@@ -421,6 +428,174 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         print("Translated subtitles (Specified Languages): \n")
         pprint(translated_subtitles)
         return translated_subtitles
+
+    def translate_and_merge_subtitles_yue(self, subtitles, idx):
+        """Request Cantonese subtitles with structured outputs - native Cantonese grammar."""
+        print("Translating subtitles to native Cantonese...")
+
+        cantonese_schema = {
+            "type": "object",
+            "properties": {
+                "subtitles": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "start": {
+                                "type": "string",
+                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
+                                "description": "Start timestamp in HH:MM:SS,mmm format"
+                            },
+                            "end": {
+                                "type": "string",
+                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
+                                "description": "End timestamp in HH:MM:S,mmm format"
+                            },
+                            "yue": {
+                                "type": "string",
+                                "description": "Native Hong Kong Cantonese translation"
+                            }
+                        },
+                        "required": ["start", "end", "yue"],
+                        "additionalProperties": False
+                    }
+                }
+            },
+            "required": ["subtitles"],
+            "additionalProperties": False
+        }
+
+        system_content = "Translate to native Hong Kong Cantonese using proper Cantonese grammar and natural expressions that Hong Kong people actually use."
+
+        prompt = (
+            "Translate to native Hong Kong Cantonese with proper Cantonese grammar.\n"
+            "Use natural Hong Kong expressions, not direct translations.\n"
+            "Output in traditional Chinese characters.\n\n"
+            "Please PRESERVE ALL the original timestamps for EACH ENTRY.\n\n"
+            "Subtitles to process:\n"
+            f"{json.dumps(subtitles, indent=2, ensure_ascii=False)}\n\n"
+        )
+
+        response = self.send_request_with_json_schema(
+            prompt=prompt,
+            json_schema=cantonese_schema,
+            system_content=system_content,
+            filename=self.get_filename(lang="yue_native", idx=idx),
+            schema_name="native_cantonese_translation"
+        )
+
+        # Extract the subtitles array from the response object
+        translated_subtitles = response["subtitles"]
+
+        print("Translated subtitles (Native Cantonese): \n")
+        pprint(translated_subtitles)
+
+        # Now transcribe Cantonese to Jyutping-only
+        jyutping_subtitles = self.transcribe_cantonese_to_jyutping(translated_subtitles, idx)
+
+        print("Final Jyutping-only subtitles: \n")
+        pprint(jyutping_subtitles)
+
+        return jyutping_subtitles
+
+    def transcribe_cantonese_to_jyutping(self, subtitles, idx):
+        """Transcribe Cantonese Chinese characters to Jyutping romanization only."""
+        
+        print("Transcribing Cantonese to Jyutping romanization...")
+
+        jyutping_schema = {
+            "type": "object",
+            "properties": {
+                "subtitles": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "start": {
+                                "type": "string",
+                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
+                                "description": "Start timestamp in HH:MM:SS,mmm format"
+                            },
+                            "end": {
+                                "type": "string",
+                                "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
+                                "description": "End timestamp in HH:MM:SS,mmm format"
+                            },
+                            "yue": {
+                                "type": "string",
+                                "description": "Jyutping romanization with tone numbers (no Chinese characters)"
+                            }
+                        },
+                        "required": ["start", "end", "yue"],
+                        "additionalProperties": False
+                    }
+                }
+            },
+            "required": ["subtitles"],
+            "additionalProperties": False
+        }
+
+        system_content = "Convert Cantonese Chinese characters to accurate Jyutping romanization with tone numbers 1-6. Use standard Jyutping system."
+
+        def process_subtitle(subtitle):
+            """Process a single subtitle to convert Cantonese to Jyutping."""
+            cantonese_text = subtitle.get('yue', '')
+            
+            if not cantonese_text:
+                return subtitle
+                
+            prompt = (
+                "Convert this Cantonese text to Jyutping romanization with tone numbers.\n"
+                "Requirements: Every syllable needs tone number (1-6), separate words with spaces, output ONLY Jyutping.\n\n"
+                f"Cantonese: {cantonese_text}\n\n"
+                "Output only Jyutping with tone numbers:"
+            )
+
+            response = self.send_request_with_json_schema(
+                prompt=prompt,
+                json_schema=jyutping_schema,
+                system_content=system_content,
+                filename=self.get_filename(lang="jyutping_transcribe", idx=idx, timestamp=self.format_subtitle_range(subtitle)),
+                schema_name="jyutping_transcription"
+            )
+
+            # Extract the Jyutping from response
+            transcribed_subtitles = response.get("subtitles", [])
+            if transcribed_subtitles and len(transcribed_subtitles) > 0:
+                jyutping_text = transcribed_subtitles[0].get('yue', cantonese_text)
+            else:
+                jyutping_text = cantonese_text  # Fallback to original
+
+            return {
+                "start": subtitle["start"],
+                "end": subtitle["end"],
+                "yue": jyutping_text
+            }
+
+        # Process each subtitle to convert Cantonese to Jyutping
+        jyutping_subtitles = []
+        
+        # Use parallel processing for efficiency
+        with ThreadPoolExecutor() as executor:
+            futures = {executor.submit(process_subtitle, sub): sub for sub in subtitles}
+            for future in as_completed(futures):
+                original_sub = futures[future]
+                try:
+                    result = future.result()
+                    jyutping_subtitles.append(result)
+                except Exception as exc:
+                    print(f"Jyutping transcription generated an exception: {exc}")
+                    # Fallback: keep original
+                    jyutping_subtitles.append(original_sub)
+
+        # Sort by timestamp to maintain order
+        jyutping_subtitles.sort(key=lambda x: x['start'])
+
+        print("Cantonese transcribed to Jyutping: \n")
+        pprint(jyutping_subtitles)
+
+        return jyutping_subtitles
+
 
     # Function to annotate Kanji and Katakana independently
     @staticmethod
@@ -1377,18 +1552,22 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         kanji_font_size = font_sizes["Japanese"]
         furigana_font_size = font_sizes["Japanese"]
         arabic_font_size = font_sizes["Arabic"]
+
+        jyutping_font_size = english_font_size
+
         # korean
         korean_font_size = japanese_font_size 
         hanja_font_size = kanji_font_size 
         hangul_font_size = furigana_font_size 
         romanko_font_size = furigana_font_size 
         #
-        spanish_font_size = english_font_size
         french_font_size = english_font_size
+        spanish_font_size = english_font_size
         # vietnamese
         vietnamese_font_size = kanji_font_size 
         chuhan_font_size = kanji_font_size 
         viet_font_size = furigana_font_size 
+
 
         # ===== SPACING AND MARGIN VARIABLES (EASY TO ADJUST) =====
         margin_l = 3          # Left margin
@@ -1429,27 +1608,29 @@ Style: Emoji,BabelStone Flags,{base_font_size},&H00FFFFFF,&H00000000,&H00000000,
 Style: Micphone,Noto Color Emoji,{base_font_size},&H00FFFFFF,&H00000000,&H00000000,&H00000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: English,Vernada,{english_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Chinese,Vernada,{chinese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
+Style: Jyutping,Vernada,{jyutping_font_size},&H00D3D3D3,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
+Style: Jyutping1,Vernada,{jyutping_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Japanese,Vernada,{japanese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Kanji,Vernada,{kanji_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Furigana,Vernada,{furigana_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{furigana_scale_x},{furigana_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
+Style: Arabic,Arial,{arabic_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Arabic1,Arial,{arabic_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Arabic,Arial,{arabic_font_size},&H0071B33C,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
+Style: Arabic2,Arial,{arabic_font_size},&H0071B33C,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
+Style: French,Arial,{french_font_size},&H003929ED,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
+Style: French1,Arial,{french_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
+Style: Spanish,Arial,{spanish_font_size},&H0000BFF1,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
+Style: Spanish1,Arial,{spanish_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Korean,Vernada,{korean_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Hanja1,Vernada,{hanja_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Hanja,Vernada,{hanja_font_size},&H00E16941,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Hangul1,Vernada,{hangul_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{hangul_scale_x},{hangul_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Hangul,Vernada,{hangul_font_size},&H00FACE87,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{hangul_scale_x},{hangul_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: RomanKO,Vernada,{romanko_font_size},&H00FACADE,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{hangul_scale_x},{hangul_scale_y},{spacing},0,1,1,1,2,{margin_l},{margin_r},{margin_v},1
-Style: Spanish1,Arial,{spanish_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Spanish,Arial,{spanish_font_size},&H0000BFF1,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: French,Arial,{french_font_size},&H003929ED,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: French2,Arial,{french_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Vietnamese,Arial,{vietnamese_font_size},&H00FFFFFF,&H000000FF,&H00000000,&H64000000,0,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Chuhan1,Vernada,{chuhan_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Chuhan,Vernada,{chuhan_font_size},&H00ADDEFF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-Style: Viet1,Vernada,{viet_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{viet_scale_x},{viet_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
+Style: Chuhan1,Vernada,{chuhan_font_size},&H003C14DC,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{scale_x},{scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 Style: Viet,Vernada,{viet_font_size},&H00E1E4FF,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{viet_scale_x},{viet_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
-
+Style: Viet1,Vernada,{viet_font_size},&H007280FA,&H000000FF,&H00000000,&H64000000,-1,0,0,0,{viet_scale_x},{viet_scale_y},{spacing},0,{border_style},{outline},{shadow},2,{margin_l},{margin_r},{margin_v},1
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 """      
@@ -1596,7 +1777,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             dialogue_lines = []
 
             # Process languages in a specific order if needed, then all additional languages
-            preferred_order = ['zh', 'en', 'ja', "ar", "ko", "es", "vi", "fr", "ru"][::-1]  # Example: Start with Chinese, then English, then Japanese
+            preferred_order = ['zh', 'yue', 'en', 'ja', "ar", "fr", "ko", "vi", "es", "ru"][::-1]  # Example: Start with Chinese, then English, then Japanese
             handled_keys = set(preferred_order)
 
             # Add preferred languages first
@@ -1613,18 +1794,20 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                     else:
                         wrapping_limit_half_width = wrapping_limit_half_width_default
 
-                    if lang == "ar":
-                        style = "Arabic"
-                    elif lang == "zh":
+                    if lang == "zh":
                         style = "Chinese"
+                    elif lang == "yue":
+                        style = "Jyutping"
                     elif lang == "en":
                         style = "English"
                     elif lang == "ja":
                         style = "Japanese"
-                    elif lang == "es":
-                        style = "Spanish"
+                    elif lang == "ar":
+                        style = "Arabic"
                     elif lang == "fr":
                         style = "French"
+                    elif lang == "es":
+                        style = "Spanish"
                     elif lang == "vi":
                         style = "Vietnamese"
                     else:

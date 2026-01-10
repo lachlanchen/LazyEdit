@@ -58,7 +58,7 @@ class OpenAIRequestJSONBase:
                 return cached_data["response"]
         return None
 
-    def send_request_with_json_schema(self, prompt, json_schema, system_content="You are an AI.", filename=None, schema_name="response"):
+    def send_request_with_json_schema(self, prompt, json_schema, system_content="You are an AI.", filename=None, schema_name="response", model=None):
         """
         Send a request to OpenAI with structured JSON schema validation.
         
@@ -78,6 +78,9 @@ class OpenAIRequestJSONBase:
             {"role": "user", "content": prompt}
         ]
 
+        if model is None:
+            model = os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+
         print("self.use_cache: ", self.use_cache)
 
         if self.use_cache:
@@ -92,7 +95,7 @@ class OpenAIRequestJSONBase:
                 
                 # Use the new Structured Outputs API
                 response = self.client.chat.completions.create(
-                    model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+                    model=model,
                     messages=messages,
                     response_format={
                         "type": "json_schema",
