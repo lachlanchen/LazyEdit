@@ -383,6 +383,13 @@ export default function HomeScreen() {
   }, [loadLatestVideos]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      loadLatestVideos(true);
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [loadLatestVideos]);
+
+  useEffect(() => {
     const unsubscribe = subscribeStudioRefresh(() => {
       loadLatestVideos(true);
     });
