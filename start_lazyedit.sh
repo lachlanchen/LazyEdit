@@ -57,6 +57,8 @@ if [ $? != 0 ]; then
         tmux send-keys -t "$SESSION_NAME":0.1 "source \"$BASHRC_PATH\"" C-m
     fi
     tmux send-keys -t "$SESSION_NAME":0.1 "cd \"$EXPO_APP_DIR\"" C-m
+    tmux send-keys -t "$SESSION_NAME":0.1 "if [ -f \"package.json\" ] && [ ! -d \"node_modules\" ]; then npm install; fi" C-m
+    tmux send-keys -t "$SESSION_NAME":0.1 "if [ -f \"package.json\" ] && [ ! -d \"node_modules/expo\" ]; then npm install; fi" C-m
     tmux send-keys -t "$SESSION_NAME":0.1 "export EXPO_PUBLIC_API_URL=\"$EXPO_PUBLIC_API_URL\"" C-m
     tmux send-keys -t "$SESSION_NAME":0.1 "npx expo start --web --port $EXPO_PORT" C-m
 else
