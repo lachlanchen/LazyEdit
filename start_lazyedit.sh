@@ -11,6 +11,11 @@ BACKEND_PORT="${BACKEND_PORT:-18787}"
 EXPO_PORT="${EXPO_PORT:-18791}"
 EXPO_PUBLIC_API_URL="${EXPO_PUBLIC_API_URL:-http://localhost:${BACKEND_PORT}}"
 
+if ! command -v tmux >/dev/null 2>&1; then
+    echo "tmux is required but not found in PATH."
+    exit 1
+fi
+
 if [ -z "$CONDA_PATH" ] || [ ! -f "$CONDA_PATH" ]; then
     for candidate in "$HOME/miniconda3/etc/profile.d/conda.sh" "$HOME/anaconda3/etc/profile.d/conda.sh"; do
         if [ -f "$candidate" ]; then
