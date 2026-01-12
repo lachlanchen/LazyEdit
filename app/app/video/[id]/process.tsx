@@ -304,15 +304,6 @@ export default function ProcessVideoScreen() {
     refreshBurnPreview();
   }, [id]);
 
-  useEffect(() => {
-    if (!id) return;
-    syncPipelineStatus();
-    const interval = setInterval(() => {
-      syncPipelineStatus();
-    }, 6000);
-    return () => clearInterval(interval);
-  }, [id, syncPipelineStatus]);
-
   const slotLanguages = useMemo(() => {
     const slots = burnLayout?.slots || [];
     return slots
@@ -577,6 +568,15 @@ export default function ProcessVideoScreen() {
     syncInFlightRef.current = false;
   }
   }, [id, selectedSteps, translationTargetLanguages]);
+
+  useEffect(() => {
+    if (!id) return;
+    syncPipelineStatus();
+    const interval = setInterval(() => {
+      syncPipelineStatus();
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [id, syncPipelineStatus]);
 
   const logEntries = useMemo(() => {
     return {
