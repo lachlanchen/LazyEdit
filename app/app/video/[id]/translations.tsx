@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Modal, ScrollView, StyleSheet, Switch, Text, View, Pressable } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ActivityIndicator, Modal, ScrollView, StyleSheet, Switch, Text, TextInput, View, Pressable } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
@@ -353,6 +353,13 @@ export default function TranslationsScreen() {
   const [jaLines, setJaLines] = useState<JaLine[]>([]);
   const [contentLoading, setContentLoading] = useState(false);
   const [error, setError] = useState<string>('');
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editValue, setEditValue] = useState('');
+  const [editOriginal, setEditOriginal] = useState('');
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState('');
+  const skipAutoSaveRef = useRef(false);
+  const lastTapRef = useRef<{ key: string; time: number } | null>(null);
   const [palette, setPalette] = useState<GrammarPalette | null>(null);
   const [outlineEnabled, setOutlineEnabled] = useState(true);
   const [shadowEnabled, setShadowEnabled] = useState(true);
@@ -420,6 +427,79 @@ export default function TranslationsScreen() {
       }
     })();
   }, [activeLang, translations]);
+
+  useEffect(() => {
+    setEditingIndex(null);
+    setEditValue('');
+    setEditOriginal('');
+    setEditError('');
+  }, [activeLang]);
+
+  const startEditing = useCallback((index: number, text: string) => {
+    setEditingIndex(index);
+    setEditValue(text);
+    setEditOriginal(text);
+    setEditError('');
+  }, []);
+
+  const handleLinePress = useCallback(
+    (key: string, index: number, text: string) => {
+      const now = Date.now();
+      if (lastTapRef.current && lastTapRef.current.key === key && now - lastTapRef.current.time < 320) {
+        lastTapRef.current = null;
+        startEditing(index, text);
+        return;
+      }
+      lastTapRef.current = { key, time: now };
+    },
+    [startEditing],
+  );
+
+  const cancelEdit = useCallback(() => {
+    skipAutoSaveRef.current = true;
+    setEditingIndex(null);
+    setEditValue('');
+    setEditOriginal('');
+    setEditError('');
+  }, []);
+
+  const saveEdit = useCallback(async () => {
+    if (editingIndex === null || !activeLang || !id) return;
+    const trimmed = editValue.trim();
+    if (trimmed === editOriginal.trim()) {
+      setEditingIndex(null);
+      return;
+    }
+    setEditSaving(true);
+    setEditError('');
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}/translation?lang=${activeLang}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ index: editingIndex, text: editValue }),
+      });
+      const json = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        throw new Error(json.error || 'Save failed');
+      }
+      if (activeLang === 'ja') {
+        setJaLines((prev) =>
+          prev.map((line, idx) =>
+            idx === editingIndex ? { ...line, ja: editValue, ruby: undefined, tokens: undefined, furigana_pairs: undefined } : line,
+          ),
+        );
+      } else {
+        setSrtLines((prev) =>
+          prev.map((line, idx) => (idx === editingIndex ? { ...line, text: editValue } : line)),
+        );
+      }
+      setEditingIndex(null);
+    } catch (e: any) {
+      setEditError(e?.message || 'Save failed');
+    } finally {
+      setEditSaving(false);
+    }
+  }, [editingIndex, activeLang, id, editValue, editOriginal]);
 
   useEffect(() => {
     if (!activeLang) return;
@@ -681,10 +761,47 @@ export default function TranslationsScreen() {
                   useBg && { backgroundColor: rgbaFromHex(bgColor, bgAlpha) },
                 ];
                 const lineTimeColor = useBg && isDarkColor(bgColor) ? '#e2e8f0' : '#64748b';
+                const isEditing = editingIndex === idx;
+                const lineKey = `${line.start}-${idx}`;
                 return (
-                  <View key={`${line.start}-${idx}`} style={lineBlockStyle}>
+                  <Pressable
+                    key={lineKey}
+                    style={lineBlockStyle}
+                    onPress={() => handleLinePress(lineKey, idx, line.ja || '')}
+                    onLongPress={() => startEditing(idx, line.ja || '')}
+                  >
                     <Text style={[styles.lineTime, { color: lineTimeColor }]}>{line.start} → {line.end}</Text>
-                    {displayTokens.length ? (
+                    {isEditing ? (
+                      <>
+                        <TextInput
+                          style={styles.editInput}
+                          value={editValue}
+                          onChangeText={setEditValue}
+                          multiline
+                          onBlur={() => {
+                            if (editingIndex !== idx) return;
+                            if (skipAutoSaveRef.current) {
+                              skipAutoSaveRef.current = false;
+                              return;
+                            }
+                            saveEdit();
+                          }}
+                        />
+                        {editError ? <Text style={styles.editError}>{editError}</Text> : null}
+                        <View style={styles.editActions}>
+                          <Pressable style={styles.actionButton} onPress={cancelEdit}>
+                            <Text style={styles.actionText}>Cancel</Text>
+                          </Pressable>
+                          <Pressable
+                            style={[styles.actionButton, styles.actionPrimary]}
+                            onPress={saveEdit}
+                            disabled={editSaving}
+                          >
+                            <Text style={styles.actionPrimaryText}>{editSaving ? 'Saving...' : 'Save'}</Text>
+                          </Pressable>
+                        </View>
+                      </>
+                    ) : displayTokens.length ? (
                       <View style={styles.furiganaLine}>
                         {displayTokens.map((token, pIdx) => {
                           const word = token.word || '';
@@ -704,7 +821,7 @@ export default function TranslationsScreen() {
                     ) : (
                       <Text style={buildTextStyle(styles.jaText, lineTextColor)}>{line.ja}</Text>
                     )}
-                  </View>
+                  </Pressable>
                 );
               })
             ) : (
@@ -721,11 +838,50 @@ export default function TranslationsScreen() {
                   useBg && { backgroundColor: rgbaFromHex(bgColor, bgAlpha) },
                 ];
                 const lineTimeColor = useBg && isDarkColor(bgColor) ? '#e2e8f0' : '#64748b';
+                const isEditing = editingIndex === idx;
+                const lineKey = `${line.start}-${idx}`;
                 return (
-                  <View key={`${line.start}-${idx}`} style={lineBlockStyle}>
+                  <Pressable
+                    key={lineKey}
+                    style={lineBlockStyle}
+                    onPress={() => handleLinePress(lineKey, idx, line.text)}
+                    onLongPress={() => startEditing(idx, line.text)}
+                  >
                     <Text style={[styles.lineTime, { color: lineTimeColor }]}>{line.start} → {line.end}</Text>
-                    <Text style={buildTextStyle(styles.lineText, lineTextColor)}>{line.text}</Text>
-                  </View>
+                    {isEditing ? (
+                      <>
+                        <TextInput
+                          style={styles.editInput}
+                          value={editValue}
+                          onChangeText={setEditValue}
+                          multiline
+                          onBlur={() => {
+                            if (editingIndex !== idx) return;
+                            if (skipAutoSaveRef.current) {
+                              skipAutoSaveRef.current = false;
+                              return;
+                            }
+                            saveEdit();
+                          }}
+                        />
+                        {editError ? <Text style={styles.editError}>{editError}</Text> : null}
+                        <View style={styles.editActions}>
+                          <Pressable style={styles.actionButton} onPress={cancelEdit}>
+                            <Text style={styles.actionText}>Cancel</Text>
+                          </Pressable>
+                          <Pressable
+                            style={[styles.actionButton, styles.actionPrimary]}
+                            onPress={saveEdit}
+                            disabled={editSaving}
+                          >
+                            <Text style={styles.actionPrimaryText}>{editSaving ? 'Saving...' : 'Save'}</Text>
+                          </Pressable>
+                        </View>
+                      </>
+                    ) : (
+                      <Text style={buildTextStyle(styles.lineText, lineTextColor)}>{line.text}</Text>
+                    )}
+                  </Pressable>
                 );
               })
             ) : (
@@ -807,6 +963,29 @@ const styles = StyleSheet.create({
   lineBlockWithBg: { paddingVertical: 8, paddingHorizontal: 10, borderRadius: 10 },
   lineTime: { fontSize: 11, color: '#64748b', marginBottom: 4 },
   lineText: { fontSize: 14, color: '#0f172a' },
+  editInput: {
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    borderRadius: 8,
+    padding: 8,
+    fontSize: 13,
+    color: '#0f172a',
+    minHeight: 44,
+    backgroundColor: 'white',
+  },
+  editActions: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 8 },
+  actionButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    marginLeft: 8,
+  },
+  actionText: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
+  actionPrimary: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
+  actionPrimaryText: { fontSize: 12, fontWeight: '700', color: '#f8fafc' },
+  editError: { fontSize: 11, color: '#b91c1c', marginTop: 6 },
   furiganaLine: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-end' },
   furiganaToken: { alignItems: 'center', marginRight: 4, marginBottom: 2 },
   furiganaText: {

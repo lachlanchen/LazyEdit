@@ -1317,6 +1317,69 @@ def build_srt_preview_with_timestamps(srt_path, max_entries=6):
     return "\n".join(lines) if lines else None
 
 
+def _load_subtitle_payload(json_path: str) -> tuple[dict | None, list[dict], str | None]:
+    if not json_path or not os.path.exists(json_path):
+        return None, [], None
+    try:
+        with open(json_path, "r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except Exception:
+        return None, [], None
+
+    if isinstance(payload, dict):
+        for key in ("items", "subtitles", "segments"):
+            value = payload.get(key)
+            if isinstance(value, list):
+                return payload, value, key
+        return payload, [], None
+    if isinstance(payload, list):
+        return None, payload, None
+    return None, [], None
+
+
+def _write_subtitle_payload(json_path: str, payload: dict | None, items: list[dict], container_key: str | None) -> None:
+    if payload is None:
+        data = items
+    else:
+        if container_key:
+            payload[container_key] = items
+        data = payload
+    with open(json_path, "w", encoding="utf-8") as handle:
+        json.dump(data, handle, ensure_ascii=False, indent=2)
+
+
+def _write_srt_from_items(items: list[dict], output_path: str, text_key: str | None = None) -> None:
+    blocks = []
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            continue
+        start = item.get("start")
+        end = item.get("end")
+        if not start or not end:
+            continue
+        if text_key:
+            text_value = item.get(text_key)
+        else:
+            text_value = item.get("text")
+        text = "" if text_value is None else str(text_value)
+        blocks.append(f"{index}\n{start} --> {end}\n{text}")
+    with open(output_path, "w", encoding="utf-8") as handle:
+        handle.write("\n\n".join(blocks).strip() + "\n")
+
+
+def _resolve_translation_text_key(language: str, item: dict) -> str:
+    if language in {"zh", "zh-Hant", "zh-Hans"}:
+        preferred = "zh"
+    else:
+        preferred = language
+    if preferred in item:
+        return preferred
+    for key in ("ja", "en", "zh", "ar", "ko", "es", "fr", "ru", "vi", "yue"):
+        if key in item:
+            return key
+    return preferred
+
+
 def find_latest_caption_frames_dir(output_folder, base_name):
     if not output_folder or not base_name:
         return None
@@ -3445,6 +3508,54 @@ class VideoTranscriptionHandler(CorsMixin, tornado.web.RequestHandler):
             "language_summary": language_summary,
         })
 
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+        index_raw = data.get("index")
+        text_raw = data.get("text")
+        if index_raw is None or text_raw is None:
+            self.set_status(400)
+            return self.write({"error": "index and text required"})
+        try:
+            index = int(index_raw)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid index"})
+        ldb.ensure_schema()
+        row = ldb.get_latest_transcription(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "transcription not found"})
+        (
+            _transcription_id,
+            _language_code,
+            _status,
+            output_json_path,
+            output_srt_path,
+            output_md_path,
+            _error,
+            _created_at,
+        ) = row
+        payload, items, container_key = _load_subtitle_payload(output_json_path)
+        if index < 0 or index >= len(items):
+            self.set_status(400)
+            return self.write({"error": "index out of range"})
+        item = items[index]
+        item["text"] = str(text_raw)
+        _write_subtitle_payload(output_json_path, payload, items, container_key)
+        if output_srt_path:
+            _write_srt_from_items(items, output_srt_path, text_key="text")
+        if output_md_path and output_srt_path:
+            write_markdown_from_srt(output_srt_path, output_md_path)
+        self.write({"status": "ok", "index": index, "text": item.get("text", "")})
+
 
 class VideoCaptionHandler(CorsMixin, tornado.web.RequestHandler):
     def post(self, video_id):
@@ -4561,6 +4672,67 @@ class VideoTranslationHandler(CorsMixin, tornado.web.RequestHandler):
             "created_at": created_at.isoformat() if created_at else None,
             "preview_text": build_srt_preview_with_timestamps(output_srt_path),
         })
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        lang = self.get_argument("lang", default=None)
+        if not lang:
+            self.set_status(400)
+            return self.write({"error": "lang required"})
+        lang = _normalize_translation_language(lang)
+        if not lang:
+            self.set_status(400)
+            return self.write({"error": "unsupported lang"})
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+        index_raw = data.get("index")
+        text_raw = data.get("text")
+        if index_raw is None or text_raw is None:
+            self.set_status(400)
+            return self.write({"error": "index and text required"})
+        try:
+            index = int(index_raw)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid index"})
+        ldb.ensure_schema()
+        row = ldb.get_latest_subtitle_translation(video_id_i, lang)
+        if not row and lang == "zh-Hant":
+            row = ldb.get_latest_subtitle_translation(video_id_i, "zh")
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "translation not found"})
+        (
+            _translation_id,
+            _language_code,
+            _status,
+            output_json_path,
+            output_srt_path,
+            _output_ass_path,
+            _error,
+            _created_at,
+        ) = row
+        payload, items, container_key = _load_subtitle_payload(output_json_path)
+        if index < 0 or index >= len(items):
+            self.set_status(400)
+            return self.write({"error": "index out of range"})
+        item = items[index]
+        text_key = _resolve_translation_text_key(lang, item)
+        item[text_key] = str(text_raw)
+        if text_key == "ja":
+            item.pop("tokens", None)
+            item.pop("furigana_pairs", None)
+            item.pop("ruby", None)
+        _write_subtitle_payload(output_json_path, payload, items, container_key)
+        if output_srt_path:
+            _write_srt_from_items(items, output_srt_path, text_key=text_key)
+        self.write({"status": "ok", "index": index, "text": item.get(text_key, "")})
 
 
 class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
