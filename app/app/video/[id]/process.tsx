@@ -344,6 +344,15 @@ export default function ProcessVideoScreen() {
     const needsCaption = selectedSteps.caption || selectedSteps.metadataZh || selectedSteps.metadataEn;
 
     const mark = (step: StepKey, status: StepState, detail = '') => {
+      const current = nextStatus[step];
+      if (runningNow) {
+        if ((current === 'done' || current === 'error') && status !== current) {
+          return;
+        }
+        if (current === 'working' && status === 'idle') {
+          return;
+        }
+      }
       nextStatus[step] = status;
       nextDetail[step] = detail;
     };
