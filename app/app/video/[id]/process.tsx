@@ -793,6 +793,34 @@ export default function ProcessVideoScreen() {
     ));
   };
 
+  const stopPipeline = async () => {
+    if (!id) return;
+    const nextStatus = { ...stepStatus };
+    const nextDetail = { ...stepDetail };
+    STEP_ORDER.forEach((step) => {
+      if (nextStatus[step] === 'working') {
+        nextStatus[step] = step === 'burn' ? 'error' : 'idle';
+        nextDetail[step] = step === 'burn' ? 'Cancelled' : '';
+      }
+    });
+    processStateRef.current.stepStatus = nextStatus;
+    processStateRef.current.stepDetail = nextDetail;
+    setStepStatus(nextStatus);
+    setStepDetail(nextDetail);
+    setRunningState(false);
+    updateStoredMessage('Pipeline stopped.');
+    try {
+      await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cancel: true }),
+      });
+    } catch (_err) {
+      // ignore
+    }
+    syncPipelineStatus();
+  };
+
   const runPipeline = async () => {
     if (!id || running) return;
     const needsTranscribe =
@@ -945,6 +973,11 @@ export default function ProcessVideoScreen() {
         <Pressable style={[styles.btnPrimary, running && styles.btnDisabled]} onPress={runPipeline}>
           <Text style={styles.btnText}>{running ? 'Processing…' : 'Process video'}</Text>
         </Pressable>
+        {running ? (
+          <Pressable style={styles.btnDanger} onPress={stopPipeline}>
+            <Text style={styles.btnDangerText}>Stop pipeline</Text>
+          </Pressable>
+        ) : null}
         <View style={styles.previewCard}>
           <Text style={styles.sectionTitle}>Burn preview</Text>
           {(burnPreviewUrl || proxyPreviewUrl || previewVideoUrl) ? (
@@ -1041,6 +1074,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   btnSecondaryText: { color: '#0f172a', fontWeight: '700' },
+  btnDanger: {
+    marginTop: 8,
+    paddingVertical: 12,
+    borderRadius: 999,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    backgroundColor: '#fee2e2',
+  },
+  btnDangerText: { color: '#b91c1c', fontWeight: '700' },
   btnDisabled: { opacity: 0.6 },
   btnText: { color: '#f8fafc', fontWeight: '700' },
   status: { marginTop: 10, fontSize: 12, color: '#0f172a' },

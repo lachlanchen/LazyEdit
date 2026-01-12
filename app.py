@@ -4778,6 +4778,18 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             data = {}
 
+        cancel_requested = _parse_bool(data.get("cancel") or data.get("stop") or data.get("abort"), default=False)
+        if cancel_requested:
+            ldb.ensure_schema()
+            row = ldb.get_latest_subtitle_burn(video_id_i)
+            if not row:
+                return self.write({"status": "no_active"})
+            burn_id, status, _output_path, _progress, _config, error, _created_at = row
+            if status == "processing":
+                ldb.finalize_subtitle_burn(burn_id, "failed", None, "Cancelled by user", progress=0)
+                return self.write({"id": burn_id, "video_id": video_id_i, "status": "cancelled"})
+            return self.write({"id": burn_id, "video_id": video_id_i, "status": status, "error": error})
+
         layout_config = _sanitize_burn_layout(data.get("layout") or data.get("slots") or data)
         slots_config = layout_config.get("slots") or []
         romaji_enabled = bool(layout_config.get("romajiEnabled", True))
