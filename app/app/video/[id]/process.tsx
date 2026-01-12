@@ -370,24 +370,25 @@ export default function ProcessVideoScreen() {
     };
 
     try {
-      const transcribeResp = await fetch(`${API_URL}/api/videos/${id}/transcription`);
-      if (transcribeResp.ok) {
-        const json = await transcribeResp.json();
-        if (json.status === 'completed') {
-          mark('transcribe', 'done', 'Completed');
-        } else if (json.status === 'no_audio') {
-          mark('transcribe', 'error', 'No audio detected');
-        } else if (json.status === 'failed') {
-          mark('transcribe', 'error', json.error || 'Failed');
-        } else {
-          mark('transcribe', 'working', json.status || 'Working');
+      try {
+        const transcribeResp = await fetch(`${API_URL}/api/videos/${id}/transcription`);
+        if (transcribeResp.ok) {
+          const json = await transcribeResp.json();
+          if (json.status === 'completed') {
+            mark('transcribe', 'done', 'Completed');
+          } else if (json.status === 'no_audio') {
+            mark('transcribe', 'error', 'No audio detected');
+          } else if (json.status === 'failed') {
+            mark('transcribe', 'error', json.error || 'Failed');
+          } else {
+            mark('transcribe', 'working', json.status || 'Working');
+          }
+        } else if (transcribeResp.status === 404) {
+          markIdle('transcribe', needsTranscribe);
         }
-      } else if (transcribeResp.status === 404) {
+      } catch (_err) {
         markIdle('transcribe', needsTranscribe);
       }
-    } catch (_err) {
-      markIdle('transcribe', needsTranscribe);
-    }
 
     if (!needsTranslate) {
       mark('translate', 'skipped', 'Skipped');
