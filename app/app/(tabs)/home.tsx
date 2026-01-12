@@ -365,7 +365,7 @@ export default function HomeScreen() {
   }, []);
 
   const latestForTab = useMemo(() => {
-    if (!latestVideos.length) return null;
+    if (!latestVideos.length) return [];
     const target =
       activeTab === 'generate' ? 'generate' : activeTab === 'remix' ? 'remix' : activeTab === 'api' ? 'api' : 'upload';
     const resolveSource = (video: Video) => {
@@ -375,7 +375,7 @@ export default function HomeScreen() {
       if (path.includes('/generated/') || path.includes('\\generated\\')) return 'generate';
       return 'upload';
     };
-    return latestVideos.find((video) => resolveSource(video) === target) || null;
+    return latestVideos.filter((video) => resolveSource(video) === target).slice(0, 5);
   }, [latestVideos, activeTab]);
 
   useEffect(() => {
@@ -1797,41 +1797,43 @@ const HISTORY_KEYS = {
             </View>
             {latestLoading ? (
               <ActivityIndicator style={{ marginTop: 8 }} />
-            ) : latestForTab ? (
+            ) : latestForTab.length ? (
               <View style={styles.latestList}>
-                <Pressable
-                  key={latestForTab.id}
-                  style={styles.latestRow}
-                  onPress={() => router.push('/library')}
-                >
-                  <View style={styles.latestPreview}>
-                    {(() => {
-                      const previewUrl = latestForTab.preview_media_url || latestForTab.media_url;
-                      const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
-                      if (Platform.OS === 'web' && mediaSrc) {
-                        return React.createElement('video', {
-                          src: mediaSrc,
-                          style: { width: '100%', height: '100%', borderRadius: 10, objectFit: 'cover' },
-                          muted: true,
-                          playsInline: true,
-                          preload: 'metadata',
-                        });
-                      }
-                      return <Text style={styles.previewLabel}>{t('library_preview')}</Text>;
-                    })()}
-                  </View>
-                  <View style={styles.latestMeta}>
-                    <Text style={styles.latestTitle} numberOfLines={1}>
-                      {latestForTab.title || t('library_video_fallback', { id: latestForTab.id })}
-                    </Text>
-                    <Text style={styles.latestPath} numberOfLines={1}>
-                      {latestForTab.file_path}
-                    </Text>
-                    <Text style={styles.latestTime}>
-                      {latestForTab.created_at?.slice(0, 19).replace('T', ' ')}
-                    </Text>
-                  </View>
-                </Pressable>
+                {latestForTab.map((video) => (
+                  <Pressable
+                    key={video.id}
+                    style={styles.latestRow}
+                    onPress={() => router.push('/library')}
+                  >
+                    <View style={styles.latestPreview}>
+                      {(() => {
+                        const previewUrl = video.preview_media_url || video.media_url;
+                        const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
+                        if (Platform.OS === 'web' && mediaSrc) {
+                          return React.createElement('video', {
+                            src: mediaSrc,
+                            style: { width: '100%', height: '100%', borderRadius: 10, objectFit: 'cover' },
+                            muted: true,
+                            playsInline: true,
+                            preload: 'metadata',
+                          });
+                        }
+                        return <Text style={styles.previewLabel}>{t('library_preview')}</Text>;
+                      })()}
+                    </View>
+                    <View style={styles.latestMeta}>
+                      <Text style={styles.latestTitle} numberOfLines={1}>
+                        {video.title || t('library_video_fallback', { id: video.id })}
+                      </Text>
+                      <Text style={styles.latestPath} numberOfLines={1}>
+                        {video.file_path}
+                      </Text>
+                      <Text style={styles.latestTime}>
+                        {video.created_at?.slice(0, 19).replace('T', ' ')}
+                      </Text>
+                    </View>
+                  </Pressable>
+                ))}
               </View>
             ) : (
               <Text style={styles.empty}>{t('library_empty')}</Text>
