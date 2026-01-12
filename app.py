@@ -3030,6 +3030,11 @@ class MediaHandler(tornado.web.StaticFileHandler):
         self.set_header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS")
         self.set_header("Access-Control-Allow-Headers", "content-type, range")
 
+    def set_extra_headers(self, path):
+        ext = os.path.splitext(path)[1].lower()
+        if ext in {".json", ".srt", ".md", ".ass", ".vtt", ".txt"}:
+            self.set_header("Cache-Control", "no-store")
+
     def options(self, *args, **kwargs):
         self.set_status(204)
         self.finish()

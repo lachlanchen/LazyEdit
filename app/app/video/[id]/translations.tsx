@@ -378,7 +378,7 @@ export default function TranslationsScreen() {
     (async () => {
       setLoading(true);
       try {
-        const resp = await fetch(`${API_URL}/api/videos/${id}/translations`);
+        const resp = await fetch(`${API_URL}/api/videos/${id}/translations`, { cache: 'no-store' });
         const json = await resp.json();
         if (!resp.ok) {
           setError(json.error || 'Failed to load translations');
@@ -411,12 +411,12 @@ export default function TranslationsScreen() {
       setJaLines([]);
       try {
         if (activeLang === 'ja' && current.json_url) {
-          const resp = await fetch(`${API_URL}${current.json_url}`);
+          const resp = await fetch(`${API_URL}${current.json_url}?t=${Date.now()}`);
           const json = await resp.json();
           const lines = Array.isArray(json) ? (json as JaLine[]) : [];
           setJaLines(lines);
         } else if (current.srt_url) {
-          const resp = await fetch(`${API_URL}${current.srt_url}`);
+          const resp = await fetch(`${API_URL}${current.srt_url}?t=${Date.now()}`);
           const text = await resp.text();
           setSrtLines(parseSrt(text));
         }

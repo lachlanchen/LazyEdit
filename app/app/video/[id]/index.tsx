@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -12,6 +12,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
@@ -292,11 +293,11 @@ export default function VideoDetailScreen() {
   }, [selectedTranslateLangs, previewLang]);
 
 
-  const loadTranscription = async () => {
+  const loadTranscription = useCallback(async () => {
     if (!id) return;
     setTranscriptionLoading(true);
     try {
-      const resp = await fetch(`${API_URL}/api/videos/${id}/transcription`);
+      const resp = await fetch(`${API_URL}/api/videos/${id}/transcription`, { cache: 'no-store' });
       if (resp.status === 404) {
         setTranscription(null);
         return;
@@ -316,7 +317,7 @@ export default function VideoDetailScreen() {
     } finally {
       setTranscriptionLoading(false);
     }
-  };
+  }, [id]);
 
   const loadCaption = async () => {
     if (!id) return;
@@ -370,11 +371,11 @@ export default function VideoDetailScreen() {
     }
   };
 
-  const loadTranslations = async (): Promise<TranslationDetail[]> => {
+  const loadTranslations = useCallback(async (): Promise<TranslationDetail[]> => {
     if (!id) return [];
     setTranslationsLoading(true);
     try {
-      const resp = await fetch(`${API_URL}/api/videos/${id}/translations`);
+      const resp = await fetch(`${API_URL}/api/videos/${id}/translations`, { cache: 'no-store' });
       const json = await resp.json();
       if (!resp.ok) {
         setTranslateStatus(json.error || 'Failed to load translations');
@@ -400,7 +401,7 @@ export default function VideoDetailScreen() {
     } finally {
       setTranslationsLoading(false);
     }
-  };
+  }, [id]);
 
   const loadMetadata = async (lang: 'zh' | 'en') => {
     if (!id) return null;
@@ -496,6 +497,14 @@ export default function VideoDetailScreen() {
     loadTranslations();
     loadAllMetadata();
   }, [id]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadTranscription();
+      loadTranslations();
+      return undefined;
+    }, [loadTranscription, loadTranslations]),
+  );
 
   const openProcessPage = () => {
     if (!video) return;

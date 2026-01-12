@@ -149,7 +149,7 @@ export default function TranscriptionScreen() {
     (async () => {
       setLoading(true);
       try {
-        const resp = await fetch(`${API_URL}/api/videos/${id}/transcription`);
+        const resp = await fetch(`${API_URL}/api/videos/${id}/transcription`, { cache: 'no-store' });
         const json = await resp.json();
         if (!resp.ok) {
           setError(json.error || 'Failed to load transcription');
@@ -162,7 +162,7 @@ export default function TranscriptionScreen() {
           setLines([]);
           return;
         }
-        const fileResp = await fetch(`${API_URL}${url}`);
+        const fileResp = await fetch(`${API_URL}${url}?t=${Date.now()}`);
         const payload = await fileResp.json();
         setLines(parseTranscriptionPayload(payload));
       } catch (e: any) {
