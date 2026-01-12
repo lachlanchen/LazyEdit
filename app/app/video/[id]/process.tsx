@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
@@ -143,7 +143,10 @@ export default function ProcessVideoScreen() {
     stepDetail: {} as Record<StepKey, string>,
     message: '',
     burnPreviewUrl: null as string | null,
+    selectedSteps: defaultSelections,
+    running: false,
   });
+  const syncInFlightRef = useRef(false);
 
   const persistProcessState = () => {
     const key = buildStorageKey(id);
@@ -164,6 +167,18 @@ export default function ProcessVideoScreen() {
   const updateBurnPreview = (url: string | null) => {
     setBurnPreviewUrl(url);
     processStateRef.current.burnPreviewUrl = url;
+    persistProcessState();
+  };
+
+  const setRunningState = (value: boolean) => {
+    setRunning(value);
+    processStateRef.current.running = value;
+    persistProcessState();
+  };
+
+  const setSelectedStepsState = (value: Record<StepKey, boolean>) => {
+    setSelectedSteps(value);
+    processStateRef.current.selectedSteps = value;
     persistProcessState();
   };
 
@@ -225,15 +240,21 @@ export default function ProcessVideoScreen() {
     if (stored) {
       const baselineStatus = { ...defaultStepState, ...(stored.stepStatus || {}) };
       const baselineDetail = { ...(stored.stepDetail || {}) };
+      const storedSteps = stored.selectedSteps || defaultSelections;
+      const storedRunning = Boolean(stored.running);
       setStepStatus(baselineStatus);
       setStepDetail(baselineDetail);
       setMessage(stored.message || '');
       setBurnPreviewUrl(stored.burnPreviewUrl || null);
+      setSelectedSteps(storedSteps);
+      setRunning(storedRunning);
       processStateRef.current = {
         stepStatus: baselineStatus,
         stepDetail: baselineDetail,
         message: stored.message || '',
         burnPreviewUrl: stored.burnPreviewUrl || null,
+        selectedSteps: storedSteps,
+        running: storedRunning,
       };
     }
   }, [id]);
@@ -283,6 +304,15 @@ export default function ProcessVideoScreen() {
     refreshBurnPreview();
   }, [id]);
 
+  useEffect(() => {
+    if (!id) return;
+    syncPipelineStatus();
+    const interval = setInterval(() => {
+      syncPipelineStatus();
+    }, 6000);
+    return () => clearInterval(interval);
+  }, [id, syncPipelineStatus]);
+
   const slotLanguages = useMemo(() => {
     const slots = burnLayout?.slots || [];
     return slots
@@ -306,6 +336,246 @@ export default function ProcessVideoScreen() {
     }
     persistProcessState();
   };
+
+  const syncPipelineStatus = useCallback(async () => {
+    if (!id || syncInFlightRef.current) return;
+    syncInFlightRef.current = true;
+    const nextStatus = { ...processStateRef.current.stepStatus };
+    const nextDetail = { ...processStateRef.current.stepDetail };
+    const runningNow = processStateRef.current.running;
+    const needsTranscribe =
+      selectedSteps.transcribe ||
+      selectedSteps.translate ||
+      selectedSteps.burn ||
+      selectedSteps.metadataZh ||
+      selectedSteps.metadataEn;
+    const needsTranslate = selectedSteps.translate || selectedSteps.burn;
+    const needsCaption = selectedSteps.caption || selectedSteps.metadataZh || selectedSteps.metadataEn;
+
+    const mark = (step: StepKey, status: StepState, detail = '') => {
+      nextStatus[step] = status;
+      nextDetail[step] = detail;
+    };
+
+    const markIdle = (step: StepKey, needed: boolean) => {
+      if (!needed) {
+        mark(step, 'skipped', 'Skipped');
+        return;
+      }
+      if (runningNow) {
+        mark(step, 'working', 'Queued');
+        return;
+      }
+      mark(step, 'idle', '');
+    };
+
+    try {
+      const transcribeResp = await fetch(`${API_URL}/api/videos/${id}/transcription`);
+      if (transcribeResp.ok) {
+        const json = await transcribeResp.json();
+        if (json.status === 'completed') {
+          mark('transcribe', 'done', 'Completed');
+        } else if (json.status === 'no_audio') {
+          mark('transcribe', 'error', 'No audio detected');
+        } else if (json.status === 'failed') {
+          mark('transcribe', 'error', json.error || 'Failed');
+        } else {
+          mark('transcribe', 'working', json.status || 'Working');
+        }
+      } else if (transcribeResp.status === 404) {
+        markIdle('transcribe', needsTranscribe);
+      }
+    } catch (_err) {
+      markIdle('transcribe', needsTranscribe);
+    }
+
+    if (!needsTranslate) {
+      mark('translate', 'skipped', 'Skipped');
+    } else if (!translationTargetLanguages.length) {
+      mark('translate', 'skipped', 'No languages selected');
+    } else {
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${id}/translations`);
+        if (resp.ok) {
+          const json = await resp.json();
+          const items: TranslationDetail[] = json.translations || [];
+          const statusByLang = new Map(items.map((item) => [item.language_code, item.status]));
+          const failedLangs = translationTargetLanguages.filter((lang) => statusByLang.get(lang) === 'failed');
+          const completedCount = translationTargetLanguages.filter(
+            (lang) => statusByLang.get(lang) === 'completed',
+          ).length;
+          const total = translationTargetLanguages.length;
+          if (failedLangs.length) {
+            mark(
+              'translate',
+              'error',
+              `Failed: ${failedLangs.map((lang) => LANG_LABELS[lang] || lang).join(', ')}`,
+            );
+          } else if (completedCount >= total && total > 0) {
+            mark('translate', 'done', `Completed ${completedCount}/${total}`);
+          } else {
+            const detail = `Completed ${completedCount}/${total}`;
+            if (runningNow) {
+              mark('translate', 'working', detail);
+            } else if (completedCount > 0) {
+              mark('translate', 'working', detail);
+            } else {
+              mark('translate', 'idle', detail);
+            }
+          }
+        } else if (resp.status === 404) {
+          markIdle('translate', needsTranslate);
+        }
+      } catch (_err) {
+        markIdle('translate', needsTranslate);
+      }
+    }
+
+    if (selectedSteps.burn) {
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`);
+        if (resp.ok) {
+          const json = await resp.json();
+          if (json.status === 'processing') {
+            mark('burn', 'working', 'Rendering');
+          } else if (json.status === 'completed') {
+            mark('burn', 'done', 'Completed');
+            if (json.output_url) {
+              updateBurnPreview(`${API_URL}${json.output_url}`);
+            }
+          } else {
+            mark('burn', 'error', json.error || 'Failed');
+          }
+        } else if (resp.status === 404) {
+          markIdle('burn', selectedSteps.burn);
+        }
+      } catch (_err) {
+        markIdle('burn', selectedSteps.burn);
+      }
+    } else {
+      markIdle('burn', false);
+    }
+
+    if (selectedSteps.keyframes) {
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${id}/keyframes`);
+        if (resp.ok) {
+          const json = await resp.json();
+          if (json.status === 'completed') {
+            mark('keyframes', 'done', 'Completed');
+          } else if (json.status === 'failed') {
+            mark('keyframes', 'error', json.error || 'Failed');
+          } else {
+            mark('keyframes', 'working', json.status || 'Working');
+          }
+        } else if (resp.status === 404) {
+          markIdle('keyframes', selectedSteps.keyframes);
+        }
+      } catch (_err) {
+        markIdle('keyframes', selectedSteps.keyframes);
+      }
+    } else {
+      markIdle('keyframes', false);
+    }
+
+    if (needsCaption) {
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${id}/caption`);
+        if (resp.ok) {
+          const json = await resp.json();
+          if (json.status === 'completed') {
+            mark('caption', 'done', 'Completed');
+          } else if (json.status === 'failed' || json.status === 'not_configured') {
+            mark('caption', 'error', json.error || 'Failed');
+          } else {
+            mark('caption', 'working', json.status || 'Working');
+          }
+        } else if (resp.status === 404) {
+          markIdle('caption', needsCaption);
+        }
+      } catch (_err) {
+        markIdle('caption', needsCaption);
+      }
+    } else {
+      markIdle('caption', false);
+    }
+
+    if (selectedSteps.metadataZh) {
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${id}/metadata?lang=zh`);
+        if (resp.ok) {
+          const json = await resp.json();
+          if (json.status === 'completed') {
+            mark('metadataZh', 'done', 'Completed');
+          } else if (json.status === 'failed') {
+            mark('metadataZh', 'error', json.error || 'Failed');
+          } else {
+            mark('metadataZh', 'working', json.status || 'Working');
+          }
+        } else if (resp.status === 404) {
+          markIdle('metadataZh', selectedSteps.metadataZh);
+        }
+      } catch (_err) {
+        markIdle('metadataZh', selectedSteps.metadataZh);
+      }
+    } else {
+      markIdle('metadataZh', false);
+    }
+
+    if (selectedSteps.metadataEn) {
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${id}/metadata?lang=en`);
+        if (resp.ok) {
+          const json = await resp.json();
+          if (json.status === 'completed') {
+            mark('metadataEn', 'done', 'Completed');
+          } else if (json.status === 'failed') {
+            mark('metadataEn', 'error', json.error || 'Failed');
+          } else {
+            mark('metadataEn', 'working', json.status || 'Working');
+          }
+        } else if (resp.status === 404) {
+          markIdle('metadataEn', selectedSteps.metadataEn);
+        }
+      } catch (_err) {
+        markIdle('metadataEn', selectedSteps.metadataEn);
+      }
+    } else {
+      markIdle('metadataEn', false);
+    }
+  } finally {
+    processStateRef.current.stepStatus = nextStatus;
+    processStateRef.current.stepDetail = nextDetail;
+    setStepStatus(nextStatus);
+    setStepDetail(nextDetail);
+    persistProcessState();
+
+    const hasWorking = Object.values(nextStatus).includes('working');
+    if (!runningNow && hasWorking) {
+      setRunningState(true);
+    }
+    const hasError = STEP_ORDER.some(
+      (step) => nextStatus[step] === 'error' && (selectedSteps[step] || (step === 'caption' && needsCaption)),
+    );
+    const pipelineComplete = STEP_ORDER.every((step) => {
+      const needed =
+        step === 'transcribe'
+          ? needsTranscribe
+          : step === 'translate'
+            ? needsTranslate
+            : step === 'caption'
+              ? needsCaption
+              : selectedSteps[step];
+      if (!needed) return true;
+      return ['done', 'skipped', 'error'].includes(nextStatus[step]);
+    });
+    if (processStateRef.current.running && pipelineComplete) {
+      setRunningState(false);
+      updateStoredMessage(hasError ? 'Process finished with errors.' : 'Process complete.');
+    }
+    syncInFlightRef.current = false;
+  }
+  }, [id, selectedSteps, translationTargetLanguages]);
 
   const logEntries = useMemo(() => {
     return {
@@ -515,11 +785,6 @@ export default function ProcessVideoScreen() {
 
   const runPipeline = async () => {
     if (!id || running) return;
-    setRunning(true);
-    updateStoredMessage('');
-    setStepStatus(defaultStepState);
-    setStepDetail({});
-
     const needsTranscribe =
       selectedSteps.transcribe ||
       selectedSteps.translate ||
@@ -529,82 +794,68 @@ export default function ProcessVideoScreen() {
     const needsTranslate = selectedSteps.translate || selectedSteps.burn;
     const needsCaption = selectedSteps.caption || selectedSteps.metadataZh || selectedSteps.metadataEn;
 
-    try {
-      if (needsTranscribe) {
-        const ok = await ensureTranscription();
-        if (!ok) {
-          updateStoredMessage('Stopped: transcription failed.');
-          return;
-        }
-      } else {
-        updateStatus('transcribe', 'skipped', 'Skipped');
-      }
-
-      if (needsTranslate) {
-        const ok = await ensureTranslations();
-        if (!ok) {
-          updateStoredMessage('Stopped: translation failed.');
-          return;
-        }
-      } else {
-        updateStatus('translate', 'skipped', 'Skipped');
-      }
-
-      if (selectedSteps.burn) {
-        const ok = await runBurn();
-        if (!ok) {
-          updateStoredMessage('Stopped: burn failed.');
-          return;
-        }
-        await refreshBurnPreview();
-      } else {
-        updateStatus('burn', 'skipped', 'Skipped');
-      }
-
-      if (selectedSteps.keyframes) {
-        const ok = await runKeyframes();
-        if (!ok) {
-          updateStoredMessage('Stopped: keyframe extraction failed.');
-          return;
-        }
-      } else {
-        updateStatus('keyframes', 'skipped', 'Skipped');
-      }
-
-      if (needsCaption) {
-        const ok = await runCaption();
-        if (!ok) {
-          updateStoredMessage('Stopped: captioning failed.');
-          return;
-        }
-      } else {
-        updateStatus('caption', 'skipped', 'Skipped');
-      }
-
-      if (selectedSteps.metadataZh) {
-        const ok = await runMetadata('zh', 'metadataZh');
-        if (!ok) {
-          updateStoredMessage('Stopped: Chinese metadata failed.');
-          return;
-        }
-      } else {
-        updateStatus('metadataZh', 'skipped', 'Skipped');
-      }
-
-      if (selectedSteps.metadataEn) {
-        const ok = await runMetadata('en', 'metadataEn');
-        if (!ok) {
-          updateStoredMessage('Stopped: English metadata failed.');
-          return;
-        }
-      } else {
-        updateStatus('metadataEn', 'skipped', 'Skipped');
-      }
-
-      updateStoredMessage('Process complete.');
-    } finally {
-      setRunning(false);
+    const stepMap: Record<StepKey, string> = {
+      transcribe: 'transcribe',
+      translate: 'translate',
+      burn: 'burn',
+      keyframes: 'keyframes',
+      caption: 'caption',
+      metadataZh: 'metadata_zh',
+      metadataEn: 'metadata_en',
+    };
+    const steps = STEP_ORDER.filter((step) => selectedSteps[step]).map((step) => stepMap[step]);
+    if (!steps.length) {
+      updateStoredMessage('Select at least one step to start.');
+      return;
     }
+
+    const nextStatus = { ...defaultStepState };
+    const nextDetail: Record<StepKey, string> = {};
+    const mark = (step: StepKey, status: StepState, detail = '') => {
+      nextStatus[step] = status;
+      nextDetail[step] = detail;
+    };
+
+    mark('transcribe', needsTranscribe ? 'working' : 'skipped', needsTranscribe ? 'Queued' : 'Skipped');
+    if (needsTranslate) {
+      const detail = translationTargetLanguages.length
+        ? `Languages: ${translationTargetLanguages.map((lang) => LANG_LABELS[lang] || lang).join(', ')}`
+        : 'No languages selected';
+      mark('translate', translationTargetLanguages.length ? 'working' : 'skipped', detail);
+    } else {
+      mark('translate', 'skipped', 'Skipped');
+    }
+    mark('burn', selectedSteps.burn ? 'working' : 'skipped', selectedSteps.burn ? 'Queued' : 'Skipped');
+    mark('keyframes', selectedSteps.keyframes ? 'working' : 'skipped', selectedSteps.keyframes ? 'Queued' : 'Skipped');
+    mark('caption', needsCaption ? 'working' : 'skipped', needsCaption ? 'Queued' : 'Skipped');
+    mark('metadataZh', selectedSteps.metadataZh ? 'working' : 'skipped', selectedSteps.metadataZh ? 'Queued' : 'Skipped');
+    mark('metadataEn', selectedSteps.metadataEn ? 'working' : 'skipped', selectedSteps.metadataEn ? 'Queued' : 'Skipped');
+
+    processStateRef.current.stepStatus = nextStatus;
+    processStateRef.current.stepDetail = nextDetail;
+    setStepStatus(nextStatus);
+    setStepDetail(nextDetail);
+    setRunningState(true);
+    updateStoredMessage('Pipeline started. You can leave this page; progress will update automatically.');
+
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}/process`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ steps, async: true }),
+      });
+      const json = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        updateStoredMessage(json.error || 'Failed to start pipeline.');
+        setRunningState(false);
+        return;
+      }
+    } catch (err: any) {
+      updateStoredMessage(err?.message || 'Failed to start pipeline.');
+      setRunningState(false);
+      return;
+    }
+    syncPipelineStatus();
   };
 
   const translationsSummary = translationLanguages.length
@@ -643,10 +894,10 @@ export default function ProcessVideoScreen() {
                 <Switch
                   value={selectedSteps[step]}
                   onValueChange={(value) =>
-                    setSelectedSteps((prev) => ({
-                      ...prev,
+                    setSelectedStepsState({
+                      ...selectedSteps,
                       [step]: value,
-                    }))
+                    })
                   }
                   trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
                   thumbColor={selectedSteps[step] ? '#f8fafc' : '#f1f5f9'}
