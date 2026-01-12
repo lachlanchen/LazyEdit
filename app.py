@@ -3134,7 +3134,17 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
         ldb.ensure_schema()
         with ldb.get_cursor() as cur:
             cur.execute(
-                "SELECT id, file_path, title, created_at, source FROM videos ORDER BY id DESC LIMIT 100"
+                """
+                SELECT id, file_path, title, created_at, source
+                FROM (
+                    SELECT DISTINCT ON (file_path)
+                        id, file_path, title, created_at, source
+                    FROM videos
+                    ORDER BY file_path, created_at DESC, id DESC
+                ) latest
+                ORDER BY created_at DESC
+                LIMIT 100
+                """
             )
             rows = cur.fetchall()
 
@@ -3207,6 +3217,21 @@ class VideoDetailHandler(CorsMixin, tornado.web.RequestHandler):
             "created_at": row[3].isoformat() if row[3] else None,
             "source": row[4],
         })
+
+    def delete(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        row = ldb.get_video_by_id(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "not found"})
+        _, file_path, _, _, _ = row
+        deleted_count = ldb.delete_videos_by_file_path(file_path)
+        self.write({"deleted": deleted_count, "file_path": file_path})
 
 
 class VideoProxyHandler(CorsMixin, tornado.web.RequestHandler):

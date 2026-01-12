@@ -205,9 +205,45 @@ def ensure_schema():
             cur.execute(ddl)
 
 
-def add_video(file_path: str, title: str | None = None, source: str | None = None) -> int:
-    """Insert a video row and return its ID."""
+def get_video_by_id(video_id: int) -> tuple | None:
+    """Return a video row by id."""
+    with get_cursor() as cur:
+        cur.execute(
+            "SELECT id, file_path, title, source, created_at FROM videos WHERE id = %s",
+            (video_id,),
+        )
+        return cur.fetchone()
+
+
+def delete_videos_by_file_path(file_path: str) -> int:
+    """Delete all videos with the given file_path and return the count."""
     with get_cursor(commit=True) as cur:
+        cur.execute("DELETE FROM videos WHERE file_path = %s RETURNING id", (file_path,))
+        rows = cur.fetchall()
+    return len(rows)
+
+
+def add_video(file_path: str, title: str | None = None, source: str | None = None) -> int:
+    """Insert a video row and return its ID, reusing existing entries by file_path."""
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            "SELECT id FROM videos WHERE file_path = %s ORDER BY id DESC LIMIT 1",
+            (file_path,),
+        )
+        row = cur.fetchone()
+        if row:
+            video_id = row[0]
+            cur.execute(
+                """
+                UPDATE videos
+                SET title = COALESCE(%s, title),
+                    source = COALESCE(%s, source),
+                    created_at = NOW()
+                WHERE id = %s
+                """,
+                (title, source, video_id),
+            )
+            return video_id
         cur.execute(
             "INSERT INTO videos (file_path, title, source) VALUES (%s, %s, %s) RETURNING id",
             (file_path, title, source),
