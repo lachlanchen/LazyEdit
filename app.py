@@ -12,6 +12,9 @@ from config import UPLOAD_FOLDER, PORT, AUTOPUBLISH_URL, AUTOPUBLISH_TIMEOUT
 import shlex
 import threading
 import subprocess
+import socket
+import time
+from urllib.parse import urlparse
 
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
@@ -3013,6 +3016,69 @@ def _simplify_metadata_payload(metadata: dict) -> dict:
     return simplified
 
 
+_AUTOPUBLISH_URL_CACHE = {"url": None, "checked": 0.0}
+_AUTOPUBLISH_URL_TTL = 30.0
+
+
+def _iter_autopublish_candidates() -> list[str]:
+    env_url = os.getenv("LAZYEDIT_AUTOPUBLISH_URL") or os.getenv("AUTOPUBLISH_URL")
+    candidates = []
+    if env_url:
+        candidates.append(env_url)
+
+    host_env = os.getenv("LAZYEDIT_AUTOPUBLISH_HOST") or os.getenv("AUTOPUBLISH_HOST")
+    port_env = os.getenv("LAZYEDIT_AUTOPUBLISH_PORT") or os.getenv("AUTOPUBLISH_PORT")
+    if host_env:
+        if port_env:
+            candidates.append(f"http://{host_env}:{port_env}/publish")
+        else:
+            candidates.append(f"http://{host_env}/publish")
+
+    if AUTOPUBLISH_URL:
+        candidates.append(AUTOPUBLISH_URL)
+
+    # Known defaults in this environment.
+    candidates.append("http://localhost:8081/publish")
+    candidates.append("http://lazyingart:8081/publish")
+
+    seen = set()
+    ordered = []
+    for item in candidates:
+        if not item or item in seen:
+            continue
+        seen.add(item)
+        ordered.append(item)
+    return ordered
+
+
+def _is_host_reachable(url: str, timeout: float = 1.0) -> bool:
+    try:
+        parsed = urlparse(url)
+        host = parsed.hostname
+        if not host:
+            return False
+        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except Exception:
+        return False
+
+
+def _resolve_autopublish_url() -> str | None:
+    now = time.time()
+    cached = _AUTOPUBLISH_URL_CACHE
+    if cached["checked"] and now - cached["checked"] < _AUTOPUBLISH_URL_TTL:
+        return cached["url"]
+    for candidate in _iter_autopublish_candidates():
+        if _is_host_reachable(candidate):
+            cached["url"] = candidate
+            cached["checked"] = now
+            return candidate
+    cached["url"] = None
+    cached["checked"] = now
+    return None
+
+
 class CorsMixin:
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -4118,8 +4184,10 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
             "platforms": platform_flags,
         }
 
-        if not AUTOPUBLISH_URL:
-            response_payload["warning"] = "autopublish url not configured"
+        autopublish_url = _resolve_autopublish_url()
+        if not autopublish_url:
+            response_payload["warning"] = "autopublish service not reachable"
+            response_payload["status"] = "ready"
             return self.write(response_payload)
 
         params = {
@@ -4135,7 +4203,7 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
         def _post_zip():
             with open(zip_path, "rb") as handle:
                 resp = requests.post(
-                    AUTOPUBLISH_URL,
+                    autopublish_url,
                     params=params,
                     data=handle.read(),
                     headers={"Content-Type": "application/octet-stream"},
