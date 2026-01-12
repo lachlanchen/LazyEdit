@@ -162,6 +162,7 @@ export default function LibraryScreen() {
               style={styles.menuAction}
               onPress={() => {
                 setConfirmVideo(menuVideo);
+                setDeleteError(null);
                 setMenuVideo(null);
               }}
             >
@@ -184,6 +185,7 @@ export default function LibraryScreen() {
                 style={styles.confirmButton}
                 onPress={() => {
                   if (!deletePending) setConfirmVideo(null);
+                  if (!deletePending) setDeleteError(null);
                 }}
               >
                 <Text style={styles.confirmCancelText}>{t('library_menu_cancel')}</Text>
