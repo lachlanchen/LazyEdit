@@ -27,6 +27,16 @@ type Video = {
   created_at?: string;
 };
 
+type PublishJob = {
+  id?: string;
+  filename?: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+  platforms?: string[];
+  error?: string;
+};
+
 const PLATFORMS = [
   { key: 'douyin', label: 'Douyin' },
   { key: 'xiaohongshu', label: 'Xiaohongshu' },
@@ -57,6 +67,9 @@ export default function EditorScreen() {
   const [publishStatus, setPublishStatus] = useState('');
   const [publishTone, setPublishTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [publishZipUrl, setPublishZipUrl] = useState<string | null>(null);
+  const [publishQueue, setPublishQueue] = useState<PublishJob[]>([]);
+  const [queueLoading, setQueueLoading] = useState(false);
+  const [queueError, setQueueError] = useState('');
   const { t } = useI18n();
 
   const selectedList = useMemo(
@@ -79,6 +92,15 @@ export default function EditorScreen() {
   const toneStyle = (tone: 'neutral' | 'good' | 'bad') =>
     tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
 
+  const queueStatusLabel = (status?: string) => {
+    const key = String(status || '').toLowerCase();
+    if (key === 'queued') return t('publish_queue_status_queued');
+    if (key === 'running') return t('publish_queue_status_running');
+    if (key === 'done' || key === 'completed') return t('publish_queue_status_done');
+    if (key === 'failed' || key === 'error') return t('publish_queue_status_failed');
+    return status || t('publish_queue_status_queued');
+  };
+
   const loadVideos = useCallback(async (silent?: boolean) => {
     if (!silent) setLoadingVideos(true);
     try {
@@ -97,6 +119,30 @@ export default function EditorScreen() {
     }
   }, [selectedVideoId]);
 
+  const loadPublishQueue = useCallback(async (silent?: boolean) => {
+    if (!silent) setQueueLoading(true);
+    try {
+      const resp = await fetch(`${API_URL}/api/autopublish/queue`);
+      const json = await resp.json();
+      if (!resp.ok) {
+        setQueueError(`${t('publish_queue_failed')}: ${json?.error || resp.statusText}`);
+        return;
+      }
+      if (json?.status === 'unavailable') {
+        setPublishQueue([]);
+        setQueueError(t('publish_queue_unavailable'));
+        return;
+      }
+      const jobs = Array.isArray(json?.jobs) ? json.jobs : [];
+      setPublishQueue(jobs);
+      setQueueError('');
+    } catch (_err) {
+      setQueueError(t('publish_queue_failed'));
+    } finally {
+      if (!silent) setQueueLoading(false);
+    }
+  }, [t]);
+
   const loadCoverPreview = async (videoId: number) => {
     try {
       const resp = await fetch(`${API_URL}/api/videos/${videoId}/cover`);
@@ -113,6 +159,14 @@ export default function EditorScreen() {
   useEffect(() => {
     loadVideos();
   }, [loadVideos]);
+
+  useEffect(() => {
+    loadPublishQueue();
+    const interval = setInterval(() => {
+      loadPublishQueue(true);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [loadPublishQueue]);
 
   useEffect(() => {
     const unsubscribe = subscribeStudioRefresh(() => {
@@ -210,6 +264,7 @@ export default function EditorScreen() {
     } finally {
       setPublishing(false);
     }
+    loadPublishQueue(true);
   };
 
   return (
@@ -364,6 +419,31 @@ export default function EditorScreen() {
               {t('publish_zip_ready', { value: publishZipUrl })}
             </Text>
           ) : null}
+          <View style={styles.queueBlock}>
+            <Text style={styles.queueTitle}>{t('publish_queue_title')}</Text>
+            <Text style={styles.queueHint}>{t('publish_queue_hint')}</Text>
+            {queueLoading ? <ActivityIndicator style={{ marginTop: 8 }} /> : null}
+            {queueError ? (
+              <Text style={[styles.status, styles.statusBad]}>{queueError}</Text>
+            ) : null}
+            {publishQueue.length ? (
+              publishQueue.map((job) => {
+                const name = (job.filename || '').replace(/\.zip$/i, '') || t('library_video_fallback', { id: job.id || '?' });
+                const metaParts = [queueStatusLabel(job.status)];
+                if (job.platforms?.length) metaParts.push(job.platforms.join(', '));
+                if (job.updated_at || job.created_at) metaParts.push(job.updated_at || job.created_at || '');
+                return (
+                  <View key={job.id || name} style={styles.queueRow}>
+                    <Text style={styles.queueName} numberOfLines={1}>{name}</Text>
+                    <Text style={styles.queueMeta} numberOfLines={2}>{metaParts.filter(Boolean).join(' · ')}</Text>
+                    {job.error ? <Text style={styles.queueError}>{job.error}</Text> : null}
+                  </View>
+                );
+              })
+            ) : !queueLoading && !queueError ? (
+              <Text style={styles.empty}>{t('publish_queue_empty')}</Text>
+            ) : null}
+          </View>
         </View>
       </View>
     </ScrollView>
@@ -506,4 +586,23 @@ const styles = StyleSheet.create({
   statusGood: { color: '#15803d' },
   statusBad: { color: '#b91c1c' },
   zipText: { marginTop: 8, fontSize: 12, color: '#475569' },
+  queueBlock: {
+    marginTop: 16,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#e2e8f0',
+  },
+  queueTitle: { fontSize: 14, fontWeight: '700', color: '#0f172a' },
+  queueHint: { marginTop: 6, fontSize: 12, color: '#64748b' },
+  queueRow: {
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  queueName: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
+  queueMeta: { marginTop: 4, fontSize: 11, color: '#475569' },
+  queueError: { marginTop: 4, fontSize: 11, color: '#b91c1c' },
 });

@@ -3079,6 +3079,16 @@ def _resolve_autopublish_url() -> str | None:
     return None
 
 
+def _autopublish_queue_url(publish_url: str) -> str:
+    parsed = urlparse(publish_url)
+    path = parsed.path or ""
+    if path.endswith("/publish"):
+        queue_path = f"{path}/queue"
+    else:
+        queue_path = "/publish/queue"
+    return parsed._replace(path=queue_path, query="").geturl()
+
+
 class CorsMixin:
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -4233,6 +4243,34 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
         threading.Thread(target=_async_worker, daemon=True).start()
         response_payload["status"] = "queued"
         self.write(response_payload)
+
+
+class AutopublishQueueHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self):
+        autopublish_url = _resolve_autopublish_url()
+        if not autopublish_url:
+            return self.write({"status": "unavailable", "jobs": []})
+
+        queue_url = _autopublish_queue_url(autopublish_url)
+        try:
+            resp = requests.get(queue_url, timeout=AUTOPUBLISH_TIMEOUT)
+        except Exception as exc:
+            self.set_status(502)
+            return self.write({"error": "autopublish queue failed", "details": str(exc)})
+
+        if not resp.ok:
+            self.set_status(502)
+            return self.write({
+                "error": "autopublish queue failed",
+                "status_code": resp.status_code,
+                "body": resp.text,
+            })
+
+        try:
+            payload = resp.json()
+        except Exception:
+            payload = {"status": "error", "body": resp.text}
+        self.write(payload)
 
 
 class VideoPromptHandler(CorsMixin, tornado.web.RequestHandler):
@@ -5701,6 +5739,7 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/burn-subtitles", VideoSubtitleBurnHandler),
         (r"/api/videos/(\d+)/process", VideoProcessHandler),
         (r"/api/videos/(\d+)/publish", VideoPublishHandler),
+        (r"/api/autopublish/queue", AutopublishQueueHandler),
         (r"/api/videos/(\d+)/captions", CaptionsHandler),
         (r"/media/(.*)", MediaHandler, {"path": upload_folder}),
     ])
