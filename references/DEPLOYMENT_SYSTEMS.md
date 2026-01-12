@@ -11,7 +11,7 @@ This repo is the development source. The runtime deployments live in DiskMech an
 
 - Monitor system (AutoPubMonitor)
   - Deployment path: `/home/lachlan/DiskMech/Projects/autopub-monitor`
-  - tmux sessions: `am-video-sync`, `am-monitor`, `am-process-queue`, `am-transcription-sync`, `am-manual`
+  - tmux: `autopub-monitor` (2x2 panes: sync | monitor, process | manual) + `am-transcription-sync`
   - Default API base: `http://localhost:18787`
   - Flow: upload -> process -> publish via LazyEdit app API
 
