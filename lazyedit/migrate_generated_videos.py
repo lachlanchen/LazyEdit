@@ -67,6 +67,27 @@ def _collect_prefixed_files(src_dir: Path, base_name: str, matcher, moves, targe
         dest = target_dir / rel
         _queue_move(moves, path, dest)
 
+def _find_base_name(file_name: str, base_names: list[str]) -> str | None:
+    for base in base_names:
+        if file_name.startswith(f"{base}_"):
+            return base
+    return None
+
+
+def _collect_loose_assets(base_root: Path, category: str, base_dirs: dict[str, Path], moves) -> None:
+    src_dir = base_root / category
+    if not src_dir.is_dir():
+        return
+    base_names = sorted(base_dirs.keys(), key=len, reverse=True)
+    for path in src_dir.rglob("*"):
+        if not path.is_file():
+            continue
+        base_name = _find_base_name(path.name, base_names)
+        if not base_name:
+            continue
+        rel = path.relative_to(src_dir)
+        dest = base_dirs[base_name] / category / rel
+        _queue_move(moves, path, dest)
 
 def _apply_moves(moves: list[tuple[Path, Path]], dry_run: bool) -> dict[str, str]:
     mapping: dict[str, str] = {}
@@ -192,6 +213,18 @@ def migrate_generated_videos(dry_run: bool = True, only: list[str] | None = None
 
         mapping = _apply_moves(moves, dry_run)
         _update_db_paths(mapping, dry_run)
+
+    base_dirs = {
+        entry.name: entry
+        for entry in generated_root.iterdir()
+        if entry.is_dir() and entry.name not in SKIP_ROOT_NAMES
+    }
+    if base_dirs:
+        extra_moves: list[tuple[Path, Path]] = []
+        _collect_loose_assets(generated_root, "metadata", base_dirs, extra_moves)
+        _collect_loose_assets(generated_root, "translations", base_dirs, extra_moves)
+        extra_mapping = _apply_moves(extra_moves, dry_run)
+        _update_db_paths(extra_mapping, dry_run)
 
     _cleanup_empty_dirs(
         [

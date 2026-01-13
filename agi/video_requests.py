@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import shutil
 import sys
 import time
 from typing import Optional
@@ -141,6 +142,18 @@ def create_poll_and_download(
             if row:
                 job_id, status, progress, file_path, error, created_at, completed_at = row
                 if status == "completed" and file_path and os.path.exists(file_path):
+                    if output and os.path.abspath(file_path) != os.path.abspath(output):
+                        out_dir = os.path.dirname(output)
+                        if out_dir:
+                            os.makedirs(out_dir, exist_ok=True)
+                        if not os.path.exists(output):
+                            shutil.copy2(file_path, output)
+                        try:
+                            ldb.update_generated_video(job_id=job_id, file_path=output)
+                        except Exception:
+                            pass
+                        print(f"Cache hit for code {rcode}; returning {output}")
+                        return output
                     print(f"Cache hit for code {rcode}; returning {file_path}")
                     return file_path
         except Exception as e:
