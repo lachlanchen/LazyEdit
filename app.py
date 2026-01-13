@@ -4407,11 +4407,12 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
         title_base = _sanitize_title(title_input)
         prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:8]
         title = f"{title_base} {prompt_hash}"
-        output_dir = os.path.join(UPLOAD_FOLDER, "generated")
-        os.makedirs(output_dir, exist_ok=True)
         slug = _slugify(title_base)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_path = os.path.join(output_dir, f"{slug}_{timestamp}_{prompt_hash}.mp4")
+        base_name = f"{slug}_{timestamp}_{prompt_hash}"
+        output_dir = os.path.join(UPLOAD_FOLDER, "generated", base_name)
+        os.makedirs(output_dir, exist_ok=True)
+        output_path = os.path.join(output_dir, f"{base_name}.mp4")
 
         try:
             output_path = create_poll_and_download(
