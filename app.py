@@ -368,8 +368,13 @@ def _parse_bool(value, default=True):
 
 
 def _slugify(value: str) -> str:
-    cleaned = re.sub(r"[^a-zA-Z0-9]+", "-", value or "").strip("-").lower()
-    return cleaned or "generated"
+    raw = str(value or "").strip()
+    if not raw:
+        return "generated"
+    dashed = re.sub(r"\s+", "-", raw, flags=re.UNICODE)
+    cleaned = re.sub(r"[^\w\-]+", "-", dashed, flags=re.UNICODE)
+    cleaned = re.sub(r"-{2,}", "-", cleaned).strip("-")
+    return cleaned.lower() or "generated"
 
 
 def _sanitize_title(value: str) -> str:
