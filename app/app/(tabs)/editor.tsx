@@ -60,13 +60,6 @@ export default function EditorScreen() {
     [],
   );
   const [selected, setSelected] = useState<Record<string, boolean>>(defaultPublishSelection);
-    douyin: false,
-    xiaohongshu: true,
-    shipinhao: true,
-    bilibili: false,
-    youtube: true,
-    instagram: false,
-  });
   const [videos, setVideos] = useState<Video[]>([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [listHeight, setListHeight] = useState(0);
