@@ -48,7 +48,18 @@ const PLATFORMS = [
 const withCacheBust = (url: string) => `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
 
 export default function EditorScreen() {
-  const [selected, setSelected] = useState<Record<string, boolean>>({
+  const defaultPublishSelection = useMemo(
+    () => ({
+      douyin: false,
+      xiaohongshu: true,
+      shipinhao: true,
+      bilibili: false,
+      youtube: true,
+      instagram: true,
+    }),
+    [],
+  );
+  const [selected, setSelected] = useState<Record<string, boolean>>(defaultPublishSelection);
     douyin: false,
     xiaohongshu: true,
     shipinhao: true,
@@ -73,6 +84,7 @@ export default function EditorScreen() {
   const [publishQueue, setPublishQueue] = useState<PublishJob[]>([]);
   const [queueLoading, setQueueLoading] = useState(false);
   const [queueError, setQueueError] = useState('');
+  const [publishSettingsLoaded, setPublishSettingsLoaded] = useState(false);
   const { t } = useI18n();
 
   const selectedList = useMemo(
@@ -104,6 +116,21 @@ export default function EditorScreen() {
     return status || t('publish_queue_status_queued');
   };
 
+  const normalizePublishSelection = useCallback(
+    (value: unknown) => {
+      const next = { ...defaultPublishSelection };
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        Object.keys(next).forEach((key) => {
+          if (key in (value as Record<string, unknown>)) {
+            next[key] = Boolean((value as Record<string, unknown>)[key]);
+          }
+        });
+      }
+      return next;
+    },
+    [defaultPublishSelection],
+  );
+
   const loadVideos = useCallback(async (silent?: boolean) => {
     if (!silent) setLoadingVideos(true);
     try {
@@ -121,6 +148,20 @@ export default function EditorScreen() {
       if (!silent) setLoadingVideos(false);
     }
   }, [selectedVideoId]);
+
+  const loadPublishSettings = useCallback(async () => {
+    try {
+      const resp = await fetch(`${API_URL}/api/ui-settings/publish_platforms`);
+      const json = await resp.json();
+      if (resp.ok) {
+        setSelected(normalizePublishSelection(json?.value));
+      }
+    } catch (_err) {
+      // ignore
+    } finally {
+      setPublishSettingsLoaded(true);
+    }
+  }, [normalizePublishSelection]);
 
   const loadPublishQueue = useCallback(async (silent?: boolean) => {
     if (!silent) setQueueLoading(true);
@@ -162,6 +203,26 @@ export default function EditorScreen() {
   useEffect(() => {
     loadVideos();
   }, [loadVideos]);
+
+  useEffect(() => {
+    loadPublishSettings();
+  }, [loadPublishSettings]);
+
+  useEffect(() => {
+    if (!publishSettingsLoaded) return;
+    const persist = async () => {
+      try {
+        await fetch(`${API_URL}/api/ui-settings/publish_platforms`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(selected),
+        });
+      } catch (_err) {
+        // ignore
+      }
+    };
+    persist();
+  }, [publishSettingsLoaded, selected]);
 
   useEffect(() => {
     loadPublishQueue();

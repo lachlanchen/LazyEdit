@@ -116,6 +116,22 @@ DEFAULT_TRANSLATION_STYLE = {
     "bgOpacity": 0.5,
 }
 DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
+PUBLISH_PLATFORM_KEYS = [
+    "douyin",
+    "xiaohongshu",
+    "shipinhao",
+    "bilibili",
+    "youtube",
+    "instagram",
+]
+DEFAULT_PUBLISH_PLATFORMS = {
+    "douyin": False,
+    "xiaohongshu": True,
+    "shipinhao": True,
+    "bilibili": False,
+    "youtube": True,
+    "instagram": True,
+}
 DEFAULT_VIDEO_PROMPT_SPEC = {
     "autoTitle": False,
     "title": "Epic Vision",
@@ -465,6 +481,17 @@ def _sanitize_translation_languages(payload) -> list[str]:
         if code and code not in cleaned:
             cleaned.append(code)
     return cleaned or DEFAULT_TRANSLATION_LANGUAGES.copy()
+
+
+def _sanitize_publish_platforms(payload) -> dict:
+    if isinstance(payload, list):
+        payload = {str(item): True for item in payload}
+    if not isinstance(payload, dict):
+        return DEFAULT_PUBLISH_PLATFORMS.copy()
+    cleaned = {}
+    for key in PUBLISH_PLATFORM_KEYS:
+        cleaned[key] = bool(payload.get(key, DEFAULT_PUBLISH_PLATFORMS.get(key, False)))
+    return cleaned
 
 
 def _load_translation_languages_setting() -> list[str]:
@@ -3212,6 +3239,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "video_prompt_text_history",
             "video_prompt_result_history",
             "video_idea_history",
+            "publish_platforms",
         }:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
@@ -3232,6 +3260,10 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_VIDEO_PROMPT_HISTORY})
             return self.write({"key": key, "value": _sanitize_video_prompt_history(saved)})
+        if key == "publish_platforms":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_PUBLISH_PLATFORMS})
+            return self.write({"key": key, "value": _sanitize_publish_platforms(saved)})
         if key in {"video_spec_history", "video_prompt_text_history", "video_prompt_result_history", "video_idea_history"}:
             return self.write({"key": key, "value": _sanitize_history_list(saved)})
         if not saved:
@@ -3250,6 +3282,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "video_prompt_text_history",
             "video_prompt_result_history",
             "video_idea_history",
+            "publish_platforms",
         }:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
@@ -3265,6 +3298,8 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             cleaned = _sanitize_video_prompt_spec(data)
         elif key == "video_prompt_history":
             cleaned = _sanitize_video_prompt_history(data)
+        elif key == "publish_platforms":
+            cleaned = _sanitize_publish_platforms(data)
         elif key in {"video_spec_history", "video_prompt_text_history", "video_prompt_result_history", "video_idea_history"}:
             cleaned = _sanitize_history_list(data)
         else:
