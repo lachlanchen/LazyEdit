@@ -43,6 +43,7 @@ const PLATFORMS = [
   { key: 'shipinhao', label: 'Shipinhao' },
   { key: 'bilibili', label: 'Bilibili' },
   { key: 'youtube', label: 'YouTube' },
+  { key: 'instagram', label: 'Instagram' },
 ];
 
 export default function EditorScreen() {
@@ -52,6 +53,7 @@ export default function EditorScreen() {
     shipinhao: true,
     bilibili: false,
     youtube: true,
+    instagram: false,
   });
   const [videos, setVideos] = useState<Video[]>([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);

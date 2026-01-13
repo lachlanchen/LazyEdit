@@ -4114,6 +4114,7 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
                 "bilibili": bool(data.get("publish_bilibili")),
                 "shipinhao": bool(data.get("publish_shipinhao")),
                 "youtube": bool(data.get("publish_youtube")),
+                "instagram": bool(data.get("publish_instagram")),
             }
 
         has_target = any(platform_flags.values())
@@ -4207,6 +4208,7 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
             "publish_bilibili": str(platform_flags.get("bilibili", False)).lower(),
             "publish_shipinhao": str(platform_flags.get("shipinhao", False)).lower(),
             "publish_y2b": str(platform_flags.get("youtube", False)).lower(),
+            "publish_instagram": str(platform_flags.get("instagram", False)).lower(),
             "test": str(test_mode).lower(),
         }
 
