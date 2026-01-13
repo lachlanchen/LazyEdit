@@ -45,6 +45,7 @@ const PLATFORMS = [
   { key: 'youtube', label: 'YouTube' },
   { key: 'instagram', label: 'Instagram' },
 ];
+const withCacheBust = (url: string) => `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
 
 export default function EditorScreen() {
   const [selected, setSelected] = useState<Record<string, boolean>>({
@@ -151,7 +152,7 @@ export default function EditorScreen() {
       if (!resp.ok) return;
       const json = await resp.json();
       if (json.cover_url) {
-        setCoverUrl(`${API_URL}${json.cover_url}`);
+        setCoverUrl(withCacheBust(`${API_URL}${json.cover_url}`));
       }
     } catch (_err) {
       // ignore
@@ -214,7 +215,7 @@ export default function EditorScreen() {
         return;
       }
       if (json.cover_url) {
-        setCoverUrl(`${API_URL}${json.cover_url}`);
+        setCoverUrl(withCacheBust(`${API_URL}${json.cover_url}`));
       }
       setCoverStatus(t('publish_cover_ready'));
       setCoverTone('good');

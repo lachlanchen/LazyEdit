@@ -1,7 +1,8 @@
 import os
 import hashlib
 
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+if "CUDA_VISIBLE_DEVICES" not in os.environ:
+    os.environ["CUDA_VISIBLE_DEVICES"] = os.getenv("LAZYEDIT_CUDA_VISIBLE_DEVICES", "0")
 
 
 from lazyedit.openai_version_check import OpenAI

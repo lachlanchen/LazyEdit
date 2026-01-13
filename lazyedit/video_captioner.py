@@ -149,13 +149,23 @@ class VideoCaptioner:
         weights_dir = os.path.join(self.fallback_cwd, "weights", "large")
         os.makedirs(weights_dir, exist_ok=True)
 
-    def _run_command(self, command, cwd=None):
+    def _run_command(self, command, cwd=None, extra_env=None):
         env = os.environ.copy()
         if cwd:
             existing = env.get("PYTHONPATH")
             env["PYTHONPATH"] = f"{cwd}:{existing}" if existing else cwd
         env.setdefault("MPLBACKEND", "Agg")
         env.setdefault("QT_QPA_PLATFORM", "offscreen")
+        env.setdefault("PYTORCH_CUDA_ALLOC_CONF", "max_split_size_mb:128")
+        caption_gpu = os.getenv("LAZYEDIT_CAPTION_GPU")
+        if caption_gpu and "CUDA_VISIBLE_DEVICES" not in env:
+            env["CUDA_VISIBLE_DEVICES"] = caption_gpu
+        if extra_env:
+            for key, value in extra_env.items():
+                if value is None:
+                    env.pop(key, None)
+                else:
+                    env[key] = value
         try:
             return subprocess.run(
                 command,
@@ -172,6 +182,19 @@ class VideoCaptioner:
             output = (e.stdout or "").strip()
             tail = output[-2000:] if output else ""
             raise RuntimeError(f"{e}. Output: {tail}") from e
+
+    def _is_cuda_oom(self, error):
+        message = str(error).lower()
+        return "out of memory" in message and ("cuda" in message or "cudnn" in message or "cublas" in message)
+
+    def _run_with_oom_fallback(self, command, cwd=None):
+        try:
+            return self._run_command(command, cwd=cwd)
+        except RuntimeError as exc:
+            if not self._is_cuda_oom(exc):
+                raise
+            print("CUDA OOM detected. Retrying captioning on CPU.")
+            return self._run_command(command, cwd=cwd, extra_env={"CUDA_VISIBLE_DEVICES": ""})
 
     def run_captioning(self):
         if not self.is_configured():
@@ -192,7 +215,7 @@ class VideoCaptioner:
             if alternative_command:
                 self._ensure_fallback_weights_dir()
                 print("Executing fallback command: ", alternative_command)
-                self._run_command(alternative_command, cwd=self.fallback_cwd)
+                self._run_with_oom_fallback(alternative_command, cwd=self.fallback_cwd)
                 print("Fallback captioning completed successfully.")
                 self.last_method = "fallback"
                 self.last_error = None
@@ -213,7 +236,7 @@ class VideoCaptioner:
                 if not caption_command:
                     raise RuntimeError("Primary caption script not available.")
                 print("Executing primary command: ", caption_command)
-                self._run_command(caption_command, cwd=self.primary_root)
+                self._run_with_oom_fallback(caption_command, cwd=self.primary_root)
                 print(f"Captioning completed successfully, output saved to: {self.caption_srt_path}")
                 print(f"Captioning completed successfully, output saved to: {self.caption_json_path}")
                 self.last_method = "primary"
