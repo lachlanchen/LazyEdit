@@ -1166,8 +1166,8 @@ const HISTORY_KEYS = {
             {[
               { key: 'upload', label: t('home_tab_upload') },
               { key: 'generate', label: t('home_tab_generate') },
-              { key: 'remix', label: t('home_tab_remix') },
               { key: 'api', label: t('home_tab_api') },
+              { key: 'remix', label: t('home_tab_remix') },
             ].map((tab) => {
               const isActive = activeTab === tab.key;
               return (
