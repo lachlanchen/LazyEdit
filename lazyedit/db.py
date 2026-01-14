@@ -686,21 +686,39 @@ def record_generated_video(
 ) -> None:
     ensure_schema()
     with get_cursor(commit=True) as cur:
-        cur.execute(
-            """
-            INSERT INTO generated_videos (job_id, model, prompt, size, seconds, status, progress, request_hash)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (job_id) DO UPDATE SET
-              model = EXCLUDED.model,
-              prompt = EXCLUDED.prompt,
-              size = EXCLUDED.size,
-              seconds = EXCLUDED.seconds,
-              status = EXCLUDED.status,
-              progress = COALESCE(EXCLUDED.progress, generated_videos.progress),
-              request_hash = COALESCE(EXCLUDED.request_hash, generated_videos.request_hash)
-            """,
-            (job_id, model, prompt, size, seconds, status, progress if progress is not None else 0, request_hash),
-        )
+        if request_hash:
+            cur.execute(
+                """
+                INSERT INTO generated_videos (job_id, model, prompt, size, seconds, status, progress, request_hash)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (request_hash) DO UPDATE SET
+                  job_id = EXCLUDED.job_id,
+                  model = EXCLUDED.model,
+                  prompt = EXCLUDED.prompt,
+                  size = EXCLUDED.size,
+                  seconds = EXCLUDED.seconds,
+                  status = EXCLUDED.status,
+                  progress = COALESCE(EXCLUDED.progress, generated_videos.progress),
+                  request_hash = EXCLUDED.request_hash
+                """,
+                (job_id, model, prompt, size, seconds, status, progress if progress is not None else 0, request_hash),
+            )
+        else:
+            cur.execute(
+                """
+                INSERT INTO generated_videos (job_id, model, prompt, size, seconds, status, progress, request_hash)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (job_id) DO UPDATE SET
+                  model = EXCLUDED.model,
+                  prompt = EXCLUDED.prompt,
+                  size = EXCLUDED.size,
+                  seconds = EXCLUDED.seconds,
+                  status = EXCLUDED.status,
+                  progress = COALESCE(EXCLUDED.progress, generated_videos.progress),
+                  request_hash = COALESCE(EXCLUDED.request_hash, generated_videos.request_hash)
+                """,
+                (job_id, model, prompt, size, seconds, status, progress if progress is not None else 0, request_hash),
+            )
 
 
 def update_generated_video(
