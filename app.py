@@ -104,6 +104,21 @@ METADATA_TEMPLATE_MAP = {
 }
 VIDEO_PROMPT_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_prompt")
 VIDEO_SPEC_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_spec")
+PROMPT_TEMPLATE_DIR = os.path.join(UPLOAD_FOLDER, "prompt_templates")
+PROMPT_TEMPLATE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "original_prompt": {"type": "string"},
+        "moderated_prompt": {"type": "string"},
+        "status": {"type": "string", "enum": ["allowed", "rewritten", "blocked"]},
+        "model": {"type": "string"},
+        "size": {"type": "string"},
+        "seconds": {"type": "integer"},
+        "timestamp": {"type": "string"},
+        "moderation": {"type": "object"},
+    },
+    "required": ["original_prompt", "status", "timestamp"],
+}
 
 DEFAULT_TRANSLATION_STYLE = {
     "outlineEnabled": True,
@@ -1114,6 +1129,64 @@ def _prepare_image_reference(image_path, size_value):
     if not os.path.exists(output_path):
         canvas.save(output_path, format="PNG")
     return output_path
+
+
+def _extract_moderation_result(response):
+    if hasattr(response, "model_dump"):
+        data = response.model_dump()
+    elif isinstance(response, dict):
+        data = response
+    else:
+        data = {}
+    results = data.get("results")
+    if not results and hasattr(response, "results"):
+        try:
+            results = [item.model_dump() if hasattr(item, "model_dump") else item for item in response.results]
+        except Exception:
+            results = None
+    first = results[0] if isinstance(results, list) and results else {}
+    flagged = bool(first.get("flagged"))
+    categories = first.get("categories") or {}
+    scores = first.get("category_scores") or {}
+    return {"flagged": flagged, "categories": categories, "category_scores": scores}
+
+
+def _rewrite_prompt_for_moderation(client, prompt):
+    system = (
+        "You are a prompt editor. Rewrite user video prompts to comply with OpenAI policies. "
+        "Keep the original intent and style as much as possible while removing disallowed content. "
+        "Return only the revised prompt, no extra commentary."
+    )
+    try:
+        response = client.chat.completions.create(
+            model=os.getenv("OPENAI_REWRITE_MODEL", "gpt-4o-mini"),
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": prompt},
+            ],
+            temperature=0.4,
+        )
+    except Exception:
+        return None
+    message = response.choices[0].message if response.choices else None
+    content = message.content if message else None
+    if not content:
+        return None
+    return str(content).strip()
+
+
+def _save_prompt_template(payload):
+    os.makedirs(PROMPT_TEMPLATE_DIR, exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    digest = hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()[:12]
+    base = f"prompt_{timestamp}_{digest}"
+    template_path = os.path.join(PROMPT_TEMPLATE_DIR, f"{base}.json")
+    schema_path = os.path.join(PROMPT_TEMPLATE_DIR, f"{base}.schema.json")
+    with open(template_path, "w", encoding="utf-8") as handle:
+        json.dump(payload, handle, ensure_ascii=False, indent=2)
+    with open(schema_path, "w", encoding="utf-8") as handle:
+        json.dump(PROMPT_TEMPLATE_SCHEMA, handle, ensure_ascii=False, indent=2)
+    return template_path, schema_path
 
 
 def overlay_logo_on_video(video_path, logo_path, output_path, height_ratio=0.1, position="top-right"):
@@ -4633,6 +4706,68 @@ class VideoSpecHandler(CorsMixin, tornado.web.RequestHandler):
         self.write({"idea": idea_prompt, "spec": spec, "result": result})
 
 
+class PromptModerationHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        prompt = data.get("prompt") or ""
+        if not isinstance(prompt, str) or not prompt.strip():
+            self.set_status(400)
+            return self.write({"error": "prompt required"})
+        prompt = prompt.strip()
+
+        model = str(data.get("model") or "sora-2").strip()
+        size = str(data.get("size") or "").strip()
+        try:
+            seconds = int(data.get("seconds") or 0)
+        except Exception:
+            seconds = 0
+
+        client = OpenAI()
+        try:
+            moderation = client.moderations.create(
+                model=os.getenv("OPENAI_MODERATION_MODEL", "omni-moderation-latest"),
+                input=prompt,
+            )
+        except Exception as exc:
+            self.set_status(502)
+            return self.write({"error": "moderation failed", "details": str(exc)})
+
+        moderation_result = _extract_moderation_result(moderation)
+        flagged = bool(moderation_result.get("flagged"))
+        rewritten_prompt = None
+        status = "allowed"
+        if flagged:
+            rewritten_prompt = _rewrite_prompt_for_moderation(client, prompt)
+            status = "rewritten" if rewritten_prompt else "blocked"
+
+        moderated_prompt = rewritten_prompt or prompt
+        template_payload = {
+            "original_prompt": prompt,
+            "moderated_prompt": moderated_prompt,
+            "status": status,
+            "model": model,
+            "size": size,
+            "seconds": seconds,
+            "timestamp": datetime.now().isoformat(),
+            "moderation": moderation_result,
+        }
+        template_path, schema_path = _save_prompt_template(template_payload)
+
+        self.write({
+            "prompt": prompt,
+            "moderated_prompt": moderated_prompt,
+            "status": status,
+            "flagged": flagged,
+            "moderation": moderation_result,
+            "template_path": template_path,
+            "schema_path": schema_path,
+        })
+
+
 class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
     def post(self):
         try:
@@ -6059,6 +6194,7 @@ def make_app(upload_folder):
         (r"/api/ui-settings/([A-Za-z0-9_-]+)", UISettingsHandler),
         (r"/api/video-specs", VideoSpecHandler),
         (r"/api/video-prompts", VideoPromptHandler),
+        (r"/api/prompt-moderation", PromptModerationHandler),
         (r"/api/videos/generate", VideoGenerateHandler),
         (r"/api/videos", VideosHandler),
         (r"/api/videos/(\d+)", VideoDetailHandler),

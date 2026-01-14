@@ -240,6 +240,9 @@ export default function HomeScreen() {
   const [prompting, setPrompting] = useState(false);
   const [promptStatus, setPromptStatus] = useState<string>('');
   const [promptTone, setPromptTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [moderatingPrompt, setModeratingPrompt] = useState(false);
+  const [moderationStatus, setModerationStatus] = useState('');
+  const [moderationTone, setModerationTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [promptSpecLoaded, setPromptSpecLoaded] = useState(false);
   const [specHistoryLoaded, setSpecHistoryLoaded] = useState(false);
   const [promptTextHistoryLoaded, setPromptTextHistoryLoaded] = useState(false);
@@ -1140,6 +1143,64 @@ const HISTORY_KEYS = {
     }
   };
 
+  const moderatePrompt = async () => {
+    if (moderatingPrompt) return;
+    if (!promptOutput.trim()) {
+      setModerationStatus('Add a prompt first.');
+      setModerationTone('bad');
+      return;
+    }
+    setModeratingPrompt(true);
+    setModerationStatus('Checking moderation...');
+    setModerationTone('neutral');
+    try {
+      const spec = buildPromptSpecPayload();
+      const selectedModel = normalizeModel(promptSpec.model);
+      const seconds =
+        clampSecondsForModel(parseSeconds(videoSeconds) ?? parseSeconds(promptSpec.durationSeconds), selectedModel) ??
+        (selectedModel === 'sora-2-pro' ? 12 : 8);
+      const size =
+        normalizeVideoSize(videoSize || sizeForAspectRatio(promptSpec.aspectRatio)) ||
+        sizeForAspectRatio(promptSpec.aspectRatio);
+      const resp = await fetch(`${API_URL}/api/prompt-moderation`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prompt: promptOutput.trim(),
+          model: selectedModel,
+          size,
+          seconds,
+          title: spec.title || promptResult?.title,
+        }),
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        const details = json.details ? `: ${json.details}` : '';
+        setModerationStatus(`Moderation failed: ${json.error || json.message || resp.statusText}${details}`);
+        setModerationTone('bad');
+        return;
+      }
+      if (json.moderated_prompt && json.moderated_prompt !== promptOutput) {
+        setPromptOutput(json.moderated_prompt);
+      }
+      if (json.status === 'allowed') {
+        setModerationStatus('Prompt is OK. Saved moderation template.');
+        setModerationTone('good');
+      } else if (json.status === 'rewritten') {
+        setModerationStatus('Prompt rewritten to comply with moderation.');
+        setModerationTone('good');
+      } else {
+        setModerationStatus('Prompt blocked by moderation. Please revise.');
+        setModerationTone('bad');
+      }
+    } catch (e: any) {
+      setModerationStatus(`Moderation failed: ${e?.message || String(e)}`);
+      setModerationTone('bad');
+    } finally {
+      setModeratingPrompt(false);
+    }
+  };
+
   const generateSpecs = async () => {
     if (specGenerating) return;
     setSpecGenerating(true);
@@ -1246,8 +1307,14 @@ const HISTORY_KEYS = {
       });
       const json = await resp.json();
       if (!resp.ok) {
-        const details = json.details ? `: ${json.details}` : '';
-        setVideoStatus(`Generation failed: ${json.error || json.message || resp.statusText}${details}`);
+        const detailsText = json.details || json.error || json.message || resp.statusText;
+        const details = detailsText ? `: ${detailsText}` : '';
+        const message = String(detailsText || '').toLowerCase();
+        if (message.includes('moderation')) {
+          setVideoStatus('Generation blocked by moderation. Use "Moderate prompt" to rewrite.');
+        } else {
+          setVideoStatus(`Generation failed${details}`);
+        }
         setVideoTone('bad');
         return;
       }
@@ -1803,6 +1870,23 @@ const HISTORY_KEYS = {
                 ) : null}
                 {promptResult?.negativePrompt ? (
                   <Text style={styles.metaText}>Negative: {promptResult.negativePrompt}</Text>
+                ) : null}
+
+                <Pressable
+                  style={[styles.btnAccent, moderatingPrompt && styles.btnDisabled]}
+                  onPress={moderatePrompt}
+                  disabled={moderatingPrompt}
+                >
+                  <View style={styles.btnContent}>
+                    {moderatingPrompt && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                    <Text style={styles.btnText}>
+                      {moderatingPrompt ? 'Moderating...' : 'Moderate prompt'}
+                    </Text>
+                  </View>
+                </Pressable>
+
+                {moderationStatus ? (
+                  <Text style={[styles.status, toneStyle(moderationTone)]}>{moderationStatus}</Text>
                 ) : null}
 
                 <Pressable
