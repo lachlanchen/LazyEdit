@@ -5,7 +5,7 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 source "$SCRIPT_DIR/lazyedit_config.sh"
 
 BASHRC_PATH="${BASHRC_PATH:-$HOME/.bashrc}"
-SESSION_NAME="${SESSION_NAME:-la-lazyedit}"
+SESSION_NAME="${SESSION_NAME:-lazyedit}"
 EXPO_APP_DIR="${EXPO_APP_DIR:-${LAZYEDIT_DIR}/app}"
 BACKEND_PORT="${BACKEND_PORT:-18787}"
 EXPO_PORT="${EXPO_PORT:-18791}"
