@@ -12,7 +12,15 @@ fi
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 TARGET_USER="${SUDO_USER:-$USER}"
 DEFAULT_DEPLOY_DIR="/home/lachlan/DiskMech/Projects/lazyedit"
-DEPLOY_DIR="${1:-${LAZYEDIT_DIR:-$DEFAULT_DEPLOY_DIR}}"
+RUN_DIR="$(pwd)"
+DEPLOY_DIR="${1:-${LAZYEDIT_DIR:-}}"
+if [[ -z "$DEPLOY_DIR" ]]; then
+    if [[ -f "$RUN_DIR/app.py" ]]; then
+        DEPLOY_DIR="$RUN_DIR"
+    else
+        DEPLOY_DIR="$DEFAULT_DEPLOY_DIR"
+    fi
+fi
 
 if [[ ! -d "$DEPLOY_DIR" ]]; then
     echo "Deploy directory not found: $DEPLOY_DIR" >&2
