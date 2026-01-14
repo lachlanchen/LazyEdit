@@ -36,5 +36,19 @@ class AutocutProcessor:
 
 
         # Run the autocut command with the specified environment
-        subprocess.run(autocut_command, shell=True, check=True, env=env)
-        print(f"Finished autocut with lang={lang} on GPU {gpu_id}")
+        try:
+            subprocess.run(autocut_command, shell=True, check=True, env=env)
+            print(f"Finished autocut with lang={lang} on GPU {gpu_id}")
+            return
+        except subprocess.CalledProcessError as exc:
+            if exc.returncode != 132:
+                raise
+            print("Autocut hit SIGILL (illegal instruction). Retrying with safe CPU flags...")
+
+        fallback_env = env.copy()
+        fallback_env["CUDA_VISIBLE_DEVICES"] = ""
+        fallback_env["ATEN_CPU_CAPABILITY"] = "default"
+        fallback_env["ONEDNN_MAX_CPU_ISA"] = "AVX2"
+        fallback_env["MKL_DEBUG_CPU_TYPE"] = "5"
+        subprocess.run(autocut_command, shell=True, check=True, env=fallback_env)
+        print(f"Finished autocut with fallback CPU mode for lang={lang}")
