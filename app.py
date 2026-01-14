@@ -1071,6 +1071,51 @@ def get_video_resolution(video_path):
     return width, height
 
 
+def _parse_size(size_value):
+    if not size_value or not isinstance(size_value, str) or "x" not in size_value:
+        return None
+    parts = size_value.lower().split("x", 1)
+    try:
+        width = int(parts[0].strip())
+        height = int(parts[1].strip())
+    except Exception:
+        return None
+    if width <= 0 or height <= 0:
+        return None
+    return width, height
+
+
+def _prepare_image_reference(image_path, size_value):
+    target = _parse_size(size_value)
+    if not target:
+        return image_path
+    target_w, target_h = target
+    with Image.open(image_path) as img:
+        if img.width == target_w and img.height == target_h:
+            return image_path
+        scale = min(target_w / img.width, target_h / img.height)
+        new_w = max(1, int(img.width * scale))
+        new_h = max(1, int(img.height * scale))
+        resized = img.convert("RGB").resize((new_w, new_h), Image.LANCZOS)
+        canvas = Image.new("RGB", (target_w, target_h), (0, 0, 0))
+        x = (target_w - new_w) // 2
+        y = (target_h - new_h) // 2
+        canvas.paste(resized, (x, y))
+
+    hasher = hashlib.sha256()
+    with open(image_path, "rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            hasher.update(chunk)
+    suffix = hasher.hexdigest()[:12]
+    output_folder = os.path.join(UPLOAD_FOLDER, "ui_assets", "input_references")
+    os.makedirs(output_folder, exist_ok=True)
+    base = os.path.splitext(os.path.basename(image_path))[0]
+    output_path = os.path.join(output_folder, f"{base}_{target_w}x{target_h}_{suffix}.png")
+    if not os.path.exists(output_path):
+        canvas.save(output_path, format="PNG")
+    return output_path
+
+
 def overlay_logo_on_video(video_path, logo_path, output_path, height_ratio=0.1, position="top-right"):
     if not logo_path or not os.path.exists(logo_path):
         raise FileNotFoundError("logo file missing")
@@ -4637,7 +4682,7 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
                     raise ValueError("input_image_path must live under the upload folder")
                 if not resolved.exists():
                     raise FileNotFoundError(f"input image not found: {resolved}")
-                input_reference = str(resolved)
+                input_reference = _prepare_image_reference(str(resolved), size)
             except Exception as exc:
                 self.set_status(400)
                 return self.write({"error": "invalid input image", "details": str(exc)})
