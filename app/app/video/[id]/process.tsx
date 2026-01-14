@@ -172,8 +172,9 @@ export default function ProcessVideoScreen() {
   const [translationLanguages, setTranslationLanguages] = useState<string[]>([]);
   const [burnLayout, setBurnLayout] = useState<BurnLayout | null>(null);
   const [logoSettings, setLogoSettings] = useState<LogoSettings | null>(null);
-  const [logoEnabled, setLogoEnabled] = useState(false);
+  const [logoEnabled, setLogoEnabled] = useState(true);
   const [logoPick, setLogoPick] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const [logoPickPreviewUrl, setLogoPickPreviewUrl] = useState<string | null>(null);
   const [logoUploading, setLogoUploading] = useState(false);
   const [logoStatus, setLogoStatus] = useState('');
   const [logoTone, setLogoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -499,8 +500,11 @@ export default function ProcessVideoScreen() {
         if (logoResp.ok) {
           const json = await logoResp.json();
           if (json.value) {
-            setLogoSettings(json.value);
-            setLogoEnabled(Boolean(json.value.enabled));
+            const enabledValue =
+              typeof json.value.enabled === 'boolean' ? json.value.enabled : Boolean(json.value.logoPath);
+            const normalized = { ...json.value, enabled: enabledValue };
+            setLogoSettings(normalized);
+            setLogoEnabled(Boolean(normalized.enabled));
           }
         }
       } catch (_err) {
@@ -542,6 +546,31 @@ export default function ProcessVideoScreen() {
       setLogoEnabled(false);
     }
   }, [logoSettings?.logoPath]);
+
+  useEffect(() => {
+    if (!logoPick) {
+      setLogoPickPreviewUrl(null);
+      return;
+    }
+    if (logoPick.uri) {
+      setLogoPickPreviewUrl(logoPick.uri);
+      return;
+    }
+    if (Platform.OS !== 'web' || typeof URL === 'undefined') {
+      setLogoPickPreviewUrl(null);
+      return;
+    }
+    const file = (logoPick as any).file;
+    if (!file) {
+      setLogoPickPreviewUrl(null);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(file as File);
+    setLogoPickPreviewUrl(objectUrl);
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [logoPick]);
 
   useEffect(() => {
     if (!id) return;
@@ -1254,8 +1283,12 @@ export default function ProcessVideoScreen() {
           <Text style={styles.sectionTitle}>Video logo</Text>
           <Text style={styles.sectionHint}>Upload a logo to reuse when burning the intro overlay.</Text>
 
-          {logoPreviewUrl ? (
-            <Image source={{ uri: logoPreviewUrl }} style={styles.logoPreview} resizeMode="contain" />
+          {logoPickPreviewUrl || logoPreviewUrl ? (
+            <Image
+              source={{ uri: logoPickPreviewUrl || logoPreviewUrl || '' }}
+              style={styles.logoPreview}
+              resizeMode="contain"
+            />
           ) : (
             <Text style={styles.emptyText}>No logo uploaded yet.</Text>
           )}

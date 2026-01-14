@@ -222,7 +222,7 @@ DEFAULT_LOGO_SETTINGS = {
     "logoUrl": None,
     "heightRatio": 0.1,
     "position": "top-right",
-    "enabled": False,
+    "enabled": True,
 }
 
 BURN_EXECUTOR = ThreadPoolExecutor(max_workers=1)
