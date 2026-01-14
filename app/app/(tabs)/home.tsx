@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {
   ActivityIndicator,
+  Image,
   Modal,
   Platform,
   Pressable,
@@ -256,6 +257,12 @@ export default function HomeScreen() {
   const [videoModel, setVideoModel] = useState(DEFAULT_MODEL);
   const [videoSize, setVideoSize] = useState(sizeForAspectRatio(DEFAULT_PROMPT_SPEC.aspectRatio));
   const [videoSeconds, setVideoSeconds] = useState(DEFAULT_PROMPT_SPEC.durationSeconds);
+  const [referenceImage, setReferenceImage] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const [referenceImageStatus, setReferenceImageStatus] = useState<string>('');
+  const [referenceImageTone, setReferenceImageTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [referenceImageUploading, setReferenceImageUploading] = useState(false);
+  const [referenceImagePath, setReferenceImagePath] = useState<string | null>(null);
+  const [referencePreviewUrl, setReferencePreviewUrl] = useState<string | null>(null);
   const aspectOptions = useMemo(
     () => [
       { value: '16:9', label: t('aspect_ratio_landscape') },
@@ -327,6 +334,22 @@ export default function HomeScreen() {
     return () => URL.revokeObjectURL(url);
   }, [remixPicked]);
 
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    if (!referenceImage) {
+      setReferencePreviewUrl(null);
+      return;
+    }
+    const file = (referenceImage as any).file as File | undefined;
+    if (!file) {
+      setReferencePreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setReferencePreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [referenceImage]);
+
   const fileLabel = useMemo(() => {
     if (!picked) return null;
     return picked.name || 'Untitled video';
@@ -350,6 +373,18 @@ export default function HomeScreen() {
     const type = remixPicked.mimeType || 'video';
     return `${size} · ${type}`;
   }, [remixPicked]);
+
+  const referenceImageLabel = useMemo(() => {
+    if (!referenceImage) return null;
+    return referenceImage.name || 'Reference image';
+  }, [referenceImage]);
+
+  const referenceImageMeta = useMemo(() => {
+    if (!referenceImage) return null;
+    const size = formatBytes(referenceImage.size);
+    const type = referenceImage.mimeType || 'image';
+    return `${size} · ${type}`;
+  }, [referenceImage]);
 
   const loadLatestVideos = useCallback(async (silent?: boolean) => {
     if (!silent) setLatestLoading(true);
@@ -525,6 +560,70 @@ export default function HomeScreen() {
       setRemixTone('bad');
     } finally {
       setRemixUploading(false);
+    }
+  };
+
+  const pickReferenceImage = async () => {
+    const res = await DocumentPicker.getDocumentAsync({
+      multiple: false,
+      type: ['image/*'],
+    });
+    if (res.canceled) return;
+    setReferenceImage(res.assets[0]);
+    setReferenceImagePath(null);
+    setReferenceImageStatus(t('reference_image_selected'));
+    setReferenceImageTone('neutral');
+  };
+
+  const clearReferenceImage = () => {
+    setReferenceImage(null);
+    setReferenceImagePath(null);
+    setReferenceImageStatus('');
+    setReferenceImageTone('neutral');
+  };
+
+  const uploadReferenceImage = async () => {
+    if (!referenceImage || referenceImageUploading) return;
+    setReferenceImageUploading(true);
+    setReferenceImageStatus(t('reference_image_uploading'));
+    setReferenceImageTone('neutral');
+    try {
+      if (Platform.OS === 'web') {
+        const file = referenceImage as any;
+        const form = new FormData();
+        form.append('image', (file.file as File) ?? (file as any), referenceImage.name || 'reference.png');
+        const resp = await fetch(`${API_URL}/upload-image`, { method: 'POST', body: form as any });
+        const json = await resp.json();
+        if (!resp.ok) {
+          setReferenceImageStatus(`Upload failed: ${json.error || json.message || resp.statusText}`);
+          setReferenceImageTone('bad');
+          return;
+        }
+        setReferenceImagePath(json.file_path || null);
+        setReferenceImageStatus(t('reference_image_uploaded'));
+        setReferenceImageTone('good');
+      } else {
+        const resp = await FileSystem.uploadAsync(`${API_URL}/upload-image`, referenceImage.uri, {
+          fieldName: 'image',
+          httpMethod: 'POST',
+          uploadType: 'multipart' as any,
+          parameters: { filename: referenceImage.name || 'reference.png' },
+        });
+        const json = JSON.parse(resp.body);
+        if (resp.status >= 400) {
+          setReferenceImageStatus(`Upload failed: ${json.error || json.message || `HTTP ${resp.status}`}`);
+          setReferenceImageTone('bad');
+          return;
+        }
+        setReferenceImagePath(json.file_path || null);
+        setReferenceImageStatus(t('reference_image_uploaded'));
+        setReferenceImageTone('good');
+      }
+    } catch (e: any) {
+      setReferenceImageStatus(`Upload failed: ${e?.message || String(e)}`);
+      setReferenceImageTone('bad');
+    } finally {
+      setReferenceImageUploading(false);
     }
   };
 
@@ -1111,6 +1210,11 @@ const HISTORY_KEYS = {
       setVideoTone('bad');
       return;
     }
+    if (referenceImage && !referenceImagePath) {
+      setVideoStatus(t('reference_image_missing_upload'));
+      setVideoTone('bad');
+      return;
+    }
     recordHistory();
     setGeneratingVideo(true);
     setVideoStatus(t('generate_video_progress'));
@@ -1124,16 +1228,20 @@ const HISTORY_KEYS = {
         (selectedModel === 'sora-2-pro' ? 12 : 8);
       const size =
         normalizeVideoSize(videoSize || sizeForAspectRatio(promptSpec.aspectRatio)) || sizeForAspectRatio(promptSpec.aspectRatio);
+      const body: Record<string, string | number> = {
+        prompt: promptOutput.trim(),
+        model: selectedModel,
+        size,
+        seconds,
+        title,
+      };
+      if (referenceImagePath) {
+        body.input_image_path = referenceImagePath;
+      }
       const resp = await fetch(`${API_URL}/api/videos/generate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: promptOutput.trim(),
-          model: selectedModel,
-          size,
-          seconds,
-          title,
-        }),
+        body: JSON.stringify(body),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -1591,6 +1699,54 @@ const HISTORY_KEYS = {
                   keyboardType="numeric"
                 />
                 <ResetButton onPress={() => setVideoSeconds(promptSpec.durationSeconds)} />
+              </View>
+
+              <Text style={styles.fieldLabel}>{t('field_reference_image')}</Text>
+              <View style={styles.inputRow}>
+                <Pressable style={styles.btnPrimary} onPress={pickReferenceImage}>
+                  <Text style={styles.btnText}>{t('reference_image_pick')}</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.btnSecondary, referenceImageUploading && styles.btnDisabled]}
+                  onPress={uploadReferenceImage}
+                  disabled={referenceImageUploading}
+                >
+                  <View style={styles.btnContent}>
+                    {referenceImageUploading && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                    <Text style={styles.btnText}>{t('reference_image_upload')}</Text>
+                  </View>
+                </Pressable>
+                <ResetButton onPress={clearReferenceImage} />
+              </View>
+              {referenceImageStatus ? (
+                <Text style={[styles.status, toneStyle(referenceImageTone)]}>{referenceImageStatus}</Text>
+              ) : null}
+              <View style={styles.card}>
+                {referenceImage ? (
+                  <>
+                    <Text style={styles.cardTitle}>{t('reference_image_preview')}</Text>
+                    <Text style={styles.fileName} numberOfLines={1}>
+                      {referenceImageLabel}
+                    </Text>
+                    <Text style={styles.fileMeta}>{referenceImageMeta}</Text>
+                    {Platform.OS === 'web' ? (
+                      referencePreviewUrl ? (
+                        <View style={styles.previewBox}>
+                          {React.createElement('img', {
+                            src: referencePreviewUrl,
+                            style: { width: '100%', borderRadius: 12, maxHeight: 260, objectFit: 'cover' },
+                          })}
+                        </View>
+                      ) : null
+                    ) : referenceImage.uri ? (
+                      <View style={styles.previewBox}>
+                        <Image source={{ uri: referenceImage.uri }} style={{ width: '100%', height: 220 }} />
+                      </View>
+                    ) : null}
+                  </>
+                ) : (
+                  <Text style={styles.previewHint}>{t('reference_image_none')}</Text>
+                )}
               </View>
 
               <Text style={styles.fieldLabel}>{t('field_generated_prompt')}</Text>

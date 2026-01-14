@@ -121,6 +121,7 @@ def create_poll_and_download(
     size: str = "1280x720",
     seconds: int = 8,
     output: str = "video.mp4",
+    input_reference: Optional[str] = None,
     poll_interval: float = 10.0,
     timeout_seconds: int = 30 * 60,
     use_cache: bool = True,
@@ -130,8 +131,34 @@ def create_poll_and_download(
     out_dir = os.path.dirname(output)
     if out_dir:
         os.makedirs(out_dir, exist_ok=True)
+    def _hash_reference(value: Optional[str]) -> Optional[str]:
+        if not value:
+            return None
+        if os.path.exists(value):
+            hasher = hashlib.sha256()
+            with open(value, "rb") as handle:
+                for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                    hasher.update(chunk)
+            return f"file:{hasher.hexdigest()}"
+        return value
+
+    def _prepare_reference(value: Optional[str]) -> Optional[str]:
+        if not value:
+            return None
+        if os.path.exists(value):
+            with open(value, "rb") as handle:
+                uploaded = client.files.create(file=handle, purpose="vision")
+            ref_id = getattr(uploaded, "id", None) or (uploaded.get("id") if isinstance(uploaded, dict) else None)
+            if not ref_id:
+                raise RuntimeError("OpenAI file upload did not return an id")
+            return ref_id
+        return value
+
     # Compute request hash and attempt cache
     payload = {"model": model, "prompt": prompt, "size": size, "seconds": seconds}
+    reference_hash = _hash_reference(input_reference)
+    if reference_hash:
+        payload["input_reference"] = reference_hash
     key = json.dumps(payload, ensure_ascii=False, sort_keys=True)
     rhash = hashlib.sha256(key.encode("utf-8")).hexdigest()
     rcode = rhash[:12]
@@ -159,7 +186,15 @@ def create_poll_and_download(
         except Exception as e:
             print(f"Cache lookup error (non-fatal): {e}")
 
-    video = create_video(client, prompt=prompt, model=model, size=size, seconds=seconds)
+    resolved_reference = _prepare_reference(input_reference)
+    video = create_video(
+        client,
+        prompt=prompt,
+        model=model,
+        size=size,
+        seconds=seconds,
+        input_reference=resolved_reference,
+    )
     vid0 = getattr(video, "id", None) or (video.get("id") if isinstance(video, dict) else None)
     status0 = getattr(video, "status", None) or (video.get("status") if isinstance(video, dict) else "queued")
     progress0 = getattr(video, "progress", None) or (video.get("progress") if isinstance(video, dict) else 0)

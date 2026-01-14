@@ -3217,6 +3217,40 @@ class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class ImageUploadHandler(CorsMixin, tornado.web.RequestHandler):
+    def initialize(self, upload_folder):
+        self.upload_folder = upload_folder
+
+    def post(self):
+        image_files = self.request.files.get("image") or self.request.files.get("file")
+        if not image_files:
+            self.set_status(400)
+            return self.write({"error": "image file missing"})
+        image_file = image_files[0]
+        original_fname = image_file["filename"]
+        requested_name = self.get_argument("filename", default=None) or original_fname
+        safe_name = os.path.basename(requested_name) or original_fname
+        base_name, ext = os.path.splitext(safe_name)
+        if not ext:
+            ext = ".png"
+        output_folder = os.path.join(self.upload_folder, "image_inputs")
+        os.makedirs(output_folder, exist_ok=True)
+        output_path = os.path.join(output_folder, f"{base_name}{ext}")
+        if os.path.exists(output_path):
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_path = os.path.join(output_folder, f"{base_name}_{timestamp}{ext}")
+
+        with open(output_path, "wb") as f:
+            f.write(image_file["body"])
+
+        self.write({
+            "status": "success",
+            "message": f"Image {os.path.basename(output_path)} uploaded successfully.",
+            "file_path": output_path,
+            "media_url": media_url_for_path(output_path),
+        })
+
+
 class LanguagesHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self):
         self.write({"languages": list_languages()})
@@ -4442,6 +4476,21 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
         allowed_seconds = (4, 8, 12)
         seconds = min(allowed_seconds, key=lambda v: abs(v - seconds))
 
+        input_image_path = data.get("input_image_path") or data.get("image_path")
+        input_reference = None
+        if input_image_path:
+            try:
+                resolved = Path(str(input_image_path)).resolve()
+                upload_root = Path(UPLOAD_FOLDER).resolve()
+                if upload_root not in resolved.parents and resolved != upload_root:
+                    raise ValueError("input_image_path must live under the upload folder")
+                if not resolved.exists():
+                    raise FileNotFoundError(f"input image not found: {resolved}")
+                input_reference = str(resolved)
+            except Exception as exc:
+                self.set_status(400)
+                return self.write({"error": "invalid input image", "details": str(exc)})
+
         use_cache = _parse_bool(data.get("use_cache"), default=True)
         title_input = data.get("title") or data.get("name") or "Generated video"
         if not isinstance(title_input, str):
@@ -4464,6 +4513,7 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
                 size=size,
                 seconds=seconds,
                 output=output_path,
+                input_reference=input_reference,
                 use_cache=use_cache,
             )
         except Exception as exc:
@@ -5759,6 +5809,7 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
 def make_app(upload_folder):
     return tornado.web.Application([
         (r"/upload", FileUploaderHandler, dict(upload_folder=upload_folder)),
+        (r"/upload-image", ImageUploadHandler, dict(upload_folder=upload_folder)),
         (r"/upload-stream", FileUploadHandlerStream, dict(upload_folder=upload_folder)),
         (r"/video-processing", AutomaticalVideoEditingHandler),
         # Lightweight JSON APIs for the Expo app
