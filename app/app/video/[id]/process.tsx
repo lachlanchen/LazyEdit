@@ -630,7 +630,10 @@ export default function ProcessVideoScreen() {
     const mark = (step: StepKey, status: StepState, detail = '') => {
       const current = nextStatus[step];
       if (runningNow) {
-        if ((current === 'done' || current === 'error') && status !== current) {
+        if (current === 'done' && status !== 'done') {
+          return;
+        }
+        if (current === 'error' && status === 'idle') {
           return;
         }
         if (current === 'working' && status === 'idle') {
@@ -729,7 +732,12 @@ export default function ProcessVideoScreen() {
               updateBurnPreview(`${API_URL}${json.output_url}`);
             }
           } else {
-            mark('burn', 'error', json.error || 'Failed');
+            const errorText = json.error || 'Failed';
+            if (errorText.includes('Cancelled')) {
+              mark('burn', 'skipped', 'Cancelled');
+            } else {
+              mark('burn', 'error', errorText);
+            }
           }
         } else if (resp.status === 404) {
           markIdle('burn', selectedSteps.burn);
