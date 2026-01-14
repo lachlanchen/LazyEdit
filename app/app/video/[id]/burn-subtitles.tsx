@@ -1,6 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Image,
+  Modal,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 
@@ -41,6 +55,14 @@ type BurnStatus = {
   } | null;
 };
 
+type LogoSettings = {
+  logoPath?: string | null;
+  logoUrl?: string | null;
+  heightRatio?: number;
+  position?: string;
+  enabled?: boolean;
+};
+
 type SelectOption = {
   value: string;
   label: string;
@@ -76,6 +98,21 @@ const LANG_SHORT: Record<string, string> = {
 };
 
 const SLOT_COLORS = ['#22c55e', '#60a5fa', '#f59e0b', '#f472b6', '#a78bfa', '#34d399', '#fb7185', '#38bdf8'];
+
+const LOGO_POSITION_LABELS: Record<string, string> = {
+  'top-right': 'Top right',
+  'top-left': 'Top left',
+  'bottom-right': 'Bottom right',
+  'bottom-left': 'Bottom left',
+  center: 'Center',
+};
+const LOGO_POSITION_OPTIONS = [
+  { value: 'top-right', label: 'Top right' },
+  { value: 'top-left', label: 'Top left' },
+  { value: 'bottom-right', label: 'Bottom right' },
+  { value: 'bottom-left', label: 'Bottom left' },
+  { value: 'center', label: 'Center' },
+];
 
 const DEFAULT_ROWS = 4;
 const DEFAULT_COLS = 1;
@@ -304,6 +341,8 @@ const SliderControl = ({
 
 const formatTimestamp = (value?: string | null) =>
   value ? value.slice(0, 19).replace('T', ' ') : 'Unknown time';
+const formatPercent = (value?: number, fallback = 0) =>
+  `${Math.round((typeof value === 'number' ? value : fallback) * 100)}%`;
 
 export default function BurnSubtitlesScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -322,6 +361,14 @@ export default function BurnSubtitlesScreen() {
   const [burning, setBurning] = useState(false);
   const [message, setMessage] = useState('');
   const [layoutLoaded, setLayoutLoaded] = useState(false);
+  const [logoSettings, setLogoSettings] = useState<LogoSettings | null>(null);
+  const [logoEnabled, setLogoEnabled] = useState(true);
+  const [logoPick, setLogoPick] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
+  const [logoPickPreviewUrl, setLogoPickPreviewUrl] = useState<string | null>(null);
+  const [logoUploading, setLogoUploading] = useState(false);
+  const [logoStatus, setLogoStatus] = useState('');
+  const [logoTone, setLogoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [logoHeightInput, setLogoHeightInput] = useState('10');
 
   const availableLanguages = useMemo(() => {
     const set = new Set<string>();
@@ -341,6 +388,22 @@ export default function BurnSubtitlesScreen() {
   }, [availableLanguages]);
 
   const sortedSlots = useMemo(() => [...slots].sort((a, b) => a.slot - b.slot), [slots]);
+
+  const logoSummary = useMemo(() => {
+    const settings = logoSettings || {};
+    const heightRatio = settings.heightRatio ?? 0.1;
+    const position = settings.position ?? 'top-right';
+    const heightPercent = formatPercent(heightRatio, 0.1);
+    const positionLabel = LOGO_POSITION_LABELS[position] || position;
+    const hasLogo = Boolean(settings.logoPath);
+    return { heightPercent, positionLabel, hasLogo };
+  }, [logoSettings]);
+
+  const logoPreviewUrl = useMemo(() => {
+    const url = logoSettings?.logoUrl;
+    if (!url) return null;
+    return url.startsWith('http') ? url : `${API_URL}${url}`;
+  }, [logoSettings?.logoUrl]);
 
   const buildSlotList = (current: BurnSlot[], total: number) => {
     const map = new Map<number, BurnSlot>();
@@ -444,6 +507,150 @@ export default function BurnSubtitlesScreen() {
     }
   };
 
+  const saveLogoSettings = async (next: Partial<LogoSettings>) => {
+    const payload: LogoSettings = {
+      logoPath: logoSettings?.logoPath ?? null,
+      logoUrl: logoSettings?.logoUrl ?? null,
+      heightRatio: logoSettings?.heightRatio ?? 0.1,
+      position: logoSettings?.position ?? 'top-right',
+      enabled: logoSettings?.enabled ?? logoEnabled,
+      ...next,
+    };
+    try {
+      await fetch(`${API_URL}/api/ui-settings/logo_settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (_err) {
+      // ignore
+    }
+    setLogoSettings(payload);
+    setLogoEnabled(Boolean(payload.enabled));
+  };
+
+  const loadLogoSettings = async () => {
+    try {
+      const resp = await fetch(`${API_URL}/api/ui-settings/logo_settings`);
+      const json = await resp.json();
+      if (!resp.ok) return;
+      if (json?.value) {
+        const value = json.value;
+        const normalized: LogoSettings = {
+          logoPath: value.logoPath ?? null,
+          logoUrl: value.logoUrl ?? null,
+          heightRatio: typeof value.heightRatio === 'number' ? value.heightRatio : 0.1,
+          position: value.position ?? 'top-right',
+          enabled: typeof value.enabled === 'boolean' ? value.enabled : Boolean(value.logoPath),
+        };
+        setLogoSettings(normalized);
+        setLogoEnabled(Boolean(normalized.enabled));
+      }
+    } catch (_err) {
+      // ignore
+    }
+  };
+
+  const pickLogo = async () => {
+    const res = await DocumentPicker.getDocumentAsync({
+      type: ['image/*'],
+      copyToCacheDirectory: true,
+      multiple: false,
+    });
+    if (res.canceled || !res.assets?.length) return;
+    setLogoPick(res.assets[0]);
+    setLogoStatus('Logo selected. Ready to upload.');
+    setLogoTone('neutral');
+  };
+
+  const uploadLogo = async () => {
+    if (!logoPick || logoUploading) return;
+    setLogoUploading(true);
+    setLogoStatus('Uploading logo...');
+    setLogoTone('neutral');
+    try {
+      if (Platform.OS === 'web') {
+        const form = new FormData();
+        const file = logoPick as any;
+        form.append('image', (file.file as File) ?? (file as any), logoPick.name || 'logo.png');
+        const resp = await fetch(`${API_URL}/upload-logo`, { method: 'POST', body: form as any });
+        const json = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+          setLogoStatus(`Upload failed: ${json.error || json.message || resp.statusText}`);
+          setLogoTone('bad');
+          return;
+        }
+        await saveLogoSettings({
+          logoPath: json.file_path || null,
+          logoUrl: json.media_url || null,
+          enabled: true,
+        });
+        setLogoStatus('Logo uploaded.');
+        setLogoTone('good');
+      } else {
+        const resp = await FileSystem.uploadAsync(`${API_URL}/upload-logo`, logoPick.uri, {
+          httpMethod: 'POST',
+          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          fieldName: 'image',
+          parameters: { filename: logoPick.name || 'logo.png' },
+        });
+        const json = JSON.parse(resp.body || '{}');
+        if (resp.status !== 200) {
+          setLogoStatus(`Upload failed: ${json.error || json.message || `HTTP ${resp.status}`}`);
+          setLogoTone('bad');
+          return;
+        }
+        await saveLogoSettings({
+          logoPath: json.file_path || null,
+          logoUrl: json.media_url || null,
+          enabled: true,
+        });
+        setLogoStatus('Logo uploaded.');
+        setLogoTone('good');
+      }
+      setLogoPick(null);
+    } catch (err: any) {
+      setLogoStatus(`Upload failed: ${err?.message || String(err)}`);
+      setLogoTone('bad');
+    } finally {
+      setLogoUploading(false);
+    }
+  };
+
+  const clearLogo = async () => {
+    await saveLogoSettings({ logoPath: null, logoUrl: null, enabled: false });
+    setLogoStatus('Logo cleared.');
+    setLogoTone('neutral');
+  };
+
+  const commitLogoHeight = async () => {
+    const raw = logoHeightInput.replace('%', '').trim();
+    const value = Number(raw);
+    if (Number.isNaN(value)) {
+      const ratio = logoSettings?.heightRatio ?? 0.1;
+      setLogoHeightInput(String(Math.round(ratio * 100)));
+      return;
+    }
+    const ratio = Math.min(Math.max(value / 100, 0.02), 0.4);
+    await saveLogoSettings({ heightRatio: ratio });
+    setLogoHeightInput(String(Math.round(ratio * 100)));
+  };
+
+  const updateLogoPosition = async (position: string) => {
+    await saveLogoSettings({ position });
+  };
+
+  const updateLogoEnabled = async (value: boolean) => {
+    if (!logoSettings?.logoPath) {
+      setLogoEnabled(false);
+      return;
+    }
+    await saveLogoSettings({ enabled: value });
+  };
+
+  const toneStyle = (tone: 'neutral' | 'good' | 'bad') =>
+    tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
+
   const loadBurnStatus = async () => {
     if (!id) return;
     try {
@@ -536,10 +743,34 @@ export default function BurnSubtitlesScreen() {
       await loadVideoDetails();
       await loadTranslations();
       await loadLayout();
+      await loadLogoSettings();
       await loadBurnStatus();
       setLoading(false);
     })();
   }, [id]);
+
+  useEffect(() => {
+    if (typeof logoSettings?.heightRatio !== 'number') return;
+    setLogoHeightInput(String(Math.round(logoSettings.heightRatio * 100)));
+  }, [logoSettings?.heightRatio]);
+
+  useEffect(() => {
+    if (!logoPick) {
+      setLogoPickPreviewUrl(null);
+      return;
+    }
+    if (logoPick.uri) {
+      setLogoPickPreviewUrl(logoPick.uri);
+      return;
+    }
+    const file = (logoPick as any).file;
+    if (file && typeof URL !== 'undefined') {
+      const objectUrl = URL.createObjectURL(file);
+      setLogoPickPreviewUrl(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+    setLogoPickPreviewUrl(null);
+  }, [logoPick]);
 
   useEffect(() => {
     if (!layoutLoaded) return;
@@ -679,11 +910,30 @@ export default function BurnSubtitlesScreen() {
         return;
       }
 
+      if (logoEnabled && !logoSettings?.logoPath) {
+        setMessage('Upload a logo to burn it.');
+        setBurning(false);
+        return;
+      }
+
+      const logoPayload =
+        logoEnabled && logoSettings?.logoPath
+          ? {
+              logoPath: logoSettings.logoPath,
+              heightRatio: logoSettings.heightRatio ?? 0.1,
+              position: logoSettings.position ?? 'top-right',
+              enabled: true,
+            }
+          : null;
+
       setMessage('Burning subtitles... this can take a few minutes.');
       const resp = await fetch(`${API_URL}/api/videos/${id}/burn-subtitles`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ layout: { slots, heightRatio, rows, cols, liftRatio, rubySpacing } }),
+        body: JSON.stringify({
+          layout: { slots, heightRatio, rows, cols, liftRatio, rubySpacing },
+          ...(logoPayload ? { logo: logoPayload } : {}),
+        }),
       });
       const json = await resp.json();
       if (!resp.ok) {
@@ -900,11 +1150,11 @@ export default function BurnSubtitlesScreen() {
 
           <View style={styles.previewCard}>
             <Text style={styles.previewTitle}>Layout preview</Text>
+          <View
+            style={[styles.previewStage, { height: previewStageHeight }]}
+            onLayout={(event) => setPreviewWidth(event.nativeEvent.layout.width)}
+          >
             <View
-              style={[styles.previewStage, { height: previewStageHeight }]}
-              onLayout={(event) => setPreviewWidth(event.nativeEvent.layout.width)}
-            >
-              <View
                 style={[
                   styles.previewBand,
                   { height: previewBandHeight, padding: previewBandPadding, bottom: previewLift },
@@ -965,9 +1215,101 @@ export default function BurnSubtitlesScreen() {
             <Text style={styles.previewHint}>
               Layout height is the subtitle band as % of full video height: {Math.round(heightRatio * 100)}%.
             </Text>
-            <Text style={styles.previewHint}>
-              Vertical shift lifts the entire band by % of full video height: {Math.round(liftRatio * 100)}%.
-            </Text>
+          <Text style={styles.previewHint}>
+            Vertical shift lifts the entire band by % of full video height: {Math.round(liftRatio * 100)}%.
+          </Text>
+          </View>
+
+          <View style={styles.logoCard}>
+            <Text style={styles.sectionTitle}>Video logo</Text>
+            <Text style={styles.sectionHint}>Upload a logo to overlay across the full video.</Text>
+
+            {logoPickPreviewUrl || logoPreviewUrl ? (
+              <Image
+                source={{ uri: logoPickPreviewUrl || logoPreviewUrl || '' }}
+                style={styles.logoPreview}
+                resizeMode="contain"
+              />
+            ) : (
+              <Text style={styles.emptyText}>No logo uploaded yet.</Text>
+            )}
+
+            <View style={styles.buttonRow}>
+              <Pressable style={styles.btnSecondarySmall} onPress={pickLogo}>
+                <Text style={styles.btnSecondarySmallText}>Pick logo</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.btnPrimarySmall, (!logoPick || logoUploading) && styles.btnDisabled]}
+                onPress={uploadLogo}
+              >
+                <Text style={styles.btnPrimarySmallText}>
+                  {logoUploading ? 'Uploading...' : 'Upload logo'}
+                </Text>
+              </Pressable>
+              {logoSettings?.logoPath ? (
+                <Pressable style={styles.btnDangerSmall} onPress={clearLogo}>
+                  <Text style={styles.btnDangerSmallText}>Remove logo</Text>
+                </Pressable>
+              ) : null}
+            </View>
+
+            {logoStatus ? <Text style={[styles.status, toneStyle(logoTone)]}>{logoStatus}</Text> : null}
+
+            <View style={styles.fieldRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.settingLabel}>Height (%)</Text>
+                <TextInput
+                  value={logoHeightInput}
+                  onChangeText={setLogoHeightInput}
+                  onBlur={commitLogoHeight}
+                  onSubmitEditing={commitLogoHeight}
+                  style={styles.input}
+                  keyboardType="numeric"
+                />
+              </View>
+            </View>
+
+            <Text style={styles.settingLabel}>Position</Text>
+            <View style={styles.chipRow}>
+              {LOGO_POSITION_OPTIONS.map((option) => (
+                <Pressable
+                  key={option.value}
+                  style={[
+                    styles.chip,
+                    (logoSettings?.position ?? 'top-right') === option.value && styles.chipActive,
+                  ]}
+                  onPress={() => updateLogoPosition(option.value)}
+                >
+                  <Text
+                    style={[
+                      styles.chipText,
+                      (logoSettings?.position ?? 'top-right') === option.value && styles.chipTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <View style={styles.settingRow}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.settingLabel}>Burn logo (full video)</Text>
+                <Text style={styles.settingValue}>
+                  {logoSummary.hasLogo ? 'Ready' : 'No logo'} · {logoSummary.positionLabel} · height {logoSummary.heightPercent}
+                </Text>
+                {!logoSummary.hasLogo ? (
+                  <Text style={styles.settingHint}>Upload a logo to enable.</Text>
+                ) : null}
+              </View>
+              <Switch
+                value={logoEnabled && logoSummary.hasLogo}
+                onValueChange={updateLogoEnabled}
+                disabled={!logoSummary.hasLogo}
+                trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                thumbColor={logoEnabled && logoSummary.hasLogo ? '#f8fafc' : '#f1f5f9'}
+              />
+            </View>
           </View>
 
           {videoUrl
@@ -1045,7 +1387,9 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#fbfdff' },
   scrollContent: { paddingBottom: 24 },
   title: { fontSize: 18, fontWeight: '700', color: '#0f172a' },
+  sectionTitle: { fontSize: 16, fontWeight: '700', color: '#0f172a' },
   meta: { fontSize: 12, color: '#475569', marginTop: 4 },
+  sectionHint: { marginTop: 4, fontSize: 12, color: '#64748b' },
   loadingText: { marginTop: 12, color: '#475569' },
   card: {
     padding: 14,
@@ -1055,6 +1399,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     marginBottom: 14,
   },
+  logoCard: {
+    marginTop: 12,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: 'white',
+  },
+  logoPreview: { marginTop: 12, width: '100%', height: 140, borderRadius: 12, backgroundColor: '#f8fafc' },
+  emptyText: { marginTop: 12, fontSize: 12, color: '#94a3b8' },
+  buttonRow: { marginTop: 12, flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   slotGrid: {
     marginTop: 12,
   },
@@ -1151,9 +1506,64 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     alignItems: 'center',
   },
+  btnPrimarySmall: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    backgroundColor: '#2563eb',
+  },
+  btnPrimarySmallText: { color: '#f8fafc', fontWeight: '700', fontSize: 12 },
+  btnSecondarySmall: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#ffffff',
+  },
+  btnSecondarySmallText: { color: '#0f172a', fontWeight: '700', fontSize: 12 },
+  btnDangerSmall: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    backgroundColor: '#fee2e2',
+  },
+  btnDangerSmallText: { color: '#b91c1c', fontWeight: '700', fontSize: 12 },
   btnDisabled: { opacity: 0.6 },
   btnText: { color: '#f8fafc', fontWeight: '700' },
   status: { marginTop: 10, fontSize: 12, color: '#0f172a' },
+  statusNeutral: { color: '#475569' },
+  statusGood: { color: '#15803d' },
+  statusBad: { color: '#b91c1c' },
+  settingLabel: { marginTop: 10, fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  settingValue: { fontSize: 12, color: '#475569', marginTop: 4 },
+  settingHint: { fontSize: 11, color: '#64748b', marginTop: 2 },
+  settingRow: { marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  fieldRow: { marginTop: 8 },
+  input: {
+    marginTop: 6,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    fontSize: 13,
+    color: '#0f172a',
+  },
+  chipRow: { marginTop: 8, flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  chipActive: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
+  chipText: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
+  chipTextActive: { color: '#f8fafc' },
   error: { marginTop: 8, color: '#b91c1c', fontSize: 12 },
   progressWrap: { marginTop: 10 },
   progressTrack: {
