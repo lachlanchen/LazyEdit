@@ -50,74 +50,26 @@ echo "Installing required packages..."
 apt-get update
 apt-get install -y ffmpeg tmux
 
-# 2. Create or update config file (backup if it changes)
+# 2. Validate existing scripts/config (do not generate)
 CONFIG_PATH="$DEPLOY_DIR/lazyedit_config.sh"
-TMP_CONFIG="$(mktemp)"
-cat > "$TMP_CONFIG" << EOF
-#!/bin/bash
-
-# LazyEdit configuration file - automatically generated
-
-# Project paths
-LAZYEDIT_DIR="$DEPLOY_DIR"
-LAZYEDIT_USER="$TARGET_USER"
-
-# Python/Conda settings
-CONDA_PATH="$CONDA_PATH"
-CONDA_ENV="$CONDA_ENV"
-
-# App settings
-APP_ARGS="-m lazyedit"
-SESSION_NAME="lazyedit"
-
-# Function to activate conda
-activate_conda() {
-    if [ -n "\$CONDA_PATH" ]; then
-        source "\$CONDA_PATH"
-        conda activate "\$CONDA_ENV" 2>/dev/null || echo "Warning: Could not activate conda environment '\$CONDA_ENV'"
-    else
-        echo "Warning: Conda path not set. Cannot activate environment."
-    fi
-}
-EOF
-
-if [[ -f "$CONFIG_PATH" ]] && cmp -s "$TMP_CONFIG" "$CONFIG_PATH"; then
-    rm -f "$TMP_CONFIG"
-    echo "Config unchanged: $CONFIG_PATH"
-else
-    if [[ -f "$CONFIG_PATH" ]]; then
-        backup="${CONFIG_PATH}.bak.$(date +%Y%m%d_%H%M%S)"
-        cp "$CONFIG_PATH" "$backup"
-        echo "Existing config backed up to $backup"
-    fi
-    mv "$TMP_CONFIG" "$CONFIG_PATH"
-    chmod +x "$CONFIG_PATH"
-    echo "Config file written to $CONFIG_PATH"
-fi
-
-# 3. Ensure start/stop scripts exist in deploy dir
-START_TEMPLATE="$SCRIPT_DIR/start_lazyedit.sh"
-STOP_TEMPLATE="$SCRIPT_DIR/stop_lazyedit.sh"
 START_TARGET="$DEPLOY_DIR/start_lazyedit.sh"
 STOP_TARGET="$DEPLOY_DIR/stop_lazyedit.sh"
 
+if [[ ! -f "$CONFIG_PATH" ]]; then
+    echo "Missing config: $CONFIG_PATH" >&2
+    echo "Aborting because this installer no longer generates config/scripts." >&2
+    exit 1
+fi
 if [[ ! -f "$START_TARGET" ]]; then
-    cp "$START_TEMPLATE" "$START_TARGET"
-    echo "Copied start_lazyedit.sh to $START_TARGET"
-else
-    echo "Keeping existing start script at $START_TARGET"
+    echo "Missing start script: $START_TARGET" >&2
+    exit 1
 fi
-chmod +x "$START_TARGET"
-
 if [[ ! -f "$STOP_TARGET" ]]; then
-    cp "$STOP_TEMPLATE" "$STOP_TARGET"
-    echo "Copied stop_lazyedit.sh to $STOP_TARGET"
-else
-    echo "Keeping existing stop script at $STOP_TARGET"
+    echo "Missing stop script: $STOP_TARGET" >&2
+    exit 1
 fi
-chmod +x "$STOP_TARGET"
 
-# 4. Create the systemd service file
+# 3. Create the systemd service file
 SERVICE_FILE="/etc/systemd/system/lazyedit.service"
 cat > "$SERVICE_FILE" << EOF
 [Unit]
@@ -125,7 +77,8 @@ Description=LazyEdit Video Processing
 After=network.target
 
 [Service]
-Type=forking
+Type=oneshot
+RemainAfterExit=yes
 User=$TARGET_USER
 WorkingDirectory=$DEPLOY_DIR
 ExecStart=/bin/bash -lc '$DEPLOY_DIR/start_lazyedit.sh'
@@ -137,12 +90,12 @@ EOF
 
 chmod 644 "$SERVICE_FILE"
 
-# 5. Reload systemd, enable and start the service
+# 4. Reload systemd, enable and start the service
 echo "Configuring systemd service..."
 systemctl daemon-reload
 systemctl enable lazyedit.service
 
-# 6. Offer to start the service
+# 5. Offer to start the service
 echo "Would you like to start the lazyedit service now? (y/n)"
 read -r response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
