@@ -217,6 +217,13 @@ DEFAULT_BURN_LAYOUT = {
         },
     ]
 }
+DEFAULT_LOGO_SETTINGS = {
+    "logoPath": None,
+    "logoUrl": None,
+    "heightRatio": 0.1,
+    "position": "top-right",
+    "enabled": False,
+}
 
 BURN_EXECUTOR = ThreadPoolExecutor(max_workers=1)
 PROXY_EXECUTOR = ThreadPoolExecutor(max_workers=1)
@@ -511,6 +518,48 @@ def _load_burn_layout_setting() -> dict:
     if saved is None:
         return DEFAULT_BURN_LAYOUT.copy()
     return _sanitize_burn_layout(saved)
+
+
+def _sanitize_logo_settings(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        payload = {}
+
+    height_ratio = DEFAULT_LOGO_SETTINGS.get("heightRatio", 0.1)
+    try:
+        height_ratio = float(payload.get("heightRatio", height_ratio))
+    except Exception:
+        height_ratio = DEFAULT_LOGO_SETTINGS.get("heightRatio", 0.1)
+    height_ratio = min(max(height_ratio, 0.02), 0.4)
+
+    position = str(payload.get("position") or DEFAULT_LOGO_SETTINGS.get("position", "top-right"))
+    if position not in {"top-right", "top-left", "bottom-right", "bottom-left", "center"}:
+        position = DEFAULT_LOGO_SETTINGS.get("position", "top-right")
+
+    enabled = payload.get("enabled")
+    if not isinstance(enabled, bool):
+        enabled = DEFAULT_LOGO_SETTINGS.get("enabled", False)
+
+    logo_path = payload.get("logoPath") or payload.get("logo_path")
+    if isinstance(logo_path, str):
+        logo_path = logo_path.strip() or None
+    else:
+        logo_path = None
+    logo_url = media_url_for_path(logo_path) if logo_path else None
+
+    return {
+        "logoPath": logo_path,
+        "logoUrl": logo_url,
+        "heightRatio": height_ratio,
+        "position": position,
+        "enabled": enabled,
+    }
+
+
+def _load_logo_settings_setting() -> dict:
+    saved = ldb.get_ui_preference("logo_settings")
+    if saved is None:
+        return DEFAULT_LOGO_SETTINGS.copy()
+    return _sanitize_logo_settings(saved)
 
 
 def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
@@ -1020,6 +1069,73 @@ def get_video_resolution(video_path):
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     cap.release()
     return width, height
+
+
+def overlay_logo_on_intro(video_path, logo_path, output_path, height_ratio=0.1, position="top-right", duration=3.0):
+    if not logo_path or not os.path.exists(logo_path):
+        raise FileNotFoundError("logo file missing")
+    width, height = get_video_resolution(video_path)
+    if width <= 0 or height <= 0:
+        raise ValueError("invalid video resolution")
+
+    height_ratio = min(max(float(height_ratio), 0.02), 0.4)
+    pad = max(0, int(height * 0.02))
+
+    logo_img = Image.open(logo_path).convert("RGBA")
+    if logo_img.height <= 0:
+        raise ValueError("invalid logo dimensions")
+    target_height = max(1, int(height * height_ratio))
+    target_width = max(1, int(target_height * (logo_img.width / logo_img.height)))
+
+    if position == "top-left":
+        x_pos, y_pos = pad, pad
+    elif position == "bottom-right":
+        x_pos, y_pos = width - target_width - pad, height - target_height - pad
+    elif position == "bottom-left":
+        x_pos, y_pos = pad, height - target_height - pad
+    elif position == "center":
+        x_pos, y_pos = (width - target_width) // 2, (height - target_height) // 2
+    else:
+        x_pos, y_pos = width - target_width - pad, pad
+
+    x_pos = min(max(x_pos, 0), max(width - target_width, 0))
+    y_pos = min(max(y_pos, 0), max(height - target_height, 0))
+
+    try:
+        video_length = get_video_length(video_path)
+    except Exception:
+        video_length = None
+    if isinstance(video_length, (int, float)) and video_length > 0:
+        duration = min(duration, video_length)
+
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        scaled_path = os.path.join(temp_dir, "logo.png")
+        logo_img.resize((target_width, target_height), Image.LANCZOS).save(scaled_path, format="PNG")
+        overlay_filter = f"overlay=x={x_pos}:y={y_pos}:enable='between(t,0,{duration})'"
+        cmd = [
+            "ffmpeg",
+            "-y",
+            "-i",
+            video_path,
+            "-i",
+            scaled_path,
+            "-filter_complex",
+            overlay_filter,
+            "-c:v",
+            "libx264",
+            "-preset",
+            "medium",
+            "-crf",
+            "18",
+        ]
+        if has_audio_stream(video_path):
+            cmd += ["-c:a", "copy"]
+        else:
+            cmd += ["-an"]
+        cmd.append(output_path)
+        subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 def has_audio_stream(video_path):
@@ -3251,6 +3367,40 @@ class ImageUploadHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class LogoUploadHandler(CorsMixin, tornado.web.RequestHandler):
+    def initialize(self, upload_folder):
+        self.upload_folder = upload_folder
+
+    def post(self):
+        image_files = self.request.files.get("image") or self.request.files.get("file")
+        if not image_files:
+            self.set_status(400)
+            return self.write({"error": "image file missing"})
+        image_file = image_files[0]
+        original_fname = image_file["filename"]
+        requested_name = self.get_argument("filename", default=None) or original_fname
+        safe_name = os.path.basename(requested_name) or original_fname
+        base_name, ext = os.path.splitext(safe_name)
+        if not ext:
+            ext = ".png"
+        output_folder = os.path.join(self.upload_folder, "ui_assets", "logos")
+        os.makedirs(output_folder, exist_ok=True)
+        output_path = os.path.join(output_folder, f"{base_name}{ext}")
+        if os.path.exists(output_path):
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            output_path = os.path.join(output_folder, f"{base_name}_{timestamp}{ext}")
+
+        with open(output_path, "wb") as f:
+            f.write(image_file["body"])
+
+        self.write({
+            "status": "success",
+            "message": f"Logo {os.path.basename(output_path)} uploaded successfully.",
+            "file_path": output_path,
+            "media_url": media_url_for_path(output_path),
+        })
+
+
 class LanguagesHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self):
         self.write({"languages": list_languages()})
@@ -3279,6 +3429,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "video_prompt_result_history",
             "video_idea_history",
             "publish_platforms",
+            "logo_settings",
         }:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
@@ -3291,6 +3442,10 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_BURN_LAYOUT})
             return self.write({"key": key, "value": _sanitize_burn_layout(saved)})
+        if key == "logo_settings":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_LOGO_SETTINGS})
+            return self.write({"key": key, "value": _sanitize_logo_settings(saved)})
         if key == "video_prompt":
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_VIDEO_PROMPT_SPEC})
@@ -3322,6 +3477,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "video_prompt_result_history",
             "video_idea_history",
             "publish_platforms",
+            "logo_settings",
         }:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
@@ -3333,6 +3489,8 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             cleaned = _sanitize_translation_style(data)
         elif key == "burn_layout":
             cleaned = _sanitize_burn_layout(data)
+        elif key == "logo_settings":
+            cleaned = _sanitize_logo_settings(data)
         elif key == "video_prompt":
             cleaned = _sanitize_video_prompt_spec(data)
         elif key == "video_prompt_history":
@@ -4991,6 +5149,15 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"id": burn_id, "video_id": video_id_i, "status": status, "error": error})
 
         layout_config = _sanitize_burn_layout(data.get("layout") or data.get("slots") or data)
+        logo_payload = data.get("logo")
+        logo_config = None
+        if isinstance(logo_payload, dict):
+            logo_config = _sanitize_logo_settings(logo_payload)
+            if "enabled" not in logo_payload and logo_config.get("logoPath"):
+                logo_config["enabled"] = True
+        elif _parse_bool(logo_payload, default=False):
+            logo_config = _load_logo_settings_setting()
+            logo_config["enabled"] = True
         slots_config = layout_config.get("slots") or []
         romaji_enabled = bool(layout_config.get("romajiEnabled", True))
         pinyin_enabled = bool(layout_config.get("pinyinEnabled", True))
@@ -5098,11 +5265,19 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         lift_slots = layout_config.get("liftSlots", DEFAULT_BURN_LAYOUT.get("liftSlots", 0))
         ruby_spacing = layout_config.get("rubySpacing", DEFAULT_BURN_LAYOUT.get("rubySpacing", 0.1))
 
+        burn_config = dict(layout_config)
+        if logo_config:
+            burn_config["logo"] = {
+                "logoPath": logo_config.get("logoPath"),
+                "heightRatio": logo_config.get("heightRatio"),
+                "position": logo_config.get("position"),
+                "enabled": logo_config.get("enabled"),
+            }
         burn_id = ldb.add_subtitle_burn(
             video_id_i,
             "processing",
             None,
-            layout_config,
+            burn_config,
             None,
             progress=0,
         )
@@ -5130,6 +5305,21 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     progress_callback=_update_progress,
                 )
                 mux_audio(temp_output, video_path, output_path)
+                final_output = output_path
+                if logo_config and logo_config.get("enabled") and logo_config.get("logoPath"):
+                    logo_path = logo_config.get("logoPath")
+                    logo_output = os.path.join(output_folder, f"{base_name}_subtitles_logo.mp4")
+                    try:
+                        overlay_logo_on_intro(
+                            output_path,
+                            logo_path,
+                            logo_output,
+                            height_ratio=logo_config.get("heightRatio", DEFAULT_LOGO_SETTINGS.get("heightRatio", 0.1)),
+                            position=logo_config.get("position", DEFAULT_LOGO_SETTINGS.get("position", "top-right")),
+                        )
+                        final_output = logo_output
+                    except Exception as exc:
+                        print(f"Logo overlay failed: {exc}")
             except Exception as exc:
                 status = "failed"
                 error_message = str(exc)
@@ -5140,7 +5330,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     except Exception:
                         pass
             if status == "completed":
-                ldb.finalize_subtitle_burn(burn_id, status, output_path, None, progress=100)
+                ldb.finalize_subtitle_burn(burn_id, status, final_output, None, progress=100)
             else:
                 ldb.finalize_subtitle_burn(burn_id, status, None, error_message, progress=0)
 
@@ -5201,6 +5391,15 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
 
         translation_languages = _load_translation_languages_setting()
         burn_layout = _load_burn_layout_setting()
+        logo_payload = data.get("logo")
+        logo_config = None
+        if isinstance(logo_payload, dict):
+            logo_config = _sanitize_logo_settings(logo_payload)
+            if "enabled" not in logo_payload and logo_config.get("logoPath"):
+                logo_config["enabled"] = True
+        elif _parse_bool(logo_payload, default=False):
+            logo_config = _load_logo_settings_setting()
+            logo_config["enabled"] = True
         notes = data.get("notes") or data.get("custom_notes") or ""
         async def run_pipeline():
             statuses: dict[str, dict] = {}
@@ -5268,10 +5467,13 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
 
             if wants("burn"):
                 await mark("burn", "working", "Burning subtitles")
+                burn_payload = {"layout": burn_layout}
+                if logo_config and logo_config.get("enabled") and logo_config.get("logoPath"):
+                    burn_payload["logo"] = logo_config
                 code, payload = await call_json(
                     "POST",
                     f"/api/videos/{video_id_i}/burn-subtitles",
-                    {"layout": burn_layout},
+                    burn_payload,
                 )
                 if code >= 400:
                     await mark("burn", "error", payload.get("error") or payload.get("details") or "Failed")
@@ -5810,6 +6012,7 @@ def make_app(upload_folder):
     return tornado.web.Application([
         (r"/upload", FileUploaderHandler, dict(upload_folder=upload_folder)),
         (r"/upload-image", ImageUploadHandler, dict(upload_folder=upload_folder)),
+        (r"/upload-logo", LogoUploadHandler, dict(upload_folder=upload_folder)),
         (r"/upload-stream", FileUploadHandlerStream, dict(upload_folder=upload_folder)),
         (r"/video-processing", AutomaticalVideoEditingHandler),
         # Lightweight JSON APIs for the Expo app

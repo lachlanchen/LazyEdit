@@ -211,7 +211,7 @@ export default function HomeScreen() {
     }
     return 'upload';
   });
-  const [activeStage, setActiveStage] = useState<'a' | 'b' | 'c'>('b');
+  const [activeStage, setActiveStage] = useState<'a' | 'b' | 'c'>('c');
   const [remixPicked, setRemixPicked] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [remixStatus, setRemixStatus] = useState('');
   const [remixTone, setRemixTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
