@@ -211,6 +211,7 @@ export default function HomeScreen() {
     }
     return 'upload';
   });
+  const [activeStage, setActiveStage] = useState<'a' | 'b' | 'c'>('b');
   const [remixPicked, setRemixPicked] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [remixStatus, setRemixStatus] = useState('');
   const [remixTone, setRemixTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -1361,57 +1362,80 @@ const HISTORY_KEYS = {
               <Text style={styles.sectionTitle}>{t('generate_title')}</Text>
               <Text style={styles.sectionSubtitle}>{t('generate_subtitle')}</Text>
 
-            <View style={styles.panel}>
-              <View style={styles.panelHeader}>
-                <Text style={styles.stageBadge}>{t('stage_a_label')}</Text>
-                <Text style={styles.panelTitle}>{t('stage_a_title')}</Text>
+              <View style={styles.stageTabRow}>
+                {[
+                  { key: 'a', label: t('stage_a_label') },
+                  { key: 'b', label: t('stage_b_label') },
+                  { key: 'c', label: t('stage_c_label') },
+                ].map((stage) => {
+                  const isActive = activeStage === stage.key;
+                  return (
+                    <Pressable
+                      key={stage.key}
+                      style={[styles.stageTabButton, isActive && styles.stageTabButtonActive]}
+                      onPress={() => setActiveStage(stage.key as 'a' | 'b' | 'c')}
+                    >
+                      <Text style={[styles.stageTabText, isActive && styles.stageTabTextActive]}>{stage.label}</Text>
+                    </Pressable>
+                  );
+                })}
               </View>
-              <Text style={styles.panelHint}>{t('stage_a_hint')}</Text>
 
-              <Text style={styles.fieldLabel}>{t('idea_prompt_label')}</Text>
-              <TextInput
-                style={styles.textArea}
-                value={ideaPrompt}
-                onChangeText={setIdeaPrompt}
-                placeholder={t('idea_prompt_placeholder')}
-                multiline
-              />
-              {ideaHistoryOptions.length > 1 ? (
-                <HistorySelect
-                  label={t('history_ai_idea')}
-                  value={selectedIdeaHistory}
-                  options={ideaHistoryOptions}
-                  onChange={applyIdeaHistory}
-                />
-              ) : null}
-
-              <Pressable style={styles.btnAccent} onPress={generateSpecs} disabled={specGenerating}>
-                <View style={styles.btnContent}>
-                  {specGenerating && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                  <Text style={styles.btnText}>
-                    {specGenerating ? t('generate_specs_progress') : t('generate_specs_button')}
-                  </Text>
+              {activeStage === 'a' ? (
+              <View style={styles.panel}>
+                <View style={styles.panelHeader}>
+                  <Text style={styles.stageBadge}>{t('stage_a_label')}</Text>
+                  <Text style={styles.panelTitle}>{t('stage_a_title')}</Text>
                 </View>
-              </Pressable>
+                <Text style={styles.panelHint}>{t('stage_a_hint')}</Text>
 
-              {specStatus ? (
-                <Text style={[styles.status, toneStyle(specTone)]}>{specStatus}</Text>
-              ) : null}
-            </View>
+                <Text style={styles.fieldLabel}>{t('idea_prompt_label')}</Text>
+                <TextInput
+                  style={styles.textArea}
+                  value={ideaPrompt}
+                  onChangeText={setIdeaPrompt}
+                  placeholder={t('idea_prompt_placeholder')}
+                  multiline
+                />
+                {ideaHistoryOptions.length > 1 ? (
+                  <HistorySelect
+                    label={t('history_ai_idea')}
+                    value={selectedIdeaHistory}
+                    options={ideaHistoryOptions}
+                    onChange={applyIdeaHistory}
+                  />
+                ) : null}
 
-            <View style={styles.panel}>
-              <View style={styles.panelHeader}>
-                <Text style={styles.stageBadge}>{t('stage_b_label')}</Text>
-                <Text style={styles.panelTitle}>{t('stage_b_title')}</Text>
+                <Pressable style={styles.btnAccent} onPress={generateSpecs} disabled={specGenerating}>
+                  <View style={styles.btnContent}>
+                    {specGenerating && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                    <Text style={styles.btnText}>
+                      {specGenerating ? t('generate_specs_progress') : t('generate_specs_button')}
+                    </Text>
+                  </View>
+                </Pressable>
+
+                {specStatus ? (
+                  <Text style={[styles.status, toneStyle(specTone)]}>{specStatus}</Text>
+                ) : null}
               </View>
-              <Text style={styles.panelHint}>{t('stage_b_hint')}</Text>
-              <HistorySelect
-                label={t('history_ai_specs')}
-                value={selectedSpecHistory}
-                options={specHistoryOptions}
-                onChange={applySpecHistory}
-                hideIfSingle={false}
-              />
+              ) : null}
+
+              {activeStage === 'b' ? (
+              <>
+              <View style={styles.panel}>
+                <View style={styles.panelHeader}>
+                  <Text style={styles.stageBadge}>{t('stage_b_label')}</Text>
+                  <Text style={styles.panelTitle}>{t('stage_b_title')}</Text>
+                </View>
+                <Text style={styles.panelHint}>{t('stage_b_hint')}</Text>
+                <HistorySelect
+                  label={t('history_ai_specs')}
+                  value={selectedSpecHistory}
+                  options={specHistoryOptions}
+                  onChange={applySpecHistory}
+                  hideIfSingle={false}
+                />
 
               <Text style={styles.fieldLabel}>{t('field_title')}</Text>
               <View style={[styles.inputRow, styles.inputRowTop]}>
@@ -1660,160 +1684,164 @@ const HISTORY_KEYS = {
               {promptStatus ? (
                 <Text style={[styles.status, toneStyle(promptTone)]}>{promptStatus}</Text>
               ) : null}
-            </View>
-
-            <View style={styles.panel}>
-              <View style={styles.panelHeader}>
-                <Text style={styles.stageBadge}>{t('stage_c_label')}</Text>
-                <Text style={styles.panelTitle}>{t('stage_c_title')}</Text>
               </View>
-              <Text style={styles.panelHint}>{t('stage_c_hint')}</Text>
-              <HistorySelect
-                label={t('history_ai_prompt_result')}
-                value={selectedPromptResultHistory}
-                options={promptResultHistoryOptions}
-                onChange={applyPromptResultHistory}
-                hideIfSingle={false}
-              />
-
-              <SelectControl
-                label={t('field_video_size')}
-                value={videoSize}
-                options={sizeOptions}
-                onChange={setVideoSize}
-              />
-
-              <SelectControl
-                label={t('field_model')}
-                value={videoModel}
-                options={modelOptions}
-                onChange={(value) => setVideoModel(normalizeModel(value))}
-              />
-
-              <Text style={styles.fieldLabel}>{t('field_length_seconds')}</Text>
-              <View style={styles.inputRow}>
-                <TextInput
-                  style={[styles.input, styles.inputFlex]}
-                  value={videoSeconds}
-                  onChangeText={(value) => setVideoSeconds(value.replace(/[^\d]/g, ''))}
-                  keyboardType="numeric"
-                />
-                <ResetButton onPress={() => setVideoSeconds(promptSpec.durationSeconds)} />
-              </View>
-
-              <Text style={styles.fieldLabel}>{t('field_reference_image')}</Text>
-              <View style={styles.inputRow}>
-                <Pressable style={styles.btnPrimary} onPress={pickReferenceImage}>
-                  <Text style={styles.btnText}>{t('reference_image_pick')}</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.btnSecondary, referenceImageUploading && styles.btnDisabled]}
-                  onPress={uploadReferenceImage}
-                  disabled={referenceImageUploading}
-                >
-                  <View style={styles.btnContent}>
-                    {referenceImageUploading && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                    <Text style={styles.btnText}>{t('reference_image_upload')}</Text>
-                  </View>
-                </Pressable>
-                <ResetButton onPress={clearReferenceImage} />
-              </View>
-              {referenceImageStatus ? (
-                <Text style={[styles.status, toneStyle(referenceImageTone)]}>{referenceImageStatus}</Text>
-              ) : null}
-              <View style={styles.card}>
-                {referenceImage ? (
-                  <>
-                    <Text style={styles.cardTitle}>{t('reference_image_preview')}</Text>
-                    <Text style={styles.fileName} numberOfLines={1}>
-                      {referenceImageLabel}
-                    </Text>
-                    <Text style={styles.fileMeta}>{referenceImageMeta}</Text>
-                    {Platform.OS === 'web' ? (
-                      referencePreviewUrl ? (
-                        <View style={styles.previewBox}>
-                          {React.createElement('img', {
-                            src: referencePreviewUrl,
-                            style: { width: '100%', borderRadius: 12, maxHeight: 260, objectFit: 'cover' },
-                          })}
-                        </View>
-                      ) : null
-                    ) : referenceImage.uri ? (
-                      <View style={styles.previewBox}>
-                        <Image source={{ uri: referenceImage.uri }} style={{ width: '100%', height: 220 }} />
-                      </View>
-                    ) : null}
-                  </>
-                ) : (
-                  <Text style={styles.previewHint}>{t('reference_image_none')}</Text>
-                )}
-              </View>
-
-              <Text style={styles.fieldLabel}>{t('field_generated_prompt')}</Text>
-              <TextInput
-                style={styles.textAreaLarge}
-                value={promptOutput}
-                onChangeText={setPromptOutput}
-                placeholder={t('prompt_placeholder')}
-                multiline
-              />
-              <HistorySelect
-                label={t('history_ai_prompt')}
-                value={selectedPromptTextHistory}
-                options={promptTextHistoryOptions}
-                onChange={applyPromptHistory}
-                hideIfSingle={false}
-              />
-
-              {promptResult?.model || promptResult?.size || promptResult?.seconds ? (
-                <Text style={styles.metaText}>
-                  Suggested settings: {promptResult?.model || 'sora-2'} · {promptResult?.size || '1280x720'} ·{' '}
-                  {promptResult?.seconds || 8}s
-                </Text>
-              ) : null}
-              {promptResult?.title ? (
-                <Text style={styles.metaText}>Suggested title: {promptResult.title}</Text>
-              ) : null}
-              {promptResult?.negativePrompt ? (
-                <Text style={styles.metaText}>Negative: {promptResult.negativePrompt}</Text>
+              </>
               ) : null}
 
-              <Pressable
-                style={[styles.btnSuccess, generatingVideo && styles.btnDisabled]}
-                onPress={generateVideo}
-                disabled={generatingVideo}
-              >
-                <View style={styles.btnContent}>
-                  {generatingVideo && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                  <Text style={styles.btnText}>
-                    {generatingVideo ? t('generate_video_progress') : t('generate_video_button')}
-                  </Text>
+              {activeStage === 'c' ? (
+              <View style={styles.panel}>
+                <View style={styles.panelHeader}>
+                  <Text style={styles.stageBadge}>{t('stage_c_label')}</Text>
+                  <Text style={styles.panelTitle}>{t('stage_c_title')}</Text>
                 </View>
-              </Pressable>
+                <Text style={styles.panelHint}>{t('stage_c_hint')}</Text>
+                <HistorySelect
+                  label={t('history_ai_prompt_result')}
+                  value={selectedPromptResultHistory}
+                  options={promptResultHistoryOptions}
+                  onChange={applyPromptResultHistory}
+                  hideIfSingle={false}
+                />
 
-              {videoStatus ? (
-                <Text style={[styles.status, toneStyle(videoTone)]}>{videoStatus}</Text>
-              ) : null}
+                <SelectControl
+                  label={t('field_video_size')}
+                  value={videoSize}
+                  options={sizeOptions}
+                  onChange={setVideoSize}
+                />
 
-              {generatedVideoUrl ? (
-                <View style={styles.card}>
-                  <Text style={styles.cardTitle}>{t('generated_video_preview')}</Text>
-                  {Platform.OS === 'web' ? (
-                    <View style={styles.previewBox}>
-                      {React.createElement('video', {
-                        src: generatedVideoUrl,
-                        style: { width: '100%', borderRadius: 12, maxHeight: 300 },
-                        controls: true,
-                        preload: 'metadata',
-                      })}
+                <SelectControl
+                  label={t('field_model')}
+                  value={videoModel}
+                  options={modelOptions}
+                  onChange={(value) => setVideoModel(normalizeModel(value))}
+                />
+
+                <Text style={styles.fieldLabel}>{t('field_length_seconds')}</Text>
+                <View style={styles.inputRow}>
+                  <TextInput
+                    style={[styles.input, styles.inputFlex]}
+                    value={videoSeconds}
+                    onChangeText={(value) => setVideoSeconds(value.replace(/[^\d]/g, ''))}
+                    keyboardType="numeric"
+                  />
+                  <ResetButton onPress={() => setVideoSeconds(promptSpec.durationSeconds)} />
+                </View>
+
+                <Text style={styles.fieldLabel}>{t('field_reference_image')}</Text>
+                <View style={styles.inputRow}>
+                  <Pressable style={styles.btnPrimary} onPress={pickReferenceImage}>
+                    <Text style={styles.btnText}>{t('reference_image_pick')}</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.btnSecondary, referenceImageUploading && styles.btnDisabled]}
+                    onPress={uploadReferenceImage}
+                    disabled={referenceImageUploading}
+                  >
+                    <View style={styles.btnContent}>
+                      {referenceImageUploading && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                      <Text style={styles.btnText}>{t('reference_image_upload')}</Text>
                     </View>
+                  </Pressable>
+                  <ResetButton onPress={clearReferenceImage} />
+                </View>
+                {referenceImageStatus ? (
+                  <Text style={[styles.status, toneStyle(referenceImageTone)]}>{referenceImageStatus}</Text>
+                ) : null}
+                <View style={styles.card}>
+                  {referenceImage ? (
+                    <>
+                      <Text style={styles.cardTitle}>{t('reference_image_preview')}</Text>
+                      <Text style={styles.fileName} numberOfLines={1}>
+                        {referenceImageLabel}
+                      </Text>
+                      <Text style={styles.fileMeta}>{referenceImageMeta}</Text>
+                      {Platform.OS === 'web' ? (
+                        referencePreviewUrl ? (
+                          <View style={styles.previewBox}>
+                            {React.createElement('img', {
+                              src: referencePreviewUrl,
+                              style: { width: '100%', borderRadius: 12, maxHeight: 260, objectFit: 'cover' },
+                            })}
+                          </View>
+                        ) : null
+                      ) : referenceImage.uri ? (
+                        <View style={styles.previewBox}>
+                          <Image source={{ uri: referenceImage.uri }} style={{ width: '100%', height: 220 }} />
+                        </View>
+                      ) : null}
+                    </>
                   ) : (
-                    <Text style={styles.previewHint}>{t('preview_web_generic')}</Text>
+                    <Text style={styles.previewHint}>{t('reference_image_none')}</Text>
                   )}
                 </View>
+
+                <Text style={styles.fieldLabel}>{t('field_generated_prompt')}</Text>
+                <TextInput
+                  style={styles.textAreaLarge}
+                  value={promptOutput}
+                  onChangeText={setPromptOutput}
+                  placeholder={t('prompt_placeholder')}
+                  multiline
+                />
+                <HistorySelect
+                  label={t('history_ai_prompt')}
+                  value={selectedPromptTextHistory}
+                  options={promptTextHistoryOptions}
+                  onChange={applyPromptHistory}
+                  hideIfSingle={false}
+                />
+
+                {promptResult?.model || promptResult?.size || promptResult?.seconds ? (
+                  <Text style={styles.metaText}>
+                    Suggested settings: {promptResult?.model || 'sora-2'} · {promptResult?.size || '1280x720'} ·{' '}
+                    {promptResult?.seconds || 8}s
+                  </Text>
+                ) : null}
+                {promptResult?.title ? (
+                  <Text style={styles.metaText}>Suggested title: {promptResult.title}</Text>
+                ) : null}
+                {promptResult?.negativePrompt ? (
+                  <Text style={styles.metaText}>Negative: {promptResult.negativePrompt}</Text>
+                ) : null}
+
+                <Pressable
+                  style={[styles.btnSuccess, generatingVideo && styles.btnDisabled]}
+                  onPress={generateVideo}
+                  disabled={generatingVideo}
+                >
+                  <View style={styles.btnContent}>
+                    {generatingVideo && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                    <Text style={styles.btnText}>
+                      {generatingVideo ? t('generate_video_progress') : t('generate_video_button')}
+                    </Text>
+                  </View>
+                </Pressable>
+
+                {videoStatus ? (
+                  <Text style={[styles.status, toneStyle(videoTone)]}>{videoStatus}</Text>
+                ) : null}
+
+                {generatedVideoUrl ? (
+                  <View style={styles.card}>
+                    <Text style={styles.cardTitle}>{t('generated_video_preview')}</Text>
+                    {Platform.OS === 'web' ? (
+                      <View style={styles.previewBox}>
+                        {React.createElement('video', {
+                          src: generatedVideoUrl,
+                          style: { width: '100%', borderRadius: 12, maxHeight: 300 },
+                          controls: true,
+                          preload: 'metadata',
+                        })}
+                      </View>
+                    ) : (
+                      <Text style={styles.previewHint}>{t('preview_web_generic')}</Text>
+                    )}
+                  </View>
+                ) : null}
+              </View>
               ) : null}
             </View>
-          </View>
           ) : null}
 
           {activeTab === 'remix' ? (
@@ -2075,6 +2103,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
   },
+  stageTabRow: {
+    marginTop: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
   tabButton: {
     paddingHorizontal: 14,
     paddingVertical: 8,
@@ -2093,6 +2127,26 @@ const styles = StyleSheet.create({
     color: '#1e293b',
   },
   tabButtonTextActive: {
+    color: 'white',
+  },
+  stageTabButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    backgroundColor: '#f8fafc',
+  },
+  stageTabButtonActive: {
+    backgroundColor: '#0f172a',
+    borderColor: '#0f172a',
+  },
+  stageTabText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#1e293b',
+  },
+  stageTabTextActive: {
     color: 'white',
   },
   stepRow: {
