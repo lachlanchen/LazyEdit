@@ -12,6 +12,7 @@ CONDA_ENV="lazyedit"
 
 # App settings
 APP_ARGS="-m lazyedit"
+SESSION_NAME="lazyedit"
 
 # Function to activate conda
 activate_conda() {

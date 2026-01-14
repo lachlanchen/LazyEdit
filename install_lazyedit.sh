@@ -1,41 +1,58 @@
 #!/bin/bash
+set -euo pipefail
 
 # install_lazyedit.sh - Script to install and set up the LazyEdit service
 # Creates the systemd service, config file and installs required packages
 
-# Define current directory and user
-CURRENT_DIR=$(pwd)
-CURRENT_USER=$(whoami)
-CONDA_ENV="lazyedit"
+if [[ $EUID -ne 0 ]]; then
+    echo "Please run with sudo." >&2
+    exit 1
+fi
 
-echo "Installing LazyEdit from directory: $CURRENT_DIR"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+TARGET_USER="${SUDO_USER:-$USER}"
+DEFAULT_DEPLOY_DIR="/home/lachlan/DiskMech/Projects/lazyedit"
+DEPLOY_DIR="${1:-${LAZYEDIT_DIR:-$DEFAULT_DEPLOY_DIR}}"
+
+if [[ ! -d "$DEPLOY_DIR" ]]; then
+    echo "Deploy directory not found: $DEPLOY_DIR" >&2
+    echo "Clone LazyEdit to that path or pass the deploy dir as the first argument." >&2
+    exit 1
+fi
+
+HOME_DIR="$(getent passwd "$TARGET_USER" | cut -d: -f6)"
+if [[ -z "$HOME_DIR" ]]; then
+    HOME_DIR="/home/$TARGET_USER"
+fi
+
+CONDA_ENV="${CONDA_ENV:-lazyedit}"
+CONDA_PATH=""
+if [[ -f "$HOME_DIR/miniconda3/etc/profile.d/conda.sh" ]]; then
+    CONDA_PATH="$HOME_DIR/miniconda3/etc/profile.d/conda.sh"
+elif [[ -f "$HOME_DIR/anaconda3/etc/profile.d/conda.sh" ]]; then
+    CONDA_PATH="$HOME_DIR/anaconda3/etc/profile.d/conda.sh"
+else
+    echo "Warning: Could not find conda.sh. Please update the config file manually."
+fi
+
+echo "Installing LazyEdit into: $DEPLOY_DIR"
 
 # 1. Install required packages
 echo "Installing required packages..."
-sudo apt-get update
-sudo apt-get install -y ffmpeg tmux
+apt-get update
+apt-get install -y ffmpeg tmux
 
-# 2. Detect conda path
-echo "Detecting conda installation..."
-if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-    CONDA_PATH="$HOME/miniconda3/etc/profile.d/conda.sh"
-elif [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
-    CONDA_PATH="$HOME/anaconda3/etc/profile.d/conda.sh"
-else
-    echo "Warning: Could not find conda.sh. Please update the config file manually."
-    CONDA_PATH=""
-fi
-
-# 3. Create config file
-echo "Creating config file..."
-cat > "$CURRENT_DIR/lazyedit_config.sh" << EOF
+# 2. Create or update config file (backup if it changes)
+CONFIG_PATH="$DEPLOY_DIR/lazyedit_config.sh"
+TMP_CONFIG="$(mktemp)"
+cat > "$TMP_CONFIG" << EOF
 #!/bin/bash
 
 # LazyEdit configuration file - automatically generated
 
 # Project paths
-LAZYEDIT_DIR="$CURRENT_DIR"
-LAZYEDIT_USER="$CURRENT_USER"
+LAZYEDIT_DIR="$DEPLOY_DIR"
+LAZYEDIT_USER="$TARGET_USER"
 
 # Python/Conda settings
 CONDA_PATH="$CONDA_PATH"
@@ -43,6 +60,7 @@ CONDA_ENV="$CONDA_ENV"
 
 # App settings
 APP_ARGS="-m lazyedit"
+SESSION_NAME="lazyedit"
 
 # Function to activate conda
 activate_conda() {
@@ -55,75 +73,72 @@ activate_conda() {
 }
 EOF
 
-chmod +x "$CURRENT_DIR/lazyedit_config.sh"
-echo "Config file created at $CURRENT_DIR/lazyedit_config.sh"
-
-# 4. Update the start_lazyedit.sh script
-echo "Updating start_lazyedit.sh..."
-cat > "$CURRENT_DIR/start_lazyedit.sh" << EOF
-#!/bin/bash
-
-# Source the config file
-SCRIPT_DIR=\$(dirname "\$(readlink -f "\$0")")
-source "\$SCRIPT_DIR/lazyedit_config.sh"
-
-# Check if the tmux session 'lazyedit' already exists
-tmux has-session -t lazyedit 2>/dev/null
-
-# Check the exit status of the previous command
-if [ \$? != 0 ]; then
-    # If the session does not exist, create it
-    tmux new -d -s lazyedit
-
-    # Wait a bit to ensure that commands are sent after the session is properly set up
-    sleep 2
-
-    # Activate the conda environment using the function from config
-    tmux send-keys -t lazyedit "cd \$LAZYEDIT_DIR" C-m
-    tmux send-keys -t lazyedit "source \$CONDA_PATH" C-m
-    tmux send-keys -t lazyedit "conda activate \$CONDA_ENV" C-m
-
-    # Wait for the conda environment to activate
-    sleep 5
-
-    # Execute the script
-    tmux send-keys -t lazyedit "cd \$LAZYEDIT_DIR" C-m
-    tmux send-keys -t lazyedit "python app.py \$APP_ARGS" C-m
+if [[ -f "$CONFIG_PATH" ]] && cmp -s "$TMP_CONFIG" "$CONFIG_PATH"; then
+    rm -f "$TMP_CONFIG"
+    echo "Config unchanged: $CONFIG_PATH"
 else
-    echo "Tmux session 'lazyedit' already exists."
+    if [[ -f "$CONFIG_PATH" ]]; then
+        backup="${CONFIG_PATH}.bak.$(date +%Y%m%d_%H%M%S)"
+        cp "$CONFIG_PATH" "$backup"
+        echo "Existing config backed up to $backup"
+    fi
+    mv "$TMP_CONFIG" "$CONFIG_PATH"
+    chmod +x "$CONFIG_PATH"
+    echo "Config file written to $CONFIG_PATH"
 fi
-EOF
 
-chmod +x "$CURRENT_DIR/start_lazyedit.sh"
-echo "Updated start_lazyedit.sh with configuration"
+# 3. Ensure start/stop scripts exist in deploy dir
+START_TEMPLATE="$SCRIPT_DIR/start_lazyedit.sh"
+STOP_TEMPLATE="$SCRIPT_DIR/stop_lazyedit.sh"
+START_TARGET="$DEPLOY_DIR/start_lazyedit.sh"
+STOP_TARGET="$DEPLOY_DIR/stop_lazyedit.sh"
 
-# 5. Create the systemd service file
-echo "Creating systemd service..."
+if [[ ! -f "$START_TARGET" ]]; then
+    cp "$START_TEMPLATE" "$START_TARGET"
+    echo "Copied start_lazyedit.sh to $START_TARGET"
+else
+    echo "Keeping existing start script at $START_TARGET"
+fi
+chmod +x "$START_TARGET"
+
+if [[ ! -f "$STOP_TARGET" ]]; then
+    cp "$STOP_TEMPLATE" "$STOP_TARGET"
+    echo "Copied stop_lazyedit.sh to $STOP_TARGET"
+else
+    echo "Keeping existing stop script at $STOP_TARGET"
+fi
+chmod +x "$STOP_TARGET"
+
+# 4. Create the systemd service file
 SERVICE_FILE="/etc/systemd/system/lazyedit.service"
-
-echo "[Unit]
+cat > "$SERVICE_FILE" << EOF
+[Unit]
 Description=LazyEdit Video Processing
 After=network.target
 
 [Service]
 Type=forking
-User=$CURRENT_USER
-WorkingDirectory=$CURRENT_DIR
-ExecStart=/bin/bash -lc '$CURRENT_DIR/start_lazyedit.sh'
+User=$TARGET_USER
+WorkingDirectory=$DEPLOY_DIR
+ExecStart=/bin/bash -lc '$DEPLOY_DIR/start_lazyedit.sh'
+ExecStop=/bin/bash -lc '$DEPLOY_DIR/stop_lazyedit.sh'
 
 [Install]
-WantedBy=multi-user.target" | sudo tee $SERVICE_FILE
+WantedBy=multi-user.target
+EOF
 
-# 6. Reload systemd, enable and start the service
+chmod 644 "$SERVICE_FILE"
+
+# 5. Reload systemd, enable and start the service
 echo "Configuring systemd service..."
-sudo systemctl daemon-reload
-sudo systemctl enable lazyedit.service
+systemctl daemon-reload
+systemctl enable lazyedit.service
 
-# 7. Offer to start the service
+# 6. Offer to start the service
 echo "Would you like to start the lazyedit service now? (y/n)"
 read -r response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    sudo systemctl restart lazyedit.service
+    systemctl restart lazyedit.service
     echo "Service started. Check status with: sudo systemctl status lazyedit.service"
 else
     echo "Service installation complete but not started."
