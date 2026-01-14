@@ -1810,7 +1810,11 @@ const HISTORY_KEYS = {
                       <Text style={styles.btnText}>{t('reference_image_upload')}</Text>
                     </View>
                   </Pressable>
-                  <ResetButton onPress={clearReferenceImage} />
+                  {(referenceImage || referenceImagePath) ? (
+                    <Pressable style={styles.btnDanger} onPress={clearReferenceImage}>
+                      <Text style={styles.btnText}>Remove image</Text>
+                    </Pressable>
+                  ) : null}
                 </View>
                 {referenceImageStatus ? (
                   <Text style={[styles.status, toneStyle(referenceImageTone)]}>{referenceImageStatus}</Text>
@@ -2259,6 +2263,13 @@ const styles = StyleSheet.create({
   },
   btnSecondary: {
     backgroundColor: '#fc8eac',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignSelf: 'flex-start',
+  },
+  btnDanger: {
+    backgroundColor: '#ef4444',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 12,

@@ -75,7 +75,10 @@ def create_video(
         headers["OpenAI-Project"] = project
     with httpx.Client(timeout=60.0) as s:
         try:
-            r = s.post("https://api.openai.com/v1/videos", headers=headers, data=data, files=files)
+            if files:
+                r = s.post("https://api.openai.com/v1/videos", headers=headers, data=data, files=files)
+            else:
+                r = s.post("https://api.openai.com/v1/videos", headers=headers, json=data)
             if r.status_code >= 400:
                 raise RuntimeError(f"POST /videos {r.status_code}: {r.text}")
             return r.json()
