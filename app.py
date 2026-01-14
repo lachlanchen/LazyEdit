@@ -1071,7 +1071,7 @@ def get_video_resolution(video_path):
     return width, height
 
 
-def overlay_logo_on_intro(video_path, logo_path, output_path, height_ratio=0.1, position="top-right", duration=3.0):
+def overlay_logo_on_video(video_path, logo_path, output_path, height_ratio=0.1, position="top-right"):
     if not logo_path or not os.path.exists(logo_path):
         raise FileNotFoundError("logo file missing")
     width, height = get_video_resolution(video_path)
@@ -1101,19 +1101,12 @@ def overlay_logo_on_intro(video_path, logo_path, output_path, height_ratio=0.1, 
     x_pos = min(max(x_pos, 0), max(width - target_width, 0))
     y_pos = min(max(y_pos, 0), max(height - target_height, 0))
 
-    try:
-        video_length = get_video_length(video_path)
-    except Exception:
-        video_length = None
-    if isinstance(video_length, (int, float)) and video_length > 0:
-        duration = min(duration, video_length)
-
     import tempfile
 
     with tempfile.TemporaryDirectory() as temp_dir:
         scaled_path = os.path.join(temp_dir, "logo.png")
         logo_img.resize((target_width, target_height), Image.LANCZOS).save(scaled_path, format="PNG")
-        overlay_filter = f"overlay=x={x_pos}:y={y_pos}:enable='between(t,0,{duration})'"
+        overlay_filter = f"overlay=x={x_pos}:y={y_pos}"
         cmd = [
             "ffmpeg",
             "-y",
@@ -5310,7 +5303,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     logo_path = logo_config.get("logoPath")
                     logo_output = os.path.join(output_folder, f"{base_name}_subtitles_logo.mp4")
                     try:
-                        overlay_logo_on_intro(
+                        overlay_logo_on_video(
                             output_path,
                             logo_path,
                             logo_output,

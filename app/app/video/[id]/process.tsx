@@ -1281,7 +1281,7 @@ export default function ProcessVideoScreen() {
 
         <View style={styles.logoCard}>
           <Text style={styles.sectionTitle}>Video logo</Text>
-          <Text style={styles.sectionHint}>Upload a logo to reuse when burning the intro overlay.</Text>
+          <Text style={styles.sectionHint}>Upload a logo to overlay across the full video.</Text>
 
           {logoPickPreviewUrl || logoPreviewUrl ? (
             <Image
@@ -1353,7 +1353,7 @@ export default function ProcessVideoScreen() {
 
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={styles.settingLabel}>Burn logo (intro)</Text>
+              <Text style={styles.settingLabel}>Burn logo (full video)</Text>
               <Text style={styles.settingValue}>
                 {logoSummary.hasLogo ? 'Ready' : 'No logo'} · {logoSummary.positionLabel} · height {logoSummary.heightPercent}
               </Text>
