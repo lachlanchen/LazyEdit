@@ -127,6 +127,8 @@ def _load_burner_module():
                 def _keep_token_atomic(token) -> bool:
                     if getattr(token, "token_type", None) == "speaker":
                         return True
+                    if hasattr(token, "_lazyedit_group"):
+                        return True
                     text = getattr(token, "text", "") or ""
                     if not _is_japanese_text(text):
                         return False
@@ -248,22 +250,39 @@ def _load_burner_module():
                     # that render_segment uses. This yields stable chunk sizes
                     # as the user adjusts fontScale.
                     split_tokens = _expand_tokens_for_width(split_tokens, max_w, pad)
+                    # Build units that keep grouped Japanese tokens together.
+                    units = []
+                    idx = 0
+                    while idx < len(split_tokens):
+                        tok = split_tokens[idx]
+                        group = getattr(tok, "_lazyedit_group", None)
+                        if group is None:
+                            units.append([tok])
+                            idx += 1
+                            continue
+                        grouped = [tok]
+                        idx += 1
+                        while idx < len(split_tokens) and getattr(split_tokens[idx], "_lazyedit_group", None) == group:
+                            grouped.append(split_tokens[idx])
+                            idx += 1
+                        units.append(grouped)
+
                     chunks = []
-                    current = []
-                    for tok in split_tokens:
-                        trial = current + [tok]
+                    current_tokens = []
+                    for unit in units:
+                        trial = current_tokens + unit
                         w, _ = renderer.measure_tokens(trial)
-                        if current and (w + pad * 2) > max_w:
-                            chunk = current
+                        if current_tokens and (w + pad * 2) > max_w:
+                            chunk = current_tokens
                             if callable(_trim_chunk):
                                 chunk = _trim_chunk(chunk)
                             if chunk:
                                 chunks.append(chunk)
-                            current = [tok]
+                            current_tokens = list(unit)
                             continue
-                        current = trial
-                    if current:
-                        chunk = current
+                        current_tokens = trial
+                    if current_tokens:
+                        chunk = current_tokens
                         if callable(_trim_chunk):
                             chunk = _trim_chunk(chunk)
                         if chunk:
@@ -300,14 +319,25 @@ def _load_burner_module():
 
             def _expand_kana_affixes_lazyedit(tokens, add_romaji):  # type: ignore[no-redef]
                 expanded = []
+                group_counter = 0
                 for token in tokens:
                     if not getattr(token, "text", None):
                         continue
                     token_type = getattr(token, "token_type", None)
                     ruby = getattr(token, "ruby", None)
-                    # Preserve word-level tokens from JSON (they have a type)
-                    # and any explicit ruby tokens as atomic units.
                     if add_romaji and token_type is not None and token_type != "speaker":
+                        # Preserve word-level tokens but still annotate kana affixes.
+                        if burner_mod._has_kanji(token.text):
+                            parts = original_expand_kana([token], add_romaji)
+                            if len(parts) > 1:
+                                group_counter += 1
+                                group_id = f"jpword-{group_counter}"
+                                for part in parts:
+                                    setattr(part, "_lazyedit_group", group_id)
+                                expanded.extend(parts)
+                            else:
+                                expanded.extend(parts)
+                            continue
                         if not ruby and burner_mod._is_kana_text(token.text):
                             romaji = burner_mod._kana_to_romaji(token.text)
                             if romaji and romaji != token.text:
