@@ -128,10 +128,12 @@ def _load_burner_module():
                     if getattr(token, "token_type", None) == "speaker":
                         return True
                     text = getattr(token, "text", "") or ""
+                    if not _is_japanese_text(text):
+                        return False
+                    # If tokens come from the JSON (word-level), keep each word intact.
+                    token_type = getattr(token, "token_type", None)
                     ruby = getattr(token, "ruby", None)
-                    if ruby and _is_japanese_text(text):
-                        return True
-                    return False
+                    return token_type is not None or ruby is not None
 
                 def _padding_for_tokens(tokens):
                     pad = _slot_padding_for_height(int(slot.height), stroke)
