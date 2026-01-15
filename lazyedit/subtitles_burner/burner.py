@@ -112,69 +112,10 @@ def _load_burner_module():
             _trim_chunk = getattr(burner_mod, "_trim_chunk", None)
 
             def _auto_split_segments_for_slot_lazyedit(segments, slot, style):  # type: ignore[no-redef]
-                import re
-
                 renderer = RubyRenderer(style)
                 split_segments = []
                 max_w = max(1, int(slot.width))
                 stroke = int(getattr(style, "stroke_width", 0) or 0)
-
-                def _is_japanese_chunk(text: str) -> bool:
-                    if not text:
-                        return False
-                    return bool(re.fullmatch(r"[\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFFー・]+", text))
-
-                def _merge_japanese_tokens(tokens):
-                    merged = []
-                    buffer = None
-
-                    def _flush():
-                        nonlocal buffer
-                        if buffer is not None:
-                            merged.append(buffer)
-                            buffer = None
-
-                    for tok in tokens or []:
-                        if getattr(tok, "token_type", None) == "speaker":
-                            _flush()
-                            merged.append(tok)
-                            continue
-                        text = getattr(tok, "text", "") or ""
-                        ruby = getattr(tok, "ruby", None)
-                        color = getattr(tok, "color", None)
-                        token_type = getattr(tok, "token_type", None)
-
-                        if ruby or not text or text.isspace():
-                            _flush()
-                            merged.append(tok)
-                            continue
-
-                        if _is_japanese_chunk(text):
-                            if buffer is None:
-                                buffer = burner_mod.RubyToken(
-                                    text=text,
-                                    ruby=None,
-                                    color=color,
-                                    token_type=token_type,
-                                )
-                            else:
-                                if getattr(buffer, "color", None) == color and getattr(buffer, "token_type", None) == token_type:
-                                    buffer.text = (getattr(buffer, "text", "") or "") + text
-                                else:
-                                    _flush()
-                                    buffer = burner_mod.RubyToken(
-                                        text=text,
-                                        ruby=None,
-                                        color=color,
-                                        token_type=token_type,
-                                    )
-                            continue
-
-                        _flush()
-                        merged.append(tok)
-
-                    _flush()
-                    return merged
 
                 def _padding_for_tokens(tokens):
                     pad = _slot_padding_for_height(int(slot.height), stroke)
@@ -184,114 +125,22 @@ def _load_burner_module():
                         pad = max(pad, stroke * 2, icon_w + gap + 2)
                     return pad
 
-                def _split_ruby_token(token):
-                    """Split a single RubyToken into smaller RubyTokens while keeping ruby roughly aligned."""
-                    text = getattr(token, "text", "") or ""
-                    ruby = getattr(token, "ruby", None)
-                    color = getattr(token, "color", None)
-                    token_type = getattr(token, "token_type", None)
-                    if ruby is None and _is_japanese_chunk(text):
-                        return [token]
-                    split_text_tokens = _split_text_tokens_for_fit(text)
-                    if not ruby:
-                        return [
-                            burner_mod.RubyToken(text=t.text, ruby=None, color=color, token_type=token_type)  # type: ignore[attr-defined]
-                            for t in split_text_tokens
-                        ]
-
-                    ruby_parts = re.findall(r"\S+|\s+", str(ruby))
-                    ruby_words = [p for p in ruby_parts if not p.isspace()]
-                    text_words = [t for t in split_text_tokens if (t.text or "") and not (t.text or "").isspace()]
-
-                    # Best-effort mapping: when counts match, assign 1:1.
-                    mapping: list[str | None] = []
-                    if ruby_words and len(ruby_words) == len(text_words):
-                        mapping = list(ruby_words)
-                    elif ruby_words and len(text_words) > 1 and len(ruby_words) > 1:
-                        # Proportional allocation by visible text length.
-                        lengths = [len((t.text or "").strip()) for t in text_words]
-                        total = max(1, sum(lengths))
-                        remaining = len(ruby_words)
-                        allocations: list[int] = []
-                        for idx, ln in enumerate(lengths):
-                            if idx == len(lengths) - 1:
-                                take = remaining
-                            else:
-                                take = max(1, int(round(remaining * (ln / total))))
-                                take = min(take, remaining - (len(lengths) - idx - 1))
-                            allocations.append(take)
-                            remaining -= take
-                        cursor = 0
-                        for take in allocations:
-                            chunk = ruby_words[cursor : cursor + take]
-                            cursor += take
-                            mapping.append(" ".join(chunk).strip() or None)
-                    else:
-                        mapping = [str(ruby)]
-
-                    out = []
-                    word_idx = 0
-                    for t in split_text_tokens:
-                        token_text = t.text
-                        if not token_text:
-                            continue
-                        if token_text.isspace():
-                            out.append(burner_mod.RubyToken(text=token_text, ruby=None, color=color, token_type=token_type))  # type: ignore[attr-defined]
-                            continue
-                        ruby_piece = mapping[word_idx] if word_idx < len(mapping) else None
-                        out.append(burner_mod.RubyToken(text=token_text, ruby=ruby_piece, color=color, token_type=token_type))  # type: ignore[attr-defined]
-                        word_idx += 1
-                    return out or [token]
-
-                def _expand_tokens_for_width(tokens, max_w, pad):
-                    expanded = []
-                    for tok in tokens:
-                        if getattr(tok, "token_type", None) == "speaker":
-                            expanded.append(tok)
-                            continue
-                        if getattr(tok, "ruby", None) is None and _is_japanese_chunk(getattr(tok, "text", "") or ""):
-                            expanded.append(tok)
-                            continue
-                        try:
-                            w, _ = renderer.measure_tokens([tok])
-                        except Exception:
-                            expanded.append(tok)
-                            continue
-                        if (w + pad * 2) <= max_w:
-                            expanded.append(tok)
-                            continue
-                        parts = _split_ruby_token(tok)
-                        if len(parts) <= 1:
-                            expanded.append(tok)
-                        else:
-                            expanded.extend(parts)
-                    return expanded
-
                 for segment in segments:
                     if not getattr(segment, "tokens", None):
                         continue
-                    tokens = _merge_japanese_tokens(segment.tokens)
+                    # Treat tokens as word-level units from the JSON response.
+                    # Do not split inside a token.
+                    tokens = segment.tokens
                     pad = _padding_for_tokens(tokens)
                     width, _ = renderer.measure_tokens(tokens)
                     if (width + pad * 2) <= max_w:
                         split_segments.append(segment)
                         continue
 
-                    split_tokens = tokens
-                    if len(tokens) == 1:
-                        tok = tokens[0]
-                        if getattr(tok, "token_type", None) != "speaker":
-                            split_tokens = _split_ruby_token(tok)
-                        else:
-                            split_tokens = tokens
-
-                    # Greedy chunking by measured width with the same padding
-                    # that render_segment uses. This yields stable chunk sizes
-                    # as the user adjusts fontScale.
-                    split_tokens = _expand_tokens_for_width(split_tokens, max_w, pad)
                     chunks = []
                     current = []
-                    for tok in split_tokens:
+                    # Greedy chunking by measured width. Tokens are atomic.
+                    for tok in tokens:
                         trial = current + [tok]
                         w, _ = renderer.measure_tokens(trial)
                         if current and (w + pad * 2) > max_w:
@@ -314,17 +163,22 @@ def _load_burner_module():
                         split_segments.extend(_split_segment_timing(segment, chunks))
                         continue
 
-                    if split_tokens is not tokens:
-                        split_segments.append(
-                            SubtitleSegment(
-                                start_time=segment.start_time,
-                                end_time=segment.end_time,
-                                tokens=split_tokens,
-                                text=_segment_text_from_tokens(split_tokens),
-                            )
-                        )
-                    else:
+                    if not chunks:
                         split_segments.append(segment)
+                        continue
+
+                    if len(chunks) == 1 and chunks[0] == tokens:
+                        split_segments.append(segment)
+                        continue
+
+                    split_segments.append(
+                        SubtitleSegment(
+                            start_time=segment.start_time,
+                            end_time=segment.end_time,
+                            tokens=chunks[0],
+                            text=_segment_text_from_tokens(chunks[0]),
+                        )
+                    )
                 return split_segments
 
             burner_mod._auto_split_segments_for_slot = _auto_split_segments_for_slot_lazyedit
