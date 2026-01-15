@@ -18,11 +18,12 @@ import * as FileSystem from 'expo-file-system';
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 
 type StepKey =
-  | 'transcribe'
-  | 'translate'
-  | 'burn'
   | 'keyframes'
   | 'caption'
+  | 'transcribe'
+  | 'polish'
+  | 'translate'
+  | 'burn'
   | 'metadataZh'
   | 'metadataEn';
 
@@ -56,21 +57,23 @@ type TranslationDetail = {
 };
 
 const STEP_ORDER: StepKey[] = [
-  'transcribe',
-  'translate',
-  'burn',
   'keyframes',
   'caption',
+  'transcribe',
+  'polish',
+  'translate',
+  'burn',
   'metadataZh',
   'metadataEn',
 ];
 
 const STEP_LABELS: Record<StepKey, string> = {
-  transcribe: 'Transcribe',
-  translate: 'Translate',
-  burn: 'Burn subtitles',
   keyframes: 'Extract key frames',
   caption: 'Caption frames',
+  transcribe: 'Transcribe',
+  polish: 'Polish subtitles',
+  translate: 'Translate',
+  burn: 'Burn subtitles',
   metadataZh: 'Generate Chinese metadata',
   metadataEn: 'Generate English metadata',
 };
@@ -113,6 +116,7 @@ const defaultStepState = STEP_ORDER.reduce((acc, key) => {
 
 const defaultSelections: Record<StepKey, boolean> = {
   transcribe: true,
+  polish: false,
   translate: true,
   burn: true,
   keyframes: true,
@@ -134,11 +138,10 @@ type VideoDetail = {
   preview_media_url?: string | null;
 };
 
-const LOG_TABS = ['transcription', 'translations', 'captions', 'metadata'] as const;
+const LOG_TABS = ['captions', 'subtitles', 'metadata'] as const;
 const LOG_TAB_LABELS: Record<typeof LOG_TABS[number], string> = {
-  transcription: 'Transcriptions',
-  translations: 'Translations',
   captions: 'Captions',
+  subtitles: 'Subtitles',
   metadata: 'Metadata',
 };
 const PREVIEW_HEIGHT = 220;
@@ -183,7 +186,7 @@ export default function ProcessVideoScreen() {
   const [video, setVideo] = useState<VideoDetail | null>(null);
   const [burnPreviewUrl, setBurnPreviewUrl] = useState<string | null>(null);
   const [proxyPreviewUrl, setProxyPreviewUrl] = useState<string | null>(null);
-  const [activeLogTab, setActiveLogTab] = useState<typeof LOG_TABS[number]>('transcription');
+  const [activeLogTab, setActiveLogTab] = useState<typeof LOG_TABS[number]>('captions');
   const processStateRef = useRef({
     stepStatus: defaultStepState,
     stepDetail: {} as Record<StepKey, string>,
@@ -456,7 +459,7 @@ export default function ProcessVideoScreen() {
     if (stored) {
       const baselineStatus = { ...defaultStepState, ...(stored.stepStatus || {}) };
       const baselineDetail = { ...(stored.stepDetail || {}) };
-      const storedSteps = stored.selectedSteps || defaultSelections;
+      const storedSteps = { ...defaultSelections, ...(stored.selectedSteps || {}) };
       const storedRunning = Boolean(stored.running);
       setStepStatus(baselineStatus);
       setStepDetail(baselineDetail);
@@ -620,12 +623,14 @@ export default function ProcessVideoScreen() {
     const runningNow = processStateRef.current.running;
     const needsTranscribe =
       selectedSteps.transcribe ||
+      selectedSteps.polish ||
       selectedSteps.translate ||
       selectedSteps.burn ||
       selectedSteps.metadataZh ||
       selectedSteps.metadataEn;
     const needsTranslate = selectedSteps.translate || selectedSteps.burn;
-    const needsCaption = selectedSteps.caption || selectedSteps.metadataZh || selectedSteps.metadataEn;
+    const needsCaption =
+      selectedSteps.caption || selectedSteps.polish || selectedSteps.metadataZh || selectedSteps.metadataEn;
 
     const mark = (step: StepKey, status: StepState, detail = '') => {
       const current = nextStatus[step];
@@ -676,6 +681,28 @@ export default function ProcessVideoScreen() {
       } catch (_err) {
         markIdle('transcribe', needsTranscribe);
       }
+
+    if (selectedSteps.polish) {
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${id}/polish-subtitles`);
+        if (resp.ok) {
+          const json = await resp.json();
+          if (json.status === 'completed') {
+            mark('polish', 'done', 'Completed');
+          } else if (json.status === 'failed') {
+            mark('polish', 'error', json.error || 'Failed');
+          } else {
+            mark('polish', 'working', json.status || 'Working');
+          }
+        } else if (resp.status === 404) {
+          markIdle('polish', selectedSteps.polish);
+        }
+      } catch (_err) {
+        markIdle('polish', selectedSteps.polish);
+      }
+    } else {
+      markIdle('polish', false);
+    }
 
     if (!needsTranslate) {
       mark('translate', 'skipped', 'Skipped');
@@ -858,6 +885,8 @@ export default function ProcessVideoScreen() {
             ? needsTranslate
             : step === 'caption'
               ? needsCaption
+              : step === 'polish'
+                ? selectedSteps.polish
               : selectedSteps[step];
       if (!needed) return true;
       return ['done', 'skipped', 'error'].includes(nextStatus[step]);
@@ -881,24 +910,6 @@ export default function ProcessVideoScreen() {
 
   const logEntries = useMemo(() => {
     return {
-      transcription: [
-        {
-          title: 'Transcribe',
-          status: stepStatus.transcribe,
-          detail: stepDetail.transcribe,
-        },
-      ],
-      translations: [
-        {
-          title: 'Translate',
-          status: stepStatus.translate,
-          detail:
-            stepDetail.translate ||
-            (translationTargetLanguages.length
-              ? `Languages: ${translationTargetLanguages.join(', ')}`
-              : 'No languages selected'),
-        },
-      ],
       captions: [
         {
           title: 'Key frames',
@@ -909,6 +920,32 @@ export default function ProcessVideoScreen() {
           title: 'Captions',
           status: stepStatus.caption,
           detail: stepDetail.caption,
+        },
+      ],
+      subtitles: [
+        {
+          title: 'Transcribe',
+          status: stepStatus.transcribe,
+          detail: stepDetail.transcribe,
+        },
+        {
+          title: 'Polish subtitles',
+          status: stepStatus.polish,
+          detail: stepDetail.polish,
+        },
+        {
+          title: 'Translate',
+          status: stepStatus.translate,
+          detail:
+            stepDetail.translate ||
+            (translationTargetLanguages.length
+              ? `Languages: ${translationTargetLanguages.join(', ')}`
+              : 'No languages selected'),
+        },
+        {
+          title: 'Burn subtitles',
+          status: stepStatus.burn,
+          detail: stepDetail.burn,
         },
       ],
       metadata: [
@@ -1129,19 +1166,22 @@ export default function ProcessVideoScreen() {
     if (!id || running) return;
     const needsTranscribe =
       selectedSteps.transcribe ||
+      selectedSteps.polish ||
       selectedSteps.translate ||
       selectedSteps.burn ||
       selectedSteps.metadataZh ||
       selectedSteps.metadataEn;
     const needsTranslate = selectedSteps.translate || selectedSteps.burn;
-    const needsCaption = selectedSteps.caption || selectedSteps.metadataZh || selectedSteps.metadataEn;
+    const needsCaption =
+      selectedSteps.caption || selectedSteps.polish || selectedSteps.metadataZh || selectedSteps.metadataEn;
 
     const stepMap: Record<StepKey, string> = {
-      transcribe: 'transcribe',
-      translate: 'translate',
-      burn: 'burn',
       keyframes: 'keyframes',
       caption: 'caption',
+      transcribe: 'transcribe',
+      polish: 'polish',
+      translate: 'translate',
+      burn: 'burn',
       metadataZh: 'metadata_zh',
       metadataEn: 'metadata_en',
     };
@@ -1170,7 +1210,10 @@ export default function ProcessVideoScreen() {
       nextDetail[step] = detail;
     };
 
+    mark('keyframes', selectedSteps.keyframes ? 'working' : 'skipped', selectedSteps.keyframes ? 'Queued' : 'Skipped');
+    mark('caption', needsCaption ? 'working' : 'skipped', needsCaption ? 'Queued' : 'Skipped');
     mark('transcribe', needsTranscribe ? 'working' : 'skipped', needsTranscribe ? 'Queued' : 'Skipped');
+    mark('polish', selectedSteps.polish ? 'working' : 'skipped', selectedSteps.polish ? 'Queued' : 'Skipped');
     if (needsTranslate) {
       const detail = translationTargetLanguages.length
         ? `Languages: ${translationTargetLanguages.map((lang) => LANG_LABELS[lang] || lang).join(', ')}`
@@ -1180,8 +1223,6 @@ export default function ProcessVideoScreen() {
       mark('translate', 'skipped', 'Skipped');
     }
     mark('burn', selectedSteps.burn ? 'working' : 'skipped', selectedSteps.burn ? 'Queued' : 'Skipped');
-    mark('keyframes', selectedSteps.keyframes ? 'working' : 'skipped', selectedSteps.keyframes ? 'Queued' : 'Skipped');
-    mark('caption', needsCaption ? 'working' : 'skipped', needsCaption ? 'Queued' : 'Skipped');
     mark('metadataZh', selectedSteps.metadataZh ? 'working' : 'skipped', selectedSteps.metadataZh ? 'Queued' : 'Skipped');
     mark('metadataEn', selectedSteps.metadataEn ? 'working' : 'skipped', selectedSteps.metadataEn ? 'Queued' : 'Skipped');
 

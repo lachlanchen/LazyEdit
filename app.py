@@ -6,6 +6,7 @@ if "CUDA_VISIBLE_DEVICES" not in os.environ:
 
 
 from lazyedit.openai_version_check import OpenAI
+from lazyedit.openai_request_json import OpenAIRequestJSONBase
 from config import UPLOAD_FOLDER, PORT, AUTOPUBLISH_URL, AUTOPUBLISH_TIMEOUT
 
 
@@ -104,6 +105,7 @@ METADATA_TEMPLATE_MAP = {
 }
 VIDEO_PROMPT_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_prompt")
 VIDEO_SPEC_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_spec")
+SUBTITLE_POLISH_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "subtitle_polish")
 PROMPT_TEMPLATE_DIR = os.path.join(UPLOAD_FOLDER, "prompt_templates")
 PROMPT_TEMPLATE_SCHEMA = {
     "type": "object",
@@ -131,6 +133,9 @@ DEFAULT_TRANSLATION_STYLE = {
     "bgOpacity": 0.5,
 }
 DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
+DEFAULT_SUBTITLE_POLISH = {
+    "notes": "",
+}
 PUBLISH_PLATFORM_KEYS = [
     "douyin",
     "xiaohongshu",
@@ -421,6 +426,18 @@ def _load_metadata_templates(lang_code: str) -> tuple[dict, dict]:
     return prompt_payload, schema_payload
 
 
+def _load_subtitle_polish_templates() -> tuple[dict, dict]:
+    prompt_path = os.path.join(SUBTITLE_POLISH_TEMPLATE_DIR, "prompt.json")
+    schema_path = os.path.join(SUBTITLE_POLISH_TEMPLATE_DIR, "schema.json")
+    if not os.path.exists(prompt_path) or not os.path.exists(schema_path):
+        raise FileNotFoundError("subtitle polish template missing")
+    with open(prompt_path, "r", encoding="utf-8") as handle:
+        prompt_payload = json.load(handle)
+    with open(schema_path, "r", encoding="utf-8") as handle:
+        schema_payload = json.load(handle)
+    return prompt_payload, schema_payload
+
+
 def _sanitize_translation_style(payload: dict | None) -> dict:
     if not isinstance(payload, dict):
         return DEFAULT_TRANSLATION_STYLE.copy()
@@ -510,6 +527,18 @@ def _sanitize_translation_languages(payload) -> list[str]:
     return cleaned or DEFAULT_TRANSLATION_LANGUAGES.copy()
 
 
+def _sanitize_subtitle_polish(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        payload = {}
+    notes = payload.get("notes")
+    if notes is None:
+        notes = ""
+    notes = str(notes)
+    if len(notes) > 4000:
+        notes = notes[:4000]
+    return {"notes": notes}
+
+
 def _sanitize_publish_platforms(payload) -> dict:
     if isinstance(payload, list):
         payload = {str(item): True for item in payload}
@@ -526,6 +555,13 @@ def _load_translation_languages_setting() -> list[str]:
     if saved is None:
         return DEFAULT_TRANSLATION_LANGUAGES.copy()
     return _sanitize_translation_languages(saved)
+
+
+def _load_subtitle_polish_setting() -> dict:
+    saved = ldb.get_ui_preference("subtitle_polish")
+    if saved is None:
+        return DEFAULT_SUBTITLE_POLISH.copy()
+    return _sanitize_subtitle_polish(saved)
 
 
 def _load_burn_layout_setting() -> dict:
@@ -1354,6 +1390,10 @@ def find_latest_caption_outputs(output_folder, base_name):
 def find_latest_transcription_outputs(output_folder, base_name):
     if not output_folder or not base_name:
         return None, None
+    polished_json = os.path.join(output_folder, f"{base_name}_mixed_polished.json")
+    polished_srt = os.path.join(output_folder, f"{base_name}_mixed_polished.srt")
+    if os.path.exists(polished_json) and os.path.exists(polished_srt):
+        return polished_json, polished_srt
     default_json = os.path.join(output_folder, f"{base_name}_mixed.json")
     default_srt = os.path.join(output_folder, f"{base_name}_mixed.srt")
     if os.path.exists(default_json) and os.path.exists(default_srt):
@@ -3534,6 +3574,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "translation_style",
             "translation_languages",
             "burn_layout",
+            "subtitle_polish",
             "video_prompt",
             "video_prompt_history",
             "video_spec_history",
@@ -3554,6 +3595,10 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_BURN_LAYOUT})
             return self.write({"key": key, "value": _sanitize_burn_layout(saved)})
+        if key == "subtitle_polish":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_SUBTITLE_POLISH})
+            return self.write({"key": key, "value": _sanitize_subtitle_polish(saved)})
         if key == "logo_settings":
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_LOGO_SETTINGS})
@@ -3582,6 +3627,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "translation_style",
             "translation_languages",
             "burn_layout",
+            "subtitle_polish",
             "video_prompt",
             "video_prompt_history",
             "video_spec_history",
@@ -3601,6 +3647,8 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             cleaned = _sanitize_translation_style(data)
         elif key == "burn_layout":
             cleaned = _sanitize_burn_layout(data)
+        elif key == "subtitle_polish":
+            cleaned = _sanitize_subtitle_polish(data)
         elif key == "logo_settings":
             cleaned = _sanitize_logo_settings(data)
         elif key == "video_prompt":
@@ -3981,6 +4029,213 @@ class VideoTranscriptionHandler(CorsMixin, tornado.web.RequestHandler):
         if output_md_path and output_srt_path:
             write_markdown_from_srt(output_srt_path, output_md_path)
         self.write({"status": "ok", "index": index, "text": item.get("text", "")})
+
+
+class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, language_code, status, output_json_path, output_srt_path, output_md_path, error, created_at
+                FROM transcriptions
+                WHERE video_id = %s AND language_code = %s
+                ORDER BY id DESC
+                LIMIT 1
+                """,
+                (video_id_i, "polished"),
+            )
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "polished subtitles not found"})
+        (
+            transcription_id,
+            language_code,
+            status,
+            output_json_path,
+            output_srt_path,
+            output_md_path,
+            error,
+            created_at,
+        ) = row
+        primary_lang, language_summary = _summarize_transcription_languages(output_json_path)
+        self.write({
+            "id": transcription_id,
+            "video_id": video_id_i,
+            "language_code": language_code,
+            "status": status,
+            "output_json_path": output_json_path,
+            "output_srt_path": output_srt_path,
+            "output_md_path": output_md_path,
+            "json_url": media_url_for_path(output_json_path),
+            "srt_url": media_url_for_path(output_srt_path),
+            "md_url": media_url_for_path(output_md_path),
+            "error": error,
+            "created_at": created_at.isoformat() if created_at else None,
+            "preview_text": build_transcription_preview(output_md_path, output_srt_path),
+            "primary_language": primary_lang,
+            "language_summary": language_summary,
+        })
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+        use_cache = _parse_bool(data.get("use_cache", None), default=True)
+        notes_raw = data.get("notes") or data.get("custom_notes") or data.get("message")
+        if notes_raw is None:
+            notes_raw = _load_subtitle_polish_setting().get("notes", "")
+        notes = _sanitize_subtitle_polish({"notes": notes_raw}).get("notes", "")
+
+        ldb.ensure_schema()
+        with ldb.get_cursor() as cur:
+            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+            row = cur.fetchone()
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        file_path = row[0]
+        if not file_path or not os.path.exists(file_path):
+            self.set_status(404)
+            return self.write({"error": "video file missing"})
+
+        input_file = preprocess_if_needed(file_path)
+        base_name, _ = os.path.splitext(os.path.basename(input_file))
+        output_folder = os.path.dirname(input_file)
+        input_json, _input_srt = find_latest_transcription_outputs(output_folder, base_name)
+        if not input_json or not os.path.exists(input_json):
+            self.set_status(400)
+            return self.write({"error": "transcription missing; run Transcribe first"})
+
+        payload, items, container_key = _load_subtitle_payload(input_json)
+        if not items:
+            self.set_status(400)
+            return self.write({"error": "transcription missing; run Transcribe first"})
+
+        caption_text = ""
+        caption_row = ldb.get_latest_frame_caption(video_id_i)
+        if caption_row:
+            _, caption_status, _, caption_srt_path, caption_md_path, _, _ = caption_row
+            if caption_status != "failed":
+                caption_text = _read_text_file(caption_md_path) or _read_text_file(caption_srt_path)
+
+        prompt_template, schema_payload = _load_subtitle_polish_templates()
+        prompt_text = prompt_template.get("user", "")
+        system_text = prompt_template.get("system", "You are an expert subtitle editor.")
+        subtitle_items = []
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            start = item.get("start")
+            end = item.get("end")
+            if not start or not end:
+                continue
+            subtitle_items.append({
+                "start": start,
+                "end": end,
+                "text": "" if item.get("text") is None else str(item.get("text")),
+            })
+        subtitles_json = json.dumps(subtitle_items, ensure_ascii=False, indent=2)
+        prompt_text = (
+            prompt_text.replace("{{CUSTOM_MESSAGE}}", notes)
+            .replace("{{CAPTIONS}}", caption_text)
+            .replace("{{SUBTITLES_JSON}}", subtitles_json)
+        )
+
+        output_json_path = os.path.join(output_folder, f"{base_name}_mixed_polished.json")
+        output_srt_path = os.path.join(output_folder, f"{base_name}_mixed_polished.srt")
+        output_md_path = os.path.join(output_folder, f"{base_name}_mixed_polished.md")
+        for path in (output_json_path, output_srt_path, output_md_path):
+            if path and os.path.exists(path):
+                os.remove(path)
+
+        status = "completed"
+        error_message = None
+        try:
+            client = OpenAIRequestJSONBase(use_cache=use_cache, cache_dir="cache/subtitle_polish")
+            response = client.send_request_with_json_schema(
+                prompt_text,
+                schema_payload,
+                system_content=system_text,
+                schema_name="subtitle_polish",
+            )
+            polished_items = response.get("items") if isinstance(response, dict) else None
+            if not isinstance(polished_items, list):
+                raise RuntimeError("subtitle polish response missing items")
+
+            if len(polished_items) == len(items):
+                for idx, item in enumerate(items):
+                    if not isinstance(item, dict):
+                        continue
+                    candidate = polished_items[idx]
+                    if isinstance(candidate, dict) and candidate.get("text") is not None:
+                        item["text"] = str(candidate.get("text"))
+            else:
+                mapped = {}
+                for candidate in polished_items:
+                    if not isinstance(candidate, dict):
+                        continue
+                    key = (candidate.get("start"), candidate.get("end"))
+                    if key[0] and key[1]:
+                        mapped[key] = candidate
+                for item in items:
+                    if not isinstance(item, dict):
+                        continue
+                    key = (item.get("start"), item.get("end"))
+                    if key in mapped and mapped[key].get("text") is not None:
+                        item["text"] = str(mapped[key].get("text"))
+
+            _write_subtitle_payload(output_json_path, payload, items, container_key)
+            _write_srt_from_items(items, output_srt_path, text_key="text")
+            write_markdown_from_srt(output_srt_path, output_md_path)
+        except Exception as exc:
+            status = "failed"
+            error_message = str(exc)
+            print(f"Subtitle polish failed: {error_message}")
+            traceback.print_exc()
+
+        transcription_id = ldb.add_transcription(
+            video_id_i,
+            "polished",
+            status,
+            output_json_path if status == "completed" else None,
+            output_srt_path if status == "completed" else None,
+            output_md_path if status == "completed" else None,
+            error_message,
+        )
+        if status != "completed":
+            self.set_status(500)
+            return self.write({"error": "subtitle polish failed", "details": error_message, "id": transcription_id})
+
+        primary_lang, language_summary = _summarize_transcription_languages(output_json_path)
+        self.write({
+            "id": transcription_id,
+            "video_id": video_id_i,
+            "language_code": "polished",
+            "status": status,
+            "output_json_path": output_json_path,
+            "output_srt_path": output_srt_path,
+            "output_md_path": output_md_path,
+            "json_url": media_url_for_path(output_json_path),
+            "srt_url": media_url_for_path(output_srt_path),
+            "md_url": media_url_for_path(output_md_path),
+            "preview_text": build_transcription_preview(output_md_path, output_srt_path),
+            "primary_language": primary_lang,
+            "language_summary": language_summary,
+            "error": error_message,
+        })
 
 
 class VideoCaptionHandler(CorsMixin, tornado.web.RequestHandler):
@@ -5566,9 +5821,16 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         def wants(step: str) -> bool:
             return not selected_steps or step in selected_steps
 
-        needs_transcribe = wants("transcribe") or wants("translate") or wants("burn") or wants("metadata_zh") or wants("metadata_en")
+        needs_transcribe = (
+            wants("transcribe")
+            or wants("polish")
+            or wants("translate")
+            or wants("burn")
+            or wants("metadata_zh")
+            or wants("metadata_en")
+        )
         needs_translate = wants("translate") or wants("burn")
-        needs_caption = wants("caption") or wants("metadata_zh") or wants("metadata_en")
+        needs_caption = wants("caption") or wants("polish") or wants("metadata_zh") or wants("metadata_en")
 
         translation_languages = _load_translation_languages_setting()
         burn_layout = _load_burn_layout_setting()
@@ -5582,6 +5844,10 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             logo_config = _load_logo_settings_setting()
             logo_config["enabled"] = True
         notes = data.get("notes") or data.get("custom_notes") or ""
+        polish_notes = data.get("polish_notes") or data.get("subtitle_notes")
+        if polish_notes is None:
+            polish_notes = _load_subtitle_polish_setting().get("notes", "")
+        polish_notes = _sanitize_subtitle_polish({"notes": polish_notes}).get("notes", "")
         async def run_pipeline():
             statuses: dict[str, dict] = {}
 
@@ -5614,6 +5880,26 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             async def mark(step: str, status: str, detail: str | None = None):
                 statuses[step] = {"status": status, "detail": detail}
 
+            if wants("keyframes"):
+                await mark("keyframes", "working", "Extracting")
+                code, payload = await call_json("POST", f"/api/videos/{video_id_i}/keyframes")
+                if code >= 400:
+                    await mark("keyframes", "error", payload.get("error") or payload.get("details") or "Failed")
+                    return False, statuses, "keyframes failed"
+                await mark("keyframes", "done", "Completed")
+            else:
+                await mark("keyframes", "skipped", "Skipped")
+
+            if needs_caption:
+                await mark("caption", "working", "Captioning")
+                code, payload = await call_json("POST", f"/api/videos/{video_id_i}/caption")
+                if code >= 400:
+                    await mark("caption", "error", payload.get("error") or payload.get("details") or "Failed")
+                    return False, statuses, "caption failed"
+                await mark("caption", "done", "Completed")
+            else:
+                await mark("caption", "skipped", "Skipped")
+
             if needs_transcribe:
                 await mark("transcribe", "working", "Transcribing")
                 code, payload = await call_json("POST", f"/api/videos/{video_id_i}/transcribe")
@@ -5623,6 +5909,20 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                 await mark("transcribe", "done", "Completed")
             else:
                 await mark("transcribe", "skipped", "Skipped")
+
+            if wants("polish"):
+                await mark("polish", "working", "Polishing")
+                code, payload = await call_json(
+                    "POST",
+                    f"/api/videos/{video_id_i}/polish-subtitles",
+                    {"notes": polish_notes},
+                )
+                if code >= 400:
+                    await mark("polish", "error", payload.get("error") or payload.get("details") or "Failed")
+                    return False, statuses, "polish failed"
+                await mark("polish", "done", "Completed")
+            else:
+                await mark("polish", "skipped", "Skipped")
 
             if needs_translate:
                 if not translation_languages:
@@ -5675,26 +5975,6 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                     return False, statuses, "burn failed"
             else:
                 await mark("burn", "skipped", "Skipped")
-
-            if wants("keyframes"):
-                await mark("keyframes", "working", "Extracting")
-                code, payload = await call_json("POST", f"/api/videos/{video_id_i}/keyframes")
-                if code >= 400:
-                    await mark("keyframes", "error", payload.get("error") or payload.get("details") or "Failed")
-                    return False, statuses, "keyframes failed"
-                await mark("keyframes", "done", "Completed")
-            else:
-                await mark("keyframes", "skipped", "Skipped")
-
-            if needs_caption:
-                await mark("caption", "working", "Captioning")
-                code, payload = await call_json("POST", f"/api/videos/{video_id_i}/caption")
-                if code >= 400:
-                    await mark("caption", "error", payload.get("error") or payload.get("details") or "Failed")
-                    return False, statuses, "caption failed"
-                await mark("caption", "done", "Completed")
-            else:
-                await mark("caption", "skipped", "Skipped")
 
             if wants("metadata_zh"):
                 await mark("metadata_zh", "working", "Generating")
@@ -6209,6 +6489,7 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/proxy", VideoProxyHandler),
         (r"/api/videos/(\d+)/transcribe", VideoTranscribeHandler),
         (r"/api/videos/(\d+)/transcription", VideoTranscriptionHandler),
+        (r"/api/videos/(\d+)/polish-subtitles", VideoSubtitlePolishHandler),
         (r"/api/videos/(\d+)/caption", VideoCaptionHandler),
         (r"/api/videos/(\d+)/metadata", VideoMetadataHandler),
         (r"/api/videos/(\d+)/cover", VideoCoverHandler),

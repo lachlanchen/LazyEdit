@@ -163,6 +163,13 @@ const normalizeTranslateLang = (value: string): TranslateLang | null => {
   return null;
 };
 
+const MAIN_TABS = ['captions', 'subtitles', 'metadata'] as const;
+const MAIN_TAB_LABELS: Record<typeof MAIN_TABS[number], string> = {
+  captions: 'Captions',
+  subtitles: 'Subtitles',
+  metadata: 'Metadata',
+};
+
 export default function VideoDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
@@ -174,6 +181,14 @@ export default function VideoDetailScreen() {
   const [transcribing, setTranscribing] = useState(false);
   const [transcribeStatus, setTranscribeStatus] = useState('');
   const [transcribeTone, setTranscribeTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [polishNotes, setPolishNotes] = useState('');
+  const [polishNotesTouched, setPolishNotesTouched] = useState(false);
+  const [polishSettingsLoaded, setPolishSettingsLoaded] = useState(false);
+  const [polishDetail, setPolishDetail] = useState<TranscriptionDetail | null>(null);
+  const [polishLoading, setPolishLoading] = useState(true);
+  const [polishing, setPolishing] = useState(false);
+  const [polishStatus, setPolishStatus] = useState('');
+  const [polishTone, setPolishTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [caption, setCaption] = useState<CaptionDetail | null>(null);
   const [captionLoading, setCaptionLoading] = useState(true);
   const [captioning, setCaptioning] = useState(false);
@@ -202,6 +217,7 @@ export default function VideoDetailScreen() {
   const [metadataStatus, setMetadataStatus] = useState('');
   const [metadataTone, setMetadataTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [metadataTab, setMetadataTab] = useState<'zh' | 'en'>('zh');
+  const [activeMainTab, setActiveMainTab] = useState<typeof MAIN_TABS[number]>('captions');
   const [selectedTranslateLangs, setSelectedTranslateLangs] = useState<TranslateLang[]>([
     'ja',
     'en',
@@ -284,6 +300,12 @@ export default function VideoDetailScreen() {
   ];
   const activeMetadata = metadataTab === 'zh' ? metadataZh : metadataEn;
   const activeMetadataLabel = metadataTab === 'zh' ? 'Chinese social' : 'English YouTube';
+  const polishSeedText = useMemo(() => {
+    const source = caption?.preview_text || transcription?.preview_text || video?.title || '';
+    const cleaned = source.replace(/\s+/g, ' ').trim();
+    if (!cleaned) return '';
+    return cleaned.length > 240 ? `${cleaned.slice(0, 240)}…` : cleaned;
+  }, [caption?.preview_text, transcription?.preview_text, video?.title]);
 
   useEffect(() => {
     if (!selectedTranslateLangs.length) return;
@@ -316,6 +338,32 @@ export default function VideoDetailScreen() {
       setTranscription(null);
     } finally {
       setTranscriptionLoading(false);
+    }
+  }, [id]);
+
+  const loadSubtitlePolish = useCallback(async () => {
+    if (!id) return;
+    setPolishLoading(true);
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${id}/polish-subtitles`, { cache: 'no-store' });
+      if (resp.status === 404) {
+        setPolishDetail(null);
+        return;
+      }
+      const json = await resp.json();
+      if (!resp.ok) {
+        setPolishStatus(json.error || 'Failed to load polished subtitles');
+        setPolishTone('bad');
+        setPolishDetail(null);
+        return;
+      }
+      setPolishDetail(json);
+    } catch (e: any) {
+      setPolishStatus(e?.message || 'Failed to load polished subtitles');
+      setPolishTone('bad');
+      setPolishDetail(null);
+    } finally {
+      setPolishLoading(false);
     }
   }, [id]);
 
@@ -474,6 +522,22 @@ export default function VideoDetailScreen() {
   }, []);
 
   useEffect(() => {
+    (async () => {
+      try {
+        const resp = await fetch(`${API_URL}/api/ui-settings/subtitle_polish`);
+        const json = await resp.json();
+        if (resp.ok && json.value && typeof json.value.notes === 'string') {
+          setPolishNotes(json.value.notes);
+        }
+      } catch (_err) {
+        // ignore load failures
+      } finally {
+        setPolishSettingsLoaded(true);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
     if (!translateLangsLoaded) return;
     const payload = selectedTranslateLangs;
     const timeout = setTimeout(async () => {
@@ -491,7 +555,31 @@ export default function VideoDetailScreen() {
   }, [selectedTranslateLangs, translateLangsLoaded]);
 
   useEffect(() => {
+    if (!polishSettingsLoaded) return;
+    if (polishNotesTouched || polishNotes) return;
+    if (!polishSeedText) return;
+    setPolishNotes(`the subtitles is not well recognized the contents of this video is about:\n\n${polishSeedText}`);
+  }, [polishSettingsLoaded, polishNotesTouched, polishNotes, polishSeedText]);
+
+  useEffect(() => {
+    if (!polishSettingsLoaded) return;
+    const timeout = setTimeout(async () => {
+      try {
+        await fetch(`${API_URL}/api/ui-settings/subtitle_polish`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ notes: polishNotes }),
+        });
+      } catch (_err) {
+        // ignore save failures
+      }
+    }, 200);
+    return () => clearTimeout(timeout);
+  }, [polishNotes, polishSettingsLoaded]);
+
+  useEffect(() => {
     loadTranscription();
+    loadSubtitlePolish();
     loadCaption();
     loadKeyframes();
     loadTranslations();
@@ -501,9 +589,10 @@ export default function VideoDetailScreen() {
   useFocusEffect(
     useCallback(() => {
       loadTranscription();
+      loadSubtitlePolish();
       loadTranslations();
       return undefined;
-    }, [loadTranscription, loadTranslations]),
+    }, [loadTranscription, loadSubtitlePolish, loadTranslations]),
   );
 
   const openProcessPage = () => {
@@ -623,6 +712,37 @@ export default function VideoDetailScreen() {
     await runTranslations(selectedTranslateLangs);
   };
 
+  const runPolishSubtitles = async () => {
+    if (!video || polishing) return;
+    const ready = await ensureTranscription();
+    if (!ready) return;
+    setPolishing(true);
+    setPolishStatus('Polishing subtitles... this can take a few minutes.');
+    setPolishTone('neutral');
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${video.id}/polish-subtitles`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notes: polishNotes }),
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        setPolishStatus(json.error || json.details || 'Subtitle polish failed');
+        setPolishTone('bad');
+        return;
+      }
+      setPolishDetail(json);
+      await loadTranscription();
+      setPolishStatus('Subtitle polish complete.');
+      setPolishTone('good');
+    } catch (e: any) {
+      setPolishStatus(`Subtitle polish failed: ${e?.message || String(e)}`);
+      setPolishTone('bad');
+    } finally {
+      setPolishing(false);
+    }
+  };
+
   const openBurnPage = async () => {
     if (!video) return;
     const transcriptionReady = await ensureTranscription();
@@ -640,6 +760,8 @@ export default function VideoDetailScreen() {
     keyframesTone === 'good' ? styles.statusGood : keyframesTone === 'bad' ? styles.statusBad : styles.statusNeutral;
   const translateStatusStyle =
     translateTone === 'good' ? styles.statusGood : translateTone === 'bad' ? styles.statusBad : styles.statusNeutral;
+  const polishStatusStyle =
+    polishTone === 'good' ? styles.statusGood : polishTone === 'bad' ? styles.statusBad : styles.statusNeutral;
   const metadataStatusStyle =
     metadataTone === 'good' ? styles.statusGood : metadataTone === 'bad' ? styles.statusBad : styles.statusNeutral;
 
@@ -914,10 +1036,28 @@ export default function VideoDetailScreen() {
         </Pressable>
         {proxyStatus ? <Text style={styles.statusNeutral}>{proxyStatus}</Text> : null}
 
+        <View style={styles.mainTabs}>
+          {MAIN_TABS.map((tab) => {
+            const isActive = activeMainTab === tab;
+            return (
+              <Pressable
+                key={tab}
+                style={[styles.mainTab, isActive && styles.mainTabActive]}
+                onPress={() => setActiveMainTab(tab)}
+              >
+                <Text style={[styles.mainTabText, isActive && styles.mainTabTextActive]}>
+                  {MAIN_TAB_LABELS[tab]}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        {activeMainTab === 'subtitles' ? (
         <View style={styles.groupCard}>
           <View style={styles.groupHeader}>
             <Text style={styles.groupTitle}>Subtitles</Text>
-            <Text style={styles.groupHint}>Transcribe → translate → burn subtitles.</Text>
+            <Text style={styles.groupHint}>Transcribe → polish → translate → burn subtitles.</Text>
           </View>
           <Pressable
             style={[styles.btnSecondary, transcribing && styles.btnDisabled]}
@@ -963,6 +1103,61 @@ export default function VideoDetailScreen() {
           </View>
 
           {transcribeStatus ? <Text style={[styles.status, transcribeStatusStyle]}>{transcribeStatus}</Text> : null}
+
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionTitle}>Polish subtitles</Text>
+            <Text style={styles.sectionMeta}>Use captions + transcription + your notes to refine the subtitles.</Text>
+            <TextInput
+              style={styles.polishInput}
+              value={polishNotes}
+              onChangeText={(value) => {
+                if (!polishNotesTouched) setPolishNotesTouched(true);
+                setPolishNotes(value);
+              }}
+              placeholder="The subtitles are not well recognized. The contents of this video are about..."
+              placeholderTextColor="#94a3b8"
+              multiline
+              textAlignVertical="top"
+            />
+            <Pressable
+              style={[styles.btnSecondaryAlt, polishing && styles.btnDisabled]}
+              onPress={runPolishSubtitles}
+              disabled={polishing}
+            >
+              <View style={styles.btnContent}>
+                {polishing && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                <Text style={styles.btnText}>{polishing ? 'Polishing...' : 'Polish subtitles'}</Text>
+              </View>
+            </Pressable>
+            {polishStatus ? <Text style={[styles.status, polishStatusStyle]}>{polishStatus}</Text> : null}
+          </View>
+
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionTitle}>Polished subtitles preview</Text>
+            {polishLoading ? (
+              <ActivityIndicator />
+            ) : polishDetail ? (
+              <>
+                <Text style={styles.sectionMeta}>Status: {polishDetail.status}</Text>
+                {polishDetail.preview_text ? (
+                  <Text style={styles.previewText}>{polishDetail.preview_text}</Text>
+                ) : (
+                  <Text style={styles.previewEmpty}>No preview available.</Text>
+                )}
+                {polishDetail.error ? <Text style={styles.previewError}>{polishDetail.error}</Text> : null}
+                <Pressable
+                  style={styles.previewBtn}
+                  onPress={() =>
+                    router.push({ pathname: '/video/[id]/transcription', params: { id: String(video.id) } })
+                  }
+                >
+                  <Text style={styles.previewBtnText}>Preview polished subtitles</Text>
+                </Pressable>
+              </>
+            ) : (
+              <Text style={styles.previewEmpty}>No polished subtitles yet. Tap Polish subtitles.</Text>
+            )}
+          </View>
 
           <View style={styles.toggleRowInline}>
             <Switch
@@ -1062,7 +1257,9 @@ export default function VideoDetailScreen() {
             </View>
           </Pressable>
         </View>
+        ) : null}
 
+        {activeMainTab === 'captions' ? (
         <View style={styles.groupCard}>
           <View style={styles.groupHeader}>
             <Text style={styles.groupTitle}>Captions</Text>
@@ -1173,7 +1370,9 @@ export default function VideoDetailScreen() {
 
         {captionStatus ? <Text style={[styles.status, captionStatusStyle]}>{captionStatus}</Text> : null}
         </View>
+        ) : null}
 
+        {activeMainTab === 'metadata' ? (
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>Metadata generator</Text>
           <Text style={styles.sectionMeta}>
@@ -1252,6 +1451,7 @@ export default function VideoDetailScreen() {
         </View>
 
         {metadataStatus ? <Text style={[styles.status, metadataStatusStyle]}>{metadataStatus}</Text> : null}
+        ) : null}
       </ScrollView>
       <Modal transparent visible={!!lightbox} animationType="fade" onRequestClose={() => setLightbox(null)}>
         <Pressable style={styles.lightboxBackdrop} onPress={() => setLightbox(null)}>
@@ -1382,6 +1582,31 @@ const styles = StyleSheet.create({
   langCheckBoxActive: { backgroundColor: '#1d4ed8', borderColor: '#1d4ed8' },
   langCheckMark: { color: 'white', fontSize: 10, fontWeight: '700' },
   langCheckLabel: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
+  mainTabs: {
+    marginTop: 16,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  mainTab: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    marginRight: 10,
+    marginBottom: 8,
+    backgroundColor: '#f8fafc',
+  },
+  mainTabActive: {
+    backgroundColor: '#1d4ed8',
+    borderColor: '#1d4ed8',
+  },
+  mainTabText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#0f172a',
+  },
+  mainTabTextActive: { color: '#f8fafc' },
   sectionCard: {
     marginTop: 16,
     padding: 14,
@@ -1409,6 +1634,16 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 10,
     minHeight: 80,
+    fontSize: 12,
+    color: '#0f172a',
+    backgroundColor: '#f8fafc',
+  },
+  polishInput: {
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    borderRadius: 12,
+    padding: 10,
+    minHeight: 90,
     fontSize: 12,
     color: '#0f172a',
     backgroundColor: '#f8fafc',
