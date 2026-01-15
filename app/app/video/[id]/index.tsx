@@ -1373,84 +1373,93 @@ export default function VideoDetailScreen() {
         ) : null}
 
         {activeMainTab === 'metadata' ? (
-        <View style={styles.sectionCard}>
-          <Text style={styles.sectionTitle}>Metadata generator</Text>
-          <Text style={styles.sectionMeta}>
-            Use the transcription and keyframe captions to draft metadata for Chinese social platforms and YouTube.
-          </Text>
-          <TextInput
-            style={styles.metadataInput}
-            value={metadataNotes}
-            onChangeText={setMetadataNotes}
-            placeholder="Add optional notes about the video (context, tone, audience, keywords)."
-            placeholderTextColor="#94a3b8"
-            multiline
-            textAlignVertical="top"
-          />
-          <View style={styles.metaButtonRow}>
-            <Pressable
-              style={[styles.btnSecondary, styles.metaButton, metadataGenerating.zh && styles.btnDisabled]}
-              onPress={() => generateMetadata('zh')}
-              disabled={metadataGenerating.zh}
-            >
-              <View style={styles.btnContent}>
-                {metadataGenerating.zh && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                <Text style={styles.btnText}>
-                  {metadataGenerating.zh ? 'Generating...' : 'Generate Chinese metadata'}
-                </Text>
-              </View>
-            </Pressable>
-            <Pressable
-              style={[
-                styles.btnSecondaryAlt,
-                styles.metaButton,
-                { marginRight: 0 },
-                metadataGenerating.en && styles.btnDisabled,
-              ]}
-              onPress={() => generateMetadata('en')}
-              disabled={metadataGenerating.en}
-            >
-              <View style={styles.btnContent}>
-                {metadataGenerating.en && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                <Text style={styles.btnText}>
-                  {metadataGenerating.en ? 'Generating...' : 'Generate English metadata'}
-                </Text>
-              </View>
-            </Pressable>
-          </View>
-          <Pressable
-            style={[styles.btnAccent, styles.metaButtonFull, styles.btnCenter, metadataGeneratingAll && styles.btnDisabled]}
-            onPress={generateMetadataAll}
-            disabled={metadataGeneratingAll}
-          >
-            <View style={styles.btnContent}>
-              {metadataGeneratingAll && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-              <Text style={styles.btnText}>
-                {metadataGeneratingAll ? 'Generating metadata...' : 'Generate metadata'}
+          <>
+            <View style={styles.sectionCard}>
+              <Text style={styles.sectionTitle}>Metadata generator</Text>
+              <Text style={styles.sectionMeta}>
+                Use the transcription and keyframe captions to draft metadata for Chinese social platforms and YouTube.
               </Text>
-            </View>
-          </Pressable>
-          <View style={styles.metadataPreviewHeader}>
-            <Text style={styles.sectionTitle}>Metadata preview</Text>
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.langTabs}>
-            {metadataTabs.map((tab) => {
-              const isActive = metadataTab === tab.code;
-              return (
+              <TextInput
+                style={styles.metadataInput}
+                value={metadataNotes}
+                onChangeText={setMetadataNotes}
+                placeholder="Add optional notes about the video (context, tone, audience, keywords)."
+                placeholderTextColor="#94a3b8"
+                multiline
+                textAlignVertical="top"
+              />
+              <View style={styles.metaButtonRow}>
                 <Pressable
-                  key={tab.code}
-                  style={[styles.langTab, isActive && styles.langTabActive]}
-                  onPress={() => setMetadataTab(tab.code)}
+                  style={[styles.btnSecondary, styles.metaButton, metadataGenerating.zh && styles.btnDisabled]}
+                  onPress={() => generateMetadata('zh')}
+                  disabled={metadataGenerating.zh}
                 >
-                  <Text style={[styles.langTabText, isActive && styles.langTabTextActive]}>{tab.label}</Text>
+                  <View style={styles.btnContent}>
+                    {metadataGenerating.zh && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                    <Text style={styles.btnText}>
+                      {metadataGenerating.zh ? 'Generating...' : 'Generate Chinese metadata'}
+                    </Text>
+                  </View>
                 </Pressable>
-              );
-            })}
-          </ScrollView>
-          {metadataLoading ? <ActivityIndicator /> : renderMetadataContent(activeMetadata)}
-        </View>
+                <Pressable
+                  style={[
+                    styles.btnSecondaryAlt,
+                    styles.metaButton,
+                    { marginRight: 0 },
+                    metadataGenerating.en && styles.btnDisabled,
+                  ]}
+                  onPress={() => generateMetadata('en')}
+                  disabled={metadataGenerating.en}
+                >
+                  <View style={styles.btnContent}>
+                    {metadataGenerating.en && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                    <Text style={styles.btnText}>
+                      {metadataGenerating.en ? 'Generating...' : 'Generate English metadata'}
+                    </Text>
+                  </View>
+                </Pressable>
+              </View>
+              <Pressable
+                style={[
+                  styles.btnAccent,
+                  styles.metaButtonFull,
+                  styles.btnCenter,
+                  metadataGeneratingAll && styles.btnDisabled,
+                ]}
+                onPress={generateMetadataAll}
+                disabled={metadataGeneratingAll}
+              >
+                <View style={styles.btnContent}>
+                  {metadataGeneratingAll && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                  <Text style={styles.btnText}>
+                    {metadataGeneratingAll ? 'Generating metadata...' : 'Generate metadata'}
+                  </Text>
+                </View>
+              </Pressable>
+              <View style={styles.metadataPreviewHeader}>
+                <Text style={styles.sectionTitle}>Metadata preview</Text>
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.langTabs}>
+                {metadataTabs.map((tab) => {
+                  const isActive = metadataTab === tab.code;
+                  return (
+                    <Pressable
+                      key={tab.code}
+                      style={[styles.langTab, isActive && styles.langTabActive]}
+                      onPress={() => setMetadataTab(tab.code)}
+                    >
+                      <Text style={[styles.langTabText, isActive && styles.langTabTextActive]}>{tab.label}</Text>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+              {metadataLoading ? <ActivityIndicator /> : renderMetadataContent(activeMetadata)}
+            </View>
 
-        {metadataStatus ? <Text style={[styles.status, metadataStatusStyle]}>{metadataStatus}</Text> : null}
+            {metadataStatus ? (
+              <Text style={[styles.status, metadataStatusStyle]}>{metadataStatus}</Text>
+            ) : null}
+          </>
         ) : null}
       </ScrollView>
       <Modal transparent visible={!!lightbox} animationType="fade" onRequestClose={() => setLightbox(null)}>
