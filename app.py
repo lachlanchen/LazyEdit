@@ -1260,7 +1260,10 @@ def overlay_logo_on_video(video_path, logo_path, output_path, height_ratio=0.1, 
 
     with tempfile.TemporaryDirectory() as temp_dir:
         scaled_path = os.path.join(temp_dir, "logo.png")
-        logo_img.resize((target_width, target_height), Image.LANCZOS).save(scaled_path, format="PNG")
+        logo_resized = logo_img.resize((target_width, target_height), Image.LANCZOS)
+        logo_bg = Image.new("RGBA", (target_width, target_height), (255, 255, 255, 128))
+        logo_bg.alpha_composite(logo_resized)
+        logo_bg.save(scaled_path, format="PNG")
         overlay_filter = f"overlay=x={x_pos}:y={y_pos}"
         cmd = [
             "ffmpeg",
