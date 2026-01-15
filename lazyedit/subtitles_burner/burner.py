@@ -119,6 +119,20 @@ def _load_burner_module():
                 max_w = max(1, int(slot.width))
                 stroke = int(getattr(style, "stroke_width", 0) or 0)
 
+                def _is_japanese_text(text: str) -> bool:
+                    if not text:
+                        return False
+                    return bool(re.search(r"[\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFF]", text))
+
+                def _keep_token_atomic(token) -> bool:
+                    if getattr(token, "token_type", None) == "speaker":
+                        return True
+                    text = getattr(token, "text", "") or ""
+                    ruby = getattr(token, "ruby", None)
+                    if ruby and _is_japanese_text(text):
+                        return True
+                    return False
+
                 def _padding_for_tokens(tokens):
                     pad = _slot_padding_for_height(int(slot.height), stroke)
                     if tokens and getattr(tokens[0], "token_type", None) == "speaker":
@@ -133,6 +147,8 @@ def _load_burner_module():
                     ruby = getattr(token, "ruby", None)
                     color = getattr(token, "color", None)
                     token_type = getattr(token, "token_type", None)
+                    if _keep_token_atomic(token):
+                        return [token]
                     split_text_tokens = _split_text_tokens_for_fit(text)
                     if not ruby:
                         return [
@@ -190,6 +206,9 @@ def _load_burner_module():
                         if getattr(tok, "token_type", None) == "speaker":
                             expanded.append(tok)
                             continue
+                        if _keep_token_atomic(tok):
+                            expanded.append(tok)
+                            continue
                         try:
                             w, _ = renderer.measure_tokens([tok])
                         except Exception:
@@ -218,7 +237,7 @@ def _load_burner_module():
                     split_tokens = tokens
                     if len(tokens) == 1:
                         tok = tokens[0]
-                        if getattr(tok, "token_type", None) != "speaker":
+                        if getattr(tok, "token_type", None) != "speaker" and not _keep_token_atomic(tok):
                             split_tokens = _split_ruby_token(tok)
                         else:
                             split_tokens = tokens
