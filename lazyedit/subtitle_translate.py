@@ -74,6 +74,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         self.font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
         self.translation_log_folder = 'translation_logs'
         self.subtitles = None
+        worker_env = os.getenv("LAZYEDIT_TRANSLATION_WORKERS", "").strip()
+        try:
+            workers = int(worker_env) if worker_env else 4
+        except ValueError:
+            workers = 4
+        self.translation_workers = max(1, workers)
 
         self.flags = {
             'zh': '🇨🇳',  # China for Mandarin
@@ -154,17 +160,18 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             return ""
         return str(value).strip()
 
-    def _build_context_strings(self, index: int, last_translation: str | None) -> tuple[str, str, str]:
+    def _build_context_strings(self, index: int) -> tuple[str, str, str]:
         subtitles = self.subtitles or []
         if index < 0 or index >= len(subtitles):
-            return "", "", self._format_context_value(last_translation)
+            return "", "", ""
 
         prev_text = self._extract_subtitle_text(subtitles[index - 1]) if index > 0 else ""
+        current_text = self._extract_subtitle_text(subtitles[index])
         next_text = self._extract_subtitle_text(subtitles[index + 1]) if index + 1 < len(subtitles) else ""
         return (
             self._format_context_value(prev_text),
+            self._format_context_value(current_text),
             self._format_context_value(next_text),
-            self._format_context_value(last_translation),
         )
 
     def _build_prompt_with_context(
@@ -172,16 +179,17 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         user_template: str,
         subtitles,
         prev_line: str | None,
+        current_line: str | None,
         next_line: str | None,
-        prev_translation: str | None,
     ) -> str:
         prompt = user_template.replace(
             "{{SUBTITLES_JSON}}",
             json.dumps(subtitles, indent=2, ensure_ascii=False),
         )
         prompt = prompt.replace("{{PREV_LINE}}", self._format_context_value(prev_line))
+        prompt = prompt.replace("{{CURRENT_LINE}}", self._format_context_value(current_line))
         prompt = prompt.replace("{{NEXT_LINE}}", self._format_context_value(next_line))
-        prompt = prompt.replace("{{PREV_TRANSLATION}}", self._format_context_value(prev_translation))
+        prompt = prompt.replace("{{PREV_TRANSLATION}}", "")
         return prompt
 
     @staticmethod
@@ -293,7 +301,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """Process subtitle batches in parallel using ThreadPoolExecutor."""
         translated_subtitles = []
 
-        with ThreadPoolExecutor(max_workers=1) as executor:
+        max_workers = min(self.translation_workers, max(len(batches), 1))
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
             # Submit all batches to be processed in parallel
             future_to_batch = {executor.submit(self.translate_and_merge_subtitles_in_batch, batch, i): batch for i, batch in enumerate(batches)}
 
@@ -334,6 +343,31 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             batches.append(current_batch)
 
         return batches
+
+    def _run_line_tasks(self, batch, start_index, worker):
+        results = []
+        if not batch:
+            return results
+        max_workers = min(self.translation_workers, len(batch))
+        if max_workers <= 1:
+            for offset, subtitle in enumerate(batch):
+                idx = start_index + offset
+                prev_line, current_line, next_line = self._build_context_strings(idx)
+                result = worker([subtitle], idx, prev_line, current_line, next_line)
+                results.append((idx, result))
+            return results
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_idx = {}
+            for offset, subtitle in enumerate(batch):
+                idx = start_index + offset
+                prev_line, current_line, next_line = self._build_context_strings(idx)
+                future = executor.submit(worker, [subtitle], idx, prev_line, current_line, next_line)
+                future_to_idx[future] = idx
+            for future in as_completed(future_to_idx):
+                idx = future_to_idx[future]
+                results.append((idx, future.result()))
+        return results
 
     def translate_and_merge_subtitles_in_batch(self, subtitles, idx):
         """Merge translations from multiple languages' functions in parallel."""
@@ -706,8 +740,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         subtitles,
         idx,
         prev_line: str | None = None,
+        current_line: str | None = None,
         next_line: str | None = None,
-        prev_translation: str | None = None,
     ):
         """Single-pass Japanese translation + furigana using template prompt + schema."""
         print("Translating subtitles to Japanese with furigana (single pass)...")
@@ -724,8 +758,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             user_template,
             subtitles,
             prev_line,
+            current_line,
             next_line,
-            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -781,24 +815,14 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        last_translation = None
         line_counter = 0
         for batch in batches:
-            for _subtitle in batch:
-                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_ja_furigana_single_pass(
-                    [_subtitle],
-                    line_counter,
-                    prev_line,
-                    next_line,
-                    prev_translation,
-                )
+            results = self._run_line_tasks(batch, line_counter, self.translate_and_merge_subtitles_ja_furigana_single_pass)
+            for _, result in sorted(results, key=lambda item: item[0]):
                 ruby_items.extend(result["ruby"])
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
-                if result["plain"]:
-                    last_translation = result["plain"][-1].get("ja") or last_translation
-                line_counter += 1
+            line_counter += len(batch)
 
         ruby_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -811,8 +835,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         subtitles,
         idx,
         prev_line: str | None = None,
+        current_line: str | None = None,
         next_line: str | None = None,
-        prev_translation: str | None = None,
     ):
         """Single-pass English translation using template prompt + schema."""
         print("Translating subtitles to English (single pass)...")
@@ -826,8 +850,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             user_template,
             subtitles,
             prev_line,
+            current_line,
             next_line,
-            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -864,23 +888,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        last_translation = None
         line_counter = 0
         for batch in batches:
-            for _subtitle in batch:
-                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_en_single_pass(
-                    [_subtitle],
-                    line_counter,
-                    prev_line,
-                    next_line,
-                    prev_translation,
-                )
+            results = self._run_line_tasks(batch, line_counter, self.translate_and_merge_subtitles_en_single_pass)
+            for _, result in sorted(results, key=lambda item: item[0]):
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
-                if result["plain"]:
-                    last_translation = result["plain"][-1].get("en") or last_translation
-                line_counter += 1
+            line_counter += len(batch)
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
         json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -892,8 +906,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         subtitles,
         idx,
         prev_line: str | None = None,
+        current_line: str | None = None,
         next_line: str | None = None,
-        prev_translation: str | None = None,
     ):
         """Single-pass Arabic translation using template prompt + schema."""
         print("Translating subtitles to Arabic (single pass)...")
@@ -907,8 +921,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             user_template,
             subtitles,
             prev_line,
+            current_line,
             next_line,
-            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -945,23 +959,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        last_translation = None
         line_counter = 0
         for batch in batches:
-            for _subtitle in batch:
-                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_ar_single_pass(
-                    [_subtitle],
-                    line_counter,
-                    prev_line,
-                    next_line,
-                    prev_translation,
-                )
+            results = self._run_line_tasks(batch, line_counter, self.translate_and_merge_subtitles_ar_single_pass)
+            for _, result in sorted(results, key=lambda item: item[0]):
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
-                if result["plain"]:
-                    last_translation = result["plain"][-1].get("ar") or last_translation
-                line_counter += 1
+            line_counter += len(batch)
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
         json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -973,8 +977,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         subtitles,
         idx,
         prev_line: str | None = None,
+        current_line: str | None = None,
         next_line: str | None = None,
-        prev_translation: str | None = None,
     ):
         """Single-pass Vietnamese translation using template prompt + schema."""
         print("Translating subtitles to Vietnamese (single pass)...")
@@ -988,8 +992,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             user_template,
             subtitles,
             prev_line,
+            current_line,
             next_line,
-            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1026,23 +1030,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        last_translation = None
         line_counter = 0
         for batch in batches:
-            for _subtitle in batch:
-                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_vi_single_pass(
-                    [_subtitle],
-                    line_counter,
-                    prev_line,
-                    next_line,
-                    prev_translation,
-                )
+            results = self._run_line_tasks(batch, line_counter, self.translate_and_merge_subtitles_vi_single_pass)
+            for _, result in sorted(results, key=lambda item: item[0]):
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
-                if result["plain"]:
-                    last_translation = result["plain"][-1].get("vi") or last_translation
-                line_counter += 1
+            line_counter += len(batch)
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
         json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1054,8 +1048,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         subtitles,
         idx,
         prev_line: str | None = None,
+        current_line: str | None = None,
         next_line: str | None = None,
-        prev_translation: str | None = None,
     ):
         """Single-pass Korean translation using template prompt + schema."""
         print("Translating subtitles to Korean (single pass)...")
@@ -1069,8 +1063,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             user_template,
             subtitles,
             prev_line,
+            current_line,
             next_line,
-            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1107,23 +1101,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        last_translation = None
         line_counter = 0
         for batch in batches:
-            for _subtitle in batch:
-                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_ko_single_pass(
-                    [_subtitle],
-                    line_counter,
-                    prev_line,
-                    next_line,
-                    prev_translation,
-                )
+            results = self._run_line_tasks(batch, line_counter, self.translate_and_merge_subtitles_ko_single_pass)
+            for _, result in sorted(results, key=lambda item: item[0]):
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
-                if result["plain"]:
-                    last_translation = result["plain"][-1].get("ko") or last_translation
-                line_counter += 1
+            line_counter += len(batch)
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
         json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1135,8 +1119,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         subtitles,
         idx,
         prev_line: str | None = None,
+        current_line: str | None = None,
         next_line: str | None = None,
-        prev_translation: str | None = None,
     ):
         """Single-pass Spanish translation using template prompt + schema."""
         print("Translating subtitles to Spanish (single pass)...")
@@ -1150,8 +1134,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             user_template,
             subtitles,
             prev_line,
+            current_line,
             next_line,
-            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1188,23 +1172,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        last_translation = None
         line_counter = 0
         for batch in batches:
-            for _subtitle in batch:
-                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_es_single_pass(
-                    [_subtitle],
-                    line_counter,
-                    prev_line,
-                    next_line,
-                    prev_translation,
-                )
+            results = self._run_line_tasks(batch, line_counter, self.translate_and_merge_subtitles_es_single_pass)
+            for _, result in sorted(results, key=lambda item: item[0]):
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
-                if result["plain"]:
-                    last_translation = result["plain"][-1].get("es") or last_translation
-                line_counter += 1
+            line_counter += len(batch)
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
         json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1216,8 +1190,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         subtitles,
         idx,
         prev_line: str | None = None,
+        current_line: str | None = None,
         next_line: str | None = None,
-        prev_translation: str | None = None,
     ):
         """Single-pass French translation using template prompt + schema."""
         print("Translating subtitles to French (single pass)...")
@@ -1231,8 +1205,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             user_template,
             subtitles,
             prev_line,
+            current_line,
             next_line,
-            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1269,23 +1243,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        last_translation = None
         line_counter = 0
         for batch in batches:
-            for _subtitle in batch:
-                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_fr_single_pass(
-                    [_subtitle],
-                    line_counter,
-                    prev_line,
-                    next_line,
-                    prev_translation,
-                )
+            results = self._run_line_tasks(batch, line_counter, self.translate_and_merge_subtitles_fr_single_pass)
+            for _, result in sorted(results, key=lambda item: item[0]):
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
-                if result["plain"]:
-                    last_translation = result["plain"][-1].get("fr") or last_translation
-                line_counter += 1
+            line_counter += len(batch)
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
         json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1297,8 +1261,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         subtitles,
         idx,
         prev_line: str | None = None,
+        current_line: str | None = None,
         next_line: str | None = None,
-        prev_translation: str | None = None,
     ):
         """Single-pass Russian translation using template prompt + schema."""
         print("Translating subtitles to Russian (single pass)...")
@@ -1312,8 +1276,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             user_template,
             subtitles,
             prev_line,
+            current_line,
             next_line,
-            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1346,8 +1310,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         subtitles,
         idx,
         prev_line: str | None = None,
+        current_line: str | None = None,
         next_line: str | None = None,
-        prev_translation: str | None = None,
     ):
         """Single-pass Cantonese translation using template prompt + schema."""
         print("Translating subtitles to Cantonese (single pass)...")
@@ -1361,8 +1325,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             user_template,
             subtitles,
             prev_line,
+            current_line,
             next_line,
-            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1399,23 +1363,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        last_translation = None
         line_counter = 0
         for batch in batches:
-            for _subtitle in batch:
-                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_yue_single_pass(
-                    [_subtitle],
-                    line_counter,
-                    prev_line,
-                    next_line,
-                    prev_translation,
-                )
+            results = self._run_line_tasks(batch, line_counter, self.translate_and_merge_subtitles_yue_single_pass)
+            for _, result in sorted(results, key=lambda item: item[0]):
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
-                if result["plain"]:
-                    last_translation = result["plain"][-1].get("yue") or last_translation
-                line_counter += 1
+            line_counter += len(batch)
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
         json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1431,23 +1385,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        last_translation = None
         line_counter = 0
         for batch in batches:
-            for _subtitle in batch:
-                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_ru_single_pass(
-                    [_subtitle],
-                    line_counter,
-                    prev_line,
-                    next_line,
-                    prev_translation,
-                )
+            results = self._run_line_tasks(batch, line_counter, self.translate_and_merge_subtitles_ru_single_pass)
+            for _, result in sorted(results, key=lambda item: item[0]):
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
-                if result["plain"]:
-                    last_translation = result["plain"][-1].get("ru") or last_translation
-                line_counter += 1
+            line_counter += len(batch)
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
         json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -1459,8 +1403,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         subtitles,
         idx,
         prev_line: str | None = None,
+        current_line: str | None = None,
         next_line: str | None = None,
-        prev_translation: str | None = None,
     ):
         """Single-pass Traditional Chinese translation using template prompt + schema."""
         print("Translating subtitles to Traditional Chinese (single pass)...")
@@ -1474,8 +1418,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             user_template,
             subtitles,
             prev_line,
+            current_line,
             next_line,
-            prev_translation,
         )
 
         response = self.send_request_with_json_schema(
@@ -1512,23 +1456,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        last_translation = None
         line_counter = 0
         for batch in batches:
-            for _subtitle in batch:
-                prev_line, next_line, prev_translation = self._build_context_strings(line_counter, last_translation)
-                result = self.translate_and_merge_subtitles_zh_hant_single_pass(
-                    [_subtitle],
-                    line_counter,
-                    prev_line,
-                    next_line,
-                    prev_translation,
-                )
+            results = self._run_line_tasks(batch, line_counter, self.translate_and_merge_subtitles_zh_hant_single_pass)
+            for _, result in sorted(results, key=lambda item: item[0]):
                 plain_items.extend(result["plain"])
                 json_items.extend(result["json"])
-                if result["plain"]:
-                    last_translation = result["plain"][-1].get("zh") or last_translation
-                line_counter += 1
+            line_counter += len(batch)
 
         plain_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
         json_items.sort(key=lambda x: datetime.strptime(x['start'], '%H:%M:%S,%f'))
@@ -2620,7 +2554,12 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                     else:
                         style = "Default"
 
-                    wrapped_text_lines = self.wrap_text(text, wrapping_limit_half_width, is_cjk=is_cjk)
+                    wrapped_text_lines = self.wrap_text(
+                        text,
+                        wrapping_limit_half_width,
+                        is_cjk=is_cjk,
+                        lang=lang,
+                    )
                     dialogue_line = '\\N'.join(wrapped_text_lines)
 
                     if lang == 'ja':
@@ -2649,11 +2588,88 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
             file.write(ass_content)
         print(f"Subtitles have been processed and saved successfully to {self.output_sub_path}.")
 
-    def wrap_text(self, text, wrapping_limit_half_width, is_cjk=False):
+    def wrap_text(self, text, wrapping_limit_half_width, is_cjk=False, lang=None):
         if not is_cjk:
-            # For non-CJK text, directly use the wrapping function.
             return [text]
 
+        if lang == "ja" or (lang is None and self._looks_like_japanese(text)):
+            return self.wrap_text_japanese(text, wrapping_limit_half_width)
+
+        if lang == "zh":
+            wrapped = self.wrap_text_chinese(text, wrapping_limit_half_width)
+            if wrapped:
+                return wrapped
+
+        return self.wrap_text_cjk(text, wrapping_limit_half_width)
+
+    @staticmethod
+    def _looks_like_japanese(text: str) -> bool:
+        if not text:
+            return False
+        if "<" in text and "[" in text and "]" in text:
+            return True
+        return bool(re.search(r"[\u3040-\u30FF]", text))
+
+    def _tokenize_japanese_text(self, text: str):
+        if not text:
+            return []
+        pattern = re.compile(
+            r"(<[^>]+>\[[^\]]+\]|<[^>]+>|\[[^\]]+\]|"
+            r"[\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFFー・]+|\w+|\s+|.)"
+        )
+        return [tok for tok in pattern.findall(text) if tok]
+
+    def _tokenize_chinese_text(self, text: str):
+        try:
+            import jieba  # type: ignore
+        except Exception:
+            return None
+        tokens = [tok for tok in jieba.cut(text, cut_all=False) if tok]
+        return tokens
+
+    def _line_fits(self, text: str, wrapping_limit_half_width: int) -> bool:
+        wrapped = self.cjkwrap_punctuation(self.strip_brackets(text), wrapping_limit_half_width)
+        return len(wrapped) <= 1
+
+    def _wrap_tokens_for_width(self, tokens, wrapping_limit_half_width):
+        if not tokens:
+            return [""]
+        lines = []
+        current = ""
+        for token in tokens:
+            if not token:
+                continue
+            if current:
+                candidate = current + token
+                if self._line_fits(candidate, wrapping_limit_half_width):
+                    current = candidate
+                    continue
+                lines.append(current)
+                current = ""
+            if token.isspace():
+                continue
+            if not current and lines and self._is_punctuation_token(token):
+                last = lines[-1] + token
+                if self._line_fits(last, wrapping_limit_half_width):
+                    lines[-1] = last
+                    continue
+            current = token
+        if current:
+            lines.append(current)
+        return lines
+
+    def wrap_text_japanese(self, text, wrapping_limit_half_width):
+        tokens = self._tokenize_japanese_text(text)
+        wrapped = self._wrap_tokens_for_width(tokens, wrapping_limit_half_width)
+        return wrapped if wrapped else [text]
+
+    def wrap_text_chinese(self, text, wrapping_limit_half_width):
+        tokens = self._tokenize_chinese_text(text)
+        if not tokens:
+            return None
+        return self._wrap_tokens_for_width(tokens, wrapping_limit_half_width)
+
+    def wrap_text_cjk(self, text, wrapping_limit_half_width):
         # Step 1: Wrap the text into lines.
         wrapped_lines = self.cjkwrap_punctuation(text, wrapping_limit_half_width)
 
@@ -2664,13 +2680,9 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         def correct_breakpoints(match):
             structured_text = match.group(0)
 
-            # If '###' is inside the structured text, it indicates an incorrect break.
             if '###' in structured_text:
-                # Remove '###' and keep the structure intact.
                 return "###" + structured_text.replace('###', '') + "###"
-            else:
-                # If no '###' inside, return the structured text as is.
-                return structured_text
+            return structured_text
 
         pattern = r'(<[^>]*>)(###)?\[[^\]]*\]|<[^>]*>|(\[[^\]]*\])'
         corrected_text = re.sub(pattern, correct_breakpoints, joined_text)
