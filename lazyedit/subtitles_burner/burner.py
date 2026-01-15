@@ -119,63 +119,6 @@ def _load_burner_module():
                 max_w = max(1, int(slot.width))
                 stroke = int(getattr(style, "stroke_width", 0) or 0)
 
-                def _is_japanese_chunk(text: str) -> bool:
-                    if not text:
-                        return False
-                    return bool(re.fullmatch(r"[\u3040-\u30FF\u3400-\u4DBF\u4E00-\u9FFFー・]+", text))
-
-                def _merge_japanese_tokens(tokens):
-                    merged = []
-                    buffer = None
-
-                    def _flush():
-                        nonlocal buffer
-                        if buffer is not None:
-                            merged.append(buffer)
-                            buffer = None
-
-                    for tok in tokens or []:
-                        if getattr(tok, "token_type", None) == "speaker":
-                            _flush()
-                            merged.append(tok)
-                            continue
-                        text = getattr(tok, "text", "") or ""
-                        ruby = getattr(tok, "ruby", None)
-                        color = getattr(tok, "color", None)
-                        token_type = getattr(tok, "token_type", None)
-
-                        if ruby or not text or text.isspace():
-                            _flush()
-                            merged.append(tok)
-                            continue
-
-                        if _is_japanese_chunk(text):
-                            if buffer is None:
-                                buffer = burner_mod.RubyToken(
-                                    text=text,
-                                    ruby=None,
-                                    color=color,
-                                    token_type=token_type,
-                                )
-                            else:
-                                if getattr(buffer, "color", None) == color and getattr(buffer, "token_type", None) == token_type:
-                                    buffer.text = (getattr(buffer, "text", "") or "") + text
-                                else:
-                                    _flush()
-                                    buffer = burner_mod.RubyToken(
-                                        text=text,
-                                        ruby=None,
-                                        color=color,
-                                        token_type=token_type,
-                                    )
-                            continue
-
-                        _flush()
-                        merged.append(tok)
-
-                    _flush()
-                    return merged
-
                 def _padding_for_tokens(tokens):
                     pad = _slot_padding_for_height(int(slot.height), stroke)
                     if tokens and getattr(tokens[0], "token_type", None) == "speaker":
@@ -190,8 +133,6 @@ def _load_burner_module():
                     ruby = getattr(token, "ruby", None)
                     color = getattr(token, "color", None)
                     token_type = getattr(token, "token_type", None)
-                    if ruby is None and _is_japanese_chunk(text):
-                        return [token]
                     split_text_tokens = _split_text_tokens_for_fit(text)
                     if not ruby:
                         return [
@@ -249,9 +190,6 @@ def _load_burner_module():
                         if getattr(tok, "token_type", None) == "speaker":
                             expanded.append(tok)
                             continue
-                        if getattr(tok, "ruby", None) is None and _is_japanese_chunk(getattr(tok, "text", "") or ""):
-                            expanded.append(tok)
-                            continue
                         try:
                             w, _ = renderer.measure_tokens([tok])
                         except Exception:
@@ -270,7 +208,7 @@ def _load_burner_module():
                 for segment in segments:
                     if not getattr(segment, "tokens", None):
                         continue
-                    tokens = _merge_japanese_tokens(segment.tokens)
+                    tokens = segment.tokens
                     pad = _padding_for_tokens(tokens)
                     width, _ = renderer.measure_tokens(tokens)
                     if (width + pad * 2) <= max_w:
