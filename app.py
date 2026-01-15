@@ -84,7 +84,7 @@ from lazyedit.handbrake import preprocess_video
 from lazyedit.video_utils import preprocess_if_needed
 from lazyedit import db as ldb
 from lazyedit.plugins.languages import list_languages
-from agi.video_requests import create_poll_and_download
+from agi.video_providers import VideoRequest, get_video_provider, is_sora_model, normalize_video_model
 
 
 GRAMMAR_PALETTE_DIR = os.path.join(
@@ -596,9 +596,7 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
         aspect_ratio = DEFAULT_VIDEO_PROMPT_SPEC["aspectRatio"]
 
     model_provided = "model" in payload and payload.get("model") is not None
-    model_value = str(payload.get("model") or DEFAULT_VIDEO_PROMPT_SPEC["model"])
-    if model_value not in {"sora-2", "sora-2-pro"}:
-        model_value = DEFAULT_VIDEO_PROMPT_SPEC["model"]
+    model_value = normalize_video_model(payload.get("model"), DEFAULT_VIDEO_PROMPT_SPEC["model"])
 
     duration_value = str(payload.get("durationSeconds") or DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
     duration_value = "".join(ch for ch in duration_value if ch.isdigit())
@@ -609,7 +607,10 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
             duration_int = int(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
     else:
         duration_int = int(DEFAULT_VIDEO_PROMPT_SPEC["durationSeconds"])
-    max_seconds = 25 if (model_provided and model_value == "sora-2-pro") or not model_provided else 12
+    if is_sora_model(model_value):
+        max_seconds = 25 if (model_provided and model_value == "sora-2-pro") or not model_provided else 12
+    else:
+        max_seconds = 12
     duration_int = min(max(duration_int, 4), max_seconds)
     duration_value = str(duration_int)
 
@@ -4780,32 +4781,34 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(400)
             return self.write({"error": "prompt required"})
 
-        model = str(data.get("model") or "sora-2").strip()
-        if model not in {"sora-2", "sora-2-pro"}:
-            model = "sora-2"
+        model = normalize_video_model(data.get("model"), "sora-2")
+        provider = get_video_provider(model)
 
-        # OpenAI Sora size options are fixed; normalize legacy UI values.
-        supported_sizes = {"720x1280", "1280x720", "1024x1792", "1792x1024"}
+        size = str(data.get("size") or "1280x720").strip()
         legacy_size_map = {
-            # Legacy 1080p selections (unsupported by Sora).
             "1920x1080": "1792x1024",
             "1080x1920": "1024x1792",
-            # Legacy low-res 16:9.
             "1024x576": "1280x720",
         }
-        size = str(data.get("size") or "1280x720").strip()
         size = legacy_size_map.get(size, size)
-        if size not in supported_sizes:
-            size = "1280x720"
+        if is_sora_model(model):
+            supported_sizes = {"720x1280", "1280x720", "1024x1792", "1792x1024"}
+            if size not in supported_sizes:
+                size = "1280x720"
+        else:
+            if size not in {"720x1280", "1280x720"}:
+                size = "1280x720"
 
         try:
             seconds = int(data.get("seconds") or 8)
         except Exception:
             seconds = 8
 
-        # OpenAI Sora currently supports only fixed durations (regardless of model).
-        allowed_seconds = (4, 8, 12)
-        seconds = min(allowed_seconds, key=lambda v: abs(v - seconds))
+        if is_sora_model(model):
+            allowed_seconds = (4, 8, 12)
+            seconds = min(allowed_seconds, key=lambda v: abs(v - seconds))
+        else:
+            seconds = max(4, min(seconds, 12))
 
         input_image_path = data.get("input_image_path") or data.get("image_path")
         input_reference = None
@@ -4817,7 +4820,12 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
                     raise ValueError("input_image_path must live under the upload folder")
                 if not resolved.exists():
                     raise FileNotFoundError(f"input image not found: {resolved}")
-                input_reference = _prepare_image_reference(str(resolved), size)
+                if provider.reference_mode == "file":
+                    input_reference = _prepare_image_reference(str(resolved), size)
+                elif provider.reference_mode == "url":
+                    input_reference = media_url_for_path(str(resolved))
+                    if not input_reference:
+                        raise ValueError("input image must be reachable via /media for Veo")
             except Exception as exc:
                 self.set_status(400)
                 return self.write({"error": "invalid input image", "details": str(exc)})
@@ -4838,15 +4846,15 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
         output_path = os.path.join(output_dir, f"{base_name}.mp4")
 
         try:
-            output_path = create_poll_and_download(
+            output_path = provider.generate(VideoRequest(
                 prompt=prompt.strip(),
                 model=model,
                 size=size,
                 seconds=seconds,
                 output=output_path,
-                input_reference=input_reference,
+                reference=input_reference,
                 use_cache=use_cache,
-            )
+            ))
         except Exception as exc:
             print("Video generation failed.")
             traceback.print_exc()

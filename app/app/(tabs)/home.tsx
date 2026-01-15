@@ -37,11 +37,15 @@ const formatBytes = (bytes?: number | null) => {
 };
 
 const DEFAULT_MODEL = 'sora-2';
-const normalizeModel = (model?: string) => (model === 'sora-2' || model === 'sora-2-pro' ? model : DEFAULT_MODEL);
-const clampSecondsForModel = (seconds: number | null | undefined, _model: string) => {
+const SUPPORTED_MODELS = ['sora-2', 'sora-2-pro', 'veo3.1-fast', 'veo3.1-pro', 'veo3-fast', 'veo3-pro'] as const;
+const normalizeModel = (model?: string) =>
+  SUPPORTED_MODELS.includes(model as (typeof SUPPORTED_MODELS)[number]) ? (model as string) : DEFAULT_MODEL;
+const isSoraModel = (model: string) => model.startsWith('sora-2');
+const clampSecondsForModel = (seconds: number | null | undefined, model: string) => {
   if (seconds === null || seconds === undefined || Number.isNaN(seconds)) return undefined;
-  const allowed = [4, 8, 12];
   const value = Math.trunc(seconds);
+  if (!isSoraModel(model)) return Math.min(Math.max(value, 4), 12);
+  const allowed = [4, 8, 12];
   return allowed.reduce((best, current) => (Math.abs(current - value) < Math.abs(best - value) ? current : best), allowed[0]);
 };
 const normalizeVideoSize = (size?: string) => {
@@ -288,6 +292,10 @@ export default function HomeScreen() {
     () => [
       { value: 'sora-2', label: t('model_sora2') },
       { value: 'sora-2-pro', label: t('model_sora2_pro') },
+      { value: 'veo3.1-fast', label: t('model_veo31_fast') },
+      { value: 'veo3.1-pro', label: t('model_veo31_pro') },
+      { value: 'veo3-fast', label: t('model_veo3_fast') },
+      { value: 'veo3-pro', label: t('model_veo3_pro') },
     ],
     [t],
   );
@@ -947,13 +955,8 @@ const HISTORY_KEYS = {
       if (payload && typeof payload === 'object') {
         const parsedSeconds = parseSeconds((payload as any).durationSeconds);
         const requestedModel = normalizeModel((payload as any).model);
-        let model = normalizeModel(promptSpec.model);
-        if (requestedModel === 'sora-2-pro') {
-          model = 'sora-2-pro';
-        } else if (requestedModel === 'sora-2' && model !== 'sora-2-pro') {
-          model = 'sora-2';
-        }
-        if (parsedSeconds && parsedSeconds > 12) {
+        let model = requestedModel || normalizeModel(promptSpec.model);
+        if (isSoraModel(model) && parsedSeconds && parsedSeconds > 12) {
           model = 'sora-2-pro';
         }
         const seconds =
@@ -1156,9 +1159,10 @@ const HISTORY_KEYS = {
     try {
       const spec = buildPromptSpecPayload();
       const selectedModel = normalizeModel(promptSpec.model);
+      const fallbackSeconds = isSoraModel(selectedModel) && selectedModel === 'sora-2-pro' ? 12 : 8;
       const seconds =
         clampSecondsForModel(parseSeconds(videoSeconds) ?? parseSeconds(promptSpec.durationSeconds), selectedModel) ??
-        (selectedModel === 'sora-2-pro' ? 12 : 8);
+        fallbackSeconds;
       const size =
         normalizeVideoSize(videoSize || sizeForAspectRatio(promptSpec.aspectRatio)) ||
         sizeForAspectRatio(promptSpec.aspectRatio);
@@ -1285,9 +1289,10 @@ const HISTORY_KEYS = {
       const spec = buildPromptSpecPayload();
       const title = promptResult?.title || (promptSpec.autoTitle ? 'Generated video' : spec.title || 'Generated video');
       const selectedModel = normalizeModel(promptSpec.model);
+      const fallbackSeconds = isSoraModel(selectedModel) && selectedModel === 'sora-2-pro' ? 12 : 8;
       const seconds =
         clampSecondsForModel(parseSeconds(videoSeconds) ?? parseSeconds(promptSpec.durationSeconds), selectedModel) ??
-        (selectedModel === 'sora-2-pro' ? 12 : 8);
+        fallbackSeconds;
       const size =
         normalizeVideoSize(videoSize || sizeForAspectRatio(promptSpec.aspectRatio)) || sizeForAspectRatio(promptSpec.aspectRatio);
       const body: Record<string, string | number> = {
