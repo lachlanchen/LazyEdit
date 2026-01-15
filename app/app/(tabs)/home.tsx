@@ -36,7 +36,7 @@ const formatBytes = (bytes?: number | null) => {
   return `${size.toFixed(decimals)} ${units[unitIndex]}`;
 };
 
-const DEFAULT_MODEL = 'sora-2';
+const DEFAULT_MODEL = 'veo3.1-pro';
 const SUPPORTED_MODELS = ['sora-2', 'sora-2-pro', 'veo3.1-fast', 'veo3.1-pro', 'veo3-fast', 'veo3-pro'] as const;
 const normalizeModel = (model?: string) =>
   SUPPORTED_MODELS.includes(model as (typeof SUPPORTED_MODELS)[number]) ? (model as string) : DEFAULT_MODEL;
@@ -84,7 +84,7 @@ const DEFAULT_PROMPT_SPEC = {
   mood: 'Epic, awe-inspiring, contemplative',
   style: 'Cinematic, richly detailed, timeless tone',
   model: DEFAULT_MODEL,
-  aspectRatio: '16:9',
+  aspectRatio: '9:16',
   durationSeconds: '12',
   audioLanguage: 'auto',
   sceneCount: '',
@@ -1478,6 +1478,25 @@ const HISTORY_KEYS = {
                   />
                 ) : null}
 
+                <Text style={styles.fieldLabel}>{t('field_aspect_ratio')}</Text>
+                <View style={[styles.inputRow, styles.inputRowTop]}>
+                  <View style={[styles.chipRow, styles.inputFlex]}>
+                    {aspectOptions.map((option) => {
+                      const isActive = promptSpec.aspectRatio === option.value;
+                      return (
+                        <Pressable
+                          key={option.value}
+                          style={[styles.chip, isActive && styles.chipActive]}
+                          onPress={() => updateSpec('aspectRatio', option.value)}
+                        >
+                          <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{option.label}</Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                  <ResetButton onPress={() => resetSpec('aspectRatio')} />
+                </View>
+
                 <Pressable style={styles.btnAccent} onPress={generateSpecs} disabled={specGenerating}>
                   <View style={styles.btnContent}>
                     {specGenerating && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
@@ -1690,25 +1709,6 @@ const HISTORY_KEYS = {
                 options={modelOptions}
                 onChange={(value) => updateSpec('model', normalizeModel(value))}
               />
-
-              <Text style={styles.fieldLabel}>{t('field_aspect_ratio')}</Text>
-              <View style={[styles.inputRow, styles.inputRowTop]}>
-                <View style={[styles.chipRow, styles.inputFlex]}>
-                  {aspectOptions.map((option) => {
-                    const isActive = promptSpec.aspectRatio === option.value;
-                    return (
-                      <Pressable
-                        key={option.value}
-                        style={[styles.chip, isActive && styles.chipActive]}
-                        onPress={() => updateSpec('aspectRatio', option.value)}
-                      >
-                        <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{option.label}</Text>
-                      </Pressable>
-                    );
-                  })}
-                </View>
-                <ResetButton onPress={() => resetSpec('aspectRatio')} />
-              </View>
 
               <Text style={styles.fieldLabel}>{t('field_length_seconds')}</Text>
               <View style={styles.inputRow}>
