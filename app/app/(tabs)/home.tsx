@@ -1288,7 +1288,7 @@ const HISTORY_KEYS = {
     try {
       const spec = buildPromptSpecPayload();
       const title = promptResult?.title || (promptSpec.autoTitle ? 'Generated video' : spec.title || 'Generated video');
-      const selectedModel = normalizeModel(promptSpec.model);
+      const selectedModel = normalizeModel(videoModel || promptSpec.model);
       const fallbackSeconds = isSoraModel(selectedModel) && selectedModel === 'sora-2-pro' ? 12 : 8;
       const seconds =
         clampSecondsForModel(parseSeconds(videoSeconds) ?? parseSeconds(promptSpec.durationSeconds), selectedModel) ??
