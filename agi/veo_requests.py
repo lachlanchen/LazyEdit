@@ -38,6 +38,21 @@ def _unwrap_response(payload: dict) -> dict:
     return payload
 
 
+def _raise_for_code(payload: dict, context: str) -> None:
+    if not isinstance(payload, dict):
+        return
+    if "code" not in payload:
+        return
+    try:
+        code_val = int(payload.get("code"))
+    except Exception:
+        return
+    if code_val == 0:
+        return
+    message = payload.get("msg") or payload.get("error") or "unknown error"
+    raise RuntimeError(f"{context} {code_val}: {message}")
+
+
 def _download_url(url: str, output: str) -> str:
     with httpx.Client(timeout=None) as client:
         resp = client.get(url)
@@ -67,7 +82,9 @@ def create_veo_job(
         resp = client.post(f"{base_url}/v1/video/veo", headers=headers, json=payload)
     if resp.status_code >= 400:
         raise RuntimeError(f"POST /v1/video/veo {resp.status_code}: {resp.text}")
-    return _unwrap_response(resp.json())
+    parsed = resp.json()
+    _raise_for_code(parsed, "POST /v1/video/veo")
+    return _unwrap_response(parsed)
 
 
 def fetch_veo_result(job_id: str) -> dict:
@@ -77,7 +94,9 @@ def fetch_veo_result(job_id: str) -> dict:
         resp = client.post(f"{base_url}/v1/draw/result", headers=headers, json={"id": job_id})
     if resp.status_code >= 400:
         raise RuntimeError(f"POST /v1/draw/result {resp.status_code}: {resp.text}")
-    return _unwrap_response(resp.json())
+    parsed = resp.json()
+    _raise_for_code(parsed, "POST /v1/draw/result")
+    return _unwrap_response(parsed)
 
 
 def create_veo_video_and_download(
@@ -146,12 +165,19 @@ def create_veo_video_and_download(
         print(f"DB record error (non-fatal): {exc}")
 
     start = time.time()
+    last_status = None
+    last_progress = None
     while True:
         if time.time() - start > timeout_seconds:
             raise RuntimeError("Veo generation timed out.")
         result = fetch_veo_result(str(job_id))
         status = str(result.get("status") or "").lower()
         progress = int(result.get("progress", 0) or 0)
+        if status != last_status or progress != last_progress:
+            label = status or "unknown"
+            print(f"Veo status: {label} {progress}%")
+            last_status = status
+            last_progress = progress
         try:
             ldb.update_generated_video(job_id=str(job_id), status=status, progress=progress)
         except Exception:
@@ -171,6 +197,10 @@ def create_veo_video_and_download(
 
         if status == "failed":
             failure_reason = result.get("failure_reason") or result.get("error") or "unknown"
+            try:
+                ldb.update_generated_video(job_id=str(job_id), status="failed", error=str(failure_reason))
+            except Exception:
+                pass
             raise RuntimeError(f"Veo generation failed: {failure_reason}")
 
         time.sleep(poll_interval)
