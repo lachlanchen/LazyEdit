@@ -291,6 +291,40 @@ def _load_burner_module():
     except Exception:
         pass
 
+    # LazyEdit patch: keep word-level Japanese tokens intact when applying
+    # kana/romaji expansion. The upstream behavior splits kana-only tokens into
+    # per-character pieces, which breaks word-level tokens like ドン・キホーテ.
+    try:
+        if getattr(burner_mod, "_lazyedit_kana_expand_patch", False) is not True and hasattr(burner_mod, "_expand_kana_affixes"):
+            original_expand_kana = burner_mod._expand_kana_affixes
+
+            def _expand_kana_affixes_lazyedit(tokens, add_romaji):  # type: ignore[no-redef]
+                expanded = []
+                for token in tokens:
+                    if not getattr(token, "text", None):
+                        continue
+                    token_type = getattr(token, "token_type", None)
+                    ruby = getattr(token, "ruby", None)
+                    # Preserve word-level tokens from JSON (they have a type)
+                    # and any explicit ruby tokens as atomic units.
+                    if add_romaji and token_type is not None and token_type != "speaker":
+                        if not ruby and burner_mod._is_kana_text(token.text):
+                            romaji = burner_mod._kana_to_romaji(token.text)
+                            if romaji and romaji != token.text:
+                                token.ruby = romaji
+                        expanded.append(token)
+                        continue
+                    if ruby and burner_mod._has_kanji(token.text):
+                        expanded.append(token)
+                        continue
+                    expanded.extend(original_expand_kana([token], add_romaji))
+                return expanded
+
+            burner_mod._expand_kana_affixes = _expand_kana_affixes_lazyedit
+            burner_mod._lazyedit_kana_expand_patch = True
+    except Exception:
+        pass
+
     # LazyEdit patch: upstream RubyRenderer inflates ruby row height using full
     # font metrics (ascent+descent) even for small romanization like "ge ru",
     # creating an overly large invisible gap between ruby and main text. It also
