@@ -298,19 +298,21 @@ export default function EditorScreen() {
           setProcessUpdatedAt(null);
           setProcessReadyForCover(false);
           setProcessReadyForPublish(false);
-          return;
+          return null;
         }
         setProcessSteps(json?.steps || null);
         setProcessUpdatedAt(json?.updated_at || null);
         setProcessReadyForCover(Boolean(json?.ready_for_cover));
         setProcessReadyForPublish(Boolean(json?.ready_for_publish));
         setProcessStatusError('');
+        return json;
       } catch (err: any) {
         setProcessStatusError(err?.message || String(err));
         setProcessSteps(null);
         setProcessUpdatedAt(null);
         setProcessReadyForCover(false);
         setProcessReadyForPublish(false);
+        return null;
       } finally {
         if (!silent) setProcessStatusLoading(false);
       }
@@ -454,13 +456,42 @@ export default function EditorScreen() {
     }
   };
 
+  const waitForProcessReady = async (videoId: number) => {
+    const start = Date.now();
+    const timeoutMs = 12 * 60 * 1000;
+    const intervalMs = 5000;
+    while (Date.now() - start < timeoutMs) {
+      const json = await loadProcessStatus(videoId, true);
+      if (json?.ready_for_publish) return true;
+      setPublishStatus(t('publish_process_running'));
+      setPublishTone('neutral');
+      await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    }
+    return false;
+  };
+
   const publishNow = async () => {
     if (!selectedVideoId || publishing) return;
     setPublishing(true);
     setPublishStatus(t('publish_status_sending'));
     setPublishTone('neutral');
     try {
-      if (!coverUrl && processReadyForCover) {
+      if (!processReadyForPublish) {
+        setPublishStatus(t('publish_process_starting'));
+        setPublishTone('neutral');
+        if (!processBusy) {
+          await startProcess();
+        }
+        const ready = await waitForProcessReady(selectedVideoId);
+        if (!ready) {
+          setPublishStatus(`${t('publish_status_failed')}: ${t('publish_process_failed')}`);
+          setPublishTone('bad');
+          return;
+        }
+        setPublishStatus(t('publish_status_sending'));
+        setPublishTone('neutral');
+      }
+      if (!coverUrl) {
         setPublishStatus(t('publish_cover_extracting'));
         setPublishTone('neutral');
         const coverOk = await extractCover();
@@ -727,10 +758,10 @@ export default function EditorScreen() {
           <Pressable
             style={[
               styles.publishButton,
-              (!selectedVideo || publishing || !processReadyForPublish) && styles.btnDisabled,
+              (!selectedVideo || publishing) && styles.btnDisabled,
             ]}
             onPress={publishNow}
-            disabled={!selectedVideo || publishing || !processReadyForPublish}
+            disabled={!selectedVideo || publishing}
           >
             <View style={styles.btnContent}>
               {publishing && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
