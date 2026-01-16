@@ -110,6 +110,33 @@ export default function EditorScreen() {
     [t],
   );
 
+  const processBusy = useMemo(() => {
+    if (!processSteps) return processRunning;
+    return processRunning || Object.values(processSteps).some((step) => {
+      const status = String(step?.status || '').toLowerCase();
+      return status === 'working' || status === 'processing' || status === 'queued';
+    });
+  }, [processRunning, processSteps]);
+
+  const activeProcessLabel = useMemo(() => {
+    if (!processSteps) return null;
+    const active = processStepDefinitions.find(({ key }) => {
+      const status = String(processSteps[key]?.status || '').toLowerCase();
+      return status === 'working' || status === 'processing' || status === 'queued';
+    });
+    return active?.label || null;
+  }, [processSteps, processStepDefinitions]);
+
+  const processButtonLabel = useMemo(() => {
+    if (processRunning) return t('publish_process_starting');
+    if (processBusy) {
+      return activeProcessLabel
+        ? t('publish_process_running_step', { value: activeProcessLabel })
+        : t('publish_process_running');
+    }
+    return t('publish_process_button');
+  }, [processRunning, processBusy, activeProcessLabel, t]);
+
   const processStatusLabel = useCallback(
     (status?: string) => {
       const key = String(status || '').toLowerCase();
@@ -582,13 +609,13 @@ export default function EditorScreen() {
           <Text style={styles.sectionTitle}>{t('publish_process_title')}</Text>
           <Text style={styles.sectionHint}>{t('publish_process_hint')}</Text>
           <Pressable
-            style={[styles.processButton, (!selectedVideo || processRunning) && styles.btnDisabled]}
+            style={[styles.processButton, (!selectedVideo || processBusy) && styles.btnDisabled]}
             onPress={startProcess}
-            disabled={!selectedVideo || processRunning}
+            disabled={!selectedVideo || processBusy}
           >
             <View style={styles.btnContent}>
-              {processRunning && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-              <Text style={styles.processButtonText}>{t('publish_process_button')}</Text>
+              {processBusy && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+              <Text style={styles.processButtonText}>{processButtonLabel}</Text>
             </View>
           </Pressable>
           {processStatus ? (
