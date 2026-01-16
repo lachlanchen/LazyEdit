@@ -12,6 +12,7 @@ from config import UPLOAD_FOLDER, PORT, AUTOPUBLISH_URL, AUTOPUBLISH_TIMEOUT
 
 
 import shlex
+import asyncio
 import threading
 import subprocess
 import socket
@@ -249,6 +250,17 @@ DEFAULT_LOGO_SETTINGS = {
 
 BURN_EXECUTOR = ThreadPoolExecutor(max_workers=1)
 PROXY_EXECUTOR = ThreadPoolExecutor(max_workers=1)
+_DEFAULT_BG_WORKERS = max(8, min(32, (os.cpu_count() or 4) * 2))
+_BG_WORKERS = int(os.getenv("LAZYEDIT_BACKGROUND_WORKERS", str(_DEFAULT_BG_WORKERS)))
+BACKGROUND_EXECUTOR = ThreadPoolExecutor(max_workers=_BG_WORKERS)
+
+
+async def run_blocking(func, *args, **kwargs):
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(
+        BACKGROUND_EXECUTOR,
+        lambda: func(*args, **kwargs),
+    )
 
 
 def _should_create_preview_proxy(file_path: str) -> bool:
@@ -3819,124 +3831,163 @@ class VideoDetailHandler(CorsMixin, tornado.web.RequestHandler):
 
 
 class VideoProxyHandler(CorsMixin, tornado.web.RequestHandler):
-    def post(self, video_id):
+    async def post(self, video_id):
         try:
             video_id_i = int(video_id)
         except Exception:
             self.set_status(400)
             return self.write({"error": "invalid id"})
 
-        ldb.ensure_schema()
-        with ldb.get_cursor() as cur:
-            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
-            row = cur.fetchone()
-        if not row:
-            self.set_status(404)
-            return self.write({"error": "video not found"})
+        def _run():
+            ldb.ensure_schema()
+            with ldb.get_cursor() as cur:
+                cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+                row = cur.fetchone()
+            if not row:
+                return 404, {"error": "video not found"}
 
-        input_path = row[0]
-        if not input_path or not os.path.exists(input_path):
-            self.set_status(404)
-            return self.write({"error": "video file missing"})
+            input_path = row[0]
+            if not input_path or not os.path.exists(input_path):
+                return 404, {"error": "video file missing"}
 
-        proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
-        os.makedirs(proxies_dir, exist_ok=True)
-        output_path = os.path.join(proxies_dir, f"video_{video_id_i}_proxy.mp4")
+            proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+            os.makedirs(proxies_dir, exist_ok=True)
+            output_path = os.path.join(proxies_dir, f"video_{video_id_i}_proxy.mp4")
 
-        try:
-            if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(input_path):
-                return self.write({
-                    "video_id": video_id_i,
-                    "file_path": output_path,
-                    "media_url": media_url_for_path(output_path),
-                })
-        except Exception:
-            # If mtime checks fail, just regenerate.
-            pass
+            try:
+                if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(input_path):
+                    return 200, {
+                        "video_id": video_id_i,
+                        "file_path": output_path,
+                        "media_url": media_url_for_path(output_path),
+                    }
+            except Exception:
+                # If mtime checks fail, just regenerate.
+                pass
 
-        try:
-            _create_preview_proxy(video_id_i, input_path)
-        except subprocess.CalledProcessError as exc:
-            err = exc.stderr.decode("utf-8", errors="replace") if exc.stderr else str(exc)
-            self.set_status(500)
-            return self.write({"error": "proxy transcode failed", "details": err})
-        except Exception as exc:
-            self.set_status(500)
-            return self.write({"error": "proxy transcode failed", "details": str(exc)})
+            try:
+                _create_preview_proxy(video_id_i, input_path)
+            except subprocess.CalledProcessError as exc:
+                err = exc.stderr.decode("utf-8", errors="replace") if exc.stderr else str(exc)
+                return 500, {"error": "proxy transcode failed", "details": err}
+            except Exception as exc:
+                return 500, {"error": "proxy transcode failed", "details": str(exc)}
 
-        self.write({
-            "video_id": video_id_i,
-            "file_path": output_path,
-            "media_url": media_url_for_path(output_path),
-        })
+            return 200, {
+                "video_id": video_id_i,
+                "file_path": output_path,
+                "media_url": media_url_for_path(output_path),
+            }
+
+        status, payload = await run_blocking(_run)
+        if status >= 400:
+            self.set_status(status)
+        self.write(payload)
 
 
 class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
-    def post(self, video_id):
+    async def post(self, video_id):
         try:
             video_id_i = int(video_id)
         except Exception:
             self.set_status(400)
             return self.write({"error": "invalid id"})
-        ldb.ensure_schema()
-        with ldb.get_cursor() as cur:
-            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
-            row = cur.fetchone()
-        if not row:
-            self.set_status(404)
-            return self.write({"error": "video not found"})
-        file_path = row[0]
-        if not file_path or not os.path.exists(file_path):
-            self.set_status(404)
-            return self.write({"error": "video file missing"})
 
-        input_file = preprocess_if_needed(file_path)
-        base_name, extension = os.path.splitext(os.path.basename(input_file))
-        output_folder = os.path.dirname(input_file)
-        output_json_mixed = f"{output_folder}/{base_name}_mixed.json"
-        output_srt_mixed = f"{output_folder}/{base_name}_mixed.srt"
-        output_md_mixed = f"{output_folder}/{base_name}_mixed.md"
+        def _run():
+            ldb.ensure_schema()
+            with ldb.get_cursor() as cur:
+                cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+                row = cur.fetchone()
+            if not row:
+                return 404, {"error": "video not found"}
+            file_path = row[0]
+            if not file_path or not os.path.exists(file_path):
+                return 404, {"error": "video file missing"}
 
-        if not has_audio_stream(input_file):
-            message = "No audio stream detected in video."
-            write_empty_transcription_files(output_json_mixed, output_srt_mixed, output_md_mixed, message)
-            transcription_id = ldb.add_transcription(
-                video_id_i,
-                "mixed",
-                "no_audio",
-                output_json_mixed,
-                output_srt_mixed,
-                output_md_mixed,
-                message,
-            )
-            primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
-            return self.write({
-                "id": transcription_id,
-                "video_id": video_id_i,
-                "status": "no_audio",
-                "error": message,
-                "output_json_path": output_json_mixed,
-                "output_srt_path": output_srt_mixed,
-                "output_md_path": output_md_mixed,
-                "json_url": media_url_for_path(output_json_mixed),
-                "srt_url": media_url_for_path(output_srt_mixed),
-                "md_url": media_url_for_path(output_md_mixed),
-                "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
-                "primary_language": primary_lang,
-                "language_summary": language_summary,
-            })
+            input_file = preprocess_if_needed(file_path)
+            base_name, extension = os.path.splitext(os.path.basename(input_file))
+            output_folder = os.path.dirname(input_file)
+            output_json_mixed = f"{output_folder}/{base_name}_mixed.json"
+            output_srt_mixed = f"{output_folder}/{base_name}_mixed.srt"
+            output_md_mixed = f"{output_folder}/{base_name}_mixed.md"
 
-        # Clear stale outputs to avoid returning old data if transcription fails.
-        for path in (output_json_mixed, output_srt_mixed, output_md_mixed):
-            if os.path.exists(path):
-                os.remove(path)
+            if not has_audio_stream(input_file):
+                message = "No audio stream detected in video."
+                write_empty_transcription_files(output_json_mixed, output_srt_mixed, output_md_mixed, message)
+                transcription_id = ldb.add_transcription(
+                    video_id_i,
+                    "mixed",
+                    "no_audio",
+                    output_json_mixed,
+                    output_srt_mixed,
+                    output_md_mixed,
+                    message,
+                )
+                primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
+                return 200, {
+                    "id": transcription_id,
+                    "video_id": video_id_i,
+                    "status": "no_audio",
+                    "error": message,
+                    "output_json_path": output_json_mixed,
+                    "output_srt_path": output_srt_mixed,
+                    "output_md_path": output_md_mixed,
+                    "json_url": media_url_for_path(output_json_mixed),
+                    "srt_url": media_url_for_path(output_srt_mixed),
+                    "md_url": media_url_for_path(output_md_mixed),
+                    "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
+                    "primary_language": primary_lang,
+                    "language_summary": language_summary,
+                }
 
-        try:
-            autocut_processor = AutocutProcessor(input_file, output_folder, base_name, extension)
-            autocut_processor.run_autocut("mixed", 1)
+            # Clear stale outputs to avoid returning old data if transcription fails.
+            for path in (output_json_mixed, output_srt_mixed, output_md_mixed):
+                if os.path.exists(path):
+                    os.remove(path)
 
-            if not os.path.exists(output_json_mixed) or not os.path.exists(output_srt_mixed):
-                message = "Transcription completed but output files were not found."
+            try:
+                autocut_processor = AutocutProcessor(input_file, output_folder, base_name, extension)
+                autocut_processor.run_autocut("mixed", 1)
+
+                if not os.path.exists(output_json_mixed) or not os.path.exists(output_srt_mixed):
+                    message = "Transcription completed but output files were not found."
+                    transcription_id = ldb.add_transcription(
+                        video_id_i,
+                        "mixed",
+                        "failed",
+                        None,
+                        None,
+                        None,
+                        message,
+                    )
+                    return 500, {"error": message, "id": transcription_id}
+
+                write_markdown_from_srt(output_srt_mixed, output_md_mixed)
+                transcription_id = ldb.add_transcription(
+                    video_id_i,
+                    "mixed",
+                    "completed",
+                    output_json_mixed,
+                    output_srt_mixed,
+                    output_md_mixed,
+                    None,
+                )
+                primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
+                return 200, {
+                    "id": transcription_id,
+                    "video_id": video_id_i,
+                    "status": "completed",
+                    "output_json_path": output_json_mixed,
+                    "output_srt_path": output_srt_mixed,
+                    "output_md_path": output_md_mixed,
+                    "json_url": media_url_for_path(output_json_mixed),
+                    "srt_url": media_url_for_path(output_srt_mixed),
+                    "md_url": media_url_for_path(output_md_mixed),
+                    "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
+                    "primary_language": primary_lang,
+                    "language_summary": language_summary,
+                }
+            except Exception as e:
                 transcription_id = ldb.add_transcription(
                     video_id_i,
                     "mixed",
@@ -3944,48 +3995,14 @@ class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
                     None,
                     None,
                     None,
-                    message,
+                    str(e),
                 )
-                self.set_status(500)
-                return self.write({"error": message, "id": transcription_id})
+                return 500, {"error": "transcription failed", "details": str(e), "id": transcription_id}
 
-            write_markdown_from_srt(output_srt_mixed, output_md_mixed)
-            transcription_id = ldb.add_transcription(
-                video_id_i,
-                "mixed",
-                "completed",
-                output_json_mixed,
-                output_srt_mixed,
-                output_md_mixed,
-                None,
-            )
-            primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
-            self.write({
-                "id": transcription_id,
-                "video_id": video_id_i,
-                "status": "completed",
-                "output_json_path": output_json_mixed,
-                "output_srt_path": output_srt_mixed,
-                "output_md_path": output_md_mixed,
-                "json_url": media_url_for_path(output_json_mixed),
-                "srt_url": media_url_for_path(output_srt_mixed),
-                "md_url": media_url_for_path(output_md_mixed),
-                "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
-                "primary_language": primary_lang,
-                "language_summary": language_summary,
-            })
-        except Exception as e:
-            transcription_id = ldb.add_transcription(
-                video_id_i,
-                "mixed",
-                "failed",
-                None,
-                None,
-                None,
-                str(e),
-            )
-            self.set_status(500)
-            return self.write({"error": "transcription failed", "details": str(e), "id": transcription_id})
+        status, payload = await run_blocking(_run)
+        if status >= 400:
+            self.set_status(status)
+        self.write(payload)
 
 
 class VideoTranscriptionHandler(CorsMixin, tornado.web.RequestHandler):
@@ -4130,7 +4147,7 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
             "language_summary": language_summary,
         })
 
-    def post(self, video_id):
+    async def post(self, video_id):
         try:
             video_id_i = int(video_id)
         except Exception:
@@ -4146,174 +4163,153 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
             notes_raw = _load_subtitle_polish_setting().get("notes", "")
         notes = _sanitize_subtitle_polish({"notes": notes_raw}).get("notes", "")
 
-        ldb.ensure_schema()
-        with ldb.get_cursor() as cur:
-            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
-            row = cur.fetchone()
-        if not row:
-            self.set_status(404)
-            return self.write({"error": "video not found"})
-        file_path = row[0]
-        if not file_path or not os.path.exists(file_path):
-            self.set_status(404)
-            return self.write({"error": "video file missing"})
+        def _run():
+            ldb.ensure_schema()
+            with ldb.get_cursor() as cur:
+                cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+                row = cur.fetchone()
+            if not row:
+                return 404, {"error": "video not found"}
+            file_path = row[0]
+            if not file_path or not os.path.exists(file_path):
+                return 404, {"error": "video file missing"}
 
-        input_file = preprocess_if_needed(file_path)
-        base_name, _ = os.path.splitext(os.path.basename(input_file))
-        output_folder = os.path.dirname(input_file)
-        input_json, _input_srt = find_latest_transcription_outputs(output_folder, base_name)
-        if not input_json or not os.path.exists(input_json):
-            self.set_status(400)
-            return self.write({"error": "transcription missing; run Transcribe first"})
+            input_file = preprocess_if_needed(file_path)
+            base_name, _ = os.path.splitext(os.path.basename(input_file))
+            output_folder = os.path.dirname(input_file)
+            input_json, _input_srt = find_latest_transcription_outputs(output_folder, base_name)
+            if not input_json or not os.path.exists(input_json):
+                return 400, {"error": "transcription missing; run Transcribe first"}
 
-        payload, items, container_key = _load_subtitle_payload(input_json)
-        if not items:
-            self.set_status(400)
-            return self.write({"error": "transcription missing; run Transcribe first"})
+            payload, items, container_key = _load_subtitle_payload(input_json)
+            if not items:
+                return 400, {"error": "transcription missing; run Transcribe first"}
 
-        caption_text = ""
-        caption_row = ldb.get_latest_frame_caption(video_id_i)
-        if caption_row:
-            _, caption_status, _, caption_srt_path, caption_md_path, _, _ = caption_row
-            if caption_status != "failed":
-                caption_text = _read_text_file(caption_md_path) or _read_text_file(caption_srt_path)
+            caption_text = ""
+            caption_row = ldb.get_latest_frame_caption(video_id_i)
+            if caption_row:
+                _, caption_status, _, caption_srt_path, caption_md_path, _, _ = caption_row
+                if caption_status != "failed":
+                    caption_text = _read_text_file(caption_md_path) or _read_text_file(caption_srt_path)
 
-        prompt_template, schema_payload = _load_subtitle_polish_templates()
-        prompt_text = prompt_template.get("user", "")
-        system_text = prompt_template.get("system", "You are an expert subtitle editor.")
-        subtitle_items = []
-        for item in items:
-            if not isinstance(item, dict):
-                continue
-            start = item.get("start")
-            end = item.get("end")
-            if not start or not end:
-                continue
-            subtitle_items.append({
-                "start": start,
-                "end": end,
-                "text": "" if item.get("text") is None else str(item.get("text")),
-            })
-        subtitles_json = json.dumps(subtitle_items, ensure_ascii=False, indent=2)
-        prompt_text = (
-            prompt_text.replace("{{CUSTOM_MESSAGE}}", notes)
-            .replace("{{CAPTIONS}}", caption_text)
-            .replace("{{SUBTITLES_JSON}}", subtitles_json)
-        )
-
-        output_json_path = os.path.join(output_folder, f"{base_name}_mixed_polished.json")
-        output_srt_path = os.path.join(output_folder, f"{base_name}_mixed_polished.srt")
-        output_md_path = os.path.join(output_folder, f"{base_name}_mixed_polished.md")
-        for path in (output_json_path, output_srt_path, output_md_path):
-            if path and os.path.exists(path):
-                os.remove(path)
-
-        status = "completed"
-        error_message = None
-        try:
-            client = OpenAIRequestJSONBase(use_cache=use_cache, cache_dir="cache/subtitle_polish")
-            response = client.send_request_with_json_schema(
-                prompt_text,
-                schema_payload,
-                system_content=system_text,
-                schema_name="subtitle_polish",
+            prompt_template, schema_payload = _load_subtitle_polish_templates()
+            prompt_text = prompt_template.get("user", "")
+            system_text = prompt_template.get("system", "You are an expert subtitle editor.")
+            subtitle_items = []
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                start = item.get("start")
+                end = item.get("end")
+                if not start or not end:
+                    continue
+                subtitle_items.append({
+                    "start": start,
+                    "end": end,
+                    "text": "" if item.get("text") is None else str(item.get("text")),
+                })
+            subtitles_json = json.dumps(subtitle_items, ensure_ascii=False, indent=2)
+            prompt_text = (
+                prompt_text.replace("{{CUSTOM_MESSAGE}}", notes)
+                .replace("{{CAPTIONS}}", caption_text)
+                .replace("{{SUBTITLES_JSON}}", subtitles_json)
             )
-            polished_items = response.get("items") if isinstance(response, dict) else None
-            if not isinstance(polished_items, list):
-                raise RuntimeError("subtitle polish response missing items")
 
-            if len(polished_items) == len(items):
-                for idx, item in enumerate(items):
-                    if not isinstance(item, dict):
-                        continue
-                    candidate = polished_items[idx]
-                    if isinstance(candidate, dict) and candidate.get("text") is not None:
-                        item["text"] = str(candidate.get("text"))
-            else:
-                mapped = {}
-                for candidate in polished_items:
-                    if not isinstance(candidate, dict):
-                        continue
-                    key = (candidate.get("start"), candidate.get("end"))
-                    if key[0] and key[1]:
-                        mapped[key] = candidate
-                for item in items:
-                    if not isinstance(item, dict):
-                        continue
-                    key = (item.get("start"), item.get("end"))
-                    if key in mapped and mapped[key].get("text") is not None:
-                        item["text"] = str(mapped[key].get("text"))
+            output_json_path = os.path.join(output_folder, f"{base_name}_mixed_polished.json")
+            output_srt_path = os.path.join(output_folder, f"{base_name}_mixed_polished.srt")
+            output_md_path = os.path.join(output_folder, f"{base_name}_mixed_polished.md")
+            for path in (output_json_path, output_srt_path, output_md_path):
+                if path and os.path.exists(path):
+                    os.remove(path)
 
-            _write_subtitle_payload(output_json_path, payload, items, container_key)
-            _write_srt_from_items(items, output_srt_path, text_key="text")
-            write_markdown_from_srt(output_srt_path, output_md_path)
-        except Exception as exc:
-            status = "failed"
-            error_message = str(exc)
-            print(f"Subtitle polish failed: {error_message}")
-            traceback.print_exc()
+            status = "completed"
+            error_message = None
+            try:
+                client = OpenAIRequestJSONBase(use_cache=use_cache, cache_dir="cache/subtitle_polish")
+                response = client.send_request_with_json_schema(
+                    prompt_text,
+                    schema_payload,
+                    system_content=system_text,
+                    schema_name="subtitle_polish",
+                )
+                polished_items = response.get("items") if isinstance(response, dict) else None
+                if not isinstance(polished_items, list):
+                    raise RuntimeError("subtitle polish response missing items")
 
-        transcription_id = ldb.add_transcription(
-            video_id_i,
-            "polished",
-            status,
-            output_json_path if status == "completed" else None,
-            output_srt_path if status == "completed" else None,
-            output_md_path if status == "completed" else None,
-            error_message,
-        )
-        if status != "completed":
-            self.set_status(500)
-            return self.write({"error": "subtitle polish failed", "details": error_message, "id": transcription_id})
+                if len(polished_items) == len(items):
+                    for idx, item in enumerate(items):
+                        if not isinstance(item, dict):
+                            continue
+                        candidate = polished_items[idx]
+                        if isinstance(candidate, dict) and candidate.get("text") is not None:
+                            item["text"] = str(candidate.get("text"))
+                else:
+                    mapped = {}
+                    for candidate in polished_items:
+                        if not isinstance(candidate, dict):
+                            continue
+                        key = (candidate.get("start"), candidate.get("end"))
+                        if key[0] and key[1]:
+                            mapped[key] = candidate
+                    for item in items:
+                        if not isinstance(item, dict):
+                            continue
+                        key = (item.get("start"), item.get("end"))
+                        if key in mapped and mapped[key].get("text") is not None:
+                            item["text"] = str(mapped[key].get("text"))
 
-        primary_lang, language_summary = _summarize_transcription_languages(output_json_path)
-        self.write({
-            "id": transcription_id,
-            "video_id": video_id_i,
-            "language_code": "polished",
-            "status": status,
-            "output_json_path": output_json_path,
-            "output_srt_path": output_srt_path,
-            "output_md_path": output_md_path,
-            "json_url": media_url_for_path(output_json_path),
-            "srt_url": media_url_for_path(output_srt_path),
-            "md_url": media_url_for_path(output_md_path),
-            "preview_text": build_transcription_preview(output_md_path, output_srt_path),
-            "primary_language": primary_lang,
-            "language_summary": language_summary,
-            "error": error_message,
-        })
+                _write_subtitle_payload(output_json_path, payload, items, container_key)
+                _write_srt_from_items(items, output_srt_path, text_key="text")
+                write_markdown_from_srt(output_srt_path, output_md_path)
+            except Exception as exc:
+                status = "failed"
+                error_message = str(exc)
+                print(f"Subtitle polish failed: {error_message}")
+                traceback.print_exc()
+
+            transcription_id = ldb.add_transcription(
+                video_id_i,
+                "polished",
+                status,
+                output_json_path if status == "completed" else None,
+                output_srt_path if status == "completed" else None,
+                output_md_path if status == "completed" else None,
+                error_message,
+            )
+            if status != "completed":
+                return 500, {"error": "subtitle polish failed", "details": error_message, "id": transcription_id}
+
+            primary_lang, language_summary = _summarize_transcription_languages(output_json_path)
+            return 200, {
+                "id": transcription_id,
+                "video_id": video_id_i,
+                "language_code": "polished",
+                "status": status,
+                "output_json_path": output_json_path,
+                "output_srt_path": output_srt_path,
+                "output_md_path": output_md_path,
+                "json_url": media_url_for_path(output_json_path),
+                "srt_url": media_url_for_path(output_srt_path),
+                "md_url": media_url_for_path(output_md_path),
+                "preview_text": build_transcription_preview(output_md_path, output_srt_path),
+                "primary_language": primary_lang,
+                "language_summary": language_summary,
+                "error": error_message,
+            }
+
+        status, payload = await run_blocking(_run)
+        if status >= 400:
+            self.set_status(status)
+        self.write(payload)
 
 
 class VideoCaptionHandler(CorsMixin, tornado.web.RequestHandler):
-    def post(self, video_id):
+    async def post(self, video_id):
         try:
             video_id_i = int(video_id)
         except Exception:
             self.set_status(400)
             return self.write({"error": "invalid id"})
-        ldb.ensure_schema()
-        with ldb.get_cursor() as cur:
-            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
-            row = cur.fetchone()
-        if not row:
-            self.set_status(404)
-            return self.write({"error": "video not found"})
-        file_path = row[0]
-        if not file_path or not os.path.exists(file_path):
-            self.set_status(404)
-            return self.write({"error": "video file missing"})
-
-        input_file = preprocess_if_needed(file_path)
-        base_name, extension = os.path.splitext(os.path.basename(input_file))
-        output_folder = os.path.dirname(input_file)
-        output_json_caption = f"{output_folder}/{base_name}_caption.json"
-        output_srt_caption = f"{output_folder}/{base_name}_caption.srt"
-        output_md_caption = f"{output_folder}/{base_name}_caption.md"
-
-        for path in (output_json_caption, output_srt_caption, output_md_caption):
-            if os.path.exists(path):
-                os.remove(path)
 
         num_frames_raw = self.get_argument("num_frames", default="7")
         try:
@@ -4321,100 +4317,125 @@ class VideoCaptionHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             num_frames = 7
 
-        try:
-            captioner = VideoCaptioner(input_file, output_folder, num_frames=num_frames)
-            if not captioner.is_configured():
-                message = "Captioner not configured. Set LAZYEDIT_CAPTION_PYTHON and script paths."
-                caption_id = ldb.add_frame_caption(
-                    video_id_i,
-                    "not_configured",
-                    None,
-                    None,
-                    None,
-                    message,
-                )
-                return self.write({
-                    "error": message,
-                    "id": caption_id,
-                    "status": "not_configured",
-                    "preview_text": message,
-                })
-            captioner.run_captioning()
+        def _run():
+            ldb.ensure_schema()
+            with ldb.get_cursor() as cur:
+                cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+                row = cur.fetchone()
+            if not row:
+                return 404, {"error": "video not found"}
+            file_path = row[0]
+            if not file_path or not os.path.exists(file_path):
+                return 404, {"error": "video file missing"}
 
-            if not os.path.exists(output_json_caption) or not os.path.exists(output_srt_caption):
-                latest_srt, latest_json = find_latest_caption_outputs(output_folder, base_name)
-                if latest_srt and not os.path.exists(output_srt_caption):
-                    shutil.copy2(latest_srt, output_srt_caption)
-                if latest_json and not os.path.exists(output_json_caption):
-                    shutil.copy2(latest_json, output_json_caption)
-                if not os.path.exists(output_json_caption) or not os.path.exists(output_srt_caption):
-                    message = "Captioning completed but output files were not found."
+            input_file = preprocess_if_needed(file_path)
+            base_name, _extension = os.path.splitext(os.path.basename(input_file))
+            output_folder = os.path.dirname(input_file)
+            output_json_caption = f"{output_folder}/{base_name}_caption.json"
+            output_srt_caption = f"{output_folder}/{base_name}_caption.srt"
+            output_md_caption = f"{output_folder}/{base_name}_caption.md"
+
+            for path in (output_json_caption, output_srt_caption, output_md_caption):
+                if os.path.exists(path):
+                    os.remove(path)
+
+            try:
+                captioner = VideoCaptioner(input_file, output_folder, num_frames=num_frames)
+                if not captioner.is_configured():
+                    message = "Captioner not configured. Set LAZYEDIT_CAPTION_PYTHON and script paths."
                     caption_id = ldb.add_frame_caption(
                         video_id_i,
-                        "failed",
+                        "not_configured",
                         None,
                         None,
                         None,
                         message,
                     )
-                    self.set_status(500)
-                    return self.write({"error": message, "id": caption_id})
+                    return 200, {
+                        "error": message,
+                        "id": caption_id,
+                        "status": "not_configured",
+                        "preview_text": message,
+                    }
+                captioner.run_captioning()
 
-            error_message = None
-            if captioner.last_error:
-                error_message = captioner.last_error
-                with open(output_md_caption, "w", encoding="utf-8") as md_file:
-                    md_file.write(f"Captioning failed: {error_message}\n")
-                status = "failed"
-            else:
-                write_markdown_from_srt(
+                if not os.path.exists(output_json_caption) or not os.path.exists(output_srt_caption):
+                    latest_srt, latest_json = find_latest_caption_outputs(output_folder, base_name)
+                    if latest_srt and not os.path.exists(output_srt_caption):
+                        shutil.copy2(latest_srt, output_srt_caption)
+                    if latest_json and not os.path.exists(output_json_caption):
+                        shutil.copy2(latest_json, output_json_caption)
+                    if not os.path.exists(output_json_caption) or not os.path.exists(output_srt_caption):
+                        message = "Captioning completed but output files were not found."
+                        caption_id = ldb.add_frame_caption(
+                            video_id_i,
+                            "failed",
+                            None,
+                            None,
+                            None,
+                            message,
+                        )
+                        return 500, {"error": message, "id": caption_id}
+
+                error_message = None
+                if captioner.last_error:
+                    error_message = captioner.last_error
+                    with open(output_md_caption, "w", encoding="utf-8") as md_file:
+                        md_file.write(f"Captioning failed: {error_message}\n")
+                    status = "failed"
+                else:
+                    write_markdown_from_srt(
+                        output_srt_caption,
+                        output_md_caption,
+                        empty_message="No captions generated for this video.",
+                    )
+                    status = "completed"
+                    if os.path.getsize(output_srt_caption) == 0:
+                        status = "empty"
+                caption_id = ldb.add_frame_caption(
+                    video_id_i,
+                    status,
+                    output_json_caption,
                     output_srt_caption,
                     output_md_caption,
-                    empty_message="No captions generated for this video.",
+                    error_message,
                 )
-                status = "completed"
-                if os.path.getsize(output_srt_caption) == 0:
-                    status = "empty"
-            caption_id = ldb.add_frame_caption(
-                video_id_i,
-                status,
-                output_json_caption,
-                output_srt_caption,
-                output_md_caption,
-                error_message,
-            )
-            frames_payload = build_caption_frame_payload(
-                output_folder,
-                base_name,
-                output_json_caption,
-                output_srt_caption,
-            )
-            self.write({
-                "id": caption_id,
-                "video_id": video_id_i,
-                "status": status,
-                "output_json_path": output_json_caption,
-                "output_srt_path": output_srt_caption,
-                "output_md_path": output_md_caption,
-                "json_url": media_url_for_path(output_json_caption),
-                "srt_url": media_url_for_path(output_srt_caption),
-                "md_url": media_url_for_path(output_md_caption),
-                "preview_text": build_transcription_preview(output_md_caption, output_srt_caption),
-                "error": error_message,
-                "method": captioner.last_method,
-                "frames": frames_payload,
-            })
-        except Exception as e:
-            caption_id = ldb.add_frame_caption(
-                video_id_i,
-                "failed",
-                None,
-                None,
-                None,
-                str(e),
-            )
-            self.set_status(500)
-            return self.write({"error": "captioning failed", "details": str(e), "id": caption_id})
+                frames_payload = build_caption_frame_payload(
+                    output_folder,
+                    base_name,
+                    output_json_caption,
+                    output_srt_caption,
+                )
+                return 200, {
+                    "id": caption_id,
+                    "video_id": video_id_i,
+                    "status": status,
+                    "output_json_path": output_json_caption,
+                    "output_srt_path": output_srt_caption,
+                    "output_md_path": output_md_caption,
+                    "json_url": media_url_for_path(output_json_caption),
+                    "srt_url": media_url_for_path(output_srt_caption),
+                    "md_url": media_url_for_path(output_md_caption),
+                    "preview_text": build_transcription_preview(output_md_caption, output_srt_caption),
+                    "error": error_message,
+                    "method": captioner.last_method,
+                    "frames": frames_payload,
+                }
+            except Exception as e:
+                caption_id = ldb.add_frame_caption(
+                    video_id_i,
+                    "failed",
+                    None,
+                    None,
+                    None,
+                    str(e),
+                )
+                return 500, {"error": "captioning failed", "details": str(e), "id": caption_id}
+
+        status, payload = await run_blocking(_run)
+        if status >= 400:
+            self.set_status(status)
+        self.write(payload)
 
     def get(self, video_id):
         try:
@@ -4512,7 +4533,7 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
             "created_at": created_at.isoformat() if created_at else None,
         })
 
-    def post(self, video_id):
+    async def post(self, video_id):
         try:
             video_id_i = int(video_id)
         except Exception:
@@ -4547,101 +4568,101 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
         if not isinstance(custom_notes, str):
             custom_notes = str(custom_notes)
 
-        ldb.ensure_schema()
-        with ldb.get_cursor() as cur:
-            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
-            row = cur.fetchone()
-        if not row:
-            self.set_status(404)
-            return self.write({"error": "video not found"})
-        file_path = row[0]
-        if not file_path or not os.path.exists(file_path):
-            self.set_status(404)
-            return self.write({"error": "video file missing"})
+        def _run():
+            ldb.ensure_schema()
+            with ldb.get_cursor() as cur:
+                cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+                row = cur.fetchone()
+            if not row:
+                return 404, {"error": "video not found"}
+            file_path = row[0]
+            if not file_path or not os.path.exists(file_path):
+                return 404, {"error": "video file missing"}
 
-        input_file = preprocess_if_needed(file_path)
-        base_name, _ = os.path.splitext(os.path.basename(input_file))
-        output_folder = os.path.dirname(input_file)
+            input_file = preprocess_if_needed(file_path)
+            base_name, _ = os.path.splitext(os.path.basename(input_file))
+            output_folder = os.path.dirname(input_file)
 
-        transcription_row = ldb.get_latest_transcription(video_id_i)
-        if not transcription_row:
-            self.set_status(400)
-            return self.write({"error": "transcription missing; run Transcribe first"})
-        (
-            _transcription_id,
-            _language_code,
-            transcription_status,
-            _output_json_path,
-            output_srt_path,
-            output_md_path,
-            _error,
-            _created_at,
-        ) = transcription_row
-        if transcription_status == "failed":
-            self.set_status(400)
-            return self.write({"error": "transcription failed; run Transcribe again"})
+            transcription_row = ldb.get_latest_transcription(video_id_i)
+            if not transcription_row:
+                return 400, {"error": "transcription missing; run Transcribe first"}
+            (
+                _transcription_id,
+                _language_code,
+                transcription_status,
+                _output_json_path,
+                output_srt_path,
+                output_md_path,
+                _error,
+                _created_at,
+            ) = transcription_row
+            if transcription_status == "failed":
+                return 400, {"error": "transcription failed; run Transcribe again"}
 
-        transcription_text = _read_text_file(output_md_path) or _read_text_file(output_srt_path)
-        if not transcription_text:
-            self.set_status(400)
-            return self.write({"error": "transcription missing; run Transcribe first"})
+            transcription_text = _read_text_file(output_md_path) or _read_text_file(output_srt_path)
+            if not transcription_text:
+                return 400, {"error": "transcription missing; run Transcribe first"}
 
-        caption_text = ""
-        caption_row = ldb.get_latest_frame_caption(video_id_i)
-        if caption_row:
-            _, caption_status, _, caption_srt_path, caption_md_path, _, _ = caption_row
-            if caption_status != "failed":
-                caption_text = _read_text_file(caption_md_path) or _read_text_file(caption_srt_path)
+            caption_text = ""
+            caption_row = ldb.get_latest_frame_caption(video_id_i)
+            if caption_row:
+                _, caption_status, _, caption_srt_path, caption_md_path, _, _ = caption_row
+                if caption_status != "failed":
+                    caption_text = _read_text_file(caption_md_path) or _read_text_file(caption_srt_path)
 
-        metadata_dir = os.path.join(output_folder, "metadata", lang)
-        os.makedirs(metadata_dir, exist_ok=True)
-        output_json_path = os.path.join(metadata_dir, f"{base_name}_metadata_{lang}.json")
-        if os.path.exists(output_json_path):
-            os.remove(output_json_path)
+            metadata_dir = os.path.join(output_folder, "metadata", lang)
+            os.makedirs(metadata_dir, exist_ok=True)
+            output_json_path = os.path.join(metadata_dir, f"{base_name}_metadata_{lang}.json")
+            if os.path.exists(output_json_path):
+                os.remove(output_json_path)
 
-        status = "completed"
-        error_message = None
-        metadata_payload = None
-        try:
-            template_dir = os.path.join(METADATA_TEMPLATE_DIR, METADATA_TEMPLATE_MAP.get(lang, ""))
-            generator = Subtitle2Metadata(OpenAI(), use_cache=use_cache, cache_dir="cache/metadata")
-            metadata_payload = generator.generate_metadata_from_template(
-                template_dir=template_dir,
-                transcription_text=transcription_text,
-                caption_text=caption_text,
-                custom_notes=custom_notes,
-                output_path=output_json_path,
+            status = "completed"
+            error_message = None
+            metadata_payload = None
+            try:
+                template_dir = os.path.join(METADATA_TEMPLATE_DIR, METADATA_TEMPLATE_MAP.get(lang, ""))
+                generator = Subtitle2Metadata(OpenAI(), use_cache=use_cache, cache_dir="cache/metadata")
+                metadata_payload = generator.generate_metadata_from_template(
+                    template_dir=template_dir,
+                    transcription_text=transcription_text,
+                    caption_text=caption_text,
+                    custom_notes=custom_notes,
+                    output_path=output_json_path,
+                )
+                with open(output_json_path, "w", encoding="utf-8") as handle:
+                    json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
+            except Exception as exc:
+                status = "failed"
+                error_message = str(exc)
+                print(f"Metadata generation failed for {lang}: {error_message}")
+                traceback.print_exc()
+
+            metadata_id = ldb.add_video_metadata(
+                video_id_i,
+                lang,
+                status,
+                output_json_path if status == "completed" else None,
+                error_message,
             )
-            with open(output_json_path, "w", encoding="utf-8") as handle:
-                json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
-        except Exception as exc:
-            status = "failed"
-            error_message = str(exc)
-            print(f"Metadata generation failed for {lang}: {error_message}")
-            traceback.print_exc()
 
-        metadata_id = ldb.add_video_metadata(
-            video_id_i,
-            lang,
-            status,
-            output_json_path if status == "completed" else None,
-            error_message,
-        )
+            if status != "completed":
+                return 500, {"error": "metadata generation failed", "details": error_message, "id": metadata_id}
 
-        if status != "completed":
-            self.set_status(500)
-            return self.write({"error": "metadata generation failed", "details": error_message, "id": metadata_id})
+            return 200, {
+                "id": metadata_id,
+                "video_id": video_id_i,
+                "language_code": lang,
+                "status": status,
+                "output_json_path": output_json_path,
+                "json_url": media_url_for_path(output_json_path),
+                "metadata": metadata_payload,
+                "error": error_message,
+            }
 
-        self.write({
-            "id": metadata_id,
-            "video_id": video_id_i,
-            "language_code": lang,
-            "status": status,
-            "output_json_path": output_json_path,
-            "json_url": media_url_for_path(output_json_path),
-            "metadata": metadata_payload,
-            "error": error_message,
-        })
+        status, payload = await run_blocking(_run)
+        if status != 200:
+            self.set_status(status)
+        self.write(payload)
 
 
 class VideoCoverHandler(CorsMixin, tornado.web.RequestHandler):
@@ -4679,7 +4700,7 @@ class VideoCoverHandler(CorsMixin, tornado.web.RequestHandler):
             "cover_url": media_url_for_path(cover_path),
         })
 
-    def post(self, video_id):
+    async def post(self, video_id):
         try:
             video_id_i = int(video_id)
         except Exception:
@@ -4692,46 +4713,47 @@ class VideoCoverHandler(CorsMixin, tornado.web.RequestHandler):
             data = {}
 
         lang = _normalize_metadata_language(data.get("lang") or data.get("language") or "zh") or "zh"
-        row = _get_video_row(video_id_i)
-        if not row:
-            self.set_status(404)
-            return self.write({"error": "video not found"})
-        _, file_path, _, _ = row
-        if not file_path or not os.path.exists(file_path):
-            self.set_status(404)
-            return self.write({"error": "video file missing"})
+        def _run():
+            row = _get_video_row(video_id_i)
+            if not row:
+                return 404, {"error": "video not found"}
+            _, file_path, _, _ = row
+            if not file_path or not os.path.exists(file_path):
+                return 404, {"error": "video file missing"}
 
-        metadata_payload, _ = _get_latest_metadata_payload(video_id_i, lang)
-        if not metadata_payload and lang != "en":
-            metadata_payload, _ = _get_latest_metadata_payload(video_id_i, "en")
-        if not metadata_payload:
-            self.set_status(400)
-            return self.write({"error": "metadata missing; generate metadata first"})
+            metadata_payload, _ = _get_latest_metadata_payload(video_id_i, lang)
+            if not metadata_payload and lang != "en":
+                metadata_payload, _ = _get_latest_metadata_payload(video_id_i, "en")
+            if not metadata_payload:
+                return 400, {"error": "metadata missing; generate metadata first"}
 
-        cover_timestamp_raw = metadata_payload.get("cover")
-        if not cover_timestamp_raw:
-            self.set_status(400)
-            return self.write({"error": "cover timestamp missing in metadata"})
+            cover_timestamp_raw = metadata_payload.get("cover")
+            if not cover_timestamp_raw:
+                return 400, {"error": "cover timestamp missing in metadata"}
 
-        base_name = os.path.splitext(os.path.basename(file_path))[0]
-        publish_dir = _get_publish_dir(file_path)
-        cover_filename = f"{base_name}_cover.jpg"
-        cover_path = os.path.join(publish_dir, cover_filename)
-        cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
-        video_for_cover = _pick_publish_video_path(video_id_i, file_path)
+            base_name = os.path.splitext(os.path.basename(file_path))[0]
+            publish_dir = _get_publish_dir(file_path)
+            cover_filename = f"{base_name}_cover.jpg"
+            cover_path = os.path.join(publish_dir, cover_filename)
+            cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
+            video_for_cover = _pick_publish_video_path(video_id_i, file_path)
 
-        try:
-            extract_cover(video_for_cover, cover_path, cover_timestamp)
-        except Exception as exc:
-            self.set_status(500)
-            return self.write({"error": "cover extraction failed", "details": str(exc)})
+            try:
+                extract_cover(video_for_cover, cover_path, cover_timestamp)
+            except Exception as exc:
+                return 500, {"error": "cover extraction failed", "details": str(exc)}
 
-        self.write({
-            "status": "completed",
-            "cover_path": cover_path,
-            "cover_url": media_url_for_path(cover_path),
-            "timestamp": cover_timestamp,
-        })
+            return 200, {
+                "status": "completed",
+                "cover_path": cover_path,
+                "cover_url": media_url_for_path(cover_path),
+                "timestamp": cover_timestamp,
+            }
+
+        status, payload = await run_blocking(_run)
+        if status != 200:
+            self.set_status(status)
+        self.write(payload)
 
 
 class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
@@ -5199,7 +5221,7 @@ class VideoGenerateHandler(CorsMixin, tornado.web.RequestHandler):
 
 
 class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
-    def post(self, video_id):
+    async def post(self, video_id):
         try:
             video_id_i = int(video_id)
         except Exception:
@@ -5239,193 +5261,195 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             default=True,
         )
 
-        ldb.ensure_schema()
-        with ldb.get_cursor() as cur:
-            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
-            row = cur.fetchone()
-        if not row:
-            self.set_status(404)
-            return self.write({"error": "video not found"})
-        file_path = row[0]
-        if not file_path or not os.path.exists(file_path):
-            self.set_status(404)
-            return self.write({"error": "video file missing"})
+        def _run():
+            ldb.ensure_schema()
+            with ldb.get_cursor() as cur:
+                cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+                row = cur.fetchone()
+            if not row:
+                return 404, {"error": "video not found"}
+            file_path = row[0]
+            if not file_path or not os.path.exists(file_path):
+                return 404, {"error": "video file missing"}
 
-        input_file = preprocess_if_needed(file_path)
-        base_name, _ = os.path.splitext(os.path.basename(input_file))
-        output_folder = os.path.dirname(input_file)
-        input_json, input_srt = find_latest_transcription_outputs(output_folder, base_name)
-        if not input_json or not input_srt or not os.path.exists(input_json) or not os.path.exists(input_srt):
-            self.set_status(400)
-            return self.write({"error": "transcription missing; run Transcribe first"})
+            input_file = preprocess_if_needed(file_path)
+            base_name, _ = os.path.splitext(os.path.basename(input_file))
+            output_folder = os.path.dirname(input_file)
+            input_json, input_srt = find_latest_transcription_outputs(output_folder, base_name)
+            if not input_json or not input_srt or not os.path.exists(input_json) or not os.path.exists(input_srt):
+                return 400, {"error": "transcription missing; run Transcribe first"}
 
-        translations_dir = os.path.join(output_folder, "translations", lang)
-        os.makedirs(translations_dir, exist_ok=True)
-        traditional_json_path = None
-        if lang == "ja":
-            output_json_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.srt")
-            output_ass_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.ass")
-        elif lang == "en":
-            output_json_path = os.path.join(translations_dir, f"{base_name}_en.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_en.srt")
-            output_ass_path = None
-        elif lang == "ar":
-            output_json_path = os.path.join(translations_dir, f"{base_name}_ar.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_ar.srt")
-            output_ass_path = None
-        elif lang == "vi":
-            output_json_path = os.path.join(translations_dir, f"{base_name}_vi.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_vi.srt")
-            output_ass_path = None
-        elif lang == "ko":
-            output_json_path = os.path.join(translations_dir, f"{base_name}_ko.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_ko.srt")
-            output_ass_path = None
-        elif lang == "es":
-            output_json_path = os.path.join(translations_dir, f"{base_name}_es.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_es.srt")
-            output_ass_path = None
-        elif lang == "fr":
-            output_json_path = os.path.join(translations_dir, f"{base_name}_fr.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_fr.srt")
-            output_ass_path = None
-        elif lang == "ru":
-            output_json_path = os.path.join(translations_dir, f"{base_name}_ru.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_ru.srt")
-            output_ass_path = None
-        elif lang == "yue":
-            output_json_path = os.path.join(translations_dir, f"{base_name}_yue.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_yue.srt")
-            output_ass_path = None
-        elif lang == "zh-Hant":
-            output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hant.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hant.srt")
-            output_ass_path = None
-        else:
-            output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hans.json")
-            output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hans.srt")
-            output_ass_path = None
-            traditional_dir = os.path.join(output_folder, "translations", "zh-Hant")
-            traditional_json_path = os.path.join(traditional_dir, f"{base_name}_zh_hant.json")
-
-        for path in (output_json_path, output_srt_path, output_ass_path):
-            if path and os.path.exists(path):
-                os.remove(path)
-
-        try:
-            video_length = get_video_length(input_file)
-            video_width, video_height = get_video_resolution(input_file)
-            translator = SubtitlesTranslator(
-                OpenAI(),
-                input_json_path=input_json,
-                input_sub_path=input_srt,
-                output_json_path=output_json_path,
-                output_sub_path=output_srt_path,
-                video_length=video_length,
-                video_width=video_width,
-                video_height=video_height,
-                use_cache=use_cache,
-            )
-            json_items = []
+            translations_dir = os.path.join(output_folder, "translations", lang)
+            os.makedirs(translations_dir, exist_ok=True)
+            traditional_json_path = None
             if lang == "ja":
-                ruby_items, plain_items, json_items = translator.process_japanese_furigana_single_pass()
-                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
-                translator.save_translated_subtitles_to_ass_path(ruby_items, output_ass_path)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.srt")
+                output_ass_path = os.path.join(translations_dir, f"{base_name}_ja_furigana.ass")
             elif lang == "en":
-                plain_items, json_items = translator.process_english_translation_single_pass()
-                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_en.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_en.srt")
+                output_ass_path = None
             elif lang == "ar":
-                plain_items, json_items = translator.process_arabic_translation_single_pass()
-                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_ar.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_ar.srt")
+                output_ass_path = None
             elif lang == "vi":
-                plain_items, json_items = translator.process_vietnamese_translation_single_pass()
-                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_vi.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_vi.srt")
+                output_ass_path = None
             elif lang == "ko":
-                plain_items, json_items = translator.process_korean_translation_single_pass()
-                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_ko.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_ko.srt")
+                output_ass_path = None
             elif lang == "es":
-                plain_items, json_items = translator.process_spanish_translation_single_pass()
-                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_es.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_es.srt")
+                output_ass_path = None
             elif lang == "fr":
-                plain_items, json_items = translator.process_french_translation_single_pass()
-                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_fr.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_fr.srt")
+                output_ass_path = None
             elif lang == "ru":
-                plain_items, json_items = translator.process_russian_translation_single_pass()
-                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_ru.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_ru.srt")
+                output_ass_path = None
             elif lang == "yue":
-                plain_items, json_items = translator.process_cantonese_translation_single_pass()
-                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_yue.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_yue.srt")
+                output_ass_path = None
             elif lang == "zh-Hant":
-                plain_items, json_items = translator.process_chinese_traditional_translation_single_pass()
-                translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hant.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hant.srt")
+                output_ass_path = None
             else:
-                traditional_items = None
-                if use_cache and traditional_json_path and os.path.exists(traditional_json_path):
-                    try:
-                        with open(traditional_json_path, "r", encoding="utf-8") as handle:
-                            data = json.load(handle)
-                        if isinstance(data, list):
-                            traditional_items = data
-                    except Exception:
-                        traditional_items = None
+                output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hans.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hans.srt")
+                output_ass_path = None
+                traditional_dir = os.path.join(output_folder, "translations", "zh-Hant")
+                traditional_json_path = os.path.join(traditional_dir, f"{base_name}_zh_hant.json")
 
-                if traditional_items is None:
+            for path in (output_json_path, output_srt_path, output_ass_path):
+                if path and os.path.exists(path):
+                    os.remove(path)
+
+            try:
+                video_length = get_video_length(input_file)
+                video_width, video_height = get_video_resolution(input_file)
+                translator = SubtitlesTranslator(
+                    OpenAI(),
+                    input_json_path=input_json,
+                    input_sub_path=input_srt,
+                    output_json_path=output_json_path,
+                    output_sub_path=output_srt_path,
+                    video_length=video_length,
+                    video_width=video_width,
+                    video_height=video_height,
+                    use_cache=use_cache,
+                )
+                json_items = []
+                if lang == "ja":
+                    ruby_items, plain_items, json_items = translator.process_japanese_furigana_single_pass()
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                    translator.save_translated_subtitles_to_ass_path(ruby_items, output_ass_path)
+                elif lang == "en":
+                    plain_items, json_items = translator.process_english_translation_single_pass()
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                elif lang == "ar":
+                    plain_items, json_items = translator.process_arabic_translation_single_pass()
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                elif lang == "vi":
+                    plain_items, json_items = translator.process_vietnamese_translation_single_pass()
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                elif lang == "ko":
+                    plain_items, json_items = translator.process_korean_translation_single_pass()
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                elif lang == "es":
+                    plain_items, json_items = translator.process_spanish_translation_single_pass()
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                elif lang == "fr":
+                    plain_items, json_items = translator.process_french_translation_single_pass()
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                elif lang == "ru":
+                    plain_items, json_items = translator.process_russian_translation_single_pass()
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                elif lang == "yue":
+                    plain_items, json_items = translator.process_cantonese_translation_single_pass()
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
+                elif lang == "zh-Hant":
                     plain_items, json_items = translator.process_chinese_traditional_translation_single_pass()
-                    traditional_items = json_items
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
                 else:
-                    plain_items = traditional_items
-                    json_items = traditional_items
+                    traditional_items = None
+                    if use_cache and traditional_json_path and os.path.exists(traditional_json_path):
+                        try:
+                            with open(traditional_json_path, "r", encoding="utf-8") as handle:
+                                data = json.load(handle)
+                            if isinstance(data, list):
+                                traditional_items = data
+                        except Exception:
+                            traditional_items = None
 
-                simplified_plain_items = convert_items_to_simplified(plain_items)
-                simplified_json_items = convert_items_to_simplified(json_items)
-                translator.save_translated_subtitles_to_json_path(simplified_json_items, output_json_path)
-                translator.save_translated_subtitles_to_srt_path(simplified_plain_items, output_srt_path)
-                json_items = simplified_json_items
+                    if traditional_items is None:
+                        plain_items, json_items = translator.process_chinese_traditional_translation_single_pass()
+                        traditional_items = json_items
+                    else:
+                        plain_items = traditional_items
+                        json_items = traditional_items
 
-            status = "completed" if json_items else "empty"
-            error_message = None
-        except Exception as e:
-            status = "failed"
-            error_message = str(e)
+                    simplified_plain_items = convert_items_to_simplified(plain_items)
+                    simplified_json_items = convert_items_to_simplified(json_items)
+                    translator.save_translated_subtitles_to_json_path(simplified_json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(simplified_plain_items, output_srt_path)
+                    json_items = simplified_json_items
 
-        translation_id = ldb.add_subtitle_translation(
-            video_id_i,
-            lang,
-            status,
-            output_json_path if status != "failed" else None,
-            output_srt_path if status != "failed" else None,
-            output_ass_path if status != "failed" else None,
-            error_message,
-        )
-        if status == "failed":
-            self.set_status(500)
-            return self.write({"error": "translation failed", "details": error_message, "id": translation_id})
+                status = "completed" if json_items else "empty"
+                error_message = None
+            except Exception as e:
+                status = "failed"
+                error_message = str(e)
 
-        self.write({
-            "id": translation_id,
-            "video_id": video_id_i,
-            "language_code": lang,
-            "status": status,
-            "output_json_path": output_json_path,
-            "output_srt_path": output_srt_path,
-            "output_ass_path": output_ass_path,
-            "json_url": media_url_for_path(output_json_path),
-            "srt_url": media_url_for_path(output_srt_path),
-            "ass_url": media_url_for_path(output_ass_path),
-            "preview_text": build_srt_preview_with_timestamps(output_srt_path),
-            "error": error_message,
-        })
+            translation_id = ldb.add_subtitle_translation(
+                video_id_i,
+                lang,
+                status,
+                output_json_path if status != "failed" else None,
+                output_srt_path if status != "failed" else None,
+                output_ass_path if status != "failed" else None,
+                error_message,
+            )
+            if status == "failed":
+                return 500, {"error": "translation failed", "details": error_message, "id": translation_id}
+
+            return 200, {
+                "id": translation_id,
+                "video_id": video_id_i,
+                "language_code": lang,
+                "status": status,
+                "output_json_path": output_json_path,
+                "output_srt_path": output_srt_path,
+                "output_ass_path": output_ass_path,
+                "json_url": media_url_for_path(output_json_path),
+                "srt_url": media_url_for_path(output_srt_path),
+                "ass_url": media_url_for_path(output_ass_path),
+                "preview_text": build_srt_preview_with_timestamps(output_srt_path),
+                "error": error_message,
+            }
+
+        status, payload = await run_blocking(_run)
+        if status != 200:
+            self.set_status(status)
+        self.write(payload)
 
 
 class VideoTranslationsHandler(CorsMixin, tornado.web.RequestHandler):
@@ -6274,76 +6298,78 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 class VideoKeyframesHandler(CorsMixin, tornado.web.RequestHandler):
-    def post(self, video_id):
+    async def post(self, video_id):
         try:
             video_id_i = int(video_id)
         except Exception:
             self.set_status(400)
             return self.write({"error": "invalid id"})
-        ldb.ensure_schema()
-        with ldb.get_cursor() as cur:
-            cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
-            row = cur.fetchone()
-        if not row:
-            self.set_status(404)
-            return self.write({"error": "video not found"})
-        file_path = row[0]
-        if not file_path or not os.path.exists(file_path):
-            self.set_status(404)
-            return self.write({"error": "video file missing"})
-
-        input_file = preprocess_if_needed(file_path)
-        base_name, _ = os.path.splitext(os.path.basename(input_file))
-        output_folder = os.path.dirname(input_file)
-        output_dir = os.path.join(output_folder, "keyframes")
-
         target_count_raw = self.get_argument("count", default="8")
         try:
             target_count = max(1, int(target_count_raw))
         except Exception:
             target_count = 8
 
-        try:
-            frames, method = extract_keyframes(input_file, output_dir, target_count=target_count)
-            if not frames:
-                message = "Keyframe extraction produced no frames."
+        def _run():
+            ldb.ensure_schema()
+            with ldb.get_cursor() as cur:
+                cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+                row = cur.fetchone()
+            if not row:
+                return 404, {"error": "video not found"}
+            file_path = row[0]
+            if not file_path or not os.path.exists(file_path):
+                return 404, {"error": "video file missing"}
+
+            input_file = preprocess_if_needed(file_path)
+            base_name, _ = os.path.splitext(os.path.basename(input_file))
+            output_folder = os.path.dirname(input_file)
+            output_dir = os.path.join(output_folder, "keyframes")
+
+            try:
+                frames, method = extract_keyframes(input_file, output_dir, target_count=target_count)
+                if not frames:
+                    message = "Keyframe extraction produced no frames."
+                    extract_id = ldb.add_keyframe_extraction(
+                        video_id_i,
+                        "failed",
+                        output_dir,
+                        0,
+                        message,
+                    )
+                    return 500, {"error": message, "id": extract_id}
+
+                frame_urls = [media_url_for_path(path) for path in frames if media_url_for_path(path)]
+                extract_id = ldb.add_keyframe_extraction(
+                    video_id_i,
+                    "completed",
+                    output_dir,
+                    len(frame_urls),
+                    None,
+                )
+                return 200, {
+                    "id": extract_id,
+                    "video_id": video_id_i,
+                    "status": "completed",
+                    "frame_count": len(frame_urls),
+                    "output_dir": output_dir,
+                    "frame_urls": frame_urls,
+                    "method": method,
+                }
+            except Exception as e:
                 extract_id = ldb.add_keyframe_extraction(
                     video_id_i,
                     "failed",
                     output_dir,
                     0,
-                    message,
+                    str(e),
                 )
-                self.set_status(500)
-                return self.write({"error": message, "id": extract_id})
+                return 500, {"error": "keyframe extraction failed", "details": str(e), "id": extract_id}
 
-            frame_urls = [media_url_for_path(path) for path in frames if media_url_for_path(path)]
-            extract_id = ldb.add_keyframe_extraction(
-                video_id_i,
-                "completed",
-                output_dir,
-                len(frame_urls),
-                None,
-            )
-            self.write({
-                "id": extract_id,
-                "video_id": video_id_i,
-                "status": "completed",
-                "frame_count": len(frame_urls),
-                "output_dir": output_dir,
-                "frame_urls": frame_urls,
-                "method": method,
-            })
-        except Exception as e:
-            extract_id = ldb.add_keyframe_extraction(
-                video_id_i,
-                "failed",
-                output_dir,
-                0,
-                str(e),
-            )
-            self.set_status(500)
-            return self.write({"error": "keyframe extraction failed", "details": str(e), "id": extract_id})
+        status, payload = await run_blocking(_run)
+        if status != 200:
+            self.set_status(status)
+        self.write(payload)
 
     def get(self, video_id):
         try:
