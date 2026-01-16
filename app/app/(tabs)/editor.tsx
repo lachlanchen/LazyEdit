@@ -422,8 +422,8 @@ export default function EditorScreen() {
     }
   };
 
-  const extractCover = async () => {
-    if (!selectedVideoId || coverLoading) return;
+  const extractCover = async (): Promise<boolean> => {
+    if (!selectedVideoId || coverLoading) return false;
     setCoverLoading(true);
     setCoverStatus(t('publish_cover_extracting'));
     setCoverTone('neutral');
@@ -437,16 +437,18 @@ export default function EditorScreen() {
       if (!resp.ok) {
         setCoverStatus(`${t('publish_cover_failed')}: ${json.error || resp.statusText}`);
         setCoverTone('bad');
-        return;
+        return false;
       }
       if (json.cover_url) {
         setCoverUrl(withCacheBust(`${API_URL}${json.cover_url}`));
       }
       setCoverStatus(t('publish_cover_ready'));
       setCoverTone('good');
+      return true;
     } catch (err: any) {
       setCoverStatus(`${t('publish_cover_failed')}: ${err?.message || String(err)}`);
       setCoverTone('bad');
+      return false;
     } finally {
       setCoverLoading(false);
     }
@@ -458,6 +460,18 @@ export default function EditorScreen() {
     setPublishStatus(t('publish_status_sending'));
     setPublishTone('neutral');
     try {
+      if (!coverUrl && processReadyForCover) {
+        setPublishStatus(t('publish_cover_extracting'));
+        setPublishTone('neutral');
+        const coverOk = await extractCover();
+        if (!coverOk) {
+          setPublishStatus(`${t('publish_status_failed')}: ${t('publish_cover_failed')}`);
+          setPublishTone('bad');
+          return;
+        }
+        setPublishStatus(t('publish_status_sending'));
+        setPublishTone('neutral');
+      }
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
