@@ -37,6 +37,13 @@ type PublishJob = {
   error?: string;
 };
 
+type ProcessStep = {
+  status?: string;
+  detail?: string;
+  updated_at?: string;
+  progress?: number;
+};
+
 const PLATFORMS = [
   { key: 'douyin', label: 'Douyin' },
   { key: 'xiaohongshu', label: 'Xiaohongshu' },
@@ -73,6 +80,12 @@ export default function EditorScreen() {
   const [processRunning, setProcessRunning] = useState(false);
   const [processStatus, setProcessStatus] = useState('');
   const [processTone, setProcessTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [processSteps, setProcessSteps] = useState<Record<string, ProcessStep> | null>(null);
+  const [processUpdatedAt, setProcessUpdatedAt] = useState<string | null>(null);
+  const [processReadyForCover, setProcessReadyForCover] = useState(false);
+  const [processReadyForPublish, setProcessReadyForPublish] = useState(false);
+  const [processStatusLoading, setProcessStatusLoading] = useState(false);
+  const [processStatusError, setProcessStatusError] = useState('');
   const [publishing, setPublishing] = useState(false);
   const [publishStatus, setPublishStatus] = useState('');
   const [publishTone, setPublishTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -83,6 +96,33 @@ export default function EditorScreen() {
   const [publishSettingsLoaded, setPublishSettingsLoaded] = useState(false);
   const { t } = useI18n();
 
+  const processStepDefinitions = useMemo(
+    () => [
+      { key: 'transcribe', label: t('publish_step_transcribe') },
+      { key: 'polish', label: t('publish_step_polish') },
+      { key: 'translate', label: t('publish_step_translate') },
+      { key: 'burn', label: t('publish_step_burn') },
+      { key: 'keyframes', label: t('publish_step_keyframes') },
+      { key: 'caption', label: t('publish_step_caption') },
+      { key: 'metadata_zh', label: t('publish_step_metadata_zh') },
+      { key: 'metadata_en', label: t('publish_step_metadata_en') },
+    ],
+    [t],
+  );
+
+  const processStatusLabel = useCallback(
+    (status?: string) => {
+      const key = String(status || '').toLowerCase();
+      if (key === 'done') return t('publish_step_status_done');
+      if (key === 'working') return t('publish_step_status_working');
+      if (key === 'error') return t('publish_step_status_error');
+      if (key === 'skipped') return t('publish_step_status_skipped');
+      if (key === 'idle') return t('publish_step_status_idle');
+      return status || t('publish_step_status_idle');
+    },
+    [t],
+  );
+
   const selectedList = useMemo(
     () => PLATFORMS.filter((platform) => selected[platform.key]).map((platform) => platform.label),
     [selected],
@@ -92,6 +132,12 @@ export default function EditorScreen() {
     () => videos.find((video) => video.id === selectedVideoId) || null,
     [videos, selectedVideoId],
   );
+  const previewVideoUrl = useMemo(() => {
+    if (!selectedVideo) return null;
+    const raw = selectedVideo.preview_media_url || selectedVideo.media_url;
+    if (!raw) return null;
+    return raw.startsWith('http') ? raw : `${API_URL}${raw}`;
+  }, [selectedVideo]);
   const visibleVideos = useMemo(() => videos.slice(0, visibleCount), [videos, visibleCount]);
   const hasMoreVideos = visibleCount < videos.length;
 
@@ -102,6 +148,23 @@ export default function EditorScreen() {
 
   const toneStyle = (tone: 'neutral' | 'good' | 'bad') =>
     tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
+
+  const processToneStyle = (status?: string) => {
+    const key = String(status || '').toLowerCase();
+    if (key === 'done') return styles.statusGood;
+    if (key === 'error') return styles.statusBad;
+    if (key === 'working') return styles.statusWarning;
+    return styles.statusNeutral;
+  };
+
+  const formatTimestamp = (value?: string | null) => {
+    if (!value) return '';
+    try {
+      return new Date(value).toLocaleString();
+    } catch (_err) {
+      return value;
+    }
+  };
 
   const queueStatusLabel = (status?: string) => {
     const key = String(status || '').toLowerCase();
@@ -196,6 +259,38 @@ export default function EditorScreen() {
     }
   };
 
+  const loadProcessStatus = useCallback(
+    async (videoId: number, silent?: boolean) => {
+      if (!silent) setProcessStatusLoading(true);
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${videoId}/process-status`);
+        const json = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+          setProcessStatusError(json?.error || resp.statusText);
+          setProcessSteps(null);
+          setProcessUpdatedAt(null);
+          setProcessReadyForCover(false);
+          setProcessReadyForPublish(false);
+          return;
+        }
+        setProcessSteps(json?.steps || null);
+        setProcessUpdatedAt(json?.updated_at || null);
+        setProcessReadyForCover(Boolean(json?.ready_for_cover));
+        setProcessReadyForPublish(Boolean(json?.ready_for_publish));
+        setProcessStatusError('');
+      } catch (err: any) {
+        setProcessStatusError(err?.message || String(err));
+        setProcessSteps(null);
+        setProcessUpdatedAt(null);
+        setProcessReadyForCover(false);
+        setProcessReadyForPublish(false);
+      } finally {
+        if (!silent) setProcessStatusLoading(false);
+      }
+    },
+    [],
+  );
+
   useEffect(() => {
     loadVideos();
   }, [loadVideos]);
@@ -251,11 +346,26 @@ export default function EditorScreen() {
     setProcessStatus('');
     setProcessTone('neutral');
     setProcessRunning(false);
+    setProcessSteps(null);
+    setProcessUpdatedAt(null);
+    setProcessReadyForCover(false);
+    setProcessReadyForPublish(false);
+    setProcessStatusError('');
     setPublishStatus('');
     setPublishTone('neutral');
     setPublishZipUrl(null);
     loadCoverPreview(selectedVideoId);
-  }, [selectedVideoId]);
+    loadProcessStatus(selectedVideoId, true);
+  }, [selectedVideoId, loadProcessStatus]);
+
+  useEffect(() => {
+    if (!selectedVideoId) return;
+    loadProcessStatus(selectedVideoId, true);
+    const interval = setInterval(() => {
+      loadProcessStatus(selectedVideoId, true);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [selectedVideoId, loadProcessStatus]);
 
   const startProcess = async () => {
     if (!selectedVideoId || processRunning) return;
@@ -276,6 +386,7 @@ export default function EditorScreen() {
       }
       setProcessStatus(t('publish_process_started'));
       setProcessTone('good');
+      loadProcessStatus(selectedVideoId, true);
     } catch (err: any) {
       setProcessStatus(`${t('publish_process_failed')}: ${err?.message || String(err)}`);
       setProcessTone('bad');
@@ -483,21 +594,84 @@ export default function EditorScreen() {
           {processStatus ? (
             <Text style={[styles.status, toneStyle(processTone)]}>{processStatus}</Text>
           ) : null}
+          <View style={styles.processPreviewBlock}>
+            <Text style={styles.processPreviewTitle}>{t('publish_process_preview_title')}</Text>
+            {previewVideoUrl ? (
+              <View style={styles.processPreviewVideoWrap}>
+                {Platform.OS === 'web' ? (
+                  React.createElement('video', {
+                    src: previewVideoUrl,
+                    style: { width: '100%', height: '100%', borderRadius: 12, objectFit: 'contain' },
+                    controls: true,
+                    muted: true,
+                    playsInline: true,
+                    preload: 'metadata',
+                  })
+                ) : (
+                  <Image source={{ uri: previewVideoUrl }} style={styles.processPreviewImage} />
+                )}
+              </View>
+            ) : (
+              <Text style={styles.empty}>{t('publish_process_preview_empty')}</Text>
+            )}
+          </View>
+          <View style={styles.processStatusBlock}>
+            <View style={styles.processStatusHeader}>
+              <Text style={styles.processStatusTitle}>{t('publish_process_status_title')}</Text>
+              {processUpdatedAt ? (
+                <Text style={styles.processStatusUpdated}>
+                  {t('publish_process_status_updated', { value: formatTimestamp(processUpdatedAt) })}
+                </Text>
+              ) : null}
+            </View>
+            {processStatusLoading ? <ActivityIndicator style={{ marginTop: 8 }} /> : null}
+            {processStatusError ? (
+              <Text style={[styles.status, styles.statusBad]}>{processStatusError}</Text>
+            ) : null}
+            {processSteps ? (
+              processStepDefinitions.map(({ key, label }) => {
+                const step = processSteps[key];
+                const status = step?.status || 'idle';
+                const detail = step?.detail;
+                return (
+                  <View key={key} style={styles.processRow}>
+                    <View style={styles.processRowHeader}>
+                      <Text style={styles.processStepLabel}>{label}</Text>
+                      <Text style={[styles.processStepStatus, processToneStyle(status)]}>
+                        {processStatusLabel(status)}
+                      </Text>
+                    </View>
+                    {detail ? <Text style={styles.processStepDetail}>{detail}</Text> : null}
+                  </View>
+                );
+              })
+            ) : (
+              !processStatusLoading && !processStatusError ? (
+                <Text style={styles.empty}>{t('publish_process_status_empty')}</Text>
+              ) : null
+            )}
+          </View>
         </View>
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{t('publish_cover_title')}</Text>
           <Text style={styles.sectionHint}>{t('publish_cover_hint')}</Text>
           <Pressable
-            style={[styles.coverButton, (!selectedVideo || coverLoading) && styles.btnDisabled]}
+            style={[
+              styles.coverButton,
+              (!selectedVideo || coverLoading || !processReadyForCover) && styles.btnDisabled,
+            ]}
             onPress={extractCover}
-            disabled={!selectedVideo || coverLoading}
+            disabled={!selectedVideo || coverLoading || !processReadyForCover}
           >
             <View style={styles.btnContent}>
               {coverLoading && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
               <Text style={styles.coverButtonText}>{t('publish_cover_button')}</Text>
             </View>
           </Pressable>
+          {selectedVideo && !processReadyForCover ? (
+            <Text style={styles.helperText}>{t('publish_cover_disabled_hint')}</Text>
+          ) : null}
           {coverUrl ? (
             <Image source={{ uri: coverUrl }} style={styles.coverPreview} resizeMode="contain" />
           ) : (
@@ -510,15 +684,21 @@ export default function EditorScreen() {
           <Text style={styles.sectionTitle}>{t('publish_manual_title')}</Text>
           <Text style={styles.sectionHint}>{t('publish_manual_hint')}</Text>
           <Pressable
-            style={[styles.publishButton, publishing && styles.btnDisabled]}
+            style={[
+              styles.publishButton,
+              (!selectedVideo || publishing || !processReadyForPublish) && styles.btnDisabled,
+            ]}
             onPress={publishNow}
-            disabled={publishing}
+            disabled={!selectedVideo || publishing || !processReadyForPublish}
           >
             <View style={styles.btnContent}>
               {publishing && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
               <Text style={styles.publishButtonText}>{t('publish_button')}</Text>
             </View>
           </Pressable>
+          {selectedVideo && !processReadyForPublish ? (
+            <Text style={styles.helperText}>{t('publish_publish_disabled_hint')}</Text>
+          ) : null}
           {publishStatus ? (
             <Text style={[styles.status, toneStyle(publishTone)]}>{publishStatus}</Text>
           ) : null}
@@ -686,7 +866,50 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   processButtonText: { color: 'white', fontWeight: '700' },
+  processPreviewBlock: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  processPreviewTitle: { fontSize: 13, fontWeight: '600', color: '#0f172a' },
+  processPreviewVideoWrap: {
+    marginTop: 8,
+    width: '100%',
+    height: 200,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#0f172a',
+  },
+  processPreviewImage: { width: '100%', height: '100%' },
+  processStatusBlock: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  processStatusHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  processStatusTitle: { fontSize: 13, fontWeight: '600', color: '#0f172a' },
+  processStatusUpdated: { fontSize: 11, color: '#64748b' },
+  processRow: { marginTop: 10 },
+  processRowHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  processStepLabel: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
+  processStepStatus: { fontSize: 11, fontWeight: '600' },
+  processStepDetail: { marginTop: 4, fontSize: 11, color: '#64748b' },
   empty: { marginTop: 12, color: '#64748b', fontSize: 12 },
+  helperText: { marginTop: 8, fontSize: 12, color: '#64748b' },
   publishButton: {
     marginTop: 12,
     backgroundColor: '#2563eb',
@@ -701,6 +924,7 @@ const styles = StyleSheet.create({
   statusNeutral: { color: '#0f172a' },
   statusGood: { color: '#15803d' },
   statusBad: { color: '#b91c1c' },
+  statusWarning: { color: '#b45309' },
   zipText: { marginTop: 8, fontSize: 12, color: '#475569' },
   queueBlock: {
     marginTop: 16,

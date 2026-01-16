@@ -6074,6 +6074,205 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": error_message or "pipeline failed", "steps": statuses})
         self.write({"video_id": video_id_i, "steps": statuses})
 
+
+class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+
+        ldb.ensure_schema()
+        row = _get_video_row(video_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+
+        def iso(dt_val):
+            return dt_val.isoformat() if dt_val else None
+
+        def step_payload(status: str, detail: str | None = None, updated_at: datetime | None = None, progress: int | None = None):
+            payload = {"status": status}
+            if detail:
+                payload["detail"] = detail
+            if updated_at:
+                payload["updated_at"] = iso(updated_at)
+            if progress is not None:
+                payload["progress"] = progress
+            return payload
+
+        def transcribe_row(language_code: str):
+            with ldb.get_cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT id, status, output_json_path, output_srt_path, output_md_path, error, created_at
+                    FROM transcriptions
+                    WHERE video_id = %s AND language_code = %s
+                    ORDER BY id DESC
+                    LIMIT 1
+                    """,
+                    (video_id_i, language_code),
+                )
+                return cur.fetchone()
+
+        def normalize_status(raw_status: str | None, done_values: set[str], working_values: set[str] | None = None):
+            value = str(raw_status or "").lower()
+            if value in done_values:
+                return "done"
+            if working_values and value in working_values:
+                return "working"
+            if value in {"failed", "error"}:
+                return "error"
+            if value in {"skipped", "not_configured"}:
+                return "skipped"
+            if value:
+                return "working"
+            return "idle"
+
+        steps: dict[str, dict] = {}
+        updated_at_candidates: list[datetime] = []
+
+        mixed_row = transcribe_row("mixed")
+        if mixed_row:
+            _id, status, _json_path, _srt_path, _md_path, error, created_at = mixed_row
+            updated_at_candidates.append(created_at)
+            normalized = normalize_status(status, {"completed", "no_audio", "empty"}, {"processing", "running"})
+            detail = error or status
+            steps["transcribe"] = step_payload(normalized, detail if normalized == "error" else None, created_at)
+        else:
+            steps["transcribe"] = step_payload("idle")
+
+        polished_row = transcribe_row("polished")
+        if polished_row:
+            _id, status, _json_path, _srt_path, _md_path, error, created_at = polished_row
+            updated_at_candidates.append(created_at)
+            normalized = normalize_status(status, {"completed", "no_audio", "empty"}, {"processing", "running"})
+            steps["polish"] = step_payload(normalized, error, created_at)
+        else:
+            steps["polish"] = step_payload("skipped", "Not requested")
+
+        translation_languages = _load_translation_languages_setting()
+        if not translation_languages:
+            steps["translate"] = step_payload("skipped", "No languages selected")
+        else:
+            missing = []
+            failed = []
+            working = []
+            done = []
+            newest = None
+            for lang in translation_languages:
+                row = ldb.get_latest_subtitle_translation(video_id_i, lang)
+                if not row and lang == "zh-Hant":
+                    row = ldb.get_latest_subtitle_translation(video_id_i, "zh")
+                if not row:
+                    missing.append(lang)
+                    continue
+                (
+                    _translation_id,
+                    _language_code,
+                    status,
+                    _output_json_path,
+                    _output_srt_path,
+                    _output_ass_path,
+                    error,
+                    created_at,
+                ) = row
+                if created_at:
+                    updated_at_candidates.append(created_at)
+                    if not newest or created_at > newest:
+                        newest = created_at
+                normalized = normalize_status(status, {"completed", "empty"}, {"processing", "running"})
+                if normalized == "done":
+                    done.append(lang)
+                elif normalized == "working":
+                    working.append(lang)
+                elif normalized == "error":
+                    failed.append(lang)
+                if normalized == "error" and error:
+                    failed.append(f"{lang}: {error}")
+            if failed:
+                steps["translate"] = step_payload("error", "Failed: " + ", ".join(failed), newest)
+            elif working:
+                steps["translate"] = step_payload("working", "Processing: " + ", ".join(working), newest)
+            elif missing:
+                steps["translate"] = step_payload("idle", "Missing: " + ", ".join(missing))
+            else:
+                steps["translate"] = step_payload("done", "Completed", newest)
+
+        burn_row = ldb.get_latest_subtitle_burn(video_id_i)
+        if burn_row:
+            _burn_id, status, _output_path, progress, _config, error, created_at = burn_row
+            updated_at_candidates.append(created_at)
+            normalized = normalize_status(status, {"completed"}, {"processing"})
+            detail = None
+            if normalized == "working" and progress is not None:
+                detail = f"{progress}%"
+            elif normalized == "error":
+                detail = error or status
+            steps["burn"] = step_payload(normalized, detail, created_at, progress)
+        else:
+            steps["burn"] = step_payload("idle")
+
+        keyframe_row = ldb.get_latest_keyframe_extraction(video_id_i)
+        if keyframe_row:
+            _extract_id, status, _output_dir, frame_count, error, created_at = keyframe_row
+            updated_at_candidates.append(created_at)
+            normalized = normalize_status(status, {"completed"})
+            detail = None
+            if normalized == "done" and frame_count is not None:
+                detail = f"{frame_count} frames"
+            elif normalized == "error":
+                detail = error or status
+            steps["keyframes"] = step_payload(normalized, detail, created_at)
+        else:
+            steps["keyframes"] = step_payload("idle")
+
+        caption_row = ldb.get_latest_frame_caption(video_id_i)
+        if caption_row:
+            _caption_id, status, _json_path, _srt_path, _md_path, error, created_at = caption_row
+            updated_at_candidates.append(created_at)
+            normalized = normalize_status(status, {"completed"})
+            if normalized == "skipped" and status == "not_configured":
+                steps["caption"] = step_payload("skipped", "Not configured", created_at)
+            else:
+                detail = error or status
+                steps["caption"] = step_payload(normalized, detail if normalized == "error" else None, created_at)
+        else:
+            steps["caption"] = step_payload("idle")
+
+        zh_row = ldb.get_latest_video_metadata(video_id_i, "zh")
+        if zh_row:
+            _metadata_id, _language_code, status, _output_json_path, error, created_at = zh_row
+            updated_at_candidates.append(created_at)
+            normalized = normalize_status(status, {"completed"})
+            steps["metadata_zh"] = step_payload(normalized, error if normalized == "error" else None, created_at)
+        else:
+            steps["metadata_zh"] = step_payload("idle")
+
+        en_row = ldb.get_latest_video_metadata(video_id_i, "en")
+        if en_row:
+            _metadata_id, _language_code, status, _output_json_path, error, created_at = en_row
+            updated_at_candidates.append(created_at)
+            normalized = normalize_status(status, {"completed"})
+            steps["metadata_en"] = step_payload(normalized, error if normalized == "error" else None, created_at)
+        else:
+            steps["metadata_en"] = step_payload("idle")
+
+        ready_for_cover = steps.get("metadata_zh", {}).get("status") == "done"
+        ready_for_publish = ready_for_cover and all(
+            step.get("status") in {"done", "skipped"} for step in steps.values()
+        )
+        last_updated = max(updated_at_candidates) if updated_at_candidates else None
+
+        self.write({
+            "video_id": video_id_i,
+            "steps": steps,
+            "ready_for_cover": ready_for_cover,
+            "ready_for_publish": ready_for_publish,
+            "updated_at": iso(last_updated),
+        })
+
 class VideoKeyframesHandler(CorsMixin, tornado.web.RequestHandler):
     def post(self, video_id):
         try:
@@ -6550,6 +6749,7 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/translations", VideoTranslationsHandler),
         (r"/api/videos/(\d+)/burn-subtitles", VideoSubtitleBurnHandler),
         (r"/api/videos/(\d+)/process", VideoProcessHandler),
+        (r"/api/videos/(\d+)/process-status", VideoProcessStatusHandler),
         (r"/api/videos/(\d+)/publish", VideoPublishHandler),
         (r"/api/autopublish/queue", AutopublishQueueHandler),
         (r"/api/videos/(\d+)/captions", CaptionsHandler),
