@@ -66,115 +66,91 @@
 
 # LazyEdit
 
-LazyEdit is an AI-powered automatic video editing tool that processes videos to add professional-quality subtitles, highlights, word cards, and metadata. It streamlines the video editing workflow using advanced AI techniques to automate labor-intensive tasks.
+LazyEdit is a web app for end-to-end video creation, processing, and publishing. It combines prompt-based generation (Stage A/B/C), a multi-step processing pipeline, and an optional AutoPublish flow for social platforms.
 
-## Features
+## What it does
 
-- **Auto-Transcription**: Automatically transcribes video audio using AI
-- **Auto-Caption**: Generates descriptive captions for video content
-- **Auto-Subtitle**: Creates and burns subtitles directly onto videos
-- **Auto-Highlight**: Identifies and visually highlights key words during playback
-- **Auto-Metadata**: Extracts and generates metadata from video content
-- **Word Cards**: Adds educational word cards for language learning
-- **Teaser Generation**: Creates intelligent teasers by repeating key segments at the start
-- **Multi-language Support**: Handles various languages including English and Chinese
-- **Cover Image Generation**: Extracts optimal cover images with word overlays
+- **Generate**: Stage A/B/C prompt flow with Sora 2 and Veo 3.1 (via GRSAI).
+- **Process**: transcribe → polish → translate → burn subtitles → keyframes → captions → metadata.
+- **Publish**: package outputs and send to AutoPublish (optional).
+- **Visual polish**: subtitle layouts, multilingual furigana/IPA/romaji, logo overlays, cover extraction.
 
-## Installation
+## Submodules
 
-### Prerequisites
+- **AutoPublish** (`AutoPublish/`) - optional publishing pipeline
+- **MultilingualWhisper** (`whisper_with_lang_detect/`) - transcription + VAD pipeline
+- **VideoCaptionerWithVit** (`vit-gpt2-image-captioning/`) - ViT + GPT-2 captioning
+- **VideoCaptionerWithClip** (`clip-gpt-captioning/`) - CLIP + GPT captioning (fallback)
 
-- Python 3.10 or higher
-- FFmpeg
-- CUDA-capable GPU (for transcription acceleration)
-- Conda environment manager
-
-### Installation Steps
-
-1. Clone the repository:
-   ```bash
-   git clone <repository_url>
-   cd lazyedit
-   ```
-
-2. Run the installation script:
-   ```bash
-   chmod +x install_lazyedit.sh
-   ./install_lazyedit.sh
-   ```
-
-The installation script will:
-- Install required system packages (ffmpeg, tmux)
-- Create and configure a conda environment named "lazyedit"
-- Set up the systemd service for automatic startup
-- Configure necessary permissions
-
-## Usage
-
-LazyEdit runs as a web application that you can access at http://localhost:8081
-
-### Processing a Video
-
-1. Upload your video through the web interface
-2. LazyEdit will automatically:
-   - Transcribe and caption the video
-   - Generate metadata and educational content
-   - Create subtitles in detected languages
-   - Add word highlighting for important terms
-   - Create a teaser introduction
-   - Generate a cover image
-   - Package and return the processed content
-
-### Command Line Usage
-
-You can also run LazyEdit directly:
+## Quick start (dev)
 
 ```bash
+git clone git@github.com:lachlanchen/LazyEdit.git
+cd LazyEdit
+git submodule update --init --recursive
+
 conda activate lazyedit
-cd /path/to/lazyedit
 python app.py -m lazyedit
 ```
 
-## Project Structure
+Open http://localhost:8787 (set `LAZYEDIT_PORT` or `PORT` to change).
 
-- `app.py` - Main application entry point
-- `lazyedit/` - Core module directory
-  - `autocut_processor.py` - Handles video segmentation and transcription
-  - `subtitle_metadata.py` - Generates metadata from subtitles
-  - `subtitle_translate.py` - Handles subtitle translation
-  - `video_captioner.py` - Generates video captions
-  - `words_card.py` - Creates educational word cards
-  - `utils.py` - Utility functions
-  - `openai_version_check.py` - OpenAI API compatibility layer
+## Service install (optional)
+
+The service installer does **not** generate config/scripts. Ensure these exist and are correct for your deployment:
+
+- `lazyedit_config.sh`
+- `start_lazyedit.sh`
+- `stop_lazyedit.sh`
+
+Then run:
+
+```bash
+sudo ./install_lazyedit.sh /path/to/lazyedit
+```
+
+Service commands:
+
+- `sudo systemctl start lazyedit.service`
+- `sudo systemctl stop lazyedit.service`
+- `sudo systemctl status lazyedit.service`
+- `sudo journalctl -u lazyedit.service`
 
 ## Configuration
 
-The systemd service configuration is created in `/etc/systemd/system/lazyedit.service`.
+Copy `.env.example` to `.env` and update values as needed.
 
-LazyEdit uses a tmux session named "lazyedit" to run the application, which allows it to continue running in the background.
+Key overrides:
 
-## Service Management
+- `LAZYEDIT_PORT`, `PORT`
+- `LAZYEDIT_UPLOAD_DIR`
+- `LAZYEDIT_AUTOPUBLISH_URL`
+- `LAZYEDIT_WHISPER_*` (script + models)
+- `LAZYEDIT_CAPTION_*` (captioning scripts/roots)
+- `GRSAI_API_BASE`, `GRSAI_API_KEY` (Veo)
+- `OPENAI_API_KEY` (Sora + metadata)
 
-- Start the service: `sudo systemctl start lazyedit.service`
-- Stop the service: `sudo systemctl stop lazyedit.service`
-- Check status: `sudo systemctl status lazyedit.service`
-- View logs: `sudo journalctl -u lazyedit.service`
+## Project structure
 
-## Advanced Usage
+- `app.py` - Tornado backend entrypoint
+- `lazyedit/` - core processing logic
+- `agi/` - video generation providers (Sora/Veo)
+- `AutoPublish/` - optional publishing service (submodule)
+- `whisper_with_lang_detect/` - transcription pipeline (submodule)
+- `vit-gpt2-image-captioning/` - primary captioner (submodule)
+- `clip-gpt-captioning/` - fallback captioner (submodule)
+- `DATA/` - outputs (generated videos, processed assets)
 
-LazyEdit supports customization of:
-- Teaser length and placement
-- Word highlighting styles
-- Subtitle fonts and positioning
-- Output folder structure
-- GPU selection for processing
+## AutoPublish integration
+
+AutoPublish runs as a separate service. Configure `LAZYEDIT_AUTOPUBLISH_URL` to point at the AutoPublish `/publish` endpoint.
 
 ## Troubleshooting
 
-- If the application doesn't start, check the systemd service status and logs
-- If video processing fails, ensure FFmpeg is correctly installed
-- For GPU-related issues, verify CUDA installation and GPU availability
-- Ensure the conda environment is correctly activated by the service
+- Run `git submodule update --init --recursive` if captions/transcribe fail due to missing code.
+- Ensure FFmpeg is installed and on PATH.
+- Confirm your conda env matches the paths in `.env` and `lazyedit_config.sh`.
+- For GPU issues, verify CUDA drivers and that your env has the right torch build.
 
 ## What your support makes possible
 
@@ -226,7 +202,7 @@ LazyEdit supports customization of:
 
 ## License
 
-[Specify your license here]
+[Apache-2.0](LICENSE)
 
 ## Acknowledgements
 
