@@ -242,6 +242,8 @@ DEFAULT_LOGO_SETTINGS = {
     "logoUrl": None,
     "heightRatio": 0.1,
     "position": "top-right",
+    "bgOpacity": 0.5,
+    "bgShape": "circle",
     "enabled": True,
 }
 
@@ -590,6 +592,17 @@ def _sanitize_logo_settings(payload: dict | None) -> dict:
     if not isinstance(enabled, bool):
         enabled = DEFAULT_LOGO_SETTINGS.get("enabled", False)
 
+    bg_opacity_raw = payload.get("bgOpacity", payload.get("backgroundOpacity", DEFAULT_LOGO_SETTINGS.get("bgOpacity", 0.5)))
+    try:
+        bg_opacity = float(bg_opacity_raw)
+    except Exception:
+        bg_opacity = float(DEFAULT_LOGO_SETTINGS.get("bgOpacity", 0.5))
+    bg_opacity = min(max(bg_opacity, 0.0), 1.0)
+
+    bg_shape = str(payload.get("bgShape") or payload.get("backgroundShape") or DEFAULT_LOGO_SETTINGS.get("bgShape", "circle"))
+    if bg_shape not in {"circle", "square"}:
+        bg_shape = DEFAULT_LOGO_SETTINGS.get("bgShape", "circle")
+
     logo_path = payload.get("logoPath") or payload.get("logo_path")
     if isinstance(logo_path, str):
         logo_path = logo_path.strip() or None
@@ -602,6 +615,8 @@ def _sanitize_logo_settings(payload: dict | None) -> dict:
         "logoUrl": logo_url,
         "heightRatio": height_ratio,
         "position": position,
+        "bgOpacity": bg_opacity,
+        "bgShape": bg_shape,
         "enabled": enabled,
     }
 
@@ -1226,7 +1241,15 @@ def _save_prompt_template(payload):
     return template_path, schema_path
 
 
-def overlay_logo_on_video(video_path, logo_path, output_path, height_ratio=0.1, position="top-right"):
+def overlay_logo_on_video(
+    video_path,
+    logo_path,
+    output_path,
+    height_ratio=0.1,
+    position="top-right",
+    bg_opacity=0.5,
+    bg_shape="circle",
+):
     if not logo_path or not os.path.exists(logo_path):
         raise FileNotFoundError("logo file missing")
     width, height = get_video_resolution(video_path)
@@ -1235,6 +1258,14 @@ def overlay_logo_on_video(video_path, logo_path, output_path, height_ratio=0.1, 
 
     height_ratio = min(max(float(height_ratio), 0.02), 0.4)
     pad = max(0, int(height * 0.02))
+    try:
+        bg_opacity = float(bg_opacity)
+    except Exception:
+        bg_opacity = 0.5
+    bg_opacity = min(max(bg_opacity, 0.0), 1.0)
+    bg_shape = str(bg_shape or "circle")
+    if bg_shape not in {"circle", "square"}:
+        bg_shape = "circle"
 
     logo_img = Image.open(logo_path).convert("RGBA")
     if logo_img.height <= 0:
@@ -1261,7 +1292,20 @@ def overlay_logo_on_video(video_path, logo_path, output_path, height_ratio=0.1, 
     with tempfile.TemporaryDirectory() as temp_dir:
         scaled_path = os.path.join(temp_dir, "logo.png")
         logo_resized = logo_img.resize((target_width, target_height), Image.LANCZOS)
-        logo_bg = Image.new("RGBA", (target_width, target_height), (255, 255, 255, 128))
+        alpha = int(255 * bg_opacity)
+        logo_bg = Image.new("RGBA", (target_width, target_height), (255, 255, 255, 0))
+        if alpha > 0:
+            if bg_shape == "square":
+                logo_bg = Image.new("RGBA", (target_width, target_height), (255, 255, 255, alpha))
+            else:
+                draw = ImageDraw.Draw(logo_bg)
+                diameter = min(target_width, target_height)
+                offset_x = (target_width - diameter) // 2
+                offset_y = (target_height - diameter) // 2
+                draw.ellipse(
+                    [offset_x, offset_y, offset_x + diameter, offset_y + diameter],
+                    fill=(255, 255, 255, alpha),
+                )
         logo_bg.alpha_composite(logo_resized)
         logo_bg.save(scaled_path, format="PNG")
         overlay_filter = f"overlay=x={x_pos}:y={y_pos}"
@@ -5710,6 +5754,8 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                 "logoPath": logo_config.get("logoPath"),
                 "heightRatio": logo_config.get("heightRatio"),
                 "position": logo_config.get("position"),
+                "bgOpacity": logo_config.get("bgOpacity"),
+                "bgShape": logo_config.get("bgShape"),
                 "enabled": logo_config.get("enabled"),
             }
         burn_id = ldb.add_subtitle_burn(
@@ -5755,6 +5801,8 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                             logo_output,
                             height_ratio=logo_config.get("heightRatio", DEFAULT_LOGO_SETTINGS.get("heightRatio", 0.1)),
                             position=logo_config.get("position", DEFAULT_LOGO_SETTINGS.get("position", "top-right")),
+                            bg_opacity=logo_config.get("bgOpacity", DEFAULT_LOGO_SETTINGS.get("bgOpacity", 0.5)),
+                            bg_shape=logo_config.get("bgShape", DEFAULT_LOGO_SETTINGS.get("bgShape", "circle")),
                         )
                         final_output = logo_output
                     except Exception as exc:

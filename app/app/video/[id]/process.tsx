@@ -48,6 +48,8 @@ type LogoSettings = {
   logoUrl?: string | null;
   heightRatio?: number;
   position?: string;
+  bgOpacity?: number;
+  bgShape?: string;
   enabled?: boolean;
 };
 
@@ -106,6 +108,14 @@ const LOGO_POSITION_OPTIONS = [
   { value: 'bottom-left', label: 'Bottom left' },
   { value: 'center', label: 'Center' },
 ];
+const LOGO_BG_SHAPE_LABELS: Record<string, string> = {
+  circle: 'Circle',
+  square: 'Square',
+};
+const LOGO_BG_SHAPE_OPTIONS = [
+  { value: 'circle', label: 'Circle' },
+  { value: 'square', label: 'Square' },
+];
 
 const STORAGE_PREFIX = 'lazyedit_process_state';
 
@@ -123,6 +133,57 @@ const defaultSelections: Record<StepKey, boolean> = {
   caption: true,
   metadataZh: true,
   metadataEn: true,
+};
+
+const SliderControl = ({
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+  formatValue,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: number) => void;
+  formatValue?: (value: number) => string;
+}) => {
+  const [trackWidth, setTrackWidth] = useState(1);
+  const ratio = Math.min(Math.max((value - min) / (max - min), 0), 1);
+
+  const updateFromEvent = (event: any) => {
+    const { locationX, offsetX } = event.nativeEvent || {};
+    const x = typeof locationX === 'number' ? locationX : offsetX;
+    if (typeof x !== 'number') return;
+    const nextRatio = Math.min(Math.max(x / trackWidth, 0), 1);
+    const raw = min + nextRatio * (max - min);
+    const stepped = Math.round(raw / step) * step;
+    onChange(Number(stepped.toFixed(2)));
+  };
+
+  return (
+    <View style={styles.sliderRow}>
+      <View style={styles.sliderHeader}>
+        <Text style={styles.sliderLabel}>{label}</Text>
+        <Text style={styles.sliderValue}>{formatValue ? formatValue(value) : value.toFixed(2)}</Text>
+      </View>
+      <View
+        style={styles.sliderTrack}
+        onLayout={(event) => setTrackWidth(event.nativeEvent.layout.width)}
+        onStartShouldSetResponder={() => true}
+        onResponderMove={updateFromEvent}
+        onResponderRelease={updateFromEvent}
+        onResponderGrant={updateFromEvent}
+      >
+        <View style={[styles.sliderFill, { width: `${ratio * 100}%` }]} />
+        <View style={[styles.sliderThumb, { left: `${ratio * 100}%` }]} />
+      </View>
+    </View>
+  );
 };
 
 const formatPercent = (value?: number, fallback = 0) =>
@@ -248,10 +309,14 @@ export default function ProcessVideoScreen() {
     const settings = logoSettings || {};
     const heightRatio = settings.heightRatio ?? 0.1;
     const position = settings.position ?? 'top-right';
+    const bgOpacity = typeof settings.bgOpacity === 'number' ? settings.bgOpacity : 0.5;
+    const bgShape = settings.bgShape === 'square' ? 'square' : 'circle';
     const heightPercent = formatPercent(heightRatio, 0.1);
     const positionLabel = LOGO_POSITION_LABELS[position] || position;
+    const bgLabel = LOGO_BG_SHAPE_LABELS[bgShape] || bgShape;
+    const bgPercent = formatPercent(bgOpacity, 0.5);
     const hasLogo = Boolean(settings.logoPath);
-    return { heightPercent, positionLabel, hasLogo };
+    return { heightPercent, positionLabel, bgLabel, bgPercent, hasLogo };
   }, [logoSettings]);
 
   const logoPreviewUrl = useMemo(() => {
@@ -273,7 +338,10 @@ export default function ProcessVideoScreen() {
     const width = Math.round(height * (logoAspectRatio || 1));
     const padding = 10;
     const position = logoSettings.position ?? 'top-right';
-    const style: Record<string, any> = { width, height };
+    const style: Record<string, any> = {
+      width,
+      height,
+    };
     if (position === 'top-left') {
       style.top = padding;
       style.left = padding;
@@ -292,7 +360,35 @@ export default function ProcessVideoScreen() {
       style.right = padding;
     }
     return style;
-  }, [logoSettings?.logoPath, logoSettings?.heightRatio, logoSettings?.position, logoAspectRatio]);
+  }, [
+    logoSettings?.logoPath,
+    logoSettings?.heightRatio,
+    logoSettings?.position,
+    logoAspectRatio,
+  ]);
+
+  const logoOverlayBgStyle = useMemo(() => {
+    if (!logoOverlayStyle || !logoSettings?.logoPath) return null;
+    const bgOpacity = typeof logoSettings.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5;
+    if (bgOpacity <= 0) return null;
+    const bgShape = logoSettings.bgShape === 'square' ? 'square' : 'circle';
+    const width = Number(logoOverlayStyle.width) || 0;
+    const height = Number(logoOverlayStyle.height) || 0;
+    if (width <= 0 || height <= 0) return null;
+    const diameter = Math.min(width, height);
+    const bgWidth = bgShape === 'circle' ? diameter : width;
+    const bgHeight = bgShape === 'circle' ? diameter : height;
+    return {
+      width: bgWidth,
+      height: bgHeight,
+      borderRadius: bgShape === 'circle' ? bgWidth / 2 : 12,
+      backgroundColor: `rgba(255, 255, 255, ${bgOpacity})`,
+      left: '50%',
+      top: '50%',
+      marginLeft: -bgWidth / 2,
+      marginTop: -bgHeight / 2,
+    };
+  }, [logoOverlayStyle, logoSettings?.bgOpacity, logoSettings?.bgShape, logoSettings?.logoPath]);
 
   const saveLogoSettings = async (next: Partial<LogoSettings>) => {
     const payload: LogoSettings = {
@@ -300,6 +396,8 @@ export default function ProcessVideoScreen() {
       logoUrl: logoSettings?.logoUrl ?? null,
       heightRatio: logoSettings?.heightRatio ?? 0.1,
       position: logoSettings?.position ?? 'top-right',
+      bgOpacity: typeof logoSettings?.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5,
+      bgShape: logoSettings?.bgShape ?? 'circle',
       enabled: logoSettings?.enabled ?? logoEnabled,
       ...next,
     };
@@ -409,6 +507,14 @@ export default function ProcessVideoScreen() {
     await saveLogoSettings({ position });
   };
 
+  const updateLogoBgShape = async (shape: string) => {
+    await saveLogoSettings({ bgShape: shape });
+  };
+
+  const updateLogoBgOpacity = async (value: number) => {
+    await saveLogoSettings({ bgOpacity: value });
+  };
+
   const updateLogoEnabled = async (value: boolean) => {
     if (!logoSettings?.logoPath) {
       setLogoEnabled(false);
@@ -505,7 +611,12 @@ export default function ProcessVideoScreen() {
           if (json.value) {
             const enabledValue =
               typeof json.value.enabled === 'boolean' ? json.value.enabled : Boolean(json.value.logoPath);
-            const normalized = { ...json.value, enabled: enabledValue };
+            const normalized = {
+              ...json.value,
+              bgOpacity: typeof json.value.bgOpacity === 'number' ? json.value.bgOpacity : 0.5,
+              bgShape: json.value.bgShape === 'square' ? 'square' : 'circle',
+              enabled: enabledValue,
+            };
             setLogoSettings(normalized);
             setLogoEnabled(Boolean(normalized.enabled));
           }
@@ -1040,6 +1151,8 @@ export default function ProcessVideoScreen() {
             logoPath: logoSettings.logoPath,
             heightRatio: logoSettings.heightRatio ?? 0.1,
             position: logoSettings.position ?? 'top-right',
+            bgOpacity: typeof logoSettings.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5,
+            bgShape: logoSettings.bgShape ?? 'circle',
           }
         : null;
     if (logoEnabled && !logoSettings?.logoPath) {
@@ -1197,6 +1310,8 @@ export default function ProcessVideoScreen() {
             logoPath: logoSettings.logoPath,
             heightRatio: logoSettings.heightRatio ?? 0.1,
             position: logoSettings.position ?? 'top-right',
+            bgOpacity: typeof logoSettings.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5,
+            bgShape: logoSettings.bgShape ?? 'circle',
           }
         : null;
     if (logoEnabled && !logoSettings?.logoPath) {
@@ -1397,14 +1512,46 @@ export default function ProcessVideoScreen() {
                   {option.label}
                 </Text>
               </Pressable>
+              ))}
+          </View>
+
+          <Text style={styles.settingLabel}>Background</Text>
+          <View style={styles.chipRow}>
+            {LOGO_BG_SHAPE_OPTIONS.map((option) => (
+              <Pressable
+                key={option.value}
+                style={[
+                  styles.chip,
+                  (logoSettings?.bgShape ?? 'circle') === option.value && styles.chipActive,
+                ]}
+                onPress={() => updateLogoBgShape(option.value)}
+              >
+                <Text
+                  style={[
+                    styles.chipText,
+                    (logoSettings?.bgShape ?? 'circle') === option.value && styles.chipTextActive,
+                  ]}
+                >
+                  {option.label}
+                </Text>
+              </Pressable>
             ))}
           </View>
+          <SliderControl
+            label="Background opacity"
+            value={typeof logoSettings?.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5}
+            min={0}
+            max={1}
+            step={0.05}
+            onChange={updateLogoBgOpacity}
+            formatValue={(value) => formatPercent(value, 0.5)}
+          />
 
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
               <Text style={styles.settingLabel}>Burn logo (full video)</Text>
               <Text style={styles.settingValue}>
-                {logoSummary.hasLogo ? 'Ready' : 'No logo'} · {logoSummary.positionLabel} · height {logoSummary.heightPercent}
+                {logoSummary.hasLogo ? 'Ready' : 'No logo'} · {logoSummary.positionLabel} · height {logoSummary.heightPercent} · bg {logoSummary.bgLabel} {logoSummary.bgPercent}
               </Text>
               {!logoSummary.hasLogo ? (
                 <Text style={styles.settingHint}>Upload a logo to enable.</Text>
@@ -1441,12 +1588,16 @@ export default function ProcessVideoScreen() {
                 preload: 'metadata',
               })}
               {logoEnabled && logoPreviewUrl && logoOverlayStyle ? (
-                <Image
-                  source={{ uri: logoPreviewUrl }}
-                  style={[styles.logoOverlay, logoOverlayStyle]}
-                  resizeMode="contain"
-                  pointerEvents="none"
-                />
+                <View style={[styles.logoOverlay, logoOverlayStyle]} pointerEvents="none">
+                  {logoOverlayBgStyle ? (
+                    <View style={[styles.logoOverlayBg, logoOverlayBgStyle]} />
+                  ) : null}
+                  <Image
+                    source={{ uri: logoPreviewUrl }}
+                    style={styles.logoOverlayImage}
+                    resizeMode="contain"
+                  />
+                </View>
               ) : null}
             </View>
           ) : (
@@ -1629,6 +1780,18 @@ const styles = StyleSheet.create({
   logoOverlay: {
     position: 'absolute',
     zIndex: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoOverlayBg: {
+    position: 'absolute',
+  },
+  logoOverlayImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
   },
   logTabRow: {
     marginTop: 12,
@@ -1668,4 +1831,29 @@ const styles = StyleSheet.create({
   logLabel: { fontSize: 13, fontWeight: '700', color: '#0f172a' },
   logStatus: { fontSize: 11, fontWeight: '600', color: '#0f766e', marginTop: 2 },
   logDetail: { fontSize: 11, color: '#475569', marginTop: 4 },
+  sliderRow: { marginTop: 12 },
+  sliderHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 },
+  sliderLabel: { fontSize: 12, color: '#0f172a', fontWeight: '600' },
+  sliderValue: { fontSize: 12, color: '#475569' },
+  sliderTrack: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: '#e2e8f0',
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  sliderFill: {
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: '#2563eb',
+  },
+  sliderThumb: {
+    position: 'absolute',
+    top: -4,
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#2563eb',
+    marginLeft: -8,
+  },
 });

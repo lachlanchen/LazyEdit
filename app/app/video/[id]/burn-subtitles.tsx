@@ -60,6 +60,8 @@ type LogoSettings = {
   logoUrl?: string | null;
   heightRatio?: number;
   position?: string;
+  bgOpacity?: number;
+  bgShape?: string;
   enabled?: boolean;
 };
 
@@ -112,6 +114,14 @@ const LOGO_POSITION_OPTIONS = [
   { value: 'bottom-right', label: 'Bottom right' },
   { value: 'bottom-left', label: 'Bottom left' },
   { value: 'center', label: 'Center' },
+];
+const LOGO_BG_SHAPE_LABELS: Record<string, string> = {
+  circle: 'Circle',
+  square: 'Square',
+};
+const LOGO_BG_SHAPE_OPTIONS = [
+  { value: 'circle', label: 'Circle' },
+  { value: 'square', label: 'Square' },
 ];
 
 const DEFAULT_ROWS = 4;
@@ -393,10 +403,14 @@ export default function BurnSubtitlesScreen() {
     const settings = logoSettings || {};
     const heightRatio = settings.heightRatio ?? 0.1;
     const position = settings.position ?? 'top-right';
+    const bgOpacity = typeof settings.bgOpacity === 'number' ? settings.bgOpacity : 0.5;
+    const bgShape = settings.bgShape === 'square' ? 'square' : 'circle';
     const heightPercent = formatPercent(heightRatio, 0.1);
     const positionLabel = LOGO_POSITION_LABELS[position] || position;
+    const bgLabel = LOGO_BG_SHAPE_LABELS[bgShape] || bgShape;
+    const bgPercent = formatPercent(bgOpacity, 0.5);
     const hasLogo = Boolean(settings.logoPath);
-    return { heightPercent, positionLabel, hasLogo };
+    return { heightPercent, positionLabel, bgLabel, bgPercent, hasLogo };
   }, [logoSettings]);
 
   const logoPreviewUrl = useMemo(() => {
@@ -513,6 +527,8 @@ export default function BurnSubtitlesScreen() {
       logoUrl: logoSettings?.logoUrl ?? null,
       heightRatio: logoSettings?.heightRatio ?? 0.1,
       position: logoSettings?.position ?? 'top-right',
+      bgOpacity: typeof logoSettings?.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5,
+      bgShape: logoSettings?.bgShape ?? 'circle',
       enabled: logoSettings?.enabled ?? logoEnabled,
       ...next,
     };
@@ -541,6 +557,8 @@ export default function BurnSubtitlesScreen() {
           logoUrl: value.logoUrl ?? null,
           heightRatio: typeof value.heightRatio === 'number' ? value.heightRatio : 0.1,
           position: value.position ?? 'top-right',
+          bgOpacity: typeof value.bgOpacity === 'number' ? value.bgOpacity : 0.5,
+          bgShape: value.bgShape === 'square' ? 'square' : 'circle',
           enabled: typeof value.enabled === 'boolean' ? value.enabled : Boolean(value.logoPath),
         };
         setLogoSettings(normalized);
@@ -638,6 +656,14 @@ export default function BurnSubtitlesScreen() {
 
   const updateLogoPosition = async (position: string) => {
     await saveLogoSettings({ position });
+  };
+
+  const updateLogoBgShape = async (shape: string) => {
+    await saveLogoSettings({ bgShape: shape });
+  };
+
+  const updateLogoBgOpacity = async (value: number) => {
+    await saveLogoSettings({ bgOpacity: value });
   };
 
   const updateLogoEnabled = async (value: boolean) => {
@@ -922,6 +948,8 @@ export default function BurnSubtitlesScreen() {
               logoPath: logoSettings.logoPath,
               heightRatio: logoSettings.heightRatio ?? 0.1,
               position: logoSettings.position ?? 'top-right',
+              bgOpacity: typeof logoSettings.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5,
+              bgShape: logoSettings.bgShape ?? 'circle',
               enabled: true,
             }
           : null;
@@ -1292,11 +1320,43 @@ export default function BurnSubtitlesScreen() {
               ))}
             </View>
 
+            <Text style={styles.settingLabel}>Background</Text>
+            <View style={styles.chipRow}>
+              {LOGO_BG_SHAPE_OPTIONS.map((option) => (
+                <Pressable
+                  key={option.value}
+                  style={[
+                    styles.chip,
+                    (logoSettings?.bgShape ?? 'circle') === option.value && styles.chipActive,
+                  ]}
+                  onPress={() => updateLogoBgShape(option.value)}
+                >
+                  <Text
+                    style={[
+                      styles.chipText,
+                      (logoSettings?.bgShape ?? 'circle') === option.value && styles.chipTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <SliderControl
+              label="Background opacity"
+              value={typeof logoSettings?.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5}
+              min={0}
+              max={1}
+              step={0.05}
+              onChange={updateLogoBgOpacity}
+              formatValue={(value) => formatPercent(value, 0.5)}
+            />
+
             <View style={styles.settingRow}>
               <View style={{ flex: 1 }}>
                 <Text style={styles.settingLabel}>Burn logo (full video)</Text>
                 <Text style={styles.settingValue}>
-                  {logoSummary.hasLogo ? 'Ready' : 'No logo'} · {logoSummary.positionLabel} · height {logoSummary.heightPercent}
+                  {logoSummary.hasLogo ? 'Ready' : 'No logo'} · {logoSummary.positionLabel} · height {logoSummary.heightPercent} · bg {logoSummary.bgLabel} {logoSummary.bgPercent}
                 </Text>
                 {!logoSummary.hasLogo ? (
                   <Text style={styles.settingHint}>Upload a logo to enable.</Text>

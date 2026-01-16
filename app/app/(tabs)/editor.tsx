@@ -70,6 +70,9 @@ export default function EditorScreen() {
   const [coverStatus, setCoverStatus] = useState('');
   const [coverTone, setCoverTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [coverLoading, setCoverLoading] = useState(false);
+  const [processRunning, setProcessRunning] = useState(false);
+  const [processStatus, setProcessStatus] = useState('');
+  const [processTone, setProcessTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [publishing, setPublishing] = useState(false);
   const [publishStatus, setPublishStatus] = useState('');
   const [publishTone, setPublishTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -245,11 +248,41 @@ export default function EditorScreen() {
     setCoverUrl(null);
     setCoverStatus('');
     setCoverTone('neutral');
+    setProcessStatus('');
+    setProcessTone('neutral');
+    setProcessRunning(false);
     setPublishStatus('');
     setPublishTone('neutral');
     setPublishZipUrl(null);
     loadCoverPreview(selectedVideoId);
   }, [selectedVideoId]);
+
+  const startProcess = async () => {
+    if (!selectedVideoId || processRunning) return;
+    setProcessRunning(true);
+    setProcessStatus(t('publish_process_starting'));
+    setProcessTone('neutral');
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/process`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ async: true }),
+      });
+      const json = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        setProcessStatus(`${t('publish_process_failed')}: ${json.error || resp.statusText}`);
+        setProcessTone('bad');
+        return;
+      }
+      setProcessStatus(t('publish_process_started'));
+      setProcessTone('good');
+    } catch (err: any) {
+      setProcessStatus(`${t('publish_process_failed')}: ${err?.message || String(err)}`);
+      setProcessTone('bad');
+    } finally {
+      setProcessRunning(false);
+    }
+  };
 
   const extractCover = async () => {
     if (!selectedVideoId || coverLoading) return;
@@ -432,6 +465,24 @@ export default function EditorScreen() {
               value: selectedList.length ? selectedList.join(', ') : t('label_none'),
             })}
           </Text>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>{t('publish_process_title')}</Text>
+          <Text style={styles.sectionHint}>{t('publish_process_hint')}</Text>
+          <Pressable
+            style={[styles.processButton, (!selectedVideo || processRunning) && styles.btnDisabled]}
+            onPress={startProcess}
+            disabled={!selectedVideo || processRunning}
+          >
+            <View style={styles.btnContent}>
+              {processRunning && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+              <Text style={styles.processButtonText}>{t('publish_process_button')}</Text>
+            </View>
+          </Pressable>
+          {processStatus ? (
+            <Text style={[styles.status, toneStyle(processTone)]}>{processStatus}</Text>
+          ) : null}
         </View>
 
         <View style={styles.card}>
@@ -627,6 +678,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f172a',
     overflow: 'hidden',
   },
+  processButton: {
+    marginTop: 12,
+    backgroundColor: '#0f172a',
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  processButtonText: { color: 'white', fontWeight: '700' },
   empty: { marginTop: 12, color: '#64748b', fontSize: 12 },
   publishButton: {
     marginTop: 12,
