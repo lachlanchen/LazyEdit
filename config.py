@@ -38,13 +38,25 @@ AUTOPUBLISH_TIMEOUT = int(os.getenv("LAZYEDIT_AUTOPUBLISH_TIMEOUT") or 60)
 
 # Captioning configuration (frame captions).
 CAPTION_PYTHON = os.getenv("LAZYEDIT_CAPTION_PYTHON") or "/home/lachlan/miniconda3/envs/caption/bin/python"
+
+_default_primary_script = None
+for script in (
+    BASE_DIR / "vit-gpt2-image-captioning" / "vit_captioner_video.py",
+    Path("/home/lachlan/ProjectsLFS/vit-gpt2-image-captioning/vit_captioner_video.py"),
+    Path("/home/lachlan/Projects/vit-gpt2-image-captioning/vit_captioner_video.py"),
+):
+    if script.is_file():
+        _default_primary_script = str(script)
+        break
 CAPTION_PRIMARY_SCRIPT = (
     os.getenv("LAZYEDIT_CAPTION_PRIMARY_SCRIPT")
+    or _default_primary_script
     or "/home/lachlan/Projects/vit-gpt2-image-captioning/vit_captioner_video.py"
 )
 
 _default_primary_root = None
 for root in (
+    str(BASE_DIR / "vit-gpt2-image-captioning"),
     "/home/lachlan/ProjectsLFS/vit-gpt2-image-captioning",
     "/home/lachlan/Projects/vit-gpt2-image-captioning",
 ):
@@ -53,8 +65,19 @@ for root in (
         break
 CAPTION_PRIMARY_ROOT = os.getenv("LAZYEDIT_CAPTION_PRIMARY_ROOT") or _default_primary_root
 
+
+_default_fallback_script = None
+for script in (
+    BASE_DIR / "clip-gpt-captioning" / "src" / "v2c.py",
+    Path("/home/lachlan/ProjectsLFS/image_captioning/clip-gpt-captioning/src/v2c.py"),
+    Path("/home/lachlan/Projects/image_captioning/clip-gpt-captioning/src/v2c.py"),
+):
+    if script.is_file():
+        _default_fallback_script = str(script)
+        break
 CAPTION_FALLBACK_SCRIPT = (
     os.getenv("LAZYEDIT_CAPTION_FALLBACK_SCRIPT")
+    or _default_fallback_script
     or "/home/lachlan/Projects/image_captioning/clip-gpt-captioning/src/v2c.py"
 )
 
@@ -63,6 +86,7 @@ if (BASE_DIR / "weights" / "large" / "model.pt").exists():
     _default_fallback_cwd = str(BASE_DIR)
 else:
     for root in (
+        str(BASE_DIR / "clip-gpt-captioning"),
         "/home/lachlan/ProjectsLFS/image_captioning/clip-gpt-captioning",
         "/home/lachlan/Projects/image_captioning/clip-gpt-captioning",
     ):

@@ -10,3 +10,9 @@
 [submodule "whisper_with_lang_detect"]
 	path = whisper_with_lang_detect
 	url = git@github.com:lachlanchen/MultilingualWhisper.git
+[submodule "vit-gpt2-image-captioning"]
+	path = vit-gpt2-image-captioning
+	url = git@github.com:lachlanchen/VideoCaptionerWithVit.git
+[submodule "clip-gpt-captioning"]
+	path = clip-gpt-captioning
+	url = git@github.com:lachlanchen/VideoCaptionerWithClip.git
