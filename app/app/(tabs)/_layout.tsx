@@ -63,11 +63,25 @@ export default function TabLayout() {
         headerTitleAlign: 'left',
         headerTitle: () => (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Image
-              source={logoSource}
-              style={{ height: 42, width: 54, resizeMode: 'contain', marginRight: 8 }}
-              accessibilityLabel="LazyEdit logo"
-            />
+            <View
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: 22,
+                backgroundColor: '#ffffff',
+                borderWidth: 1,
+                borderColor: '#e2e8f0',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginRight: 8,
+              }}
+            >
+              <Image
+                source={logoSource}
+                style={{ height: 30, width: 30, resizeMode: 'contain' }}
+                accessibilityLabel="LazyEdit logo"
+              />
+            </View>
             <Text style={{ fontSize: 16, fontWeight: '700', color: '#0f172a' }}>
               {t('header_title')}
             </Text>

@@ -44,6 +44,16 @@ type ProcessStep = {
   progress?: number;
 };
 
+type LogoSettings = {
+  logoPath?: string | null;
+  logoUrl?: string | null;
+  heightRatio?: number;
+  position?: string;
+  bgOpacity?: number;
+  bgShape?: string;
+  enabled?: boolean;
+};
+
 const PLATFORMS = [
   { key: 'douyin', label: 'Douyin' },
   { key: 'xiaohongshu', label: 'Xiaohongshu' },
@@ -247,6 +257,20 @@ export default function EditorScreen() {
     }
   }, [normalizePublishSelection]);
 
+  const fetchLogoSettings = useCallback(async (): Promise<LogoSettings | null> => {
+    try {
+      const resp = await fetch(`${API_URL}/api/ui-settings/logo_settings`);
+      const json = await resp.json();
+      if (!resp.ok) return null;
+      const value = json?.value;
+      if (!value?.logoPath) return null;
+      const enabled = typeof value.enabled === 'boolean' ? value.enabled : Boolean(value.logoPath);
+      return { ...value, enabled };
+    } catch (_err) {
+      return null;
+    }
+  }, []);
+
   const loadPublishQueue = useCallback(async (silent?: boolean) => {
     if (!silent) setQueueLoading(true);
     try {
@@ -400,10 +424,11 @@ export default function EditorScreen() {
     setProcessStatus(t('publish_process_starting'));
     setProcessTone('neutral');
     try {
+      const logoPayload = await fetchLogoSettings();
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/process`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ async: true }),
+        body: JSON.stringify({ async: true, ...(logoPayload ? { logo: logoPayload } : {}) }),
       });
       const json = await resp.json().catch(() => ({}));
       if (!resp.ok) {
