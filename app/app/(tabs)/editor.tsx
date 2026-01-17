@@ -225,15 +225,13 @@ export default function EditorScreen() {
       const items = json.videos || [];
       setVideos(items);
       setVisibleCount(Math.min(PAGE_SIZE, items.length));
-      if (!selectedVideoId && items.length) {
-        setSelectedVideoId(items[0].id);
-      }
+      setSelectedVideoId((current) => current ?? items[0]?.id ?? null);
     } catch (_err) {
       // ignore fetch errors
     } finally {
       if (!silent) setLoadingVideos(false);
     }
-  }, [selectedVideoId]);
+  }, []);
 
   const loadPublishSettings = useCallback(async () => {
     try {
