@@ -143,11 +143,13 @@ def _ratio_to_dimensions(aspect_ratio: str) -> tuple[int, int]:
 class VenicePromptGenerator:
     def __init__(self, template_dir: str) -> None:
         self.template_dir = template_dir
-        self.api_base = os.getenv("VENICE_API_BASE", "https://api.venice.ai").rstrip("/")
+        self.api_base = os.getenv("VENICE_API_BASE", "https://api.venice.ai/api/v1").rstrip("/")
         self.api_key = os.getenv("VENICE_API_KEY", "").strip()
         self.model = os.getenv("VENICE_MODEL", "venice-2.0").strip() or "venice-2.0"
         self.timeout = float(os.getenv("VENICE_TIMEOUT_SECONDS", "60"))
-        self.chat_endpoint = os.getenv("VENICE_CHAT_ENDPOINT", "/v1/chat/completions")
+        self.chat_endpoint = os.getenv("VENICE_CHAT_ENDPOINT", "/chat/completions")
+        if self.api_base.endswith("/api/v1") and self.chat_endpoint.startswith("/v1/"):
+            self.chat_endpoint = self.chat_endpoint[len("/v1") :]
         self.session = requests.Session()
         if self.api_key:
             self.session.headers.update({"Authorization": f"Bearer {self.api_key}"})

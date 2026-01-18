@@ -1,5 +1,35 @@
 import os
 import hashlib
+from pathlib import Path
+
+
+def _load_env_file(path: str | Path) -> None:
+    env_path = Path(path)
+    if not env_path.exists():
+        return
+    try:
+        content = env_path.read_text(encoding="utf-8").splitlines()
+    except Exception:
+        return
+    for raw_line in content:
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[len("export ") :].lstrip()
+        if "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if not key or key in os.environ:
+            continue
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in ("'", '"'):
+            value = value[1:-1]
+        os.environ[key] = value
+
+
+_load_env_file(Path(__file__).resolve().parent / ".env")
 
 if "CUDA_VISIBLE_DEVICES" not in os.environ:
     os.environ["CUDA_VISIBLE_DEVICES"] = os.getenv("LAZYEDIT_CUDA_VISIBLE_DEVICES", "0")
@@ -49,7 +79,6 @@ import json
 
 import subprocess
 from urllib.parse import quote
-from pathlib import Path
 import re
 
 import cjkwrap
@@ -5059,8 +5088,18 @@ class VeniceA2EPromptHandler(CorsMixin, tornado.web.RequestHandler):
         try:
             prompts = await run_blocking(_generate)
         except Exception as exc:
+            details = {
+                "message": str(exc),
+                "type": type(exc).__name__,
+                "venice_api_base": os.getenv("VENICE_API_BASE", ""),
+                "venice_chat_endpoint": os.getenv("VENICE_CHAT_ENDPOINT", ""),
+                "venice_model": os.getenv("VENICE_MODEL", ""),
+                "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
+                "traceback": traceback.format_exc(),
+            }
+            print(f"[V+A2E] venice prompt failed: {details}")
             self.set_status(500)
-            return self.write({"error": "venice prompt failed", "details": str(exc)})
+            return self.write({"error": "venice prompt failed", "details": details})
 
         events = [
             {
@@ -5140,8 +5179,20 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
         try:
             result = await run_blocking(_run)
         except Exception as exc:
+            details = {
+                "message": str(exc),
+                "type": type(exc).__name__,
+                "venice_api_base": os.getenv("VENICE_API_BASE", ""),
+                "venice_chat_endpoint": os.getenv("VENICE_CHAT_ENDPOINT", ""),
+                "venice_model": os.getenv("VENICE_MODEL", ""),
+                "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
+                "a2e_api_base": os.getenv("A2E_API_BASE", ""),
+                "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
+                "traceback": traceback.format_exc(),
+            }
+            print(f"[V+A2E] pipeline failed: {details}")
             self.set_status(500)
-            return self.write({"error": "venice a2e failed", "details": str(exc)})
+            return self.write({"error": "venice a2e failed", "details": details})
 
         self.write(result)
 
