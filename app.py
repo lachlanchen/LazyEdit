@@ -164,7 +164,7 @@ DEFAULT_VIDEO_PROMPT_SPEC = {
     "mood": "Epic, awe-inspiring, contemplative",
     "style": "Cinematic, richly detailed, timeless tone",
     "model": "sora-2",
-    "aspectRatio": "16:9",
+    "aspectRatio": "9:16",
     "durationSeconds": "12",
     "audioLanguage": "auto",
     "sceneCount": "",

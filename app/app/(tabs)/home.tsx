@@ -58,7 +58,7 @@ const normalizeVideoSize = (size?: string) => {
     '1024x576': '1280x720',
   };
   const normalized = legacyMap[trimmed] || trimmed;
-  return supported.has(normalized) ? normalized : '1280x720';
+  return supported.has(normalized) ? normalized : undefined;
 };
 const parseSeconds = (value: unknown) => {
   if (typeof value === 'number') return value;
@@ -69,8 +69,8 @@ const parseSeconds = (value: unknown) => {
   return undefined;
 };
 const sizeForAspectRatio = (aspectRatio?: string) => {
-  if (aspectRatio === '9:16') return '720x1280';
-  return '1280x720';
+  if (aspectRatio === '16:9') return '1280x720';
+  return '720x1280';
 };
 
 const DEFAULT_PROMPT_SPEC = {
@@ -229,6 +229,7 @@ export default function HomeScreen() {
     title?: string;
     prompt?: string;
     negativePrompt?: string;
+    model?: string;
     size?: string;
     seconds?: number;
   } | null>(null);
@@ -647,6 +648,9 @@ export default function HomeScreen() {
 
   const updateSpec = (key: keyof typeof DEFAULT_PROMPT_SPEC, value: string | boolean) => {
     setPromptSpec((prev) => ({ ...prev, [key]: value }));
+    if (key === 'model' && typeof value === 'string') {
+      setVideoModel(normalizeModel(value));
+    }
   };
 
   const resetSpec = (key: keyof typeof DEFAULT_PROMPT_SPEC) => {
@@ -990,8 +994,16 @@ const HISTORY_KEYS = {
       if (parsed && typeof parsed === 'object') {
         setPromptResult(parsed);
         if (parsed.prompt) setPromptOutput(parsed.prompt);
-        if (parsed.size) setVideoSize(normalizeVideoSize(parsed.size));
+        if (parsed.size) {
+          const normalized = normalizeVideoSize(parsed.size);
+          setVideoSize(normalized || sizeForAspectRatio(promptSpec.aspectRatio));
+        }
         if (parsed.seconds) setVideoSeconds(String(parsed.seconds));
+        if (parsed.model) {
+          const normalizedModel = normalizeModel(parsed.model);
+          setVideoModel(normalizedModel);
+          setPromptSpec((prev) => ({ ...prev, model: normalizedModel }));
+        }
       }
     } catch (_err) {
       // ignore malformed
@@ -1064,6 +1076,7 @@ const HISTORY_KEYS = {
       const result = json.result || json;
       const promptText = result.prompt || json.prompt || '';
       const selectedModel = normalizeModel(videoModel || promptSpec.model);
+      const promptModel = normalizeModel(result.model || selectedModel);
       const specSeconds = clampSecondsForModel(parseSeconds(promptSpec.durationSeconds), selectedModel);
       const rawSeconds = parseSeconds(result.seconds ?? json.seconds);
       const seconds = clampSecondsForModel(rawSeconds ?? specSeconds, selectedModel) ?? specSeconds ?? 8;
@@ -1075,12 +1088,12 @@ const HISTORY_KEYS = {
         title: result.title || json.title,
         prompt: promptText,
         negativePrompt: result.negative_prompt || json.negative_prompt,
+        model: promptModel,
         size,
         seconds,
       });
       if (specHistoryLoaded) {
-        const { model: _model, ...specOnly } = promptSpec as any;
-        const next = pushListValue(specHistoryList, JSON.stringify(specOnly));
+        const next = pushListValue(specHistoryList, JSON.stringify(promptSpec));
         setSpecHistoryList(next);
         fetch(`${API_URL}/api/ui-settings/video_spec_history`, {
           method: 'POST',
@@ -1116,6 +1129,7 @@ const HISTORY_KEYS = {
           title: result.title || json.title,
           prompt: promptText,
           negativePrompt: result.negative_prompt || json.negative_prompt,
+          model: promptModel,
           size,
           seconds,
         });
@@ -1223,7 +1237,7 @@ const HISTORY_KEYS = {
         return;
       }
       const spec = json.spec || json.result || {};
-      const merged = { ...DEFAULT_PROMPT_SPEC, ...spec };
+      const merged = { ...DEFAULT_PROMPT_SPEC, ...promptSpec, ...spec };
       setPromptSpec(merged);
       recordHistoryForSpec(merged);
       if (ideaHistoryLoaded) {
@@ -1243,8 +1257,7 @@ const HISTORY_KEYS = {
         }
       }
       if (specHistoryLoaded) {
-        const { model: _model, ...specOnly } = merged as any;
-        const nextSpecHistory = pushListValue(specHistoryList, JSON.stringify(specOnly));
+        const nextSpecHistory = pushListValue(specHistoryList, JSON.stringify(merged));
         setSpecHistoryList(nextSpecHistory);
         fetch(`${API_URL}/api/ui-settings/video_spec_history`, {
           method: 'POST',
@@ -1786,7 +1799,7 @@ const HISTORY_KEYS = {
                   label={t('field_model')}
                   value={videoModel}
                   options={modelOptions}
-                  onChange={(value) => setVideoModel(normalizeModel(value))}
+                  onChange={(value) => updateSpec('model', normalizeModel(value))}
                 />
 
                 <Text style={styles.fieldLabel}>{t('field_length_seconds')}</Text>
