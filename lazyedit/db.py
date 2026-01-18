@@ -1,6 +1,7 @@
 import os
 import json
 import psycopg2
+from psycopg2.extras import Json
 from contextlib import contextmanager
 
 
@@ -99,6 +100,28 @@ def ensure_schema():
         # Backfill/updates for evolving schema
         "ALTER TABLE generated_videos ADD COLUMN IF NOT EXISTS request_hash TEXT;",
         "CREATE UNIQUE INDEX IF NOT EXISTS idx_generated_videos_request_hash ON generated_videos (request_hash);",
+        """
+        CREATE TABLE IF NOT EXISTS venice_a2e_history (
+            id SERIAL PRIMARY KEY,
+            step TEXT NOT NULL,
+            idea TEXT,
+            image_prompt TEXT,
+            video_prompt TEXT,
+            audio_text TEXT,
+            negative_prompt TEXT,
+            aspect_ratio TEXT,
+            video_time INTEGER,
+            audio_language TEXT,
+            venice_model TEXT,
+            image_url TEXT,
+            video_url TEXT,
+            audio_url TEXT,
+            talking_video_url TEXT,
+            events JSONB,
+            created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        );
+        """,
+        "CREATE INDEX IF NOT EXISTS idx_venice_a2e_history_created_at ON venice_a2e_history (created_at DESC);",
         # Transcriptions table for raw speech-to-text outputs
         """
         CREATE TABLE IF NOT EXISTS transcriptions (
@@ -250,6 +273,116 @@ def add_video(file_path: str, title: str | None = None, source: str | None = Non
         )
         (video_id,) = cur.fetchone()
         return video_id
+
+
+def add_venice_a2e_history(record: dict) -> int:
+    """Insert a Venice + A2E history entry and return its ID."""
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO venice_a2e_history (
+                step,
+                idea,
+                image_prompt,
+                video_prompt,
+                audio_text,
+                negative_prompt,
+                aspect_ratio,
+                video_time,
+                audio_language,
+                venice_model,
+                image_url,
+                video_url,
+                audio_url,
+                talking_video_url,
+                events
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                record.get("step"),
+                record.get("idea"),
+                record.get("image_prompt"),
+                record.get("video_prompt"),
+                record.get("audio_text"),
+                record.get("negative_prompt"),
+                record.get("aspect_ratio"),
+                record.get("video_time"),
+                record.get("audio_language"),
+                record.get("venice_model"),
+                record.get("image_url"),
+                record.get("video_url"),
+                record.get("audio_url"),
+                record.get("talking_video_url"),
+                Json(record.get("events") or []),
+            ),
+        )
+        (history_id,) = cur.fetchone()
+        return history_id
+
+
+def list_venice_a2e_history(limit: int = 50) -> list[tuple]:
+    """Return recent Venice + A2E history entries."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT
+                id,
+                step,
+                idea,
+                image_prompt,
+                video_prompt,
+                audio_text,
+                negative_prompt,
+                aspect_ratio,
+                video_time,
+                audio_language,
+                venice_model,
+                image_url,
+                video_url,
+                audio_url,
+                talking_video_url,
+                events,
+                created_at
+            FROM venice_a2e_history
+            ORDER BY created_at DESC, id DESC
+            LIMIT %s
+            """,
+            (limit,),
+        )
+        return cur.fetchall()
+
+
+def get_venice_a2e_history(history_id: int) -> tuple | None:
+    """Return a Venice + A2E history entry by id."""
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT
+                id,
+                step,
+                idea,
+                image_prompt,
+                video_prompt,
+                audio_text,
+                negative_prompt,
+                aspect_ratio,
+                video_time,
+                audio_language,
+                venice_model,
+                image_url,
+                video_url,
+                audio_url,
+                talking_video_url,
+                events,
+                created_at
+            FROM venice_a2e_history
+            WHERE id = %s
+            """,
+            (history_id,),
+        )
+        return cur.fetchone()
 
 
 def add_caption(video_id: int, language_code: str, subtitle_path: str) -> int:

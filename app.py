@@ -3360,6 +3360,54 @@ def media_url_for_path(file_path: str | None) -> str | None:
     return f"/media/{quote(relative.as_posix())}"
 
 
+def _serialize_venice_a2e_history_row(row: tuple) -> dict:
+    return {
+        "id": row[0],
+        "step": row[1],
+        "idea": row[2],
+        "image_prompt": row[3],
+        "video_prompt": row[4],
+        "audio_text": row[5],
+        "negative_prompt": row[6],
+        "aspect_ratio": row[7],
+        "video_time": row[8],
+        "audio_language": row[9],
+        "venice_model": row[10],
+        "image_url": row[11],
+        "video_url": row[12],
+        "audio_url": row[13],
+        "talking_video_url": row[14],
+        "events": row[15],
+        "created_at": row[16].isoformat() if row[16] else None,
+    }
+
+
+def _store_venice_a2e_history(step: str, data: dict, result: dict, extras: dict | None = None) -> None:
+    record = {
+        "step": step,
+        "idea": data.get("idea") or data.get("prompt") or result.get("idea"),
+        "image_prompt": result.get("image_prompt") or data.get("image_prompt") or data.get("imagePrompt"),
+        "video_prompt": result.get("video_prompt") or data.get("video_prompt") or data.get("videoPrompt"),
+        "audio_text": result.get("audio_text") or data.get("audio_text") or data.get("audioText"),
+        "negative_prompt": data.get("negative_prompt") or data.get("negativePrompt"),
+        "aspect_ratio": data.get("aspect_ratio") or data.get("aspectRatio"),
+        "audio_language": data.get("audio_language") or data.get("audioLanguage"),
+        "venice_model": data.get("venice_model") or data.get("veniceModel") or data.get("model"),
+        "image_url": result.get("image_url"),
+        "video_url": result.get("video_url"),
+        "audio_url": result.get("audio_url"),
+        "talking_video_url": result.get("talking_video_url"),
+        "events": result.get("events") or [],
+    }
+    if extras:
+        record.update(extras)
+    try:
+        ldb.ensure_schema()
+        ldb.add_venice_a2e_history(record)
+    except Exception as exc:
+        print(f"[V+A2E] history save failed: {exc}")
+
+
 def _load_json_payload(path: str | None) -> dict | None:
     if not path or not os.path.exists(path):
         return None
@@ -5207,6 +5255,8 @@ class VeniceA2EImageHandler(CorsMixin, tornado.web.RequestHandler):
                 "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
                 "a2e_api_base": os.getenv("A2E_API_BASE", ""),
                 "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
+                "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
+                "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
                 "traceback": traceback.format_exc(),
             }
             if events:
@@ -5215,6 +5265,7 @@ class VeniceA2EImageHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e image failed", "details": details, "events": events})
 
+        _store_venice_a2e_history("image", data, result)
         self.write(result)
 
 
@@ -5289,6 +5340,8 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
                 "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
                 "a2e_api_base": os.getenv("A2E_API_BASE", ""),
                 "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
+                "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
+                "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
                 "traceback": traceback.format_exc(),
             }
             if events:
@@ -5297,6 +5350,7 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e video failed", "details": details, "events": events})
 
+        _store_venice_a2e_history("video", data, result, {"video_time": video_time})
         try:
             video_url_result = result.get("video_url") if isinstance(result, dict) else None
             if video_url_result:
@@ -5385,6 +5439,8 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
                 "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
                 "a2e_api_base": os.getenv("A2E_API_BASE", ""),
                 "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
+                "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
+                "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
                 "traceback": traceback.format_exc(),
             }
             if events:
@@ -5393,6 +5449,7 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e audio failed", "details": details, "events": events})
 
+        _store_venice_a2e_history("audio", data, result, {"video_time": video_time})
         try:
             talking_url = result.get("talking_video_url") if isinstance(result, dict) else None
             if talking_url:
@@ -5483,6 +5540,8 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
                 "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
                 "a2e_api_base": os.getenv("A2E_API_BASE", ""),
                 "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
+                "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
+                "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
                 "traceback": traceback.format_exc(),
             }
             if events:
@@ -5491,6 +5550,7 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e failed", "details": details, "events": events})
 
+        _store_venice_a2e_history("pipeline", data, result, {"video_time": video_time})
         try:
             if isinstance(result, dict):
                 video_url_result = result.get("video_url")
@@ -5509,6 +5569,34 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
             print(f"[V+A2E] pipeline registration failed: {exc}")
 
         self.write(result)
+
+
+class VeniceA2EHistoryHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self):
+        ldb.ensure_schema()
+        try:
+            limit = int(self.get_argument("limit", default=20))
+        except Exception:
+            limit = 20
+        limit = max(1, min(limit, 100))
+        rows = ldb.list_venice_a2e_history(limit)
+        items = [_serialize_venice_a2e_history_row(row) for row in rows]
+        self.write({"items": items})
+
+
+class VeniceA2EHistoryDetailHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, history_id):
+        try:
+            history_id_i = int(history_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        ldb.ensure_schema()
+        row = ldb.get_venice_a2e_history(history_id_i)
+        if not row:
+            self.set_status(404)
+            return self.write({"error": "not found"})
+        self.write(_serialize_venice_a2e_history_row(row))
 
 
 class PromptModerationHandler(CorsMixin, tornado.web.RequestHandler):
@@ -7243,6 +7331,8 @@ def make_app(upload_folder):
         (r"/api/venice-a2e/video", VeniceA2EVideoHandler),
         (r"/api/venice-a2e/audio", VeniceA2EAudioHandler),
         (r"/api/venice-a2e/run", VeniceA2ERunHandler),
+        (r"/api/venice-a2e/history", VeniceA2EHistoryHandler),
+        (r"/api/venice-a2e/history/(\d+)", VeniceA2EHistoryDetailHandler),
         (r"/api/prompt-moderation", PromptModerationHandler),
         (r"/api/videos/generate", VideoGenerateHandler),
         (r"/api/videos", VideosHandler),

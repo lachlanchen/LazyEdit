@@ -387,7 +387,7 @@ class A2EClient:
         self.api_key = os.getenv("A2E_API_KEY", "").strip()
         self.timeout = float(os.getenv("A2E_TIMEOUT_SECONDS", "60"))
         self.poll_interval = float(os.getenv("A2E_POLL_INTERVAL_SECONDS", "3"))
-        self.poll_timeout = self._parse_poll_timeout(os.getenv("A2E_POLL_TIMEOUT_SECONDS", "900"))
+        self.poll_timeout = self._parse_poll_timeout(os.getenv("A2E_POLL_TIMEOUT_SECONDS", "1800"))
         self.tts_endpoint = os.getenv("A2E_TTS_ENDPOINT", "").strip()
         self.tts_status_endpoint = os.getenv("A2E_TTS_STATUS_ENDPOINT", "").strip()
         self.tts_voice_id = os.getenv("A2E_TTS_VOICE_ID", "").strip()
@@ -398,18 +398,19 @@ class A2EClient:
 
     @staticmethod
     def _parse_poll_timeout(value: str | None) -> float | None:
+        default_timeout = 1800.0
         if value is None:
-            return 900.0
+            return default_timeout
         raw = str(value).strip().lower()
         if raw in {"none", "no", "off", "disable", "disabled", "infinite", "inf"}:
             return None
         try:
             parsed = float(raw)
         except Exception:
-            return 900.0
+            return default_timeout
         if parsed <= 0:
             return None
-        return parsed
+        return max(parsed, default_timeout)
 
     def create_text_to_image(self, prompt: str, width: int, height: int) -> tuple[str, dict[str, Any]]:
         payload = {
