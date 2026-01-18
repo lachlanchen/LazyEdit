@@ -37,6 +37,7 @@ from lazyedit.subtitle_metadata import Subtitle2Metadata
 from lazyedit.words_card import VideoAddWordsCard, overlay_word_card_on_cover
 from lazyedit.subtitle_translate import SubtitlesTranslator
 from lazyedit.video_prompt_generator import VideoPromptGenerator
+from lazyedit.venice_a2e import VenicePromptGenerator, run_venice_a2e_pipeline
 from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
 from lazyedit.chinese_simplify import convert_items_to_simplified, convert_traditional_to_simplified
@@ -108,6 +109,7 @@ VIDEO_PROMPT_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_prompt")
 VIDEO_SPEC_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_spec")
 SUBTITLE_POLISH_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "subtitle_polish")
 PROMPT_TEMPLATE_DIR = os.path.join(UPLOAD_FOLDER, "prompt_templates")
+VENICE_A2E_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "venice_a2e")
 PROMPT_TEMPLATE_SCHEMA = {
     "type": "object",
     "properties": {
@@ -5031,6 +5033,119 @@ class VideoSpecHandler(CorsMixin, tornado.web.RequestHandler):
         self.write({"idea": idea_prompt, "spec": spec, "result": result})
 
 
+class VeniceA2EPromptHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea, str):
+            idea = str(idea)
+        idea = idea.strip()
+        if not idea:
+            self.set_status(400)
+            return self.write({"error": "idea required"})
+
+        audio_language = data.get("audio_language") or data.get("audioLanguage") or data.get("language")
+        if audio_language is not None and not isinstance(audio_language, str):
+            audio_language = str(audio_language)
+
+        def _generate():
+            generator = VenicePromptGenerator(template_dir=VENICE_A2E_TEMPLATE_DIR)
+            return generator.generate(idea=idea, audio_language=audio_language)
+
+        try:
+            prompts = await run_blocking(_generate)
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "venice prompt failed", "details": str(exc)})
+
+        events = [
+            {
+                "ts": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                "stage": "venice",
+                "message": "Prompts generated.",
+            }
+        ]
+
+        self.write({
+            "idea": idea,
+            "audio_language": audio_language or "auto",
+            "prompts": prompts,
+            "image_prompt": prompts.get("image_prompt", ""),
+            "video_prompt": prompts.get("video_prompt", ""),
+            "audio_text": prompts.get("audio_text", ""),
+            "events": events,
+        })
+
+
+class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea, str):
+            idea = str(idea)
+        idea = idea.strip()
+
+        image_prompt = data.get("image_prompt") or data.get("imagePrompt")
+        video_prompt = data.get("video_prompt") or data.get("videoPrompt")
+        audio_text = data.get("audio_text") or data.get("audioText")
+        audio_language = data.get("audio_language") or data.get("audioLanguage")
+        aspect_ratio = data.get("aspect_ratio") or data.get("aspectRatio")
+        negative_prompt = data.get("negative_prompt") or data.get("negativePrompt")
+
+        if audio_language is not None and not isinstance(audio_language, str):
+            audio_language = str(audio_language)
+        if aspect_ratio is not None and not isinstance(aspect_ratio, str):
+            aspect_ratio = str(aspect_ratio)
+
+        try:
+            video_time = int(data.get("video_time") or data.get("videoTime") or 0) or None
+        except Exception:
+            video_time = None
+        try:
+            width = int(data.get("width") or 0) or None
+        except Exception:
+            width = None
+        try:
+            height = int(data.get("height") or 0) or None
+        except Exception:
+            height = None
+
+        if not idea and not (image_prompt and video_prompt and audio_text):
+            self.set_status(400)
+            return self.write({"error": "idea required when prompts are not provided"})
+
+        def _run():
+            return run_venice_a2e_pipeline(
+                template_dir=VENICE_A2E_TEMPLATE_DIR,
+                idea=idea or "Venice + A2E run",
+                image_prompt=image_prompt,
+                video_prompt=video_prompt,
+                audio_text=audio_text,
+                audio_language=audio_language,
+                aspect_ratio=aspect_ratio,
+                video_time=video_time,
+                width=width,
+                height=height,
+                negative_prompt=negative_prompt,
+            )
+
+        try:
+            result = await run_blocking(_run)
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": "venice a2e failed", "details": str(exc)})
+
+        self.write(result)
+
+
 class PromptModerationHandler(CorsMixin, tornado.web.RequestHandler):
     def post(self):
         try:
@@ -6758,6 +6873,8 @@ def make_app(upload_folder):
         (r"/api/ui-settings/([A-Za-z0-9_-]+)", UISettingsHandler),
         (r"/api/video-specs", VideoSpecHandler),
         (r"/api/video-prompts", VideoPromptHandler),
+        (r"/api/venice-a2e/prompts", VeniceA2EPromptHandler),
+        (r"/api/venice-a2e/run", VeniceA2ERunHandler),
         (r"/api/prompt-moderation", PromptModerationHandler),
         (r"/api/videos/generate", VideoGenerateHandler),
         (r"/api/videos", VideosHandler),

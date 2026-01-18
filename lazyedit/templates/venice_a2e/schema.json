@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "image_prompt": {
+      "type": "string",
+      "description": "Prompt for the starting image."
+    },
+    "video_prompt": {
+      "type": "string",
+      "description": "Prompt describing motion and cinematic direction."
+    },
+    "audio_text": {
+      "type": "string",
+      "description": "Narration or spoken text for audio."
+    }
+  },
+  "required": ["image_prompt", "video_prompt", "audio_text"]
+}

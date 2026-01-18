@@ -18,6 +18,7 @@ import * as FileSystem from 'expo-file-system';
 import { useRouter } from 'expo-router';
 
 import { useI18n } from '@/components/I18nProvider';
+import VeniceA2EPanel from '@/components/VeniceA2EPanel';
 import { subscribeStudioRefresh, triggerStudioRefresh } from '@/lib/studioRefresh';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
@@ -205,11 +206,13 @@ export default function HomeScreen() {
   const [statusTone, setStatusTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'upload' | 'generate' | 'remix' | 'api'>(() => {
+  const [activeTab, setActiveTab] = useState<'upload' | 'generate' | 'venice_a2e' | 'remix' | 'api'>(() => {
     if (Platform.OS !== 'web') return 'upload';
     try {
       const saved = localStorage.getItem('lazyedit:homeTab');
-      if (saved === 'upload' || saved === 'generate' || saved === 'remix' || saved === 'api') return saved;
+      if (saved === 'upload' || saved === 'generate' || saved === 'venice_a2e' || saved === 'remix' || saved === 'api') {
+        return saved;
+      }
     } catch (_err) {
       // ignore storage errors
     }
@@ -415,7 +418,13 @@ export default function HomeScreen() {
   const latestForTab = useMemo(() => {
     if (!latestVideos.length) return [];
     const target =
-      activeTab === 'generate' ? 'generate' : activeTab === 'remix' ? 'remix' : activeTab === 'api' ? 'api' : 'upload';
+      activeTab === 'generate' || activeTab === 'venice_a2e'
+        ? 'generate'
+        : activeTab === 'remix'
+          ? 'remix'
+          : activeTab === 'api'
+            ? 'api'
+            : 'upload';
     const resolveSource = (video: Video) => {
       const raw = video.source?.toLowerCase();
       if (raw && ['upload', 'generate', 'remix', 'api'].includes(raw)) return raw;
@@ -1360,6 +1369,7 @@ const HISTORY_KEYS = {
             {[
               { key: 'upload', label: t('home_tab_upload') },
               { key: 'generate', label: t('home_tab_generate') },
+              { key: 'venice_a2e', label: t('home_tab_venice_a2e') },
               { key: 'api', label: t('home_tab_api') },
               { key: 'remix', label: t('home_tab_remix') },
             ].map((tab) => {
@@ -1368,7 +1378,7 @@ const HISTORY_KEYS = {
                 <Pressable
                   key={tab.key}
                   style={[styles.tabButton, isActive && styles.tabButtonActive]}
-                  onPress={() => setActiveTab(tab.key as 'upload' | 'generate' | 'remix' | 'api')}
+                  onPress={() => setActiveTab(tab.key as 'upload' | 'generate' | 'venice_a2e' | 'remix' | 'api')}
                 >
                   <Text style={[styles.tabButtonText, isActive && styles.tabButtonTextActive]}>{tab.label}</Text>
                 </Pressable>
@@ -1947,6 +1957,12 @@ const HISTORY_KEYS = {
                 ) : null}
               </View>
               ) : null}
+            </View>
+          ) : null}
+
+          {activeTab === 'venice_a2e' ? (
+            <View style={styles.section}>
+              <VeniceA2EPanel apiUrl={API_URL} />
             </View>
           ) : null}
 
