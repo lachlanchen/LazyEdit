@@ -145,7 +145,7 @@ class VenicePromptGenerator:
         self.template_dir = template_dir
         self.api_base = os.getenv("VENICE_API_BASE", "https://api.venice.ai/api/v1").rstrip("/")
         self.api_key = os.getenv("VENICE_API_KEY", "").strip()
-        self.model = os.getenv("VENICE_MODEL", "venice-2.0").strip() or "venice-2.0"
+        self.model = os.getenv("VENICE_MODEL", "qwen3-4b").strip() or "qwen3-4b"
         self.timeout = float(os.getenv("VENICE_TIMEOUT_SECONDS", "60"))
         self.chat_endpoint = os.getenv("VENICE_CHAT_ENDPOINT", "/chat/completions")
         if self.api_base.endswith("/api/v1") and self.chat_endpoint.startswith("/v1/"):
