@@ -328,6 +328,7 @@ export default function ProcessVideoScreen() {
   const previewVideoUrl = useMemo(() => {
     const path = video?.preview_media_url || video?.media_url;
     if (!path) return null;
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
     return `${API_URL}${path}`;
   }, [video]);
 
@@ -537,7 +538,11 @@ export default function ProcessVideoScreen() {
         setProxyStatus(`Proxy failed: ${json.error || json.message || resp.statusText}${details}`);
         return;
       }
-      const url = json.media_url ? `${API_URL}${json.media_url}` : null;
+      const url = json.media_url
+        ? json.media_url.startsWith('http')
+          ? json.media_url
+          : `${API_URL}${json.media_url}`
+        : null;
       setProxyPreviewUrl(url);
       setProxyStatus('Proxy ready.');
     } catch (err: any) {

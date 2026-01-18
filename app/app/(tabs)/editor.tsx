@@ -106,6 +106,12 @@ export default function EditorScreen() {
   const [publishSettingsLoaded, setPublishSettingsLoaded] = useState(false);
   const { t } = useI18n();
 
+  const resolveMediaSrc = useCallback((value?: string | null) => {
+    if (!value) return null;
+    if (value.startsWith('http://') || value.startsWith('https://')) return value;
+    return `${API_URL}${value}`;
+  }, []);
+
   const processStepDefinitions = useMemo(
     () => [
       { key: 'transcribe', label: t('publish_step_transcribe') },
@@ -589,7 +595,7 @@ export default function EditorScreen() {
               nestedScrollEnabled
               renderItem={({ item: video }) => {
                 const previewUrl = video.preview_media_url || video.media_url;
-                const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
+                const mediaSrc = resolveMediaSrc(previewUrl);
                 const isActive = selectedVideoId === video.id;
                 const title = video.title || t('library_video_fallback', { id: video.id });
                 return (

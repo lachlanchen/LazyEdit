@@ -4,7 +4,7 @@ import os
 import re
 import time
 from datetime import datetime
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable
 
 import requests
 
@@ -16,7 +16,6 @@ DEFAULT_NEGATIVE_PROMPT = (
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp")
 VIDEO_EXTENSIONS = (".mp4", ".mov", ".webm", ".mkv")
 AUDIO_EXTENSIONS = (".mp3", ".wav", ".m4a", ".aac", ".ogg")
-
 
 def _utc_timestamp() -> str:
     return datetime.utcnow().isoformat(timespec="seconds") + "Z"
@@ -105,6 +104,39 @@ def _extract_status(payload: Any) -> str | None:
     return None
 
 
+def _extract_progress(payload: Any) -> float | None:
+    if isinstance(payload, dict):
+        for key in (
+            "progress",
+            "progress_pct",
+            "progressPercent",
+            "progress_percent",
+            "percentage",
+            "percent",
+            "pct",
+        ):
+            value = payload.get(key)
+            if isinstance(value, (int, float)):
+                pct = float(value)
+                if 0 < pct <= 1:
+                    pct *= 100
+                return pct
+            if isinstance(value, str):
+                try:
+                    pct = float(value.strip().rstrip("%"))
+                    if 0 < pct <= 1:
+                        pct *= 100
+                    return pct
+                except ValueError:
+                    continue
+        data = payload.get("data")
+        if data is not None:
+            return _extract_progress(data)
+    if isinstance(payload, list) and payload:
+        return _extract_progress(payload[0])
+    return None
+
+
 def _extract_task_id(payload: Any) -> str | None:
     if isinstance(payload, dict):
         for key in ("_id", "id", "task_id", "taskId"):
@@ -127,6 +159,32 @@ def _log_event(events: list[dict[str, Any]], stage: str, message: str, data: dic
         entry["data"] = data
     events.append(entry)
     print(f"[V+A2E] {stage}: {message}")
+
+
+def _progress_logger(
+    events: list[dict[str, Any]],
+    stage: str,
+    label: str,
+) -> Callable[[str | None, float | None], None]:
+    last_status: str | None = None
+    last_progress: float | None = None
+
+    def _log(status: str | None, progress: float | None) -> None:
+        nonlocal last_status, last_progress
+        if status == last_status and progress == last_progress:
+            return
+        last_status = status
+        last_progress = progress
+        details = {}
+        if status:
+            details["status"] = status
+        if progress is not None:
+            details["progress"] = round(progress, 1)
+        if details:
+            message = label + " (" + ", ".join(f"{k}={v}" for k, v in details.items()) + ")"
+            _log_event(events, stage, message, details)
+
+    return _log
 
 
 def _ratio_to_dimensions(aspect_ratio: str) -> tuple[int, int]:
@@ -388,7 +446,12 @@ class A2EClient:
             raise RuntimeError("A2E talking video did not return a task id")
         return task_id, response
 
-    def generate_tts(self, text: str, language: str | None = None) -> tuple[str, dict[str, Any]]:
+    def generate_tts(
+        self,
+        text: str,
+        language: str | None = None,
+        on_update: Callable[[str | None, float | None], None] | None = None,
+    ) -> tuple[str, dict[str, Any]]:
         if not self.tts_endpoint:
             raise RuntimeError("A2E_TTS_ENDPOINT is not configured")
         payload: dict[str, Any] = {"text": text}
@@ -399,6 +462,8 @@ class A2EClient:
         response = self._post(self.tts_endpoint, payload)
         audio_url = _find_first_url(response, AUDIO_EXTENSIONS)
         if audio_url:
+            if on_update:
+                on_update("ready", 100)
             return audio_url, response
         task_id = _extract_task_id(response)
         if not task_id:
@@ -408,10 +473,18 @@ class A2EClient:
         audio_url = self.wait_for_media_url(
             self.tts_status_endpoint.format(task_id=task_id),
             AUDIO_EXTENSIONS,
+            on_update=on_update,
         )
         return audio_url, response
 
-    def wait_for_media_url(self, endpoint: str, extensions: Iterable[str]) -> str:
+    def wait_for_media_url(
+        self,
+        endpoint: str,
+        extensions: Iterable[str],
+        on_update: Callable[[str | None, float | None], None] | None = None,
+    ) -> str:
+        last_status: str | None = None
+        last_progress: float | None = None
         deadline = time.time() + self.poll_timeout
         while time.time() < deadline:
             response = self._get(endpoint)
@@ -419,12 +492,23 @@ class A2EClient:
             if url:
                 return url
             status = _extract_status(response)
+            progress = _extract_progress(response)
+            if on_update and (status != last_status or progress != last_progress):
+                on_update(status, progress)
+                last_status, last_progress = status, progress
             if status in {"failed", "error", "canceled"}:
                 raise RuntimeError(f"A2E task failed with status={status}")
             time.sleep(self.poll_interval)
         raise TimeoutError("A2E task timed out")
 
-    def wait_for_task(self, endpoint: str, extensions: Iterable[str]) -> tuple[str, dict[str, Any]]:
+    def wait_for_task(
+        self,
+        endpoint: str,
+        extensions: Iterable[str],
+        on_update: Callable[[str | None, float | None], None] | None = None,
+    ) -> tuple[str, dict[str, Any]]:
+        last_status: str | None = None
+        last_progress: float | None = None
         deadline = time.time() + self.poll_timeout
         while time.time() < deadline:
             response = self._get(endpoint)
@@ -432,6 +516,10 @@ class A2EClient:
             if url:
                 return url, response
             status = _extract_status(response)
+            progress = _extract_progress(response)
+            if on_update and (status != last_status or progress != last_progress):
+                on_update(status, progress)
+                last_status, last_progress = status, progress
             if status in {"failed", "error", "canceled"}:
                 raise RuntimeError(f"A2E task failed with status={status}")
             time.sleep(self.poll_interval)
@@ -452,6 +540,248 @@ class A2EClient:
         return response.json()
 
 
+def run_venice_a2e_image(
+    template_dir: str,
+    idea: str,
+    venice_model: str | None = None,
+    use_cache: bool = True,
+    image_prompt: str | None = None,
+    audio_language: str | None = None,
+    aspect_ratio: str | None = None,
+    width: int | None = None,
+    height: int | None = None,
+    events: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    if events is None:
+        events = []
+    prompts: dict[str, Any] = {}
+    if not width or not height:
+        width, height = _ratio_to_dimensions(aspect_ratio or "9:16")
+
+    _log_event(events, "start", "Starting Venice + A2E image step.")
+
+    if not image_prompt:
+        if not idea:
+            raise RuntimeError("idea is required when image_prompt is missing")
+        _log_event(events, "venice", "Generating prompts with Venice.")
+        generator = VenicePromptGenerator(
+            template_dir=template_dir,
+            model=venice_model,
+            use_cache=use_cache,
+            cache_dir="cache/venice_prompts",
+        )
+        prompts = generator.generate(idea=idea, audio_language=audio_language)
+        image_prompt = prompts.get("image_prompt", "").strip()
+    else:
+        prompts = {"image_prompt": image_prompt}
+
+    if not image_prompt:
+        raise RuntimeError("Missing image prompt after Venice generation")
+
+    _log_event(events, "venice", "Image prompt ready.", {"image_prompt": image_prompt})
+
+    client = A2EClient()
+    if not client.api_key:
+        raise RuntimeError("A2E_API_KEY is not configured")
+
+    _log_event(events, "a2e_image", "Requesting image generation.")
+    image_task_id, image_task_payload = client.create_text_to_image(image_prompt, width, height)
+    _log_event(events, "a2e_image", "Image task queued.", {"task_id": image_task_id})
+    _log_event(events, "a2e_image", "Polling image status.")
+    image_url, image_detail = client.wait_for_task(
+        f"/api/v1/userText2Image/{image_task_id}",
+        IMAGE_EXTENSIONS,
+        on_update=_progress_logger(events, "a2e_image", "Image progress"),
+    )
+    _log_event(events, "a2e_image", "Image ready.", {"image_url": image_url})
+
+    return {
+        "idea": idea,
+        "prompts": prompts,
+        "image_prompt": image_prompt,
+        "image_url": image_url,
+        "events": events,
+        "debug": {
+            "image_task": image_task_payload,
+            "image_detail": image_detail,
+        },
+    }
+
+
+def run_venice_a2e_video(
+    template_dir: str,
+    idea: str,
+    image_url: str,
+    venice_model: str | None = None,
+    use_cache: bool = True,
+    video_prompt: str | None = None,
+    audio_language: str | None = None,
+    video_time: int | None = None,
+    negative_prompt: str | None = None,
+    events: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    if events is None:
+        events = []
+    prompts: dict[str, Any] = {}
+    if not video_time:
+        video_time = 10
+    negative_prompt = negative_prompt or DEFAULT_NEGATIVE_PROMPT
+
+    _log_event(events, "start", "Starting Venice + A2E video step.")
+
+    if not image_url:
+        raise RuntimeError("image_url is required to generate video")
+
+    if not video_prompt:
+        if not idea:
+            raise RuntimeError("idea is required when video_prompt is missing")
+        _log_event(events, "venice", "Generating prompts with Venice.")
+        generator = VenicePromptGenerator(
+            template_dir=template_dir,
+            model=venice_model,
+            use_cache=use_cache,
+            cache_dir="cache/venice_prompts",
+        )
+        prompts = generator.generate(idea=idea, audio_language=audio_language)
+        video_prompt = prompts.get("video_prompt", "").strip()
+    else:
+        prompts = {"video_prompt": video_prompt}
+
+    if not video_prompt:
+        raise RuntimeError("Missing video prompt after Venice generation")
+
+    _log_event(events, "venice", "Video prompt ready.", {"video_prompt": video_prompt})
+
+    client = A2EClient()
+    if not client.api_key:
+        raise RuntimeError("A2E_API_KEY is not configured")
+
+    _log_event(events, "a2e_video", "Requesting image-to-video.")
+    video_task_id, video_task_payload = client.create_image_to_video(
+        image_url=image_url,
+        prompt=video_prompt,
+        video_time=int(video_time),
+        negative_prompt=negative_prompt,
+    )
+    _log_event(events, "a2e_video", "Video task queued.", {"task_id": video_task_id})
+    _log_event(events, "a2e_video", "Polling video status.")
+    video_url, video_detail = client.wait_for_task(
+        f"/api/v1/userImage2Video/{video_task_id}",
+        VIDEO_EXTENSIONS,
+        on_update=_progress_logger(events, "a2e_video", "Video progress"),
+    )
+    _log_event(events, "a2e_video", "Video ready.", {"video_url": video_url})
+
+    return {
+        "idea": idea,
+        "prompts": prompts,
+        "image_url": image_url,
+        "video_prompt": video_prompt,
+        "video_url": video_url,
+        "events": events,
+        "debug": {
+            "video_task": video_task_payload,
+            "video_detail": video_detail,
+        },
+    }
+
+
+def run_venice_a2e_audio(
+    template_dir: str,
+    idea: str,
+    video_url: str,
+    venice_model: str | None = None,
+    use_cache: bool = True,
+    audio_text: str | None = None,
+    video_prompt: str | None = None,
+    audio_language: str | None = None,
+    video_time: int | None = None,
+    negative_prompt: str | None = None,
+    events: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    if events is None:
+        events = []
+    prompts: dict[str, Any] = {}
+    if not video_time:
+        video_time = 10
+    negative_prompt = negative_prompt or DEFAULT_NEGATIVE_PROMPT
+
+    _log_event(events, "start", "Starting Venice + A2E audio step.")
+
+    if not video_url:
+        raise RuntimeError("video_url is required to generate audio")
+
+    if not audio_text or not video_prompt:
+        if not idea:
+            raise RuntimeError("idea is required when audio_text or video_prompt is missing")
+        _log_event(events, "venice", "Generating prompts with Venice.")
+        generator = VenicePromptGenerator(
+            template_dir=template_dir,
+            model=venice_model,
+            use_cache=use_cache,
+            cache_dir="cache/venice_prompts",
+        )
+        prompts = generator.generate(idea=idea, audio_language=audio_language)
+        if not audio_text:
+            audio_text = prompts.get("audio_text", "").strip()
+        if not video_prompt:
+            video_prompt = prompts.get("video_prompt", "").strip()
+    else:
+        prompts = {"audio_text": audio_text, "video_prompt": video_prompt}
+
+    if not audio_text:
+        raise RuntimeError("Missing audio text after Venice generation")
+
+    if not video_prompt:
+        video_prompt = "Sync the lips to the provided audio."
+
+    _log_event(events, "venice", "Audio prompt ready.", {"audio_text": audio_text})
+
+    client = A2EClient()
+    if not client.api_key:
+        raise RuntimeError("A2E_API_KEY is not configured")
+
+    _log_event(events, "a2e_audio", "Generating audio (TTS).")
+    audio_url, audio_detail = client.generate_tts(
+        audio_text,
+        language=audio_language,
+        on_update=_progress_logger(events, "a2e_audio", "TTS progress"),
+    )
+    _log_event(events, "a2e_audio", "Audio ready.", {"audio_url": audio_url})
+
+    _log_event(events, "a2e_talking", "Requesting talking video.")
+    talking_task_id, talking_task_payload = client.create_talking_video(
+        video_url=video_url,
+        audio_url=audio_url,
+        prompt=video_prompt,
+        negative_prompt=negative_prompt,
+        duration=int(video_time),
+    )
+    _log_event(events, "a2e_talking", "Talking video task queued.", {"task_id": talking_task_id})
+    _log_event(events, "a2e_talking", "Polling talking video status.")
+    talking_video_url, talking_detail = client.wait_for_task(
+        f"/api/v1/talkingVideo/{talking_task_id}",
+        VIDEO_EXTENSIONS,
+        on_update=_progress_logger(events, "a2e_talking", "Talking video progress"),
+    )
+    _log_event(events, "a2e_talking", "Talking video ready.", {"video_url": talking_video_url})
+
+    return {
+        "idea": idea,
+        "prompts": prompts,
+        "video_url": video_url,
+        "audio_text": audio_text,
+        "audio_url": audio_url,
+        "talking_video_url": talking_video_url,
+        "events": events,
+        "debug": {
+            "audio_detail": audio_detail,
+            "talking_task": talking_task_payload,
+            "talking_detail": talking_detail,
+        },
+    }
+
+
 def run_venice_a2e_pipeline(
     template_dir: str,
     idea: str,
@@ -466,8 +796,10 @@ def run_venice_a2e_pipeline(
     width: int | None = None,
     height: int | None = None,
     negative_prompt: str | None = None,
+    events: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    events: list[dict[str, Any]] = []
+    if events is None:
+        events = []
     prompts: dict[str, Any] = {}
     if not video_time:
         video_time = 10
@@ -508,9 +840,11 @@ def run_venice_a2e_pipeline(
     _log_event(events, "a2e_image", "Requesting image generation.")
     image_task_id, image_task_payload = client.create_text_to_image(image_prompt, width, height)
     _log_event(events, "a2e_image", "Image task queued.", {"task_id": image_task_id})
+    _log_event(events, "a2e_image", "Polling image status.")
     image_url, image_detail = client.wait_for_task(
         f"/api/v1/userText2Image/{image_task_id}",
         IMAGE_EXTENSIONS,
+        on_update=_progress_logger(events, "a2e_image", "Image progress"),
     )
     _log_event(events, "a2e_image", "Image ready.", {"image_url": image_url})
 
@@ -522,14 +856,20 @@ def run_venice_a2e_pipeline(
         negative_prompt=negative_prompt,
     )
     _log_event(events, "a2e_video", "Video task queued.", {"task_id": video_task_id})
+    _log_event(events, "a2e_video", "Polling video status.")
     video_url, video_detail = client.wait_for_task(
         f"/api/v1/userImage2Video/{video_task_id}",
         VIDEO_EXTENSIONS,
+        on_update=_progress_logger(events, "a2e_video", "Video progress"),
     )
     _log_event(events, "a2e_video", "Video ready.", {"video_url": video_url})
 
     _log_event(events, "a2e_audio", "Generating audio (TTS).")
-    audio_url, audio_detail = client.generate_tts(audio_text, language=audio_language)
+    audio_url, audio_detail = client.generate_tts(
+        audio_text,
+        language=audio_language,
+        on_update=_progress_logger(events, "a2e_audio", "TTS progress"),
+    )
     _log_event(events, "a2e_audio", "Audio ready.", {"audio_url": audio_url})
 
     _log_event(events, "a2e_talking", "Requesting talking video.")
@@ -541,9 +881,11 @@ def run_venice_a2e_pipeline(
         duration=int(video_time),
     )
     _log_event(events, "a2e_talking", "Talking video task queued.", {"task_id": talking_task_id})
+    _log_event(events, "a2e_talking", "Polling talking video status.")
     talking_video_url, talking_detail = client.wait_for_task(
         f"/api/v1/talkingVideo/{talking_task_id}",
         VIDEO_EXTENSIONS,
+        on_update=_progress_logger(events, "a2e_talking", "Talking video progress"),
     )
     _log_event(events, "a2e_talking", "Talking video ready.", {"video_url": talking_video_url})
 

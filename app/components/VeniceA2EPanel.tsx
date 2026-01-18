@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -89,7 +89,16 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [events, setEvents] = useState<EventEntry[]>([]);
   const [status, setStatus] = useState('');
   const [statusTone, setStatusTone] = useState<StatusTone>('neutral');
+  const [imageStatus, setImageStatus] = useState('');
+  const [imageTone, setImageTone] = useState<StatusTone>('neutral');
+  const [videoStatus, setVideoStatus] = useState('');
+  const [videoTone, setVideoTone] = useState<StatusTone>('neutral');
+  const [audioStatus, setAudioStatus] = useState('');
+  const [audioTone, setAudioTone] = useState<StatusTone>('neutral');
   const [busyPrompts, setBusyPrompts] = useState(false);
+  const [busyImage, setBusyImage] = useState(false);
+  const [busyVideo, setBusyVideo] = useState(false);
+  const [busyAudio, setBusyAudio] = useState(false);
   const [busyRun, setBusyRun] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -99,9 +108,31 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
 
   const canGenerate = idea.trim().length > 0;
   const canRun =
-    busyRun ||
     idea.trim().length > 0 ||
     (imagePrompt.trim().length > 0 && videoPrompt.trim().length > 0 && audioText.trim().length > 0);
+  const canGenerateImage = idea.trim().length > 0 || imagePrompt.trim().length > 0;
+  const canGenerateVideo = Boolean(imageUrl) && (idea.trim().length > 0 || videoPrompt.trim().length > 0);
+  const canGenerateAudio =
+    Boolean(videoUrl) &&
+    (idea.trim().length > 0 || (audioText.trim().length > 0 && videoPrompt.trim().length > 0));
+
+  const appendEvents = useCallback((incoming?: EventEntry[] | null) => {
+    if (!incoming || incoming.length === 0) return;
+    setEvents((prev) => [...prev, ...incoming]);
+  }, []);
+
+  const appendEventsFromPayload = useCallback(
+    (payload: any) => {
+      if (!payload) return;
+      const incoming = Array.isArray(payload.events)
+        ? payload.events
+        : Array.isArray(payload.details?.events)
+          ? payload.details.events
+          : [];
+      appendEvents(incoming);
+    },
+    [appendEvents],
+  );
 
   const runPromptGeneration = async () => {
     if (busyPrompts) return;
@@ -113,6 +144,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     setBusyPrompts(true);
     setStatus('Generating prompts with Venice...');
     setStatusTone('neutral');
+    setEvents([]);
     try {
       const resp = await fetch(`${apiUrl}/api/venice-a2e/prompts`, {
         method: 'POST',
@@ -125,6 +157,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       });
       const json = await resp.json();
       if (!resp.ok) {
+        appendEventsFromPayload(json);
         setStatus(`Prompt generation failed: ${json.error || json.details || resp.statusText}`);
         setStatusTone('bad');
         return;
@@ -133,7 +166,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       setVideoPrompt(json.video_prompt || '');
       setAudioText(json.audio_text || '');
       setEvents(json.events || []);
-      setStatus('Prompts ready. Review and run the pipeline.');
+      setStatus('Prompts ready. Generate outputs step by step.');
       setStatusTone('good');
     } catch (err: any) {
       setStatus(`Prompt generation failed: ${err?.message || String(err)}`);
@@ -151,12 +184,19 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       return;
     }
     setBusyRun(true);
-    setStatus('Running Venice + A2E pipeline. This can take a few minutes...');
+    setStatus('Running full Venice + A2E pipeline. This can take a few minutes...');
     setStatusTone('neutral');
+    setEvents([]);
     setImageUrl(null);
     setVideoUrl(null);
     setAudioUrl(null);
     setTalkingVideoUrl(null);
+    setImageStatus('');
+    setImageTone('neutral');
+    setVideoStatus('');
+    setVideoTone('neutral');
+    setAudioStatus('');
+    setAudioTone('neutral');
     try {
       const resp = await fetch(`${apiUrl}/api/venice-a2e/run`, {
         method: 'POST',
@@ -175,6 +215,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       });
       const json = await resp.json();
       if (!resp.ok) {
+        appendEventsFromPayload(json);
         setStatus(`Pipeline failed: ${json.error || json.details || resp.statusText}`);
         setStatusTone('bad');
         return;
@@ -183,6 +224,18 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       setVideoUrl(json.video_url || null);
       setAudioUrl(json.audio_url || null);
       setTalkingVideoUrl(json.talking_video_url || null);
+      if (json.image_url) {
+        setImageStatus('Image ready.');
+        setImageTone('good');
+      }
+      if (json.video_url) {
+        setVideoStatus('Video ready.');
+        setVideoTone('good');
+      }
+      if (json.audio_url || json.talking_video_url) {
+        setAudioStatus('Audio ready.');
+        setAudioTone('good');
+      }
       if (json.image_prompt) setImagePrompt(json.image_prompt);
       if (json.video_prompt) setVideoPrompt(json.video_prompt);
       if (json.audio_text) setAudioText(json.audio_text);
@@ -197,15 +250,160 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     }
   };
 
-  const outputItems = useMemo(
-    () => [
-      { label: 'Image', url: imageUrl, kind: 'image' as const },
-      { label: 'Video', url: videoUrl, kind: 'video' as const },
-      { label: 'Audio', url: audioUrl, kind: 'audio' as const },
-      { label: 'Talking Video', url: talkingVideoUrl, kind: 'video' as const },
-    ],
-    [imageUrl, videoUrl, audioUrl, talkingVideoUrl],
-  );
+  const runImage = async () => {
+    if (busyImage) return;
+    if (!idea.trim() && !imagePrompt.trim()) {
+      setImageStatus('Add an idea or image prompt first.');
+      setImageTone('bad');
+      return;
+    }
+    setBusyImage(true);
+    setImageStatus('Generating image...');
+    setImageTone('neutral');
+    setImageUrl(null);
+    setVideoUrl(null);
+    setAudioUrl(null);
+    setTalkingVideoUrl(null);
+    setVideoStatus('');
+    setVideoTone('neutral');
+    setAudioStatus('');
+    setAudioTone('neutral');
+    try {
+      const resp = await fetch(`${apiUrl}/api/venice-a2e/image`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea: idea.trim(),
+          image_prompt: imagePrompt.trim() || undefined,
+          audio_language: audioLanguage,
+          venice_model: veniceModel,
+          aspect_ratio: aspectRatio,
+        }),
+      });
+      const json = await resp.json();
+      appendEventsFromPayload(json);
+      if (!resp.ok) {
+        setImageStatus(`Image failed: ${json.error || json.details?.message || json.details || resp.statusText}`);
+        setImageTone('bad');
+        return;
+      }
+      if (json.image_prompt) setImagePrompt(json.image_prompt);
+      setImageUrl(json.image_url || null);
+      setImageStatus(json.image_url ? 'Image ready.' : 'Image complete.');
+      setImageTone('good');
+    } catch (err: any) {
+      setImageStatus(`Image failed: ${err?.message || String(err)}`);
+      setImageTone('bad');
+    } finally {
+      setBusyImage(false);
+    }
+  };
+
+  const runVideo = async () => {
+    if (busyVideo) return;
+    if (!imageUrl) {
+      setVideoStatus('Generate an image first.');
+      setVideoTone('bad');
+      return;
+    }
+    if (!idea.trim() && !videoPrompt.trim()) {
+      setVideoStatus('Add an idea or video prompt first.');
+      setVideoTone('bad');
+      return;
+    }
+    setBusyVideo(true);
+    setVideoStatus('Generating video...');
+    setVideoTone('neutral');
+    setVideoUrl(null);
+    setAudioUrl(null);
+    setTalkingVideoUrl(null);
+    setAudioStatus('');
+    setAudioTone('neutral');
+    try {
+      const resp = await fetch(`${apiUrl}/api/venice-a2e/video`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea: idea.trim(),
+          image_url: imageUrl,
+          video_prompt: videoPrompt.trim() || undefined,
+          audio_language: audioLanguage,
+          venice_model: veniceModel,
+          video_time: parseInt(videoTime, 10),
+          negative_prompt: negativePrompt.trim() || undefined,
+        }),
+      });
+      const json = await resp.json();
+      appendEventsFromPayload(json);
+      if (!resp.ok) {
+        setVideoStatus(`Video failed: ${json.error || json.details?.message || json.details || resp.statusText}`);
+        setVideoTone('bad');
+        return;
+      }
+      if (json.video_prompt) setVideoPrompt(json.video_prompt);
+      setVideoUrl(json.video_url || null);
+      setVideoStatus(json.video_url ? 'Video ready.' : 'Video complete.');
+      setVideoTone('good');
+    } catch (err: any) {
+      setVideoStatus(`Video failed: ${err?.message || String(err)}`);
+      setVideoTone('bad');
+    } finally {
+      setBusyVideo(false);
+    }
+  };
+
+  const runAudio = async () => {
+    if (busyAudio) return;
+    if (!videoUrl) {
+      setAudioStatus('Generate a video first.');
+      setAudioTone('bad');
+      return;
+    }
+    if (!idea.trim() && !(audioText.trim() && videoPrompt.trim())) {
+      setAudioStatus('Add an idea or fill both audio text and video prompt.');
+      setAudioTone('bad');
+      return;
+    }
+    setBusyAudio(true);
+    setAudioStatus('Generating audio and talking video...');
+    setAudioTone('neutral');
+    setAudioUrl(null);
+    setTalkingVideoUrl(null);
+    try {
+      const resp = await fetch(`${apiUrl}/api/venice-a2e/audio`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea: idea.trim(),
+          video_url: videoUrl,
+          audio_text: audioText.trim() || undefined,
+          video_prompt: videoPrompt.trim() || undefined,
+          audio_language: audioLanguage,
+          venice_model: veniceModel,
+          video_time: parseInt(videoTime, 10),
+          negative_prompt: negativePrompt.trim() || undefined,
+        }),
+      });
+      const json = await resp.json();
+      appendEventsFromPayload(json);
+      if (!resp.ok) {
+        setAudioStatus(`Audio failed: ${json.error || json.details?.message || json.details || resp.statusText}`);
+        setAudioTone('bad');
+        return;
+      }
+      if (json.audio_text) setAudioText(json.audio_text);
+      setAudioUrl(json.audio_url || null);
+      setTalkingVideoUrl(json.talking_video_url || null);
+      setAudioStatus(json.audio_url || json.talking_video_url ? 'Audio ready.' : 'Audio complete.');
+      setAudioTone('good');
+    } catch (err: any) {
+      setAudioStatus(`Audio failed: ${err?.message || String(err)}`);
+      setAudioTone('bad');
+    } finally {
+      setBusyAudio(false);
+    }
+  };
+
   const veniceModelLabel = useMemo(
     () => veniceTextModels.find((model) => model.value === veniceModel)?.label || veniceModel,
     [veniceModel],
@@ -339,7 +537,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           >
             <View style={styles.buttonContent}>
               {busyRun && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-              <Text style={styles.secondaryButtonText}>Run pipeline</Text>
+              <Text style={styles.secondaryButtonText}>Run full pipeline</Text>
             </View>
           </Pressable>
         </View>
@@ -348,7 +546,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Prompts</Text>
+        <Text style={styles.sectionTitle}>Steps</Text>
         <Text style={styles.label}>Image prompt</Text>
         <TextInput
           style={styles.textArea}
@@ -357,20 +555,30 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           placeholder="Still image prompt."
           multiline
         />
+        <Pressable
+          style={[styles.primaryButton, styles.stepButton, (!canGenerateImage || busyImage) && styles.buttonDisabled]}
+          onPress={runImage}
+          disabled={!canGenerateImage || busyImage}
+        >
+          <View style={styles.buttonContent}>
+            {busyImage && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+            <Text style={styles.primaryButtonText}>Text -> Image</Text>
+          </View>
+        </Pressable>
+        {imageStatus ? <Text style={[styles.status, toneStyle(imageTone)]}>{imageStatus}</Text> : null}
+        <Text style={styles.outputLabel}>Image preview</Text>
+        {imageUrl ? (
+          <Image source={{ uri: imageUrl }} style={styles.outputImage} />
+        ) : (
+          <Text style={styles.outputEmpty}>Image not ready.</Text>
+        )}
+
         <Text style={styles.label}>Video prompt</Text>
         <TextInput
           style={styles.textArea}
           value={videoPrompt}
           onChangeText={setVideoPrompt}
           placeholder="Motion prompt."
-          multiline
-        />
-        <Text style={styles.label}>Audio text</Text>
-        <TextInput
-          style={styles.textArea}
-          value={audioText}
-          onChangeText={setAudioText}
-          placeholder="Short narration."
           multiline
         />
         <Text style={styles.label}>Negative prompt</Text>
@@ -381,6 +589,79 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           placeholder="Things to avoid."
           multiline
         />
+        <Pressable
+          style={[styles.primaryButton, styles.stepButton, (!canGenerateVideo || busyVideo) && styles.buttonDisabled]}
+          onPress={runVideo}
+          disabled={!canGenerateVideo || busyVideo}
+        >
+          <View style={styles.buttonContent}>
+            {busyVideo && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+            <Text style={styles.primaryButtonText}>Image + prompt -> Video</Text>
+          </View>
+        </Pressable>
+        {videoStatus ? <Text style={[styles.status, toneStyle(videoTone)]}>{videoStatus}</Text> : null}
+        <Text style={styles.outputLabel}>Video preview</Text>
+        {videoUrl ? (
+          Platform.OS === 'web' ? (
+            React.createElement('video', {
+              src: videoUrl,
+              controls: true,
+              style: { width: '100%', borderRadius: 12 },
+            })
+          ) : (
+            <Text style={styles.outputLink}>{videoUrl}</Text>
+          )
+        ) : (
+          <Text style={styles.outputEmpty}>Video not ready.</Text>
+        )}
+
+        <Text style={styles.label}>Audio text</Text>
+        <TextInput
+          style={styles.textArea}
+          value={audioText}
+          onChangeText={setAudioText}
+          placeholder="Short narration."
+          multiline
+        />
+        <Pressable
+          style={[styles.primaryButton, styles.stepButton, (!canGenerateAudio || busyAudio) && styles.buttonDisabled]}
+          onPress={runAudio}
+          disabled={!canGenerateAudio || busyAudio}
+        >
+          <View style={styles.buttonContent}>
+            {busyAudio && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+            <Text style={styles.primaryButtonText}>Text + video -> Audio</Text>
+          </View>
+        </Pressable>
+        {audioStatus ? <Text style={[styles.status, toneStyle(audioTone)]}>{audioStatus}</Text> : null}
+        <Text style={styles.outputLabel}>Audio</Text>
+        {audioUrl ? (
+          Platform.OS === 'web' ? (
+            React.createElement('audio', {
+              src: audioUrl,
+              controls: true,
+              style: { width: '100%' },
+            })
+          ) : (
+            <Text style={styles.outputLink}>{audioUrl}</Text>
+          )
+        ) : (
+          <Text style={styles.outputEmpty}>Audio not ready.</Text>
+        )}
+        <Text style={styles.outputLabel}>Talking video</Text>
+        {talkingVideoUrl ? (
+          Platform.OS === 'web' ? (
+            React.createElement('video', {
+              src: talkingVideoUrl,
+              controls: true,
+              style: { width: '100%', borderRadius: 12 },
+            })
+          ) : (
+            <Text style={styles.outputLink}>{talkingVideoUrl}</Text>
+          )
+        ) : (
+          <Text style={styles.outputEmpty}>Talking video not ready.</Text>
+        )}
       </View>
 
       <View style={styles.card}>
@@ -396,30 +677,6 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
             ))
           )}
         </ScrollView>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>Outputs</Text>
-        {outputItems.map((item) => (
-          <View key={item.label} style={styles.outputRow}>
-            <Text style={styles.outputLabel}>{item.label}</Text>
-            {item.url ? (
-              item.kind === 'image' ? (
-                <Image source={{ uri: item.url }} style={styles.outputImage} />
-              ) : Platform.OS === 'web' ? (
-                React.createElement(item.kind === 'audio' ? 'audio' : 'video', {
-                  src: item.url,
-                  controls: true,
-                  style: { width: '100%', borderRadius: 12 },
-                })
-              ) : (
-                <Text style={styles.outputLink}>{item.url}</Text>
-              )
-            ) : (
-              <Text style={styles.outputEmpty}>Not ready.</Text>
-            )}
-          </View>
-        ))}
       </View>
     </View>
   );
@@ -571,6 +828,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
   },
+  stepButton: {
+    alignSelf: 'flex-start',
+    marginTop: 10,
+  },
   buttonDisabled: {
     opacity: 0.5,
   },
@@ -611,13 +872,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#7b7b7b',
   },
-  outputRow: {
-    marginBottom: 14,
-  },
   outputLabel: {
     fontSize: 12,
     color: '#6a6a6a',
     marginBottom: 6,
+    marginTop: 10,
   },
   outputEmpty: {
     fontSize: 12,

@@ -465,7 +465,8 @@ export default function BurnSubtitlesScreen() {
       const json = await resp.json();
       if (!resp.ok) return;
       if (json.media_url) {
-        setVideoUrl(`${API_URL}${json.media_url}`);
+        const resolved = json.media_url.startsWith('http') ? json.media_url : `${API_URL}${json.media_url}`;
+        setVideoUrl(resolved);
       }
     } catch (_err) {
       // ignore

@@ -31,6 +31,12 @@ export default function LibraryScreen() {
   const router = useRouter();
   const { t } = useI18n();
 
+  const resolveMediaSrc = useCallback((value?: string | null) => {
+    if (!value) return null;
+    if (value.startsWith('http://') || value.startsWith('https://')) return value;
+    return `${API_URL}${value}`;
+  }, []);
+
   const load = useCallback(async (silent?: boolean) => {
     if (!silent) setLoading(true);
     try {
@@ -107,7 +113,7 @@ export default function LibraryScreen() {
         onContentSizeChange={(_width, height) => setContentHeight(height)}
         renderItem={({ item }) => {
           const mediaPath = item.preview_media_url || item.media_url;
-          const mediaSrc = mediaPath ? `${API_URL}${mediaPath}` : null;
+          const mediaSrc = resolveMediaSrc(mediaPath);
           const title = item.title || t('library_video_fallback', { id: item.id });
           return (
             <Pressable

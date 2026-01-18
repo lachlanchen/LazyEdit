@@ -418,8 +418,10 @@ export default function HomeScreen() {
   const latestForTab = useMemo(() => {
     if (!latestVideos.length) return [];
     const target =
-      activeTab === 'generate' || activeTab === 'venice_a2e'
+      activeTab === 'generate'
         ? 'generate'
+        : activeTab === 'venice_a2e'
+          ? 'venice_a2e'
         : activeTab === 'remix'
           ? 'remix'
           : activeTab === 'api'
@@ -427,13 +429,20 @@ export default function HomeScreen() {
             : 'upload';
     const resolveSource = (video: Video) => {
       const raw = video.source?.toLowerCase();
-      if (raw && ['upload', 'generate', 'remix', 'api'].includes(raw)) return raw;
+      if (raw && ['upload', 'generate', 'remix', 'api', 'venice_a2e'].includes(raw)) return raw;
       const path = video.file_path || '';
+      if (path.includes('/venice_a2e/') || path.includes('\\venice_a2e\\')) return 'venice_a2e';
       if (path.includes('/generated/') || path.includes('\\generated\\')) return 'generate';
       return 'upload';
     };
     return latestVideos.filter((video) => resolveSource(video) === target).slice(0, 5);
   }, [latestVideos, activeTab]);
+
+  const resolveMediaSrc = (value?: string | null) => {
+    if (!value) return null;
+    if (value.startsWith('http://') || value.startsWith('https://')) return value;
+    return `${API_URL}${value}`;
+  };
 
   useEffect(() => {
     loadLatestVideos();
@@ -2114,7 +2123,7 @@ const HISTORY_KEYS = {
                     <View style={styles.latestPreview}>
                       {(() => {
                         const previewUrl = video.preview_media_url || video.media_url;
-                        const mediaSrc = previewUrl ? `${API_URL}${previewUrl}` : null;
+                        const mediaSrc = resolveMediaSrc(previewUrl);
                         if (Platform.OS === 'web' && mediaSrc) {
                           return React.createElement('video', {
                             src: mediaSrc,

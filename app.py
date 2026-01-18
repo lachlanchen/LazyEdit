@@ -67,7 +67,13 @@ from lazyedit.subtitle_metadata import Subtitle2Metadata
 from lazyedit.words_card import VideoAddWordsCard, overlay_word_card_on_cover
 from lazyedit.subtitle_translate import SubtitlesTranslator
 from lazyedit.video_prompt_generator import VideoPromptGenerator
-from lazyedit.venice_a2e import VenicePromptGenerator, run_venice_a2e_pipeline
+from lazyedit.venice_a2e import (
+    VenicePromptGenerator,
+    run_venice_a2e_audio,
+    run_venice_a2e_image,
+    run_venice_a2e_pipeline,
+    run_venice_a2e_video,
+)
 from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
 from lazyedit.chinese_simplify import convert_items_to_simplified, convert_traditional_to_simplified
@@ -410,7 +416,7 @@ def _normalize_video_source(value: str | None) -> str | None:
     if not value:
         return None
     lowered = str(value).strip().lower()
-    if lowered in {"upload", "generate", "remix", "api"}:
+    if lowered in {"upload", "generate", "remix", "api", "venice_a2e"}:
         return lowered
     return None
 
@@ -3341,6 +3347,10 @@ def copy_folder(output_folder, new_folder_name):
 def media_url_for_path(file_path: str | None) -> str | None:
     if not file_path:
         return None
+    if isinstance(file_path, str):
+        trimmed = file_path.strip()
+        if trimmed.startswith("http://") or trimmed.startswith("https://"):
+            return trimmed
     try:
         upload_root = Path(UPLOAD_FOLDER).resolve()
         resolved = Path(file_path).resolve()
@@ -5129,6 +5139,273 @@ class VeniceA2EPromptHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class VeniceA2EImageHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea, str):
+            idea = str(idea)
+        idea = idea.strip()
+
+        image_prompt = data.get("image_prompt") or data.get("imagePrompt")
+        audio_language = data.get("audio_language") or data.get("audioLanguage")
+        venice_model = data.get("venice_model") or data.get("veniceModel") or data.get("model")
+        aspect_ratio = data.get("aspect_ratio") or data.get("aspectRatio")
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+
+        if image_prompt is not None and not isinstance(image_prompt, str):
+            image_prompt = str(image_prompt)
+        if audio_language is not None and not isinstance(audio_language, str):
+            audio_language = str(audio_language)
+        if venice_model is not None and not isinstance(venice_model, str):
+            venice_model = str(venice_model)
+        if aspect_ratio is not None and not isinstance(aspect_ratio, str):
+            aspect_ratio = str(aspect_ratio)
+
+        try:
+            width = int(data.get("width") or 0) or None
+        except Exception:
+            width = None
+        try:
+            height = int(data.get("height") or 0) or None
+        except Exception:
+            height = None
+
+        if not idea and not (image_prompt and image_prompt.strip()):
+            self.set_status(400)
+            return self.write({"error": "idea or image_prompt required"})
+
+        events = []
+
+        def _run():
+            return run_venice_a2e_image(
+                template_dir=VENICE_A2E_TEMPLATE_DIR,
+                idea=idea or "Venice + A2E image",
+                venice_model=venice_model,
+                use_cache=use_cache,
+                image_prompt=image_prompt,
+                audio_language=audio_language,
+                aspect_ratio=aspect_ratio,
+                width=width,
+                height=height,
+                events=events,
+            )
+
+        try:
+            result = await run_blocking(_run)
+        except Exception as exc:
+            details = {
+                "message": str(exc),
+                "type": type(exc).__name__,
+                "venice_api_base": os.getenv("VENICE_API_BASE", ""),
+                "venice_chat_endpoint": os.getenv("VENICE_CHAT_ENDPOINT", ""),
+                "venice_model": os.getenv("VENICE_MODEL", ""),
+                "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
+                "a2e_api_base": os.getenv("A2E_API_BASE", ""),
+                "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
+                "traceback": traceback.format_exc(),
+            }
+            if events:
+                details["events"] = events
+            print(f"[V+A2E] image step failed: {details}")
+            self.set_status(500)
+            return self.write({"error": "venice a2e image failed", "details": details, "events": events})
+
+        self.write(result)
+
+
+class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea, str):
+            idea = str(idea)
+        idea = idea.strip()
+
+        image_url = data.get("image_url") or data.get("imageUrl") or ""
+        if not isinstance(image_url, str):
+            image_url = str(image_url)
+        image_url = image_url.strip()
+
+        video_prompt = data.get("video_prompt") or data.get("videoPrompt")
+        audio_language = data.get("audio_language") or data.get("audioLanguage")
+        venice_model = data.get("venice_model") or data.get("veniceModel") or data.get("model")
+        negative_prompt = data.get("negative_prompt") or data.get("negativePrompt")
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+
+        if video_prompt is not None and not isinstance(video_prompt, str):
+            video_prompt = str(video_prompt)
+        if audio_language is not None and not isinstance(audio_language, str):
+            audio_language = str(audio_language)
+        if venice_model is not None and not isinstance(venice_model, str):
+            venice_model = str(venice_model)
+
+        try:
+            video_time = int(data.get("video_time") or data.get("videoTime") or 0) or None
+        except Exception:
+            video_time = None
+
+        if not image_url:
+            self.set_status(400)
+            return self.write({"error": "image_url required"})
+
+        if not idea and not (video_prompt and video_prompt.strip()):
+            self.set_status(400)
+            return self.write({"error": "idea or video_prompt required"})
+
+        events = []
+
+        def _run():
+            return run_venice_a2e_video(
+                template_dir=VENICE_A2E_TEMPLATE_DIR,
+                idea=idea or "Venice + A2E video",
+                image_url=image_url,
+                venice_model=venice_model,
+                use_cache=use_cache,
+                video_prompt=video_prompt,
+                audio_language=audio_language,
+                video_time=video_time,
+                negative_prompt=negative_prompt,
+                events=events,
+            )
+
+        try:
+            result = await run_blocking(_run)
+        except Exception as exc:
+            details = {
+                "message": str(exc),
+                "type": type(exc).__name__,
+                "venice_api_base": os.getenv("VENICE_API_BASE", ""),
+                "venice_chat_endpoint": os.getenv("VENICE_CHAT_ENDPOINT", ""),
+                "venice_model": os.getenv("VENICE_MODEL", ""),
+                "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
+                "a2e_api_base": os.getenv("A2E_API_BASE", ""),
+                "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
+                "traceback": traceback.format_exc(),
+            }
+            if events:
+                details["events"] = events
+            print(f"[V+A2E] video step failed: {details}")
+            self.set_status(500)
+            return self.write({"error": "venice a2e video failed", "details": details, "events": events})
+
+        try:
+            video_url_result = result.get("video_url") if isinstance(result, dict) else None
+            if video_url_result:
+                title_base = idea or result.get("video_prompt") or "Venice A2E video"
+                title = _sanitize_title(title_base)
+                ldb.ensure_schema()
+                ldb.add_video(video_url_result, title, "venice_a2e")
+        except Exception as exc:
+            print(f"[V+A2E] video registration failed: {exc}")
+
+        self.write(result)
+
+
+class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea, str):
+            idea = str(idea)
+        idea = idea.strip()
+
+        video_url = data.get("video_url") or data.get("videoUrl") or ""
+        if not isinstance(video_url, str):
+            video_url = str(video_url)
+        video_url = video_url.strip()
+
+        audio_text = data.get("audio_text") or data.get("audioText")
+        video_prompt = data.get("video_prompt") or data.get("videoPrompt")
+        audio_language = data.get("audio_language") or data.get("audioLanguage")
+        venice_model = data.get("venice_model") or data.get("veniceModel") or data.get("model")
+        negative_prompt = data.get("negative_prompt") or data.get("negativePrompt")
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+
+        if audio_text is not None and not isinstance(audio_text, str):
+            audio_text = str(audio_text)
+        if video_prompt is not None and not isinstance(video_prompt, str):
+            video_prompt = str(video_prompt)
+        if audio_language is not None and not isinstance(audio_language, str):
+            audio_language = str(audio_language)
+        if venice_model is not None and not isinstance(venice_model, str):
+            venice_model = str(venice_model)
+
+        try:
+            video_time = int(data.get("video_time") or data.get("videoTime") or 0) or None
+        except Exception:
+            video_time = None
+
+        if not video_url:
+            self.set_status(400)
+            return self.write({"error": "video_url required"})
+
+        if not idea and not ((audio_text and audio_text.strip()) and (video_prompt and video_prompt.strip())):
+            self.set_status(400)
+            return self.write({"error": "idea or audio_text/video_prompt required"})
+
+        events = []
+
+        def _run():
+            return run_venice_a2e_audio(
+                template_dir=VENICE_A2E_TEMPLATE_DIR,
+                idea=idea or "Venice + A2E audio",
+                video_url=video_url,
+                venice_model=venice_model,
+                use_cache=use_cache,
+                audio_text=audio_text,
+                video_prompt=video_prompt,
+                audio_language=audio_language,
+                video_time=video_time,
+                negative_prompt=negative_prompt,
+                events=events,
+            )
+
+        try:
+            result = await run_blocking(_run)
+        except Exception as exc:
+            details = {
+                "message": str(exc),
+                "type": type(exc).__name__,
+                "venice_api_base": os.getenv("VENICE_API_BASE", ""),
+                "venice_chat_endpoint": os.getenv("VENICE_CHAT_ENDPOINT", ""),
+                "venice_model": os.getenv("VENICE_MODEL", ""),
+                "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
+                "a2e_api_base": os.getenv("A2E_API_BASE", ""),
+                "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
+                "traceback": traceback.format_exc(),
+            }
+            if events:
+                details["events"] = events
+            print(f"[V+A2E] audio step failed: {details}")
+            self.set_status(500)
+            return self.write({"error": "venice a2e audio failed", "details": details, "events": events})
+
+        try:
+            talking_url = result.get("talking_video_url") if isinstance(result, dict) else None
+            if talking_url:
+                title_base = idea or result.get("audio_text") or "Venice A2E talking video"
+                title = _sanitize_title(title_base)
+                ldb.ensure_schema()
+                ldb.add_video(talking_url, title, "venice_a2e")
+        except Exception as exc:
+            print(f"[V+A2E] talking video registration failed: {exc}")
+
+        self.write(result)
+
+
 class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
     async def post(self):
         try:
@@ -5174,6 +5451,8 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(400)
             return self.write({"error": "idea required when prompts are not provided"})
 
+        events = []
+
         def _run():
             return run_venice_a2e_pipeline(
                 template_dir=VENICE_A2E_TEMPLATE_DIR,
@@ -5189,6 +5468,7 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
                 height=height,
                 negative_prompt=negative_prompt,
                 use_cache=use_cache,
+                events=events,
             )
 
         try:
@@ -5205,9 +5485,28 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
                 "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
                 "traceback": traceback.format_exc(),
             }
+            if events:
+                details["events"] = events
             print(f"[V+A2E] pipeline failed: {details}")
             self.set_status(500)
-            return self.write({"error": "venice a2e failed", "details": details})
+            return self.write({"error": "venice a2e failed", "details": details, "events": events})
+
+        try:
+            if isinstance(result, dict):
+                video_url_result = result.get("video_url")
+                if video_url_result:
+                    title_base = idea or result.get("video_prompt") or "Venice A2E video"
+                    title = _sanitize_title(title_base)
+                    ldb.ensure_schema()
+                    ldb.add_video(video_url_result, title, "venice_a2e")
+                talking_url = result.get("talking_video_url")
+                if talking_url:
+                    title_base = idea or result.get("audio_text") or "Venice A2E talking video"
+                    title = _sanitize_title(title_base)
+                    ldb.ensure_schema()
+                    ldb.add_video(talking_url, title, "venice_a2e")
+        except Exception as exc:
+            print(f"[V+A2E] pipeline registration failed: {exc}")
 
         self.write(result)
 
@@ -6940,6 +7239,9 @@ def make_app(upload_folder):
         (r"/api/video-specs", VideoSpecHandler),
         (r"/api/video-prompts", VideoPromptHandler),
         (r"/api/venice-a2e/prompts", VeniceA2EPromptHandler),
+        (r"/api/venice-a2e/image", VeniceA2EImageHandler),
+        (r"/api/venice-a2e/video", VeniceA2EVideoHandler),
+        (r"/api/venice-a2e/audio", VeniceA2EAudioHandler),
         (r"/api/venice-a2e/run", VeniceA2ERunHandler),
         (r"/api/prompt-moderation", PromptModerationHandler),
         (r"/api/videos/generate", VideoGenerateHandler),

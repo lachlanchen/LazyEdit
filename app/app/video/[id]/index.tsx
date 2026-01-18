@@ -231,6 +231,7 @@ export default function VideoDetailScreen() {
   const mediaSrc = useMemo(() => {
     const path = video?.preview_media_url || video?.media_url;
     if (!path) return null;
+    if (path.startsWith('http://') || path.startsWith('https://')) return path;
     return `${API_URL}${path}`;
   }, [video]);
 
