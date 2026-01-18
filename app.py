@@ -5079,13 +5079,19 @@ class VeniceA2EPromptHandler(CorsMixin, tornado.web.RequestHandler):
 
         audio_language = data.get("audio_language") or data.get("audioLanguage") or data.get("language")
         venice_model = data.get("venice_model") or data.get("veniceModel") or data.get("model")
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
         if audio_language is not None and not isinstance(audio_language, str):
             audio_language = str(audio_language)
         if venice_model is not None and not isinstance(venice_model, str):
             venice_model = str(venice_model)
 
         def _generate():
-            generator = VenicePromptGenerator(template_dir=VENICE_A2E_TEMPLATE_DIR, model=venice_model)
+            generator = VenicePromptGenerator(
+                template_dir=VENICE_A2E_TEMPLATE_DIR,
+                model=venice_model,
+                use_cache=use_cache,
+                cache_dir="cache/venice_prompts",
+            )
             return generator.generate(idea=idea, audio_language=audio_language)
 
         try:
@@ -5142,6 +5148,7 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
         venice_model = data.get("venice_model") or data.get("veniceModel") or data.get("model")
         aspect_ratio = data.get("aspect_ratio") or data.get("aspectRatio")
         negative_prompt = data.get("negative_prompt") or data.get("negativePrompt")
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
 
         if audio_language is not None and not isinstance(audio_language, str):
             audio_language = str(audio_language)
@@ -5181,6 +5188,7 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
                 width=width,
                 height=height,
                 negative_prompt=negative_prompt,
+                use_cache=use_cache,
             )
 
         try:

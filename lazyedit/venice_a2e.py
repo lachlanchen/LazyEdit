@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -141,12 +142,21 @@ def _ratio_to_dimensions(aspect_ratio: str) -> tuple[int, int]:
 
 
 class VenicePromptGenerator:
-    def __init__(self, template_dir: str, model: str | None = None) -> None:
+    def __init__(
+        self,
+        template_dir: str,
+        model: str | None = None,
+        use_cache: bool = True,
+        cache_dir: str | None = None,
+    ) -> None:
         self.template_dir = template_dir
         self.api_base = os.getenv("VENICE_API_BASE", "https://api.venice.ai/api/v1").rstrip("/")
         self.api_key = os.getenv("VENICE_API_KEY", "").strip()
         env_model = os.getenv("VENICE_MODEL", "venice-uncensored").strip() or "venice-uncensored"
         self.model = (model or env_model).strip() or env_model
+        self.use_cache = use_cache
+        self.cache_dir = cache_dir or os.getenv("VENICE_CACHE_DIR", "cache/venice_prompts")
+        self._ensure_dir_exists(self.cache_dir)
         self.timeout = float(os.getenv("VENICE_TIMEOUT_SECONDS", "60"))
         self.chat_endpoint = os.getenv("VENICE_CHAT_ENDPOINT", "/chat/completions")
         if self.api_base.endswith("/api/v1") and self.chat_endpoint.startswith("/v1/"):
@@ -176,9 +186,25 @@ class VenicePromptGenerator:
             },
         )
 
+        cache_path = self._build_cache_path(
+            prompt=prompt,
+            system_content=system_content,
+            schema_payload=schema_payload,
+            schema_name="venice_a2e_prompt",
+        )
+        cached = self._load_cache(cache_path)
+        if cached is not None:
+            try:
+                self._validate_schema(cached, schema_payload)
+                print("[V+A2E] venice cache hit.")
+                return cached
+            except Exception:
+                self._safe_remove(cache_path)
+
         response = self._call_venice(system_content, prompt)
         result = self._extract_json_from_response(response)
         self._validate_schema(result, schema_payload)
+        self._save_cache(cache_path, prompt, system_content, result)
         return result
 
     def _call_venice(self, system_content: str, prompt: str) -> dict[str, Any]:
@@ -195,6 +221,75 @@ class VenicePromptGenerator:
         if not response.ok:
             raise RuntimeError(f"Venice request failed ({response.status_code}): {response.text}")
         return response.json()
+
+    @staticmethod
+    def _ensure_dir_exists(path: str) -> None:
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+    def _build_cache_path(
+        self,
+        prompt: str,
+        system_content: str,
+        schema_payload: dict[str, Any],
+        schema_name: str,
+    ) -> str:
+        payload = json.dumps(
+            {
+                "model": self.model,
+                "prompt": prompt,
+                "system": system_content,
+                "schema": schema_payload,
+                "schema_name": schema_name,
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+        )
+        digest = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+        return os.path.join(self.cache_dir, f"{digest}.json")
+
+    def _load_cache(self, cache_path: str) -> dict[str, Any] | None:
+        if not self.use_cache or not os.path.exists(cache_path):
+            return None
+        try:
+            with open(cache_path, "r", encoding="utf-8") as handle:
+                cached = json.load(handle)
+            if not isinstance(cached, dict):
+                raise ValueError("Cache payload is not an object")
+            response = cached.get("response")
+            if not isinstance(response, dict):
+                raise ValueError("Cached response is not an object")
+            return response
+        except (json.JSONDecodeError, ValueError) as exc:
+            print(f"[V+A2E] cache invalid ({exc}), ignoring: {cache_path}")
+            self._safe_remove(cache_path)
+            return None
+
+    def _save_cache(
+        self,
+        cache_path: str,
+        prompt: str,
+        system_content: str,
+        response: dict[str, Any],
+    ) -> None:
+        if not self.use_cache:
+            return
+        payload = {
+            "prompt": prompt,
+            "system": system_content,
+            "model": self.model,
+            "response": response,
+            "ts": _utc_timestamp(),
+        }
+        with open(cache_path, "w", encoding="utf-8") as handle:
+            json.dump(payload, handle, ensure_ascii=False, indent=2)
+
+    @staticmethod
+    def _safe_remove(path: str) -> None:
+        try:
+            os.remove(path)
+        except Exception:
+            pass
 
     @staticmethod
     def _extract_json_from_response(payload: dict[str, Any]) -> dict[str, Any]:
@@ -361,6 +456,7 @@ def run_venice_a2e_pipeline(
     template_dir: str,
     idea: str,
     venice_model: str | None = None,
+    use_cache: bool = True,
     image_prompt: str | None = None,
     video_prompt: str | None = None,
     audio_text: str | None = None,
@@ -383,7 +479,12 @@ def run_venice_a2e_pipeline(
 
     if not image_prompt or not video_prompt or not audio_text:
         _log_event(events, "venice", "Generating prompts with Venice.")
-        generator = VenicePromptGenerator(template_dir=template_dir, model=venice_model)
+        generator = VenicePromptGenerator(
+            template_dir=template_dir,
+            model=venice_model,
+            use_cache=use_cache,
+            cache_dir="cache/venice_prompts",
+        )
         prompts = generator.generate(idea=idea, audio_language=audio_language)
         image_prompt = prompts.get("image_prompt", "").strip()
         video_prompt = prompts.get("video_prompt", "").strip()
