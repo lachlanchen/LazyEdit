@@ -567,11 +567,13 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         </Pressable>
         {imageStatus ? <Text style={[styles.status, toneStyle(imageTone)]}>{imageStatus}</Text> : null}
         <Text style={styles.outputLabel}>Image preview</Text>
-        {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={styles.outputImage} />
-        ) : (
-          <Text style={styles.outputEmpty}>Image not ready.</Text>
-        )}
+        <View style={styles.previewFrame}>
+          {imageUrl ? (
+            <Image source={{ uri: imageUrl }} style={styles.previewImage} resizeMode="contain" />
+          ) : (
+            <Text style={[styles.outputEmpty, styles.previewEmpty]}>Image not ready.</Text>
+          )}
+        </View>
 
         <Text style={styles.label}>Video prompt</Text>
         <TextInput
@@ -886,9 +888,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#2f6cff',
   },
-  outputImage: {
-    width: '100%',
-    height: 200,
+  previewFrame: {
+    height: 240,
     borderRadius: 12,
+    backgroundColor: '#fbfaf7',
+    borderWidth: 1,
+    borderColor: '#e0ddd6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  previewImage: {
+    width: '100%',
+    height: '100%',
+  },
+  previewEmpty: {
+    textAlign: 'center',
+    paddingHorizontal: 12,
   },
 });
