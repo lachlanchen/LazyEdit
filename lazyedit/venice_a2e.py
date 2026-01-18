@@ -392,6 +392,8 @@ class A2EClient:
         self.poll_timeout = self._parse_poll_timeout(os.getenv("A2E_POLL_TIMEOUT_SECONDS", "1800"))
         self.tts_endpoint = os.getenv("A2E_TTS_ENDPOINT", "").strip() or DEFAULT_TTS_ENDPOINT
         self.tts_status_endpoint = os.getenv("A2E_TTS_STATUS_ENDPOINT", "").strip()
+        self.tts_user_voice_id = os.getenv("A2E_TTS_USER_VOICE_ID", "").strip()
+        self.tts_id = os.getenv("A2E_TTS_ID", "").strip()
         self.tts_voice_id = os.getenv("A2E_TTS_VOICE_ID", "").strip()
         self.session = requests.Session()
         if self.api_key:
@@ -481,9 +483,16 @@ class A2EClient:
     ) -> tuple[str, dict[str, Any]]:
         if not self.tts_endpoint:
             raise RuntimeError("A2E_TTS_ENDPOINT is not configured")
+        user_voice_id = self.tts_user_voice_id or self.tts_voice_id
+        if not user_voice_id and not self.tts_id:
+            raise RuntimeError(
+                "A2E_TTS_USER_VOICE_ID or A2E_TTS_ID (or legacy A2E_TTS_VOICE_ID) is required for TTS"
+            )
         payload: dict[str, Any] = {"text": text, "msg": text}
-        if self.tts_voice_id:
-            payload["voice_id"] = self.tts_voice_id
+        if user_voice_id:
+            payload["user_voice_id"] = user_voice_id
+        if self.tts_id:
+            payload["tts_id"] = self.tts_id
         if language and language != "auto":
             payload["language"] = language
             payload["lang"] = language
