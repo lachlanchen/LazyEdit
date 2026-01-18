@@ -475,6 +475,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     idea?: string;
     videoUrl?: string | null;
     audioText?: string;
+    audioUrl?: string | null;
     videoPrompt?: string;
     audioLanguage?: string;
     veniceModel?: string;
@@ -485,6 +486,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     const nextIdea = override?.idea !== undefined ? override.idea : idea;
     const nextVideoUrl = override?.videoUrl !== undefined ? override.videoUrl : videoUrl;
     const nextAudioText = override?.audioText !== undefined ? override.audioText : audioText;
+    const nextAudioUrl = override?.audioUrl !== undefined ? override.audioUrl : null;
     const nextVideoPrompt = override?.videoPrompt !== undefined ? override.videoPrompt : videoPrompt;
     const nextAudioLanguage = override?.audioLanguage !== undefined ? override.audioLanguage : audioLanguage;
     const nextVeniceModel = override?.veniceModel !== undefined ? override.veniceModel : veniceModel;
@@ -504,8 +506,9 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       setAudioTone('bad');
       return;
     }
-    if (!nextIdea.trim() && !(nextAudioText.trim() && nextVideoPrompt.trim())) {
-      setAudioStatus('Add an idea or fill both audio text and video prompt.');
+    const hasAudioUrl = Boolean(nextAudioUrl && String(nextAudioUrl).trim());
+    if (!nextIdea.trim() && !hasAudioUrl && !(nextAudioText.trim() && nextVideoPrompt.trim())) {
+      setAudioStatus('Add an idea, an audio URL, or fill both audio text and video prompt.');
       setAudioTone('bad');
       return;
     }
@@ -522,6 +525,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           idea: nextIdea.trim(),
           video_url: nextVideoUrl,
           audio_text: nextAudioText.trim() || undefined,
+          audio_url: hasAudioUrl ? nextAudioUrl : undefined,
           video_prompt: nextVideoPrompt.trim() || undefined,
           audio_language: nextAudioLanguage,
           venice_model: nextVeniceModel,
@@ -587,6 +591,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         idea: entry.idea || '',
         videoUrl: entry.video_url || null,
         audioText: entry.audio_text || '',
+        audioUrl: entry.audio_url || null,
         videoPrompt: entry.video_prompt || '',
         audioLanguage: entry.audio_language || audioLanguage,
         veniceModel: entry.venice_model || veniceModel,

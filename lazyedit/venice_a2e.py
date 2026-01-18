@@ -16,6 +16,8 @@ DEFAULT_NEGATIVE_PROMPT = (
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp")
 VIDEO_EXTENSIONS = (".mp4", ".mov", ".webm", ".mkv")
 AUDIO_EXTENSIONS = (".mp3", ".wav", ".m4a", ".aac", ".ogg")
+DEFAULT_TTS_ENDPOINT = "/api/v1/video/send_tts"
+
 
 def _utc_timestamp() -> str:
     return datetime.utcnow().isoformat(timespec="seconds") + "Z"
@@ -388,7 +390,7 @@ class A2EClient:
         self.timeout = float(os.getenv("A2E_TIMEOUT_SECONDS", "60"))
         self.poll_interval = float(os.getenv("A2E_POLL_INTERVAL_SECONDS", "3"))
         self.poll_timeout = self._parse_poll_timeout(os.getenv("A2E_POLL_TIMEOUT_SECONDS", "1800"))
-        self.tts_endpoint = os.getenv("A2E_TTS_ENDPOINT", "").strip()
+        self.tts_endpoint = os.getenv("A2E_TTS_ENDPOINT", "").strip() or DEFAULT_TTS_ENDPOINT
         self.tts_status_endpoint = os.getenv("A2E_TTS_STATUS_ENDPOINT", "").strip()
         self.tts_voice_id = os.getenv("A2E_TTS_VOICE_ID", "").strip()
         self.session = requests.Session()
@@ -479,11 +481,12 @@ class A2EClient:
     ) -> tuple[str, dict[str, Any]]:
         if not self.tts_endpoint:
             raise RuntimeError("A2E_TTS_ENDPOINT is not configured")
-        payload: dict[str, Any] = {"text": text}
+        payload: dict[str, Any] = {"text": text, "msg": text}
         if self.tts_voice_id:
             payload["voice_id"] = self.tts_voice_id
         if language and language != "auto":
             payload["language"] = language
+            payload["lang"] = language
         response = self._post(self.tts_endpoint, payload)
         audio_url = _find_first_url(response, AUDIO_EXTENSIONS)
         if audio_url:
@@ -724,6 +727,7 @@ def run_venice_a2e_audio(
     venice_model: str | None = None,
     use_cache: bool = True,
     audio_text: str | None = None,
+    audio_url: str | None = None,
     video_prompt: str | None = None,
     audio_language: str | None = None,
     video_time: int | None = None,
@@ -742,43 +746,54 @@ def run_venice_a2e_audio(
     if not video_url:
         raise RuntimeError("video_url is required to generate audio")
 
-    if not audio_text or not video_prompt:
+    need_audio_text = not audio_url
+    if (need_audio_text and not audio_text) or not video_prompt:
         if not idea:
-            raise RuntimeError("idea is required when audio_text or video_prompt is missing")
-        _log_event(events, "venice", "Generating prompts with Venice.")
-        generator = VenicePromptGenerator(
-            template_dir=template_dir,
-            model=venice_model,
-            use_cache=use_cache,
-            cache_dir="cache/venice_prompts",
-        )
-        prompts = generator.generate(idea=idea, audio_language=audio_language)
-        if not audio_text:
-            audio_text = prompts.get("audio_text", "").strip()
-        if not video_prompt:
-            video_prompt = prompts.get("video_prompt", "").strip()
+            if not video_prompt:
+                video_prompt = "Sync the lips to the provided audio."
+            if need_audio_text and not audio_text:
+                raise RuntimeError("idea is required when audio_text is missing")
+        else:
+            _log_event(events, "venice", "Generating prompts with Venice.")
+            generator = VenicePromptGenerator(
+                template_dir=template_dir,
+                model=venice_model,
+                use_cache=use_cache,
+                cache_dir="cache/venice_prompts",
+            )
+            prompts = generator.generate(idea=idea, audio_language=audio_language)
+            if need_audio_text and not audio_text:
+                audio_text = prompts.get("audio_text", "").strip()
+            if not video_prompt:
+                video_prompt = prompts.get("video_prompt", "").strip()
     else:
         prompts = {"audio_text": audio_text, "video_prompt": video_prompt}
 
-    if not audio_text:
+    if need_audio_text and not audio_text:
         raise RuntimeError("Missing audio text after Venice generation")
 
     if not video_prompt:
         video_prompt = "Sync the lips to the provided audio."
 
-    _log_event(events, "venice", "Audio prompt ready.", {"audio_text": audio_text})
+    prompt_meta = {"audio_text": audio_text} if audio_text else None
+    _log_event(events, "venice", "Audio prompt ready.", prompt_meta)
 
     client = A2EClient()
     if not client.api_key:
         raise RuntimeError("A2E_API_KEY is not configured")
 
-    _log_event(events, "a2e_audio", "Generating audio (TTS).")
-    audio_url, audio_detail = client.generate_tts(
-        audio_text,
-        language=audio_language,
-        on_update=_progress_logger(events, "a2e_audio", "TTS progress"),
-    )
-    _log_event(events, "a2e_audio", "Audio ready.", {"audio_url": audio_url})
+    audio_detail: dict[str, Any] | None = None
+    if audio_url:
+        _log_event(events, "a2e_audio", "Using provided audio URL.", {"audio_url": audio_url})
+        audio_detail = {"audio_url": audio_url, "source": "provided"}
+    else:
+        _log_event(events, "a2e_audio", "Generating audio (TTS).")
+        audio_url, audio_detail = client.generate_tts(
+            audio_text,
+            language=audio_language,
+            on_update=_progress_logger(events, "a2e_audio", "TTS progress"),
+        )
+        _log_event(events, "a2e_audio", "Audio ready.", {"audio_url": audio_url})
 
     _log_event(events, "a2e_talking", "Requesting talking video.")
     talking_task_id, talking_task_payload = client.create_talking_video(

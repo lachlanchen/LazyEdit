@@ -5381,6 +5381,11 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
             video_url = str(video_url)
         video_url = video_url.strip()
 
+        audio_url = data.get("audio_url") or data.get("audioUrl") or ""
+        if not isinstance(audio_url, str):
+            audio_url = str(audio_url)
+        audio_url = audio_url.strip()
+
         audio_text = data.get("audio_text") or data.get("audioText")
         video_prompt = data.get("video_prompt") or data.get("videoPrompt")
         audio_language = data.get("audio_language") or data.get("audioLanguage")
@@ -5406,7 +5411,11 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(400)
             return self.write({"error": "video_url required"})
 
-        if not idea and not ((audio_text and audio_text.strip()) and (video_prompt and video_prompt.strip())):
+        if (
+            not idea
+            and not audio_url
+            and not ((audio_text and audio_text.strip()) and (video_prompt and video_prompt.strip()))
+        ):
             self.set_status(400)
             return self.write({"error": "idea or audio_text/video_prompt required"})
 
@@ -5420,6 +5429,7 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
                 venice_model=venice_model,
                 use_cache=use_cache,
                 audio_text=audio_text,
+                audio_url=audio_url or None,
                 video_prompt=video_prompt,
                 audio_language=audio_language,
                 video_time=video_time,
@@ -5441,6 +5451,8 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
                 "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
                 "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
                 "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
+                "a2e_tts_endpoint": os.getenv("A2E_TTS_ENDPOINT", "").strip() or "/api/v1/video/send_tts",
+                "a2e_tts_status_endpoint": os.getenv("A2E_TTS_STATUS_ENDPOINT", "").strip(),
                 "traceback": traceback.format_exc(),
             }
             if events:
