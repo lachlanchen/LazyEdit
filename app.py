@@ -5078,11 +5078,14 @@ class VeniceA2EPromptHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": "idea required"})
 
         audio_language = data.get("audio_language") or data.get("audioLanguage") or data.get("language")
+        venice_model = data.get("venice_model") or data.get("veniceModel") or data.get("model")
         if audio_language is not None and not isinstance(audio_language, str):
             audio_language = str(audio_language)
+        if venice_model is not None and not isinstance(venice_model, str):
+            venice_model = str(venice_model)
 
         def _generate():
-            generator = VenicePromptGenerator(template_dir=VENICE_A2E_TEMPLATE_DIR)
+            generator = VenicePromptGenerator(template_dir=VENICE_A2E_TEMPLATE_DIR, model=venice_model)
             return generator.generate(idea=idea, audio_language=audio_language)
 
         try:
@@ -5136,11 +5139,14 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
         video_prompt = data.get("video_prompt") or data.get("videoPrompt")
         audio_text = data.get("audio_text") or data.get("audioText")
         audio_language = data.get("audio_language") or data.get("audioLanguage")
+        venice_model = data.get("venice_model") or data.get("veniceModel") or data.get("model")
         aspect_ratio = data.get("aspect_ratio") or data.get("aspectRatio")
         negative_prompt = data.get("negative_prompt") or data.get("negativePrompt")
 
         if audio_language is not None and not isinstance(audio_language, str):
             audio_language = str(audio_language)
+        if venice_model is not None and not isinstance(venice_model, str):
+            venice_model = str(venice_model)
         if aspect_ratio is not None and not isinstance(aspect_ratio, str):
             aspect_ratio = str(aspect_ratio)
 
@@ -5165,6 +5171,7 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
             return run_venice_a2e_pipeline(
                 template_dir=VENICE_A2E_TEMPLATE_DIR,
                 idea=idea or "Venice + A2E run",
+                venice_model=venice_model,
                 image_prompt=image_prompt,
                 video_prompt=video_prompt,
                 audio_text=audio_text,

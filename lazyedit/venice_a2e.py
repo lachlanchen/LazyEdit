@@ -141,11 +141,12 @@ def _ratio_to_dimensions(aspect_ratio: str) -> tuple[int, int]:
 
 
 class VenicePromptGenerator:
-    def __init__(self, template_dir: str) -> None:
+    def __init__(self, template_dir: str, model: str | None = None) -> None:
         self.template_dir = template_dir
         self.api_base = os.getenv("VENICE_API_BASE", "https://api.venice.ai/api/v1").rstrip("/")
         self.api_key = os.getenv("VENICE_API_KEY", "").strip()
-        self.model = os.getenv("VENICE_MODEL", "qwen3-4b").strip() or "qwen3-4b"
+        env_model = os.getenv("VENICE_MODEL", "venice-uncensored").strip() or "venice-uncensored"
+        self.model = (model or env_model).strip() or env_model
         self.timeout = float(os.getenv("VENICE_TIMEOUT_SECONDS", "60"))
         self.chat_endpoint = os.getenv("VENICE_CHAT_ENDPOINT", "/chat/completions")
         if self.api_base.endswith("/api/v1") and self.chat_endpoint.startswith("/v1/"):
@@ -359,6 +360,7 @@ class A2EClient:
 def run_venice_a2e_pipeline(
     template_dir: str,
     idea: str,
+    venice_model: str | None = None,
     image_prompt: str | None = None,
     video_prompt: str | None = None,
     audio_text: str | None = None,
@@ -381,7 +383,7 @@ def run_venice_a2e_pipeline(
 
     if not image_prompt or not video_prompt or not audio_text:
         _log_event(events, "venice", "Generating prompts with Venice.")
-        generator = VenicePromptGenerator(template_dir=template_dir)
+        generator = VenicePromptGenerator(template_dir=template_dir, model=venice_model)
         prompts = generator.generate(idea=idea, audio_language=audio_language)
         image_prompt = prompts.get("image_prompt", "").strip()
         video_prompt = prompts.get("video_prompt", "").strip()

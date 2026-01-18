@@ -48,6 +48,31 @@ const chipOptions = {
   ],
 };
 
+const veniceTextModels = [
+  { value: 'venice-uncensored', label: 'Venice Uncensored 1.1' },
+  { value: 'qwen3-4b', label: 'Venice Small (qwen3-4b)' },
+  { value: 'mistral-31-24b', label: 'Venice Medium (mistral-31-24b)' },
+  { value: 'zai-org-glm-4.7', label: 'GLM 4.7 (zai-org-glm-4.7)' },
+  { value: 'qwen3-235b-a22b-instruct-2507', label: 'Qwen 3 235B Instruct' },
+  { value: 'qwen3-235b-a22b-thinking-2507', label: 'Qwen 3 235B Thinking' },
+  { value: 'qwen3-next-80b', label: 'Qwen 3 Next 80B' },
+  { value: 'qwen3-coder-480b-a35b-instruct', label: 'Qwen 3 Coder 480B' },
+  { value: 'llama-3.3-70b', label: 'Llama 3.3 70B' },
+  { value: 'llama-3.2-3b', label: 'Llama 3.2 3B' },
+  { value: 'deepseek-v3.2', label: 'DeepSeek V3.2' },
+  { value: 'kimi-k2-thinking', label: 'Kimi K2 Thinking' },
+  { value: 'openai-gpt-52', label: 'GPT-5.2' },
+  { value: 'openai-gpt-52-codex', label: 'GPT-5.2 Codex' },
+  { value: 'claude-sonnet-45', label: 'Claude Sonnet 4.5' },
+  { value: 'claude-opus-45', label: 'Claude Opus 4.5' },
+  { value: 'grok-41-fast', label: 'Grok 4.1 Fast' },
+  { value: 'gemini-3-flash-preview', label: 'Gemini 3 Flash Preview' },
+  { value: 'gemini-3-pro-preview', label: 'Gemini 3 Pro Preview' },
+  { value: 'openai-gpt-oss-120b', label: 'OpenAI GPT OSS 120B' },
+  { value: 'minimax-m21', label: 'MiniMax M2.1' },
+  { value: 'grok-code-fast-1', label: 'Grok Code Fast 1' },
+];
+
 const toneStyle = (tone: StatusTone) =>
   tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
 
@@ -56,6 +81,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [imagePrompt, setImagePrompt] = useState('');
   const [videoPrompt, setVideoPrompt] = useState('');
   const [audioText, setAudioText] = useState('');
+  const [veniceModel, setVeniceModel] = useState('venice-uncensored');
   const [aspectRatio, setAspectRatio] = useState('9:16');
   const [videoTime, setVideoTime] = useState('10');
   const [audioLanguage, setAudioLanguage] = useState('auto');
@@ -69,6 +95,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [talkingVideoUrl, setTalkingVideoUrl] = useState<string | null>(null);
+  const [modelMenuOpen, setModelMenuOpen] = useState(false);
 
   const canGenerate = idea.trim().length > 0;
   const canRun =
@@ -93,6 +120,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         body: JSON.stringify({
           idea: idea.trim(),
           audio_language: audioLanguage,
+          venice_model: veniceModel,
         }),
       });
       const json = await resp.json();
@@ -139,6 +167,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           video_prompt: videoPrompt.trim() || undefined,
           audio_text: audioText.trim() || undefined,
           audio_language: audioLanguage,
+          venice_model: veniceModel,
           aspect_ratio: aspectRatio,
           video_time: parseInt(videoTime, 10),
           negative_prompt: negativePrompt.trim() || undefined,
@@ -176,6 +205,10 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       { label: 'Talking Video', url: talkingVideoUrl, kind: 'video' as const },
     ],
     [imageUrl, videoUrl, audioUrl, talkingVideoUrl],
+  );
+  const veniceModelLabel = useMemo(
+    () => veniceTextModels.find((model) => model.value === veniceModel)?.label || veniceModel,
+    [veniceModel],
   );
 
   return (
@@ -248,6 +281,42 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
                   </Pressable>
                 );
               })}
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.inlineRow}>
+          <View style={styles.inlineBlock}>
+            <Text style={styles.label}>Venice text model</Text>
+            <View style={styles.dropdown}>
+              <Pressable
+                style={styles.dropdownButton}
+                onPress={() => setModelMenuOpen((open) => !open)}
+              >
+                <Text style={styles.dropdownButtonText}>{veniceModelLabel}</Text>
+                <Text style={styles.dropdownChevron}>{modelMenuOpen ? '▲' : '▼'}</Text>
+              </Pressable>
+              {modelMenuOpen && (
+                <ScrollView style={styles.dropdownMenu} nestedScrollEnabled>
+                  {veniceTextModels.map((option) => {
+                    const active = veniceModel === option.value;
+                    return (
+                      <Pressable
+                        key={option.value}
+                        style={[styles.dropdownItem, active && styles.dropdownItemActive]}
+                        onPress={() => {
+                          setVeniceModel(option.value);
+                          setModelMenuOpen(false);
+                        }}
+                      >
+                        <Text style={[styles.dropdownItemText, active && styles.dropdownItemTextActive]}>
+                          {option.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </ScrollView>
+              )}
             </View>
           </View>
         </View>
@@ -436,6 +505,53 @@ const styles = StyleSheet.create({
   chipTextActive: {
     color: '#fff',
     fontWeight: '600',
+  },
+  dropdown: {
+    position: 'relative',
+  },
+  dropdownButton: {
+    borderWidth: 1,
+    borderColor: '#e0ddd6',
+    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: '#fbfaf7',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  dropdownButtonText: {
+    fontSize: 13,
+    color: '#2f2f2f',
+    flex: 1,
+    paddingRight: 8,
+  },
+  dropdownChevron: {
+    fontSize: 12,
+    color: '#6b6b6b',
+  },
+  dropdownMenu: {
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#e0ddd6',
+    borderRadius: 12,
+    maxHeight: 220,
+    backgroundColor: '#fff',
+  },
+  dropdownItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  dropdownItemActive: {
+    backgroundColor: '#eef3ff',
+  },
+  dropdownItemText: {
+    fontSize: 12,
+    color: '#333',
+  },
+  dropdownItemTextActive: {
+    fontWeight: '600',
+    color: '#1d3a8a',
   },
   buttonRow: {
     flexDirection: 'row',
