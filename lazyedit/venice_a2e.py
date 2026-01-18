@@ -199,6 +199,15 @@ def _ratio_to_dimensions(aspect_ratio: str) -> tuple[int, int]:
     return mapping.get(ratio, (768, 1344))
 
 
+def _format_timeout_message(elapsed: float, status: str | None, progress: float | None) -> str:
+    details: list[str] = [f"elapsed={elapsed:.0f}s"]
+    if status:
+        details.append(f"last_status={status}")
+    if progress is not None:
+        details.append(f"last_progress={round(progress, 1)}")
+    return "A2E task timed out (" + ", ".join(details) + ")"
+
+
 class VenicePromptGenerator:
     def __init__(
         self,
@@ -378,7 +387,7 @@ class A2EClient:
         self.api_key = os.getenv("A2E_API_KEY", "").strip()
         self.timeout = float(os.getenv("A2E_TIMEOUT_SECONDS", "60"))
         self.poll_interval = float(os.getenv("A2E_POLL_INTERVAL_SECONDS", "3"))
-        self.poll_timeout = float(os.getenv("A2E_POLL_TIMEOUT_SECONDS", "240"))
+        self.poll_timeout = self._parse_poll_timeout(os.getenv("A2E_POLL_TIMEOUT_SECONDS", "900"))
         self.tts_endpoint = os.getenv("A2E_TTS_ENDPOINT", "").strip()
         self.tts_status_endpoint = os.getenv("A2E_TTS_STATUS_ENDPOINT", "").strip()
         self.tts_voice_id = os.getenv("A2E_TTS_VOICE_ID", "").strip()
@@ -386,6 +395,21 @@ class A2EClient:
         if self.api_key:
             self.session.headers.update({"Authorization": f"Bearer {self.api_key}"})
         self.session.headers.update({"Content-Type": "application/json"})
+
+    @staticmethod
+    def _parse_poll_timeout(value: str | None) -> float | None:
+        if value is None:
+            return 900.0
+        raw = str(value).strip().lower()
+        if raw in {"none", "no", "off", "disable", "disabled", "infinite", "inf"}:
+            return None
+        try:
+            parsed = float(raw)
+        except Exception:
+            return 900.0
+        if parsed <= 0:
+            return None
+        return parsed
 
     def create_text_to_image(self, prompt: str, width: int, height: int) -> tuple[str, dict[str, Any]]:
         payload = {
@@ -485,8 +509,9 @@ class A2EClient:
     ) -> str:
         last_status: str | None = None
         last_progress: float | None = None
-        deadline = time.time() + self.poll_timeout
-        while time.time() < deadline:
+        start = time.time()
+        deadline = None if self.poll_timeout is None else start + self.poll_timeout
+        while True:
             response = self._get(endpoint)
             url = _find_first_url(response, extensions)
             if url:
@@ -498,8 +523,10 @@ class A2EClient:
                 last_status, last_progress = status, progress
             if status in {"failed", "error", "canceled"}:
                 raise RuntimeError(f"A2E task failed with status={status}")
+            if deadline is not None and time.time() >= deadline:
+                elapsed = time.time() - start
+                raise TimeoutError(_format_timeout_message(elapsed, last_status, last_progress))
             time.sleep(self.poll_interval)
-        raise TimeoutError("A2E task timed out")
 
     def wait_for_task(
         self,
@@ -509,8 +536,9 @@ class A2EClient:
     ) -> tuple[str, dict[str, Any]]:
         last_status: str | None = None
         last_progress: float | None = None
-        deadline = time.time() + self.poll_timeout
-        while time.time() < deadline:
+        start = time.time()
+        deadline = None if self.poll_timeout is None else start + self.poll_timeout
+        while True:
             response = self._get(endpoint)
             url = _find_first_url(response, extensions)
             if url:
@@ -522,8 +550,10 @@ class A2EClient:
                 last_status, last_progress = status, progress
             if status in {"failed", "error", "canceled"}:
                 raise RuntimeError(f"A2E task failed with status={status}")
+            if deadline is not None and time.time() >= deadline:
+                elapsed = time.time() - start
+                raise TimeoutError(_format_timeout_message(elapsed, last_status, last_progress))
             time.sleep(self.poll_interval)
-        raise TimeoutError("A2E task timed out")
 
     def _post(self, endpoint: str, payload: dict[str, Any]) -> dict[str, Any]:
         url = f"{self.api_base}{endpoint}"
