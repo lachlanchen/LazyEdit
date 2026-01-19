@@ -3545,6 +3545,7 @@ def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> str | No
     if not isinstance(result, dict):
         return None
     output_dir = _venice_a2e_artifact_dir(step, result.get("idea") or data.get("idea") or data.get("prompt"))
+    events = result.get("events") if isinstance(result.get("events"), list) else None
     image_url = _cache_venice_a2e_url(
         result.get("image_url"),
         output_dir,
@@ -3552,6 +3553,9 @@ def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> str | No
         ".jpg",
         IMAGE_EXTENSIONS,
     )
+    source_image_url = result.get("image_url")
+    if source_image_url and _is_remote_url(source_image_url):
+        result["image_source_url"] = source_image_url
     if image_url:
         result["image_url"] = image_url
     video_url = _cache_venice_a2e_url(
@@ -3561,6 +3565,9 @@ def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> str | No
         ".mp4",
         VIDEO_EXTENSIONS,
     )
+    source_video_url = result.get("video_url")
+    if source_video_url and _is_remote_url(source_video_url):
+        result["video_source_url"] = source_video_url
     if video_url:
         result["video_url"] = video_url
     audio_url = _cache_venice_a2e_url(
@@ -3570,6 +3577,9 @@ def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> str | No
         ".mp3",
         AUDIO_EXTENSIONS,
     )
+    source_audio_url = result.get("audio_url")
+    if source_audio_url and _is_remote_url(source_audio_url):
+        result["audio_source_url"] = source_audio_url
     if audio_url:
         result["audio_url"] = audio_url
     talking_url = _cache_venice_a2e_url(
@@ -3579,6 +3589,9 @@ def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> str | No
         ".mp4",
         VIDEO_EXTENSIONS,
     )
+    source_talking_url = result.get("talking_video_url")
+    if source_talking_url and _is_remote_url(source_talking_url):
+        result["talking_source_url"] = source_talking_url
     if talking_url:
         result["talking_video_url"] = talking_url
     if talking_url and audio_url and os.path.exists(talking_url) and os.path.exists(audio_url):
@@ -3588,6 +3601,31 @@ def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> str | No
             talking_url = merged
         elif error:
             print(f"[V+A2E] talking audio mux failed: {error}")
+    if events is not None:
+        cache_data: dict[str, Any] = {}
+        if source_image_url:
+            cache_data["image_source_url"] = source_image_url
+        if source_video_url:
+            cache_data["video_source_url"] = source_video_url
+        if source_audio_url:
+            cache_data["audio_source_url"] = source_audio_url
+        if source_talking_url:
+            cache_data["talking_source_url"] = source_talking_url
+        if image_url:
+            cache_data["image_cached_path"] = image_url
+        if video_url:
+            cache_data["video_cached_path"] = video_url
+        if audio_url:
+            cache_data["audio_cached_path"] = audio_url
+        if talking_url:
+            cache_data["talking_cached_path"] = talking_url
+        if cache_data:
+            events.append({
+                "ts": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                "stage": "cache",
+                "message": "Cached artifacts.",
+                "data": cache_data,
+            })
     muxed_path = None
     if video_url and audio_url and os.path.exists(video_url) and os.path.exists(audio_url):
         digest = hashlib.sha1(f"{video_url}|{audio_url}".encode("utf-8")).hexdigest()[:12]
@@ -3791,6 +3829,7 @@ def _serialize_venice_a2e_history_row(row: tuple) -> dict:
         "created_at": row[17].isoformat() if row[17] else None,
     }
     prompts = {}
+    sources = {}
     if isinstance(entry.get("events"), list):
         for item in entry["events"]:
             if not isinstance(item, dict):
@@ -3801,12 +3840,23 @@ def _serialize_venice_a2e_history_row(row: tuple) -> dict:
             for key in ("image_prompt", "video_prompt", "audio_text"):
                 if key not in prompts and data.get(key):
                     prompts[key] = data.get(key)
+            for key in ("image_source_url", "video_source_url", "audio_source_url", "talking_source_url"):
+                if key not in sources and data.get(key):
+                    sources[key] = data.get(key)
     if not entry.get("image_prompt") and prompts.get("image_prompt"):
         entry["image_prompt"] = prompts["image_prompt"]
     if not entry.get("video_prompt") and prompts.get("video_prompt"):
         entry["video_prompt"] = prompts["video_prompt"]
     if not entry.get("audio_text") and prompts.get("audio_text"):
         entry["audio_text"] = prompts["audio_text"]
+    if sources.get("image_source_url"):
+        entry["image_source_url"] = sources["image_source_url"]
+    if sources.get("video_source_url"):
+        entry["video_source_url"] = sources["video_source_url"]
+    if sources.get("audio_source_url"):
+        entry["audio_source_url"] = sources["audio_source_url"]
+    if sources.get("talking_source_url"):
+        entry["talking_source_url"] = sources["talking_source_url"]
 
     def _preview_url(value: str | None) -> str | None:
         if not value:
@@ -5771,9 +5821,14 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
 
         title = data.get("title") or data.get("video_title") or data.get("videoTitle")
         image_url = data.get("image_url") or data.get("imageUrl") or ""
+        image_source_url = data.get("image_source_url") or data.get("imageSourceUrl")
         if not isinstance(image_url, str):
             image_url = str(image_url)
         image_url = image_url.strip()
+        if image_source_url is not None and not isinstance(image_source_url, str):
+            image_source_url = str(image_source_url)
+        if image_source_url:
+            image_source_url = image_source_url.strip()
 
         video_prompt = data.get("video_prompt") or data.get("videoPrompt")
         audio_language = data.get("audio_language") or data.get("audioLanguage")
@@ -5802,6 +5857,9 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
         if not idea and not (video_prompt and video_prompt.strip()):
             self.set_status(400)
             return self.write({"error": "idea or video_prompt required"})
+
+        if image_source_url and _is_remote_url(image_source_url) and not _is_remote_url(image_url):
+            image_url = image_source_url
 
         events = []
 
@@ -5882,9 +5940,14 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
 
         title = data.get("title") or data.get("video_title") or data.get("videoTitle")
         video_url = data.get("video_url") or data.get("videoUrl") or ""
+        video_source_url = data.get("video_source_url") or data.get("videoSourceUrl")
         if not isinstance(video_url, str):
             video_url = str(video_url)
         video_url = video_url.strip()
+        if video_source_url is not None and not isinstance(video_source_url, str):
+            video_source_url = str(video_source_url)
+        if video_source_url:
+            video_source_url = video_source_url.strip()
 
         audio_url = data.get("audio_url") or data.get("audioUrl") or ""
         if not isinstance(audio_url, str):
@@ -5917,6 +5980,9 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
         if not video_url:
             self.set_status(400)
             return self.write({"error": "video_url required"})
+
+        if video_source_url and _is_remote_url(video_source_url) and not _is_remote_url(video_url):
+            video_url = video_source_url
 
         if (
             not idea

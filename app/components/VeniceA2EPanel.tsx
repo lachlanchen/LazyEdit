@@ -33,6 +33,10 @@ type HistoryEntry = {
   video_url?: string | null;
   audio_url?: string | null;
   talking_video_url?: string | null;
+  image_source_url?: string | null;
+  video_source_url?: string | null;
+  audio_source_url?: string | null;
+  talking_source_url?: string | null;
   image_media_url?: string | null;
   video_media_url?: string | null;
   audio_media_url?: string | null;
@@ -128,6 +132,8 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [talkingVideoUrl, setTalkingVideoUrl] = useState<string | null>(null);
+  const [imageSourceUrl, setImageSourceUrl] = useState<string | null>(null);
+  const [videoSourceUrl, setVideoSourceUrl] = useState<string | null>(null);
   const [modelMenuOpen, setModelMenuOpen] = useState(false);
   const [historyItems, setHistoryItems] = useState<HistoryEntry[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -158,6 +164,11 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     },
     [apiUrl],
   );
+
+  const isRemoteUrl = useCallback((value?: string | null) => {
+    if (!value) return false;
+    return value.startsWith('http://') || value.startsWith('https://');
+  }, []);
 
   const formatHistoryTimestamp = useCallback((value?: string | null) => {
     if (!value) return '';
@@ -210,6 +221,8 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         video_time: pickField('video_time'),
         audio_language: pickField('audio_language'),
         venice_model: pickField('venice_model'),
+        image_source_url: pickField('image_source_url'),
+        video_source_url: pickField('video_source_url'),
       };
     },
     [historyItems],
@@ -234,6 +247,8 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       if (merged.video_url !== undefined) setVideoUrl(merged.video_url || null);
       if (merged.audio_url !== undefined) setAudioUrl(merged.audio_url || null);
       if (merged.talking_video_url !== undefined) setTalkingVideoUrl(merged.talking_video_url || null);
+      if (merged.image_source_url !== undefined) setImageSourceUrl(merged.image_source_url || null);
+      if (merged.video_source_url !== undefined) setVideoSourceUrl(merged.video_source_url || null);
     },
     [mergeHistoryEntry],
   );
@@ -323,6 +338,8 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     setVideoUrl(null);
     setAudioUrl(null);
     setTalkingVideoUrl(null);
+    setImageSourceUrl(null);
+    setVideoSourceUrl(null);
     setImageStatus('');
     setImageTone('neutral');
     setVideoStatus('');
@@ -358,6 +375,16 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       setVideoUrl(json.video_url || null);
       setAudioUrl(json.audio_url || null);
       setTalkingVideoUrl(json.talking_video_url || null);
+      if (json.image_source_url) {
+        setImageSourceUrl(json.image_source_url);
+      } else if (isRemoteUrl(json.image_url)) {
+        setImageSourceUrl(json.image_url);
+      }
+      if (json.video_source_url) {
+        setVideoSourceUrl(json.video_source_url);
+      } else if (isRemoteUrl(json.video_url)) {
+        setVideoSourceUrl(json.video_url);
+      }
       if (json.image_url) {
         setImageStatus('Image ready.');
         setImageTone('good');
@@ -418,6 +445,8 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     setVideoUrl(null);
     setAudioUrl(null);
     setTalkingVideoUrl(null);
+    setImageSourceUrl(null);
+    setVideoSourceUrl(null);
     setVideoStatus('');
     setVideoTone('neutral');
     setAudioStatus('');
@@ -445,6 +474,11 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       if (json.title) setTitle(json.title);
       if (json.image_prompt) setImagePrompt(json.image_prompt);
       setImageUrl(json.image_url || null);
+      if (json.image_source_url) {
+        setImageSourceUrl(json.image_source_url);
+      } else if (isRemoteUrl(json.image_url)) {
+        setImageSourceUrl(json.image_url);
+      }
       setImageStatus(json.image_url ? 'Image ready.' : 'Image complete.');
       setImageTone('good');
       loadHistory();
@@ -460,6 +494,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     idea?: string;
     title?: string;
     imageUrl?: string | null;
+    imageSourceUrl?: string | null;
     videoPrompt?: string;
     audioLanguage?: string;
     veniceModel?: string;
@@ -470,6 +505,10 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     const nextIdea = override?.idea !== undefined ? override.idea : idea;
     const nextTitle = override?.title !== undefined ? override.title : title;
     const nextImageUrl = override?.imageUrl !== undefined ? override.imageUrl : imageUrl;
+    const nextImageSourceUrl =
+      override?.imageSourceUrl !== undefined ? override.imageSourceUrl : imageSourceUrl;
+    const imageForGeneration =
+      nextImageSourceUrl || (isRemoteUrl(nextImageUrl) ? nextImageUrl : null) || nextImageUrl;
     const nextVideoPrompt = override?.videoPrompt !== undefined ? override.videoPrompt : videoPrompt;
     const nextAudioLanguage = override?.audioLanguage !== undefined ? override.audioLanguage : audioLanguage;
     const nextVeniceModel = override?.veniceModel !== undefined ? override.veniceModel : veniceModel;
@@ -480,6 +519,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     if (override?.title !== undefined) setTitle(nextTitle);
     if (override?.imageUrl !== undefined) setImageUrl(nextImageUrl || null);
     if (override?.videoPrompt !== undefined) setVideoPrompt(nextVideoPrompt);
+    if (override?.imageSourceUrl !== undefined) setImageSourceUrl(nextImageSourceUrl || null);
     if (override?.audioLanguage !== undefined) setAudioLanguage(nextAudioLanguage);
     if (override?.veniceModel !== undefined) setVeniceModel(nextVeniceModel);
     if (override?.videoTime !== undefined) setVideoTime(String(nextVideoTime || ''));
@@ -500,6 +540,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     setVideoUrl(null);
     setAudioUrl(null);
     setTalkingVideoUrl(null);
+    setVideoSourceUrl(null);
     setAudioStatus('');
     setAudioTone('neutral');
     try {
@@ -509,7 +550,8 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         body: JSON.stringify({
           idea: nextIdea.trim(),
           title: nextTitle.trim() || undefined,
-          image_url: nextImageUrl,
+          image_url: imageForGeneration,
+          image_source_url: nextImageSourceUrl || undefined,
           video_prompt: nextVideoPrompt.trim() || undefined,
           audio_language: nextAudioLanguage,
           venice_model: nextVeniceModel,
@@ -527,6 +569,11 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       if (json.title) setTitle(json.title);
       if (json.video_prompt) setVideoPrompt(json.video_prompt);
       setVideoUrl(json.video_url || null);
+      if (json.video_source_url) {
+        setVideoSourceUrl(json.video_source_url);
+      } else if (isRemoteUrl(json.video_url)) {
+        setVideoSourceUrl(json.video_url);
+      }
       setVideoStatus(json.video_url ? 'Video ready.' : 'Video complete.');
       setVideoTone('good');
       loadHistory();
@@ -542,6 +589,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     idea?: string;
     title?: string;
     videoUrl?: string | null;
+    videoSourceUrl?: string | null;
     audioText?: string;
     audioUrl?: string | null;
     videoPrompt?: string;
@@ -554,6 +602,10 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     const nextIdea = override?.idea !== undefined ? override.idea : idea;
     const nextTitle = override?.title !== undefined ? override.title : title;
     const nextVideoUrl = override?.videoUrl !== undefined ? override.videoUrl : videoUrl;
+    const nextVideoSourceUrl =
+      override?.videoSourceUrl !== undefined ? override.videoSourceUrl : videoSourceUrl;
+    const videoForGeneration =
+      nextVideoSourceUrl || (isRemoteUrl(nextVideoUrl) ? nextVideoUrl : null) || nextVideoUrl;
     const nextAudioText = override?.audioText !== undefined ? override.audioText : audioText;
     const nextAudioUrl = override?.audioUrl !== undefined ? override.audioUrl : null;
     const nextVideoPrompt = override?.videoPrompt !== undefined ? override.videoPrompt : videoPrompt;
@@ -567,6 +619,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     if (override?.videoUrl !== undefined) setVideoUrl(nextVideoUrl || null);
     if (override?.audioText !== undefined) setAudioText(nextAudioText);
     if (override?.videoPrompt !== undefined) setVideoPrompt(nextVideoPrompt);
+    if (override?.videoSourceUrl !== undefined) setVideoSourceUrl(nextVideoSourceUrl || null);
     if (override?.audioLanguage !== undefined) setAudioLanguage(nextAudioLanguage);
     if (override?.veniceModel !== undefined) setVeniceModel(nextVeniceModel);
     if (override?.videoTime !== undefined) setVideoTime(String(nextVideoTime || ''));
@@ -594,7 +647,8 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         body: JSON.stringify({
           idea: nextIdea.trim(),
           title: nextTitle.trim() || undefined,
-          video_url: nextVideoUrl,
+          video_url: videoForGeneration,
+          video_source_url: nextVideoSourceUrl || undefined,
           audio_text: nextAudioText.trim() || undefined,
           audio_url: hasAudioUrl ? nextAudioUrl : undefined,
           video_prompt: nextVideoPrompt.trim() || undefined,
@@ -615,6 +669,9 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       if (json.audio_text) setAudioText(json.audio_text);
       setAudioUrl(json.audio_url || null);
       setTalkingVideoUrl(json.talking_video_url || null);
+      if (json.video_source_url) {
+        setVideoSourceUrl(json.video_source_url);
+      }
       setAudioStatus(json.audio_url || json.talking_video_url ? 'Audio ready.' : 'Audio complete.');
       setAudioTone('good');
       loadHistory();
@@ -650,6 +707,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         idea: merged.idea || '',
         title: merged.title || '',
         imageUrl: merged.image_url || null,
+        imageSourceUrl: merged.image_source_url || null,
         videoPrompt: merged.video_prompt || '',
         audioLanguage: merged.audio_language || audioLanguage,
         veniceModel: merged.venice_model || veniceModel,
@@ -668,6 +726,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         idea: merged.idea || '',
         title: merged.title || '',
         videoUrl: merged.video_url || null,
+        videoSourceUrl: merged.video_source_url || null,
         audioText: merged.audio_text || '',
         audioUrl: merged.audio_url || null,
         videoPrompt: merged.video_prompt || '',

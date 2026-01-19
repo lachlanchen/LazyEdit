@@ -186,6 +186,21 @@ def _extract_message(payload: Any) -> str | None:
     return None
 
 
+def _summarize_payload(payload: Any) -> dict[str, Any]:
+    if isinstance(payload, dict):
+        summary: dict[str, Any] = {"keys": list(payload.keys())[:12]}
+        data = payload.get("data")
+        if isinstance(data, dict):
+            summary["data_keys"] = list(data.keys())[:12]
+        return summary
+    if isinstance(payload, list):
+        summary = {"list_len": len(payload)}
+        if payload and isinstance(payload[0], dict):
+            summary["first_keys"] = list(payload[0].keys())[:12]
+        return summary
+    return {"type": type(payload).__name__}
+
+
 def _extract_progress(payload: Any) -> float | None:
     if isinstance(payload, dict):
         for key in (
@@ -300,7 +315,12 @@ def _poll_logger(
             if len(trimmed) > 160:
                 trimmed = trimmed[:157] + "..."
             details["message"] = trimmed
-        _log_event(events, stage, label, details)
+        ordered_keys = ("attempt", "elapsed", "status", "progress", "message")
+        message_parts = [f"{key}={details[key]}" for key in ordered_keys if key in details]
+        message_text = label
+        if message_parts:
+            message_text += " (" + ", ".join(message_parts) + ")"
+        _log_event(events, stage, message_text, details)
 
     return _log
 
@@ -517,6 +537,7 @@ class A2EClient:
             self.poll_log_seconds = float(os.getenv("A2E_POLL_LOG_SECONDS", "15"))
         except Exception:
             self.poll_log_seconds = 15.0
+        self.poll_log_payload = self._parse_bool_env(os.getenv("A2E_POLL_LOG_PAYLOAD", ""), False)
         self.tts_endpoint = os.getenv("A2E_TTS_ENDPOINT", "").strip() or DEFAULT_TTS_ENDPOINT
         self.tts_status_endpoint = os.getenv("A2E_TTS_STATUS_ENDPOINT", "").strip()
         self.tts_user_voice_id = os.getenv("A2E_TTS_USER_VOICE_ID", "").strip()
@@ -546,6 +567,17 @@ class A2EClient:
         if parsed <= 0:
             return None
         return max(parsed, default_timeout)
+
+    @staticmethod
+    def _parse_bool_env(value: str | None, default: bool) -> bool:
+        if value is None:
+            return default
+        raw = str(value).strip().lower()
+        if raw in {"1", "true", "yes", "y", "on"}:
+            return True
+        if raw in {"0", "false", "no", "n", "off"}:
+            return False
+        return default
 
     @staticmethod
     def _parse_voice_list_endpoints(raw: str) -> tuple[str, ...]:
@@ -692,9 +724,16 @@ class A2EClient:
         start = time.time()
         deadline = None if self.poll_timeout is None else start + self.poll_timeout
         attempt = 0
+        last_payload_log = -1.0
         while True:
             attempt += 1
             response = self._get(endpoint)
+            if self.poll_log_payload:
+                elapsed = time.time() - start
+                if last_payload_log < 0 or elapsed - last_payload_log >= (self.poll_log_seconds or 0):
+                    last_payload_log = elapsed
+                    summary = _summarize_payload(response)
+                    print(f"[V+A2E] poll payload: {summary}")
             url = _find_first_url(response, extensions)
             if url:
                 return url
@@ -731,9 +770,16 @@ class A2EClient:
         start = time.time()
         deadline = None if self.poll_timeout is None else start + self.poll_timeout
         attempt = 0
+        last_payload_log = -1.0
         while True:
             attempt += 1
             response = self._get(endpoint)
+            if self.poll_log_payload:
+                elapsed = time.time() - start
+                if last_payload_log < 0 or elapsed - last_payload_log >= (self.poll_log_seconds or 0):
+                    last_payload_log = elapsed
+                    summary = _summarize_payload(response)
+                    print(f"[V+A2E] poll payload: {summary}")
             url = _find_first_url(response, extensions)
             if url:
                 return url, response
