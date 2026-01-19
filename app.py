@@ -4252,6 +4252,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "video_prompt_text_history",
             "video_prompt_result_history",
             "video_idea_history",
+            "wan_prompt_history",
             "publish_platforms",
             "logo_settings",
         }:
@@ -4286,7 +4287,13 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_PUBLISH_PLATFORMS})
             return self.write({"key": key, "value": _sanitize_publish_platforms(saved)})
-        if key in {"video_spec_history", "video_prompt_text_history", "video_prompt_result_history", "video_idea_history"}:
+        if key in {
+            "video_spec_history",
+            "video_prompt_text_history",
+            "video_prompt_result_history",
+            "video_idea_history",
+            "wan_prompt_history",
+        }:
             return self.write({"key": key, "value": _sanitize_history_list(saved)})
         if not saved:
             return self.write({"key": key, "value": DEFAULT_TRANSLATION_LANGUAGES})
@@ -4305,6 +4312,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "video_prompt_text_history",
             "video_prompt_result_history",
             "video_idea_history",
+            "wan_prompt_history",
             "publish_platforms",
             "logo_settings",
         }:
@@ -4328,7 +4336,13 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             cleaned = _sanitize_video_prompt_history(data)
         elif key == "publish_platforms":
             cleaned = _sanitize_publish_platforms(data)
-        elif key in {"video_spec_history", "video_prompt_text_history", "video_prompt_result_history", "video_idea_history"}:
+        elif key in {
+            "video_spec_history",
+            "video_prompt_text_history",
+            "video_prompt_result_history",
+            "video_idea_history",
+            "wan_prompt_history",
+        }:
             cleaned = _sanitize_history_list(data)
         else:
             cleaned = _sanitize_translation_languages(data)

@@ -249,10 +249,12 @@ export default function HomeScreen() {
   const [specHistoryList, setSpecHistoryList] = useState<string[]>([]);
   const [promptTextHistory, setPromptTextHistory] = useState<string[]>([]);
   const [ideaHistory, setIdeaHistory] = useState<string[]>([]);
+  const [wanHistory, setWanHistory] = useState<string[]>([]);
   const [selectedSpecHistory, setSelectedSpecHistory] = useState('');
   const [selectedPromptTextHistory, setSelectedPromptTextHistory] = useState('');
   const [selectedPromptResultHistory, setSelectedPromptResultHistory] = useState('');
   const [selectedIdeaHistory, setSelectedIdeaHistory] = useState('');
+  const [selectedWanHistory, setSelectedWanHistory] = useState('');
   const [promptOutput, setPromptOutput] = useState<string>('');
   const [prompting, setPrompting] = useState(false);
   const [promptStatus, setPromptStatus] = useState<string>('');
@@ -265,6 +267,7 @@ export default function HomeScreen() {
   const [promptTextHistoryLoaded, setPromptTextHistoryLoaded] = useState(false);
   const [promptResultHistoryLoaded, setPromptResultHistoryLoaded] = useState(false);
   const [ideaHistoryLoaded, setIdeaHistoryLoaded] = useState(false);
+  const [wanHistoryLoaded, setWanHistoryLoaded] = useState(false);
   const [promptHistory, setPromptHistory] = useState(DEFAULT_PROMPT_HISTORY);
   const [promptHistoryLoaded, setPromptHistoryLoaded] = useState(false);
   const [ideaPrompt, setIdeaPrompt] = useState('');
@@ -920,6 +923,27 @@ export default function HomeScreen() {
     if (!options.length) return [{ value: '', label: t('history_select') }];
     return [{ value: '', label: t('history_select') }, ...options];
   }, [promptResultHistory, t]);
+  const wanHistoryOptions = useMemo(() => {
+    const options: { value: string; label: string }[] = [];
+    wanHistory.forEach((item, idx) => {
+      let label = '';
+      try {
+        const parsed = JSON.parse(item);
+        if (parsed && typeof parsed === 'object') {
+          label = String(parsed.title || parsed.idea || parsed.prompt || '');
+        }
+      } catch (_err) {
+        // ignore
+      }
+      if (!label || !label.trim()) {
+        label = `Idea ${idx + 1}`;
+      }
+      if (label.length > 60) label = `${label.slice(0, 60)}…`;
+      options.push({ value: item, label });
+    });
+    if (!options.length) return [{ value: '', label: t('history_select') }];
+    return [{ value: '', label: t('history_select') }, ...options];
+  }, [wanHistory, t]);
 
 const pushListValue = (list: string[], value: string) => {
   const cleaned = value.trim();
@@ -943,6 +967,7 @@ const HISTORY_KEYS = {
   promptText: 'video_prompt_text_history',
   promptResult: 'video_prompt_result_history',
   idea: 'video_idea_history',
+  wanPrompt: 'wan_prompt_history',
 } as const;
 
   const loadPromptSettings = async () => {
@@ -1031,6 +1056,20 @@ const HISTORY_KEYS = {
       } finally {
         setIdeaHistoryLoaded(true);
       }
+      try {
+        const resp = await fetch(`${API_URL}/api/ui-settings/wan_prompt_history`);
+        const json = await resp.json();
+        const local = loadLocal(HISTORY_KEYS.wanPrompt);
+        if (resp.ok && Array.isArray(json.value)) {
+          setWanHistory(mergeHistory(json.value, local));
+        } else {
+          setWanHistory(local);
+        }
+      } catch (_err) {
+        // ignore
+      } finally {
+        setWanHistoryLoaded(true);
+      }
     })();
   }, []);
 
@@ -1098,6 +1137,50 @@ const HISTORY_KEYS = {
     if (!value) return;
     setSelectedIdeaHistory(value);
     setIdeaPrompt(value);
+  };
+
+  const applyWanHistory = (value: string) => {
+    if (!value) return;
+    setSelectedWanHistory(value);
+    try {
+      const parsed = JSON.parse(value);
+      if (parsed && typeof parsed === 'object') {
+        if (parsed.idea) setWanIdea(String(parsed.idea));
+        if (parsed.title) setWanTitle(String(parsed.title));
+        if (parsed.prompt) setWanPrompt(String(parsed.prompt));
+        return;
+      }
+    } catch (_err) {
+      // ignore
+    }
+    setWanPrompt(value);
+  };
+
+  const saveWanHistoryEntry = (entry: { idea?: string; title?: string; prompt?: string }) => {
+    if (!wanHistoryLoaded) return;
+    const payload: Record<string, string> = {};
+    const idea = entry.idea?.trim();
+    const title = entry.title?.trim();
+    const prompt = entry.prompt?.trim();
+    if (idea) payload.idea = idea;
+    if (title) payload.title = title;
+    if (prompt) payload.prompt = prompt;
+    if (!Object.keys(payload).length) return;
+    const serialized = JSON.stringify(payload);
+    const next = pushListValue(wanHistory, serialized);
+    setWanHistory(next);
+    fetch(`${API_URL}/api/ui-settings/wan_prompt_history`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(next),
+    }).catch(() => {});
+    if (Platform.OS === 'web') {
+      try {
+        localStorage.setItem(`lazyedit:${HISTORY_KEYS.wanPrompt}`, JSON.stringify(next));
+      } catch (_err) {
+        // ignore
+      }
+    }
   };
 
   useEffect(() => {
@@ -1467,6 +1550,11 @@ const HISTORY_KEYS = {
       if (json.title && !wanTitle.trim()) {
         setWanTitle(json.title);
       }
+      saveWanHistoryEntry({
+        idea,
+        title: wanTitle.trim() || json.title || '',
+        prompt: nextPrompt,
+      });
       setWanPromptStatus('Prompt ready.');
       setWanPromptTone('good');
     } catch (e: any) {
@@ -1517,6 +1605,11 @@ const HISTORY_KEYS = {
       if (mediaUrl) {
         setWanGeneratedVideoUrl(mediaUrl);
       }
+      saveWanHistoryEntry({
+        idea: wanIdea.trim(),
+        title: (json.title || wanTitle || '').trim(),
+        prompt,
+      });
       const warning = json.duration_warning ? ` ${json.duration_warning}` : '';
       setWanVideoStatus(`Video ready. Added to library.${warning}`);
       setWanVideoTone('good');
@@ -2226,6 +2319,14 @@ const HISTORY_KEYS = {
                   placeholder={t('idea_prompt_placeholder')}
                   multiline
                 />
+                {wanHistoryOptions.length > 1 ? (
+                  <HistorySelect
+                    label={t('history_label')}
+                    value={selectedWanHistory}
+                    options={wanHistoryOptions}
+                    onChange={applyWanHistory}
+                  />
+                ) : null}
 
                 <Pressable
                   style={[styles.btnAccent, wanPrompting && styles.btnDisabled]}
