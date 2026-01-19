@@ -391,6 +391,21 @@ def get_venice_a2e_history(history_id: int) -> tuple | None:
         return cur.fetchone()
 
 
+def update_venice_a2e_history_media(history_id: int, updates: dict) -> None:
+    """Update media paths for a Venice + A2E history entry."""
+    allowed = {"image_url", "video_url", "audio_url", "talking_video_url"}
+    cleaned = {key: updates[key] for key in updates if key in allowed and updates[key]}
+    if not cleaned:
+        return
+    set_clause = ", ".join(f"{key} = %s" for key in cleaned)
+    values = list(cleaned.values()) + [history_id]
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            f"UPDATE venice_a2e_history SET {set_clause} WHERE id = %s",
+            values,
+        )
+
+
 def add_caption(video_id: int, language_code: str, subtitle_path: str) -> int:
     """Insert a caption row and return its ID."""
     with get_cursor(commit=True) as cur:

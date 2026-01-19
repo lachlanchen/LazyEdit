@@ -3557,6 +3557,39 @@ def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> str | No
     return muxed_path
 
 
+def _backfill_venice_a2e_history_urls(entry: dict) -> dict:
+    history_id = entry.get("id")
+    if not history_id:
+        return entry
+    url_specs = {
+        "image_url": ("image", ".jpg", IMAGE_EXTENSIONS),
+        "video_url": ("video", ".mp4", VIDEO_EXTENSIONS),
+        "audio_url": ("audio", ".mp3", AUDIO_EXTENSIONS),
+        "talking_video_url": ("talking", ".mp4", VIDEO_EXTENSIONS),
+    }
+    output_dir = None
+    updates: dict[str, str] = {}
+    for field, (prefix, fallback_ext, exts) in url_specs.items():
+        url = entry.get(field)
+        if not url or not _is_remote_url(url):
+            continue
+        if output_dir is None:
+            output_dir = _venice_a2e_artifact_dir(
+                "history",
+                entry.get("idea") or entry.get("title") or "venice_a2e",
+            )
+        cached = _cache_venice_a2e_url(url, output_dir, prefix, fallback_ext, exts)
+        if cached and cached != url:
+            entry[field] = cached
+            updates[field] = cached
+    if updates:
+        try:
+            ldb.update_venice_a2e_history_media(int(history_id), updates)
+        except Exception as exc:
+            print(f"[V+A2E] history update failed: {exc}")
+    return entry
+
+
 def _update_video_file_path(video_id: int, new_path: str) -> None:
     ldb.ensure_schema()
     with ldb.get_cursor(commit=True) as cur:
@@ -3576,6 +3609,22 @@ def _replace_venice_a2e_video_record(original_path: str | None, replacement_path
             (original_path,),
         )
         row = cur.fetchone()
+        if not row and _is_remote_url(original_path):
+            digest = hashlib.sha1(original_path.encode("utf-8")).hexdigest()[:12]
+            cur.execute(
+                "SELECT id, title, file_path FROM videos WHERE file_path LIKE %s ORDER BY created_at DESC, id DESC LIMIT 5",
+                (f"%{digest}%",),
+            )
+            candidates = cur.fetchall()
+            if candidates:
+                preferred = None
+                for candidate in candidates:
+                    candidate_path = (candidate[2] or "").replace("\\", "/")
+                    if "/remote_cache/" in candidate_path:
+                        preferred = candidate
+                        break
+                row = preferred or candidates[0]
+                row = (row[0], row[1])
         if not row:
             return False
         video_id, existing_title = row
@@ -3602,13 +3651,22 @@ def _sync_venice_a2e_audio_replacements(limit: int = 200) -> None:
         rows = ldb.list_venice_a2e_history(limit)
     except Exception:
         return
+    ldb.ensure_schema()
     for row in rows:
         entry = _serialize_venice_a2e_history_row(row)
+        entry = _backfill_venice_a2e_history_urls(entry)
         video_url = entry.get("video_url")
         talking_url = entry.get("talking_video_url")
-        if not video_url or not talking_url or video_url == talking_url:
+        if not talking_url:
             continue
         title = entry.get("title") or entry.get("idea")
+        try:
+            clean_title = _sanitize_title(title) if title else None
+            ldb.add_video(talking_url, clean_title, "venice_a2e")
+        except Exception:
+            pass
+        if not video_url or video_url == talking_url:
+            continue
         try:
             _replace_venice_a2e_video_record(video_url, talking_url, title)
         except Exception:
