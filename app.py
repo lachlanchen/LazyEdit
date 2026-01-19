@@ -3512,10 +3512,15 @@ def _has_audio_stream(video_path: str) -> bool:
 def _ensure_audio_on_talking_video(talking_path: str, audio_path: str) -> tuple[str | None, str | None]:
     if not talking_path or not audio_path:
         return None, "missing talking or audio path"
-    if _has_audio_stream(talking_path):
-        return talking_path, None
     digest = hashlib.sha1(f"{talking_path}|{audio_path}".encode("utf-8")).hexdigest()[:12]
     output_path = os.path.join(os.path.dirname(talking_path), f"talking_audio_{digest}.mp4")
+    if _has_audio_stream(talking_path) and os.path.exists(output_path):
+        try:
+            output_mtime = os.path.getmtime(output_path)
+            if output_mtime >= max(os.path.getmtime(talking_path), os.path.getmtime(audio_path)):
+                return output_path, None
+        except Exception:
+            pass
     return _mux_audio_to_video(talking_path, audio_path, output_path)
 
 
@@ -3750,17 +3755,20 @@ def _sync_venice_a2e_audio_replacements(limit: int = 200) -> None:
         if not talking_url:
             continue
         title = entry.get("title") or entry.get("idea")
+        replaced = False
         try:
             clean_title = _sanitize_title(title) if title else None
-            ldb.add_video(talking_url, clean_title, "venice_a2e")
+            replaced = _replace_venice_a2e_video_record(video_url, talking_url, clean_title)
+            if not replaced:
+                ldb.add_video(talking_url, clean_title, "venice_a2e")
         except Exception:
-            pass
+            replaced = False
         if previous_talking_url and previous_talking_url != talking_url:
             try:
                 _replace_venice_a2e_video_record(previous_talking_url, talking_url, title)
             except Exception:
                 pass
-        if not video_url or video_url == talking_url:
+        if not video_url or video_url == talking_url or replaced:
             continue
         try:
             _replace_venice_a2e_video_record(video_url, talking_url, title)
@@ -6035,9 +6043,8 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e audio failed", "details": details, "events": events})
 
-        muxed_path = None
         try:
-            muxed_path = await run_blocking(lambda: _cache_venice_a2e_artifacts("audio", data, result))
+            await run_blocking(lambda: _cache_venice_a2e_artifacts("audio", data, result))
         except Exception as exc:
             print(f"[V+A2E] audio cache failed: {exc}")
         if title:
@@ -6055,21 +6062,9 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
                 )
                 title = _sanitize_title(title_base)
                 ldb.ensure_schema()
-                ldb.add_video(talking_url, title, "venice_a2e")
-            if muxed_path and os.path.exists(muxed_path):
-                title_base = (
-                    (title.strip() if isinstance(title, str) else None)
-                    or result.get("title")
-                    or idea
-                    or result.get("audio_text")
-                    or "Venice A2E audio mux"
-                )
-                title = _sanitize_title(f"{title_base} (audio)")
-                ldb.ensure_schema()
-                ldb.add_video(muxed_path, title, "venice_a2e")
-            if result.get("video_url") and (muxed_path or talking_url):
-                replacement = muxed_path or talking_url
-                _replace_venice_a2e_video_record(result.get("video_url"), replacement, title)
+                replaced = _replace_venice_a2e_video_record(result.get("video_url"), talking_url, title)
+                if not replaced:
+                    ldb.add_video(talking_url, title, "venice_a2e")
         except Exception as exc:
             print(f"[V+A2E] talking video registration failed: {exc}")
 
@@ -6167,9 +6162,8 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e failed", "details": details, "events": events})
 
-        muxed_path = None
         try:
-            muxed_path = await run_blocking(lambda: _cache_venice_a2e_artifacts("pipeline", data, result))
+            await run_blocking(lambda: _cache_venice_a2e_artifacts("pipeline", data, result))
         except Exception as exc:
             print(f"[V+A2E] pipeline cache failed: {exc}")
         if title:
@@ -6178,7 +6172,8 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
         try:
             if isinstance(result, dict):
                 video_url_result = result.get("video_url")
-                if video_url_result:
+                talking_url = result.get("talking_video_url")
+                if video_url_result and not talking_url:
                     title_base = (
                         (title.strip() if isinstance(title, str) else None)
                         or result.get("title")
@@ -6189,7 +6184,6 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
                     title = _sanitize_title(title_base)
                     ldb.ensure_schema()
                     ldb.add_video(video_url_result, title, "venice_a2e")
-                talking_url = result.get("talking_video_url")
                 if talking_url:
                     title_base = (
                         (title.strip() if isinstance(title, str) else None)
@@ -6200,21 +6194,9 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
                     )
                     title = _sanitize_title(title_base)
                     ldb.ensure_schema()
-                    ldb.add_video(talking_url, title, "venice_a2e")
-                if muxed_path and os.path.exists(muxed_path):
-                    title_base = (
-                        (title.strip() if isinstance(title, str) else None)
-                        or result.get("title")
-                        or idea
-                        or result.get("audio_text")
-                        or "Venice A2E audio mux"
-                    )
-                    title = _sanitize_title(f"{title_base} (audio)")
-                    ldb.ensure_schema()
-                    ldb.add_video(muxed_path, title, "venice_a2e")
-                if result.get("video_url") and (muxed_path or talking_url):
-                    replacement = muxed_path or talking_url
-                    _replace_venice_a2e_video_record(result.get("video_url"), replacement, title)
+                    replaced = _replace_venice_a2e_video_record(result.get("video_url"), talking_url, title)
+                    if not replaced:
+                        ldb.add_video(talking_url, title, "venice_a2e")
         except Exception as exc:
             print(f"[V+A2E] pipeline registration failed: {exc}")
 
