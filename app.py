@@ -3438,6 +3438,50 @@ def _venice_a2e_artifact_dir(step: str, idea: str | None) -> str:
     return output_dir
 
 
+def _mux_audio_to_video(video_path: str, audio_path: str, output_path: str) -> tuple[str | None, str | None]:
+    if not video_path or not os.path.exists(video_path):
+        return None, "video file missing"
+    if not audio_path or not os.path.exists(audio_path):
+        return None, "audio file missing"
+    try:
+        if os.path.exists(output_path):
+            output_mtime = os.path.getmtime(output_path)
+            if output_mtime >= max(os.path.getmtime(video_path), os.path.getmtime(audio_path)):
+                return output_path, None
+    except Exception:
+        pass
+    cmd = [
+        "ffmpeg",
+        "-y",
+        "-i",
+        video_path,
+        "-i",
+        audio_path,
+        "-map",
+        "0:v:0",
+        "-map",
+        "1:a:0",
+        "-c:v",
+        "copy",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "192k",
+        "-shortest",
+        "-movflags",
+        "+faststart",
+        output_path,
+    ]
+    try:
+        subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return output_path, None
+    except subprocess.CalledProcessError as exc:
+        err = exc.stderr.decode("utf-8", errors="replace") if exc.stderr else str(exc)
+        return None, err
+    except Exception as exc:
+        return None, str(exc)
+
+
 def _cache_venice_a2e_url(
     url: str | None,
     output_dir: str,
@@ -3460,9 +3504,9 @@ def _cache_venice_a2e_url(
     return cached_path
 
 
-def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> None:
+def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> str | None:
     if not isinstance(result, dict):
-        return
+        return None
     output_dir = _venice_a2e_artifact_dir(step, result.get("idea") or data.get("idea") or data.get("prompt"))
     image_url = _cache_venice_a2e_url(
         result.get("image_url"),
@@ -3500,6 +3544,17 @@ def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> None:
     )
     if talking_url:
         result["talking_video_url"] = talking_url
+    muxed_path = None
+    if video_url and audio_url and os.path.exists(video_url) and os.path.exists(audio_url):
+        digest = hashlib.sha1(f"{video_url}|{audio_url}".encode("utf-8")).hexdigest()[:12]
+        muxed_path = os.path.join(output_dir, f"muxed_{digest}.mp4")
+        merged, error = _mux_audio_to_video(video_url, audio_url, muxed_path)
+        if merged:
+            result["muxed_video_url"] = merged
+            muxed_path = merged
+        else:
+            print(f"[V+A2E] audio mux failed: {error}")
+    return muxed_path
 
 
 def _update_video_file_path(video_id: int, new_path: str) -> None:
@@ -5667,8 +5722,9 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e audio failed", "details": details, "events": events})
 
+        muxed_path = None
         try:
-            await run_blocking(lambda: _cache_venice_a2e_artifacts("audio", data, result))
+            muxed_path = await run_blocking(lambda: _cache_venice_a2e_artifacts("audio", data, result))
         except Exception as exc:
             print(f"[V+A2E] audio cache failed: {exc}")
         _store_venice_a2e_history("audio", data, result, {"video_time": video_time})
@@ -5679,6 +5735,11 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
                 title = _sanitize_title(title_base)
                 ldb.ensure_schema()
                 ldb.add_video(talking_url, title, "venice_a2e")
+            if muxed_path and os.path.exists(muxed_path):
+                title_base = idea or result.get("audio_text") or "Venice A2E audio mux"
+                title = _sanitize_title(f"{title_base} (audio)")
+                ldb.ensure_schema()
+                ldb.add_video(muxed_path, title, "venice_a2e")
         except Exception as exc:
             print(f"[V+A2E] talking video registration failed: {exc}")
 
@@ -5772,8 +5833,9 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e failed", "details": details, "events": events})
 
+        muxed_path = None
         try:
-            await run_blocking(lambda: _cache_venice_a2e_artifacts("pipeline", data, result))
+            muxed_path = await run_blocking(lambda: _cache_venice_a2e_artifacts("pipeline", data, result))
         except Exception as exc:
             print(f"[V+A2E] pipeline cache failed: {exc}")
         _store_venice_a2e_history("pipeline", data, result, {"video_time": video_time})
@@ -5791,6 +5853,11 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
                     title = _sanitize_title(title_base)
                     ldb.ensure_schema()
                     ldb.add_video(talking_url, title, "venice_a2e")
+                if muxed_path and os.path.exists(muxed_path):
+                    title_base = idea or result.get("audio_text") or "Venice A2E audio mux"
+                    title = _sanitize_title(f"{title_base} (audio)")
+                    ldb.ensure_schema()
+                    ldb.add_video(muxed_path, title, "venice_a2e")
         except Exception as exc:
             print(f"[V+A2E] pipeline registration failed: {exc}")
 
