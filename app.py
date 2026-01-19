@@ -1,6 +1,7 @@
 import os
 import hashlib
 from pathlib import Path
+from typing import Any
 
 
 def _load_env_file(path: str | Path) -> None:
@@ -77,6 +78,7 @@ from lazyedit.venice_a2e import (
     run_venice_a2e_pipeline,
     run_venice_a2e_video,
 )
+from lazyedit.venice_video import VeniceVideoClient, poll_venice_video
 from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
 from lazyedit.chinese_simplify import convert_items_to_simplified, convert_traditional_to_simplified
@@ -419,7 +421,7 @@ def _normalize_video_source(value: str | None) -> str | None:
     if not value:
         return None
     lowered = str(value).strip().lower()
-    if lowered in {"upload", "generate", "remix", "api", "venice_a2e"}:
+    if lowered in {"upload", "generate", "remix", "api", "venice_a2e", "wan_26"}:
         return lowered
     return None
 
@@ -5725,6 +5727,297 @@ class VeniceA2EPromptHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class VeniceWanPromptHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea, str):
+            idea = str(idea)
+        idea = idea.strip()
+        if not idea:
+            self.set_status(400)
+            return self.write({"error": "idea required"})
+
+        title = data.get("title") or data.get("video_title") or data.get("videoTitle")
+        audio_language = data.get("audio_language") or data.get("audioLanguage")
+        venice_model = data.get("venice_model") or data.get("veniceModel") or data.get("model")
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+        if title is not None and not isinstance(title, str):
+            title = str(title)
+        if isinstance(title, str):
+            title = title.strip() or None
+        if audio_language is not None and not isinstance(audio_language, str):
+            audio_language = str(audio_language)
+        if venice_model is not None and not isinstance(venice_model, str):
+            venice_model = str(venice_model)
+
+        events = []
+
+        def _run():
+            generator = VenicePromptGenerator(
+                template_dir=VENICE_A2E_TEMPLATE_DIR,
+                model=venice_model,
+                use_cache=use_cache,
+                cache_dir="cache/venice_prompts",
+            )
+            return generator.generate(idea=idea, audio_language=audio_language)
+
+        try:
+            prompts = await run_blocking(_run)
+        except Exception as exc:
+            details = {
+                "message": str(exc),
+                "type": type(exc).__name__,
+                "venice_api_base": os.getenv("VENICE_API_BASE", ""),
+                "venice_chat_endpoint": os.getenv("VENICE_CHAT_ENDPOINT", ""),
+                "venice_model": os.getenv("VENICE_MODEL", ""),
+                "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
+                "traceback": traceback.format_exc(),
+            }
+            print(f"[V+Wan] prompt failed: {details}")
+            self.set_status(500)
+            return self.write({"error": "venice wan prompt failed", "details": details})
+
+        if title:
+            prompts["title"] = title
+
+        response = {
+            "idea": idea,
+            "title": prompts.get("title") or title,
+            "prompt": prompts.get("video_prompt"),
+            "image_prompt": prompts.get("image_prompt"),
+            "audio_text": prompts.get("audio_text"),
+            "prompts": prompts,
+            "events": events,
+        }
+        self.write(response)
+
+
+class VeniceWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea, str):
+            idea = str(idea)
+        idea = idea.strip()
+
+        title = data.get("title") or data.get("video_title") or data.get("videoTitle")
+        if title is not None and not isinstance(title, str):
+            title = str(title)
+        if isinstance(title, str):
+            title = title.strip() or None
+
+        prompt = data.get("prompt") or data.get("video_prompt") or data.get("videoPrompt") or ""
+        if not isinstance(prompt, str):
+            prompt = str(prompt)
+        prompt = prompt.strip()
+
+        venice_model = data.get("model") or data.get("venice_model") or data.get("veniceModel") or "wan-2.6-text-to-video"
+        if not isinstance(venice_model, str):
+            venice_model = str(venice_model)
+        venice_model = venice_model.strip() or "wan-2.6-text-to-video"
+
+        aspect_ratio = data.get("aspect_ratio") or data.get("aspectRatio")
+        if aspect_ratio is not None and not isinstance(aspect_ratio, str):
+            aspect_ratio = str(aspect_ratio)
+        if isinstance(aspect_ratio, str):
+            aspect_ratio = aspect_ratio.strip() or None
+
+        resolution = data.get("resolution") or "720p"
+        if not isinstance(resolution, str):
+            resolution = str(resolution)
+        resolution = resolution.strip().lower()
+        if resolution not in {"1080p", "720p", "480p"}:
+            resolution = "720p"
+
+        duration_raw = data.get("duration") or data.get("video_time") or data.get("videoTime")
+        duration = None
+        if duration_raw is not None:
+            duration_text = str(duration_raw).strip().lower()
+            if duration_text.isdigit():
+                duration_text = f"{duration_text}s"
+            if not duration_text.endswith("s"):
+                duration_text = f"{duration_text}s"
+            duration = duration_text
+        if not duration:
+            duration = "5s"
+
+        duration_warning = None
+        if duration not in {"5s", "10s"}:
+            try:
+                seconds = int(duration.rstrip("s"))
+            except Exception:
+                seconds = 5
+            duration = "10s" if seconds >= 10 else "5s"
+            duration_warning = f"Duration not supported, using {duration}."
+
+        audio = _parse_bool(data.get("audio"), default=True)
+        negative_prompt = data.get("negative_prompt") or data.get("negativePrompt")
+        if negative_prompt is not None and not isinstance(negative_prompt, str):
+            negative_prompt = str(negative_prompt)
+        if isinstance(negative_prompt, str):
+            negative_prompt = negative_prompt.strip() or None
+
+        image_url = data.get("image_url") or data.get("imageUrl")
+        if image_url is not None and not isinstance(image_url, str):
+            image_url = str(image_url)
+        if isinstance(image_url, str):
+            image_url = image_url.strip() or None
+
+        audio_url = data.get("audio_url") or data.get("audioUrl")
+        if audio_url is not None and not isinstance(audio_url, str):
+            audio_url = str(audio_url)
+        if isinstance(audio_url, str):
+            audio_url = audio_url.strip() or None
+
+        video_url = data.get("video_url") or data.get("videoUrl")
+        if video_url is not None and not isinstance(video_url, str):
+            video_url = str(video_url)
+        if isinstance(video_url, str):
+            video_url = video_url.strip() or None
+
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+        events: list[dict[str, Any]] = []
+
+        def _run():
+            nonlocal prompt, title
+            if not prompt:
+                if not idea:
+                    raise RuntimeError("prompt or idea required")
+                generator = VenicePromptGenerator(
+                    template_dir=VENICE_A2E_TEMPLATE_DIR,
+                    model=venice_model,
+                    use_cache=use_cache,
+                    cache_dir="cache/venice_prompts",
+                )
+                prompts = generator.generate(idea=idea, audio_language=None)
+                prompt = str(prompts.get("video_prompt") or "").strip()
+                if not title:
+                    title = str(prompts.get("title") or "").strip() or None
+                if not prompt:
+                    raise RuntimeError("Missing video prompt after Venice generation")
+
+            client = VeniceVideoClient()
+            if not client.api_key:
+                raise RuntimeError("VENICE_API_KEY is not configured")
+
+            queue_payload: dict[str, Any] = {
+                "model": venice_model,
+                "prompt": prompt,
+                "duration": duration,
+                "resolution": resolution,
+                "audio": audio,
+            }
+            if aspect_ratio:
+                queue_payload["aspect_ratio"] = aspect_ratio
+            if negative_prompt:
+                queue_payload["negative_prompt"] = negative_prompt
+            if image_url:
+                queue_payload["image_url"] = image_url
+            if audio_url:
+                queue_payload["audio_url"] = audio_url
+            if video_url:
+                queue_payload["video_url"] = video_url
+
+            queue_response = client.queue(queue_payload)
+            queue_id = queue_response.get("queue_id")
+            events.append({
+                "ts": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                "stage": "queue",
+                "message": "Video task queued.",
+                "data": {"queue_id": queue_id, "model": venice_model},
+            })
+
+            title_input = title or idea or "Wan video"
+            title_clean = _sanitize_title(title_input)
+            slug = _slugify(title_clean)
+            prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:8]
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            base_name = f"{slug}_{timestamp}_{prompt_hash}"
+            output_dir = os.path.join(UPLOAD_FOLDER, "venice_wan", base_name)
+            output_path = os.path.join(output_dir, f"{base_name}.mp4")
+
+            poll_venice_video(
+                client=client,
+                model=venice_model,
+                queue_id=str(queue_id),
+                output_path=output_path,
+                events=events,
+                poll_interval=float(os.getenv("VENICE_VIDEO_POLL_INTERVAL_SECONDS", "5")),
+                poll_timeout=float(os.getenv("VENICE_VIDEO_POLL_TIMEOUT_SECONDS", "1800")),
+                delete_media_on_completion=False,
+            )
+
+            try:
+                client.complete(model=venice_model, queue_id=str(queue_id))
+            except Exception as exc:
+                print(f"[V+Wan] complete cleanup failed: {exc}")
+
+            return {
+                "title": title_clean,
+                "prompt": prompt,
+                "queue_id": queue_id,
+                "output_path": output_path,
+                "queue_response": queue_response,
+                "duration": duration,
+                "aspect_ratio": aspect_ratio,
+                "resolution": resolution,
+                "audio": audio,
+                "duration_warning": duration_warning,
+            }
+
+        try:
+            result = await run_blocking(_run)
+        except Exception as exc:
+            details = {
+                "message": str(exc),
+                "type": type(exc).__name__,
+                "venice_api_base": os.getenv("VENICE_API_BASE", ""),
+                "venice_video_queue_endpoint": os.getenv("VENICE_VIDEO_QUEUE_ENDPOINT", ""),
+                "venice_video_retrieve_endpoint": os.getenv("VENICE_VIDEO_RETRIEVE_ENDPOINT", ""),
+                "venice_video_complete_endpoint": os.getenv("VENICE_VIDEO_COMPLETE_ENDPOINT", ""),
+                "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
+                "traceback": traceback.format_exc(),
+            }
+            if events:
+                details["events"] = events
+            print(f"[V+Wan] video failed: {details}")
+            self.set_status(500)
+            return self.write({"error": "venice wan video failed", "details": details, "events": events})
+
+        output_path = result.get("output_path")
+        if not output_path or not os.path.exists(output_path):
+            self.set_status(500)
+            return self.write({"error": "generated video missing", "path": output_path})
+
+        ldb.ensure_schema()
+        video_id = ldb.add_video(output_path, result.get("title"), "wan_26")
+
+        response = {
+            "video_id": video_id,
+            "file_path": output_path,
+            "media_url": media_url_for_path(output_path),
+            "title": result.get("title"),
+            "prompt": result.get("prompt"),
+            "queue_id": result.get("queue_id"),
+            "duration": result.get("duration"),
+            "aspect_ratio": result.get("aspect_ratio"),
+            "resolution": result.get("resolution"),
+            "audio": result.get("audio"),
+            "duration_warning": result.get("duration_warning"),
+            "events": events,
+        }
+        self.write(response)
+
+
 class VeniceA2EImageHandler(CorsMixin, tornado.web.RequestHandler):
     async def post(self):
         try:
@@ -7964,12 +8257,14 @@ def make_app(upload_folder):
         (r"/api/video-specs", VideoSpecHandler),
         (r"/api/video-prompts", VideoPromptHandler),
         (r"/api/venice-a2e/prompts", VeniceA2EPromptHandler),
+        (r"/api/venice-wan/prompts", VeniceWanPromptHandler),
         (r"/api/venice-a2e/image", VeniceA2EImageHandler),
         (r"/api/venice-a2e/video", VeniceA2EVideoHandler),
         (r"/api/venice-a2e/audio", VeniceA2EAudioHandler),
         (r"/api/venice-a2e/run", VeniceA2ERunHandler),
         (r"/api/venice-a2e/history", VeniceA2EHistoryHandler),
         (r"/api/venice-a2e/history/(\d+)", VeniceA2EHistoryDetailHandler),
+        (r"/api/venice-wan/video", VeniceWanVideoHandler),
         (r"/api/prompt-moderation", PromptModerationHandler),
         (r"/api/videos/generate", VideoGenerateHandler),
         (r"/api/videos", VideosHandler),

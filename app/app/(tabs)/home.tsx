@@ -283,6 +283,16 @@ export default function HomeScreen() {
   const [wanDuration, setWanDuration] = useState('5');
   const [wanResolution, setWanResolution] = useState('1080p');
   const [wanAudio, setWanAudio] = useState('on');
+  const [wanTitle, setWanTitle] = useState('');
+  const [wanIdea, setWanIdea] = useState('');
+  const [wanPrompt, setWanPrompt] = useState('');
+  const [wanPrompting, setWanPrompting] = useState(false);
+  const [wanPromptStatus, setWanPromptStatus] = useState('');
+  const [wanPromptTone, setWanPromptTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [wanGenerating, setWanGenerating] = useState(false);
+  const [wanVideoStatus, setWanVideoStatus] = useState('');
+  const [wanVideoTone, setWanVideoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [wanGeneratedVideoUrl, setWanGeneratedVideoUrl] = useState<string | null>(null);
   const [referenceImage, setReferenceImage] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [referenceImageStatus, setReferenceImageStatus] = useState<string>('');
   const [referenceImageTone, setReferenceImageTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -1424,6 +1434,101 @@ const HISTORY_KEYS = {
     }
   };
 
+  const generateWanPrompt = async () => {
+    if (wanPrompting) return;
+    const idea = wanIdea.trim();
+    if (!idea) {
+      setWanPromptStatus('Add an idea first.');
+      setWanPromptTone('bad');
+      return;
+    }
+    setWanPrompting(true);
+    setWanPromptStatus(t('generate_prompt_progress'));
+    setWanPromptTone('neutral');
+    try {
+      const resp = await fetch(`${API_URL}/api/venice-wan/prompts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea,
+          ...(wanTitle.trim() ? { title: wanTitle.trim() } : {}),
+        }),
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        const detailsText = json.details || json.error || json.message || resp.statusText;
+        const details = detailsText ? `: ${detailsText}` : '';
+        setWanPromptStatus(`Prompt failed${details}`);
+        setWanPromptTone('bad');
+        return;
+      }
+      const nextPrompt = json.prompt || json.video_prompt || '';
+      setWanPrompt(nextPrompt);
+      if (json.title && !wanTitle.trim()) {
+        setWanTitle(json.title);
+      }
+      setWanPromptStatus('Prompt ready.');
+      setWanPromptTone('good');
+    } catch (e: any) {
+      setWanPromptStatus(`Prompt failed: ${e?.message || String(e)}`);
+      setWanPromptTone('bad');
+    } finally {
+      setWanPrompting(false);
+    }
+  };
+
+  const generateWanVideo = async () => {
+    if (wanGenerating) return;
+    const prompt = wanPrompt.trim();
+    if (!prompt) {
+      setWanVideoStatus('Add a prompt first.');
+      setWanVideoTone('bad');
+      return;
+    }
+    setWanGenerating(true);
+    setWanVideoStatus(t('generate_video_progress'));
+    setWanVideoTone('neutral');
+    setWanGeneratedVideoUrl(null);
+    const duration = wanDuration.endsWith('s') ? wanDuration : `${wanDuration}s`;
+    try {
+      const resp = await fetch(`${API_URL}/api/venice-wan/video`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea: wanIdea.trim(),
+          title: wanTitle.trim(),
+          prompt,
+          model: wanModel,
+          duration,
+          aspect_ratio: wanAspect,
+          resolution: wanResolution,
+          audio: wanAudio === 'on',
+        }),
+      });
+      const json = await resp.json();
+      if (!resp.ok) {
+        const detailsText = json.details || json.error || json.message || resp.statusText;
+        const details = detailsText ? `: ${detailsText}` : '';
+        setWanVideoStatus(`Generation failed${details}`);
+        setWanVideoTone('bad');
+        return;
+      }
+      const mediaUrl = resolveMediaSrc(json.media_url || json.preview_media_url || json.file_path);
+      if (mediaUrl) {
+        setWanGeneratedVideoUrl(mediaUrl);
+      }
+      const warning = json.duration_warning ? ` ${json.duration_warning}` : '';
+      setWanVideoStatus(`Video ready. Added to library.${warning}`);
+      setWanVideoTone('good');
+      triggerStudioRefresh();
+    } catch (e: any) {
+      setWanVideoStatus(`Generation failed: ${e?.message || String(e)}`);
+      setWanVideoTone('bad');
+    } finally {
+      setWanGenerating(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -2110,6 +2215,86 @@ const HISTORY_KEYS = {
                     );
                   })}
                 </View>
+              </View>
+
+              <View style={styles.panel}>
+                <Text style={styles.fieldLabel}>{t('field_title')}</Text>
+                <TextInput
+                  style={styles.input}
+                  value={wanTitle}
+                  onChangeText={setWanTitle}
+                  placeholder={t('field_title')}
+                />
+
+                <Text style={styles.fieldLabel}>{t('idea_prompt_label')}</Text>
+                <TextInput
+                  style={styles.textArea}
+                  value={wanIdea}
+                  onChangeText={setWanIdea}
+                  placeholder={t('idea_prompt_placeholder')}
+                  multiline
+                />
+
+                <Pressable
+                  style={[styles.btnAccent, wanPrompting && styles.btnDisabled]}
+                  onPress={generateWanPrompt}
+                  disabled={wanPrompting}
+                >
+                  <View style={styles.btnContent}>
+                    {wanPrompting && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                    <Text style={styles.btnText}>
+                      {wanPrompting ? t('generate_prompt_progress') : t('generate_prompt_button')}
+                    </Text>
+                  </View>
+                </Pressable>
+
+                {wanPromptStatus ? (
+                  <Text style={[styles.status, toneStyle(wanPromptTone)]}>{wanPromptStatus}</Text>
+                ) : null}
+
+                <Text style={styles.fieldLabel}>{t('field_generated_prompt')}</Text>
+                <TextInput
+                  style={styles.textAreaLarge}
+                  value={wanPrompt}
+                  onChangeText={setWanPrompt}
+                  placeholder={t('prompt_placeholder')}
+                  multiline
+                />
+
+                <Pressable
+                  style={[styles.btnSuccess, wanGenerating && styles.btnDisabled]}
+                  onPress={generateWanVideo}
+                  disabled={wanGenerating}
+                >
+                  <View style={styles.btnContent}>
+                    {wanGenerating && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                    <Text style={styles.btnText}>
+                      {wanGenerating ? t('generate_video_progress') : t('generate_video_button')}
+                    </Text>
+                  </View>
+                </Pressable>
+
+                {wanVideoStatus ? (
+                  <Text style={[styles.status, toneStyle(wanVideoTone)]}>{wanVideoStatus}</Text>
+                ) : null}
+
+                {wanGeneratedVideoUrl ? (
+                  <View style={styles.card}>
+                    <Text style={styles.cardTitle}>{t('generated_video_preview')}</Text>
+                    {Platform.OS === 'web' ? (
+                      <View style={styles.previewBox}>
+                        {React.createElement('video', {
+                          src: wanGeneratedVideoUrl,
+                          style: { width: '100%', borderRadius: 12, maxHeight: 300 },
+                          controls: true,
+                          preload: 'metadata',
+                        })}
+                      </View>
+                    ) : (
+                      <Text style={styles.previewHint}>{t('preview_web_generic')}</Text>
+                    )}
+                  </View>
+                ) : null}
               </View>
             </View>
           ) : null}
