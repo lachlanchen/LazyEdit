@@ -172,6 +172,20 @@ def _extract_status(payload: Any) -> str | None:
     return None
 
 
+def _extract_message(payload: Any) -> str | None:
+    if isinstance(payload, dict):
+        for key in ("message", "msg", "error", "detail", "description"):
+            value = payload.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+        data = payload.get("data")
+        if data is not None:
+            return _extract_message(data)
+    if isinstance(payload, list) and payload:
+        return _extract_message(payload[0])
+    return None
+
+
 def _extract_progress(payload: Any) -> float | None:
     if isinstance(payload, dict):
         for key in (
@@ -255,6 +269,42 @@ def _progress_logger(
     return _log
 
 
+def _poll_logger(
+    events: list[dict[str, Any]],
+    stage: str,
+    label: str,
+    log_every: float | None,
+) -> Callable[[str | None, float | None, str | None, int, float], None]:
+    last_logged = -1.0
+
+    def _log(
+        status: str | None,
+        progress: float | None,
+        message: str | None,
+        attempt: int,
+        elapsed: float,
+    ) -> None:
+        nonlocal last_logged
+        if log_every is None or log_every <= 0:
+            return
+        if last_logged >= 0 and (elapsed - last_logged) < log_every:
+            return
+        last_logged = elapsed
+        details: dict[str, Any] = {"attempt": attempt, "elapsed": round(elapsed, 1)}
+        if status:
+            details["status"] = status
+        if progress is not None:
+            details["progress"] = round(progress, 1)
+        if message:
+            trimmed = message.strip()
+            if len(trimmed) > 160:
+                trimmed = trimmed[:157] + "..."
+            details["message"] = trimmed
+        _log_event(events, stage, label, details)
+
+    return _log
+
+
 def _ratio_to_dimensions(aspect_ratio: str) -> tuple[int, int]:
     ratio = (aspect_ratio or "9:16").strip()
     mapping = {
@@ -267,12 +317,19 @@ def _ratio_to_dimensions(aspect_ratio: str) -> tuple[int, int]:
     return mapping.get(ratio, (768, 1344))
 
 
-def _format_timeout_message(elapsed: float, status: str | None, progress: float | None) -> str:
+def _format_timeout_message(
+    elapsed: float,
+    status: str | None,
+    progress: float | None,
+    message: str | None = None,
+) -> str:
     details: list[str] = [f"elapsed={elapsed:.0f}s"]
     if status:
         details.append(f"last_status={status}")
     if progress is not None:
         details.append(f"last_progress={round(progress, 1)}")
+    if message:
+        details.append(f"last_message={message}")
     return "A2E task timed out (" + ", ".join(details) + ")"
 
 
@@ -456,6 +513,10 @@ class A2EClient:
         self.timeout = float(os.getenv("A2E_TIMEOUT_SECONDS", "60"))
         self.poll_interval = float(os.getenv("A2E_POLL_INTERVAL_SECONDS", "3"))
         self.poll_timeout = self._parse_poll_timeout(os.getenv("A2E_POLL_TIMEOUT_SECONDS", "1800"))
+        try:
+            self.poll_log_seconds = float(os.getenv("A2E_POLL_LOG_SECONDS", "15"))
+        except Exception:
+            self.poll_log_seconds = 15.0
         self.tts_endpoint = os.getenv("A2E_TTS_ENDPOINT", "").strip() or DEFAULT_TTS_ENDPOINT
         self.tts_status_endpoint = os.getenv("A2E_TTS_STATUS_ENDPOINT", "").strip()
         self.tts_user_voice_id = os.getenv("A2E_TTS_USER_VOICE_ID", "").strip()
@@ -579,6 +640,7 @@ class A2EClient:
         text: str,
         language: str | None = None,
         on_update: Callable[[str | None, float | None], None] | None = None,
+        on_poll: Callable[[str | None, float | None, str | None, int, float], None] | None = None,
     ) -> tuple[str, dict[str, Any]]:
         if not self.tts_endpoint:
             raise RuntimeError("A2E_TTS_ENDPOINT is not configured")
@@ -613,6 +675,7 @@ class A2EClient:
             self.tts_status_endpoint.format(task_id=task_id),
             AUDIO_EXTENSIONS,
             on_update=on_update,
+            on_poll=on_poll,
         )
         return audio_url, response
 
@@ -621,26 +684,38 @@ class A2EClient:
         endpoint: str,
         extensions: Iterable[str],
         on_update: Callable[[str | None, float | None], None] | None = None,
+        on_poll: Callable[[str | None, float | None, str | None, int, float], None] | None = None,
     ) -> str:
         last_status: str | None = None
         last_progress: float | None = None
+        last_message: str | None = None
         start = time.time()
         deadline = None if self.poll_timeout is None else start + self.poll_timeout
+        attempt = 0
         while True:
+            attempt += 1
             response = self._get(endpoint)
             url = _find_first_url(response, extensions)
             if url:
                 return url
             status = _extract_status(response)
             progress = _extract_progress(response)
+            message = _extract_message(response)
             if on_update and (status != last_status or progress != last_progress):
                 on_update(status, progress)
                 last_status, last_progress = status, progress
+            if message:
+                last_message = message
+            if on_poll:
+                on_poll(status, progress, message, attempt, time.time() - start)
             if status in {"failed", "error", "canceled"}:
-                raise RuntimeError(f"A2E task failed with status={status}")
+                detail = f"status={status}"
+                if message:
+                    detail += f", message={message}"
+                raise RuntimeError(f"A2E task failed ({detail})")
             if deadline is not None and time.time() >= deadline:
                 elapsed = time.time() - start
-                raise TimeoutError(_format_timeout_message(elapsed, last_status, last_progress))
+                raise TimeoutError(_format_timeout_message(elapsed, last_status, last_progress, last_message))
             time.sleep(self.poll_interval)
 
     def wait_for_task(
@@ -648,26 +723,38 @@ class A2EClient:
         endpoint: str,
         extensions: Iterable[str],
         on_update: Callable[[str | None, float | None], None] | None = None,
+        on_poll: Callable[[str | None, float | None, str | None, int, float], None] | None = None,
     ) -> tuple[str, dict[str, Any]]:
         last_status: str | None = None
         last_progress: float | None = None
+        last_message: str | None = None
         start = time.time()
         deadline = None if self.poll_timeout is None else start + self.poll_timeout
+        attempt = 0
         while True:
+            attempt += 1
             response = self._get(endpoint)
             url = _find_first_url(response, extensions)
             if url:
                 return url, response
             status = _extract_status(response)
             progress = _extract_progress(response)
+            message = _extract_message(response)
             if on_update and (status != last_status or progress != last_progress):
                 on_update(status, progress)
                 last_status, last_progress = status, progress
+            if message:
+                last_message = message
+            if on_poll:
+                on_poll(status, progress, message, attempt, time.time() - start)
             if status in {"failed", "error", "canceled"}:
-                raise RuntimeError(f"A2E task failed with status={status}")
+                detail = f"status={status}"
+                if message:
+                    detail += f", message={message}"
+                raise RuntimeError(f"A2E task failed ({detail})")
             if deadline is not None and time.time() >= deadline:
                 elapsed = time.time() - start
-                raise TimeoutError(_format_timeout_message(elapsed, last_status, last_progress))
+                raise TimeoutError(_format_timeout_message(elapsed, last_status, last_progress, last_message))
             time.sleep(self.poll_interval)
 
     def _post(self, endpoint: str, payload: dict[str, Any]) -> dict[str, Any]:
@@ -739,6 +826,7 @@ def run_venice_a2e_image(
         f"/api/v1/userText2Image/{image_task_id}",
         IMAGE_EXTENSIONS,
         on_update=_progress_logger(events, "a2e_image", "Image progress"),
+        on_poll=_poll_logger(events, "a2e_image", "Image polling", client.poll_log_seconds),
     )
     _log_event(events, "a2e_image", "Image ready.", {"image_url": image_url})
 
@@ -819,6 +907,7 @@ def run_venice_a2e_video(
         f"/api/v1/userImage2Video/{video_task_id}",
         VIDEO_EXTENSIONS,
         on_update=_progress_logger(events, "a2e_video", "Video progress"),
+        on_poll=_poll_logger(events, "a2e_video", "Video polling", client.poll_log_seconds),
     )
     _log_event(events, "a2e_video", "Video ready.", {"video_url": video_url})
 
@@ -911,6 +1000,7 @@ def run_venice_a2e_audio(
             audio_text,
             language=audio_language,
             on_update=_progress_logger(events, "a2e_audio", "TTS progress"),
+            on_poll=_poll_logger(events, "a2e_audio", "TTS polling", client.poll_log_seconds),
         )
         _log_event(events, "a2e_audio", "Audio ready.", {"audio_url": audio_url})
 
@@ -928,6 +1018,7 @@ def run_venice_a2e_audio(
         f"/api/v1/talkingVideo/{talking_task_id}",
         VIDEO_EXTENSIONS,
         on_update=_progress_logger(events, "a2e_talking", "Talking video progress"),
+        on_poll=_poll_logger(events, "a2e_talking", "Talking video polling", client.poll_log_seconds),
     )
     _log_event(events, "a2e_talking", "Talking video ready.", {"video_url": talking_video_url})
 
@@ -1013,6 +1104,7 @@ def run_venice_a2e_pipeline(
         f"/api/v1/userText2Image/{image_task_id}",
         IMAGE_EXTENSIONS,
         on_update=_progress_logger(events, "a2e_image", "Image progress"),
+        on_poll=_poll_logger(events, "a2e_image", "Image polling", client.poll_log_seconds),
     )
     _log_event(events, "a2e_image", "Image ready.", {"image_url": image_url})
 
@@ -1029,6 +1121,7 @@ def run_venice_a2e_pipeline(
         f"/api/v1/userImage2Video/{video_task_id}",
         VIDEO_EXTENSIONS,
         on_update=_progress_logger(events, "a2e_video", "Video progress"),
+        on_poll=_poll_logger(events, "a2e_video", "Video polling", client.poll_log_seconds),
     )
     _log_event(events, "a2e_video", "Video ready.", {"video_url": video_url})
 
@@ -1037,6 +1130,7 @@ def run_venice_a2e_pipeline(
         audio_text,
         language=audio_language,
         on_update=_progress_logger(events, "a2e_audio", "TTS progress"),
+        on_poll=_poll_logger(events, "a2e_audio", "TTS polling", client.poll_log_seconds),
     )
     _log_event(events, "a2e_audio", "Audio ready.", {"audio_url": audio_url})
 
@@ -1054,6 +1148,7 @@ def run_venice_a2e_pipeline(
         f"/api/v1/talkingVideo/{talking_task_id}",
         VIDEO_EXTENSIONS,
         on_update=_progress_logger(events, "a2e_talking", "Talking video progress"),
+        on_poll=_poll_logger(events, "a2e_talking", "Talking video polling", client.poll_log_seconds),
     )
     _log_event(events, "a2e_talking", "Talking video ready.", {"video_url": talking_video_url})
 

@@ -5738,6 +5738,7 @@ class VeniceA2EImageHandler(CorsMixin, tornado.web.RequestHandler):
                 "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
                 "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
                 "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
+                "a2e_poll_log_seconds": os.getenv("A2E_POLL_LOG_SECONDS", ""),
                 "traceback": traceback.format_exc(),
             }
             if events:
@@ -5832,6 +5833,7 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
                 "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
                 "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
                 "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
+                "a2e_poll_log_seconds": os.getenv("A2E_POLL_LOG_SECONDS", ""),
                 "traceback": traceback.format_exc(),
             }
             if events:
@@ -5956,6 +5958,7 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
                 "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
                 "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
                 "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
+                "a2e_poll_log_seconds": os.getenv("A2E_POLL_LOG_SECONDS", ""),
                 "a2e_tts_endpoint": os.getenv("A2E_TTS_ENDPOINT", "").strip() or "/api/v1/video/send_tts",
                 "a2e_tts_status_endpoint": os.getenv("A2E_TTS_STATUS_ENDPOINT", "").strip(),
                 "traceback": traceback.format_exc(),
@@ -6089,6 +6092,7 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
                 "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
                 "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
                 "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
+                "a2e_poll_log_seconds": os.getenv("A2E_POLL_LOG_SECONDS", ""),
                 "traceback": traceback.format_exc(),
             }
             if events:
