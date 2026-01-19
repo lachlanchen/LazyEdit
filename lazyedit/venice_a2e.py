@@ -201,6 +201,16 @@ def _summarize_payload(payload: Any) -> dict[str, Any]:
     return {"type": type(payload).__name__}
 
 
+def _format_payload_for_log(payload: Any, max_chars: int | None) -> str:
+    try:
+        text = json.dumps(payload, ensure_ascii=False)
+    except Exception:
+        text = repr(payload)
+    if max_chars and max_chars > 0 and len(text) > max_chars:
+        return text[:max_chars] + "...(truncated)"
+    return text
+
+
 def _extract_progress(payload: Any) -> float | None:
     if isinstance(payload, dict):
         for key in (
@@ -538,6 +548,12 @@ class A2EClient:
         except Exception:
             self.poll_log_seconds = 15.0
         self.poll_log_payload = self._parse_bool_env(os.getenv("A2E_POLL_LOG_PAYLOAD", ""), False)
+        self.poll_log_payload_full = self._parse_bool_env(
+            os.getenv("A2E_POLL_LOG_PAYLOAD_FULL", ""), False
+        )
+        self.poll_log_payload_max_chars = self._parse_int_env(
+            os.getenv("A2E_POLL_LOG_PAYLOAD_MAX_CHARS", ""), 0
+        )
         self.tts_endpoint = os.getenv("A2E_TTS_ENDPOINT", "").strip() or DEFAULT_TTS_ENDPOINT
         self.tts_status_endpoint = os.getenv("A2E_TTS_STATUS_ENDPOINT", "").strip()
         self.tts_user_voice_id = os.getenv("A2E_TTS_USER_VOICE_ID", "").strip()
@@ -578,6 +594,15 @@ class A2EClient:
         if raw in {"0", "false", "no", "n", "off"}:
             return False
         return default
+
+    @staticmethod
+    def _parse_int_env(value: str | None, default: int) -> int:
+        if value is None:
+            return default
+        try:
+            return int(str(value).strip())
+        except Exception:
+            return default
 
     @staticmethod
     def _parse_voice_list_endpoints(raw: str) -> tuple[str, ...]:
@@ -728,12 +753,17 @@ class A2EClient:
         while True:
             attempt += 1
             response = self._get(endpoint)
-            if self.poll_log_payload:
+            if self.poll_log_payload or self.poll_log_payload_full:
                 elapsed = time.time() - start
                 if last_payload_log < 0 or elapsed - last_payload_log >= (self.poll_log_seconds or 0):
                     last_payload_log = elapsed
-                    summary = _summarize_payload(response)
-                    print(f"[V+A2E] poll payload: {summary}")
+                    if self.poll_log_payload_full:
+                        max_chars = self.poll_log_payload_max_chars or None
+                        payload_text = _format_payload_for_log(response, max_chars)
+                        print(f"[V+A2E] poll payload full: {payload_text}")
+                    else:
+                        summary = _summarize_payload(response)
+                        print(f"[V+A2E] poll payload: {summary}")
             url = _find_first_url(response, extensions)
             if url:
                 return url
@@ -774,12 +804,17 @@ class A2EClient:
         while True:
             attempt += 1
             response = self._get(endpoint)
-            if self.poll_log_payload:
+            if self.poll_log_payload or self.poll_log_payload_full:
                 elapsed = time.time() - start
                 if last_payload_log < 0 or elapsed - last_payload_log >= (self.poll_log_seconds or 0):
                     last_payload_log = elapsed
-                    summary = _summarize_payload(response)
-                    print(f"[V+A2E] poll payload: {summary}")
+                    if self.poll_log_payload_full:
+                        max_chars = self.poll_log_payload_max_chars or None
+                        payload_text = _format_payload_for_log(response, max_chars)
+                        print(f"[V+A2E] poll payload full: {payload_text}")
+                    else:
+                        summary = _summarize_payload(response)
+                        print(f"[V+A2E] poll payload: {summary}")
             url = _find_first_url(response, extensions)
             if url:
                 return url, response
