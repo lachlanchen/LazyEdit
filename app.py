@@ -3770,7 +3770,7 @@ def _ensure_local_video_path(video_id: int, file_path: str | None, allow_downloa
 
 
 def _serialize_venice_a2e_history_row(row: tuple) -> dict:
-    return {
+    entry = {
         "id": row[0],
         "step": row[1],
         "idea": row[2],
@@ -3790,16 +3790,62 @@ def _serialize_venice_a2e_history_row(row: tuple) -> dict:
         "events": row[16],
         "created_at": row[17].isoformat() if row[17] else None,
     }
+    prompts = {}
+    if isinstance(entry.get("events"), list):
+        for item in entry["events"]:
+            if not isinstance(item, dict):
+                continue
+            data = item.get("data")
+            if not isinstance(data, dict):
+                continue
+            for key in ("image_prompt", "video_prompt", "audio_text"):
+                if key not in prompts and data.get(key):
+                    prompts[key] = data.get(key)
+    if not entry.get("image_prompt") and prompts.get("image_prompt"):
+        entry["image_prompt"] = prompts["image_prompt"]
+    if not entry.get("video_prompt") and prompts.get("video_prompt"):
+        entry["video_prompt"] = prompts["video_prompt"]
+    if not entry.get("audio_text") and prompts.get("audio_text"):
+        entry["audio_text"] = prompts["audio_text"]
+
+    def _preview_url(value: str | None) -> str | None:
+        if not value:
+            return None
+        if _is_remote_url(value):
+            return value
+        return media_url_for_path(value)
+
+    entry["image_media_url"] = _preview_url(entry.get("image_url"))
+    entry["video_media_url"] = _preview_url(entry.get("video_url"))
+    entry["audio_media_url"] = _preview_url(entry.get("audio_url"))
+    entry["talking_media_url"] = _preview_url(entry.get("talking_video_url"))
+    return entry
 
 
 def _store_venice_a2e_history(step: str, data: dict, result: dict, extras: dict | None = None) -> None:
+    prompts = result.get("prompts") if isinstance(result, dict) else {}
+    if not isinstance(prompts, dict):
+        prompts = {}
     record = {
         "step": step,
         "idea": data.get("idea") or data.get("prompt") or result.get("idea"),
-        "title": data.get("title") or data.get("video_title") or data.get("videoTitle") or result.get("title") or (result.get("prompts") or {}).get("title"),
-        "image_prompt": result.get("image_prompt") or data.get("image_prompt") or data.get("imagePrompt"),
-        "video_prompt": result.get("video_prompt") or data.get("video_prompt") or data.get("videoPrompt"),
-        "audio_text": result.get("audio_text") or data.get("audio_text") or data.get("audioText"),
+        "title": data.get("title")
+        or data.get("video_title")
+        or data.get("videoTitle")
+        or result.get("title")
+        or prompts.get("title"),
+        "image_prompt": result.get("image_prompt")
+        or data.get("image_prompt")
+        or data.get("imagePrompt")
+        or prompts.get("image_prompt"),
+        "video_prompt": result.get("video_prompt")
+        or data.get("video_prompt")
+        or data.get("videoPrompt")
+        or prompts.get("video_prompt"),
+        "audio_text": result.get("audio_text")
+        or data.get("audio_text")
+        or data.get("audioText")
+        or prompts.get("audio_text"),
         "negative_prompt": data.get("negative_prompt") or data.get("negativePrompt"),
         "aspect_ratio": data.get("aspect_ratio") or data.get("aspectRatio"),
         "audio_language": data.get("audio_language") or data.get("audioLanguage"),

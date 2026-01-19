@@ -33,6 +33,10 @@ type HistoryEntry = {
   video_url?: string | null;
   audio_url?: string | null;
   talking_video_url?: string | null;
+  image_media_url?: string | null;
+  video_media_url?: string | null;
+  audio_media_url?: string | null;
+  talking_media_url?: string | null;
   created_at?: string | null;
 };
 
@@ -181,24 +185,58 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     }
   }, [apiUrl]);
 
-  const applyHistory = useCallback((entry: HistoryEntry) => {
-    if (entry.idea !== undefined && entry.idea !== null) setIdea(entry.idea);
-    if (entry.title !== undefined && entry.title !== null) setTitle(entry.title);
-    if (entry.image_prompt !== undefined && entry.image_prompt !== null) setImagePrompt(entry.image_prompt);
-    if (entry.video_prompt !== undefined && entry.video_prompt !== null) setVideoPrompt(entry.video_prompt);
-    if (entry.audio_text !== undefined && entry.audio_text !== null) setAudioText(entry.audio_text);
-    if (entry.negative_prompt !== undefined && entry.negative_prompt !== null) {
-      setNegativePrompt(entry.negative_prompt);
-    }
-    if (entry.aspect_ratio) setAspectRatio(entry.aspect_ratio);
-    if (entry.audio_language) setAudioLanguage(entry.audio_language);
-    if (entry.venice_model) setVeniceModel(entry.venice_model);
-    if (entry.video_time) setVideoTime(String(entry.video_time));
-    if (entry.image_url !== undefined) setImageUrl(entry.image_url || null);
-    if (entry.video_url !== undefined) setVideoUrl(entry.video_url || null);
-    if (entry.audio_url !== undefined) setAudioUrl(entry.audio_url || null);
-    if (entry.talking_video_url !== undefined) setTalkingVideoUrl(entry.talking_video_url || null);
-  }, []);
+  const mergeHistoryEntry = useCallback(
+    (entry: HistoryEntry) => {
+      if (!historyItems.length) return entry;
+      const ideaKey = entry.idea?.trim();
+      const titleKey = entry.title?.trim();
+      if (!ideaKey && !titleKey) return entry;
+      const matches = historyItems.filter((item) => {
+        if (item.id === entry.id) return false;
+        if (ideaKey && item.idea?.trim() === ideaKey) return true;
+        if (titleKey && item.title?.trim() === titleKey) return true;
+        return false;
+      });
+      if (!matches.length) return entry;
+      const pickField = <K extends keyof HistoryEntry>(key: K) =>
+        entry[key] ?? matches.find((item) => item[key])?.[key] ?? null;
+      return {
+        ...entry,
+        image_prompt: pickField('image_prompt'),
+        video_prompt: pickField('video_prompt'),
+        audio_text: pickField('audio_text'),
+        negative_prompt: pickField('negative_prompt'),
+        aspect_ratio: pickField('aspect_ratio'),
+        video_time: pickField('video_time'),
+        audio_language: pickField('audio_language'),
+        venice_model: pickField('venice_model'),
+      };
+    },
+    [historyItems],
+  );
+
+  const applyHistory = useCallback(
+    (entry: HistoryEntry) => {
+      const merged = mergeHistoryEntry(entry);
+      if (merged.idea !== undefined && merged.idea !== null) setIdea(merged.idea);
+      if (merged.title !== undefined && merged.title !== null) setTitle(merged.title);
+      if (merged.image_prompt !== undefined && merged.image_prompt !== null) setImagePrompt(merged.image_prompt);
+      if (merged.video_prompt !== undefined && merged.video_prompt !== null) setVideoPrompt(merged.video_prompt);
+      if (merged.audio_text !== undefined && merged.audio_text !== null) setAudioText(merged.audio_text);
+      if (merged.negative_prompt !== undefined && merged.negative_prompt !== null) {
+        setNegativePrompt(merged.negative_prompt);
+      }
+      if (merged.aspect_ratio) setAspectRatio(merged.aspect_ratio);
+      if (merged.audio_language) setAudioLanguage(merged.audio_language);
+      if (merged.venice_model) setVeniceModel(merged.venice_model);
+      if (merged.video_time) setVideoTime(String(merged.video_time));
+      if (merged.image_url !== undefined) setImageUrl(merged.image_url || null);
+      if (merged.video_url !== undefined) setVideoUrl(merged.video_url || null);
+      if (merged.audio_url !== undefined) setAudioUrl(merged.audio_url || null);
+      if (merged.talking_video_url !== undefined) setTalkingVideoUrl(merged.talking_video_url || null);
+    },
+    [mergeHistoryEntry],
+  );
 
   const appendEvents = useCallback((incoming?: EventEntry[] | null) => {
     if (!incoming || incoming.length === 0) return;
@@ -590,53 +628,56 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
 
   const runImageFromHistory = useCallback(
     (entry: HistoryEntry) => {
-      applyHistory(entry);
+      const merged = mergeHistoryEntry(entry);
+      applyHistory(merged);
       runImage({
-        idea: entry.idea || '',
-        title: entry.title || '',
-        imagePrompt: entry.image_prompt || '',
-        audioLanguage: entry.audio_language || audioLanguage,
-        veniceModel: entry.venice_model || veniceModel,
-        aspectRatio: entry.aspect_ratio || aspectRatio,
+        idea: merged.idea || '',
+        title: merged.title || '',
+        imagePrompt: merged.image_prompt || '',
+        audioLanguage: merged.audio_language || audioLanguage,
+        veniceModel: merged.venice_model || veniceModel,
+        aspectRatio: merged.aspect_ratio || aspectRatio,
       });
     },
-    [applyHistory, audioLanguage, aspectRatio, runImage, veniceModel],
+    [applyHistory, audioLanguage, aspectRatio, mergeHistoryEntry, runImage, veniceModel],
   );
 
   const runVideoFromHistory = useCallback(
     (entry: HistoryEntry) => {
-      applyHistory(entry);
+      const merged = mergeHistoryEntry(entry);
+      applyHistory(merged);
       runVideo({
-        idea: entry.idea || '',
-        title: entry.title || '',
-        imageUrl: entry.image_url || null,
-        videoPrompt: entry.video_prompt || '',
-        audioLanguage: entry.audio_language || audioLanguage,
-        veniceModel: entry.venice_model || veniceModel,
-        videoTime: entry.video_time || videoTime,
-        negativePrompt: entry.negative_prompt || negativePrompt,
+        idea: merged.idea || '',
+        title: merged.title || '',
+        imageUrl: merged.image_url || null,
+        videoPrompt: merged.video_prompt || '',
+        audioLanguage: merged.audio_language || audioLanguage,
+        veniceModel: merged.venice_model || veniceModel,
+        videoTime: merged.video_time || videoTime,
+        negativePrompt: merged.negative_prompt || negativePrompt,
       });
     },
-    [applyHistory, audioLanguage, negativePrompt, runVideo, veniceModel, videoTime],
+    [applyHistory, audioLanguage, mergeHistoryEntry, negativePrompt, runVideo, veniceModel, videoTime],
   );
 
   const runAudioFromHistory = useCallback(
     (entry: HistoryEntry) => {
-      applyHistory(entry);
+      const merged = mergeHistoryEntry(entry);
+      applyHistory(merged);
       runAudio({
-        idea: entry.idea || '',
-        title: entry.title || '',
-        videoUrl: entry.video_url || null,
-        audioText: entry.audio_text || '',
-        audioUrl: entry.audio_url || null,
-        videoPrompt: entry.video_prompt || '',
-        audioLanguage: entry.audio_language || audioLanguage,
-        veniceModel: entry.venice_model || veniceModel,
-        videoTime: entry.video_time || videoTime,
-        negativePrompt: entry.negative_prompt || negativePrompt,
+        idea: merged.idea || '',
+        title: merged.title || '',
+        videoUrl: merged.video_url || null,
+        audioText: merged.audio_text || '',
+        audioUrl: merged.audio_url || null,
+        videoPrompt: merged.video_prompt || '',
+        audioLanguage: merged.audio_language || audioLanguage,
+        veniceModel: merged.venice_model || veniceModel,
+        videoTime: merged.video_time || videoTime,
+        negativePrompt: merged.negative_prompt || negativePrompt,
       });
     },
-    [applyHistory, audioLanguage, negativePrompt, runAudio, veniceModel, videoTime],
+    [applyHistory, audioLanguage, mergeHistoryEntry, negativePrompt, runAudio, veniceModel, videoTime],
   );
 
   const veniceModelLabel = useMemo(
@@ -945,10 +986,10 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
                       ? 'Audio'
                       : 'Pipeline';
               const timestamp = formatHistoryTimestamp(entry.created_at);
-              const imageSrc = resolveMediaUrl(entry.image_url);
-              const videoSrc = resolveMediaUrl(entry.video_url);
-              const audioSrc = resolveMediaUrl(entry.audio_url);
-              const talkingSrc = resolveMediaUrl(entry.talking_video_url);
+              const imageSrc = resolveMediaUrl(entry.image_media_url || entry.image_url);
+              const videoSrc = resolveMediaUrl(entry.video_media_url || entry.video_url);
+              const audioSrc = resolveMediaUrl(entry.audio_media_url || entry.audio_url);
+              const talkingSrc = resolveMediaUrl(entry.talking_media_url || entry.talking_video_url);
               const canRegenImage = !busyImage && !!(entry.idea?.trim() || entry.image_prompt?.trim());
               const canRegenVideo =
                 !busyVideo && !!entry.image_url && !!(entry.idea?.trim() || entry.video_prompt?.trim());
