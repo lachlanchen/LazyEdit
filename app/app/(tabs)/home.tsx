@@ -206,11 +206,20 @@ export default function HomeScreen() {
   const [statusTone, setStatusTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'upload' | 'generate' | 'venice_a2e' | 'remix' | 'api'>(() => {
+  const [activeTab, setActiveTab] = useState<
+    'upload' | 'generate' | 'venice_a2e' | 'wan_26' | 'remix' | 'api'
+  >(() => {
     if (Platform.OS !== 'web') return 'upload';
     try {
       const saved = localStorage.getItem('lazyedit:homeTab');
-      if (saved === 'upload' || saved === 'generate' || saved === 'venice_a2e' || saved === 'remix' || saved === 'api') {
+      if (
+        saved === 'upload' ||
+        saved === 'generate' ||
+        saved === 'venice_a2e' ||
+        saved === 'wan_26' ||
+        saved === 'remix' ||
+        saved === 'api'
+      ) {
         return saved;
       }
     } catch (_err) {
@@ -269,6 +278,11 @@ export default function HomeScreen() {
   const [videoModel, setVideoModel] = useState(DEFAULT_MODEL);
   const [videoSize, setVideoSize] = useState(sizeForAspectRatio(DEFAULT_PROMPT_SPEC.aspectRatio));
   const [videoSeconds, setVideoSeconds] = useState(DEFAULT_PROMPT_SPEC.durationSeconds);
+  const [wanModel, setWanModel] = useState('wan-2.6-text-to-video');
+  const [wanAspect, setWanAspect] = useState('9:16');
+  const [wanDuration, setWanDuration] = useState('5');
+  const [wanResolution, setWanResolution] = useState('1080p');
+  const [wanAudio, setWanAudio] = useState('on');
   const [referenceImage, setReferenceImage] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [referenceImageStatus, setReferenceImageStatus] = useState<string>('');
   const [referenceImageTone, setReferenceImageTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -314,6 +328,45 @@ export default function HomeScreen() {
       { value: 'ar', label: t('audio_language_ar') },
       { value: 'fr', label: t('audio_language_fr') },
       { value: 'es', label: t('audio_language_es') },
+    ],
+    [t],
+  );
+  const wanModelOptions = useMemo(
+    () => [
+      { value: 'wan-2.6-text-to-video', label: 'Wan 2.6 (Text to Video)' },
+    ],
+    [],
+  );
+  const wanAspectOptions = useMemo(
+    () => [
+      { value: '9:16', label: t('aspect_ratio_portrait') },
+      { value: '16:9', label: t('aspect_ratio_landscape') },
+      { value: '1:1', label: '1:1' },
+      { value: '4:3', label: '4:3' },
+      { value: '3:4', label: '3:4' },
+    ],
+    [t],
+  );
+  const wanDurationOptions = useMemo(
+    () => [
+      { value: '5', label: '5s' },
+      { value: '10', label: '10s' },
+      { value: '15', label: '15s' },
+      { value: '20', label: '20s' },
+    ],
+    [],
+  );
+  const wanResolutionOptions = useMemo(
+    () => [
+      { value: '720p', label: '720p' },
+      { value: '1080p', label: '1080p' },
+    ],
+    [],
+  );
+  const wanAudioOptions = useMemo(
+    () => [
+      { value: 'on', label: t('wan_audio_on') },
+      { value: 'off', label: t('wan_audio_off') },
     ],
     [t],
   );
@@ -422,6 +475,8 @@ export default function HomeScreen() {
         ? 'generate'
         : activeTab === 'venice_a2e'
           ? 'venice_a2e'
+        : activeTab === 'wan_26'
+          ? 'wan_26'
         : activeTab === 'remix'
           ? 'remix'
           : activeTab === 'api'
@@ -429,9 +484,10 @@ export default function HomeScreen() {
             : 'upload';
     const resolveSource = (video: Video) => {
       const raw = video.source?.toLowerCase();
-      if (raw && ['upload', 'generate', 'remix', 'api', 'venice_a2e'].includes(raw)) return raw;
+      if (raw && ['upload', 'generate', 'remix', 'api', 'venice_a2e', 'wan_26'].includes(raw)) return raw;
       const path = video.file_path || '';
       if (path.includes('/venice_a2e/') || path.includes('\\venice_a2e\\')) return 'venice_a2e';
+      if (path.includes('/venice_wan/') || path.includes('\\venice_wan\\')) return 'wan_26';
       if (path.includes('/generated/') || path.includes('\\generated\\')) return 'generate';
       return 'upload';
     };
@@ -1379,6 +1435,7 @@ const HISTORY_KEYS = {
               { key: 'upload', label: t('home_tab_upload') },
               { key: 'generate', label: t('home_tab_generate') },
               { key: 'venice_a2e', label: t('home_tab_venice_a2e') },
+              { key: 'wan_26', label: t('home_tab_wan_26') },
               { key: 'api', label: t('home_tab_api') },
               { key: 'remix', label: t('home_tab_remix') },
             ].map((tab) => {
@@ -1387,7 +1444,9 @@ const HISTORY_KEYS = {
                 <Pressable
                   key={tab.key}
                   style={[styles.tabButton, isActive && styles.tabButtonActive]}
-                  onPress={() => setActiveTab(tab.key as 'upload' | 'generate' | 'venice_a2e' | 'remix' | 'api')}
+                  onPress={() =>
+                    setActiveTab(tab.key as 'upload' | 'generate' | 'venice_a2e' | 'wan_26' | 'remix' | 'api')
+                  }
                 >
                   <Text style={[styles.tabButtonText, isActive && styles.tabButtonTextActive]}>{tab.label}</Text>
                 </Pressable>
@@ -1972,6 +2031,86 @@ const HISTORY_KEYS = {
           {activeTab === 'venice_a2e' ? (
             <View style={styles.section}>
               <VeniceA2EPanel apiUrl={API_URL} />
+            </View>
+          ) : null}
+
+          {activeTab === 'wan_26' ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{t('home_tab_wan_26')}</Text>
+
+              <View style={styles.panel}>
+                <Text style={styles.fieldLabel}>{t('field_model')}</Text>
+                <SelectControl
+                  label={t('field_model')}
+                  value={wanModel}
+                  options={wanModelOptions}
+                  onChange={setWanModel}
+                />
+
+                <Text style={styles.fieldLabel}>{t('field_aspect_ratio')}</Text>
+                <View style={styles.chipRow}>
+                  {wanAspectOptions.map((option) => {
+                    const isActive = wanAspect === option.value;
+                    return (
+                      <Pressable
+                        key={option.value}
+                        style={[styles.chip, isActive && styles.chipActive]}
+                        onPress={() => setWanAspect(option.value)}
+                      >
+                        <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{option.label}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+
+                <Text style={styles.fieldLabel}>{t('field_video_size')}</Text>
+                <View style={styles.chipRow}>
+                  {wanResolutionOptions.map((option) => {
+                    const isActive = wanResolution === option.value;
+                    return (
+                      <Pressable
+                        key={option.value}
+                        style={[styles.chip, isActive && styles.chipActive]}
+                        onPress={() => setWanResolution(option.value)}
+                      >
+                        <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{option.label}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+
+                <Text style={styles.fieldLabel}>{t('field_length_seconds')}</Text>
+                <View style={styles.chipRow}>
+                  {wanDurationOptions.map((option) => {
+                    const isActive = wanDuration === option.value;
+                    return (
+                      <Pressable
+                        key={option.value}
+                        style={[styles.chip, isActive && styles.chipActive]}
+                        onPress={() => setWanDuration(option.value)}
+                      >
+                        <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{option.label}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+
+                <Text style={styles.fieldLabel}>{t('wan_audio_label')}</Text>
+                <View style={styles.chipRow}>
+                  {wanAudioOptions.map((option) => {
+                    const isActive = wanAudio === option.value;
+                    return (
+                      <Pressable
+                        key={option.value}
+                        style={[styles.chip, isActive && styles.chipActive]}
+                        onPress={() => setWanAudio(option.value)}
+                      >
+                        <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{option.label}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
             </View>
           ) : null}
 
