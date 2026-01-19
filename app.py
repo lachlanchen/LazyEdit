@@ -69,6 +69,9 @@ from lazyedit.subtitle_translate import SubtitlesTranslator
 from lazyedit.video_prompt_generator import VideoPromptGenerator
 from lazyedit.venice_a2e import (
     VenicePromptGenerator,
+    AUDIO_EXTENSIONS,
+    IMAGE_EXTENSIONS,
+    VIDEO_EXTENSIONS,
     run_venice_a2e_audio,
     run_venice_a2e_image,
     run_venice_a2e_pipeline,
@@ -3360,7 +3363,7 @@ def media_url_for_path(file_path: str | None) -> str | None:
     return f"/media/{quote(relative.as_posix())}"
 
 
-def _is_remote_video_path(file_path: str | None) -> bool:
+def _is_remote_url(file_path: str | None) -> bool:
     if not file_path:
         return False
     try:
@@ -3368,6 +3371,10 @@ def _is_remote_video_path(file_path: str | None) -> bool:
     except Exception:
         return False
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+
+
+def _is_remote_video_path(file_path: str | None) -> bool:
+    return _is_remote_url(file_path)
 
 
 def _remote_video_cache_path(video_id: int, remote_url: str) -> str:
@@ -3379,6 +3386,120 @@ def _remote_video_cache_path(video_id: int, remote_url: str) -> str:
     cache_dir = os.path.join(UPLOAD_FOLDER, "remote_cache")
     os.makedirs(cache_dir, exist_ok=True)
     return os.path.join(cache_dir, f"video_{video_id}_{digest}{ext}")
+
+
+def _artifact_ext_from_url(url: str, fallback: str, allowed_exts: tuple[str, ...]) -> str:
+    try:
+        parsed = urlparse(url)
+        ext = os.path.splitext(parsed.path)[1].lower()
+    except Exception:
+        ext = ""
+    if not ext or ext not in allowed_exts:
+        return fallback
+    return ext
+
+
+def _download_media_url(url: str, output_path: str) -> tuple[str | None, str | None]:
+    if not url:
+        return None, "missing url"
+    try:
+        if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
+            return output_path, None
+    except Exception:
+        pass
+    temp_path = f"{output_path}.part"
+    try:
+        response = requests.get(url, stream=True, timeout=(10, 300))
+        if not response.ok:
+            return None, f"download failed ({response.status_code}): {response.text[:200]}"
+        with open(temp_path, "wb") as handle:
+            for chunk in response.iter_content(chunk_size=4 * 1024 * 1024):
+                if chunk:
+                    handle.write(chunk)
+        os.replace(temp_path, output_path)
+        return output_path, None
+    except Exception as exc:
+        try:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        except Exception:
+            pass
+        return None, str(exc)
+
+
+def _venice_a2e_artifact_dir(step: str, idea: str | None) -> str:
+    base_dir = os.path.join(UPLOAD_FOLDER, "venice_a2e")
+    os.makedirs(base_dir, exist_ok=True)
+    stamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    token = hashlib.sha1(f"{idea or ''}|{step}|{stamp}".encode("utf-8")).hexdigest()[:8]
+    folder_name = f"{stamp}_{step}_{token}"
+    output_dir = os.path.join(base_dir, folder_name)
+    os.makedirs(output_dir, exist_ok=True)
+    return output_dir
+
+
+def _cache_venice_a2e_url(
+    url: str | None,
+    output_dir: str,
+    prefix: str,
+    fallback_ext: str,
+    allowed_exts: tuple[str, ...],
+) -> str | None:
+    if not url:
+        return None
+    if not _is_remote_url(url):
+        return url
+    ext = _artifact_ext_from_url(url, fallback_ext, allowed_exts)
+    digest = hashlib.sha1(url.encode("utf-8")).hexdigest()[:12]
+    filename = f"{prefix}_{digest}{ext}"
+    output_path = os.path.join(output_dir, filename)
+    cached_path, error = _download_media_url(url, output_path)
+    if not cached_path:
+        print(f"[V+A2E] cache failed for {prefix}: {error}")
+        return url
+    return cached_path
+
+
+def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> None:
+    if not isinstance(result, dict):
+        return
+    output_dir = _venice_a2e_artifact_dir(step, result.get("idea") or data.get("idea") or data.get("prompt"))
+    image_url = _cache_venice_a2e_url(
+        result.get("image_url"),
+        output_dir,
+        "image",
+        ".jpg",
+        IMAGE_EXTENSIONS,
+    )
+    if image_url:
+        result["image_url"] = image_url
+    video_url = _cache_venice_a2e_url(
+        result.get("video_url"),
+        output_dir,
+        "video",
+        ".mp4",
+        VIDEO_EXTENSIONS,
+    )
+    if video_url:
+        result["video_url"] = video_url
+    audio_url = _cache_venice_a2e_url(
+        result.get("audio_url"),
+        output_dir,
+        "audio",
+        ".mp3",
+        AUDIO_EXTENSIONS,
+    )
+    if audio_url:
+        result["audio_url"] = audio_url
+    talking_url = _cache_venice_a2e_url(
+        result.get("talking_video_url"),
+        output_dir,
+        "talking",
+        ".mp4",
+        VIDEO_EXTENSIONS,
+    )
+    if talking_url:
+        result["talking_video_url"] = talking_url
 
 
 def _update_video_file_path(video_id: int, new_path: str) -> None:
@@ -5342,6 +5463,10 @@ class VeniceA2EImageHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e image failed", "details": details, "events": events})
 
+        try:
+            await run_blocking(lambda: _cache_venice_a2e_artifacts("image", data, result))
+        except Exception as exc:
+            print(f"[V+A2E] image cache failed: {exc}")
         _store_venice_a2e_history("image", data, result)
         self.write(result)
 
@@ -5427,6 +5552,10 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e video failed", "details": details, "events": events})
 
+        try:
+            await run_blocking(lambda: _cache_venice_a2e_artifacts("video", data, result))
+        except Exception as exc:
+            print(f"[V+A2E] video cache failed: {exc}")
         _store_venice_a2e_history("video", data, result, {"video_time": video_time})
         try:
             video_url_result = result.get("video_url") if isinstance(result, dict) else None
@@ -5538,6 +5667,10 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e audio failed", "details": details, "events": events})
 
+        try:
+            await run_blocking(lambda: _cache_venice_a2e_artifacts("audio", data, result))
+        except Exception as exc:
+            print(f"[V+A2E] audio cache failed: {exc}")
         _store_venice_a2e_history("audio", data, result, {"video_time": video_time})
         try:
             talking_url = result.get("talking_video_url") if isinstance(result, dict) else None
@@ -5639,6 +5772,10 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e failed", "details": details, "events": events})
 
+        try:
+            await run_blocking(lambda: _cache_venice_a2e_artifacts("pipeline", data, result))
+        except Exception as exc:
+            print(f"[V+A2E] pipeline cache failed: {exc}")
         _store_venice_a2e_history("pipeline", data, result, {"video_time": video_time})
         try:
             if isinstance(result, dict):
