@@ -150,6 +150,7 @@ VIDEO_SPEC_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_spec")
 SUBTITLE_POLISH_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "subtitle_polish")
 PROMPT_TEMPLATE_DIR = os.path.join(UPLOAD_FOLDER, "prompt_templates")
 VENICE_A2E_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "venice_a2e")
+VENICE_WAN_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "venice_wan")
 PROMPT_TEMPLATE_SCHEMA = {
     "type": "object",
     "properties": {
@@ -5759,7 +5760,7 @@ class VeniceWanPromptHandler(CorsMixin, tornado.web.RequestHandler):
 
         def _run():
             generator = VenicePromptGenerator(
-                template_dir=VENICE_A2E_TEMPLATE_DIR,
+                template_dir=VENICE_WAN_TEMPLATE_DIR,
                 model=venice_model,
                 use_cache=use_cache,
                 cache_dir="cache/venice_prompts",
@@ -5782,12 +5783,17 @@ class VeniceWanPromptHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice wan prompt failed", "details": details})
 
+        generated_title = str(prompts.get("title") or "").strip()
         if title:
             prompts["title"] = title
+            generated_title = title
+        if not generated_title:
+            generated_title = _sanitize_title(idea)
+            prompts["title"] = generated_title
 
         response = {
             "idea": idea,
-            "title": prompts.get("title") or title,
+            "title": generated_title,
             "prompt": prompts.get("video_prompt"),
             "image_prompt": prompts.get("image_prompt"),
             "audio_text": prompts.get("audio_text"),
@@ -5893,7 +5899,7 @@ class VeniceWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
                 if not idea:
                     raise RuntimeError("prompt or idea required")
                 generator = VenicePromptGenerator(
-                    template_dir=VENICE_A2E_TEMPLATE_DIR,
+                    template_dir=VENICE_WAN_TEMPLATE_DIR,
                     model=venice_model,
                     use_cache=use_cache,
                     cache_dir="cache/venice_prompts",

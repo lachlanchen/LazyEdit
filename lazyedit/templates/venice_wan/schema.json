@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short title for the video."
+    },
+    "video_prompt": {
+      "type": "string",
+      "description": "Prompt describing motion and cinematic direction (4-8 sentences)."
+    }
+  },
+  "required": ["title", "video_prompt"]
+}
