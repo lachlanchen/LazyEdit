@@ -4064,7 +4064,7 @@ def _autopublish_queue_url(publish_url: str) -> str:
 class CorsMixin:
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT")
+        self.set_header("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE")
         self.set_header("Access-Control-Allow-Headers", "content-type")
 
     def options(self, *args, **kwargs):
