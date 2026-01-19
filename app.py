@@ -4003,6 +4003,20 @@ def _simplify_metadata_payload(metadata: dict) -> dict:
     return simplified
 
 
+def _build_placeholder_metadata(title: str | None) -> dict:
+    fallback_title = title or "Untitled video"
+    return {
+        "title": fallback_title,
+        "brief_description": "No transcription available.",
+        "middle_description": "No transcription available.",
+        "long_description": "No transcription available.",
+        "tags": [],
+        "english_words_to_learn": [],
+        "teaser": {"start": "00:00:00,000", "end": "00:00:00,000"},
+        "cover": "00:00:00,000",
+    }
+
+
 _AUTOPUBLISH_URL_CACHE = {"url": None, "checked": 0.0}
 _AUTOPUBLISH_URL_TTL = 30.0
 
@@ -5247,11 +5261,11 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
         def _run():
             ldb.ensure_schema()
             with ldb.get_cursor() as cur:
-                cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+                cur.execute("SELECT file_path, title FROM videos WHERE id = %s", (video_id_i,))
                 row = cur.fetchone()
             if not row:
                 return 404, {"error": "video not found"}
-            file_path = row[0]
+            file_path, video_title = row
             file_path, error = _ensure_local_video_path(video_id_i, file_path)
             if not file_path:
                 return 404, {"error": error or "video file missing"}
@@ -5276,10 +5290,6 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
             if transcription_status == "failed":
                 return 400, {"error": "transcription failed; run Transcribe again"}
 
-            transcription_text = _read_text_file(output_md_path) or _read_text_file(output_srt_path)
-            if not transcription_text:
-                return 400, {"error": "transcription missing; run Transcribe first"}
-
             caption_text = ""
             caption_row = ldb.get_latest_frame_caption(video_id_i)
             if caption_row:
@@ -5287,11 +5297,40 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
                 if caption_status != "failed":
                     caption_text = _read_text_file(caption_md_path) or _read_text_file(caption_srt_path)
 
+            transcription_text = _read_text_file(output_md_path) or _read_text_file(output_srt_path)
             metadata_dir = os.path.join(output_folder, "metadata", lang)
             os.makedirs(metadata_dir, exist_ok=True)
             output_json_path = os.path.join(metadata_dir, f"{base_name}_metadata_{lang}.json")
             if os.path.exists(output_json_path):
                 os.remove(output_json_path)
+
+            if not transcription_text:
+                if caption_text:
+                    transcription_text = caption_text
+                    caption_text = ""
+                else:
+                    metadata_payload = _build_placeholder_metadata(
+                        _sanitize_title(video_title) if video_title else _sanitize_title(base_name)
+                    )
+                    with open(output_json_path, "w", encoding="utf-8") as handle:
+                        json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
+                    metadata_id = ldb.add_video_metadata(
+                        video_id_i,
+                        lang,
+                        "completed",
+                        output_json_path,
+                        None,
+                    )
+                    return 200, {
+                        "id": metadata_id,
+                        "video_id": video_id_i,
+                        "language_code": lang,
+                        "status": "completed",
+                        "output_json_path": output_json_path,
+                        "json_url": media_url_for_path(output_json_path),
+                        "metadata": metadata_payload,
+                        "error": None,
+                    }
 
             status = "completed"
             error_message = None
