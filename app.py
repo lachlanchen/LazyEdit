@@ -4807,13 +4807,40 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
             input_file = preprocess_if_needed(file_path)
             base_name, _ = os.path.splitext(os.path.basename(input_file))
             output_folder = os.path.dirname(input_file)
-            input_json, _input_srt = find_latest_transcription_outputs(output_folder, base_name)
+            input_json, input_srt = find_latest_transcription_outputs(output_folder, base_name)
             if not input_json or not os.path.exists(input_json):
                 return 400, {"error": "transcription missing; run Transcribe first"}
 
             payload, items, container_key = _load_subtitle_payload(input_json)
             if not items:
-                return 400, {"error": "transcription missing; run Transcribe first"}
+                input_md = os.path.join(output_folder, f"{base_name}_mixed.md")
+                output_md_path = input_md if os.path.exists(input_md) else None
+                transcription_id = ldb.add_transcription(
+                    video_id_i,
+                    "polished",
+                    "empty",
+                    input_json,
+                    input_srt if input_srt and os.path.exists(input_srt) else None,
+                    output_md_path,
+                    "No subtitles found to polish.",
+                )
+                primary_lang, language_summary = _summarize_transcription_languages(input_json)
+                return 200, {
+                    "id": transcription_id,
+                    "video_id": video_id_i,
+                    "language_code": "polished",
+                    "status": "empty",
+                    "output_json_path": input_json,
+                    "output_srt_path": input_srt,
+                    "output_md_path": output_md_path,
+                    "json_url": media_url_for_path(input_json),
+                    "srt_url": media_url_for_path(input_srt),
+                    "md_url": media_url_for_path(output_md_path),
+                    "preview_text": build_transcription_preview(output_md_path, input_srt),
+                    "primary_language": primary_lang,
+                    "language_summary": language_summary,
+                    "error": "No subtitles found to polish.",
+                }
 
             caption_text = ""
             caption_row = ldb.get_latest_frame_caption(video_id_i)
@@ -7201,6 +7228,24 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         output_folder = os.path.dirname(video_path)
         base_name = os.path.splitext(os.path.basename(video_path))[0]
         speaker_output_dir = os.path.join(output_folder, "burn")
+        input_json, _input_srt = find_latest_transcription_outputs(output_folder, base_name)
+        if input_json and os.path.exists(input_json):
+            _payload, items, _container_key = _load_subtitle_payload(input_json)
+            if not items:
+                burn_id = ldb.add_subtitle_burn(
+                    video_id_i,
+                    "skipped",
+                    None,
+                    layout_config,
+                    "no subtitles to burn",
+                    progress=0,
+                )
+                return self.write({
+                    "id": burn_id,
+                    "video_id": video_id_i,
+                    "status": "skipped",
+                    "error": "no subtitles to burn",
+                })
         transcription_row = ldb.get_latest_transcription(video_id_i)
         speaker_map: dict[tuple[str, str], str] = {}
         if transcription_row:
