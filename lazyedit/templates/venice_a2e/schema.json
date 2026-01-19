@@ -8,15 +8,15 @@
     },
     "image_prompt": {
       "type": "string",
-      "description": "Prompt for the starting image."
+      "description": "Prompt for the starting image (2-3 sentences, richly detailed)."
     },
     "video_prompt": {
       "type": "string",
-      "description": "Prompt describing motion and cinematic direction."
+      "description": "Prompt describing motion and cinematic direction (4-6 sentences, multiple camera moves)."
     },
     "audio_text": {
       "type": "string",
-      "description": "Narration or spoken text for audio."
+      "description": "Narration or spoken text for audio (2-4 sentences, inspirational)."
     }
   },
   "required": ["title", "image_prompt", "video_prompt", "audio_text"]

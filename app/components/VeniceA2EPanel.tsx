@@ -142,6 +142,14 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     (value?: string | null) => {
       if (!value) return null;
       if (value.startsWith('http://') || value.startsWith('https://')) return value;
+      if (value.startsWith('/media/')) return `${apiUrl}${value}`;
+      const normalized = value.replace(/\\/g, '/');
+      const marker = '/DATA/';
+      const markerIndex = normalized.indexOf(marker);
+      if (markerIndex >= 0) {
+        const relative = normalized.slice(markerIndex + marker.length);
+        return `${apiUrl}/media/${encodeURI(relative)}`;
+      }
       return `${apiUrl}${value}`;
     },
     [apiUrl],
@@ -803,7 +811,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         <Text style={styles.outputLabel}>Image preview</Text>
         <View style={styles.previewFrame}>
           {imageUrl ? (
-            <Image source={{ uri: imageUrl }} style={styles.previewImage} resizeMode="contain" />
+            <Image source={{ uri: resolveMediaUrl(imageUrl) || imageUrl }} style={styles.previewImage} resizeMode="contain" />
           ) : (
             <Text style={[styles.outputEmpty, styles.previewEmpty]}>Image not ready.</Text>
           )}
@@ -840,7 +848,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         {videoUrl ? (
           Platform.OS === 'web' ? (
             React.createElement('video', {
-              src: videoUrl,
+              src: resolveMediaUrl(videoUrl) || videoUrl,
               controls: true,
               style: { width: '100%', borderRadius: 12 },
             })
@@ -874,7 +882,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         {audioUrl ? (
           Platform.OS === 'web' ? (
             React.createElement('audio', {
-              src: audioUrl,
+              src: resolveMediaUrl(audioUrl) || audioUrl,
               controls: true,
               style: { width: '100%' },
             })
@@ -888,7 +896,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         {talkingVideoUrl ? (
           Platform.OS === 'web' ? (
             React.createElement('video', {
-              src: talkingVideoUrl,
+              src: resolveMediaUrl(talkingVideoUrl) || talkingVideoUrl,
               controls: true,
               style: { width: '100%', borderRadius: 12 },
             })
