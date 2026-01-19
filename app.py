@@ -3704,7 +3704,7 @@ def _replace_venice_a2e_video_record(original_path: str | None, replacement_path
     ldb.ensure_schema()
     with ldb.get_cursor(commit=True) as cur:
         cur.execute(
-            "SELECT id, title FROM videos WHERE file_path = %s ORDER BY id DESC LIMIT 1",
+            "SELECT id, title, file_path FROM videos WHERE file_path = %s ORDER BY id DESC LIMIT 1",
             (original_path,),
         )
         row = cur.fetchone()
@@ -3723,17 +3723,17 @@ def _replace_venice_a2e_video_record(original_path: str | None, replacement_path
                         preferred = candidate
                         break
                 row = preferred or candidates[0]
-                row = (row[0], row[1])
         if not row:
             return False
-        video_id, existing_title = row
+        video_id, existing_title, existing_path = row
+        if existing_path and existing_path == replacement_path:
+            return False
         cleaned_title = _sanitize_title(title) if title else None
         cur.execute(
             """
             UPDATE videos
             SET file_path = %s,
-                title = COALESCE(%s, title),
-                created_at = NOW()
+                title = COALESCE(%s, title)
             WHERE id = %s
             """,
             (replacement_path, cleaned_title, video_id),
