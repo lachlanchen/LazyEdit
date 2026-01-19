@@ -2227,14 +2227,6 @@ const HISTORY_KEYS = {
                   multiline
                 />
 
-                <Text style={styles.fieldLabel}>{t('field_title')}</Text>
-                <TextInput
-                  style={styles.input}
-                  value={wanTitle}
-                  onChangeText={setWanTitle}
-                  placeholder={t('field_title')}
-                />
-
                 <Pressable
                   style={[styles.btnAccent, wanPrompting && styles.btnDisabled]}
                   onPress={generateWanPrompt}
@@ -2250,6 +2242,18 @@ const HISTORY_KEYS = {
 
                 {wanPromptStatus ? (
                   <Text style={[styles.status, toneStyle(wanPromptTone)]}>{wanPromptStatus}</Text>
+                ) : null}
+
+                {wanPrompt || wanTitle ? (
+                  <>
+                    <Text style={styles.fieldLabel}>{t('field_title')}</Text>
+                    <TextInput
+                      style={styles.input}
+                      value={wanTitle}
+                      onChangeText={setWanTitle}
+                      placeholder={t('field_title')}
+                    />
+                  </>
                 ) : null}
 
                 <Text style={styles.fieldLabel}>{t('field_generated_prompt')}</Text>
