@@ -3360,6 +3360,75 @@ def media_url_for_path(file_path: str | None) -> str | None:
     return f"/media/{quote(relative.as_posix())}"
 
 
+def _is_remote_video_path(file_path: str | None) -> bool:
+    if not file_path:
+        return False
+    try:
+        parsed = urlparse(str(file_path))
+    except Exception:
+        return False
+    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+
+
+def _remote_video_cache_path(video_id: int, remote_url: str) -> str:
+    parsed = urlparse(remote_url)
+    ext = os.path.splitext(parsed.path)[1].lower()
+    if not ext or len(ext) > 8:
+        ext = ".mp4"
+    digest = hashlib.sha1(remote_url.encode("utf-8")).hexdigest()[:12]
+    cache_dir = os.path.join(UPLOAD_FOLDER, "remote_cache")
+    os.makedirs(cache_dir, exist_ok=True)
+    return os.path.join(cache_dir, f"video_{video_id}_{digest}{ext}")
+
+
+def _update_video_file_path(video_id: int, new_path: str) -> None:
+    ldb.ensure_schema()
+    with ldb.get_cursor(commit=True) as cur:
+        cur.execute(
+            "UPDATE videos SET file_path = %s, created_at = NOW() WHERE id = %s",
+            (new_path, video_id),
+        )
+
+
+def _ensure_local_video_path(video_id: int, file_path: str | None, allow_download: bool = True) -> tuple[str | None, str | None]:
+    if not file_path:
+        return None, "video file missing"
+    if os.path.exists(file_path):
+        return file_path, None
+    if not _is_remote_video_path(file_path):
+        return None, "video file missing"
+    cache_path = _remote_video_cache_path(video_id, file_path)
+    if os.path.exists(cache_path):
+        try:
+            if os.path.getsize(cache_path) > 0:
+                _update_video_file_path(video_id, cache_path)
+                return cache_path, None
+        except Exception:
+            pass
+    if not allow_download:
+        return None, "cached video not found"
+    temp_path = f"{cache_path}.part"
+    try:
+        print(f"[LazyEdit] Downloading remote video {file_path} -> {cache_path}")
+        response = requests.get(file_path, stream=True, timeout=(10, 300))
+        if not response.ok:
+            return None, f"remote download failed ({response.status_code}): {response.text[:200]}"
+        with open(temp_path, "wb") as handle:
+            for chunk in response.iter_content(chunk_size=4 * 1024 * 1024):
+                if chunk:
+                    handle.write(chunk)
+        os.replace(temp_path, cache_path)
+        _update_video_file_path(video_id, cache_path)
+        return cache_path, None
+    except Exception as exc:
+        try:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        except Exception:
+            pass
+        return None, f"remote download failed: {exc}"
+
+
 def _serialize_venice_a2e_history_row(row: tuple) -> dict:
     return {
         "id": row[0],
@@ -3936,8 +4005,9 @@ class VideoProxyHandler(CorsMixin, tornado.web.RequestHandler):
                 return 404, {"error": "video not found"}
 
             input_path = row[0]
-            if not input_path or not os.path.exists(input_path):
-                return 404, {"error": "video file missing"}
+            input_path, error = _ensure_local_video_path(video_id_i, input_path)
+            if not input_path:
+                return 404, {"error": error or "video file missing"}
 
             proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
             os.makedirs(proxies_dir, exist_ok=True)
@@ -3990,8 +4060,9 @@ class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
             if not row:
                 return 404, {"error": "video not found"}
             file_path = row[0]
-            if not file_path or not os.path.exists(file_path):
-                return 404, {"error": "video file missing"}
+            file_path, error = _ensure_local_video_path(video_id_i, file_path)
+            if not file_path:
+                return 404, {"error": error or "video file missing"}
 
             input_file = preprocess_if_needed(file_path)
             base_name, extension = os.path.splitext(os.path.basename(input_file))
@@ -4260,8 +4331,9 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
             if not row:
                 return 404, {"error": "video not found"}
             file_path = row[0]
-            if not file_path or not os.path.exists(file_path):
-                return 404, {"error": "video file missing"}
+            file_path, error = _ensure_local_video_path(video_id_i, file_path)
+            if not file_path:
+                return 404, {"error": error or "video file missing"}
 
             input_file = preprocess_if_needed(file_path)
             base_name, _ = os.path.splitext(os.path.basename(input_file))
@@ -4414,8 +4486,9 @@ class VideoCaptionHandler(CorsMixin, tornado.web.RequestHandler):
             if not row:
                 return 404, {"error": "video not found"}
             file_path = row[0]
-            if not file_path or not os.path.exists(file_path):
-                return 404, {"error": "video file missing"}
+            file_path, error = _ensure_local_video_path(video_id_i, file_path)
+            if not file_path:
+                return 404, {"error": error or "video file missing"}
 
             input_file = preprocess_if_needed(file_path)
             base_name, _extension = os.path.splitext(os.path.basename(input_file))
@@ -4665,8 +4738,9 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
             if not row:
                 return 404, {"error": "video not found"}
             file_path = row[0]
-            if not file_path or not os.path.exists(file_path):
-                return 404, {"error": "video file missing"}
+            file_path, error = _ensure_local_video_path(video_id_i, file_path)
+            if not file_path:
+                return 404, {"error": error or "video file missing"}
 
             input_file = preprocess_if_needed(file_path)
             base_name, _ = os.path.splitext(os.path.basename(input_file))
@@ -4767,9 +4841,10 @@ class VideoCoverHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(404)
             return self.write({"error": "video not found"})
         _, file_path, _, _ = row
-        if not file_path or not os.path.exists(file_path):
+        file_path, error = _ensure_local_video_path(video_id_i, file_path, allow_download=False)
+        if not file_path:
             self.set_status(404)
-            return self.write({"error": "video file missing"})
+            return self.write({"error": error or "video file missing"})
 
         base_name = os.path.splitext(os.path.basename(file_path))[0]
         publish_dir = _get_publish_dir(file_path)
@@ -4807,8 +4882,9 @@ class VideoCoverHandler(CorsMixin, tornado.web.RequestHandler):
             if not row:
                 return 404, {"error": "video not found"}
             _, file_path, _, _ = row
-            if not file_path or not os.path.exists(file_path):
-                return 404, {"error": "video file missing"}
+            file_path, error = _ensure_local_video_path(video_id_i, file_path)
+            if not file_path:
+                return 404, {"error": error or "video file missing"}
 
             metadata_payload, _ = _get_latest_metadata_payload(video_id_i, lang)
             if not metadata_payload and lang != "en":
@@ -4888,9 +4964,10 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(404)
             return self.write({"error": "video not found"})
         _, file_path, _, _ = row
-        if not file_path or not os.path.exists(file_path):
+        file_path, error = _ensure_local_video_path(video_id_i, file_path)
+        if not file_path:
             self.set_status(404)
-            return self.write({"error": "video file missing"})
+            return self.write({"error": error or "video file missing"})
 
         metadata_zh, _ = _get_latest_metadata_payload(video_id_i, "zh")
         if not metadata_zh:
@@ -5849,8 +5926,9 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             if not row:
                 return 404, {"error": "video not found"}
             file_path = row[0]
-            if not file_path or not os.path.exists(file_path):
-                return 404, {"error": "video file missing"}
+            file_path, error = _ensure_local_video_path(video_id_i, file_path)
+            if not file_path:
+                return 404, {"error": error or "video file missing"}
 
             input_file = preprocess_if_needed(file_path)
             base_name, _ = os.path.splitext(os.path.basename(input_file))
@@ -6257,9 +6335,10 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(404)
             return self.write({"error": "video not found"})
         video_path = row[0]
-        if not video_path or not os.path.exists(video_path):
+        video_path, error = _ensure_local_video_path(video_id_i, video_path)
+        if not video_path:
             self.set_status(404)
-            return self.write({"error": "video file missing"})
+            return self.write({"error": error or "video file missing"})
 
         output_folder = os.path.dirname(video_path)
         base_name = os.path.splitext(os.path.basename(video_path))[0]
@@ -6898,8 +6977,9 @@ class VideoKeyframesHandler(CorsMixin, tornado.web.RequestHandler):
             if not row:
                 return 404, {"error": "video not found"}
             file_path = row[0]
-            if not file_path or not os.path.exists(file_path):
-                return 404, {"error": "video file missing"}
+            file_path, error = _ensure_local_video_path(video_id_i, file_path)
+            if not file_path:
+                return 404, {"error": error or "video file missing"}
 
             input_file = preprocess_if_needed(file_path)
             base_name, _ = os.path.splitext(os.path.basename(input_file))
