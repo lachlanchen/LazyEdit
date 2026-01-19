@@ -105,6 +105,7 @@ def ensure_schema():
             id SERIAL PRIMARY KEY,
             step TEXT NOT NULL,
             idea TEXT,
+            title TEXT,
             image_prompt TEXT,
             video_prompt TEXT,
             audio_text TEXT,
@@ -121,6 +122,7 @@ def ensure_schema():
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
         """,
+        "ALTER TABLE venice_a2e_history ADD COLUMN IF NOT EXISTS title TEXT;",
         "CREATE INDEX IF NOT EXISTS idx_venice_a2e_history_created_at ON venice_a2e_history (created_at DESC);",
         # Transcriptions table for raw speech-to-text outputs
         """
@@ -283,6 +285,7 @@ def add_venice_a2e_history(record: dict) -> int:
             INSERT INTO venice_a2e_history (
                 step,
                 idea,
+                title,
                 image_prompt,
                 video_prompt,
                 audio_text,
@@ -297,12 +300,13 @@ def add_venice_a2e_history(record: dict) -> int:
                 talking_video_url,
                 events
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
             (
                 record.get("step"),
                 record.get("idea"),
+                record.get("title"),
                 record.get("image_prompt"),
                 record.get("video_prompt"),
                 record.get("audio_text"),
@@ -331,6 +335,7 @@ def list_venice_a2e_history(limit: int = 50) -> list[tuple]:
                 id,
                 step,
                 idea,
+                title,
                 image_prompt,
                 video_prompt,
                 audio_text,
@@ -363,6 +368,7 @@ def get_venice_a2e_history(history_id: int) -> tuple | None:
                 id,
                 step,
                 idea,
+                title,
                 image_prompt,
                 video_prompt,
                 audio_text,

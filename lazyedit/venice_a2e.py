@@ -705,6 +705,7 @@ def run_venice_a2e_image(
 
     _log_event(events, "start", "Starting Venice + A2E image step.")
 
+    title = ""
     if not image_prompt:
         if not idea:
             raise RuntimeError("idea is required when image_prompt is missing")
@@ -716,6 +717,7 @@ def run_venice_a2e_image(
             cache_dir="cache/venice_prompts",
         )
         prompts = generator.generate(idea=idea, audio_language=audio_language)
+        title = str(prompts.get("title") or "").strip()
         image_prompt = prompts.get("image_prompt", "").strip()
     else:
         prompts = {"image_prompt": image_prompt}
@@ -742,6 +744,7 @@ def run_venice_a2e_image(
 
     return {
         "idea": idea,
+        "title": title or None,
         "prompts": prompts,
         "image_prompt": image_prompt,
         "image_url": image_url,
@@ -777,6 +780,7 @@ def run_venice_a2e_video(
     if not image_url:
         raise RuntimeError("image_url is required to generate video")
 
+    title = ""
     if not video_prompt:
         if not idea:
             raise RuntimeError("idea is required when video_prompt is missing")
@@ -788,6 +792,7 @@ def run_venice_a2e_video(
             cache_dir="cache/venice_prompts",
         )
         prompts = generator.generate(idea=idea, audio_language=audio_language)
+        title = str(prompts.get("title") or "").strip()
         video_prompt = prompts.get("video_prompt", "").strip()
     else:
         prompts = {"video_prompt": video_prompt}
@@ -819,6 +824,7 @@ def run_venice_a2e_video(
 
     return {
         "idea": idea,
+        "title": title or None,
         "prompts": prompts,
         "image_url": image_url,
         "video_prompt": video_prompt,
@@ -857,6 +863,7 @@ def run_venice_a2e_audio(
     if not video_url:
         raise RuntimeError("video_url is required to generate audio")
 
+    title = ""
     need_audio_text = not audio_url
     if (need_audio_text and not audio_text) or not video_prompt:
         if not idea:
@@ -873,6 +880,7 @@ def run_venice_a2e_audio(
                 cache_dir="cache/venice_prompts",
             )
             prompts = generator.generate(idea=idea, audio_language=audio_language)
+            title = str(prompts.get("title") or "").strip()
             if need_audio_text and not audio_text:
                 audio_text = prompts.get("audio_text", "").strip()
             if not video_prompt:
@@ -925,6 +933,7 @@ def run_venice_a2e_audio(
 
     return {
         "idea": idea,
+        "title": title or None,
         "prompts": prompts,
         "video_url": video_url,
         "audio_text": audio_text,
@@ -966,6 +975,7 @@ def run_venice_a2e_pipeline(
 
     _log_event(events, "start", "Starting Venice + A2E pipeline.")
 
+    title = ""
     if not image_prompt or not video_prompt or not audio_text:
         _log_event(events, "venice", "Generating prompts with Venice.")
         generator = VenicePromptGenerator(
@@ -975,6 +985,7 @@ def run_venice_a2e_pipeline(
             cache_dir="cache/venice_prompts",
         )
         prompts = generator.generate(idea=idea, audio_language=audio_language)
+        title = str(prompts.get("title") or "").strip()
         image_prompt = prompts.get("image_prompt", "").strip()
         video_prompt = prompts.get("video_prompt", "").strip()
         audio_text = prompts.get("audio_text", "").strip()
@@ -1048,6 +1059,7 @@ def run_venice_a2e_pipeline(
 
     return {
         "idea": idea,
+        "title": title or None,
         "prompts": prompts,
         "image_prompt": image_prompt,
         "video_prompt": video_prompt,

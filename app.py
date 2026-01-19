@@ -3566,6 +3566,55 @@ def _update_video_file_path(video_id: int, new_path: str) -> None:
         )
 
 
+def _replace_venice_a2e_video_record(original_path: str | None, replacement_path: str | None, title: str | None) -> bool:
+    if not original_path or not replacement_path or original_path == replacement_path:
+        return False
+    ldb.ensure_schema()
+    with ldb.get_cursor(commit=True) as cur:
+        cur.execute(
+            "SELECT id, title FROM videos WHERE file_path = %s ORDER BY id DESC LIMIT 1",
+            (original_path,),
+        )
+        row = cur.fetchone()
+        if not row:
+            return False
+        video_id, existing_title = row
+        cleaned_title = _sanitize_title(title) if title else None
+        cur.execute(
+            """
+            UPDATE videos
+            SET file_path = %s,
+                title = COALESCE(%s, title),
+                created_at = NOW()
+            WHERE id = %s
+            """,
+            (replacement_path, cleaned_title, video_id),
+        )
+    return True
+
+
+def _sync_venice_a2e_audio_replacements(limit: int = 200) -> None:
+    now = time.time()
+    if now - _VENICE_A2E_REPLACE_CACHE["checked"] < _VENICE_A2E_REPLACE_TTL:
+        return
+    _VENICE_A2E_REPLACE_CACHE["checked"] = now
+    try:
+        rows = ldb.list_venice_a2e_history(limit)
+    except Exception:
+        return
+    for row in rows:
+        entry = _serialize_venice_a2e_history_row(row)
+        video_url = entry.get("video_url")
+        talking_url = entry.get("talking_video_url")
+        if not video_url or not talking_url or video_url == talking_url:
+            continue
+        title = entry.get("title") or entry.get("idea")
+        try:
+            _replace_venice_a2e_video_record(video_url, talking_url, title)
+        except Exception:
+            continue
+
+
 def _ensure_local_video_path(video_id: int, file_path: str | None, allow_download: bool = True) -> tuple[str | None, str | None]:
     if not file_path:
         return None, "video file missing"
@@ -3610,20 +3659,21 @@ def _serialize_venice_a2e_history_row(row: tuple) -> dict:
         "id": row[0],
         "step": row[1],
         "idea": row[2],
-        "image_prompt": row[3],
-        "video_prompt": row[4],
-        "audio_text": row[5],
-        "negative_prompt": row[6],
-        "aspect_ratio": row[7],
-        "video_time": row[8],
-        "audio_language": row[9],
-        "venice_model": row[10],
-        "image_url": row[11],
-        "video_url": row[12],
-        "audio_url": row[13],
-        "talking_video_url": row[14],
-        "events": row[15],
-        "created_at": row[16].isoformat() if row[16] else None,
+        "title": row[3],
+        "image_prompt": row[4],
+        "video_prompt": row[5],
+        "audio_text": row[6],
+        "negative_prompt": row[7],
+        "aspect_ratio": row[8],
+        "video_time": row[9],
+        "audio_language": row[10],
+        "venice_model": row[11],
+        "image_url": row[12],
+        "video_url": row[13],
+        "audio_url": row[14],
+        "talking_video_url": row[15],
+        "events": row[16],
+        "created_at": row[17].isoformat() if row[17] else None,
     }
 
 
@@ -3631,6 +3681,7 @@ def _store_venice_a2e_history(step: str, data: dict, result: dict, extras: dict 
     record = {
         "step": step,
         "idea": data.get("idea") or data.get("prompt") or result.get("idea"),
+        "title": data.get("title") or data.get("video_title") or data.get("videoTitle") or result.get("title") or (result.get("prompts") or {}).get("title"),
         "image_prompt": result.get("image_prompt") or data.get("image_prompt") or data.get("imagePrompt"),
         "video_prompt": result.get("video_prompt") or data.get("video_prompt") or data.get("videoPrompt"),
         "audio_text": result.get("audio_text") or data.get("audio_text") or data.get("audioText"),
@@ -3712,6 +3763,9 @@ def _simplify_metadata_payload(metadata: dict) -> dict:
 
 _AUTOPUBLISH_URL_CACHE = {"url": None, "checked": 0.0}
 _AUTOPUBLISH_URL_TTL = 30.0
+
+_VENICE_A2E_REPLACE_CACHE = {"checked": 0.0}
+_VENICE_A2E_REPLACE_TTL = 30.0
 
 
 def _iter_autopublish_candidates() -> list[str]:
@@ -4062,6 +4116,7 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self):
         # Return recent videos from DB
         ldb.ensure_schema()
+        _sync_venice_a2e_audio_replacements()
         with ldb.get_cursor() as cur:
             cur.execute(
                 """
@@ -5388,9 +5443,14 @@ class VeniceA2EPromptHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(400)
             return self.write({"error": "idea required"})
 
+        title = data.get("title") or data.get("video_title") or data.get("videoTitle")
         audio_language = data.get("audio_language") or data.get("audioLanguage") or data.get("language")
         venice_model = data.get("venice_model") or data.get("veniceModel") or data.get("model")
         use_cache = _parse_bool(data.get("use_cache"), default=True)
+        if title is not None and not isinstance(title, str):
+            title = str(title)
+        if isinstance(title, str):
+            title = title.strip() or None
         if audio_language is not None and not isinstance(audio_language, str):
             audio_language = str(audio_language)
         if venice_model is not None and not isinstance(venice_model, str):
@@ -5421,6 +5481,9 @@ class VeniceA2EPromptHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice prompt failed", "details": details})
 
+        if title:
+            prompts["title"] = title
+
         events = [
             {
                 "ts": datetime.utcnow().isoformat(timespec="seconds") + "Z",
@@ -5433,6 +5496,7 @@ class VeniceA2EPromptHandler(CorsMixin, tornado.web.RequestHandler):
             "idea": idea,
             "audio_language": audio_language or "auto",
             "prompts": prompts,
+            "title": prompts.get("title", ""),
             "image_prompt": prompts.get("image_prompt", ""),
             "video_prompt": prompts.get("video_prompt", ""),
             "audio_text": prompts.get("audio_text", ""),
@@ -5452,6 +5516,7 @@ class VeniceA2EImageHandler(CorsMixin, tornado.web.RequestHandler):
             idea = str(idea)
         idea = idea.strip()
 
+        title = data.get("title") or data.get("video_title") or data.get("videoTitle")
         image_prompt = data.get("image_prompt") or data.get("imagePrompt")
         audio_language = data.get("audio_language") or data.get("audioLanguage")
         venice_model = data.get("venice_model") or data.get("veniceModel") or data.get("model")
@@ -5460,6 +5525,8 @@ class VeniceA2EImageHandler(CorsMixin, tornado.web.RequestHandler):
 
         if image_prompt is not None and not isinstance(image_prompt, str):
             image_prompt = str(image_prompt)
+        if title is not None and not isinstance(title, str):
+            title = str(title)
         if audio_language is not None and not isinstance(audio_language, str):
             audio_language = str(audio_language)
         if venice_model is not None and not isinstance(venice_model, str):
@@ -5518,6 +5585,8 @@ class VeniceA2EImageHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e image failed", "details": details, "events": events})
 
+        if title:
+            result["title"] = title.strip()
         try:
             await run_blocking(lambda: _cache_venice_a2e_artifacts("image", data, result))
         except Exception as exc:
@@ -5538,6 +5607,7 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
             idea = str(idea)
         idea = idea.strip()
 
+        title = data.get("title") or data.get("video_title") or data.get("videoTitle")
         image_url = data.get("image_url") or data.get("imageUrl") or ""
         if not isinstance(image_url, str):
             image_url = str(image_url)
@@ -5551,6 +5621,8 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
 
         if video_prompt is not None and not isinstance(video_prompt, str):
             video_prompt = str(video_prompt)
+        if title is not None and not isinstance(title, str):
+            title = str(title)
         if audio_language is not None and not isinstance(audio_language, str):
             audio_language = str(audio_language)
         if venice_model is not None and not isinstance(venice_model, str):
@@ -5607,6 +5679,8 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(500)
             return self.write({"error": "venice a2e video failed", "details": details, "events": events})
 
+        if title:
+            result["title"] = title.strip()
         try:
             await run_blocking(lambda: _cache_venice_a2e_artifacts("video", data, result))
         except Exception as exc:
@@ -5615,7 +5689,13 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
         try:
             video_url_result = result.get("video_url") if isinstance(result, dict) else None
             if video_url_result:
-                title_base = idea or result.get("video_prompt") or "Venice A2E video"
+                title_base = (
+                    (title.strip() if isinstance(title, str) else None)
+                    or result.get("title")
+                    or idea
+                    or result.get("video_prompt")
+                    or "Venice A2E video"
+                )
                 title = _sanitize_title(title_base)
                 ldb.ensure_schema()
                 ldb.add_video(video_url_result, title, "venice_a2e")
@@ -5637,6 +5717,7 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
             idea = str(idea)
         idea = idea.strip()
 
+        title = data.get("title") or data.get("video_title") or data.get("videoTitle")
         video_url = data.get("video_url") or data.get("videoUrl") or ""
         if not isinstance(video_url, str):
             video_url = str(video_url)
@@ -5658,6 +5739,8 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
             audio_text = str(audio_text)
         if video_prompt is not None and not isinstance(video_prompt, str):
             video_prompt = str(video_prompt)
+        if title is not None and not isinstance(title, str):
+            title = str(title)
         if audio_language is not None and not isinstance(audio_language, str):
             audio_language = str(audio_language)
         if venice_model is not None and not isinstance(venice_model, str):
@@ -5727,19 +5810,36 @@ class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
             muxed_path = await run_blocking(lambda: _cache_venice_a2e_artifacts("audio", data, result))
         except Exception as exc:
             print(f"[V+A2E] audio cache failed: {exc}")
+        if title:
+            result["title"] = title.strip()
         _store_venice_a2e_history("audio", data, result, {"video_time": video_time})
         try:
             talking_url = result.get("talking_video_url") if isinstance(result, dict) else None
             if talking_url:
-                title_base = idea or result.get("audio_text") or "Venice A2E talking video"
+                title_base = (
+                    (title.strip() if isinstance(title, str) else None)
+                    or result.get("title")
+                    or idea
+                    or result.get("audio_text")
+                    or "Venice A2E talking video"
+                )
                 title = _sanitize_title(title_base)
                 ldb.ensure_schema()
                 ldb.add_video(talking_url, title, "venice_a2e")
             if muxed_path and os.path.exists(muxed_path):
-                title_base = idea or result.get("audio_text") or "Venice A2E audio mux"
+                title_base = (
+                    (title.strip() if isinstance(title, str) else None)
+                    or result.get("title")
+                    or idea
+                    or result.get("audio_text")
+                    or "Venice A2E audio mux"
+                )
                 title = _sanitize_title(f"{title_base} (audio)")
                 ldb.ensure_schema()
                 ldb.add_video(muxed_path, title, "venice_a2e")
+            if result.get("video_url") and (muxed_path or talking_url):
+                replacement = muxed_path or talking_url
+                _replace_venice_a2e_video_record(result.get("video_url"), replacement, title)
         except Exception as exc:
             print(f"[V+A2E] talking video registration failed: {exc}")
 
@@ -5758,6 +5858,7 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
             idea = str(idea)
         idea = idea.strip()
 
+        title = data.get("title") or data.get("video_title") or data.get("videoTitle")
         image_prompt = data.get("image_prompt") or data.get("imagePrompt")
         video_prompt = data.get("video_prompt") or data.get("videoPrompt")
         audio_text = data.get("audio_text") or data.get("audioText")
@@ -5773,6 +5874,8 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
             venice_model = str(venice_model)
         if aspect_ratio is not None and not isinstance(aspect_ratio, str):
             aspect_ratio = str(aspect_ratio)
+        if title is not None and not isinstance(title, str):
+            title = str(title)
 
         try:
             video_time = int(data.get("video_time") or data.get("videoTime") or 0) or None
@@ -5838,26 +5941,49 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
             muxed_path = await run_blocking(lambda: _cache_venice_a2e_artifacts("pipeline", data, result))
         except Exception as exc:
             print(f"[V+A2E] pipeline cache failed: {exc}")
+        if title:
+            result["title"] = title.strip()
         _store_venice_a2e_history("pipeline", data, result, {"video_time": video_time})
         try:
             if isinstance(result, dict):
                 video_url_result = result.get("video_url")
                 if video_url_result:
-                    title_base = idea or result.get("video_prompt") or "Venice A2E video"
+                    title_base = (
+                        (title.strip() if isinstance(title, str) else None)
+                        or result.get("title")
+                        or idea
+                        or result.get("video_prompt")
+                        or "Venice A2E video"
+                    )
                     title = _sanitize_title(title_base)
                     ldb.ensure_schema()
                     ldb.add_video(video_url_result, title, "venice_a2e")
                 talking_url = result.get("talking_video_url")
                 if talking_url:
-                    title_base = idea or result.get("audio_text") or "Venice A2E talking video"
+                    title_base = (
+                        (title.strip() if isinstance(title, str) else None)
+                        or result.get("title")
+                        or idea
+                        or result.get("audio_text")
+                        or "Venice A2E talking video"
+                    )
                     title = _sanitize_title(title_base)
                     ldb.ensure_schema()
                     ldb.add_video(talking_url, title, "venice_a2e")
                 if muxed_path and os.path.exists(muxed_path):
-                    title_base = idea or result.get("audio_text") or "Venice A2E audio mux"
+                    title_base = (
+                        (title.strip() if isinstance(title, str) else None)
+                        or result.get("title")
+                        or idea
+                        or result.get("audio_text")
+                        or "Venice A2E audio mux"
+                    )
                     title = _sanitize_title(f"{title_base} (audio)")
                     ldb.ensure_schema()
                     ldb.add_video(muxed_path, title, "venice_a2e")
+                if result.get("video_url") and (muxed_path or talking_url):
+                    replacement = muxed_path or talking_url
+                    _replace_venice_a2e_video_record(result.get("video_url"), replacement, title)
         except Exception as exc:
             print(f"[V+A2E] pipeline registration failed: {exc}")
 

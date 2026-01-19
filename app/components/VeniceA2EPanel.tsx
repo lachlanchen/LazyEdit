@@ -20,6 +20,7 @@ type HistoryEntry = {
   id: number;
   step: string;
   idea?: string | null;
+  title?: string | null;
   image_prompt?: string | null;
   video_prompt?: string | null;
   audio_text?: string | null;
@@ -96,6 +97,7 @@ const toneStyle = (tone: StatusTone) =>
 
 export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [idea, setIdea] = useState('');
+  const [title, setTitle] = useState('');
   const [imagePrompt, setImagePrompt] = useState('');
   const [videoPrompt, setVideoPrompt] = useState('');
   const [audioText, setAudioText] = useState('');
@@ -173,6 +175,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
 
   const applyHistory = useCallback((entry: HistoryEntry) => {
     if (entry.idea !== undefined && entry.idea !== null) setIdea(entry.idea);
+    if (entry.title !== undefined && entry.title !== null) setTitle(entry.title);
     if (entry.image_prompt !== undefined && entry.image_prompt !== null) setImagePrompt(entry.image_prompt);
     if (entry.video_prompt !== undefined && entry.video_prompt !== null) setVideoPrompt(entry.video_prompt);
     if (entry.audio_text !== undefined && entry.audio_text !== null) setAudioText(entry.audio_text);
@@ -228,6 +231,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           idea: idea.trim(),
+          title: title.trim() || undefined,
           audio_language: audioLanguage,
           venice_model: veniceModel,
         }),
@@ -238,6 +242,11 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         setStatus(`Prompt generation failed: ${json.error || json.details || resp.statusText}`);
         setStatusTone('bad');
         return;
+      }
+      if (json.title) {
+        setTitle(json.title);
+      } else if (json.prompts?.title) {
+        setTitle(json.prompts.title);
       }
       setImagePrompt(json.image_prompt || '');
       setVideoPrompt(json.video_prompt || '');
@@ -280,6 +289,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           idea: idea.trim(),
+          title: title.trim() || undefined,
           image_prompt: imagePrompt.trim() || undefined,
           video_prompt: videoPrompt.trim() || undefined,
           audio_text: audioText.trim() || undefined,
@@ -297,6 +307,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         setStatusTone('bad');
         return;
       }
+      if (json.title) setTitle(json.title);
       setImageUrl(json.image_url || null);
       setVideoUrl(json.video_url || null);
       setAudioUrl(json.audio_url || null);
@@ -330,6 +341,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
 
   const runImage = async (override?: {
     idea?: string;
+    title?: string;
     imagePrompt?: string;
     audioLanguage?: string;
     veniceModel?: string;
@@ -337,11 +349,13 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   }) => {
     if (busyImage) return;
     const nextIdea = override?.idea !== undefined ? override.idea : idea;
+    const nextTitle = override?.title !== undefined ? override.title : title;
     const nextImagePrompt = override?.imagePrompt !== undefined ? override.imagePrompt : imagePrompt;
     const nextAudioLanguage = override?.audioLanguage !== undefined ? override.audioLanguage : audioLanguage;
     const nextVeniceModel = override?.veniceModel !== undefined ? override.veniceModel : veniceModel;
     const nextAspectRatio = override?.aspectRatio !== undefined ? override.aspectRatio : aspectRatio;
     if (override?.idea !== undefined) setIdea(nextIdea);
+    if (override?.title !== undefined) setTitle(nextTitle);
     if (override?.imagePrompt !== undefined) setImagePrompt(nextImagePrompt);
     if (override?.audioLanguage !== undefined) setAudioLanguage(nextAudioLanguage);
     if (override?.veniceModel !== undefined) setVeniceModel(nextVeniceModel);
@@ -368,6 +382,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           idea: nextIdea.trim(),
+          title: nextTitle.trim() || undefined,
           image_prompt: nextImagePrompt.trim() || undefined,
           audio_language: nextAudioLanguage,
           venice_model: nextVeniceModel,
@@ -381,6 +396,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         setImageTone('bad');
         return;
       }
+      if (json.title) setTitle(json.title);
       if (json.image_prompt) setImagePrompt(json.image_prompt);
       setImageUrl(json.image_url || null);
       setImageStatus(json.image_url ? 'Image ready.' : 'Image complete.');
@@ -396,6 +412,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
 
   const runVideo = async (override?: {
     idea?: string;
+    title?: string;
     imageUrl?: string | null;
     videoPrompt?: string;
     audioLanguage?: string;
@@ -405,6 +422,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   }) => {
     if (busyVideo) return;
     const nextIdea = override?.idea !== undefined ? override.idea : idea;
+    const nextTitle = override?.title !== undefined ? override.title : title;
     const nextImageUrl = override?.imageUrl !== undefined ? override.imageUrl : imageUrl;
     const nextVideoPrompt = override?.videoPrompt !== undefined ? override.videoPrompt : videoPrompt;
     const nextAudioLanguage = override?.audioLanguage !== undefined ? override.audioLanguage : audioLanguage;
@@ -413,6 +431,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     const nextNegativePrompt =
       override?.negativePrompt !== undefined ? override.negativePrompt : negativePrompt;
     if (override?.idea !== undefined) setIdea(nextIdea);
+    if (override?.title !== undefined) setTitle(nextTitle);
     if (override?.imageUrl !== undefined) setImageUrl(nextImageUrl || null);
     if (override?.videoPrompt !== undefined) setVideoPrompt(nextVideoPrompt);
     if (override?.audioLanguage !== undefined) setAudioLanguage(nextAudioLanguage);
@@ -443,6 +462,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           idea: nextIdea.trim(),
+          title: nextTitle.trim() || undefined,
           image_url: nextImageUrl,
           video_prompt: nextVideoPrompt.trim() || undefined,
           audio_language: nextAudioLanguage,
@@ -458,6 +478,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         setVideoTone('bad');
         return;
       }
+      if (json.title) setTitle(json.title);
       if (json.video_prompt) setVideoPrompt(json.video_prompt);
       setVideoUrl(json.video_url || null);
       setVideoStatus(json.video_url ? 'Video ready.' : 'Video complete.');
@@ -473,6 +494,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
 
   const runAudio = async (override?: {
     idea?: string;
+    title?: string;
     videoUrl?: string | null;
     audioText?: string;
     audioUrl?: string | null;
@@ -484,6 +506,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   }) => {
     if (busyAudio) return;
     const nextIdea = override?.idea !== undefined ? override.idea : idea;
+    const nextTitle = override?.title !== undefined ? override.title : title;
     const nextVideoUrl = override?.videoUrl !== undefined ? override.videoUrl : videoUrl;
     const nextAudioText = override?.audioText !== undefined ? override.audioText : audioText;
     const nextAudioUrl = override?.audioUrl !== undefined ? override.audioUrl : null;
@@ -494,6 +517,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     const nextNegativePrompt =
       override?.negativePrompt !== undefined ? override.negativePrompt : negativePrompt;
     if (override?.idea !== undefined) setIdea(nextIdea);
+    if (override?.title !== undefined) setTitle(nextTitle);
     if (override?.videoUrl !== undefined) setVideoUrl(nextVideoUrl || null);
     if (override?.audioText !== undefined) setAudioText(nextAudioText);
     if (override?.videoPrompt !== undefined) setVideoPrompt(nextVideoPrompt);
@@ -523,6 +547,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           idea: nextIdea.trim(),
+          title: nextTitle.trim() || undefined,
           video_url: nextVideoUrl,
           audio_text: nextAudioText.trim() || undefined,
           audio_url: hasAudioUrl ? nextAudioUrl : undefined,
@@ -540,6 +565,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         setAudioTone('bad');
         return;
       }
+      if (json.title) setTitle(json.title);
       if (json.audio_text) setAudioText(json.audio_text);
       setAudioUrl(json.audio_url || null);
       setTalkingVideoUrl(json.talking_video_url || null);
@@ -559,6 +585,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       applyHistory(entry);
       runImage({
         idea: entry.idea || '',
+        title: entry.title || '',
         imagePrompt: entry.image_prompt || '',
         audioLanguage: entry.audio_language || audioLanguage,
         veniceModel: entry.venice_model || veniceModel,
@@ -573,6 +600,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       applyHistory(entry);
       runVideo({
         idea: entry.idea || '',
+        title: entry.title || '',
         imageUrl: entry.image_url || null,
         videoPrompt: entry.video_prompt || '',
         audioLanguage: entry.audio_language || audioLanguage,
@@ -589,6 +617,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       applyHistory(entry);
       runAudio({
         idea: entry.idea || '',
+        title: entry.title || '',
         videoUrl: entry.video_url || null,
         audioText: entry.audio_text || '',
         audioUrl: entry.audio_url || null,
@@ -622,6 +651,13 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           onChangeText={setIdea}
           placeholder="Describe the story, vibe, and characters."
           multiline
+        />
+        <Text style={styles.label}>Title</Text>
+        <TextInput
+          style={styles.textInput}
+          value={title}
+          onChangeText={setTitle}
+          placeholder="Short video title."
         />
 
         <View style={styles.inlineRow}>
@@ -918,6 +954,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
                     {stepLabel}
                     {timestamp ? ` · ${timestamp}` : ''}
                   </Text>
+                  {entry.title ? <Text style={styles.historyPrompt}>Title: {entry.title}</Text> : null}
                   {entry.idea ? <Text style={styles.historyIdea}>{entry.idea}</Text> : null}
                   {entry.image_prompt ? (
                     <Text style={styles.historyPrompt}>Image: {entry.image_prompt}</Text>
@@ -1066,6 +1103,14 @@ const styles = StyleSheet.create({
     padding: 12,
     minHeight: 80,
     textAlignVertical: 'top',
+    backgroundColor: '#fbfaf7',
+  },
+  textInput: {
+    borderWidth: 1,
+    borderColor: '#e0ddd6',
+    borderRadius: 12,
+    padding: 10,
+    minHeight: 44,
     backgroundColor: '#fbfaf7',
   },
   inlineRow: {

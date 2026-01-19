@@ -2,6 +2,10 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "title": {
+      "type": "string",
+      "description": "Short title for the video."
+    },
     "image_prompt": {
       "type": "string",
       "description": "Prompt for the starting image."
@@ -15,5 +19,5 @@
       "description": "Narration or spoken text for audio."
     }
   },
-  "required": ["image_prompt", "video_prompt", "audio_text"]
+  "required": ["title", "image_prompt", "video_prompt", "audio_text"]
 }
