@@ -17,10 +17,76 @@ IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".webp")
 VIDEO_EXTENSIONS = (".mp4", ".mov", ".webm", ".mkv")
 AUDIO_EXTENSIONS = (".mp3", ".wav", ".m4a", ".aac", ".ogg")
 DEFAULT_TTS_ENDPOINT = "/api/v1/video/send_tts"
+DEFAULT_TTS_VOICE_LIST_ENDPOINTS = (
+    "/api/v1/tts/most_used",
+    "/api/v1/tts/preview/list",
+    "/api/v1/anchor/voice_list",
+)
 
 
 def _utc_timestamp() -> str:
     return datetime.utcnow().isoformat(timespec="seconds") + "Z"
+
+
+def _coerce_str(value: Any) -> str | None:
+    if isinstance(value, str):
+        cleaned = value.strip()
+        return cleaned or None
+    if isinstance(value, (int, float)):
+        return str(value)
+    return None
+
+
+def _extract_voice_candidates(payload: Any) -> list[dict[str, Any]]:
+    candidates: list[dict[str, Any]] = []
+    seen: set[tuple[str | None, str | None, str | None, str | None]] = set()
+
+    def consider(item: Any) -> None:
+        if not isinstance(item, dict):
+            return
+        user_voice_id = _coerce_str(item.get("user_voice_id") or item.get("userVoiceId"))
+        tts_id = _coerce_str(item.get("tts_id") or item.get("ttsId"))
+        voice_id = _coerce_str(
+            item.get("voice_id") or item.get("voiceId") or item.get("_id") or item.get("id")
+        )
+        if not (user_voice_id or tts_id or voice_id):
+            return
+        name = _coerce_str(
+            item.get("name")
+            or item.get("voice_name")
+            or item.get("voiceName")
+            or item.get("title")
+            or item.get("label")
+        )
+        key = (user_voice_id, tts_id, voice_id, name)
+        if key in seen:
+            return
+        seen.add(key)
+        candidates.append(
+            {
+                "user_voice_id": user_voice_id,
+                "tts_id": tts_id,
+                "voice_id": voice_id,
+                "name": name,
+            }
+        )
+
+    def visit(node: Any) -> None:
+        if isinstance(node, list):
+            for entry in node:
+                visit(entry)
+            return
+        if isinstance(node, dict):
+            consider(node)
+            for key in ("data", "list", "rows", "records", "items", "result", "results"):
+                if key in node:
+                    visit(node[key])
+            for value in node.values():
+                if isinstance(value, (dict, list)):
+                    visit(value)
+
+    visit(payload)
+    return candidates
 
 
 def _render_prompt(template: str, values: dict[str, str]) -> str:
@@ -395,6 +461,10 @@ class A2EClient:
         self.tts_user_voice_id = os.getenv("A2E_TTS_USER_VOICE_ID", "").strip()
         self.tts_id = os.getenv("A2E_TTS_ID", "").strip()
         self.tts_voice_id = os.getenv("A2E_TTS_VOICE_ID", "").strip()
+        self.tts_voice_list_endpoints = self._parse_voice_list_endpoints(
+            os.getenv("A2E_TTS_VOICE_LIST_ENDPOINTS", "")
+        )
+        self._tts_voice_cache: tuple[str | None, str | None, str | None] | None = None
         self.session = requests.Session()
         if self.api_key:
             self.session.headers.update({"Authorization": f"Bearer {self.api_key}"})
@@ -415,6 +485,35 @@ class A2EClient:
         if parsed <= 0:
             return None
         return max(parsed, default_timeout)
+
+    @staticmethod
+    def _parse_voice_list_endpoints(raw: str) -> tuple[str, ...]:
+        if raw:
+            endpoints = [entry.strip() for entry in raw.split(",") if entry.strip()]
+            return tuple(endpoints)
+        return DEFAULT_TTS_VOICE_LIST_ENDPOINTS
+
+    def _resolve_default_tts_voice(self) -> tuple[str | None, str | None, str | None]:
+        if self._tts_voice_cache is not None:
+            return self._tts_voice_cache
+        for endpoint in self.tts_voice_list_endpoints:
+            try:
+                payload = self._get(endpoint)
+            except Exception:
+                continue
+            candidates = _extract_voice_candidates(payload)
+            if not candidates:
+                continue
+            choice = candidates[0]
+            user_voice_id = _coerce_str(choice.get("user_voice_id"))
+            tts_id = _coerce_str(choice.get("tts_id"))
+            if not user_voice_id and not tts_id:
+                tts_id = _coerce_str(choice.get("voice_id"))
+            if user_voice_id or tts_id:
+                self._tts_voice_cache = (user_voice_id, tts_id, endpoint)
+                return user_voice_id, tts_id, endpoint
+        self._tts_voice_cache = (None, None, None)
+        return None, None, None
 
     def create_text_to_image(self, prompt: str, width: int, height: int) -> tuple[str, dict[str, Any]]:
         payload = {
@@ -484,15 +583,18 @@ class A2EClient:
         if not self.tts_endpoint:
             raise RuntimeError("A2E_TTS_ENDPOINT is not configured")
         user_voice_id = self.tts_user_voice_id or self.tts_voice_id
-        if not user_voice_id and not self.tts_id:
+        tts_id = self.tts_id
+        if not user_voice_id and not tts_id:
+            user_voice_id, tts_id, _ = self._resolve_default_tts_voice()
+        if not user_voice_id and not tts_id:
             raise RuntimeError(
-                "A2E_TTS_USER_VOICE_ID or A2E_TTS_ID (or legacy A2E_TTS_VOICE_ID) is required for TTS"
+                "A2E TTS voice not available (set A2E_TTS_USER_VOICE_ID or A2E_TTS_ID)"
             )
         payload: dict[str, Any] = {"text": text, "msg": text}
         if user_voice_id:
             payload["user_voice_id"] = user_voice_id
-        if self.tts_id:
-            payload["tts_id"] = self.tts_id
+        if tts_id:
+            payload["tts_id"] = tts_id
         if language and language != "auto":
             payload["language"] = language
             payload["lang"] = language
@@ -575,9 +677,9 @@ class A2EClient:
             raise RuntimeError(f"A2E request failed ({response.status_code}): {response.text}")
         return response.json()
 
-    def _get(self, endpoint: str) -> dict[str, Any]:
+    def _get(self, endpoint: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
         url = f"{self.api_base}{endpoint}"
-        response = self.session.get(url, timeout=self.timeout)
+        response = self.session.get(url, params=params, timeout=self.timeout)
         if not response.ok:
             raise RuntimeError(f"A2E request failed ({response.status_code}): {response.text}")
         return response.json()
