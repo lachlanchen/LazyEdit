@@ -461,6 +461,24 @@ def _slugify(value: str) -> str:
     return cleaned.lower() or "generated"
 
 
+def _truncate_slug(value: str, max_len: int = 60) -> str:
+    if not value:
+        return value
+    if len(value) <= max_len:
+        return value
+    trimmed = value[:max_len].rstrip("-")
+    return trimmed or value[:max_len]
+
+
+def _short_title_from_idea(idea: str, max_words: int = 3) -> str:
+    if not idea:
+        return ""
+    words = re.findall(r"[A-Za-z0-9]+", idea)
+    if words:
+        return " ".join(words[:max_words])
+    return idea.strip()
+
+
 def _sanitize_title(value: str) -> str:
     cleaned = re.sub(r"[\r\n\t]+", " ", value or "")
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
@@ -5867,6 +5885,12 @@ class VeniceWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
             prompt = str(prompt)
         prompt = prompt.strip()
 
+        queue_id = data.get("queue_id") or data.get("queueId") or data.get("queueID")
+        if queue_id is not None and not isinstance(queue_id, str):
+            queue_id = str(queue_id)
+        if isinstance(queue_id, str):
+            queue_id = queue_id.strip() or None
+
         venice_model = data.get("model") or data.get("venice_model") or data.get("veniceModel") or "wan-2.6-text-to-video"
         if not isinstance(venice_model, str):
             venice_model = str(venice_model)
@@ -5935,58 +5959,74 @@ class VeniceWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
         events: list[dict[str, Any]] = []
 
         def _run():
-            nonlocal prompt, title
+            nonlocal prompt, title, queue_id
             if not prompt:
-                if not idea:
+                if not idea and not queue_id:
                     raise RuntimeError("prompt or idea required")
-                generator = VenicePromptGenerator(
-                    template_dir=VENICE_WAN_TEMPLATE_DIR,
-                    model=venice_model,
-                    use_cache=use_cache,
-                    cache_dir="cache/venice_prompts",
-                )
-                prompts = generator.generate(idea=idea, audio_language=None)
-                prompt = str(prompts.get("video_prompt") or "").strip()
-                if not title:
-                    title = str(prompts.get("title") or "").strip() or None
-                if not prompt:
-                    raise RuntimeError("Missing video prompt after Venice generation")
+                if queue_id:
+                    prompt = ""
+                else:
+                    generator = VenicePromptGenerator(
+                        template_dir=VENICE_WAN_TEMPLATE_DIR,
+                        model=venice_model,
+                        use_cache=use_cache,
+                        cache_dir="cache/venice_prompts",
+                    )
+                    prompts = generator.generate(idea=idea, audio_language=None)
+                    prompt = str(prompts.get("video_prompt") or "").strip()
+                    if not title:
+                        title = str(prompts.get("title") or "").strip() or None
+                    if not prompt:
+                        raise RuntimeError("Missing video prompt after Venice generation")
 
             client = VeniceVideoClient()
             if not client.api_key:
                 raise RuntimeError("VENICE_API_KEY is not configured")
 
-            queue_payload: dict[str, Any] = {
-                "model": venice_model,
-                "prompt": prompt,
-                "duration": duration,
-                "resolution": resolution,
-                "audio": audio,
-            }
-            if aspect_ratio:
-                queue_payload["aspect_ratio"] = aspect_ratio
-            if negative_prompt:
-                queue_payload["negative_prompt"] = negative_prompt
-            if image_url:
-                queue_payload["image_url"] = image_url
-            if audio_url:
-                queue_payload["audio_url"] = audio_url
-            if video_url:
-                queue_payload["video_url"] = video_url
+            if not queue_id:
+                queue_payload: dict[str, Any] = {
+                    "model": venice_model,
+                    "prompt": prompt,
+                    "duration": duration,
+                    "resolution": resolution,
+                    "audio": audio,
+                }
+                if aspect_ratio:
+                    queue_payload["aspect_ratio"] = aspect_ratio
+                if negative_prompt:
+                    queue_payload["negative_prompt"] = negative_prompt
+                if image_url:
+                    queue_payload["image_url"] = image_url
+                if audio_url:
+                    queue_payload["audio_url"] = audio_url
+                if video_url:
+                    queue_payload["video_url"] = video_url
 
-            queue_response = client.queue(queue_payload)
-            queue_id = queue_response.get("queue_id")
-            events.append({
-                "ts": datetime.utcnow().isoformat(timespec="seconds") + "Z",
-                "stage": "queue",
-                "message": "Video task queued.",
-                "data": {"queue_id": queue_id, "model": venice_model},
-            })
+                queue_response = client.queue(queue_payload)
+                queue_id = queue_response.get("queue_id")
+                events.append({
+                    "ts": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                    "stage": "queue",
+                    "message": "Video task queued.",
+                    "data": {"queue_id": queue_id, "model": venice_model},
+                })
+            else:
+                queue_response = {"queue_id": queue_id}
+                events.append({
+                    "ts": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                    "stage": "queue",
+                    "message": "Resuming queued video.",
+                    "data": {"queue_id": queue_id, "model": venice_model},
+                })
 
-            title_input = title or idea or "Wan video"
-            title_clean = _sanitize_title(title_input)
-            slug = _slugify(title_clean)
-            prompt_hash = hashlib.sha256(prompt.encode("utf-8")).hexdigest()[:8]
+            if not queue_id:
+                raise RuntimeError("queue_id missing for Venice video")
+
+            short_title = title or _short_title_from_idea(idea) or "Wan video"
+            title_clean = _sanitize_title(title or short_title)
+            slug = _truncate_slug(_slugify(short_title), max_len=60) or "wan-video"
+            hash_source = idea or prompt or str(queue_id) or title_clean
+            prompt_hash = hashlib.sha1(hash_source.encode("utf-8")).hexdigest()[:8]
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             base_name = f"{slug}_{timestamp}_{prompt_hash}"
             output_dir = os.path.join(UPLOAD_FOLDER, "venice_wan", base_name)

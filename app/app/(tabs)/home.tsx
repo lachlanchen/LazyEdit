@@ -296,6 +296,7 @@ export default function HomeScreen() {
   const [wanVideoStatus, setWanVideoStatus] = useState('');
   const [wanVideoTone, setWanVideoTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
   const [wanGeneratedVideoUrl, setWanGeneratedVideoUrl] = useState<string | null>(null);
+  const [wanResumeQueueId, setWanResumeQueueId] = useState<string | null>(null);
   const [referenceImage, setReferenceImage] = useState<DocumentPicker.DocumentPickerAsset | null>(null);
   const [referenceImageStatus, setReferenceImageStatus] = useState<string>('');
   const [referenceImageTone, setReferenceImageTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -1222,6 +1223,37 @@ const HISTORY_KEYS = {
     return () => clearTimeout(timeout);
   }, [promptSpec, promptSpecLoaded]);
 
+  useEffect(() => {
+    setWanResumeQueueId(null);
+  }, [wanIdea, wanPrompt, wanTitle, wanModel, wanAspect, wanDuration, wanResolution, wanAudio]);
+
+  const formatWanErrorDetails = (value: any) => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    if (typeof value === 'number' || typeof value === 'boolean') return String(value);
+    if (value?.message) return String(value.message);
+    try {
+      return JSON.stringify(value);
+    } catch (_err) {
+      return String(value);
+    }
+  };
+
+  const extractWanQueueId = (payload: any) => {
+    if (!payload) return null;
+    if (payload.queue_id) return String(payload.queue_id);
+    const scanEvents = (events: any) => {
+      if (!Array.isArray(events)) return null;
+      const match = events.find((event) => event?.data?.queue_id);
+      return match?.data?.queue_id ? String(match.data.queue_id) : null;
+    };
+    return (
+      scanEvents(payload.events) ||
+      scanEvents(payload.details?.events) ||
+      (payload.details?.queue_id ? String(payload.details.queue_id) : null)
+    );
+  };
+
   const generatePrompt = async () => {
     if (prompting) return;
     recordHistory();
@@ -1525,6 +1557,7 @@ const HISTORY_KEYS = {
       setWanPromptTone('bad');
       return;
     }
+    setWanResumeQueueId(null);
     setWanPrompting(true);
     setWanPromptStatus(t('generate_prompt_progress'));
     setWanPromptTone('neutral');
@@ -1539,7 +1572,8 @@ const HISTORY_KEYS = {
       });
       const json = await resp.json();
       if (!resp.ok) {
-        const detailsText = json.details || json.error || json.message || resp.statusText;
+        const rawDetails = json.details || json.error || json.message || resp.statusText;
+        const detailsText = formatWanErrorDetails(rawDetails);
         const details = detailsText ? `: ${detailsText}` : '';
         setWanPromptStatus(`Prompt failed${details}`);
         setWanPromptTone('bad');
@@ -1565,10 +1599,10 @@ const HISTORY_KEYS = {
     }
   };
 
-  const generateWanVideo = async () => {
+  const generateWanVideo = async (resumeQueueId?: string | null) => {
     if (wanGenerating) return;
     const prompt = wanPrompt.trim();
-    if (!prompt) {
+    if (!prompt && !resumeQueueId) {
       setWanVideoStatus('Add a prompt first.');
       setWanVideoTone('bad');
       return;
@@ -1591,13 +1625,20 @@ const HISTORY_KEYS = {
           aspect_ratio: wanAspect,
           resolution: wanResolution,
           audio: wanAudio === 'on',
+          ...(resumeQueueId ? { queue_id: resumeQueueId } : {}),
         }),
       });
       const json = await resp.json();
       if (!resp.ok) {
-        const detailsText = json.details || json.error || json.message || resp.statusText;
+        const rawDetails = json.details || json.error || json.message || resp.statusText;
+        const detailsText = formatWanErrorDetails(rawDetails);
         const details = detailsText ? `: ${detailsText}` : '';
-        setWanVideoStatus(`Generation failed${details}`);
+        const queued = extractWanQueueId(json);
+        if (queued) {
+          setWanResumeQueueId(queued);
+        }
+        const resumeHint = queued ? ' (resume available)' : '';
+        setWanVideoStatus(`Generation failed${details}${resumeHint}`);
         setWanVideoTone('bad');
         return;
       }
@@ -1605,6 +1646,7 @@ const HISTORY_KEYS = {
       if (mediaUrl) {
         setWanGeneratedVideoUrl(mediaUrl);
       }
+      setWanResumeQueueId(null);
       saveWanHistoryEntry({
         idea: wanIdea.trim(),
         title: (json.title || wanTitle || '').trim(),
@@ -2378,6 +2420,15 @@ const HISTORY_KEYS = {
                     </Text>
                   </View>
                 </Pressable>
+                {wanResumeQueueId ? (
+                  <Pressable
+                    style={[styles.btnGhost, { marginTop: 8 }]}
+                    onPress={() => generateWanVideo(wanResumeQueueId)}
+                    disabled={wanGenerating}
+                  >
+                    <Text style={styles.btnGhostText}>Resume download</Text>
+                  </Pressable>
+                ) : null}
 
                 {wanVideoStatus ? (
                   <Text style={[styles.status, toneStyle(wanVideoTone)]}>{wanVideoStatus}</Text>
