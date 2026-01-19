@@ -1601,6 +1601,9 @@ const HISTORY_KEYS = {
 
   const generateWanVideo = async (resumeQueueId?: string | null) => {
     if (wanGenerating) return;
+    if (resumeQueueId && typeof resumeQueueId !== 'string') {
+      resumeQueueId = null;
+    }
     const prompt = wanPrompt.trim();
     if (!prompt && !resumeQueueId) {
       setWanVideoStatus('Add a prompt first.');
@@ -2410,7 +2413,7 @@ const HISTORY_KEYS = {
 
                 <Pressable
                   style={[styles.btnSuccess, wanGenerating && styles.btnDisabled]}
-                  onPress={generateWanVideo}
+                  onPress={() => generateWanVideo()}
                   disabled={wanGenerating}
                 >
                   <View style={styles.btnContent}>
