@@ -3512,9 +3512,11 @@ def _has_audio_stream(video_path: str) -> bool:
 def _ensure_audio_on_talking_video(talking_path: str, audio_path: str) -> tuple[str | None, str | None]:
     if not talking_path or not audio_path:
         return None, "missing talking or audio path"
+    if _has_audio_stream(talking_path):
+        return talking_path, None
     digest = hashlib.sha1(f"{talking_path}|{audio_path}".encode("utf-8")).hexdigest()[:12]
     output_path = os.path.join(os.path.dirname(talking_path), f"talking_audio_{digest}.mp4")
-    if _has_audio_stream(talking_path) and os.path.exists(output_path):
+    if os.path.exists(output_path):
         try:
             output_mtime = os.path.getmtime(output_path)
             if output_mtime >= max(os.path.getmtime(talking_path), os.path.getmtime(audio_path)):
