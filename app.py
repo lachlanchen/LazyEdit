@@ -3482,6 +3482,43 @@ def _mux_audio_to_video(video_path: str, audio_path: str, output_path: str) -> t
         return None, str(exc)
 
 
+def _has_audio_stream(video_path: str) -> bool:
+    if not video_path or not os.path.exists(video_path):
+        return False
+    cmd = [
+        "ffprobe",
+        "-v",
+        "error",
+        "-select_streams",
+        "a:0",
+        "-show_entries",
+        "stream=codec_type",
+        "-of",
+        "csv=p=0",
+        video_path,
+    ]
+    try:
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False)
+    except FileNotFoundError:
+        return False
+    except Exception:
+        return False
+    if result.returncode != 0:
+        return False
+    output = result.stdout.decode("utf-8", errors="replace").strip().lower()
+    return "audio" in output
+
+
+def _ensure_audio_on_talking_video(talking_path: str, audio_path: str) -> tuple[str | None, str | None]:
+    if not talking_path or not audio_path:
+        return None, "missing talking or audio path"
+    if _has_audio_stream(talking_path):
+        return talking_path, None
+    digest = hashlib.sha1(f"{talking_path}|{audio_path}".encode("utf-8")).hexdigest()[:12]
+    output_path = os.path.join(os.path.dirname(talking_path), f"talking_audio_{digest}.mp4")
+    return _mux_audio_to_video(talking_path, audio_path, output_path)
+
+
 def _cache_venice_a2e_url(
     url: str | None,
     output_dir: str,
@@ -3544,6 +3581,13 @@ def _cache_venice_a2e_artifacts(step: str, data: dict, result: dict) -> str | No
     )
     if talking_url:
         result["talking_video_url"] = talking_url
+    if talking_url and audio_url and os.path.exists(talking_url) and os.path.exists(audio_url):
+        merged, error = _ensure_audio_on_talking_video(talking_url, audio_url)
+        if merged and merged != talking_url:
+            result["talking_video_url"] = merged
+            talking_url = merged
+        elif error:
+            print(f"[V+A2E] talking audio mux failed: {error}")
     muxed_path = None
     if video_url and audio_url and os.path.exists(video_url) and os.path.exists(audio_url):
         digest = hashlib.sha1(f"{video_url}|{audio_url}".encode("utf-8")).hexdigest()[:12]
@@ -3574,14 +3618,21 @@ def _backfill_venice_a2e_history_urls(entry: dict) -> dict:
         if not url or not _is_remote_url(url):
             continue
         if output_dir is None:
-            output_dir = _venice_a2e_artifact_dir(
-                "history",
-                entry.get("idea") or entry.get("title") or "venice_a2e",
-            )
+            output_dir = os.path.join(UPLOAD_FOLDER, "venice_a2e", f"history_{history_id}")
+            os.makedirs(output_dir, exist_ok=True)
         cached = _cache_venice_a2e_url(url, output_dir, prefix, fallback_ext, exts)
         if cached and cached != url:
             entry[field] = cached
             updates[field] = cached
+    talking_url = entry.get("talking_video_url")
+    audio_url = entry.get("audio_url")
+    if talking_url and audio_url and os.path.exists(talking_url) and os.path.exists(audio_url):
+        merged, error = _ensure_audio_on_talking_video(talking_url, audio_url)
+        if merged and merged != talking_url:
+            entry["talking_video_url"] = merged
+            updates["talking_video_url"] = merged
+        elif error:
+            print(f"[V+A2E] talking audio mux failed: {error}")
     if updates:
         try:
             ldb.update_venice_a2e_history_media(int(history_id), updates)
@@ -3654,6 +3705,7 @@ def _sync_venice_a2e_audio_replacements(limit: int = 200) -> None:
     ldb.ensure_schema()
     for row in rows:
         entry = _serialize_venice_a2e_history_row(row)
+        previous_talking_url = entry.get("talking_video_url")
         entry = _backfill_venice_a2e_history_urls(entry)
         video_url = entry.get("video_url")
         talking_url = entry.get("talking_video_url")
@@ -3665,6 +3717,11 @@ def _sync_venice_a2e_audio_replacements(limit: int = 200) -> None:
             ldb.add_video(talking_url, clean_title, "venice_a2e")
         except Exception:
             pass
+        if previous_talking_url and previous_talking_url != talking_url:
+            try:
+                _replace_venice_a2e_video_record(previous_talking_url, talking_url, title)
+            except Exception:
+                pass
         if not video_url or video_url == talking_url:
             continue
         try:
