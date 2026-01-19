@@ -2218,14 +2218,6 @@ const HISTORY_KEYS = {
               </View>
 
               <View style={styles.panel}>
-                <Text style={styles.fieldLabel}>{t('field_title')}</Text>
-                <TextInput
-                  style={styles.input}
-                  value={wanTitle}
-                  onChangeText={setWanTitle}
-                  placeholder={t('field_title')}
-                />
-
                 <Text style={styles.fieldLabel}>{t('idea_prompt_label')}</Text>
                 <TextInput
                   style={styles.textArea}
@@ -2233,6 +2225,14 @@ const HISTORY_KEYS = {
                   onChangeText={setWanIdea}
                   placeholder={t('idea_prompt_placeholder')}
                   multiline
+                />
+
+                <Text style={styles.fieldLabel}>{t('field_title')}</Text>
+                <TextInput
+                  style={styles.input}
+                  value={wanTitle}
+                  onChangeText={setWanTitle}
+                  placeholder={t('field_title')}
                 />
 
                 <Pressable
