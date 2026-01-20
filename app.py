@@ -73,6 +73,7 @@ from lazyedit.venice_a2e import (
     AUDIO_EXTENSIONS,
     IMAGE_EXTENSIONS,
     VIDEO_EXTENSIONS,
+    A2EClient,
     run_venice_a2e_audio,
     run_venice_a2e_image,
     run_venice_a2e_pipeline,
@@ -3858,8 +3859,9 @@ def _serialize_venice_a2e_history_row(row: tuple) -> dict:
         "video_url": row[13],
         "audio_url": row[14],
         "talking_video_url": row[15],
-        "events": row[16],
-        "created_at": row[17].isoformat() if row[17] else None,
+        "queue_id": row[16],
+        "events": row[17],
+        "created_at": row[18].isoformat() if row[18] else None,
     }
     prompts = {}
     sources = {}
@@ -3937,6 +3939,7 @@ def _store_venice_a2e_history(step: str, data: dict, result: dict, extras: dict 
         "video_url": result.get("video_url"),
         "audio_url": result.get("audio_url"),
         "talking_video_url": result.get("talking_video_url"),
+        "queue_id": data.get("queue_id") or data.get("queueId") or result.get("queue_id"),
         "events": result.get("events") or [],
     }
     if extras:
@@ -6388,6 +6391,7 @@ class VeniceA2EWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
         wan_model = data.get("wan_model") or data.get("wanModel") or data.get("video_model")
         resolution = data.get("resolution") or data.get("video_size") or data.get("videoSize")
         audio_url = data.get("audio_url") or data.get("audioUrl")
+        queue_id = data.get("queue_id") or data.get("queueId") or data.get("task_id") or data.get("taskId")
         use_cache = _parse_bool(data.get("use_cache"), default=True)
 
         if video_prompt is not None and not isinstance(video_prompt, str):
@@ -6406,6 +6410,10 @@ class VeniceA2EWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
             resolution = str(resolution)
         if audio_url is not None and not isinstance(audio_url, str):
             audio_url = str(audio_url)
+        if queue_id is not None and not isinstance(queue_id, str):
+            queue_id = str(queue_id)
+        if isinstance(queue_id, str):
+            queue_id = queue_id.strip() or None
 
         try:
             video_time = int(data.get("video_time") or data.get("videoTime") or 0) or None
@@ -6423,11 +6431,11 @@ class VeniceA2EWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
         enable_prompt_expansion = data.get("enable_prompt_expansion")
         multi_shots = data.get("multi_shots")
 
-        if not image_url:
+        if not image_url and not queue_id:
             self.set_status(400)
             return self.write({"error": "image_url required"})
 
-        if not idea and not (video_prompt and video_prompt.strip()):
+        if not queue_id and not idea and not (video_prompt and video_prompt.strip()):
             self.set_status(400)
             return self.write({"error": "idea or video_prompt required"})
 
@@ -6435,6 +6443,9 @@ class VeniceA2EWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
             image_url = image_source_url
 
         events = []
+
+        if queue_id:
+            data["queue_id"] = queue_id
 
         def _run():
             return run_venice_a2e_wan_video(
@@ -6452,6 +6463,7 @@ class VeniceA2EWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
                 resolution=resolution,
                 audio=audio,
                 audio_url=audio_url,
+                task_id=queue_id,
                 seed=seed,
                 enable_prompt_expansion=enable_prompt_expansion,
                 multi_shots=multi_shots,
@@ -6461,6 +6473,30 @@ class VeniceA2EWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
         try:
             result = await run_blocking(_run)
         except Exception as exc:
+            queue_id_from_events = queue_id
+            if not queue_id_from_events and isinstance(events, list):
+                for event in events:
+                    if isinstance(event, dict):
+                        data = event.get("data")
+                        if isinstance(data, dict) and data.get("task_id"):
+                            queue_id_from_events = str(data.get("task_id"))
+                            break
+            if queue_id_from_events:
+                data["queue_id"] = queue_id_from_events
+                try:
+                    _store_venice_a2e_history(
+                        "video",
+                        data,
+                        {
+                            "video_prompt": video_prompt,
+                            "audio_text": audio_text,
+                            "queue_id": queue_id_from_events,
+                            "events": events,
+                        },
+                        {"video_time": video_time},
+                    )
+                except Exception as history_exc:
+                    print(f"[V+A2E] wan video history save failed: {history_exc}")
             details = {
                 "message": str(exc),
                 "type": type(exc).__name__,
@@ -6474,6 +6510,7 @@ class VeniceA2EWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
                 "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
                 "a2e_poll_log_seconds": os.getenv("A2E_POLL_LOG_SECONDS", ""),
                 "traceback": traceback.format_exc(),
+                "queue_id": queue_id_from_events,
             }
             if events:
                 details["events"] = events
@@ -6505,6 +6542,24 @@ class VeniceA2EWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
             print(f"[V+A2E] wan video registration failed: {exc}")
 
         self.write(result)
+
+
+class VeniceA2EWanStatusHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, task_id: str):
+        task_id = str(task_id or "").strip()
+        if not task_id:
+            self.set_status(400)
+            return self.write({"error": "task_id required"})
+        client = A2EClient()
+        if not client.api_key:
+            self.set_status(500)
+            return self.write({"error": "A2E_API_KEY is not configured"})
+        try:
+            payload = client._get(f"/api/v1/userWan25/{task_id}")
+        except Exception as exc:
+            self.set_status(502)
+            return self.write({"error": "wan status failed", "details": str(exc)})
+        self.write({"task_id": task_id, "payload": payload})
 
 
 class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
@@ -8703,6 +8758,7 @@ def make_app(upload_folder):
         (r"/api/venice-a2e/image", VeniceA2EImageHandler),
         (r"/api/venice-a2e/video", VeniceA2EVideoHandler),
         (r"/api/venice-a2e/wan/video", VeniceA2EWanVideoHandler),
+        (r"/api/venice-a2e/wan/status/(.*)", VeniceA2EWanStatusHandler),
         (r"/api/venice-a2e/audio", VeniceA2EAudioHandler),
         (r"/api/venice-a2e/run", VeniceA2ERunHandler),
         (r"/api/venice-a2e/wan/run", VeniceA2EWanRunHandler),

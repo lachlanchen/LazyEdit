@@ -118,11 +118,13 @@ def ensure_schema():
             video_url TEXT,
             audio_url TEXT,
             talking_video_url TEXT,
+            queue_id TEXT,
             events JSONB,
             created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
         """,
         "ALTER TABLE venice_a2e_history ADD COLUMN IF NOT EXISTS title TEXT;",
+        "ALTER TABLE venice_a2e_history ADD COLUMN IF NOT EXISTS queue_id TEXT;",
         "CREATE INDEX IF NOT EXISTS idx_venice_a2e_history_created_at ON venice_a2e_history (created_at DESC);",
         # Transcriptions table for raw speech-to-text outputs
         """
@@ -298,9 +300,10 @@ def add_venice_a2e_history(record: dict) -> int:
                 video_url,
                 audio_url,
                 talking_video_url,
+                queue_id,
                 events
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
             (
@@ -319,6 +322,7 @@ def add_venice_a2e_history(record: dict) -> int:
                 record.get("video_url"),
                 record.get("audio_url"),
                 record.get("talking_video_url"),
+                record.get("queue_id"),
                 Json(record.get("events") or []),
             ),
         )
@@ -348,6 +352,7 @@ def list_venice_a2e_history(limit: int = 50) -> list[tuple]:
                 video_url,
                 audio_url,
                 talking_video_url,
+                queue_id,
                 events,
                 created_at
             FROM venice_a2e_history
@@ -381,6 +386,7 @@ def get_venice_a2e_history(history_id: int) -> tuple | None:
                 video_url,
                 audio_url,
                 talking_video_url,
+                queue_id,
                 events,
                 created_at
             FROM venice_a2e_history

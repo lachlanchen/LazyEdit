@@ -1084,7 +1084,7 @@ def run_venice_a2e_video(
 def run_venice_a2e_wan_video(
     template_dir: str,
     idea: str,
-    image_url: str,
+    image_url: str | None,
     venice_model: str | None = None,
     use_cache: bool = True,
     video_prompt: str | None = None,
@@ -1096,6 +1096,7 @@ def run_venice_a2e_wan_video(
     resolution: str | None = None,
     audio: bool = True,
     audio_url: str | None = None,
+    task_id: str | None = None,
     seed: int | None = None,
     enable_prompt_expansion: bool | None = None,
     multi_shots: bool | None = None,
@@ -1110,52 +1111,59 @@ def run_venice_a2e_wan_video(
 
     _log_event(events, "start", "Starting Venice + Wan video step.")
 
-    if not image_url:
+    if not image_url and not task_id:
         raise RuntimeError("image_url is required to generate video")
 
     title = ""
     if not video_prompt:
-        if not idea:
+        if not idea and not task_id:
             raise RuntimeError("idea is required when video_prompt is missing")
-        _log_event(events, "venice", "Generating prompts with Venice.")
-        generator = VenicePromptGenerator(
-            template_dir=template_dir,
-            model=venice_model,
-            use_cache=use_cache,
-            cache_dir="cache/venice_prompts",
-        )
-        prompts = generator.generate(idea=idea, audio_language=audio_language)
-        title = str(prompts.get("title") or "").strip()
-        video_prompt = prompts.get("video_prompt", "").strip()
-        audio_text = audio_text or prompts.get("audio_text")
+        if not task_id:
+            _log_event(events, "venice", "Generating prompts with Venice.")
+            generator = VenicePromptGenerator(
+                template_dir=template_dir,
+                model=venice_model,
+                use_cache=use_cache,
+                cache_dir="cache/venice_prompts",
+            )
+            prompts = generator.generate(idea=idea, audio_language=audio_language)
+            title = str(prompts.get("title") or "").strip()
+            video_prompt = prompts.get("video_prompt", "").strip()
+            audio_text = audio_text or prompts.get("audio_text")
+        else:
+            video_prompt = ""
+            prompts = {"video_prompt": video_prompt, "audio_text": audio_text}
     else:
         prompts = {"video_prompt": video_prompt, "audio_text": audio_text}
 
-    if not video_prompt:
-        raise RuntimeError("Missing video prompt after Venice generation")
-
-    combined_prompt = _merge_wan_prompt(video_prompt, audio_text)
-    _log_event(events, "venice", "Video prompt ready.", {"video_prompt": combined_prompt})
+    combined_prompt = _merge_wan_prompt(video_prompt or "", audio_text)
+    if combined_prompt:
+        _log_event(events, "venice", "Video prompt ready.", {"video_prompt": combined_prompt})
 
     client = A2EClient()
     if not client.api_key:
         raise RuntimeError("A2E_API_KEY is not configured")
 
-    _log_event(events, "a2e_wan", "Requesting Wan image-to-video.")
-    video_task_id, video_task_payload = client.create_wan_image_to_video(
-        image_url=image_url,
-        prompt=combined_prompt,
-        duration=duration,
-        resolution=resolution,
-        negative_prompt=negative_prompt,
-        model=wan_model,
-        audio=audio,
-        audio_url=audio_url,
-        seed=seed,
-        enable_prompt_expansion=enable_prompt_expansion,
-        multi_shots=multi_shots,
-    )
-    _log_event(events, "a2e_wan", "Video task queued.", {"task_id": video_task_id})
+    if task_id:
+        video_task_id = task_id
+        video_task_payload = {"task_id": task_id, "resume": True}
+        _log_event(events, "a2e_wan", "Resuming Wan video task.", {"task_id": video_task_id})
+    else:
+        _log_event(events, "a2e_wan", "Requesting Wan image-to-video.")
+        video_task_id, video_task_payload = client.create_wan_image_to_video(
+            image_url=image_url,
+            prompt=combined_prompt,
+            duration=duration,
+            resolution=resolution,
+            negative_prompt=negative_prompt,
+            model=wan_model,
+            audio=audio,
+            audio_url=audio_url,
+            seed=seed,
+            enable_prompt_expansion=enable_prompt_expansion,
+            multi_shots=multi_shots,
+        )
+        _log_event(events, "a2e_wan", "Video task queued.", {"task_id": video_task_id})
     _log_event(events, "a2e_wan", "Polling video status.")
     video_url, video_detail = client.wait_for_task(
         f"/api/v1/userWan25/{video_task_id}",
@@ -1173,6 +1181,7 @@ def run_venice_a2e_wan_video(
         "video_prompt": video_prompt,
         "audio_text": audio_text,
         "video_url": video_url,
+        "queue_id": video_task_id,
         "events": events,
         "debug": {
             "video_task": video_task_payload,
@@ -1540,6 +1549,7 @@ def run_venice_a2e_wan_pipeline(
         "audio_text": audio_text,
         "image_url": image_url,
         "video_url": video_url,
+        "queue_id": video_task_id,
         "events": events,
         "debug": {
             "image_task": image_task_payload,

@@ -33,6 +33,7 @@ type HistoryEntry = {
   video_url?: string | null;
   audio_url?: string | null;
   talking_video_url?: string | null;
+  queue_id?: string | null;
   image_source_url?: string | null;
   video_source_url?: string | null;
   audio_source_url?: string | null;
@@ -139,6 +140,9 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [wanModel, setWanModel] = useState('wan2.6-i2v');
   const [wanResolution, setWanResolution] = useState('720p');
   const [wanAudio, setWanAudio] = useState(true);
+  const [wanQueueId, setWanQueueId] = useState<string | null>(null);
+  const [wanQueueStatus, setWanQueueStatus] = useState('');
+  const [wanQueueTone, setWanQueueTone] = useState<StatusTone>('neutral');
   const [audioLanguage, setAudioLanguage] = useState('auto');
   const [negativePrompt, setNegativePrompt] = useState(DEFAULT_NEGATIVE_PROMPT);
   const [events, setEvents] = useState<EventEntry[]>([]);
@@ -246,6 +250,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         image_prompt: pickField('image_prompt'),
         video_prompt: pickField('video_prompt'),
         audio_text: pickField('audio_text'),
+        queue_id: pickField('queue_id'),
         negative_prompt: pickField('negative_prompt'),
         aspect_ratio: pickField('aspect_ratio'),
         video_time: pickField('video_time'),
@@ -281,6 +286,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       if (merged.video_url !== undefined) setVideoUrl(merged.video_url || null);
       if (merged.audio_url !== undefined) setAudioUrl(merged.audio_url || null);
       if (merged.talking_video_url !== undefined) setTalkingVideoUrl(merged.talking_video_url || null);
+      if (merged.queue_id !== undefined) setWanQueueId(merged.queue_id || null);
       if (merged.image_source_url !== undefined) setImageSourceUrl(merged.image_source_url || null);
       if (merged.video_source_url !== undefined) setVideoSourceUrl(merged.video_source_url || null);
     },
@@ -304,6 +310,96 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     },
     [appendEvents],
   );
+
+  const extractWanQueueId = useCallback((payload: any): string | null => {
+    const direct =
+      payload?.queue_id ||
+      payload?.queueId ||
+      payload?.task_id ||
+      payload?.taskId ||
+      payload?.details?.queue_id ||
+      payload?.details?.queueId ||
+      payload?.details?.task_id ||
+      payload?.details?.taskId ||
+      payload?.payload?.task_id;
+    if (typeof direct === 'string' && direct.trim()) {
+      return direct.trim();
+    }
+    const data = payload?.payload?.data || payload?.details?.data;
+    const dataId = data?._id || data?.id || data?.task_id;
+    if (typeof dataId === 'string' && dataId.trim()) {
+      return dataId.trim();
+    }
+    return null;
+  }, []);
+
+  const pollWanStatus = useCallback(
+    async (queueId?: string | null) => {
+      const target = (queueId || wanQueueId || '').trim();
+      if (!target) return false;
+      try {
+        const resp = await fetch(`${apiUrl}/api/venice-a2e/wan/status/${encodeURIComponent(target)}`);
+        const json = await resp.json();
+        if (!resp.ok) {
+          setWanQueueStatus(`Task status failed: ${json.error || json.details || resp.statusText}`);
+          setWanQueueTone('bad');
+          return false;
+        }
+        const payload = json.payload || {};
+        const data = payload.data || payload;
+        const status = String(
+          data.current_status || data.status || payload.status || 'unknown',
+        ).toLowerCase();
+        const failedMessage =
+          data.failed_message || data.failedMessage || payload.failed_message || payload.failedMessage;
+        const resultUrl = data.result_url || data.resultUrl || payload.result_url || payload.resultUrl;
+        let message = `Task status: ${status}`;
+        if (resultUrl) message += ' (result ready)';
+        if (failedMessage) message += ` - ${failedMessage}`;
+        setWanQueueStatus(message);
+        if (status.includes('fail') || status.includes('error') || failedMessage) {
+          setWanQueueTone('bad');
+        } else if (status.includes('ready') || status.includes('success') || resultUrl) {
+          setWanQueueTone('good');
+        } else {
+          setWanQueueTone('neutral');
+        }
+        return Boolean(
+          resultUrl ||
+            status.includes('ready') ||
+            status.includes('success') ||
+            status.includes('fail') ||
+            status.includes('error') ||
+            status.includes('canceled'),
+        );
+      } catch (err: any) {
+        setWanQueueStatus(`Task status failed: ${err?.message || String(err)}`);
+        setWanQueueTone('bad');
+        return false;
+      }
+    },
+    [apiUrl, wanQueueId],
+  );
+
+  useEffect(() => {
+    if (!isWan || !wanQueueId) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const poll = async () => {
+      if (cancelled) return;
+      const done = await pollWanStatus(wanQueueId);
+      if (done && timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    };
+    poll();
+    timer = setInterval(poll, 15000);
+    return () => {
+      cancelled = true;
+      if (timer) clearInterval(timer);
+    };
+  }, [isWan, pollWanStatus, wanQueueId]);
 
   useEffect(() => {
     loadHistory();
@@ -371,6 +467,10 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         : 'Running full Venice + A2E pipeline. This can take a few minutes...',
     );
     setStatusTone('neutral');
+    if (isWan) {
+      setWanQueueStatus('');
+      setWanQueueTone('neutral');
+    }
     setEvents([]);
     setImageUrl(null);
     setVideoUrl(null);
@@ -414,11 +514,23 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       const json = await resp.json();
       if (!resp.ok) {
         appendEventsFromPayload(json);
+        if (isWan) {
+          const queued = extractWanQueueId(json);
+          if (queued) {
+            setWanQueueId(queued);
+          }
+        }
         setStatus(`Pipeline failed: ${json.error || json.details || resp.statusText}`);
         setStatusTone('bad');
         return;
       }
       if (json.title) setTitle(json.title);
+      if (isWan) {
+        const queued = extractWanQueueId(json);
+        if (queued) {
+          setWanQueueId(queued);
+        }
+      }
       setImageUrl(json.image_url || null);
       setVideoUrl(json.video_url || null);
       setAudioUrl(json.audio_url || null);
@@ -647,6 +759,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     wanModel?: string;
     wanResolution?: string;
     wanAudio?: boolean;
+    queueId?: string | null;
   }) => {
     if (busyVideo) return;
     const nextIdea = override?.idea !== undefined ? override.idea : idea;
@@ -668,6 +781,8 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     const nextWanResolution =
       override?.wanResolution !== undefined ? override.wanResolution : wanResolution;
     const nextWanAudio = override?.wanAudio !== undefined ? override.wanAudio : wanAudio;
+    const nextQueueId =
+      override?.queueId !== undefined ? override.queueId : wanQueueId;
     if (override?.idea !== undefined) setIdea(nextIdea);
     if (override?.title !== undefined) setTitle(nextTitle);
     if (override?.imageUrl !== undefined) setImageUrl(nextImageUrl || null);
@@ -681,12 +796,15 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     if (override?.wanModel !== undefined) setWanModel(nextWanModel);
     if (override?.wanResolution !== undefined) setWanResolution(nextWanResolution);
     if (override?.wanAudio !== undefined) setWanAudio(nextWanAudio);
-    if (!nextImageUrl) {
+    if (nextQueueId) {
+      setWanQueueId(nextQueueId || null);
+    }
+    if (!nextImageUrl && !nextQueueId) {
       setVideoStatus('Generate an image first.');
       setVideoTone('bad');
       return;
     }
-    if (!nextIdea.trim() && !nextVideoPrompt.trim()) {
+    if (!nextQueueId && !nextIdea.trim() && !nextVideoPrompt.trim()) {
       setVideoStatus('Add an idea or video prompt first.');
       setVideoTone('bad');
       return;
@@ -694,6 +812,8 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     setBusyVideo(true);
     setVideoStatus('Generating Wan video...');
     setVideoTone('neutral');
+    setWanQueueStatus('');
+    setWanQueueTone('neutral');
     setVideoUrl(null);
     setAudioUrl(null);
     setTalkingVideoUrl(null);
@@ -718,11 +838,16 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           wan_model: nextWanModel,
           resolution: nextWanResolution,
           audio: nextWanAudio,
+          ...(nextQueueId ? { queue_id: nextQueueId } : {}),
         }),
       });
       const json = await resp.json();
       appendEventsFromPayload(json);
       if (!resp.ok) {
+        const queued = extractWanQueueId(json);
+        if (queued) {
+          setWanQueueId(queued);
+        }
         setVideoStatus(`Video failed: ${json.error || json.details?.message || json.details || resp.statusText}`);
         setVideoTone('bad');
         return;
@@ -730,6 +855,10 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       if (json.title) setTitle(json.title);
       if (json.video_prompt) setVideoPrompt(json.video_prompt);
       if (json.audio_text) setAudioText(json.audio_text);
+      const queued = extractWanQueueId(json);
+      if (queued) {
+        setWanQueueId(queued);
+      }
       setVideoUrl(json.video_url || null);
       if (json.video_source_url) {
         setVideoSourceUrl(json.video_source_url);
@@ -876,6 +1005,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         veniceModel: merged.venice_model || veniceModel,
         videoTime: merged.video_time || (isWan ? wanDuration : videoTime),
         negativePrompt: merged.negative_prompt || negativePrompt,
+        queueId: merged.queue_id || null,
       };
       if (isWan) {
         runWanVideo(payload);
@@ -1201,6 +1331,22 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           </View>
         </Pressable>
         {videoStatus ? <Text style={[styles.status, toneStyle(videoTone)]}>{videoStatus}</Text> : null}
+        {isWan && wanQueueId ? (
+          <>
+            <Text style={styles.queueLabel}>Queue id: {wanQueueId}</Text>
+            {wanQueueStatus ? (
+              <Text style={[styles.status, toneStyle(wanQueueTone)]}>{wanQueueStatus}</Text>
+            ) : null}
+            <View style={styles.queueActions}>
+              <Pressable style={styles.queueButton} onPress={() => pollWanStatus(wanQueueId)}>
+                <Text style={styles.queueButtonText}>Poll task</Text>
+              </Pressable>
+              <Pressable style={styles.queueButton} onPress={() => runWanVideo({ queueId: wanQueueId })}>
+                <Text style={styles.queueButtonText}>Resume download</Text>
+              </Pressable>
+            </View>
+          </>
+        ) : null}
         <Text style={styles.outputLabel}>Video preview</Text>
         {videoUrl ? (
           Platform.OS === 'web' ? (
@@ -1340,6 +1486,9 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
                   {entry.negative_prompt ? (
                     <Text style={styles.historyPrompt}>Negative: {entry.negative_prompt}</Text>
                   ) : null}
+                  {entry.queue_id ? (
+                    <Text style={styles.historyPrompt}>Queue: {entry.queue_id}</Text>
+                  ) : null}
 
                   <View style={styles.historyActions}>
                     <Pressable style={styles.historyButton} onPress={() => applyHistory(entry)}>
@@ -1366,6 +1515,25 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
                     >
                       <Text style={styles.historyButtonText}>Regen audio</Text>
                     </Pressable>
+                    {isWan && entry.queue_id ? (
+                      <>
+                        <Pressable
+                          style={styles.historyButton}
+                          onPress={() => {
+                            setWanQueueId(entry.queue_id || null);
+                            pollWanStatus(entry.queue_id || null);
+                          }}
+                        >
+                          <Text style={styles.historyButtonText}>Poll task</Text>
+                        </Pressable>
+                        <Pressable
+                          style={styles.historyButton}
+                          onPress={() => runWanVideo({ queueId: entry.queue_id || null })}
+                        >
+                          <Text style={styles.historyButtonText}>Resume download</Text>
+                        </Pressable>
+                      </>
+                    ) : null}
                   </View>
 
                   {imageSrc ? (
@@ -1699,6 +1867,30 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
     marginTop: 4,
+  },
+  queueLabel: {
+    fontSize: 12,
+    color: '#5b5b5b',
+    marginTop: 8,
+  },
+  queueActions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 6,
+  },
+  queueButton: {
+    borderWidth: 1,
+    borderColor: '#d7d6f1',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: '#f4f3ff',
+  },
+  queueButtonText: {
+    fontSize: 12,
+    color: '#3b33a3',
+    fontWeight: '600',
   },
   historyButton: {
     borderWidth: 1,
