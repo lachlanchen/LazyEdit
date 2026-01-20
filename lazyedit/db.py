@@ -250,7 +250,12 @@ def delete_videos_by_file_path(file_path: str) -> int:
     return len(rows)
 
 
-def add_video(file_path: str, title: str | None = None, source: str | None = None) -> int:
+def add_video(
+    file_path: str,
+    title: str | None = None,
+    source: str | None = None,
+    update_created_at: bool = True,
+) -> int:
     """Insert a video row and return its ID, reusing existing entries by file_path."""
     with get_cursor(commit=True) as cur:
         cur.execute(
@@ -260,14 +265,15 @@ def add_video(file_path: str, title: str | None = None, source: str | None = Non
         row = cur.fetchone()
         if row:
             video_id = row[0]
+            set_parts = [
+                "title = COALESCE(%s, title)",
+                "source = COALESCE(%s, source)",
+            ]
+            if update_created_at:
+                set_parts.append("created_at = NOW()")
+            set_clause = ", ".join(set_parts)
             cur.execute(
-                """
-                UPDATE videos
-                SET title = COALESCE(%s, title),
-                    source = COALESCE(%s, source),
-                    created_at = NOW()
-                WHERE id = %s
-                """,
+                f"UPDATE videos SET {set_clause} WHERE id = %s",
                 (title, source, video_id),
             )
             return video_id

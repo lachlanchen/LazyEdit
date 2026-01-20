@@ -3786,7 +3786,7 @@ def _sync_venice_a2e_audio_replacements(limit: int = 200) -> None:
             clean_title = _sanitize_title(title) if title else None
             replaced = _replace_venice_a2e_video_record(video_url, talking_url, clean_title)
             if not replaced:
-                ldb.add_video(talking_url, clean_title, "venice_a2e")
+                ldb.add_video(talking_url, clean_title, "venice_a2e", update_created_at=False)
         except Exception:
             replaced = False
         if previous_talking_url and previous_talking_url != talking_url:
