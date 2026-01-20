@@ -284,6 +284,27 @@ DEFAULT_BURN_LAYOUT = {
         },
     ]
 }
+
+DEFAULT_VENICE_A2E_SETTINGS = {
+    "engine": "wan",
+    "aspect_ratio": "9:16",
+    "video_time": "10",
+    "audio_language": "auto",
+    "venice_model": "venice-uncensored",
+    "negative_prompt": "blurry, low quality, chaotic, deformed, watermark, bad anatomy, shaky camera view point",
+    "wan_model": "wan2.6-i2v",
+    "wan_resolution": "720p",
+    "wan_audio": True,
+    "wan_duration": "10",
+}
+
+DEFAULT_VENICE_WAN_SETTINGS = {
+    "model": "wan-2.6-text-to-video",
+    "aspect_ratio": "9:16",
+    "duration": "5",
+    "resolution": "1080p",
+    "audio": "on",
+}
 DEFAULT_LOGO_SETTINGS = {
     "logoPath": None,
     "logoUrl": None,
@@ -766,6 +787,114 @@ def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
         "spokenWords": _string("spokenWords", DEFAULT_VIDEO_PROMPT_SPEC["spokenWords"]),
         "extraRequirements": _string("extraRequirements", DEFAULT_VIDEO_PROMPT_SPEC["extraRequirements"]),
         "negative": _string("negative", DEFAULT_VIDEO_PROMPT_SPEC["negative"]),
+    }
+
+
+def _sanitize_venice_a2e_settings(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        return DEFAULT_VENICE_A2E_SETTINGS.copy()
+
+    def _string(key: str, fallback: str) -> str:
+        value = payload.get(key, fallback)
+        if value is None:
+            return fallback
+        text = str(value).strip()
+        return text or fallback
+
+    engine = _string("engine", DEFAULT_VENICE_A2E_SETTINGS["engine"]).lower()
+    if engine not in {"a2e", "wan"}:
+        engine = DEFAULT_VENICE_A2E_SETTINGS["engine"]
+
+    aspect_ratio = _string("aspect_ratio", DEFAULT_VENICE_A2E_SETTINGS["aspect_ratio"])
+    if aspect_ratio not in {"9:16", "16:9", "1:1", "4:3", "3:4"}:
+        aspect_ratio = DEFAULT_VENICE_A2E_SETTINGS["aspect_ratio"]
+
+    video_time = "".join(ch for ch in _string("video_time", DEFAULT_VENICE_A2E_SETTINGS["video_time"]) if ch.isdigit())
+    if video_time not in {"5", "10", "15", "20"}:
+        video_time = DEFAULT_VENICE_A2E_SETTINGS["video_time"]
+
+    audio_language = _string("audio_language", DEFAULT_VENICE_A2E_SETTINGS["audio_language"]).lower()
+    if audio_language not in {"auto", "en", "zh", "ja", "ko", "vi", "ar", "fr", "es"}:
+        audio_language = DEFAULT_VENICE_A2E_SETTINGS["audio_language"]
+
+    venice_model = _string("venice_model", DEFAULT_VENICE_A2E_SETTINGS["venice_model"])
+
+    negative_prompt = _string(
+        "negative_prompt",
+        DEFAULT_VENICE_A2E_SETTINGS["negative_prompt"],
+    )
+
+    wan_model = _string("wan_model", DEFAULT_VENICE_A2E_SETTINGS["wan_model"])
+    if wan_model not in {"wan2.6-i2v", "wan2.6-i2v-flash", "wan2.5-i2v-preview"}:
+        wan_model = DEFAULT_VENICE_A2E_SETTINGS["wan_model"]
+
+    wan_resolution = _string("wan_resolution", DEFAULT_VENICE_A2E_SETTINGS["wan_resolution"]).lower()
+    if wan_resolution not in {"480p", "720p", "1080p"}:
+        wan_resolution = DEFAULT_VENICE_A2E_SETTINGS["wan_resolution"]
+
+    wan_audio = _parse_bool(payload.get("wan_audio"), DEFAULT_VENICE_A2E_SETTINGS["wan_audio"])
+
+    wan_duration = "".join(
+        ch for ch in _string("wan_duration", DEFAULT_VENICE_A2E_SETTINGS["wan_duration"]) if ch.isdigit()
+    )
+    if wan_duration not in {"5", "10", "15"}:
+        wan_duration = DEFAULT_VENICE_A2E_SETTINGS["wan_duration"]
+
+    return {
+        "engine": engine,
+        "aspect_ratio": aspect_ratio,
+        "video_time": video_time,
+        "audio_language": audio_language,
+        "venice_model": venice_model,
+        "negative_prompt": negative_prompt,
+        "wan_model": wan_model,
+        "wan_resolution": wan_resolution,
+        "wan_audio": wan_audio,
+        "wan_duration": wan_duration,
+    }
+
+
+def _sanitize_venice_wan_settings(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        return DEFAULT_VENICE_WAN_SETTINGS.copy()
+
+    def _string(key: str, fallback: str) -> str:
+        value = payload.get(key, fallback)
+        if value is None:
+            return fallback
+        text = str(value).strip()
+        return text or fallback
+
+    model = _string("model", DEFAULT_VENICE_WAN_SETTINGS["model"])
+    if model not in {"wan-2.6-text-to-video"}:
+        model = DEFAULT_VENICE_WAN_SETTINGS["model"]
+
+    aspect_ratio = _string("aspect_ratio", DEFAULT_VENICE_WAN_SETTINGS["aspect_ratio"])
+    if aspect_ratio not in {"9:16", "16:9", "1:1", "4:3", "3:4"}:
+        aspect_ratio = DEFAULT_VENICE_WAN_SETTINGS["aspect_ratio"]
+
+    duration = "".join(ch for ch in _string("duration", DEFAULT_VENICE_WAN_SETTINGS["duration"]) if ch.isdigit())
+    if duration not in {"5", "10", "15", "20"}:
+        duration = DEFAULT_VENICE_WAN_SETTINGS["duration"]
+
+    resolution = _string("resolution", DEFAULT_VENICE_WAN_SETTINGS["resolution"]).lower()
+    if resolution not in {"720p", "1080p"}:
+        resolution = DEFAULT_VENICE_WAN_SETTINGS["resolution"]
+
+    audio_value = payload.get("audio")
+    if isinstance(audio_value, str):
+        audio = audio_value.strip().lower()
+    else:
+        audio = "on" if _parse_bool(audio_value, True) else "off"
+    if audio not in {"on", "off"}:
+        audio = DEFAULT_VENICE_WAN_SETTINGS["audio"]
+
+    return {
+        "model": model,
+        "aspect_ratio": aspect_ratio,
+        "duration": duration,
+        "resolution": resolution,
+        "audio": audio,
     }
 
 
@@ -4290,6 +4419,8 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "video_prompt_result_history",
             "video_idea_history",
             "wan_prompt_history",
+            "venice_a2e_settings",
+            "venice_wan_settings",
             "publish_platforms",
             "logo_settings",
         }:
@@ -4320,6 +4451,14 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_VIDEO_PROMPT_HISTORY})
             return self.write({"key": key, "value": _sanitize_video_prompt_history(saved)})
+        if key == "venice_a2e_settings":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_VENICE_A2E_SETTINGS})
+            return self.write({"key": key, "value": _sanitize_venice_a2e_settings(saved)})
+        if key == "venice_wan_settings":
+            if not saved:
+                return self.write({"key": key, "value": DEFAULT_VENICE_WAN_SETTINGS})
+            return self.write({"key": key, "value": _sanitize_venice_wan_settings(saved)})
         if key == "publish_platforms":
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_PUBLISH_PLATFORMS})
@@ -4350,6 +4489,8 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "video_prompt_result_history",
             "video_idea_history",
             "wan_prompt_history",
+            "venice_a2e_settings",
+            "venice_wan_settings",
             "publish_platforms",
             "logo_settings",
         }:
@@ -4371,6 +4512,10 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             cleaned = _sanitize_video_prompt_spec(data)
         elif key == "video_prompt_history":
             cleaned = _sanitize_video_prompt_history(data)
+        elif key == "venice_a2e_settings":
+            cleaned = _sanitize_venice_a2e_settings(data)
+        elif key == "venice_wan_settings":
+            cleaned = _sanitize_venice_wan_settings(data)
         elif key == "publish_platforms":
             cleaned = _sanitize_publish_platforms(data)
         elif key in {

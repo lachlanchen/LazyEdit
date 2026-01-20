@@ -289,6 +289,7 @@ export default function HomeScreen() {
   const [wanTitle, setWanTitle] = useState('');
   const [wanIdea, setWanIdea] = useState('');
   const [wanPrompt, setWanPrompt] = useState('');
+  const [wanSettingsLoaded, setWanSettingsLoaded] = useState(false);
   const [wanPrompting, setWanPrompting] = useState(false);
   const [wanPromptStatus, setWanPromptStatus] = useState('');
   const [wanPromptTone, setWanPromptTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -988,6 +989,24 @@ const HISTORY_KEYS = {
 
   useEffect(() => {
     loadPromptSettings();
+    (async () => {
+      try {
+        const resp = await fetch(`${API_URL}/api/ui-settings/venice_wan_settings`);
+        const json = await resp.json();
+        if (resp.ok && json.value) {
+          const value = json.value || {};
+          if (value.model) setWanModel(String(value.model));
+          if (value.aspect_ratio) setWanAspect(String(value.aspect_ratio));
+          if (value.duration) setWanDuration(String(value.duration));
+          if (value.resolution) setWanResolution(String(value.resolution));
+          if (value.audio) setWanAudio(String(value.audio));
+        }
+      } catch (_err) {
+        // ignore
+      } finally {
+        setWanSettingsLoaded(true);
+      }
+    })();
     loadPromptHistory();
     (async () => {
       const loadLocal = (key: string) => {
@@ -1222,6 +1241,24 @@ const HISTORY_KEYS = {
     }, 300);
     return () => clearTimeout(timeout);
   }, [promptSpec, promptSpecLoaded]);
+
+  useEffect(() => {
+    if (!wanSettingsLoaded) return;
+    const timeout = setTimeout(() => {
+      fetch(`${API_URL}/api/ui-settings/venice_wan_settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: wanModel,
+          aspect_ratio: wanAspect,
+          duration: wanDuration,
+          resolution: wanResolution,
+          audio: wanAudio,
+        }),
+      }).catch(() => {});
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [wanAspect, wanAudio, wanDuration, wanModel, wanResolution, wanSettingsLoaded]);
 
   useEffect(() => {
     setWanResumeQueueId(null);

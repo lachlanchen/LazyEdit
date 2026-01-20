@@ -127,7 +127,7 @@ const toneStyle = (tone: StatusTone) =>
   tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
 
 export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
-  const [engine, setEngine] = useState<'a2e' | 'wan'>('a2e');
+  const [engine, setEngine] = useState<'a2e' | 'wan'>('wan');
   const [idea, setIdea] = useState('');
   const [title, setTitle] = useState('');
   const [imagePrompt, setImagePrompt] = useState('');
@@ -169,6 +169,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [historyItems, setHistoryItems] = useState<HistoryEntry[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState('');
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   const isWan = engine === 'wan';
   const canGenerate = idea.trim().length > 0;
@@ -227,6 +228,31 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       setHistoryError(err?.message || String(err));
     } finally {
       setHistoryLoading(false);
+    }
+  }, [apiUrl]);
+
+  const loadSettings = useCallback(async () => {
+    try {
+      const resp = await fetch(`${apiUrl}/api/ui-settings/venice_a2e_settings`);
+      const json = await resp.json();
+      if (!resp.ok || !json.value) return;
+      const value = json.value || {};
+      if (value.engine === 'a2e' || value.engine === 'wan') {
+        setEngine(value.engine);
+      }
+      if (value.aspect_ratio) setAspectRatio(String(value.aspect_ratio));
+      if (value.video_time) setVideoTime(String(value.video_time));
+      if (value.audio_language) setAudioLanguage(String(value.audio_language));
+      if (value.venice_model) setVeniceModel(String(value.venice_model));
+      if (value.negative_prompt) setNegativePrompt(String(value.negative_prompt));
+      if (value.wan_model) setWanModel(String(value.wan_model));
+      if (value.wan_resolution) setWanResolution(String(value.wan_resolution));
+      if (typeof value.wan_audio === 'boolean') setWanAudio(value.wan_audio);
+      if (value.wan_duration) setWanDuration(String(value.wan_duration));
+    } catch (_err) {
+      // ignore
+    } finally {
+      setSettingsLoaded(true);
     }
   }, [apiUrl]);
 
@@ -404,6 +430,47 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   useEffect(() => {
     loadHistory();
   }, [loadHistory]);
+
+  useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
+
+  useEffect(() => {
+    if (!settingsLoaded) return;
+    const timeout = setTimeout(() => {
+      const payload = {
+        engine,
+        aspect_ratio: aspectRatio,
+        video_time: videoTime,
+        audio_language: audioLanguage,
+        venice_model: veniceModel,
+        negative_prompt: negativePrompt,
+        wan_model: wanModel,
+        wan_resolution: wanResolution,
+        wan_audio: wanAudio,
+        wan_duration: wanDuration,
+      };
+      fetch(`${apiUrl}/api/ui-settings/venice_a2e_settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      }).catch(() => {});
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [
+    apiUrl,
+    aspectRatio,
+    audioLanguage,
+    engine,
+    negativePrompt,
+    settingsLoaded,
+    veniceModel,
+    videoTime,
+    wanAudio,
+    wanDuration,
+    wanModel,
+    wanResolution,
+  ]);
 
   const runPromptGeneration = async () => {
     if (busyPrompts) return;
