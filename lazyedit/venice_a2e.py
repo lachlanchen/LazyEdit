@@ -22,6 +22,9 @@ DEFAULT_TTS_VOICE_LIST_ENDPOINTS = (
     "/api/v1/tts/preview/list",
     "/api/v1/anchor/voice_list",
 )
+DEFAULT_WAN_MODEL = "wan2.6-i2v"
+WAN_DURATION_OPTIONS = (5, 10, 15)
+WAN_RESOLUTION_OPTIONS = ("480p", "720p", "1080p")
 
 
 def _utc_timestamp() -> str:
@@ -156,6 +159,38 @@ def _find_first_url(payload: Any, extensions: Iterable[str]) -> str | None:
             if candidate:
                 return candidate
     return None
+
+
+def _merge_wan_prompt(video_prompt: str, audio_text: str | None) -> str:
+    combined = video_prompt.strip()
+    if audio_text:
+        speech = audio_text.strip()
+        if speech:
+            combined = f"{combined}\nDialogue: {speech}"
+    return combined
+
+
+def _normalize_wan_duration(value: int | None) -> int:
+    if value is None:
+        return 10
+    try:
+        parsed = int(value)
+    except Exception:
+        return 10
+    if parsed in WAN_DURATION_OPTIONS:
+        return parsed
+    if parsed < min(WAN_DURATION_OPTIONS):
+        return min(WAN_DURATION_OPTIONS)
+    return max(WAN_DURATION_OPTIONS)
+
+
+def _normalize_wan_resolution(value: str | None) -> str:
+    if not value:
+        return "720p"
+    cleaned = str(value).strip().lower()
+    if cleaned in WAN_RESOLUTION_OPTIONS:
+        return cleaned
+    return "720p"
 
 
 def _extract_status(payload: Any) -> str | None:
@@ -670,6 +705,45 @@ class A2EClient:
             raise RuntimeError("A2E image-to-video did not return a task id")
         return task_id, response
 
+    def create_wan_image_to_video(
+        self,
+        image_url: str,
+        prompt: str,
+        duration: int,
+        resolution: str,
+        negative_prompt: str | None = None,
+        model: str | None = None,
+        audio: bool = True,
+        audio_url: str | None = None,
+        seed: int | None = None,
+        enable_prompt_expansion: bool | None = None,
+        multi_shots: bool | None = None,
+    ) -> tuple[str, dict[str, Any]]:
+        payload: dict[str, Any] = {
+            "name": f"venice_a2e_wan_{_utc_timestamp()}",
+            "image_url": image_url,
+            "prompt": prompt,
+            "duration": str(duration),
+            "resolution": resolution,
+            "audio": bool(audio),
+            "model": model or DEFAULT_WAN_MODEL,
+        }
+        if negative_prompt:
+            payload["negative_prompt"] = negative_prompt
+        if audio_url:
+            payload["audio_url"] = audio_url
+        if seed is not None:
+            payload["seed"] = int(seed)
+        if enable_prompt_expansion is not None:
+            payload["enable_prompt_expansion"] = bool(enable_prompt_expansion)
+        if multi_shots is not None:
+            payload["multi_shots"] = bool(multi_shots)
+        response = self._post("/api/v1/userWan25/start", payload)
+        task_id = _extract_task_id(response)
+        if not task_id:
+            raise RuntimeError("A2E Wan image-to-video did not return a task id")
+        return task_id, response
+
     def create_talking_video(
         self,
         video_url: str,
@@ -1007,6 +1081,111 @@ def run_venice_a2e_video(
     }
 
 
+def run_venice_a2e_wan_video(
+    template_dir: str,
+    idea: str,
+    image_url: str,
+    venice_model: str | None = None,
+    use_cache: bool = True,
+    video_prompt: str | None = None,
+    audio_text: str | None = None,
+    audio_language: str | None = None,
+    video_time: int | None = None,
+    negative_prompt: str | None = None,
+    wan_model: str | None = None,
+    resolution: str | None = None,
+    audio: bool = True,
+    audio_url: str | None = None,
+    seed: int | None = None,
+    enable_prompt_expansion: bool | None = None,
+    multi_shots: bool | None = None,
+    events: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    if events is None:
+        events = []
+    prompts: dict[str, Any] = {}
+    duration = _normalize_wan_duration(video_time)
+    negative_prompt = negative_prompt or DEFAULT_NEGATIVE_PROMPT
+    resolution = _normalize_wan_resolution(resolution)
+
+    _log_event(events, "start", "Starting Venice + Wan video step.")
+
+    if not image_url:
+        raise RuntimeError("image_url is required to generate video")
+
+    title = ""
+    if not video_prompt:
+        if not idea:
+            raise RuntimeError("idea is required when video_prompt is missing")
+        _log_event(events, "venice", "Generating prompts with Venice.")
+        generator = VenicePromptGenerator(
+            template_dir=template_dir,
+            model=venice_model,
+            use_cache=use_cache,
+            cache_dir="cache/venice_prompts",
+        )
+        prompts = generator.generate(idea=idea, audio_language=audio_language)
+        title = str(prompts.get("title") or "").strip()
+        video_prompt = prompts.get("video_prompt", "").strip()
+        audio_text = audio_text or prompts.get("audio_text")
+    else:
+        prompts = {"video_prompt": video_prompt, "audio_text": audio_text}
+
+    if not video_prompt:
+        raise RuntimeError("Missing video prompt after Venice generation")
+
+    combined_prompt = _merge_wan_prompt(video_prompt, audio_text)
+    _log_event(events, "venice", "Video prompt ready.", {"video_prompt": combined_prompt})
+
+    client = A2EClient()
+    if not client.api_key:
+        raise RuntimeError("A2E_API_KEY is not configured")
+
+    _log_event(events, "a2e_wan", "Requesting Wan image-to-video.")
+    video_task_id, video_task_payload = client.create_wan_image_to_video(
+        image_url=image_url,
+        prompt=combined_prompt,
+        duration=duration,
+        resolution=resolution,
+        negative_prompt=negative_prompt,
+        model=wan_model,
+        audio=audio,
+        audio_url=audio_url,
+        seed=seed,
+        enable_prompt_expansion=enable_prompt_expansion,
+        multi_shots=multi_shots,
+    )
+    _log_event(events, "a2e_wan", "Video task queued.", {"task_id": video_task_id})
+    _log_event(events, "a2e_wan", "Polling video status.")
+    video_url, video_detail = client.wait_for_task(
+        f"/api/v1/userWan25/{video_task_id}",
+        VIDEO_EXTENSIONS,
+        on_update=_progress_logger(events, "a2e_wan", "Video progress"),
+        on_poll=_poll_logger(events, "a2e_wan", "Video polling", client.poll_log_seconds),
+    )
+    _log_event(events, "a2e_wan", "Video ready.", {"video_url": video_url})
+
+    return {
+        "idea": idea,
+        "title": title or None,
+        "prompts": prompts,
+        "image_url": image_url,
+        "video_prompt": video_prompt,
+        "audio_text": audio_text,
+        "video_url": video_url,
+        "events": events,
+        "debug": {
+            "video_task": video_task_payload,
+            "video_detail": video_detail,
+            "wan_prompt": combined_prompt,
+            "wan_model": wan_model or DEFAULT_WAN_MODEL,
+            "wan_duration": duration,
+            "wan_resolution": resolution,
+            "wan_audio": bool(audio),
+        },
+    }
+
+
 def run_venice_a2e_audio(
     template_dir: str,
     idea: str,
@@ -1251,5 +1430,126 @@ def run_venice_a2e_pipeline(
             "video_detail": video_detail,
             "audio_detail": audio_detail,
             "talking_detail": talking_detail,
+        },
+    }
+
+
+def run_venice_a2e_wan_pipeline(
+    template_dir: str,
+    idea: str,
+    venice_model: str | None = None,
+    use_cache: bool = True,
+    image_prompt: str | None = None,
+    video_prompt: str | None = None,
+    audio_text: str | None = None,
+    audio_language: str | None = None,
+    aspect_ratio: str | None = None,
+    video_time: int | None = None,
+    width: int | None = None,
+    height: int | None = None,
+    negative_prompt: str | None = None,
+    wan_model: str | None = None,
+    resolution: str | None = None,
+    audio: bool = True,
+    audio_url: str | None = None,
+    seed: int | None = None,
+    enable_prompt_expansion: bool | None = None,
+    multi_shots: bool | None = None,
+    events: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
+    if events is None:
+        events = []
+    prompts: dict[str, Any] = {}
+    duration = _normalize_wan_duration(video_time)
+    if not width or not height:
+        width, height = _ratio_to_dimensions(aspect_ratio or "9:16")
+    negative_prompt = negative_prompt or DEFAULT_NEGATIVE_PROMPT
+    resolution = _normalize_wan_resolution(resolution)
+
+    _log_event(events, "start", "Starting Venice + Wan pipeline.")
+
+    title = ""
+    if not image_prompt or not video_prompt:
+        _log_event(events, "venice", "Generating prompts with Venice.")
+        generator = VenicePromptGenerator(
+            template_dir=template_dir,
+            model=venice_model,
+            use_cache=use_cache,
+            cache_dir="cache/venice_prompts",
+        )
+        prompts = generator.generate(idea=idea, audio_language=audio_language)
+        title = str(prompts.get("title") or "").strip()
+        image_prompt = image_prompt or str(prompts.get("image_prompt") or "").strip()
+        video_prompt = video_prompt or str(prompts.get("video_prompt") or "").strip()
+        audio_text = audio_text or prompts.get("audio_text")
+    else:
+        prompts = {"image_prompt": image_prompt, "video_prompt": video_prompt, "audio_text": audio_text}
+
+    if not image_prompt or not video_prompt:
+        raise RuntimeError("Missing prompts after Venice generation")
+
+    _log_event(events, "venice", "Prompts ready.", {"image_prompt": image_prompt, "video_prompt": video_prompt})
+
+    client = A2EClient()
+    if not client.api_key:
+        raise RuntimeError("A2E_API_KEY is not configured")
+
+    _log_event(events, "a2e_image", "Requesting image generation.")
+    image_task_id, image_task_payload = client.create_text_to_image(image_prompt, width, height)
+    _log_event(events, "a2e_image", "Image task queued.", {"task_id": image_task_id})
+    _log_event(events, "a2e_image", "Polling image status.")
+    image_url, image_detail = client.wait_for_task(
+        f"/api/v1/userText2Image/{image_task_id}",
+        IMAGE_EXTENSIONS,
+        on_update=_progress_logger(events, "a2e_image", "Image progress"),
+        on_poll=_poll_logger(events, "a2e_image", "Image polling", client.poll_log_seconds),
+    )
+    _log_event(events, "a2e_image", "Image ready.", {"image_url": image_url})
+
+    combined_prompt = _merge_wan_prompt(video_prompt, audio_text)
+    _log_event(events, "a2e_wan", "Requesting Wan image-to-video.")
+    video_task_id, video_task_payload = client.create_wan_image_to_video(
+        image_url=image_url,
+        prompt=combined_prompt,
+        duration=duration,
+        resolution=resolution,
+        negative_prompt=negative_prompt,
+        model=wan_model,
+        audio=audio,
+        audio_url=audio_url,
+        seed=seed,
+        enable_prompt_expansion=enable_prompt_expansion,
+        multi_shots=multi_shots,
+    )
+    _log_event(events, "a2e_wan", "Video task queued.", {"task_id": video_task_id})
+    _log_event(events, "a2e_wan", "Polling video status.")
+    video_url, video_detail = client.wait_for_task(
+        f"/api/v1/userWan25/{video_task_id}",
+        VIDEO_EXTENSIONS,
+        on_update=_progress_logger(events, "a2e_wan", "Video progress"),
+        on_poll=_poll_logger(events, "a2e_wan", "Video polling", client.poll_log_seconds),
+    )
+    _log_event(events, "a2e_wan", "Video ready.", {"video_url": video_url})
+
+    return {
+        "idea": idea,
+        "title": title or None,
+        "prompts": prompts,
+        "image_prompt": image_prompt,
+        "video_prompt": video_prompt,
+        "audio_text": audio_text,
+        "image_url": image_url,
+        "video_url": video_url,
+        "events": events,
+        "debug": {
+            "image_task": image_task_payload,
+            "image_detail": image_detail,
+            "video_task": video_task_payload,
+            "video_detail": video_detail,
+            "wan_prompt": combined_prompt,
+            "wan_model": wan_model or DEFAULT_WAN_MODEL,
+            "wan_duration": duration,
+            "wan_resolution": resolution,
+            "wan_audio": bool(audio),
         },
     }

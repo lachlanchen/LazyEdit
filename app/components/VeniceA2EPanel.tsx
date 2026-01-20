@@ -100,10 +100,33 @@ const veniceTextModels = [
   { value: 'grok-code-fast-1', label: 'Grok Code Fast 1' },
 ];
 
+const wanOptions = {
+  model: [
+    { value: 'wan2.6-i2v', label: 'Wan 2.6 (i2v)' },
+    { value: 'wan2.6-i2v-flash', label: 'Wan 2.6 Flash (i2v)' },
+    { value: 'wan2.5-i2v-preview', label: 'Wan 2.5 Preview (i2v)' },
+  ],
+  duration: [
+    { value: '5', label: '5s' },
+    { value: '10', label: '10s' },
+    { value: '15', label: '15s' },
+  ],
+  resolution: [
+    { value: '720p', label: '720p' },
+    { value: '1080p', label: '1080p' },
+    { value: '480p', label: '480p' },
+  ],
+  audio: [
+    { value: true, label: 'On' },
+    { value: false, label: 'Off' },
+  ],
+};
+
 const toneStyle = (tone: StatusTone) =>
   tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
 
 export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
+  const [engine, setEngine] = useState<'a2e' | 'wan'>('a2e');
   const [idea, setIdea] = useState('');
   const [title, setTitle] = useState('');
   const [imagePrompt, setImagePrompt] = useState('');
@@ -112,6 +135,10 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [veniceModel, setVeniceModel] = useState('venice-uncensored');
   const [aspectRatio, setAspectRatio] = useState('9:16');
   const [videoTime, setVideoTime] = useState('10');
+  const [wanDuration, setWanDuration] = useState('10');
+  const [wanModel, setWanModel] = useState('wan2.6-i2v');
+  const [wanResolution, setWanResolution] = useState('720p');
+  const [wanAudio, setWanAudio] = useState(true);
   const [audioLanguage, setAudioLanguage] = useState('auto');
   const [negativePrompt, setNegativePrompt] = useState(DEFAULT_NEGATIVE_PROMPT);
   const [events, setEvents] = useState<EventEntry[]>([]);
@@ -139,13 +166,16 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState('');
 
+  const isWan = engine === 'wan';
   const canGenerate = idea.trim().length > 0;
-  const canRun =
-    idea.trim().length > 0 ||
-    (imagePrompt.trim().length > 0 && videoPrompt.trim().length > 0 && audioText.trim().length > 0);
+  const canRun = isWan
+    ? idea.trim().length > 0 || (imagePrompt.trim().length > 0 && videoPrompt.trim().length > 0)
+    : idea.trim().length > 0 ||
+      (imagePrompt.trim().length > 0 && videoPrompt.trim().length > 0 && audioText.trim().length > 0);
   const canGenerateImage = idea.trim().length > 0 || imagePrompt.trim().length > 0;
   const canGenerateVideo = Boolean(imageUrl) && (idea.trim().length > 0 || videoPrompt.trim().length > 0);
   const canGenerateAudio =
+    !isWan &&
     Boolean(videoUrl) &&
     (idea.trim().length > 0 || (audioText.trim().length > 0 && videoPrompt.trim().length > 0));
   const resolveMediaUrl = useCallback(
@@ -242,7 +272,11 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       if (merged.aspect_ratio) setAspectRatio(merged.aspect_ratio);
       if (merged.audio_language) setAudioLanguage(merged.audio_language);
       if (merged.venice_model) setVeniceModel(merged.venice_model);
-      if (merged.video_time) setVideoTime(String(merged.video_time));
+      if (merged.video_time) {
+        const nextTime = String(merged.video_time);
+        setVideoTime(nextTime);
+        setWanDuration(nextTime);
+      }
       if (merged.image_url !== undefined) setImageUrl(merged.image_url || null);
       if (merged.video_url !== undefined) setVideoUrl(merged.video_url || null);
       if (merged.audio_url !== undefined) setAudioUrl(merged.audio_url || null);
@@ -325,13 +359,17 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
 
   const runPipeline = async () => {
     if (busyRun) return;
-    if (!idea.trim() && !(imagePrompt.trim() && videoPrompt.trim() && audioText.trim())) {
-      setStatus('Add an idea prompt or fill all three prompts.');
+    if (!idea.trim() && !(imagePrompt.trim() && videoPrompt.trim() && (isWan || audioText.trim()))) {
+      setStatus(isWan ? 'Add an idea prompt or fill image and video prompts.' : 'Add an idea prompt or fill all three prompts.');
       setStatusTone('bad');
       return;
     }
     setBusyRun(true);
-    setStatus('Running full Venice + A2E pipeline. This can take a few minutes...');
+    setStatus(
+      isWan
+        ? 'Running Venice + Wan pipeline. This can take a few minutes...'
+        : 'Running full Venice + A2E pipeline. This can take a few minutes...',
+    );
     setStatusTone('neutral');
     setEvents([]);
     setImageUrl(null);
@@ -347,7 +385,9 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     setAudioStatus('');
     setAudioTone('neutral');
     try {
-      const resp = await fetch(`${apiUrl}/api/venice-a2e/run`, {
+      const resp = await fetch(
+        isWan ? `${apiUrl}/api/venice-a2e/wan/run` : `${apiUrl}/api/venice-a2e/run`,
+        {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -359,10 +399,18 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           audio_language: audioLanguage,
           venice_model: veniceModel,
           aspect_ratio: aspectRatio,
-          video_time: parseInt(videoTime, 10),
+          video_time: parseInt(isWan ? wanDuration : videoTime, 10),
           negative_prompt: negativePrompt.trim() || undefined,
+          ...(isWan
+            ? {
+                wan_model: wanModel,
+                resolution: wanResolution,
+                audio: wanAudio,
+              }
+            : {}),
         }),
-      });
+      },
+      );
       const json = await resp.json();
       if (!resp.ok) {
         appendEventsFromPayload(json);
@@ -585,6 +633,120 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     }
   };
 
+  const runWanVideo = async (override?: {
+    idea?: string;
+    title?: string;
+    imageUrl?: string | null;
+    imageSourceUrl?: string | null;
+    videoPrompt?: string;
+    audioText?: string;
+    audioLanguage?: string;
+    veniceModel?: string;
+    videoTime?: string | number;
+    negativePrompt?: string;
+    wanModel?: string;
+    wanResolution?: string;
+    wanAudio?: boolean;
+  }) => {
+    if (busyVideo) return;
+    const nextIdea = override?.idea !== undefined ? override.idea : idea;
+    const nextTitle = override?.title !== undefined ? override.title : title;
+    const nextImageUrl = override?.imageUrl !== undefined ? override.imageUrl : imageUrl;
+    const nextImageSourceUrl =
+      override?.imageSourceUrl !== undefined ? override.imageSourceUrl : imageSourceUrl;
+    const imageForGeneration =
+      nextImageSourceUrl || (isRemoteUrl(nextImageUrl) ? nextImageUrl : null) || nextImageUrl;
+    const nextVideoPrompt = override?.videoPrompt !== undefined ? override.videoPrompt : videoPrompt;
+    const nextAudioText = override?.audioText !== undefined ? override.audioText : audioText;
+    const nextAudioLanguage = override?.audioLanguage !== undefined ? override.audioLanguage : audioLanguage;
+    const nextVeniceModel = override?.veniceModel !== undefined ? override.veniceModel : veniceModel;
+    const nextWanDuration =
+      override?.videoTime !== undefined ? String(override.videoTime) : wanDuration;
+    const nextNegativePrompt =
+      override?.negativePrompt !== undefined ? override.negativePrompt : negativePrompt;
+    const nextWanModel = override?.wanModel !== undefined ? override.wanModel : wanModel;
+    const nextWanResolution =
+      override?.wanResolution !== undefined ? override.wanResolution : wanResolution;
+    const nextWanAudio = override?.wanAudio !== undefined ? override.wanAudio : wanAudio;
+    if (override?.idea !== undefined) setIdea(nextIdea);
+    if (override?.title !== undefined) setTitle(nextTitle);
+    if (override?.imageUrl !== undefined) setImageUrl(nextImageUrl || null);
+    if (override?.videoPrompt !== undefined) setVideoPrompt(nextVideoPrompt);
+    if (override?.audioText !== undefined) setAudioText(nextAudioText);
+    if (override?.imageSourceUrl !== undefined) setImageSourceUrl(nextImageSourceUrl || null);
+    if (override?.audioLanguage !== undefined) setAudioLanguage(nextAudioLanguage);
+    if (override?.veniceModel !== undefined) setVeniceModel(nextVeniceModel);
+    if (override?.videoTime !== undefined) setWanDuration(String(nextWanDuration || ''));
+    if (override?.negativePrompt !== undefined) setNegativePrompt(nextNegativePrompt);
+    if (override?.wanModel !== undefined) setWanModel(nextWanModel);
+    if (override?.wanResolution !== undefined) setWanResolution(nextWanResolution);
+    if (override?.wanAudio !== undefined) setWanAudio(nextWanAudio);
+    if (!nextImageUrl) {
+      setVideoStatus('Generate an image first.');
+      setVideoTone('bad');
+      return;
+    }
+    if (!nextIdea.trim() && !nextVideoPrompt.trim()) {
+      setVideoStatus('Add an idea or video prompt first.');
+      setVideoTone('bad');
+      return;
+    }
+    setBusyVideo(true);
+    setVideoStatus('Generating Wan video...');
+    setVideoTone('neutral');
+    setVideoUrl(null);
+    setAudioUrl(null);
+    setTalkingVideoUrl(null);
+    setVideoSourceUrl(null);
+    setAudioStatus('');
+    setAudioTone('neutral');
+    try {
+      const resp = await fetch(`${apiUrl}/api/venice-a2e/wan/video`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea: nextIdea.trim(),
+          title: nextTitle.trim() || undefined,
+          image_url: imageForGeneration,
+          image_source_url: nextImageSourceUrl || undefined,
+          video_prompt: nextVideoPrompt.trim() || undefined,
+          audio_text: nextAudioText.trim() || undefined,
+          audio_language: nextAudioLanguage,
+          venice_model: nextVeniceModel,
+          video_time: parseInt(String(nextWanDuration || ''), 10),
+          negative_prompt: nextNegativePrompt.trim() || undefined,
+          wan_model: nextWanModel,
+          resolution: nextWanResolution,
+          audio: nextWanAudio,
+        }),
+      });
+      const json = await resp.json();
+      appendEventsFromPayload(json);
+      if (!resp.ok) {
+        setVideoStatus(`Video failed: ${json.error || json.details?.message || json.details || resp.statusText}`);
+        setVideoTone('bad');
+        return;
+      }
+      if (json.title) setTitle(json.title);
+      if (json.video_prompt) setVideoPrompt(json.video_prompt);
+      if (json.audio_text) setAudioText(json.audio_text);
+      setVideoUrl(json.video_url || null);
+      if (json.video_source_url) {
+        setVideoSourceUrl(json.video_source_url);
+      } else if (isRemoteUrl(json.video_url)) {
+        setVideoSourceUrl(json.video_url);
+      }
+      setVideoStatus(json.video_url ? 'Video ready.' : 'Video complete.');
+      setVideoTone('good');
+      loadHistory();
+    } catch (err: any) {
+      setVideoStatus(`Video failed: ${err?.message || String(err)}`);
+      setVideoTone('bad');
+    } finally {
+      setBusyVideo(false);
+    }
+  };
+
   const runAudio = async (override?: {
     idea?: string;
     title?: string;
@@ -703,19 +865,25 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     (entry: HistoryEntry) => {
       const merged = mergeHistoryEntry(entry);
       applyHistory(merged);
-      runVideo({
+      const payload = {
         idea: merged.idea || '',
         title: merged.title || '',
         imageUrl: merged.image_url || null,
         imageSourceUrl: merged.image_source_url || null,
         videoPrompt: merged.video_prompt || '',
+        audioText: merged.audio_text || '',
         audioLanguage: merged.audio_language || audioLanguage,
         veniceModel: merged.venice_model || veniceModel,
-        videoTime: merged.video_time || videoTime,
+        videoTime: merged.video_time || (isWan ? wanDuration : videoTime),
         negativePrompt: merged.negative_prompt || negativePrompt,
-      });
+      };
+      if (isWan) {
+        runWanVideo(payload);
+      } else {
+        runVideo(payload);
+      }
     },
-    [applyHistory, audioLanguage, mergeHistoryEntry, negativePrompt, runVideo, veniceModel, videoTime],
+    [applyHistory, audioLanguage, isWan, mergeHistoryEntry, negativePrompt, runVideo, runWanVideo, veniceModel, videoTime, wanDuration],
   );
 
   const runAudioFromHistory = useCallback(
@@ -743,13 +911,36 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     () => veniceTextModels.find((model) => model.value === veniceModel)?.label || veniceModel,
     [veniceModel],
   );
+  const durationOptions = isWan ? wanOptions.duration : chipOptions.videoTime;
+  const durationValue = isWan ? wanDuration : videoTime;
+  const setDurationValue = isWan ? setWanDuration : setVideoTime;
 
   return (
     <View style={styles.wrapper}>
       <Text style={styles.title}>Venice + A2E</Text>
       <Text style={styles.subtitle}>
-        Generate prompts with Venice, then create image, video, and audio with A2E.
+        {isWan
+          ? 'Generate prompts with Venice, then create image and Wan video (audio on by default).'
+          : 'Generate prompts with Venice, then create image, video, and audio with A2E.'}
       </Text>
+
+      <View style={styles.subTabRow}>
+        {[
+          { key: 'a2e', label: 'A2E' },
+          { key: 'wan', label: 'Wan' },
+        ].map((tab) => {
+          const active = engine === tab.key;
+          return (
+            <Pressable
+              key={tab.key}
+              style={[styles.subTab, active && styles.subTabActive]}
+              onPress={() => setEngine(tab.key as 'a2e' | 'wan')}
+            >
+              <Text style={[styles.subTabText, active && styles.subTabTextActive]}>{tab.label}</Text>
+            </Pressable>
+          );
+        })}
+      </View>
 
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>Idea</Text>
@@ -789,13 +980,13 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           <View style={styles.inlineBlock}>
             <Text style={styles.label}>Video length</Text>
             <View style={styles.chipRow}>
-              {chipOptions.videoTime.map((option) => {
-                const active = videoTime === option.value;
+              {durationOptions.map((option) => {
+                const active = durationValue === option.value;
                 return (
                   <Pressable
                     key={option.value}
                     style={[styles.chip, active && styles.chipActive]}
-                    onPress={() => setVideoTime(option.value)}
+                    onPress={() => setDurationValue(option.value)}
                   >
                     <Text style={[styles.chipText, active && styles.chipTextActive]}>{option.label}</Text>
                   </Pressable>
@@ -861,6 +1052,68 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           </View>
         </View>
 
+        {isWan ? (
+          <>
+            <View style={styles.inlineRow}>
+              <View style={styles.inlineBlock}>
+                <Text style={styles.label}>Wan model</Text>
+                <View style={styles.chipRow}>
+                  {wanOptions.model.map((option) => {
+                    const active = wanModel === option.value;
+                    return (
+                      <Pressable
+                        key={option.value}
+                        style={[styles.chip, active && styles.chipActive]}
+                        onPress={() => setWanModel(option.value)}
+                      >
+                        <Text style={[styles.chipText, active && styles.chipTextActive]}>{option.label}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+            </View>
+            <View style={styles.inlineRow}>
+              <View style={styles.inlineBlock}>
+                <Text style={styles.label}>Video size</Text>
+                <View style={styles.chipRow}>
+                  {wanOptions.resolution.map((option) => {
+                    const active = wanResolution === option.value;
+                    return (
+                      <Pressable
+                        key={option.value}
+                        style={[styles.chip, active && styles.chipActive]}
+                        onPress={() => setWanResolution(option.value)}
+                      >
+                        <Text style={[styles.chipText, active && styles.chipTextActive]}>{option.label}</Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+              <View style={styles.inlineBlock}>
+                <Text style={styles.label}>Audio</Text>
+                <View style={styles.chipRow}>
+                  {wanOptions.audio.map((option) => {
+                    const active = wanAudio === option.value;
+                    return (
+                      <Pressable
+                        key={String(option.value)}
+                        style={[styles.chip, active && styles.chipActive]}
+                        onPress={() => setWanAudio(option.value)}
+                      >
+                        <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                          {option.label}
+                        </Text>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              </View>
+            </View>
+          </>
+        ) : null}
+
         <View style={styles.buttonRow}>
           <Pressable
             style={[styles.primaryButton, (!canGenerate || busyPrompts) && styles.buttonDisabled]}
@@ -879,7 +1132,9 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           >
             <View style={styles.buttonContent}>
               {busyRun && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-              <Text style={styles.secondaryButtonText}>Run full pipeline</Text>
+              <Text style={styles.secondaryButtonText}>
+                {isWan ? 'Run Wan pipeline' : 'Run full pipeline'}
+              </Text>
             </View>
           </Pressable>
         </View>
@@ -935,12 +1190,14 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         />
         <Pressable
           style={[styles.primaryButton, styles.stepButton, (!canGenerateVideo || busyVideo) && styles.buttonDisabled]}
-          onPress={runVideo}
+          onPress={isWan ? runWanVideo : runVideo}
           disabled={!canGenerateVideo || busyVideo}
         >
           <View style={styles.buttonContent}>
             {busyVideo && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-            <Text style={styles.primaryButtonText}>Image + prompt -> Video</Text>
+            <Text style={styles.primaryButtonText}>
+              {isWan ? 'Image + prompt -> Wan video' : 'Image + prompt -> Video'}
+            </Text>
           </View>
         </Pressable>
         {videoStatus ? <Text style={[styles.status, toneStyle(videoTone)]}>{videoStatus}</Text> : null}
@@ -959,52 +1216,58 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           <Text style={styles.outputEmpty}>Video not ready.</Text>
         )}
 
-        <Text style={styles.label}>Audio text</Text>
+        <Text style={styles.label}>{isWan ? 'Dialogue text' : 'Audio text'}</Text>
         <TextInput
           style={styles.textArea}
           value={audioText}
           onChangeText={setAudioText}
-          placeholder="Short narration."
+          placeholder={isWan ? 'Optional spoken line to merge into the video prompt.' : 'Short narration.'}
           multiline
         />
-        <Pressable
-          style={[styles.primaryButton, styles.stepButton, (!canGenerateAudio || busyAudio) && styles.buttonDisabled]}
-          onPress={runAudio}
-          disabled={!canGenerateAudio || busyAudio}
-        >
-          <View style={styles.buttonContent}>
-            {busyAudio && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-            <Text style={styles.primaryButtonText}>Text + video -> Audio</Text>
-          </View>
-        </Pressable>
-        {audioStatus ? <Text style={[styles.status, toneStyle(audioTone)]}>{audioStatus}</Text> : null}
-        <Text style={styles.outputLabel}>Audio</Text>
-        {audioUrl ? (
-          Platform.OS === 'web' ? (
-            React.createElement('audio', {
-              src: resolveMediaUrl(audioUrl) || audioUrl,
-              controls: true,
-              style: { width: '100%' },
-            })
-          ) : (
-            <Text style={styles.outputLink}>{audioUrl}</Text>
-          )
+        {isWan ? (
+          <Text style={styles.helperText}>Merged into the Wan video prompt for audio.</Text>
         ) : (
-          <Text style={styles.outputEmpty}>Audio not ready.</Text>
-        )}
-        <Text style={styles.outputLabel}>Talking video</Text>
-        {talkingVideoUrl ? (
-          Platform.OS === 'web' ? (
-            React.createElement('video', {
-              src: resolveMediaUrl(talkingVideoUrl) || talkingVideoUrl,
-              controls: true,
-              style: { width: '100%', borderRadius: 12 },
-            })
-          ) : (
-            <Text style={styles.outputLink}>{talkingVideoUrl}</Text>
-          )
-        ) : (
-          <Text style={styles.outputEmpty}>Talking video not ready.</Text>
+          <>
+            <Pressable
+              style={[styles.primaryButton, styles.stepButton, (!canGenerateAudio || busyAudio) && styles.buttonDisabled]}
+              onPress={runAudio}
+              disabled={!canGenerateAudio || busyAudio}
+            >
+              <View style={styles.buttonContent}>
+                {busyAudio && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                <Text style={styles.primaryButtonText}>Text + video -> Audio</Text>
+              </View>
+            </Pressable>
+            {audioStatus ? <Text style={[styles.status, toneStyle(audioTone)]}>{audioStatus}</Text> : null}
+            <Text style={styles.outputLabel}>Audio</Text>
+            {audioUrl ? (
+              Platform.OS === 'web' ? (
+                React.createElement('audio', {
+                  src: resolveMediaUrl(audioUrl) || audioUrl,
+                  controls: true,
+                  style: { width: '100%' },
+                })
+              ) : (
+                <Text style={styles.outputLink}>{audioUrl}</Text>
+              )
+            ) : (
+              <Text style={styles.outputEmpty}>Audio not ready.</Text>
+            )}
+            <Text style={styles.outputLabel}>Talking video</Text>
+            {talkingVideoUrl ? (
+              Platform.OS === 'web' ? (
+                React.createElement('video', {
+                  src: resolveMediaUrl(talkingVideoUrl) || talkingVideoUrl,
+                  controls: true,
+                  style: { width: '100%', borderRadius: 12 },
+                })
+              ) : (
+                <Text style={styles.outputLink}>{talkingVideoUrl}</Text>
+              )
+            ) : (
+              <Text style={styles.outputEmpty}>Talking video not ready.</Text>
+            )}
+          </>
         )}
       </View>
 
@@ -1053,6 +1316,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
               const canRegenVideo =
                 !busyVideo && !!entry.image_url && !!(entry.idea?.trim() || entry.video_prompt?.trim());
               const canRegenAudio =
+                !isWan &&
                 !busyAudio &&
                 !!entry.video_url &&
                 !!(entry.idea?.trim() || (entry.audio_text?.trim() && entry.video_prompt?.trim()));
@@ -1179,6 +1443,30 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#5b5b5b',
     marginBottom: 4,
+  },
+  subTabRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  subTab: {
+    borderWidth: 1,
+    borderColor: '#d1c8ba',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    backgroundColor: '#f7f3ea',
+  },
+  subTabActive: {
+    backgroundColor: '#1f4bd1',
+    borderColor: '#1f4bd1',
+  },
+  subTabText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#3b3b3b',
+  },
+  subTabTextActive: {
+    color: '#ffffff',
   },
   card: {
     backgroundColor: '#ffffff',
@@ -1351,6 +1639,11 @@ const styles = StyleSheet.create({
   },
   statusBad: {
     color: '#b91c1c',
+  },
+  helperText: {
+    fontSize: 12,
+    color: '#6a6a6a',
+    marginTop: 6,
   },
   eventList: {
     maxHeight: 160,

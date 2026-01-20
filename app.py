@@ -76,6 +76,8 @@ from lazyedit.venice_a2e import (
     run_venice_a2e_audio,
     run_venice_a2e_image,
     run_venice_a2e_pipeline,
+    run_venice_a2e_wan_pipeline,
+    run_venice_a2e_wan_video,
     run_venice_a2e_video,
 )
 from lazyedit.venice_video import VeniceVideoClient, poll_venice_video
@@ -6355,6 +6357,156 @@ class VeniceA2EVideoHandler(CorsMixin, tornado.web.RequestHandler):
         self.write(result)
 
 
+class VeniceA2EWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea, str):
+            idea = str(idea)
+        idea = idea.strip()
+
+        title = data.get("title") or data.get("video_title") or data.get("videoTitle")
+        image_url = data.get("image_url") or data.get("imageUrl") or ""
+        image_source_url = data.get("image_source_url") or data.get("imageSourceUrl")
+        if not isinstance(image_url, str):
+            image_url = str(image_url)
+        image_url = image_url.strip()
+        if image_source_url is not None and not isinstance(image_source_url, str):
+            image_source_url = str(image_source_url)
+        if image_source_url:
+            image_source_url = image_source_url.strip()
+
+        video_prompt = data.get("video_prompt") or data.get("videoPrompt")
+        audio_text = data.get("audio_text") or data.get("audioText")
+        audio_language = data.get("audio_language") or data.get("audioLanguage")
+        venice_model = data.get("venice_model") or data.get("veniceModel")
+        negative_prompt = data.get("negative_prompt") or data.get("negativePrompt")
+        wan_model = data.get("wan_model") or data.get("wanModel") or data.get("video_model")
+        resolution = data.get("resolution") or data.get("video_size") or data.get("videoSize")
+        audio_url = data.get("audio_url") or data.get("audioUrl")
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+
+        if video_prompt is not None and not isinstance(video_prompt, str):
+            video_prompt = str(video_prompt)
+        if audio_text is not None and not isinstance(audio_text, str):
+            audio_text = str(audio_text)
+        if title is not None and not isinstance(title, str):
+            title = str(title)
+        if audio_language is not None and not isinstance(audio_language, str):
+            audio_language = str(audio_language)
+        if venice_model is not None and not isinstance(venice_model, str):
+            venice_model = str(venice_model)
+        if wan_model is not None and not isinstance(wan_model, str):
+            wan_model = str(wan_model)
+        if resolution is not None and not isinstance(resolution, str):
+            resolution = str(resolution)
+        if audio_url is not None and not isinstance(audio_url, str):
+            audio_url = str(audio_url)
+
+        try:
+            video_time = int(data.get("video_time") or data.get("videoTime") or 0) or None
+        except Exception:
+            video_time = None
+
+        audio = _parse_bool(data.get("audio"), default=True)
+        try:
+            seed = data.get("seed")
+            if seed is not None:
+                seed = int(seed)
+        except Exception:
+            seed = None
+
+        enable_prompt_expansion = data.get("enable_prompt_expansion")
+        multi_shots = data.get("multi_shots")
+
+        if not image_url:
+            self.set_status(400)
+            return self.write({"error": "image_url required"})
+
+        if not idea and not (video_prompt and video_prompt.strip()):
+            self.set_status(400)
+            return self.write({"error": "idea or video_prompt required"})
+
+        if image_source_url and _is_remote_url(image_source_url) and not _is_remote_url(image_url):
+            image_url = image_source_url
+
+        events = []
+
+        def _run():
+            return run_venice_a2e_wan_video(
+                template_dir=VENICE_A2E_TEMPLATE_DIR,
+                idea=idea or "Venice + Wan video",
+                image_url=image_url,
+                venice_model=venice_model,
+                use_cache=use_cache,
+                video_prompt=video_prompt,
+                audio_text=audio_text,
+                audio_language=audio_language,
+                video_time=video_time,
+                negative_prompt=negative_prompt,
+                wan_model=wan_model,
+                resolution=resolution,
+                audio=audio,
+                audio_url=audio_url,
+                seed=seed,
+                enable_prompt_expansion=enable_prompt_expansion,
+                multi_shots=multi_shots,
+                events=events,
+            )
+
+        try:
+            result = await run_blocking(_run)
+        except Exception as exc:
+            details = {
+                "message": str(exc),
+                "type": type(exc).__name__,
+                "venice_api_base": os.getenv("VENICE_API_BASE", ""),
+                "venice_chat_endpoint": os.getenv("VENICE_CHAT_ENDPOINT", ""),
+                "venice_model": os.getenv("VENICE_MODEL", ""),
+                "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
+                "a2e_api_base": os.getenv("A2E_API_BASE", ""),
+                "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
+                "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
+                "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
+                "a2e_poll_log_seconds": os.getenv("A2E_POLL_LOG_SECONDS", ""),
+                "traceback": traceback.format_exc(),
+            }
+            if events:
+                details["events"] = events
+            print(f"[V+A2E] wan video step failed: {details}")
+            self.set_status(500)
+            return self.write({"error": "venice a2e wan video failed", "details": details, "events": events})
+
+        if title:
+            result["title"] = title.strip()
+        try:
+            await run_blocking(lambda: _cache_venice_a2e_artifacts("video", data, result))
+        except Exception as exc:
+            print(f"[V+A2E] wan video cache failed: {exc}")
+        _store_venice_a2e_history("video", data, result, {"video_time": video_time})
+        try:
+            video_url_result = result.get("video_url") if isinstance(result, dict) else None
+            if video_url_result:
+                title_base = (
+                    (title.strip() if isinstance(title, str) else None)
+                    or result.get("title")
+                    or idea
+                    or result.get("video_prompt")
+                    or "Venice Wan video"
+                )
+                title = _sanitize_title(title_base)
+                ldb.ensure_schema()
+                ldb.add_video(video_url_result, title, "venice_a2e")
+        except Exception as exc:
+            print(f"[V+A2E] wan video registration failed: {exc}")
+
+        self.write(result)
+
+
 class VeniceA2EAudioHandler(CorsMixin, tornado.web.RequestHandler):
     async def post(self):
         try:
@@ -6620,6 +6772,152 @@ class VeniceA2ERunHandler(CorsMixin, tornado.web.RequestHandler):
                         ldb.add_video(talking_url, title, "venice_a2e")
         except Exception as exc:
             print(f"[V+A2E] pipeline registration failed: {exc}")
+
+        self.write(result)
+
+
+class VeniceA2EWanRunHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea, str):
+            idea = str(idea)
+        idea = idea.strip()
+
+        title = data.get("title") or data.get("video_title") or data.get("videoTitle")
+        image_prompt = data.get("image_prompt") or data.get("imagePrompt")
+        video_prompt = data.get("video_prompt") or data.get("videoPrompt")
+        audio_text = data.get("audio_text") or data.get("audioText")
+        audio_language = data.get("audio_language") or data.get("audioLanguage")
+        venice_model = data.get("venice_model") or data.get("veniceModel")
+        aspect_ratio = data.get("aspect_ratio") or data.get("aspectRatio")
+        negative_prompt = data.get("negative_prompt") or data.get("negativePrompt")
+        wan_model = data.get("wan_model") or data.get("wanModel") or data.get("video_model")
+        resolution = data.get("resolution") or data.get("video_size") or data.get("videoSize")
+        audio_url = data.get("audio_url") or data.get("audioUrl")
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+
+        if audio_language is not None and not isinstance(audio_language, str):
+            audio_language = str(audio_language)
+        if venice_model is not None and not isinstance(venice_model, str):
+            venice_model = str(venice_model)
+        if aspect_ratio is not None and not isinstance(aspect_ratio, str):
+            aspect_ratio = str(aspect_ratio)
+        if title is not None and not isinstance(title, str):
+            title = str(title)
+        if wan_model is not None and not isinstance(wan_model, str):
+            wan_model = str(wan_model)
+        if resolution is not None and not isinstance(resolution, str):
+            resolution = str(resolution)
+        if audio_text is not None and not isinstance(audio_text, str):
+            audio_text = str(audio_text)
+        if audio_url is not None and not isinstance(audio_url, str):
+            audio_url = str(audio_url)
+
+        try:
+            video_time = int(data.get("video_time") or data.get("videoTime") or 0) or None
+        except Exception:
+            video_time = None
+        try:
+            width = int(data.get("width") or 0) or None
+        except Exception:
+            width = None
+        try:
+            height = int(data.get("height") or 0) or None
+        except Exception:
+            height = None
+
+        audio = _parse_bool(data.get("audio"), default=True)
+        try:
+            seed = data.get("seed")
+            if seed is not None:
+                seed = int(seed)
+        except Exception:
+            seed = None
+        enable_prompt_expansion = data.get("enable_prompt_expansion")
+        multi_shots = data.get("multi_shots")
+
+        if not idea and not (image_prompt and video_prompt):
+            self.set_status(400)
+            return self.write({"error": "idea required when prompts are not provided"})
+
+        events = []
+
+        def _run():
+            return run_venice_a2e_wan_pipeline(
+                template_dir=VENICE_A2E_TEMPLATE_DIR,
+                idea=idea or "Venice + Wan run",
+                venice_model=venice_model,
+                image_prompt=image_prompt,
+                video_prompt=video_prompt,
+                audio_text=audio_text,
+                audio_language=audio_language,
+                aspect_ratio=aspect_ratio,
+                video_time=video_time,
+                width=width,
+                height=height,
+                negative_prompt=negative_prompt,
+                wan_model=wan_model,
+                resolution=resolution,
+                audio=audio,
+                audio_url=audio_url,
+                seed=seed,
+                enable_prompt_expansion=enable_prompt_expansion,
+                multi_shots=multi_shots,
+                use_cache=use_cache,
+                events=events,
+            )
+
+        try:
+            result = await run_blocking(_run)
+        except Exception as exc:
+            details = {
+                "message": str(exc),
+                "type": type(exc).__name__,
+                "venice_api_base": os.getenv("VENICE_API_BASE", ""),
+                "venice_chat_endpoint": os.getenv("VENICE_CHAT_ENDPOINT", ""),
+                "venice_model": os.getenv("VENICE_MODEL", ""),
+                "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
+                "a2e_api_base": os.getenv("A2E_API_BASE", ""),
+                "a2e_key_set": bool(os.getenv("A2E_API_KEY")),
+                "a2e_poll_timeout": os.getenv("A2E_POLL_TIMEOUT_SECONDS", ""),
+                "a2e_poll_interval": os.getenv("A2E_POLL_INTERVAL_SECONDS", ""),
+                "a2e_poll_log_seconds": os.getenv("A2E_POLL_LOG_SECONDS", ""),
+                "traceback": traceback.format_exc(),
+            }
+            if events:
+                details["events"] = events
+            print(f"[V+A2E] wan pipeline failed: {details}")
+            self.set_status(500)
+            return self.write({"error": "venice a2e wan failed", "details": details, "events": events})
+
+        try:
+            await run_blocking(lambda: _cache_venice_a2e_artifacts("pipeline", data, result))
+        except Exception as exc:
+            print(f"[V+A2E] wan pipeline cache failed: {exc}")
+        if title:
+            result["title"] = title.strip()
+        _store_venice_a2e_history("pipeline", data, result, {"video_time": video_time})
+        try:
+            if isinstance(result, dict):
+                video_url_result = result.get("video_url")
+                if video_url_result:
+                    title_base = (
+                        (title.strip() if isinstance(title, str) else None)
+                        or result.get("title")
+                        or idea
+                        or result.get("video_prompt")
+                        or "Venice Wan video"
+                    )
+                    title = _sanitize_title(title_base)
+                    ldb.ensure_schema()
+                    ldb.add_video(video_url_result, title, "venice_a2e")
+        except Exception as exc:
+            print(f"[V+A2E] wan pipeline registration failed: {exc}")
 
         self.write(result)
 
@@ -8404,8 +8702,10 @@ def make_app(upload_folder):
         (r"/api/venice-wan/prompts", VeniceWanPromptHandler),
         (r"/api/venice-a2e/image", VeniceA2EImageHandler),
         (r"/api/venice-a2e/video", VeniceA2EVideoHandler),
+        (r"/api/venice-a2e/wan/video", VeniceA2EWanVideoHandler),
         (r"/api/venice-a2e/audio", VeniceA2EAudioHandler),
         (r"/api/venice-a2e/run", VeniceA2ERunHandler),
+        (r"/api/venice-a2e/wan/run", VeniceA2EWanRunHandler),
         (r"/api/venice-a2e/history", VeniceA2EHistoryHandler),
         (r"/api/venice-a2e/history/(\d+)", VeniceA2EHistoryDetailHandler),
         (r"/api/venice-wan/video", VeniceWanVideoHandler),
