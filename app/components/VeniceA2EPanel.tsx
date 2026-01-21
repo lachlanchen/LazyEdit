@@ -123,11 +123,29 @@ const wanOptions = {
   ],
 };
 
+const veoOptions = {
+  model: [
+    { value: 'veo3.1-pro', label: 'Veo 3.1 Pro' },
+    { value: 'veo3.1-fast', label: 'Veo 3.1 Fast' },
+    { value: 'veo3-pro', label: 'Veo 3 Pro' },
+    { value: 'veo3-fast', label: 'Veo 3 Fast' },
+  ],
+  duration: [
+    { value: '4', label: '4s' },
+    { value: '8', label: '8s' },
+    { value: '12', label: '12s' },
+  ],
+  aspectRatio: [
+    { value: '9:16', label: '9:16' },
+    { value: '16:9', label: '16:9' },
+  ],
+};
+
 const toneStyle = (tone: StatusTone) =>
   tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
 
 export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
-  const [engine, setEngine] = useState<'a2e' | 'wan'>('wan');
+  const [engine, setEngine] = useState<'a2e' | 'wan' | 'veo'>('wan');
   const [idea, setIdea] = useState('');
   const [title, setTitle] = useState('');
   const [imagePrompt, setImagePrompt] = useState('');
@@ -143,6 +161,9 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [wanQueueId, setWanQueueId] = useState<string | null>(null);
   const [wanQueueStatus, setWanQueueStatus] = useState('');
   const [wanQueueTone, setWanQueueTone] = useState<StatusTone>('neutral');
+  const [veoModel, setVeoModel] = useState('veo3.1-pro');
+  const [veoAspect, setVeoAspect] = useState('9:16');
+  const [veoSeconds, setVeoSeconds] = useState('8');
   const [audioLanguage, setAudioLanguage] = useState('auto');
   const [negativePrompt, setNegativePrompt] = useState(DEFAULT_NEGATIVE_PROMPT);
   const [events, setEvents] = useState<EventEntry[]>([]);
@@ -172,15 +193,21 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
   const [settingsLoaded, setSettingsLoaded] = useState(false);
 
   const isWan = engine === 'wan';
+  const isVeo = engine === 'veo';
   const canGenerate = idea.trim().length > 0;
   const canRun = isWan
     ? idea.trim().length > 0 || (imagePrompt.trim().length > 0 && videoPrompt.trim().length > 0)
-    : idea.trim().length > 0 ||
-      (imagePrompt.trim().length > 0 && videoPrompt.trim().length > 0 && audioText.trim().length > 0);
-  const canGenerateImage = idea.trim().length > 0 || imagePrompt.trim().length > 0;
-  const canGenerateVideo = Boolean(imageUrl) && (idea.trim().length > 0 || videoPrompt.trim().length > 0);
+    : isVeo
+      ? idea.trim().length > 0 || videoPrompt.trim().length > 0
+      : idea.trim().length > 0 ||
+        (imagePrompt.trim().length > 0 && videoPrompt.trim().length > 0 && audioText.trim().length > 0);
+  const canGenerateImage = !isVeo && (idea.trim().length > 0 || imagePrompt.trim().length > 0);
+  const canGenerateVideo = isVeo
+    ? idea.trim().length > 0 || videoPrompt.trim().length > 0
+    : Boolean(imageUrl) && (idea.trim().length > 0 || videoPrompt.trim().length > 0);
   const canGenerateAudio =
     !isWan &&
+    !isVeo &&
     Boolean(videoUrl) &&
     (idea.trim().length > 0 || (audioText.trim().length > 0 && videoPrompt.trim().length > 0));
   const resolveMediaUrl = useCallback(
@@ -237,7 +264,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       const json = await resp.json();
       if (!resp.ok || !json.value) return;
       const value = json.value || {};
-      if (value.engine === 'a2e' || value.engine === 'wan') {
+      if (value.engine === 'a2e' || value.engine === 'wan' || value.engine === 'veo') {
         setEngine(value.engine);
       }
       if (value.aspect_ratio) setAspectRatio(String(value.aspect_ratio));
@@ -249,6 +276,9 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       if (value.wan_resolution) setWanResolution(String(value.wan_resolution));
       if (typeof value.wan_audio === 'boolean') setWanAudio(value.wan_audio);
       if (value.wan_duration) setWanDuration(String(value.wan_duration));
+      if (value.veo_model) setVeoModel(String(value.veo_model));
+      if (value.veo_aspect_ratio) setVeoAspect(String(value.veo_aspect_ratio));
+      if (value.veo_seconds) setVeoSeconds(String(value.veo_seconds));
     } catch (_err) {
       // ignore
     } finally {
@@ -300,13 +330,21 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       if (merged.negative_prompt !== undefined && merged.negative_prompt !== null) {
         setNegativePrompt(merged.negative_prompt);
       }
-      if (merged.aspect_ratio) setAspectRatio(merged.aspect_ratio);
+      if (merged.aspect_ratio) {
+        setAspectRatio(merged.aspect_ratio);
+        if (merged.aspect_ratio === '9:16' || merged.aspect_ratio === '16:9') {
+          setVeoAspect(merged.aspect_ratio);
+        }
+      }
       if (merged.audio_language) setAudioLanguage(merged.audio_language);
       if (merged.venice_model) setVeniceModel(merged.venice_model);
       if (merged.video_time) {
         const nextTime = String(merged.video_time);
         setVideoTime(nextTime);
         setWanDuration(nextTime);
+        if (nextTime === '4' || nextTime === '8' || nextTime === '12') {
+          setVeoSeconds(nextTime);
+        }
       }
       if (merged.image_url !== undefined) setImageUrl(merged.image_url || null);
       if (merged.video_url !== undefined) setVideoUrl(merged.video_url || null);
@@ -449,6 +487,9 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         wan_resolution: wanResolution,
         wan_audio: wanAudio,
         wan_duration: wanDuration,
+        veo_model: veoModel,
+        veo_aspect_ratio: veoAspect,
+        veo_seconds: veoSeconds,
       };
       fetch(`${apiUrl}/api/ui-settings/venice_a2e_settings`, {
         method: 'POST',
@@ -470,14 +511,17 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     wanDuration,
     wanModel,
     wanResolution,
+    veoAspect,
+    veoModel,
+    veoSeconds,
   ]);
 
   const runPromptGeneration = async () => {
-    if (busyPrompts) return;
+    if (busyPrompts) return null;
     if (!idea.trim()) {
       setStatus('Add an idea prompt first.');
       setStatusTone('bad');
-      return;
+      return null;
     }
     setBusyPrompts(true);
     setStatus('Generating prompts with Venice...');
@@ -499,7 +543,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         appendEventsFromPayload(json);
         setStatus(`Prompt generation failed: ${json.error || json.details || resp.statusText}`);
         setStatusTone('bad');
-        return;
+        return null;
       }
       if (json.title) {
         setTitle(json.title);
@@ -512,9 +556,16 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       setEvents(json.events || []);
       setStatus('Prompts ready. Generate outputs step by step.');
       setStatusTone('good');
+      return {
+        title: json.title || json.prompts?.title,
+        image_prompt: json.image_prompt || json.prompts?.image_prompt,
+        video_prompt: json.video_prompt || json.prompts?.video_prompt,
+        audio_text: json.audio_text || json.prompts?.audio_text,
+      };
     } catch (err: any) {
       setStatus(`Prompt generation failed: ${err?.message || String(err)}`);
       setStatusTone('bad');
+      return null;
     } finally {
       setBusyPrompts(false);
     }
@@ -522,8 +573,18 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
 
   const runPipeline = async () => {
     if (busyRun) return;
-    if (!idea.trim() && !(imagePrompt.trim() && videoPrompt.trim() && (isWan || audioText.trim()))) {
-      setStatus(isWan ? 'Add an idea prompt or fill image and video prompts.' : 'Add an idea prompt or fill all three prompts.');
+    if (isVeo) {
+      if (!idea.trim() && !videoPrompt.trim()) {
+        setStatus('Add an idea or video prompt first.');
+        setStatusTone('bad');
+        return;
+      }
+    } else if (!idea.trim() && !(imagePrompt.trim() && videoPrompt.trim() && (isWan || audioText.trim()))) {
+      setStatus(
+        isWan
+          ? 'Add an idea prompt or fill image and video prompts.'
+          : 'Add an idea prompt or fill all three prompts.',
+      );
       setStatusTone('bad');
       return;
     }
@@ -531,7 +592,9 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     setStatus(
       isWan
         ? 'Running Venice + Wan pipeline. This can take a few minutes...'
-        : 'Running full Venice + A2E pipeline. This can take a few minutes...',
+        : isVeo
+          ? 'Running Venice + Veo pipeline. This can take a few minutes...'
+          : 'Running full Venice + A2E pipeline. This can take a few minutes...',
     );
     setStatusTone('neutral');
     if (isWan) {
@@ -552,6 +615,43 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     setAudioStatus('');
     setAudioTone('neutral');
     try {
+      if (isVeo) {
+        let promptPayload: any = null;
+        if (!videoPrompt.trim()) {
+          promptPayload = await runPromptGeneration();
+        }
+        const nextPrompt = (promptPayload?.video_prompt || videoPrompt || '').trim();
+        if (!nextPrompt) {
+          setStatus('Prompt generation failed. Add a video prompt to continue.');
+          setStatusTone('bad');
+          return;
+        }
+        if (promptPayload?.title && !title.trim()) {
+          setTitle(promptPayload.title);
+        }
+        if (promptPayload?.audio_text && !audioText.trim()) {
+          setAudioText(promptPayload.audio_text);
+        }
+        if (promptPayload?.video_prompt) {
+          setVideoPrompt(promptPayload.video_prompt);
+        }
+        const ok = await runVeoVideo({
+          idea: idea.trim(),
+          title: (promptPayload?.title || title).trim(),
+          videoPrompt: nextPrompt,
+          audioText: promptPayload?.audio_text || audioText,
+          audioLanguage,
+          veniceModel,
+          aspectRatio: veoAspect,
+          veoModel,
+          veoSeconds,
+        });
+        if (ok) {
+          setStatus('Pipeline complete.');
+          setStatusTone('good');
+        }
+        return;
+      }
       const resp = await fetch(
         isWan ? `${apiUrl}/api/venice-a2e/wan/run` : `${apiUrl}/api/venice-a2e/run`,
         {
@@ -807,6 +907,95 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     } catch (err: any) {
       setVideoStatus(`Video failed: ${err?.message || String(err)}`);
       setVideoTone('bad');
+    } finally {
+      setBusyVideo(false);
+    }
+  };
+
+  const runVeoVideo = async (override?: {
+    idea?: string;
+    title?: string;
+    videoPrompt?: string;
+    audioText?: string;
+    audioLanguage?: string;
+    veniceModel?: string;
+    aspectRatio?: string;
+    veoModel?: string;
+    veoSeconds?: string | number;
+  }) => {
+    if (busyVideo) return false;
+    const nextIdea = override?.idea !== undefined ? override.idea : idea;
+    const nextTitle = override?.title !== undefined ? override.title : title;
+    const nextVideoPrompt = override?.videoPrompt !== undefined ? override.videoPrompt : videoPrompt;
+    const nextAudioText = override?.audioText !== undefined ? override.audioText : audioText;
+    const nextAudioLanguage = override?.audioLanguage !== undefined ? override.audioLanguage : audioLanguage;
+    const nextVeniceModel = override?.veniceModel !== undefined ? override.veniceModel : veniceModel;
+    const nextAspectRatio = override?.aspectRatio !== undefined ? override.aspectRatio : veoAspect;
+    const nextVeoModel = override?.veoModel !== undefined ? override.veoModel : veoModel;
+    const nextVeoSeconds = override?.veoSeconds !== undefined ? override.veoSeconds : veoSeconds;
+    if (override?.idea !== undefined) setIdea(nextIdea);
+    if (override?.title !== undefined) setTitle(nextTitle);
+    if (override?.videoPrompt !== undefined) setVideoPrompt(nextVideoPrompt);
+    if (override?.audioText !== undefined) setAudioText(nextAudioText);
+    if (override?.audioLanguage !== undefined) setAudioLanguage(nextAudioLanguage);
+    if (override?.veniceModel !== undefined) setVeniceModel(nextVeniceModel);
+    if (override?.aspectRatio !== undefined) setVeoAspect(String(nextAspectRatio || ''));
+    if (override?.veoModel !== undefined) setVeoModel(nextVeoModel);
+    if (override?.veoSeconds !== undefined) setVeoSeconds(String(nextVeoSeconds || ''));
+    if (!nextIdea.trim() && !nextVideoPrompt.trim()) {
+      setVideoStatus('Add an idea or video prompt first.');
+      setVideoTone('bad');
+      return false;
+    }
+    setBusyVideo(true);
+    setVideoStatus('Generating Veo video...');
+    setVideoTone('neutral');
+    setVideoUrl(null);
+    setAudioUrl(null);
+    setTalkingVideoUrl(null);
+    setVideoSourceUrl(null);
+    setAudioStatus('');
+    setAudioTone('neutral');
+    try {
+      const resp = await fetch(`${apiUrl}/api/venice-a2e/veo/video`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          idea: nextIdea.trim(),
+          title: nextTitle.trim() || undefined,
+          video_prompt: nextVideoPrompt.trim() || undefined,
+          audio_text: nextAudioText.trim() || undefined,
+          audio_language: nextAudioLanguage,
+          venice_model: nextVeniceModel,
+          aspect_ratio: nextAspectRatio,
+          veo_model: nextVeoModel,
+          video_time: parseInt(String(nextVeoSeconds || ''), 10),
+        }),
+      });
+      const json = await resp.json();
+      appendEventsFromPayload(json);
+      if (!resp.ok) {
+        setVideoStatus(`Video failed: ${json.error || json.details?.message || json.details || resp.statusText}`);
+        setVideoTone('bad');
+        return false;
+      }
+      if (json.title) setTitle(json.title);
+      if (json.video_prompt) setVideoPrompt(json.video_prompt);
+      if (json.audio_text) setAudioText(json.audio_text);
+      setVideoUrl(json.video_url || null);
+      if (json.video_source_url) {
+        setVideoSourceUrl(json.video_source_url);
+      } else if (isRemoteUrl(json.video_url)) {
+        setVideoSourceUrl(json.video_url);
+      }
+      setVideoStatus(json.video_url ? 'Video ready.' : 'Video complete.');
+      setVideoTone('good');
+      loadHistory();
+      return true;
+    } catch (err: any) {
+      setVideoStatus(`Video failed: ${err?.message || String(err)}`);
+      setVideoTone('bad');
+      return false;
     } finally {
       setBusyVideo(false);
     }
@@ -1070,17 +1259,45 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         audioText: merged.audio_text || '',
         audioLanguage: merged.audio_language || audioLanguage,
         veniceModel: merged.venice_model || veniceModel,
-        videoTime: merged.video_time || (isWan ? wanDuration : videoTime),
+        videoTime: merged.video_time || (isWan ? wanDuration : isVeo ? veoSeconds : videoTime),
         negativePrompt: merged.negative_prompt || negativePrompt,
         queueId: merged.queue_id || null,
       };
       if (isWan) {
         runWanVideo(payload);
+      } else if (isVeo) {
+        runVeoVideo({
+          idea: payload.idea,
+          title: payload.title,
+          videoPrompt: payload.videoPrompt,
+          audioText: payload.audioText,
+          audioLanguage: payload.audioLanguage,
+          veniceModel: payload.veniceModel,
+          aspectRatio: merged.aspect_ratio || veoAspect,
+          veoSeconds: payload.videoTime,
+          veoModel,
+        });
       } else {
         runVideo(payload);
       }
     },
-    [applyHistory, audioLanguage, isWan, mergeHistoryEntry, negativePrompt, runVideo, runWanVideo, veniceModel, videoTime, wanDuration],
+    [
+      applyHistory,
+      audioLanguage,
+      isVeo,
+      isWan,
+      mergeHistoryEntry,
+      negativePrompt,
+      runVeoVideo,
+      runVideo,
+      runWanVideo,
+      veoAspect,
+      veoModel,
+      veoSeconds,
+      veniceModel,
+      videoTime,
+      wanDuration,
+    ],
   );
 
   const runAudioFromHistory = useCallback(
@@ -1108,9 +1325,12 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
     () => veniceTextModels.find((model) => model.value === veniceModel)?.label || veniceModel,
     [veniceModel],
   );
-  const durationOptions = isWan ? wanOptions.duration : chipOptions.videoTime;
-  const durationValue = isWan ? wanDuration : videoTime;
-  const setDurationValue = isWan ? setWanDuration : setVideoTime;
+  const durationOptions = isWan ? wanOptions.duration : isVeo ? veoOptions.duration : chipOptions.videoTime;
+  const durationValue = isWan ? wanDuration : isVeo ? veoSeconds : videoTime;
+  const setDurationValue = isWan ? setWanDuration : isVeo ? setVeoSeconds : setVideoTime;
+  const aspectOptions = isVeo ? veoOptions.aspectRatio : chipOptions.aspectRatio;
+  const aspectValue = isVeo ? veoAspect : aspectRatio;
+  const setAspectValue = isVeo ? setVeoAspect : setAspectRatio;
 
   return (
     <View style={styles.wrapper}>
@@ -1118,20 +1338,23 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
       <Text style={styles.subtitle}>
         {isWan
           ? 'Generate prompts with Venice, then create image and Wan video (audio on by default).'
-          : 'Generate prompts with Venice, then create image, video, and audio with A2E.'}
+          : isVeo
+            ? 'Generate prompts with Venice, then create a Veo text-to-video clip (portrait quality by default).'
+            : 'Generate prompts with Venice, then create image, video, and audio with A2E.'}
       </Text>
 
       <View style={styles.subTabRow}>
         {[
           { key: 'a2e', label: 'A2E' },
           { key: 'wan', label: 'Wan' },
+          { key: 'veo', label: 'Veo' },
         ].map((tab) => {
           const active = engine === tab.key;
           return (
             <Pressable
               key={tab.key}
               style={[styles.subTab, active && styles.subTabActive]}
-              onPress={() => setEngine(tab.key as 'a2e' | 'wan')}
+              onPress={() => setEngine(tab.key as 'a2e' | 'wan' | 'veo')}
             >
               <Text style={[styles.subTabText, active && styles.subTabTextActive]}>{tab.label}</Text>
             </Pressable>
@@ -1160,13 +1383,13 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           <View style={styles.inlineBlock}>
             <Text style={styles.label}>Aspect ratio</Text>
             <View style={styles.chipRow}>
-              {chipOptions.aspectRatio.map((option) => {
-                const active = aspectRatio === option.value;
+              {aspectOptions.map((option) => {
+                const active = aspectValue === option.value;
                 return (
                   <Pressable
                     key={option.value}
                     style={[styles.chip, active && styles.chipActive]}
-                    onPress={() => setAspectRatio(option.value)}
+                    onPress={() => setAspectValue(option.value)}
                   >
                     <Text style={[styles.chipText, active && styles.chipTextActive]}>{option.label}</Text>
                   </Pressable>
@@ -1311,6 +1534,28 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           </>
         ) : null}
 
+        {isVeo ? (
+          <View style={styles.inlineRow}>
+            <View style={styles.inlineBlock}>
+              <Text style={styles.label}>Veo model</Text>
+              <View style={styles.chipRow}>
+                {veoOptions.model.map((option) => {
+                  const active = veoModel === option.value;
+                  return (
+                    <Pressable
+                      key={option.value}
+                      style={[styles.chip, active && styles.chipActive]}
+                      onPress={() => setVeoModel(option.value)}
+                    >
+                      <Text style={[styles.chipText, active && styles.chipTextActive]}>{option.label}</Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          </View>
+        ) : null}
+
         <View style={styles.buttonRow}>
           <Pressable
             style={[styles.primaryButton, (!canGenerate || busyPrompts) && styles.buttonDisabled]}
@@ -1330,7 +1575,7 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
             <View style={styles.buttonContent}>
               {busyRun && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
               <Text style={styles.secondaryButtonText}>
-                {isWan ? 'Run Wan pipeline' : 'Run full pipeline'}
+                {isWan ? 'Run Wan pipeline' : isVeo ? 'Run Veo pipeline' : 'Run full pipeline'}
               </Text>
             </View>
           </Pressable>
@@ -1341,33 +1586,41 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
 
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>Steps</Text>
-        <Text style={styles.label}>Image prompt</Text>
-        <TextInput
-          style={styles.textArea}
-          value={imagePrompt}
-          onChangeText={setImagePrompt}
-          placeholder="Still image prompt."
-          multiline
-        />
-        <Pressable
-          style={[styles.primaryButton, styles.stepButton, (!canGenerateImage || busyImage) && styles.buttonDisabled]}
-          onPress={runImage}
-          disabled={!canGenerateImage || busyImage}
-        >
-          <View style={styles.buttonContent}>
-            {busyImage && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-            <Text style={styles.primaryButtonText}>Text -> Image</Text>
-          </View>
-        </Pressable>
-        {imageStatus ? <Text style={[styles.status, toneStyle(imageTone)]}>{imageStatus}</Text> : null}
-        <Text style={styles.outputLabel}>Image preview</Text>
-        <View style={styles.previewFrame}>
-          {imageUrl ? (
-            <Image source={{ uri: resolveMediaUrl(imageUrl) || imageUrl }} style={styles.previewImage} resizeMode="contain" />
-          ) : (
-            <Text style={[styles.outputEmpty, styles.previewEmpty]}>Image not ready.</Text>
-          )}
-        </View>
+        {!isVeo ? (
+          <>
+            <Text style={styles.label}>Image prompt</Text>
+            <TextInput
+              style={styles.textArea}
+              value={imagePrompt}
+              onChangeText={setImagePrompt}
+              placeholder="Still image prompt."
+              multiline
+            />
+            <Pressable
+              style={[styles.primaryButton, styles.stepButton, (!canGenerateImage || busyImage) && styles.buttonDisabled]}
+              onPress={runImage}
+              disabled={!canGenerateImage || busyImage}
+            >
+              <View style={styles.buttonContent}>
+                {busyImage && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                <Text style={styles.primaryButtonText}>Text -> Image</Text>
+              </View>
+            </Pressable>
+            {imageStatus ? <Text style={[styles.status, toneStyle(imageTone)]}>{imageStatus}</Text> : null}
+            <Text style={styles.outputLabel}>Image preview</Text>
+            <View style={styles.previewFrame}>
+              {imageUrl ? (
+                <Image
+                  source={{ uri: resolveMediaUrl(imageUrl) || imageUrl }}
+                  style={styles.previewImage}
+                  resizeMode="contain"
+                />
+              ) : (
+                <Text style={[styles.outputEmpty, styles.previewEmpty]}>Image not ready.</Text>
+              )}
+            </View>
+          </>
+        ) : null}
 
         <Text style={styles.label}>Video prompt</Text>
         <TextInput
@@ -1377,23 +1630,27 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           placeholder="Motion prompt."
           multiline
         />
-        <Text style={styles.label}>Negative prompt</Text>
-        <TextInput
-          style={styles.textArea}
-          value={negativePrompt}
-          onChangeText={setNegativePrompt}
-          placeholder="Things to avoid."
-          multiline
-        />
+        {!isVeo ? (
+          <>
+            <Text style={styles.label}>Negative prompt</Text>
+            <TextInput
+              style={styles.textArea}
+              value={negativePrompt}
+              onChangeText={setNegativePrompt}
+              placeholder="Things to avoid."
+              multiline
+            />
+          </>
+        ) : null}
         <Pressable
           style={[styles.primaryButton, styles.stepButton, (!canGenerateVideo || busyVideo) && styles.buttonDisabled]}
-          onPress={isWan ? runWanVideo : runVideo}
+          onPress={isVeo ? runVeoVideo : isWan ? runWanVideo : runVideo}
           disabled={!canGenerateVideo || busyVideo}
         >
           <View style={styles.buttonContent}>
             {busyVideo && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
             <Text style={styles.primaryButtonText}>
-              {isWan ? 'Image + prompt -> Wan video' : 'Image + prompt -> Video'}
+              {isWan ? 'Image + prompt -> Wan video' : isVeo ? 'Text + prompt -> Veo video' : 'Image + prompt -> Video'}
             </Text>
           </View>
         </Pressable>
@@ -1429,16 +1686,20 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           <Text style={styles.outputEmpty}>Video not ready.</Text>
         )}
 
-        <Text style={styles.label}>{isWan ? 'Dialogue text' : 'Audio text'}</Text>
+        <Text style={styles.label}>{isWan || isVeo ? 'Dialogue text' : 'Audio text'}</Text>
         <TextInput
           style={styles.textArea}
           value={audioText}
           onChangeText={setAudioText}
-          placeholder={isWan ? 'Optional spoken line to merge into the video prompt.' : 'Short narration.'}
+          placeholder={
+            isWan || isVeo ? 'Optional spoken line to merge into the video prompt.' : 'Short narration.'
+          }
           multiline
         />
-        {isWan ? (
-          <Text style={styles.helperText}>Merged into the Wan video prompt for audio.</Text>
+        {isWan || isVeo ? (
+          <Text style={styles.helperText}>
+            {isWan ? 'Merged into the Wan video prompt for audio.' : 'Merged into the Veo prompt for dialogue.'}
+          </Text>
         ) : (
           <>
             <Pressable
@@ -1517,19 +1778,23 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
                   ? 'Image'
                   : entry.step === 'video'
                     ? 'Video'
-                    : entry.step === 'audio'
-                      ? 'Audio'
-                      : 'Pipeline';
+                    : entry.step === 'veo'
+                      ? 'Veo'
+                      : entry.step === 'audio'
+                        ? 'Audio'
+                        : 'Pipeline';
               const timestamp = formatHistoryTimestamp(entry.created_at);
               const imageSrc = resolveMediaUrl(entry.image_media_url || entry.image_url);
               const videoSrc = resolveMediaUrl(entry.video_media_url || entry.video_url);
               const audioSrc = resolveMediaUrl(entry.audio_media_url || entry.audio_url);
               const talkingSrc = resolveMediaUrl(entry.talking_media_url || entry.talking_video_url);
-              const canRegenImage = !busyImage && !!(entry.idea?.trim() || entry.image_prompt?.trim());
-              const canRegenVideo =
-                !busyVideo && !!entry.image_url && !!(entry.idea?.trim() || entry.video_prompt?.trim());
+              const canRegenImage = !busyImage && !isVeo && !!(entry.idea?.trim() || entry.image_prompt?.trim());
+              const canRegenVideo = isVeo
+                ? !busyVideo && !!(entry.idea?.trim() || entry.video_prompt?.trim())
+                : !busyVideo && !!entry.image_url && !!(entry.idea?.trim() || entry.video_prompt?.trim());
               const canRegenAudio =
                 !isWan &&
+                !isVeo &&
                 !busyAudio &&
                 !!entry.video_url &&
                 !!(entry.idea?.trim() || (entry.audio_text?.trim() && entry.video_prompt?.trim()));

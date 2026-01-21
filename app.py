@@ -296,6 +296,9 @@ DEFAULT_VENICE_A2E_SETTINGS = {
     "wan_resolution": "720p",
     "wan_audio": True,
     "wan_duration": "10",
+    "veo_model": "veo3.1-pro",
+    "veo_aspect_ratio": "9:16",
+    "veo_seconds": "8",
 }
 
 DEFAULT_VENICE_WAN_SETTINGS = {
@@ -802,7 +805,7 @@ def _sanitize_venice_a2e_settings(payload: dict | None) -> dict:
         return text or fallback
 
     engine = _string("engine", DEFAULT_VENICE_A2E_SETTINGS["engine"]).lower()
-    if engine not in {"a2e", "wan"}:
+    if engine not in {"a2e", "wan", "veo"}:
         engine = DEFAULT_VENICE_A2E_SETTINGS["engine"]
 
     aspect_ratio = _string("aspect_ratio", DEFAULT_VENICE_A2E_SETTINGS["aspect_ratio"])
@@ -840,6 +843,24 @@ def _sanitize_venice_a2e_settings(payload: dict | None) -> dict:
     if wan_duration not in {"5", "10", "15"}:
         wan_duration = DEFAULT_VENICE_A2E_SETTINGS["wan_duration"]
 
+    veo_model = _string("veo_model", DEFAULT_VENICE_A2E_SETTINGS["veo_model"])
+    if veo_model not in {"veo3.1-fast", "veo3.1-pro", "veo3-fast", "veo3-pro"}:
+        veo_model = DEFAULT_VENICE_A2E_SETTINGS["veo_model"]
+
+    veo_aspect_ratio = _string("veo_aspect_ratio", DEFAULT_VENICE_A2E_SETTINGS["veo_aspect_ratio"])
+    if veo_aspect_ratio not in {"9:16", "16:9"}:
+        veo_aspect_ratio = DEFAULT_VENICE_A2E_SETTINGS["veo_aspect_ratio"]
+
+    veo_seconds_raw = "".join(
+        ch for ch in _string("veo_seconds", DEFAULT_VENICE_A2E_SETTINGS["veo_seconds"]) if ch.isdigit()
+    )
+    try:
+        veo_seconds_int = int(veo_seconds_raw or DEFAULT_VENICE_A2E_SETTINGS["veo_seconds"])
+    except Exception:
+        veo_seconds_int = int(DEFAULT_VENICE_A2E_SETTINGS["veo_seconds"])
+    veo_seconds_int = max(4, min(veo_seconds_int, 12))
+    veo_seconds = str(veo_seconds_int)
+
     return {
         "engine": engine,
         "aspect_ratio": aspect_ratio,
@@ -851,6 +872,9 @@ def _sanitize_venice_a2e_settings(payload: dict | None) -> dict:
         "wan_resolution": wan_resolution,
         "wan_audio": wan_audio,
         "wan_duration": wan_duration,
+        "veo_model": veo_model,
+        "veo_aspect_ratio": veo_aspect_ratio,
+        "veo_seconds": veo_seconds,
     }
 
 
@@ -6689,6 +6713,203 @@ class VeniceA2EWanVideoHandler(CorsMixin, tornado.web.RequestHandler):
         self.write(result)
 
 
+class VeniceA2EVeoVideoHandler(CorsMixin, tornado.web.RequestHandler):
+    async def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+
+        idea = data.get("idea") or data.get("prompt") or ""
+        if not isinstance(idea, str):
+            idea = str(idea)
+        idea = idea.strip()
+
+        title = data.get("title") or data.get("video_title") or data.get("videoTitle")
+        video_prompt = data.get("video_prompt") or data.get("videoPrompt")
+        audio_text = data.get("audio_text") or data.get("audioText")
+        audio_language = data.get("audio_language") or data.get("audioLanguage")
+        venice_model = data.get("venice_model") or data.get("veniceModel")
+        aspect_ratio = data.get("aspect_ratio") or data.get("aspectRatio")
+        veo_model = (
+            data.get("veo_model")
+            or data.get("veoModel")
+            or data.get("model")
+            or data.get("video_model")
+            or data.get("videoModel")
+        )
+        use_cache = _parse_bool(data.get("use_cache"), default=True)
+
+        if title is not None and not isinstance(title, str):
+            title = str(title)
+        if video_prompt is not None and not isinstance(video_prompt, str):
+            video_prompt = str(video_prompt)
+        if audio_text is not None and not isinstance(audio_text, str):
+            audio_text = str(audio_text)
+        if audio_language is not None and not isinstance(audio_language, str):
+            audio_language = str(audio_language)
+        if venice_model is not None and not isinstance(venice_model, str):
+            venice_model = str(venice_model)
+        if aspect_ratio is not None and not isinstance(aspect_ratio, str):
+            aspect_ratio = str(aspect_ratio)
+        if veo_model is not None and not isinstance(veo_model, str):
+            veo_model = str(veo_model)
+
+        try:
+            video_time = int(
+                data.get("video_time")
+                or data.get("videoTime")
+                or data.get("seconds")
+                or data.get("duration")
+                or 0
+            ) or None
+        except Exception:
+            video_time = None
+
+        if not video_prompt and not idea:
+            self.set_status(400)
+            return self.write({"error": "idea or video_prompt required"})
+
+        if not aspect_ratio or aspect_ratio not in {"9:16", "16:9"}:
+            aspect_ratio = DEFAULT_VENICE_A2E_SETTINGS["veo_aspect_ratio"]
+
+        if not video_time:
+            video_time = int(DEFAULT_VENICE_A2E_SETTINGS["veo_seconds"])
+        video_time = max(4, min(video_time, 12))
+
+        model = normalize_video_model(veo_model, DEFAULT_VENICE_A2E_SETTINGS["veo_model"])
+        if model not in {"veo3.1-fast", "veo3.1-pro", "veo3-fast", "veo3-pro"}:
+            model = DEFAULT_VENICE_A2E_SETTINGS["veo_model"]
+
+        events: list[dict[str, Any]] = []
+
+        def _log(stage: str, message: str, payload: dict[str, Any] | None = None) -> None:
+            entry = {
+                "ts": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+                "stage": stage,
+                "message": message,
+            }
+            if payload:
+                entry["data"] = payload
+            events.append(entry)
+
+        prompts: dict[str, Any] = {}
+        _log("start", "Starting Venice + Veo video step.")
+
+        if not video_prompt:
+            _log("venice", "Generating prompts with Venice.")
+            try:
+                generator = VenicePromptGenerator(
+                    template_dir=VENICE_A2E_TEMPLATE_DIR,
+                    model=venice_model,
+                    use_cache=use_cache,
+                    cache_dir="cache/venice_prompts",
+                )
+                prompts = await run_blocking(lambda: generator.generate(idea=idea, audio_language=audio_language))
+            except Exception as exc:
+                details = {
+                    "message": str(exc),
+                    "type": type(exc).__name__,
+                    "venice_api_base": os.getenv("VENICE_API_BASE", ""),
+                    "venice_chat_endpoint": os.getenv("VENICE_CHAT_ENDPOINT", ""),
+                    "venice_model": os.getenv("VENICE_MODEL", ""),
+                    "venice_key_set": bool(os.getenv("VENICE_API_KEY")),
+                    "traceback": traceback.format_exc(),
+                }
+                print(f"[V+A2E] venice veo prompt failed: {details}")
+                self.set_status(500)
+                return self.write({"error": "venice prompt failed", "details": details, "events": events})
+
+            if not title:
+                title = str(prompts.get("title") or "").strip() or None
+            if not video_prompt:
+                video_prompt = str(prompts.get("video_prompt") or "").strip()
+            if not audio_text:
+                audio_text = str(prompts.get("audio_text") or "").strip() or None
+
+        if not video_prompt:
+            self.set_status(400)
+            return self.write({"error": "video_prompt missing after prompt generation"})
+
+        _log("venice", "Video prompt ready.", {"video_prompt": video_prompt})
+
+        prompt = video_prompt.strip()
+        if audio_text and audio_text.strip():
+            lang_hint = str(audio_language or "").strip().lower()
+            prefix = f"Dialogue ({lang_hint})" if lang_hint and lang_hint != "auto" else "Dialogue"
+            prompt = f"{prompt}\n{prefix}: {audio_text.strip()}"
+
+        short_title = title or _short_title_from_idea(idea) or "Veo video"
+        title_clean = _sanitize_title(title or short_title)
+        slug = _truncate_slug(_slugify(short_title), max_len=60) or "veo-video"
+        hash_source = prompt or idea or title_clean
+        prompt_hash = hashlib.sha1(hash_source.encode("utf-8")).hexdigest()[:8]
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        base_name = f"{slug}_{timestamp}_{prompt_hash}"
+        output_dir = os.path.join(UPLOAD_FOLDER, "venice_a2e", base_name)
+        output_path = os.path.join(output_dir, f"{base_name}.mp4")
+        size = "720x1280" if aspect_ratio == "9:16" else "1280x720"
+
+        _log("veo", "Requesting Veo video.", {"model": model, "size": size, "seconds": video_time})
+
+        try:
+            def _run():
+                os.makedirs(output_dir, exist_ok=True)
+                provider = get_video_provider(model)
+                return provider.generate(VideoRequest(
+                    prompt=prompt,
+                    model=model,
+                    size=size,
+                    seconds=video_time,
+                    output=output_path,
+                    reference=None,
+                    use_cache=use_cache,
+                ))
+
+            output_path = await run_blocking(_run)
+        except Exception as exc:
+            details = {
+                "message": str(exc),
+                "type": type(exc).__name__,
+                "veo_api_base": os.getenv("GRSAI_API_BASE", "") or os.getenv("VEO_API_BASE", ""),
+                "veo_key_set": bool(os.getenv("GRSAI_API_KEY") or os.getenv("VEO_API_KEY")),
+                "traceback": traceback.format_exc(),
+                "requested": {"model": model, "size": size, "seconds": video_time},
+            }
+            if events:
+                details["events"] = events
+            print(f"[V+A2E] veo video failed: {details}")
+            self.set_status(500)
+            return self.write({"error": "venice veo video failed", "details": details, "events": events})
+
+        if not output_path or not os.path.exists(output_path):
+            self.set_status(500)
+            return self.write({"error": "generated video missing", "path": output_path})
+
+        _log("veo", "Video ready.", {"video_url": output_path})
+
+        result = {
+            "idea": idea,
+            "title": title_clean,
+            "video_prompt": video_prompt,
+            "audio_text": audio_text,
+            "video_url": output_path,
+            "model": model,
+            "size": size,
+            "seconds": video_time,
+            "events": events,
+        }
+        data["aspect_ratio"] = aspect_ratio
+        _store_venice_a2e_history("veo", data, result, {"video_time": video_time})
+        try:
+            ldb.ensure_schema()
+            ldb.add_video(output_path, title_clean, "venice_a2e")
+        except Exception as exc:
+            print(f"[V+A2E] veo video registration failed: {exc}")
+
+        self.write(result)
+
+
 class VeniceA2EWanStatusHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self, task_id: str):
         task_id = str(task_id or "").strip()
@@ -8903,6 +9124,7 @@ def make_app(upload_folder):
         (r"/api/venice-a2e/image", VeniceA2EImageHandler),
         (r"/api/venice-a2e/video", VeniceA2EVideoHandler),
         (r"/api/venice-a2e/wan/video", VeniceA2EWanVideoHandler),
+        (r"/api/venice-a2e/veo/video", VeniceA2EVeoVideoHandler),
         (r"/api/venice-a2e/wan/status/(.*)", VeniceA2EWanStatusHandler),
         (r"/api/venice-a2e/audio", VeniceA2EAudioHandler),
         (r"/api/venice-a2e/run", VeniceA2ERunHandler),
