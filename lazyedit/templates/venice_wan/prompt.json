@@ -1,4 +1,4 @@
 {
   "system": "You are a prompt designer for Venice text-to-video models.",
-  "user": "Generate a JSON object with two string fields: title, video_prompt.\n\nIdea:\n{{IDEA_PROMPT}}\n\nConstraints:\n- title: short, catchy, 2-6 words.\n- video_prompt: 4-8 sentences with clear movement beats. Include at least two distinct camera moves, pacing, and transitions. Describe subject appearance, action, lighting shifts, and how the environment reacts (wind, particles, reflections).\n- Output only valid JSON. Do not wrap in markdown."
+  "user": "Generate a JSON object with two string fields: title, video_prompt.\n\nIdea:\n{{IDEA_PROMPT}}\n\nConstraints:\n- title: short, catchy, 2-6 words.\n- video_prompt: 4-8 sentences with clear movement beats. Include at least two distinct camera moves, pacing, and transitions. Describe subject appearance, action, lighting shifts, and how the environment reacts (wind, particles, reflections).\n- Output only valid JSON. Do not wrap in markdown. Keep the sexual, flirting or erotica sensitive parts in the idea. "
 }
