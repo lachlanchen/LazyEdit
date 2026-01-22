@@ -4,7 +4,7 @@ import hashlib
 import json
 import os
 import time
-from typing import Optional
+from typing import Callable, Optional
 
 import httpx
 
@@ -111,6 +111,7 @@ def create_veo_video_and_download(
     use_cache: bool = True,
     size: Optional[str] = None,
     seconds: Optional[int] = None,
+    on_job_created: Optional[Callable[[str], None]] = None,
 ) -> str:
     payload = {"model": model, "prompt": prompt, "aspectRatio": aspect_ratio, "reference": reference_url}
     key = json.dumps(payload, ensure_ascii=False, sort_keys=True)
@@ -146,6 +147,11 @@ def create_veo_video_and_download(
     job_id = job.get("id")
     if not job_id:
         raise RuntimeError(f"Veo job creation failed: {job}")
+    if on_job_created:
+        try:
+            on_job_created(str(job_id))
+        except Exception:
+            pass
     status = job.get("status", "queued")
     progress = int(job.get("progress", 0) or 0)
     print(f"Video generation started: id={job_id} model={model} aspect={aspect_ratio} status={status}")

@@ -131,6 +131,7 @@ from lazyedit.video_utils import preprocess_if_needed
 from lazyedit import db as ldb
 from lazyedit.plugins.languages import list_languages
 from agi.video_providers import VideoRequest, get_video_provider, is_sora_model, normalize_video_model
+from agi.veo_requests import create_veo_video_and_download
 
 
 GRAMMAR_PALETTE_DIR = os.path.join(
@@ -6782,6 +6783,7 @@ class VeniceA2EVeoVideoHandler(CorsMixin, tornado.web.RequestHandler):
             model = DEFAULT_VENICE_A2E_SETTINGS["veo_model"]
 
         events: list[dict[str, Any]] = []
+        queue_id: str | None = None
 
         def _log(stage: str, message: str, payload: dict[str, Any] | None = None) -> None:
             entry = {
@@ -6850,21 +6852,27 @@ class VeniceA2EVeoVideoHandler(CorsMixin, tornado.web.RequestHandler):
         output_path = os.path.join(output_dir, f"{base_name}.mp4")
         size = "720x1280" if aspect_ratio == "9:16" else "1280x720"
 
+        def _mark_queue(job_id: str) -> None:
+            nonlocal queue_id
+            queue_id = str(job_id)
+            _log("veo", "Video task queued.", {"queue_id": queue_id, "model": model})
+
         _log("veo", "Requesting Veo video.", {"model": model, "size": size, "seconds": video_time})
 
         try:
             def _run():
                 os.makedirs(output_dir, exist_ok=True)
-                provider = get_video_provider(model)
-                return provider.generate(VideoRequest(
+                return create_veo_video_and_download(
                     prompt=prompt,
                     model=model,
+                    aspect_ratio=aspect_ratio,
+                    output=output_path,
+                    reference_url=None,
+                    use_cache=use_cache,
                     size=size,
                     seconds=video_time,
-                    output=output_path,
-                    reference=None,
-                    use_cache=use_cache,
-                ))
+                    on_job_created=_mark_queue,
+                )
 
             output_path = await run_blocking(_run)
         except Exception as exc:
@@ -6876,6 +6884,18 @@ class VeniceA2EVeoVideoHandler(CorsMixin, tornado.web.RequestHandler):
                 "traceback": traceback.format_exc(),
                 "requested": {"model": model, "size": size, "seconds": video_time},
             }
+            if queue_id:
+                data["queue_id"] = queue_id
+                details["queue_id"] = queue_id
+                try:
+                    _store_venice_a2e_history(
+                        "veo",
+                        data,
+                        {"video_prompt": video_prompt, "audio_text": audio_text, "queue_id": queue_id, "events": events},
+                        {"video_time": video_time},
+                    )
+                except Exception as history_exc:
+                    print(f"[V+A2E] veo history save failed: {history_exc}")
             if events:
                 details["events"] = events
             print(f"[V+A2E] veo video failed: {details}")
@@ -6887,7 +6907,6 @@ class VeniceA2EVeoVideoHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": "generated video missing", "path": output_path})
 
         _log("veo", "Video ready.", {"video_url": output_path})
-
         result = {
             "idea": idea,
             "title": title_clean,
@@ -6897,9 +6916,12 @@ class VeniceA2EVeoVideoHandler(CorsMixin, tornado.web.RequestHandler):
             "model": model,
             "size": size,
             "seconds": video_time,
+            "queue_id": queue_id,
             "events": events,
         }
         data["aspect_ratio"] = aspect_ratio
+        if queue_id:
+            data["queue_id"] = queue_id
         _store_venice_a2e_history("veo", data, result, {"video_time": video_time})
         try:
             ldb.ensure_schema()
