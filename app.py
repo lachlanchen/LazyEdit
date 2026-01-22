@@ -5473,6 +5473,8 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
                     caption_text = _read_text_file(caption_md_path) or _read_text_file(caption_srt_path)
 
             transcription_text = _read_text_file(output_md_path) or _read_text_file(output_srt_path)
+            if str(transcription_status or "").lower() in {"no_audio", "empty"}:
+                transcription_text = ""
             metadata_dir = os.path.join(output_folder, "metadata", lang)
             os.makedirs(metadata_dir, exist_ok=True)
             output_json_path = os.path.join(metadata_dir, f"{base_name}_metadata_{lang}.json")
