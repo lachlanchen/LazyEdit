@@ -28,44 +28,40 @@ if [ -z "$CONDA_ENV" ]; then
     CONDA_ENV="lazyedit"
 fi
 
-# Check if the tmux session already exists
-tmux has-session -t "$SESSION_NAME" 2>/dev/null
-
-# Check the exit status of the previous command
-if [ $? != 0 ]; then
-    # If the session does not exist, create it
-    tmux new -d -s "$SESSION_NAME" -n lazyedit
-
-    # Wait a bit to ensure that commands are sent after the session is properly set up
-    sleep 2
-
-    # Split into left/right panes (left: backend, right: Expo app)
-    tmux split-window -h -t "$SESSION_NAME":0
-
-    # Left pane: backend
-    if [ -f "$BASHRC_PATH" ]; then
-        tmux send-keys -t "$SESSION_NAME":0.0 "source \"$BASHRC_PATH\"" C-m
-    fi
-    if [ -n "$CONDA_PATH" ] && [ -f "$CONDA_PATH" ]; then
-        tmux send-keys -t "$SESSION_NAME":0.0 "source \"$CONDA_PATH\"" C-m
-    fi
-    tmux send-keys -t "$SESSION_NAME":0.0 "conda activate \"$CONDA_ENV\"" C-m
-
-    # Wait for the conda environment to activate
-    sleep 4
-
-    tmux send-keys -t "$SESSION_NAME":0.0 "cd \"$LAZYEDIT_DIR\"" C-m
-    tmux send-keys -t "$SESSION_NAME":0.0 "LAZYEDIT_PORT=\"$BACKEND_PORT\" python app.py $APP_ARGS" C-m
-
-    # Right pane: Expo app
-    if [ -f "$BASHRC_PATH" ]; then
-        tmux send-keys -t "$SESSION_NAME":0.1 "source \"$BASHRC_PATH\"" C-m
-    fi
-    tmux send-keys -t "$SESSION_NAME":0.1 "cd \"$EXPO_APP_DIR\"" C-m
-    tmux send-keys -t "$SESSION_NAME":0.1 "if [ -f \"package.json\" ] && [ ! -d \"node_modules\" ]; then npm install; fi" C-m
-    tmux send-keys -t "$SESSION_NAME":0.1 "if [ -f \"package.json\" ] && [ ! -d \"node_modules/expo\" ]; then npm install; fi" C-m
-    tmux send-keys -t "$SESSION_NAME":0.1 "export EXPO_PUBLIC_API_URL=\"$EXPO_PUBLIC_API_URL\"" C-m
-    tmux send-keys -t "$SESSION_NAME":0.1 "npx expo start --web --port $EXPO_PORT" C-m
-else
-    echo "Tmux session '$SESSION_NAME' already exists."
+if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+    echo "Tmux session '$SESSION_NAME' already exists; restarting."
+    tmux kill-session -t "$SESSION_NAME"
 fi
+
+tmux new -d -s "$SESSION_NAME" -n lazyedit
+
+# Wait a bit to ensure that commands are sent after the session is properly set up
+sleep 2
+
+# Split into left/right panes (left: backend, right: Expo app)
+tmux split-window -h -t "$SESSION_NAME":0
+
+# Left pane: backend
+if [ -f "$BASHRC_PATH" ]; then
+    tmux send-keys -t "$SESSION_NAME":0.0 "source \"$BASHRC_PATH\"" C-m
+fi
+if [ -n "$CONDA_PATH" ] && [ -f "$CONDA_PATH" ]; then
+    tmux send-keys -t "$SESSION_NAME":0.0 "source \"$CONDA_PATH\"" C-m
+fi
+tmux send-keys -t "$SESSION_NAME":0.0 "conda activate \"$CONDA_ENV\"" C-m
+
+# Wait for the conda environment to activate
+sleep 4
+
+tmux send-keys -t "$SESSION_NAME":0.0 "cd \"$LAZYEDIT_DIR\"" C-m
+tmux send-keys -t "$SESSION_NAME":0.0 "LAZYEDIT_PORT=\"$BACKEND_PORT\" python app.py $APP_ARGS" C-m
+
+# Right pane: Expo app
+if [ -f "$BASHRC_PATH" ]; then
+    tmux send-keys -t "$SESSION_NAME":0.1 "source \"$BASHRC_PATH\"" C-m
+fi
+tmux send-keys -t "$SESSION_NAME":0.1 "cd \"$EXPO_APP_DIR\"" C-m
+tmux send-keys -t "$SESSION_NAME":0.1 "if [ -f \"package.json\" ] && [ ! -d \"node_modules\" ]; then npm install; fi" C-m
+tmux send-keys -t "$SESSION_NAME":0.1 "if [ -f \"package.json\" ] && [ ! -d \"node_modules/expo\" ]; then npm install; fi" C-m
+tmux send-keys -t "$SESSION_NAME":0.1 "export EXPO_PUBLIC_API_URL=\"$EXPO_PUBLIC_API_URL\"" C-m
+tmux send-keys -t "$SESSION_NAME":0.1 "npx expo start --web --port $EXPO_PORT" C-m
