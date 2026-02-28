@@ -3,6 +3,14 @@
 
 [![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://github.com/lachlanchen/lachlanchen/blob/main/figs/banner.png)
 
+# LazyEdit
+
+<p align="center">
+  <b>AI-assisted video workflow</b> for generation, subtitle processing, metadata, and optional publishing.
+  <br />
+  <sub>Upload or generate -> transcribe -> translate/polish -> burn subtitles -> caption/keyframes -> metadata -> publish</sub>
+</p>
+
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache-2.0" /></a>
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python 3.10+" />
@@ -16,13 +24,7 @@
   <img src="https://img.shields.io/badge/i18n-11%20languages-1f883d" alt="i18n: 11 languages" />
 </p>
 
-<p align="center">
-  <b>AI-assisted video workflow</b> for generation, subtitle processing, metadata, and optional publishing.
-  <br />
-  <sub>Upload or generate -> transcribe -> translate/polish -> burn subtitles -> caption/keyframes -> metadata -> publish</sub>
-</p>
-
-# LazyEdit
+## 📌 Quick Facts
 
 LazyEdit is an end-to-end AI-assisted video workflow for creation, processing, and optional publishing. It combines prompt-based generation (Stage A/B/C), media processing APIs, subtitle rendering, keyframe captioning, metadata generation, and AutoPublish handoff.
 
@@ -36,6 +38,7 @@ LazyEdit is an end-to-end AI-assisted video workflow for creation, processing, a
 ## 🧭 Contents
 
 - [Overview](#overview)
+- [Quick Facts](#-quick-facts)
 - [At a Glance](#at-a-glance)
 - [Architecture Snapshot](#architecture-snapshot)
 - [Demos](#demos)
@@ -619,11 +622,13 @@ Practical guidelines:
 - Update docs/config scripts when behavior changes.
 - Preferred commit style: short, imperative, scoped (for example: `fix ffmpeg 7 compatibility`).
 
+
+
 ## ❤️ Support
 
 | Donate | PayPal | Stripe |
-|---|---|---|
-| [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=ko-fi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
+| --- | --- | --- |
+| [![Donate](https://camo.githubusercontent.com/24a4914f0b42c6f435f9e101621f1e52535b02c225764b2f6cc99416926004b7/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f446f6e6174652d4c617a79696e674172742d3045413545393f7374796c653d666f722d7468652d6261646765266c6f676f3d6b6f2d6669266c6f676f436f6c6f723d7768697465)](https://chat.lazying.art/donate) | [![PayPal](https://camo.githubusercontent.com/d0f57e8b016517a4b06961b24d0ca87d62fdba16e18bbdb6aba28e978dc0ea21/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f50617950616c2d526f6e677a686f754368656e2d3030343537433f7374796c653d666f722d7468652d6261646765266c6f676f3d70617970616c266c6f676f436f6c6f723d7768697465)](https://paypal.me/RongzhouChen) | [![Stripe](https://camo.githubusercontent.com/1152dfe04b6943afe3a8d2953676749603fb9f95e24088c92c97a01a897b4942/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5374726970652d446f6e6174652d3633354246463f7374796c653d666f722d7468652d6261646765266c6f676f3d737472697065266c6f676f436f6c6f723d7768697465)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ## 📄 License
 
@@ -637,3 +642,7 @@ LazyEdit builds on open-source libraries and services, including:
 - MoviePy for editing workflows
 - OpenAI models for AI-assisted pipeline tasks
 - CJKWrap and multilingual text tooling in subtitle workflows
+
+
+
+

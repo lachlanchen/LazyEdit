@@ -3,6 +3,14 @@
 
 [![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://github.com/lachlanchen/lachlanchen/blob/main/figs/banner.png)
 
+# LazyEdit
+
+<p align="center">
+  <b>生成、字幕処理、メタデータ作成、必要に応じた公開までを扱う</b> AI支援の動画ワークフロー。
+  <br />
+  <sub>Upload or generate -> transcribe -> translate/polish -> burn subtitles -> caption/keyframes -> metadata -> publish</sub>
+</p>
+
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache-2.0" /></a>
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python 3.10+" />
@@ -16,105 +24,100 @@
   <img src="https://img.shields.io/badge/i18n-11%20languages-1f883d" alt="i18n: 11 languages" />
 </p>
 
-<p align="center">
-  <b>AI支援の動画ワークフロー</b>で、生成、字幕処理、メタデータ作成、任意の公開までを一貫して扱えます。
-  <br />
-  <sub>Upload or generate -> transcribe -> translate/polish -> burn subtitles -> caption/keyframes -> metadata -> publish</sub>
-</p>
+## 📌 クイックファクト
 
-# LazyEdit
+LazyEdit は、制作・処理・任意の公開までをカバーするエンドツーエンドの AI 支援動画ワークフローです。プロンプトベースの生成（Stage A/B/C）、メディア処理 API、字幕レンダリング、キーフレームキャプション生成、メタデータ作成、AutoPublish 連携を統合しています。
 
-LazyEdit は、作成・処理・任意公開までを一気通貫で行う AI 支援動画ワークフローです。プロンプトベースの生成（Stage A/B/C）、メディア処理 API、字幕レンダリング、キーフレームキャプション、メタデータ生成、AutoPublish 連携を統合しています。
-
-| クイック情報 | 内容 |
+| クイックファクト | 値 |
 | --- | --- |
-| 📘 正式 README | `README.md`（このファイル） |
-| 🌐 多言語版 | `i18n/README.*.md`（先頭の言語バーは 1 本に統一） |
-| 🧠 バックエンド入口 | `app.py`（Tornado） |
-| 🖥️ フロントエンド | `app/`（Expo web/mobile） |
+| 📘 正式な README | `README.md`（このファイル） |
+| 🌐 言語版 | `i18n/README.*.md`（各 README の先頭に言語バーを 1 つだけ保持） |
+| 🧠 バックエンド開始点 | `app.py`（Tornado） |
+| 🖥️ フロントエンドアプリ | `app/`（Expo web/mobile） |
 
-## 🧭 Contents
+## 🧭 目次
 
-- [Overview](#-overview)
-- [At a Glance](#-at-a-glance)
-- [Architecture Snapshot](#-architecture-snapshot)
-- [Demos](#-demos)
-- [Features](#-features)
+- [Overview](#overview)
+- [Quick Facts](#-quick-facts)
+- [At a Glance](#at-a-glance)
+- [Architecture Snapshot](#architecture-snapshot)
+- [Demos](#demos)
+- [Features](#features)
 - [Documentation & i18n](#-documentation--i18n)
-- [Project Structure](#-project-structure)
-- [Prerequisites](#-prerequisites)
-- [Installation](#-installation)
-- [Quick Start](#-quick-start)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
 - [Command Cheat Sheet](#-command-cheat-sheet)
-- [Usage](#️-usage)
-- [Configuration](#️-configuration)
+- [Usage](#usage)
+- [Configuration](#configuration)
 - [Configuration Files](#-configuration-files)
-- [API Examples](#-api-examples)
-- [Examples](#-examples)
-- [Development Notes](#-development-notes)
-- [Testing](#-testing)
+- [API Examples](#api-examples)
+- [Examples](#examples)
+- [Development Notes](#development-notes)
+- [Testing](#testing)
 - [Assumptions & Known Limits](#-assumptions--known-limits)
-- [Deployment & Sync Notes](#-deployment--sync-notes)
-- [Troubleshooting](#-troubleshooting)
-- [Roadmap](#️-roadmap)
-- [Contributing](#-contributing)
-- [Support](#️-support)
-- [License](#-license)
-- [Acknowledgements](#-acknowledgements)
+- [Deployment & Sync Notes](#deployment--sync-notes)
+- [Troubleshooting](#troubleshooting)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Support](#-support)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
 ## ✨ Overview
 
-LazyEdit は Tornado バックエンド（`app.py`）と Expo フロントエンド（`app/`）を中心に構成されています。
+LazyEdit は、Tornado バックエンド（`app.py`）と Expo フロントエンド（`app/`）を中核に構成されています。
 
-> 注: マシンごとにリポジトリ/ランタイム差異がある場合、既存のデフォルトを削除せず、環境変数で上書きしてください。
+> 注意: マシンごとでリポジトリや実行環境が異なる場合、既存のデフォルト値を消去せず、環境変数で上書きしてください。
 
-| 使われる理由 | 実際のメリット |
+| 利用される理由 | 実際の効果 |
 | --- | --- |
-| 統一オペレーター導線 | 1つの流れで Upload/Generate/Remix/Publish |
-| API ファースト設計 | スクリプト化や他ツール連携が容易 |
-| ローカルファースト運用 | tmux + service ベース運用に適合 |
+| 統一されたオペレーターフロー | 1 つの流れで Upload / Generate / Remix / Publish を実行 |
+| API ファースト設計 | スクリプト化しやすく、他ツールとの統合も容易 |
+| ローカルファーストな実行 | tmux + サービス運用パターンに最適 |
 
 | Step | 処理内容 |
 | --- | --- |
 | 1 | 動画をアップロードまたは生成 |
-| 2 | 字幕を文字起こしし、必要に応じて翻訳 |
+| 2 | 文字起こしと、必要に応じた字幕の翻訳 |
 | 3 | レイアウト制御付きで多言語字幕を焼き込み |
 | 4 | キーフレーム、キャプション、メタデータを生成 |
-| 5 | パッケージ化し、必要に応じて AutoPublish で公開 |
+| 5 | パッケージ化して、必要に応じて AutoPublish で公開 |
 
 ### Pipeline focus
 
-- 単一のオペレーター UI で、アップロード、生成、リミックス、ライブラリ管理まで対応。
-- 文字起こし、字幕整形/翻訳、焼き込み、メタデータ生成を API ファーストで処理。
-- 任意の生成プロバイダ連携（`agi/` の Veo / Venice / A2E / Sora ヘルパー）に対応。
-- `AutoPublish` への公開ハンドオフを任意で利用可能。
+- 単一のオペレータ UI からアップロード、生成、リミックス、ライブラリ管理を行う。
+- 文字起こし、字幕の整形/翻訳、焼き込み、メタデータ生成の一連処理を API ファーストで実装。
+- オプションで生成プロバイダー（`agi/` 内の Veo / Venice / A2E / Sora ヘルパー）を統合。
+- オプションで `AutoPublish` への公開ハンドオフを実施。
 
 ## 🎯 At a Glance
 
-| 領域 | LazyEdit に含まれるもの | 状態 |
+| 項目 | LazyEdit に含まれる内容 | 状態 |
 | --- | --- | --- |
-| Core app | Tornado API backend + Expo web/mobile frontend | ✅ |
-| Media pipeline | ASR, subtitle translation/polish, burn-in, keyframes, captions, metadata | ✅ |
-| Generation | Stage A/B/C and provider helper routes (`agi/`) | ✅ |
-| Distribution | Optional AutoPublish handoff | 🟡 Optional |
-| Runtime model | Local-first scripts, tmux workflows, optional systemd service | ✅ |
+| コアアプリ | Tornado API backend + Expo web/mobile frontend | ✅ |
+| メディアパイプライン | ASR、字幕翻訳・整形、焼き込み、キーフレーム、キャプション、メタデータ | ✅ |
+| 生成 | Stage A/B/C および `agi/` のプロバイダー補助ルート | ✅ |
+| 配信 | AutoPublish 連携（任意） | 🟡 Optional |
+| 実行モデル | ローカルファーストなスクリプト、tmux ワークフロー、systemd サービス（任意） | ✅ |
 
 ## 🏗️ Architecture Snapshot
 
 このリポジトリは、UI レイヤーを備えた API ファーストのメディアパイプラインとして構成されています。
 
-- `app.py` は Tornado のエントリーポイントで、アップロード、処理、生成、公開ハンドオフ、メディア配信のルートを統括します。
-- `lazyedit/` はパイプラインのモジュール群（DB 永続化、翻訳、字幕焼き込み、キャプション、メタデータ、プロバイダアダプタ）を提供します。
-- `app/` は Expo Router アプリ（web/mobile）で、アップロード、処理、プレビュー、公開フローを操作します。
-- `config.py` は環境変数の読み込みとデフォルト/フォールバック実行パスを一元管理します。
-- `start_lazyedit.sh` と `lazyedit_config.sh` は、再現可能な tmux ベースのローカル/デプロイ運用を提供します。
+- `app.py` は Tornado のエントリーポイントで、アップロード、処理、生成、公開ハンドオフ、メディア配信のルートを統合管理。
+- `lazyedit/` はモジュール化されたコア処理群（DB 永続化、翻訳、字幕焼き込み、キャプション、メタデータ、プロバイダーアダプター）を含みます。
+- `app/` は Expo Router アプリ（web/mobile）で、アップロード、処理、プレビュー、公開フローを操作する UI です。
+- `config.py` は環境変数読込とデフォルト/フォールバックの実行パスを一元化。
+- `start_lazyedit.sh` と `lazyedit_config.sh` は、tmux ベースの再現性あるローカル/デプロイ実行を提供。
 
-| レイヤー | 主なパス | 役割 |
+| レイヤー | 主なパス | 責務 |
 | --- | --- | --- |
-| API & orchestration | `app.py`, `config.py` | Endpoints, routing, env resolution |
-| Processing core | `lazyedit/`, `agi/` | Subtitle/caption/metadata pipeline + providers |
-| UI | `app/` | Operator experience (web/mobile via Expo) |
-| Runtime scripts | `start_lazyedit.sh`, `lazyedit_config.sh`, `install_lazyedit.sh` | Local/service startup and ops |
+| API とオーケストレーション | `app.py`, `config.py` | エンドポイント、ルーティング、環境変数解決 |
+| 処理コア | `lazyedit/`, `agi/` | 字幕・キャプション・メタデータのパイプライン、およびプロバイダー |
+| UI | `app/` | オペレーター体験（Expo による web/mobile） |
+| ランタイムスクリプト | `start_lazyedit.sh`, `lazyedit_config.sh`, `install_lazyedit.sh` | ローカル/サービス起動と運用 |
 
 高レベルフロー:
 
@@ -122,7 +125,7 @@ LazyEdit は Tornado バックエンド（`app.py`）と Expo フロントエン
 
 ## 🎬 Demos
 
-以下は、取り込みからメタデータ生成までの主要オペレーターフローの画面例です。
+以下は、取り込みからメタデータ生成までの主要なオペレーターパスを示した画面です。
 
 <table>
   <tr>
@@ -173,29 +176,26 @@ LazyEdit は Tornado バックエンド（`app.py`）と Expo フロントエン
 
 ## 🧩 Features
 
-- ✨ Sora / Veo 連携パスを含む、プロンプトベース生成ワークフロー（Stage A/B/C）。
-- 🧵 完全な処理パイプライン: transcription -> subtitle polish/translation -> burn-in -> keyframes -> captions -> metadata。
-- 🌏 furigana/IPA/romaji 系の補助パスを含む多言語字幕合成。
-- 🔌 アップロード、処理、メディア配信、公開キューを備えた API ファーストのバックエンド。
-- 🚚 ソーシャル配信向けに任意で AutoPublish と連携可能。
-- 🖥️ tmux 起動スクリプトによる backend + Expo の統合運用。
+- ✨ Stage A/B/C を使うプロンプトベース生成ワークフロー。Sora と Veo の統合パスを含みます。
+- 🧵 文字起こし -> 字幕整形/翻訳 -> 焼き込み -> キーフレーム -> キャプション -> メタデータまでをつなぐ完全パイプライン。
+- 🌏 furigana、IPA、ローマ字系の補助パスを含む多言語字幕の構成。
+- 🔌 アップロード、処理、メディア配信、公開キューを提供する API ファースト backend。
+- 🚚 ソーシャル配信先連携向けに AutoPublish を任意で統合。
+- 🖥️ tmux 起動スクリプトで backend と Expo の統合ワークフローをサポート。
 
 ## 🌍 Documentation & i18n
 
-LazyEdit は 1 つの正本英語 README（`README.md`）と、`i18n/` 配下の各言語版で運用します。
+- 正本: `README.md`
+- 言語版: `i18n/README.*.md`
+- 言語ナビゲーション: 各 README の先頭に言語バーを 1 行のみ配置（重複なし）
+- 本リポジトリの対応言語: Arabic, German, English, Spanish, French, Japanese, Korean, Russian, Vietnamese, Simplified Chinese, Traditional Chinese
 
-- 正本ソース: `README.md`
-- 言語別ファイル: `i18n/README.*.md`
-- 言語ナビゲーション: 各 README の先頭に 1 行のみ（重複させない）
-- 現在の対応言語: Arabic, German, English, Spanish, French, Japanese, Korean, Russian, Vietnamese, Simplified Chinese, Traditional Chinese
+English 版と翻訳版が一致しない場合は、英語 README をソース・オブ・トゥルースとして扱い、各言語ファイルを順次更新します。
 
-翻訳版と英語版に差異がある場合は、英語 README を正として各言語ファイルを順番に更新してください。
-
-| i18n 方針 | ルール |
+| i18n ポリシー | ルール |
 | --- | --- |
-| Canonical source | `README.md` を常に正本として扱う |
-| Language bar | 先頭に言語オプション行をちょうど 1 本 |
-| Update order | 英語を先に更新し、`i18n/README.*.md` を順次更新 |
+| Canonical source | `README.md` を正本として保持 |
+| Language bar | 各 README の先頭に言語バーを **1 行のみ** |
 
 ## 🗂️ Project Structure
 
@@ -223,26 +223,27 @@ LazyEdit/
 └── furigana/                        # External dependency in workflow (tracked submodule in this checkout)
 ```
 
-サブモジュール/外部依存に関する注記:
-- このリポジトリの Git サブモジュールには `AutoPublish`、`AutoPubMonitor`、`whisper_with_lang_detect`、`vit-gpt2-image-captioning`、`clip-gpt-captioning`、`furigana` が含まれます。
-- 運用ガイド上、このリポジトリでは `furigana` と `echomind` を外部の読み取り専用依存として扱います。迷う場合は upstream を保持し、直接編集を避けてください。
+サブモジュール/外部依存ノート:
+- このリポジトリの Git submodule には `AutoPublish`、`AutoPubMonitor`、`whisper_with_lang_detect`、`vit-gpt2-image-captioning`、`clip-gpt-captioning`、`furigana` が含まれます。
+- 本運用では `furigana` と `echomind` は外部依存として扱い、編集しない方針です。不明な場合は upstream を保全し、in-place 編集は避けてください。
 
 ## ✅ Prerequisites
 
-| Dependency | Notes |
+| 依存 | 補足 |
 | --- | --- |
-| Linux environment | `systemd`/`tmux` scripts are Linux-oriented |
-| Python 3.10+ | Use Conda env `lazyedit` |
-| Node.js 20+ + npm | Required for Expo app in `app/` |
-| FFmpeg | Must be available on `PATH` |
-| PostgreSQL | Local peer auth or DSN-based connection |
-| Git submodules | Required for key pipelines |
+| Linux environment | `systemd` / `tmux` の運用スクリプトは Linux 向け |
+| Python 3.10+ | Conda 環境 `lazyedit` を使用 |
+| Node.js 20+ + npm | `app/` の Expo アプリに必要 |
+| FFmpeg | `PATH` 上で利用可能であること |
+| PostgreSQL | ローカル peer 認証または DSN ベースの接続 |
+| Git submodules | 主要パイプラインのため必須 |
 
 ## 🚀 Installation
 
-1. クローンしてサブモジュールを初期化:
+1. サブモジュールを含めてクローンし初期化:
 
 ```bash
+
 git clone git@github.com:lachlanchen/LazyEdit.git
 cd LazyEdit
 git submodule update --init --recursive
@@ -255,20 +256,20 @@ source ~/miniconda3/etc/profile.d/conda.sh
 conda activate lazyedit
 ```
 
-3. 任意: システムレベルインストール（service モード）:
+3. オプション（システムレベルインストール、service モード）:
 
 ```bash
 chmod +x install_lazyedit.sh
 sudo ./install_lazyedit.sh /path/to/lazyedit
 ```
 
-サービスインストールに関する注記:
+サービスインストールの注意:
 - `install_lazyedit.sh` は `ffmpeg` と `tmux` をインストールし、`lazyedit.service` を作成します。
-- `lazyedit_config.sh`、`start_lazyedit.sh`、`stop_lazyedit.sh` は自動生成されません。事前に存在し内容が正しい必要があります。
+- `lazyedit_config.sh`、`start_lazyedit.sh`、`stop_lazyedit.sh` は生成されません。既に存在し、正しく設定されている必要があります。
 
 ## ⚡ Quick Start
 
-backend + frontend をローカルで実行（最短手順）:
+Backend + frontend をローカルで起動（最小手順）:
 
 ```bash
 source ~/miniconda3/etc/profile.d/conda.sh
@@ -276,7 +277,7 @@ conda activate lazyedit
 python app.py
 ```
 
-別シェルで実行:
+別シェルで:
 
 ```bash
 cd app
@@ -284,7 +285,7 @@ npm install
 EXPO_PUBLIC_API_URL="http://localhost:8787" npx expo start --web --port 8091
 ```
 
-任意のローカル DB 初期化:
+オプションのローカル DB ブートストラップ:
 
 ```bash
 createdb lazyedit_db || true
@@ -295,23 +296,23 @@ psql -d lazyedit_db -tAc "SELECT 'ok'"
 
 | Profile | Start command | Default backend | Default frontend |
 | --- | --- | --- | --- |
-| Local dev (manual) | `python app.py` + Expo command | `8787` | `8091` (example command) |
-| Tmux orchestrated | `./start_lazyedit.sh` | `18787` | `18791` |
-| systemd service | `sudo systemctl start lazyedit.service` | Config/env-driven | N/A |
+| ローカル開発（手動） | `python app.py` + Expo コマンド | `8787` | `8091`（例） |
+| tmux での起動 | `./start_lazyedit.sh` | `18787` | `18791` |
+| systemd サービス | `sudo systemctl start lazyedit.service` | 設定/環境依存 | N/A |
 
 ## 🧭 Command Cheat Sheet
 
-| Task | Command |
+| タスク | コマンド |
 | --- | --- |
-| Initialize submodules | `git submodule update --init --recursive` |
-| Start backend only | `python app.py` |
-| Start backend + Expo (tmux) | `./start_lazyedit.sh` |
-| Stop tmux run | `./stop_lazyedit.sh` |
-| Open tmux session | `tmux attach -t lazyedit` |
-| Service status | `sudo systemctl status lazyedit.service` |
-| Service logs | `sudo journalctl -u lazyedit.service` |
-| DB smoke test | `python db_smoke_test.py` |
-| Pytest smoke test | `pytest tests/test_db_smoke.py` |
+| サブモジュール初期化 | `git submodule update --init --recursive` |
+| backend のみ起動 | `python app.py` |
+| backend + Expo を tmux 起動 | `./start_lazyedit.sh` |
+| tmux 停止 | `./stop_lazyedit.sh` |
+| tmux セッション接続 | `tmux attach -t lazyedit` |
+| サービス状態確認 | `sudo systemctl status lazyedit.service` |
+| サービスログ | `sudo journalctl -u lazyedit.service` |
+| DB スモークテスト | `python db_smoke_test.py` |
+| pytest スモークテスト | `pytest tests/test_db_smoke.py` |
 
 ## 🛠️ Usage
 
@@ -323,13 +324,13 @@ conda activate lazyedit
 python app.py
 ```
 
-現在のデプロイスクリプトで使われる代替エントリ:
+現在のデプロイスクリプトで使う代替エントリ:
 
 ```bash
 python app.py -m lazyedit
 ```
 
-backend の既定 URL: `http://localhost:8787`（`config.py` 基準。`PORT` または `LAZYEDIT_PORT` で上書き可能）。
+バックエンドの既定 URL: `http://localhost:8787`（`config.py` で設定、`PORT` または `LAZYEDIT_PORT` で上書き可）。
 
 ### Development: backend + Expo app (tmux)
 
@@ -342,7 +343,7 @@ backend の既定 URL: `http://localhost:8787`（`config.py` 基準。`PORT` ま
 - Expo web: `18791`
 - `EXPO_PUBLIC_API_URL=http://localhost:18787`
 
-セッションへアタッチ:
+セッション接続:
 
 ```bash
 tmux attach -t lazyedit
@@ -365,68 +366,68 @@ sudo journalctl -u lazyedit.service
 
 ## ⚙️ Configuration
 
-`.env.example` を `.env` にコピーし、パス/シークレットを更新してください:
+`.env.example` を `.env` にコピーして、パスとシークレットを更新:
 
 ```bash
 cp .env.example .env
 ```
 
-設定優先順位の注記:
+設定の優先順位:
 
-- `config.py` は `.env` の値を読み込みますが、シェルで export 済みのキーは上書きしません。
-- 実行時の値は、シェル環境変数 -> `.env` -> コード既定値の順で決まります。
-- tmux/service 実行時は `lazyedit_config.sh` が起動/セッション変数（`LAZYEDIT_DIR`、`CONDA_ENV`、`APP_ARGS`、ポート）を制御します。
+- `config.py` は `.env` の値を読み込む一方、すでに shell で export されたキーは上書きしません。
+- 実行時値は、shell の環境変数 -> `.env` -> コード既定値 の順で決まります。
+- tmux/service 実行時は、`lazyedit_config.sh` が起動/セッション変数（`LAZYEDIT_DIR`、`CONDA_ENV`、`APP_ARGS`、ポート）を制御します。
 
 ### Key variables
 
-| Variable | Purpose | Default/Fallback |
+| 変数 | 用途 | Default/Fallback |
 | --- | --- | --- |
-| `PORT`, `LAZYEDIT_PORT` | Backend port | `8787` |
-| `LAZYEDIT_UPLOAD_DIR` | Media root directory | `DATA/` |
-| `LAZYEDIT_DATABASE_URL`, `DATABASE_URL` | PostgreSQL DSN | Local DB fallback `lazyedit_db` |
+| `PORT`, `LAZYEDIT_PORT` | バックエンドポート | `8787` |
+| `LAZYEDIT_UPLOAD_DIR` | メディアのルートディレクトリ | `DATA/` |
+| `LAZYEDIT_DATABASE_URL`, `DATABASE_URL` | PostgreSQL DSN | ローカル DB fallback: `lazyedit_db` |
 | `LAZYEDIT_AUTOPUBLISH_URL` | AutoPublish endpoint | `http://localhost:8081/publish` |
-| `LAZYEDIT_AUTOPUBLISH_TIMEOUT` | AutoPublish request timeout (seconds) | `60` |
-| `LAZYEDIT_WHISPER_SCRIPT` | Whisper/VAD script path | Environment-dependent |
-| `LAZYEDIT_WHISPER_MODEL`, `LAZYEDIT_WHISPER_FALLBACK_MODEL` | ASR model names | `large-v3` / `large-v2` (example) |
-| `LAZYEDIT_CAPTION_PYTHON` | Python runtime for caption pipeline | Environment-dependent |
-| `LAZYEDIT_CAPTION_PRIMARY_ROOT`, `LAZYEDIT_CAPTION_PRIMARY_SCRIPT` | Primary captioning path/script | Environment-dependent |
-| `LAZYEDIT_CAPTION_FALLBACK_SCRIPT`, `LAZYEDIT_CAPTION_FALLBACK_CWD` | Fallback captioning path/script/cwd | Environment-dependent |
-| `GRSAI_API_*` | Veo/GRSAI integration settings | Environment-dependent |
-| `VENICE_*`, `A2E_*` | Venice/A2E integration settings | Environment-dependent |
-| `OPENAI_API_KEY` | Required for OpenAI-backed features | None |
+| `LAZYEDIT_AUTOPUBLISH_TIMEOUT` | AutoPublish リクエストタイムアウト（秒） | `60` |
+| `LAZYEDIT_WHISPER_SCRIPT` | Whisper/VAD スクリプトパス | 環境依存 |
+| `LAZYEDIT_WHISPER_MODEL`, `LAZYEDIT_WHISPER_FALLBACK_MODEL` | ASR モデル名 | `large-v3` / `large-v2`（例） |
+| `LAZYEDIT_CAPTION_PYTHON` | キャプションパイプライン用 Python 実行環境 | 環境依存 |
+| `LAZYEDIT_CAPTION_PRIMARY_ROOT`, `LAZYEDIT_CAPTION_PRIMARY_SCRIPT` | 主系キャプションルート/スクリプト | 環境依存 |
+| `LAZYEDIT_CAPTION_FALLBACK_SCRIPT`, `LAZYEDIT_CAPTION_FALLBACK_CWD` | 代替キャプション用スクリプト/作業ディレクトリ | 環境依存 |
+| `GRSAI_API_*` | Veo/GRSAI 統合設定 | 環境依存 |
+| `VENICE_*`, `A2E_*` | Venice/A2E 統合設定 | 環境依存 |
+| `OPENAI_API_KEY` | OpenAI を使う機能で必須 | 未設定 |
 
-マシン固有の注記:
-- `app.py` は CUDA 挙動を設定する場合があります（`CUDA_VISIBLE_DEVICES` の利用）。
-- 既定値の一部パスはワークステーション固有のため、可搬性が必要なら `.env` で上書きしてください。
-- `lazyedit_config.sh` はデプロイスクリプト向けの tmux/セッション起動変数を制御します。
+マシン固有の補足:
+- `app.py` では CUDA の挙動が設定される場合があります（`CUDA_VISIBLE_DEVICES`）。
+- 既定パスの一部はワークステーション固有です。持ち運び用には `.env` で上書きしてください。
+- `lazyedit_config.sh` は tmux/セッション起動変数をデプロイスクリプトに合わせて制御します。
 
 ## 🧾 Configuration Files
 
-| File | Purpose |
+| ファイル | 用途 |
 | --- | --- |
-| `.env.example` | Template for environment variables used by backend/services |
-| `.env` | Machine-local overrides; loaded by `config.py`/`app.py` if present |
-| `config.py` | Backend defaults and environment resolution |
-| `lazyedit_config.sh` | tmux/service runtime profile (deploy path, conda env, app args, session name) |
-| `start_lazyedit.sh` | Launches backend + Expo in tmux with selected ports |
-| `install_lazyedit.sh` | Creates `lazyedit.service` and validates existing scripts/config |
+| `.env.example` | バックエンド/サービスで使う環境変数のテンプレート |
+| `.env` | ローカル設定上書き。`config.py` / `app.py` が存在時に読み込む |
+| `config.py` | バックエンド既定値と環境解決 |
+| `lazyedit_config.sh` | tmux/service 用実行プロファイル（deploy パス、conda env、アプリ引数、セッション名） |
+| `start_lazyedit.sh` | 指定ポートで backend + Expo を tmux 起動 |
+| `install_lazyedit.sh` | `lazyedit.service` を作成し、既存 script/config の検証を行う |
 
 可搬性を高める推奨更新順:
-1. `.env.example` を `.env` にコピーする。
-2. `.env` でパス/API 関連の `LAZYEDIT_*` を設定する。
-3. tmux/service 運用に必要な場合のみ `lazyedit_config.sh` を調整する。
+1. `.env.example` を `.env` へコピー。
+2. `.env` に `LAZYEDIT_*` でパス/API 関連の値を設定。
+3. tmux/service デプロイ動作に必要な場合のみ `lazyedit_config.sh` を調整。
 
 ## 🔌 API Examples
 
-Base URL の例は `http://localhost:8787` を想定しています。
+Base URL の例は `http://localhost:8787` を前提とします。
 
-| API group | Representative endpoints |
+| API グループ | 代表エンドポイント |
 | --- | --- |
-| Upload and media | `/upload`, `/upload-stream`, `/media/*` |
-| Video records | `/api/videos`, `/api/videos/{id}` |
-| Processing | `/api/videos/{id}/transcribe`, `/translate`, `/burn-subtitles`, `/caption`, `/metadata`, `/process` |
-| Publish | `/api/videos/{id}/publish`, `/api/autopublish/queue` |
-| Generation | `/api/videos/generate` (+ provider routes in `app.py`) |
+| アップロード / メディア | `/upload`, `/upload-stream`, `/media/*` |
+| 動画レコード | `/api/videos`, `/api/videos/{id}` |
+| 処理 | `/api/videos/{id}/transcribe`, `/translate`, `/burn-subtitles`, `/caption`, `/metadata`, `/process` |
+| 公開 | `/api/videos/{id}/publish`, `/api/autopublish/queue` |
+| 生成 | `/api/videos/generate` (+ app.py の provider routes) |
 
 Upload:
 
@@ -463,12 +464,12 @@ curl -X POST \
   http://localhost:8787/api/videos/123/publish
 ```
 
-より詳しいエンドポイントとペイロードは `references/API_GUIDE.md` を参照してください。
+More endpoints and payload details: `references/API_GUIDE.md`。
 
-よく使う関連エンドポイント群:
+関連する主要エンドポイント:
 - 動画ライフサイクル: `/upload`, `/upload-stream`, `/api/videos`, `/api/videos/{id}`, `/media/*`
 - 処理アクション: `/api/videos/{id}/transcribe`, `/api/videos/{id}/translate`, `/api/videos/{id}/burn-subtitles`, `/api/videos/{id}/metadata`, `/api/videos/{id}/caption`, `/api/videos/{id}/process`
-- 生成/プロバイダ: `/api/videos/generate` と `app.py` で公開される Venice/A2E ルート
+- 生成 / provider 系: `/api/videos/generate` と、`app.py` で公開される Venice/A2E routes
 - 配信: `/api/videos/{id}/publish`, `/api/autopublish/queue`
 
 ## 🧪 Examples
@@ -481,7 +482,7 @@ npm install
 EXPO_PUBLIC_API_URL="http://localhost:8787" npx expo start --web --port 8091
 ```
 
-backend が `8887` の場合:
+バックエンドが `8887` の場合:
 
 ```bash
 EXPO_PUBLIC_API_URL="http://localhost:8887" npx expo start --web --port 8091
@@ -510,58 +511,58 @@ python -m agi.demo_fantasy_woman --seconds 8 --size 1280x720 --output DATA/sora_
 
 ## 🧪 Development Notes
 
-- Conda 環境 `lazyedit` の `python` を使ってください（システム `python3` 前提にしない）。
-- 大容量メディアは Git に含めず、`DATA/` または外部ストレージに保存してください。
-- パイプライン部品が解決できない場合は、サブモジュールを初期化/更新してください。
-- 変更範囲は絞り、無関係な大規模フォーマット変更を避けてください。
-- フロントエンド開発時の API URL は `EXPO_PUBLIC_API_URL` で制御します。
-- バックエンドの CORS はアプリ開発向けにオープン設定です。
+- Conda 環境 `lazyedit` の `python` を使ってください（`python3` を前提にしない）。
+- 大きなメディアは Git にコミットせず、`DATA/` または外部ストレージへ。
+- パイプラインコンポーネントの解決に問題がある場合は、サブモジュールを初期化/更新する。
+- 変更は範囲を絞り、不要な大規模フォーマット変更を避ける。
+- フロントエンド側では API URL を `EXPO_PUBLIC_API_URL` で制御。
+- 開発時の CORS はアプリ開発向けに開放されています。
 
-サブモジュールと外部依存の運用方針:
-- 外部依存は upstream 管理として扱い、対象プロジェクトを意図して作業するとき以外はサブモジュール内部を編集しないでください。
-- このリポジトリ運用では `furigana`（ローカル構成により `echomind` も）を外部依存パスとして扱います。迷ったら upstream を維持し、インプレース編集を避けてください。
+Submodule and external dependency policy:
+- 外部依存は upstream 管理として扱います。本リポジトリの運用上、意図せずサブモジュール内部を編集しない。
+- 運用ガイドでは、`furigana`（ローカル設定では `echomind` が加わる場合あり）を外部依存として扱い、編集が必要な場合を除き in-place 変更を避ける。
 
-参考ドキュメント:
+Helpful references:
 - `references/QUICKSTART.md`
 - `references/API_GUIDE.md`
 - `references/APP_GUIDE.md`
 - `references/DEPLOYMENT_SYSTEMS.md`
 - `references/TMUX_SESSIONS.md`
 
-セキュリティ/設定衛生:
-- API キーやシークレットは環境変数で管理し、認証情報をコミットしないでください。
-- マシンローカルの上書きは `.env` を使い、公開テンプレートは `.env.example` を維持してください。
-- CUDA/GPU 挙動がホストごとに異なる場合は、ハードコードせず環境変数で上書きしてください。
+Security/config hygiene:
+- API キー/シークレットは環境変数管理。認証情報をコミットしない。
+- マシン個別の上書きは `.env`、公開テンプレートは `.env.example` を維持。
+- CUDA/GPU の挙動がホストで異なる場合、ハードコーディングせず環境変数で上書きする。
 
 ## ✅ Testing
 
-現時点での正式なテスト対象は最小限で、主に DB 周辺です。
+現時点での正式テストは最小限で、主に DB 向けです。
 
 | Validation layer | Command or method |
 | --- | --- |
 | DB smoke | `python db_smoke_test.py` |
 | Pytest DB check | `pytest tests/test_db_smoke.py` |
-| Functional flow | Web UI + API run using short sample in `DATA/` |
+| Functional flow | Web UI + API を `DATA/` の短いサンプルで実行 |
 
 ```bash
 python db_smoke_test.py
 pytest tests/test_db_smoke.py
 ```
 
-機能検証では、`DATA/` の短いサンプルクリップを使って Web UI と API フローを確認してください。
+機能検証は、`DATA/` の短いサンプルクリップで Web UI と API フローを使って行ってください。
 
-前提と可搬性の注記:
-- コード中の既定パスの一部はワークステーション固有フォールバックです（現行状態として想定）。
-- 既定パスが自分のマシンに存在しない場合は、対応する `LAZYEDIT_*` を `.env` で設定してください。
-- マシン固有値に確信が持てない場合、既存設定を削除せず、明示的な上書きを追加してください。
+Assumptions and portability notes:
+- コード内の既定パスの一部は、ワークステーション固有のフォールバックとして残っています（現行状態として想定）。
+- 既定パスが環境に存在しない場合、対応する `LAZYEDIT_*` 変数を `.env` で設定する。
+- マシン依存値が不明な場合は既存設定を残しつつ明示的上書きを追加し、既定値を削除しない。
 
 ## 🧱 Assumptions & Known Limits
 
-- backend 依存セットはルート lockfile で厳密固定されておらず、再現性はローカル環境管理に依存します。
-- `app.py` は現行状態で意図的にモノリシックで、ルート面積が大きめです。
-- パイプライン検証の多くは integration/manual（UI + API + サンプルメディア）で、自動テストは限定的です。
-- 実行ディレクトリ（`DATA/`, `temp/`, `translation_logs/`）は運用出力のため大きくなり得ます。
-- 全機能の利用にはサブモジュールが必要で、部分 checkout ではスクリプト欠落エラーが発生しやすいです。
+- backend の依存はルートのロックファイルで固定されていないため、環境再現性はローカル運用の管理に依存。
+- `app.py` は現状モジュール分割を行わず、大きなルート面を持つ意図的なモノリシック構成。
+- ほとんどの検証は統合/手動（UI + API + サンプルメディア）で、形式的な自動テストは限定的。
+- 運用ディレクトリ（`DATA/`, `temp/`, `translation_logs/`）は出力が増えやすい。
+- サブモジュールは全機能に必要。部分チェックアウトはスクリプト欠落エラーを起こしやすい。
 
 ## 🚢 Deployment & Sync Notes
 
@@ -579,7 +580,7 @@ pytest tests/test_db_smoke.py
 | Deployed AutoPubMonitor | `/home/lachlan/DiskMech/Projects/autopub-monitor` | Monitor/sync/process sessions |
 | Publishing host | `/home/lachlan/Projects/auto-publish` (`lazyingart`) | Pull after submodule updates |
 
-このリポジトリから `AutoPublish/` を更新して push した後、公開ホスト側で pull:
+`AutoPublish/` の更新を push 後は公開先で pull:
 
 ```bash
 ssh lachlan@lazyingart
@@ -589,43 +590,43 @@ git pull github main
 
 ## 🧯 Troubleshooting
 
-| Problem | Check / Fix |
+| 問題 | 確認 / 対処 |
 | --- | --- |
-| Missing pipeline modules or scripts | Run `git submodule update --init --recursive` |
-| FFmpeg not found | Install FFmpeg and confirm `ffmpeg -version` works |
-| Port conflicts | Backend defaults to `8787`; `start_lazyedit.sh` defaults to `18787`; set `LAZYEDIT_PORT` or `PORT` explicitly |
-| Expo cannot reach backend | Ensure `EXPO_PUBLIC_API_URL` points to active backend host/port |
-| Database connection issues | Verify PostgreSQL + DSN/env vars; optional smoke check: `python db_smoke_test.py` |
-| GPU/CUDA issues | Confirm driver/CUDA compatibility with installed Torch stack |
-| Service script fails at install | Ensure `lazyedit_config.sh`, `start_lazyedit.sh`, and `stop_lazyedit.sh` exist before running installer |
+| パイプラインモジュールまたはスクリプトが見つからない | `git submodule update --init --recursive` を実行 |
+| FFmpeg が見つからない | FFmpeg をインストールし、`ffmpeg -version` を確認 |
+| ポート競合 | backend は `8787` が既定、`start_lazyedit.sh` は `18787` が既定。`LAZYEDIT_PORT` または `PORT` を明示指定 |
+| Expo が backend に接続できない | `EXPO_PUBLIC_API_URL` が稼働中の backend host/port を指しているか確認 |
+| DB 接続エラー | PostgreSQL と DSN/env を確認。任意で `python db_smoke_test.py` を実行 |
+| GPU/CUDA 問題 | インストール済み Torch スタックで driver/CUDA 互換を確認 |
+| インストール時のサービス失敗 | `lazyedit_config.sh`、`start_lazyedit.sh`、`stop_lazyedit.sh` が存在するか確認 |
 
 ## 🗺️ Roadmap
 
-- 行単位制御付き A/B プレビューを含む、アプリ内字幕/セグメント編集。
-- コア API フロー向けエンドツーエンドテストの強化。
-- i18n README バリアントとデプロイモード間のドキュメント収束。
-- 生成プロバイダのリトライ制御とステータス可視化の強化。
+- インアプリで、行単位制御付き A/B プレビューを用いた字幕/セグメント編集。
+- コア API フロー向けのエンドツーエンドテスト強化。
+- i18n README とデプロイモード間のドキュメント収束。
+- 生成プロバイダーの再試行やステータス可視化の強化。
 
 ## 🤝 Contributing
 
-コントリビューションを歓迎します。
+コントリビュートは歓迎します。
 
-1. Fork して機能ブランチを作成。
-2. コミットは焦点を絞って小さく保つ。
-3. ローカルで変更を検証（`python app.py`、主要 API フロー、必要に応じてアプリ連携）。
-4. 目的、再現手順、変更前後メモ（UI 変更時はスクリーンショット）付きで PR を作成。
+1. Fork して feature branch を作成。
+2. コミットは小さく、目的を絞る。
+3. ローカルで変更を検証（`python app.py`、主要 API フロー、必要ならアプリ連携）。
+4. PR を作成し、目的、再現手順、前後比較を添付（UI 変更時はスクリーンショット）。
 
-実践ガイドライン:
-- Python スタイル（PEP 8、4 スペース、snake_case）に従う。
+実運用ガイドライン:
+- Python スタイル（PEP 8, 4 spaces, snake_case）を守る。
 - 認証情報や大容量バイナリをコミットしない。
-- 振る舞いが変わる場合は docs/config scripts も更新する。
-- 推奨コミットスタイル: short, imperative, scoped（例: `fix ffmpeg 7 compatibility`）。
+- 挙動が変わる変更時は docs/config scripts も更新する。
+- 推奨コミット形式: short, imperative, scoped（例: `fix ffmpeg 7 compatibility`）。
 
 ## ❤️ Support
 
 | Donate | PayPal | Stripe |
-|---|---|---|
-| [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=ko-fi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
+| --- | --- | --- |
+| [![Donate](https://camo.githubusercontent.com/24a4914f0b42c6f435f9e101621f1e52535b02c225764b2f6cc99416926004b7/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f446f6e6174652d4c617a79696e674172742d3045413545393f7374796c653d666f722d7468652d6261646765266c6f676f3d6b6f2d6669266c6f676f436f6c6f723d7768697465)](https://chat.lazying.art/donate) | [![PayPal](https://camo.githubusercontent.com/d0f57e8b016517a4b06961b24d0ca87d62fdba16e18bbdb6aba28e978dc0ea21/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f50617950616c2d526f6e677a686f754368656e2d3030343537433f7374796c653d666f722d7468652d6261646765266c6f676f3d70617970616c266c6f676f436f6c6f723d7768697465)](https://paypal.me/RongzhouChen) | [![Stripe](https://camo.githubusercontent.com/1152dfe04b6943afe3a8d2953676749603fb9f95e24088c92c97a01a897b4942/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5374726970652d446f6e6174652d3633354246463f7374796c653d666f722d7468652d6261646765266c6f676f3d737472697065266c6f676f436f6c6f723d7768697465)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ## 📄 License
 
@@ -633,9 +634,9 @@ git pull github main
 
 ## 🙏 Acknowledgements
 
-LazyEdit は以下を含むオープンソースライブラリ/サービスを基盤にしています。
-- FFmpeg（メディア処理）
-- Tornado（バックエンド API）
-- MoviePy（編集ワークフロー）
-- OpenAI models（AI 支援パイプライン処理）
-- CJKWrap と多言語テキスト処理（字幕ワークフロー）
+LazyEdit は次のオープンソースライブラリ・サービスの上に成り立っています。
+- FFmpeg for media processing
+- Tornado for backend APIs
+- MoviePy for editing workflows
+- OpenAI models for AI-assisted pipeline tasks
+- CJKWrap and multilingual text tooling in subtitle workflows
