@@ -1,55 +1,128 @@
 [English](../README.md) · [العربية](README.ar.md) · [Español](README.es.md) · [Français](README.fr.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Tiếng Việt](README.vi.md) · [中文 (简体)](README.zh-Hans.md) · [中文（繁體）](README.zh-Hant.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
 
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/lachlanchen/lachlanchen/main/logos/banner.png" alt="LazyingArt banner" />
-</p>
+[![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://github.com/lachlanchen/lachlanchen/blob/main/figs/banner.png)
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache-2.0" /></a>
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python 3.10+" />
   <img src="https://img.shields.io/badge/Backend-Tornado-222222" alt="Backend: Tornado" />
   <img src="https://img.shields.io/badge/Frontend-Expo-000020?logo=expo&logoColor=white" alt="Frontend: Expo" />
+  <img src="https://img.shields.io/badge/Platform-Linux-informational?logo=linux&logoColor=white" alt="Platform: Linux" />
   <img src="https://img.shields.io/badge/FFmpeg-required-0A0A0A?logo=ffmpeg&logoColor=white" alt="FFmpeg required" />
   <img src="https://img.shields.io/badge/PostgreSQL-supported-336791?logo=postgresql&logoColor=white" alt="PostgreSQL supported" />
   <img src="https://img.shields.io/badge/Stage_A%2FB%2FC-enabled-0f766e" alt="Stage A/B/C enabled" />
   <img src="https://img.shields.io/badge/AutoPublish-optional-orange" alt="AutoPublish optional" />
+  <img src="https://img.shields.io/badge/i18n-11%20languages-1f883d" alt="i18n: 11 languages" />
+</p>
+
+<p align="center">
+  <b>AI-ассистированный видеопоток</b> для генерации, обработки субтитров, метаданных и опциональной публикации.
+  <br />
+  <sub>Загрузить или сгенерировать -> транскрибировать -> перевести/отшлифовать -> вшить субтитры -> создать подписи/ключевые кадры -> метаданные -> опционально опубликовать</sub>
 </p>
 
 # LazyEdit
 
-LazyEdit — это сквозной AI-ассистированный видеопайплайн для создания, обработки и при необходимости публикации контента. Он объединяет генерацию по промптам (Stage A/B/C), API обработки медиа, рендеринг субтитров, подписи к ключевым кадрам, генерацию метаданных и передачу в AutoPublish.
+LazyEdit — это сквозной AI-ассистированный видеопайплайн для создания, обработки и (по желанию) публикации. Он объединяет генерацию по prompt (Stage A/B/C), API обработки медиа, рендеринг субтитров, создание keyframe-описаний, генерацию метаданных и передачу в AutoPublish.
+
+| Коротко | Значение |
+| --- | --- |
+| 📘 Канонический README | `README.md` (этот файл) |
+| 🌐 Языковые версии | `i18n/README.*.md` (в каждой версии ровно одна строка языковой навигации сверху) |
+| 🧠 Точка входа backend | `app.py` (Tornado) |
+| 🖥️ Frontend-приложение | `app/` (Expo web/mobile) |
+
+## 🧭 Содержание
+
+- Обзор
+- В двух словах
+- Архитектурная схема
+- Демонстрации
+- Возможности
+- Документация и i18n
+- Структура проекта
+- Предпосылки
+- Установка
+- Быстрый старт
+- Чек-лист команд
+- Использование
+- Конфигурация
+- Файлы конфигурации
+- Примеры API
+- Примеры
+- Заметки по разработке
+- Тестирование
+- Предположения и известные ограничения
+- Заметки по развертыванию и синхронизации
+- Устранение неполадок
+- Дорожная карта
+- Участие
+- Support
+- Лицензия
+- Благодарности
 
 ## ✨ Обзор
 
-LazyEdit построен вокруг backend на Tornado (`app.py`) и frontend на Expo (`app/`).
+LazyEdit построен на Tornado backend (`app.py`) и Expo frontend (`app/`).
+
+> Примечание: если настройки репозитория/рантайма отличаются между машинами, оставляйте существующие значения по умолчанию и переопределяйте их через переменные окружения, а не удаляйте машинные fallback-пути.
+
+| Зачем командам это нужно | Практический эффект |
+| --- | --- |
+| Единый операторский поток | Загрузка, генерация, ремикс и публикация в одном пайплайне |
+| API-first дизайн | Удобно скриптовать и интегрировать с другими инструментами |
+| Local-first рантайм | Работает с tmux и service-based сценариями развертывания |
 
 | Шаг | Что происходит |
 | --- | --- |
 | 1 | Загрузка или генерация видео |
-| 2 | Транскрибация и при необходимости перевод субтитров |
-| 3 | Вшивание многоязычных субтитров с контролем макета |
-| 4 | Генерация ключевых кадров, подписей и метаданных |
-| 5 | Сборка пакета и, при необходимости, публикация через AutoPublish |
+| 2 | Транскрипция и, при необходимости, перевод субтитров |
+| 3 | Вшивание многоязычных субтитров с управлением макетом |
+| 4 | Генерация keyframes, captions и метаданных |
+| 5 | Упаковка и опциональная публикация через AutoPublish |
 
-### Фокус пайплайна
+### Упор на пайплайн
 
-- Загрузка, генерация, ремикс и управление библиотекой в одном операторском UI.
-- API-first поток обработки: транскрибация, полировка/перевод субтитров, вшивание и генерация метаданных.
-- Опциональные интеграции провайдеров генерации (хелперы Veo / Venice / A2E / Sora в `agi/`).
+- Загрузка, генерация, ремикс и управление библиотекой из одного интерфейса оператора.
+- API-first поток для транскрипции, полировки/перевода субтитров, burn-in и метаданных.
+- Опциональные интеграции с провайдерами генерации (хелперы Veo / Venice / A2E / Sora в `agi/`).
 - Опциональная передача на публикацию через `AutoPublish`.
 
-## 🎯 Кратко
+## 🎯 В двух словах
 
-| Область | Что включает LazyEdit |
-| --- | --- |
-| Основное приложение | Tornado API backend + Expo frontend (web/mobile) |
-| Медиа-пайплайн | ASR, перевод/полировка субтитров, вшивание, ключевые кадры, подписи, метаданные |
-| Генерация | Stage A/B/C и маршруты-хелперы провайдеров (`agi/`) |
-| Дистрибуция | Опциональная передача в AutoPublish |
-| Модель запуска | Local-first скрипты, tmux-процессы, опциональный systemd-сервис |
+| Область | Есть в LazyEdit | Статус |
+| --- | --- | --- |
+| Основное приложение | Tornado API backend + Expo web/mobile frontend | ✅ |
+| Медиа-пайплайн | ASR, перевод/шлифовка субтитров, burn-in, keyframes, captions, метаданные | ✅ |
+| Генерация | Stage A/B/C и helper-маршруты провайдеров (`agi/`) | ✅ |
+| Распространение | Опциональная передача в AutoPublish | 🟡 По желанию |
+| Модель запуска | Local-first скрипты, tmux-workflow, optional systemd service | ✅ |
 
-## 🎬 Демо
+## 🏗️ Архитектурная схема
+
+Репозиторий организован как media pipeline в формате API-first с UI-слоем:
+
+- `app.py` — entrypoint Tornado и оркестратор маршрутов для загрузки, обработки, генерации, публикации и раздачи медиа.
+- `lazyedit/` — модульные блоки пайплайна (хранение в БД, перевод, burn-in субтитров, captions, метаданные, адаптеры провайдеров).
+- `app/` — Expo Router app (web/mobile), через которую происходят upload, processing, preview и публикация.
+- `config.py` — централизованная загрузка окружения и путей по умолчанию.
+- `start_lazyedit.sh` и `lazyedit_config.sh` — воспроизводимые режимы запуска через tmux для локальной и production эксплуатации.
+
+| Слой | Основные пути | Роль |
+| --- | --- | --- |
+| API и оркестрация | `app.py`, `config.py` | Точки доступа, маршрутизация, разрешение переменных среды |
+| Ядро обработки | `lazyedit/`, `agi/` | Конвейер subtitle/caption/metadata + провайдеры |
+| UI | `app/` | Операторский интерфейс (web/mobile через Expo) |
+| Скрипты запуска | `start_lazyedit.sh`, `lazyedit_config.sh`, `install_lazyedit.sh` | Локальный и service запуск |
+
+Высокоуровневый поток:
+
+`Upload/Generate -> Transcribe -> Translate/Polish -> Burn Subtitles -> Keyframes/Captions -> Metadata -> Optional AutoPublish`
+
+## 🎬 Демонстрации
+
+Ниже показан основной путь оператора: от загрузки до генерации метаданных.
 
 <table>
   <tr>
@@ -100,53 +173,72 @@ LazyEdit построен вокруг backend на Tornado (`app.py`) и fronte
 
 ## 🧩 Возможности
 
-- Генеративный workflow по промптам (Stage A/B/C) с путями интеграции Sora и Veo.
-- Полный пайплайн обработки: transcription -> subtitle polish/translation -> burn-in -> keyframes -> captions -> metadata.
-- Многоязычная компоновка субтитров с путями поддержки, связанными с furigana/IPA/romaji.
-- API-first backend с endpoint'ами для загрузки, обработки, выдачи медиа и очереди публикации.
-- Опциональная интеграция AutoPublish для передачи в соцплатформы.
-- Единый backend + Expo workflow с запуском через tmux-скрипты.
+- ✨ Prompt-based генерационный workflow (Stage A/B/C) с путями интеграции Sora и Veo.
+- 🧵 Полный пайплайн обработки: транскрипция -> polishing/перевод субтитров -> burn-in -> keyframes -> captions -> metadata.
+- 🌏 Многоязычное составление субтитров с поддержкой furigana/IPA/romaji.
+- 🔌 API-first backend с endpoint-ами для upload, обработки, выдачи медиа и очереди публикации.
+- 🚚 Опциональная интеграция AutoPublish для передачи в social-платформы.
+- 🖥️ Единый backend + Expo workflow через запуск скриптами tmux.
+
+## 🌍 Документация и i18n
+
+LazyEdit хранит канонический английский README (`README.md`) и переводы в `i18n/`.
+
+- Канонический источник: `README.md`
+- Языковые версии: `i18n/README.*.md`
+- Языковая навигация: у каждой README ровно одна строка выбора языков сверху
+
+Если есть расхождения между переводами и английской документацией, в таком случае английский `README.md` является источником истины, затем обновляйте файлы по одному.
+
+| Политика i18n | Правило |
+| --- | --- |
+| Канонический источник | Держать `README.md` как source of truth |
+| Языковая панель | Ровно одна строка выбора языка вверху |
 
 ## 🗂️ Структура проекта
 
 ```text
 LazyEdit/
-├── app.py                           # Точка входа Tornado backend и оркестрация API
+├── app.py                           # Точка входа Tornado backend и API-оркестрации
 ├── app/                             # Expo frontend (web/mobile)
-├── lazyedit/                        # Основные модули пайплайна (перевод, метаданные, burner, DB, шаблоны)
-├── agi/                             # Абстракция провайдеров генерации (маршруты Sora/Veo/A2E/Venice)
-├── DATA/                            # Вход/выход runtime-медиа (symlink в этом workspace)
+├── lazyedit/                        # Ядро пайплайна (перевод, метаданные, burner, БД, шаблоны)
+├── agi/                             # Абстракция провайдеров генерации (маршруты Sora/Veo/A2E/Venice в `agi/`)
+├── DATA/                            # Runtime media input/output (симлинк в этой рабочей директории)
 ├── translation_logs/                # Логи перевода
 ├── temp/                            # Временные runtime-файлы
-├── install_lazyedit.sh              # Инсталлятор systemd (ожидает config/start/stop скрипты)
+├── install_lazyedit.sh              # Установщик systemd (ожидает корректных config/start/stop скриптов)
 ├── start_lazyedit.sh                # tmux-лаунчер для backend + Expo
 ├── stop_lazyedit.sh                 # Помощник остановки tmux
-├── lazyedit_config.sh               # Shell-конфигурация деплоя/runtime
-├── config.py                        # Разрешение env/config (порты, пути, URL autopublish)
-├── .env.example                     # Шаблон переопределений окружения
-├── references/                      # Дополнительная документация (API guide, quickstart, deployment notes)
-├── AutoPublish/                     # Submodule (опциональный пайплайн публикации)
-├── AutoPubMonitor/                  # Submodule (автоматизация monitor/sync)
+├── lazyedit_config.sh               # Shell-конфиг деплоя/рантайма
+├── config.py                        # Разрешение переменных окружения (порты, пути, autopublish URL)
+├── .env.example                     # Шаблон override-переменных окружения
+├── references/                      # Доп. документация (API guide, quickstart, notes по deploy)
+├── AutoPublish/                     # Submodule (опциональный publishing pipeline)
+├── AutoPubMonitor/                  # Submodule (мониторинг/синхронизация)
 ├── whisper_with_lang_detect/        # Submodule (ASR/VAD)
 ├── vit-gpt2-image-captioning/       # Submodule (основной captioner)
 ├── clip-gpt-captioning/             # Submodule (резервный captioner)
-└── furigana/                        # Внешняя зависимость в workflow (в этом checkout отслеживается как submodule)
+└── furigana/                        # Внешняя зависимость в пайплайне (в этом checkout как submodule)
 ```
 
-## ✅ Предварительные требования
+Примечание по submodule/внешним зависимостям:
+- Git submodules этого репозитория: `AutoPublish`, `AutoPubMonitor`, `whisper_with_lang_detect`, `vit-gpt2-image-captioning`, `clip-gpt-captioning`, и `furigana`.
+- В рабочих инструкциях `furigana` и `echomind` считаются внешними/read-only зависимостями. Если есть сомнения, сохраняйте upstream и не редактируйте их здесь.
 
-| Зависимость | Примечания |
+## ✅ Предпосылки
+
+| Зависимость | Примечание |
 | --- | --- |
 | Linux-среда | Скрипты `systemd`/`tmux` ориентированы на Linux |
 | Python 3.10+ | Используйте Conda env `lazyedit` |
-| Node.js 20+ + npm | Требуется для Expo-приложения в `app/` |
-| FFmpeg | Должен быть доступен в `PATH` |
-| PostgreSQL | Локальная peer auth или подключение через DSN |
-| Git submodules | Нужны для ключевых частей пайплайна |
+| Node.js 20+ + npm | Нужен для Expo app в `app/` |
+| FFmpeg | Должен быть в `PATH` |
+| PostgreSQL | Локальный peer auth или DSN-подключение |
+| Git submodules | Требуются для ключевых частей пайплайна |
 
 ## 🚀 Установка
 
-1. Клонируйте репозиторий и инициализируйте submodules:
+1. Клонировать и инициализировать submodule:
 
 ```bash
 git clone git@github.com:lachlanchen/LazyEdit.git
@@ -154,23 +246,70 @@ cd LazyEdit
 git submodule update --init --recursive
 ```
 
-2. Активируйте Conda-окружение:
+2. Активировать Conda-окружение:
 
 ```bash
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate lazyedit
 ```
 
-3. Опциональная системная установка (режим сервиса):
+3. Опциональная установка на уровне системы (service mode):
 
 ```bash
 chmod +x install_lazyedit.sh
 sudo ./install_lazyedit.sh /path/to/lazyedit
 ```
 
-Примечания по установке сервиса:
-- `install_lazyedit.sh` устанавливает `ffmpeg` и `tmux`, затем создаёт `lazyedit.service`.
-- Он не генерирует `lazyedit_config.sh`, `start_lazyedit.sh` или `stop_lazyedit.sh`; эти файлы должны уже существовать и быть корректными.
+Заметки по установке сервиса:
+- `install_lazyedit.sh` ставит `ffmpeg` и `tmux`, затем создает `lazyedit.service`.
+- Сценарий не создает `lazyedit_config.sh`, `start_lazyedit.sh` и `stop_lazyedit.sh`; эти файлы должны уже существовать и быть корректными.
+
+## ⚡ Быстрый старт
+
+Минимальный запуск backend + frontend локально:
+
+```bash
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate lazyedit
+python app.py
+```
+
+Вторая консоль:
+
+```bash
+cd app
+npm install
+EXPO_PUBLIC_API_URL="http://localhost:8787" npx expo start --web --port 8091
+```
+
+Опциональное поднятие локальной базы данных:
+
+```bash
+createdb lazyedit_db || true
+psql -d lazyedit_db -tAc "SELECT 'ok'"
+```
+
+### Профили запуска
+
+| Профиль | Команда запуска | Backend по умолчанию | Frontend по умолчанию |
+| --- | --- | --- | --- |
+| Локальная разработка (ручной) | `python app.py` + Expo-команда | `8787` | `8091` (пример) |
+| Orchestrated через tmux | `./start_lazyedit.sh` | `18787` | `18791` |
+| systemd service | `sudo systemctl start lazyedit.service` | По config/env | N/A |
+
+## 🧭 Чек-лист команд
+
+| Задача | Команда |
+| --- | --- |
+| Инициализация submodules | `git submodule update --init --recursive` |
+| Запустить только backend | `python app.py` |
+| Запустить backend + Expo (tmux) | `./start_lazyedit.sh` |
+| Остановить tmux-сессию | `./stop_lazyedit.sh` |
+| Подключиться к tmux-сессии | `tmux attach -t lazyedit` |
+| Статус сервиса | `sudo systemctl status lazyedit.service` |
+| Логи сервиса | `sudo journalctl -u lazyedit.service` |
+| DB smoke test | `python db_smoke_test.py` |
+| Pytest smoke test | `pytest tests/test_db_smoke.py` |
 
 ## 🛠️ Использование
 
@@ -182,13 +321,13 @@ conda activate lazyedit
 python app.py
 ```
 
-Альтернативная точка входа, используемая в текущих deployment-скриптах:
+Альтернативный entrypoint, используемый в текущих скриптах деплоя:
 
 ```bash
 python app.py -m lazyedit
 ```
 
-URL backend по умолчанию: `http://localhost:8787` (из `config.py`, можно переопределить через `PORT` или `LAZYEDIT_PORT`).
+URL backend по умолчанию: `http://localhost:8787` (берется из `config.py`, переопределяется через `PORT` или `LAZYEDIT_PORT`).
 
 ### Разработка: backend + Expo app (tmux)
 
@@ -196,7 +335,7 @@ URL backend по умолчанию: `http://localhost:8787` (из `config.py`, 
 ./start_lazyedit.sh
 ```
 
-Порты по умолчанию в `start_lazyedit.sh`:
+Порты `start_lazyedit.sh` по умолчанию:
 - Backend: `18787`
 - Expo web: `18791`
 - `EXPO_PUBLIC_API_URL=http://localhost:18787`
@@ -230,34 +369,64 @@ sudo journalctl -u lazyedit.service
 cp .env.example .env
 ```
 
+Примечание по приоритету конфигурации:
+
+- `config.py` читает значения из `.env`, если файл есть, и задает только те ключи, которые еще не экспортированы в shell.
+- Значения рантайма можно подставлять в цепочке: shell env -> `.env` -> дефолты в коде.
+- Для запуска через tmux/service `lazyedit_config.sh` управляет параметрами запуска/сессии (`LAZYEDIT_DIR`, `CONDA_ENV`, `APP_ARGS`, порты через env запуска).
+
 ### Ключевые переменные
 
 | Переменная | Назначение | Значение по умолчанию/резерв |
 | --- | --- | --- |
 | `PORT`, `LAZYEDIT_PORT` | Порт backend | `8787` |
 | `LAZYEDIT_UPLOAD_DIR` | Корневая директория медиа | `DATA/` |
-| `LAZYEDIT_DATABASE_URL`, `DATABASE_URL` | PostgreSQL DSN | Локальный DB fallback `lazyedit_db` |
+| `LAZYEDIT_DATABASE_URL`, `DATABASE_URL` | PostgreSQL DSN | Локальный fallback `lazyedit_db` |
 | `LAZYEDIT_AUTOPUBLISH_URL` | Endpoint AutoPublish | `http://localhost:8081/publish` |
-| `LAZYEDIT_AUTOPUBLISH_TIMEOUT` | Таймаут запроса AutoPublish (секунды) | `60` |
-| `LAZYEDIT_WHISPER_SCRIPT` | Путь к Whisper/VAD-скрипту | Зависит от окружения |
+| `LAZYEDIT_AUTOPUBLISH_TIMEOUT` | Таймаут AutoPublish (секунды) | `60` |
+| `LAZYEDIT_WHISPER_SCRIPT` | Путь к скрипту Whisper/VAD | В зависимости от окружения |
 | `LAZYEDIT_WHISPER_MODEL`, `LAZYEDIT_WHISPER_FALLBACK_MODEL` | Имена ASR-моделей | `large-v3` / `large-v2` (пример) |
-| `LAZYEDIT_CAPTION_PYTHON` | Python runtime для пайплайна подписей | Зависит от окружения |
-| `LAZYEDIT_CAPTION_PRIMARY_ROOT`, `LAZYEDIT_CAPTION_PRIMARY_SCRIPT` | Путь/скрипт основного captioning | Зависит от окружения |
-| `LAZYEDIT_CAPTION_FALLBACK_SCRIPT`, `LAZYEDIT_CAPTION_FALLBACK_CWD` | Путь/скрипт/cwd резервного captioning | Зависит от окружения |
-| `GRSAI_API_*` | Настройки интеграции Veo/GRSAI | Зависит от окружения |
-| `VENICE_*`, `A2E_*` | Настройки интеграции Venice/A2E | Зависит от окружения |
-| `OPENAI_API_KEY` | Нужен для функций на базе OpenAI | Нет |
+| `LAZYEDIT_CAPTION_PYTHON` | Python runtime для caption-пайплайна | В зависимости от окружения |
+| `LAZYEDIT_CAPTION_PRIMARY_ROOT`, `LAZYEDIT_CAPTION_PRIMARY_SCRIPT` | Путь/скрипт primary captioning | В зависимости от окружения |
+| `LAZYEDIT_CAPTION_FALLBACK_SCRIPT`, `LAZYEDIT_CAPTION_FALLBACK_CWD` | Путь/скрипт/рабочий каталог fallback captioning | В зависимости от окружения |
+| `GRSAI_API_*` | Настройки интеграции Veo/GRSAI | В зависимости от окружения |
+| `VENICE_*`, `A2E_*` | Настройки интеграции Venice/A2E | В зависимости от окружения |
+| `OPENAI_API_KEY` | Нужен для OpenAI-опций | Нет |
 
-Примечания по machine-specific настройкам:
-- `app.py` может задавать поведение CUDA (использование `CUDA_VISIBLE_DEVICES` в контексте кодовой базы).
-- Некоторые пути в значениях по умолчанию завязаны на конкретную рабочую станцию; для переносимой конфигурации используйте переопределения в `.env`.
-- `lazyedit_config.sh` управляет переменными запуска tmux/сессий для deployment-скриптов.
+Примечания по machine-specific параметрам:
+- `app.py` может настраивать поведение CUDA (`CUDA_VISIBLE_DEVICES` в контексте кодовой базы).
+- Некоторые дефолтные пути завязаны на конкретную рабочую станцию; для переносимой конфигурации используйте overrides в `.env`.
+- `lazyedit_config.sh` управляет переменными запуска tmux/session для скриптов деплоя.
+
+## 🧾 Файлы конфигурации
+
+| Файл | Назначение |
+| --- | --- |
+| `.env.example` | Шаблон переменных окружения для backend/services |
+| `.env` | Локальные overrides; загружаются `config.py`/`app.py` при наличии |
+| `config.py` | Дефолты backend и резолв окружения |
+| `lazyedit_config.sh` | Профиль tmux/service рантайма (deploy path, conda env, app args, session name) |
+| `start_lazyedit.sh` | Запускает backend + Expo в tmux на выбранных портах |
+| `install_lazyedit.sh` | Создает `lazyedit.service` и валидирует существующие скрипты/config |
+
+Рекомендуемый порядок обновления для переносимости:
+1. Скопируйте `.env.example` в `.env`.
+2. Задайте путь/ключевые API значения `LAZYEDIT_*` в `.env`.
+3. Меняйте `lazyedit_config.sh` только для поведения tmux/service в сценариях деплоя.
 
 ## 🔌 Примеры API
 
-Примеры Base URL предполагают `http://localhost:8787`.
+Базовый URL предполагает `http://localhost:8787`.
 
-Загрузка:
+| Группа API | Представительные endpoints |
+| --- | --- |
+| Upload и медиа | `/upload`, `/upload-stream`, `/media/*` |
+| Записи видео | `/api/videos`, `/api/videos/{id}` |
+| Обработка | `/api/videos/{id}/transcribe`, `/translate`, `/burn-subtitles`, `/caption`, `/metadata`, `/process` |
+| Публикация | `/api/videos/{id}/publish`, `/api/autopublish/queue` |
+| Генерация | `/api/videos/generate` (+ маршруты провайдеров в `app.py`) |
+
+Upload:
 
 ```bash
 curl -F "video=@/path/to/video.mp4" \
@@ -267,7 +436,7 @@ curl -F "video=@/path/to/video.mp4" \
      http://localhost:8787/upload
 ```
 
-Сквозная обработка:
+End-to-end процесс:
 
 ```bash
 curl -X POST \
@@ -292,11 +461,17 @@ curl -X POST \
   http://localhost:8787/api/videos/123/publish
 ```
 
-Больше endpoint'ов и деталей payload: `references/API_GUIDE.md`.
+Дополнительные endpoints и детали payload: `references/API_GUIDE.md`.
+
+Скорее всего, вы будете использовать такие группы:
+- Жизненный цикл видео: `/upload`, `/upload-stream`, `/api/videos`, `/api/videos/{id}`, `/media/*`
+- Действия обработки: `/api/videos/{id}/transcribe`, `/api/videos/{id}/translate`, `/api/videos/{id}/burn-subtitles`, `/api/videos/{id}/metadata`, `/api/videos/{id}/caption`, `/api/videos/{id}/process`
+- Порождение/provider-пути: `/api/videos/generate` и маршруты Venice/A2E в `app.py`
+- Публикация: `/api/videos/{id}/publish`, `/api/autopublish/queue`
 
 ## 🧪 Примеры
 
-### Локальный запуск frontend (web)
+### Frontend локально (web)
 
 ```bash
 cd app
@@ -304,7 +479,7 @@ npm install
 EXPO_PUBLIC_API_URL="http://localhost:8787" npx expo start --web --port 8091
 ```
 
-Если backend работает на `8887`:
+Если backend на `8887`:
 
 ```bash
 EXPO_PUBLIC_API_URL="http://localhost:8887" npx expo start --web --port 8091
@@ -322,56 +497,87 @@ EXPO_PUBLIC_API_URL="http://10.0.2.2:8787" npx expo start --android
 EXPO_PUBLIC_API_URL="http://127.0.0.1:8787" npx expo start --ios
 ```
 
-### Опциональный Sora helper для генерации
+### Опциональный Sora generation helper
 
 ```bash
 python -m agi.demo_fantasy_woman --seconds 8 --size 1280x720 --output DATA/sora_oracle_valley.mp4
 ```
 
-Поддерживаемая длительность (seconds): `4`, `8`, `12`.
-Поддерживаемые размеры (sizes): `720x1280`, `1280x720`, `1024x1792`, `1792x1024`.
+Поддерживаемые длительности: `4`, `8`, `12`.
+Поддерживаемые разрешения: `720x1280`, `1280x720`, `1024x1792`, `1792x1024`.
 
-## 🧪 Заметки для разработки
+## 🧪 Заметки по разработке
 
-- Используйте `python` из Conda env `lazyedit` (не полагайтесь на системный `python3`).
-- Не храните крупные медиафайлы в Git; размещайте runtime-медиа в `DATA/` или внешнем хранилище.
-- Инициализируйте/обновляйте submodules, если компоненты пайплайна не находятся.
-- Делайте изменения точечно; избегайте несвязанных массовых форматирований.
-- Для frontend API URL backend задаётся через `EXPO_PUBLIC_API_URL`.
-- Для разработки приложения на backend открыт CORS.
+- Используйте `python` из Conda env `lazyedit` (не полагайтесь на `python3`).
+- Не храните большие медиа в Git; помещайте runtime-медиа в `DATA/` или во внешнее хранилище.
+- Инициализируйте/обновляйте submodules, если компоненты пайплайна не разрешаются.
+- Держите изменения точечными; избегайте несвязанных крупных форматных правок.
+- Для работы с frontend backend URL задается через `EXPO_PUBLIC_API_URL`.
+- CORS открыт для app-разработки.
 
-Политика submodule и внешних зависимостей:
-- Считайте внешние зависимости проектами, которыми владеют upstream-авторы. В рамках этого репозитория избегайте правок внутри submodule, если вы не работаете в этих проектах целенаправленно.
-- Операционные правила этого репозитория рассматривают `furigana` (а иногда и `echomind` в локальных конфигурациях) как пути внешних зависимостей; если есть сомнения, сохраняйте upstream-состояние и избегайте правок на месте.
+Политика по submodule и внешним зависимостям:
+- Считайте внешние зависимости принадлежащими upstream. В этом репозитории избегайте редактирования submodule, если не работаете в них целенаправленно.
+- Операционные инструкции рассматривают `furigana` и иногда `echomind` в локальных сетапах как внешние зависимости; если не уверены, сохраняйте upstream и не редактируйте на месте.
 
-Полезные материалы:
+Полезные справки:
 - `references/QUICKSTART.md`
 - `references/API_GUIDE.md`
 - `references/APP_GUIDE.md`
 - `references/DEPLOYMENT_SYSTEMS.md`
 - `references/TMUX_SESSIONS.md`
 
+Безопасность и hygiene настроек:
+- Храните API-ключи и секреты в переменных окружения, не коммитьте креды.
+- Предпочитайте `.env` для локальных overrides и держите `.env.example` публичным шаблоном.
+- Если CUDA/GPU отличаются между хостами, переопределяйте через env, а не хардкодите значения.
+
 ## ✅ Тестирование
 
-Сейчас формальный набор тестов минимальный и в основном связан с БД.
+Текущая формальная тестовая поверхность минимальная и в основном DB-ориентирована.
+
+| Уровень валидации | Команда или метод |
+| --- | --- |
+| DB smoke test | `python db_smoke_test.py` |
+| Pytest DB check | `pytest tests/test_db_smoke.py` |
+| Functional flow | Web UI + API с коротким sample-роликом из `DATA/` |
 
 ```bash
 python db_smoke_test.py
 pytest tests/test_db_smoke.py
 ```
 
-Для функциональной проверки используйте web UI и API-поток с коротким sample-клипом в `DATA/`.
+Для функциональной проверки используйте web UI и API-поток с коротким sample-клипа в `DATA/`.
 
-## 🚢 Заметки по деплою и синхронизации
+Предпосылки и заметки по переносимости:
+- Некоторые пути по умолчанию в коде завязаны на конкретную workstation; это ожидаемо в текущем состоянии.
+- Если дефолтного пути нет на вашей машине, задайте соответствующую переменную `LAZYEDIT_*` в `.env`.
+- При сомнениях о машинных значениях оставьте существующие настройки и добавьте явные overrides вместо удаления дефолтов.
 
-Текущие известные пути и поток синхронизации (из операционной документации репозитория):
+## 🧱 Предположения и известные ограничения
+
+- Набор backend зависимостей не фиксирован в root lockfile; воспроизводимость окружения зависит от локальной дисциплины.
+- `app.py` сейчас намеренно монолитный и содержит большую поверхность роутов.
+- Основная валидация пайплайна — интеграционная/ручная (UI + API + sample-медиа), с ограниченными формальными автоматическими тестами.
+- Runtime каталоги (`DATA/`, `temp/`, `translation_logs/`) — это рабочие outputs и они могут существенно расти.
+- Submodules необходимы для полной функциональности; частичная сборка часто приводит к ошибкам отсутствующих скриптов.
+
+## 🚢 Заметки по развертыванию и синхронизации
+
+Актуальные пути и sync flow (по документации репозитория):
 
 - Development workspace: `/home/lachlan/ProjectsLFS/LazyEdit`
 - Deployed LazyEdit backend + app: `/home/lachlan/DiskMech/Projects/lazyedit`
 - Deployed AutoPubMonitor: `/home/lachlan/DiskMech/Projects/autopub-monitor`
-- Publishing system host: `/home/lachlan/Projects/auto-publish` on `lazyingart`
+- Publishing system host: `/home/lachlan/Projects/auto-publish` на `lazyingart`
 
-После отправки обновлений `AutoPublish/` из этого репозитория выполните pull на publishing-host:
+| Окружение | Путь | Примечание |
+| --- | --- | --- |
+| Dev workspace | `/home/lachlan/ProjectsLFS/LazyEdit` | Основной исходник + submodules |
+| Deployed LazyEdit | `/home/lachlan/DiskMech/Projects/lazyedit` | tmux `la-lazyedit` в ops docs |
+| Deployed AutoPubMonitor | `/home/lachlan/DiskMech/Projects/autopub-monitor` | Сессии monitor/sync/process |
+| Publishing host | `/home/lachlan/Projects/auto-publish` (`lazyingart`) | Делайте pull после изменений submodule |
+
+После пуша изменений `AutoPublish/` из этого репозитория на publishing-хост:
 
 ```bash
 ssh lachlan@lazyingart
@@ -381,85 +587,43 @@ git pull github main
 
 ## 🧯 Устранение неполадок
 
-| Проблема | Проверка / Решение |
+| Проблема | Проверка / исправление |
 | --- | --- |
-| Отсутствуют модули/скрипты пайплайна | Выполните `git submodule update --init --recursive` |
-| FFmpeg не найден | Установите FFmpeg и проверьте, что работает `ffmpeg -version` |
+| Отсутствуют модули или скрипты пайплайна | Выполните `git submodule update --init --recursive` |
+| FFmpeg не найден | Установите FFmpeg и проверьте `ffmpeg -version` |
 | Конфликт портов | Backend по умолчанию `8787`; `start_lazyedit.sh` по умолчанию `18787`; задайте `LAZYEDIT_PORT` или `PORT` явно |
-| Expo не может подключиться к backend | Проверьте, что `EXPO_PUBLIC_API_URL` указывает на активный host/port backend |
-| Проблемы с подключением к базе | Проверьте PostgreSQL + DSN/env vars; опциональная smoke-проверка: `python db_smoke_test.py` |
-| Проблемы GPU/CUDA | Проверьте совместимость драйвера/CUDA с установленным стеком Torch |
-| Ошибка service-скрипта при установке | Перед запуском инсталлятора убедитесь, что существуют `lazyedit_config.sh`, `start_lazyedit.sh` и `stop_lazyedit.sh` |
+| Expo не достает backend | Убедитесь, что `EXPO_PUBLIC_API_URL` указывает на активный хост/порт backend |
+| Проблемы подключения к БД | Проверьте PostgreSQL + DSN/env vars; опционально smoke check: `python db_smoke_test.py` |
+| Проблемы GPU/CUDA | Проверьте совместимость драйвер/CUDA со стеком Torch |
+| Service-скрипт падает на установке | Убедитесь, что `lazyedit_config.sh`, `start_lazyedit.sh` и `stop_lazyedit.sh` существуют перед запуском инсталлятора |
 
 ## 🗺️ Дорожная карта
 
-- Редактирование субтитров/сегментов в приложении с A/B-превью и построчным управлением.
-- Более сильное покрытие сквозными тестами для ключевых API-потоков.
-- Сближение документации между i18n-вариантами README и режимами деплоя.
-- Дополнительное усиление workflow для ретраев у провайдеров генерации и видимости статусов.
+- Редактирование субтитров/сегментов прямо в приложении с A/B preview и построчными контролами.
+- Более сильное покрытие end-to-end тестами для ключевых API потоков.
+- Сближение документации между i18n README вариантами и режимами deploy.
+- Дополнительная hardening для retry-поведения генераторных провайдеров и прозрачности статусов.
 
-## 🤝 Вклад в проект
+## 🤝 Участие
 
-Вклад приветствуется.
+Добро пожаловать к участию.
 
-1. Сделайте fork и создайте feature-ветку.
-2. Держите коммиты сфокусированными и ограниченными по области изменений.
-3. Проверьте изменения локально (`python app.py`, ключевой API-поток и интеграцию приложения, если применимо).
-4. Откройте PR с целью, шагами воспроизведения и заметками до/после (для UI-изменений добавьте скриншоты).
+1. Сделайте fork и создайте feature branch.
+2. Держите изменения сфокусированными и локализованными.
+3. Проверяйте изменения локально (`python app.py`, key API flow, интеграцию app при необходимости).
+4. Откройте PR с целью, шагами воспроизведения и заметками до/после (для UI-изменений добавляйте скриншоты).
 
 Практические рекомендации:
-- Следуйте стилю Python (PEP 8, 4 пробела, snake_case-именование).
-- Не коммитьте учётные данные и крупные бинарные файлы.
-- Обновляйте docs/config-скрипты при изменении поведения.
-- Предпочтительный стиль коммита: коротко, в повелительном наклонении, с указанием области (например: `fix ffmpeg 7 compatibility`).
+- Соблюдайте Python style (PEP 8, 4 пробела, snake_case).
+- Не коммитьте credentials и большие бинарные файлы.
+- Обновляйте docs/config скрипты при изменении поведения.
+- Рекомендуемый стиль коммита: короткий, повелительный, scoped (например: `fix ffmpeg 7 compatibility`).
 
-## ❤️ Что делает возможной ваша поддержка
+## ❤️ Support
 
-- <b>Сохранять инструменты открытыми</b>: хостинг, инференс, хранение данных и поддержка сообщества.  
-- <b>Выпускать быстрее</b>: недели сфокусированного open-source времени на EchoMind, LazyEdit и MultilingualWhisper.  
-- <b>Прототипировать wearable-устройства</b>: оптика, сенсоры и нейроморфные/edge-компоненты для IdeasGlass + LightMind.  
-- <b>Давать доступ всем</b>: субсидированные развёртывания для студентов, креаторов и сообществ.
-
-### Donate
-
-<div align="center">
-<table style="margin:0 auto; text-align:center; border-collapse:collapse;">
-  <tr>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;">
-      <a href="https://chat.lazying.art/donate">https://chat.lazying.art/donate</a>
-    </td>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;">
-      <a href="https://chat.lazying.art/donate"><img src="https://raw.githubusercontent.com/lachlanchen/lachlanchen/main/figs/donate_button.svg" alt="Donate" height="44"></a>
-    </td>
-  </tr>
-  <tr>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;">
-      <a href="https://paypal.me/RongzhouChen">
-        <img src="https://img.shields.io/badge/PayPal-Donate-003087?logo=paypal&logoColor=white" alt="Donate with PayPal">
-      </a>
-    </td>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;">
-      <a href="https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400">
-        <img src="https://img.shields.io/badge/Stripe-Donate-635bff?logo=stripe&logoColor=white" alt="Donate with Stripe">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;"><strong>WeChat</strong></td>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;"><strong>Alipay</strong></td>
-  </tr>
-  <tr>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;"><img alt="WeChat QR" src="https://raw.githubusercontent.com/lachlanchen/lachlanchen/main/figs/donate_wechat.png" width="240"/></td>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;"><img alt="Alipay QR" src="https://raw.githubusercontent.com/lachlanchen/lachlanchen/main/figs/donate_alipay.png" width="240"/></td>
-  </tr>
-</table>
-</div>
-
-**支援 / Donate**
-
-- ご支援は研究・開発と運用の継続に役立ち、より多くのオープンなプロジェクトを皆さんに届ける力になります。  
-- 你的支持将用于研发与运维，帮助我持续公开分享更多项目与改进。  
-- Your support sustains my research, development, and ops so I can keep sharing more open projects and improvements.
+| Donate | PayPal | Stripe |
+|---|---|---|
+| [![Donate](https://img.shields.io/badge/Donate-LazyingArt-0EA5E9?style=for-the-badge&logo=ko-fi&logoColor=white)](https://chat.lazying.art/donate) | [![PayPal](https://img.shields.io/badge/PayPal-RongzhouChen-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/RongzhouChen) | [![Stripe](https://img.shields.io/badge/Stripe-Donate-635BFF?style=for-the-badge&logo=stripe&logoColor=white)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
 
 ## 📄 Лицензия
 
@@ -467,9 +631,9 @@ git pull github main
 
 ## 🙏 Благодарности
 
-LazyEdit опирается на open-source библиотеки и сервисы, включая:
+LazyEdit строится на базе open-source библиотек и сервисов, включая:
 - FFmpeg для обработки медиа
 - Tornado для backend API
-- MoviePy для workflow редактирования
-- OpenAI models для задач AI-ассистированного пайплайна
-- CJKWrap и многоязычные инструменты текста в workflow субтитров
+- MoviePy для видео-обработки
+- OpenAI models для AI-ассистентных задач пайплайна
+- CJKWrap и многоязычные инструменты текста в subtitle workflow
