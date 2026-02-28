@@ -1,6 +1,7 @@
 [English](README.md) · [العربية](i18n/README.ar.md) · [Español](i18n/README.es.md) · [Français](i18n/README.fr.md) · [日本語](i18n/README.ja.md) · [한국어](i18n/README.ko.md) · [Tiếng Việt](i18n/README.vi.md) · [中文 (简体)](i18n/README.zh-Hans.md) · [中文（繁體）](i18n/README.zh-Hant.md) · [Deutsch](i18n/README.de.md) · [Русский](i18n/README.ru.md)
 
 
+
 [![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://github.com/lachlanchen/lachlanchen/blob/main/figs/banner.png)
 
 # LazyEdit
@@ -22,6 +23,8 @@
   <img src="https://img.shields.io/badge/Stage_A%2FB%2FC-enabled-0f766e" alt="Stage A/B/C enabled" />
   <img src="https://img.shields.io/badge/AutoPublish-optional-orange" alt="AutoPublish optional" />
   <img src="https://img.shields.io/badge/i18n-11%20languages-1f883d" alt="i18n: 11 languages" />
+  <a href="https://github.com/lachlanchen/LazyEdit/commits/main"><img src="https://img.shields.io/github/last-commit/lachlanchen/LazyEdit?color=0ea5e9" alt="Last commit" /></a>
+  <a href="https://github.com/lachlanchen/LazyEdit/graphs/contributors"><img src="https://img.shields.io/github/contributors/lachlanchen/LazyEdit?color=8a4fff" alt="Contributors" /></a>
 </p>
 
 ## 📌 Quick Facts
@@ -34,6 +37,8 @@ LazyEdit is an end-to-end AI-assisted video workflow for creation, processing, a
 | 🌐 Language variants | `i18n/README.*.md` (single language bar is intentionally kept at top) |
 | 🧠 Backend entrypoint | `app.py` (Tornado) |
 | 🖥️ Frontend app | `app/` (Expo web/mobile) |
+| 🧩 Runtime styles | `python app.py` (manual), `./start_lazyedit.sh` (tmux), optional `lazyedit.service` |
+| 🎯 Primary references | `README.md`, `references/QUICKSTART.md`, `references/API_GUIDE.md`, `references/APP_GUIDE.md` |
 
 ## 🧭 Contents
 
@@ -642,7 +647,6 @@ LazyEdit builds on open-source libraries and services, including:
 - MoviePy for editing workflows
 - OpenAI models for AI-assisted pipeline tasks
 - CJKWrap and multilingual text tooling in subtitle workflows
-
 
 
 

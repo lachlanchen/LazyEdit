@@ -2,6 +2,7 @@
 
 
 
+
 [![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://github.com/lachlanchen/lachlanchen/blob/main/figs/banner.png)
 
 # LazyEdit
@@ -35,6 +36,8 @@ LazyEdit ist ein durchgängiger KI-unterstützter Video-Workflow für Erstellung
 | 🌐 Sprachvarianten | `i18n/README.*.md` (in jeder README gibt es eine einzige Sprachleiste am Anfang) |
 | 🧠 Backend-Einstiegspunkt | `app.py` (Tornado) |
 | 🖥️ Frontend-App | `app/` (Expo Web/Mobile) |
+| 🧩 Laufzeitstile | `python app.py` (manuell), `./start_lazyedit.sh` (tmux), optional `lazyedit.service` |
+| 🎯 Primäre Referenzen | `README.md`, `references/QUICKSTART.md`, `references/API_GUIDE.md`, `references/APP_GUIDE.md` |
 
 ## 🧭 Inhalte
 
@@ -625,6 +628,7 @@ Praktische Richtlinien:
 
 
 
+
 ## 📄 Lizenz
 
 [Apache-2.0](LICENSE)
@@ -637,6 +641,7 @@ LazyEdit baut auf Open-Source-Bibliotheken und Diensten auf, darunter:
 - MoviePy für Bearbeitungsworkflows
 - OpenAI-Modelle für KI-gestützte Pipeline-Aufgaben
 - CJKWrap und mehrsprachige Textwerkzeuge in Untertitelworkflows
+
 
 
 ## ❤️ Support

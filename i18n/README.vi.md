@@ -1,14 +1,15 @@
 [English](../README.md) · [العربية](README.ar.md) · [Español](README.es.md) · [Français](README.fr.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Tiếng Việt](README.vi.md) · [中文 (简体)](README.zh-Hans.md) · [中文（繁體）](README.zh-Hant.md) · [Deutsch](README.de.md) · [Русский](README.ru.md)
 
 
+
 [![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://github.com/lachlanchen/lachlanchen/blob/main/figs/banner.png)
 
 # LazyEdit
 
 <p align="center">
-  <b>Quy trình làm việc AI-assist toàn diện cho video</b> dùng để tạo nội dung, xử lý phụ đề, metadata và xuất bản tùy chọn.
+  <b>AI-assisted video workflow</b> để tạo nội dung, xử lý phụ đề, metadata và xuất bản tùy chọn.
   <br />
-  <sub>Tải lên hoặc tạo mới -> phiên âm -> dịch/chỉnh sửa -> chèn phụ đề -> keyframe/chú thích -> metadata -> xuất bản</sub>
+  <sub>Tải lên hoặc tạo mới -> phiên âm -> dịch/chỉnh sửa -> đốt phụ đề -> keyframes/chú thích -> metadata -> xuất bản</sub>
 </p>
 
 <p align="center">
@@ -22,120 +23,124 @@
   <img src="https://img.shields.io/badge/Stage_A%2FB%2FC-enabled-0f766e" alt="Stage A/B/C enabled" />
   <img src="https://img.shields.io/badge/AutoPublish-optional-orange" alt="AutoPublish optional" />
   <img src="https://img.shields.io/badge/i18n-11%20languages-1f883d" alt="i18n: 11 languages" />
+  <a href="https://github.com/lachlanchen/LazyEdit/commits/main"><img src="https://img.shields.io/github/last-commit/lachlanchen/LazyEdit?color=0ea5e9" alt="Last commit" /></a>
+  <a href="https://github.com/lachlanchen/LazyEdit/graphs/contributors"><img src="https://img.shields.io/github/contributors/lachlanchen/LazyEdit?color=8a4fff" alt="Contributors" /></a>
 </p>
 
-## 📌 Thông tin nhanh
+## 📌 Quick Facts
 
-LazyEdit là pipeline video end-to-end hỗ trợ AI cho quá trình tạo, xử lý và xuất bản tùy chọn. Nó kết hợp tạo nội dung dựa trên prompt (Stage A/B/C), API xử lý media, render phụ đề, chú thích keyframe, sinh metadata và bàn giao sang AutoPublish.
+LazyEdit là quy trình làm việc video end-to-end có hỗ trợ AI cho khâu tạo nội dung, xử lý và xuất bản tùy chọn. Nó kết hợp sinh nội dung theo prompt (Stage A/B/C), các API xử lý media, render phụ đề, keyframe captioning, sinh metadata, và bước bàn giao AutoPublish.
 
-| Thông tin nhanh | Giá trị |
+| Quick fact | Value |
 | --- | --- |
-| 📘 README chuẩn | `README.md` (tệp này) |
-| 🌐 Biến thể ngôn ngữ | `i18n/README.*.md` (mỗi README chỉ giữ một dòng chọn ngôn ngữ ở đầu) |
-| 🧠 Điểm vào backend | `app.py` (Tornado) |
-| 🖥️ Ứng dụng frontend | `app/` (Expo web/mobile) |
+| 📘 Canonical README | `README.md` (file này) |
+| 🌐 Language variants | `i18n/README.*.md` (mỗi file README chỉ giữ một dòng lựa chọn ngôn ngữ ở đầu) |
+| 🧠 Backend entrypoint | `app.py` (Tornado) |
+| 🖥️ Frontend app | `app/` (Expo web/mobile) |
+| 🧩 Runtime styles | `python app.py` (manual), `./start_lazyedit.sh` (tmux), tùy chọn `lazyedit.service` |
+| 🎯 Primary references | `README.md`, `references/QUICKSTART.md`, `references/API_GUIDE.md`, `references/APP_GUIDE.md` |
 
-## 🧭 Mục lục
+## 🧭 Contents
 
-- [Tổng quan](#-tổng-quan)
-- [Thông tin nhanh](#-thông-tin-nhanh)
-- [Nhìn nhanh](#-nhìn-nhanh)
-- [Kiến trúc nhanh](#-kiến-trúc-nhanh)
-- [Demos](#-demos)
-- [Tính năng](#-tính-năng)
-- [Tài liệu & i18n](#-tài-liệu--i18n)
-- [Cấu trúc dự án](#-cấu-trúc-dự-án)
-- [Điều kiện tiên quyết](#-điều-kiện-tiên-quyết)
-- [Cài đặt](#-cài-đặt)
-- [Khởi động nhanh](#-khởi-động-nhanh)
-- [Bảng lệnh nhanh](#-bảng-lệnh-nhanh)
-- [Cách sử dụng](#-cách-sử-dụng)
-- [Cấu hình](#-cấu-hình)
-- [Tập tin cấu hình](#-tập-tin-cấu-hình)
-- [Ví dụ API](#-ví-dụ-api)
-- [Ví dụ](#-ví-dụ)
-- [Ghi chú phát triển](#-ghi-chú-phát-triển)
-- [Kiểm thử](#-kiểm-thử)
-- [Giả định & giới hạn đã biết](#-giả-định--giới-hạn-đã-biết)
-- [Ghi chú triển khai & đồng bộ](#-ghi-chú-triển-khai--đồng-bộ)
-- [Xử lý sự cố](#-xử-lý-sự-cố)
-- [Lộ trình](#-lộ-trình)
-- [Đóng góp](#-đóng-góp)
+- [Tổng quan](#overview)
+- [Thông tin nhanh](#-quick-facts)
+- [Nhìn nhanh](#at-a-glance)
+- [Kiến trúc tổng quan](#architecture-snapshot)
+- [Demos](#demos)
+- [Tính năng](#features)
+- [Tài liệu & i18n](#-documentation--i18n)
+- [Cấu trúc dự án](#project-structure)
+- [Yêu cầu ban đầu](#prerequisites)
+- [Cài đặt](#installation)
+- [Khởi động nhanh](#quick-start)
+- [Bảng lệnh nhanh](#-command-cheat-sheet)
+- [Cách dùng](#usage)
+- [Cấu hình](#️-configuration)
+- [Tệp cấu hình](#-configuration-files)
+- [Ví dụ API](#api-examples)
+- [Ví dụ](#examples)
+- [Ghi chú phát triển](#development-notes)
+- [Kiểm thử](#testing)
+- [Giả định & giới hạn đã biết](#-assumptions--known-limits)
+- [Triển khai & đồng bộ](#deployment--sync-notes)
+- [Xử lý sự cố](#troubleshooting)
+- [Lộ trình](#roadmap)
+- [Đóng góp](#contributing)
 - [Hỗ trợ](#-support)
-- [Giấy phép](#-giấy-phép)
-- [Lời cảm ơn](#-lời-cảm-ơn)
+- [Giấy phép](#license)
+- [Lời cảm ơn](#acknowledgements)
 
-## ✨ Tổng quan
+## ✨ Overview
 
 LazyEdit được xây dựng quanh backend Tornado (`app.py`) và frontend Expo (`app/`).
 
-> Ghi chú: Nếu chi tiết repo/runtime khác theo máy, giữ nguyên mặc định hiện tại và override qua biến môi trường thay vì xóa các giá trị fallback theo máy.
+> Lưu ý: Nếu chi tiết repository/runtime khác theo máy, giữ nguyên giá trị mặc định hiện có và ghi đè bằng biến môi trường thay vì xóa fallback theo từng máy.
 
-| Vì sao đội ngũ dùng | Kết quả thực tế |
+| Why teams use it | Practical result |
 | --- | --- |
-| Luồng vận hành thống nhất | Tải lên/tạo mới/phối hợp/xuất bản từ một quy trình duy nhất |
-| Thiết kế API-first | Dễ viết script và tích hợp với công cụ khác |
-| Runtime theo hướng local-first | Hoạt động tốt với tmux + triển khai theo service |
+| Unified operator flow | Tải lên/tạo mới/remix/xuất bản từ cùng một workflow |
+| API-first design | Dễ viết script và tích hợp với các công cụ khác |
+| Local-first runtime | Hoạt động tốt với tmux + các mẫu triển khai service |
 
-| Bước | Diễn biến |
+| Step | What happens |
 | --- | --- |
 | 1 | Tải lên hoặc tạo video |
-| 2 | Phiên âm và (tùy chọn) dịch phụ đề |
-| 3 | Chèn phụ đề đa ngôn ngữ với kiểm soát bố cục |
+| 2 | Phiên âm và tùy chọn dịch phụ đề |
+| 3 | Đốt phụ đề đa ngôn ngữ với điều khiển layout |
 | 4 | Sinh keyframes, captions và metadata |
-| 5 | Đóng gói và (tùy chọn) xuất bản qua AutoPublish |
+| 5 | Đóng gói và tùy chọn xuất bản qua AutoPublish |
 
-### Trọng tâm pipeline
+### Pipeline focus
 
 - Tải lên, tạo mới, remix và quản lý thư viện từ một UI vận hành duy nhất.
-- Luồng xử lý API-first cho phiên âm, dịch/chỉnh sửa phụ đề, burn-in và metadata.
-- Tích hợp tùy chọn provider tạo nội dung (Veo / Venice / A2E / Sora helpers trong `agi/`).
+- Dòng xử lý API-first cho transcription, polish/translate phụ đề, burn-in, và metadata.
+- Tích hợp tùy chọn nhà cung cấp generation (`agi/`) cho Veo / Venice / A2E / helpers Sora.
 - Bàn giao xuất bản tùy chọn qua `AutoPublish`.
 
-## 🎯 Nhìn nhanh
+## 🎯 At a Glance
 
-| Khu vực | Có trong LazyEdit | Trạng thái |
+| Area | Included in LazyEdit | Status |
 | --- | --- | --- |
-| Ứng dụng lõi | Backend API Tornado + frontend Expo web/mobile | ✅ |
-| Pipeline media | ASR, dịch/chỉnh sửa phụ đề, burn-in, keyframes, captions, metadata | ✅ |
-| Tạo nội dung | Stage A/B/C và các route helper provider (`agi/`) | ✅ |
-| Phân phối | Bàn giao AutoPublish (tùy chọn) | 🟡 Tùy chọn |
-| Mô hình runtime | Script local-first, workflow tmux, service systemd tùy chọn | ✅ |
+| Core app | Backend API Tornado + frontend Expo web/mobile | ✅ |
+| Media pipeline | ASR, dịch/chỉnh sửa phụ đề, burn-in, keyframes, captions, metadata | ✅ |
+| Generation | Stage A/B/C và route trợ giúp provider (`agi/`) | ✅ |
+| Distribution | Handoff AutoPublish tùy chọn | 🟡 Tùy chọn |
+| Runtime model | Script local-first, workflow tmux, service systemd tùy chọn | ✅ |
 
-## 🏗️ Kiến trúc nhanh
+## 🏗️ Architecture Snapshot
 
-Repository được tổ chức như một pipeline xử lý media theo hướng API-first có lớp giao diện người dùng:
+Kho mã này được tổ chức như một media pipeline theo hướng API-first với lớp UI:
 
-- `app.py` là entrypoint của Tornado và điều phối route cho upload, xử lý, tạo nội dung, bàn giao xuất bản và phục vụ media.
-- `lazyedit/` chứa các khối pipeline mô-đun (lưu trữ DB, dịch thuật, burn-in phụ đề, captions, metadata, adapter provider).
-- `app/` là ứng dụng Expo Router (web/mobile) vận hành flow upload, processing, preview và publish.
-- `config.py` gom logic đọc biến môi trường và các đường dẫn fallback.
-- `start_lazyedit.sh` và `lazyedit_config.sh` cung cấp chế độ chạy tmux local/deployed có thể lặp lại.
+- `app.py` là điểm vào của Tornado và bộ điều phối route cho upload, processing, generation, bàn giao publish, và phục vụ media.
+- `lazyedit/` chứa các khối pipeline module hóa (lưu trữ DB, translation, subtitle burn-in, captions, metadata, adapter provider).
+- `app/` là ứng dụng Expo Router (web/mobile) điều phối upload, processing, preview, và publish.
+- `config.py` gom cơ chế load environment và giải quyết đường dẫn mặc định.
+- `start_lazyedit.sh` và `lazyedit_config.sh` cung cấp chế độ chạy local/deployed tái tạo được dựa trên tmux.
 
-| Tầng | Đường dẫn chính | Trách nhiệm |
+| Layer | Main paths | Responsibility |
 | --- | --- | --- |
-| API & orchestration | `app.py`, `config.py` | Endpoint, routing, giải quyết env |
-| Processing core | `lazyedit/`, `agi/` | Pipeline subtitle/caption/metadata + providers |
+| API & orchestration | `app.py`, `config.py` | Endpoints, routing, env resolution |
+| Processing core | `lazyedit/`, `agi/` | Pipeline phụ đề/caption/metadata + providers |
 | UI | `app/` | Trải nghiệm vận hành (web/mobile qua Expo) |
 | Runtime scripts | `start_lazyedit.sh`, `lazyedit_config.sh`, `install_lazyedit.sh` | Khởi chạy local/service và vận hành |
 
-Luồng tổng quan:
+High-level flow:
 
 `Upload/Generate -> Transcribe -> Translate/Polish -> Burn Subtitles -> Keyframes/Captions -> Metadata -> Optional AutoPublish`
 
 ## 🎬 Demos
 
-Các ảnh minh họa dưới đây thể hiện luồng vận hành chính từ ingest đến sinh metadata.
+Các ảnh minh họa bên dưới thể hiện tuyến luồng vận hành chính từ ingest đến sinh metadata.
 
 <table>
   <tr>
     <td align="center">
       <img src="figs/demos/demo_01_home_upload.png" alt="Home upload" width="240" />
-      <br /><sub>Home · Tải lên</sub>
+      <br /><sub>Home · Upload</sub>
     </td>
     <td align="center">
       <img src="figs/demos/demo_02_home_generate.png" alt="Home generate" width="240" />
-      <br /><sub>Home · Tạo mới</sub>
+      <br /><sub>Home · Generate</sub>
     </td>
     <td align="center">
       <img src="figs/demos/demo_03_home_remix.png" alt="Home remix" width="240" />
@@ -143,17 +148,17 @@ Các ảnh minh họa dưới đây thể hiện luồng vận hành chính từ
     </td>
     <td align="center">
       <img src="figs/demos/demo_04_library.png" alt="Library list" width="240" />
-      <br /><sub>Thư viện</sub>
+      <br /><sub>Library</sub>
     </td>
     <td align="center">
       <img src="figs/demos/demo_05_video_overview.png" alt="Video overview" width="240" />
-      <br /><sub>Tổng quan video</sub>
+      <br /><sub>Video overview</sub>
     </td>
   </tr>
   <tr>
     <td align="center">
       <img src="figs/demos/demo_06_translation_preview.png" alt="Translation preview" width="240" />
-      <br /><sub>Xem trước bản dịch</sub>
+      <br /><sub>Translation preview</sub>
     </td>
     <td align="center">
       <img src="figs/demos/demo_07_burn_slots.png" alt="Burn slots" width="240" />
@@ -161,7 +166,7 @@ Các ảnh minh họa dưới đây thể hiện luồng vận hành chính từ
     </td>
     <td align="center">
       <img src="figs/demos/demo_08_burn_layout.png" alt="Burn layout" width="240" />
-      <br /><sub>Bố cục burn</sub>
+      <br /><sub>Burn layout</sub>
     </td>
     <td align="center">
       <img src="figs/demos/demo_09_keyframes_captions.png" alt="Keyframes and captions" width="240" />
@@ -174,30 +179,31 @@ Các ảnh minh họa dưới đây thể hiện luồng vận hành chính từ
   </tr>
 </table>
 
-## 🧩 Tính năng
+## 🧩 Features
 
-- ✨ Quy trình tạo nội dung bằng prompt (Stage A/B/C) với các đường dẫn tích hợp Sora và Veo.
-- 🧵 Pipeline xử lý toàn bộ: phiên âm -> dịch/chỉnh sửa phụ đề -> burn-in -> keyframes -> captions -> metadata.
-- 🌏 Soạn phụ đề đa ngôn ngữ với luồng hỗ trợ furigana/IPA/romaji liên quan.
-- 🔌 Backend API-first với endpoint upload, processing, media serving, publish queue.
-- 🚚 Tích hợp AutoPublish tùy chọn cho bước bàn giao sang nền tảng xã hội.
-- 🖥️ Hỗ trợ workflow backend + Expo cùng lúc thông qua các script tmux.
+- ✨ Workflow tạo nội dung bằng prompt (Stage A/B/C) với đường dẫn tích hợp Sora và Veo.
+- 🧵 Toàn bộ pipeline: phiên âm -> polish/translate phụ đề -> burn-in -> keyframes -> captions -> metadata.
+- 🌏 Soạn phụ đề đa ngôn ngữ với support paths cho furigana/IPA/romaji.
+- 🔌 Backend API-first với các endpoint upload, processing, media serving, publish queue.
+- 🚚 Tích hợp AutoPublish tùy chọn để bàn giao sang platform.
+- 🖥️ Hỗ trợ workflow backend + Expo được phối hợp qua script tmux.
 
-## 🌍 Tài liệu & i18n
+## 🌍 Documentation & i18n
 
-- Nguồn chuẩn: `README.md`
-- Biến thể ngôn ngữ: `i18n/README.*.md`
-- Thanh chọn ngôn ngữ: giữ đúng một dòng chọn ngôn ngữ duy nhất ở đầu mỗi README (không nhân bản)
+
+- Canonical source: `README.md`
+- Language variants: `i18n/README.*.md`
+- Language bar: giữ đúng một dòng language-options ở đầu mỗi README (không trùng lặp)
 - Ngôn ngữ hiện có trong repo: Arabic, German, English, Spanish, French, Japanese, Korean, Russian, Vietnamese, Simplified Chinese, Traditional Chinese
 
-Nếu có bất kỳ chênh lệch nào giữa bản dịch và README tiếng Anh, hãy coi `README.md` là nguồn gốc đúng rồi cập nhật từng file `i18n/README.*.md` lần lượt.
+If there is ever a mismatch between translations and English docs, treat this English README as source of truth, then update each language file one-by-one.
 
-| Chính sách i18n | Quy tắc |
+| i18n policy | Rule |
 | --- | --- |
-| README chuẩn | Giữ `README.md` làm nguồn gốc |
-| Thanh ngôn ngữ | Chỉ đúng một dòng language-options ở đầu |
+| Canonical source | Giữ `README.md` làm nguồn tham chiếu chính |
+| Language bar | Chính xác một dòng language-options ở đầu |
 
-## 🗂️ Cấu trúc dự án
+## 🗂️ Project Structure
 
 ```text
 LazyEdit/
@@ -223,24 +229,24 @@ LazyEdit/
 └── furigana/                        # External dependency in workflow (tracked submodule in this checkout)
 ```
 
-Ghi chú submodule/external dependency:
-- Các git submodule trong repository gồm `AutoPublish`, `AutoPubMonitor`, `whisper_with_lang_detect`, `vit-gpt2-image-captioning`, `clip-gpt-captioning` và `furigana`.
-- Hướng dẫn vận hành xem `furigana` và `echomind` là external/read-only trong luồng làm việc repo này. Nếu chưa chắc chắn, giữ nguyên upstream và tránh sửa trực tiếp.
+Ghi chú submodule/dependency bên ngoài:
+- Git submodule của repository gồm `AutoPublish`, `AutoPubMonitor`, `whisper_with_lang_detect`, `vit-gpt2-image-captioning`, `clip-gpt-captioning`, và `furigana`.
+- Hướng dẫn vận hành xử lý `furigana` và `echomind` như dependency ngoài và chỉ đọc trong workflow này. Nếu chưa rõ, ưu tiên giữ nguyên upstream và tránh sửa trực tiếp.
 
-## ✅ Điều kiện tiên quyết
+## ✅ Prerequisites
 
-| Dependency | Ghi chú |
+| Dependency | Notes |
 | --- | --- |
-| Môi trường Linux | Script `systemd`/`tmux` định hướng Linux |
-| Python 3.10+ | Dùng môi trường Conda `lazyedit` |
-| Node.js 20+ + npm | Bắt buộc cho ứng dụng Expo trong `app/` |
-| FFmpeg | Phải có trong `PATH` |
-| PostgreSQL | Local peer auth hoặc kết nối DSN |
-| Git submodules | Bắt buộc cho các pipeline chính |
+| Linux environment | Các script `systemd`/`tmux` định hướng Linux |
+| Python 3.10+ | Dùng Conda env `lazyedit` |
+| Node.js 20+ + npm | Bắt buộc cho Expo app trong `app/` |
+| FFmpeg | Phải có sẵn trong `PATH` |
+| PostgreSQL | Kết nối local peer auth hoặc DSN |
+| Git submodules | Bắt buộc cho pipeline then chốt |
 
-## 🚀 Cài đặt
+## 🚀 Installation
 
-1. Clone và khởi tạo submodules:
+1. Clone và khởi tạo submodule:
 
 ```bash
 git clone git@github.com:lachlanchen/LazyEdit.git
@@ -248,27 +254,27 @@ cd LazyEdit
 git submodule update --init --recursive
 ```
 
-2. Kích hoạt môi trường Conda:
+2. Kích hoạt Conda:
 
 ```bash
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate lazyedit
 ```
 
-3. Cài đặt hệ thống (service mode, tùy chọn):
+3. Cài đặt tùy chọn ở cấp hệ thống (service mode):
 
 ```bash
 chmod +x install_lazyedit.sh
 sudo ./install_lazyedit.sh /path/to/lazyedit
 ```
 
-Ghi chú cài đặt service:
-- `install_lazyedit.sh` cài `ffmpeg` và `tmux`, rồi tạo `lazyedit.service`.
-- Nó không tạo `lazyedit_config.sh`, `start_lazyedit.sh` hoặc `stop_lazyedit.sh`; các tệp này phải đã có sẵn và đúng.
+Service install notes:
+- `install_lazyedit.sh` cài `ffmpeg` và `tmux`, sau đó tạo `lazyedit.service`.
+- Nó không sinh `lazyedit_config.sh`, `start_lazyedit.sh`, hay `stop_lazyedit.sh`; các file này phải đã tồn tại và đúng cấu hình.
 
-## ⚡ Khởi động nhanh
+## ⚡ Quick Start
 
-Chạy backend + frontend local theo đường dẫn tối thiểu:
+Chạy backend + frontend local (đường dẫn tối thiểu):
 
 ```bash
 source ~/miniconda3/etc/profile.d/conda.sh
@@ -276,7 +282,7 @@ conda activate lazyedit
 python app.py
 ```
 
-Ở shell thứ hai:
+Trong terminal thứ hai:
 
 ```bash
 cd app
@@ -284,36 +290,36 @@ npm install
 EXPO_PUBLIC_API_URL="http://localhost:8787" npx expo start --web --port 8091
 ```
 
-Bootstrap database local (tùy chọn):
+Khởi tạo DB local tùy chọn:
 
 ```bash
 createdb lazyedit_db || true
 psql -d lazyedit_db -tAc "SELECT 'ok'"
 ```
 
-### Profile runtime
+### Runtime profiles
 
-| Profile | Lệnh khởi động | Backend mặc định | Frontend mặc định |
+| Profile | Start command | Default backend | Default frontend |
 | --- | --- | --- | --- |
-| Phát triển local (thủ công) | `python app.py` + lệnh Expo | `8787` | `8091` (ví dụ) |
-| Tmux orchestration | `./start_lazyedit.sh` | `18787` | `18791` |
-| Service systemd | `sudo systemctl start lazyedit.service` | Theo cấu hình/env | N/A |
+| Local dev (manual) | `python app.py` + Expo command | `8787` | `8091` (example command) |
+| Tmux orchestrated | `./start_lazyedit.sh` | `18787` | `18791` |
+| service systemd | `sudo systemctl start lazyedit.service` | Config/env-driven | N/A |
 
-## 🧭 Bảng lệnh nhanh
+## 🧭 Command Cheat Sheet
 
-| Nhiệm vụ | Lệnh |
+| Task | Command |
 | --- | --- |
-| Khởi tạo submodule | `git submodule update --init --recursive` |
-| Chạy backend only | `python app.py` |
-| Chạy backend + Expo (tmux) | `./start_lazyedit.sh` |
-| Dừng tmux run | `./stop_lazyedit.sh` |
-| Mở tmux session | `tmux attach -t lazyedit` |
-| Xem trạng thái service | `sudo systemctl status lazyedit.service` |
-| Xem log service | `sudo journalctl -u lazyedit.service` |
-| Smoke test DB | `python db_smoke_test.py` |
-| Smoke test bằng pytest | `pytest tests/test_db_smoke.py` |
+| Initialize submodules | `git submodule update --init --recursive` |
+| Start backend only | `python app.py` |
+| Start backend + Expo (tmux) | `./start_lazyedit.sh` |
+| Stop tmux run | `./stop_lazyedit.sh` |
+| Open tmux session | `tmux attach -t lazyedit` |
+| Service status | `sudo systemctl status lazyedit.service` |
+| Service logs | `sudo journalctl -u lazyedit.service` |
+| DB smoke test | `python db_smoke_test.py` |
+| Pytest smoke test | `pytest tests/test_db_smoke.py` |
 
-## 🛠️ Cách sử dụng
+## 🛠️ Usage
 
 ### Development: backend only
 
@@ -323,13 +329,13 @@ conda activate lazyedit
 python app.py
 ```
 
-Lối vào thay thế đang dùng trong scripts triển khai hiện tại:
+Entrypoint thay thế đang dùng trong các script deploy hiện tại:
 
 ```bash
 python app.py -m lazyedit
 ```
 
-Backend URL mặc định: `http://localhost:8787` (lấy từ `config.py`, có thể override bằng `PORT` hoặc `LAZYEDIT_PORT`).
+Backend default URL: `http://localhost:8787` (theo `config.py`, có thể override bằng `PORT` hoặc `LAZYEDIT_PORT`).
 
 ### Development: backend + Expo app (tmux)
 
@@ -342,19 +348,19 @@ Ports mặc định của `start_lazyedit.sh`:
 - Expo web: `18791`
 - `EXPO_PUBLIC_API_URL=http://localhost:18787`
 
-Kết nối vào phiên:
+Đính vào session:
 
 ```bash
 tmux attach -t lazyedit
 ```
 
-Dừng phiên:
+Dừng session:
 
 ```bash
 ./stop_lazyedit.sh
 ```
 
-### Quản lý service
+### Service management
 
 ```bash
 sudo systemctl start lazyedit.service
@@ -363,70 +369,70 @@ sudo systemctl status lazyedit.service
 sudo journalctl -u lazyedit.service
 ```
 
-## ⚙️ Cấu hình
+## ⚙️ Configuration
 
-Sao chép `.env.example` thành `.env` và cập nhật đường dẫn/secret:
+Copy `.env.example` sang `.env` rồi cập nhật đường dẫn/secrets:
 
 ```bash
 cp .env.example .env
 ```
 
-Lưu ý độ ưu tiên cấu hình:
+Configuration precedence note:
 
-- `config.py` nạp giá trị từ `.env` nếu có và chỉ thiết lập các key chưa được export trong shell.
-- Giá trị runtime có thể đến từ: biến môi trường export shell -> `.env` -> default trong code.
-- Với chạy tmux/service, `lazyedit_config.sh` điều khiển tham số khởi động/session (`LAZYEDIT_DIR`, `CONDA_ENV`, `APP_ARGS`, ports qua env của script khởi động).
+- `config.py` load giá trị `.env` nếu tồn tại và chỉ set các key chưa được export trong shell.
+- Giá trị runtime có thể đến từ: biến môi trường đã export trong shell -> `.env` -> default trong code.
+- Với tmux/service, `lazyedit_config.sh` điều khiển tham số khởi chạy/session (`LAZYEDIT_DIR`, `CONDA_ENV`, `APP_ARGS`, ports qua env của script).
 
-### Biến quan trọng
+### Key variables
 
-| Biến | Mục đích | Default/Fallback |
+| Variable | Purpose | Default/Fallback |
 | --- | --- | --- |
-| `PORT`, `LAZYEDIT_PORT` | Cổng backend | `8787` |
+| `PORT`, `LAZYEDIT_PORT` | Backend port | `8787` |
 | `LAZYEDIT_UPLOAD_DIR` | Thư mục gốc media | `DATA/` |
 | `LAZYEDIT_DATABASE_URL`, `DATABASE_URL` | DSN PostgreSQL | Fallback local `lazyedit_db` |
-| `LAZYEDIT_AUTOPUBLISH_URL` | Endpoint AutoPublish | `http://localhost:8081/publish` |
+| `LAZYEDIT_AUTOPUBLISH_URL` | AutoPublish endpoint | `http://localhost:8081/publish` |
 | `LAZYEDIT_AUTOPUBLISH_TIMEOUT` | Timeout request AutoPublish (giây) | `60` |
-| `LAZYEDIT_WHISPER_SCRIPT` | Đường dẫn script Whisper/VAD | Phụ thuộc môi trường |
+| `LAZYEDIT_WHISPER_SCRIPT` | Đường dẫn script Whisper/VAD | phụ thuộc môi trường |
 | `LAZYEDIT_WHISPER_MODEL`, `LAZYEDIT_WHISPER_FALLBACK_MODEL` | Tên mô hình ASR | `large-v3` / `large-v2` (ví dụ) |
-| `LAZYEDIT_CAPTION_PYTHON` | Runtime Python cho pipeline caption | Phụ thuộc môi trường |
-| `LAZYEDIT_CAPTION_PRIMARY_ROOT`, `LAZYEDIT_CAPTION_PRIMARY_SCRIPT` | Đường dẫn/script caption chính | Phụ thuộc môi trường |
-| `LAZYEDIT_CAPTION_FALLBACK_SCRIPT`, `LAZYEDIT_CAPTION_FALLBACK_CWD` | Đường dẫn/script/cwd caption fallback | Phụ thuộc môi trường |
-| `GRSAI_API_*` | Cài đặt tích hợp Veo/GRSAI | Phụ thuộc môi trường |
-| `VENICE_*`, `A2E_*` | Cài đặt tích hợp Venice/A2E | Phụ thuộc môi trường |
-| `OPENAI_API_KEY` | Bắt buộc cho tính năng dựa trên OpenAI | None |
+| `LAZYEDIT_CAPTION_PYTHON` | Runtime Python cho caption pipeline | phụ thuộc môi trường |
+| `LAZYEDIT_CAPTION_PRIMARY_ROOT`, `LAZYEDIT_CAPTION_PRIMARY_SCRIPT` | Đường dẫn/script chú thích chính | phụ thuộc môi trường |
+| `LAZYEDIT_CAPTION_FALLBACK_SCRIPT`, `LAZYEDIT_CAPTION_FALLBACK_CWD` | Script/fallback cwd cho caption | phụ thuộc môi trường |
+| `GRSAI_API_*` | Cài đặt tích hợp Veo/GRSAI | phụ thuộc môi trường |
+| `VENICE_*`, `A2E_*` | Cài đặt tích hợp Venice/A2E | phụ thuộc môi trường |
+| `OPENAI_API_KEY` | Bắt buộc cho chức năng OpenAI-backed | None |
 
-Ghi chú theo máy:
-- `app.py` có thể thiết lập hành vi CUDA (`CUDA_VISIBLE_DEVICES` trong codebase context).
-- Một số đường dẫn mặc định mang tính workstation-specific; dùng override trong `.env` cho cấu hình portable.
-- `lazyedit_config.sh` điều khiển biến khởi động tmux/session cho scripts deploy.
+Machine-specific notes:
+- `app.py` có thể set hành vi CUDA (`CUDA_VISIBLE_DEVICES` usage in codebase context).
+- Một số đường dẫn mặc định mang tính máy chủ; dùng `.env` để override cho portable setup.
+- `lazyedit_config.sh` điều khiển biến khởi chạy tmux/session cho các script deploy.
 
-### Tập tin cấu hình
+## 🧾 Configuration Files
 
-| Tệp | Mục đích |
+| File | Purpose |
 | --- | --- |
-| `.env.example` | Mẫu biến môi trường cho backend/services |
-| `.env` | Override local theo máy; được `config.py`/`app.py` load nếu có |
-| `config.py` | Default backend và resolve env |
-| `lazyedit_config.sh` | Runtime profile tmux/service (đường dẫn deploy, conda env, app args, session name) |
-| `start_lazyedit.sh` | Khởi chạy backend + Expo trong tmux với ports đã chọn |
-| `install_lazyedit.sh` | Tạo `lazyedit.service` và validate scripts/config hiện có |
+| `.env.example` | Mẫu biến môi trường dùng bởi backend/services |
+| `.env` | Override máy địa phương; được load bởi `config.py`/`app.py` nếu tồn tại |
+| `config.py` | Mặc định backend và logic resolve environment |
+| `lazyedit_config.sh` | Profile runtime tmux/service (deploy path, conda env, app args, session name) |
+| `start_lazyedit.sh` | Chạy backend + Expo trong tmux với ports đã chọn |
+| `install_lazyedit.sh` | Tạo `lazyedit.service` và validate script/config hiện có |
 
-Thứ tự cập nhật khuyến nghị cho portability:
+Recommended update order for machine portability:
 1. Copy `.env.example` thành `.env`.
-2. Thiết lập các biến `LAZYEDIT_*` liên quan path/API trong `.env`.
+2. Set các giá trị `LAZYEDIT_*` liên quan path/API trong `.env`.
 3. Chỉ chỉnh `lazyedit_config.sh` cho hành vi deploy tmux/service.
 
-## 🔌 Ví dụ API
+## 🔌 API Examples
 
-Ví dụ base URL mặc định lấy từ `http://localhost:8787`.
+Mẫu base URL mặc định giả sử `http://localhost:8787`.
 
-| Nhóm API | Endpoint tiêu biểu |
+| API group | Representative endpoints |
 | --- | --- |
-| Upload và media | `/upload`, `/upload-stream`, `/media/*` |
-| Hồ sơ video | `/api/videos`, `/api/videos/{id}` |
+| Upload and media | `/upload`, `/upload-stream`, `/media/*` |
+| Video records | `/api/videos`, `/api/videos/{id}` |
 | Processing | `/api/videos/{id}/transcribe`, `/translate`, `/burn-subtitles`, `/caption`, `/metadata`, `/process` |
 | Publish | `/api/videos/{id}/publish`, `/api/autopublish/queue` |
-| Generation | `/api/videos/generate` (+ route provider trong `app.py`) |
+| Generation | `/api/videos/generate` (+ provider routes trong `app.py`) |
 
 Upload:
 
@@ -438,7 +444,7 @@ curl -F "video=@/path/to/video.mp4" \
      http://localhost:8787/upload
 ```
 
-Quy trình end-to-end:
+End-to-end process:
 
 ```bash
 curl -X POST \
@@ -448,7 +454,7 @@ curl -X POST \
   http://localhost:8787/video-processing
 ```
 
-Liệt kê video:
+List videos:
 
 ```bash
 curl http://localhost:8787/api/videos
@@ -463,17 +469,17 @@ curl -X POST \
   http://localhost:8787/api/videos/123/publish
 ```
 
-Thêm endpoint và payload chi tiết: `references/API_GUIDE.md`.
+More endpoints and payload details: `references/API_GUIDE.md`.
 
-Các nhóm endpoint thường dùng:
-- Vòng đời video: `/upload`, `/upload-stream`, `/api/videos`, `/api/videos/{id}`, `/media/*`
-- Hành động xử lý: `/api/videos/{id}/transcribe`, `/api/videos/{id}/translate`, `/api/videos/{id}/burn-subtitles`, `/api/videos/{id}/metadata`, `/api/videos/{id}/caption`, `/api/videos/{id}/process`
-- Generation/provider paths: `/api/videos/generate` cộng thêm Venice/A2E routes trong `app.py`
+Related endpoint groups you will likely use:
+- Video lifecycle: `/upload`, `/upload-stream`, `/api/videos`, `/api/videos/{id}`, `/media/*`
+- Processing actions: `/api/videos/{id}/transcribe`, `/api/videos/{id}/translate`, `/api/videos/{id}/burn-subtitles`, `/api/videos/{id}/metadata`, `/api/videos/{id}/caption`, `/api/videos/{id}/process`
+- Generation/provider paths: `/api/videos/generate` plus Venice/A2E routes exposed in `app.py`
 - Distribution: `/api/videos/{id}/publish`, `/api/autopublish/queue`
 
-## 🧪 Ví dụ
+## 🧪 Examples
 
-### Chạy frontend local (web)
+### Frontend local run (web)
 
 ```bash
 cd app
@@ -481,7 +487,7 @@ npm install
 EXPO_PUBLIC_API_URL="http://localhost:8787" npx expo start --web --port 8091
 ```
 
-Nếu backend chạy ở `8887`:
+Nếu backend đang chạy ở `8887`:
 
 ```bash
 EXPO_PUBLIC_API_URL="http://localhost:8887" npx expo start --web --port 8091
@@ -499,87 +505,87 @@ EXPO_PUBLIC_API_URL="http://10.0.2.2:8787" npx expo start --android
 EXPO_PUBLIC_API_URL="http://127.0.0.1:8787" npx expo start --ios
 ```
 
-### Tùy chọn helper tạo Sora
+### Optional Sora generation helper
 
 ```bash
 python -m agi.demo_fantasy_woman --seconds 8 --size 1280x720 --output DATA/sora_oracle_valley.mp4
 ```
 
-Giây hỗ trợ: `4`, `8`, `12`.
-Kích thước hỗ trợ: `720x1280`, `1280x720`, `1024x1792`, `1792x1024`.
+Supported seconds: `4`, `8`, `12`.
+Supported sizes: `720x1280`, `1280x720`, `1024x1792`, `1792x1024`.
 
-## 🧪 Ghi chú phát triển
+## 🧪 Development Notes
 
-- Dùng `python` từ Conda env `lazyedit` (không giả định system `python3`).
-- Không đẩy media lớn lên Git; lưu media runtime trong `DATA/` hoặc bộ nhớ ngoài.
-- Khởi tạo/cập nhật submodule khi thành phần pipeline không resolve.
-- Giữ phạm vi chỉnh sửa gọn; tránh sửa format lớn không liên quan.
-- Với frontend, `EXPO_PUBLIC_API_URL` điều khiển URL API backend.
-- CORS mở trên backend cho phát triển app.
+- Dùng `python` trong Conda env `lazyedit` (không giả định `python3` hệ thống).
+- Giữ media lớn ngoài Git; lưu runtime media trong `DATA/` hoặc lưu trữ ngoài.
+- Initialize/update submodules khi các component của pipeline lỗi hoặc không resolve được.
+- Giữ các thay đổi scope hẹp; tránh format refactor không liên quan.
+- Với frontend, API URL của app được điều khiển bởi `EXPO_PUBLIC_API_URL`.
+- CORS backend mở cho app development.
 
-Chính sách submodule & external dependency:
-- Xem dependency bên ngoài là do upstream sở hữu. Trong workflow này, tránh chỉnh sửa nội bộ submodule trừ khi làm việc trực tiếp trên chính project đó.
-- Hướng dẫn vận hành coi `furigana` (và đôi khi `echomind` trong một số setup local) là dependency bên ngoài; nếu chưa chắc, giữ nguyên upstream và tránh sửa tại chỗ.
+Submodule and external dependency policy:
+- Treat external dependencies as upstream-owned. In this repository workflow, avoid editing submodule internals unless intentionally working in those projects.
+- Hướng dẫn vận hành của repo coi `furigana` (và một số thiết lập `echomind` trong môi trường local) là dependency ngoài; nếu không chắc chắn, giữ upstream và tránh sửa in-place.
 
-Tài liệu tham khảo:
+Helpful references:
 - `references/QUICKSTART.md`
 - `references/API_GUIDE.md`
 - `references/APP_GUIDE.md`
 - `references/DEPLOYMENT_SYSTEMS.md`
 - `references/TMUX_SESSIONS.md`
 
-Vệ sinh bảo mật/cấu hình:
-- Giữ API keys và secret trong biến môi trường; không commit credentials.
-- Ưu tiên `.env` cho override theo máy và giữ `.env.example` làm template công khai.
-- Nếu hành vi CUDA/GPU khác theo host, override bằng biến môi trường thay vì hardcode theo máy.
+Security/config hygiene:
+- Giữ API keys và secrets trong biến môi trường; không commit credential.
+- Ưu tiên `.env` cho overrides máy local và giữ `.env.example` làm template công khai.
+- Nếu hành vi CUDA/GPU khác theo host, override qua môi trường thay vì hardcode giá trị theo máy.
 
-## ✅ Kiểm thử
+## ✅ Testing
 
-Bề mặt kiểm thử hiện tại còn tối thiểu và thiên về DB.
+Phạm vi test chính thức hiện tại nhỏ và tập trung DB.
 
-| Lớp kiểm thử | Lệnh hoặc phương pháp |
+| Validation layer | Command or method |
 | --- | --- |
 | DB smoke | `python db_smoke_test.py` |
-| Kiểm tra pytest DB | `pytest tests/test_db_smoke.py` |
-| Kiểm thử chức năng | Web UI + API flow với sample ngắn trong `DATA/` |
+| Pytest DB check | `pytest tests/test_db_smoke.py` |
+| Functional flow | Web UI + API chạy bằng sample ngắn trong `DATA/` |
 
 ```bash
 python db_smoke_test.py
 pytest tests/test_db_smoke.py
 ```
 
-Với kiểm thử chức năng, dùng web UI và luồng API với clip ngắn trong `DATA/`.
+Với kiểm chứng chức năng, dùng web UI + API flow với một clip ngắn trong `DATA/`.
 
-Giả định và ghi chú portability:
-- Một số đường dẫn mặc định trong code là fallback dành cho workstation cụ thể; đây là trạng thái hiện tại.
-- Nếu path mặc định không tồn tại trên máy bạn, đặt biến `LAZYEDIT_*` tương ứng trong `.env`.
-- Nếu chưa chắc về giá trị cụ thể theo máy, giữ nguyên cấu hình hiện tại và thêm override rõ ràng thay vì xóa defaults.
+Assumptions and portability notes:
+- Một số đường dẫn mặc định trong code là fallback theo máy; đây là đặc điểm hiện tại.
+- Nếu một đường dẫn mặc định không tồn tại trên máy bạn, set biến `LAZYEDIT_*` tương ứng trong `.env`.
+- Nếu chưa chắc chắn về giá trị theo máy, giữ nguyên thiết lập hiện tại và thêm override rõ ràng thay vì xóa default.
 
-## 🧱 Giả định & Giới hạn đã biết
+## 🧱 Assumptions & Known Limits
 
-- Bộ dependency backend chưa được khóa bằng root lockfile; khả năng tái lập môi trường hiện phụ thuộc kỷ luật cài đặt local.
-- `app.py` hiện đang tương đối monolithic và chứa surface route khá rộng.
-- Hầu hết validation pipeline là integration/manual (UI + API + sample media), với phạm vi test tự động hạn chế.
-- Runtime directories (`DATA/`, `temp/`, `translation_logs/`) là output vận hành và có thể phình rất lớn.
-- Submodule cần đầy đủ để dùng đủ chức năng; checkout thiếu sẽ dễ gây lỗi thiếu script.
+- Bộ dependency backend chưa được khóa bằng lockfile gốc; reproducibility phụ thuộc kỷ luật thiết lập local.
+- `app.py` hiện tại có phạm vi route lớn và được giữ intentionally monolithic.
+- Hầu hết validation pipeline là integration/manual (UI + API + media mẫu), với automated test còn hạn chế.
+- Các thư mục runtime (`DATA/`, `temp/`, `translation_logs/`) là output vận hành và có thể tăng nhanh kích thước.
+- Submodule cần có đầy đủ để hoạt động; checkout một phần thường gây lỗi script mất tích.
 
-## 🚢 Ghi chú triển khai & đồng bộ
+## 🚢 Deployment & Sync Notes
 
-Các đường dẫn và luồng đồng bộ đã biết (theo tài liệu vận hành repo):
+Đường dẫn + luồng sync đã biết (theo tài liệu vận hành repo):
 
-- Workspace phát triển: `/home/lachlan/ProjectsLFS/LazyEdit`
-- LazyEdit backend + app đã deploy: `/home/lachlan/DiskMech/Projects/lazyedit`
-- AutoPubMonitor đã deploy: `/home/lachlan/DiskMech/Projects/autopub-monitor`
-- Host hệ thống publishing: `/home/lachlan/Projects/auto-publish` trên `lazyingart`
+- Development workspace: `/home/lachlan/ProjectsLFS/LazyEdit`
+- Deployed LazyEdit backend + app: `/home/lachlan/DiskMech/Projects/lazyedit`
+- Deployed AutoPubMonitor: `/home/lachlan/DiskMech/Projects/autopub-monitor`
+- Publishing system host: `/home/lachlan/Projects/auto-publish` trên `lazyingart`
 
-| Môi trường | Đường dẫn | Ghi chú |
+| Environment | Path | Notes |
 | --- | --- | --- |
-| Dev workspace | `/home/lachlan/ProjectsLFS/LazyEdit` | Nguồn chính + submodules |
-| Deployed LazyEdit | `/home/lachlan/DiskMech/Projects/lazyedit` | tmux `la-lazyedit` trong tài liệu ops |
-| Deployed AutoPubMonitor | `/home/lachlan/DiskMech/Projects/autopub-monitor` | Các phiên monitor/sync/process |
+| Dev workspace | `/home/lachlan/ProjectsLFS/LazyEdit` | Main source + submodules |
+| Deployed LazyEdit | `/home/lachlan/DiskMech/Projects/lazyedit` | tmux `la-lazyedit` in ops docs |
+| Deployed AutoPubMonitor | `/home/lachlan/DiskMech/Projects/autopub-monitor` | Monitor/sync/process sessions |
 | Publishing host | `/home/lachlan/Projects/auto-publish` (`lazyingart`) | Pull sau khi cập nhật submodule |
 
-Sau khi đẩy cập nhật `AutoPublish/` từ repo này, pull trên máy publishing:
+Sau khi push thay đổi `AutoPublish/` từ repo này, pull trên host publishing:
 
 ```bash
 ssh lachlan@lazyingart
@@ -587,52 +593,40 @@ cd ~/Projects/auto-publish
 git pull github main
 ```
 
-## 🧯 Xử lý sự cố
+## 🧯 Troubleshooting
 
-| Vấn đề | Kiểm tra / Sửa |
+| Problem | Check / Fix |
 | --- | --- |
 | Thiếu module hoặc script pipeline | Chạy `git submodule update --init --recursive` |
-| Không tìm thấy FFmpeg | Cài FFmpeg và kiểm tra `ffmpeg -version` hoạt động |
-| Xung đột cổng | Backend mặc định `8787`; `start_lazyedit.sh` mặc định `18787`; set rõ `LAZYEDIT_PORT` hoặc `PORT` |
-| Expo không kết nối backend | Đảm bảo `EXPO_PUBLIC_API_URL` trỏ đúng host/cổng backend đang chạy |
-| Lỗi kết nối database | Kiểm tra PostgreSQL + DSN/env vars; smoke check tùy chọn: `python db_smoke_test.py` |
-| Lỗi GPU/CUDA | Xác nhận driver/CUDA tương thích với Torch stack đã cài |
-| Script service lỗi khi cài | Đảm bảo `lazyedit_config.sh`, `start_lazyedit.sh`, `stop_lazyedit.sh` tồn tại trước khi chạy installer |
+| FFmpeg not found | Cài FFmpeg và xác nhận `ffmpeg -version` chạy được |
+| Port conflicts | Backend mặc định `8787`; `start_lazyedit.sh` mặc định `18787`; set `LAZYEDIT_PORT` hoặc `PORT` rõ ràng |
+| Expo cannot reach backend | Đảm bảo `EXPO_PUBLIC_API_URL` trỏ đúng host/port backend đang chạy |
+| Database connection issues | Kiểm tra PostgreSQL + DSN/env vars; smoke check tùy chọn: `python db_smoke_test.py` |
+| GPU/CUDA issues | Kiểm tra driver/CUDA tương thích stack Torch |
+| Service script fails at install | Đảm bảo `lazyedit_config.sh`, `start_lazyedit.sh`, và `stop_lazyedit.sh` tồn tại trước khi chạy installer |
 
-## 🗺️ Lộ trình
+## 🗺️ Roadmap
 
-- Chỉnh sửa phụ đề/segmentation trực tiếp trong app với xem trước A/B và điều khiển theo dòng.
-- Tăng độ phủ test end-to-end cho luồng API cốt lõi.
-- Đồng bộ tài liệu giữa các README i18n và các chế độ triển khai.
-- Tăng độ bền cho workflow retry provider tạo nội dung và khả năng quan sát trạng thái.
+- Chỉnh sửa phụ đề/segment in-app với A/B preview và điều khiển per-line.
+- Mở rộng coverage test end-to-end cho các API flow cốt lõi.
+- Đồng bộ tài liệu giữa các README i18n và các chế độ deploy.
+- Cứng hóa pipeline cho generation-provider retries và visibility của trạng thái xử lý.
 
-## 🤝 Đóng góp
+## 🤝 Contributing
 
-Đóng góp được chào đón.
+Đóng góp đều được hoan nghênh.
 
-1. Fork và tạo nhánh tính năng.
-2. Giữ commit tập trung và có phạm vi rõ.
-3. Xác thực thay đổi cục bộ (`python app.py`, luồng API chính, và tích hợp app nếu liên quan).
-4. Mở PR kèm mục đích, hướng dẫn reproduce, và ghi chú before/after (ảnh chụp nếu có đổi UI).
+1. Fork và tạo nhánh feature.
+2. Giữ các commit scoped và tập trung.
+3. Validate local (`python app.py`, flow API chính, và integration app nếu liên quan).
+4. Tạo PR với mục đích rõ, bước tái hiện, và ghi chú before/after (screenshots cho thay đổi UI).
 
-Nguyên tắc thực hành:
-- Tuân thủ style Python (PEP 8, 4 spaces, snake_case naming).
-- Không commit credential hoặc file nhị phân lớn.
-- Cập nhật docs/config khi hành vi thay đổi.
-- Ưu tiên commit ngắn, mệnh lệnh, có phạm vi (ví dụ: `fix ffmpeg 7 compatibility`).
+Practical guidelines:
+- Follow Python style (PEP 8, 4 spaces, snake_case naming).
+- Avoid committing credentials or large binaries.
+- Update docs/config scripts khi hành vi thay đổi.
+- Preferred commit style: short, imperative, scoped (for example: `fix ffmpeg 7 compatibility`).
 
-## 📄 Giấy phép
-
-[Apache-2.0](LICENSE)
-
-## 🙏 Lời cảm ơn
-
-LazyEdit được xây dựng trên các thư viện và dịch vụ mã nguồn mở, bao gồm:
-- FFmpeg cho xử lý media
-- Tornado cho backend API
-- MoviePy cho luồng chỉnh sửa
-- OpenAI models cho pipeline có hỗ trợ AI
-- CJKWrap và công cụ xử lý văn bản đa ngôn ngữ trong luồng phụ đề
 
 
 ## ❤️ Support
@@ -640,3 +634,16 @@ LazyEdit được xây dựng trên các thư viện và dịch vụ mã nguồn
 | Donate | PayPal | Stripe |
 | --- | --- | --- |
 | [![Donate](https://camo.githubusercontent.com/24a4914f0b42c6f435f9e101621f1e52535b02c225764b2f6cc99416926004b7/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f446f6e6174652d4c617a79696e674172742d3045413545393f7374796c653d666f722d7468652d6261646765266c6f676f3d6b6f2d6669266c6f676f436f6c6f723d7768697465)](https://chat.lazying.art/donate) | [![PayPal](https://camo.githubusercontent.com/d0f57e8b016517a4b06961b24d0ca87d62fdba16e18bbdb6aba28e978dc0ea21/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f50617950616c2d526f6e677a686f754368656e2d3030343537433f7374796c653d666f722d7468652d6261646765266c6f676f3d70617970616c266c6f676f436f6c6f723d7768697465)](https://paypal.me/RongzhouChen) | [![Stripe](https://camo.githubusercontent.com/1152dfe04b6943afe3a8d2953676749603fb9f95e24088c92c97a01a897b4942/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5374726970652d446f6e6174652d3633354246463f7374796c653d666f722d7468652d6261646765266c6f676f3d737472697065266c6f676f436f6c6f723d7768697465)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
+
+## 📄 License
+
+[Apache-2.0](LICENSE)
+
+## 🙏 Acknowledgements
+
+LazyEdit dựa trên các thư viện và dịch vụ mã nguồn mở, gồm:
+- FFmpeg cho xử lý media
+- Tornado cho backend APIs
+- MoviePy cho workflow chỉnh sửa
+- OpenAI models cho pipeline tác vụ hỗ trợ AI
+- CJKWrap và công cụ văn bản đa ngôn ngữ trong luồng phụ đề
