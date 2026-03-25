@@ -99,13 +99,7 @@ fi
 echo "Installing LazyEdit into: $DEPLOY_DIR"
 echo "Target user: $TARGET_USER"
 
-# 1. Install required packages
-echo "Installing required packages..."
-export DEBIAN_FRONTEND=noninteractive
-apt-get update
-apt-get install -y ffmpeg tmux
-
-# 2. Validate existing scripts/config (do not generate)
+# 1. Validate existing scripts/config (do not generate)
 CONFIG_PATH="$DEPLOY_DIR/lazyedit_config.sh"
 START_TARGET="$DEPLOY_DIR/start_lazyedit.sh"
 STOP_TARGET="$DEPLOY_DIR/stop_lazyedit.sh"
@@ -124,21 +118,16 @@ if [[ ! -f "$STOP_TARGET" ]]; then
     exit 1
 fi
 
-# 3. Validate runtime prerequisites expected by start_lazyedit.sh
-if ! run_as_target_user "export NVM_DIR=\"$HOME_DIR/.nvm\"; if [[ -s \"$HOME_DIR/.nvm/nvm.sh\" ]]; then . \"$HOME_DIR/.nvm/nvm.sh\"; fi; command -v node >/dev/null && command -v npm >/dev/null && command -v npx >/dev/null"; then
-    echo "Node.js/npm/npx are required for the Expo frontend and were not found for user $TARGET_USER." >&2
+# 2. Install/check shared runtime prerequisites
+PREREQ_SCRIPT="$DEPLOY_DIR/scripts/ensure_lazyedit_runtime.sh"
+if [[ ! -f "$PREREQ_SCRIPT" ]]; then
+    echo "Missing prerequisite checker: $PREREQ_SCRIPT" >&2
     exit 1
 fi
-if [[ -z "$CONDA_PATH" ]]; then
-    echo "Conda activation script not found for user $TARGET_USER." >&2
-    exit 1
-fi
-if ! run_as_target_user "source \"$CONDA_PATH\" >/dev/null 2>&1 && conda env list | awk '{print \$1}' | grep -qx \"$CONDA_ENV\""; then
-    echo "Conda environment '$CONDA_ENV' was not found for user $TARGET_USER." >&2
-    exit 1
-fi
+echo "Installing/checking LazyEdit runtime prerequisites..."
+"$PREREQ_SCRIPT" --install-system --target-user "$TARGET_USER" --deploy-dir "$DEPLOY_DIR"
 
-# 4. Create/update the systemd service file
+# 3. Create/update the systemd service file
 SERVICE_FILE="/etc/systemd/system/lazyedit.service"
 TMP_SERVICE="$(mktemp)"
 cat > "$TMP_SERVICE" << EOF
@@ -163,12 +152,12 @@ EOF
 install -m 0644 "$TMP_SERVICE" "$SERVICE_FILE"
 rm -f "$TMP_SERVICE"
 
-# 5. Reload systemd and enable the service
+# 4. Reload systemd and enable the service
 echo "Configuring systemd service..."
 systemctl daemon-reload
 systemctl enable lazyedit.service
 
-# 6. Optionally start the service
+# 5. Optionally start the service
 if [[ "$START_SERVICE" == "1" ]]; then
     systemctl restart lazyedit.service
     echo "Service started. Check status with: sudo systemctl status lazyedit.service"

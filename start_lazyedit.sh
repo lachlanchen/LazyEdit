@@ -29,6 +29,11 @@ if [ -z "$CONDA_ENV" ]; then
     CONDA_ENV="lazyedit"
 fi
 
+PREREQ_SCRIPT="${PREREQ_SCRIPT:-$SCRIPT_DIR/scripts/ensure_lazyedit_runtime.sh}"
+if [ -f "$PREREQ_SCRIPT" ]; then
+    "$PREREQ_SCRIPT" --check-only --target-user "${LAZYEDIT_USER:-$(id -un)}" --deploy-dir "$LAZYEDIT_DIR"
+fi
+
 if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
     echo "Tmux session '$SESSION_NAME' already exists; restarting."
     tmux kill-session -t "$SESSION_NAME"
