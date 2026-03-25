@@ -10,6 +10,7 @@ EXPO_APP_DIR="${EXPO_APP_DIR:-${LAZYEDIT_DIR}/app}"
 BACKEND_PORT="${BACKEND_PORT:-18787}"
 EXPO_PORT="${EXPO_PORT:-18791}"
 EXPO_PUBLIC_API_URL="${EXPO_PUBLIC_API_URL:-http://localhost:${BACKEND_PORT}}"
+ENV_FILE="${ENV_FILE:-${LAZYEDIT_DIR}/.env}"
 
 if ! command -v tmux >/dev/null 2>&1; then
     echo "tmux is required but not found in PATH."
@@ -45,6 +46,10 @@ tmux split-window -h -t "$SESSION_NAME":0
 if [ -f "$BASHRC_PATH" ]; then
     tmux send-keys -t "$SESSION_NAME":0.0 "source \"$BASHRC_PATH\"" C-m
 fi
+if [ -f "$ENV_FILE" ]; then
+    tmux send-keys -t "$SESSION_NAME":0.0 "set -a; source \"$ENV_FILE\"; set +a" C-m
+fi
+tmux send-keys -t "$SESSION_NAME":0.0 "if [ -n \"\$LAZYEDIT_DATABASE_URL\" ]; then export DATABASE_URL=\"\$LAZYEDIT_DATABASE_URL\"; else unset DATABASE_URL; fi" C-m
 if [ -n "$CONDA_PATH" ] && [ -f "$CONDA_PATH" ]; then
     tmux send-keys -t "$SESSION_NAME":0.0 "source \"$CONDA_PATH\"" C-m
 fi
@@ -60,8 +65,11 @@ tmux send-keys -t "$SESSION_NAME":0.0 "LAZYEDIT_PORT=\"$BACKEND_PORT\" python ap
 if [ -f "$BASHRC_PATH" ]; then
     tmux send-keys -t "$SESSION_NAME":0.1 "source \"$BASHRC_PATH\"" C-m
 fi
+if [ -f "$ENV_FILE" ]; then
+    tmux send-keys -t "$SESSION_NAME":0.1 "set -a; source \"$ENV_FILE\"; set +a" C-m
+fi
 tmux send-keys -t "$SESSION_NAME":0.1 "cd \"$EXPO_APP_DIR\"" C-m
 tmux send-keys -t "$SESSION_NAME":0.1 "if [ -f \"package.json\" ] && [ ! -d \"node_modules\" ]; then npm install; fi" C-m
 tmux send-keys -t "$SESSION_NAME":0.1 "if [ -f \"package.json\" ] && [ ! -d \"node_modules/expo\" ]; then npm install; fi" C-m
-tmux send-keys -t "$SESSION_NAME":0.1 "export EXPO_PUBLIC_API_URL=\"$EXPO_PUBLIC_API_URL\"" C-m
+tmux send-keys -t "$SESSION_NAME":0.1 "if [ -z \"\$EXPO_PUBLIC_API_URL\" ]; then export EXPO_PUBLIC_API_URL=\"$EXPO_PUBLIC_API_URL\"; fi" C-m
 tmux send-keys -t "$SESSION_NAME":0.1 "npx expo start --web --port $EXPO_PORT" C-m
