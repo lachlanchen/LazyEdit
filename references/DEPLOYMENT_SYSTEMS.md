@@ -17,8 +17,9 @@ This repo is the development source. The runtime deployments live in DiskMech an
 
 - Publication system (AutoPublish)
   - Raspberry Pi: `lazyingart`
-  - Path: `/home/lachlan/Projects/auto-publish`
+  - Path: `/home/lachlan/Projects/autopub`
   - Platforms: XiaoHongShu, Douyin, Bilibili, ShiPinHao, YouTube
+  - Runtime secrets: `/home/lachlan/Projects/autopub/.env`
 
 ## Sync Workflow (High Level)
 1) Develop in `/home/lachlan/ProjectsLFS/LazyEdit`.
@@ -26,8 +27,12 @@ This repo is the development source. The runtime deployments live in DiskMech an
 3) Pull on deployments:
    - Edit system: `cd /home/lachlan/DiskMech/Projects/lazyedit && git pull --no-rebase origin main`
    - Monitor system: `cd /home/lachlan/DiskMech/Projects/autopub-monitor && git pull --no-rebase origin main`
-   - Raspberry Pi: `cd /home/lachlan/Projects/auto-publish && git pull github main`
+   - Raspberry Pi: `cd /home/lachlan/Projects/autopub && git pull github main`
 
 ## Common Restart Commands
 - LazyEdit tmux: `tmux kill-session -t lazyedit || true` then `/home/lachlan/DiskMech/Projects/lazyedit/start_lazyedit.sh`
 - AutoPubMonitor tmux: `./autopub_monitor/autopub_monitor_tmux_session.sh stop && ./autopub_monitor/autopub_monitor_tmux_session.sh start`
+
+## Related References
+
+- `references/XIAOHONGSHU_AUTOPUBLISH_LAYOUT_CHANGE_2026_03.md`
