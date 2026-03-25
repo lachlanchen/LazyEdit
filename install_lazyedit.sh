@@ -1,8 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# install_lazyedit.sh - Script to install and set up the LazyEdit service
-# Creates the systemd service, config file and installs required packages
+# install_lazyedit.sh - install/update the LazyEdit systemd service safely
 
 if [[ $EUID -ne 0 ]]; then
     echo "Please run with sudo." >&2
@@ -13,7 +12,57 @@ SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 TARGET_USER="${SUDO_USER:-$USER}"
 DEFAULT_DEPLOY_DIR="/home/lachlan/DiskMech/Projects/lazyedit"
 RUN_DIR="$(pwd)"
-DEPLOY_DIR="${1:-${LAZYEDIT_DIR:-}}"
+START_SERVICE="${LAZYEDIT_START:-0}"
+
+usage() {
+    cat <<'EOF'
+Usage: sudo ./install_lazyedit.sh [--start] [--no-start] [DEPLOY_DIR]
+
+Options:
+  --start     Enable and restart lazyedit.service after install/update
+  --no-start  Enable service only; do not start it
+  -h, --help  Show this help
+
+Environment:
+  LAZYEDIT_START=1  same as --start
+EOF
+}
+
+DEPLOY_DIR=""
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --start)
+            START_SERVICE=1
+            shift
+            ;;
+        --no-start)
+            START_SERVICE=0
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        -*)
+            echo "Unknown option: $1" >&2
+            usage >&2
+            exit 2
+            ;;
+        *)
+            if [[ -n "$DEPLOY_DIR" ]]; then
+                echo "Only one deploy directory may be provided." >&2
+                usage >&2
+                exit 2
+            fi
+            DEPLOY_DIR="$1"
+            shift
+            ;;
+    esac
+done
+
+if [[ -z "$DEPLOY_DIR" ]]; then
+    DEPLOY_DIR="${LAZYEDIT_DIR:-}"
+fi
 if [[ -z "$DEPLOY_DIR" ]]; then
     if [[ -f "$RUN_DIR/app.py" ]]; then
         DEPLOY_DIR="$RUN_DIR"
@@ -33,6 +82,10 @@ if [[ -z "$HOME_DIR" ]]; then
     HOME_DIR="/home/$TARGET_USER"
 fi
 
+run_as_target_user() {
+    HOME="$HOME_DIR" runuser -u "$TARGET_USER" -- bash -c "$1"
+}
+
 CONDA_ENV="${CONDA_ENV:-lazyedit}"
 CONDA_PATH=""
 if [[ -f "$HOME_DIR/miniconda3/etc/profile.d/conda.sh" ]]; then
@@ -44,9 +97,11 @@ else
 fi
 
 echo "Installing LazyEdit into: $DEPLOY_DIR"
+echo "Target user: $TARGET_USER"
 
 # 1. Install required packages
 echo "Installing required packages..."
+export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y ffmpeg tmux
 
@@ -69,17 +124,34 @@ if [[ ! -f "$STOP_TARGET" ]]; then
     exit 1
 fi
 
-# 3. Create the systemd service file
+# 3. Validate runtime prerequisites expected by start_lazyedit.sh
+if ! run_as_target_user "export NVM_DIR=\"$HOME_DIR/.nvm\"; if [[ -s \"$HOME_DIR/.nvm/nvm.sh\" ]]; then . \"$HOME_DIR/.nvm/nvm.sh\"; fi; command -v node >/dev/null && command -v npm >/dev/null && command -v npx >/dev/null"; then
+    echo "Node.js/npm/npx are required for the Expo frontend and were not found for user $TARGET_USER." >&2
+    exit 1
+fi
+if [[ -z "$CONDA_PATH" ]]; then
+    echo "Conda activation script not found for user $TARGET_USER." >&2
+    exit 1
+fi
+if ! run_as_target_user "source \"$CONDA_PATH\" >/dev/null 2>&1 && conda env list | awk '{print \$1}' | grep -qx \"$CONDA_ENV\""; then
+    echo "Conda environment '$CONDA_ENV' was not found for user $TARGET_USER." >&2
+    exit 1
+fi
+
+# 4. Create/update the systemd service file
 SERVICE_FILE="/etc/systemd/system/lazyedit.service"
-cat > "$SERVICE_FILE" << EOF
+TMP_SERVICE="$(mktemp)"
+cat > "$TMP_SERVICE" << EOF
 [Unit]
 Description=LazyEdit Video Processing
 After=network.target
+RequiresMountsFor=$HOME_DIR $DEPLOY_DIR
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
 User=$TARGET_USER
+Environment=HOME=$HOME_DIR
 WorkingDirectory=$DEPLOY_DIR
 ExecStart=/bin/bash -lc '$DEPLOY_DIR/start_lazyedit.sh'
 ExecStop=/bin/bash -lc '$DEPLOY_DIR/stop_lazyedit.sh'
@@ -88,17 +160,16 @@ ExecStop=/bin/bash -lc '$DEPLOY_DIR/stop_lazyedit.sh'
 WantedBy=multi-user.target
 EOF
 
-chmod 644 "$SERVICE_FILE"
+install -m 0644 "$TMP_SERVICE" "$SERVICE_FILE"
+rm -f "$TMP_SERVICE"
 
-# 4. Reload systemd, enable and start the service
+# 5. Reload systemd and enable the service
 echo "Configuring systemd service..."
 systemctl daemon-reload
 systemctl enable lazyedit.service
 
-# 5. Offer to start the service
-echo "Would you like to start the lazyedit service now? (y/n)"
-read -r response
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+# 6. Optionally start the service
+if [[ "$START_SERVICE" == "1" ]]; then
     systemctl restart lazyedit.service
     echo "Service started. Check status with: sudo systemctl status lazyedit.service"
 else

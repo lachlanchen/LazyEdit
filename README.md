@@ -265,11 +265,13 @@ conda activate lazyedit
 
 ```bash
 chmod +x install_lazyedit.sh
-sudo ./install_lazyedit.sh /path/to/lazyedit
+sudo ./install_lazyedit.sh --start /path/to/lazyedit
 ```
 
 Service install notes:
-- `install_lazyedit.sh` installs `ffmpeg` and `tmux`, then creates `lazyedit.service`.
+- `install_lazyedit.sh` installs `ffmpeg` and `tmux`, validates the `lazyedit` conda env plus Node/npm/npx, then creates or updates `lazyedit.service`.
+- Use `--start` to restart the service immediately after install/update.
+- Re-running the installer is safe; already-installed packages are skipped and the service file is refreshed in place.
 - It does not generate `lazyedit_config.sh`, `start_lazyedit.sh`, or `stop_lazyedit.sh`; these must already exist and be correct.
 
 ## ⚡ Quick Start
@@ -295,6 +297,12 @@ Optional local database bootstrap:
 ```bash
 createdb lazyedit_db || true
 psql -d lazyedit_db -tAc "SELECT 'ok'"
+```
+
+Or use the repeat-safe helper:
+
+```bash
+sudo ./scripts/prepare_lazyedit_db.sh
 ```
 
 ### Runtime profiles
@@ -647,6 +655,4 @@ LazyEdit builds on open-source libraries and services, including:
 - MoviePy for editing workflows
 - OpenAI models for AI-assisted pipeline tasks
 - CJKWrap and multilingual text tooling in subtitle workflows
-
-
 
