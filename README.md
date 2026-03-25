@@ -39,6 +39,7 @@ LazyEdit is an end-to-end AI-assisted video workflow for creation, processing, a
 | 🖥️ Frontend app | `app/` (Expo web/mobile) |
 | 🧩 Runtime styles | `python app.py` (manual), `./start_lazyedit.sh` (tmux), optional `lazyedit.service` |
 | 🎯 Primary references | `README.md`, `references/QUICKSTART.md`, `references/API_GUIDE.md`, `references/APP_GUIDE.md` |
+| 🛠️ Ops references | `references/DEPLOYMENT_SYSTEMS.md`, `references/TMUX_SESSIONS.md`, `references/LAZYEDIT_DATABASE_SPLIT_FROM_ECHOMIND.md`, `references/LOCAL_DNS_HOST_CACHE.md` |
 
 ## 🧭 Contents
 
@@ -541,6 +542,8 @@ Helpful references:
 - `references/APP_GUIDE.md`
 - `references/DEPLOYMENT_SYSTEMS.md`
 - `references/TMUX_SESSIONS.md`
+- `references/LAZYEDIT_DATABASE_SPLIT_FROM_ECHOMIND.md`
+- `references/LOCAL_DNS_HOST_CACHE.md`
 
 Security/config hygiene:
 - Keep API keys and secrets in environment variables; do not commit credentials.
@@ -655,4 +658,3 @@ LazyEdit builds on open-source libraries and services, including:
 - MoviePy for editing workflows
 - OpenAI models for AI-assisted pipeline tasks
 - CJKWrap and multilingual text tooling in subtitle workflows
-
