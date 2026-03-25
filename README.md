@@ -1,21 +1,136 @@
+[English](README.md) · [العربية](i18n/README.ar.md) · [Español](i18n/README.es.md) · [Français](i18n/README.fr.md) · [日本語](i18n/README.ja.md) · [한국어](i18n/README.ko.md) · [Tiếng Việt](i18n/README.vi.md) · [中文 (简体)](i18n/README.zh-Hans.md) · [中文（繁體）](i18n/README.zh-Hant.md) · [Deutsch](i18n/README.de.md) · [Русский](i18n/README.ru.md)
+
+
+
+[![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://github.com/lachlanchen/lachlanchen/blob/main/figs/banner.png)
+
+# LazyEdit
+
 <p align="center">
-  <img src="https://raw.githubusercontent.com/lachlanchen/lachlanchen/main/logos/banner.png" alt="LazyingArt banner" />
+  <b>AI-assisted video workflow</b> for generation, subtitle processing, metadata, and optional publishing.
+  <br />
+  <sub>Upload or generate -> transcribe -> translate/polish -> burn subtitles -> caption/keyframes -> metadata -> publish</sub>
 </p>
 
-<p>
-  <b>Languages:</b>
-  <a href="README.md">English</a>
-  · <a href="i18n/README.zh-Hant.md">中文（繁體）</a>
-  · <a href="i18n/README.zh-Hans.md">中文 (简体)</a>
-  · <a href="i18n/README.ja.md">日本語</a>
-  · <a href="i18n/README.ko.md">한국어</a>
-  · <a href="i18n/README.vi.md">Tiếng Việt</a>
-  · <a href="i18n/README.ar.md">العربية</a>
-  · <a href="i18n/README.fr.md">Français</a>
-  · <a href="i18n/README.es.md">Español</a>
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License: Apache-2.0" /></a>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" alt="Python 3.10+" />
+  <img src="https://img.shields.io/badge/Backend-Tornado-222222" alt="Backend: Tornado" />
+  <img src="https://img.shields.io/badge/Frontend-Expo-000020?logo=expo&logoColor=white" alt="Frontend: Expo" />
+  <img src="https://img.shields.io/badge/Platform-Linux-informational?logo=linux&logoColor=white" alt="Platform: Linux" />
+  <img src="https://img.shields.io/badge/FFmpeg-required-0A0A0A?logo=ffmpeg&logoColor=white" alt="FFmpeg required" />
+  <img src="https://img.shields.io/badge/PostgreSQL-supported-336791?logo=postgresql&logoColor=white" alt="PostgreSQL supported" />
+  <img src="https://img.shields.io/badge/Stage_A%2FB%2FC-enabled-0f766e" alt="Stage A/B/C enabled" />
+  <img src="https://img.shields.io/badge/AutoPublish-optional-orange" alt="AutoPublish optional" />
+  <img src="https://img.shields.io/badge/i18n-11%20languages-1f883d" alt="i18n: 11 languages" />
+  <a href="https://github.com/lachlanchen/LazyEdit/commits/main"><img src="https://img.shields.io/github/last-commit/lachlanchen/LazyEdit?color=0ea5e9" alt="Last commit" /></a>
+  <a href="https://github.com/lachlanchen/LazyEdit/graphs/contributors"><img src="https://img.shields.io/github/contributors/lachlanchen/LazyEdit?color=8a4fff" alt="Contributors" /></a>
 </p>
 
-## Demos
+## 📌 Quick Facts
+
+LazyEdit is an end-to-end AI-assisted video workflow for creation, processing, and optional publishing. It combines prompt-based generation (Stage A/B/C), media processing APIs, subtitle rendering, keyframe captioning, metadata generation, and AutoPublish handoff.
+
+| Quick fact | Value |
+| --- | --- |
+| 📘 Canonical README | `README.md` (this file) |
+| 🌐 Language variants | `i18n/README.*.md` (single language bar is intentionally kept at top) |
+| 🧠 Backend entrypoint | `app.py` (Tornado) |
+| 🖥️ Frontend app | `app/` (Expo web/mobile) |
+| 🧩 Runtime styles | `python app.py` (manual), `./start_lazyedit.sh` (tmux), optional `lazyedit.service` |
+| 🎯 Primary references | `README.md`, `references/QUICKSTART.md`, `references/API_GUIDE.md`, `references/APP_GUIDE.md` |
+
+## 🧭 Contents
+
+- [Overview](#overview)
+- [Quick Facts](#-quick-facts)
+- [At a Glance](#at-a-glance)
+- [Architecture Snapshot](#architecture-snapshot)
+- [Demos](#demos)
+- [Features](#features)
+- [Documentation & i18n](#-documentation--i18n)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Command Cheat Sheet](#-command-cheat-sheet)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Configuration Files](#-configuration-files)
+- [API Examples](#api-examples)
+- [Examples](#examples)
+- [Development Notes](#development-notes)
+- [Testing](#testing)
+- [Assumptions & Known Limits](#-assumptions--known-limits)
+- [Deployment & Sync Notes](#deployment--sync-notes)
+- [Troubleshooting](#troubleshooting)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Support](#-support)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
+
+## ✨ Overview
+
+LazyEdit is built around a Tornado backend (`app.py`) and an Expo frontend (`app/`).
+
+> Note: If repo/runtime details differ by machine, preserve existing defaults and override via environment variables instead of deleting machine-specific fallbacks.
+
+| Why teams use it | Practical result |
+| --- | --- |
+| Unified operator flow | Upload/generate/remix/publish from one workflow |
+| API-first design | Easy to script and integrate with other tools |
+| Local-first runtime | Works with tmux + service-based deployment patterns |
+
+| Step | What happens |
+| --- | --- |
+| 1 | Upload or generate video |
+| 2 | Transcribe and optionally translate subtitles |
+| 3 | Burn multilingual subtitles with layout controls |
+| 4 | Generate keyframes, captions, and metadata |
+| 5 | Package and optionally publish via AutoPublish |
+
+### Pipeline focus
+
+- Upload, generation, remix, and library management from a single operator UI.
+- API-first processing flow for transcription, subtitle polish/translation, burn-in, and metadata.
+- Optional generation-provider integrations (Veo / Venice / A2E / Sora helpers in `agi/`).
+- Optional publish handoff through `AutoPublish`.
+
+## 🎯 At a Glance
+
+| Area | Included in LazyEdit | Status |
+| --- | --- | --- |
+| Core app | Tornado API backend + Expo web/mobile frontend | ✅ |
+| Media pipeline | ASR, subtitle translation/polish, burn-in, keyframes, captions, metadata | ✅ |
+| Generation | Stage A/B/C and provider helper routes (`agi/`) | ✅ |
+| Distribution | Optional AutoPublish handoff | 🟡 Optional |
+| Runtime model | Local-first scripts, tmux workflows, optional systemd service | ✅ |
+
+## 🏗️ Architecture Snapshot
+
+The repository is organized as an API-first media pipeline with a UI layer:
+
+- `app.py` is the Tornado entrypoint and route orchestrator for upload, processing, generation, publish handoff, and media serving.
+- `lazyedit/` contains modular pipeline building blocks (DB persistence, translation, subtitle burn-in, captions, metadata, provider adapters).
+- `app/` is an Expo Router app (web/mobile) that drives upload, processing, preview, and publishing flows.
+- `config.py` centralizes environment loading and default/fallback runtime paths.
+- `start_lazyedit.sh` and `lazyedit_config.sh` provide reproducible tmux-based local/deployed run modes.
+
+| Layer | Main paths | Responsibility |
+| --- | --- | --- |
+| API & orchestration | `app.py`, `config.py` | Endpoints, routing, env resolution |
+| Processing core | `lazyedit/`, `agi/` | Subtitle/caption/metadata pipeline + providers |
+| UI | `app/` | Operator experience (web/mobile via Expo) |
+| Runtime scripts | `start_lazyedit.sh`, `lazyedit_config.sh`, `install_lazyedit.sh` | Local/service startup and ops |
+
+High-level flow:
+
+`Upload/Generate -> Transcribe -> Translate/Polish -> Burn Subtitles -> Keyframes/Captions -> Metadata -> Optional AutoPublish`
+
+## 🎬 Demos
+
+Screens below show the main operator path from ingestion to metadata generation.
 
 <table>
   <tr>
@@ -64,151 +179,474 @@
   </tr>
 </table>
 
-# LazyEdit
+## 🧩 Features
 
-LazyEdit is a web app for end-to-end video creation, processing, and publishing. It combines prompt-based generation (Stage A/B/C), a multi-step processing pipeline, and an optional AutoPublish flow for social platforms.
+- ✨ Prompt-based generation workflow (Stage A/B/C) with Sora and Veo integration paths.
+- 🧵 Full processing pipeline: transcription -> subtitle polish/translation -> burn-in -> keyframes -> captions -> metadata.
+- 🌏 Multilingual subtitle composition with furigana/IPA/romaji-related support paths.
+- 🔌 API-first backend with upload, processing, media serving, and publish queue endpoints.
+- 🚚 Optional AutoPublish integration for social-platform handoff.
+- 🖥️ Combined backend + Expo workflow supported via tmux launch scripts.
 
-## What it does
+## 🌍 Documentation & i18n
 
-- **Generate**: Stage A/B/C prompt flow with Sora 2 and Veo 3.1 (via GRSAI).
-- **Process**: transcribe → polish → translate → burn subtitles → keyframes → captions → metadata.
-- **Publish**: package outputs and send to AutoPublish (optional).
-- **Visual polish**: subtitle layouts, multilingual furigana/IPA/romaji, logo overlays, cover extraction.
 
-## Submodules
+- Canonical source: `README.md`
+- Language variants: `i18n/README.*.md`
+- Language navigation: keep a single language-options line at the top of each README (no duplicate language bars)
+- Current languages in this repo: Arabic, German, English, Spanish, French, Japanese, Korean, Russian, Vietnamese, Simplified Chinese, Traditional Chinese
 
-- **AutoPublish** (`AutoPublish/`) - optional publishing pipeline
-- **MultilingualWhisper** (`whisper_with_lang_detect/`) - transcription + VAD pipeline
-- **VideoCaptionerWithVit** (`vit-gpt2-image-captioning/`) - ViT + GPT-2 captioning
-- **VideoCaptionerWithClip** (`clip-gpt-captioning/`) - CLIP + GPT captioning (fallback)
+If there is ever a mismatch between translations and English docs, treat this English README as source of truth, then update each language file one-by-one.
 
-## Quick start (dev)
+| i18n policy | Rule |
+| --- | --- |
+| Canonical source | Keep `README.md` as source of truth |
+| Language bar | Exactly one language-options line at top |
+
+## 🗂️ Project Structure
+
+```text
+LazyEdit/
+├── app.py                           # Tornado backend entrypoint and API orchestration
+├── app/                             # Expo frontend (web/mobile)
+├── lazyedit/                        # Core pipeline modules (translation, metadata, burner, DB, templates)
+├── agi/                             # Generation provider abstraction (Sora/Veo/A2E/Venice routes)
+├── DATA/                            # Runtime media input/output (symlink in this workspace)
+├── translation_logs/                # Translation logs
+├── temp/                            # Temporary runtime files
+├── install_lazyedit.sh              # systemd installer (expects config/start/stop scripts)
+├── start_lazyedit.sh                # tmux launcher for backend + Expo
+├── stop_lazyedit.sh                 # tmux stop helper
+├── lazyedit_config.sh               # Deployment/runtime shell config
+├── config.py                        # Environment/config resolution (ports, paths, autopublish URL)
+├── .env.example                     # Environment override template
+├── references/                      # Additional docs (API guide, quickstart, deployment notes)
+├── AutoPublish/                     # Submodule (optional publishing pipeline)
+├── AutoPubMonitor/                  # Submodule (monitor/sync automation)
+├── whisper_with_lang_detect/        # Submodule (ASR/VAD)
+├── vit-gpt2-image-captioning/       # Submodule (primary captioner)
+├── clip-gpt-captioning/             # Submodule (fallback captioner)
+└── furigana/                        # External dependency in workflow (tracked submodule in this checkout)
+```
+
+Submodule/external dependency note:
+- Git submodules in this repository include `AutoPublish`, `AutoPubMonitor`, `whisper_with_lang_detect`, `vit-gpt2-image-captioning`, `clip-gpt-captioning`, and `furigana`.
+- Operational guidance treats `furigana` and `echomind` as external/read-only in this repo workflow. If uncertain, preserve upstream and avoid editing in place.
+
+## ✅ Prerequisites
+
+| Dependency | Notes |
+| --- | --- |
+| Linux environment | `systemd`/`tmux` scripts are Linux-oriented |
+| Python 3.10+ | Use Conda env `lazyedit` |
+| Node.js 20+ + npm | Required for Expo app in `app/` |
+| FFmpeg | Must be available on `PATH` |
+| PostgreSQL | Local peer auth or DSN-based connection |
+| Git submodules | Required for key pipelines |
+
+## 🚀 Installation
+
+1. Clone and initialize submodules:
 
 ```bash
 git clone git@github.com:lachlanchen/LazyEdit.git
 cd LazyEdit
 git submodule update --init --recursive
-
-conda activate lazyedit
-python app.py -m lazyedit
 ```
 
-Open http://localhost:8787 (set `LAZYEDIT_PORT` or `PORT` to change).
-
-## Service install (optional)
-
-The service installer does **not** generate config/scripts. Ensure these exist and are correct for your deployment:
-
-- `lazyedit_config.sh`
-- `start_lazyedit.sh`
-- `stop_lazyedit.sh`
-
-Then run:
+2. Activate Conda environment:
 
 ```bash
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate lazyedit
+```
+
+3. Optional system-level install (service mode):
+
+```bash
+chmod +x install_lazyedit.sh
 sudo ./install_lazyedit.sh /path/to/lazyedit
 ```
 
-Service commands:
+Service install notes:
+- `install_lazyedit.sh` installs `ffmpeg` and `tmux`, then creates `lazyedit.service`.
+- It does not generate `lazyedit_config.sh`, `start_lazyedit.sh`, or `stop_lazyedit.sh`; these must already exist and be correct.
 
-- `sudo systemctl start lazyedit.service`
-- `sudo systemctl stop lazyedit.service`
-- `sudo systemctl status lazyedit.service`
-- `sudo journalctl -u lazyedit.service`
+## ⚡ Quick Start
 
-## Configuration
+Backend + frontend local run (minimal path):
 
-Copy `.env.example` to `.env` and update values as needed.
+```bash
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate lazyedit
+python app.py
+```
 
-Key overrides:
+In a second shell:
 
-- `LAZYEDIT_PORT`, `PORT`
-- `LAZYEDIT_UPLOAD_DIR`
-- `LAZYEDIT_AUTOPUBLISH_URL`
-- `LAZYEDIT_WHISPER_*` (script + models)
-- `LAZYEDIT_CAPTION_*` (captioning scripts/roots)
-- `GRSAI_API_BASE`, `GRSAI_API_KEY` (Veo)
-- `OPENAI_API_KEY` (Sora + metadata)
+```bash
+cd app
+npm install
+EXPO_PUBLIC_API_URL="http://localhost:8787" npx expo start --web --port 8091
+```
 
-## Project structure
+Optional local database bootstrap:
 
-- `app.py` - Tornado backend entrypoint
-- `lazyedit/` - core processing logic
-- `agi/` - video generation providers (Sora/Veo)
-- `AutoPublish/` - optional publishing service (submodule)
-- `whisper_with_lang_detect/` - transcription pipeline (submodule)
-- `vit-gpt2-image-captioning/` - primary captioner (submodule)
-- `clip-gpt-captioning/` - fallback captioner (submodule)
-- `DATA/` - outputs (generated videos, processed assets)
+```bash
+createdb lazyedit_db || true
+psql -d lazyedit_db -tAc "SELECT 'ok'"
+```
 
-## AutoPublish integration
+### Runtime profiles
 
-AutoPublish runs as a separate service. Configure `LAZYEDIT_AUTOPUBLISH_URL` to point at the AutoPublish `/publish` endpoint.
+| Profile | Start command | Default backend | Default frontend |
+| --- | --- | --- | --- |
+| Local dev (manual) | `python app.py` + Expo command | `8787` | `8091` (example command) |
+| Tmux orchestrated | `./start_lazyedit.sh` | `18787` | `18791` |
+| systemd service | `sudo systemctl start lazyedit.service` | Config/env-driven | N/A |
 
-## Troubleshooting
+## 🧭 Command Cheat Sheet
 
-- Run `git submodule update --init --recursive` if captions/transcribe fail due to missing code.
-- Ensure FFmpeg is installed and on PATH.
-- Confirm your conda env matches the paths in `.env` and `lazyedit_config.sh`.
-- For GPU issues, verify CUDA drivers and that your env has the right torch build.
+| Task | Command |
+| --- | --- |
+| Initialize submodules | `git submodule update --init --recursive` |
+| Start backend only | `python app.py` |
+| Start backend + Expo (tmux) | `./start_lazyedit.sh` |
+| Stop tmux run | `./stop_lazyedit.sh` |
+| Open tmux session | `tmux attach -t lazyedit` |
+| Service status | `sudo systemctl status lazyedit.service` |
+| Service logs | `sudo journalctl -u lazyedit.service` |
+| DB smoke test | `python db_smoke_test.py` |
+| Pytest smoke test | `pytest tests/test_db_smoke.py` |
 
-## What your support makes possible
+## 🛠️ Usage
 
-- <b>Keep tools open</b>: hosting, inference, data storage, and community ops.  
-- <b>Ship faster</b>: weeks of focused open-source time on EchoMind, LazyEdit, and MultilingualWhisper.  
-- <b>Prototype wearables</b>: optics, sensors, and neuromorphic/edge components for IdeasGlass + LightMind.  
-- <b>Access for all</b>: subsidized deployments for students, creators, and community groups.
+### Development: backend only
 
-### Donate
+```bash
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate lazyedit
+python app.py
+```
 
-<div align="center">
-<table style="margin:0 auto; text-align:center; border-collapse:collapse;">
-  <tr>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;">
-      <a href="https://chat.lazying.art/donate">https://chat.lazying.art/donate</a>
-    </td>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;">
-      <a href="https://chat.lazying.art/donate"><img src="https://raw.githubusercontent.com/lachlanchen/lachlanchen/main/figs/donate_button.svg" alt="Donate" height="44"></a>
-    </td>
-  </tr>
-  <tr>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;">
-      <a href="https://paypal.me/RongzhouChen">
-        <img src="https://img.shields.io/badge/PayPal-Donate-003087?logo=paypal&logoColor=white" alt="Donate with PayPal">
-      </a>
-    </td>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;">
-      <a href="https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400">
-        <img src="https://img.shields.io/badge/Stripe-Donate-635bff?logo=stripe&logoColor=white" alt="Donate with Stripe">
-      </a>
-    </td>
-  </tr>
-  <tr>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;"><strong>WeChat</strong></td>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;"><strong>Alipay</strong></td>
-  </tr>
-  <tr>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;"><img alt="WeChat QR" src="https://raw.githubusercontent.com/lachlanchen/lachlanchen/main/figs/donate_wechat.png" width="240"/></td>
-    <td style="text-align:center; vertical-align:middle; padding:6px 12px;"><img alt="Alipay QR" src="https://raw.githubusercontent.com/lachlanchen/lachlanchen/main/figs/donate_alipay.png" width="240"/></td>
-  </tr>
-</table>
-</div>
+Alternate entry used in current deployment scripts:
 
-**支援 / Donate**
+```bash
+python app.py -m lazyedit
+```
 
-- ご支援は研究・開発と運用の継続に役立ち、より多くのオープンなプロジェクトを皆さんに届ける力になります。  
-- 你的支持将用于研发与运维，帮助我持续公开分享更多项目与改进。  
-- Your support sustains my research, development, and ops so I can keep sharing more open projects and improvements.
+Backend default URL: `http://localhost:8787` (from `config.py`, override with `PORT` or `LAZYEDIT_PORT`).
 
-## License
+### Development: backend + Expo app (tmux)
+
+```bash
+./start_lazyedit.sh
+```
+
+Default `start_lazyedit.sh` ports:
+- Backend: `18787`
+- Expo web: `18791`
+- `EXPO_PUBLIC_API_URL=http://localhost:18787`
+
+Attach to session:
+
+```bash
+tmux attach -t lazyedit
+```
+
+Stop session:
+
+```bash
+./stop_lazyedit.sh
+```
+
+### Service management
+
+```bash
+sudo systemctl start lazyedit.service
+sudo systemctl stop lazyedit.service
+sudo systemctl status lazyedit.service
+sudo journalctl -u lazyedit.service
+```
+
+## ⚙️ Configuration
+
+Copy `.env.example` to `.env` and update paths/secrets:
+
+```bash
+cp .env.example .env
+```
+
+Configuration precedence note:
+
+- `config.py` loads `.env` values if present and only sets keys not already exported in the shell.
+- Runtime values can therefore come from: shell-exported env vars -> `.env` -> code defaults.
+- For tmux/service runs, `lazyedit_config.sh` controls startup/session parameters (`LAZYEDIT_DIR`, `CONDA_ENV`, `APP_ARGS`, ports via startup script env).
+
+### Key variables
+
+| Variable | Purpose | Default/Fallback |
+| --- | --- | --- |
+| `PORT`, `LAZYEDIT_PORT` | Backend port | `8787` |
+| `LAZYEDIT_UPLOAD_DIR` | Media root directory | `DATA/` |
+| `LAZYEDIT_DATABASE_URL`, `DATABASE_URL` | PostgreSQL DSN | Local DB fallback `lazyedit_db` |
+| `LAZYEDIT_AUTOPUBLISH_URL` | AutoPublish endpoint | `http://localhost:8081/publish` |
+| `LAZYEDIT_AUTOPUBLISH_TIMEOUT` | AutoPublish request timeout (seconds) | `60` |
+| `LAZYEDIT_WHISPER_SCRIPT` | Whisper/VAD script path | Environment-dependent |
+| `LAZYEDIT_WHISPER_MODEL`, `LAZYEDIT_WHISPER_FALLBACK_MODEL` | ASR model names | `large-v3` / `large-v2` (example) |
+| `LAZYEDIT_CAPTION_PYTHON` | Python runtime for caption pipeline | Environment-dependent |
+| `LAZYEDIT_CAPTION_PRIMARY_ROOT`, `LAZYEDIT_CAPTION_PRIMARY_SCRIPT` | Primary captioning path/script | Environment-dependent |
+| `LAZYEDIT_CAPTION_FALLBACK_SCRIPT`, `LAZYEDIT_CAPTION_FALLBACK_CWD` | Fallback captioning path/script/cwd | Environment-dependent |
+| `GRSAI_API_*` | Veo/GRSAI integration settings | Environment-dependent |
+| `VENICE_*`, `A2E_*` | Venice/A2E integration settings | Environment-dependent |
+| `OPENAI_API_KEY` | Required for OpenAI-backed features | None |
+
+Machine-specific notes:
+- `app.py` may set CUDA behavior (`CUDA_VISIBLE_DEVICES` usage in codebase context).
+- Some paths in defaults are workstation-specific; use `.env` overrides for portable setups.
+- `lazyedit_config.sh` controls tmux/session startup variables for deployment scripts.
+
+## 🧾 Configuration Files
+
+| File | Purpose |
+| --- | --- |
+| `.env.example` | Template for environment variables used by backend/services |
+| `.env` | Machine-local overrides; loaded by `config.py`/`app.py` if present |
+| `config.py` | Backend defaults and environment resolution |
+| `lazyedit_config.sh` | tmux/service runtime profile (deploy path, conda env, app args, session name) |
+| `start_lazyedit.sh` | Launches backend + Expo in tmux with selected ports |
+| `install_lazyedit.sh` | Creates `lazyedit.service` and validates existing scripts/config |
+
+Recommended update order for machine portability:
+1. Copy `.env.example` to `.env`.
+2. Set path- and API-related `LAZYEDIT_*` values in `.env`.
+3. Adjust `lazyedit_config.sh` only for tmux/service deployment behavior.
+
+## 🔌 API Examples
+
+Base URL examples assume `http://localhost:8787`.
+
+| API group | Representative endpoints |
+| --- | --- |
+| Upload and media | `/upload`, `/upload-stream`, `/media/*` |
+| Video records | `/api/videos`, `/api/videos/{id}` |
+| Processing | `/api/videos/{id}/transcribe`, `/translate`, `/burn-subtitles`, `/caption`, `/metadata`, `/process` |
+| Publish | `/api/videos/{id}/publish`, `/api/autopublish/queue` |
+| Generation | `/api/videos/generate` (+ provider routes in `app.py`) |
+
+Upload:
+
+```bash
+curl -F "video=@/path/to/video.mp4" \
+     -F "title=my_video" \
+     -F "filename=video.mp4" \
+     -F "source=api" \
+     http://localhost:8787/upload
+```
+
+End-to-end process:
+
+```bash
+curl -X POST \
+  -d "file_path=/abs/path/to/DATA/my_video/video.mp4" \
+  -d "use_translation_cache=true" \
+  -d "use_metadata_cache=true" \
+  http://localhost:8787/video-processing
+```
+
+List videos:
+
+```bash
+curl http://localhost:8787/api/videos
+```
+
+Publish package:
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"platforms":{"xiaohongshu":true,"douyin":true}}' \
+  http://localhost:8787/api/videos/123/publish
+```
+
+More endpoints and payload details: `references/API_GUIDE.md`.
+
+Related endpoint groups you will likely use:
+- Video lifecycle: `/upload`, `/upload-stream`, `/api/videos`, `/api/videos/{id}`, `/media/*`
+- Processing actions: `/api/videos/{id}/transcribe`, `/api/videos/{id}/translate`, `/api/videos/{id}/burn-subtitles`, `/api/videos/{id}/metadata`, `/api/videos/{id}/caption`, `/api/videos/{id}/process`
+- Generation/provider paths: `/api/videos/generate` plus Venice/A2E routes exposed in `app.py`
+- Distribution: `/api/videos/{id}/publish`, `/api/autopublish/queue`
+
+## 🧪 Examples
+
+### Frontend local run (web)
+
+```bash
+cd app
+npm install
+EXPO_PUBLIC_API_URL="http://localhost:8787" npx expo start --web --port 8091
+```
+
+If backend is on `8887`:
+
+```bash
+EXPO_PUBLIC_API_URL="http://localhost:8887" npx expo start --web --port 8091
+```
+
+### Android emulator
+
+```bash
+EXPO_PUBLIC_API_URL="http://10.0.2.2:8787" npx expo start --android
+```
+
+### iOS simulator (macOS)
+
+```bash
+EXPO_PUBLIC_API_URL="http://127.0.0.1:8787" npx expo start --ios
+```
+
+### Optional Sora generation helper
+
+```bash
+python -m agi.demo_fantasy_woman --seconds 8 --size 1280x720 --output DATA/sora_oracle_valley.mp4
+```
+
+Supported seconds: `4`, `8`, `12`.
+Supported sizes: `720x1280`, `1280x720`, `1024x1792`, `1792x1024`.
+
+## 🧪 Development Notes
+
+- Use `python` from Conda env `lazyedit` (do not assume system `python3`).
+- Keep large media out of Git; store runtime media in `DATA/` or external storage.
+- Initialize/update submodules whenever pipeline components fail to resolve.
+- Keep edits scoped; avoid unrelated large-formatting changes.
+- For frontend work, backend API URL is controlled by `EXPO_PUBLIC_API_URL`.
+- CORS is open on the backend for app development.
+
+Submodule and external dependency policy:
+- Treat external dependencies as upstream-owned. In this repository workflow, avoid editing submodule internals unless intentionally working in those projects.
+- Operational guidance in this repo treats `furigana` (and sometimes `echomind` in local setups) as external dependency paths; if uncertain, preserve upstream and avoid in-place edits.
+
+Helpful references:
+- `references/QUICKSTART.md`
+- `references/API_GUIDE.md`
+- `references/APP_GUIDE.md`
+- `references/DEPLOYMENT_SYSTEMS.md`
+- `references/TMUX_SESSIONS.md`
+
+Security/config hygiene:
+- Keep API keys and secrets in environment variables; do not commit credentials.
+- Prefer `.env` for machine-local overrides and keep `.env.example` as the public template.
+- If CUDA/GPU behavior differs by host, override via environment instead of hardcoding machine-specific values.
+
+## ✅ Testing
+
+Current formal test surface is minimal and DB-oriented.
+
+| Validation layer | Command or method |
+| --- | --- |
+| DB smoke | `python db_smoke_test.py` |
+| Pytest DB check | `pytest tests/test_db_smoke.py` |
+| Functional flow | Web UI + API run using short sample in `DATA/` |
+
+```bash
+python db_smoke_test.py
+pytest tests/test_db_smoke.py
+```
+
+For functional validation, use the web UI and API flow with a short sample clip in `DATA/`.
+
+Assumptions and portability notes:
+- Some default paths in code are workstation-specific fallbacks; this is expected in current repo state.
+- If a default path does not exist on your machine, set the corresponding `LAZYEDIT_*` variable in `.env`.
+- If uncertain about a machine-specific value, preserve existing settings and add explicit overrides rather than deleting defaults.
+
+## 🧱 Assumptions & Known Limits
+
+- The backend dependency set is not pinned by a root lockfile; environment reproducibility currently depends on local setup discipline.
+- `app.py` is intentionally monolithic in current repo state and contains a large route surface.
+- Most pipeline validation is integration/manual (UI + API + sample media), with limited formal automated tests.
+- Runtime directories (`DATA/`, `temp/`, `translation_logs/`) are operational outputs and can grow significantly.
+- Submodules are required for full functionality; partial checkout often leads to missing-script errors.
+
+## 🚢 Deployment & Sync Notes
+
+Current known paths and sync flow (from repository operations docs):
+
+- Development workspace: `/home/lachlan/ProjectsLFS/LazyEdit`
+- Deployed LazyEdit backend + app: `/home/lachlan/DiskMech/Projects/lazyedit`
+- Deployed AutoPubMonitor: `/home/lachlan/DiskMech/Projects/autopub-monitor`
+- Publishing system host: `/home/lachlan/Projects/auto-publish` on `lazyingart`
+
+| Environment | Path | Notes |
+| --- | --- | --- |
+| Dev workspace | `/home/lachlan/ProjectsLFS/LazyEdit` | Main source + submodules |
+| Deployed LazyEdit | `/home/lachlan/DiskMech/Projects/lazyedit` | tmux `la-lazyedit` in ops docs |
+| Deployed AutoPubMonitor | `/home/lachlan/DiskMech/Projects/autopub-monitor` | Monitor/sync/process sessions |
+| Publishing host | `/home/lachlan/Projects/auto-publish` (`lazyingart`) | Pull after submodule updates |
+
+After pushing `AutoPublish/` updates from this repo, pull on publishing host:
+
+```bash
+ssh lachlan@lazyingart
+cd ~/Projects/auto-publish
+git pull github main
+```
+
+## 🧯 Troubleshooting
+
+| Problem | Check / Fix |
+| --- | --- |
+| Missing pipeline modules or scripts | Run `git submodule update --init --recursive` |
+| FFmpeg not found | Install FFmpeg and confirm `ffmpeg -version` works |
+| Port conflicts | Backend defaults to `8787`; `start_lazyedit.sh` defaults to `18787`; set `LAZYEDIT_PORT` or `PORT` explicitly |
+| Expo cannot reach backend | Ensure `EXPO_PUBLIC_API_URL` points to active backend host/port |
+| Database connection issues | Verify PostgreSQL + DSN/env vars; optional smoke check: `python db_smoke_test.py` |
+| GPU/CUDA issues | Confirm driver/CUDA compatibility with installed Torch stack |
+| Service script fails at install | Ensure `lazyedit_config.sh`, `start_lazyedit.sh`, and `stop_lazyedit.sh` exist before running installer |
+
+## 🗺️ Roadmap
+
+- In-app subtitle/segment editing with A/B preview and per-line controls.
+- Stronger end-to-end test coverage for core API flows.
+- Documentation convergence across i18n README variants and deployment modes.
+- Additional workflow hardening for generation-provider retries and status visibility.
+
+## 🤝 Contributing
+
+Contributions are welcome.
+
+1. Fork and create a feature branch.
+2. Keep commits focused and scoped.
+3. Validate changes locally (`python app.py`, key API flow, and app integration if relevant).
+4. Open a PR with purpose, reproduction steps, and before/after notes (screenshots for UI changes).
+
+Practical guidelines:
+- Follow Python style (PEP 8, 4 spaces, snake_case naming).
+- Avoid committing credentials or large binaries.
+- Update docs/config scripts when behavior changes.
+- Preferred commit style: short, imperative, scoped (for example: `fix ffmpeg 7 compatibility`).
+
+
+
+## ❤️ Support
+
+| Donate | PayPal | Stripe |
+| --- | --- | --- |
+| [![Donate](https://camo.githubusercontent.com/24a4914f0b42c6f435f9e101621f1e52535b02c225764b2f6cc99416926004b7/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f446f6e6174652d4c617a79696e674172742d3045413545393f7374796c653d666f722d7468652d6261646765266c6f676f3d6b6f2d6669266c6f676f436f6c6f723d7768697465)](https://chat.lazying.art/donate) | [![PayPal](https://camo.githubusercontent.com/d0f57e8b016517a4b06961b24d0ca87d62fdba16e18bbdb6aba28e978dc0ea21/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f50617950616c2d526f6e677a686f754368656e2d3030343537433f7374796c653d666f722d7468652d6261646765266c6f676f3d70617970616c266c6f676f436f6c6f723d7768697465)](https://paypal.me/RongzhouChen) | [![Stripe](https://camo.githubusercontent.com/1152dfe04b6943afe3a8d2953676749603fb9f95e24088c92c97a01a897b4942/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f5374726970652d446f6e6174652d3633354246463f7374796c653d666f722d7468652d6261646765266c6f676f3d737472697065266c6f676f436f6c6f723d7768697465)](https://buy.stripe.com/aFadR8gIaflgfQV6T4fw400) |
+
+## 📄 License
 
 [Apache-2.0](LICENSE)
 
-## Acknowledgements
+## 🙏 Acknowledgements
 
-LazyEdit uses several open-source libraries and tools including:
-- FFmpeg for video processing
-- OpenAI models for AI capabilities
-- Tornado web framework
-- MoviePy for video editing
-- CJKWrap for multilingual text processing
+LazyEdit builds on open-source libraries and services, including:
+- FFmpeg for media processing
+- Tornado for backend APIs
+- MoviePy for editing workflows
+- OpenAI models for AI-assisted pipeline tasks
+- CJKWrap and multilingual text tooling in subtitle workflows
+
+
+
