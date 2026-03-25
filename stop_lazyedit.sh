@@ -8,4 +8,3 @@ fi
 SESSION_NAME="${SESSION_NAME:-lazyedit}"
 
 tmux kill-session -t "$SESSION_NAME" 2>/dev/null || true
-tmux kill-session -t "la-lazyedit" 2>/dev/null || true

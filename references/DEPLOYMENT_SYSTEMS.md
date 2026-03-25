@@ -7,7 +7,7 @@ This repo is the development source. The runtime deployments live in DiskMech an
   - Deployment path: `/home/lachlan/DiskMech/Projects/lazyedit`
   - Backend port: 18787
   - Expo app port: 18791
-  - tmux session: `la-lazyedit` (left pane backend, right pane app)
+  - tmux session: `lazyedit` (left pane backend, right pane app)
 
 - Monitor system (AutoPubMonitor)
   - Deployment path: `/home/lachlan/DiskMech/Projects/autopub-monitor`
@@ -29,5 +29,5 @@ This repo is the development source. The runtime deployments live in DiskMech an
    - Raspberry Pi: `cd /home/lachlan/Projects/auto-publish && git pull github main`
 
 ## Common Restart Commands
-- LazyEdit tmux: `tmux kill-session -t la-lazyedit || true` then `/home/lachlan/DiskMech/Projects/lazyedit/start_lazyedit.sh`
+- LazyEdit tmux: `tmux kill-session -t lazyedit || true` then `/home/lachlan/DiskMech/Projects/lazyedit/start_lazyedit.sh`
 - AutoPubMonitor tmux: `./autopub_monitor/autopub_monitor_tmux_session.sh stop && ./autopub_monitor/autopub_monitor_tmux_session.sh start`
