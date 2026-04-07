@@ -33,6 +33,7 @@ lazyedit_config.sh
 *.log
 *.tmp
 *.bak
+words.db
 
 # Media outputs (avoid committing large binaries)
 *.mp4
