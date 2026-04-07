@@ -17,6 +17,7 @@ import { subscribeStudioRefresh } from '@/lib/studioRefresh';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 const PAGE_SIZE = 8;
+const PROCESS_READY_TIMEOUT_MS = 90 * 60 * 1000;
 
 type Video = {
   id: number;
@@ -28,13 +29,18 @@ type Video = {
 };
 
 type PublishJob = {
-  id?: string;
+  id?: string | number;
+  video_id?: number | null;
   filename?: string;
+  title?: string | null;
   status?: string;
+  detail?: string;
   created_at?: string;
   updated_at?: string;
   platforms?: string[];
   error?: string;
+  zip_url?: string | null;
+  source?: string;
 };
 
 type ProcessStep = {
@@ -103,6 +109,7 @@ export default function EditorScreen() {
   const [publishQueue, setPublishQueue] = useState<PublishJob[]>([]);
   const [queueLoading, setQueueLoading] = useState(false);
   const [queueError, setQueueError] = useState('');
+  const [queueExpanded, setQueueExpanded] = useState(false);
   const [publishSettingsLoaded, setPublishSettingsLoaded] = useState(false);
   const { t } = useI18n();
 
@@ -124,6 +131,11 @@ export default function EditorScreen() {
       { key: 'metadata_en', label: t('publish_step_metadata_en') },
     ],
     [t],
+  );
+
+  const processStepLabelMap = useMemo(
+    () => Object.fromEntries(processStepDefinitions.map(({ key, label }) => [key, label])),
+    [processStepDefinitions],
   );
 
   const processBusy = useMemo(() => {
@@ -152,6 +164,33 @@ export default function EditorScreen() {
     }
     return t('publish_process_button');
   }, [processRunning, processBusy, activeProcessLabel, t]);
+
+  const summarizeProcessState = useCallback(
+    (steps?: Record<string, ProcessStep> | null) => {
+      for (const { key } of processStepDefinitions) {
+        const step = steps?.[key];
+        const status = String(step?.status || '').toLowerCase();
+        if (status === 'error' || status === 'failed') {
+          return {
+            activeLabel: null as string | null,
+            errorDetail: step?.detail || processStepLabelMap[key] || key,
+          };
+        }
+      }
+      for (const { key } of processStepDefinitions) {
+        const step = steps?.[key];
+        const status = String(step?.status || '').toLowerCase();
+        if (status === 'working' || status === 'processing' || status === 'queued') {
+          return {
+            activeLabel: processStepLabelMap[key] || key,
+            errorDetail: null as string | null,
+          };
+        }
+      }
+      return { activeLabel: null as string | null, errorDetail: null as string | null };
+    },
+    [processStepDefinitions, processStepLabelMap],
+  );
 
   const processStatusLabel = useCallback(
     (status?: string) => {
@@ -183,6 +222,17 @@ export default function EditorScreen() {
   }, [selectedVideo]);
   const visibleVideos = useMemo(() => videos.slice(0, visibleCount), [videos, visibleCount]);
   const hasMoreVideos = visibleCount < videos.length;
+  const activeQueueCount = useMemo(
+    () => publishQueue.filter((job) => {
+      const status = String(job.status || '').toLowerCase();
+      return status === 'queued' || status === 'running';
+    }).length,
+    [publishQueue],
+  );
+  const selectedPublishJob = useMemo(
+    () => publishQueue.find((job) => job.video_id === selectedVideoId) || null,
+    [publishQueue, selectedVideoId],
+  );
 
   const loadMoreVideos = useCallback(() => {
     if (!hasMoreVideos) return;
@@ -240,7 +290,7 @@ export default function EditorScreen() {
       const json = await resp.json();
       const items = json.videos || [];
       setVideos(items);
-      setVisibleCount(Math.min(PAGE_SIZE, items.length));
+      setVisibleCount((current) => Math.min(Math.max(current, PAGE_SIZE), items.length));
       setSelectedVideoId((current) => current ?? items[0]?.id ?? null);
     } catch (_err) {
       // ignore fetch errors
@@ -353,6 +403,13 @@ export default function EditorScreen() {
   }, [loadVideos]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      loadVideos(true);
+    }, 15000);
+    return () => clearInterval(interval);
+  }, [loadVideos]);
+
+  useEffect(() => {
     loadPublishSettings();
   }, [loadPublishSettings]);
 
@@ -424,8 +481,43 @@ export default function EditorScreen() {
     return () => clearInterval(interval);
   }, [selectedVideoId, loadProcessStatus]);
 
-  const startProcess = async () => {
-    if (!selectedVideoId || processRunning) return;
+  useEffect(() => {
+    if (!selectedPublishJob) return;
+    if (selectedPublishJob.zip_url) {
+      setPublishZipUrl(resolveMediaSrc(selectedPublishJob.zip_url));
+    }
+    const status = String(selectedPublishJob.status || '').toLowerCase();
+    if (status === 'failed') {
+      setPublishStatus(
+        selectedPublishJob.error
+          ? `${t('publish_status_failed')}: ${selectedPublishJob.error}`
+          : t('publish_status_failed'),
+      );
+      setPublishTone('bad');
+      return;
+    }
+    if (status === 'done' || status === 'completed') {
+      setPublishStatus(t('publish_status_published'));
+      setPublishTone('good');
+      return;
+    }
+    if (status === 'running') {
+      setPublishStatus(selectedPublishJob.detail || t('publish_process_running'));
+      setPublishTone('neutral');
+      return;
+    }
+    if (status === 'queued') {
+      setPublishStatus(
+        selectedPublishJob.detail
+          ? `${t('publish_status_queued')} ${selectedPublishJob.detail}`
+          : t('publish_status_queued'),
+      );
+      setPublishTone('good');
+    }
+  }, [resolveMediaSrc, selectedPublishJob, t]);
+
+  const startProcess = async (): Promise<{ ok: boolean; message?: string }> => {
+    if (!selectedVideoId || processRunning) return { ok: false };
     setProcessRunning(true);
     setProcessStatus(t('publish_process_starting'));
     setProcessTone('neutral');
@@ -438,16 +530,20 @@ export default function EditorScreen() {
       });
       const json = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        setProcessStatus(`${t('publish_process_failed')}: ${json.error || resp.statusText}`);
+        const message = `${t('publish_process_failed')}: ${json.error || resp.statusText}`;
+        setProcessStatus(message);
         setProcessTone('bad');
-        return;
+        return { ok: false, message };
       }
       setProcessStatus(t('publish_process_started'));
       setProcessTone('good');
       loadProcessStatus(selectedVideoId, true);
+      return { ok: true };
     } catch (err: any) {
-      setProcessStatus(`${t('publish_process_failed')}: ${err?.message || String(err)}`);
+      const message = `${t('publish_process_failed')}: ${err?.message || String(err)}`;
+      setProcessStatus(message);
       setProcessTone('bad');
+      return { ok: false, message };
     } finally {
       setProcessRunning(false);
     }
@@ -485,88 +581,74 @@ export default function EditorScreen() {
     }
   };
 
-  const waitForProcessReady = async (videoId: number) => {
+  const waitForProcessReady = useCallback(async (videoId: number) => {
     const start = Date.now();
-    const timeoutMs = 12 * 60 * 1000;
     const intervalMs = 5000;
-    while (Date.now() - start < timeoutMs) {
+    while (Date.now() - start < PROCESS_READY_TIMEOUT_MS) {
       const json = await loadProcessStatus(videoId, true);
       if (json?.ready_for_publish) return true;
-      setPublishStatus(t('publish_process_running'));
+      const { activeLabel, errorDetail } = summarizeProcessState(json?.steps || null);
+      if (errorDetail) {
+        throw new Error(errorDetail);
+      }
+      setPublishStatus(
+        activeLabel
+          ? t('publish_process_running_step', { value: activeLabel })
+          : t('publish_process_running'),
+      );
       setPublishTone('neutral');
       await new Promise((resolve) => setTimeout(resolve, intervalMs));
     }
+    const finalJson = await loadProcessStatus(videoId, true);
+    if (finalJson?.ready_for_publish) return true;
+    const { activeLabel, errorDetail } = summarizeProcessState(finalJson?.steps || null);
+    if (errorDetail) {
+      throw new Error(errorDetail);
+    }
+    setPublishStatus(
+      activeLabel
+        ? t('publish_process_running_step', { value: activeLabel })
+        : t('publish_process_running'),
+    );
+    setPublishTone('neutral');
     return false;
-  };
+  }, [loadProcessStatus, summarizeProcessState, t]);
 
   const publishNow = async () => {
     if (!selectedVideoId || publishing) return;
     setPublishing(true);
-    setPublishStatus(t('publish_status_sending'));
+    setPublishStatus(t('publish_status_queued'));
     setPublishTone('neutral');
     try {
-      if (!processReadyForPublish) {
-        setPublishStatus(t('publish_process_starting'));
-        setPublishTone('neutral');
-        if (!processBusy) {
-          await startProcess();
-        }
-        const ready = await waitForProcessReady(selectedVideoId);
-        if (!ready) {
-          setPublishStatus(`${t('publish_status_failed')}: ${t('publish_process_failed')}`);
-          setPublishTone('bad');
-          return;
-        }
-        setPublishStatus(t('publish_status_sending'));
-        setPublishTone('neutral');
-      }
-      if (!coverUrl) {
-        setPublishStatus(t('publish_cover_extracting'));
-        setPublishTone('neutral');
-        const coverOk = await extractCover();
-        if (!coverOk) {
-          setPublishStatus(`${t('publish_status_failed')}: ${t('publish_cover_failed')}`);
-          setPublishTone('bad');
-          return;
-        }
-        setPublishStatus(t('publish_status_sending'));
-        setPublishTone('neutral');
-      }
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ platforms: selected }),
       });
-      const json = await resp.json();
+      const json = await resp.json().catch(() => ({}));
       if (!resp.ok) {
         setPublishStatus(`${t('publish_status_failed')}: ${json.error || resp.statusText}`);
         setPublishTone('bad');
         return;
       }
-      if (json.zip_url) {
-        setPublishZipUrl(`${API_URL}${json.zip_url}`);
+      const queuedJob = json?.job as PublishJob | undefined;
+      const zipUrl = queuedJob?.zip_url || json?.zip_url;
+      if (zipUrl) {
+        setPublishZipUrl(resolveMediaSrc(zipUrl));
       }
-      if (json.status === 'published') {
-        setPublishStatus(t('publish_status_published'));
-        setPublishTone('good');
-      } else if (json.status === 'queued') {
-        setPublishStatus(t('publish_status_queued'));
-        setPublishTone('good');
-      } else {
-        setPublishStatus(t('publish_status_ready'));
-        setPublishTone('neutral');
-      }
-      if (json.warning) {
-        setPublishStatus(`${t('publish_status_ready')}: ${json.warning}`);
-        setPublishTone('neutral');
-      }
+      setPublishStatus(
+        json?.detail
+          ? `${t('publish_status_queued')} ${json.detail}`
+          : t('publish_status_queued'),
+      );
+      setPublishTone('good');
+      loadPublishQueue(true);
     } catch (err: any) {
       setPublishStatus(`${t('publish_status_failed')}: ${err?.message || String(err)}`);
       setPublishTone('bad');
     } finally {
       setPublishing(false);
     }
-    loadPublishQueue(true);
   };
 
   return (
@@ -809,28 +891,60 @@ export default function EditorScreen() {
             </Text>
           ) : null}
           <View style={styles.queueBlock}>
-            <Text style={styles.queueTitle}>{t('publish_queue_title')}</Text>
-            <Text style={styles.queueHint}>{t('publish_queue_hint')}</Text>
-            {queueLoading ? <ActivityIndicator style={{ marginTop: 8 }} /> : null}
-            {queueError ? (
-              <Text style={[styles.status, styles.statusBad]}>{queueError}</Text>
-            ) : null}
-            {publishQueue.length ? (
-              publishQueue.map((job) => {
-                const name = (job.filename || '').replace(/\.zip$/i, '') || t('library_video_fallback', { id: job.id || '?' });
-                const metaParts = [queueStatusLabel(job.status)];
-                if (job.platforms?.length) metaParts.push(job.platforms.join(', '));
-                if (job.updated_at || job.created_at) metaParts.push(job.updated_at || job.created_at || '');
-                return (
-                  <View key={job.id || name} style={styles.queueRow}>
-                    <Text style={styles.queueName} numberOfLines={1}>{name}</Text>
-                    <Text style={styles.queueMeta} numberOfLines={2}>{metaParts.filter(Boolean).join(' · ')}</Text>
-                    {job.error ? <Text style={styles.queueError}>{job.error}</Text> : null}
-                  </View>
-                );
-              })
-            ) : !queueLoading && !queueError ? (
-              <Text style={styles.empty}>{t('publish_queue_empty')}</Text>
+            <Pressable style={styles.queueHeaderButton} onPress={() => setQueueExpanded((prev) => !prev)}>
+              <View style={styles.queueHeaderTextWrap}>
+                <Text style={styles.queueTitle}>{t('publish_queue_title')}</Text>
+                <Text style={styles.queueHint}>
+                  {t('publish_queue_hint')}
+                  {activeQueueCount ? ` (${activeQueueCount})` : ''}
+                </Text>
+              </View>
+              <FontAwesome
+                name={queueExpanded ? 'angle-up' : 'angle-down'}
+                size={20}
+                color="#0f172a"
+              />
+            </Pressable>
+            {queueExpanded ? (
+              <>
+                {queueLoading ? <ActivityIndicator style={{ marginTop: 8 }} /> : null}
+                {queueError ? (
+                  <Text style={[styles.status, styles.statusBad]}>{queueError}</Text>
+                ) : null}
+                {publishQueue.length ? (
+                  <ScrollView
+                    style={styles.queueScroll}
+                    contentContainerStyle={styles.queueScrollContent}
+                    nestedScrollEnabled
+                  >
+                    {publishQueue.map((job) => {
+                      const name =
+                        job.title ||
+                        (job.filename || '').replace(/\.zip$/i, '') ||
+                        t('library_video_fallback', { id: job.id || '?' });
+                      const metaParts = [queueStatusLabel(job.status)];
+                      if (job.platforms?.length) metaParts.push(job.platforms.join(', '));
+                      if (job.updated_at || job.created_at) {
+                        metaParts.push(formatTimestamp(job.updated_at || job.created_at || ''));
+                      }
+                      return (
+                        <View key={String(job.id || job.filename || name)} style={styles.queueRow}>
+                          <Text style={styles.queueName} numberOfLines={1}>{name}</Text>
+                          <Text style={styles.queueMeta} numberOfLines={2}>
+                            {metaParts.filter(Boolean).join(' · ')}
+                          </Text>
+                          {job.detail ? (
+                            <Text style={styles.queueDetail} numberOfLines={2}>{job.detail}</Text>
+                          ) : null}
+                          {job.error ? <Text style={styles.queueError}>{job.error}</Text> : null}
+                        </View>
+                      );
+                    })}
+                  </ScrollView>
+                ) : !queueLoading && !queueError ? (
+                  <Text style={styles.empty}>{t('publish_queue_empty')}</Text>
+                ) : null}
+              </>
             ) : null}
           </View>
         </View>
@@ -1033,8 +1147,24 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#e2e8f0',
   },
+  queueHeaderButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  queueHeaderTextWrap: {
+    flex: 1,
+  },
   queueTitle: { fontSize: 14, fontWeight: '700', color: '#0f172a' },
   queueHint: { marginTop: 6, fontSize: 12, color: '#64748b' },
+  queueScroll: {
+    marginTop: 10,
+    maxHeight: 320,
+  },
+  queueScrollContent: {
+    paddingBottom: 4,
+  },
   queueRow: {
     marginTop: 10,
     padding: 10,
@@ -1045,5 +1175,6 @@ const styles = StyleSheet.create({
   },
   queueName: { fontSize: 12, fontWeight: '600', color: '#0f172a' },
   queueMeta: { marginTop: 4, fontSize: 11, color: '#475569' },
+  queueDetail: { marginTop: 4, fontSize: 11, color: '#334155' },
   queueError: { marginTop: 4, fontSize: 11, color: '#b91c1c' },
 });

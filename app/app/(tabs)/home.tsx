@@ -74,6 +74,27 @@ const sizeForAspectRatio = (aspectRatio?: string) => {
   return '720x1280';
 };
 
+const uploadVideoViaStream = async (
+  asset: DocumentPicker.DocumentPickerAsset,
+  source: string,
+) => {
+  const directFile = (asset as any).file as File | undefined;
+  const blob = directFile || await fetch(asset.uri).then((resp) => resp.blob());
+  const params = new URLSearchParams({
+    filename: asset.name || 'video.mp4',
+    source,
+  });
+  const resp = await fetch(`${API_URL}/upload-stream?${params.toString()}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': asset.mimeType || 'application/octet-stream',
+    },
+    body: blob as any,
+  });
+  const json = await resp.json().catch(() => ({}));
+  return { resp, json };
+};
+
 const DEFAULT_PROMPT_SPEC = {
   autoTitle: false,
   title: 'Epic Vision',
@@ -551,13 +572,7 @@ export default function HomeScreen() {
     setStatusTone('neutral');
     try {
       if (Platform.OS === 'web') {
-        // Web: the asset is a File object already
-        const file = picked as any; // has .file property in web
-        const form = new FormData();
-        form.append('video', (file.file as File) ?? (file as any), picked.name || 'video.mp4');
-        form.append('source', 'upload');
-        const resp = await fetch(`${API_URL}/upload`, { method: 'POST', body: form as any });
-        const json = await resp.json();
+        const { resp, json } = await uploadVideoViaStream(picked, 'upload');
         if (!resp.ok) {
           setStatus(`Upload failed: ${json.error || json.message || resp.statusText}`);
           setStatusTone('bad');
@@ -615,15 +630,7 @@ export default function HomeScreen() {
     const notes = remixNotes.trim();
     try {
       if (Platform.OS === 'web') {
-        const file = remixPicked as any;
-        const form = new FormData();
-        form.append('video', (file.file as File) ?? (file as any), remixPicked.name || 'video.mp4');
-        form.append('source', 'remix');
-        if (notes) {
-          form.append('remix_notes', notes);
-        }
-        const resp = await fetch(`${API_URL}/upload`, { method: 'POST', body: form as any });
-        const json = await resp.json();
+        const { resp, json } = await uploadVideoViaStream(remixPicked, 'remix');
         if (!resp.ok) {
           setRemixStatus(`Upload failed: ${json.error || json.message || resp.statusText}`);
           setRemixTone('bad');

@@ -28,6 +28,8 @@ class AutocutProcessor:
         # Set the CUDA_VISIBLE_DEVICES environment variable
         env = os.environ.copy()
         env['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
+        env["LAZYEDIT_WHISPER_DEVICE"] = "cuda"
+        env["LAZYEDIT_WHISPER_GPU_ID"] = str(gpu_id)
         env.setdefault("OMP_NUM_THREADS", "1")
 
         # Define filenames with language-specific suffixes before the extension
@@ -57,6 +59,7 @@ class AutocutProcessor:
 
         fallback_env = env.copy()
         fallback_env["CUDA_VISIBLE_DEVICES"] = ""
+        fallback_env["LAZYEDIT_WHISPER_DEVICE"] = "cpu"
         fallback_env["ATEN_CPU_CAPABILITY"] = "default"
         fallback_env["ONEDNN_MAX_CPU_ISA"] = "AVX2"
         fallback_env["MKL_DEBUG_CPU_TYPE"] = "5"

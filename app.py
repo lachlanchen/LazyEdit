@@ -36,6 +36,20 @@ if "CUDA_VISIBLE_DEVICES" not in os.environ:
     os.environ["CUDA_VISIBLE_DEVICES"] = os.getenv("LAZYEDIT_CUDA_VISIBLE_DEVICES", "0")
 
 
+def _resolve_autocut_gpu_id() -> int:
+    requested = (
+        os.getenv("LAZYEDIT_WHISPER_GPU_ID")
+        or os.getenv("LAZYEDIT_CUDA_VISIBLE_DEVICES")
+        or os.getenv("CUDA_VISIBLE_DEVICES")
+        or "0"
+    )
+    first = str(requested).split(",")[0].strip()
+    try:
+        return int(first)
+    except (TypeError, ValueError):
+        return 0
+
+
 from lazyedit.openai_version_check import OpenAI
 from lazyedit.openai_request_json import OpenAIRequestJSONBase
 from config import UPLOAD_FOLDER, PORT, AUTOPUBLISH_URL, AUTOPUBLISH_TIMEOUT
@@ -324,6 +338,17 @@ PROXY_EXECUTOR = ThreadPoolExecutor(max_workers=1)
 _DEFAULT_BG_WORKERS = max(8, min(32, (os.cpu_count() or 4) * 2))
 _BG_WORKERS = int(os.getenv("LAZYEDIT_BACKGROUND_WORKERS", str(_DEFAULT_BG_WORKERS)))
 BACKGROUND_EXECUTOR = ThreadPoolExecutor(max_workers=_BG_WORKERS)
+BURN_STATE_LOCK = threading.Lock()
+ACTIVE_BURN_FUTURES: dict[int, Any] = {}
+PROXY_STATE_LOCK = threading.Lock()
+QUEUED_PREVIEW_VIDEO_IDS: set[int] = set()
+PREVIEW_BACKFILL_LOCK = threading.Lock()
+PREVIEW_BACKFILL_STARTED = False
+PUBLISH_WORKER_LOCK = threading.Lock()
+PUBLISH_WORKER_WAKE_EVENT = threading.Event()
+PUBLISH_WORKER_STARTED = False
+PUBLISH_PROCESS_TIMEOUT = int(os.getenv("LAZYEDIT_PUBLISH_PROCESS_TIMEOUT", str(6 * 60 * 60)))
+PUBLISH_QUEUE_HISTORY_LIMIT = int(os.getenv("LAZYEDIT_PUBLISH_QUEUE_HISTORY_LIMIT", "80"))
 
 
 async def run_blocking(func, *args, **kwargs):
@@ -332,6 +357,33 @@ async def run_blocking(func, *args, **kwargs):
         BACKGROUND_EXECUTOR,
         lambda: func(*args, **kwargs),
     )
+
+
+def _is_burn_future_active(burn_id: int) -> bool:
+    with BURN_STATE_LOCK:
+        future = ACTIVE_BURN_FUTURES.get(burn_id)
+    return future is not None and not future.done()
+
+
+def _get_latest_subtitle_burn_with_recovery(video_id: int) -> tuple | None:
+    row = ldb.get_latest_subtitle_burn(video_id)
+    if not row:
+        return None
+    burn_id, status, _output_path, _progress, _config, error, _created_at = row
+    if status != "processing" or _is_burn_future_active(burn_id):
+        return row
+
+    stale_error = error or "Stale burn state recovered after backend restart or worker crash"
+    try:
+        ldb.finalize_subtitle_burn(burn_id, "failed", None, stale_error, progress=0)
+    except Exception:
+        return row
+    return ldb.get_latest_subtitle_burn(video_id)
+
+
+def _forget_active_burn_future(burn_id: int) -> None:
+    with BURN_STATE_LOCK:
+        ACTIVE_BURN_FUTURES.pop(burn_id, None)
 
 
 def _should_create_preview_proxy(file_path: str) -> bool:
@@ -374,12 +426,16 @@ def _should_create_preview_proxy(file_path: str) -> bool:
     return False
 
 
+def _preview_proxy_path(video_id: int) -> str:
+    proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+    os.makedirs(proxies_dir, exist_ok=True)
+    return os.path.join(proxies_dir, f"video_{video_id}_proxy.mp4")
+
+
 def _create_preview_proxy(video_id: int, input_path: str) -> str | None:
     if not input_path or not os.path.exists(input_path):
         return None
-    proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
-    os.makedirs(proxies_dir, exist_ok=True)
-    output_path = os.path.join(proxies_dir, f"video_{video_id}_proxy.mp4")
+    output_path = _preview_proxy_path(video_id)
 
     try:
         if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(input_path):
@@ -415,14 +471,87 @@ def _create_preview_proxy(video_id: int, input_path: str) -> str | None:
 def _enqueue_preview_proxy(video_id: int, input_path: str) -> None:
     if not _should_create_preview_proxy(input_path):
         return
+    if not input_path or not os.path.exists(input_path):
+        return
+    output_path = _preview_proxy_path(video_id)
+    try:
+        if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(input_path):
+            return
+    except Exception:
+        pass
+
+    with PROXY_STATE_LOCK:
+        if video_id in QUEUED_PREVIEW_VIDEO_IDS:
+            return
+        QUEUED_PREVIEW_VIDEO_IDS.add(video_id)
 
     def _run() -> None:
         try:
             _create_preview_proxy(video_id, input_path)
         except Exception as exc:
             print(f"Proxy transcode failed for video {video_id}: {exc}")
+        finally:
+            with PROXY_STATE_LOCK:
+                QUEUED_PREVIEW_VIDEO_IDS.discard(video_id)
 
     PROXY_EXECUTOR.submit(_run)
+
+
+def _preview_media_url_for_video(video_id: int, file_path: str | None, auto_enqueue: bool = False) -> str | None:
+    if not file_path:
+        return None
+    proxy_path = _preview_proxy_path(video_id)
+    if os.path.exists(proxy_path):
+        return media_url_for_path(proxy_path)
+    if auto_enqueue and os.path.exists(file_path):
+        _enqueue_preview_proxy(video_id, file_path)
+    return media_url_for_path(file_path)
+
+
+def _schedule_preview_backfill() -> None:
+    global PREVIEW_BACKFILL_STARTED
+    with PREVIEW_BACKFILL_LOCK:
+        if PREVIEW_BACKFILL_STARTED:
+            return
+        PREVIEW_BACKFILL_STARTED = True
+
+    def _run() -> None:
+        try:
+            ldb.ensure_schema()
+            with ldb.get_cursor() as cur:
+                cur.execute(
+                    """
+                    SELECT id, file_path
+                    FROM (
+                        SELECT DISTINCT ON (file_path)
+                            id, file_path, created_at
+                        FROM videos
+                        ORDER BY file_path, created_at DESC, id DESC
+                    ) latest
+                    ORDER BY created_at DESC
+                    """
+                )
+                rows = cur.fetchall()
+            for video_id, file_path in rows:
+                if not file_path or not os.path.exists(file_path):
+                    continue
+                _enqueue_preview_proxy(video_id, file_path)
+        except Exception as exc:
+            print(f"Preview backfill scheduling failed: {exc}")
+
+    threading.Thread(target=_run, daemon=True, name="lazyedit-preview-backfill").start()
+
+
+def _ensure_preview_proxy_for_upload(video_id: int, input_path: str) -> str | None:
+    """Create a browser-safe preview proxy before returning upload success when needed."""
+    if not _should_create_preview_proxy(input_path):
+        return None
+    try:
+        return _create_preview_proxy(video_id, input_path)
+    except Exception as exc:
+        print(f"Preview proxy creation failed during upload for video {video_id}: {exc}")
+        _enqueue_preview_proxy(video_id, input_path)
+        return None
 
 
 def load_grammar_palette(lang):
@@ -4252,6 +4381,488 @@ def _autopublish_queue_url(publish_url: str) -> str:
     return parsed._replace(path=queue_path, query="").geturl()
 
 
+def _normalize_publish_platform_flags(data: dict) -> dict[str, bool]:
+    platforms_raw = data.get("platforms") or data.get("publish") or {}
+    platform_flags: dict[str, bool] = {}
+    if isinstance(platforms_raw, list):
+        platform_flags = {str(item): True for item in platforms_raw}
+    elif isinstance(platforms_raw, dict):
+        platform_flags = {str(key): bool(value) for key, value in platforms_raw.items()}
+
+    if not platform_flags:
+        platform_flags = {
+            "xiaohongshu": bool(data.get("publish_xhs")),
+            "douyin": bool(data.get("publish_douyin")),
+            "bilibili": bool(data.get("publish_bilibili")),
+            "shipinhao": bool(data.get("publish_shipinhao")),
+            "youtube": bool(data.get("publish_youtube")),
+            "instagram": bool(data.get("publish_instagram")),
+        }
+
+    allowed = {"xiaohongshu", "douyin", "bilibili", "shipinhao", "youtube", "instagram"}
+    return {key: bool(value) for key, value in platform_flags.items() if key in allowed}
+
+
+def _selected_platforms(platform_flags: dict[str, bool]) -> list[str]:
+    ordered = ["xiaohongshu", "douyin", "bilibili", "shipinhao", "youtube", "instagram"]
+    return [key for key in ordered if platform_flags.get(key)]
+
+
+def _normalize_publish_status(raw_status: str | None) -> str:
+    value = str(raw_status or "").strip().lower()
+    if value in {"done", "completed", "published", "success"}:
+        return "done"
+    if value in {"failed", "error"}:
+        return "failed"
+    if value in {"running", "processing", "working", "uploading", "submitted"}:
+        return "running"
+    return "queued"
+
+
+def _prepare_publish_bundle(video_id_i: int, platform_flags: dict[str, bool]) -> tuple[int, dict]:
+    row = _get_video_row(video_id_i)
+    if not row:
+        return 404, {"error": "video not found"}
+    _, file_path, _, _ = row
+    file_path, error = _ensure_local_video_path(video_id_i, file_path)
+    if not file_path:
+        return 404, {"error": error or "video file missing"}
+
+    metadata_zh, _ = _get_latest_metadata_payload(video_id_i, "zh")
+    if not metadata_zh:
+        return 400, {"error": "Chinese metadata missing; generate metadata first"}
+
+    metadata_en, _ = _get_latest_metadata_payload(video_id_i, "en")
+    if not metadata_en:
+        metadata_en = metadata_zh
+
+    metadata_payload = _simplify_metadata_payload(metadata_zh)
+    metadata_payload["english_version"] = metadata_en
+
+    base_name = os.path.splitext(os.path.basename(file_path))[0]
+    publish_dir = _get_publish_dir(file_path)
+    video_filename = f"{base_name}_highlighted.mp4"
+    cover_filename = f"{base_name}_cover.jpg"
+    metadata_filename = f"{base_name}_metadata.json"
+
+    metadata_payload["video_filename"] = video_filename
+    metadata_payload["cover_filename"] = cover_filename
+
+    video_to_publish = _pick_publish_video_path(video_id_i, file_path)
+    cover_path = os.path.join(publish_dir, cover_filename)
+    if not os.path.exists(cover_path):
+        cover_timestamp_raw = metadata_payload.get("cover") or "00:00:01,000"
+        cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
+        try:
+            extract_cover(video_to_publish, cover_path, cover_timestamp)
+        except Exception as exc:
+            return 500, {"error": "cover extraction failed", "details": str(exc)}
+
+    metadata_path = os.path.join(publish_dir, metadata_filename)
+    with open(metadata_path, "w", encoding="utf-8") as handle:
+        json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
+
+    zip_path = os.path.join(publish_dir, f"{base_name}.zip")
+    extra_files = [
+        os.path.join(os.path.dirname(file_path), f"{base_name}_mixed.json"),
+        os.path.join(os.path.dirname(file_path), f"{base_name}_mixed.srt"),
+    ]
+    with zipfile.ZipFile(zip_path, "w") as zipf:
+        zipf.write(video_to_publish, arcname=video_filename)
+        if os.path.exists(cover_path):
+            zipf.write(cover_path, arcname=cover_filename)
+        zipf.write(metadata_path, arcname=metadata_filename)
+        for extra in extra_files:
+            if os.path.exists(extra):
+                zipf.write(extra, arcname=os.path.basename(extra))
+
+    zip_url = media_url_for_path(zip_path)
+    return 200, {
+        "status": "ready",
+        "zip_path": zip_path,
+        "zip_url": zip_url,
+        "metadata_path": metadata_path,
+        "cover_path": cover_path if os.path.exists(cover_path) else None,
+        "video_path": video_to_publish,
+        "platforms": platform_flags,
+    }
+
+
+def _post_publish_zip(zip_path: str, platform_flags: dict[str, bool], test_mode: bool) -> tuple[str | None, Any, Any]:
+    autopublish_url = _resolve_autopublish_url()
+    if not autopublish_url:
+        return None, None, {"warning": "autopublish service not reachable"}
+
+    params = {
+        "filename": os.path.basename(zip_path),
+        "publish_xhs": str(platform_flags.get("xiaohongshu", False)).lower(),
+        "publish_douyin": str(platform_flags.get("douyin", False)).lower(),
+        "publish_bilibili": str(platform_flags.get("bilibili", False)).lower(),
+        "publish_shipinhao": str(platform_flags.get("shipinhao", False)).lower(),
+        "publish_y2b": str(platform_flags.get("youtube", False)).lower(),
+        "publish_instagram": str(platform_flags.get("instagram", False)).lower(),
+        "test": str(test_mode).lower(),
+    }
+
+    with open(zip_path, "rb") as handle:
+        response = requests.post(
+            autopublish_url,
+            params=params,
+            data=handle,
+            headers={"Content-Type": "application/octet-stream"},
+            timeout=(10, AUTOPUBLISH_TIMEOUT),
+        )
+    try:
+        payload = response.json()
+    except Exception:
+        payload = None
+    return autopublish_url, response, payload
+
+
+def _local_api_json_request(
+    method: str,
+    path: str,
+    payload: dict | None = None,
+    *,
+    timeout: int = 120,
+) -> tuple[int, dict, str]:
+    response = requests.request(
+        method.upper(),
+        f"http://127.0.0.1:{PORT}{path}",
+        json=payload,
+        timeout=(10, timeout),
+    )
+    try:
+        parsed = response.json()
+    except Exception:
+        parsed = {}
+    return response.status_code, parsed, response.text
+
+
+def _extract_process_error(payload: dict | None) -> str:
+    if not isinstance(payload, dict):
+        return "process failed"
+    if payload.get("error"):
+        return str(payload.get("error"))
+    steps = payload.get("steps")
+    if isinstance(steps, dict):
+        for step_name, step in steps.items():
+            if not isinstance(step, dict):
+                continue
+            status = str(step.get("status") or "").lower()
+            if status in {"error", "failed"}:
+                return str(step.get("detail") or step_name)
+    return "process failed"
+
+
+def _serialize_publish_job_row(row: tuple) -> dict:
+    platforms_raw = row[3]
+    if isinstance(platforms_raw, dict):
+        platform_flags = platforms_raw
+    else:
+        try:
+            platform_flags = json.loads(platforms_raw or "{}")
+        except Exception:
+            platform_flags = {}
+    zip_path = row[6]
+    zip_url = media_url_for_path(zip_path) if zip_path and os.path.exists(zip_path) else None
+    filename = row[11] or (os.path.basename(zip_path) if zip_path else None)
+    title = row[18] or (filename.replace(".zip", "") if filename else None)
+    return {
+        "id": row[0],
+        "video_id": row[1],
+        "status": _normalize_publish_status(row[2]),
+        "internal_status": row[2],
+        "platforms": _selected_platforms(platform_flags),
+        "detail": row[5],
+        "zip_url": zip_url,
+        "zip_path": zip_path,
+        "filename": filename,
+        "remote_job_id": row[10],
+        "remote_status": row[12],
+        "error": row[13],
+        "created_at": row[14].isoformat() if row[14] else None,
+        "updated_at": row[15].isoformat() if row[15] else None,
+        "started_at": row[16].isoformat() if row[16] else None,
+        "finished_at": row[17].isoformat() if row[17] else None,
+        "title": title,
+        "file_path": row[19],
+        "source": "local",
+    }
+
+
+def _serialize_remote_publish_job(job: dict) -> dict:
+    remote_job_id = job.get("job_id") or job.get("id")
+    return {
+        "id": remote_job_id or job.get("filename"),
+        "video_id": None,
+        "status": _normalize_publish_status(job.get("status")),
+        "internal_status": job.get("status"),
+        "platforms": list(job.get("platforms") or []),
+        "detail": job.get("detail") or job.get("message"),
+        "zip_url": None,
+        "zip_path": None,
+        "filename": job.get("filename"),
+        "remote_job_id": remote_job_id,
+        "remote_status": job.get("status"),
+        "error": job.get("error"),
+        "created_at": job.get("created_at"),
+        "updated_at": job.get("updated_at"),
+        "started_at": None,
+        "finished_at": None,
+        "title": None,
+        "file_path": None,
+        "source": "remote",
+    }
+
+
+def _merge_publish_queue_jobs(local_jobs: list[dict], remote_jobs: list[dict]) -> list[dict]:
+    remote_by_id = {}
+    remote_by_filename = {}
+    for job in remote_jobs:
+        key = str(job.get("remote_job_id") or "")
+        if key:
+            remote_by_id[key] = job
+        filename = str(job.get("filename") or "")
+        if filename:
+            remote_by_filename[filename] = job
+
+    merged: list[dict] = []
+    used_remote_keys: set[str] = set()
+
+    for job in local_jobs:
+        merged_job = dict(job)
+        matched_remote = None
+        remote_job_id = str(job.get("remote_job_id") or "")
+        if remote_job_id:
+            matched_remote = remote_by_id.get(remote_job_id)
+        if not matched_remote and job.get("filename"):
+            matched_remote = remote_by_filename.get(str(job.get("filename")))
+
+        if matched_remote:
+            remote_key = str(matched_remote.get("remote_job_id") or matched_remote.get("filename") or "")
+            if remote_key:
+                used_remote_keys.add(remote_key)
+            merged_job["remote_job_id"] = matched_remote.get("remote_job_id") or merged_job.get("remote_job_id")
+            merged_job["remote_status"] = matched_remote.get("remote_status")
+            if matched_remote.get("platforms"):
+                merged_job["platforms"] = matched_remote.get("platforms")
+            if matched_remote.get("updated_at"):
+                merged_job["updated_at"] = matched_remote.get("updated_at")
+            if matched_remote.get("error"):
+                merged_job["error"] = matched_remote.get("error")
+            remote_status = matched_remote.get("status")
+            if remote_status:
+                merged_job["status"] = remote_status
+            if matched_remote.get("detail") and merged_job.get("status") in {"queued", "running"}:
+                merged_job["detail"] = merged_job.get("detail") or matched_remote.get("detail")
+
+            final_status = merged_job.get("status")
+            if job.get("source") == "local" and final_status in {"done", "failed"} and job.get("id"):
+                ldb.update_publish_job(
+                    int(job["id"]),
+                    status=final_status,
+                    detail=merged_job.get("detail"),
+                    remote_status=matched_remote.get("remote_status"),
+                    error=merged_job.get("error"),
+                    finished=True,
+                )
+
+        merged.append(merged_job)
+
+    for remote_job in remote_jobs:
+        remote_key = str(remote_job.get("remote_job_id") or remote_job.get("filename") or "")
+        if remote_key and remote_key in used_remote_keys:
+            continue
+        merged.append(remote_job)
+
+    active_jobs = sorted(
+        [job for job in merged if job.get("status") in {"queued", "running"}],
+        key=lambda job: ((job.get("created_at") or ""), str(job.get("id") or job.get("filename") or "")),
+    )
+    history_jobs = sorted(
+        [job for job in merged if job.get("status") not in {"queued", "running"}],
+        key=lambda job: ((job.get("updated_at") or job.get("created_at") or ""), str(job.get("id") or job.get("filename") or "")),
+        reverse=True,
+    )
+    return active_jobs + history_jobs[:max(0, PUBLISH_QUEUE_HISTORY_LIMIT - len(active_jobs))]
+
+
+def _load_publish_queue_payload() -> dict:
+    local_jobs = [_serialize_publish_job_row(row) for row in ldb.list_publish_jobs(PUBLISH_QUEUE_HISTORY_LIMIT)]
+    autopublish_url = _resolve_autopublish_url()
+    remote_jobs: list[dict] = []
+    warning = None
+
+    if autopublish_url:
+        queue_url = _autopublish_queue_url(autopublish_url)
+        try:
+            resp = requests.get(queue_url, timeout=(5, AUTOPUBLISH_TIMEOUT))
+            if resp.ok:
+                payload = resp.json()
+                remote_jobs = [_serialize_remote_publish_job(job) for job in (payload.get("jobs") or []) if isinstance(job, dict)]
+            else:
+                warning = f"autopublish queue failed ({resp.status_code})"
+        except Exception as exc:
+            warning = f"autopublish queue failed: {exc}"
+
+    merged_jobs = _merge_publish_queue_jobs(local_jobs, remote_jobs)
+    status = "ok"
+    if warning and not remote_jobs and not local_jobs:
+        status = "unavailable"
+    elif warning:
+        status = "degraded"
+
+    payload = {
+        "status": status,
+        "jobs": merged_jobs,
+        "queue_size": sum(1 for job in merged_jobs if job.get("status") in {"queued", "running"}),
+        "is_publishing": any(job.get("status") == "running" for job in merged_jobs),
+    }
+    if warning:
+        payload["warning"] = warning
+    return payload
+
+
+def _wake_publish_worker() -> None:
+    _ensure_publish_worker_started()
+    PUBLISH_WORKER_WAKE_EVENT.set()
+
+
+def _process_publish_job(job_row: tuple) -> None:
+    job_id = int(job_row[0])
+    video_id = int(job_row[1])
+    platforms_raw = job_row[3]
+    if isinstance(platforms_raw, dict):
+        platform_flags = platforms_raw
+    else:
+        try:
+            platform_flags = json.loads(platforms_raw or "{}")
+        except Exception:
+            platform_flags = {}
+    test_mode = bool(job_row[4])
+
+    ldb.update_publish_job(job_id, detail="Checking publish prerequisites")
+    status_code, status_payload, _status_text = _local_api_json_request(
+        "GET",
+        f"/api/videos/{video_id}/process-status",
+        timeout=30,
+    )
+    if status_code >= 400:
+        raise RuntimeError(status_payload.get("error") or "process status check failed")
+
+    if not status_payload.get("ready_for_publish"):
+        ldb.update_publish_job(job_id, detail="Processing video before publish")
+        logo_settings = _load_logo_settings_setting()
+        process_payload: dict[str, Any] = {"async": False}
+        if logo_settings.get("enabled") and logo_settings.get("logoPath"):
+            process_payload["logo"] = logo_settings
+        process_code, process_payload_out, _process_text = _local_api_json_request(
+            "POST",
+            f"/api/videos/{video_id}/process",
+            process_payload,
+            timeout=PUBLISH_PROCESS_TIMEOUT,
+        )
+        if process_code >= 400:
+            raise RuntimeError(_extract_process_error(process_payload_out))
+
+    ldb.update_publish_job(job_id, detail="Preparing publish bundle")
+    bundle_status, bundle_payload = _prepare_publish_bundle(video_id, platform_flags)
+    if bundle_status >= 400:
+        raise RuntimeError(bundle_payload.get("error") or bundle_payload.get("details") or "publish bundle failed")
+
+    zip_path = bundle_payload.get("zip_path")
+    zip_filename = os.path.basename(zip_path) if zip_path else None
+    ldb.update_publish_job(
+        job_id,
+        detail="Sending ZIP to AutoPublish",
+        zip_path=bundle_payload.get("zip_path"),
+        metadata_path=bundle_payload.get("metadata_path"),
+        cover_path=bundle_payload.get("cover_path"),
+        video_path=bundle_payload.get("video_path"),
+        remote_filename=zip_filename,
+    )
+
+    autopublish_url, response, response_payload = _post_publish_zip(zip_path, platform_flags, test_mode)
+    if not autopublish_url or response is None:
+        raise RuntimeError("autopublish service not reachable")
+    if not response.ok:
+        error_body = ""
+        if isinstance(response_payload, dict):
+            error_body = str(response_payload.get("error") or response_payload.get("message") or "")
+        if not error_body:
+            error_body = response.text[:500]
+        raise RuntimeError(error_body or f"autopublish failed ({response.status_code})")
+
+    remote_job_id = None
+    remote_status = "queued"
+    detail = "Queued in AutoPublish"
+    if isinstance(response_payload, dict):
+        remote_job_id = response_payload.get("job_id") or response_payload.get("id")
+        remote_status = str(response_payload.get("status") or remote_status)
+        detail = str(response_payload.get("message") or response_payload.get("detail") or detail)
+
+    final_status = _normalize_publish_status(remote_status)
+    if final_status in {"done", "failed"}:
+        ldb.update_publish_job(
+            job_id,
+            status=final_status,
+            detail=detail,
+            remote_job_id=str(remote_job_id) if remote_job_id else None,
+            remote_filename=zip_filename,
+            remote_status=remote_status,
+            error=None if final_status == "done" else detail,
+            finished=True,
+        )
+        return
+
+    ldb.update_publish_job(
+        job_id,
+        status="running",
+        detail=detail,
+        remote_job_id=str(remote_job_id) if remote_job_id else None,
+        remote_filename=zip_filename,
+        remote_status=remote_status,
+    )
+
+
+def _publish_worker_loop() -> None:
+    while True:
+        try:
+            job_row = ldb.claim_next_publish_job()
+            if not job_row:
+                PUBLISH_WORKER_WAKE_EVENT.wait(5)
+                PUBLISH_WORKER_WAKE_EVENT.clear()
+                continue
+            try:
+                _process_publish_job(job_row)
+            except Exception as exc:
+                job_id = int(job_row[0])
+                ldb.update_publish_job(
+                    job_id,
+                    status="failed",
+                    detail="Publish failed",
+                    error=str(exc),
+                    finished=True,
+                )
+                print(f"Publish job {job_id} failed: {exc}")
+        except Exception as exc:
+            print(f"Publish worker loop error: {exc}")
+            time.sleep(2)
+
+
+def _ensure_publish_worker_started() -> None:
+    global PUBLISH_WORKER_STARTED
+    with PUBLISH_WORKER_LOCK:
+        if PUBLISH_WORKER_STARTED:
+            return
+        PUBLISH_WORKER_STARTED = True
+    recovered = ldb.recover_incomplete_publish_jobs()
+    if recovered:
+        print(f"Recovered {recovered} unfinished local publish jobs")
+    threading.Thread(target=_publish_worker_loop, daemon=True, name="lazyedit-publish-worker").start()
+
+
 class CorsMixin:
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -4335,7 +4946,10 @@ class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
                 "details": str(e),
             })
 
-        _enqueue_preview_proxy(video_id, input_file)
+        proxy_path = _ensure_preview_proxy_for_upload(video_id, input_file)
+        preview_media_url = media_url_for_path(proxy_path) if proxy_path and os.path.exists(proxy_path) else media_url_for_path(input_file)
+        if not proxy_path:
+            _enqueue_preview_proxy(video_id, input_file)
 
         # Respond with the path of the saved file
         self.write({
@@ -4343,6 +4957,7 @@ class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
             'message': f'File {safe_name} uploaded successfully.',
             'file_path': input_file,
             'media_url': media_url_for_path(input_file),
+            'preview_media_url': preview_media_url,
             'video_id': video_id,
         })
 
@@ -4561,6 +5176,7 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self):
         # Return recent videos from DB
         ldb.ensure_schema()
+        _schedule_preview_backfill()
         _sync_venice_a2e_audio_replacements()
         with ldb.get_cursor() as cur:
             cur.execute(
@@ -4578,20 +5194,12 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
             )
             rows = cur.fetchall()
 
-        proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
-
-        def preview_media_url(video_id: int, file_path: str) -> str | None:
-            proxy_path = os.path.join(proxies_dir, f"video_{video_id}_proxy.mp4")
-            if os.path.exists(proxy_path):
-                return media_url_for_path(proxy_path)
-            return media_url_for_path(file_path)
-
         videos = [
             {
                 "id": r[0],
                 "file_path": r[1],
                 "media_url": media_url_for_path(r[1]),
-                "preview_media_url": preview_media_url(r[0], r[1]),
+                "preview_media_url": _preview_media_url_for_video(r[0], r[1], auto_enqueue=True),
                 "title": r[2],
                 "created_at": r[3].isoformat() if r[3] else None,
                 "source": r[4],
@@ -4614,7 +5222,14 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": "file_path required"})
         ldb.ensure_schema()
         vid = ldb.add_video(file_path, title, source)
-        self.write({"id": vid})
+        proxy_path = _ensure_preview_proxy_for_upload(vid, file_path)
+        if not proxy_path:
+            _enqueue_preview_proxy(vid, file_path)
+        self.write({
+            "id": vid,
+            "media_url": media_url_for_path(file_path),
+            "preview_media_url": media_url_for_path(proxy_path) if proxy_path and os.path.exists(proxy_path) else media_url_for_path(file_path),
+        })
 
 
 class VideoDetailHandler(CorsMixin, tornado.web.RequestHandler):
@@ -4634,10 +5249,7 @@ class VideoDetailHandler(CorsMixin, tornado.web.RequestHandler):
         if not row:
             self.set_status(404)
             return self.write({"error": "not found"})
-
-        proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
-        proxy_path = os.path.join(proxies_dir, f"video_{row[0]}_proxy.mp4")
-        preview_url = media_url_for_path(proxy_path) if os.path.exists(proxy_path) else media_url_for_path(row[1])
+        preview_url = _preview_media_url_for_video(row[0], row[1], auto_enqueue=True)
         self.write({
             "id": row[0],
             "file_path": row[1],
@@ -4783,7 +5395,7 @@ class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
 
             try:
                 autocut_processor = AutocutProcessor(input_file, output_folder, base_name, extension)
-                autocut_processor.run_autocut("mixed", 1)
+                autocut_processor.run_autocut("mixed", _resolve_autocut_gpu_id())
 
                 if not os.path.exists(output_json_mixed) or not os.path.exists(output_srt_mixed):
                     message = "Transcription completed but output files were not found."
@@ -5247,7 +5859,7 @@ class VideoCaptionHandler(CorsMixin, tornado.web.RequestHandler):
                     error_message = captioner.last_error
                     with open(output_md_caption, "w", encoding="utf-8") as md_file:
                         md_file.write(f"Captioning failed: {error_message}\n")
-                    status = "failed"
+                    status = "empty"
                 else:
                     write_markdown_from_srt(
                         output_srt_caption,
@@ -5664,25 +6276,8 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             data = {}
 
-        platforms_raw = data.get("platforms") or data.get("publish") or {}
-        platform_flags: dict[str, bool] = {}
-        if isinstance(platforms_raw, list):
-            platform_flags = {str(item): True for item in platforms_raw}
-        elif isinstance(platforms_raw, dict):
-            platform_flags = {str(key): bool(value) for key, value in platforms_raw.items()}
-
-        if not platform_flags:
-            platform_flags = {
-                "xiaohongshu": bool(data.get("publish_xhs")),
-                "douyin": bool(data.get("publish_douyin")),
-                "bilibili": bool(data.get("publish_bilibili")),
-                "shipinhao": bool(data.get("publish_shipinhao")),
-                "youtube": bool(data.get("publish_youtube")),
-                "instagram": bool(data.get("publish_instagram")),
-            }
-
-        has_target = any(platform_flags.values())
-        if not has_target:
+        platform_flags = _normalize_publish_platform_flags(data)
+        if not any(platform_flags.values()):
             self.set_status(400)
             return self.write({"error": "no platforms selected"})
 
@@ -5693,151 +6288,68 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
         if not row:
             self.set_status(404)
             return self.write({"error": "video not found"})
-        _, file_path, _, _ = row
-        file_path, error = _ensure_local_video_path(video_id_i, file_path)
-        if not file_path:
-            self.set_status(404)
-            return self.write({"error": error or "video file missing"})
-
-        metadata_zh, _ = _get_latest_metadata_payload(video_id_i, "zh")
-        if not metadata_zh:
-            self.set_status(400)
-            return self.write({"error": "Chinese metadata missing; generate metadata first"})
-
-        metadata_en, _ = _get_latest_metadata_payload(video_id_i, "en")
-        if not metadata_en:
-            metadata_en = metadata_zh
-
-        metadata_payload = _simplify_metadata_payload(metadata_zh)
-        metadata_payload["english_version"] = metadata_en
-
-        base_name = os.path.splitext(os.path.basename(file_path))[0]
-        publish_dir = _get_publish_dir(file_path)
-        video_filename = f"{base_name}_highlighted.mp4"
-        cover_filename = f"{base_name}_cover.jpg"
-        metadata_filename = f"{base_name}_metadata.json"
-
-        metadata_payload["video_filename"] = video_filename
-        metadata_payload["cover_filename"] = cover_filename
-
-        video_to_publish = _pick_publish_video_path(video_id_i, file_path)
-        cover_path = os.path.join(publish_dir, cover_filename)
-        if not os.path.exists(cover_path):
-            cover_timestamp_raw = metadata_payload.get("cover") or "00:00:01,000"
-            cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
-            try:
-                extract_cover(video_to_publish, cover_path, cover_timestamp)
-            except Exception as exc:
-                self.set_status(500)
-                return self.write({"error": "cover extraction failed", "details": str(exc)})
-
-        metadata_path = os.path.join(publish_dir, metadata_filename)
-        with open(metadata_path, "w", encoding="utf-8") as handle:
-            json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
-
-        zip_path = os.path.join(publish_dir, f"{base_name}.zip")
-        extra_files = [
-            os.path.join(os.path.dirname(file_path), f"{base_name}_mixed.json"),
-            os.path.join(os.path.dirname(file_path), f"{base_name}_mixed.srt"),
-        ]
-        with zipfile.ZipFile(zip_path, "w") as zipf:
-            zipf.write(video_to_publish, arcname=video_filename)
-            if os.path.exists(cover_path):
-                zipf.write(cover_path, arcname=cover_filename)
-            zipf.write(metadata_path, arcname=metadata_filename)
-            for extra in extra_files:
-                if os.path.exists(extra):
-                    zipf.write(extra, arcname=os.path.basename(extra))
-
-        zip_url = media_url_for_path(zip_path)
-        response_payload = {
-            "status": "ready",
-            "zip_path": zip_path,
-            "zip_url": zip_url,
-            "metadata_path": metadata_path,
-            "cover_path": cover_path if os.path.exists(cover_path) else None,
-            "video_path": video_to_publish,
-            "platforms": platform_flags,
-        }
-
-        autopublish_url = _resolve_autopublish_url()
-        if not autopublish_url:
-            response_payload["warning"] = "autopublish service not reachable"
-            response_payload["status"] = "ready"
-            return self.write(response_payload)
-
-        params = {
-            "filename": os.path.basename(zip_path),
-            "publish_xhs": str(platform_flags.get("xiaohongshu", False)).lower(),
-            "publish_douyin": str(platform_flags.get("douyin", False)).lower(),
-            "publish_bilibili": str(platform_flags.get("bilibili", False)).lower(),
-            "publish_shipinhao": str(platform_flags.get("shipinhao", False)).lower(),
-            "publish_y2b": str(platform_flags.get("youtube", False)).lower(),
-            "publish_instagram": str(platform_flags.get("instagram", False)).lower(),
-            "test": str(test_mode).lower(),
-        }
-
-        def _post_zip():
-            with open(zip_path, "rb") as handle:
-                resp = requests.post(
-                    autopublish_url,
-                    params=params,
-                    data=handle.read(),
-                    headers={"Content-Type": "application/octet-stream"},
-                    timeout=AUTOPUBLISH_TIMEOUT,
-                )
-            return resp
-
         if wait_for_result:
+            bundle_status, response_payload = _prepare_publish_bundle(video_id_i, platform_flags)
+            if bundle_status != 200:
+                self.set_status(bundle_status)
+                return self.write(response_payload)
             try:
-                resp = _post_zip()
+                autopublish_url, resp, autopublish_payload = _post_publish_zip(
+                    response_payload["zip_path"],
+                    platform_flags,
+                    test_mode,
+                )
+                if not autopublish_url or resp is None:
+                    response_payload["warning"] = "autopublish service not reachable"
+                    response_payload["status"] = "ready"
+                    return self.write(response_payload)
                 response_payload["autopublish_status"] = resp.status_code
-                response_payload["autopublish_response"] = resp.text
+                response_payload["autopublish_response"] = (
+                    autopublish_payload if isinstance(autopublish_payload, dict) else resp.text
+                )
                 response_payload["status"] = "published" if resp.ok else "failed"
             except Exception as exc:
                 response_payload["status"] = "failed"
                 response_payload["autopublish_error"] = str(exc)
             return self.write(response_payload)
 
-        def _async_worker():
-            try:
-                resp = _post_zip()
-                if not resp.ok:
-                    print(f"Autopublish failed: {resp.status_code} {resp.text}")
-            except Exception as exc:
-                print(f"Autopublish request failed: {exc}")
+        _ensure_publish_worker_started()
+        existing_job = ldb.find_active_publish_job(video_id_i)
+        if existing_job:
+            job_payload = _serialize_publish_job_row(existing_job)
+            return self.write({
+                "status": "queued",
+                "job_id": job_payload["id"],
+                "queue_size": ldb.count_pending_publish_jobs(),
+                "detail": job_payload.get("detail") or "Already in publish queue",
+                "job": job_payload,
+                "zip_url": job_payload.get("zip_url"),
+                "platforms": platform_flags,
+            })
 
-        threading.Thread(target=_async_worker, daemon=True).start()
-        response_payload["status"] = "queued"
-        self.write(response_payload)
+        job_id = ldb.add_publish_job(
+            video_id_i,
+            platform_flags,
+            test_mode=test_mode,
+            detail="Waiting for local publish worker",
+        )
+        job_payload = _serialize_publish_job_row(ldb.get_publish_job(job_id))
+        _wake_publish_worker()
+        self.write({
+            "status": "queued",
+            "job_id": job_id,
+            "queue_size": ldb.count_pending_publish_jobs(),
+            "detail": job_payload.get("detail"),
+            "job": job_payload,
+            "zip_url": job_payload.get("zip_url"),
+            "platforms": platform_flags,
+        })
 
 
 class AutopublishQueueHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self):
-        autopublish_url = _resolve_autopublish_url()
-        if not autopublish_url:
-            return self.write({"status": "unavailable", "jobs": []})
-
-        queue_url = _autopublish_queue_url(autopublish_url)
-        try:
-            resp = requests.get(queue_url, timeout=AUTOPUBLISH_TIMEOUT)
-        except Exception as exc:
-            self.set_status(502)
-            return self.write({"error": "autopublish queue failed", "details": str(exc)})
-
-        if not resp.ok:
-            self.set_status(502)
-            return self.write({
-                "error": "autopublish queue failed",
-                "status_code": resp.status_code,
-                "body": resp.text,
-            })
-
-        try:
-            payload = resp.json()
-        except Exception:
-            payload = {"status": "error", "body": resp.text}
-        self.write(payload)
+        _ensure_publish_worker_started()
+        self.write(_load_publish_queue_payload())
 
 
 class VideoPromptHandler(CorsMixin, tornado.web.RequestHandler):
@@ -7979,7 +8491,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": "invalid id"})
 
         ldb.ensure_schema()
-        row = ldb.get_latest_subtitle_burn(video_id_i)
+        row = _get_latest_subtitle_burn_with_recovery(video_id_i)
         if not row:
             self.set_status(404)
             return self.write({"error": "burn not found"})
@@ -8011,7 +8523,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         cancel_requested = _parse_bool(data.get("cancel") or data.get("stop") or data.get("abort"), default=False)
         if cancel_requested:
             ldb.ensure_schema()
-            row = ldb.get_latest_subtitle_burn(video_id_i)
+            row = _get_latest_subtitle_burn_with_recovery(video_id_i)
             if not row:
                 return self.write({"status": "no_active"})
             burn_id, status, _output_path, _progress, _config, error, _created_at = row
@@ -8166,6 +8678,23 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                 "bgShape": logo_config.get("bgShape"),
                 "enabled": logo_config.get("enabled"),
             }
+
+        existing_burn = _get_latest_subtitle_burn_with_recovery(video_id_i)
+        if existing_burn:
+            existing_id, existing_status, existing_output_path, existing_progress, existing_config, existing_error, existing_created_at = existing_burn
+            if existing_status == "processing" and _is_burn_future_active(existing_id):
+                return self.write({
+                    "id": existing_id,
+                    "video_id": video_id_i,
+                    "status": "processing",
+                    "output_path": existing_output_path,
+                    "output_url": media_url_for_path(existing_output_path),
+                    "progress": existing_progress,
+                    "config": existing_config,
+                    "error": existing_error,
+                    "created_at": existing_created_at.isoformat() if existing_created_at else None,
+                })
+
         burn_id = ldb.add_subtitle_burn(
             video_id_i,
             "processing",
@@ -8229,7 +8758,10 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             else:
                 ldb.finalize_subtitle_burn(burn_id, status, None, error_message, progress=0)
 
-        BURN_EXECUTOR.submit(_run_burn)
+        future = BURN_EXECUTOR.submit(_run_burn)
+        with BURN_STATE_LOCK:
+            ACTIVE_BURN_FUTURES[burn_id] = future
+        future.add_done_callback(lambda _future, _burn_id=burn_id: _forget_active_burn_future(_burn_id))
 
         created_at = None
         try:
@@ -8608,7 +9140,7 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             else:
                 steps["translate"] = step_payload("done", "Completed", newest)
 
-        burn_row = ldb.get_latest_subtitle_burn(video_id_i)
+        burn_row = _get_latest_subtitle_burn_with_recovery(video_id_i)
         if burn_row:
             _burn_id, status, _output_path, progress, _config, error, created_at = burn_row
             updated_at_candidates.append(created_at)
@@ -8871,12 +9403,16 @@ class FileUploadHandlerStream(CorsMixin, tornado.web.RequestHandler):
                     "error": "failed to save video in database",
                     "details": str(e),
                 })
-            _enqueue_preview_proxy(video_id, self.file_path)
+            proxy_path = _ensure_preview_proxy_for_upload(video_id, self.file_path)
+            preview_media_url = media_url_for_path(proxy_path) if proxy_path and os.path.exists(proxy_path) else media_url_for_path(self.file_path)
+            if not proxy_path:
+                _enqueue_preview_proxy(video_id, self.file_path)
             response = {
                 'status': 'success',
                 'message': f"Received {self.bytes_received} bytes.",
                 'file_path': self.file_path,
                 'media_url': media_url_for_path(self.file_path),
+                'preview_media_url': preview_media_url,
                 'video_id': video_id,
             }
             self.write(response)
@@ -8903,7 +9439,7 @@ class AutomaticalVideoEditingHandler(tornado.web.RequestHandler):
         # Process the video with autocut
         autocut_processor = AutocutProcessor(input_file, output_folder, base_name, extension)
         futures = [
-            self.executor.submit(autocut_processor.run_autocut, 'mixed', 1),
+            self.executor.submit(autocut_processor.run_autocut, 'mixed', _resolve_autocut_gpu_id()),
             # self.executor.submit(autocut_processor.run_autocut, 'en', 0),
             # self.executor.submit(autocut_processor.run_autocut, 'zh', 1)
         ]
@@ -9185,6 +9721,9 @@ if __name__ == "__main__":
     # os.environ["OPENAI_MODEL"] = "gpt-4-0125-preview"
     os.environ["OPENAI_MODEL"] = "gpt-4o-mini"
     
+    ldb.ensure_schema()
+    _ensure_publish_worker_started()
+    _schedule_preview_backfill()
     upload_folder = UPLOAD_FOLDER
     app = make_app(upload_folder)
     port = PORT

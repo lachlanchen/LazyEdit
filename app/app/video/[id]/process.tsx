@@ -921,7 +921,11 @@ export default function ProcessVideoScreen() {
           const json = await resp.json();
           if (json.status === 'completed') {
             mark('caption', 'done', 'Completed');
-          } else if (json.status === 'failed' || json.status === 'not_configured') {
+          } else if (json.status === 'empty') {
+            mark('caption', 'skipped', json.error || 'No frame captions generated; continuing without them');
+          } else if (json.status === 'not_configured') {
+            mark('caption', 'skipped', json.error || 'Captioner not configured; continuing without frame captions');
+          } else if (json.status === 'failed') {
             mark('caption', 'error', json.error || 'Failed');
           } else {
             mark('caption', 'working', json.status || 'Working');

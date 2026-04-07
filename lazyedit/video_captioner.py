@@ -210,9 +210,26 @@ class VideoCaptioner:
             caption_command = self._build_module_command()
         if self.alternate_command and os.path.exists(self.alternate_command):
             alternative_command = self._build_command(self.alternate_command)
-        
-        try:
-            if alternative_command:
+
+        # Prefer the vendored vit_captioner path. It is the maintained path in this
+        # repository, while the legacy fallback script exists only as a backup.
+        if caption_command:
+            try:
+                print("Executing primary command: ", caption_command)
+                self._run_with_oom_fallback(caption_command, cwd=self.primary_root)
+                print(f"Captioning completed successfully, output saved to: {self.caption_srt_path}")
+                print(f"Captioning completed successfully, output saved to: {self.caption_json_path}")
+                self.last_method = "primary"
+                self.last_error = None
+                return
+            except Exception as e:
+                traceback.print_exc()
+                self.last_error = str(e)
+                self.specific_kill(caption_command)
+                print("Primary command failed. Trying fallback command.")
+
+        if alternative_command:
+            try:
                 self._ensure_fallback_weights_dir()
                 print("Executing fallback command: ", alternative_command)
                 self._run_with_oom_fallback(alternative_command, cwd=self.fallback_cwd)
@@ -220,42 +237,20 @@ class VideoCaptioner:
                 self.last_method = "fallback"
                 self.last_error = None
                 return
-            raise RuntimeError("Fallback caption script not available.")
-        except Exception as e:
-
-            traceback.print_exc()
-            self.last_error = str(e)
-
-            if alternative_command:
-                self.specific_kill(alternative_command)
-
-            print("Fallback command failed. Trying primary command.")
-
-            # Primary command
-            try:
-                if not caption_command:
-                    raise RuntimeError("Primary caption script not available.")
-                print("Executing primary command: ", caption_command)
-                self._run_with_oom_fallback(caption_command, cwd=self.primary_root)
-                print(f"Captioning completed successfully, output saved to: {self.caption_srt_path}")
-                print(f"Captioning completed successfully, output saved to: {self.caption_json_path}")
-                self.last_method = "primary"
-                self.last_error = None
             except Exception as e:
-
                 traceback.print_exc()
                 self.last_error = str(e)
+                self.specific_kill(alternative_command)
 
-                if caption_command:
-                    self.specific_kill(caption_command)
+        print("All caption commands failed. Saving empty file.")
 
-                print("Primary command failed. Saving empty file.")
-                
-                with open(self.caption_srt_path, 'w') as file:
-                    file.write("")  # Create an empty file
+        with open(self.caption_srt_path, 'w') as file:
+            file.write("")
 
-                with open(self.caption_json_path, 'w') as file:
-                    file.write("")  # Create an empty file
+        with open(self.caption_json_path, 'w') as file:
+            file.write("")
+
+        self.last_method = "empty"
 
 
         if caption_command:
