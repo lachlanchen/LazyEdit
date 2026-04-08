@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {
   ActivityIndicator,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  type ViewToken,
   View,
 } from 'react-native';
 
@@ -25,6 +26,10 @@ type Video = {
   file_path: string;
   media_url?: string | null;
   preview_media_url?: string | null;
+  preview_image_url?: string | null;
+  needs_preview_proxy?: boolean;
+  has_preview_proxy?: boolean;
+  has_preview_image?: boolean;
   created_at?: string;
 };
 
@@ -111,6 +116,12 @@ export default function EditorScreen() {
   const [queueError, setQueueError] = useState('');
   const [queueExpanded, setQueueExpanded] = useState(false);
   const [publishSettingsLoaded, setPublishSettingsLoaded] = useState(false);
+  const previewProxyPendingIdsRef = useRef<number[]>([]);
+  const previewProxyAttemptedIdsRef = useRef<Set<number>>(new Set());
+  const previewProxyRunningRef = useRef(false);
+  const videosRef = useRef<Video[]>([]);
+  const queueVisiblePreviewBackfillRef = useRef<(items: Video[]) => void>(() => {});
+  const viewabilityConfigRef = useRef({ itemVisiblePercentThreshold: 60, minimumViewTime: 120 });
   const { t } = useI18n();
 
   const resolveMediaSrc = useCallback((value?: string | null) => {
@@ -220,6 +231,11 @@ export default function EditorScreen() {
     if (!raw) return null;
     return raw.startsWith('http') ? raw : `${API_URL}${raw}`;
   }, [selectedVideo]);
+  const previewPosterUrl = useMemo(() => {
+    if (!selectedVideo?.preview_image_url) return null;
+    const raw = selectedVideo.preview_image_url;
+    return raw.startsWith('http') ? raw : `${API_URL}${raw}`;
+  }, [selectedVideo]);
   const visibleVideos = useMemo(() => videos.slice(0, visibleCount), [videos, visibleCount]);
   const hasMoreVideos = visibleCount < videos.length;
   const activeQueueCount = useMemo(
@@ -238,6 +254,12 @@ export default function EditorScreen() {
     if (!hasMoreVideos) return;
     setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, videos.length));
   }, [hasMoreVideos, videos.length]);
+
+  const hasDedicatedPreviewProxy = useCallback((video?: Video | null) => {
+    if (video?.has_preview_proxy) return true;
+    const previewUrl = String(video?.preview_media_url || '');
+    return previewUrl.includes('/proxy_previews/');
+  }, []);
 
   const toneStyle = (tone: 'neutral' | 'good' | 'bad') =>
     tone === 'good' ? styles.statusGood : tone === 'bad' ? styles.statusBad : styles.statusNeutral;
@@ -298,6 +320,65 @@ export default function EditorScreen() {
       if (!silent) setLoadingVideos(false);
     }
   }, []);
+
+  const runVisiblePreviewBackfill = useCallback(async () => {
+    if (previewProxyRunningRef.current) return;
+    previewProxyRunningRef.current = true;
+    try {
+      while (previewProxyPendingIdsRef.current.length) {
+        const nextVideoId = previewProxyPendingIdsRef.current.shift();
+        if (!nextVideoId) continue;
+        const currentVideo = videosRef.current.find((video) => video.id === nextVideoId);
+        if (!currentVideo || hasDedicatedPreviewProxy(currentVideo)) continue;
+        try {
+          const resp = await fetch(`${API_URL}/api/videos/${nextVideoId}/proxy`, { method: 'POST' });
+          const json = await resp.json().catch(() => ({}));
+          if (!resp.ok || !json?.media_url) continue;
+          setVideos((prev) =>
+            prev.map((video) =>
+              video.id === nextVideoId
+                ? {
+                    ...video,
+                    preview_media_url: json.media_url,
+                    preview_image_url: json.preview_image_url ?? video.preview_image_url ?? null,
+                    needs_preview_proxy: Boolean(json.needs_preview_proxy),
+                    has_preview_proxy: Boolean(json.has_preview_proxy ?? true),
+                    has_preview_image: Boolean(json.has_preview_image ?? json.preview_image_url ?? video.preview_image_url),
+                  }
+                : video,
+            ),
+          );
+        } catch (_err) {
+          // Best-effort only.
+        }
+      }
+    } finally {
+      previewProxyRunningRef.current = false;
+    }
+  }, [hasDedicatedPreviewProxy]);
+
+  const queueVisiblePreviewBackfill = useCallback((items: Video[]) => {
+    let shouldRun = false;
+    for (const video of items) {
+      if (!video?.id || hasDedicatedPreviewProxy(video) || !video.needs_preview_proxy) continue;
+      if (previewProxyAttemptedIdsRef.current.has(video.id)) continue;
+      previewProxyAttemptedIdsRef.current.add(video.id);
+      previewProxyPendingIdsRef.current.push(video.id);
+      shouldRun = true;
+    }
+    if (shouldRun) {
+      void runVisiblePreviewBackfill();
+    }
+  }, [hasDedicatedPreviewProxy, runVisiblePreviewBackfill]);
+
+  const onViewableItemsChanged = useRef(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      const items = viewableItems
+        .map((entry) => entry.item as Video | null | undefined)
+        .filter((item): item is Video => Boolean(item));
+      queueVisiblePreviewBackfillRef.current(items);
+    },
+  ).current;
 
   const loadPublishSettings = useCallback(async () => {
     try {
@@ -403,6 +484,14 @@ export default function EditorScreen() {
   }, [loadVideos]);
 
   useEffect(() => {
+    videosRef.current = videos;
+  }, [videos]);
+
+  useEffect(() => {
+    queueVisiblePreviewBackfillRef.current = queueVisiblePreviewBackfill;
+  }, [queueVisiblePreviewBackfill]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
       loadVideos(true);
     }, 15000);
@@ -480,6 +569,11 @@ export default function EditorScreen() {
     }, 5000);
     return () => clearInterval(interval);
   }, [selectedVideoId, loadProcessStatus]);
+
+  useEffect(() => {
+    if (!selectedVideo) return;
+    queueVisiblePreviewBackfill([selectedVideo]);
+  }, [queueVisiblePreviewBackfill, selectedVideo]);
 
   useEffect(() => {
     if (!selectedPublishJob) return;
@@ -668,6 +762,8 @@ export default function EditorScreen() {
               keyExtractor={(video) => String(video.id)}
               style={styles.videoListScroll}
               contentContainerStyle={styles.videoList}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfigRef.current}
               onEndReached={() => {
                 if (hasMoreVideos) loadMoreVideos();
               }}
@@ -678,6 +774,7 @@ export default function EditorScreen() {
               renderItem={({ item: video }) => {
                 const previewUrl = video.preview_media_url || video.media_url;
                 const mediaSrc = resolveMediaSrc(previewUrl);
+                const imageSrc = resolveMediaSrc(video.preview_image_url || null);
                 const isActive = selectedVideoId === video.id;
                 const title = video.title || t('library_video_fallback', { id: video.id });
                 return (
@@ -687,7 +784,9 @@ export default function EditorScreen() {
                     onPress={() => setSelectedVideoId(video.id)}
                   >
                     <View style={styles.videoPreview}>
-                      {Platform.OS === 'web' && mediaSrc ? (
+                      {imageSrc ? (
+                        <Image source={{ uri: imageSrc }} style={styles.processPreviewImage} />
+                      ) : Platform.OS === 'web' && mediaSrc ? (
                         React.createElement('video', {
                           src: mediaSrc,
                           style: { width: '100%', height: '100%', borderRadius: 10, objectFit: 'cover' },
@@ -789,9 +888,10 @@ export default function EditorScreen() {
                     muted: true,
                     playsInline: true,
                     preload: 'metadata',
+                    poster: previewPosterUrl || undefined,
                   })
                 ) : (
-                  <Image source={{ uri: previewVideoUrl }} style={styles.processPreviewImage} />
+                  <Image source={{ uri: previewPosterUrl || previewVideoUrl }} style={styles.processPreviewImage} />
                 )}
               </View>
             ) : (

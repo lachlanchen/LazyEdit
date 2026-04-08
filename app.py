@@ -389,6 +389,17 @@ def _forget_active_burn_future(burn_id: int) -> None:
 def _should_create_preview_proxy(file_path: str) -> bool:
     if not file_path:
         return False
+    normalized_path = os.path.normpath(file_path).lower()
+    legacy_preview_dirs = (
+        os.path.join(UPLOAD_FOLDER, "venice_a2e").lower(),
+        os.path.join(UPLOAD_FOLDER, "venice_wan").lower(),
+    )
+    if any(
+        normalized_path == legacy_dir
+        or normalized_path.startswith(f"{legacy_dir}{os.sep}")
+        for legacy_dir in legacy_preview_dirs
+    ):
+        return True
     _, ext = os.path.splitext(file_path)
     ext = (ext or "").lower()
     if ext in {".mov"}:
@@ -432,6 +443,12 @@ def _preview_proxy_path(video_id: int) -> str:
     return os.path.join(proxies_dir, f"video_{video_id}_proxy.mp4")
 
 
+def _preview_poster_path(video_id: int) -> str:
+    proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
+    os.makedirs(proxies_dir, exist_ok=True)
+    return os.path.join(proxies_dir, f"video_{video_id}_poster.jpg")
+
+
 def _create_preview_proxy(video_id: int, input_path: str) -> str | None:
     if not input_path or not os.path.exists(input_path):
         return None
@@ -468,17 +485,59 @@ def _create_preview_proxy(video_id: int, input_path: str) -> str | None:
     return output_path
 
 
-def _enqueue_preview_proxy(video_id: int, input_path: str) -> None:
-    if not _should_create_preview_proxy(input_path):
-        return
-    if not input_path or not os.path.exists(input_path):
-        return
-    output_path = _preview_proxy_path(video_id)
+def _create_preview_poster(video_id: int, source_path: str) -> str | None:
+    if not source_path or not os.path.exists(source_path):
+        return None
+    output_path = _preview_poster_path(video_id)
+
     try:
-        if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(input_path):
-            return
+        if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(source_path):
+            return output_path
     except Exception:
         pass
+
+    cmd = [
+        "ffmpeg",
+        "-y",
+        "-i",
+        source_path,
+        "-vf",
+        "thumbnail,scale='min(720,iw)':-2",
+        "-frames:v",
+        "1",
+        output_path,
+    ]
+    subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    return output_path
+
+
+def _submit_preview_proxy(video_id: int, input_path: str, create_proxy: bool = True, create_poster: bool = True) -> None:
+    if not input_path or not os.path.exists(input_path):
+        return
+    proxy_path = _preview_proxy_path(video_id)
+    poster_path = _preview_poster_path(video_id)
+    proxy_ready = False
+    poster_ready = False
+
+    if create_proxy:
+        try:
+            proxy_ready = os.path.exists(proxy_path) and os.path.getmtime(proxy_path) >= os.path.getmtime(input_path)
+        except Exception:
+            proxy_ready = False
+    else:
+        proxy_ready = True
+
+    if create_poster:
+        poster_source = proxy_path if os.path.exists(proxy_path) else input_path
+        try:
+            poster_ready = os.path.exists(poster_path) and os.path.getmtime(poster_path) >= os.path.getmtime(poster_source)
+        except Exception:
+            poster_ready = False
+    else:
+        poster_ready = True
+
+    if proxy_ready and poster_ready:
+        return
 
     with PROXY_STATE_LOCK:
         if video_id in QUEUED_PREVIEW_VIDEO_IDS:
@@ -487,7 +546,15 @@ def _enqueue_preview_proxy(video_id: int, input_path: str) -> None:
 
     def _run() -> None:
         try:
-            _create_preview_proxy(video_id, input_path)
+            source_for_poster = input_path
+            if create_proxy:
+                proxy_result = _create_preview_proxy(video_id, input_path)
+                if proxy_result and os.path.exists(proxy_result):
+                    source_for_poster = proxy_result
+            elif os.path.exists(proxy_path):
+                source_for_poster = proxy_path
+            if create_poster:
+                _create_preview_poster(video_id, source_for_poster)
         except Exception as exc:
             print(f"Proxy transcode failed for video {video_id}: {exc}")
         finally:
@@ -497,15 +564,55 @@ def _enqueue_preview_proxy(video_id: int, input_path: str) -> None:
     PROXY_EXECUTOR.submit(_run)
 
 
-def _preview_media_url_for_video(video_id: int, file_path: str | None, auto_enqueue: bool = False) -> str | None:
+def _enqueue_preview_proxy(video_id: int, input_path: str, needs_proxy: bool | None = None) -> None:
+    if needs_proxy is None:
+        needs_proxy = _should_create_preview_proxy(input_path)
+    needs_poster = True
+    poster_path = _preview_poster_path(video_id)
+    poster_source = _preview_proxy_path(video_id) if os.path.exists(_preview_proxy_path(video_id)) else input_path
+    try:
+        needs_poster = not os.path.exists(poster_path) or os.path.getmtime(poster_path) < os.path.getmtime(poster_source)
+    except Exception:
+        needs_poster = True
+    if not needs_proxy and not needs_poster:
+        return
+    _submit_preview_proxy(video_id, input_path, create_proxy=bool(needs_proxy), create_poster=needs_poster)
+
+
+def _preview_info_for_video(video_id: int, file_path: str | None, auto_enqueue: bool = False) -> dict[str, Any]:
     if not file_path:
-        return None
+        return {
+            "preview_media_url": None,
+            "preview_image_url": None,
+            "needs_preview_proxy": False,
+            "has_preview_proxy": False,
+            "has_preview_image": False,
+        }
     proxy_path = _preview_proxy_path(video_id)
+    poster_path = _preview_poster_path(video_id)
+    has_proxy = os.path.exists(proxy_path)
+    has_poster = os.path.exists(poster_path)
+    if auto_enqueue and os.path.exists(file_path) and (not has_proxy or not has_poster):
+        _enqueue_preview_proxy(video_id, file_path, needs_proxy=None if not has_proxy else False)
     if os.path.exists(proxy_path):
-        return media_url_for_path(proxy_path)
-    if auto_enqueue and os.path.exists(file_path):
-        _enqueue_preview_proxy(video_id, file_path)
-    return media_url_for_path(file_path)
+        return {
+            "preview_media_url": media_url_for_path(proxy_path),
+            "preview_image_url": media_url_for_path(poster_path) if has_poster else None,
+            "needs_preview_proxy": False,
+            "has_preview_proxy": True,
+            "has_preview_image": has_poster,
+        }
+
+    needs_proxy = False
+    if os.path.exists(file_path):
+        needs_proxy = _should_create_preview_proxy(file_path)
+    return {
+        "preview_media_url": media_url_for_path(file_path),
+        "preview_image_url": media_url_for_path(poster_path) if has_poster else None,
+        "needs_preview_proxy": bool(needs_proxy),
+        "has_preview_proxy": False,
+        "has_preview_image": has_poster,
+    }
 
 
 def _schedule_preview_backfill() -> None:
@@ -552,6 +659,18 @@ def _ensure_preview_proxy_for_upload(video_id: int, input_path: str) -> str | No
         print(f"Preview proxy creation failed during upload for video {video_id}: {exc}")
         _enqueue_preview_proxy(video_id, input_path)
         return None
+
+
+def _ensure_preview_assets_for_upload(video_id: int, input_path: str) -> tuple[str | None, str | None]:
+    proxy_path = _ensure_preview_proxy_for_upload(video_id, input_path)
+    poster_source = proxy_path if proxy_path and os.path.exists(proxy_path) else input_path
+    poster_path = None
+    try:
+        poster_path = _create_preview_poster(video_id, poster_source)
+    except Exception as exc:
+        print(f"Preview poster creation failed during upload for video {video_id}: {exc}")
+        _enqueue_preview_proxy(video_id, input_path, needs_proxy=False if proxy_path else None)
+    return proxy_path, poster_path
 
 
 def load_grammar_palette(lang):
@@ -4946,9 +5065,10 @@ class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
                 "details": str(e),
             })
 
-        proxy_path = _ensure_preview_proxy_for_upload(video_id, input_file)
+        proxy_path, poster_path = _ensure_preview_assets_for_upload(video_id, input_file)
         preview_media_url = media_url_for_path(proxy_path) if proxy_path and os.path.exists(proxy_path) else media_url_for_path(input_file)
-        if not proxy_path:
+        preview_image_url = media_url_for_path(poster_path) if poster_path and os.path.exists(poster_path) else None
+        if not proxy_path or not poster_path:
             _enqueue_preview_proxy(video_id, input_file)
 
         # Respond with the path of the saved file
@@ -4958,6 +5078,7 @@ class FileUploaderHandler(CorsMixin, tornado.web.RequestHandler):
             'file_path': input_file,
             'media_url': media_url_for_path(input_file),
             'preview_media_url': preview_media_url,
+            'preview_image_url': preview_image_url,
             'video_id': video_id,
         })
 
@@ -5195,15 +5316,21 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
             rows = cur.fetchall()
 
         videos = [
-            {
-                "id": r[0],
-                "file_path": r[1],
-                "media_url": media_url_for_path(r[1]),
-                "preview_media_url": _preview_media_url_for_video(r[0], r[1], auto_enqueue=True),
-                "title": r[2],
-                "created_at": r[3].isoformat() if r[3] else None,
-                "source": r[4],
-            }
+            (
+                lambda preview_info: {
+                    "id": r[0],
+                    "file_path": r[1],
+                    "media_url": media_url_for_path(r[1]),
+                    "preview_media_url": preview_info["preview_media_url"],
+                    "preview_image_url": preview_info["preview_image_url"],
+                    "needs_preview_proxy": preview_info["needs_preview_proxy"],
+                    "has_preview_proxy": preview_info["has_preview_proxy"],
+                    "has_preview_image": preview_info["has_preview_image"],
+                    "title": r[2],
+                    "created_at": r[3].isoformat() if r[3] else None,
+                    "source": r[4],
+                }
+            )(_preview_info_for_video(r[0], r[1], auto_enqueue=True))
             for r in rows
         ]
         self.write({"videos": videos})
@@ -5222,13 +5349,14 @@ class VideosHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": "file_path required"})
         ldb.ensure_schema()
         vid = ldb.add_video(file_path, title, source)
-        proxy_path = _ensure_preview_proxy_for_upload(vid, file_path)
-        if not proxy_path:
+        proxy_path, poster_path = _ensure_preview_assets_for_upload(vid, file_path)
+        if not proxy_path or not poster_path:
             _enqueue_preview_proxy(vid, file_path)
         self.write({
             "id": vid,
             "media_url": media_url_for_path(file_path),
             "preview_media_url": media_url_for_path(proxy_path) if proxy_path and os.path.exists(proxy_path) else media_url_for_path(file_path),
+            "preview_image_url": media_url_for_path(poster_path) if poster_path and os.path.exists(poster_path) else None,
         })
 
 
@@ -5249,12 +5377,16 @@ class VideoDetailHandler(CorsMixin, tornado.web.RequestHandler):
         if not row:
             self.set_status(404)
             return self.write({"error": "not found"})
-        preview_url = _preview_media_url_for_video(row[0], row[1], auto_enqueue=True)
+        preview_info = _preview_info_for_video(row[0], row[1], auto_enqueue=True)
         self.write({
             "id": row[0],
             "file_path": row[1],
             "media_url": media_url_for_path(row[1]),
-            "preview_media_url": preview_url,
+            "preview_media_url": preview_info["preview_media_url"],
+            "preview_image_url": preview_info["preview_image_url"],
+            "needs_preview_proxy": preview_info["needs_preview_proxy"],
+            "has_preview_proxy": preview_info["has_preview_proxy"],
+            "has_preview_image": preview_info["has_preview_image"],
             "title": row[2],
             "created_at": row[3].isoformat() if row[3] else None,
             "source": row[4],
@@ -5296,6 +5428,23 @@ class VideoProxyHandler(CorsMixin, tornado.web.RequestHandler):
             input_path, error = _ensure_local_video_path(video_id_i, input_path)
             if not input_path:
                 return 404, {"error": error or "video file missing"}
+            if not _should_create_preview_proxy(input_path):
+                poster_path = None
+                try:
+                    poster_path = _create_preview_poster(video_id_i, input_path)
+                except Exception as exc:
+                    print(f"Preview poster creation failed for video {video_id_i}: {exc}")
+                    _enqueue_preview_proxy(video_id_i, input_path, needs_proxy=False)
+                return 200, {
+                    "video_id": video_id_i,
+                    "file_path": input_path,
+                    "media_url": media_url_for_path(input_path),
+                    "preview_image_url": media_url_for_path(poster_path) if poster_path and os.path.exists(poster_path) else None,
+                    "needs_preview_proxy": False,
+                    "has_preview_proxy": False,
+                    "has_preview_image": bool(poster_path and os.path.exists(poster_path)),
+                    "skipped": True,
+                }
 
             proxies_dir = os.path.join(UPLOAD_FOLDER, "proxy_previews")
             os.makedirs(proxies_dir, exist_ok=True)
@@ -5303,17 +5452,23 @@ class VideoProxyHandler(CorsMixin, tornado.web.RequestHandler):
 
             try:
                 if os.path.exists(output_path) and os.path.getmtime(output_path) >= os.path.getmtime(input_path):
+                    poster_path = _preview_poster_path(video_id_i)
                     return 200, {
                         "video_id": video_id_i,
                         "file_path": output_path,
                         "media_url": media_url_for_path(output_path),
+                        "preview_image_url": media_url_for_path(poster_path) if os.path.exists(poster_path) else None,
+                        "needs_preview_proxy": False,
+                        "has_preview_proxy": True,
+                        "has_preview_image": os.path.exists(poster_path),
                     }
             except Exception:
                 # If mtime checks fail, just regenerate.
                 pass
 
             try:
-                _create_preview_proxy(video_id_i, input_path)
+                proxy_result = _create_preview_proxy(video_id_i, input_path)
+                poster_path = _create_preview_poster(video_id_i, proxy_result or input_path)
             except subprocess.CalledProcessError as exc:
                 err = exc.stderr.decode("utf-8", errors="replace") if exc.stderr else str(exc)
                 return 500, {"error": "proxy transcode failed", "details": err}
@@ -5324,6 +5479,10 @@ class VideoProxyHandler(CorsMixin, tornado.web.RequestHandler):
                 "video_id": video_id_i,
                 "file_path": output_path,
                 "media_url": media_url_for_path(output_path),
+                "preview_image_url": media_url_for_path(poster_path) if poster_path and os.path.exists(poster_path) else None,
+                "needs_preview_proxy": False,
+                "has_preview_proxy": True,
+                "has_preview_image": bool(poster_path and os.path.exists(poster_path)),
             }
 
         status, payload = await run_blocking(_run)
@@ -9403,9 +9562,10 @@ class FileUploadHandlerStream(CorsMixin, tornado.web.RequestHandler):
                     "error": "failed to save video in database",
                     "details": str(e),
                 })
-            proxy_path = _ensure_preview_proxy_for_upload(video_id, self.file_path)
+            proxy_path, poster_path = _ensure_preview_assets_for_upload(video_id, self.file_path)
             preview_media_url = media_url_for_path(proxy_path) if proxy_path and os.path.exists(proxy_path) else media_url_for_path(self.file_path)
-            if not proxy_path:
+            preview_image_url = media_url_for_path(poster_path) if poster_path and os.path.exists(poster_path) else None
+            if not proxy_path or not poster_path:
                 _enqueue_preview_proxy(video_id, self.file_path)
             response = {
                 'status': 'success',
@@ -9413,6 +9573,7 @@ class FileUploadHandlerStream(CorsMixin, tornado.web.RequestHandler):
                 'file_path': self.file_path,
                 'media_url': media_url_for_path(self.file_path),
                 'preview_media_url': preview_media_url,
+                'preview_image_url': preview_image_url,
                 'video_id': video_id,
             }
             self.write(response)
