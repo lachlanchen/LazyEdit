@@ -3,6 +3,17 @@ import os
 import subprocess
 import shlex
 
+
+DEFAULT_MODEL_MIN_FREE_MB = {
+    "large-v3": 12000,
+    "large-v2": 10000,
+    "medium": 6000,
+    "small": 3500,
+    "base": 2500,
+    "tiny": 1500,
+}
+
+
 def create_or_replace_hard_link(source, link_name):
     if os.path.exists(link_name):
         os.remove(link_name)  # Remove the existing file to replace
@@ -44,6 +55,71 @@ class AutocutProcessor:
             "tiny",
         ]
         return self._dedupe_models(default_chain)
+
+    @staticmethod
+    def _resolve_model_min_free_mb(model_name):
+        env_key = f"LAZYEDIT_WHISPER_MIN_FREE_MB_{str(model_name).upper().replace('-', '_')}"
+        raw = os.getenv(env_key)
+        if raw:
+            try:
+                return max(0, int(raw))
+            except ValueError:
+                pass
+        return DEFAULT_MODEL_MIN_FREE_MB.get(str(model_name or "").strip().lower(), 0)
+
+    @staticmethod
+    def _query_gpu_memory_mb(gpu_id):
+        try:
+            result = subprocess.run(
+                [
+                    "nvidia-smi",
+                    f"--id={gpu_id}",
+                    "--query-gpu=memory.total,memory.used,memory.free",
+                    "--format=csv,noheader,nounits",
+                ],
+                check=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            line = (result.stdout or "").strip().splitlines()[0]
+            total_mb, used_mb, free_mb = [int(part.strip()) for part in line.split(",")]
+            return {
+                "total_mb": total_mb,
+                "used_mb": used_mb,
+                "free_mb": free_mb,
+            }
+        except Exception:
+            return None
+
+    def _select_gpu_model_candidates(self, model_candidates, gpu_id):
+        memory = self._query_gpu_memory_mb(gpu_id)
+        if not memory:
+            print(f"Could not query GPU {gpu_id} memory. Keeping default Whisper fallback order: {model_candidates}")
+            return model_candidates, None
+
+        free_mb = memory["free_mb"]
+        selected_index = None
+        for index, model_name in enumerate(model_candidates):
+            required_mb = self._resolve_model_min_free_mb(model_name)
+            if free_mb >= required_mb:
+                selected_index = index
+                break
+
+        if selected_index is None:
+            print(
+                f"GPU {gpu_id} only has {free_mb} MiB free. "
+                "Skipping GPU Whisper attempts and falling back to CPU directly."
+            )
+            return [], memory
+
+        selected = model_candidates[selected_index:]
+        print(
+            f"GPU {gpu_id} memory snapshot: total={memory['total_mb']} MiB, "
+            f"used={memory['used_mb']} MiB, free={free_mb} MiB. "
+            f"Starting Whisper with model {selected[0]} and fallback chain {selected}."
+        )
+        return selected, memory
 
     @staticmethod
     def _is_cuda_oom(output):
@@ -92,7 +168,7 @@ class AutocutProcessor:
         env["LAZYEDIT_WHISPER_DEVICE"] = "cuda"
         env["LAZYEDIT_WHISPER_GPU_ID"] = str(gpu_id)
         env.setdefault("OMP_NUM_THREADS", "1")
-        env.setdefault("PYTORCH_CUDA_ALLOC_CONF", "max_split_size_mb:128")
+        env.setdefault("PYTORCH_CUDA_ALLOC_CONF", "max_split_size_mb:128,expandable_segments:True")
 
         # Define filenames with language-specific suffixes before the extension
         input_file_lang = f"{self.output_folder}/{self.base_name}_{lang}{self.extension}"
@@ -101,16 +177,17 @@ class AutocutProcessor:
         # os.link(self.input_file, input_file_lang)
         create_or_replace_hard_link(self.input_file, input_file_lang)
 
+        gpu_model_candidates, gpu_memory = self._select_gpu_model_candidates(model_candidates, gpu_id)
         last_failure_output = ""
         saw_cuda_oom = False
-        for index, model_name in enumerate(model_candidates, start=1):
+        for index, model_name in enumerate(gpu_model_candidates, start=1):
             autocut_command = (
                 f"/home/lachlan/miniconda3/envs/whisper/bin/python "
                 f"{shlex.quote(script_path)} -t {shlex.quote(input_file_lang)} "
                 f"--whisper-model {shlex.quote(model_name)} --force"
             )
             print(
-                f"Autocut attempt {index}/{len(model_candidates)} for lang={lang} "
+                f"Autocut attempt {index}/{len(gpu_model_candidates)} for lang={lang} "
                 f"on GPU {gpu_id} with Whisper model {model_name}"
             )
             returncode, output = self._run_logged_command(autocut_command, env)
@@ -136,6 +213,11 @@ class AutocutProcessor:
         cpu_model = model_candidates[-1] if model_candidates else whisper_model
         if saw_cuda_oom:
             print(f"All GPU Whisper model attempts exhausted VRAM. Falling back to CPU with model {cpu_model}.")
+        elif gpu_memory and not gpu_model_candidates:
+            print(
+                f"GPU {gpu_id} free memory ({gpu_memory['free_mb']} MiB) is below the minimum threshold "
+                f"for GPU Whisper. Running directly on CPU with model {cpu_model}."
+            )
         fallback_command = (
             f"/home/lachlan/miniconda3/envs/whisper/bin/python "
             f"{shlex.quote(script_path)} -t {shlex.quote(input_file_lang)} "
