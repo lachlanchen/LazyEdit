@@ -27,6 +27,12 @@
   <a href="https://github.com/lachlanchen/LazyEdit/graphs/contributors"><img src="https://img.shields.io/github/contributors/lachlanchen/LazyEdit?color=8a4fff" alt="Contributors" /></a>
 </p>
 
+<p align="center">
+  <img src="demos/studio-publish-demo.png" alt="LazyEdit Studio publish workflow demo" width="1100" />
+  <br />
+  <sub>Studio publish workflow with platform selection, live preview, process status, and queue tracking.</sub>
+</p>
+
 ## 📌 Quick Facts
 
 LazyEdit is an end-to-end AI-assisted video workflow for creation, processing, and optional publishing. It combines prompt-based generation (Stage A/B/C), media processing APIs, subtitle rendering, keyframe captioning, metadata generation, and AutoPublish handoff.
