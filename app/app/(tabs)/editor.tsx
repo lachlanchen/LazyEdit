@@ -27,6 +27,12 @@ const LANGUAGE_LABELS: Record<string, string> = {
   'zh-Hant': 'Chinese',
   fr: 'French',
 };
+const LANGUAGE_SHORT_LABELS: Record<string, string> = {
+  ja: 'JP',
+  en: 'EN',
+  'zh-Hant': 'ZH',
+  fr: 'FR',
+};
 
 type Video = {
   id: number;
@@ -231,15 +237,6 @@ export default function EditorScreen() {
     () => PLATFORMS.filter((platform) => selected[platform.key]).map((platform) => platform.label),
     [selected],
   );
-  const translationLanguageCount = useMemo(
-    () => Math.min(Math.max(translationLanguages.length || DEFAULT_TRANSLATION_LANGUAGES.length, 1), DEFAULT_TRANSLATION_LANGUAGES.length),
-    [translationLanguages.length],
-  );
-  const translationLanguageSummary = useMemo(
-    () => translationLanguages.map((lang) => LANGUAGE_LABELS[lang] || lang).join(', '),
-    [translationLanguages],
-  );
-
   const selectedVideo = useMemo(
     () => videos.find((video) => video.id === selectedVideoId) || null,
     [videos, selectedVideoId],
@@ -465,14 +462,18 @@ export default function EditorScreen() {
     }
   }, []);
 
-  const setTranslationLanguageCount = useCallback(
-    (count: number) => {
-      const normalizedCount = Math.min(Math.max(count, 1), DEFAULT_TRANSLATION_LANGUAGES.length);
-      const nextLanguages = DEFAULT_TRANSLATION_LANGUAGES.slice(0, normalizedCount);
+  const toggleTranslationLanguage = useCallback(
+    (language: string) => {
+      const active = translationLanguages.includes(language);
+      if (active && translationLanguages.length <= 1) return;
+      const nextSet = new Set(translationLanguages);
+      if (active) nextSet.delete(language);
+      else nextSet.add(language);
+      const nextLanguages = DEFAULT_TRANSLATION_LANGUAGES.filter((candidate) => nextSet.has(candidate));
       setTranslationLanguages(nextLanguages);
       void persistPublishOptions(burnSubtitles, nextLanguages);
     },
-    [burnSubtitles, persistPublishOptions],
+    [burnSubtitles, persistPublishOptions, translationLanguages],
   );
 
   const updateBurnSubtitles = useCallback(
@@ -985,25 +986,21 @@ export default function EditorScreen() {
               thumbColor={burnSubtitles ? '#f8fafc' : '#f1f5f9'}
             />
           </View>
-          <View style={styles.publishOptionBlock}>
-            <View style={styles.publishOptionText}>
-              <Text style={styles.optionLabel}>{t('publish_option_language_count_title')}</Text>
-              <Text style={styles.optionHint}>
-                {t('publish_option_language_count_hint', { value: translationLanguageSummary || t('label_none') })}
-              </Text>
-            </View>
-            <View style={styles.countControl}>
-              {[1, 2, 3, 4].map((count) => {
-                const active = translationLanguageCount === count;
+          <View style={styles.languageOptionRow}>
+            <Text style={styles.optionLabel}>{t('publish_option_language_count_title')}</Text>
+            <View style={styles.languageChipGroup}>
+              {DEFAULT_TRANSLATION_LANGUAGES.map((language) => {
+                const active = translationLanguages.includes(language);
                 return (
                   <Pressable
-                    key={count}
-                    style={[styles.countButton, active && styles.countButtonActive]}
-                    onPress={() => setTranslationLanguageCount(count)}
+                    key={language}
+                    accessibilityLabel={LANGUAGE_LABELS[language] || language}
+                    style={[styles.languageChip, active && styles.languageChipActive]}
+                    onPress={() => toggleTranslationLanguage(language)}
                     disabled={!publishOptionsLoaded}
                   >
-                    <Text style={[styles.countButtonText, active && styles.countButtonTextActive]}>
-                      {count}
+                    <Text style={[styles.languageChipText, active && styles.languageChipTextActive]}>
+                      {LANGUAGE_SHORT_LABELS[language] || language.toUpperCase()}
                     </Text>
                   </Pressable>
                 );
@@ -1316,38 +1313,45 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 12,
   },
-  publishOptionBlock: {
-    marginTop: 10,
-    padding: 12,
+  publishOptionText: { flex: 1 },
+  optionLabel: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  optionHint: { marginTop: 4, fontSize: 11, color: '#64748b' },
+  languageOptionRow: {
+    marginTop: 8,
+    minHeight: 38,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#e2e8f0',
     backgroundColor: '#f8fafc',
-  },
-  publishOptionText: { flex: 1 },
-  optionLabel: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
-  optionHint: { marginTop: 4, fontSize: 11, color: '#64748b' },
-  countControl: {
-    marginTop: 10,
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    gap: 10,
   },
-  countButton: {
-    minWidth: 36,
-    height: 32,
-    borderRadius: 16,
+  languageChipGroup: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+    gap: 6,
+  },
+  languageChip: {
+    minWidth: 34,
+    height: 26,
+    borderRadius: 13,
     borderWidth: 1,
     borderColor: '#cbd5f5',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
   },
-  countButtonActive: {
+  languageChipActive: {
     backgroundColor: '#0f172a',
     borderColor: '#0f172a',
   },
-  countButtonText: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
-  countButtonTextActive: { color: 'white' },
+  languageChipText: { fontSize: 11, fontWeight: '700', color: '#0f172a' },
+  languageChipTextActive: { color: 'white' },
   coverButton: {
     marginTop: 12,
     backgroundColor: '#0f172a',
