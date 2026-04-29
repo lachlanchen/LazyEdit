@@ -12,11 +12,8 @@ This file maps each tmux session name to the script or service that creates it.
 | `em-voice-api` | manual script | `/home/lachlan/scripts/create_tmux_session.sh` | Runs `Projects/EchoMind/apis/api_server.py`. |
 | `em-ngrok-api` | manual script | `/home/lachlan/scripts/create_tmux_session.sh` | Runs `ngrok http` for `em-voice-api`. |
 | `lazyedit` | systemd service | `/etc/systemd/system/lazyedit.service` | Calls `/home/lachlan/DiskMech/Projects/lazyedit/start_lazyedit.sh`. |
-| `am-manual` | systemd service | `/etc/systemd/system/autopub-monitor.service` | Runs `autopub.py` with cache flags. |
-| `am-monitor` | systemd service | `/etc/systemd/system/autopub-monitor.service` | Created by `autopub_monitor_tmux_session.sh`. |
-| `am-process-queue` | systemd service | `/etc/systemd/system/autopub-monitor.service` | Created by `autopub_monitor_tmux_session.sh`. |
-| `am-transcription-sync` | systemd service | `/etc/systemd/system/autopub-monitor.service` | Created by `autopub_monitor_tmux_session.sh`. |
-| `am-video-sync` | systemd service | `/etc/systemd/system/autopub-monitor.service` | Created by `autopub_monitor_tmux_session.sh`. |
+| `autopub-monitor` | systemd service | `/etc/systemd/system/autopub-monitor.service` | Main 2x2 tmux session created by `autopub_monitor_tmux_session.sh`. |
+| `transcription-sync` | systemd service | `/etc/systemd/system/autopub-monitor.service` | Staged rsync loop session created by `autopub_monitor_tmux_session.sh`; waits for Enter. |
 
 ## By Script / Service
 
@@ -28,11 +25,8 @@ This file maps each tmux session name to the script or service that creates it.
 - `em-ngrok-api`
 
 ### `/home/lachlan/DiskMech/Projects/autopub-monitor/autopub_monitor/autopub_monitor_tmux_session.sh`
-- `am-video-sync`
-- `am-monitor`
-- `am-process-queue`
-- `am-transcription-sync`
-- `am-manual`
+- `autopub-monitor`
+- `transcription-sync`
 
 ### `/home/lachlan/DiskMech/Projects/lazyedit/start_lazyedit.sh`
 - `lazyedit`
@@ -41,3 +35,5 @@ This file maps each tmux session name to the script or service that creates it.
 
 - `lazyedit.service` uses `start_lazyedit.sh` in `DiskMech/Projects/lazyedit` (current service config).
 - Standard session name for the current deployment is `lazyedit`.
+- `autopub-monitor` contains the sync, monitor, process, and manual panes inside a
+  single session; only `transcription-sync` is a separate extra session.

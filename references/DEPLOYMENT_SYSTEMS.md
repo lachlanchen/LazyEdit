@@ -11,15 +11,25 @@ This repo is the development source. The runtime deployments live in DiskMech an
 
 - Monitor system (AutoPubMonitor)
   - Deployment path: `/home/lachlan/DiskMech/Projects/autopub-monitor`
-  - tmux: `autopub-monitor` (2x2 panes: sync | monitor, process | manual) + `am-transcription-sync`
+  - tmux: `autopub-monitor` (2x2 panes: sync | monitor, process | manual) + `transcription-sync`
   - Default API base: `http://localhost:18787`
   - Flow: upload -> process -> publish via LazyEdit app API
+  - Conda env: `autopub-video`
+  - Notes:
+    - `autopub-monitor.service` is mount-aware for `/home/lachlan`, `/home/lachlan/DiskMech`, and `/home/lachlan/AutoPublishDATA`
+    - the manual pane stages the `autopub.py --force` command and waits for Enter
+    - the `transcription-sync` session stages its rsync loop and waits for Enter
+    - steady write churn comes mainly from `autopub_sync.sh` and log appends, not queue locks or `/dev/shm` temp files
 
 - Publication system (AutoPublish)
   - Raspberry Pi: `lazyingart`
   - Path: `/home/lachlan/Projects/autopub`
   - Platforms: XiaoHongShu, Douyin, Bilibili, ShiPinHao, YouTube
   - Runtime secrets: `/home/lachlan/Projects/autopub/.env`
+  - Notes:
+    - repo `.env` is the source of truth; `.bashrc` is only a fallback
+    - Gmail SMTP uses `APP_PASSWORD`
+    - current visible account label is commonly `LazyingArt懒人艺术`
 
 ## Sync Workflow (High Level)
 1) Develop in `/home/lachlan/ProjectsLFS/LazyEdit`.
