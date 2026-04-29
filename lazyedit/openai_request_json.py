@@ -24,8 +24,27 @@ class JSONParsingError(Exception):
 
 
 class OpenAIRequestJSONBase:
-    def __init__(self, use_cache=True, max_retries=3, cache_dir='cache'):
-        self.client = OpenAI()  # Assume correct initialization with API key
+    def __init__(
+        self,
+        use_cache=True,
+        max_retries=3,
+        cache_dir='cache',
+        api_provider=None,
+        model=None,
+        api_key=None,
+        base_url=None,
+    ):
+        self.api_provider = str(api_provider or os.environ.get("LAZYEDIT_AI_PROVIDER", "openai")).strip().lower()
+        if self.api_provider == "deepseek":
+            self.model = model or os.environ.get("DEEPSEEK_MODEL", "deepseek-v4-flash")
+            self.client = OpenAI(
+                api_key=api_key or os.environ.get("DEEPSEEK_API_KEY"),
+                base_url=base_url or os.environ.get("DEEPSEEK_API_BASE", "https://api.deepseek.com"),
+            )
+        else:
+            self.api_provider = "openai"
+            self.model = model or os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+            self.client = OpenAI(api_key=api_key, base_url=base_url) if api_key or base_url else OpenAI()
         self.max_retries = max_retries
         self.use_cache = use_cache
         self.cache_dir = cache_dir
@@ -53,6 +72,8 @@ class OpenAIRequestJSONBase:
                 "system": system_content,
                 "schema": json_schema,
                 "schema_name": schema_name,
+                "provider": self.api_provider,
+                "model": self.model,
             },
             ensure_ascii=False,
             sort_keys=True,
@@ -128,26 +149,55 @@ class OpenAIRequestJSONBase:
 
         while retries < self.max_retries:
             try:
-                print(f"Querying OpenAI with structured outputs (attempt {retries + 1})...")
+                print(f"Querying {self.api_provider} with structured JSON output (attempt {retries + 1})...")
                 
-                # Use the new Structured Outputs API
-                response = self.client.chat.completions.create(
-                    model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
-                    messages=messages,
-                    response_format={
-                        "type": "json_schema",
-                        "json_schema": {
-                            "name": schema_name,
-                            "strict": True,
-                            "schema": json_schema
-                        }
+                request_prompt = prompt
+                response_format = {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": schema_name,
+                        "strict": True,
+                        "schema": json_schema
                     }
+                }
+                if self.api_provider == "deepseek":
+                    request_prompt = (
+                        f"{prompt}\n\n"
+                        "Return only valid JSON matching this JSON schema:\n"
+                        f"{json.dumps(json_schema, ensure_ascii=False)}"
+                    )
+                    messages = [
+                        {"role": "system", "content": system_content},
+                        {"role": "user", "content": request_prompt}
+                    ]
+                    response_format = {"type": "json_object"}
+
+                max_tokens_env = (
+                    os.environ.get("DEEPSEEK_MAX_TOKENS")
+                    if self.api_provider == "deepseek"
+                    else os.environ.get("OPENAI_MAX_TOKENS")
+                )
+                extra_kwargs = {}
+                if max_tokens_env:
+                    try:
+                        extra_kwargs["max_tokens"] = max(1, int(max_tokens_env))
+                    except ValueError:
+                        pass
+
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    response_format=response_format,
+                    **extra_kwargs,
                 )
 
                 # Check for refusal
                 message = response.choices[0].message
-                if message.refusal:
-                    raise Exception(f"Request was refused: {message.refusal}")
+                refusal = getattr(message, "refusal", None)
+                if refusal:
+                    raise Exception(f"Request was refused: {refusal}")
+                if not message.content:
+                    raise ValueError("empty model response")
 
                 # Parse the structured response
                 parsed_response = json.loads(message.content)

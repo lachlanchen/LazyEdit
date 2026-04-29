@@ -246,6 +246,7 @@ def ensure_schema():
                 status TEXT NOT NULL,
                 platforms JSONB NOT NULL,
                 test_mode BOOLEAN NOT NULL DEFAULT FALSE,
+                config JSONB NOT NULL DEFAULT '{}'::jsonb,
                 detail TEXT,
                 zip_path TEXT,
                 metadata_path TEXT,
@@ -262,6 +263,7 @@ def ensure_schema():
             );
             """,
             "ALTER TABLE publish_jobs ADD COLUMN IF NOT EXISTS test_mode BOOLEAN NOT NULL DEFAULT FALSE;",
+            "ALTER TABLE publish_jobs ADD COLUMN IF NOT EXISTS config JSONB NOT NULL DEFAULT '{}'::jsonb;",
             "ALTER TABLE publish_jobs ADD COLUMN IF NOT EXISTS detail TEXT;",
             "ALTER TABLE publish_jobs ADD COLUMN IF NOT EXISTS zip_path TEXT;",
             "ALTER TABLE publish_jobs ADD COLUMN IF NOT EXISTS metadata_path TEXT;",
@@ -1009,16 +1011,17 @@ def add_publish_job(
     *,
     test_mode: bool = False,
     detail: str | None = None,
+    config: dict | None = None,
 ) -> int:
     ensure_schema()
     with get_cursor(commit=True) as cur:
         cur.execute(
             """
-            INSERT INTO publish_jobs (video_id, status, platforms, test_mode, detail)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO publish_jobs (video_id, status, platforms, test_mode, config, detail)
+            VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
-            (video_id, "queued", Json(platforms or {}), bool(test_mode), detail),
+            (video_id, "queued", Json(platforms or {}), bool(test_mode), Json(config or {}), detail),
         )
         (job_id,) = cur.fetchone()
         return job_id
@@ -1046,7 +1049,8 @@ def _publish_job_select_clause() -> str:
             j.started_at,
             j.finished_at,
             v.title,
-            v.file_path
+            v.file_path,
+            j.config
         FROM publish_jobs j
         LEFT JOIN videos v ON v.id = j.video_id
     """
@@ -1115,7 +1119,8 @@ def claim_next_publish_job() -> tuple | None:
                 j.created_at,
                 j.updated_at,
                 j.started_at,
-                j.finished_at
+                j.finished_at,
+                j.config
             """
         )
         row = cur.fetchone()

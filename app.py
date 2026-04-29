@@ -214,6 +214,9 @@ DEFAULT_PUBLISH_PLATFORMS = {
     "youtube": True,
     "instagram": True,
 }
+DEFAULT_PUBLISH_OPTIONS = {
+    "burnSubtitles": True,
+}
 DEFAULT_VIDEO_PROMPT_SPEC = {
     "autoTitle": False,
     "title": "Epic Vision",
@@ -901,6 +904,26 @@ def _sanitize_publish_platforms(payload) -> dict:
     return cleaned
 
 
+def _sanitize_publish_options(payload) -> dict:
+    if not isinstance(payload, dict):
+        payload = {}
+    burn_subtitles = payload.get("burnSubtitles")
+    if burn_subtitles is None:
+        burn_subtitles = payload.get("burn_subtitles")
+    if burn_subtitles is None:
+        burn_subtitles = DEFAULT_PUBLISH_OPTIONS["burnSubtitles"]
+
+    languages_raw = payload.get("translationLanguages")
+    if languages_raw is None:
+        languages_raw = payload.get("translation_languages")
+    translation_languages = _sanitize_translation_languages(languages_raw)
+
+    return {
+        "burnSubtitles": _parse_bool(burn_subtitles, default=DEFAULT_PUBLISH_OPTIONS["burnSubtitles"]),
+        "translationLanguages": translation_languages,
+    }
+
+
 def _load_translation_languages_setting() -> list[str]:
     saved = ldb.get_ui_preference("translation_languages")
     if saved is None:
@@ -920,6 +943,19 @@ def _load_burn_layout_setting() -> dict:
     if saved is None:
         return DEFAULT_BURN_LAYOUT.copy()
     return _sanitize_burn_layout(saved)
+
+
+def _load_publish_options_setting() -> dict:
+    saved = ldb.get_ui_preference("publish_options")
+    if saved is None:
+        return _sanitize_publish_options({
+            **DEFAULT_PUBLISH_OPTIONS,
+            "translationLanguages": _load_translation_languages_setting(),
+        })
+    cleaned = _sanitize_publish_options(saved)
+    if not cleaned.get("translationLanguages"):
+        cleaned["translationLanguages"] = _load_translation_languages_setting()
+    return cleaned
 
 
 def _sanitize_logo_settings(payload: dict | None) -> dict:
@@ -4538,7 +4574,12 @@ def _normalize_publish_status(raw_status: str | None) -> str:
     return "queued"
 
 
-def _prepare_publish_bundle(video_id_i: int, platform_flags: dict[str, bool]) -> tuple[int, dict]:
+def _prepare_publish_bundle(
+    video_id_i: int,
+    platform_flags: dict[str, bool],
+    *,
+    burn_subtitles: bool = True,
+) -> tuple[int, dict]:
     row = _get_video_row(video_id_i)
     if not row:
         return 404, {"error": "video not found"}
@@ -4567,7 +4608,7 @@ def _prepare_publish_bundle(video_id_i: int, platform_flags: dict[str, bool]) ->
     metadata_payload["video_filename"] = video_filename
     metadata_payload["cover_filename"] = cover_filename
 
-    video_to_publish = _pick_publish_video_path(video_id_i, file_path)
+    video_to_publish = _pick_publish_video_path(video_id_i, file_path) if burn_subtitles else preprocess_if_needed(file_path)
     cover_path = os.path.join(publish_dir, cover_filename)
     if not os.path.exists(cover_path):
         cover_timestamp_raw = metadata_payload.get("cover") or "00:00:01,000"
@@ -4604,6 +4645,7 @@ def _prepare_publish_bundle(video_id_i: int, platform_flags: dict[str, bool]) ->
         "cover_path": cover_path if os.path.exists(cover_path) else None,
         "video_path": video_to_publish,
         "platforms": platform_flags,
+        "burn_subtitles": burn_subtitles,
     }
 
 
@@ -4674,6 +4716,30 @@ def _extract_process_error(payload: dict | None) -> str:
     return "process failed"
 
 
+def _ready_for_publish_with_options(payload: dict | None, *, burn_subtitles: bool) -> bool:
+    if not isinstance(payload, dict):
+        return False
+    steps = payload.get("steps")
+    if not isinstance(steps, dict):
+        return bool(payload.get("ready_for_publish"))
+
+    required_steps = ["transcribe", "keyframes", "caption", "metadata_zh", "metadata_en"]
+    if burn_subtitles:
+        required_steps.extend(["translate", "burn"])
+
+    if (steps.get("metadata_zh") or {}).get("status") != "done":
+        return False
+
+    for name in required_steps:
+        status = (steps.get(name) or {}).get("status")
+        if burn_subtitles and name in {"translate", "burn"}:
+            if status != "done":
+                return False
+        elif status not in {"done", "skipped"}:
+            return False
+    return True
+
+
 def _serialize_publish_job_row(row: tuple) -> dict:
     platforms_raw = row[3]
     if isinstance(platforms_raw, dict):
@@ -4687,6 +4753,7 @@ def _serialize_publish_job_row(row: tuple) -> dict:
     zip_url = media_url_for_path(zip_path) if zip_path and os.path.exists(zip_path) else None
     filename = row[11] or (os.path.basename(zip_path) if zip_path else None)
     title = row[18] or (filename.replace(".zip", "") if filename else None)
+    config = row[20] if len(row) > 20 and isinstance(row[20], dict) else {}
     return {
         "id": row[0],
         "video_id": row[1],
@@ -4706,6 +4773,7 @@ def _serialize_publish_job_row(row: tuple) -> dict:
         "finished_at": row[17].isoformat() if row[17] else None,
         "title": title,
         "file_path": row[19],
+        "config": _sanitize_publish_options(config),
         "source": "local",
     }
 
@@ -4860,6 +4928,9 @@ def _process_publish_job(job_row: tuple) -> None:
         except Exception:
             platform_flags = {}
     test_mode = bool(job_row[4])
+    job_config = _sanitize_publish_options(job_row[18] if len(job_row) > 18 else {})
+    burn_subtitles = bool(job_config.get("burnSubtitles", True))
+    translation_languages = job_config.get("translationLanguages") or _load_translation_languages_setting()
 
     ldb.update_publish_job(job_id, detail="Checking publish prerequisites")
     status_code, status_payload, _status_text = _local_api_json_request(
@@ -4870,10 +4941,24 @@ def _process_publish_job(job_row: tuple) -> None:
     if status_code >= 400:
         raise RuntimeError(status_payload.get("error") or "process status check failed")
 
-    if not status_payload.get("ready_for_publish"):
+    if not _ready_for_publish_with_options(status_payload, burn_subtitles=burn_subtitles):
         ldb.update_publish_job(job_id, detail="Processing video before publish")
         logo_settings = _load_logo_settings_setting()
-        process_payload: dict[str, Any] = {"async": False}
+        process_steps = [
+            "keyframes",
+            "caption",
+            "transcribe",
+            "metadata_zh",
+            "metadata_en",
+        ]
+        if burn_subtitles:
+            process_steps.insert(3, "translate")
+            process_steps.insert(4, "burn")
+        process_payload: dict[str, Any] = {
+            "async": False,
+            "steps": process_steps,
+            "translation_languages": translation_languages,
+        }
         if logo_settings.get("enabled") and logo_settings.get("logoPath"):
             process_payload["logo"] = logo_settings
         process_code, process_payload_out, _process_text = _local_api_json_request(
@@ -4886,7 +4971,11 @@ def _process_publish_job(job_row: tuple) -> None:
             raise RuntimeError(_extract_process_error(process_payload_out))
 
     ldb.update_publish_job(job_id, detail="Preparing publish bundle")
-    bundle_status, bundle_payload = _prepare_publish_bundle(video_id, platform_flags)
+    bundle_status, bundle_payload = _prepare_publish_bundle(
+        video_id,
+        platform_flags,
+        burn_subtitles=burn_subtitles,
+    )
     if bundle_status >= 400:
         raise RuntimeError(bundle_payload.get("error") or bundle_payload.get("details") or "publish bundle failed")
 
@@ -5183,6 +5272,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "venice_a2e_settings",
             "venice_wan_settings",
             "publish_platforms",
+            "publish_options",
             "logo_settings",
         }:
             self.set_status(404)
@@ -5224,6 +5314,10 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_PUBLISH_PLATFORMS})
             return self.write({"key": key, "value": _sanitize_publish_platforms(saved)})
+        if key == "publish_options":
+            if not saved:
+                return self.write({"key": key, "value": _load_publish_options_setting()})
+            return self.write({"key": key, "value": _sanitize_publish_options(saved)})
         if key in {
             "video_spec_history",
             "video_prompt_text_history",
@@ -5253,6 +5347,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "venice_a2e_settings",
             "venice_wan_settings",
             "publish_platforms",
+            "publish_options",
             "logo_settings",
         }:
             self.set_status(404)
@@ -5279,6 +5374,9 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             cleaned = _sanitize_venice_wan_settings(data)
         elif key == "publish_platforms":
             cleaned = _sanitize_publish_platforms(data)
+        elif key == "publish_options":
+            cleaned = _sanitize_publish_options(data)
+            ldb.set_ui_preference("translation_languages", cleaned["translationLanguages"])
         elif key in {
             "video_spec_history",
             "video_prompt_text_history",
@@ -6442,13 +6540,21 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
 
         test_mode = _parse_bool(data.get("test"), default=False)
         wait_for_result = _parse_bool(data.get("wait"), default=False)
+        options_payload = data.get("options") if isinstance(data.get("options"), dict) else data
+        publish_config = _sanitize_publish_options(options_payload)
+        ldb.set_ui_preference("publish_options", publish_config)
+        ldb.set_ui_preference("translation_languages", publish_config["translationLanguages"])
 
         row = _get_video_row(video_id_i)
         if not row:
             self.set_status(404)
             return self.write({"error": "video not found"})
         if wait_for_result:
-            bundle_status, response_payload = _prepare_publish_bundle(video_id_i, platform_flags)
+            bundle_status, response_payload = _prepare_publish_bundle(
+                video_id_i,
+                platform_flags,
+                burn_subtitles=bool(publish_config.get("burnSubtitles", True)),
+            )
             if bundle_status != 200:
                 self.set_status(bundle_status)
                 return self.write(response_payload)
@@ -6491,6 +6597,7 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
             platform_flags,
             test_mode=test_mode,
             detail="Waiting for local publish worker",
+            config=publish_config,
         )
         job_payload = _serialize_publish_job_row(ldb.get_publish_job(job_id))
         _wake_publish_worker()
@@ -8982,7 +9089,14 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         needs_translate = wants("translate") or wants("burn")
         needs_caption = wants("caption") or wants("polish") or wants("metadata_zh") or wants("metadata_en")
 
-        translation_languages = _load_translation_languages_setting()
+        languages_override = data.get("translation_languages")
+        if languages_override is None:
+            languages_override = data.get("translationLanguages")
+        translation_languages = (
+            _sanitize_translation_languages(languages_override)
+            if languages_override is not None
+            else _load_translation_languages_setting()
+        )
         burn_layout = _load_burn_layout_setting()
         logo_payload = data.get("logo")
         logo_config = None
@@ -9251,8 +9365,12 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
         else:
             steps["polish"] = step_payload("skipped", "Not requested")
 
-        translation_languages = _load_translation_languages_setting()
-        if not translation_languages:
+        publish_options = _load_publish_options_setting()
+        burn_required_for_publish = bool(publish_options.get("burnSubtitles", True))
+        translation_languages = publish_options.get("translationLanguages") or _load_translation_languages_setting()
+        if not burn_required_for_publish:
+            steps["translate"] = step_payload("skipped", "Subtitle burn disabled")
+        elif not translation_languages:
             steps["translate"] = step_payload("skipped", "No languages selected")
         else:
             missing = []
@@ -9300,7 +9418,9 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
                 steps["translate"] = step_payload("done", "Completed", newest)
 
         burn_row = _get_latest_subtitle_burn_with_recovery(video_id_i)
-        if burn_row:
+        if not burn_required_for_publish:
+            steps["burn"] = step_payload("skipped", "Subtitle burn disabled")
+        elif burn_row:
             _burn_id, status, _output_path, progress, _config, error, created_at = burn_row
             updated_at_candidates.append(created_at)
             normalized = normalize_status(status, {"completed"}, {"processing"})

@@ -8,6 +8,7 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
+  Switch,
   Text,
   type ViewToken,
   View,
@@ -19,6 +20,13 @@ import { subscribeStudioRefresh } from '@/lib/studioRefresh';
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 const PAGE_SIZE = 8;
 const PROCESS_READY_TIMEOUT_MS = 90 * 60 * 1000;
+const DEFAULT_TRANSLATION_LANGUAGES = ['ja', 'en', 'zh-Hant', 'fr'];
+const LANGUAGE_LABELS: Record<string, string> = {
+  ja: 'Japanese',
+  en: 'English',
+  'zh-Hant': 'Chinese',
+  fr: 'French',
+};
 
 type Video = {
   id: number;
@@ -116,6 +124,9 @@ export default function EditorScreen() {
   const [queueError, setQueueError] = useState('');
   const [queueExpanded, setQueueExpanded] = useState(false);
   const [publishSettingsLoaded, setPublishSettingsLoaded] = useState(false);
+  const [publishOptionsLoaded, setPublishOptionsLoaded] = useState(false);
+  const [burnSubtitles, setBurnSubtitles] = useState(true);
+  const [translationLanguages, setTranslationLanguages] = useState<string[]>(DEFAULT_TRANSLATION_LANGUAGES);
   const previewProxyPendingIdsRef = useRef<number[]>([]);
   const previewProxyAttemptedIdsRef = useRef<Set<number>>(new Set());
   const previewProxyRunningRef = useRef(false);
@@ -219,6 +230,14 @@ export default function EditorScreen() {
   const selectedList = useMemo(
     () => PLATFORMS.filter((platform) => selected[platform.key]).map((platform) => platform.label),
     [selected],
+  );
+  const translationLanguageCount = useMemo(
+    () => Math.min(Math.max(translationLanguages.length || DEFAULT_TRANSLATION_LANGUAGES.length, 1), DEFAULT_TRANSLATION_LANGUAGES.length),
+    [translationLanguages.length],
+  );
+  const translationLanguageSummary = useMemo(
+    () => translationLanguages.map((lang) => LANGUAGE_LABELS[lang] || lang).join(', '),
+    [translationLanguages],
   );
 
   const selectedVideo = useMemo(
@@ -394,6 +413,76 @@ export default function EditorScreen() {
     }
   }, [normalizePublishSelection]);
 
+  const loadPublishOptions = useCallback(async () => {
+    try {
+      const [optionsResp, languagesResp] = await Promise.all([
+        fetch(`${API_URL}/api/ui-settings/publish_options`),
+        fetch(`${API_URL}/api/ui-settings/translation_languages`),
+      ]);
+      let nextLanguages: string[] = DEFAULT_TRANSLATION_LANGUAGES;
+      if (languagesResp.ok) {
+        const languagesJson = await languagesResp.json();
+        if (Array.isArray(languagesJson?.value) && languagesJson.value.length) {
+          nextLanguages = languagesJson.value
+            .map((lang: unknown) => String(lang))
+            .filter((lang: string) => DEFAULT_TRANSLATION_LANGUAGES.includes(lang));
+          if (!nextLanguages.length) nextLanguages = DEFAULT_TRANSLATION_LANGUAGES;
+        }
+      }
+      if (optionsResp.ok) {
+        const optionsJson = await optionsResp.json();
+        const value = optionsJson?.value || {};
+        if (typeof value.burnSubtitles === 'boolean') {
+          setBurnSubtitles(value.burnSubtitles);
+        }
+        if (Array.isArray(value.translationLanguages) && value.translationLanguages.length) {
+          const cleaned = value.translationLanguages
+            .map((lang: unknown) => String(lang))
+            .filter((lang: string) => DEFAULT_TRANSLATION_LANGUAGES.includes(lang));
+          if (cleaned.length) nextLanguages = cleaned;
+        }
+      }
+      setTranslationLanguages(nextLanguages.slice(0, DEFAULT_TRANSLATION_LANGUAGES.length));
+    } catch (_err) {
+      // ignore
+    } finally {
+      setPublishOptionsLoaded(true);
+    }
+  }, []);
+
+  const persistPublishOptions = useCallback(async (nextBurn: boolean, nextLanguages: string[]) => {
+    try {
+      await fetch(`${API_URL}/api/ui-settings/publish_options`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          burnSubtitles: nextBurn,
+          translationLanguages: nextLanguages,
+        }),
+      });
+    } catch (_err) {
+      // ignore
+    }
+  }, []);
+
+  const setTranslationLanguageCount = useCallback(
+    (count: number) => {
+      const normalizedCount = Math.min(Math.max(count, 1), DEFAULT_TRANSLATION_LANGUAGES.length);
+      const nextLanguages = DEFAULT_TRANSLATION_LANGUAGES.slice(0, normalizedCount);
+      setTranslationLanguages(nextLanguages);
+      void persistPublishOptions(burnSubtitles, nextLanguages);
+    },
+    [burnSubtitles, persistPublishOptions],
+  );
+
+  const updateBurnSubtitles = useCallback(
+    (value: boolean) => {
+      setBurnSubtitles(value);
+      void persistPublishOptions(value, translationLanguages);
+    },
+    [persistPublishOptions, translationLanguages],
+  );
+
   const fetchLogoSettings = useCallback(async (): Promise<LogoSettings | null> => {
     try {
       const resp = await fetch(`${API_URL}/api/ui-settings/logo_settings`);
@@ -501,6 +590,10 @@ export default function EditorScreen() {
   useEffect(() => {
     loadPublishSettings();
   }, [loadPublishSettings]);
+
+  useEffect(() => {
+    loadPublishOptions();
+  }, [loadPublishOptions]);
 
   useEffect(() => {
     if (!publishSettingsLoaded) return;
@@ -617,10 +710,18 @@ export default function EditorScreen() {
     setProcessTone('neutral');
     try {
       const logoPayload = await fetchLogoSettings();
+      const steps = burnSubtitles
+        ? ['keyframes', 'caption', 'transcribe', 'translate', 'burn', 'metadata_zh', 'metadata_en']
+        : ['keyframes', 'caption', 'transcribe', 'metadata_zh', 'metadata_en'];
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/process`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ async: true, ...(logoPayload ? { logo: logoPayload } : {}) }),
+        body: JSON.stringify({
+          async: true,
+          steps,
+          translationLanguages,
+          ...(logoPayload ? { logo: logoPayload } : {}),
+        }),
       });
       const json = await resp.json().catch(() => ({}));
       if (!resp.ok) {
@@ -717,7 +818,13 @@ export default function EditorScreen() {
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ platforms: selected }),
+        body: JSON.stringify({
+          platforms: selected,
+          options: {
+            burnSubtitles,
+            translationLanguages,
+          },
+        }),
       });
       const json = await resp.json().catch(() => ({}));
       if (!resp.ok) {
@@ -863,6 +970,46 @@ export default function EditorScreen() {
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{t('publish_process_title')}</Text>
           <Text style={styles.sectionHint}>{t('publish_process_hint')}</Text>
+          <View style={styles.publishOptionRow}>
+            <View style={styles.publishOptionText}>
+              <Text style={styles.optionLabel}>{t('publish_option_burn_title')}</Text>
+              <Text style={styles.optionHint}>
+                {burnSubtitles ? t('publish_option_burn_on') : t('publish_option_burn_off')}
+              </Text>
+            </View>
+            <Switch
+              value={burnSubtitles}
+              onValueChange={updateBurnSubtitles}
+              disabled={!publishOptionsLoaded}
+              trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+              thumbColor={burnSubtitles ? '#f8fafc' : '#f1f5f9'}
+            />
+          </View>
+          <View style={styles.publishOptionBlock}>
+            <View style={styles.publishOptionText}>
+              <Text style={styles.optionLabel}>{t('publish_option_language_count_title')}</Text>
+              <Text style={styles.optionHint}>
+                {t('publish_option_language_count_hint', { value: translationLanguageSummary || t('label_none') })}
+              </Text>
+            </View>
+            <View style={styles.countControl}>
+              {[1, 2, 3, 4].map((count) => {
+                const active = translationLanguageCount === count;
+                return (
+                  <Pressable
+                    key={count}
+                    style={[styles.countButton, active && styles.countButtonActive]}
+                    onPress={() => setTranslationLanguageCount(count)}
+                    disabled={!publishOptionsLoaded}
+                  >
+                    <Text style={[styles.countButtonText, active && styles.countButtonTextActive]}>
+                      {count}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
           <Pressable
             style={[styles.processButton, (!selectedVideo || processBusy) && styles.btnDisabled]}
             onPress={startProcess}
@@ -1157,6 +1304,50 @@ const styles = StyleSheet.create({
   platformText: { fontSize: 12, fontWeight: '600', color: '#1e293b' },
   platformTextActive: { color: '#f8fafc' },
   selectedText: { marginTop: 12, fontSize: 12, color: '#0f172a' },
+  publishOptionRow: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  publishOptionBlock: {
+    marginTop: 10,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  publishOptionText: { flex: 1 },
+  optionLabel: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  optionHint: { marginTop: 4, fontSize: 11, color: '#64748b' },
+  countControl: {
+    marginTop: 10,
+    flexDirection: 'row',
+    gap: 8,
+  },
+  countButton: {
+    minWidth: 36,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+  },
+  countButtonActive: {
+    backgroundColor: '#0f172a',
+    borderColor: '#0f172a',
+  },
+  countButtonText: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  countButtonTextActive: { color: 'white' },
   coverButton: {
     marginTop: 12,
     backgroundColor: '#0f172a',

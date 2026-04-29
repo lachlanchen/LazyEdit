@@ -46,10 +46,18 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         kwargs["use_cache"] = use_cache
         kwargs["max_retries"] = max_retries
+        provider = str(os.getenv("LAZYEDIT_TRANSLATION_PROVIDER", "deepseek")).strip().lower()
+        if provider == "deepseek" and not os.getenv("DEEPSEEK_API_KEY"):
+            print("DEEPSEEK_API_KEY is not set; falling back to OpenAI for translation.")
+            provider = "openai"
+        kwargs.setdefault("api_provider", provider)
+        if provider == "deepseek":
+            kwargs.setdefault("model", os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash"))
 
         super().__init__(*args, **kwargs)
 
-        self.client = openai_client
+        if provider != "deepseek" and openai_client is not None:
+            self.client = openai_client
         self.input_json_path = input_json_path
         self.input_sub_path = input_sub_path
         self.output_json_path = output_json_path
@@ -129,6 +137,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         }
 
         print("Using translation cache: ", use_cache)
+        print("Translation provider: ", self.api_provider, self.model)
 
     @property
     def is_video_landscape(self):
@@ -153,6 +162,82 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 return str(value)
         fallback = item.get("text")
         return str(fallback) if fallback is not None else ""
+
+    @staticmethod
+    def _normalize_language_code(value) -> str | None:
+        if value is None:
+            return None
+        raw = str(value).strip()
+        if not raw:
+            return None
+        lowered = raw.lower().replace("_", "-")
+        aliases = {
+            "english": "en",
+            "chinese": "zh",
+            "mandarin": "zh",
+            "zh-cn": "zh",
+            "zh-hans": "zh",
+            "zh-hant": "zh",
+            "zh-tw": "zh",
+            "zh-hk": "zh",
+            "cantonese": "yue",
+            "zh-yue": "yue",
+            "japanese": "ja",
+            "korean": "ko",
+            "arabic": "ar",
+            "vietnamese": "vi",
+            "spanish": "es",
+            "french": "fr",
+            "russian": "ru",
+        }
+        return aliases.get(lowered, lowered)
+
+    def _subtitle_source_language(self, item: dict) -> str | None:
+        if not isinstance(item, dict):
+            return None
+        return self._normalize_language_code(item.get("lang") or item.get("language"))
+
+    def _target_matches_source_language(self, item: dict, target_lang: str) -> bool:
+        source_lang = self._subtitle_source_language(item)
+        target = self._normalize_language_code(target_lang)
+        return bool(source_lang and target and source_lang == target)
+
+    def _same_language_plain_result(self, subtitles, target_lang: str, output_key: str):
+        if len(subtitles or []) != 1:
+            return None
+        subtitle = subtitles[0]
+        if not isinstance(subtitle, dict) or not self._target_matches_source_language(subtitle, target_lang):
+            return None
+        text = self._extract_subtitle_text(subtitle)
+        start = subtitle.get("start")
+        end = subtitle.get("end")
+        if not start or not end:
+            return None
+        return {
+            "plain": [{"start": start, "end": end, output_key: text}],
+            "json": [{"start": start, "end": end, output_key: text}],
+        }
+
+    def _same_language_japanese_result(self, subtitles):
+        same = self._same_language_plain_result(subtitles, "ja", "ja")
+        if not same:
+            return None
+        json_items = []
+        for item in same["json"]:
+            text = item.get("ja", "")
+            json_items.append({
+                "start": item["start"],
+                "end": item["end"],
+                "ja": text,
+                "ruby": text,
+                "tokens": [],
+                "furigana_pairs": [],
+            })
+        return {
+            "ruby": list(same["plain"]),
+            "plain": list(same["plain"]),
+            "json": json_items,
+        }
 
     @staticmethod
     def _format_context_value(value: str | None) -> str:
@@ -745,6 +830,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass Japanese translation + furigana using template prompt + schema."""
         print("Translating subtitles to Japanese with furigana (single pass)...")
+        same_language_result = self._same_language_japanese_result(subtitles)
+        if same_language_result:
+            return same_language_result
 
         prompt_bundle = self._load_template_json("japanese_furigana/prompt.json")
         schema = self._load_template_json("japanese_furigana/schema.json")
@@ -840,6 +928,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass English translation using template prompt + schema."""
         print("Translating subtitles to English (single pass)...")
+        same_language_result = self._same_language_plain_result(subtitles, "en", "en")
+        if same_language_result:
+            return same_language_result
 
         prompt_bundle = self._load_template_json("english_translation/prompt.json")
         schema = self._load_template_json("english_translation/schema.json")
@@ -911,6 +1002,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass Arabic translation using template prompt + schema."""
         print("Translating subtitles to Arabic (single pass)...")
+        same_language_result = self._same_language_plain_result(subtitles, "ar", "ar")
+        if same_language_result:
+            return same_language_result
 
         prompt_bundle = self._load_template_json("arabic_translation/prompt.json")
         schema = self._load_template_json("arabic_translation/schema.json")
@@ -982,6 +1076,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass Vietnamese translation using template prompt + schema."""
         print("Translating subtitles to Vietnamese (single pass)...")
+        same_language_result = self._same_language_plain_result(subtitles, "vi", "vi")
+        if same_language_result:
+            return same_language_result
 
         prompt_bundle = self._load_template_json("vietnamese_translation/prompt.json")
         schema = self._load_template_json("vietnamese_translation/schema.json")
@@ -1053,6 +1150,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass Korean translation using template prompt + schema."""
         print("Translating subtitles to Korean (single pass)...")
+        same_language_result = self._same_language_plain_result(subtitles, "ko", "ko")
+        if same_language_result:
+            return same_language_result
 
         prompt_bundle = self._load_template_json("korean_translation/prompt.json")
         schema = self._load_template_json("korean_translation/schema.json")
@@ -1124,6 +1224,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass Spanish translation using template prompt + schema."""
         print("Translating subtitles to Spanish (single pass)...")
+        same_language_result = self._same_language_plain_result(subtitles, "es", "es")
+        if same_language_result:
+            return same_language_result
 
         prompt_bundle = self._load_template_json("spanish_translation/prompt.json")
         schema = self._load_template_json("spanish_translation/schema.json")
@@ -1195,6 +1298,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass French translation using template prompt + schema."""
         print("Translating subtitles to French (single pass)...")
+        same_language_result = self._same_language_plain_result(subtitles, "fr", "fr")
+        if same_language_result:
+            return same_language_result
 
         prompt_bundle = self._load_template_json("french_translation/prompt.json")
         schema = self._load_template_json("french_translation/schema.json")
@@ -1266,6 +1372,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass Russian translation using template prompt + schema."""
         print("Translating subtitles to Russian (single pass)...")
+        same_language_result = self._same_language_plain_result(subtitles, "ru", "ru")
+        if same_language_result:
+            return same_language_result
 
         prompt_bundle = self._load_template_json("russian_translation/prompt.json")
         schema = self._load_template_json("russian_translation/schema.json")
@@ -1315,6 +1424,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass Cantonese translation using template prompt + schema."""
         print("Translating subtitles to Cantonese (single pass)...")
+        same_language_result = self._same_language_plain_result(subtitles, "yue", "yue")
+        if same_language_result:
+            return same_language_result
 
         prompt_bundle = self._load_template_json("cantonese_translation/prompt.json")
         schema = self._load_template_json("cantonese_translation/schema.json")
@@ -1408,6 +1520,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass Traditional Chinese translation using template prompt + schema."""
         print("Translating subtitles to Traditional Chinese (single pass)...")
+        same_language_result = self._same_language_plain_result(subtitles, "zh-Hant", "zh")
+        if same_language_result:
+            return same_language_result
 
         prompt_bundle = self._load_template_json("chinese_traditional_translation/prompt.json")
         schema = self._load_template_json("chinese_traditional_translation/schema.json")
