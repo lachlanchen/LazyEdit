@@ -706,14 +706,14 @@ def finalize_subtitle_burn(
             )
 
 
-def get_ui_preference(key: str) -> dict | None:
+def get_ui_preference(key: str):
     with get_cursor() as cur:
         cur.execute("SELECT value FROM ui_preferences WHERE key = %s", (key,))
         row = cur.fetchone()
     if not row:
         return None
     value = row[0]
-    if isinstance(value, dict):
+    if isinstance(value, (dict, list)):
         return value
     try:
         return json.loads(value)
@@ -721,7 +721,7 @@ def get_ui_preference(key: str) -> dict | None:
         return None
 
 
-def set_ui_preference(key: str, value: dict) -> None:
+def set_ui_preference(key: str, value) -> None:
     with get_cursor(commit=True) as cur:
         cur.execute(
             """

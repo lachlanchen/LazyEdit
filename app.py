@@ -1420,6 +1420,63 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     }
 
 
+def _burn_layout_for_languages(layout: dict | list | None, languages) -> dict:
+    cleaned = _sanitize_burn_layout(layout)
+    selected_languages = _sanitize_translation_languages(languages)
+    selected_set = set(selected_languages)
+    if not selected_set:
+        return cleaned
+
+    ordered_slots = []
+    seen_languages = set()
+    for slot in cleaned.get("slots") or []:
+        if not isinstance(slot, dict):
+            continue
+        language = _normalize_translation_language(slot.get("language"))
+        if not language or language not in selected_set or language in seen_languages:
+            continue
+        next_slot = dict(slot)
+        next_slot["language"] = language
+        ordered_slots.append(next_slot)
+        seen_languages.add(language)
+
+    default_slots_by_language = {
+        _normalize_translation_language(slot.get("language")): slot
+        for slot in DEFAULT_BURN_LAYOUT.get("slots", [])
+        if isinstance(slot, dict) and _normalize_translation_language(slot.get("language"))
+    }
+    for language in selected_languages:
+        if language in seen_languages:
+            continue
+        next_slot = dict(default_slots_by_language.get(language) or {})
+        next_slot["language"] = language
+        ordered_slots.append(next_slot)
+        seen_languages.add(language)
+
+    if not ordered_slots:
+        return cleaned
+
+    old_rows = max(1, int(cleaned.get("rows") or DEFAULT_BURN_LAYOUT.get("rows", 4)))
+    cols = max(1, int(cleaned.get("cols") or DEFAULT_BURN_LAYOUT.get("cols", 1)))
+    new_rows = max(1, (len(ordered_slots) + cols - 1) // cols)
+    compact_slots = []
+    for index, slot in enumerate(ordered_slots, start=1):
+        next_slot = dict(slot)
+        next_slot["slot"] = index
+        compact_slots.append(next_slot)
+
+    compact = dict(cleaned)
+    compact["rows"] = new_rows
+    compact["slots"] = compact_slots
+    compact["liftSlots"] = min(int(compact.get("liftSlots") or 0), new_rows)
+    try:
+        per_row_height = float(cleaned.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5))) / old_rows
+        compact["heightRatio"] = min(max(per_row_height * new_rows, 0.2), 0.6)
+    except Exception:
+        pass
+    return _sanitize_burn_layout(compact)
+
+
 
 def detect_language_with_lingua(text, detector):
     """
@@ -8799,6 +8856,13 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"id": burn_id, "video_id": video_id_i, "status": status, "error": error})
 
         layout_config = _sanitize_burn_layout(data.get("layout") or data.get("slots") or data)
+        burn_languages_payload = (
+            data.get("translationLanguages")
+            or data.get("translation_languages")
+            or data.get("languages")
+        )
+        if burn_languages_payload is not None:
+            layout_config = _burn_layout_for_languages(layout_config, burn_languages_payload)
         logo_payload = data.get("logo")
         logo_config = None
         if isinstance(logo_payload, dict):
@@ -9097,7 +9161,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             if languages_override is not None
             else _load_translation_languages_setting()
         )
-        burn_layout = _load_burn_layout_setting()
+        burn_layout = _burn_layout_for_languages(_load_burn_layout_setting(), translation_languages)
         logo_payload = data.get("logo")
         logo_config = None
         if isinstance(logo_payload, dict):
@@ -9212,7 +9276,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
 
             if wants("burn"):
                 await mark("burn", "working", "Burning subtitles")
-                burn_payload = {"layout": burn_layout}
+                burn_payload = {"layout": burn_layout, "translationLanguages": translation_languages}
                 if logo_config and logo_config.get("enabled") and logo_config.get("logoPath"):
                     burn_payload["logo"] = logo_config
                 code, payload = await call_json(
