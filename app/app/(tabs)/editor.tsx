@@ -86,6 +86,15 @@ type PublicationSession = {
   title?: string | null;
   mode?: string;
   status?: string;
+  burn?: {
+    status?: string | null;
+    output_url?: string | null;
+    progress?: number | null;
+    error?: string | null;
+    created_at?: string | null;
+  } | null;
+  burn_output_url?: string | null;
+  burn_status?: string | null;
   created_at?: string;
   updated_at?: string;
 };
@@ -157,6 +166,10 @@ export default function EditorScreen() {
   const [runSelectionTouched, setRunSelectionTouched] = useState(false);
   const [processRunMenuOpen, setProcessRunMenuOpen] = useState(false);
   const [publishRunMenuOpen, setPublishRunMenuOpen] = useState(false);
+  const [previewSourceKey, setPreviewSourceKey] = useState('original');
+  const [previewSourceMenuOpen, setPreviewSourceMenuOpen] = useState(false);
+  const [baseBurnPreviewUrl, setBaseBurnPreviewUrl] = useState<string | null>(null);
+  const [baseBurnPreviewStatus, setBaseBurnPreviewStatus] = useState<string | null>(null);
   const [translationLanguages, setTranslationLanguages] = useState<string[]>(DEFAULT_TRANSLATION_LANGUAGES);
   const [correctionOpen, setCorrectionOpen] = useState(false);
   const [correctionLoading, setCorrectionLoading] = useState(false);
@@ -284,6 +297,67 @@ export default function EditorScreen() {
     const raw = selectedVideo.preview_image_url;
     return raw.startsWith('http') ? raw : `${API_URL}${raw}`;
   }, [selectedVideo]);
+  const previewSourceOptions = useMemo(() => {
+    const options: Array<{
+      key: string;
+      label: string;
+      hint: string;
+      url: string | null;
+      poster?: string | null;
+    }> = [
+      {
+        key: 'original',
+        label: t('publish_preview_original'),
+        hint: t('publish_preview_original_hint'),
+        url: previewVideoUrl,
+        poster: previewPosterUrl,
+      },
+    ];
+    options.push({
+      key: 'base-burn',
+      label: t('publish_preview_current_burn'),
+      hint:
+        baseBurnPreviewStatus === 'completed'
+          ? t('publish_preview_burn_ready')
+          : t('publish_preview_burn_missing'),
+      url: baseBurnPreviewUrl,
+      poster: null,
+    });
+    publicationSessions.forEach((session) => {
+      const title = session.title || `Session ${session.id}`;
+      const outputUrl = session.burn_output_url || session.burn?.output_url || null;
+      const status = session.burn_status || session.burn?.status || '';
+      options.push({
+        key: `session:${session.id}`,
+        label: `${t('publish_run_existing', { value: session.id })} · ${title}`,
+        hint:
+          status === 'completed'
+            ? t('publish_preview_burn_ready')
+            : status
+              ? t('publish_preview_burn_status', { value: status })
+              : t('publish_preview_burn_missing'),
+        url: outputUrl ? resolveMediaSrc(outputUrl) : null,
+        poster: null,
+      });
+    });
+    return options;
+  }, [
+    baseBurnPreviewStatus,
+    baseBurnPreviewUrl,
+    previewPosterUrl,
+    previewVideoUrl,
+    publicationSessions,
+    resolveMediaSrc,
+    t,
+  ]);
+  const selectedPreviewSource = useMemo(
+    () =>
+      previewSourceOptions.find((option) => option.key === previewSourceKey) ||
+      previewSourceOptions[0],
+    [previewSourceKey, previewSourceOptions],
+  );
+  const selectedPreviewUrl = selectedPreviewSource?.url || null;
+  const selectedPreviewPosterUrl = selectedPreviewSource?.poster || previewPosterUrl;
   const visibleVideos = useMemo(() => videos.slice(0, visibleCount), [videos, visibleCount]);
   const hasMoreVideos = visibleCount < videos.length;
   const activeQueueCount = useMemo(
@@ -643,6 +717,23 @@ export default function EditorScreen() {
     }
   };
 
+  const loadBaseBurnPreview = useCallback(async (videoId: number) => {
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${videoId}/burn-subtitles`);
+      const json = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        setBaseBurnPreviewUrl(null);
+        setBaseBurnPreviewStatus(null);
+        return;
+      }
+      setBaseBurnPreviewStatus(json?.status || null);
+      setBaseBurnPreviewUrl(json?.output_url ? resolveMediaSrc(json.output_url) : null);
+    } catch (_err) {
+      setBaseBurnPreviewUrl(null);
+      setBaseBurnPreviewStatus(null);
+    }
+  }, [resolveMediaSrc]);
+
   const loadProcessStatus = useCallback(
     async (videoId: number, silent?: boolean) => {
       if (!silent) setProcessStatusLoading(true);
@@ -912,10 +1003,15 @@ export default function EditorScreen() {
     setRunSelectionTouched(false);
     setProcessRunMenuOpen(false);
     setPublishRunMenuOpen(false);
+    setPreviewSourceKey('original');
+    setPreviewSourceMenuOpen(false);
+    setBaseBurnPreviewUrl(null);
+    setBaseBurnPreviewStatus(null);
     setCorrectionOpen(false);
     setOriginalSubtitleText('');
     setPolishedSubtitleText('');
     loadCoverPreview(selectedVideoId);
+    loadBaseBurnPreview(selectedVideoId);
     loadPublicationSessions(selectedVideoId, true);
     loadProcessStatus(selectedVideoId, true);
   }, [selectedVideoId]);
@@ -933,6 +1029,14 @@ export default function EditorScreen() {
     if (!selectedVideo) return;
     queueVisiblePreviewBackfill([selectedVideo]);
   }, [queueVisiblePreviewBackfill, selectedVideo]);
+
+  useEffect(() => {
+    if (!selectedVideoId) return;
+    const burnStatus = String(processSteps?.burn?.status || '').toLowerCase();
+    if (burnStatus !== 'done') return;
+    loadBaseBurnPreview(selectedVideoId);
+    loadPublicationSessions(selectedVideoId);
+  }, [selectedVideoId, processSteps?.burn?.status, loadBaseBurnPreview, loadPublicationSessions]);
 
   useEffect(() => {
     if (!selectedPublishJob) return;
@@ -1004,6 +1108,9 @@ export default function EditorScreen() {
         setRunSelectionTouched(true);
         setPublicationSessionId(Number(json.publication_session_id));
         loadPublicationSessions(selectedVideoId, true);
+        if (burnSubtitles) setPreviewSourceKey(`session:${Number(json.publication_session_id)}`);
+      } else if (burnSubtitles) {
+        setPreviewSourceKey('base-burn');
       }
       setProcessStatus(t('publish_process_started'));
       setProcessTone('good');
@@ -1120,6 +1227,9 @@ export default function EditorScreen() {
         setRunSelectionTouched(true);
         setPublicationSessionId(Number(json.publication_session_id));
         loadPublicationSessions(selectedVideoId, true);
+        if (burnSubtitles) setPreviewSourceKey(`session:${Number(json.publication_session_id)}`);
+      } else if (burnSubtitles) {
+        setPreviewSourceKey('base-burn');
       }
       setPublishStatus(
         json?.detail
@@ -1190,6 +1300,54 @@ export default function EditorScreen() {
                     </Pressable>
                   ) : null}
                 </View>
+              );
+            })}
+          </ScrollView>
+        </View>
+      ) : null}
+    </View>
+  );
+
+  const renderPreviewSourceSelector = () => (
+    <View style={styles.previewSourceBlock}>
+      <Pressable
+        style={[styles.runSelectorButton, !selectedVideo && styles.btnDisabled]}
+        onPress={() => setPreviewSourceMenuOpen((prev) => !prev)}
+        disabled={!selectedVideo}
+      >
+        <View style={styles.runSelectorText}>
+          <Text style={styles.runSelectorLabel} numberOfLines={1}>
+            {selectedPreviewSource?.label || t('publish_preview_original')}
+          </Text>
+          <Text style={styles.runSelectorHint} numberOfLines={1}>
+            {selectedPreviewSource?.hint || t('publish_preview_original_hint')}
+          </Text>
+        </View>
+        <FontAwesome name={previewSourceMenuOpen ? 'chevron-up' : 'chevron-down'} size={13} color="#334155" />
+      </Pressable>
+      {previewSourceMenuOpen ? (
+        <View style={styles.runDropdown}>
+          <ScrollView style={styles.runDropdownScroll} nestedScrollEnabled>
+            {previewSourceOptions.map((option) => {
+              const active = option.key === previewSourceKey;
+              return (
+                <Pressable
+                  key={option.key}
+                  style={[styles.runOptionRow, active && styles.runOptionRowActive]}
+                  onPress={() => {
+                    setPreviewSourceKey(option.key);
+                    setPreviewSourceMenuOpen(false);
+                  }}
+                >
+                  <View style={styles.runOptionMain}>
+                    <Text style={[styles.runOptionLabel, active && styles.runOptionLabelActive]} numberOfLines={1}>
+                      {option.label}
+                    </Text>
+                    <Text style={styles.runOptionHint} numberOfLines={1}>
+                      {option.hint}
+                    </Text>
+                  </View>
+                </Pressable>
               );
             })}
           </ScrollView>
@@ -1392,24 +1550,29 @@ export default function EditorScreen() {
           ) : null}
           <View style={styles.processPreviewBlock}>
             <Text style={styles.processPreviewTitle}>{t('publish_process_preview_title')}</Text>
-            {previewVideoUrl ? (
+            {renderPreviewSourceSelector()}
+            {selectedPreviewUrl ? (
               <View style={styles.processPreviewVideoWrap}>
                 {Platform.OS === 'web' ? (
                   React.createElement('video', {
-                    src: previewVideoUrl,
+                    src: selectedPreviewUrl,
                     style: { width: '100%', height: '100%', borderRadius: 12, objectFit: 'contain' },
                     controls: true,
                     muted: true,
                     playsInline: true,
                     preload: 'metadata',
-                    poster: previewPosterUrl || undefined,
+                    poster: selectedPreviewPosterUrl || undefined,
                   })
                 ) : (
-                  <Image source={{ uri: previewPosterUrl || previewVideoUrl }} style={styles.processPreviewImage} />
+                  <Image source={{ uri: selectedPreviewPosterUrl || selectedPreviewUrl }} style={styles.processPreviewImage} />
                 )}
               </View>
             ) : (
-              <Text style={styles.empty}>{t('publish_process_preview_empty')}</Text>
+              <Text style={styles.empty}>
+                {selectedPreviewSource?.key === 'original'
+                  ? t('publish_process_preview_empty')
+                  : t('publish_preview_burn_empty')}
+              </Text>
             )}
           </View>
           <View style={styles.processStatusBlock}>
@@ -1916,6 +2079,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8fafc',
   },
   processPreviewTitle: { fontSize: 13, fontWeight: '600', color: '#0f172a' },
+  previewSourceBlock: {
+    marginTop: 8,
+  },
   processPreviewVideoWrap: {
     marginTop: 8,
     width: '100%',

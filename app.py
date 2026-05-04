@@ -4625,6 +4625,20 @@ def _serialize_publication_session_row(row: tuple | None) -> dict | None:
             config = json.loads(config or "{}")
         except Exception:
             config = {}
+    burn_payload = None
+    try:
+        burn_row = ldb.get_latest_subtitle_burn(int(row[1]), publication_session_id=int(row[0]))
+        if burn_row:
+            _burn_id, burn_status, burn_output_path, burn_progress, _burn_config, burn_error, burn_created_at = burn_row
+            burn_payload = {
+                "status": burn_status,
+                "output_url": media_url_for_path(burn_output_path) if burn_output_path else None,
+                "progress": burn_progress,
+                "error": burn_error,
+                "created_at": burn_created_at.isoformat() if burn_created_at else None,
+            }
+    except Exception:
+        burn_payload = None
     return {
         "id": row[0],
         "video_id": row[1],
@@ -4632,6 +4646,9 @@ def _serialize_publication_session_row(row: tuple | None) -> dict | None:
         "mode": row[3],
         "status": row[4],
         "config": config,
+        "burn": burn_payload,
+        "burn_output_url": burn_payload.get("output_url") if burn_payload else None,
+        "burn_status": burn_payload.get("status") if burn_payload else None,
         "created_at": row[6].isoformat() if row[6] else None,
         "updated_at": row[7].isoformat() if row[7] else None,
         "deleted_at": row[8].isoformat() if row[8] else None,
