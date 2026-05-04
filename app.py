@@ -228,7 +228,8 @@ DEFAULT_PUBLISH_PLATFORMS = {
 }
 DEFAULT_PUBLISH_OPTIONS = {
     "burnSubtitles": True,
-    "usePolishedSubtitles": False,
+    "usePolishedSubtitles": True,
+    "subtitleSourceVersion": "polished",
     "publicationMode": "override",
     "publicationSessionId": None,
 }
@@ -1000,8 +1001,25 @@ def _sanitize_publish_options(payload) -> dict:
     use_polished = payload.get("usePolishedSubtitles")
     if use_polished is None:
         use_polished = payload.get("use_polished_subtitles")
-    if use_polished is None:
+    subtitle_source = str(
+        payload.get("subtitleSourceVersion")
+        or payload.get("subtitle_source_version")
+        or ""
+    ).strip().lower()
+    if subtitle_source in {"latest", "corrected", "polished"}:
+        use_polished = True
+        subtitle_source = "polished"
+    elif subtitle_source in {"raw", "mixed", "original"}:
+        use_polished = False
+        subtitle_source = "original"
+    elif use_polished is None:
         use_polished = DEFAULT_PUBLISH_OPTIONS["usePolishedSubtitles"]
+        subtitle_source = DEFAULT_PUBLISH_OPTIONS["subtitleSourceVersion"]
+    else:
+        subtitle_source = "polished" if _parse_bool(
+            use_polished,
+            default=DEFAULT_PUBLISH_OPTIONS["usePolishedSubtitles"],
+        ) else "original"
 
     publication_mode = str(
         payload.get("publicationMode")
@@ -1025,6 +1043,7 @@ def _sanitize_publish_options(payload) -> dict:
             use_polished,
             default=DEFAULT_PUBLISH_OPTIONS["usePolishedSubtitles"],
         ),
+        "subtitleSourceVersion": subtitle_source,
         "publicationMode": publication_mode,
         "publicationSessionId": publication_session_id,
     }
@@ -1175,6 +1194,11 @@ def _load_publish_options_setting() -> dict:
             "translationLanguages": _load_translation_languages_setting(),
         })
     cleaned = _sanitize_publish_options(saved)
+    if isinstance(saved, dict) and not (
+        saved.get("subtitleSourceVersion") or saved.get("subtitle_source_version")
+    ):
+        cleaned["usePolishedSubtitles"] = True
+        cleaned["subtitleSourceVersion"] = "polished"
     if not cleaned.get("translationLanguages"):
         cleaned["translationLanguages"] = _load_translation_languages_setting()
     return cleaned
@@ -2273,15 +2297,6 @@ def find_latest_transcription_outputs(
     if not output_folder or not base_name:
         return None, None
     if use_polished:
-        if publication_session_id:
-            polished_json, polished_srt, _ = _transcription_variant_paths(
-                output_folder,
-                base_name,
-                "polished",
-                publication_session_id,
-            )
-            if os.path.exists(polished_json) and os.path.exists(polished_srt):
-                return polished_json, polished_srt
         polished_json, polished_srt, _ = _transcription_variant_paths(output_folder, base_name, "polished")
         if os.path.exists(polished_json) and os.path.exists(polished_srt):
             return polished_json, polished_srt
@@ -2300,11 +2315,14 @@ def find_latest_transcription_outputs(
         return default_json, default_srt
     json_pattern = os.path.join(output_folder, f"{base_name}_mixed*.json")
     srt_pattern = os.path.join(output_folder, f"{base_name}_mixed*.srt")
-    json_files = glob.glob(json_pattern)
-    srt_files = glob.glob(srt_pattern)
-    if not use_polished:
-        json_files = [path for path in json_files if "_mixed_polished" not in os.path.basename(path)]
-        srt_files = [path for path in srt_files if "_mixed_polished" not in os.path.basename(path)]
+    json_files = [
+        path for path in glob.glob(json_pattern)
+        if "_mixed_polished" not in os.path.basename(path)
+    ]
+    srt_files = [
+        path for path in glob.glob(srt_pattern)
+        if "_mixed_polished" not in os.path.basename(path)
+    ]
     latest_json = max(json_files, key=os.path.getmtime) if json_files else None
     latest_srt = max(srt_files, key=os.path.getmtime) if srt_files else None
     return latest_json, latest_srt
@@ -2616,12 +2634,22 @@ def _merge_edited_subtitle_items(original_items: list[dict], edited_items: list[
         merged = []
         for original, edited in zip(original_items, edited_items):
             item = dict(original) if isinstance(original, dict) else {}
-            item["start"] = edited.get("start") or item.get("start")
-            item["end"] = edited.get("end") or item.get("end")
             item["text"] = edited.get("text", "")
             merged.append(item)
         return merged
-    return [dict(item) for item in edited_items]
+    mapped = {
+        (item.get("start"), item.get("end")): item
+        for item in edited_items
+        if isinstance(item, dict) and item.get("start") and item.get("end")
+    }
+    merged = []
+    for original in original_items:
+        item = dict(original) if isinstance(original, dict) else {}
+        edited = mapped.get((item.get("start"), item.get("end")))
+        if edited is not None:
+            item["text"] = edited.get("text", "")
+        merged.append(item)
+    return merged
 
 
 def _resolve_translation_text_key(language: str, item: dict) -> str:
@@ -6116,6 +6144,7 @@ class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
                     output_md_mixed,
                     message,
                 )
+                _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
                 primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
                 return 200, {
                     "id": transcription_id,
@@ -6165,6 +6194,7 @@ class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
                     output_md_mixed,
                     None,
                 )
+                _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
                 primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
                 return 200, {
                     "id": transcription_id,
@@ -6302,6 +6332,99 @@ def _load_correction_sources(video_id: int, publication_session_id: int | None =
     return video_id, file_path, input_file, base_name, output_folder
 
 
+def _get_latest_global_transcription(video_id: int, language_code: str | None = None) -> tuple | None:
+    filters = ["video_id = %s", "publication_session_id IS NULL"]
+    values: list[object] = [video_id]
+    if language_code is not None:
+        filters.append("language_code = %s")
+        values.append(language_code)
+    with ldb.get_cursor() as cur:
+        cur.execute(
+            f"""
+            SELECT id, language_code, status, output_json_path, output_srt_path, output_md_path, error, created_at
+            FROM transcriptions
+            WHERE {" AND ".join(filters)}
+            ORDER BY id DESC
+            LIMIT 1
+            """,
+            tuple(values),
+        )
+        return cur.fetchone()
+
+
+def _ensure_global_polished_subtitles(video_id: int, output_folder: str, base_name: str) -> dict | None:
+    output_json_path, output_srt_path, output_md_path = _transcription_variant_paths(
+        output_folder,
+        base_name,
+        "polished",
+        create=True,
+    )
+    if os.path.exists(output_json_path) and os.path.exists(output_srt_path):
+        if not os.path.exists(output_md_path):
+            write_markdown_from_srt(output_srt_path, output_md_path)
+        if not _get_latest_global_transcription(video_id, "polished"):
+            payload, items, _container_key = _load_subtitle_payload(output_json_path)
+            ldb.add_transcription(
+                video_id,
+                "polished",
+                "completed" if items else "empty",
+                output_json_path,
+                output_srt_path,
+                output_md_path if os.path.exists(output_md_path) else None,
+                None if items else "No subtitles found to polish.",
+            )
+        return {
+            "output_json_path": output_json_path,
+            "output_srt_path": output_srt_path,
+            "output_md_path": output_md_path if os.path.exists(output_md_path) else None,
+        }
+
+    source_json = None
+    source_srt = None
+    legacy_row = ldb.get_latest_transcription(video_id, language_code="polished")
+    if legacy_row and legacy_row[3] and os.path.exists(legacy_row[3]):
+        source_json = legacy_row[3]
+        source_srt = legacy_row[4]
+    if not source_json:
+        source_json, source_srt = find_latest_transcription_outputs(
+            output_folder,
+            base_name,
+            use_polished=False,
+            publication_session_id=None,
+        )
+    if not source_json or not os.path.exists(source_json):
+        return None
+
+    payload, items, container_key = _load_subtitle_payload(source_json)
+    payload_to_write = dict(payload) if isinstance(payload, dict) else payload
+    _write_subtitle_payload(output_json_path, payload_to_write, items, container_key)
+    _write_srt_from_items(items, output_srt_path, text_key="text")
+    write_markdown_from_srt(output_srt_path, output_md_path)
+    ldb.add_transcription(
+        video_id,
+        "polished",
+        "completed" if items else "empty",
+        output_json_path,
+        output_srt_path,
+        output_md_path,
+        None if items else "No subtitles found to polish.",
+    )
+    return {
+        "output_json_path": output_json_path,
+        "output_srt_path": output_srt_path,
+        "output_md_path": output_md_path,
+        "source_json_path": source_json,
+        "source_srt_path": source_srt,
+    }
+
+
+def _normalize_subtitle_source_variant(value: object | None) -> str:
+    source = str(value or "").strip().lower().replace("-", "_")
+    if source in {"original", "raw", "mixed"}:
+        return "original"
+    return "polished"
+
+
 def _subtitle_variant_payload(
     video_id: int,
     variant: str,
@@ -6312,17 +6435,18 @@ def _subtitle_variant_payload(
         publication_session_id,
     )
     if variant == "polished":
+        _ensure_global_polished_subtitles(video_id, output_folder, base_name)
         json_path, srt_path = find_latest_transcription_outputs(
             output_folder,
             base_name,
             use_polished=True,
-            publication_session_id=publication_session_id,
+            publication_session_id=None,
         )
         raw_json, raw_srt = find_latest_transcription_outputs(
             output_folder,
             base_name,
             use_polished=False,
-            publication_session_id=publication_session_id,
+            publication_session_id=None,
         )
         if json_path == raw_json and srt_path == raw_srt:
             return None
@@ -6331,7 +6455,7 @@ def _subtitle_variant_payload(
             output_folder,
             base_name,
             use_polished=False,
-            publication_session_id=publication_session_id,
+            publication_session_id=None,
         )
     if not json_path or not os.path.exists(json_path):
         return None
@@ -6364,6 +6488,7 @@ def _save_subtitle_variant_text(
     edit_text: str,
     publication_session_id: int | None = None,
 ) -> dict:
+    publication_session_id = None
     _video_id, _file_path, _input_file, base_name, output_folder = _load_correction_sources(
         video_id,
         publication_session_id,
@@ -6432,13 +6557,7 @@ class VideoSubtitleCorrectionHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self, video_id):
         try:
             video_id_i = int(video_id)
-            session_id = _parse_int_value(
-                self.get_argument("publicationSessionId", default=None)
-                or self.get_argument("session_id", default=None)
-            )
-            if session_id:
-                _validate_publication_session(video_id_i, session_id)
-            payload = _subtitle_correction_payload(video_id_i, session_id)
+            payload = _subtitle_correction_payload(video_id_i, None)
         except FileNotFoundError as exc:
             self.set_status(404)
             return self.write({"error": str(exc)})
@@ -6460,20 +6579,28 @@ class VideoSubtitleCorrectionHandler(CorsMixin, tornado.web.RequestHandler):
             data = json.loads(self.request.body or b"{}")
         except Exception:
             data = {}
-        session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
         try:
-            if session_id:
-                _validate_publication_session(video_id_i, session_id)
             action = str(data.get("action") or "").strip().lower()
             if action in {"save_original", "save-original", "original"}:
-                _save_subtitle_variant_text(video_id_i, "original", str(data.get("text") or ""), session_id)
+                _save_subtitle_variant_text(video_id_i, "original", str(data.get("text") or ""), None)
             elif action in {"save_polished", "save-polished", "polished", "save"}:
-                _save_subtitle_variant_text(video_id_i, "polished", str(data.get("text") or ""), session_id)
+                _save_subtitle_variant_text(video_id_i, "polished", str(data.get("text") or ""), None)
             elif action in {"ai", "ai_correct", "ai-correct", "correct"}:
                 notes = data.get("prompt") or data.get("notes") or data.get("message") or ""
                 use_cache = _parse_bool(data.get("use_cache"), default=True)
+                source_variant = _normalize_subtitle_source_variant(
+                    data.get("sourceVariant")
+                    or data.get("source_variant")
+                    or data.get("source")
+                )
                 status, payload = await run_blocking(
-                    lambda: _polish_subtitles_for_video(video_id_i, str(notes), use_cache, session_id)
+                    lambda: _polish_subtitles_for_video(
+                        video_id_i,
+                        str(notes),
+                        use_cache,
+                        None,
+                        source_variant,
+                    )
                 )
                 if status >= 400:
                     self.set_status(status)
@@ -6481,7 +6608,7 @@ class VideoSubtitleCorrectionHandler(CorsMixin, tornado.web.RequestHandler):
             else:
                 self.set_status(400)
                 return self.write({"error": "unsupported correction action"})
-            self.write(_subtitle_correction_payload(video_id_i, session_id))
+            self.write(_subtitle_correction_payload(video_id_i, None))
         except FileNotFoundError as exc:
             self.set_status(404)
             self.write({"error": str(exc)})
@@ -6556,6 +6683,7 @@ def _polish_subtitles_for_video(
     notes: str,
     use_cache: bool = True,
     publication_session_id: int | None = None,
+    source_variant: str = "polished",
 ) -> tuple[int, dict]:
     ldb.ensure_schema()
     with ldb.get_cursor() as cur:
@@ -6571,44 +6699,67 @@ def _polish_subtitles_for_video(
     input_file = preprocess_if_needed(file_path)
     base_name, _ = os.path.splitext(os.path.basename(input_file))
     output_folder = os.path.dirname(input_file)
+    source_variant = _normalize_subtitle_source_variant(source_variant)
+    if source_variant == "polished":
+        _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
     input_json, input_srt = find_latest_transcription_outputs(
         output_folder,
         base_name,
-        use_polished=False,
-        publication_session_id=publication_session_id,
+        use_polished=(source_variant == "polished"),
+        publication_session_id=None,
     )
+    if source_variant == "polished":
+        raw_json, raw_srt = find_latest_transcription_outputs(
+            output_folder,
+            base_name,
+            use_polished=False,
+            publication_session_id=None,
+        )
+        if input_json == raw_json and input_srt == raw_srt:
+            input_json, input_srt = raw_json, raw_srt
     if not input_json or not os.path.exists(input_json):
         return 400, {"error": "transcription missing; run Transcribe first"}
 
+    output_json_path, output_srt_path, output_md_path = _transcription_variant_paths(
+        output_folder,
+        base_name,
+        "polished",
+        None,
+        create=True,
+    )
+
     payload, items, container_key = _load_subtitle_payload(input_json)
     if not items:
-        input_md = os.path.splitext(input_json)[0] + ".md"
+        payload_to_write = dict(payload) if isinstance(payload, dict) else payload
+        _write_subtitle_payload(output_json_path, payload_to_write, items, container_key)
+        _write_srt_from_items(items, output_srt_path, text_key="text")
+        write_markdown_from_srt(output_srt_path, output_md_path)
         transcription_id = ldb.add_transcription(
             video_id_i,
             "polished",
             "empty",
-            input_json,
-            input_srt if input_srt and os.path.exists(input_srt) else None,
-            input_md if os.path.exists(input_md) else None,
+            output_json_path,
+            output_srt_path,
+            output_md_path,
             "No subtitles found to polish.",
-            publication_session_id=publication_session_id,
         )
-        primary_lang, language_summary = _summarize_transcription_languages(input_json)
+        primary_lang, language_summary = _summarize_transcription_languages(output_json_path)
         return 200, {
             "id": transcription_id,
             "video_id": video_id_i,
-            "publication_session_id": publication_session_id,
+            "publication_session_id": None,
             "language_code": "polished",
             "status": "empty",
-            "output_json_path": input_json,
-            "output_srt_path": input_srt,
-            "output_md_path": input_md if os.path.exists(input_md) else None,
-            "json_url": media_url_for_path(input_json),
-            "srt_url": media_url_for_path(input_srt),
-            "md_url": media_url_for_path(input_md if os.path.exists(input_md) else None),
-            "preview_text": build_transcription_preview(input_md, input_srt),
+            "output_json_path": output_json_path,
+            "output_srt_path": output_srt_path,
+            "output_md_path": output_md_path,
+            "json_url": media_url_for_path(output_json_path),
+            "srt_url": media_url_for_path(output_srt_path),
+            "md_url": media_url_for_path(output_md_path),
+            "preview_text": build_transcription_preview(output_md_path, output_srt_path),
             "primary_language": primary_lang,
             "language_summary": language_summary,
+            "source_variant": source_variant,
             "error": "No subtitles found to polish.",
         }
 
@@ -6641,17 +6792,11 @@ def _polish_subtitles_for_video(
         .replace("{{CAPTIONS}}", caption_text)
         .replace("{{SUBTITLES_JSON}}", subtitles_json)
     )
-
-    output_json_path, output_srt_path, output_md_path = _transcription_variant_paths(
-        output_folder,
-        base_name,
-        "polished",
-        publication_session_id,
-        create=True,
+    prompt_text = (
+        f"{prompt_text}\n\n"
+        "Final requirement: return the same number of subtitle items in the same order. "
+        "Preserve every original start and end timestamp exactly. Only change the text field."
     )
-    for path in (output_json_path, output_srt_path, output_md_path):
-        if path and os.path.exists(path):
-            os.remove(path)
 
     status = "completed"
     error_message = None
@@ -6707,7 +6852,6 @@ def _polish_subtitles_for_video(
         output_srt_path if status == "completed" else None,
         output_md_path if status == "completed" else None,
         error_message,
-        publication_session_id=publication_session_id,
     )
     if status != "completed":
         return 500, {"error": "subtitle polish failed", "details": error_message, "id": transcription_id}
@@ -6716,7 +6860,7 @@ def _polish_subtitles_for_video(
     return 200, {
         "id": transcription_id,
         "video_id": video_id_i,
-        "publication_session_id": publication_session_id,
+        "publication_session_id": None,
         "language_code": "polished",
         "status": status,
         "output_json_path": output_json_path,
@@ -6729,6 +6873,7 @@ def _polish_subtitles_for_video(
         "primary_language": primary_lang,
         "language_summary": language_summary,
         "model": correction_model,
+        "source_variant": source_variant,
         "error": error_message,
     }
 
@@ -6751,9 +6896,7 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
         except ValueError as exc:
             self.set_status(400)
             return self.write({"error": str(exc)})
-        row = ldb.get_latest_transcription(video_id_i, publication_session_id=session_id, language_code="polished")
-        if not row and not session_id:
-            row = ldb.get_latest_transcription(video_id_i, language_code="polished")
+        row = _get_latest_global_transcription(video_id_i, "polished")
         if not row:
             self.set_status(404)
             return self.write({"error": "polished subtitles not found"})
@@ -6801,6 +6944,11 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
         if notes_raw is None:
             notes_raw = _load_subtitle_polish_setting().get("notes", "")
         notes = _sanitize_subtitle_polish({"notes": notes_raw}).get("notes", "")
+        source_variant = _normalize_subtitle_source_variant(
+            data.get("sourceVariant")
+            or data.get("source_variant")
+            or data.get("source")
+        )
         session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
         try:
             if session_id:
@@ -6810,7 +6958,7 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": str(exc)})
 
         status, payload = await run_blocking(
-            lambda: _polish_subtitles_for_video(video_id_i, notes, use_cache, session_id)
+            lambda: _polish_subtitles_for_video(video_id_i, notes, use_cache, session_id, source_variant)
         )
         if status >= 400:
             self.set_status(status)
@@ -7287,13 +7435,8 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
 
             transcription_row = None
             if use_polished:
-                transcription_row = ldb.get_latest_transcription(
-                    video_id_i,
-                    publication_session_id=publication_session_id,
-                    language_code="polished",
-                )
-                if not transcription_row and not publication_session_id:
-                    transcription_row = ldb.get_latest_transcription(video_id_i, language_code="polished")
+                _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
+                transcription_row = _get_latest_global_transcription(video_id_i, "polished")
             if not transcription_row:
                 transcription_row = ldb.get_latest_transcription(
                     video_id_i,
@@ -9426,6 +9569,8 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             input_file = preprocess_if_needed(file_path)
             base_name, _ = os.path.splitext(os.path.basename(input_file))
             output_folder = os.path.dirname(input_file)
+            if use_polished:
+                _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
             input_json, input_srt = find_latest_transcription_outputs(
                 output_folder,
                 base_name,
@@ -9870,6 +10015,8 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         base_name = os.path.splitext(os.path.basename(video_path))[0]
         session_output_folder = _publication_session_dir(output_folder, publication_session_id, create=True)
         speaker_output_dir = os.path.join(session_output_folder, "burn")
+        if use_polished:
+            _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
         input_json, _input_srt = find_latest_transcription_outputs(
             output_folder,
             base_name,
@@ -9896,13 +10043,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                 })
         transcription_row = None
         if use_polished:
-            transcription_row = ldb.get_latest_transcription(
-                video_id_i,
-                publication_session_id=publication_session_id,
-                language_code="polished",
-            )
-            if not transcription_row and not publication_session_id:
-                transcription_row = ldb.get_latest_transcription(video_id_i, language_code="polished")
+            transcription_row = _get_latest_global_transcription(video_id_i, "polished")
         if not transcription_row:
             transcription_row = ldb.get_latest_transcription(
                 video_id_i,
@@ -10280,7 +10421,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                     f"/api/videos/{video_id_i}/polish-subtitles",
                     {
                         "notes": polish_notes,
-                        "publicationSessionId": publication_session_id,
+                        "sourceVariant": "polished",
                     },
                 )
                 if code >= 400:
@@ -10454,11 +10595,14 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             return payload
 
         def transcribe_row(language_code: str):
-            row = ldb.get_latest_transcription(
-                video_id_i,
-                publication_session_id=publication_session_id,
-                language_code=language_code,
-            )
+            if language_code == "polished":
+                row = _get_latest_global_transcription(video_id_i, language_code)
+            else:
+                row = ldb.get_latest_transcription(
+                    video_id_i,
+                    publication_session_id=publication_session_id,
+                    language_code=language_code,
+                )
             if not row and publication_session_id and language_code == "mixed":
                 row = ldb.get_latest_transcription(video_id_i, language_code=language_code)
             if not row:

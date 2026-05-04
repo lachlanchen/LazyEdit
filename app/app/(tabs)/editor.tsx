@@ -105,6 +105,8 @@ type SubtitleCorrectionPayload = {
   publication_session_id?: number | null;
 };
 
+type SubtitleSourceVariant = 'polished' | 'original';
+
 const PLATFORMS = [
   { key: 'douyin', label: 'Douyin' },
   { key: 'xiaohongshu', label: 'Xiaohongshu' },
@@ -158,7 +160,8 @@ export default function EditorScreen() {
   const [publishSettingsLoaded, setPublishSettingsLoaded] = useState(false);
   const [publishOptionsLoaded, setPublishOptionsLoaded] = useState(false);
   const [burnSubtitles, setBurnSubtitles] = useState(true);
-  const [usePolishedSubtitles, setUsePolishedSubtitles] = useState(false);
+  const [usePolishedSubtitles, setUsePolishedSubtitles] = useState(true);
+  const [subtitleSourceMenuOpen, setSubtitleSourceMenuOpen] = useState(false);
   const [publishAsNewSession, setPublishAsNewSession] = useState(false);
   const [publicationSessionId, setPublicationSessionId] = useState<number | null>(null);
   const [publicationSessions, setPublicationSessions] = useState<PublicationSession[]>([]);
@@ -175,7 +178,10 @@ export default function EditorScreen() {
   const [correctionLoading, setCorrectionLoading] = useState(false);
   const [correctionSaving, setCorrectionSaving] = useState(false);
   const [correctionStatus, setCorrectionStatus] = useState('');
-  const [correctionPrompt, setCorrectionPrompt] = useState('Fix recognition errors while preserving timing and meaning.');
+  const [correctionPrompt, setCorrectionPrompt] = useState(
+    'Fix recognition errors while preserving every timestamp exactly and keeping the same number of subtitle lines.',
+  );
+  const [correctionSourceVariant, setCorrectionSourceVariant] = useState<SubtitleSourceVariant>('polished');
   const [originalSubtitleText, setOriginalSubtitleText] = useState('');
   const [polishedSubtitleText, setPolishedSubtitleText] = useState('');
   const previewProxyPendingIdsRef = useRef<number[]>([]);
@@ -412,6 +418,27 @@ export default function EditorScreen() {
       publicationRunOptions[0],
     [publicationRunOptions, selectedRunKey],
   );
+  const subtitleSourceOptions = useMemo(
+    () => [
+      {
+        key: 'polished' as SubtitleSourceVariant,
+        label: t('publish_subtitle_source_latest'),
+        hint: t('publish_subtitle_source_latest_hint'),
+      },
+      {
+        key: 'original' as SubtitleSourceVariant,
+        label: t('publish_subtitle_source_original'),
+        hint: t('publish_subtitle_source_original_hint'),
+      },
+    ],
+    [t],
+  );
+  const selectedSubtitleSource = useMemo(
+    () =>
+      subtitleSourceOptions.find((option) => option.key === (usePolishedSubtitles ? 'polished' : 'original')) ||
+      subtitleSourceOptions[0],
+    [subtitleSourceOptions, usePolishedSubtitles],
+  );
 
   const loadMoreVideos = useCallback(() => {
     if (!hasMoreVideos) return;
@@ -579,8 +606,12 @@ export default function EditorScreen() {
         if (typeof value.burnSubtitles === 'boolean') {
           setBurnSubtitles(value.burnSubtitles);
         }
-        if (typeof value.usePolishedSubtitles === 'boolean') {
-          setUsePolishedSubtitles(value.usePolishedSubtitles);
+        if (value.subtitleSourceVersion === 'original') {
+          setUsePolishedSubtitles(false);
+        } else if (value.subtitleSourceVersion === 'polished') {
+          setUsePolishedSubtitles(true);
+        } else {
+          setUsePolishedSubtitles(true);
         }
         if (Array.isArray(value.translationLanguages) && value.translationLanguages.length) {
           const cleaned = value.translationLanguages
@@ -610,6 +641,7 @@ export default function EditorScreen() {
           burnSubtitles: nextBurn,
           translationLanguages: nextLanguages,
           usePolishedSubtitles: nextUsePolished,
+          subtitleSourceVersion: nextUsePolished ? 'polished' : 'original',
           publicationMode: 'override',
         }),
       });
@@ -640,10 +672,12 @@ export default function EditorScreen() {
     [persistPublishOptions, translationLanguages],
   );
 
-  const updateUsePolishedSubtitles = useCallback(
-    (value: boolean) => {
-      setUsePolishedSubtitles(value);
-      void persistPublishOptions(burnSubtitles, translationLanguages, value);
+  const selectSubtitleSource = useCallback(
+    (source: SubtitleSourceVariant) => {
+      const nextUsePolished = source === 'polished';
+      setUsePolishedSubtitles(nextUsePolished);
+      setSubtitleSourceMenuOpen(false);
+      void persistPublishOptions(burnSubtitles, translationLanguages, nextUsePolished);
     },
     [burnSubtitles, persistPublishOptions, translationLanguages],
   );
@@ -847,8 +881,7 @@ export default function EditorScreen() {
     setCorrectionLoading(true);
     setCorrectionStatus('');
     try {
-      const suffix = publicationSessionId ? `?publicationSessionId=${publicationSessionId}` : '';
-      const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/subtitle-correction${suffix}`);
+      const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/subtitle-correction`);
       const json = (await resp.json().catch(() => ({}))) as SubtitleCorrectionPayload & { error?: string };
       if (!resp.ok) {
         setCorrectionStatus(json?.error || resp.statusText);
@@ -861,7 +894,7 @@ export default function EditorScreen() {
     } finally {
       setCorrectionLoading(false);
     }
-  }, [publicationSessionId, selectedVideoId]);
+  }, [selectedVideoId]);
 
   const openSubtitleCorrection = useCallback(() => {
     setCorrectionOpen(true);
@@ -873,10 +906,6 @@ export default function EditorScreen() {
     setCorrectionSaving(true);
     setCorrectionStatus('');
     try {
-      let sessionId = publicationSessionId;
-      if (publishAsNewSession && !sessionId) {
-        sessionId = await createPublicationSession();
-      }
       const text = action === 'save_original' ? originalSubtitleText : polishedSubtitleText;
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/subtitle-correction`, {
         method: 'POST',
@@ -885,7 +914,7 @@ export default function EditorScreen() {
           action,
           prompt: correctionPrompt,
           text,
-          publicationSessionId: sessionId,
+          sourceVariant: correctionSourceVariant,
         }),
       });
       const json = (await resp.json().catch(() => ({}))) as SubtitleCorrectionPayload & { error?: string };
@@ -905,12 +934,10 @@ export default function EditorScreen() {
   }, [
     correctionPrompt,
     correctionSaving,
-    createPublicationSession,
+    correctionSourceVariant,
     loadProcessStatus,
     originalSubtitleText,
     polishedSubtitleText,
-    publicationSessionId,
-    publishAsNewSession,
     selectedVideoId,
     t,
   ]);
@@ -1308,6 +1335,51 @@ export default function EditorScreen() {
     </View>
   );
 
+  const renderSubtitleSourceSelector = () => (
+    <View style={styles.runSelectorBlock}>
+      <Text style={styles.optionLabel}>{t('publish_option_subtitle_source_title')}</Text>
+      <Text style={styles.optionHint}>{t('publish_option_subtitle_source_hint')}</Text>
+      <Pressable
+        style={[styles.runSelectorButton, !publishOptionsLoaded && styles.btnDisabled]}
+        onPress={() => setSubtitleSourceMenuOpen((prev) => !prev)}
+        disabled={!publishOptionsLoaded}
+      >
+        <View style={styles.runSelectorText}>
+          <Text style={styles.runSelectorLabel} numberOfLines={1}>
+            {selectedSubtitleSource.label}
+          </Text>
+          <Text style={styles.runSelectorHint} numberOfLines={1}>
+            {selectedSubtitleSource.hint}
+          </Text>
+        </View>
+        <FontAwesome name={subtitleSourceMenuOpen ? 'chevron-up' : 'chevron-down'} size={13} color="#334155" />
+      </Pressable>
+      {subtitleSourceMenuOpen ? (
+        <View style={styles.runDropdown}>
+          {subtitleSourceOptions.map((option) => {
+            const active = option.key === selectedSubtitleSource.key;
+            return (
+              <Pressable
+                key={option.key}
+                style={[styles.runOptionRow, active && styles.runOptionRowActive]}
+                onPress={() => selectSubtitleSource(option.key)}
+              >
+                <View style={styles.runOptionMain}>
+                  <Text style={[styles.runOptionLabel, active && styles.runOptionLabelActive]} numberOfLines={1}>
+                    {option.label}
+                  </Text>
+                  <Text style={styles.runOptionHint} numberOfLines={1}>
+                    {option.hint}
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
+      ) : null}
+    </View>
+  );
+
   const renderPreviewSourceSelector = () => (
     <View style={styles.previewSourceBlock}>
       <Pressable
@@ -1510,19 +1582,7 @@ export default function EditorScreen() {
               })}
             </View>
           </View>
-          <View style={styles.publishOptionRow}>
-            <View style={styles.publishOptionText}>
-              <Text style={styles.optionLabel}>{t('publish_option_polished_title')}</Text>
-              <Text style={styles.optionHint}>{t('publish_option_polished_hint')}</Text>
-            </View>
-            <Switch
-              value={usePolishedSubtitles}
-              onValueChange={updateUsePolishedSubtitles}
-              disabled={!publishOptionsLoaded}
-              trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
-              thumbColor={usePolishedSubtitles ? '#f8fafc' : '#f1f5f9'}
-            />
-          </View>
+          {renderSubtitleSourceSelector()}
           {renderRunSelector(
             processRunMenuOpen,
             setProcessRunMenuOpen,
@@ -1741,6 +1801,31 @@ export default function EditorScreen() {
               </Pressable>
             </View>
             <Text style={styles.sectionHint}>{t('publish_correction_hint')}</Text>
+            <View style={styles.correctionSourceRow}>
+              <Text style={styles.optionLabel}>{t('publish_correction_source_title')}</Text>
+              <View style={styles.languageChipGroup}>
+                {subtitleSourceOptions.map((option) => {
+                  const active = correctionSourceVariant === option.key;
+                  return (
+                    <Pressable
+                      key={option.key}
+                      style={[styles.languageChip, active && styles.languageChipActive]}
+                      onPress={() => setCorrectionSourceVariant(option.key)}
+                      disabled={correctionSaving || correctionLoading}
+                    >
+                      <Text style={[styles.languageChipText, active && styles.languageChipTextActive]}>
+                        {option.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+              <Text style={styles.optionHint}>
+                {correctionSourceVariant === 'polished'
+                  ? t('publish_correction_source_polished_hint')
+                  : t('publish_correction_source_original_hint')}
+              </Text>
+            </View>
             <TextInput
               value={correctionPrompt}
               onChangeText={setCorrectionPrompt}
@@ -2210,6 +2295,10 @@ const styles = StyleSheet.create({
     color: '#0f172a',
     backgroundColor: '#f8fafc',
     textAlignVertical: 'top',
+  },
+  correctionSourceRow: {
+    marginTop: 12,
+    gap: 8,
   },
   correctionButtonRow: {
     marginTop: 10,
