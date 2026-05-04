@@ -36,14 +36,18 @@ class OpenAIRequestJSONBase:
     ):
         self.api_provider = str(api_provider or os.environ.get("LAZYEDIT_AI_PROVIDER", "openai")).strip().lower()
         if self.api_provider == "deepseek":
-            self.model = model or os.environ.get("DEEPSEEK_MODEL", "deepseek-v4-flash")
+            self.model = (
+                model
+                or os.environ.get("LAZYEDIT_AI_MODEL")
+                or os.environ.get("DEEPSEEK_MODEL", "deepseek-v4-flash")
+            )
             self.client = OpenAI(
                 api_key=api_key or os.environ.get("DEEPSEEK_API_KEY"),
                 base_url=base_url or os.environ.get("DEEPSEEK_API_BASE", "https://api.deepseek.com"),
             )
         else:
             self.api_provider = "openai"
-            self.model = model or os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
+            self.model = model or os.environ.get("LAZYEDIT_AI_MODEL") or os.environ.get("OPENAI_MODEL", "gpt-4o-mini")
             self.client = OpenAI(api_key=api_key, base_url=base_url) if api_key or base_url else OpenAI()
         self.max_retries = max_retries
         self.use_cache = use_cache

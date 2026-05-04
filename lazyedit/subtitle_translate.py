@@ -51,7 +51,10 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             print("DEEPSEEK_API_KEY is not set; falling back to OpenAI for translation.")
             provider = "openai"
         kwargs.setdefault("api_provider", provider)
-        if provider == "deepseek":
+        translation_model = os.getenv("LAZYEDIT_TRANSLATION_MODEL")
+        if translation_model:
+            kwargs.setdefault("model", translation_model)
+        elif provider == "deepseek":
             kwargs.setdefault("model", os.getenv("DEEPSEEK_MODEL", "deepseek-v4-flash"))
 
         super().__init__(*args, **kwargs)

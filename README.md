@@ -415,11 +415,21 @@ Configuration precedence note:
 | `GRSAI_API_*` | Veo/GRSAI integration settings | Environment-dependent |
 | `VENICE_*`, `A2E_*` | Venice/A2E integration settings | Environment-dependent |
 | `OPENAI_API_KEY` | Required for OpenAI-backed features | None |
+| `LAZYEDIT_AI_PROVIDER`, `LAZYEDIT_AI_MODEL` | Default structured AI provider/model | `deepseek` / `deepseek-v4-flash` |
+| `LAZYEDIT_TRANSLATION_PROVIDER`, `LAZYEDIT_TRANSLATION_MODEL` | Subtitle translation provider/model | `deepseek` / `deepseek-v4-flash` |
+| `DEEPSEEK_API_BASE`, `DEEPSEEK_API_KEY` | DeepSeek-compatible API endpoint and key | `https://api.deepseek.com` / None |
+| `OPENAI_MODEL` | OpenAI fallback model when OpenAI provider is selected | `gpt-4o-mini` |
+| `LAZYEDIT_SUBTITLE_CORRECTION_PROVIDER` | Provider for AI subtitle correction | `deepseek` |
+| `LAZYEDIT_SUBTITLE_CORRECTION_MODEL` | Primary subtitle correction model | `deepseek-v4-pro` |
+| `LAZYEDIT_SUBTITLE_CORRECTION_MODELS` | Comma-separated subtitle correction model preference list | `deepseek-v4-pro,deepseek-v4-flash` |
+| `LAZYEDIT_SUBTITLE_CORRECTION_FALLBACK_MODEL` | Final subtitle correction fallback model | `deepseek-v4-flash` |
+| `LAZYEDIT_SUBTITLE_CORRECTION_MAX_RETRIES` | Retries per correction model before trying the next model | `1` |
 
 Machine-specific notes:
 - `app.py` may set CUDA behavior (`CUDA_VISIBLE_DEVICES` usage in codebase context).
 - Some paths in defaults are workstation-specific; use `.env` overrides for portable setups.
 - `lazyedit_config.sh` controls tmux/session startup variables for deployment scripts.
+- Studio Settings can override AI provider/model choices at runtime and stores them in the UI preferences table.
 
 ## 🧾 Configuration Files
 

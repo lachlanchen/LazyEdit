@@ -198,6 +198,18 @@ DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
 DEFAULT_SUBTITLE_POLISH = {
     "notes": "",
 }
+DEEPSEEK_FLASH_MODEL = "deepseek-v4-flash"
+DEEPSEEK_PRO_MODEL = "deepseek-v4-pro"
+DEFAULT_AI_MODEL_SETTINGS = {
+    "defaultProvider": "deepseek",
+    "defaultModel": DEEPSEEK_FLASH_MODEL,
+    "translationProvider": "deepseek",
+    "translationModel": DEEPSEEK_FLASH_MODEL,
+    "correctionProvider": "deepseek",
+    "correctionModel": DEEPSEEK_PRO_MODEL,
+    "correctionFallbackModel": DEEPSEEK_FLASH_MODEL,
+    "correctionMaxRetries": 1,
+}
 PUBLISH_PLATFORM_KEYS = [
     "douyin",
     "xiaohongshu",
@@ -906,6 +918,60 @@ def _sanitize_subtitle_polish(payload: dict | None) -> dict:
     return {"notes": notes}
 
 
+def _sanitize_ai_provider(value: str | None, default: str = "deepseek") -> str:
+    provider = str(value or default).strip().lower()
+    return provider if provider in {"deepseek", "openai"} else default
+
+
+def _sanitize_model_name(value: str | None, default: str) -> str:
+    cleaned = str(value or default).strip()
+    cleaned = re.sub(r"[^A-Za-z0-9_.:-]", "", cleaned)
+    return cleaned[:120] or default
+
+
+def _sanitize_ai_model_settings(payload: dict | None) -> dict:
+    if not isinstance(payload, dict):
+        payload = {}
+    try:
+        correction_max_retries = max(
+            1,
+            min(5, int(payload.get("correctionMaxRetries", DEFAULT_AI_MODEL_SETTINGS["correctionMaxRetries"]))),
+        )
+    except (TypeError, ValueError):
+        correction_max_retries = DEFAULT_AI_MODEL_SETTINGS["correctionMaxRetries"]
+    return {
+        "defaultProvider": _sanitize_ai_provider(
+            payload.get("defaultProvider") or payload.get("default_provider"),
+            DEFAULT_AI_MODEL_SETTINGS["defaultProvider"],
+        ),
+        "defaultModel": _sanitize_model_name(
+            payload.get("defaultModel") or payload.get("default_model"),
+            DEFAULT_AI_MODEL_SETTINGS["defaultModel"],
+        ),
+        "translationProvider": _sanitize_ai_provider(
+            payload.get("translationProvider") or payload.get("translation_provider"),
+            DEFAULT_AI_MODEL_SETTINGS["translationProvider"],
+        ),
+        "translationModel": _sanitize_model_name(
+            payload.get("translationModel") or payload.get("translation_model"),
+            DEFAULT_AI_MODEL_SETTINGS["translationModel"],
+        ),
+        "correctionProvider": _sanitize_ai_provider(
+            payload.get("correctionProvider") or payload.get("correction_provider"),
+            DEFAULT_AI_MODEL_SETTINGS["correctionProvider"],
+        ),
+        "correctionModel": _sanitize_model_name(
+            payload.get("correctionModel") or payload.get("correction_model"),
+            DEFAULT_AI_MODEL_SETTINGS["correctionModel"],
+        ),
+        "correctionFallbackModel": _sanitize_model_name(
+            payload.get("correctionFallbackModel") or payload.get("correction_fallback_model"),
+            DEFAULT_AI_MODEL_SETTINGS["correctionFallbackModel"],
+        ),
+        "correctionMaxRetries": correction_max_retries,
+    }
+
+
 def _sanitize_publish_platforms(payload) -> dict:
     if isinstance(payload, list):
         payload = {str(item): True for item in payload}
@@ -976,6 +1042,122 @@ def _load_subtitle_polish_setting() -> dict:
     if saved is None:
         return DEFAULT_SUBTITLE_POLISH.copy()
     return _sanitize_subtitle_polish(saved)
+
+
+def _load_ai_model_settings() -> dict:
+    saved = ldb.get_ui_preference("ai_model_settings")
+    if saved is None:
+        return _sanitize_ai_model_settings({
+            "defaultProvider": os.getenv("LAZYEDIT_AI_PROVIDER", DEFAULT_AI_MODEL_SETTINGS["defaultProvider"]),
+            "defaultModel": os.getenv("LAZYEDIT_AI_MODEL", DEFAULT_AI_MODEL_SETTINGS["defaultModel"]),
+            "translationProvider": os.getenv(
+                "LAZYEDIT_TRANSLATION_PROVIDER",
+                DEFAULT_AI_MODEL_SETTINGS["translationProvider"],
+            ),
+            "translationModel": os.getenv(
+                "LAZYEDIT_TRANSLATION_MODEL",
+                os.getenv("DEEPSEEK_MODEL", DEFAULT_AI_MODEL_SETTINGS["translationModel"]),
+            ),
+            "correctionProvider": os.getenv(
+                "LAZYEDIT_SUBTITLE_CORRECTION_PROVIDER",
+                DEFAULT_AI_MODEL_SETTINGS["correctionProvider"],
+            ),
+            "correctionModel": (
+                os.getenv("LAZYEDIT_SUBTITLE_CORRECTION_MODEL")
+                or (os.getenv("LAZYEDIT_SUBTITLE_CORRECTION_MODELS", "").split(",")[0].strip() if os.getenv("LAZYEDIT_SUBTITLE_CORRECTION_MODELS") else "")
+                or DEFAULT_AI_MODEL_SETTINGS["correctionModel"]
+            ),
+            "correctionFallbackModel": os.getenv(
+                "LAZYEDIT_SUBTITLE_CORRECTION_FALLBACK_MODEL",
+                DEFAULT_AI_MODEL_SETTINGS["correctionFallbackModel"],
+            ),
+            "correctionMaxRetries": os.getenv(
+                "LAZYEDIT_SUBTITLE_CORRECTION_MAX_RETRIES",
+                str(DEFAULT_AI_MODEL_SETTINGS["correctionMaxRetries"]),
+            ),
+        })
+    return _sanitize_ai_model_settings(saved)
+
+
+def _apply_ai_model_settings_to_env(settings: dict | None = None) -> dict:
+    cleaned = _sanitize_ai_model_settings(settings or _load_ai_model_settings())
+    os.environ["LAZYEDIT_AI_PROVIDER"] = cleaned["defaultProvider"]
+    os.environ["LAZYEDIT_AI_MODEL"] = cleaned["defaultModel"]
+    os.environ["LAZYEDIT_TRANSLATION_PROVIDER"] = cleaned["translationProvider"]
+    os.environ["LAZYEDIT_TRANSLATION_MODEL"] = cleaned["translationModel"]
+    os.environ["LAZYEDIT_SUBTITLE_CORRECTION_PROVIDER"] = cleaned["correctionProvider"]
+    os.environ["LAZYEDIT_SUBTITLE_CORRECTION_MODEL"] = cleaned["correctionModel"]
+    os.environ["LAZYEDIT_SUBTITLE_CORRECTION_MODELS"] = ",".join(
+        model
+        for model in [cleaned["correctionModel"], cleaned["correctionFallbackModel"]]
+        if model
+    )
+    os.environ["LAZYEDIT_SUBTITLE_CORRECTION_FALLBACK_MODEL"] = cleaned["correctionFallbackModel"]
+    os.environ["LAZYEDIT_SUBTITLE_CORRECTION_MAX_RETRIES"] = str(cleaned["correctionMaxRetries"])
+    return cleaned
+
+
+def _configured_subtitle_correction_models() -> list[str]:
+    configured = (
+        os.getenv("LAZYEDIT_SUBTITLE_CORRECTION_MODELS")
+        or os.getenv("LAZYEDIT_SUBTITLE_CORRECTION_MODEL")
+        or ""
+    )
+    fallback = (
+        os.getenv("LAZYEDIT_SUBTITLE_CORRECTION_FALLBACK_MODEL")
+        or os.getenv("OPENAI_MODEL")
+        or "gpt-4o-mini"
+    )
+    raw_models = [part.strip() for part in configured.split(",") if part.strip()] if configured else []
+    if fallback:
+        raw_models.append(str(fallback).strip())
+    models: list[str] = []
+    for model in raw_models:
+        if model and model not in models:
+            models.append(model)
+    return models or ["gpt-4o-mini"]
+
+
+def _subtitle_correction_max_retries() -> int:
+    raw = os.getenv("LAZYEDIT_SUBTITLE_CORRECTION_MAX_RETRIES", "1")
+    try:
+        return max(1, int(raw))
+    except ValueError:
+        return 1
+
+
+def _request_subtitle_correction(
+    prompt_text: str,
+    schema_payload: dict,
+    system_text: str,
+    use_cache: bool,
+) -> tuple[dict, str]:
+    provider = os.getenv("LAZYEDIT_SUBTITLE_CORRECTION_PROVIDER", "openai").strip().lower() or "openai"
+    errors = []
+    for model_name in _configured_subtitle_correction_models():
+        try:
+            print(f"Subtitle correction model: provider={provider}, model={model_name}")
+            client = OpenAIRequestJSONBase(
+                use_cache=use_cache,
+                cache_dir="cache/subtitle_polish",
+                api_provider=provider,
+                model=model_name,
+                max_retries=_subtitle_correction_max_retries(),
+            )
+            response = client.send_request_with_json_schema(
+                prompt_text,
+                schema_payload,
+                system_content=system_text,
+                schema_name="subtitle_polish",
+            )
+            if not isinstance(response, dict):
+                raise RuntimeError("subtitle polish response is not an object")
+            return response, model_name
+        except Exception as exc:
+            message = f"{model_name}: {exc}"
+            errors.append(message)
+            print(f"Subtitle correction model failed: {message}")
+    raise RuntimeError("All subtitle correction models failed: " + "; ".join(errors))
 
 
 def _load_burn_layout_setting() -> dict:
@@ -5571,6 +5753,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "publish_platforms",
             "publish_options",
             "logo_settings",
+            "ai_model_settings",
         }:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
@@ -5587,6 +5770,10 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_SUBTITLE_POLISH})
             return self.write({"key": key, "value": _sanitize_subtitle_polish(saved)})
+        if key == "ai_model_settings":
+            if not saved:
+                return self.write({"key": key, "value": _load_ai_model_settings()})
+            return self.write({"key": key, "value": _sanitize_ai_model_settings(saved)})
         if key == "logo_settings":
             if not saved:
                 return self.write({"key": key, "value": DEFAULT_LOGO_SETTINGS})
@@ -5646,6 +5833,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "publish_platforms",
             "publish_options",
             "logo_settings",
+            "ai_model_settings",
         }:
             self.set_status(404)
             return self.write({"error": "unknown settings key"})
@@ -5659,6 +5847,9 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             cleaned = _sanitize_burn_layout(data)
         elif key == "subtitle_polish":
             cleaned = _sanitize_subtitle_polish(data)
+        elif key == "ai_model_settings":
+            cleaned = _sanitize_ai_model_settings(data)
+            _apply_ai_model_settings_to_env(cleaned)
         elif key == "logo_settings":
             cleaned = _sanitize_logo_settings(data)
         elif key == "video_prompt":
@@ -6464,13 +6655,13 @@ def _polish_subtitles_for_video(
 
     status = "completed"
     error_message = None
+    correction_model = None
     try:
-        client = OpenAIRequestJSONBase(use_cache=use_cache, cache_dir="cache/subtitle_polish")
-        response = client.send_request_with_json_schema(
+        response, correction_model = _request_subtitle_correction(
             prompt_text,
             schema_payload,
-            system_content=system_text,
-            schema_name="subtitle_polish",
+            system_text,
+            use_cache,
         )
         polished_items = response.get("items") if isinstance(response, dict) else None
         if not isinstance(polished_items, list):
@@ -6537,6 +6728,7 @@ def _polish_subtitles_for_video(
         "preview_text": build_transcription_preview(output_md_path, output_srt_path),
         "primary_language": primary_lang,
         "language_summary": language_summary,
+        "model": correction_model,
         "error": error_message,
     }
 
@@ -6713,13 +6905,13 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
 
             status = "completed"
             error_message = None
+            correction_model = None
             try:
-                client = OpenAIRequestJSONBase(use_cache=use_cache, cache_dir="cache/subtitle_polish")
-                response = client.send_request_with_json_schema(
+                response, correction_model = _request_subtitle_correction(
                     prompt_text,
                     schema_payload,
-                    system_content=system_text,
-                    schema_name="subtitle_polish",
+                    system_text,
+                    use_cache,
                 )
                 polished_items = response.get("items") if isinstance(response, dict) else None
                 if not isinstance(polished_items, list):
@@ -6783,6 +6975,7 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
                 "preview_text": build_transcription_preview(output_md_path, output_srt_path),
                 "primary_language": primary_lang,
                 "language_summary": language_summary,
+                "model": correction_model,
                 "error": error_message,
             }
 
@@ -10957,11 +11150,10 @@ def make_app(upload_folder):
     ])
 
 if __name__ == "__main__":
-    # Set the OPENAI_MODEL environment variable
-    # os.environ["OPENAI_MODEL"] = "gpt-4-0125-preview"
-    os.environ["OPENAI_MODEL"] = "gpt-4o-mini"
-    
+    os.environ.setdefault("OPENAI_MODEL", "gpt-4o-mini")
+
     ldb.ensure_schema()
+    _apply_ai_model_settings_to_env()
     _ensure_publish_worker_started()
     _schedule_preview_backfill()
     upload_folder = UPLOAD_FOLDER

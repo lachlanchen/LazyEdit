@@ -29,7 +29,8 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
         kwargs["max_retries"] = max_retries
         super().__init__(*args, **kwargs)
 
-        self.client = openai_client
+        if self.api_provider == "openai" and openai_client is not None:
+            self.client = openai_client
         self.max_retries = max_retries
         self.subtitles2metadata_folder = 'subtitles2metadata'
         self.datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
