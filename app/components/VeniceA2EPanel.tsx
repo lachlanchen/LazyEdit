@@ -1598,12 +1598,12 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
             />
             <Pressable
               style={[styles.primaryButton, styles.stepButton, (!canGenerateImage || busyImage) && styles.buttonDisabled]}
-              onPress={runImage}
+              onPress={() => runImage()}
               disabled={!canGenerateImage || busyImage}
             >
               <View style={styles.buttonContent}>
                 {busyImage && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                <Text style={styles.primaryButtonText}>Text -> Image</Text>
+                <Text style={styles.primaryButtonText}>{'Text -> Image'}</Text>
               </View>
             </Pressable>
             {imageStatus ? <Text style={[styles.status, toneStyle(imageTone)]}>{imageStatus}</Text> : null}
@@ -1644,7 +1644,11 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
         ) : null}
         <Pressable
           style={[styles.primaryButton, styles.stepButton, (!canGenerateVideo || busyVideo) && styles.buttonDisabled]}
-          onPress={isVeo ? runVeoVideo : isWan ? runWanVideo : runVideo}
+          onPress={() => {
+            if (isVeo) return runVeoVideo();
+            if (isWan) return runWanVideo();
+            return runVideo();
+          }}
           disabled={!canGenerateVideo || busyVideo}
         >
           <View style={styles.buttonContent}>
@@ -1704,12 +1708,12 @@ export default function VeniceA2EPanel({ apiUrl }: VeniceA2EPanelProps) {
           <>
             <Pressable
               style={[styles.primaryButton, styles.stepButton, (!canGenerateAudio || busyAudio) && styles.buttonDisabled]}
-              onPress={runAudio}
+              onPress={() => runAudio()}
               disabled={!canGenerateAudio || busyAudio}
             >
               <View style={styles.buttonContent}>
                 {busyAudio && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
-                <Text style={styles.primaryButtonText}>Text + video -> Audio</Text>
+                <Text style={styles.primaryButtonText}>{'Text + video -> Audio'}</Text>
               </View>
             </Pressable>
             {audioStatus ? <Text style={[styles.status, toneStyle(audioTone)]}>{audioStatus}</Text> : null}

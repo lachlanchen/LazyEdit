@@ -500,7 +500,7 @@ export default function VideoDetailScreen() {
         const resp = await fetch(`${API_URL}/api/ui-settings/translation_languages`);
         const json = await resp.json();
         if (!resp.ok) return;
-        const value = Array.isArray(json.value) ? json.value : [];
+        const value: unknown[] = Array.isArray(json.value) ? json.value : [];
         const cleaned: TranslateLang[] = [];
         value.forEach((item) => {
           const normalized = normalizeTranslateLang(String(item));

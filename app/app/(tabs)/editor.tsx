@@ -341,7 +341,7 @@ export default function EditorScreen() {
       if (value && typeof value === 'object' && !Array.isArray(value)) {
         Object.keys(next).forEach((key) => {
           if (key in (value as Record<string, unknown>)) {
-            next[key] = Boolean((value as Record<string, unknown>)[key]);
+            next[key as keyof typeof next] = Boolean((value as Record<string, unknown>)[key]);
           }
         });
       }

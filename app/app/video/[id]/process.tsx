@@ -11,6 +11,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import type { ViewStyle } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -124,6 +125,11 @@ const defaultStepState = STEP_ORDER.reduce((acc, key) => {
   return acc;
 }, {} as Record<StepKey, StepState>);
 
+const defaultStepDetail = STEP_ORDER.reduce((acc, key) => {
+  acc[key] = '';
+  return acc;
+}, {} as Record<StepKey, string>);
+
 const defaultSelections: Record<StepKey, boolean> = {
   transcribe: true,
   polish: false,
@@ -228,7 +234,7 @@ export default function ProcessVideoScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [selectedSteps, setSelectedSteps] = useState<Record<StepKey, boolean>>(defaultSelections);
   const [stepStatus, setStepStatus] = useState<Record<StepKey, StepState>>(defaultStepState);
-  const [stepDetail, setStepDetail] = useState<Record<StepKey, string>>({});
+  const [stepDetail, setStepDetail] = useState<Record<StepKey, string>>(defaultStepDetail);
   const [running, setRunning] = useState(false);
   const [message, setMessage] = useState('');
   const [proxyStatus, setProxyStatus] = useState('');
@@ -332,14 +338,14 @@ export default function ProcessVideoScreen() {
     return `${API_URL}${path}`;
   }, [video]);
 
-  const logoOverlayStyle = useMemo(() => {
+  const logoOverlayStyle = useMemo<ViewStyle | null>(() => {
     if (!logoSettings?.logoPath) return null;
     const heightRatio = logoSettings.heightRatio ?? 0.1;
     const height = Math.max(16, Math.round(PREVIEW_HEIGHT * heightRatio));
     const width = Math.round(height * (logoAspectRatio || 1));
     const padding = 10;
     const position = logoSettings.position ?? 'top-right';
-    const style: Record<string, any> = {
+    const style: ViewStyle = {
       width,
       height,
     };
@@ -368,7 +374,7 @@ export default function ProcessVideoScreen() {
     logoAspectRatio,
   ]);
 
-  const logoOverlayBgStyle = useMemo(() => {
+  const logoOverlayBgStyle = useMemo<ViewStyle | null>(() => {
     if (!logoOverlayStyle || !logoSettings?.logoPath) return null;
     const bgOpacity = typeof logoSettings.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5;
     if (bgOpacity <= 0) return null;
@@ -1328,7 +1334,7 @@ export default function ProcessVideoScreen() {
     }
 
     const nextStatus = { ...defaultStepState };
-    const nextDetail: Record<StepKey, string> = {};
+    const nextDetail: Record<StepKey, string> = { ...defaultStepDetail };
     const mark = (step: StepKey, status: StepState, detail = '') => {
       nextStatus[step] = status;
       nextDetail[step] = detail;
@@ -1777,6 +1783,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e2e8f0',
     backgroundColor: 'white',
+  },
+  previewEmpty: {
+    marginTop: 8,
+    padding: 14,
+    borderRadius: 12,
+    backgroundColor: '#f8fafc',
+    color: '#64748b',
+    fontSize: 12,
+    textAlign: 'center',
   },
   videoWrap: {
     marginTop: 8,

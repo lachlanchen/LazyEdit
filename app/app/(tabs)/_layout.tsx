@@ -41,7 +41,7 @@ export default function TabLayout() {
       if (pathname !== '/' && pathname !== '') return;
       const saved = localStorage.getItem('lazyedit:lastTab');
       if (saved && saved !== pathname) {
-        router.replace(saved);
+        router.replace(saved as any);
       }
     } catch (_err) {
       // ignore storage errors

@@ -2838,6 +2838,15 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignSelf: 'flex-start',
   },
+  btnGhost: {
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    alignSelf: 'flex-start',
+  },
   btnDanger: {
     backgroundColor: '#ef4444',
     paddingHorizontal: 20,
@@ -2870,6 +2879,10 @@ const styles = StyleSheet.create({
   },
   btnText: {
     color: 'white',
+    fontWeight: '600',
+  },
+  btnGhostText: {
+    color: '#0f172a',
     fontWeight: '600',
   },
   card: {

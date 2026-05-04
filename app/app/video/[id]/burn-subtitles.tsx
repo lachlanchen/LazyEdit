@@ -12,6 +12,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import type { DimensionValue } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
@@ -609,7 +610,7 @@ export default function BurnSubtitlesScreen() {
       } else {
         const resp = await FileSystem.uploadAsync(`${API_URL}/upload-logo`, logoPick.uri, {
           httpMethod: 'POST',
-          uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+          uploadType: 'multipart' as any,
           fieldName: 'image',
           parameters: { filename: logoPick.name || 'logo.png' },
         });
@@ -849,7 +850,7 @@ export default function BurnSubtitlesScreen() {
   const aspectRatio = videoAspect && videoAspect > 0 ? videoAspect : 16 / 9;
   const previewStageHeight = previewWidth > 0 ? Math.round(previewWidth / aspectRatio) : 180;
   const previewBandHeight = Math.max(12, Math.round(previewStageHeight * heightRatio));
-  const previewCellWidth = `${Math.floor(100 / Math.max(cols, 1))}%`;
+  const previewCellWidth: DimensionValue = `${Math.floor(100 / Math.max(cols, 1))}%`;
   const density = Math.min(1, previewBandHeight / Math.max(rows * 26, 1));
   const previewBandPadding = Math.max(2, Math.round(8 * density));
   const previewRowGap = Math.max(1, Math.round(6 * density));
