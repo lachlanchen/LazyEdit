@@ -216,6 +216,9 @@ DEFAULT_PUBLISH_PLATFORMS = {
 }
 DEFAULT_PUBLISH_OPTIONS = {
     "burnSubtitles": True,
+    "usePolishedSubtitles": False,
+    "publicationMode": "override",
+    "publicationSessionId": None,
 }
 DEFAULT_VIDEO_PROMPT_SPEC = {
     "autoTitle": False,
@@ -368,8 +371,8 @@ def _is_burn_future_active(burn_id: int) -> bool:
     return future is not None and not future.done()
 
 
-def _get_latest_subtitle_burn_with_recovery(video_id: int) -> tuple | None:
-    row = ldb.get_latest_subtitle_burn(video_id)
+def _get_latest_subtitle_burn_with_recovery(video_id: int, publication_session_id: int | None = None) -> tuple | None:
+    row = ldb.get_latest_subtitle_burn(video_id, publication_session_id=publication_session_id)
     if not row:
         return None
     burn_id, status, _output_path, _progress, _config, error, _created_at = row
@@ -381,7 +384,7 @@ def _get_latest_subtitle_burn_with_recovery(video_id: int) -> tuple | None:
         ldb.finalize_subtitle_burn(burn_id, "failed", None, stale_error, progress=0)
     except Exception:
         return row
-    return ldb.get_latest_subtitle_burn(video_id)
+    return ldb.get_latest_subtitle_burn(video_id, publication_session_id=publication_session_id)
 
 
 def _forget_active_burn_future(burn_id: int) -> None:
@@ -730,6 +733,16 @@ def _parse_bool(value, default=True):
     return default
 
 
+def _parse_int_value(value) -> int | None:
+    if value is None or value == "":
+        return None
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return None
+    return parsed if parsed > 0 else None
+
+
 def _slugify(value: str) -> str:
     raw = str(value or "").strip()
     if not raw:
@@ -918,9 +931,36 @@ def _sanitize_publish_options(payload) -> dict:
         languages_raw = payload.get("translation_languages")
     translation_languages = _sanitize_translation_languages(languages_raw)
 
+    use_polished = payload.get("usePolishedSubtitles")
+    if use_polished is None:
+        use_polished = payload.get("use_polished_subtitles")
+    if use_polished is None:
+        use_polished = DEFAULT_PUBLISH_OPTIONS["usePolishedSubtitles"]
+
+    publication_mode = str(
+        payload.get("publicationMode")
+        or payload.get("publication_mode")
+        or DEFAULT_PUBLISH_OPTIONS["publicationMode"]
+    ).strip().lower()
+    if publication_mode not in {"override", "new"}:
+        publication_mode = DEFAULT_PUBLISH_OPTIONS["publicationMode"]
+
+    session_raw = (
+        payload.get("publicationSessionId")
+        if payload.get("publicationSessionId") is not None
+        else payload.get("publication_session_id")
+    )
+    publication_session_id = _parse_int_value(session_raw)
+
     return {
         "burnSubtitles": _parse_bool(burn_subtitles, default=DEFAULT_PUBLISH_OPTIONS["burnSubtitles"]),
         "translationLanguages": translation_languages,
+        "usePolishedSubtitles": _parse_bool(
+            use_polished,
+            default=DEFAULT_PUBLISH_OPTIONS["usePolishedSubtitles"],
+        ),
+        "publicationMode": publication_mode,
+        "publicationSessionId": publication_session_id,
     }
 
 
@@ -2005,13 +2045,73 @@ def find_latest_caption_outputs(output_folder, base_name):
     return latest_srt, latest_json
 
 
-def find_latest_transcription_outputs(output_folder, base_name):
+def _publication_session_dir(output_folder: str, publication_session_id: int | None, create: bool = False) -> str:
+    if not publication_session_id:
+        return output_folder
+    session_dir = os.path.join(output_folder, "publications", f"session_{int(publication_session_id)}")
+    if create:
+        os.makedirs(session_dir, exist_ok=True)
+    return session_dir
+
+
+def _publication_session_publish_dir(video_path: str, publication_session_id: int | None = None) -> str:
+    if not publication_session_id:
+        return _get_publish_dir(video_path)
+    publish_dir = os.path.join(
+        _publication_session_dir(os.path.dirname(video_path), publication_session_id, create=True),
+        "publish",
+    )
+    os.makedirs(publish_dir, exist_ok=True)
+    return publish_dir
+
+
+def _transcription_variant_paths(
+    output_folder: str,
+    base_name: str,
+    variant: str,
+    publication_session_id: int | None = None,
+    create: bool = False,
+) -> tuple[str, str, str]:
+    folder = _publication_session_dir(output_folder, publication_session_id, create=create)
+    suffix = "mixed_polished" if variant == "polished" else "mixed"
+    return (
+        os.path.join(folder, f"{base_name}_{suffix}.json"),
+        os.path.join(folder, f"{base_name}_{suffix}.srt"),
+        os.path.join(folder, f"{base_name}_{suffix}.md"),
+    )
+
+
+def find_latest_transcription_outputs(
+    output_folder,
+    base_name,
+    *,
+    use_polished: bool = True,
+    publication_session_id: int | None = None,
+):
     if not output_folder or not base_name:
         return None, None
-    polished_json = os.path.join(output_folder, f"{base_name}_mixed_polished.json")
-    polished_srt = os.path.join(output_folder, f"{base_name}_mixed_polished.srt")
-    if os.path.exists(polished_json) and os.path.exists(polished_srt):
-        return polished_json, polished_srt
+    if use_polished:
+        if publication_session_id:
+            polished_json, polished_srt, _ = _transcription_variant_paths(
+                output_folder,
+                base_name,
+                "polished",
+                publication_session_id,
+            )
+            if os.path.exists(polished_json) and os.path.exists(polished_srt):
+                return polished_json, polished_srt
+        polished_json, polished_srt, _ = _transcription_variant_paths(output_folder, base_name, "polished")
+        if os.path.exists(polished_json) and os.path.exists(polished_srt):
+            return polished_json, polished_srt
+    if publication_session_id:
+        session_json, session_srt, _ = _transcription_variant_paths(
+            output_folder,
+            base_name,
+            "mixed",
+            publication_session_id,
+        )
+        if os.path.exists(session_json) and os.path.exists(session_srt):
+            return session_json, session_srt
     default_json = os.path.join(output_folder, f"{base_name}_mixed.json")
     default_srt = os.path.join(output_folder, f"{base_name}_mixed.srt")
     if os.path.exists(default_json) and os.path.exists(default_srt):
@@ -2020,6 +2120,9 @@ def find_latest_transcription_outputs(output_folder, base_name):
     srt_pattern = os.path.join(output_folder, f"{base_name}_mixed*.srt")
     json_files = glob.glob(json_pattern)
     srt_files = glob.glob(srt_pattern)
+    if not use_polished:
+        json_files = [path for path in json_files if "_mixed_polished" not in os.path.basename(path)]
+        srt_files = [path for path in srt_files if "_mixed_polished" not in os.path.basename(path)]
     latest_json = max(json_files, key=os.path.getmtime) if json_files else None
     latest_srt = max(srt_files, key=os.path.getmtime) if srt_files else None
     return latest_json, latest_srt
@@ -2287,6 +2390,56 @@ def _write_srt_from_items(items: list[dict], output_path: str, text_key: str | N
         blocks.append(f"{index}\n{start} --> {end}\n{text}")
     with open(output_path, "w", encoding="utf-8") as handle:
         handle.write("\n\n".join(blocks).strip() + "\n")
+
+
+def _items_to_srt_text(items: list[dict], text_key: str = "text") -> str:
+    blocks = []
+    for index, item in enumerate(items, start=1):
+        if not isinstance(item, dict):
+            continue
+        start = item.get("start")
+        end = item.get("end")
+        if not start or not end:
+            continue
+        text_value = item.get(text_key)
+        text = "" if text_value is None else str(text_value)
+        blocks.append(f"{index}\n{start} --> {end}\n{text}")
+    return "\n\n".join(blocks).strip() + ("\n" if blocks else "")
+
+
+def _parse_srt_edit_text(text: str) -> list[dict]:
+    blocks = re.split(r"\n\s*\n", str(text or "").replace("\r\n", "\n").replace("\r", "\n").strip())
+    items: list[dict] = []
+    for block in blocks:
+        lines = [line.rstrip() for line in block.split("\n") if line.strip()]
+        if not lines:
+            continue
+        time_index = next((idx for idx, line in enumerate(lines) if "-->" in line), None)
+        if time_index is None:
+            continue
+        parts = [part.strip() for part in lines[time_index].split("-->", 1)]
+        if len(parts) != 2 or not parts[0] or not parts[1]:
+            continue
+        text_lines = [
+            line
+            for idx, line in enumerate(lines)
+            if idx > time_index and not line.strip().isdigit()
+        ]
+        items.append({"start": parts[0], "end": parts[1], "text": "\n".join(text_lines).strip()})
+    return items
+
+
+def _merge_edited_subtitle_items(original_items: list[dict], edited_items: list[dict]) -> list[dict]:
+    if len(original_items) == len(edited_items):
+        merged = []
+        for original, edited in zip(original_items, edited_items):
+            item = dict(original) if isinstance(original, dict) else {}
+            item["start"] = edited.get("start") or item.get("start")
+            item["end"] = edited.get("end") or item.get("end")
+            item["text"] = edited.get("text", "")
+            merged.append(item)
+        return merged
+    return [dict(item) for item in edited_items]
 
 
 def _resolve_translation_text_key(language: str, item: dict) -> str:
@@ -4463,8 +4616,56 @@ def _get_video_row(video_id: int) -> tuple | None:
         return cur.fetchone()
 
 
-def _get_latest_metadata_payload(video_id: int, lang: str) -> tuple[dict | None, str | None]:
-    row = ldb.get_latest_video_metadata(video_id, lang)
+def _serialize_publication_session_row(row: tuple | None) -> dict | None:
+    if not row:
+        return None
+    config = row[5]
+    if not isinstance(config, dict):
+        try:
+            config = json.loads(config or "{}")
+        except Exception:
+            config = {}
+    return {
+        "id": row[0],
+        "video_id": row[1],
+        "title": row[2],
+        "mode": row[3],
+        "status": row[4],
+        "config": config,
+        "created_at": row[6].isoformat() if row[6] else None,
+        "updated_at": row[7].isoformat() if row[7] else None,
+        "deleted_at": row[8].isoformat() if row[8] else None,
+    }
+
+
+def _validate_publication_session(video_id: int, publication_session_id: int | None) -> int | None:
+    if not publication_session_id:
+        return None
+    row = ldb.get_publication_session(publication_session_id)
+    if not row or int(row[1]) != int(video_id) or row[8] is not None:
+        raise ValueError("publication session not found")
+    return publication_session_id
+
+
+def _ensure_publication_session_for_options(video_id: int, options: dict, *, title: str | None = None) -> int | None:
+    session_id = _parse_int_value(options.get("publicationSessionId"))
+    if session_id:
+        return _validate_publication_session(video_id, session_id)
+    mode = str(options.get("publicationMode") or "override").strip().lower()
+    if mode != "new":
+        return None
+    session_title = title or f"Publication {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    session_id = ldb.add_publication_session(video_id, session_title, mode="new", config=options)
+    options["publicationSessionId"] = session_id
+    return session_id
+
+
+def _get_latest_metadata_payload(
+    video_id: int,
+    lang: str,
+    publication_session_id: int | None = None,
+) -> tuple[dict | None, str | None]:
+    row = ldb.get_latest_video_metadata(video_id, lang, publication_session_id=publication_session_id)
     if not row:
         return None, None
     _, _, status, output_json_path, _, _ = row
@@ -4481,8 +4682,8 @@ def _get_publish_dir(video_path: str) -> str:
     return publish_dir
 
 
-def _pick_publish_video_path(video_id: int, fallback_path: str) -> str:
-    latest_burn = ldb.get_latest_subtitle_burn(video_id)
+def _pick_publish_video_path(video_id: int, fallback_path: str, publication_session_id: int | None = None) -> str:
+    latest_burn = ldb.get_latest_subtitle_burn(video_id, publication_session_id=publication_session_id)
     if latest_burn:
         _, status, output_path, _, _, _, _ = latest_burn
         if status == "completed" and output_path and os.path.exists(output_path):
@@ -4636,6 +4837,7 @@ def _prepare_publish_bundle(
     platform_flags: dict[str, bool],
     *,
     burn_subtitles: bool = True,
+    publication_session_id: int | None = None,
 ) -> tuple[int, dict]:
     row = _get_video_row(video_id_i)
     if not row:
@@ -4645,11 +4847,11 @@ def _prepare_publish_bundle(
     if not file_path:
         return 404, {"error": error or "video file missing"}
 
-    metadata_zh, _ = _get_latest_metadata_payload(video_id_i, "zh")
+    metadata_zh, _ = _get_latest_metadata_payload(video_id_i, "zh", publication_session_id=publication_session_id)
     if not metadata_zh:
         return 400, {"error": "Chinese metadata missing; generate metadata first"}
 
-    metadata_en, _ = _get_latest_metadata_payload(video_id_i, "en")
+    metadata_en, _ = _get_latest_metadata_payload(video_id_i, "en", publication_session_id=publication_session_id)
     if not metadata_en:
         metadata_en = metadata_zh
 
@@ -4657,15 +4859,20 @@ def _prepare_publish_bundle(
     metadata_payload["english_version"] = metadata_en
 
     base_name = os.path.splitext(os.path.basename(file_path))[0]
-    publish_dir = _get_publish_dir(file_path)
-    video_filename = f"{base_name}_highlighted.mp4"
+    publish_dir = _publication_session_publish_dir(file_path, publication_session_id)
+    session_suffix = f"_session_{publication_session_id}" if publication_session_id else ""
+    video_filename = f"{base_name}{session_suffix}_highlighted.mp4"
     cover_filename = f"{base_name}_cover.jpg"
     metadata_filename = f"{base_name}_metadata.json"
 
     metadata_payload["video_filename"] = video_filename
     metadata_payload["cover_filename"] = cover_filename
 
-    video_to_publish = _pick_publish_video_path(video_id_i, file_path) if burn_subtitles else preprocess_if_needed(file_path)
+    video_to_publish = (
+        _pick_publish_video_path(video_id_i, file_path, publication_session_id=publication_session_id)
+        if burn_subtitles
+        else preprocess_if_needed(file_path)
+    )
     cover_path = os.path.join(publish_dir, cover_filename)
     if not os.path.exists(cover_path):
         cover_timestamp_raw = metadata_payload.get("cover") or "00:00:01,000"
@@ -4679,11 +4886,14 @@ def _prepare_publish_bundle(
     with open(metadata_path, "w", encoding="utf-8") as handle:
         json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
 
-    zip_path = os.path.join(publish_dir, f"{base_name}.zip")
-    extra_files = [
-        os.path.join(os.path.dirname(file_path), f"{base_name}_mixed.json"),
-        os.path.join(os.path.dirname(file_path), f"{base_name}_mixed.srt"),
-    ]
+    zip_path = os.path.join(publish_dir, f"{base_name}{session_suffix}.zip")
+    input_json, input_srt = find_latest_transcription_outputs(
+        os.path.dirname(file_path),
+        base_name,
+        use_polished=True,
+        publication_session_id=publication_session_id,
+    )
+    extra_files = [path for path in (input_json, input_srt) if path]
     with zipfile.ZipFile(zip_path, "w") as zipf:
         zipf.write(video_to_publish, arcname=video_filename)
         if os.path.exists(cover_path):
@@ -4703,6 +4913,7 @@ def _prepare_publish_bundle(
         "video_path": video_to_publish,
         "platforms": platform_flags,
         "burn_subtitles": burn_subtitles,
+        "publication_session_id": publication_session_id,
     }
 
 
@@ -4811,6 +5022,7 @@ def _serialize_publish_job_row(row: tuple) -> dict:
     filename = row[11] or (os.path.basename(zip_path) if zip_path else None)
     title = row[18] or (filename.replace(".zip", "") if filename else None)
     config = row[20] if len(row) > 20 and isinstance(row[20], dict) else {}
+    publication_session_id = row[21] if len(row) > 21 else None
     return {
         "id": row[0],
         "video_id": row[1],
@@ -4831,6 +5043,7 @@ def _serialize_publish_job_row(row: tuple) -> dict:
         "title": title,
         "file_path": row[19],
         "config": _sanitize_publish_options(config),
+        "publication_session_id": publication_session_id,
         "source": "local",
     }
 
@@ -4986,13 +5199,18 @@ def _process_publish_job(job_row: tuple) -> None:
             platform_flags = {}
     test_mode = bool(job_row[4])
     job_config = _sanitize_publish_options(job_row[18] if len(job_row) > 18 else {})
+    publication_session_id = _parse_int_value(job_row[19] if len(job_row) > 19 else None)
+    if not publication_session_id:
+        publication_session_id = _parse_int_value(job_config.get("publicationSessionId"))
     burn_subtitles = bool(job_config.get("burnSubtitles", True))
+    use_polished = bool(job_config.get("usePolishedSubtitles", False))
     translation_languages = job_config.get("translationLanguages") or _load_translation_languages_setting()
 
     ldb.update_publish_job(job_id, detail="Checking publish prerequisites")
     status_code, status_payload, _status_text = _local_api_json_request(
         "GET",
-        f"/api/videos/{video_id}/process-status",
+        f"/api/videos/{video_id}/process-status"
+        + (f"?publicationSessionId={publication_session_id}" if publication_session_id else ""),
         timeout=30,
     )
     if status_code >= 400:
@@ -5015,6 +5233,9 @@ def _process_publish_job(job_row: tuple) -> None:
             "async": False,
             "steps": process_steps,
             "translation_languages": translation_languages,
+            "usePolishedSubtitles": use_polished,
+            "publicationSessionId": publication_session_id,
+            "publicationMode": "override",
         }
         if logo_settings.get("enabled") and logo_settings.get("logoPath"):
             process_payload["logo"] = logo_settings
@@ -5032,6 +5253,7 @@ def _process_publish_job(job_row: tuple) -> None:
         video_id,
         platform_flags,
         burn_subtitles=burn_subtitles,
+        publication_session_id=publication_session_id,
     )
     if bundle_status >= 400:
         raise RuntimeError(bundle_payload.get("error") or bundle_payload.get("details") or "publish bundle failed")
@@ -5857,6 +6079,450 @@ class VideoTranscriptionHandler(CorsMixin, tornado.web.RequestHandler):
         self.write({"status": "ok", "index": index, "text": item.get("text", "")})
 
 
+def _load_correction_sources(video_id: int, publication_session_id: int | None = None) -> tuple[int, str, str, str, str]:
+    row = _get_video_row(video_id)
+    if not row:
+        raise FileNotFoundError("video not found")
+    _, file_path, _, _ = row
+    file_path, error = _ensure_local_video_path(video_id, file_path)
+    if not file_path:
+        raise FileNotFoundError(error or "video file missing")
+    input_file = preprocess_if_needed(file_path)
+    base_name, _ = os.path.splitext(os.path.basename(input_file))
+    output_folder = os.path.dirname(input_file)
+    return video_id, file_path, input_file, base_name, output_folder
+
+
+def _subtitle_variant_payload(
+    video_id: int,
+    variant: str,
+    publication_session_id: int | None = None,
+) -> dict | None:
+    _video_id, _file_path, _input_file, base_name, output_folder = _load_correction_sources(
+        video_id,
+        publication_session_id,
+    )
+    if variant == "polished":
+        json_path, srt_path = find_latest_transcription_outputs(
+            output_folder,
+            base_name,
+            use_polished=True,
+            publication_session_id=publication_session_id,
+        )
+        raw_json, raw_srt = find_latest_transcription_outputs(
+            output_folder,
+            base_name,
+            use_polished=False,
+            publication_session_id=publication_session_id,
+        )
+        if json_path == raw_json and srt_path == raw_srt:
+            return None
+    else:
+        json_path, srt_path = find_latest_transcription_outputs(
+            output_folder,
+            base_name,
+            use_polished=False,
+            publication_session_id=publication_session_id,
+        )
+    if not json_path or not os.path.exists(json_path):
+        return None
+    _payload, items, _container_key = _load_subtitle_payload(json_path)
+    md_path = os.path.splitext(json_path)[0] + ".md"
+    return {
+        "json_path": json_path,
+        "srt_path": srt_path if srt_path and os.path.exists(srt_path) else None,
+        "md_path": md_path if os.path.exists(md_path) else None,
+        "items": items,
+        "text": _items_to_srt_text(items),
+        "preview_text": build_srt_preview_with_timestamps(srt_path),
+    }
+
+
+def _subtitle_correction_payload(video_id: int, publication_session_id: int | None = None) -> dict:
+    original = _subtitle_variant_payload(video_id, "original", publication_session_id)
+    polished = _subtitle_variant_payload(video_id, "polished", publication_session_id)
+    return {
+        "video_id": video_id,
+        "publication_session_id": publication_session_id,
+        "original": original,
+        "polished": polished,
+    }
+
+
+def _save_subtitle_variant_text(
+    video_id: int,
+    variant: str,
+    edit_text: str,
+    publication_session_id: int | None = None,
+) -> dict:
+    _video_id, _file_path, _input_file, base_name, output_folder = _load_correction_sources(
+        video_id,
+        publication_session_id,
+    )
+    source_json, _source_srt = find_latest_transcription_outputs(
+        output_folder,
+        base_name,
+        use_polished=(variant == "polished"),
+        publication_session_id=publication_session_id,
+    )
+    if variant == "polished":
+        raw_json, _raw_srt = find_latest_transcription_outputs(
+            output_folder,
+            base_name,
+            use_polished=False,
+            publication_session_id=publication_session_id,
+        )
+        if not source_json or source_json == raw_json:
+            source_json = raw_json
+    if not source_json or not os.path.exists(source_json):
+        raise FileNotFoundError("transcription missing; run Transcribe first")
+    payload, source_items, container_key = _load_subtitle_payload(source_json)
+    edited_items = _parse_srt_edit_text(edit_text)
+    if not edited_items:
+        raise ValueError("subtitle text did not contain valid SRT blocks")
+    items = _merge_edited_subtitle_items(source_items, edited_items)
+
+    output_json_path, output_srt_path, output_md_path = _transcription_variant_paths(
+        output_folder,
+        base_name,
+        "polished" if variant == "polished" else "mixed",
+        publication_session_id,
+        create=True,
+    )
+    if source_json != output_json_path and payload is None:
+        payload_to_write = None
+    elif source_json != output_json_path and isinstance(payload, dict):
+        payload_to_write = dict(payload)
+    else:
+        payload_to_write = payload
+    _write_subtitle_payload(output_json_path, payload_to_write, items, container_key)
+    _write_srt_from_items(items, output_srt_path, text_key="text")
+    write_markdown_from_srt(output_srt_path, output_md_path)
+    transcription_id = ldb.add_transcription(
+        video_id,
+        "polished" if variant == "polished" else "mixed",
+        "completed",
+        output_json_path,
+        output_srt_path,
+        output_md_path,
+        None,
+        publication_session_id=publication_session_id,
+    )
+    return {
+        "id": transcription_id,
+        "output_json_path": output_json_path,
+        "output_srt_path": output_srt_path,
+        "output_md_path": output_md_path,
+        "json_url": media_url_for_path(output_json_path),
+        "srt_url": media_url_for_path(output_srt_path),
+        "md_url": media_url_for_path(output_md_path),
+    }
+
+
+class VideoSubtitleCorrectionHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+            session_id = _parse_int_value(
+                self.get_argument("publicationSessionId", default=None)
+                or self.get_argument("session_id", default=None)
+            )
+            if session_id:
+                _validate_publication_session(video_id_i, session_id)
+            payload = _subtitle_correction_payload(video_id_i, session_id)
+        except FileNotFoundError as exc:
+            self.set_status(404)
+            return self.write({"error": str(exc)})
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
+        except Exception as exc:
+            self.set_status(500)
+            return self.write({"error": str(exc)})
+        self.write(payload)
+
+    async def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+        session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
+        try:
+            if session_id:
+                _validate_publication_session(video_id_i, session_id)
+            action = str(data.get("action") or "").strip().lower()
+            if action in {"save_original", "save-original", "original"}:
+                _save_subtitle_variant_text(video_id_i, "original", str(data.get("text") or ""), session_id)
+            elif action in {"save_polished", "save-polished", "polished", "save"}:
+                _save_subtitle_variant_text(video_id_i, "polished", str(data.get("text") or ""), session_id)
+            elif action in {"ai", "ai_correct", "ai-correct", "correct"}:
+                notes = data.get("prompt") or data.get("notes") or data.get("message") or ""
+                use_cache = _parse_bool(data.get("use_cache"), default=True)
+                status, payload = await run_blocking(
+                    lambda: _polish_subtitles_for_video(video_id_i, str(notes), use_cache, session_id)
+                )
+                if status >= 400:
+                    self.set_status(status)
+                    return self.write(payload)
+            else:
+                self.set_status(400)
+                return self.write({"error": "unsupported correction action"})
+            self.write(_subtitle_correction_payload(video_id_i, session_id))
+        except FileNotFoundError as exc:
+            self.set_status(404)
+            self.write({"error": str(exc)})
+        except ValueError as exc:
+            self.set_status(400)
+            self.write({"error": str(exc)})
+        except Exception as exc:
+            self.set_status(500)
+            self.write({"error": str(exc)})
+
+
+class VideoPublicationSessionsHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        if not _get_video_row(video_id_i):
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        rows = ldb.list_publication_sessions(video_id_i)
+        self.write({"sessions": [_serialize_publication_session_row(row) for row in rows]})
+
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        if not _get_video_row(video_id_i):
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            data = {}
+        options = _sanitize_publish_options(data.get("config") if isinstance(data.get("config"), dict) else data)
+        title = data.get("title")
+        if title is not None and not isinstance(title, str):
+            title = str(title)
+        session_id = ldb.add_publication_session(
+            video_id_i,
+            title or f"Publication {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            mode=str(data.get("mode") or "new"),
+            config=options,
+        )
+        self.write({"session": _serialize_publication_session_row(ldb.get_publication_session(session_id))})
+
+
+class VideoPublicationSessionHandler(CorsMixin, tornado.web.RequestHandler):
+    def delete(self, video_id, session_id):
+        try:
+            video_id_i = int(video_id)
+            session_id_i = int(session_id)
+            _validate_publication_session(video_id_i, session_id_i)
+        except Exception:
+            self.set_status(404)
+            return self.write({"error": "publication session not found"})
+        row = _get_video_row(video_id_i)
+        if row:
+            _, file_path, _, _ = row
+            session_dir = _publication_session_dir(os.path.dirname(file_path), session_id_i)
+            if os.path.exists(session_dir):
+                shutil.rmtree(session_dir, ignore_errors=True)
+        deleted = ldb.delete_publication_session(session_id_i)
+        self.write({"deleted": deleted, "publication_session_id": session_id_i})
+
+
+def _polish_subtitles_for_video(
+    video_id_i: int,
+    notes: str,
+    use_cache: bool = True,
+    publication_session_id: int | None = None,
+) -> tuple[int, dict]:
+    ldb.ensure_schema()
+    with ldb.get_cursor() as cur:
+        cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+        row = cur.fetchone()
+    if not row:
+        return 404, {"error": "video not found"}
+    file_path = row[0]
+    file_path, error = _ensure_local_video_path(video_id_i, file_path)
+    if not file_path:
+        return 404, {"error": error or "video file missing"}
+
+    input_file = preprocess_if_needed(file_path)
+    base_name, _ = os.path.splitext(os.path.basename(input_file))
+    output_folder = os.path.dirname(input_file)
+    input_json, input_srt = find_latest_transcription_outputs(
+        output_folder,
+        base_name,
+        use_polished=False,
+        publication_session_id=publication_session_id,
+    )
+    if not input_json or not os.path.exists(input_json):
+        return 400, {"error": "transcription missing; run Transcribe first"}
+
+    payload, items, container_key = _load_subtitle_payload(input_json)
+    if not items:
+        input_md = os.path.splitext(input_json)[0] + ".md"
+        transcription_id = ldb.add_transcription(
+            video_id_i,
+            "polished",
+            "empty",
+            input_json,
+            input_srt if input_srt and os.path.exists(input_srt) else None,
+            input_md if os.path.exists(input_md) else None,
+            "No subtitles found to polish.",
+            publication_session_id=publication_session_id,
+        )
+        primary_lang, language_summary = _summarize_transcription_languages(input_json)
+        return 200, {
+            "id": transcription_id,
+            "video_id": video_id_i,
+            "publication_session_id": publication_session_id,
+            "language_code": "polished",
+            "status": "empty",
+            "output_json_path": input_json,
+            "output_srt_path": input_srt,
+            "output_md_path": input_md if os.path.exists(input_md) else None,
+            "json_url": media_url_for_path(input_json),
+            "srt_url": media_url_for_path(input_srt),
+            "md_url": media_url_for_path(input_md if os.path.exists(input_md) else None),
+            "preview_text": build_transcription_preview(input_md, input_srt),
+            "primary_language": primary_lang,
+            "language_summary": language_summary,
+            "error": "No subtitles found to polish.",
+        }
+
+    caption_text = ""
+    caption_row = ldb.get_latest_frame_caption(video_id_i)
+    if caption_row:
+        _, caption_status, _, caption_srt_path, caption_md_path, _, _ = caption_row
+        if caption_status != "failed":
+            caption_text = _read_text_file(caption_md_path) or _read_text_file(caption_srt_path)
+
+    prompt_template, schema_payload = _load_subtitle_polish_templates()
+    prompt_text = prompt_template.get("user", "")
+    system_text = prompt_template.get("system", "You are an expert subtitle editor.")
+    subtitle_items = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        start = item.get("start")
+        end = item.get("end")
+        if not start or not end:
+            continue
+        subtitle_items.append({
+            "start": start,
+            "end": end,
+            "text": "" if item.get("text") is None else str(item.get("text")),
+        })
+    subtitles_json = json.dumps(subtitle_items, ensure_ascii=False, indent=2)
+    prompt_text = (
+        prompt_text.replace("{{CUSTOM_MESSAGE}}", notes or "")
+        .replace("{{CAPTIONS}}", caption_text)
+        .replace("{{SUBTITLES_JSON}}", subtitles_json)
+    )
+
+    output_json_path, output_srt_path, output_md_path = _transcription_variant_paths(
+        output_folder,
+        base_name,
+        "polished",
+        publication_session_id,
+        create=True,
+    )
+    for path in (output_json_path, output_srt_path, output_md_path):
+        if path and os.path.exists(path):
+            os.remove(path)
+
+    status = "completed"
+    error_message = None
+    try:
+        client = OpenAIRequestJSONBase(use_cache=use_cache, cache_dir="cache/subtitle_polish")
+        response = client.send_request_with_json_schema(
+            prompt_text,
+            schema_payload,
+            system_content=system_text,
+            schema_name="subtitle_polish",
+        )
+        polished_items = response.get("items") if isinstance(response, dict) else None
+        if not isinstance(polished_items, list):
+            raise RuntimeError("subtitle polish response missing items")
+
+        if len(polished_items) == len(items):
+            for idx, item in enumerate(items):
+                if not isinstance(item, dict):
+                    continue
+                candidate = polished_items[idx]
+                if isinstance(candidate, dict) and candidate.get("text") is not None:
+                    item["text"] = str(candidate.get("text"))
+        else:
+            mapped = {}
+            for candidate in polished_items:
+                if not isinstance(candidate, dict):
+                    continue
+                key = (candidate.get("start"), candidate.get("end"))
+                if key[0] and key[1]:
+                    mapped[key] = candidate
+            for item in items:
+                if not isinstance(item, dict):
+                    continue
+                key = (item.get("start"), item.get("end"))
+                if key in mapped and mapped[key].get("text") is not None:
+                    item["text"] = str(mapped[key].get("text"))
+
+        payload_to_write = dict(payload) if isinstance(payload, dict) else payload
+        _write_subtitle_payload(output_json_path, payload_to_write, items, container_key)
+        _write_srt_from_items(items, output_srt_path, text_key="text")
+        write_markdown_from_srt(output_srt_path, output_md_path)
+    except Exception as exc:
+        status = "failed"
+        error_message = str(exc)
+        print(f"Subtitle polish failed: {error_message}")
+        traceback.print_exc()
+
+    transcription_id = ldb.add_transcription(
+        video_id_i,
+        "polished",
+        status,
+        output_json_path if status == "completed" else None,
+        output_srt_path if status == "completed" else None,
+        output_md_path if status == "completed" else None,
+        error_message,
+        publication_session_id=publication_session_id,
+    )
+    if status != "completed":
+        return 500, {"error": "subtitle polish failed", "details": error_message, "id": transcription_id}
+
+    primary_lang, language_summary = _summarize_transcription_languages(output_json_path)
+    return 200, {
+        "id": transcription_id,
+        "video_id": video_id_i,
+        "publication_session_id": publication_session_id,
+        "language_code": "polished",
+        "status": status,
+        "output_json_path": output_json_path,
+        "output_srt_path": output_srt_path,
+        "output_md_path": output_md_path,
+        "json_url": media_url_for_path(output_json_path),
+        "srt_url": media_url_for_path(output_srt_path),
+        "md_url": media_url_for_path(output_md_path),
+        "preview_text": build_transcription_preview(output_md_path, output_srt_path),
+        "primary_language": primary_lang,
+        "language_summary": language_summary,
+        "error": error_message,
+    }
+
+
 class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self, video_id):
         try:
@@ -5864,19 +6530,20 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             self.set_status(400)
             return self.write({"error": "invalid id"})
+        session_id = _parse_int_value(
+            self.get_argument("publicationSessionId", default=None)
+            or self.get_argument("session_id", default=None)
+        )
         ldb.ensure_schema()
-        with ldb.get_cursor() as cur:
-            cur.execute(
-                """
-                SELECT id, language_code, status, output_json_path, output_srt_path, output_md_path, error, created_at
-                FROM transcriptions
-                WHERE video_id = %s AND language_code = %s
-                ORDER BY id DESC
-                LIMIT 1
-                """,
-                (video_id_i, "polished"),
-            )
-            row = cur.fetchone()
+        try:
+            if session_id:
+                _validate_publication_session(video_id_i, session_id)
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
+        row = ldb.get_latest_transcription(video_id_i, publication_session_id=session_id, language_code="polished")
+        if not row and not session_id:
+            row = ldb.get_latest_transcription(video_id_i, language_code="polished")
         if not row:
             self.set_status(404)
             return self.write({"error": "polished subtitles not found"})
@@ -5924,6 +6591,20 @@ class VideoSubtitlePolishHandler(CorsMixin, tornado.web.RequestHandler):
         if notes_raw is None:
             notes_raw = _load_subtitle_polish_setting().get("notes", "")
         notes = _sanitize_subtitle_polish({"notes": notes_raw}).get("notes", "")
+        session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
+        try:
+            if session_id:
+                _validate_publication_session(video_id_i, session_id)
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
+
+        status, payload = await run_blocking(
+            lambda: _polish_subtitles_for_video(video_id_i, notes, use_cache, session_id)
+        )
+        if status >= 400:
+            self.set_status(status)
+        return self.write(payload)
 
         def _run():
             ldb.ensure_schema()
@@ -6296,9 +6977,19 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
         if not lang:
             self.set_status(400)
             return self.write({"error": "lang required"})
+        publication_session_id = _parse_int_value(
+            self.get_argument("publicationSessionId", default=None)
+            or self.get_argument("session_id", default=None)
+        )
 
         ldb.ensure_schema()
-        row = ldb.get_latest_video_metadata(video_id_i, lang)
+        try:
+            if publication_session_id:
+                _validate_publication_session(video_id_i, publication_session_id)
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
+        row = ldb.get_latest_video_metadata(video_id_i, lang, publication_session_id=publication_session_id)
         if not row:
             self.set_status(404)
             return self.write({"error": "metadata not found"})
@@ -6355,6 +7046,14 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
             return default
 
         use_cache = parse_bool(data.get("use_cache", self.get_argument("use_cache", default=None)), default=True)
+        use_polished = _parse_bool(data.get("usePolishedSubtitles") or data.get("use_polished_subtitles"), default=False)
+        publication_session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
+        try:
+            if publication_session_id:
+                _validate_publication_session(video_id_i, publication_session_id)
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
         custom_notes = data.get("notes") or data.get("custom_notes") or ""
         if not isinstance(custom_notes, str):
             custom_notes = str(custom_notes)
@@ -6375,7 +7074,23 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
             base_name, _ = os.path.splitext(os.path.basename(input_file))
             output_folder = os.path.dirname(input_file)
 
-            transcription_row = ldb.get_latest_transcription(video_id_i)
+            transcription_row = None
+            if use_polished:
+                transcription_row = ldb.get_latest_transcription(
+                    video_id_i,
+                    publication_session_id=publication_session_id,
+                    language_code="polished",
+                )
+                if not transcription_row and not publication_session_id:
+                    transcription_row = ldb.get_latest_transcription(video_id_i, language_code="polished")
+            if not transcription_row:
+                transcription_row = ldb.get_latest_transcription(
+                    video_id_i,
+                    publication_session_id=publication_session_id,
+                    language_code="mixed",
+                )
+            if not transcription_row and publication_session_id:
+                transcription_row = ldb.get_latest_transcription(video_id_i, language_code="mixed")
             if not transcription_row:
                 return 400, {"error": "transcription missing; run Transcribe first"}
             (
@@ -6401,7 +7116,8 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
             transcription_text = _read_text_file(output_md_path) or _read_text_file(output_srt_path)
             if str(transcription_status or "").lower() in {"no_audio", "empty"}:
                 transcription_text = ""
-            metadata_dir = os.path.join(output_folder, "metadata", lang)
+            metadata_base_dir = _publication_session_dir(output_folder, publication_session_id, create=True)
+            metadata_dir = os.path.join(metadata_base_dir, "metadata", lang)
             os.makedirs(metadata_dir, exist_ok=True)
             output_json_path = os.path.join(metadata_dir, f"{base_name}_metadata_{lang}.json")
             if os.path.exists(output_json_path):
@@ -6423,6 +7139,7 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
                         "completed",
                         output_json_path,
                         None,
+                        publication_session_id=publication_session_id,
                     )
                     return 200, {
                         "id": metadata_id,
@@ -6462,6 +7179,7 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
                 status,
                 output_json_path if status == "completed" else None,
                 error_message,
+                publication_session_id=publication_session_id,
             )
 
             if status != "completed":
@@ -6470,6 +7188,7 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
             return 200, {
                 "id": metadata_id,
                 "video_id": video_id_i,
+                "publication_session_id": publication_session_id,
                 "language_code": lang,
                 "status": status,
                 "output_json_path": output_json_path,
@@ -6599,18 +7318,29 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
         wait_for_result = _parse_bool(data.get("wait"), default=False)
         options_payload = data.get("options") if isinstance(data.get("options"), dict) else data
         publish_config = _sanitize_publish_options(options_payload)
-        ldb.set_ui_preference("publish_options", publish_config)
-        ldb.set_ui_preference("translation_languages", publish_config["translationLanguages"])
 
         row = _get_video_row(video_id_i)
         if not row:
             self.set_status(404)
             return self.write({"error": "video not found"})
+        try:
+            publication_session_id = _ensure_publication_session_for_options(
+                video_id_i,
+                publish_config,
+                title=f"Publish {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            )
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
+        ldb.set_ui_preference("publish_options", publish_config)
+        ldb.set_ui_preference("translation_languages", publish_config["translationLanguages"])
+
         if wait_for_result:
             bundle_status, response_payload = _prepare_publish_bundle(
                 video_id_i,
                 platform_flags,
                 burn_subtitles=bool(publish_config.get("burnSubtitles", True)),
+                publication_session_id=publication_session_id,
             )
             if bundle_status != 200:
                 self.set_status(bundle_status)
@@ -6636,7 +7366,7 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write(response_payload)
 
         _ensure_publish_worker_started()
-        existing_job = ldb.find_active_publish_job(video_id_i)
+        existing_job = None if publish_config.get("publicationMode") == "new" else ldb.find_active_publish_job(video_id_i)
         if existing_job:
             job_payload = _serialize_publish_job_row(existing_job)
             return self.write({
@@ -6655,6 +7385,7 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
             test_mode=test_mode,
             detail="Waiting for local publish worker",
             config=publish_config,
+            publication_session_id=publication_session_id,
         )
         job_payload = _serialize_publish_job_row(ldb.get_publish_job(job_id))
         _wake_publish_worker()
@@ -6666,6 +7397,7 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
             "job": job_payload,
             "zip_url": job_payload.get("zip_url"),
             "platforms": platform_flags,
+            "publication_session_id": publication_session_id,
         })
 
 
@@ -8459,6 +9191,14 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             data.get("use_cache", self.get_argument("use_cache", default=None)),
             default=True,
         )
+        use_polished = _parse_bool(data.get("usePolishedSubtitles") or data.get("use_polished_subtitles"), default=False)
+        publication_session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
+        try:
+            if publication_session_id:
+                _validate_publication_session(video_id_i, publication_session_id)
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
 
         def _run():
             ldb.ensure_schema()
@@ -8475,11 +9215,17 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             input_file = preprocess_if_needed(file_path)
             base_name, _ = os.path.splitext(os.path.basename(input_file))
             output_folder = os.path.dirname(input_file)
-            input_json, input_srt = find_latest_transcription_outputs(output_folder, base_name)
+            input_json, input_srt = find_latest_transcription_outputs(
+                output_folder,
+                base_name,
+                use_polished=use_polished,
+                publication_session_id=publication_session_id,
+            )
             if not input_json or not input_srt or not os.path.exists(input_json) or not os.path.exists(input_srt):
                 return 400, {"error": "transcription missing; run Transcribe first"}
 
-            translations_dir = os.path.join(output_folder, "translations", lang)
+            translations_base_dir = _publication_session_dir(output_folder, publication_session_id, create=True)
+            translations_dir = os.path.join(translations_base_dir, "translations", lang)
             os.makedirs(translations_dir, exist_ok=True)
             traditional_json_path = None
             if lang == "ja":
@@ -8526,7 +9272,7 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                 output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hans.json")
                 output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hans.srt")
                 output_ass_path = None
-                traditional_dir = os.path.join(output_folder, "translations", "zh-Hant")
+                traditional_dir = os.path.join(translations_base_dir, "translations", "zh-Hant")
                 traditional_json_path = os.path.join(traditional_dir, f"{base_name}_zh_hant.json")
 
             for path in (output_json_path, output_srt_path, output_ass_path):
@@ -8627,6 +9373,7 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                 output_srt_path if status != "failed" else None,
                 output_ass_path if status != "failed" else None,
                 error_message,
+                publication_session_id=publication_session_id,
             )
             if status == "failed":
                 return 500, {"error": "translation failed", "details": error_message, "id": translation_id}
@@ -8634,6 +9381,7 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             return 200, {
                 "id": translation_id,
                 "video_id": video_id_i,
+                "publication_session_id": publication_session_id,
                 "language_code": lang,
                 "status": status,
                 "output_json_path": output_json_path,
@@ -8812,9 +9560,19 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             self.set_status(400)
             return self.write({"error": "invalid id"})
+        publication_session_id = _parse_int_value(
+            self.get_argument("publicationSessionId", default=None)
+            or self.get_argument("session_id", default=None)
+        )
 
         ldb.ensure_schema()
-        row = _get_latest_subtitle_burn_with_recovery(video_id_i)
+        try:
+            if publication_session_id:
+                _validate_publication_session(video_id_i, publication_session_id)
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
+        row = _get_latest_subtitle_burn_with_recovery(video_id_i, publication_session_id)
         if not row:
             self.set_status(404)
             return self.write({"error": "burn not found"})
@@ -8842,11 +9600,19 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             data = json.loads(self.request.body or b"{}")
         except Exception:
             data = {}
+        publication_session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
+        use_polished = _parse_bool(data.get("usePolishedSubtitles") or data.get("use_polished_subtitles"), default=False)
+        try:
+            if publication_session_id:
+                _validate_publication_session(video_id_i, publication_session_id)
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
 
         cancel_requested = _parse_bool(data.get("cancel") or data.get("stop") or data.get("abort"), default=False)
         if cancel_requested:
             ldb.ensure_schema()
-            row = _get_latest_subtitle_burn_with_recovery(video_id_i)
+            row = _get_latest_subtitle_burn_with_recovery(video_id_i, publication_session_id)
             if not row:
                 return self.write({"status": "no_active"})
             burn_id, status, _output_path, _progress, _config, error, _created_at = row
@@ -8891,8 +9657,14 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
 
         output_folder = os.path.dirname(video_path)
         base_name = os.path.splitext(os.path.basename(video_path))[0]
-        speaker_output_dir = os.path.join(output_folder, "burn")
-        input_json, _input_srt = find_latest_transcription_outputs(output_folder, base_name)
+        session_output_folder = _publication_session_dir(output_folder, publication_session_id, create=True)
+        speaker_output_dir = os.path.join(session_output_folder, "burn")
+        input_json, _input_srt = find_latest_transcription_outputs(
+            output_folder,
+            base_name,
+            use_polished=use_polished,
+            publication_session_id=publication_session_id,
+        )
         if input_json and os.path.exists(input_json):
             _payload, items, _container_key = _load_subtitle_payload(input_json)
             if not items:
@@ -8903,6 +9675,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     layout_config,
                     "no subtitles to burn",
                     progress=0,
+                    publication_session_id=publication_session_id,
                 )
                 return self.write({
                     "id": burn_id,
@@ -8910,7 +9683,23 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     "status": "skipped",
                     "error": "no subtitles to burn",
                 })
-        transcription_row = ldb.get_latest_transcription(video_id_i)
+        transcription_row = None
+        if use_polished:
+            transcription_row = ldb.get_latest_transcription(
+                video_id_i,
+                publication_session_id=publication_session_id,
+                language_code="polished",
+            )
+            if not transcription_row and not publication_session_id:
+                transcription_row = ldb.get_latest_transcription(video_id_i, language_code="polished")
+        if not transcription_row:
+            transcription_row = ldb.get_latest_transcription(
+                video_id_i,
+                publication_session_id=publication_session_id,
+                language_code="mixed",
+            )
+        if not transcription_row and publication_session_id:
+            transcription_row = ldb.get_latest_transcription(video_id_i, language_code="mixed")
         speaker_map: dict[tuple[str, str], str] = {}
         if transcription_row:
             transcription_json_path = transcription_row[3]
@@ -8940,9 +9729,21 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             if not lang:
                 continue
 
-            translation_row = ldb.get_latest_subtitle_translation(video_id_i, lang)
+            translation_row = ldb.get_latest_subtitle_translation(
+                video_id_i,
+                lang,
+                publication_session_id=publication_session_id,
+            )
+            if not translation_row and not publication_session_id:
+                translation_row = ldb.get_latest_subtitle_translation(video_id_i, lang)
             if not translation_row and lang == "zh-Hant":
-                translation_row = ldb.get_latest_subtitle_translation(video_id_i, "zh")
+                translation_row = ldb.get_latest_subtitle_translation(
+                    video_id_i,
+                    "zh",
+                    publication_session_id=publication_session_id,
+                )
+                if not translation_row and not publication_session_id:
+                    translation_row = ldb.get_latest_subtitle_translation(video_id_i, "zh")
             if not translation_row:
                 self.set_status(400)
                 return self.write({"error": f"translation missing for {lang}"})
@@ -8989,8 +9790,9 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(400)
             return self.write({"error": "no valid subtitle slots configured"})
 
-        temp_output = os.path.join(output_folder, f"{base_name}_subtitles_render.avi")
-        output_path = os.path.join(output_folder, f"{base_name}_subtitles.mp4")
+        session_suffix = f"_session_{publication_session_id}" if publication_session_id else ""
+        temp_output = os.path.join(session_output_folder, f"{base_name}{session_suffix}_subtitles_render.avi")
+        output_path = os.path.join(session_output_folder, f"{base_name}{session_suffix}_subtitles.mp4")
         height_ratio = layout_config.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5))
         rows = layout_config.get("rows", DEFAULT_BURN_LAYOUT.get("rows", 4))
         cols = layout_config.get("cols", DEFAULT_BURN_LAYOUT.get("cols", 1))
@@ -8999,6 +9801,8 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         ruby_spacing = layout_config.get("rubySpacing", DEFAULT_BURN_LAYOUT.get("rubySpacing", 0.1))
 
         burn_config = dict(layout_config)
+        burn_config["usePolishedSubtitles"] = use_polished
+        burn_config["publicationSessionId"] = publication_session_id
         if logo_config:
             burn_config["logo"] = {
                 "logoPath": logo_config.get("logoPath"),
@@ -9009,7 +9813,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                 "enabled": logo_config.get("enabled"),
             }
 
-        existing_burn = _get_latest_subtitle_burn_with_recovery(video_id_i)
+        existing_burn = _get_latest_subtitle_burn_with_recovery(video_id_i, publication_session_id)
         if existing_burn:
             existing_id, existing_status, existing_output_path, existing_progress, existing_config, existing_error, existing_created_at = existing_burn
             if existing_status == "processing" and _is_burn_future_active(existing_id):
@@ -9032,6 +9836,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             burn_config,
             None,
             progress=0,
+            publication_session_id=publication_session_id,
         )
 
         def _update_progress(value: int) -> None:
@@ -9060,7 +9865,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                 final_output = output_path
                 if logo_config and logo_config.get("enabled") and logo_config.get("logoPath"):
                     logo_path = logo_config.get("logoPath")
-                    logo_output = os.path.join(output_folder, f"{base_name}_subtitles_logo.mp4")
+                    logo_output = os.path.join(session_output_folder, f"{base_name}{session_suffix}_subtitles_logo.mp4")
                     try:
                         overlay_logo_on_video(
                             output_path,
@@ -9095,7 +9900,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
 
         created_at = None
         try:
-            latest = ldb.get_latest_subtitle_burn(video_id_i)
+            latest = ldb.get_latest_subtitle_burn(video_id_i, publication_session_id=publication_session_id)
             if latest and latest[0] == burn_id:
                 created_at = latest[-1]
         except Exception:
@@ -9104,6 +9909,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         self.write({
             "id": burn_id,
             "video_id": video_id_i,
+            "publication_session_id": publication_session_id,
             "status": "processing",
             "progress": 0,
             "output_path": None,
@@ -9176,6 +9982,24 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         if polish_notes is None:
             polish_notes = _load_subtitle_polish_setting().get("notes", "")
         polish_notes = _sanitize_subtitle_polish({"notes": polish_notes}).get("notes", "")
+        if not _get_video_row(video_id_i):
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        process_options = _sanitize_publish_options({
+            **data,
+            "translationLanguages": translation_languages,
+        })
+        use_polished_subtitles = bool(process_options.get("usePolishedSubtitles", False))
+        try:
+            publication_session_id = _ensure_publication_session_for_options(
+                video_id_i,
+                process_options,
+                title=f"Pipeline {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+            )
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
+
         async def run_pipeline():
             statuses: dict[str, dict] = {}
 
@@ -9243,7 +10067,10 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                 code, payload = await call_json(
                     "POST",
                     f"/api/videos/{video_id_i}/polish-subtitles",
-                    {"notes": polish_notes},
+                    {
+                        "notes": polish_notes,
+                        "publicationSessionId": publication_session_id,
+                    },
                 )
                 if code >= 400:
                     await mark("polish", "error", payload.get("error") or payload.get("details") or "Failed")
@@ -9261,7 +10088,12 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                         code, payload = await call_json(
                             "POST",
                             f"/api/videos/{video_id_i}/translate",
-                            {"language": lang, "use_cache": True},
+                            {
+                                "language": lang,
+                                "use_cache": True,
+                                "usePolishedSubtitles": use_polished_subtitles,
+                                "publicationSessionId": publication_session_id,
+                            },
                         )
                         if code >= 400:
                             await mark(
@@ -9276,7 +10108,12 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
 
             if wants("burn"):
                 await mark("burn", "working", "Burning subtitles")
-                burn_payload = {"layout": burn_layout, "translationLanguages": translation_languages}
+                burn_payload = {
+                    "layout": burn_layout,
+                    "translationLanguages": translation_languages,
+                    "usePolishedSubtitles": use_polished_subtitles,
+                    "publicationSessionId": publication_session_id,
+                }
                 if logo_config and logo_config.get("enabled") and logo_config.get("logoPath"):
                     burn_payload["logo"] = logo_config
                 code, payload = await call_json(
@@ -9290,7 +10127,10 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
 
                 while True:
                     await gen.sleep(2)
-                    code, status_payload = await call_json("GET", f"/api/videos/{video_id_i}/burn-subtitles")
+                    status_path = f"/api/videos/{video_id_i}/burn-subtitles"
+                    if publication_session_id:
+                        status_path += f"?publicationSessionId={publication_session_id}"
+                    code, status_payload = await call_json("GET", status_path)
                     if code >= 400:
                         await mark("burn", "error", status_payload.get("error") or "Failed")
                         return False, statuses, "burn failed"
@@ -9309,7 +10149,13 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                 code, payload = await call_json(
                     "POST",
                     f"/api/videos/{video_id_i}/metadata",
-                    {"lang": "zh", "use_cache": True, "notes": notes},
+                    {
+                        "lang": "zh",
+                        "use_cache": True,
+                        "notes": notes,
+                        "usePolishedSubtitles": use_polished_subtitles,
+                        "publicationSessionId": publication_session_id,
+                    },
                 )
                 if code >= 400:
                     await mark("metadata_zh", "error", payload.get("error") or payload.get("details") or "Failed")
@@ -9323,7 +10169,13 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                 code, payload = await call_json(
                     "POST",
                     f"/api/videos/{video_id_i}/metadata",
-                    {"lang": "en", "use_cache": True, "notes": notes},
+                    {
+                        "lang": "en",
+                        "use_cache": True,
+                        "notes": notes,
+                        "usePolishedSubtitles": use_polished_subtitles,
+                        "publicationSessionId": publication_session_id,
+                    },
                 )
                 if code >= 400:
                     await mark("metadata_en", "error", payload.get("error") or payload.get("details") or "Failed")
@@ -9341,6 +10193,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             tornado.ioloop.IOLoop.current().spawn_callback(_background_run)
             return self.write({
                 "video_id": video_id_i,
+                "publication_session_id": publication_session_id,
                 "status": "started",
                 "steps": sorted(selected_steps) if selected_steps else None,
             })
@@ -9349,7 +10202,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         if not ok:
             self.set_status(500)
             return self.write({"error": error_message or "pipeline failed", "steps": statuses})
-        self.write({"video_id": video_id_i, "steps": statuses})
+        self.write({"video_id": video_id_i, "publication_session_id": publication_session_id, "steps": statuses})
 
 
 class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
@@ -9365,6 +10218,16 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
         if not row:
             self.set_status(404)
             return self.write({"error": "video not found"})
+        publication_session_id = _parse_int_value(
+            self.get_argument("publicationSessionId", default=None)
+            or self.get_argument("session_id", default=None)
+        )
+        try:
+            if publication_session_id:
+                _validate_publication_session(video_id_i, publication_session_id)
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
 
         def iso(dt_val):
             return dt_val.isoformat() if dt_val else None
@@ -9380,18 +10243,16 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             return payload
 
         def transcribe_row(language_code: str):
-            with ldb.get_cursor() as cur:
-                cur.execute(
-                    """
-                    SELECT id, status, output_json_path, output_srt_path, output_md_path, error, created_at
-                    FROM transcriptions
-                    WHERE video_id = %s AND language_code = %s
-                    ORDER BY id DESC
-                    LIMIT 1
-                    """,
-                    (video_id_i, language_code),
-                )
-                return cur.fetchone()
+            row = ldb.get_latest_transcription(
+                video_id_i,
+                publication_session_id=publication_session_id,
+                language_code=language_code,
+            )
+            if not row and publication_session_id and language_code == "mixed":
+                row = ldb.get_latest_transcription(video_id_i, language_code=language_code)
+            if not row:
+                return None
+            return (row[0], row[2], row[3], row[4], row[5], row[6], row[7])
 
         def normalize_status(raw_status: str | None, done_values: set[str], working_values: set[str] | None = None):
             value = str(raw_status or "").lower()
@@ -9443,9 +10304,21 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             done = []
             newest = None
             for lang in translation_languages:
-                row = ldb.get_latest_subtitle_translation(video_id_i, lang)
+                row = ldb.get_latest_subtitle_translation(
+                    video_id_i,
+                    lang,
+                    publication_session_id=publication_session_id,
+                )
+                if not row and not publication_session_id:
+                    row = ldb.get_latest_subtitle_translation(video_id_i, lang)
                 if not row and lang == "zh-Hant":
-                    row = ldb.get_latest_subtitle_translation(video_id_i, "zh")
+                    row = ldb.get_latest_subtitle_translation(
+                        video_id_i,
+                        "zh",
+                        publication_session_id=publication_session_id,
+                    )
+                    if not row and not publication_session_id:
+                        row = ldb.get_latest_subtitle_translation(video_id_i, "zh")
                 if not row:
                     missing.append(lang)
                     continue
@@ -9481,7 +10354,7 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             else:
                 steps["translate"] = step_payload("done", "Completed", newest)
 
-        burn_row = _get_latest_subtitle_burn_with_recovery(video_id_i)
+        burn_row = _get_latest_subtitle_burn_with_recovery(video_id_i, publication_session_id)
         if not burn_required_for_publish:
             steps["burn"] = step_payload("skipped", "Subtitle burn disabled")
         elif burn_row:
@@ -9524,7 +10397,7 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
         else:
             steps["caption"] = step_payload("idle")
 
-        zh_row = ldb.get_latest_video_metadata(video_id_i, "zh")
+        zh_row = ldb.get_latest_video_metadata(video_id_i, "zh", publication_session_id=publication_session_id)
         if zh_row:
             _metadata_id, _language_code, status, _output_json_path, error, created_at = zh_row
             updated_at_candidates.append(created_at)
@@ -9533,7 +10406,7 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
         else:
             steps["metadata_zh"] = step_payload("idle")
 
-        en_row = ldb.get_latest_video_metadata(video_id_i, "en")
+        en_row = ldb.get_latest_video_metadata(video_id_i, "en", publication_session_id=publication_session_id)
         if en_row:
             _metadata_id, _language_code, status, _output_json_path, error, created_at = en_row
             updated_at_candidates.append(created_at)
@@ -9550,6 +10423,7 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
 
         self.write({
             "video_id": video_id_i,
+            "publication_session_id": publication_session_id,
             "steps": steps,
             "ready_for_cover": ready_for_cover,
             "ready_for_publish": ready_for_publish,
@@ -10045,6 +10919,9 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/transcribe", VideoTranscribeHandler),
         (r"/api/videos/(\d+)/transcription", VideoTranscriptionHandler),
         (r"/api/videos/(\d+)/polish-subtitles", VideoSubtitlePolishHandler),
+        (r"/api/videos/(\d+)/subtitle-correction", VideoSubtitleCorrectionHandler),
+        (r"/api/videos/(\d+)/publication-sessions", VideoPublicationSessionsHandler),
+        (r"/api/videos/(\d+)/publication-sessions/(\d+)", VideoPublicationSessionHandler),
         (r"/api/videos/(\d+)/caption", VideoCaptionHandler),
         (r"/api/videos/(\d+)/metadata", VideoMetadataHandler),
         (r"/api/videos/(\d+)/cover", VideoCoverHandler),

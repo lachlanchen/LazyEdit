@@ -4,12 +4,14 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  Modal,
   Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   Switch,
   Text,
+  TextInput,
   type ViewToken,
   View,
 } from 'react-native';
@@ -79,6 +81,21 @@ type LogoSettings = {
   enabled?: boolean;
 };
 
+type PublicationSession = {
+  id: number;
+  title?: string | null;
+  mode?: string;
+  status?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+type SubtitleCorrectionPayload = {
+  original?: { text?: string; preview_text?: string } | null;
+  polished?: { text?: string; preview_text?: string } | null;
+  publication_session_id?: number | null;
+};
+
 const PLATFORMS = [
   { key: 'douyin', label: 'Douyin' },
   { key: 'xiaohongshu', label: 'Xiaohongshu' },
@@ -132,7 +149,19 @@ export default function EditorScreen() {
   const [publishSettingsLoaded, setPublishSettingsLoaded] = useState(false);
   const [publishOptionsLoaded, setPublishOptionsLoaded] = useState(false);
   const [burnSubtitles, setBurnSubtitles] = useState(true);
+  const [usePolishedSubtitles, setUsePolishedSubtitles] = useState(false);
+  const [publishAsNewSession, setPublishAsNewSession] = useState(false);
+  const [publicationSessionId, setPublicationSessionId] = useState<number | null>(null);
+  const [publicationSessions, setPublicationSessions] = useState<PublicationSession[]>([]);
+  const [sessionLoading, setSessionLoading] = useState(false);
   const [translationLanguages, setTranslationLanguages] = useState<string[]>(DEFAULT_TRANSLATION_LANGUAGES);
+  const [correctionOpen, setCorrectionOpen] = useState(false);
+  const [correctionLoading, setCorrectionLoading] = useState(false);
+  const [correctionSaving, setCorrectionSaving] = useState(false);
+  const [correctionStatus, setCorrectionStatus] = useState('');
+  const [correctionPrompt, setCorrectionPrompt] = useState('Fix recognition errors while preserving timing and meaning.');
+  const [originalSubtitleText, setOriginalSubtitleText] = useState('');
+  const [polishedSubtitleText, setPolishedSubtitleText] = useState('');
   const previewProxyPendingIdsRef = useRef<number[]>([]);
   const previewProxyAttemptedIdsRef = useRef<Set<number>>(new Set());
   const previewProxyRunningRef = useRef(false);
@@ -432,6 +461,12 @@ export default function EditorScreen() {
         if (typeof value.burnSubtitles === 'boolean') {
           setBurnSubtitles(value.burnSubtitles);
         }
+        if (typeof value.usePolishedSubtitles === 'boolean') {
+          setUsePolishedSubtitles(value.usePolishedSubtitles);
+        }
+        if (value.publicationMode === 'new' || value.publication_mode === 'new') {
+          setPublishAsNewSession(true);
+        }
         if (Array.isArray(value.translationLanguages) && value.translationLanguages.length) {
           const cleaned = value.translationLanguages
             .map((lang: unknown) => String(lang))
@@ -447,7 +482,12 @@ export default function EditorScreen() {
     }
   }, []);
 
-  const persistPublishOptions = useCallback(async (nextBurn: boolean, nextLanguages: string[]) => {
+  const persistPublishOptions = useCallback(async (
+    nextBurn: boolean,
+    nextLanguages: string[],
+    nextUsePolished = usePolishedSubtitles,
+    nextAsNew = publishAsNewSession,
+  ) => {
     try {
       await fetch(`${API_URL}/api/ui-settings/publish_options`, {
         method: 'POST',
@@ -455,12 +495,14 @@ export default function EditorScreen() {
         body: JSON.stringify({
           burnSubtitles: nextBurn,
           translationLanguages: nextLanguages,
+          usePolishedSubtitles: nextUsePolished,
+          publicationMode: nextAsNew ? 'new' : 'override',
         }),
       });
     } catch (_err) {
       // ignore
     }
-  }, []);
+  }, [publishAsNewSession, usePolishedSubtitles]);
 
   const toggleTranslationLanguage = useCallback(
     (language: string) => {
@@ -482,6 +524,23 @@ export default function EditorScreen() {
       void persistPublishOptions(value, translationLanguages);
     },
     [persistPublishOptions, translationLanguages],
+  );
+
+  const updateUsePolishedSubtitles = useCallback(
+    (value: boolean) => {
+      setUsePolishedSubtitles(value);
+      void persistPublishOptions(burnSubtitles, translationLanguages, value, publishAsNewSession);
+    },
+    [burnSubtitles, persistPublishOptions, publishAsNewSession, translationLanguages],
+  );
+
+  const updatePublishAsNewSession = useCallback(
+    (value: boolean) => {
+      setPublishAsNewSession(value);
+      if (value) setPublicationSessionId(null);
+      void persistPublishOptions(burnSubtitles, translationLanguages, usePolishedSubtitles, value);
+    },
+    [burnSubtitles, persistPublishOptions, translationLanguages, usePolishedSubtitles],
   );
 
   const fetchLogoSettings = useCallback(async (): Promise<LogoSettings | null> => {
@@ -539,7 +598,8 @@ export default function EditorScreen() {
     async (videoId: number, silent?: boolean) => {
       if (!silent) setProcessStatusLoading(true);
       try {
-        const resp = await fetch(`${API_URL}/api/videos/${videoId}/process-status`);
+        const suffix = publicationSessionId ? `?publicationSessionId=${publicationSessionId}` : '';
+        const resp = await fetch(`${API_URL}/api/videos/${videoId}/process-status${suffix}`);
         const json = await resp.json().catch(() => ({}));
         if (!resp.ok) {
           setProcessStatusError(json?.error || resp.statusText);
@@ -566,8 +626,138 @@ export default function EditorScreen() {
         if (!silent) setProcessStatusLoading(false);
       }
     },
-    [],
+    [publicationSessionId],
   );
+
+  const loadPublicationSessions = useCallback(async (videoId: number) => {
+    setSessionLoading(true);
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${videoId}/publication-sessions`);
+      const json = await resp.json().catch(() => ({}));
+      if (resp.ok && Array.isArray(json?.sessions)) {
+        setPublicationSessions(json.sessions);
+      }
+    } catch (_err) {
+      // ignore
+    } finally {
+      setSessionLoading(false);
+    }
+  }, []);
+
+  const createPublicationSession = useCallback(async (): Promise<number | null> => {
+    if (!selectedVideoId) return null;
+    const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/publication-sessions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: `Publication ${new Date().toLocaleString()}`,
+        mode: 'new',
+        config: {
+          burnSubtitles,
+          translationLanguages,
+          usePolishedSubtitles,
+          publicationMode: 'new',
+        },
+      }),
+    });
+    const json = await resp.json().catch(() => ({}));
+    if (!resp.ok) throw new Error(json?.error || resp.statusText);
+    const id = Number(json?.session?.id || 0);
+    if (id > 0) {
+      setPublicationSessionId(id);
+      await loadPublicationSessions(selectedVideoId);
+      return id;
+    }
+    return null;
+  }, [burnSubtitles, loadPublicationSessions, selectedVideoId, translationLanguages, usePolishedSubtitles]);
+
+  const deletePublicationSession = useCallback(async (sessionId: number) => {
+    if (!selectedVideoId) return;
+    setSessionLoading(true);
+    try {
+      await fetch(`${API_URL}/api/videos/${selectedVideoId}/publication-sessions/${sessionId}`, {
+        method: 'DELETE',
+      });
+      if (publicationSessionId === sessionId) setPublicationSessionId(null);
+      await loadPublicationSessions(selectedVideoId);
+      await loadProcessStatus(selectedVideoId, true);
+    } finally {
+      setSessionLoading(false);
+    }
+  }, [loadProcessStatus, loadPublicationSessions, publicationSessionId, selectedVideoId]);
+
+  const loadSubtitleCorrection = useCallback(async () => {
+    if (!selectedVideoId) return;
+    setCorrectionLoading(true);
+    setCorrectionStatus('');
+    try {
+      const suffix = publicationSessionId ? `?publicationSessionId=${publicationSessionId}` : '';
+      const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/subtitle-correction${suffix}`);
+      const json = (await resp.json().catch(() => ({}))) as SubtitleCorrectionPayload & { error?: string };
+      if (!resp.ok) {
+        setCorrectionStatus(json?.error || resp.statusText);
+        return;
+      }
+      setOriginalSubtitleText(json.original?.text || '');
+      setPolishedSubtitleText(json.polished?.text || json.original?.text || '');
+    } catch (err: any) {
+      setCorrectionStatus(err?.message || String(err));
+    } finally {
+      setCorrectionLoading(false);
+    }
+  }, [publicationSessionId, selectedVideoId]);
+
+  const openSubtitleCorrection = useCallback(() => {
+    setCorrectionOpen(true);
+    void loadSubtitleCorrection();
+  }, [loadSubtitleCorrection]);
+
+  const runCorrectionAction = useCallback(async (action: 'ai' | 'save_original' | 'save_polished') => {
+    if (!selectedVideoId || correctionSaving) return;
+    setCorrectionSaving(true);
+    setCorrectionStatus('');
+    try {
+      let sessionId = publicationSessionId;
+      if (publishAsNewSession && !sessionId) {
+        sessionId = await createPublicationSession();
+      }
+      const text = action === 'save_original' ? originalSubtitleText : polishedSubtitleText;
+      const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/subtitle-correction`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action,
+          prompt: correctionPrompt,
+          text,
+          publicationSessionId: sessionId,
+        }),
+      });
+      const json = (await resp.json().catch(() => ({}))) as SubtitleCorrectionPayload & { error?: string };
+      if (!resp.ok) {
+        setCorrectionStatus(json?.error || resp.statusText);
+        return;
+      }
+      setOriginalSubtitleText(json.original?.text || originalSubtitleText);
+      setPolishedSubtitleText(json.polished?.text || polishedSubtitleText || json.original?.text || '');
+      setCorrectionStatus(t('publish_correction_saved'));
+      await loadProcessStatus(selectedVideoId, true);
+    } catch (err: any) {
+      setCorrectionStatus(err?.message || String(err));
+    } finally {
+      setCorrectionSaving(false);
+    }
+  }, [
+    correctionPrompt,
+    correctionSaving,
+    createPublicationSession,
+    loadProcessStatus,
+    originalSubtitleText,
+    polishedSubtitleText,
+    publicationSessionId,
+    publishAsNewSession,
+    selectedVideoId,
+    t,
+  ]);
 
   useEffect(() => {
     loadVideos();
@@ -651,9 +841,15 @@ export default function EditorScreen() {
     setPublishStatus('');
     setPublishTone('neutral');
     setPublishZipUrl(null);
+    setPublicationSessionId(null);
+    setPublicationSessions([]);
+    setCorrectionOpen(false);
+    setOriginalSubtitleText('');
+    setPolishedSubtitleText('');
     loadCoverPreview(selectedVideoId);
+    loadPublicationSessions(selectedVideoId);
     loadProcessStatus(selectedVideoId, true);
-  }, [selectedVideoId, loadProcessStatus]);
+  }, [selectedVideoId, loadProcessStatus, loadPublicationSessions]);
 
   useEffect(() => {
     if (!selectedVideoId) return;
@@ -721,6 +917,9 @@ export default function EditorScreen() {
           async: true,
           steps,
           translationLanguages,
+          usePolishedSubtitles,
+          publicationMode: publishAsNewSession ? 'new' : 'override',
+          publicationSessionId,
           ...(logoPayload ? { logo: logoPayload } : {}),
         }),
       });
@@ -730,6 +929,10 @@ export default function EditorScreen() {
         setProcessStatus(message);
         setProcessTone('bad');
         return { ok: false, message };
+      }
+      if (json?.publication_session_id) {
+        setPublicationSessionId(Number(json.publication_session_id));
+        loadPublicationSessions(selectedVideoId);
       }
       setProcessStatus(t('publish_process_started'));
       setProcessTone('good');
@@ -824,6 +1027,9 @@ export default function EditorScreen() {
           options: {
             burnSubtitles,
             translationLanguages,
+            usePolishedSubtitles,
+            publicationMode: publishAsNewSession ? 'new' : 'override',
+            publicationSessionId,
           },
         }),
       });
@@ -837,6 +1043,10 @@ export default function EditorScreen() {
       const zipUrl = queuedJob?.zip_url || json?.zip_url;
       if (zipUrl) {
         setPublishZipUrl(resolveMediaSrc(zipUrl));
+      }
+      if (json?.publication_session_id) {
+        setPublicationSessionId(Number(json.publication_session_id));
+        loadPublicationSessions(selectedVideoId);
       }
       setPublishStatus(
         json?.detail
@@ -1007,6 +1217,75 @@ export default function EditorScreen() {
               })}
             </View>
           </View>
+          <View style={styles.publishOptionRow}>
+            <View style={styles.publishOptionText}>
+              <Text style={styles.optionLabel}>{t('publish_option_polished_title')}</Text>
+              <Text style={styles.optionHint}>{t('publish_option_polished_hint')}</Text>
+            </View>
+            <Switch
+              value={usePolishedSubtitles}
+              onValueChange={updateUsePolishedSubtitles}
+              disabled={!publishOptionsLoaded}
+              trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+              thumbColor={usePolishedSubtitles ? '#f8fafc' : '#f1f5f9'}
+            />
+          </View>
+          <View style={styles.publishOptionRow}>
+            <View style={styles.publishOptionText}>
+              <Text style={styles.optionLabel}>{t('publish_option_new_session_title')}</Text>
+              <Text style={styles.optionHint}>
+                {publishAsNewSession ? t('publish_option_new_session_on') : t('publish_option_new_session_off')}
+              </Text>
+            </View>
+            <Switch
+              value={publishAsNewSession}
+              onValueChange={updatePublishAsNewSession}
+              disabled={!publishOptionsLoaded}
+              trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+              thumbColor={publishAsNewSession ? '#f8fafc' : '#f1f5f9'}
+            />
+          </View>
+          {publicationSessions.length || sessionLoading ? (
+            <View style={styles.sessionBlock}>
+              <Text style={styles.optionLabel}>{t('publish_sessions_title')}</Text>
+              {sessionLoading ? <ActivityIndicator style={{ marginTop: 8 }} /> : null}
+              {publicationSessions.map((session) => {
+                const active = publicationSessionId === session.id;
+                return (
+                  <View key={session.id} style={[styles.sessionRow, active && styles.sessionRowActive]}>
+                    <Pressable
+                      style={styles.sessionMain}
+                      onPress={() => {
+                        setPublishAsNewSession(false);
+                        setPublicationSessionId(session.id);
+                        if (selectedVideoId) loadProcessStatus(selectedVideoId, true);
+                      }}
+                    >
+                      <Text style={styles.sessionName} numberOfLines={1}>
+                        {session.title || `Session ${session.id}`}
+                      </Text>
+                      <Text style={styles.sessionMeta}>
+                        {formatTimestamp(session.updated_at || session.created_at || '')}
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      style={styles.sessionDelete}
+                      onPress={() => deletePublicationSession(session.id)}
+                    >
+                      <FontAwesome name="trash" size={13} color="#b91c1c" />
+                    </Pressable>
+                  </View>
+                );
+              })}
+            </View>
+          ) : null}
+          <Pressable
+            style={[styles.secondaryButton, !selectedVideo && styles.btnDisabled]}
+            onPress={openSubtitleCorrection}
+            disabled={!selectedVideo}
+          >
+            <Text style={styles.secondaryButtonText}>{t('publish_correction_button')}</Text>
+          </Pressable>
           <Pressable
             style={[styles.processButton, (!selectedVideo || processBusy) && styles.btnDisabled]}
             onPress={startProcess}
@@ -1193,6 +1472,67 @@ export default function EditorScreen() {
           </View>
         </View>
       </View>
+      <Modal visible={correctionOpen} animationType="fade" transparent onRequestClose={() => setCorrectionOpen(false)}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.correctionModal}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.sectionTitle}>{t('publish_correction_title')}</Text>
+              <Pressable onPress={() => setCorrectionOpen(false)} style={styles.modalClose}>
+                <FontAwesome name="times" size={16} color="#0f172a" />
+              </Pressable>
+            </View>
+            <Text style={styles.sectionHint}>{t('publish_correction_hint')}</Text>
+            <TextInput
+              value={correctionPrompt}
+              onChangeText={setCorrectionPrompt}
+              multiline
+              placeholder={t('publish_correction_prompt_placeholder')}
+              style={styles.promptInput}
+            />
+            <View style={styles.correctionButtonRow}>
+              <Pressable
+                style={[styles.secondaryButton, correctionSaving && styles.btnDisabled]}
+                onPress={() => runCorrectionAction('ai')}
+                disabled={correctionSaving || correctionLoading}
+              >
+                <Text style={styles.secondaryButtonText}>{t('publish_correction_ai')}</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.secondaryButton, correctionSaving && styles.btnDisabled]}
+                onPress={() => runCorrectionAction('save_original')}
+                disabled={correctionSaving || correctionLoading}
+              >
+                <Text style={styles.secondaryButtonText}>{t('publish_correction_save_original')}</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.secondaryButton, correctionSaving && styles.btnDisabled]}
+                onPress={() => runCorrectionAction('save_polished')}
+                disabled={correctionSaving || correctionLoading}
+              >
+                <Text style={styles.secondaryButtonText}>{t('publish_correction_save_polished')}</Text>
+              </Pressable>
+            </View>
+            {correctionLoading || correctionSaving ? <ActivityIndicator style={{ marginTop: 10 }} /> : null}
+            {correctionStatus ? <Text style={styles.status}>{correctionStatus}</Text> : null}
+            <ScrollView style={styles.correctionScroll} nestedScrollEnabled>
+              <Text style={styles.optionLabel}>{t('publish_correction_original')}</Text>
+              <TextInput
+                value={originalSubtitleText}
+                onChangeText={setOriginalSubtitleText}
+                multiline
+                style={styles.subtitleEditor}
+              />
+              <Text style={[styles.optionLabel, { marginTop: 12 }]}>{t('publish_correction_polished')}</Text>
+              <TextInput
+                value={polishedSubtitleText}
+                onChangeText={setPolishedSubtitleText}
+                multiline
+                style={styles.subtitleEditor}
+              />
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
@@ -1352,6 +1692,51 @@ const styles = StyleSheet.create({
   },
   languageChipText: { fontSize: 11, fontWeight: '700', color: '#0f172a' },
   languageChipTextActive: { color: 'white' },
+  secondaryButton: {
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    backgroundColor: '#f8fafc',
+    alignItems: 'center',
+  },
+  secondaryButtonText: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  sessionBlock: {
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  sessionRow: {
+    marginTop: 8,
+    padding: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  sessionRowActive: {
+    borderColor: '#2563eb',
+    backgroundColor: '#eff6ff',
+  },
+  sessionMain: { flex: 1 },
+  sessionName: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  sessionMeta: { marginTop: 2, fontSize: 11, color: '#64748b' },
+  sessionDelete: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fee2e2',
+  },
   coverButton: {
     marginTop: 12,
     backgroundColor: '#0f172a',
@@ -1472,4 +1857,69 @@ const styles = StyleSheet.create({
   queueMeta: { marginTop: 4, fontSize: 11, color: '#475569' },
   queueDetail: { marginTop: 4, fontSize: 11, color: '#334155' },
   queueError: { marginTop: 4, fontSize: 11, color: '#b91c1c' },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+    padding: 16,
+    justifyContent: 'center',
+  },
+  correctionModal: {
+    width: '100%',
+    maxWidth: 920,
+    maxHeight: '92%',
+    alignSelf: 'center',
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  modalClose: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f8fafc',
+  },
+  promptInput: {
+    marginTop: 12,
+    minHeight: 72,
+    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    color: '#0f172a',
+    backgroundColor: '#f8fafc',
+    textAlignVertical: 'top',
+  },
+  correctionButtonRow: {
+    marginTop: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  correctionScroll: {
+    marginTop: 12,
+    maxHeight: 520,
+  },
+  subtitleEditor: {
+    marginTop: 8,
+    minHeight: 180,
+    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#cbd5f5',
+    color: '#0f172a',
+    backgroundColor: '#f8fafc',
+    fontFamily: Platform.OS === 'web' ? 'monospace' : undefined,
+    fontSize: 12,
+    textAlignVertical: 'top',
+  },
 });

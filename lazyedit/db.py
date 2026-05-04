@@ -141,6 +141,21 @@ def ensure_schema():
             "CREATE INDEX IF NOT EXISTS idx_venice_a2e_history_created_at ON venice_a2e_history (created_at DESC);",
             # Transcriptions table for raw speech-to-text outputs
             """
+            CREATE TABLE IF NOT EXISTS publication_sessions (
+                id SERIAL PRIMARY KEY,
+                video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
+                title TEXT,
+                mode TEXT NOT NULL DEFAULT 'override',
+                status TEXT NOT NULL DEFAULT 'active',
+                config JSONB NOT NULL DEFAULT '{}'::jsonb,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                deleted_at TIMESTAMPTZ
+            );
+            """,
+            "CREATE INDEX IF NOT EXISTS idx_publication_sessions_video_created ON publication_sessions (video_id, created_at DESC, id DESC);",
+            # Transcriptions table for raw speech-to-text outputs
+            """
             CREATE TABLE IF NOT EXISTS transcriptions (
                 id SERIAL PRIMARY KEY,
                 video_id INTEGER NOT NULL REFERENCES videos(id) ON DELETE CASCADE,
@@ -154,6 +169,8 @@ def ensure_schema():
             );
             """,
             "CREATE INDEX IF NOT EXISTS idx_transcriptions_video_created ON transcriptions (video_id, created_at DESC);",
+            "ALTER TABLE transcriptions ADD COLUMN IF NOT EXISTS publication_session_id INTEGER REFERENCES publication_sessions(id) ON DELETE CASCADE;",
+            "CREATE INDEX IF NOT EXISTS idx_transcriptions_video_session_created ON transcriptions (video_id, publication_session_id, created_at DESC, id DESC);",
             # Frame captions (visual captioning) outputs
             """
             CREATE TABLE IF NOT EXISTS frame_captions (
@@ -168,6 +185,7 @@ def ensure_schema():
             );
             """,
             "CREATE INDEX IF NOT EXISTS idx_frame_captions_video_created ON frame_captions (video_id, created_at DESC);",
+            "ALTER TABLE frame_captions ADD COLUMN IF NOT EXISTS publication_session_id INTEGER REFERENCES publication_sessions(id) ON DELETE CASCADE;",
             # Keyframe extraction outputs
             """
             CREATE TABLE IF NOT EXISTS keyframe_extractions (
@@ -181,6 +199,7 @@ def ensure_schema():
             );
             """,
             "CREATE INDEX IF NOT EXISTS idx_keyframe_extractions_video_created ON keyframe_extractions (video_id, created_at DESC);",
+            "ALTER TABLE keyframe_extractions ADD COLUMN IF NOT EXISTS publication_session_id INTEGER REFERENCES publication_sessions(id) ON DELETE CASCADE;",
             # Subtitle translations (e.g., Japanese with furigana)
             """
             CREATE TABLE IF NOT EXISTS subtitle_translations (
@@ -199,6 +218,8 @@ def ensure_schema():
             CREATE INDEX IF NOT EXISTS idx_subtitle_translations_video_lang
                 ON subtitle_translations (video_id, language_code, created_at DESC);
             """,
+            "ALTER TABLE subtitle_translations ADD COLUMN IF NOT EXISTS publication_session_id INTEGER REFERENCES publication_sessions(id) ON DELETE CASCADE;",
+            "CREATE INDEX IF NOT EXISTS idx_subtitle_translations_video_session_lang ON subtitle_translations (video_id, publication_session_id, language_code, created_at DESC, id DESC);",
             # Video metadata (e.g., Chinese social, YouTube)
             """
             CREATE TABLE IF NOT EXISTS video_metadata (
@@ -215,6 +236,8 @@ def ensure_schema():
             CREATE INDEX IF NOT EXISTS idx_video_metadata_video_lang
                 ON video_metadata (video_id, language_code, created_at DESC);
             """,
+            "ALTER TABLE video_metadata ADD COLUMN IF NOT EXISTS publication_session_id INTEGER REFERENCES publication_sessions(id) ON DELETE CASCADE;",
+            "CREATE INDEX IF NOT EXISTS idx_video_metadata_video_session_lang ON video_metadata (video_id, publication_session_id, language_code, created_at DESC, id DESC);",
             # Burned subtitle videos
             """
             CREATE TABLE IF NOT EXISTS subtitle_burns (
@@ -230,6 +253,8 @@ def ensure_schema():
             """,
             "CREATE INDEX IF NOT EXISTS idx_subtitle_burns_video_created ON subtitle_burns (video_id, created_at DESC);",
             "ALTER TABLE subtitle_burns ADD COLUMN IF NOT EXISTS progress INTEGER DEFAULT 0;",
+            "ALTER TABLE subtitle_burns ADD COLUMN IF NOT EXISTS publication_session_id INTEGER REFERENCES publication_sessions(id) ON DELETE CASCADE;",
+            "CREATE INDEX IF NOT EXISTS idx_subtitle_burns_video_session_created ON subtitle_burns (video_id, publication_session_id, created_at DESC, id DESC);",
             # UI preference storage (e.g., translation display styles)
             """
             CREATE TABLE IF NOT EXISTS ui_preferences (
@@ -276,6 +301,7 @@ def ensure_schema():
             "ALTER TABLE publish_jobs ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();",
             "ALTER TABLE publish_jobs ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ;",
             "ALTER TABLE publish_jobs ADD COLUMN IF NOT EXISTS finished_at TIMESTAMPTZ;",
+            "ALTER TABLE publish_jobs ADD COLUMN IF NOT EXISTS publication_session_id INTEGER REFERENCES publication_sessions(id) ON DELETE SET NULL;",
             "CREATE INDEX IF NOT EXISTS idx_publish_jobs_status_created ON publish_jobs (status, created_at, id);",
             "CREATE INDEX IF NOT EXISTS idx_publish_jobs_video_created ON publish_jobs (video_id, created_at DESC, id DESC);",
         ]
@@ -300,6 +326,79 @@ def delete_videos_by_file_path(file_path: str) -> int:
     """Delete all videos with the given file_path and return the count."""
     with get_cursor(commit=True) as cur:
         cur.execute("DELETE FROM videos WHERE file_path = %s RETURNING id", (file_path,))
+        rows = cur.fetchall()
+    return len(rows)
+
+
+def add_publication_session(
+    video_id: int,
+    title: str | None = None,
+    *,
+    mode: str = "new",
+    config: dict | None = None,
+) -> int:
+    """Create a publication session and return its ID."""
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO publication_sessions (video_id, title, mode, status, config)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (video_id, title, mode or "new", "active", Json(config or {})),
+        )
+        (session_id,) = cur.fetchone()
+        return session_id
+
+
+def get_publication_session(session_id: int) -> tuple | None:
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT id, video_id, title, mode, status, config, created_at, updated_at, deleted_at
+            FROM publication_sessions
+            WHERE id = %s
+            """,
+            (session_id,),
+        )
+        return cur.fetchone()
+
+
+def list_publication_sessions(video_id: int) -> list[tuple]:
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT id, video_id, title, mode, status, config, created_at, updated_at, deleted_at
+            FROM publication_sessions
+            WHERE video_id = %s AND deleted_at IS NULL
+            ORDER BY created_at DESC, id DESC
+            """,
+            (video_id,),
+        )
+        return cur.fetchall()
+
+
+def update_publication_session(session_id: int, *, status: str | None = None, config: dict | None = None) -> None:
+    sets = ["updated_at = NOW()"]
+    values = []
+    if status is not None:
+        sets.append("status = %s")
+        values.append(status)
+    if config is not None:
+        sets.append("config = %s")
+        values.append(Json(config))
+    values.append(session_id)
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            f"UPDATE publication_sessions SET {', '.join(sets)} WHERE id = %s",
+            values,
+        )
+
+
+def delete_publication_session(session_id: int) -> int:
+    """Delete one publication session and cascaded generated rows."""
+    with get_cursor(commit=True) as cur:
+        cur.execute("DELETE FROM publication_sessions WHERE id = %s RETURNING id", (session_id,))
         rows = cur.fetchall()
     return len(rows)
 
@@ -504,6 +603,7 @@ def add_subtitle_translation(
     output_srt_path: str | None = None,
     output_ass_path: str | None = None,
     error: str | None = None,
+    publication_session_id: int | None = None,
 ) -> int:
     """Insert a subtitle translation row and return its ID."""
     with get_cursor(commit=True) as cur:
@@ -516,9 +616,10 @@ def add_subtitle_translation(
                 output_json_path,
                 output_srt_path,
                 output_ass_path,
-                error
+                error,
+                publication_session_id
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
             (
@@ -529,25 +630,38 @@ def add_subtitle_translation(
                 output_srt_path,
                 output_ass_path,
                 error,
+                publication_session_id,
             ),
         )
         (translation_id,) = cur.fetchone()
         return translation_id
 
 
-def get_latest_subtitle_translation(video_id: int, language_code: str) -> tuple | None:
+def get_latest_subtitle_translation(video_id: int, language_code: str, publication_session_id: int | None = None) -> tuple | None:
     """Return the most recent subtitle translation row for the video/language, or None."""
     with get_cursor() as cur:
-        cur.execute(
-            """
-            SELECT id, language_code, status, output_json_path, output_srt_path, output_ass_path, error, created_at
-            FROM subtitle_translations
-            WHERE video_id = %s AND language_code = %s
-            ORDER BY id DESC
-            LIMIT 1
-            """,
-            (video_id, language_code),
-        )
+        if publication_session_id is None:
+            cur.execute(
+                """
+                SELECT id, language_code, status, output_json_path, output_srt_path, output_ass_path, error, created_at
+                FROM subtitle_translations
+                WHERE video_id = %s AND language_code = %s
+                ORDER BY id DESC
+                LIMIT 1
+                """,
+                (video_id, language_code),
+            )
+        else:
+            cur.execute(
+                """
+                SELECT id, language_code, status, output_json_path, output_srt_path, output_ass_path, error, created_at
+                FROM subtitle_translations
+                WHERE video_id = %s AND language_code = %s AND publication_session_id = %s
+                ORDER BY id DESC
+                LIMIT 1
+                """,
+                (video_id, language_code, publication_session_id),
+            )
         return cur.fetchone()
 
 
@@ -572,6 +686,7 @@ def add_video_metadata(
     status: str,
     output_json_path: str | None = None,
     error: str | None = None,
+    publication_session_id: int | None = None,
 ) -> int:
     """Insert a video metadata row and return its ID."""
     with get_cursor(commit=True) as cur:
@@ -582,9 +697,10 @@ def add_video_metadata(
                 language_code,
                 status,
                 output_json_path,
-                error
+                error,
+                publication_session_id
             )
-            VALUES (%s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
             (
@@ -593,25 +709,38 @@ def add_video_metadata(
                 status,
                 output_json_path,
                 error,
+                publication_session_id,
             ),
         )
         (metadata_id,) = cur.fetchone()
         return metadata_id
 
 
-def get_latest_video_metadata(video_id: int, language_code: str) -> tuple | None:
+def get_latest_video_metadata(video_id: int, language_code: str, publication_session_id: int | None = None) -> tuple | None:
     """Return latest metadata row for the video/language."""
     with get_cursor() as cur:
-        cur.execute(
-            """
-            SELECT id, language_code, status, output_json_path, error, created_at
-            FROM video_metadata
-            WHERE video_id = %s AND language_code = %s
-            ORDER BY id DESC
-            LIMIT 1
-            """,
-            (video_id, language_code),
-        )
+        if publication_session_id is None:
+            cur.execute(
+                """
+                SELECT id, language_code, status, output_json_path, error, created_at
+                FROM video_metadata
+                WHERE video_id = %s AND language_code = %s
+                ORDER BY id DESC
+                LIMIT 1
+                """,
+                (video_id, language_code),
+            )
+        else:
+            cur.execute(
+                """
+                SELECT id, language_code, status, output_json_path, error, created_at
+                FROM video_metadata
+                WHERE video_id = %s AND language_code = %s AND publication_session_id = %s
+                ORDER BY id DESC
+                LIMIT 1
+                """,
+                (video_id, language_code, publication_session_id),
+            )
         return cur.fetchone()
 
 
@@ -622,6 +751,7 @@ def add_subtitle_burn(
     config: dict | None,
     error: str | None,
     progress: int = 0,
+    publication_session_id: int | None = None,
 ) -> int:
     """Insert a subtitle burn row and return its ID."""
     with get_cursor(commit=True) as cur:
@@ -633,30 +763,43 @@ def add_subtitle_burn(
                 output_path,
                 progress,
                 config,
-                error
+                error,
+                publication_session_id
             )
-            VALUES (%s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
-            (video_id, status, output_path, progress, json.dumps(config or {}), error),
+            (video_id, status, output_path, progress, json.dumps(config or {}), error, publication_session_id),
         )
         (burn_id,) = cur.fetchone()
         return burn_id
 
 
-def get_latest_subtitle_burn(video_id: int) -> tuple | None:
+def get_latest_subtitle_burn(video_id: int, publication_session_id: int | None = None) -> tuple | None:
     """Return latest subtitle burn row for the video."""
     with get_cursor() as cur:
-        cur.execute(
-            """
-            SELECT id, status, output_path, progress, config, error, created_at
-            FROM subtitle_burns
-            WHERE video_id = %s
-            ORDER BY id DESC
-            LIMIT 1
-            """,
-            (video_id,),
-        )
+        if publication_session_id is None:
+            cur.execute(
+                """
+                SELECT id, status, output_path, progress, config, error, created_at
+                FROM subtitle_burns
+                WHERE video_id = %s
+                ORDER BY id DESC
+                LIMIT 1
+                """,
+                (video_id,),
+            )
+        else:
+            cur.execute(
+                """
+                SELECT id, status, output_path, progress, config, error, created_at
+                FROM subtitle_burns
+                WHERE video_id = %s AND publication_session_id = %s
+                ORDER BY id DESC
+                LIMIT 1
+                """,
+                (video_id, publication_session_id),
+            )
         return cur.fetchone()
 
 
@@ -743,6 +886,7 @@ def add_transcription(
     output_srt_path: str | None = None,
     output_md_path: str | None = None,
     error: str | None = None,
+    publication_session_id: int | None = None,
 ) -> int:
     """Insert a transcription row and return its ID."""
     with get_cursor(commit=True) as cur:
@@ -755,9 +899,10 @@ def add_transcription(
                 output_json_path,
                 output_srt_path,
                 output_md_path,
-                error
+                error,
+                publication_session_id
             )
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
             (
@@ -768,24 +913,38 @@ def add_transcription(
                 output_srt_path,
                 output_md_path,
                 error,
+                publication_session_id,
             ),
         )
         (transcription_id,) = cur.fetchone()
         return transcription_id
 
 
-def get_latest_transcription(video_id: int) -> tuple | None:
+def get_latest_transcription(
+    video_id: int,
+    publication_session_id: int | None = None,
+    language_code: str | None = None,
+) -> tuple | None:
     """Return the most recent transcription row for the video, or None."""
+    filters = ["video_id = %s"]
+    values: list = [video_id]
+    if publication_session_id is not None:
+        filters.append("publication_session_id = %s")
+        values.append(publication_session_id)
+    if language_code is not None:
+        filters.append("language_code = %s")
+        values.append(language_code)
+    where_clause = " AND ".join(filters)
     with get_cursor() as cur:
         cur.execute(
-            """
+            f"""
             SELECT id, language_code, status, output_json_path, output_srt_path, output_md_path, error, created_at
             FROM transcriptions
-            WHERE video_id = %s
+            WHERE {where_clause}
             ORDER BY id DESC
             LIMIT 1
             """,
-            (video_id,),
+            tuple(values),
         )
         return cur.fetchone()
 
@@ -1012,16 +1171,25 @@ def add_publish_job(
     test_mode: bool = False,
     detail: str | None = None,
     config: dict | None = None,
+    publication_session_id: int | None = None,
 ) -> int:
     ensure_schema()
     with get_cursor(commit=True) as cur:
         cur.execute(
             """
-            INSERT INTO publish_jobs (video_id, status, platforms, test_mode, config, detail)
-            VALUES (%s, %s, %s, %s, %s, %s)
+            INSERT INTO publish_jobs (video_id, status, platforms, test_mode, config, detail, publication_session_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
-            (video_id, "queued", Json(platforms or {}), bool(test_mode), Json(config or {}), detail),
+            (
+                video_id,
+                "queued",
+                Json(platforms or {}),
+                bool(test_mode),
+                Json(config or {}),
+                detail,
+                publication_session_id,
+            ),
         )
         (job_id,) = cur.fetchone()
         return job_id
@@ -1050,7 +1218,8 @@ def _publish_job_select_clause() -> str:
             j.finished_at,
             v.title,
             v.file_path,
-            j.config
+            j.config,
+            j.publication_session_id
         FROM publish_jobs j
         LEFT JOIN videos v ON v.id = j.video_id
     """
@@ -1120,7 +1289,8 @@ def claim_next_publish_job() -> tuple | None:
                 j.updated_at,
                 j.started_at,
                 j.finished_at,
-                j.config
+                j.config,
+                j.publication_session_id
             """
         )
         row = cur.fetchone()
