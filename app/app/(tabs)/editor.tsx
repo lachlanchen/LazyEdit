@@ -154,6 +154,9 @@ export default function EditorScreen() {
   const [publicationSessionId, setPublicationSessionId] = useState<number | null>(null);
   const [publicationSessions, setPublicationSessions] = useState<PublicationSession[]>([]);
   const [sessionLoading, setSessionLoading] = useState(false);
+  const [runSelectionTouched, setRunSelectionTouched] = useState(false);
+  const [processRunMenuOpen, setProcessRunMenuOpen] = useState(false);
+  const [publishRunMenuOpen, setPublishRunMenuOpen] = useState(false);
   const [translationLanguages, setTranslationLanguages] = useState<string[]>(DEFAULT_TRANSLATION_LANGUAGES);
   const [correctionOpen, setCorrectionOpen] = useState(false);
   const [correctionLoading, setCorrectionLoading] = useState(false);
@@ -294,6 +297,47 @@ export default function EditorScreen() {
     () => publishQueue.find((job) => job.video_id === selectedVideoId) || null,
     [publishQueue, selectedVideoId],
   );
+  const selectedRunKey = publishAsNewSession
+    ? 'new'
+    : publicationSessionId
+      ? `session:${publicationSessionId}`
+      : 'base';
+  const publicationRunOptions = useMemo(() => {
+    const options: Array<{
+      key: string;
+      label: string;
+      hint: string;
+      session?: PublicationSession;
+    }> = [
+      {
+        key: 'base',
+        label: t('publish_run_current'),
+        hint: t('publish_run_current_hint'),
+      },
+    ];
+    publicationSessions.forEach((session) => {
+      const title = session.title || `Session ${session.id}`;
+      const time = formatTimestamp(session.updated_at || session.created_at || '');
+      options.push({
+        key: `session:${session.id}`,
+        label: `${t('publish_run_existing', { value: session.id })} · ${title}`,
+        hint: time || t('publish_run_existing_hint'),
+        session,
+      });
+    });
+    options.push({
+      key: 'new',
+      label: t('publish_run_new'),
+      hint: t('publish_run_new_hint'),
+    });
+    return options;
+  }, [publicationSessions, t]);
+  const selectedRunOption = useMemo(
+    () =>
+      publicationRunOptions.find((option) => option.key === selectedRunKey) ||
+      publicationRunOptions[0],
+    [publicationRunOptions, selectedRunKey],
+  );
 
   const loadMoreVideos = useCallback(() => {
     if (!hasMoreVideos) return;
@@ -317,14 +361,14 @@ export default function EditorScreen() {
     return styles.statusNeutral;
   };
 
-  const formatTimestamp = (value?: string | null) => {
+  function formatTimestamp(value?: string | null) {
     if (!value) return '';
     try {
       return new Date(value).toLocaleString();
     } catch (_err) {
       return value;
     }
-  };
+  }
 
   const queueStatusLabel = (status?: string) => {
     const key = String(status || '').toLowerCase();
@@ -464,9 +508,6 @@ export default function EditorScreen() {
         if (typeof value.usePolishedSubtitles === 'boolean') {
           setUsePolishedSubtitles(value.usePolishedSubtitles);
         }
-        if (value.publicationMode === 'new' || value.publication_mode === 'new') {
-          setPublishAsNewSession(true);
-        }
         if (Array.isArray(value.translationLanguages) && value.translationLanguages.length) {
           const cleaned = value.translationLanguages
             .map((lang: unknown) => String(lang))
@@ -486,7 +527,6 @@ export default function EditorScreen() {
     nextBurn: boolean,
     nextLanguages: string[],
     nextUsePolished = usePolishedSubtitles,
-    nextAsNew = publishAsNewSession,
   ) => {
     try {
       await fetch(`${API_URL}/api/ui-settings/publish_options`, {
@@ -496,13 +536,13 @@ export default function EditorScreen() {
           burnSubtitles: nextBurn,
           translationLanguages: nextLanguages,
           usePolishedSubtitles: nextUsePolished,
-          publicationMode: nextAsNew ? 'new' : 'override',
+          publicationMode: 'override',
         }),
       });
     } catch (_err) {
       // ignore
     }
-  }, [publishAsNewSession, usePolishedSubtitles]);
+  }, [usePolishedSubtitles]);
 
   const toggleTranslationLanguage = useCallback(
     (language: string) => {
@@ -529,19 +569,28 @@ export default function EditorScreen() {
   const updateUsePolishedSubtitles = useCallback(
     (value: boolean) => {
       setUsePolishedSubtitles(value);
-      void persistPublishOptions(burnSubtitles, translationLanguages, value, publishAsNewSession);
+      void persistPublishOptions(burnSubtitles, translationLanguages, value);
     },
-    [burnSubtitles, persistPublishOptions, publishAsNewSession, translationLanguages],
+    [burnSubtitles, persistPublishOptions, translationLanguages],
   );
 
-  const updatePublishAsNewSession = useCallback(
-    (value: boolean) => {
-      setPublishAsNewSession(value);
-      if (value) setPublicationSessionId(null);
-      void persistPublishOptions(burnSubtitles, translationLanguages, usePolishedSubtitles, value);
-    },
-    [burnSubtitles, persistPublishOptions, translationLanguages, usePolishedSubtitles],
-  );
+  const selectPublicationRun = useCallback((key: string) => {
+    setRunSelectionTouched(true);
+    setProcessRunMenuOpen(false);
+    setPublishRunMenuOpen(false);
+    if (key === 'new') {
+      setPublishAsNewSession(true);
+      setPublicationSessionId(null);
+      return;
+    }
+    setPublishAsNewSession(false);
+    if (key.startsWith('session:')) {
+      const id = Number(key.slice('session:'.length));
+      setPublicationSessionId(Number.isFinite(id) && id > 0 ? id : null);
+    } else {
+      setPublicationSessionId(null);
+    }
+  }, []);
 
   const fetchLogoSettings = useCallback(async (): Promise<LogoSettings | null> => {
     try {
@@ -629,20 +678,34 @@ export default function EditorScreen() {
     [publicationSessionId],
   );
 
-  const loadPublicationSessions = useCallback(async (videoId: number) => {
+  const loadPublicationSessions = useCallback(async (videoId: number, defaultToLatest = false) => {
     setSessionLoading(true);
     try {
       const resp = await fetch(`${API_URL}/api/videos/${videoId}/publication-sessions`);
       const json = await resp.json().catch(() => ({}));
       if (resp.ok && Array.isArray(json?.sessions)) {
-        setPublicationSessions(json.sessions);
+        const sessions = json.sessions as PublicationSession[];
+        setPublicationSessions(sessions);
+        const selectedExists = publicationSessionId
+          ? sessions.some((session) => session.id === publicationSessionId)
+          : false;
+        if (publishAsNewSession) {
+          return;
+        }
+        if ((defaultToLatest || !runSelectionTouched) && sessions.length) {
+          setPublicationSessionId(sessions[0].id);
+          return;
+        }
+        if (publicationSessionId && !selectedExists) {
+          setPublicationSessionId(sessions[0]?.id ?? null);
+        }
       }
     } catch (_err) {
       // ignore
     } finally {
       setSessionLoading(false);
     }
-  }, []);
+  }, [publicationSessionId, publishAsNewSession, runSelectionTouched]);
 
   const createPublicationSession = useCallback(async (): Promise<number | null> => {
     if (!selectedVideoId) return null;
@@ -664,8 +727,10 @@ export default function EditorScreen() {
     if (!resp.ok) throw new Error(json?.error || resp.statusText);
     const id = Number(json?.session?.id || 0);
     if (id > 0) {
+      setPublishAsNewSession(false);
+      setRunSelectionTouched(true);
       setPublicationSessionId(id);
-      await loadPublicationSessions(selectedVideoId);
+      await loadPublicationSessions(selectedVideoId, true);
       return id;
     }
     return null;
@@ -679,7 +744,7 @@ export default function EditorScreen() {
         method: 'DELETE',
       });
       if (publicationSessionId === sessionId) setPublicationSessionId(null);
-      await loadPublicationSessions(selectedVideoId);
+      await loadPublicationSessions(selectedVideoId, true);
       await loadProcessStatus(selectedVideoId, true);
     } finally {
       setSessionLoading(false);
@@ -841,15 +906,19 @@ export default function EditorScreen() {
     setPublishStatus('');
     setPublishTone('neutral');
     setPublishZipUrl(null);
+    setPublishAsNewSession(false);
     setPublicationSessionId(null);
     setPublicationSessions([]);
+    setRunSelectionTouched(false);
+    setProcessRunMenuOpen(false);
+    setPublishRunMenuOpen(false);
     setCorrectionOpen(false);
     setOriginalSubtitleText('');
     setPolishedSubtitleText('');
     loadCoverPreview(selectedVideoId);
-    loadPublicationSessions(selectedVideoId);
+    loadPublicationSessions(selectedVideoId, true);
     loadProcessStatus(selectedVideoId, true);
-  }, [selectedVideoId, loadProcessStatus, loadPublicationSessions]);
+  }, [selectedVideoId]);
 
   useEffect(() => {
     if (!selectedVideoId) return;
@@ -919,7 +988,7 @@ export default function EditorScreen() {
           translationLanguages,
           usePolishedSubtitles,
           publicationMode: publishAsNewSession ? 'new' : 'override',
-          publicationSessionId,
+          publicationSessionId: publishAsNewSession ? null : publicationSessionId,
           ...(logoPayload ? { logo: logoPayload } : {}),
         }),
       });
@@ -931,8 +1000,10 @@ export default function EditorScreen() {
         return { ok: false, message };
       }
       if (json?.publication_session_id) {
+        setPublishAsNewSession(false);
+        setRunSelectionTouched(true);
         setPublicationSessionId(Number(json.publication_session_id));
-        loadPublicationSessions(selectedVideoId);
+        loadPublicationSessions(selectedVideoId, true);
       }
       setProcessStatus(t('publish_process_started'));
       setProcessTone('good');
@@ -1029,7 +1100,7 @@ export default function EditorScreen() {
             translationLanguages,
             usePolishedSubtitles,
             publicationMode: publishAsNewSession ? 'new' : 'override',
-            publicationSessionId,
+            publicationSessionId: publishAsNewSession ? null : publicationSessionId,
           },
         }),
       });
@@ -1045,8 +1116,10 @@ export default function EditorScreen() {
         setPublishZipUrl(resolveMediaSrc(zipUrl));
       }
       if (json?.publication_session_id) {
+        setPublishAsNewSession(false);
+        setRunSelectionTouched(true);
         setPublicationSessionId(Number(json.publication_session_id));
-        loadPublicationSessions(selectedVideoId);
+        loadPublicationSessions(selectedVideoId, true);
       }
       setPublishStatus(
         json?.detail
@@ -1062,6 +1135,68 @@ export default function EditorScreen() {
       setPublishing(false);
     }
   };
+
+  const renderRunSelector = (
+    menuOpen: boolean,
+    setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    hint: string,
+  ) => (
+    <View style={styles.runSelectorBlock}>
+      <Text style={styles.optionLabel}>{t('publish_run_title')}</Text>
+      <Text style={styles.optionHint}>{hint}</Text>
+      <Pressable
+        style={[styles.runSelectorButton, !selectedVideo && styles.btnDisabled]}
+        onPress={() => setMenuOpen((prev) => !prev)}
+        disabled={!selectedVideo}
+      >
+        <View style={styles.runSelectorText}>
+          <Text style={styles.runSelectorLabel} numberOfLines={1}>
+            {selectedRunOption?.label || t('publish_run_current')}
+          </Text>
+          <Text style={styles.runSelectorHint} numberOfLines={1}>
+            {selectedRunOption?.hint || t('publish_run_current_hint')}
+          </Text>
+        </View>
+        <FontAwesome name={menuOpen ? 'chevron-up' : 'chevron-down'} size={13} color="#334155" />
+      </Pressable>
+      {menuOpen ? (
+        <View style={styles.runDropdown}>
+          {sessionLoading ? <ActivityIndicator style={{ marginVertical: 8 }} /> : null}
+          <ScrollView style={styles.runDropdownScroll} nestedScrollEnabled>
+            {publicationRunOptions.map((option) => {
+              const active = option.key === selectedRunKey;
+              return (
+                <View key={option.key} style={[styles.runOptionRow, active && styles.runOptionRowActive]}>
+                  <Pressable
+                    style={styles.runOptionMain}
+                    onPress={() => selectPublicationRun(option.key)}
+                  >
+                    <Text style={[styles.runOptionLabel, active && styles.runOptionLabelActive]} numberOfLines={1}>
+                      {option.label}
+                    </Text>
+                    <Text style={styles.runOptionHint} numberOfLines={1}>
+                      {option.hint}
+                    </Text>
+                  </Pressable>
+                  {option.session ? (
+                    <Pressable
+                      style={styles.sessionDelete}
+                      onPress={(event: any) => {
+                        event?.stopPropagation?.();
+                        deletePublicationSession(option.session!.id);
+                      }}
+                    >
+                      <FontAwesome name="trash" size={13} color="#b91c1c" />
+                    </Pressable>
+                  ) : null}
+                </View>
+              );
+            })}
+          </ScrollView>
+        </View>
+      ) : null}
+    </View>
+  );
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -1230,55 +1365,11 @@ export default function EditorScreen() {
               thumbColor={usePolishedSubtitles ? '#f8fafc' : '#f1f5f9'}
             />
           </View>
-          <View style={styles.publishOptionRow}>
-            <View style={styles.publishOptionText}>
-              <Text style={styles.optionLabel}>{t('publish_option_new_session_title')}</Text>
-              <Text style={styles.optionHint}>
-                {publishAsNewSession ? t('publish_option_new_session_on') : t('publish_option_new_session_off')}
-              </Text>
-            </View>
-            <Switch
-              value={publishAsNewSession}
-              onValueChange={updatePublishAsNewSession}
-              disabled={!publishOptionsLoaded}
-              trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
-              thumbColor={publishAsNewSession ? '#f8fafc' : '#f1f5f9'}
-            />
-          </View>
-          {publicationSessions.length || sessionLoading ? (
-            <View style={styles.sessionBlock}>
-              <Text style={styles.optionLabel}>{t('publish_sessions_title')}</Text>
-              {sessionLoading ? <ActivityIndicator style={{ marginTop: 8 }} /> : null}
-              {publicationSessions.map((session) => {
-                const active = publicationSessionId === session.id;
-                return (
-                  <View key={session.id} style={[styles.sessionRow, active && styles.sessionRowActive]}>
-                    <Pressable
-                      style={styles.sessionMain}
-                      onPress={() => {
-                        setPublishAsNewSession(false);
-                        setPublicationSessionId(session.id);
-                        if (selectedVideoId) loadProcessStatus(selectedVideoId, true);
-                      }}
-                    >
-                      <Text style={styles.sessionName} numberOfLines={1}>
-                        {session.title || `Session ${session.id}`}
-                      </Text>
-                      <Text style={styles.sessionMeta}>
-                        {formatTimestamp(session.updated_at || session.created_at || '')}
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      style={styles.sessionDelete}
-                      onPress={() => deletePublicationSession(session.id)}
-                    >
-                      <FontAwesome name="trash" size={13} color="#b91c1c" />
-                    </Pressable>
-                  </View>
-                );
-              })}
-            </View>
-          ) : null}
+          {renderRunSelector(
+            processRunMenuOpen,
+            setProcessRunMenuOpen,
+            t('publish_run_process_hint'),
+          )}
           <Pressable
             style={[styles.secondaryButton, !selectedVideo && styles.btnDisabled]}
             onPress={openSubtitleCorrection}
@@ -1389,6 +1480,11 @@ export default function EditorScreen() {
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{t('publish_manual_title')}</Text>
           <Text style={styles.sectionHint}>{t('publish_manual_hint')}</Text>
+          {renderRunSelector(
+            publishRunMenuOpen,
+            setPublishRunMenuOpen,
+            t('publish_run_publish_hint'),
+          )}
           <Pressable
             style={[
               styles.publishButton,
@@ -1692,6 +1788,56 @@ const styles = StyleSheet.create({
   },
   languageChipText: { fontSize: 11, fontWeight: '700', color: '#0f172a' },
   languageChipTextActive: { color: 'white' },
+  runSelectorBlock: {
+    marginTop: 10,
+    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  runSelectorButton: {
+    marginTop: 8,
+    minHeight: 46,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    backgroundColor: 'white',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  runSelectorText: { flex: 1 },
+  runSelectorLabel: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  runSelectorHint: { marginTop: 2, fontSize: 11, color: '#64748b' },
+  runDropdown: {
+    marginTop: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#dbe3ef',
+    backgroundColor: 'white',
+    overflow: 'hidden',
+  },
+  runDropdownScroll: {
+    maxHeight: 220,
+  },
+  runOptionRow: {
+    padding: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#edf2f7',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  runOptionRowActive: {
+    backgroundColor: '#eff6ff',
+  },
+  runOptionMain: { flex: 1 },
+  runOptionLabel: { fontSize: 12, fontWeight: '700', color: '#0f172a' },
+  runOptionLabelActive: { color: '#1d4ed8' },
+  runOptionHint: { marginTop: 2, fontSize: 11, color: '#64748b' },
   secondaryButton: {
     marginTop: 10,
     paddingVertical: 10,

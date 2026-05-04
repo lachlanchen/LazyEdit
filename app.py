@@ -4863,7 +4863,8 @@ def _prepare_publish_bundle(
     session_suffix = f"_session_{publication_session_id}" if publication_session_id else ""
     video_filename = f"{base_name}{session_suffix}_highlighted.mp4"
     cover_filename = f"{base_name}_cover.jpg"
-    metadata_filename = f"{base_name}_metadata.json"
+    bundle_stem = f"{base_name}{session_suffix}"
+    metadata_filename = f"{bundle_stem}_metadata.json"
 
     metadata_payload["video_filename"] = video_filename
     metadata_payload["cover_filename"] = cover_filename
@@ -4886,7 +4887,7 @@ def _prepare_publish_bundle(
     with open(metadata_path, "w", encoding="utf-8") as handle:
         json.dump(metadata_payload, handle, ensure_ascii=False, indent=2)
 
-    zip_path = os.path.join(publish_dir, f"{base_name}{session_suffix}.zip")
+    zip_path = os.path.join(publish_dir, f"{bundle_stem}.zip")
     input_json, input_srt = find_latest_transcription_outputs(
         os.path.dirname(file_path),
         base_name,
