@@ -1,0 +1,8 @@
+numpy<2
+matplotlib<3.9
+pillow
+opencv-python
+transformers
+tqdm
+psutil
+Katna

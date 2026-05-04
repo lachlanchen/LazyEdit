@@ -158,6 +158,7 @@ class AutocutProcessor:
             script_path = os.path.abspath(
                 os.path.join(os.path.dirname(__file__), "..", "whisper_with_lang_detect", "vad_lang_subtitle.py")
             )
+        whisper_python = os.getenv("LAZYEDIT_WHISPER_PYTHON", "/home/lachlan/miniconda3/envs/whisper/bin/python")
         whisper_model = os.getenv("LAZYEDIT_WHISPER_MODEL", "large-v3")
         fallback_model = os.getenv("LAZYEDIT_WHISPER_FALLBACK_MODEL", "large-v2")
         model_candidates = self._resolve_model_candidates(whisper_model, fallback_model)
@@ -182,7 +183,7 @@ class AutocutProcessor:
         saw_cuda_oom = False
         for index, model_name in enumerate(gpu_model_candidates, start=1):
             autocut_command = (
-                f"/home/lachlan/miniconda3/envs/whisper/bin/python "
+                f"{shlex.quote(whisper_python)} "
                 f"{shlex.quote(script_path)} -t {shlex.quote(input_file_lang)} "
                 f"--whisper-model {shlex.quote(model_name)} --force"
             )
@@ -219,7 +220,7 @@ class AutocutProcessor:
                 f"for GPU Whisper. Running directly on CPU with model {cpu_model}."
             )
         fallback_command = (
-            f"/home/lachlan/miniconda3/envs/whisper/bin/python "
+            f"{shlex.quote(whisper_python)} "
             f"{shlex.quote(script_path)} -t {shlex.quote(input_file_lang)} "
             f"--whisper-model {shlex.quote(cpu_model)} --force"
         )

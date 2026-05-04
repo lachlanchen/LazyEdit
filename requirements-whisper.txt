@@ -1,0 +1,7 @@
+openai-whisper
+torchcodec
+soundfile
+lingua-language-detector
+tqdm
+numpy
+scipy

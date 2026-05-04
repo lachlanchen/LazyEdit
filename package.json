@@ -1,0 +1,23 @@
+{
+  "name": "@lazyingart/lazyedit",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LazyEdit backend, Studio app, and media-processing runtime orchestration.",
+  "bin": {
+    "lazyedit": "scripts/npm/lazyedit-cli.js"
+  },
+  "scripts": {
+    "setup": "bash scripts/npm/setup.sh",
+    "setup:check": "bash scripts/npm/doctor.sh",
+    "doctor": "bash scripts/npm/doctor.sh",
+    "start": "bash scripts/npm/start.sh",
+    "dev": "bash scripts/npm/start.sh",
+    "backend": "bash scripts/npm/backend.sh",
+    "web": "bash scripts/npm/web.sh",
+    "typecheck": "cd app && npx tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
+  }
+}

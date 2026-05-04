@@ -268,7 +268,32 @@ source ~/miniconda3/etc/profile.d/conda.sh
 conda activate lazyedit
 ```
 
-3. Optional system-level install (service mode):
+3. NPM-managed setup (recommended for a fresh machine):
+
+```bash
+npm install
+npm run setup
+```
+
+`npm run setup` installs the Expo app dependencies, creates missing Conda envs for `lazyedit`, `whisper`, and `caption`, installs CUDA-aware PyTorch wheels using `LAZYEDIT_TORCH_INDEX_URL` (default `cu128`), writes machine-local `.env` path defaults, and runs a runtime doctor check.
+
+Useful variants:
+
+```bash
+npm run setup -- --install-system   # also checks/installs tmux, ffmpeg, HandBrakeCLI
+npm run setup -- --update-envs      # update existing Conda envs from env files
+npm run doctor                      # verify Node, Conda, CUDA/PyTorch, Whisper, captioning
+```
+
+NPM runtime commands:
+
+```bash
+npm start       # starts the tmux backend + Expo profile
+npm run backend # backend only
+npm run web     # Expo web only
+```
+
+4. Optional system-level install (service mode):
 
 ```bash
 chmod +x install_lazyedit.sh
@@ -325,7 +350,11 @@ sudo ./scripts/prepare_lazyedit_db.sh
 | Task | Command |
 | --- | --- |
 | Initialize submodules | `git submodule update --init --recursive` |
+| Fresh machine setup | `npm install && npm run setup` |
+| Runtime doctor | `npm run doctor` |
 | Start backend only | `python app.py` |
+| Start backend only through npm | `npm run backend` |
+| Start Expo web through npm | `npm run web` |
 | Start backend + Expo (tmux) | `./start_lazyedit.sh` |
 | Stop tmux run | `./stop_lazyedit.sh` |
 | Open tmux session | `tmux attach -t lazyedit` |
@@ -408,7 +437,9 @@ Configuration precedence note:
 | `LAZYEDIT_AUTOPUBLISH_URL` | AutoPublish endpoint | `http://localhost:8081/publish` |
 | `LAZYEDIT_AUTOPUBLISH_TIMEOUT` | AutoPublish request timeout (seconds) | `60` |
 | `LAZYEDIT_WHISPER_SCRIPT` | Whisper/VAD script path | Environment-dependent |
+| `LAZYEDIT_WHISPER_PYTHON` | Python executable for the dedicated Whisper env | Environment-dependent |
 | `LAZYEDIT_WHISPER_MODEL`, `LAZYEDIT_WHISPER_FALLBACK_MODEL` | ASR model names | `large-v3` / `large-v2` (example) |
+| `LAZYEDIT_TORCH_INDEX_URL` | PyTorch wheel index used by npm setup for CUDA/CPU wheels | `https://download.pytorch.org/whl/cu128` |
 | `LAZYEDIT_CAPTION_PYTHON` | Python runtime for caption pipeline | Environment-dependent |
 | `LAZYEDIT_CAPTION_PRIMARY_ROOT`, `LAZYEDIT_CAPTION_PRIMARY_SCRIPT` | Primary captioning path/script | Environment-dependent |
 | `LAZYEDIT_CAPTION_FALLBACK_SCRIPT`, `LAZYEDIT_CAPTION_FALLBACK_CWD` | Fallback captioning path/script/cwd | Environment-dependent |
