@@ -924,7 +924,9 @@ export default function EditorScreen() {
       }
       setOriginalSubtitleText(json.original?.text || originalSubtitleText);
       setPolishedSubtitleText(json.polished?.text || polishedSubtitleText || json.original?.text || '');
-      setCorrectionStatus(t('publish_correction_saved'));
+      setCorrectionStatus(
+        action === 'ai' ? t('publish_correction_ai_saved') : t('publish_correction_saved'),
+      );
       await loadProcessStatus(selectedVideoId, true);
     } catch (err: any) {
       setCorrectionStatus(err?.message || String(err));
