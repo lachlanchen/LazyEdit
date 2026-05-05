@@ -7447,7 +7447,13 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
             return default
 
         use_cache = parse_bool(data.get("use_cache", self.get_argument("use_cache", default=None)), default=True)
-        use_polished = _parse_bool(data.get("usePolishedSubtitles") or data.get("use_polished_subtitles"), default=False)
+        use_polished_raw = data.get("usePolishedSubtitles")
+        if use_polished_raw is None:
+            use_polished_raw = data.get("use_polished_subtitles")
+        use_polished = _parse_bool(
+            use_polished_raw,
+            default=DEFAULT_PUBLISH_OPTIONS["usePolishedSubtitles"],
+        )
         publication_session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
         try:
             if publication_session_id:
@@ -9587,7 +9593,13 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
             data.get("use_cache", self.get_argument("use_cache", default=None)),
             default=True,
         )
-        use_polished = _parse_bool(data.get("usePolishedSubtitles") or data.get("use_polished_subtitles"), default=False)
+        use_polished_raw = data.get("usePolishedSubtitles")
+        if use_polished_raw is None:
+            use_polished_raw = data.get("use_polished_subtitles")
+        use_polished = _parse_bool(
+            use_polished_raw,
+            default=DEFAULT_PUBLISH_OPTIONS["usePolishedSubtitles"],
+        )
         publication_session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
         try:
             if publication_session_id:
@@ -9999,7 +10011,13 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             data = {}
         publication_session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
-        use_polished = _parse_bool(data.get("usePolishedSubtitles") or data.get("use_polished_subtitles"), default=False)
+        use_polished_raw = data.get("usePolishedSubtitles")
+        if use_polished_raw is None:
+            use_polished_raw = data.get("use_polished_subtitles")
+        use_polished = _parse_bool(
+            use_polished_raw,
+            default=DEFAULT_PUBLISH_OPTIONS["usePolishedSubtitles"],
+        )
         try:
             if publication_session_id:
                 _validate_publication_session(video_id_i, publication_session_id)
