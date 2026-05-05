@@ -6105,6 +6105,115 @@ class VideoProxyHandler(CorsMixin, tornado.web.RequestHandler):
         self.write(payload)
 
 
+def _run_transcription_video(video_id_i: int) -> tuple[int, dict]:
+    ldb.ensure_schema()
+    with ldb.get_cursor() as cur:
+        cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
+        row = cur.fetchone()
+    if not row:
+        return 404, {"error": "video not found"}
+    file_path = row[0]
+    file_path, error = _ensure_local_video_path(video_id_i, file_path)
+    if not file_path:
+        return 404, {"error": error or "video file missing"}
+
+    input_file = preprocess_if_needed(file_path)
+    base_name, extension = os.path.splitext(os.path.basename(input_file))
+    output_folder = os.path.dirname(input_file)
+    output_json_mixed = f"{output_folder}/{base_name}_mixed.json"
+    output_srt_mixed = f"{output_folder}/{base_name}_mixed.srt"
+    output_md_mixed = f"{output_folder}/{base_name}_mixed.md"
+
+    if not has_audio_stream(input_file):
+        message = "No audio stream detected in video."
+        write_empty_transcription_files(output_json_mixed, output_srt_mixed, output_md_mixed, message)
+        transcription_id = ldb.add_transcription(
+            video_id_i,
+            "mixed",
+            "no_audio",
+            output_json_mixed,
+            output_srt_mixed,
+            output_md_mixed,
+            message,
+        )
+        _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
+        primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
+        return 200, {
+            "id": transcription_id,
+            "video_id": video_id_i,
+            "status": "no_audio",
+            "error": message,
+            "output_json_path": output_json_mixed,
+            "output_srt_path": output_srt_mixed,
+            "output_md_path": output_md_mixed,
+            "json_url": media_url_for_path(output_json_mixed),
+            "srt_url": media_url_for_path(output_srt_mixed),
+            "md_url": media_url_for_path(output_md_mixed),
+            "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
+            "primary_language": primary_lang,
+            "language_summary": language_summary,
+        }
+
+    for path in (output_json_mixed, output_srt_mixed, output_md_mixed):
+        if os.path.exists(path):
+            os.remove(path)
+
+    try:
+        autocut_processor = AutocutProcessor(input_file, output_folder, base_name, extension)
+        autocut_processor.run_autocut("mixed", _resolve_autocut_gpu_id())
+
+        if not os.path.exists(output_json_mixed) or not os.path.exists(output_srt_mixed):
+            message = "Transcription completed but output files were not found."
+            transcription_id = ldb.add_transcription(
+                video_id_i,
+                "mixed",
+                "failed",
+                None,
+                None,
+                None,
+                message,
+            )
+            return 500, {"error": message, "id": transcription_id}
+
+        write_markdown_from_srt(output_srt_mixed, output_md_mixed)
+        transcription_id = ldb.add_transcription(
+            video_id_i,
+            "mixed",
+            "completed",
+            output_json_mixed,
+            output_srt_mixed,
+            output_md_mixed,
+            None,
+        )
+        _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
+        primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
+        return 200, {
+            "id": transcription_id,
+            "video_id": video_id_i,
+            "status": "completed",
+            "output_json_path": output_json_mixed,
+            "output_srt_path": output_srt_mixed,
+            "output_md_path": output_md_mixed,
+            "json_url": media_url_for_path(output_json_mixed),
+            "srt_url": media_url_for_path(output_srt_mixed),
+            "md_url": media_url_for_path(output_md_mixed),
+            "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
+            "primary_language": primary_lang,
+            "language_summary": language_summary,
+        }
+    except Exception as e:
+        transcription_id = ldb.add_transcription(
+            video_id_i,
+            "mixed",
+            "failed",
+            None,
+            None,
+            None,
+            str(e),
+        )
+        return 500, {"error": "transcription failed", "details": str(e), "id": transcription_id}
+
+
 class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
     async def post(self, video_id):
         try:
@@ -6114,113 +6223,7 @@ class VideoTranscribeHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": "invalid id"})
 
         def _run():
-            ldb.ensure_schema()
-            with ldb.get_cursor() as cur:
-                cur.execute("SELECT file_path FROM videos WHERE id = %s", (video_id_i,))
-                row = cur.fetchone()
-            if not row:
-                return 404, {"error": "video not found"}
-            file_path = row[0]
-            file_path, error = _ensure_local_video_path(video_id_i, file_path)
-            if not file_path:
-                return 404, {"error": error or "video file missing"}
-
-            input_file = preprocess_if_needed(file_path)
-            base_name, extension = os.path.splitext(os.path.basename(input_file))
-            output_folder = os.path.dirname(input_file)
-            output_json_mixed = f"{output_folder}/{base_name}_mixed.json"
-            output_srt_mixed = f"{output_folder}/{base_name}_mixed.srt"
-            output_md_mixed = f"{output_folder}/{base_name}_mixed.md"
-
-            if not has_audio_stream(input_file):
-                message = "No audio stream detected in video."
-                write_empty_transcription_files(output_json_mixed, output_srt_mixed, output_md_mixed, message)
-                transcription_id = ldb.add_transcription(
-                    video_id_i,
-                    "mixed",
-                    "no_audio",
-                    output_json_mixed,
-                    output_srt_mixed,
-                    output_md_mixed,
-                    message,
-                )
-                _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
-                primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
-                return 200, {
-                    "id": transcription_id,
-                    "video_id": video_id_i,
-                    "status": "no_audio",
-                    "error": message,
-                    "output_json_path": output_json_mixed,
-                    "output_srt_path": output_srt_mixed,
-                    "output_md_path": output_md_mixed,
-                    "json_url": media_url_for_path(output_json_mixed),
-                    "srt_url": media_url_for_path(output_srt_mixed),
-                    "md_url": media_url_for_path(output_md_mixed),
-                    "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
-                    "primary_language": primary_lang,
-                    "language_summary": language_summary,
-                }
-
-            # Clear stale outputs to avoid returning old data if transcription fails.
-            for path in (output_json_mixed, output_srt_mixed, output_md_mixed):
-                if os.path.exists(path):
-                    os.remove(path)
-
-            try:
-                autocut_processor = AutocutProcessor(input_file, output_folder, base_name, extension)
-                autocut_processor.run_autocut("mixed", _resolve_autocut_gpu_id())
-
-                if not os.path.exists(output_json_mixed) or not os.path.exists(output_srt_mixed):
-                    message = "Transcription completed but output files were not found."
-                    transcription_id = ldb.add_transcription(
-                        video_id_i,
-                        "mixed",
-                        "failed",
-                        None,
-                        None,
-                        None,
-                        message,
-                    )
-                    return 500, {"error": message, "id": transcription_id}
-
-                write_markdown_from_srt(output_srt_mixed, output_md_mixed)
-                transcription_id = ldb.add_transcription(
-                    video_id_i,
-                    "mixed",
-                    "completed",
-                    output_json_mixed,
-                    output_srt_mixed,
-                    output_md_mixed,
-                    None,
-                )
-                _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
-                primary_lang, language_summary = _summarize_transcription_languages(output_json_mixed)
-                return 200, {
-                    "id": transcription_id,
-                    "video_id": video_id_i,
-                    "status": "completed",
-                    "output_json_path": output_json_mixed,
-                    "output_srt_path": output_srt_mixed,
-                    "output_md_path": output_md_mixed,
-                    "json_url": media_url_for_path(output_json_mixed),
-                    "srt_url": media_url_for_path(output_srt_mixed),
-                    "md_url": media_url_for_path(output_md_mixed),
-                    "preview_text": build_transcription_preview(output_md_mixed, output_srt_mixed),
-                    "primary_language": primary_lang,
-                    "language_summary": language_summary,
-                }
-            except Exception as e:
-                transcription_id = ldb.add_transcription(
-                    video_id_i,
-                    "mixed",
-                    "failed",
-                    None,
-                    None,
-                    None,
-                    str(e),
-                )
-                return 500, {"error": "transcription failed", "details": str(e), "id": transcription_id}
+            return _run_transcription_video(video_id_i)
 
         status, payload = await run_blocking(_run)
         if status >= 400:
@@ -6429,11 +6432,32 @@ def _subtitle_variant_payload(
     video_id: int,
     variant: str,
     publication_session_id: int | None = None,
+    *,
+    ensure_transcription: bool = False,
 ) -> dict | None:
     _video_id, _file_path, _input_file, base_name, output_folder = _load_correction_sources(
         video_id,
         publication_session_id,
     )
+    if ensure_transcription:
+        raw_json, raw_srt = find_latest_transcription_outputs(
+            output_folder,
+            base_name,
+            use_polished=False,
+            publication_session_id=publication_session_id,
+        )
+        if not (raw_json and raw_srt and os.path.exists(raw_json) and os.path.exists(raw_srt)):
+            transcribe_status, transcribe_payload = _run_transcription_video(video_id)
+            if transcribe_status >= 400:
+                raise RuntimeError(transcribe_payload.get("error") or "transcription failed")
+            raw_json, raw_srt = find_latest_transcription_outputs(
+                output_folder,
+                base_name,
+                use_polished=False,
+                publication_session_id=publication_session_id,
+            )
+            if not (raw_json and raw_srt and os.path.exists(raw_json) and os.path.exists(raw_srt)):
+                raise RuntimeError("transcription generated no subtitle files")
     if variant == "polished":
         _ensure_global_polished_subtitles(video_id, output_folder, base_name)
         json_path, srt_path = find_latest_transcription_outputs(
@@ -6472,8 +6496,18 @@ def _subtitle_variant_payload(
 
 
 def _subtitle_correction_payload(video_id: int, publication_session_id: int | None = None) -> dict:
-    original = _subtitle_variant_payload(video_id, "original", publication_session_id)
-    polished = _subtitle_variant_payload(video_id, "polished", publication_session_id)
+    original = _subtitle_variant_payload(
+        video_id,
+        "original",
+        publication_session_id,
+        ensure_transcription=True,
+    )
+    polished = _subtitle_variant_payload(
+        video_id,
+        "polished",
+        publication_session_id,
+        ensure_transcription=True,
+    )
     return {
         "video_id": video_id,
         "publication_session_id": publication_session_id,
@@ -6561,6 +6595,9 @@ class VideoSubtitleCorrectionHandler(CorsMixin, tornado.web.RequestHandler):
         except FileNotFoundError as exc:
             self.set_status(404)
             return self.write({"error": str(exc)})
+        except RuntimeError as exc:
+            self.set_status(500)
+            return self.write({"error": str(exc)})
         except ValueError as exc:
             self.set_status(400)
             return self.write({"error": str(exc)})
@@ -6580,6 +6617,8 @@ class VideoSubtitleCorrectionHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             data = {}
         try:
+            # Ensure subtitles exist so correction works even if user hasn't run any pipeline stage yet.
+            _subtitle_correction_payload(video_id_i, None)
             action = str(data.get("action") or "").strip().lower()
             if action in {"save_original", "save-original", "original"}:
                 _save_subtitle_variant_text(video_id_i, "original", str(data.get("text") or ""), None)
@@ -6611,6 +6650,9 @@ class VideoSubtitleCorrectionHandler(CorsMixin, tornado.web.RequestHandler):
             self.write(_subtitle_correction_payload(video_id_i, None))
         except FileNotFoundError as exc:
             self.set_status(404)
+            self.write({"error": str(exc)})
+        except RuntimeError as exc:
+            self.set_status(500)
             self.write({"error": str(exc)})
         except ValueError as exc:
             self.set_status(400)
