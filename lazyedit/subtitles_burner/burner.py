@@ -697,16 +697,30 @@ def burn_video_with_slots(
 
         is_cjk = (slot.language or "").lower() in {"ja", "zh", "zh-hant", "zh-hans", "yue", "ko"}
         sample_text = "漢字" if is_cjk else "Sample"
-        sample_ruby = "かんじ" if is_cjk else "sam-pəl"
+        if (slot.language or "").lower() in {"zh", "zh-hant", "zh-hans", "yue"}:
+            sample_ruby = "hàn zì"
+        elif is_cjk:
+            sample_ruby = "かんじ"
+        else:
+            sample_ruby = "sam-pəl"
 
-        def _render_main_only_height(main_size: int) -> int:
+        def _render_sample_height(main_size: int, include_ruby: bool) -> int:
             stroke = max(1, int(round(default_style.stroke_width * (main_size / default_style.main_font_size))))
             pad_base = int(round(max(1, slot_height) * 0.10))
             pad_base = max(2, min(pad_base, 16))
             pad = max(pad_base, stroke * 2)
-            style = TextStyle(main_font_size=main_size, ruby_font_size=0, stroke_width=stroke, ruby_spacing=ruby_spacing)
+            ruby_size = max(0, int(round(main_size * 0.6))) if include_ruby else 0
+            if ruby_size:
+                ruby_size = min(ruby_size, max(0, main_size - 2))
+            style = TextStyle(
+                main_font_size=main_size,
+                ruby_font_size=ruby_size,
+                stroke_width=stroke,
+                ruby_spacing=ruby_spacing,
+            )
             renderer = RubyRenderer(style)
-            img = renderer.render_tokens([RubyToken(text=sample_text)], padding=pad)
+            token = RubyToken(text=sample_text, ruby=sample_ruby if include_ruby else None)
+            img = renderer.render_tokens([token], padding=pad)
             return int(img.size[1])
 
         # Start from the heuristic size, then clamp to what fits at scale=1.
@@ -715,7 +729,7 @@ def burn_video_with_slots(
         while lo < hi:
             mid = (lo + hi + 1) // 2
             try:
-                h = _render_main_only_height(mid)
+                h = _render_sample_height(mid, include_ruby=False)
             except Exception:
                 h = safe_height + 1
             if h <= safe_height:
@@ -732,6 +746,26 @@ def burn_video_with_slots(
         # Keep main font size independent of ruby toggles; ruby is just a
         # proportional companion when enabled.
         has_ruby = expects_ruby
+        if has_ruby:
+            # Ruby/pinyin rows must not intrude into adjacent subtitle rows.
+            # Fit the combined ruby+main rendering inside this row's virtual
+            # vertical space, while still honoring fontScale up to that limit.
+            ruby_safe_height = max(1, safe_height - max(2, gutter // 3))
+            lo, hi = 10, max(10, main_font_size)
+            while lo < hi:
+                mid = (lo + hi + 1) // 2
+                try:
+                    h = _render_sample_height(mid, include_ruby=True)
+                except Exception:
+                    h = ruby_safe_height + 1
+                if h <= ruby_safe_height:
+                    lo = mid
+                else:
+                    hi = mid - 1
+            main_font_size = max(12, min(main_font_size, lo))
+            stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
+            ruby_font_size = max(0, int(round(main_font_size * 0.6)))
+            ruby_font_size = min(ruby_font_size, max(0, main_font_size - 2))
         if not has_ruby:
             ruby_font_size = 0
         style = TextStyle(
