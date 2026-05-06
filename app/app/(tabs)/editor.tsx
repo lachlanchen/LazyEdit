@@ -23,6 +23,9 @@ const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 const PAGE_SIZE = 8;
 const PROCESS_READY_TIMEOUT_MS = 90 * 60 * 1000;
 const DEFAULT_TRANSLATION_LANGUAGES = ['ja', 'en', 'zh-Hant', 'fr'];
+const DEFAULT_SUBTITLE_LIFT_RATIO = 0.1;
+const MIN_SUBTITLE_LIFT_RATIO = 0;
+const MAX_SUBTITLE_LIFT_RATIO = 0.4;
 const LANGUAGE_LABELS: Record<string, string> = {
   ja: 'Japanese',
   en: 'English',
@@ -116,6 +119,16 @@ const PLATFORMS = [
   { key: 'instagram', label: 'Instagram' },
 ];
 const withCacheBust = (url: string) => `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
+const normalizeSubtitleLiftRatio = (value: unknown, fallback = DEFAULT_SUBTITLE_LIFT_RATIO) => {
+  const parsed = typeof value === 'number' ? value : Number(String(value ?? '').trim());
+  if (!Number.isFinite(parsed)) return fallback;
+  const clamped = Math.min(MAX_SUBTITLE_LIFT_RATIO, Math.max(MIN_SUBTITLE_LIFT_RATIO, parsed));
+  return Math.round(clamped * 1000) / 1000;
+};
+const formatSubtitleLiftRatio = (value: number) => {
+  const normalized = normalizeSubtitleLiftRatio(value);
+  return normalized.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+};
 
 export default function EditorScreen() {
   const defaultPublishSelection = useMemo(
@@ -174,6 +187,8 @@ export default function EditorScreen() {
   const [baseBurnPreviewUrl, setBaseBurnPreviewUrl] = useState<string | null>(null);
   const [baseBurnPreviewStatus, setBaseBurnPreviewStatus] = useState<string | null>(null);
   const [translationLanguages, setTranslationLanguages] = useState<string[]>(DEFAULT_TRANSLATION_LANGUAGES);
+  const [subtitleLiftRatio, setSubtitleLiftRatio] = useState(DEFAULT_SUBTITLE_LIFT_RATIO);
+  const [subtitleLiftInput, setSubtitleLiftInput] = useState(formatSubtitleLiftRatio(DEFAULT_SUBTITLE_LIFT_RATIO));
   const [correctionOpen, setCorrectionOpen] = useState(false);
   const [correctionLoading, setCorrectionLoading] = useState(false);
   const [correctionSaving, setCorrectionSaving] = useState(false);
@@ -586,9 +601,10 @@ export default function EditorScreen() {
 
   const loadPublishOptions = useCallback(async () => {
     try {
-      const [optionsResp, languagesResp] = await Promise.all([
+      const [optionsResp, languagesResp, burnLayoutResp] = await Promise.all([
         fetch(`${API_URL}/api/ui-settings/publish_options`),
         fetch(`${API_URL}/api/ui-settings/translation_languages`),
+        fetch(`${API_URL}/api/ui-settings/burn_layout`),
       ]);
       let nextLanguages: string[] = DEFAULT_TRANSLATION_LANGUAGES;
       if (languagesResp.ok) {
@@ -620,6 +636,12 @@ export default function EditorScreen() {
           if (cleaned.length) nextLanguages = cleaned;
         }
       }
+      if (burnLayoutResp.ok) {
+        const burnLayoutJson = await burnLayoutResp.json();
+        const liftRatio = normalizeSubtitleLiftRatio(burnLayoutJson?.value?.liftRatio);
+        setSubtitleLiftRatio(liftRatio);
+        setSubtitleLiftInput(formatSubtitleLiftRatio(liftRatio));
+      }
       setTranslationLanguages(nextLanguages.slice(0, DEFAULT_TRANSLATION_LANGUAGES.length));
     } catch (_err) {
       // ignore
@@ -627,6 +649,54 @@ export default function EditorScreen() {
       setPublishOptionsLoaded(true);
     }
   }, []);
+
+  const persistBurnLayout = useCallback(async (nextLiftRatio: number) => {
+    try {
+      let existing = {};
+      const resp = await fetch(`${API_URL}/api/ui-settings/burn_layout`);
+      if (resp.ok) {
+        const json = await resp.json().catch(() => ({}));
+        if (json?.value && typeof json.value === 'object') existing = json.value;
+      }
+      await fetch(`${API_URL}/api/ui-settings/burn_layout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...existing,
+          liftRatio: normalizeSubtitleLiftRatio(nextLiftRatio),
+          liftSlots: 0,
+        }),
+      });
+    } catch (_err) {
+      // ignore
+    }
+  }, []);
+
+  const setAndPersistSubtitleLiftRatio = useCallback(
+    (value: unknown) => {
+      const nextLiftRatio = normalizeSubtitleLiftRatio(value, subtitleLiftRatio);
+      setSubtitleLiftRatio(nextLiftRatio);
+      setSubtitleLiftInput(formatSubtitleLiftRatio(nextLiftRatio));
+      void persistBurnLayout(nextLiftRatio);
+      return nextLiftRatio;
+    },
+    [persistBurnLayout, subtitleLiftRatio],
+  );
+
+  const commitSubtitleLiftRatio = useCallback(async () => {
+    const nextLiftRatio = normalizeSubtitleLiftRatio(subtitleLiftInput, subtitleLiftRatio);
+    setSubtitleLiftRatio(nextLiftRatio);
+    setSubtitleLiftInput(formatSubtitleLiftRatio(nextLiftRatio));
+    await persistBurnLayout(nextLiftRatio);
+    return nextLiftRatio;
+  }, [persistBurnLayout, subtitleLiftInput, subtitleLiftRatio]);
+
+  const adjustSubtitleLiftRatio = useCallback(
+    (delta: number) => {
+      setAndPersistSubtitleLiftRatio(Math.round((subtitleLiftRatio + delta) * 1000) / 1000);
+    },
+    [setAndPersistSubtitleLiftRatio, subtitleLiftRatio],
+  );
 
   const persistPublishOptions = useCallback(async (
     nextBurn: boolean,
@@ -1108,6 +1178,7 @@ export default function EditorScreen() {
     setProcessStatus(t('publish_process_starting'));
     setProcessTone('neutral');
     try {
+      const committedLiftRatio = await commitSubtitleLiftRatio();
       const logoPayload = await fetchLogoSettings();
       const steps = burnSubtitles
         ? ['keyframes', 'caption', 'transcribe', 'translate', 'burn', 'metadata_zh', 'metadata_en']
@@ -1120,6 +1191,7 @@ export default function EditorScreen() {
           steps,
           translationLanguages,
           usePolishedSubtitles,
+          subtitleLiftRatio: committedLiftRatio,
           publicationMode: publishAsNewSession ? 'new' : 'override',
           publicationSessionId: publishAsNewSession ? null : publicationSessionId,
           ...(logoPayload ? { logo: logoPayload } : {}),
@@ -1226,6 +1298,7 @@ export default function EditorScreen() {
     setPublishStatus(t('publish_status_queued'));
     setPublishTone('neutral');
     try {
+      const committedLiftRatio = await commitSubtitleLiftRatio();
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1235,6 +1308,7 @@ export default function EditorScreen() {
             burnSubtitles,
             translationLanguages,
             usePolishedSubtitles,
+            subtitleLiftRatio: committedLiftRatio,
             publicationMode: publishAsNewSession ? 'new' : 'override',
             publicationSessionId: publishAsNewSession ? null : publicationSessionId,
           },
@@ -1582,6 +1656,47 @@ export default function EditorScreen() {
                   </Pressable>
                 );
               })}
+            </View>
+          </View>
+          <View style={styles.liftRatioRow}>
+            <View style={styles.publishOptionText}>
+              <Text style={styles.optionLabel}>{t('publish_option_lift_ratio_title')}</Text>
+              <Text style={styles.optionHint}>
+                {t('publish_option_lift_ratio_hint', { value: formatSubtitleLiftRatio(subtitleLiftRatio) })}
+              </Text>
+            </View>
+            <View style={styles.liftRatioControls}>
+              <Pressable
+                style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                onPress={() => setAndPersistSubtitleLiftRatio(0)}
+                disabled={!publishOptionsLoaded}
+              >
+                <Text style={styles.liftRatioButtonText}>0</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                onPress={() => adjustSubtitleLiftRatio(-0.01)}
+                disabled={!publishOptionsLoaded}
+              >
+                <Text style={styles.liftRatioButtonText}>-</Text>
+              </Pressable>
+              <TextInput
+                value={subtitleLiftInput}
+                onChangeText={setSubtitleLiftInput}
+                onBlur={() => void commitSubtitleLiftRatio()}
+                onSubmitEditing={() => void commitSubtitleLiftRatio()}
+                keyboardType="decimal-pad"
+                placeholder="0.1"
+                editable={publishOptionsLoaded}
+                style={[styles.liftRatioInput, !publishOptionsLoaded && styles.liftRatioInputDisabled]}
+              />
+              <Pressable
+                style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                onPress={() => adjustSubtitleLiftRatio(0.01)}
+                disabled={!publishOptionsLoaded}
+              >
+                <Text style={styles.liftRatioButtonText}>+</Text>
+              </Pressable>
             </View>
           </View>
           {renderSubtitleSourceSelector()}
@@ -2038,6 +2153,57 @@ const styles = StyleSheet.create({
   },
   languageChipText: { fontSize: 11, fontWeight: '700', color: '#0f172a' },
   languageChipTextActive: { color: 'white' },
+  liftRatioRow: {
+    marginTop: 8,
+    minHeight: 42,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  liftRatioControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    flexShrink: 0,
+    gap: 6,
+  },
+  liftRatioButton: {
+    minWidth: 30,
+    height: 28,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+  },
+  liftRatioButtonText: { fontSize: 12, fontWeight: '800', color: '#0f172a' },
+  liftRatioInput: {
+    width: 58,
+    height: 30,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    backgroundColor: 'white',
+    paddingHorizontal: 8,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0f172a',
+    textAlign: 'center',
+  },
+  liftRatioInputDisabled: {
+    backgroundColor: '#f1f5f9',
+    color: '#94a3b8',
+  },
   runSelectorBlock: {
     marginTop: 10,
     padding: 10,
