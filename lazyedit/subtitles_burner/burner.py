@@ -657,6 +657,7 @@ def burn_video_with_slots(
     default_style = TextStyle()
 
     assignments: list[SlotAssignment] = []
+    prepared_slots: list[dict[str, Any]] = []
     ruby_spacing = min(max(float(ruby_spacing), 0.0), 0.2)
     for slot in slots:
         scale = max(0.6, min(2.5, float(slot.font_scale or 1.0)))
@@ -738,20 +739,15 @@ def burn_video_with_slots(
                 hi = mid - 1
         base_main_fit = max(12, min(lo, 260))
 
-        main_font_size = max(12, int(round(base_main_fit * scale)))
-        stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
-        ruby_font_size = max(0, int(round(main_font_size * 0.6)))
-        ruby_font_size = min(ruby_font_size, max(0, main_font_size - 2))
-
-        # Keep main font size independent of ruby toggles; ruby is just a
-        # proportional companion when enabled.
+        max_main_font_size = max(12, int(round(base_main_fit * scale)))
         has_ruby = expects_ruby
         if has_ruby:
-            # Ruby/pinyin rows must not intrude into adjacent subtitle rows.
-            # Fit the combined ruby+main rendering inside this row's virtual
-            # vertical space, while still honoring fontScale up to that limit.
+            # Ruby/pinyin rows must not intrude into adjacent subtitle rows. We
+            # compute a per-slot cap here, then apply the smallest cap as the
+            # shared base font below so ruby rows do not look smaller than
+            # non-ruby rows.
             ruby_safe_height = max(1, safe_height - max(2, gutter // 3))
-            lo, hi = 10, max(10, main_font_size)
+            lo, hi = 10, max(10, max_main_font_size)
             while lo < hi:
                 mid = (lo + hi + 1) // 2
                 try:
@@ -762,10 +758,34 @@ def burn_video_with_slots(
                     lo = mid
                 else:
                     hi = mid - 1
-            main_font_size = max(12, min(main_font_size, lo))
-            stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
-            ruby_font_size = max(0, int(round(main_font_size * 0.6)))
-            ruby_font_size = min(ruby_font_size, max(0, main_font_size - 2))
+            max_main_font_size = max(12, min(max_main_font_size, lo))
+
+        prepared_slots.append(
+            {
+                "slot": slot,
+                "scale": scale,
+                "has_ruby": has_ruby,
+                "max_main_font_size": max_main_font_size,
+            }
+        )
+
+    shared_base_font_size = 12.0
+    if prepared_slots:
+        shared_base_font_size = min(
+            float(entry["max_main_font_size"]) / max(0.1, float(entry["scale"]))
+            for entry in prepared_slots
+        )
+
+    for entry in prepared_slots:
+        slot = entry["slot"]
+        scale = float(entry["scale"])
+        has_ruby = bool(entry["has_ruby"])
+        max_main_font_size = int(entry["max_main_font_size"])
+        main_font_size = max(12, int(round(shared_base_font_size * scale)))
+        main_font_size = min(main_font_size, max_main_font_size)
+        stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
+        ruby_font_size = max(0, int(round(main_font_size * 0.6)))
+        ruby_font_size = min(ruby_font_size, max(0, main_font_size - 2))
         if not has_ruby:
             ruby_font_size = 0
         style = TextStyle(

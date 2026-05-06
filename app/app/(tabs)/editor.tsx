@@ -790,10 +790,9 @@ export default function EditorScreen() {
     (language: string) => {
       const active = translationLanguages.includes(language);
       if (active && translationLanguages.length <= 1) return;
-      const nextSet = new Set(translationLanguages);
-      if (active) nextSet.delete(language);
-      else nextSet.add(language);
-      const nextLanguages = DEFAULT_TRANSLATION_LANGUAGES.filter((candidate) => nextSet.has(candidate));
+      const nextLanguages = active
+        ? translationLanguages.filter((candidate) => candidate !== language)
+        : [...translationLanguages, language].filter((candidate, index, all) => all.indexOf(candidate) === index);
       setTranslationLanguages(nextLanguages);
       void persistPublishOptions(burnSubtitles, nextLanguages);
     },
