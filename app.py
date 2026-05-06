@@ -4925,6 +4925,108 @@ def _pick_publish_video_path(video_id: int, fallback_path: str, publication_sess
     return fallback_path
 
 
+def _cover_path_for_video(file_path: str, publication_session_id: int | None = None) -> tuple[str, str, str, str]:
+    base_name = os.path.splitext(os.path.basename(file_path))[0]
+    publish_dir = _publication_session_publish_dir(file_path, publication_session_id)
+    cover_filename = f"{base_name}_cover.jpg"
+    cover_path = os.path.join(publish_dir, cover_filename)
+    return base_name, publish_dir, cover_filename, cover_path
+
+
+def _existing_cover_payload(
+    video_id_i: int,
+    file_path: str,
+    publication_session_id: int | None = None,
+) -> tuple[int, dict]:
+    _base_name, _publish_dir, _cover_filename, cover_path = _cover_path_for_video(file_path, publication_session_id)
+    if not publication_session_id:
+        legacy_cover_path = os.path.join(os.path.dirname(file_path), os.path.basename(cover_path))
+        if not os.path.exists(cover_path) and os.path.exists(legacy_cover_path):
+            shutil.copy2(legacy_cover_path, cover_path)
+
+    if not os.path.exists(cover_path):
+        return 404, {"error": "cover not found", "publication_session_id": publication_session_id}
+
+    return 200, {
+        "status": "completed",
+        "video_id": video_id_i,
+        "publication_session_id": publication_session_id,
+        "cover_path": cover_path,
+        "cover_url": media_url_for_path(cover_path),
+    }
+
+
+def _extract_cover_for_video(
+    video_id_i: int,
+    *,
+    lang: str = "zh",
+    publication_session_id: int | None = None,
+    force: bool = True,
+) -> tuple[int, dict]:
+    row = _get_video_row(video_id_i)
+    if not row:
+        return 404, {"error": "video not found"}
+    _, file_path, _, _ = row
+    file_path, error = _ensure_local_video_path(video_id_i, file_path)
+    if not file_path:
+        return 404, {"error": error or "video file missing"}
+
+    if not force:
+        existing_status, existing_payload = _existing_cover_payload(video_id_i, file_path, publication_session_id)
+        if existing_status == 200:
+            return existing_status, existing_payload
+
+    metadata_payload, _ = _get_latest_metadata_payload(
+        video_id_i,
+        lang,
+        publication_session_id=publication_session_id,
+    )
+    if not metadata_payload and lang != "en":
+        metadata_payload, _ = _get_latest_metadata_payload(
+            video_id_i,
+            "en",
+            publication_session_id=publication_session_id,
+        )
+    if not metadata_payload:
+        return 400, {
+            "error": "metadata missing; generate metadata first",
+            "publication_session_id": publication_session_id,
+        }
+
+    cover_timestamp_raw = metadata_payload.get("cover")
+    if not cover_timestamp_raw:
+        return 400, {
+            "error": "cover timestamp missing in metadata",
+            "publication_session_id": publication_session_id,
+        }
+
+    _base_name, _publish_dir, _cover_filename, cover_path = _cover_path_for_video(file_path, publication_session_id)
+    cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
+    video_for_cover = _pick_publish_video_path(
+        video_id_i,
+        file_path,
+        publication_session_id=publication_session_id,
+    )
+
+    try:
+        extract_cover(video_for_cover, cover_path, cover_timestamp)
+    except Exception as exc:
+        return 500, {
+            "error": "cover extraction failed",
+            "details": str(exc),
+            "publication_session_id": publication_session_id,
+        }
+
+    return 200, {
+        "status": "completed",
+        "video_id": video_id_i,
+        "publication_session_id": publication_session_id,
+        "cover_path": cover_path,
+        "cover_url": media_url_for_path(cover_path),
+        "timestamp": cover_timestamp,
+    }
+
+
 def _simplify_metadata_payload(metadata: dict) -> dict:
     simplified = dict(metadata or {})
     for key in ("title", "brief_description", "middle_description", "long_description"):
@@ -5108,7 +5210,10 @@ def _prepare_publish_bundle(
         if burn_subtitles
         else preprocess_if_needed(file_path)
     )
-    cover_path = os.path.join(publish_dir, cover_filename)
+    _base_name, _cover_publish_dir, _cover_filename, cover_path = _cover_path_for_video(
+        file_path,
+        publication_session_id,
+    )
     if not os.path.exists(cover_path):
         cover_timestamp_raw = metadata_payload.get("cover") or "00:00:01,000"
         cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
@@ -5226,11 +5331,13 @@ def _ready_for_publish_with_options(payload: dict | None, *, burn_subtitles: boo
     if not isinstance(steps, dict):
         return bool(payload.get("ready_for_publish"))
 
-    required_steps = ["transcribe", "keyframes", "caption", "metadata_zh", "metadata_en"]
+    required_steps = ["transcribe", "keyframes", "caption", "metadata_zh", "metadata_en", "cover"]
     if burn_subtitles:
         required_steps.extend(["translate", "burn"])
 
     if (steps.get("metadata_zh") or {}).get("status") != "done":
+        return False
+    if (steps.get("cover") or {}).get("status") != "done":
         return False
 
     for name in required_steps:
@@ -5460,6 +5567,7 @@ def _process_publish_job(job_row: tuple) -> None:
             "transcribe",
             "metadata_zh",
             "metadata_en",
+            "cover",
         ]
         if burn_subtitles:
             process_steps.insert(3, "translate")
@@ -7619,34 +7727,31 @@ class VideoCoverHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             self.set_status(400)
             return self.write({"error": "invalid id"})
+        publication_session_id = _parse_int_value(
+            self.get_argument("publicationSessionId", default=None)
+            or self.get_argument("session_id", default=None)
+        )
 
         row = _get_video_row(video_id_i)
         if not row:
             self.set_status(404)
             return self.write({"error": "video not found"})
+        try:
+            if publication_session_id:
+                _validate_publication_session(video_id_i, publication_session_id)
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
         _, file_path, _, _ = row
         file_path, error = _ensure_local_video_path(video_id_i, file_path, allow_download=False)
         if not file_path:
             self.set_status(404)
             return self.write({"error": error or "video file missing"})
 
-        base_name = os.path.splitext(os.path.basename(file_path))[0]
-        publish_dir = _get_publish_dir(file_path)
-        cover_filename = f"{base_name}_cover.jpg"
-        cover_path = os.path.join(publish_dir, cover_filename)
-        legacy_cover_path = os.path.join(os.path.dirname(file_path), cover_filename)
-        if not os.path.exists(cover_path) and os.path.exists(legacy_cover_path):
-            shutil.copy2(legacy_cover_path, cover_path)
-
-        if not os.path.exists(cover_path):
-            self.set_status(404)
-            return self.write({"error": "cover not found"})
-
-        self.write({
-            "status": "completed",
-            "cover_path": cover_path,
-            "cover_url": media_url_for_path(cover_path),
-        })
+        status, payload = _existing_cover_payload(video_id_i, file_path, publication_session_id)
+        if status != 200:
+            self.set_status(status)
+        self.write(payload)
 
     async def post(self, video_id):
         try:
@@ -7661,43 +7766,21 @@ class VideoCoverHandler(CorsMixin, tornado.web.RequestHandler):
             data = {}
 
         lang = _normalize_metadata_language(data.get("lang") or data.get("language") or "zh") or "zh"
+        publication_session_id = _parse_int_value(data.get("publicationSessionId") or data.get("session_id"))
+        try:
+            if publication_session_id:
+                _validate_publication_session(video_id_i, publication_session_id)
+        except ValueError as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
+
         def _run():
-            row = _get_video_row(video_id_i)
-            if not row:
-                return 404, {"error": "video not found"}
-            _, file_path, _, _ = row
-            file_path, error = _ensure_local_video_path(video_id_i, file_path)
-            if not file_path:
-                return 404, {"error": error or "video file missing"}
-
-            metadata_payload, _ = _get_latest_metadata_payload(video_id_i, lang)
-            if not metadata_payload and lang != "en":
-                metadata_payload, _ = _get_latest_metadata_payload(video_id_i, "en")
-            if not metadata_payload:
-                return 400, {"error": "metadata missing; generate metadata first"}
-
-            cover_timestamp_raw = metadata_payload.get("cover")
-            if not cover_timestamp_raw:
-                return 400, {"error": "cover timestamp missing in metadata"}
-
-            base_name = os.path.splitext(os.path.basename(file_path))[0]
-            publish_dir = _get_publish_dir(file_path)
-            cover_filename = f"{base_name}_cover.jpg"
-            cover_path = os.path.join(publish_dir, cover_filename)
-            cover_timestamp, _ = validate_timestamp(str(cover_timestamp_raw))
-            video_for_cover = _pick_publish_video_path(video_id_i, file_path)
-
-            try:
-                extract_cover(video_for_cover, cover_path, cover_timestamp)
-            except Exception as exc:
-                return 500, {"error": "cover extraction failed", "details": str(exc)}
-
-            return 200, {
-                "status": "completed",
-                "cover_path": cover_path,
-                "cover_url": media_url_for_path(cover_path),
-                "timestamp": cover_timestamp,
-            }
+            return _extract_cover_for_video(
+                video_id_i,
+                lang=lang,
+                publication_session_id=publication_session_id,
+                force=True,
+            )
 
         status, payload = await run_blocking(_run)
         if status != 200:
@@ -10377,6 +10460,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         )
         needs_translate = wants("translate") or wants("burn")
         needs_caption = wants("caption") or wants("polish") or wants("metadata_zh") or wants("metadata_en")
+        needs_cover = wants("cover") or wants("metadata_zh") or wants("metadata_en")
 
         languages_override = data.get("translation_languages")
         if languages_override is None:
@@ -10603,6 +10687,22 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             else:
                 await mark("metadata_en", "skipped", "Skipped")
 
+            if needs_cover:
+                await mark("cover", "working", "Extracting")
+                status, payload = await run_blocking(
+                    _extract_cover_for_video,
+                    video_id_i,
+                    lang="zh",
+                    publication_session_id=publication_session_id,
+                    force=True,
+                )
+                if status >= 400:
+                    await mark("cover", "error", payload.get("error") or payload.get("details") or "Failed")
+                    return False, statuses, "cover extraction failed"
+                await mark("cover", "done", "Completed")
+            else:
+                await mark("cover", "skipped", "Skipped")
+
             return True, statuses, None
 
         if parse_bool(data.get("async")):
@@ -10637,6 +10737,7 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
         if not row:
             self.set_status(404)
             return self.write({"error": "video not found"})
+        video_file_path = row[1]
         publication_session_id = _parse_int_value(
             self.get_argument("publicationSessionId", default=None)
             or self.get_argument("session_id", default=None)
@@ -10838,8 +10939,36 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             steps["metadata_en"] = step_payload("idle")
 
         ready_for_cover = steps.get("metadata_zh", {}).get("status") == "done"
-        ready_for_publish = ready_for_cover and all(
-            step.get("status") in {"done", "skipped"} for step in steps.values()
+        if ready_for_cover:
+            cover_file_path, cover_error = _ensure_local_video_path(video_id_i, video_file_path, allow_download=False)
+            if cover_file_path:
+                cover_status, cover_payload = _existing_cover_payload(
+                    video_id_i,
+                    cover_file_path,
+                    publication_session_id,
+                )
+                if cover_status == 200:
+                    cover_updated_at = None
+                    cover_path = cover_payload.get("cover_path")
+                    if cover_path and os.path.exists(cover_path):
+                        cover_updated_at = datetime.fromtimestamp(os.path.getmtime(cover_path)).astimezone()
+                        updated_at_candidates.append(cover_updated_at)
+                    steps["cover"] = step_payload("done", "Completed", cover_updated_at)
+                else:
+                    steps["cover"] = step_payload("idle", cover_payload.get("error") or "Missing")
+            else:
+                steps["cover"] = step_payload("error", cover_error or "video file missing")
+        else:
+            steps["cover"] = step_payload("idle")
+
+        ready_for_publish = (
+            ready_for_cover
+            and steps.get("cover", {}).get("status") == "done"
+            and all(
+                step.get("status") in {"done", "skipped"}
+                for name, step in steps.items()
+                if name != "cover"
+            )
         )
         last_updated = max(updated_at_candidates) if updated_at_candidates else None
 

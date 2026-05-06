@@ -215,6 +215,7 @@ export default function EditorScreen() {
   const videosRef = useRef<Video[]>([]);
   const queueVisiblePreviewBackfillRef = useRef<(items: Video[]) => void>(() => {});
   const viewabilityConfigRef = useRef({ itemVisiblePercentThreshold: 60, minimumViewTime: 120 });
+  const coverRequestIdRef = useRef(0);
   const { t } = useI18n();
 
   const resolveMediaSrc = useCallback((value?: string | null) => {
@@ -233,6 +234,7 @@ export default function EditorScreen() {
       { key: 'caption', label: t('publish_step_caption') },
       { key: 'metadata_zh', label: t('publish_step_metadata_zh') },
       { key: 'metadata_en', label: t('publish_step_metadata_en') },
+      { key: 'cover', label: t('publish_step_cover') },
     ],
     [t],
   );
@@ -458,6 +460,7 @@ export default function EditorScreen() {
       publicationRunOptions[0],
     [publicationRunOptions, selectedRunKey],
   );
+  const selectedCoverSessionId = publishAsNewSession ? null : publicationSessionId;
   const subtitleSourceOptions = useMemo(
     () => [
       {
@@ -873,18 +876,87 @@ export default function EditorScreen() {
     }
   }, [t]);
 
-  const loadCoverPreview = async (videoId: number) => {
+  const requestCoverExtraction = useCallback(async (
+    videoId: number,
+    sessionId: number | null = null,
+    silent = false,
+  ): Promise<boolean> => {
+    if (!videoId) return false;
+    const requestId = ++coverRequestIdRef.current;
+    setCoverLoading(true);
+    if (!silent) {
+      setCoverStatus(t('publish_cover_extracting'));
+      setCoverTone('neutral');
+    }
     try {
-      const resp = await fetch(`${API_URL}/api/videos/${videoId}/cover`);
-      if (!resp.ok) return;
-      const json = await resp.json();
+      const body: Record<string, unknown> = { lang: 'zh' };
+      if (sessionId) body.publicationSessionId = sessionId;
+      const resp = await fetch(`${API_URL}/api/videos/${videoId}/cover`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const json = await resp.json().catch(() => ({}));
+      if (requestId !== coverRequestIdRef.current) return false;
+      if (!resp.ok) {
+        setCoverUrl(null);
+        if (!silent) {
+          setCoverStatus(`${t('publish_cover_failed')}: ${json.error || json.details || resp.statusText}`);
+          setCoverTone('bad');
+        }
+        return false;
+      }
       if (json.cover_url) {
         setCoverUrl(withCacheBust(`${API_URL}${json.cover_url}`));
       }
-    } catch (_err) {
-      // ignore
+      setCoverStatus(t('publish_cover_ready'));
+      setCoverTone('good');
+      return true;
+    } catch (err: any) {
+      if (requestId === coverRequestIdRef.current) {
+        setCoverUrl(null);
+        if (!silent) {
+          setCoverStatus(`${t('publish_cover_failed')}: ${err?.message || String(err)}`);
+          setCoverTone('bad');
+        }
+      }
+      return false;
+    } finally {
+      if (requestId === coverRequestIdRef.current) {
+        setCoverLoading(false);
+      }
     }
-  };
+  }, [t]);
+
+  const loadCoverPreview = useCallback(async (
+    videoId: number,
+    sessionId: number | null = null,
+    autoExtract = false,
+  ): Promise<boolean> => {
+    const requestId = ++coverRequestIdRef.current;
+    try {
+      const suffix = sessionId ? `?publicationSessionId=${encodeURIComponent(String(sessionId))}` : '';
+      const resp = await fetch(`${API_URL}/api/videos/${videoId}/cover${suffix}`);
+      const json = await resp.json().catch(() => ({}));
+      if (requestId !== coverRequestIdRef.current) return false;
+      if (resp.ok && json.cover_url) {
+        setCoverUrl(withCacheBust(`${API_URL}${json.cover_url}`));
+        setCoverStatus('');
+        setCoverTone('neutral');
+        return true;
+      }
+      setCoverUrl(null);
+      if (resp.status === 404 && autoExtract) {
+        return requestCoverExtraction(videoId, sessionId, false);
+      }
+      return false;
+    } catch (_err) {
+      if (requestId === coverRequestIdRef.current) {
+        setCoverUrl(null);
+      }
+      return false;
+    }
+  }, [requestCoverExtraction]);
 
   const loadBaseBurnPreview = useCallback(async (videoId: number) => {
     try {
@@ -1174,11 +1246,18 @@ export default function EditorScreen() {
     setCorrectionOpen(false);
     setOriginalSubtitleText('');
     setPolishedSubtitleText('');
-    loadCoverPreview(selectedVideoId);
     loadBaseBurnPreview(selectedVideoId);
     loadPublicationSessions(selectedVideoId, true);
     loadProcessStatus(selectedVideoId, true);
   }, [selectedVideoId]);
+
+  useEffect(() => {
+    if (!selectedVideoId) return;
+    setCoverUrl(null);
+    setCoverStatus('');
+    setCoverTone('neutral');
+    void loadCoverPreview(selectedVideoId, selectedCoverSessionId, processReadyForCover);
+  }, [loadCoverPreview, processReadyForCover, selectedCoverSessionId, selectedVideoId]);
 
   useEffect(() => {
     if (!selectedVideoId) return;
@@ -1246,8 +1325,8 @@ export default function EditorScreen() {
       const committedBurnLayout = await commitSubtitleBurnLayoutSettings();
       const logoPayload = await fetchLogoSettings();
       const steps = burnSubtitles
-        ? ['keyframes', 'caption', 'transcribe', 'translate', 'burn', 'metadata_zh', 'metadata_en']
-        : ['keyframes', 'caption', 'transcribe', 'metadata_zh', 'metadata_en'];
+        ? ['keyframes', 'caption', 'transcribe', 'translate', 'burn', 'metadata_zh', 'metadata_en', 'cover']
+        : ['keyframes', 'caption', 'transcribe', 'metadata_zh', 'metadata_en', 'cover'];
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/process`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1293,37 +1372,14 @@ export default function EditorScreen() {
     }
   };
 
-  const extractCover = async (): Promise<boolean> => {
-    if (!selectedVideoId || coverLoading) return false;
-    setCoverLoading(true);
-    setCoverStatus(t('publish_cover_extracting'));
-    setCoverTone('neutral');
-    try {
-      const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/cover`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lang: 'zh' }),
-      });
-      const json = await resp.json();
-      if (!resp.ok) {
-        setCoverStatus(`${t('publish_cover_failed')}: ${json.error || resp.statusText}`);
-        setCoverTone('bad');
-        return false;
-      }
-      if (json.cover_url) {
-        setCoverUrl(withCacheBust(`${API_URL}${json.cover_url}`));
-      }
-      setCoverStatus(t('publish_cover_ready'));
-      setCoverTone('good');
-      return true;
-    } catch (err: any) {
-      setCoverStatus(`${t('publish_cover_failed')}: ${err?.message || String(err)}`);
-      setCoverTone('bad');
-      return false;
-    } finally {
-      setCoverLoading(false);
-    }
-  };
+  const extractCover = useCallback(
+    () => (
+      selectedVideoId
+        ? requestCoverExtraction(selectedVideoId, selectedCoverSessionId, false)
+        : Promise.resolve(false)
+    ),
+    [requestCoverExtraction, selectedCoverSessionId, selectedVideoId],
+  );
 
   const waitForProcessReady = useCallback(async (videoId: number) => {
     const start = Date.now();
