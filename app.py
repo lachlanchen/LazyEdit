@@ -1669,57 +1669,64 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
 def _burn_layout_for_languages(layout: dict | list | None, languages) -> dict:
     cleaned = _sanitize_burn_layout(layout)
     selected_languages = _sanitize_translation_languages(languages)
-    selected_set = set(selected_languages)
-    if not selected_set:
+    if not selected_languages:
         return cleaned
 
-    ordered_slots = []
-    seen_languages = set()
+    slots_by_language: dict[str, dict] = {}
     for slot in cleaned.get("slots") or []:
         if not isinstance(slot, dict):
             continue
         language = _normalize_translation_language(slot.get("language"))
-        if not language or language not in selected_set or language in seen_languages:
+        if not language or language in slots_by_language:
             continue
-        next_slot = dict(slot)
-        next_slot["language"] = language
-        ordered_slots.append(next_slot)
-        seen_languages.add(language)
+        slots_by_language[language] = dict(slot)
 
     default_slots_by_language = {
         _normalize_translation_language(slot.get("language")): slot
         for slot in DEFAULT_BURN_LAYOUT.get("slots", [])
         if isinstance(slot, dict) and _normalize_translation_language(slot.get("language"))
     }
-    for language in selected_languages:
-        if language in seen_languages:
-            continue
-        next_slot = dict(default_slots_by_language.get(language) or {})
-        next_slot["language"] = language
-        ordered_slots.append(next_slot)
-        seen_languages.add(language)
-
-    if not ordered_slots:
-        return cleaned
-
-    old_rows = max(1, int(cleaned.get("rows") or DEFAULT_BURN_LAYOUT.get("rows", 4)))
     cols = max(1, int(cleaned.get("cols") or DEFAULT_BURN_LAYOUT.get("cols", 1)))
-    new_rows = max(1, (len(ordered_slots) + cols - 1) // cols)
-    compact_slots = []
-    for index, slot in enumerate(ordered_slots, start=1):
+    rows = max(1, int(cleaned.get("rows") or DEFAULT_BURN_LAYOUT.get("rows", 4)))
+    rows = max(rows, (len(selected_languages) + cols - 1) // cols)
+    slot_count = max(1, rows * cols)
+    fixed_slots = [dict(slot) for slot in cleaned.get("slots") or [] if isinstance(slot, dict)]
+    fixed_slots = fixed_slots[:slot_count]
+    while len(fixed_slots) < slot_count:
+        fixed_slots.append({
+            "slot": len(fixed_slots) + 1,
+            "language": None,
+            "fontScale": 1.0,
+            "romaji": cleaned.get("romajiEnabled", True),
+            "pinyin": cleaned.get("pinyinEnabled", True),
+            "ipa": False,
+            "jyutping": False,
+            "romaja": False,
+            "arabicTranslit": False,
+        })
+    for slot_id, slot in enumerate(fixed_slots, start=1):
+        slot["slot"] = slot_id
+        slot["language"] = None
+
+    for index, language in enumerate(selected_languages):
+        if index >= slot_count:
+            break
+        target_row = rows - 1 - (index // cols)
+        if target_row < 0:
+            break
+        target_col = index % cols
+        target_slot_id = target_row * cols + target_col + 1
+        slot = slots_by_language.get(language) or dict(default_slots_by_language.get(language) or {})
         next_slot = dict(slot)
-        next_slot["slot"] = index
-        compact_slots.append(next_slot)
+        next_slot["slot"] = target_slot_id
+        next_slot["language"] = language
+        fixed_slots[target_slot_id - 1] = next_slot
 
     compact = dict(cleaned)
-    compact["rows"] = new_rows
-    compact["slots"] = compact_slots
-    compact["liftSlots"] = min(int(compact.get("liftSlots") or 0), new_rows)
-    try:
-        per_row_height = float(cleaned.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5))) / old_rows
-        compact["heightRatio"] = min(max(per_row_height * new_rows, 0.2), 0.6)
-    except Exception:
-        pass
+    compact["rows"] = rows
+    compact["cols"] = cols
+    compact["slots"] = fixed_slots
+    compact["liftSlots"] = min(int(compact.get("liftSlots") or 0), rows)
     return _sanitize_burn_layout(compact)
 
 

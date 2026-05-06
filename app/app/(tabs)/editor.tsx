@@ -26,6 +26,9 @@ const DEFAULT_TRANSLATION_LANGUAGES = ['ja', 'en', 'zh-Hant', 'fr'];
 const DEFAULT_SUBTITLE_LIFT_RATIO = 0.1;
 const MIN_SUBTITLE_LIFT_RATIO = 0;
 const MAX_SUBTITLE_LIFT_RATIO = 0.4;
+const DEFAULT_SUBTITLE_ROWS = 4;
+const MIN_SUBTITLE_ROWS = 1;
+const MAX_SUBTITLE_ROWS = 10;
 const LANGUAGE_LABELS: Record<string, string> = {
   ja: 'Japanese',
   en: 'English',
@@ -129,6 +132,11 @@ const formatSubtitleLiftRatio = (value: number) => {
   const normalized = normalizeSubtitleLiftRatio(value);
   return normalized.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
 };
+const normalizeSubtitleRows = (value: unknown, fallback = DEFAULT_SUBTITLE_ROWS) => {
+  const parsed = typeof value === 'number' ? value : Number(String(value ?? '').trim());
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(MAX_SUBTITLE_ROWS, Math.max(MIN_SUBTITLE_ROWS, Math.round(parsed)));
+};
 
 export default function EditorScreen() {
   const defaultPublishSelection = useMemo(
@@ -189,6 +197,8 @@ export default function EditorScreen() {
   const [translationLanguages, setTranslationLanguages] = useState<string[]>(DEFAULT_TRANSLATION_LANGUAGES);
   const [subtitleLiftRatio, setSubtitleLiftRatio] = useState(DEFAULT_SUBTITLE_LIFT_RATIO);
   const [subtitleLiftInput, setSubtitleLiftInput] = useState(formatSubtitleLiftRatio(DEFAULT_SUBTITLE_LIFT_RATIO));
+  const [subtitleRows, setSubtitleRows] = useState(DEFAULT_SUBTITLE_ROWS);
+  const [subtitleRowsInput, setSubtitleRowsInput] = useState(String(DEFAULT_SUBTITLE_ROWS));
   const [correctionOpen, setCorrectionOpen] = useState(false);
   const [correctionLoading, setCorrectionLoading] = useState(false);
   const [correctionSaving, setCorrectionSaving] = useState(false);
@@ -318,6 +328,20 @@ export default function EditorScreen() {
     const raw = selectedVideo.preview_image_url;
     return raw.startsWith('http') ? raw : `${API_URL}${raw}`;
   }, [selectedVideo]);
+  const publicationSessionOrdinalMap = useMemo(() => {
+    const sorted = [...publicationSessions].sort((a, b) => {
+      const aTime = Date.parse(a.created_at || '') || 0;
+      const bTime = Date.parse(b.created_at || '') || 0;
+      if (aTime !== bTime) return aTime - bTime;
+      return a.id - b.id;
+    });
+    return new Map(sorted.map((session, index) => [session.id, index + 1]));
+  }, [publicationSessions]);
+  const publicationSessionLabel = useCallback(
+    (session: PublicationSession) =>
+      t('publish_run_existing', { value: publicationSessionOrdinalMap.get(session.id) || session.id }),
+    [publicationSessionOrdinalMap, t],
+  );
   const previewSourceOptions = useMemo(() => {
     const options: Array<{
       key: string;
@@ -350,7 +374,7 @@ export default function EditorScreen() {
       const status = session.burn_status || session.burn?.status || '';
       options.push({
         key: `session:${session.id}`,
-        label: `${t('publish_run_existing', { value: session.id })} · ${title}`,
+        label: `${publicationSessionLabel(session)} · ${title}`,
         hint:
           status === 'completed'
             ? t('publish_preview_burn_ready')
@@ -368,6 +392,7 @@ export default function EditorScreen() {
     previewPosterUrl,
     previewVideoUrl,
     publicationSessions,
+    publicationSessionLabel,
     resolveMediaSrc,
     t,
   ]);
@@ -415,7 +440,7 @@ export default function EditorScreen() {
       const time = formatTimestamp(session.updated_at || session.created_at || '');
       options.push({
         key: `session:${session.id}`,
-        label: `${t('publish_run_existing', { value: session.id })} · ${title}`,
+        label: `${publicationSessionLabel(session)} · ${title}`,
         hint: time || t('publish_run_existing_hint'),
         session,
       });
@@ -426,7 +451,7 @@ export default function EditorScreen() {
       hint: t('publish_run_new_hint'),
     });
     return options;
-  }, [publicationSessions, t]);
+  }, [publicationSessionLabel, publicationSessions, t]);
   const selectedRunOption = useMemo(
     () =>
       publicationRunOptions.find((option) => option.key === selectedRunKey) ||
@@ -639,8 +664,11 @@ export default function EditorScreen() {
       if (burnLayoutResp.ok) {
         const burnLayoutJson = await burnLayoutResp.json();
         const liftRatio = normalizeSubtitleLiftRatio(burnLayoutJson?.value?.liftRatio);
+        const rows = normalizeSubtitleRows(burnLayoutJson?.value?.rows);
         setSubtitleLiftRatio(liftRatio);
         setSubtitleLiftInput(formatSubtitleLiftRatio(liftRatio));
+        setSubtitleRows(rows);
+        setSubtitleRowsInput(String(rows));
       }
       setTranslationLanguages(nextLanguages.slice(0, DEFAULT_TRANSLATION_LANGUAGES.length));
     } catch (_err) {
@@ -650,7 +678,7 @@ export default function EditorScreen() {
     }
   }, []);
 
-  const persistBurnLayout = useCallback(async (nextLiftRatio: number) => {
+  const persistBurnLayout = useCallback(async (updates: { liftRatio?: number; rows?: number }) => {
     try {
       let existing = {};
       const resp = await fetch(`${API_URL}/api/ui-settings/burn_layout`);
@@ -663,7 +691,8 @@ export default function EditorScreen() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...existing,
-          liftRatio: normalizeSubtitleLiftRatio(nextLiftRatio),
+          ...(updates.liftRatio === undefined ? {} : { liftRatio: normalizeSubtitleLiftRatio(updates.liftRatio) }),
+          ...(updates.rows === undefined ? {} : { rows: normalizeSubtitleRows(updates.rows) }),
           liftSlots: 0,
         }),
       });
@@ -677,7 +706,7 @@ export default function EditorScreen() {
       const nextLiftRatio = normalizeSubtitleLiftRatio(value, subtitleLiftRatio);
       setSubtitleLiftRatio(nextLiftRatio);
       setSubtitleLiftInput(formatSubtitleLiftRatio(nextLiftRatio));
-      void persistBurnLayout(nextLiftRatio);
+      void persistBurnLayout({ liftRatio: nextLiftRatio });
       return nextLiftRatio;
     },
     [persistBurnLayout, subtitleLiftRatio],
@@ -687,7 +716,7 @@ export default function EditorScreen() {
     const nextLiftRatio = normalizeSubtitleLiftRatio(subtitleLiftInput, subtitleLiftRatio);
     setSubtitleLiftRatio(nextLiftRatio);
     setSubtitleLiftInput(formatSubtitleLiftRatio(nextLiftRatio));
-    await persistBurnLayout(nextLiftRatio);
+    await persistBurnLayout({ liftRatio: nextLiftRatio });
     return nextLiftRatio;
   }, [persistBurnLayout, subtitleLiftInput, subtitleLiftRatio]);
 
@@ -697,6 +726,43 @@ export default function EditorScreen() {
     },
     [setAndPersistSubtitleLiftRatio, subtitleLiftRatio],
   );
+
+  const setAndPersistSubtitleRows = useCallback(
+    (value: unknown) => {
+      const nextRows = normalizeSubtitleRows(value, subtitleRows);
+      setSubtitleRows(nextRows);
+      setSubtitleRowsInput(String(nextRows));
+      void persistBurnLayout({ rows: nextRows });
+      return nextRows;
+    },
+    [persistBurnLayout, subtitleRows],
+  );
+
+  const commitSubtitleRows = useCallback(async () => {
+    const nextRows = normalizeSubtitleRows(subtitleRowsInput, subtitleRows);
+    setSubtitleRows(nextRows);
+    setSubtitleRowsInput(String(nextRows));
+    await persistBurnLayout({ rows: nextRows });
+    return nextRows;
+  }, [persistBurnLayout, subtitleRows, subtitleRowsInput]);
+
+  const adjustSubtitleRows = useCallback(
+    (delta: number) => {
+      setAndPersistSubtitleRows(subtitleRows + delta);
+    },
+    [setAndPersistSubtitleRows, subtitleRows],
+  );
+
+  const commitSubtitleBurnLayoutSettings = useCallback(async () => {
+    const nextLiftRatio = normalizeSubtitleLiftRatio(subtitleLiftInput, subtitleLiftRatio);
+    const nextRows = normalizeSubtitleRows(subtitleRowsInput, subtitleRows);
+    setSubtitleLiftRatio(nextLiftRatio);
+    setSubtitleLiftInput(formatSubtitleLiftRatio(nextLiftRatio));
+    setSubtitleRows(nextRows);
+    setSubtitleRowsInput(String(nextRows));
+    await persistBurnLayout({ liftRatio: nextLiftRatio, rows: nextRows });
+    return { liftRatio: nextLiftRatio, rows: nextRows };
+  }, [persistBurnLayout, subtitleLiftInput, subtitleLiftRatio, subtitleRows, subtitleRowsInput]);
 
   const persistPublishOptions = useCallback(async (
     nextBurn: boolean,
@@ -1178,7 +1244,7 @@ export default function EditorScreen() {
     setProcessStatus(t('publish_process_starting'));
     setProcessTone('neutral');
     try {
-      const committedLiftRatio = await commitSubtitleLiftRatio();
+      const committedBurnLayout = await commitSubtitleBurnLayoutSettings();
       const logoPayload = await fetchLogoSettings();
       const steps = burnSubtitles
         ? ['keyframes', 'caption', 'transcribe', 'translate', 'burn', 'metadata_zh', 'metadata_en']
@@ -1191,7 +1257,8 @@ export default function EditorScreen() {
           steps,
           translationLanguages,
           usePolishedSubtitles,
-          subtitleLiftRatio: committedLiftRatio,
+          subtitleLiftRatio: committedBurnLayout.liftRatio,
+          subtitleRows: committedBurnLayout.rows,
           publicationMode: publishAsNewSession ? 'new' : 'override',
           publicationSessionId: publishAsNewSession ? null : publicationSessionId,
           ...(logoPayload ? { logo: logoPayload } : {}),
@@ -1298,7 +1365,7 @@ export default function EditorScreen() {
     setPublishStatus(t('publish_status_queued'));
     setPublishTone('neutral');
     try {
-      const committedLiftRatio = await commitSubtitleLiftRatio();
+      const committedBurnLayout = await commitSubtitleBurnLayoutSettings();
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1308,7 +1375,8 @@ export default function EditorScreen() {
             burnSubtitles,
             translationLanguages,
             usePolishedSubtitles,
-            subtitleLiftRatio: committedLiftRatio,
+            subtitleLiftRatio: committedBurnLayout.liftRatio,
+            subtitleRows: committedBurnLayout.rows,
             publicationMode: publishAsNewSession ? 'new' : 'override',
             publicationSessionId: publishAsNewSession ? null : publicationSessionId,
           },
@@ -1642,6 +1710,10 @@ export default function EditorScreen() {
             <View style={styles.languageChipGroup}>
               {DEFAULT_TRANSLATION_LANGUAGES.map((language) => {
                 const active = translationLanguages.includes(language);
+                const activeIndex = translationLanguages.indexOf(language);
+                const effectiveRows = Math.max(subtitleRows, translationLanguages.length);
+                const targetSlot = active && activeIndex >= 0 ? Math.max(1, effectiveRows - activeIndex) : null;
+                const shortLabel = LANGUAGE_SHORT_LABELS[language] || language.toUpperCase();
                 return (
                   <Pressable
                     key={language}
@@ -1651,7 +1723,7 @@ export default function EditorScreen() {
                     disabled={!publishOptionsLoaded}
                   >
                     <Text style={[styles.languageChipText, active && styles.languageChipTextActive]}>
-                      {LANGUAGE_SHORT_LABELS[language] || language.toUpperCase()}
+                      {targetSlot ? `${targetSlot} ${shortLabel}` : shortLabel}
                     </Text>
                   </Pressable>
                 );
@@ -1693,6 +1765,47 @@ export default function EditorScreen() {
               <Pressable
                 style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
                 onPress={() => adjustSubtitleLiftRatio(0.01)}
+                disabled={!publishOptionsLoaded}
+              >
+                <Text style={styles.liftRatioButtonText}>+</Text>
+              </Pressable>
+            </View>
+          </View>
+          <View style={styles.liftRatioRow}>
+            <View style={styles.publishOptionText}>
+              <Text style={styles.optionLabel}>{t('publish_option_rows_title')}</Text>
+              <Text style={styles.optionHint}>
+                {t('publish_option_rows_hint', { value: subtitleRows })}
+              </Text>
+            </View>
+            <View style={styles.liftRatioControls}>
+              <Pressable
+                style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                onPress={() => setAndPersistSubtitleRows(DEFAULT_SUBTITLE_ROWS)}
+                disabled={!publishOptionsLoaded}
+              >
+                <Text style={styles.liftRatioButtonText}>4</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                onPress={() => adjustSubtitleRows(-1)}
+                disabled={!publishOptionsLoaded}
+              >
+                <Text style={styles.liftRatioButtonText}>-</Text>
+              </Pressable>
+              <TextInput
+                value={subtitleRowsInput}
+                onChangeText={setSubtitleRowsInput}
+                onBlur={() => void commitSubtitleRows()}
+                onSubmitEditing={() => void commitSubtitleRows()}
+                keyboardType="number-pad"
+                placeholder="4"
+                editable={publishOptionsLoaded}
+                style={[styles.liftRatioInput, !publishOptionsLoaded && styles.liftRatioInputDisabled]}
+              />
+              <Pressable
+                style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                onPress={() => adjustSubtitleRows(1)}
                 disabled={!publishOptionsLoaded}
               >
                 <Text style={styles.liftRatioButtonText}>+</Text>
@@ -2138,7 +2251,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   languageChip: {
-    minWidth: 34,
+    minWidth: 44,
     height: 26,
     borderRadius: 13,
     borderWidth: 1,
