@@ -29,6 +29,8 @@ const MAX_SUBTITLE_LIFT_RATIO = 0.4;
 const DEFAULT_SUBTITLE_ROWS = 4;
 const MIN_SUBTITLE_ROWS = 1;
 const MAX_SUBTITLE_ROWS = 10;
+const DEFAULT_CORRECTION_PROMPT =
+  'Fix recognition errors while preserving every timestamp exactly and keeping the same number of subtitle lines.';
 const LANGUAGE_LABELS: Record<string, string> = {
   ja: 'Japanese',
   en: 'English',
@@ -203,10 +205,9 @@ export default function EditorScreen() {
   const [correctionLoading, setCorrectionLoading] = useState(false);
   const [correctionSaving, setCorrectionSaving] = useState(false);
   const [correctionStatus, setCorrectionStatus] = useState('');
-  const [correctionPrompt, setCorrectionPrompt] = useState(
-    'Fix recognition errors while preserving every timestamp exactly and keeping the same number of subtitle lines.',
-  );
+  const [correctionPrompt, setCorrectionPrompt] = useState(DEFAULT_CORRECTION_PROMPT);
   const [correctionSourceVariant, setCorrectionSourceVariant] = useState<SubtitleSourceVariant>('polished');
+  const [useCorrectionPromptForMetadata, setUseCorrectionPromptForMetadata] = useState(true);
   const [autoCorrectSubtitles, setAutoCorrectSubtitles] = useState(false);
   const [autoCorrectPrompt, setAutoCorrectPrompt] = useState('');
   const [autoCorrectDraftPrompt, setAutoCorrectDraftPrompt] = useState('');
@@ -488,6 +489,14 @@ export default function EditorScreen() {
     [subtitleSourceOptions, usePolishedSubtitles],
   );
   const autoCorrectActive = autoCorrectSubtitles && autoCorrectPrompt.trim().length > 0;
+  const metadataCorrectionPrompt = useMemo(() => {
+    if (!useCorrectionPromptForMetadata) return '';
+    const autoPrompt = autoCorrectPrompt.trim();
+    if (autoPrompt) return autoPrompt;
+    const manualPrompt = correctionPrompt.trim();
+    if (manualPrompt && manualPrompt !== DEFAULT_CORRECTION_PROMPT) return manualPrompt;
+    return '';
+  }, [autoCorrectPrompt, correctionPrompt, useCorrectionPromptForMetadata]);
 
   const loadMoreVideos = useCallback(() => {
     if (!hasMoreVideos) return;
@@ -663,6 +672,7 @@ export default function EditorScreen() {
         } else {
           setUsePolishedSubtitles(true);
         }
+        setUseCorrectionPromptForMetadata(value.useCorrectionPromptForMetadata !== false);
         if (Array.isArray(value.translationLanguages) && value.translationLanguages.length) {
           const cleaned = value.translationLanguages
             .map((lang: unknown) => String(lang))
@@ -777,6 +787,7 @@ export default function EditorScreen() {
     nextBurn: boolean,
     nextLanguages: string[],
     nextUsePolished = usePolishedSubtitles,
+    nextUseCorrectionPromptForMetadata = useCorrectionPromptForMetadata,
   ) => {
     try {
       await fetch(`${API_URL}/api/ui-settings/publish_options`, {
@@ -786,6 +797,7 @@ export default function EditorScreen() {
           burnSubtitles: nextBurn,
           translationLanguages: nextLanguages,
           usePolishedSubtitles: nextUsePolished,
+          useCorrectionPromptForMetadata: nextUseCorrectionPromptForMetadata,
           subtitleSourceVersion: nextUsePolished ? 'polished' : 'original',
           publicationMode: 'override',
         }),
@@ -793,7 +805,7 @@ export default function EditorScreen() {
     } catch (_err) {
       // ignore
     }
-  }, [usePolishedSubtitles]);
+  }, [useCorrectionPromptForMetadata, usePolishedSubtitles]);
 
   const toggleTranslationLanguage = useCallback(
     (language: string) => {
@@ -824,6 +836,14 @@ export default function EditorScreen() {
       void persistPublishOptions(burnSubtitles, translationLanguages, nextUsePolished);
     },
     [burnSubtitles, persistPublishOptions, translationLanguages],
+  );
+
+  const updateUseCorrectionPromptForMetadata = useCallback(
+    (value: boolean) => {
+      setUseCorrectionPromptForMetadata(value);
+      void persistPublishOptions(burnSubtitles, translationLanguages, usePolishedSubtitles, value);
+    },
+    [burnSubtitles, persistPublishOptions, translationLanguages, usePolishedSubtitles],
   );
 
   const openAutoCorrectPrompt = useCallback(() => {
@@ -1371,6 +1391,7 @@ export default function EditorScreen() {
       const committedBurnLayout = await commitSubtitleBurnLayoutSettings();
       const logoPayload = await fetchLogoSettings();
       const autoCorrectPromptText = autoCorrectActive ? autoCorrectPrompt.trim() : '';
+      const metadataPromptText = metadataCorrectionPrompt.trim();
       const steps = burnSubtitles
         ? ['keyframes', 'caption', 'transcribe', 'translate', 'burn', 'metadata_zh', 'metadata_en', 'cover']
         : ['keyframes', 'caption', 'transcribe', 'metadata_zh', 'metadata_en', 'cover'];
@@ -1388,6 +1409,9 @@ export default function EditorScreen() {
           autoCorrectSubtitles: Boolean(autoCorrectPromptText),
           autoCorrectPrompt: autoCorrectPromptText,
           polish_notes: autoCorrectPromptText,
+          useCorrectionPromptForMetadata,
+          metadataPrompt: metadataPromptText,
+          notes: metadataPromptText,
           subtitleLiftRatio: committedBurnLayout.liftRatio,
           subtitleRows: committedBurnLayout.rows,
           publicationMode: publishAsNewSession ? 'new' : 'override',
@@ -1475,6 +1499,7 @@ export default function EditorScreen() {
     try {
       const committedBurnLayout = await commitSubtitleBurnLayoutSettings();
       const autoCorrectPromptText = autoCorrectActive ? autoCorrectPrompt.trim() : '';
+      const metadataPromptText = metadataCorrectionPrompt.trim();
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1486,6 +1511,8 @@ export default function EditorScreen() {
             usePolishedSubtitles: autoCorrectPromptText ? true : usePolishedSubtitles,
             autoCorrectSubtitles: Boolean(autoCorrectPromptText),
             autoCorrectPrompt: autoCorrectPromptText,
+            useCorrectionPromptForMetadata,
+            metadataPrompt: metadataPromptText,
             subtitleLiftRatio: committedBurnLayout.liftRatio,
             subtitleRows: committedBurnLayout.rows,
             publicationMode: publishAsNewSession ? 'new' : 'override',
@@ -1945,6 +1972,28 @@ export default function EditorScreen() {
             <Pressable style={styles.secondaryButton} onPress={openAutoCorrectPrompt}>
               <Text style={styles.secondaryButtonText}>{t('publish_auto_correct_edit_prompt')}</Text>
             </Pressable>
+          ) : null}
+          <View style={styles.publishOptionRow}>
+            <View style={styles.publishOptionText}>
+              <Text style={styles.optionLabel}>{t('publish_metadata_prompt_title')}</Text>
+              <Text style={styles.optionHint} numberOfLines={2}>
+                {useCorrectionPromptForMetadata
+                  ? t('publish_metadata_prompt_on')
+                  : t('publish_metadata_prompt_off')}
+              </Text>
+            </View>
+            <Switch
+              value={useCorrectionPromptForMetadata}
+              onValueChange={updateUseCorrectionPromptForMetadata}
+              disabled={!publishOptionsLoaded}
+              trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+              thumbColor={useCorrectionPromptForMetadata ? '#f8fafc' : '#f1f5f9'}
+            />
+          </View>
+          {useCorrectionPromptForMetadata && metadataCorrectionPrompt ? (
+            <Text style={styles.optionHint} numberOfLines={2}>
+              {t('publish_metadata_prompt_using')}
+            </Text>
           ) : null}
           {renderRunSelector(
             processRunMenuOpen,

@@ -229,6 +229,7 @@ DEFAULT_PUBLISH_PLATFORMS = {
 DEFAULT_PUBLISH_OPTIONS = {
     "burnSubtitles": True,
     "usePolishedSubtitles": True,
+    "useCorrectionPromptForMetadata": True,
     "subtitleSourceVersion": "polished",
     "publicationMode": "override",
     "publicationSessionId": None,
@@ -1044,6 +1045,16 @@ def _sanitize_publish_options(payload) -> dict:
         or ""
     ).strip()
     auto_correct_subtitles = _parse_bool(auto_correct_raw, default=False) and bool(auto_correct_prompt)
+    use_correction_prompt_for_metadata_raw = payload.get("useCorrectionPromptForMetadata")
+    if use_correction_prompt_for_metadata_raw is None:
+        use_correction_prompt_for_metadata_raw = payload.get("use_correction_prompt_for_metadata")
+    metadata_prompt = str(
+        payload.get("metadataPrompt")
+        or payload.get("metadata_prompt")
+        or payload.get("metadataNotes")
+        or payload.get("metadata_notes")
+        or ""
+    ).strip()
 
     return {
         "burnSubtitles": _parse_bool(burn_subtitles, default=DEFAULT_PUBLISH_OPTIONS["burnSubtitles"]),
@@ -1057,6 +1068,11 @@ def _sanitize_publish_options(payload) -> dict:
         "publicationSessionId": publication_session_id,
         "autoCorrectSubtitles": auto_correct_subtitles,
         "autoCorrectPrompt": auto_correct_prompt if auto_correct_subtitles else "",
+        "useCorrectionPromptForMetadata": _parse_bool(
+            use_correction_prompt_for_metadata_raw,
+            default=DEFAULT_PUBLISH_OPTIONS["useCorrectionPromptForMetadata"],
+        ),
+        "metadataPrompt": metadata_prompt,
     }
 
 
@@ -1064,6 +1080,7 @@ def _persistable_publish_options(options: dict) -> dict:
     cleaned = dict(options or {})
     cleaned.pop("autoCorrectSubtitles", None)
     cleaned.pop("autoCorrectPrompt", None)
+    cleaned.pop("metadataPrompt", None)
     return cleaned
 
 
@@ -5567,6 +5584,9 @@ def _process_publish_job(job_row: tuple) -> None:
     auto_correct_prompt = str(job_config.get("autoCorrectPrompt") or "").strip()
     if auto_correct_subtitles and not auto_correct_prompt:
         auto_correct_subtitles = False
+    metadata_prompt = ""
+    if bool(job_config.get("useCorrectionPromptForMetadata", True)):
+        metadata_prompt = str(job_config.get("metadataPrompt") or "").strip()
     use_polished = bool(job_config.get("usePolishedSubtitles", False)) or auto_correct_subtitles
     translation_languages = job_config.get("translationLanguages") or _load_translation_languages_setting()
 
@@ -5580,7 +5600,7 @@ def _process_publish_job(job_row: tuple) -> None:
     if status_code >= 400:
         raise RuntimeError(status_payload.get("error") or "process status check failed")
 
-    if auto_correct_subtitles or not _ready_for_publish_with_options(status_payload, burn_subtitles=burn_subtitles):
+    if auto_correct_subtitles or metadata_prompt or not _ready_for_publish_with_options(status_payload, burn_subtitles=burn_subtitles):
         ldb.update_publish_job(job_id, detail="Processing video before publish")
         logo_settings = _load_logo_settings_setting()
         process_steps = [
@@ -5604,6 +5624,7 @@ def _process_publish_job(job_row: tuple) -> None:
             "autoCorrectSubtitles": auto_correct_subtitles,
             "autoCorrectPrompt": auto_correct_prompt,
             "polish_notes": auto_correct_prompt,
+            "notes": metadata_prompt,
             "publicationSessionId": publication_session_id,
             "publicationMode": "override",
         }
