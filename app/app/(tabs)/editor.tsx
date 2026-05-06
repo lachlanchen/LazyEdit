@@ -207,6 +207,11 @@ export default function EditorScreen() {
     'Fix recognition errors while preserving every timestamp exactly and keeping the same number of subtitle lines.',
   );
   const [correctionSourceVariant, setCorrectionSourceVariant] = useState<SubtitleSourceVariant>('polished');
+  const [autoCorrectSubtitles, setAutoCorrectSubtitles] = useState(false);
+  const [autoCorrectPrompt, setAutoCorrectPrompt] = useState('');
+  const [autoCorrectDraftPrompt, setAutoCorrectDraftPrompt] = useState('');
+  const [autoCorrectPromptOpen, setAutoCorrectPromptOpen] = useState(false);
+  const [autoCorrectPromptError, setAutoCorrectPromptError] = useState('');
   const [originalSubtitleText, setOriginalSubtitleText] = useState('');
   const [polishedSubtitleText, setPolishedSubtitleText] = useState('');
   const previewProxyPendingIdsRef = useRef<number[]>([]);
@@ -482,6 +487,7 @@ export default function EditorScreen() {
       subtitleSourceOptions[0],
     [subtitleSourceOptions, usePolishedSubtitles],
   );
+  const autoCorrectActive = autoCorrectSubtitles && autoCorrectPrompt.trim().length > 0;
 
   const loadMoreVideos = useCallback(() => {
     if (!hasMoreVideos) return;
@@ -819,6 +825,46 @@ export default function EditorScreen() {
     },
     [burnSubtitles, persistPublishOptions, translationLanguages],
   );
+
+  const openAutoCorrectPrompt = useCallback(() => {
+    setAutoCorrectDraftPrompt(autoCorrectPrompt);
+    setAutoCorrectPromptError('');
+    setAutoCorrectPromptOpen(true);
+  }, [autoCorrectPrompt]);
+
+  const updateAutoCorrectSubtitles = useCallback(
+    (value: boolean) => {
+      if (!value) {
+        setAutoCorrectSubtitles(false);
+        return;
+      }
+      openAutoCorrectPrompt();
+    },
+    [openAutoCorrectPrompt],
+  );
+
+  const cancelAutoCorrectPrompt = useCallback(() => {
+    setAutoCorrectPromptOpen(false);
+    setAutoCorrectPromptError('');
+    if (!autoCorrectPrompt.trim()) {
+      setAutoCorrectSubtitles(false);
+    }
+  }, [autoCorrectPrompt]);
+
+  const saveAutoCorrectPrompt = useCallback(() => {
+    const trimmed = autoCorrectDraftPrompt.trim();
+    if (!trimmed) {
+      setAutoCorrectPromptError(t('publish_auto_correct_prompt_required'));
+      setAutoCorrectSubtitles(false);
+      return;
+    }
+    setAutoCorrectPrompt(trimmed);
+    setAutoCorrectSubtitles(true);
+    setUsePolishedSubtitles(true);
+    void persistPublishOptions(burnSubtitles, translationLanguages, true);
+    setAutoCorrectPromptError('');
+    setAutoCorrectPromptOpen(false);
+  }, [autoCorrectDraftPrompt, burnSubtitles, persistPublishOptions, t, translationLanguages]);
 
   const selectPublicationRun = useCallback((key: string) => {
     setRunSelectionTouched(true);
@@ -1324,9 +1370,13 @@ export default function EditorScreen() {
     try {
       const committedBurnLayout = await commitSubtitleBurnLayoutSettings();
       const logoPayload = await fetchLogoSettings();
+      const autoCorrectPromptText = autoCorrectActive ? autoCorrectPrompt.trim() : '';
       const steps = burnSubtitles
         ? ['keyframes', 'caption', 'transcribe', 'translate', 'burn', 'metadata_zh', 'metadata_en', 'cover']
         : ['keyframes', 'caption', 'transcribe', 'metadata_zh', 'metadata_en', 'cover'];
+      if (autoCorrectPromptText) {
+        steps.splice(3, 0, 'polish');
+      }
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/process`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1334,7 +1384,10 @@ export default function EditorScreen() {
           async: true,
           steps,
           translationLanguages,
-          usePolishedSubtitles,
+          usePolishedSubtitles: autoCorrectPromptText ? true : usePolishedSubtitles,
+          autoCorrectSubtitles: Boolean(autoCorrectPromptText),
+          autoCorrectPrompt: autoCorrectPromptText,
+          polish_notes: autoCorrectPromptText,
           subtitleLiftRatio: committedBurnLayout.liftRatio,
           subtitleRows: committedBurnLayout.rows,
           publicationMode: publishAsNewSession ? 'new' : 'override',
@@ -1421,6 +1474,7 @@ export default function EditorScreen() {
     setPublishTone('neutral');
     try {
       const committedBurnLayout = await commitSubtitleBurnLayoutSettings();
+      const autoCorrectPromptText = autoCorrectActive ? autoCorrectPrompt.trim() : '';
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/publish`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1429,7 +1483,9 @@ export default function EditorScreen() {
           options: {
             burnSubtitles,
             translationLanguages,
-            usePolishedSubtitles,
+            usePolishedSubtitles: autoCorrectPromptText ? true : usePolishedSubtitles,
+            autoCorrectSubtitles: Boolean(autoCorrectPromptText),
+            autoCorrectPrompt: autoCorrectPromptText,
             subtitleLiftRatio: committedBurnLayout.liftRatio,
             subtitleRows: committedBurnLayout.rows,
             publicationMode: publishAsNewSession ? 'new' : 'override',
@@ -1868,6 +1924,28 @@ export default function EditorScreen() {
             </View>
           </View>
           {renderSubtitleSourceSelector()}
+          <View style={styles.publishOptionRow}>
+            <View style={styles.publishOptionText}>
+              <Text style={styles.optionLabel}>{t('publish_auto_correct_title')}</Text>
+              <Text style={styles.optionHint} numberOfLines={2}>
+                {autoCorrectActive
+                  ? t('publish_auto_correct_on')
+                  : t('publish_auto_correct_off')}
+              </Text>
+            </View>
+            <Switch
+              value={autoCorrectActive}
+              onValueChange={updateAutoCorrectSubtitles}
+              disabled={!selectedVideo}
+              trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+              thumbColor={autoCorrectActive ? '#f8fafc' : '#f1f5f9'}
+            />
+          </View>
+          {autoCorrectActive ? (
+            <Pressable style={styles.secondaryButton} onPress={openAutoCorrectPrompt}>
+              <Text style={styles.secondaryButtonText}>{t('publish_auto_correct_edit_prompt')}</Text>
+            </Pressable>
+          ) : null}
           {renderRunSelector(
             processRunMenuOpen,
             setProcessRunMenuOpen,
@@ -2076,6 +2154,52 @@ export default function EditorScreen() {
           </View>
         </View>
       </View>
+      <Modal
+        visible={autoCorrectPromptOpen}
+        animationType="fade"
+        transparent
+        onRequestClose={cancelAutoCorrectPrompt}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.autoCorrectModal}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.sectionTitle}>{t('publish_auto_correct_modal_title')}</Text>
+              <Pressable onPress={cancelAutoCorrectPrompt} style={styles.modalClose}>
+                <FontAwesome name="times" size={16} color="#0f172a" />
+              </Pressable>
+            </View>
+            <Text style={styles.sectionHint}>{t('publish_auto_correct_modal_hint')}</Text>
+            <TextInput
+              value={autoCorrectDraftPrompt}
+              onChangeText={(value) => {
+                setAutoCorrectDraftPrompt(value);
+                if (value.trim()) setAutoCorrectPromptError('');
+              }}
+              multiline
+              placeholder={t('publish_auto_correct_prompt_placeholder')}
+              style={styles.promptInput}
+            />
+            {autoCorrectPromptError ? (
+              <Text style={[styles.status, styles.statusBad]}>{autoCorrectPromptError}</Text>
+            ) : null}
+            <View style={styles.correctionButtonRow}>
+              <Pressable style={styles.secondaryButton} onPress={cancelAutoCorrectPrompt}>
+                <Text style={styles.secondaryButtonText}>{t('button_cancel')}</Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.processButton,
+                  !autoCorrectDraftPrompt.trim() && styles.btnDisabled,
+                ]}
+                onPress={saveAutoCorrectPrompt}
+                disabled={!autoCorrectDraftPrompt.trim()}
+              >
+                <Text style={styles.processButtonText}>{t('button_save')}</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
       <Modal visible={correctionOpen} animationType="fade" transparent onRequestClose={() => setCorrectionOpen(false)}>
         <View style={styles.modalBackdrop}>
           <View style={styles.correctionModal}>
@@ -2600,6 +2724,16 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 920,
     maxHeight: '92%',
+    alignSelf: 'center',
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  autoCorrectModal: {
+    width: '100%',
+    maxWidth: 560,
     alignSelf: 'center',
     padding: 16,
     borderRadius: 16,

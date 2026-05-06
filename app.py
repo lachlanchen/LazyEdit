@@ -1035,6 +1035,15 @@ def _sanitize_publish_options(payload) -> dict:
         else payload.get("publication_session_id")
     )
     publication_session_id = _parse_int_value(session_raw)
+    auto_correct_raw = payload.get("autoCorrectSubtitles")
+    if auto_correct_raw is None:
+        auto_correct_raw = payload.get("auto_correct_subtitles")
+    auto_correct_prompt = str(
+        payload.get("autoCorrectPrompt")
+        or payload.get("auto_correct_prompt")
+        or ""
+    ).strip()
+    auto_correct_subtitles = _parse_bool(auto_correct_raw, default=False) and bool(auto_correct_prompt)
 
     return {
         "burnSubtitles": _parse_bool(burn_subtitles, default=DEFAULT_PUBLISH_OPTIONS["burnSubtitles"]),
@@ -1046,7 +1055,16 @@ def _sanitize_publish_options(payload) -> dict:
         "subtitleSourceVersion": subtitle_source,
         "publicationMode": publication_mode,
         "publicationSessionId": publication_session_id,
+        "autoCorrectSubtitles": auto_correct_subtitles,
+        "autoCorrectPrompt": auto_correct_prompt if auto_correct_subtitles else "",
     }
+
+
+def _persistable_publish_options(options: dict) -> dict:
+    cleaned = dict(options or {})
+    cleaned.pop("autoCorrectSubtitles", None)
+    cleaned.pop("autoCorrectPrompt", None)
+    return cleaned
 
 
 def _load_translation_languages_setting() -> list[str]:
@@ -5545,7 +5563,11 @@ def _process_publish_job(job_row: tuple) -> None:
     if not publication_session_id:
         publication_session_id = _parse_int_value(job_config.get("publicationSessionId"))
     burn_subtitles = bool(job_config.get("burnSubtitles", True))
-    use_polished = bool(job_config.get("usePolishedSubtitles", False))
+    auto_correct_subtitles = bool(job_config.get("autoCorrectSubtitles", False))
+    auto_correct_prompt = str(job_config.get("autoCorrectPrompt") or "").strip()
+    if auto_correct_subtitles and not auto_correct_prompt:
+        auto_correct_subtitles = False
+    use_polished = bool(job_config.get("usePolishedSubtitles", False)) or auto_correct_subtitles
     translation_languages = job_config.get("translationLanguages") or _load_translation_languages_setting()
 
     ldb.update_publish_job(job_id, detail="Checking publish prerequisites")
@@ -5558,7 +5580,7 @@ def _process_publish_job(job_row: tuple) -> None:
     if status_code >= 400:
         raise RuntimeError(status_payload.get("error") or "process status check failed")
 
-    if not _ready_for_publish_with_options(status_payload, burn_subtitles=burn_subtitles):
+    if auto_correct_subtitles or not _ready_for_publish_with_options(status_payload, burn_subtitles=burn_subtitles):
         ldb.update_publish_job(job_id, detail="Processing video before publish")
         logo_settings = _load_logo_settings_setting()
         process_steps = [
@@ -5572,11 +5594,16 @@ def _process_publish_job(job_row: tuple) -> None:
         if burn_subtitles:
             process_steps.insert(3, "translate")
             process_steps.insert(4, "burn")
+        if auto_correct_subtitles:
+            process_steps.insert(3, "polish")
         process_payload: dict[str, Any] = {
             "async": False,
             "steps": process_steps,
             "translation_languages": translation_languages,
             "usePolishedSubtitles": use_polished,
+            "autoCorrectSubtitles": auto_correct_subtitles,
+            "autoCorrectPrompt": auto_correct_prompt,
+            "polish_notes": auto_correct_prompt,
             "publicationSessionId": publication_session_id,
             "publicationMode": "override",
         }
@@ -6006,7 +6033,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
         elif key == "publish_platforms":
             cleaned = _sanitize_publish_platforms(data)
         elif key == "publish_options":
-            cleaned = _sanitize_publish_options(data)
+            cleaned = _persistable_publish_options(_sanitize_publish_options(data))
             ldb.set_ui_preference("translation_languages", cleaned["translationLanguages"])
         elif key in {
             "video_spec_history",
@@ -7824,7 +7851,7 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
         except ValueError as exc:
             self.set_status(400)
             return self.write({"error": str(exc)})
-        ldb.set_ui_preference("publish_options", publish_config)
+        ldb.set_ui_preference("publish_options", _persistable_publish_options(publish_config))
         ldb.set_ui_preference("translation_languages", publish_config["translationLanguages"])
 
         if wait_for_result:
@@ -10447,6 +10474,18 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         else:
             selected_steps = set()
 
+        auto_correct_prompt = str(
+            data.get("autoCorrectPrompt")
+            or data.get("auto_correct_prompt")
+            or ""
+        ).strip()
+        auto_correct_subtitles = (
+            parse_bool(data.get("autoCorrectSubtitles") or data.get("auto_correct_subtitles"))
+            and bool(auto_correct_prompt)
+        )
+        if auto_correct_subtitles:
+            selected_steps.add("polish")
+
         def wants(step: str) -> bool:
             return not selected_steps or step in selected_steps
 
@@ -10481,7 +10520,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             logo_config = _load_logo_settings_setting()
             logo_config["enabled"] = True
         notes = data.get("notes") or data.get("custom_notes") or ""
-        polish_notes = data.get("polish_notes") or data.get("subtitle_notes")
+        polish_notes = auto_correct_prompt or data.get("polish_notes") or data.get("subtitle_notes")
         if polish_notes is None:
             polish_notes = _load_subtitle_polish_setting().get("notes", "")
         polish_notes = _sanitize_subtitle_polish({"notes": polish_notes}).get("notes", "")
@@ -10492,7 +10531,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             **data,
             "translationLanguages": translation_languages,
         })
-        use_polished_subtitles = bool(process_options.get("usePolishedSubtitles", False))
+        use_polished_subtitles = bool(process_options.get("usePolishedSubtitles", False)) or auto_correct_subtitles
         try:
             publication_session_id = _ensure_publication_session_for_options(
                 video_id_i,
