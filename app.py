@@ -276,6 +276,11 @@ DEFAULT_BURN_LAYOUT = {
     "liftRatio": 0.1,
     "liftSlots": 0,
     "rubySpacing": 0.1,
+    "fontScale": 1.0,
+    "fontBold": True,
+    "fontColor": "#FFFFFF",
+    "outlineBold": True,
+    "outlineColor": "#000000",
     "slots": [
         {
             "slot": 1,
@@ -1536,6 +1541,18 @@ def _sanitize_video_prompt_history(payload: dict | None) -> dict:
     }
 
 
+def _sanitize_hex_color(value, fallback: str) -> str:
+    color = str(value or fallback).strip()
+    if not color.startswith("#") or len(color) not in {4, 7}:
+        return fallback
+    hex_part = color[1:]
+    if not all(char in "0123456789abcdefABCDEF" for char in hex_part):
+        return fallback
+    if len(color) == 4:
+        color = "#" + "".join(char * 2 for char in hex_part)
+    return color.upper()
+
+
 def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     if payload is None:
         return DEFAULT_BURN_LAYOUT.copy()
@@ -1549,6 +1566,12 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     ruby_spacing = DEFAULT_BURN_LAYOUT.get("rubySpacing", 0.1)
     romaji_default = DEFAULT_BURN_LAYOUT.get("romajiEnabled", True)
     pinyin_default = DEFAULT_BURN_LAYOUT.get("pinyinEnabled", True)
+    global_font_scale = DEFAULT_BURN_LAYOUT.get("fontScale", 1.0)
+    font_bold = DEFAULT_BURN_LAYOUT.get("fontBold", True)
+    font_color = DEFAULT_BURN_LAYOUT.get("fontColor", "#FFFFFF")
+    outline_bold = DEFAULT_BURN_LAYOUT.get("outlineBold", True)
+    outline_color = DEFAULT_BURN_LAYOUT.get("outlineColor", "#000000")
+    font_scale_override = False
     if isinstance(payload, dict):
         slots_payload = payload.get("slots")
         if "heightRatio" in payload:
@@ -1589,11 +1612,43 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
             value = payload.get("pinyinEnabled")
             if isinstance(value, bool):
                 pinyin_default = value
+        if "fontScale" in payload or "subtitleFontScale" in payload:
+            font_scale_override = True
+            try:
+                global_font_scale = float(payload.get("fontScale", payload.get("subtitleFontScale")))
+            except Exception:
+                global_font_scale = DEFAULT_BURN_LAYOUT.get("fontScale", 1.0)
+        if "fontBold" in payload or "subtitleFontBold" in payload:
+            font_bold = _parse_bool(
+                payload.get("fontBold", payload.get("subtitleFontBold")),
+                default=DEFAULT_BURN_LAYOUT.get("fontBold", True),
+            )
+        if "bold" in payload:
+            font_bold = _parse_bool(payload.get("bold"), default=font_bold)
+        if "fontColor" in payload or "subtitleFontColor" in payload:
+            font_color = _sanitize_hex_color(
+                payload.get("fontColor", payload.get("subtitleFontColor")),
+                DEFAULT_BURN_LAYOUT.get("fontColor", "#FFFFFF"),
+            )
+        if "textColor" in payload:
+            font_color = _sanitize_hex_color(payload.get("textColor"), font_color)
+        if "outlineBold" in payload or "subtitleOutlineBold" in payload:
+            outline_bold = _parse_bool(
+                payload.get("outlineBold", payload.get("subtitleOutlineBold")),
+                default=DEFAULT_BURN_LAYOUT.get("outlineBold", True),
+            )
+        if "outlineEnabled" in payload:
+            outline_bold = _parse_bool(payload.get("outlineEnabled"), default=outline_bold)
+        if "outlineColor" in payload or "subtitleOutlineColor" in payload:
+            outline_color = _sanitize_hex_color(
+                payload.get("outlineColor", payload.get("subtitleOutlineColor")),
+                DEFAULT_BURN_LAYOUT.get("outlineColor", "#000000"),
+            )
     elif isinstance(payload, list):
         slots_payload = payload
 
     if not isinstance(slots_payload, list):
-        return DEFAULT_BURN_LAYOUT.copy()
+        return _sanitize_burn_layout(DEFAULT_BURN_LAYOUT.copy())
 
     height_ratio = min(max(height_ratio, 0.2), 0.6)
     rows = min(max(rows, 1), 10)
@@ -1607,13 +1662,14 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         lift_ratio = (height_ratio / max(rows, 1)) * lift_slots
     lift_ratio = min(max(float(lift_ratio), 0.0), 0.4)
     ruby_spacing = min(max(float(ruby_spacing), 0.0), 0.2)
+    global_font_scale = min(max(float(global_font_scale), 0.6), 2.5)
     slot_count = rows * cols
 
     slot_map: dict[int, dict[str, object]] = {}
     for idx, entry in enumerate(slots_payload):
         slot_id = idx + 1
         language = None
-        font_scale = 1.0
+        font_scale = global_font_scale
         romaji = romaji_default
         pinyin = pinyin_default
         ipa = False
@@ -1627,9 +1683,9 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
                 slot_id = idx + 1
             language = entry.get("language")
             try:
-                font_scale = float(entry.get("fontScale", 1.0))
+                font_scale = global_font_scale if font_scale_override else float(entry.get("fontScale", global_font_scale))
             except Exception:
-                font_scale = 1.0
+                font_scale = global_font_scale
             if isinstance(entry.get("romaji"), bool):
                 romaji = entry.get("romaji")
             if isinstance(entry.get("pinyin"), bool):
@@ -1665,7 +1721,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
             slot_id,
             {
                 "language": None,
-                "fontScale": 1.0,
+                "fontScale": global_font_scale,
                 "romaji": romaji_default,
                 "pinyin": pinyin_default,
                 "ipa": False,
@@ -1678,7 +1734,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
             {
                 "slot": slot_id,
                 "language": entry.get("language"),
-                "fontScale": entry.get("fontScale", 1.0),
+                "fontScale": entry.get("fontScale", global_font_scale),
                 "romaji": entry.get("romaji", romaji_default),
                 "pinyin": entry.get("pinyin", pinyin_default),
                 "ipa": entry.get("ipa", False),
@@ -1698,6 +1754,11 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         "rubySpacing": ruby_spacing,
         "romajiEnabled": romaji_default,
         "pinyinEnabled": pinyin_default,
+        "fontScale": global_font_scale,
+        "fontBold": bool(font_bold),
+        "fontColor": _sanitize_hex_color(font_color, DEFAULT_BURN_LAYOUT.get("fontColor", "#FFFFFF")),
+        "outlineBold": bool(outline_bold),
+        "outlineColor": _sanitize_hex_color(outline_color, DEFAULT_BURN_LAYOUT.get("outlineColor", "#000000")),
     }
 
 
@@ -1731,7 +1792,7 @@ def _burn_layout_for_languages(layout: dict | list | None, languages) -> dict:
         fixed_slots.append({
             "slot": len(fixed_slots) + 1,
             "language": None,
-            "fontScale": 1.0,
+            "fontScale": cleaned.get("fontScale", DEFAULT_BURN_LAYOUT.get("fontScale", 1.0)),
             "romaji": cleaned.get("romajiEnabled", True),
             "pinyin": cleaned.get("pinyinEnabled", True),
             "ipa": False,
@@ -1755,6 +1816,7 @@ def _burn_layout_for_languages(layout: dict | list | None, languages) -> dict:
         next_slot = dict(slot)
         next_slot["slot"] = target_slot_id
         next_slot["language"] = language
+        next_slot.setdefault("fontScale", cleaned.get("fontScale", DEFAULT_BURN_LAYOUT.get("fontScale", 1.0)))
         fixed_slots[target_slot_id - 1] = next_slot
 
     compact = dict(cleaned)
@@ -10255,6 +10317,11 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             transcription_json_path = transcription_row[3]
             speaker_map = _build_transcription_language_map(transcription_json_path)
 
+        font_bold = bool(layout_config.get("fontBold", DEFAULT_BURN_LAYOUT.get("fontBold", True)))
+        font_color = layout_config.get("fontColor", DEFAULT_BURN_LAYOUT.get("fontColor", "#FFFFFF"))
+        outline_bold = bool(layout_config.get("outlineBold", DEFAULT_BURN_LAYOUT.get("outlineBold", True)))
+        outline_color = layout_config.get("outlineColor", DEFAULT_BURN_LAYOUT.get("outlineColor", "#000000"))
+
         assignments: list[BurnSlotConfig] = []
         for slot in slots_config:
             if not isinstance(slot, dict):
@@ -10327,6 +10394,10 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     auto_ruby=auto_ruby,
                     strip_kana=lang == "ja",
                     font_scale=font_scale,
+                    font_bold=font_bold,
+                    font_color=font_color,
+                    outline_bold=outline_bold,
+                    outline_color=outline_color,
                     kana_romaji=romaji and lang == "ja",
                     pinyin=pinyin and lang in {"zh", "zh-Hant", "zh-Hans"},
                     ipa=ipa and lang in {"en", "fr"},

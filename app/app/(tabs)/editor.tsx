@@ -29,6 +29,11 @@ const MAX_SUBTITLE_LIFT_RATIO = 0.4;
 const DEFAULT_SUBTITLE_ROWS = 4;
 const MIN_SUBTITLE_ROWS = 1;
 const MAX_SUBTITLE_ROWS = 10;
+const DEFAULT_SUBTITLE_FONT_SCALE = 1;
+const MIN_SUBTITLE_FONT_SCALE = 0.6;
+const MAX_SUBTITLE_FONT_SCALE = 2.5;
+const DEFAULT_SUBTITLE_FONT_COLOR = '#FFFFFF';
+const DEFAULT_SUBTITLE_OUTLINE_COLOR = '#000000';
 const DEFAULT_CORRECTION_PROMPT =
   'Fix recognition errors while preserving every timestamp exactly and keeping the same number of subtitle lines.';
 const LANGUAGE_LABELS: Record<string, string> = {
@@ -139,6 +144,24 @@ const normalizeSubtitleRows = (value: unknown, fallback = DEFAULT_SUBTITLE_ROWS)
   if (!Number.isFinite(parsed)) return fallback;
   return Math.min(MAX_SUBTITLE_ROWS, Math.max(MIN_SUBTITLE_ROWS, Math.round(parsed)));
 };
+const normalizeSubtitleFontScale = (value: unknown, fallback = DEFAULT_SUBTITLE_FONT_SCALE) => {
+  const parsed = typeof value === 'number' ? value : Number(String(value ?? '').trim());
+  if (!Number.isFinite(parsed)) return fallback;
+  const clamped = Math.min(MAX_SUBTITLE_FONT_SCALE, Math.max(MIN_SUBTITLE_FONT_SCALE, parsed));
+  return Math.round(clamped * 100) / 100;
+};
+const formatSubtitleFontScale = (value: number) => {
+  const normalized = normalizeSubtitleFontScale(value);
+  return normalized.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
+};
+const normalizeHexColor = (value: unknown, fallback: string) => {
+  const text = String(value ?? '').trim();
+  if (!/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(text)) return fallback;
+  if (text.length === 4) {
+    return `#${text.slice(1).split('').map((char) => char + char).join('')}`.toUpperCase();
+  }
+  return text.toUpperCase();
+};
 
 export default function EditorScreen() {
   const defaultPublishSelection = useMemo(
@@ -201,6 +224,12 @@ export default function EditorScreen() {
   const [subtitleLiftInput, setSubtitleLiftInput] = useState(formatSubtitleLiftRatio(DEFAULT_SUBTITLE_LIFT_RATIO));
   const [subtitleRows, setSubtitleRows] = useState(DEFAULT_SUBTITLE_ROWS);
   const [subtitleRowsInput, setSubtitleRowsInput] = useState(String(DEFAULT_SUBTITLE_ROWS));
+  const [subtitleFontScale, setSubtitleFontScale] = useState(DEFAULT_SUBTITLE_FONT_SCALE);
+  const [subtitleFontScaleInput, setSubtitleFontScaleInput] = useState(formatSubtitleFontScale(DEFAULT_SUBTITLE_FONT_SCALE));
+  const [subtitleFontBold, setSubtitleFontBold] = useState(true);
+  const [subtitleFontColor, setSubtitleFontColor] = useState(DEFAULT_SUBTITLE_FONT_COLOR);
+  const [subtitleOutlineBold, setSubtitleOutlineBold] = useState(true);
+  const [subtitleOutlineColor, setSubtitleOutlineColor] = useState(DEFAULT_SUBTITLE_OUTLINE_COLOR);
   const [correctionOpen, setCorrectionOpen] = useState(false);
   const [correctionLoading, setCorrectionLoading] = useState(false);
   const [correctionSaving, setCorrectionSaving] = useState(false);
@@ -684,10 +713,17 @@ export default function EditorScreen() {
         const burnLayoutJson = await burnLayoutResp.json();
         const liftRatio = normalizeSubtitleLiftRatio(burnLayoutJson?.value?.liftRatio);
         const rows = normalizeSubtitleRows(burnLayoutJson?.value?.rows);
+        const fontScale = normalizeSubtitleFontScale(burnLayoutJson?.value?.fontScale);
         setSubtitleLiftRatio(liftRatio);
         setSubtitleLiftInput(formatSubtitleLiftRatio(liftRatio));
         setSubtitleRows(rows);
         setSubtitleRowsInput(String(rows));
+        setSubtitleFontScale(fontScale);
+        setSubtitleFontScaleInput(formatSubtitleFontScale(fontScale));
+        setSubtitleFontBold(burnLayoutJson?.value?.fontBold !== false);
+        setSubtitleFontColor(normalizeHexColor(burnLayoutJson?.value?.fontColor, DEFAULT_SUBTITLE_FONT_COLOR));
+        setSubtitleOutlineBold(burnLayoutJson?.value?.outlineBold !== false);
+        setSubtitleOutlineColor(normalizeHexColor(burnLayoutJson?.value?.outlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR));
       }
       setTranslationLanguages(nextLanguages.slice(0, DEFAULT_TRANSLATION_LANGUAGES.length));
     } catch (_err) {
@@ -697,7 +733,15 @@ export default function EditorScreen() {
     }
   }, []);
 
-  const persistBurnLayout = useCallback(async (updates: { liftRatio?: number; rows?: number }) => {
+  const persistBurnLayout = useCallback(async (updates: {
+    liftRatio?: number;
+    rows?: number;
+    fontScale?: number;
+    fontBold?: boolean;
+    fontColor?: string;
+    outlineBold?: boolean;
+    outlineColor?: string;
+  }) => {
     try {
       let existing = {};
       const resp = await fetch(`${API_URL}/api/ui-settings/burn_layout`);
@@ -712,13 +756,22 @@ export default function EditorScreen() {
           ...existing,
           ...(updates.liftRatio === undefined ? {} : { liftRatio: normalizeSubtitleLiftRatio(updates.liftRatio) }),
           ...(updates.rows === undefined ? {} : { rows: normalizeSubtitleRows(updates.rows) }),
+          ...(updates.fontScale === undefined ? {} : { fontScale: normalizeSubtitleFontScale(updates.fontScale) }),
+          ...(updates.fontBold === undefined ? {} : { fontBold: Boolean(updates.fontBold) }),
+          ...(updates.fontColor === undefined
+            ? {}
+            : { fontColor: normalizeHexColor(updates.fontColor, subtitleFontColor) }),
+          ...(updates.outlineBold === undefined ? {} : { outlineBold: Boolean(updates.outlineBold) }),
+          ...(updates.outlineColor === undefined
+            ? {}
+            : { outlineColor: normalizeHexColor(updates.outlineColor, subtitleOutlineColor) }),
           liftSlots: 0,
         }),
       });
     } catch (_err) {
       // ignore
     }
-  }, []);
+  }, [subtitleFontColor, subtitleOutlineColor]);
 
   const setAndPersistSubtitleLiftRatio = useCallback(
     (value: unknown) => {
@@ -772,16 +825,107 @@ export default function EditorScreen() {
     [setAndPersistSubtitleRows, subtitleRows],
   );
 
+  const setAndPersistSubtitleFontScale = useCallback(
+    (value: unknown) => {
+      const nextFontScale = normalizeSubtitleFontScale(value, subtitleFontScale);
+      setSubtitleFontScale(nextFontScale);
+      setSubtitleFontScaleInput(formatSubtitleFontScale(nextFontScale));
+      void persistBurnLayout({ fontScale: nextFontScale });
+      return nextFontScale;
+    },
+    [persistBurnLayout, subtitleFontScale],
+  );
+
+  const commitSubtitleFontScale = useCallback(async () => {
+    const nextFontScale = normalizeSubtitleFontScale(subtitleFontScaleInput, subtitleFontScale);
+    setSubtitleFontScale(nextFontScale);
+    setSubtitleFontScaleInput(formatSubtitleFontScale(nextFontScale));
+    await persistBurnLayout({ fontScale: nextFontScale });
+    return nextFontScale;
+  }, [persistBurnLayout, subtitleFontScale, subtitleFontScaleInput]);
+
+  const adjustSubtitleFontScale = useCallback(
+    (delta: number) => {
+      setAndPersistSubtitleFontScale(Math.round((subtitleFontScale + delta) * 100) / 100);
+    },
+    [setAndPersistSubtitleFontScale, subtitleFontScale],
+  );
+
+  const updateSubtitleFontBold = useCallback(
+    (value: boolean) => {
+      setSubtitleFontBold(value);
+      void persistBurnLayout({ fontBold: value });
+    },
+    [persistBurnLayout],
+  );
+
+  const updateSubtitleOutlineBold = useCallback(
+    (value: boolean) => {
+      setSubtitleOutlineBold(value);
+      void persistBurnLayout({ outlineBold: value });
+    },
+    [persistBurnLayout],
+  );
+
+  const commitSubtitleFontColor = useCallback(async () => {
+    const nextColor = normalizeHexColor(subtitleFontColor, DEFAULT_SUBTITLE_FONT_COLOR);
+    setSubtitleFontColor(nextColor);
+    await persistBurnLayout({ fontColor: nextColor });
+    return nextColor;
+  }, [persistBurnLayout, subtitleFontColor]);
+
+  const commitSubtitleOutlineColor = useCallback(async () => {
+    const nextColor = normalizeHexColor(subtitleOutlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR);
+    setSubtitleOutlineColor(nextColor);
+    await persistBurnLayout({ outlineColor: nextColor });
+    return nextColor;
+  }, [persistBurnLayout, subtitleOutlineColor]);
+
   const commitSubtitleBurnLayoutSettings = useCallback(async () => {
     const nextLiftRatio = normalizeSubtitleLiftRatio(subtitleLiftInput, subtitleLiftRatio);
     const nextRows = normalizeSubtitleRows(subtitleRowsInput, subtitleRows);
+    const nextFontScale = normalizeSubtitleFontScale(subtitleFontScaleInput, subtitleFontScale);
+    const nextFontColor = normalizeHexColor(subtitleFontColor, DEFAULT_SUBTITLE_FONT_COLOR);
+    const nextOutlineColor = normalizeHexColor(subtitleOutlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR);
     setSubtitleLiftRatio(nextLiftRatio);
     setSubtitleLiftInput(formatSubtitleLiftRatio(nextLiftRatio));
     setSubtitleRows(nextRows);
     setSubtitleRowsInput(String(nextRows));
-    await persistBurnLayout({ liftRatio: nextLiftRatio, rows: nextRows });
-    return { liftRatio: nextLiftRatio, rows: nextRows };
-  }, [persistBurnLayout, subtitleLiftInput, subtitleLiftRatio, subtitleRows, subtitleRowsInput]);
+    setSubtitleFontScale(nextFontScale);
+    setSubtitleFontScaleInput(formatSubtitleFontScale(nextFontScale));
+    setSubtitleFontColor(nextFontColor);
+    setSubtitleOutlineColor(nextOutlineColor);
+    await persistBurnLayout({
+      liftRatio: nextLiftRatio,
+      rows: nextRows,
+      fontScale: nextFontScale,
+      fontBold: subtitleFontBold,
+      fontColor: nextFontColor,
+      outlineBold: subtitleOutlineBold,
+      outlineColor: nextOutlineColor,
+    });
+    return {
+      liftRatio: nextLiftRatio,
+      rows: nextRows,
+      fontScale: nextFontScale,
+      fontBold: subtitleFontBold,
+      fontColor: nextFontColor,
+      outlineBold: subtitleOutlineBold,
+      outlineColor: nextOutlineColor,
+    };
+  }, [
+    persistBurnLayout,
+    subtitleFontBold,
+    subtitleFontColor,
+    subtitleFontScale,
+    subtitleFontScaleInput,
+    subtitleLiftInput,
+    subtitleLiftRatio,
+    subtitleOutlineBold,
+    subtitleOutlineColor,
+    subtitleRows,
+    subtitleRowsInput,
+  ]);
 
   const persistPublishOptions = useCallback(async (
     nextBurn: boolean,
@@ -1414,6 +1558,11 @@ export default function EditorScreen() {
           notes: metadataPromptText,
           subtitleLiftRatio: committedBurnLayout.liftRatio,
           subtitleRows: committedBurnLayout.rows,
+          subtitleFontScale: committedBurnLayout.fontScale,
+          subtitleFontBold: committedBurnLayout.fontBold,
+          subtitleFontColor: committedBurnLayout.fontColor,
+          subtitleOutlineBold: committedBurnLayout.outlineBold,
+          subtitleOutlineColor: committedBurnLayout.outlineColor,
           publicationMode: publishAsNewSession ? 'new' : 'override',
           publicationSessionId: publishAsNewSession ? null : publicationSessionId,
           ...(logoPayload ? { logo: logoPayload } : {}),
@@ -1515,6 +1664,11 @@ export default function EditorScreen() {
             metadataPrompt: metadataPromptText,
             subtitleLiftRatio: committedBurnLayout.liftRatio,
             subtitleRows: committedBurnLayout.rows,
+            subtitleFontScale: committedBurnLayout.fontScale,
+            subtitleFontBold: committedBurnLayout.fontBold,
+            subtitleFontColor: committedBurnLayout.fontColor,
+            subtitleOutlineBold: committedBurnLayout.outlineBold,
+            subtitleOutlineColor: committedBurnLayout.outlineColor,
             publicationMode: publishAsNewSession ? 'new' : 'override',
             publicationSessionId: publishAsNewSession ? null : publicationSessionId,
           },
@@ -1948,6 +2102,113 @@ export default function EditorScreen() {
               >
                 <Text style={styles.liftRatioButtonText}>+</Text>
               </Pressable>
+            </View>
+          </View>
+          <View style={styles.liftRatioRow}>
+            <View style={styles.publishOptionText}>
+              <Text style={styles.optionLabel}>{t('publish_option_font_size_title')}</Text>
+              <Text style={styles.optionHint}>
+                {t('publish_option_font_size_hint', { value: formatSubtitleFontScale(subtitleFontScale) })}
+              </Text>
+            </View>
+            <View style={styles.liftRatioControls}>
+              <Pressable
+                style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                onPress={() => setAndPersistSubtitleFontScale(DEFAULT_SUBTITLE_FONT_SCALE)}
+                disabled={!publishOptionsLoaded}
+              >
+                <Text style={styles.liftRatioButtonText}>1</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                onPress={() => adjustSubtitleFontScale(-0.05)}
+                disabled={!publishOptionsLoaded}
+              >
+                <Text style={styles.liftRatioButtonText}>-</Text>
+              </Pressable>
+              <TextInput
+                value={subtitleFontScaleInput}
+                onChangeText={setSubtitleFontScaleInput}
+                onBlur={() => void commitSubtitleFontScale()}
+                onSubmitEditing={() => void commitSubtitleFontScale()}
+                keyboardType="decimal-pad"
+                placeholder="1"
+                editable={publishOptionsLoaded}
+                style={[styles.liftRatioInput, !publishOptionsLoaded && styles.liftRatioInputDisabled]}
+              />
+              <Pressable
+                style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                onPress={() => adjustSubtitleFontScale(0.05)}
+                disabled={!publishOptionsLoaded}
+              >
+                <Text style={styles.liftRatioButtonText}>+</Text>
+              </Pressable>
+            </View>
+          </View>
+          <View style={styles.subtitleStyleRow}>
+            <View style={styles.subtitleStyleSwitch}>
+              <View style={styles.publishOptionText}>
+                <Text style={styles.optionLabel}>{t('publish_option_font_bold_title')}</Text>
+                <Text style={styles.optionHint}>
+                  {subtitleFontBold ? t('publish_option_font_bold_on') : t('publish_option_font_bold_off')}
+                </Text>
+              </View>
+              <Switch
+                value={subtitleFontBold}
+                onValueChange={updateSubtitleFontBold}
+                disabled={!publishOptionsLoaded}
+                trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                thumbColor={subtitleFontBold ? '#f8fafc' : '#f1f5f9'}
+              />
+            </View>
+            <View style={styles.subtitleStyleSwitch}>
+              <View style={styles.publishOptionText}>
+                <Text style={styles.optionLabel}>{t('publish_option_outline_bold_title')}</Text>
+                <Text style={styles.optionHint}>
+                  {subtitleOutlineBold ? t('publish_option_outline_bold_on') : t('publish_option_outline_bold_off')}
+                </Text>
+              </View>
+              <Switch
+                value={subtitleOutlineBold}
+                onValueChange={updateSubtitleOutlineBold}
+                disabled={!publishOptionsLoaded}
+                trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+                thumbColor={subtitleOutlineBold ? '#f8fafc' : '#f1f5f9'}
+              />
+            </View>
+          </View>
+          <View style={styles.subtitleColorRow}>
+            <View style={styles.subtitleColorField}>
+              <Text style={styles.optionLabel}>{t('publish_option_font_color_title')}</Text>
+              <View style={styles.colorControl}>
+                <View style={[styles.colorSwatch, { backgroundColor: normalizeHexColor(subtitleFontColor, DEFAULT_SUBTITLE_FONT_COLOR) }]} />
+                <TextInput
+                  value={subtitleFontColor}
+                  onChangeText={setSubtitleFontColor}
+                  onBlur={() => void commitSubtitleFontColor()}
+                  onSubmitEditing={() => void commitSubtitleFontColor()}
+                  placeholder="#FFFFFF"
+                  autoCapitalize="characters"
+                  editable={publishOptionsLoaded}
+                  style={[styles.colorInput, !publishOptionsLoaded && styles.liftRatioInputDisabled]}
+                />
+              </View>
+            </View>
+            <View style={styles.subtitleColorField}>
+              <Text style={styles.optionLabel}>{t('publish_option_outline_color_title')}</Text>
+              <View style={styles.colorControl}>
+                <View style={[styles.colorSwatch, { backgroundColor: normalizeHexColor(subtitleOutlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR) }]} />
+                <TextInput
+                  value={subtitleOutlineColor}
+                  onChangeText={setSubtitleOutlineColor}
+                  onBlur={() => void commitSubtitleOutlineColor()}
+                  onSubmitEditing={() => void commitSubtitleOutlineColor()}
+                  placeholder="#000000"
+                  autoCapitalize="characters"
+                  editable={publishOptionsLoaded}
+                  style={[styles.colorInput, !publishOptionsLoaded && styles.liftRatioInputDisabled]}
+                />
+              </View>
             </View>
           </View>
           {renderSubtitleSourceSelector()}
@@ -2544,6 +2805,69 @@ const styles = StyleSheet.create({
   liftRatioInputDisabled: {
     backgroundColor: '#f1f5f9',
     color: '#94a3b8',
+  },
+  subtitleStyleRow: {
+    marginTop: 8,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  subtitleStyleSwitch: {
+    minWidth: 190,
+    flex: 1,
+    minHeight: 42,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  subtitleColorRow: {
+    marginTop: 8,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  subtitleColorField: {
+    minWidth: 180,
+    flex: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    backgroundColor: '#f8fafc',
+  },
+  colorControl: {
+    marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  colorSwatch: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+  },
+  colorInput: {
+    flex: 1,
+    minWidth: 92,
+    height: 30,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    backgroundColor: 'white',
+    paddingHorizontal: 8,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#0f172a',
   },
   runSelectorBlock: {
     marginTop: 10,

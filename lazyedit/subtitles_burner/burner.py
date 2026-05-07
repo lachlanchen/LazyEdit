@@ -24,6 +24,10 @@ class BurnSlotConfig:
     auto_ruby: bool = False
     strip_kana: bool = False
     font_scale: float = 1.0
+    font_bold: bool = True
+    font_color: str | tuple[int, int, int] = "#FFFFFF"
+    outline_bold: bool = True
+    outline_color: str | tuple[int, int, int] = "#000000"
     kana_romaji: bool = False
     pinyin: bool = False
     ipa: bool = False
@@ -36,6 +40,23 @@ def _slot_padding_for_height(slot_height: int, stroke_width: int) -> int:
     base = int(round(max(1, slot_height) * 0.10))
     base = max(2, min(base, 16))
     return max(base, int(stroke_width) * 2)
+
+
+def _color_to_rgb(value: str | tuple[int, int, int] | None, fallback: tuple[int, int, int]) -> tuple[int, int, int]:
+    if isinstance(value, tuple) and len(value) == 3:
+        try:
+            return tuple(max(0, min(255, int(channel))) for channel in value)  # type: ignore[return-value]
+        except Exception:
+            return fallback
+    color = str(value or "").strip()
+    if not color.startswith("#") or len(color) not in {4, 7}:
+        return fallback
+    if len(color) == 4:
+        color = "#" + "".join(char * 2 for char in color[1:])
+    try:
+        return (int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16))
+    except Exception:
+        return fallback
 
 
 def _load_burner_module():
@@ -445,57 +466,110 @@ def _load_burner_module():
             OriginalRubyRenderer._build_layout = _build_layout_compact_ruby
 
             # Render speaker icon in the left padding so it doesn't consume
-            # horizontal centering space for the main text.
-            original_render_tokens = OriginalRubyRenderer.render_tokens
-
+            # horizontal centering space for the main text. Also support
+            # LazyEdit-specific bold/outline style flags without editing the
+            # upstream furigana dependency.
             def render_tokens_lazyedit(self, tokens, padding=16):  # type: ignore[no-redef]
                 if not tokens:
-                    return original_render_tokens(self, tokens, padding=padding)
-                if getattr(tokens[0], "token_type", None) != "speaker":
-                    return original_render_tokens(self, tokens, padding=padding)
+                    return burner_mod.Image.new("RGBA", (1, 1), (0, 0, 0, 0))
 
-                speaker = tokens[0]
-                rest = tokens[1:]
-                if not rest:
-                    return original_render_tokens(self, tokens, padding=padding)
+                padding = max(int(padding), int(self.style.stroke_width * 2))
+                speaker = tokens[0] if getattr(tokens[0], "token_type", None) == "speaker" else None
+                render_tokens = tokens[1:] if speaker and len(tokens) > 1 else tokens
+                if speaker and len(tokens) > 1:
+                    gap = max(1, int(round(self.style.main_font_size * 0.06)))
+                    icon_w = max(1, int(getattr(self.style, "main_font_size", 0) * 0.55))
+                    padding = max(padding, icon_w + gap + 2)
+                else:
+                    gap = 0
+                    icon_w = 0
 
-                # Ensure padding is large enough to fit the icon left of the first glyph.
-                gap = max(1, int(round(self.style.main_font_size * 0.06)))
-                icon_w = max(1, int(getattr(self.style, "main_font_size", 0) * 0.55))
-                padding = max(int(padding), int(self.style.stroke_width * 2), icon_w + gap + 2)
+                layout, text_width, max_ruby_h, max_main_h = self._build_layout(render_tokens)
+                ruby_row = max_ruby_h + int(self.style.ruby_font_size * self.style.ruby_spacing) if max_ruby_h else 0
+                text_height = max_main_h + ruby_row
+                width = max(text_width + padding * 2, 1)
+                height = max(text_height + padding * 2, 1)
+                img = burner_mod.Image.new("RGBA", (width, height), (0, 0, 0, 0))
+                draw = burner_mod.ImageDraw.Draw(img)
 
-                img = original_render_tokens(self, rest, padding=padding)
-                try:
-                    ascent, descent = self.main_font.getmetrics()
-                    # The main row is centered at padding + ruby_row + ascent/2; we use the same y math.
-                    _, _, max_ruby_h, _ = self._build_layout(rest)
-                    ruby_row = max_ruby_h + int(self.style.ruby_font_size * self.style.ruby_spacing) if max_ruby_h else 0
-                    start_y = padding
-                    main_row_center = start_y + ruby_row + (ascent + descent) / 2
-                    icon_y = main_row_center - icon_w / 2
-                    icon_x = max(0, padding - icon_w - gap)
-                    icon = self._load_speaker_icon(icon_w)
-                    if icon:
-                        try:
+                start_x = padding
+                start_y = padding
+                ascent, descent = self.main_font.getmetrics()
+                main_row_center = start_y + ruby_row + (ascent + descent) / 2
+                current_x = start_x
+                bold_width = 1 if bool(getattr(self.style, "lazyedit_font_bold", False)) else 0
+
+                def _draw_foreground(position, text, font, fill):
+                    x, y = position
+                    if bold_width <= 0:
+                        draw.text((x, y), text, font=font, fill=fill)
+                        return
+                    for dx, dy in ((0, 0), (bold_width, 0), (0, bold_width), (bold_width, bold_width)):
+                        draw.text((x + dx, y + dy), text, font=font, fill=fill)
+
+                def _draw_stroke(position, text, font):
+                    stroke_width = int(getattr(self.style, "stroke_width", 0) or 0)
+                    if stroke_width <= 0:
+                        return
+                    x, y = position
+                    for dx in range(-stroke_width, stroke_width + 1):
+                        for dy in range(-stroke_width, stroke_width + 1):
+                            if dx * dx + dy * dy <= stroke_width * stroke_width:
+                                draw.text((x + dx, y + dy), text, font=font, fill=self.style.stroke_color)
+
+                if speaker and len(tokens) > 1:
+                    try:
+                        icon_y = main_row_center - icon_w / 2
+                        icon_x = max(0, padding - icon_w - gap)
+                        icon = self._load_speaker_icon(icon_w)
+                        if icon:
                             if icon.mode != "RGBA":
                                 icon = icon.convert("RGBA")
                             alpha = icon.split()[-1]
                             tinted = burner_mod.Image.new("RGBA", icon.size, (*SPEAKER_ICON_COLOR, 255))
                             tinted.putalpha(alpha)
-                            icon = tinted
-                        except Exception:
-                            pass
-                        img.alpha_composite(icon, (int(icon_x), int(round(icon_y))))
-                    else:
-                        draw = burner_mod.ImageDraw.Draw(img)
-                        draw.text(
-                            (icon_x, icon_y),
-                            getattr(speaker, "text", None) or "🔊",
-                            font=self.main_font,
-                            fill=SPEAKER_ICON_COLOR,
-                        )
-                except Exception:
-                    return original_render_tokens(self, tokens, padding=padding)
+                            img.alpha_composite(tinted, (int(icon_x), int(round(icon_y))))
+                        else:
+                            _draw_foreground((icon_x, icon_y), getattr(speaker, "text", None) or "🔊", self.main_font, SPEAKER_ICON_COLOR)
+                    except Exception:
+                        pass
+
+                for token, metrics in zip(render_tokens, layout):
+                    main_w = metrics["main_w"]
+                    ruby_w = metrics["ruby_w"]
+                    ruby_h = metrics["ruby_h"]
+                    prefix_w = metrics["prefix_w"]
+                    core_w = metrics["core_w"]
+                    column_w = metrics["column_w"]
+
+                    main_x = current_x + (column_w - main_w) // 2
+                    main_y = start_y + ruby_row
+
+                    if getattr(token, "token_type", None) == "speaker":
+                        icon = self._load_speaker_icon(main_w)
+                        icon_y = main_row_center - metrics["main_h"] / 2
+                        if icon:
+                            img.alpha_composite(icon, (int(main_x), int(round(icon_y))))
+                        else:
+                            _draw_foreground((main_x, icon_y), getattr(token, "text", None) or "🔊", self.main_font, self.style.text_color)
+                        current_x += column_w
+                        continue
+
+                    color = getattr(token, "color", None) or self.style.text_color
+                    _draw_stroke((main_x, main_y), token.text, self.main_font)
+                    _draw_foreground((main_x, main_y), token.text, self.main_font, color)
+
+                    if getattr(token, "ruby", None):
+                        if core_w > 0:
+                            ruby_x = int(main_x + prefix_w + (core_w - ruby_w) / 2)
+                        else:
+                            ruby_x = current_x + (column_w - ruby_w) // 2
+                        ruby_y = start_y + (max_ruby_h - ruby_h)
+                        _draw_stroke((ruby_x, ruby_y), token.ruby, self.ruby_font)
+                        _draw_foreground((ruby_x, ruby_y), token.ruby, self.ruby_font, color)
+
+                    current_x += column_w
+
                 return img
 
             OriginalRubyRenderer.render_tokens = render_tokens_lazyedit
@@ -784,16 +858,23 @@ def burn_video_with_slots(
         main_font_size = max(12, int(round(shared_base_font_size * scale)))
         main_font_size = min(main_font_size, max_main_font_size)
         stroke_width = max(1, int(round(default_style.stroke_width * (main_font_size / default_style.main_font_size))))
+        if not bool(slot.outline_bold):
+            stroke_width = max(1, int(round(stroke_width * 0.45)))
         ruby_font_size = max(0, int(round(main_font_size * 0.6)))
         ruby_font_size = min(ruby_font_size, max(0, main_font_size - 2))
         if not has_ruby:
             ruby_font_size = 0
+        text_color = _color_to_rgb(slot.font_color, default_style.text_color)
+        stroke_color = _color_to_rgb(slot.outline_color, default_style.stroke_color)
         style = TextStyle(
             main_font_size=main_font_size,
             ruby_font_size=ruby_font_size,
+            text_color=text_color,
+            stroke_color=stroke_color,
             stroke_width=stroke_width,
             ruby_spacing=ruby_spacing,
         )
+        setattr(style, "lazyedit_font_bold", bool(slot.font_bold))
         ipa_lang = None
         if slot.ipa:
             if slot.language == "en":
