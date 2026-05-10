@@ -18,6 +18,12 @@ if ! command -v tmux >/dev/null 2>&1; then
     exit 1
 fi
 
+BASH_BIN="${BASH_BIN:-$(command -v bash || true)}"
+if [ -z "$BASH_BIN" ]; then
+    echo "bash is required but not found in PATH."
+    exit 1
+fi
+
 if [ -z "$CONDA_PATH" ] || [ ! -f "$CONDA_PATH" ]; then
     for candidate in "$HOME/miniconda3/etc/profile.d/conda.sh" "$HOME/anaconda3/etc/profile.d/conda.sh"; do
         if [ -f "$candidate" ]; then
@@ -40,13 +46,13 @@ if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
     tmux kill-session -t "$SESSION_NAME"
 fi
 
-tmux new -d -s "$SESSION_NAME" -n lazyedit
+tmux new -d -s "$SESSION_NAME" -n lazyedit "$BASH_BIN"
 
 # Wait a bit to ensure that commands are sent after the session is properly set up
 sleep 2
 
 # Split into left/right panes (left: backend, right: Expo app)
-tmux split-window -h -t "$SESSION_NAME":0
+tmux split-window -h -t "$SESSION_NAME":0 "$BASH_BIN"
 
 # Left pane: backend
 if [ -f "$BASHRC_PATH" ]; then
