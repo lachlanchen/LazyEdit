@@ -135,6 +135,10 @@ class AutocutProcessor:
         )
 
     @staticmethod
+    def _is_native_crash_returncode(returncode):
+        return returncode in (-11, -4, 132, 139)
+
+    @staticmethod
     def _run_logged_command(command, env):
         process = subprocess.Popen(
             ["bash", "-lc", f"ulimit -c 0; {command}"],
@@ -200,7 +204,26 @@ class AutocutProcessor:
                 saw_cuda_oom = True
                 print(f"CUDA OOM detected with Whisper model {model_name}. Trying a smaller model.")
                 continue
-            if returncode in (132, 139):
+            if self._is_native_crash_returncode(returncode):
+                if env.get("LAZYEDIT_WHISPER_WORD_TIMESTAMPS") != "0":
+                    print(
+                        "Autocut crashed in native code. Retrying the same GPU model "
+                        "with Whisper word_timestamps disabled before falling back."
+                    )
+                    retry_env = env.copy()
+                    retry_env["LAZYEDIT_WHISPER_WORD_TIMESTAMPS"] = "0"
+                    returncode, output = self._run_logged_command(autocut_command, retry_env)
+                    last_failure_output = output
+                    if returncode == 0 and not self._is_cuda_oom(output):
+                        print(
+                            f"Finished autocut with lang={lang} on GPU {gpu_id} "
+                            f"using model {model_name} without word_timestamps"
+                        )
+                        return
+                    if self._is_cuda_oom(output):
+                        saw_cuda_oom = True
+                        print(f"CUDA OOM detected with Whisper model {model_name}. Trying a smaller model.")
+                        continue
                 print("Autocut crashed (illegal instruction/segfault). Retrying with safe CPU flags...")
                 break
             raise subprocess.CalledProcessError(returncode, autocut_command, output=output)
