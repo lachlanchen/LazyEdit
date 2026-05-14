@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Optional
@@ -117,6 +118,143 @@ def _load_burner_module():
             burner_mod._lazyedit_dynamic_padding_patch = True
     except Exception:
         # If patching fails, fall back to upstream behavior.
+        pass
+
+    # LazyEdit patch: upstream pinyin tokenization zips raw characters with
+    # pypinyin() output. Mixed CJK/Latin text such as "一个bucket" then becomes
+    # 一/个/b because pypinyin groups "bucket" as one item while zip consumes
+    # only the first Latin character. Keep Latin words and decimal+unit runs
+    # atomic, and annotate only CJK characters with pinyin.
+    try:
+        if getattr(burner_mod, "_lazyedit_mixed_pinyin_patch", False) is not True:
+            RubyToken = burner_mod.RubyToken
+            cjk_pred = getattr(burner_mod, "_is_cjk", None)
+            pinyin_available = bool(getattr(burner_mod, "PINYIN_AVAILABLE", False))
+            pypinyin_fn = getattr(burner_mod, "pypinyin", None)
+            pinyin_style = getattr(getattr(burner_mod, "Style", None), "TONE", None)
+
+            token_pattern = re.compile(
+                r"\d+(?:[.,]\d+)*(?:\s*(?:[%°℃℉]|[A-Za-zµμ/%]+))?"
+                r"|[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[’'\-][A-Za-zÀ-ÖØ-öø-ÿ]+)*"
+                r"|[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]+"
+                r"|\s+"
+                r"|.",
+                re.UNICODE,
+            )
+
+            def _is_cjk_char(char: str) -> bool:
+                if callable(cjk_pred):
+                    try:
+                        return bool(cjk_pred(char))
+                    except Exception:
+                        pass
+                return "\u3400" <= char <= "\u9fff" or "\uf900" <= char <= "\ufaff"
+
+            def _pinyin_for_char(char: str) -> str | None:
+                if not pinyin_available or not callable(pypinyin_fn):
+                    return None
+                try:
+                    result = pypinyin_fn(char, style=pinyin_style, errors=lambda value: [value])
+                except Exception:
+                    return None
+                if not result:
+                    return None
+                first = result[0]
+                reading = first[0] if first else ""
+                if not reading or reading == char:
+                    return None
+                return str(reading)
+
+            def _pinyin_for_cjk_run(text: str) -> list[str | None]:
+                if not pinyin_available or not callable(pypinyin_fn):
+                    return [None] * len(text)
+                try:
+                    result = pypinyin_fn(text, style=pinyin_style, errors=lambda value: [value])
+                except Exception:
+                    return [_pinyin_for_char(char) for char in text]
+                readings: list[str | None] = []
+                for char, item in zip(text, result):
+                    reading = item[0] if item else ""
+                    readings.append(str(reading) if reading and reading != char else None)
+                if len(readings) < len(text):
+                    readings.extend(_pinyin_for_char(char) for char in text[len(readings) :])
+                return readings
+
+            def _smart_text_tokens(text: str, color=None, token_type=None) -> list:
+                if not text:
+                    return []
+                out = []
+                for match in token_pattern.finditer(str(text)):
+                    part = match.group(0)
+                    if not part:
+                        continue
+                    if all(_is_cjk_char(char) for char in part):
+                        for char, ruby in zip(part, _pinyin_for_cjk_run(part)):
+                            out.append(
+                                RubyToken(
+                                    text=char,
+                                    ruby=ruby,
+                                    color=color,
+                                    token_type=token_type,
+                                )
+                            )
+                    elif any(_is_cjk_char(ch) for ch in part):
+                        for ch in part:
+                            if _is_cjk_char(ch):
+                                out.append(
+                                    RubyToken(
+                                        text=ch,
+                                        ruby=_pinyin_for_char(ch),
+                                        color=color,
+                                        token_type=token_type,
+                                    )
+                                )
+                            else:
+                                out.append(RubyToken(text=ch, color=color, token_type=token_type))
+                    else:
+                        out.append(RubyToken(text=part, color=color, token_type=token_type))
+                return out
+
+            def _tokens_with_pinyin_lazyedit(text: str):
+                return _smart_text_tokens(text)
+
+            def _apply_pinyin_lazyedit(tokens):  # type: ignore[no-redef]
+                if not pinyin_available:
+                    return tokens
+                expanded = []
+                for token in tokens:
+                    if getattr(token, "token_type", None) == "speaker":
+                        expanded.append(token)
+                        continue
+                    text = getattr(token, "text", "") or ""
+                    if getattr(token, "ruby", None) or not text:
+                        expanded.append(token)
+                        continue
+                    if any(_is_cjk_char(char) for char in text):
+                        expanded.extend(
+                            _smart_text_tokens(
+                                text,
+                                color=getattr(token, "color", None),
+                                token_type=getattr(token, "token_type", None),
+                            )
+                        )
+                    else:
+                        expanded.append(token)
+                return expanded
+
+            def _split_text_tokens_for_fit_lazyedit(text: str):  # type: ignore[no-redef]
+                if not text:
+                    return []
+                parts = _smart_text_tokens(text)
+                if parts:
+                    return parts
+                return [RubyToken(text=text)]
+
+            burner_mod._tokens_with_pinyin = _tokens_with_pinyin_lazyedit
+            burner_mod._apply_pinyin = _apply_pinyin_lazyedit
+            burner_mod._split_text_tokens_for_fit = _split_text_tokens_for_fit_lazyedit
+            burner_mod._lazyedit_mixed_pinyin_patch = True
+    except Exception:
         pass
 
     # LazyEdit patch: prefer time-splitting segments for long lines (instead of
