@@ -2400,10 +2400,26 @@ def find_latest_transcription_outputs(
 ):
     if not output_folder or not base_name:
         return None, None
-    if use_polished:
-        polished_json, polished_srt, _ = _transcription_variant_paths(output_folder, base_name, "polished")
-        if os.path.exists(polished_json) and os.path.exists(polished_srt):
-            return polished_json, polished_srt
+
+    def latest_pair(json_patterns: list[str], *, polished: bool) -> tuple[str | None, str | None]:
+        pairs: list[tuple[float, str, str]] = []
+        for pattern in json_patterns:
+            for json_path in glob.glob(pattern):
+                basename = os.path.basename(json_path)
+                is_polished = "_mixed_polished" in basename
+                if polished != is_polished:
+                    continue
+                srt_path = os.path.splitext(json_path)[0] + ".srt"
+                if not os.path.exists(srt_path):
+                    continue
+                pairs.append((max(os.path.getmtime(json_path), os.path.getmtime(srt_path)), json_path, srt_path))
+        if not pairs:
+            return None, None
+        _mtime, json_path, srt_path = max(pairs, key=lambda item: item[0])
+        return json_path, srt_path
+
+    raw_json = None
+    raw_srt = None
     if publication_session_id:
         session_json, session_srt, _ = _transcription_variant_paths(
             output_folder,
@@ -2412,24 +2428,55 @@ def find_latest_transcription_outputs(
             publication_session_id,
         )
         if os.path.exists(session_json) and os.path.exists(session_srt):
-            return session_json, session_srt
-    default_json = os.path.join(output_folder, f"{base_name}_mixed.json")
-    default_srt = os.path.join(output_folder, f"{base_name}_mixed.srt")
-    if os.path.exists(default_json) and os.path.exists(default_srt):
-        return default_json, default_srt
-    json_pattern = os.path.join(output_folder, f"{base_name}_mixed*.json")
-    srt_pattern = os.path.join(output_folder, f"{base_name}_mixed*.srt")
-    json_files = [
-        path for path in glob.glob(json_pattern)
-        if "_mixed_polished" not in os.path.basename(path)
-    ]
-    srt_files = [
-        path for path in glob.glob(srt_pattern)
-        if "_mixed_polished" not in os.path.basename(path)
-    ]
-    latest_json = max(json_files, key=os.path.getmtime) if json_files else None
-    latest_srt = max(srt_files, key=os.path.getmtime) if srt_files else None
-    return latest_json, latest_srt
+            raw_json, raw_srt = session_json, session_srt
+
+    if not raw_json:
+        default_json = os.path.join(output_folder, f"{base_name}_mixed.json")
+        default_srt = os.path.join(output_folder, f"{base_name}_mixed.srt")
+        if os.path.exists(default_json) and os.path.exists(default_srt):
+            raw_json, raw_srt = default_json, default_srt
+
+    if not raw_json:
+        raw_json, raw_srt = latest_pair(
+            [
+                os.path.join(output_folder, f"{base_name}_mixed*.json"),
+                os.path.join(output_folder, "*_mixed*.json"),
+            ],
+            polished=False,
+        )
+
+    if use_polished:
+        base_polished_json, base_polished_srt, _ = _transcription_variant_paths(output_folder, base_name, "polished")
+        polished_json, polished_srt = None, None
+        if os.path.exists(base_polished_json) and os.path.exists(base_polished_srt):
+            polished_json, polished_srt = base_polished_json, base_polished_srt
+        latest_polished_json, latest_polished_srt = latest_pair(
+            [
+                os.path.join(output_folder, f"{base_name}_mixed_polished.json"),
+                os.path.join(output_folder, "*_mixed_polished.json"),
+            ],
+            polished=True,
+        )
+        if latest_polished_json and latest_polished_srt:
+            if not polished_json or (
+                max(os.path.getmtime(latest_polished_json), os.path.getmtime(latest_polished_srt))
+                > max(os.path.getmtime(polished_json), os.path.getmtime(polished_srt))
+            ):
+                polished_json, polished_srt = latest_polished_json, latest_polished_srt
+
+        if polished_json and polished_srt:
+            if raw_json and raw_srt and os.path.exists(raw_json) and os.path.exists(raw_srt):
+                try:
+                    raw_mtime = max(os.path.getmtime(raw_json), os.path.getmtime(raw_srt))
+                    polished_mtime = min(os.path.getmtime(polished_json), os.path.getmtime(polished_srt))
+                    if polished_mtime < raw_mtime:
+                        print(f"Polished subtitles are older than raw subtitles for {base_name}; using raw transcript.")
+                        return raw_json, raw_srt
+                except Exception:
+                    pass
+            return polished_json, polished_srt
+
+    return raw_json, raw_srt
 
 
 def _normalize_transcription_language(value: object | None) -> str | None:
