@@ -194,7 +194,7 @@ DEFAULT_TRANSLATION_STYLE = {
     "bgColor": "#000000",
     "bgOpacity": 0.5,
 }
-DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant", "fr"]
+DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant"]
 DEFAULT_SUBTITLE_POLISH = {
     "notes": "",
 }
@@ -2465,15 +2465,6 @@ def find_latest_transcription_outputs(
                 polished_json, polished_srt = latest_polished_json, latest_polished_srt
 
         if polished_json and polished_srt:
-            if raw_json and raw_srt and os.path.exists(raw_json) and os.path.exists(raw_srt):
-                try:
-                    raw_mtime = max(os.path.getmtime(raw_json), os.path.getmtime(raw_srt))
-                    polished_mtime = min(os.path.getmtime(polished_json), os.path.getmtime(polished_srt))
-                    if polished_mtime < raw_mtime:
-                        print(f"Polished subtitles are older than raw subtitles for {base_name}; using raw transcript.")
-                        return raw_json, raw_srt
-                except Exception:
-                    pass
             return polished_json, polished_srt
 
     return raw_json, raw_srt
@@ -10685,7 +10676,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             statuses: dict[str, dict] = {}
 
             async def call_json(method: str, path: str, payload: dict | None = None):
-                url = f"http://localhost:{PORT}{path}"
+                url = f"http://127.0.0.1:{PORT}{path}"
                 if payload is None:
                     if method.upper() in ("POST", "PUT", "PATCH"):
                         body = b"{}"
@@ -10701,9 +10692,24 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                     method=method,
                     body=body,
                     headers=headers,
+                    connect_timeout=120,
                     request_timeout=7200,
                 )
-                response = await tornado.httpclient.AsyncHTTPClient().fetch(request, raise_error=False)
+                last_error = None
+                response = None
+                for attempt in range(1, 4):
+                    try:
+                        response = await tornado.httpclient.AsyncHTTPClient().fetch(request, raise_error=False)
+                        break
+                    except tornado.httpclient.HTTPError as exc:
+                        last_error = exc
+                    except Exception as exc:
+                        last_error = exc
+                    if attempt < 3:
+                        print(f"Local process API call failed ({path}) attempt {attempt}: {last_error}")
+                        await gen.sleep(2 * attempt)
+                if response is None:
+                    return 599, {"error": f"local API request failed: {last_error}"}
                 try:
                     data_out = json.loads(response.body or b"{}")
                 except Exception:

@@ -22,7 +22,8 @@ import { subscribeStudioRefresh } from '@/lib/studioRefresh';
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 const PAGE_SIZE = 8;
 const PROCESS_READY_TIMEOUT_MS = 90 * 60 * 1000;
-const DEFAULT_TRANSLATION_LANGUAGES = ['ja', 'en', 'zh-Hant', 'fr'];
+const AVAILABLE_TRANSLATION_LANGUAGES = ['ja', 'en', 'zh-Hant', 'fr'];
+const DEFAULT_TRANSLATION_LANGUAGES = ['ja', 'en', 'zh-Hant'];
 const DEFAULT_SUBTITLE_LIFT_RATIO = 0.1;
 const MIN_SUBTITLE_LIFT_RATIO = 0;
 const MAX_SUBTITLE_LIFT_RATIO = 0.4;
@@ -684,7 +685,7 @@ export default function EditorScreen() {
         if (Array.isArray(languagesJson?.value) && languagesJson.value.length) {
           nextLanguages = languagesJson.value
             .map((lang: unknown) => String(lang))
-            .filter((lang: string) => DEFAULT_TRANSLATION_LANGUAGES.includes(lang));
+            .filter((lang: string) => AVAILABLE_TRANSLATION_LANGUAGES.includes(lang));
           if (!nextLanguages.length) nextLanguages = DEFAULT_TRANSLATION_LANGUAGES;
         }
       }
@@ -705,7 +706,7 @@ export default function EditorScreen() {
         if (Array.isArray(value.translationLanguages) && value.translationLanguages.length) {
           const cleaned = value.translationLanguages
             .map((lang: unknown) => String(lang))
-            .filter((lang: string) => DEFAULT_TRANSLATION_LANGUAGES.includes(lang));
+            .filter((lang: string) => AVAILABLE_TRANSLATION_LANGUAGES.includes(lang));
           if (cleaned.length) nextLanguages = cleaned;
         }
       }
@@ -725,7 +726,7 @@ export default function EditorScreen() {
         setSubtitleOutlineBold(burnLayoutJson?.value?.outlineBold !== false);
         setSubtitleOutlineColor(normalizeHexColor(burnLayoutJson?.value?.outlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR));
       }
-      setTranslationLanguages(nextLanguages.slice(0, DEFAULT_TRANSLATION_LANGUAGES.length));
+      setTranslationLanguages(nextLanguages.slice(0, AVAILABLE_TRANSLATION_LANGUAGES.length));
     } catch (_err) {
       // ignore
     } finally {
@@ -2000,7 +2001,7 @@ export default function EditorScreen() {
           <View style={styles.languageOptionRow}>
             <Text style={styles.optionLabel}>{t('publish_option_language_count_title')}</Text>
             <View style={styles.languageChipGroup}>
-              {DEFAULT_TRANSLATION_LANGUAGES.map((language) => {
+              {AVAILABLE_TRANSLATION_LANGUAGES.map((language) => {
                 const active = translationLanguages.includes(language);
                 const activeIndex = translationLanguages.indexOf(language);
                 const effectiveRows = Math.max(subtitleRows, translationLanguages.length);
