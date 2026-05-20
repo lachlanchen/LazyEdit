@@ -5568,9 +5568,15 @@ def _merge_publish_queue_jobs(local_jobs: list[dict], remote_jobs: list[dict]) -
         merged_job = dict(job)
         matched_remote = None
         remote_job_id = str(job.get("remote_job_id") or "")
+        local_status = str(job.get("status") or "").lower()
         if remote_job_id:
             matched_remote = remote_by_id.get(remote_job_id)
-        if not matched_remote and job.get("filename"):
+        if (
+            not matched_remote
+            and not remote_job_id
+            and local_status in {"queued", "running"}
+            and job.get("filename")
+        ):
             matched_remote = remote_by_filename.get(str(job.get("filename")))
 
         if matched_remote:
@@ -5588,6 +5594,8 @@ def _merge_publish_queue_jobs(local_jobs: list[dict], remote_jobs: list[dict]) -
             remote_status = matched_remote.get("status")
             if remote_status:
                 merged_job["status"] = remote_status
+                if remote_status == "done":
+                    merged_job["error"] = None
             if matched_remote.get("detail") and merged_job.get("status") in {"queued", "running"}:
                 merged_job["detail"] = merged_job.get("detail") or matched_remote.get("detail")
 
@@ -5598,7 +5606,7 @@ def _merge_publish_queue_jobs(local_jobs: list[dict], remote_jobs: list[dict]) -
                     status=final_status,
                     detail=merged_job.get("detail"),
                     remote_status=matched_remote.get("remote_status"),
-                    error=merged_job.get("error"),
+                    error=None if final_status == "done" else merged_job.get("error"),
                     finished=True,
                 )
 
