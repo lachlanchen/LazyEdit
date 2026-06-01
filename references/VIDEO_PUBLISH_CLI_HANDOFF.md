@@ -58,7 +58,7 @@ python scripts/lazyedit_publish.py \
   --video /home/lachlan/ProjectsLFS/LALACHAN/Videos/2026-06-01-alps-hamburg-hamburger_01.mp4 \
   --title 2026-06-01-alps-hamburg-hamburger \
   --platforms shipinhao,youtube,instagram \
-  --languages zh-Hant,ja,en \
+  --use-current-settings \
   --prompt-file /home/lachlan/ProjectsLFS/LALACHAN/references/prompts/2026-06-01-alps-hamburg-hamburger-submit-15s.md \
   --metadata-prompt-file /home/lachlan/ProjectsLFS/LALACHAN/references/prompts/2026-06-01-alps-hamburg-hamburger-xyq-storyboard.md \
   --correct-subtitles \
@@ -196,6 +196,8 @@ curl "http://127.0.0.1:18787/api/autopublish/queue"
 ## Useful Options
 
 - `--platforms shipinhao,youtube,instagram`: target platforms.
+- `--use-current-settings`: start from Studio's saved publish options,
+  language order, subtitle lift, rows, font, and outline settings.
 - `--languages zh-Hant,ja,en`: subtitle order, bottom-to-top.
 - `--prompt-file FILE`: use the same story/script as subtitle correction and
   metadata context.
@@ -220,4 +222,3 @@ Use this prompt in the generating repo:
 > recognition errors and use the same story context for metadata. Use polished
 > subtitles, burn subtitles, and explicit bottom-to-top language order. Do not
 > persist Studio settings unless asked.
-

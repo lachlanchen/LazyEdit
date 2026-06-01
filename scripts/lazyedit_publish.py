@@ -169,10 +169,46 @@ def platform_flags(platforms: list[str]) -> dict[str, bool]:
     return flags
 
 
-def build_options(args: argparse.Namespace, correction_prompt: str, metadata_prompt: str) -> dict[str, Any]:
-    languages = parse_csv(args.languages) or DEFAULT_LANGUAGES
-    use_polished = args.use_polished or bool(correction_prompt)
-    burn_layout: dict[str, Any] = {
+def current_ui_settings(client: LazyEditClient) -> dict[str, Any]:
+    settings: dict[str, Any] = {}
+    for key in ("publish_options", "translation_languages", "burn_layout"):
+        try:
+            payload = client.request_json("GET", f"/api/ui-settings/{key}", timeout=30)
+            settings[key] = payload.get("value")
+        except Exception as exc:
+            print_event(f"Warning: failed to load Studio setting {key}: {exc}", quiet=client.quiet)
+    return settings
+
+
+def first_present(*values: Any) -> Any:
+    for value in values:
+        if value is not None:
+            return value
+    return None
+
+
+def build_options(
+    args: argparse.Namespace,
+    correction_prompt: str,
+    metadata_prompt: str,
+    settings: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    settings = settings or {}
+    current_publish = settings.get("publish_options")
+    if not isinstance(current_publish, dict):
+        current_publish = {}
+    current_layout = settings.get("burn_layout")
+    if not isinstance(current_layout, dict):
+        current_layout = current_publish.get("burnLayout") if isinstance(current_publish.get("burnLayout"), dict) else {}
+    current_languages = current_publish.get("translationLanguages") or settings.get("translation_languages")
+
+    languages = parse_csv(args.languages) or current_languages or DEFAULT_LANGUAGES
+    burn_subtitles = first_present(args.burn_subtitles, current_publish.get("burnSubtitles"), True)
+    use_polished = first_present(args.use_polished, current_publish.get("usePolishedSubtitles"), True)
+    use_polished = bool(use_polished) or bool(correction_prompt)
+
+    burn_layout: dict[str, Any] = dict(current_layout or {})
+    layout_overrides = {
         "liftRatio": args.subtitle_lift_ratio,
         "rows": args.subtitle_rows,
         "fontScale": args.subtitle_font_scale,
@@ -181,12 +217,20 @@ def build_options(args: argparse.Namespace, correction_prompt: str, metadata_pro
         "outlineBold": args.subtitle_outline_bold,
         "outlineColor": args.subtitle_outline_color,
     }
+    for key, value in layout_overrides.items():
+        if value is not None:
+            burn_layout[key] = value
+
+    publication_mode = "new" if args.new_run else str(current_publish.get("publicationMode") or "override")
+    if publication_mode not in {"new", "override"}:
+        publication_mode = "override"
+
     return {
-        "burnSubtitles": args.burn_subtitles,
+        "burnSubtitles": bool(burn_subtitles),
         "translationLanguages": languages,
         "usePolishedSubtitles": use_polished,
         "subtitleSourceVersion": "polished" if use_polished else "original",
-        "publicationMode": "new" if args.new_run else "override",
+        "publicationMode": publication_mode,
         "publicationSessionId": args.publication_session_id,
         "autoCorrectSubtitles": False,
         "autoCorrectPrompt": "",
@@ -290,7 +334,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--source", default="api")
     parser.add_argument("--platforms", default=",".join(DEFAULT_PLATFORMS), help="Comma-separated target platforms.")
     parser.add_argument("--platform", action="append", default=[], help="Target platform; may be repeated.")
-    parser.add_argument("--languages", default=",".join(DEFAULT_LANGUAGES), help="Bottom-to-top subtitle languages.")
+    parser.add_argument("--languages", help="Bottom-to-top subtitle languages.")
+    parser.add_argument("--use-current-settings", action="store_true", help="Use current Studio publish and subtitle layout settings as defaults.")
     parser.add_argument("--prompt-file", help="Prompt/story file used for both subtitle correction and metadata.")
     parser.add_argument("--correction-prompt-file", help="Prompt file for AI subtitle correction.")
     parser.add_argument("--metadata-prompt-file", help="Prompt/story file for metadata generation.")
@@ -301,20 +346,20 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-process", dest="process", action="store_false")
     parser.add_argument("--publish", dest="publish", action="store_true", default=True)
     parser.add_argument("--no-publish", dest="publish", action="store_false")
-    parser.add_argument("--burn-subtitles", dest="burn_subtitles", action="store_true", default=True)
+    parser.add_argument("--burn-subtitles", dest="burn_subtitles", action="store_true", default=None)
     parser.add_argument("--no-burn-subtitles", dest="burn_subtitles", action="store_false")
-    parser.add_argument("--use-polished", dest="use_polished", action="store_true", default=True)
+    parser.add_argument("--use-polished", dest="use_polished", action="store_true", default=None)
     parser.add_argument("--use-original", dest="use_polished", action="store_false")
     parser.add_argument("--new-run", action="store_true", help="Create a new publication run instead of overriding current output.")
     parser.add_argument("--publication-session-id", type=int)
     parser.add_argument("--persist-settings", action="store_true", help="Also update Studio UI publish preferences.")
-    parser.add_argument("--subtitle-lift-ratio", type=float, default=0.1)
-    parser.add_argument("--subtitle-rows", type=int, default=4)
-    parser.add_argument("--subtitle-font-scale", type=float, default=1.0)
-    parser.add_argument("--subtitle-font-bold", action=argparse.BooleanOptionalAction, default=True)
-    parser.add_argument("--subtitle-font-color", default="#FFFFFF")
-    parser.add_argument("--subtitle-outline-bold", action=argparse.BooleanOptionalAction, default=True)
-    parser.add_argument("--subtitle-outline-color", default="#000000")
+    parser.add_argument("--subtitle-lift-ratio", type=float)
+    parser.add_argument("--subtitle-rows", type=int)
+    parser.add_argument("--subtitle-font-scale", type=float)
+    parser.add_argument("--subtitle-font-bold", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--subtitle-font-color")
+    parser.add_argument("--subtitle-outline-bold", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--subtitle-outline-color")
     parser.add_argument("--steps", help="Comma-separated process steps. Defaults to the publish pipeline.")
     parser.add_argument("--wait", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--process-timeout", type=int, default=PROCESS_TIMEOUT_SECONDS)
@@ -323,6 +368,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--json", action="store_true", help="Print final machine-readable JSON.")
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args(argv)
+    if args.json:
+        args.quiet = True
 
     if not args.video and not args.video_id:
         parser.error("provide --video or --video-id")
@@ -375,11 +422,25 @@ def main(argv: list[str] | None = None) -> int:
             }
             print_event("Subtitle correction saved as polished subtitles.", quiet=args.quiet)
 
-        options = build_options(args, correction_prompt, metadata_prompt)
+        settings = current_ui_settings(client) if args.use_current_settings else {}
+        if settings:
+            final["current_settings"] = settings
+            print_event("Loaded current Studio publish settings.", quiet=args.quiet)
+
+        options = build_options(args, correction_prompt, metadata_prompt, settings)
+        final["options"] = {
+            "burnSubtitles": options["burnSubtitles"],
+            "translationLanguages": options["translationLanguages"],
+            "usePolishedSubtitles": options["usePolishedSubtitles"],
+            "subtitleSourceVersion": options["subtitleSourceVersion"],
+            "publicationMode": options["publicationMode"],
+            "burnLayout": options["burnLayout"],
+            "persistSettings": options["persistSettings"],
+        }
         session_id = args.publication_session_id
 
         if args.process:
-            steps = parse_csv(args.steps) or default_steps(args.burn_subtitles)
+            steps = parse_csv(args.steps) or default_steps(bool(options["burnSubtitles"]))
             print_event(f"Starting LazyEdit process: {', '.join(steps)}", quiet=args.quiet)
             process_payload = {
                 **options,
@@ -408,9 +469,16 @@ def main(argv: list[str] | None = None) -> int:
                 )
 
         if args.publish:
+            publish_options = {**options, "publicationSessionId": session_id}
+            if args.process and args.wait and final.get("process_status", {}).get("ready_for_publish"):
+                # The process phase already used the metadata prompt. Do not
+                # send it again or the publish worker will rerun processing.
+                publish_options["metadataPrompt"] = ""
+                publish_options["notes"] = ""
+                publish_options["useCorrectionPromptForMetadata"] = False
             publish_payload = {
                 "platforms": platform_flags(platforms),
-                "options": {**options, "publicationSessionId": session_id},
+                "options": publish_options,
                 "persistSettings": args.persist_settings,
             }
             print_event(f"Queueing publish to: {', '.join(platforms)}", quiet=args.quiet)
