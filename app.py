@@ -194,7 +194,7 @@ DEFAULT_TRANSLATION_STYLE = {
     "bgColor": "#000000",
     "bgOpacity": 0.5,
 }
-DEFAULT_TRANSLATION_LANGUAGES = ["ja", "en", "zh-Hant"]
+DEFAULT_TRANSLATION_LANGUAGES = ["zh-Hant", "ja", "en"]
 DEFAULT_SUBTITLE_POLISH = {
     "notes": "",
 }
