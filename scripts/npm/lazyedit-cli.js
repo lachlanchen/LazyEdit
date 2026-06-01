@@ -27,6 +27,8 @@ Usage:
   lazyedit backend
   lazyedit web
   lazyedit typecheck
+  lazyedit publish-video --video /path/to/video.mp4 --platforms shipinhao,youtube
+  npm run publish-video -- --video /path/to/video.mp4 --platforms shipinhao,youtube
 `);
 }
 
@@ -36,6 +38,17 @@ if (command === 'help' || command === '--help' || command === '-h') {
 }
 
 const npmScript = scriptMap[command];
+if (command === 'publish-video') {
+  const python = process.env.LAZYEDIT_PYTHON || 'python';
+  const passArgs = args[0] === '--' ? args.slice(1) : args;
+  const result = spawnSync(python, ['scripts/lazyedit_publish.py', ...passArgs], {
+    cwd: root,
+    stdio: 'inherit',
+    shell: process.platform === 'win32',
+  });
+  process.exit(result.status ?? 1);
+}
+
 if (!npmScript) {
   console.error(`Unknown command: ${command}`);
   help();

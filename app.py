@@ -1078,6 +1078,7 @@ def _sanitize_publish_options(payload) -> dict:
             default=DEFAULT_PUBLISH_OPTIONS["useCorrectionPromptForMetadata"],
         ),
         "metadataPrompt": metadata_prompt,
+        "burnLayout": _burn_layout_payload_from_request(payload),
     }
 
 
@@ -1086,6 +1087,7 @@ def _persistable_publish_options(options: dict) -> dict:
     cleaned.pop("autoCorrectSubtitles", None)
     cleaned.pop("autoCorrectPrompt", None)
     cleaned.pop("metadataPrompt", None)
+    cleaned.pop("burnLayout", None)
     return cleaned
 
 
@@ -1648,7 +1650,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         slots_payload = payload
 
     if not isinstance(slots_payload, list):
-        return _sanitize_burn_layout(DEFAULT_BURN_LAYOUT.copy())
+        slots_payload = DEFAULT_BURN_LAYOUT.get("slots", [])
 
     height_ratio = min(max(height_ratio, 0.2), 0.6)
     rows = min(max(rows, 1), 10)
@@ -1825,6 +1827,51 @@ def _burn_layout_for_languages(layout: dict | list | None, languages) -> dict:
     compact["slots"] = fixed_slots
     compact["liftSlots"] = min(int(compact.get("liftSlots") or 0), rows)
     return _sanitize_burn_layout(compact)
+
+
+def _burn_layout_payload_from_request(payload: dict | None, base_layout: dict | None = None) -> dict:
+    """Build a non-persistent subtitle burn layout from API payload overrides."""
+    base = dict(base_layout or _load_burn_layout_setting())
+    if not isinstance(payload, dict):
+        return _sanitize_burn_layout(base)
+
+    layout_payload = payload.get("burnLayout") or payload.get("burn_layout") or payload.get("layout")
+    if isinstance(layout_payload, dict):
+        base.update(layout_payload)
+    elif isinstance(layout_payload, list):
+        base["slots"] = layout_payload
+
+    key_map = {
+        "subtitleLiftRatio": "liftRatio",
+        "subtitle_lift_ratio": "liftRatio",
+        "liftRatio": "liftRatio",
+        "subtitleRows": "rows",
+        "subtitle_rows": "rows",
+        "rows": "rows",
+        "subtitleFontScale": "fontScale",
+        "subtitle_font_scale": "fontScale",
+        "fontScale": "fontScale",
+        "subtitleFontBold": "fontBold",
+        "subtitle_font_bold": "fontBold",
+        "fontBold": "fontBold",
+        "bold": "fontBold",
+        "subtitleFontColor": "fontColor",
+        "subtitle_font_color": "fontColor",
+        "fontColor": "fontColor",
+        "textColor": "fontColor",
+        "subtitleOutlineBold": "outlineBold",
+        "subtitle_outline_bold": "outlineBold",
+        "outlineBold": "outlineBold",
+        "outlineEnabled": "outlineBold",
+        "subtitleOutlineColor": "outlineColor",
+        "subtitle_outline_color": "outlineColor",
+        "outlineColor": "outlineColor",
+    }
+    for source_key, target_key in key_map.items():
+        if source_key in payload:
+            base[target_key] = payload[source_key]
+
+    return _sanitize_burn_layout(base)
 
 
 
@@ -5736,6 +5783,8 @@ def _process_publish_job(job_row: tuple) -> None:
             "publicationSessionId": publication_session_id,
             "publicationMode": "override",
         }
+        if job_config.get("burnLayout"):
+            process_payload["burnLayout"] = job_config["burnLayout"]
         if logo_settings.get("enabled") and logo_settings.get("logoPath"):
             process_payload["logo"] = logo_settings
         process_code, process_payload_out, _process_text = _local_api_json_request(
@@ -7966,6 +8015,10 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
         wait_for_result = _parse_bool(data.get("wait"), default=False)
         options_payload = data.get("options") if isinstance(data.get("options"), dict) else data
         publish_config = _sanitize_publish_options(options_payload)
+        persist_settings_raw = data.get("persistSettings")
+        if persist_settings_raw is None and isinstance(options_payload, dict):
+            persist_settings_raw = options_payload.get("persistSettings")
+        persist_settings = _parse_bool(persist_settings_raw, default=True)
 
         row = _get_video_row(video_id_i)
         if not row:
@@ -7980,8 +8033,9 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
         except ValueError as exc:
             self.set_status(400)
             return self.write({"error": str(exc)})
-        ldb.set_ui_preference("publish_options", _persistable_publish_options(publish_config))
-        ldb.set_ui_preference("translation_languages", publish_config["translationLanguages"])
+        if persist_settings:
+            ldb.set_ui_preference("publish_options", _persistable_publish_options(publish_config))
+            ldb.set_ui_preference("translation_languages", publish_config["translationLanguages"])
 
         if wait_for_result:
             bundle_status, response_payload = _prepare_publish_bundle(
@@ -10647,7 +10701,6 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             if languages_override is not None
             else _load_translation_languages_setting()
         )
-        burn_layout = _burn_layout_for_languages(_load_burn_layout_setting(), translation_languages)
         logo_payload = data.get("logo")
         logo_config = None
         if isinstance(logo_payload, dict):
@@ -10669,6 +10722,10 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             **data,
             "translationLanguages": translation_languages,
         })
+        burn_layout = _burn_layout_for_languages(
+            process_options.get("burnLayout") or _burn_layout_payload_from_request(data),
+            translation_languages,
+        )
         use_polished_subtitles = bool(process_options.get("usePolishedSubtitles", False)) or auto_correct_subtitles
         try:
             publication_session_id = _ensure_publication_session_for_options(
@@ -11006,6 +11063,16 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             steps["polish"] = step_payload("skipped", "Not requested")
 
         publish_options = _load_publish_options_setting()
+        if publication_session_id:
+            session_row = ldb.get_publication_session(publication_session_id)
+            session_config = session_row[5] if session_row and len(session_row) > 5 else None
+            if not isinstance(session_config, dict):
+                try:
+                    session_config = json.loads(session_config or "{}")
+                except Exception:
+                    session_config = {}
+            if session_config:
+                publish_options = _sanitize_publish_options({**publish_options, **session_config})
         burn_required_for_publish = bool(publish_options.get("burnSubtitles", True))
         translation_languages = publish_options.get("translationLanguages") or _load_translation_languages_setting()
         if not burn_required_for_publish:

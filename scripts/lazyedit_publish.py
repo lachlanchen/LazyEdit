@@ -1,0 +1,455 @@
+#!/usr/bin/env python3
+"""CLI client for publishing videos through the LazyEdit HTTP API.
+
+This script is intentionally dependency-free so other repositories can call it
+from a Codex session without installing a client package first.
+"""
+
+from __future__ import annotations
+
+import argparse
+import http.client
+import json
+import os
+from pathlib import Path
+import sys
+import time
+from typing import Any
+from urllib.parse import urlencode, urlsplit
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
+
+
+DEFAULT_API_URL = os.getenv("LAZYEDIT_API_URL", "http://127.0.0.1:18787")
+DEFAULT_LANGUAGES = ["zh-Hant", "ja", "en"]
+DEFAULT_PLATFORMS: list[str] = []
+PROCESS_TIMEOUT_SECONDS = 3 * 60 * 60
+PUBLISH_TIMEOUT_SECONDS = 2 * 60 * 60
+POLL_SECONDS = 5
+CHUNK_SIZE = 4 * 1024 * 1024
+
+PLATFORMS = {
+    "douyin",
+    "xiaohongshu",
+    "shipinhao",
+    "bilibili",
+    "youtube",
+    "instagram",
+}
+
+
+class ApiError(RuntimeError):
+    def __init__(self, message: str, status: int | None = None, payload: Any | None = None):
+        super().__init__(message)
+        self.status = status
+        self.payload = payload
+
+
+def parse_csv(value: str | None) -> list[str]:
+    if not value:
+        return []
+    return [part.strip() for part in value.split(",") if part.strip()]
+
+
+def read_text(path: str | None) -> str:
+    if not path:
+        return ""
+    return Path(path).read_text(encoding="utf-8", errors="ignore").strip()
+
+
+def print_event(message: str, *, quiet: bool = False) -> None:
+    if not quiet:
+        print(message, flush=True)
+
+
+def json_dumps(payload: Any) -> str:
+    return json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True)
+
+
+class LazyEditClient:
+    def __init__(self, base_url: str, timeout: int = 300, quiet: bool = False):
+        self.base_url = base_url.rstrip("/")
+        self.timeout = timeout
+        self.quiet = quiet
+
+    def _url(self, path: str, query: dict[str, Any] | None = None) -> str:
+        if not path.startswith("/"):
+            path = "/" + path
+        url = self.base_url + path
+        if query:
+            clean_query = {k: v for k, v in query.items() if v is not None}
+            if clean_query:
+                url += "?" + urlencode(clean_query)
+        return url
+
+    def request_json(
+        self,
+        method: str,
+        path: str,
+        payload: dict[str, Any] | None = None,
+        query: dict[str, Any] | None = None,
+        timeout: int | None = None,
+    ) -> dict[str, Any]:
+        body = None
+        headers = {"Accept": "application/json"}
+        if payload is not None:
+            body = json.dumps(payload).encode("utf-8")
+            headers["Content-Type"] = "application/json"
+        request = Request(self._url(path, query), data=body, method=method.upper(), headers=headers)
+        try:
+            with urlopen(request, timeout=timeout or self.timeout) as response:
+                raw = response.read().decode("utf-8", errors="replace")
+                return json.loads(raw or "{}")
+        except HTTPError as exc:
+            raw = exc.read().decode("utf-8", errors="replace")
+            try:
+                payload_out = json.loads(raw or "{}")
+            except json.JSONDecodeError:
+                payload_out = {"error": raw}
+            message = payload_out.get("error") or payload_out.get("details") or raw or str(exc)
+            raise ApiError(message, status=exc.code, payload=payload_out) from exc
+        except URLError as exc:
+            raise ApiError(f"LazyEdit API request failed: {exc}") from exc
+
+    def upload_stream(
+        self,
+        video_path: Path,
+        *,
+        title: str | None,
+        filename: str | None,
+        source: str,
+    ) -> dict[str, Any]:
+        video_path = video_path.resolve()
+        if not video_path.exists():
+            raise FileNotFoundError(video_path)
+        upload_name = filename or video_path.name
+        query = urlencode({
+            "filename": upload_name,
+            "title": title or video_path.stem,
+            "source": source,
+        })
+        parsed = urlsplit(f"{self.base_url}/upload-stream?{query}")
+        target = parsed.path + (("?" + parsed.query) if parsed.query else "")
+        conn_cls = http.client.HTTPSConnection if parsed.scheme == "https" else http.client.HTTPConnection
+        port = parsed.port
+        conn = conn_cls(parsed.hostname, port=port, timeout=self.timeout)
+        size = video_path.stat().st_size
+        print_event(f"Uploading {video_path} ({size / 1024 / 1024:.1f} MB)", quiet=self.quiet)
+        try:
+            conn.putrequest("PUT", target)
+            conn.putheader("Content-Type", "application/octet-stream")
+            conn.putheader("Content-Length", str(size))
+            conn.endheaders()
+            with video_path.open("rb") as handle:
+                while True:
+                    chunk = handle.read(CHUNK_SIZE)
+                    if not chunk:
+                        break
+                    conn.send(chunk)
+            response = conn.getresponse()
+            raw = response.read().decode("utf-8", errors="replace")
+        finally:
+            conn.close()
+        try:
+            payload = json.loads(raw or "{}")
+        except json.JSONDecodeError:
+            payload = {"error": raw}
+        if response.status >= 400:
+            raise ApiError(payload.get("error") or raw or response.reason, response.status, payload)
+        return payload
+
+
+def platform_flags(platforms: list[str]) -> dict[str, bool]:
+    flags = {platform: False for platform in PLATFORMS}
+    for platform in platforms:
+        normalized = platform.strip().lower()
+        if normalized not in PLATFORMS:
+            raise ValueError(f"unsupported platform: {platform}")
+        flags[normalized] = True
+    return flags
+
+
+def build_options(args: argparse.Namespace, correction_prompt: str, metadata_prompt: str) -> dict[str, Any]:
+    languages = parse_csv(args.languages) or DEFAULT_LANGUAGES
+    use_polished = args.use_polished or bool(correction_prompt)
+    burn_layout: dict[str, Any] = {
+        "liftRatio": args.subtitle_lift_ratio,
+        "rows": args.subtitle_rows,
+        "fontScale": args.subtitle_font_scale,
+        "fontBold": args.subtitle_font_bold,
+        "fontColor": args.subtitle_font_color,
+        "outlineBold": args.subtitle_outline_bold,
+        "outlineColor": args.subtitle_outline_color,
+    }
+    return {
+        "burnSubtitles": args.burn_subtitles,
+        "translationLanguages": languages,
+        "usePolishedSubtitles": use_polished,
+        "subtitleSourceVersion": "polished" if use_polished else "original",
+        "publicationMode": "new" if args.new_run else "override",
+        "publicationSessionId": args.publication_session_id,
+        "autoCorrectSubtitles": False,
+        "autoCorrectPrompt": "",
+        "useCorrectionPromptForMetadata": bool(metadata_prompt),
+        "metadataPrompt": metadata_prompt,
+        "notes": metadata_prompt,
+        "burnLayout": burn_layout,
+        "persistSettings": args.persist_settings,
+    }
+
+
+def default_steps(burn_subtitles: bool) -> list[str]:
+    if burn_subtitles:
+        return ["keyframes", "caption", "transcribe", "translate", "burn", "metadata_zh", "metadata_en", "cover"]
+    return ["keyframes", "caption", "transcribe", "metadata_zh", "metadata_en", "cover"]
+
+
+def step_summary(payload: dict[str, Any]) -> str:
+    steps = payload.get("steps") or {}
+    if not isinstance(steps, dict):
+        return "no step status"
+    parts = []
+    for name in ("transcribe", "polish", "translate", "burn", "keyframes", "caption", "metadata_zh", "metadata_en", "cover"):
+        step = steps.get(name)
+        if isinstance(step, dict):
+            detail = step.get("detail") or step.get("progress")
+            parts.append(f"{name}:{step.get('status')}" + (f"({detail})" if detail else ""))
+    return " ".join(parts)
+
+
+def wait_for_process(
+    client: LazyEditClient,
+    video_id: int,
+    session_id: int | None,
+    timeout: int,
+    interval: int,
+) -> dict[str, Any]:
+    deadline = time.monotonic() + timeout
+    last = ""
+    while time.monotonic() < deadline:
+        payload = client.request_json(
+            "GET",
+            f"/api/videos/{video_id}/process-status",
+            query={"publicationSessionId": session_id},
+            timeout=60,
+        )
+        summary = step_summary(payload)
+        if summary != last:
+            print_event(f"Process status: {summary}", quiet=client.quiet)
+            last = summary
+        steps = payload.get("steps") or {}
+        errors = [
+            f"{name}: {step.get('detail') or 'error'}"
+            for name, step in steps.items()
+            if isinstance(step, dict) and step.get("status") == "error"
+        ]
+        if errors:
+            raise ApiError("process failed: " + "; ".join(errors), payload=payload)
+        if payload.get("ready_for_publish"):
+            return payload
+        time.sleep(interval)
+    raise TimeoutError(f"process did not become ready within {timeout} seconds")
+
+
+def wait_for_publish(client: LazyEditClient, job_id: int, timeout: int, interval: int) -> dict[str, Any]:
+    deadline = time.monotonic() + timeout
+    last = ""
+    while time.monotonic() < deadline:
+        payload = client.request_json("GET", "/api/autopublish/queue", timeout=60)
+        jobs = payload.get("jobs") if isinstance(payload, dict) else []
+        match = None
+        if isinstance(jobs, list):
+            for job in jobs:
+                if isinstance(job, dict) and int(job.get("id") or -1) == int(job_id):
+                    match = job
+                    break
+        if match:
+            status = match.get("status")
+            detail = match.get("detail") or match.get("remote_status") or ""
+            message = f"Publish job {job_id}: {status} {detail}".strip()
+            if message != last:
+                print_event(message, quiet=client.quiet)
+                last = message
+            if status == "done":
+                return match
+            if status == "failed":
+                raise ApiError(match.get("error") or "publish failed", payload=match)
+        time.sleep(interval)
+    raise TimeoutError(f"publish job {job_id} did not finish within {timeout} seconds")
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Upload, correct subtitles, process, and publish a video through LazyEdit.",
+    )
+    parser.add_argument("--api-url", default=DEFAULT_API_URL)
+    parser.add_argument("--video", help="Path to a local video to upload.")
+    parser.add_argument("--video-id", type=int, help="Existing LazyEdit video id to reuse.")
+    parser.add_argument("--title", help="Title stored in LazyEdit. Defaults to video filename stem.")
+    parser.add_argument("--filename", help="Upload filename. Defaults to source filename.")
+    parser.add_argument("--source", default="api")
+    parser.add_argument("--platforms", default=",".join(DEFAULT_PLATFORMS), help="Comma-separated target platforms.")
+    parser.add_argument("--platform", action="append", default=[], help="Target platform; may be repeated.")
+    parser.add_argument("--languages", default=",".join(DEFAULT_LANGUAGES), help="Bottom-to-top subtitle languages.")
+    parser.add_argument("--prompt-file", help="Prompt/story file used for both subtitle correction and metadata.")
+    parser.add_argument("--correction-prompt-file", help="Prompt file for AI subtitle correction.")
+    parser.add_argument("--metadata-prompt-file", help="Prompt/story file for metadata generation.")
+    parser.add_argument("--correct-subtitles", dest="correct_subtitles", action="store_true", default=None)
+    parser.add_argument("--no-correct-subtitles", dest="correct_subtitles", action="store_false")
+    parser.add_argument("--correction-source", default="polished", choices=["original", "polished"])
+    parser.add_argument("--process", dest="process", action="store_true", default=True)
+    parser.add_argument("--no-process", dest="process", action="store_false")
+    parser.add_argument("--publish", dest="publish", action="store_true", default=True)
+    parser.add_argument("--no-publish", dest="publish", action="store_false")
+    parser.add_argument("--burn-subtitles", dest="burn_subtitles", action="store_true", default=True)
+    parser.add_argument("--no-burn-subtitles", dest="burn_subtitles", action="store_false")
+    parser.add_argument("--use-polished", dest="use_polished", action="store_true", default=True)
+    parser.add_argument("--use-original", dest="use_polished", action="store_false")
+    parser.add_argument("--new-run", action="store_true", help="Create a new publication run instead of overriding current output.")
+    parser.add_argument("--publication-session-id", type=int)
+    parser.add_argument("--persist-settings", action="store_true", help="Also update Studio UI publish preferences.")
+    parser.add_argument("--subtitle-lift-ratio", type=float, default=0.1)
+    parser.add_argument("--subtitle-rows", type=int, default=4)
+    parser.add_argument("--subtitle-font-scale", type=float, default=1.0)
+    parser.add_argument("--subtitle-font-bold", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--subtitle-font-color", default="#FFFFFF")
+    parser.add_argument("--subtitle-outline-bold", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--subtitle-outline-color", default="#000000")
+    parser.add_argument("--steps", help="Comma-separated process steps. Defaults to the publish pipeline.")
+    parser.add_argument("--wait", action=argparse.BooleanOptionalAction, default=True)
+    parser.add_argument("--process-timeout", type=int, default=PROCESS_TIMEOUT_SECONDS)
+    parser.add_argument("--publish-timeout", type=int, default=PUBLISH_TIMEOUT_SECONDS)
+    parser.add_argument("--poll-seconds", type=int, default=POLL_SECONDS)
+    parser.add_argument("--json", action="store_true", help="Print final machine-readable JSON.")
+    parser.add_argument("--quiet", action="store_true")
+    args = parser.parse_args(argv)
+
+    if not args.video and not args.video_id:
+        parser.error("provide --video or --video-id")
+
+    platforms = parse_csv(args.platforms) + list(args.platform or [])
+    if args.publish and not platforms:
+        parser.error("provide --platforms or --platform when publishing")
+
+    correction_prompt = read_text(args.correction_prompt_file) or read_text(args.prompt_file)
+    metadata_prompt = read_text(args.metadata_prompt_file) or read_text(args.prompt_file)
+    should_correct = args.correct_subtitles if args.correct_subtitles is not None else bool(correction_prompt)
+    if should_correct and not correction_prompt:
+        parser.error("--correct-subtitles requires --correction-prompt-file or --prompt-file")
+
+    client = LazyEditClient(args.api_url, quiet=args.quiet)
+    final: dict[str, Any] = {"api_url": args.api_url}
+
+    try:
+        if args.video_id:
+            video_id = args.video_id
+            final["video_id"] = video_id
+        else:
+            upload = client.upload_stream(
+                Path(args.video),
+                title=args.title,
+                filename=args.filename,
+                source=args.source,
+            )
+            video_id = int(upload["video_id"])
+            final["upload"] = upload
+            final["video_id"] = video_id
+            print_event(f"Uploaded video_id={video_id}", quiet=args.quiet)
+
+        if should_correct:
+            print_event("Running AI subtitle correction...", quiet=args.quiet)
+            correction = client.request_json(
+                "POST",
+                f"/api/videos/{video_id}/subtitle-correction",
+                {
+                    "action": "ai",
+                    "prompt": correction_prompt,
+                    "sourceVariant": args.correction_source,
+                    "use_cache": True,
+                },
+                timeout=args.process_timeout,
+            )
+            final["subtitle_correction"] = {
+                "original": correction.get("original", {}).get("path"),
+                "polished": correction.get("polished", {}).get("path"),
+            }
+            print_event("Subtitle correction saved as polished subtitles.", quiet=args.quiet)
+
+        options = build_options(args, correction_prompt, metadata_prompt)
+        session_id = args.publication_session_id
+
+        if args.process:
+            steps = parse_csv(args.steps) or default_steps(args.burn_subtitles)
+            print_event(f"Starting LazyEdit process: {', '.join(steps)}", quiet=args.quiet)
+            process_payload = {
+                **options,
+                "async": True,
+                "steps": steps,
+                "polish_notes": correction_prompt,
+                "notes": metadata_prompt,
+            }
+            process_started = client.request_json(
+                "POST",
+                f"/api/videos/{video_id}/process",
+                process_payload,
+                timeout=120,
+            )
+            final["process_started"] = process_started
+            session_id = process_started.get("publication_session_id") or session_id
+            final["publication_session_id"] = session_id
+            print_event(f"Process started for video_id={video_id}, session={session_id}", quiet=args.quiet)
+            if args.wait:
+                final["process_status"] = wait_for_process(
+                    client,
+                    video_id,
+                    int(session_id) if session_id else None,
+                    args.process_timeout,
+                    args.poll_seconds,
+                )
+
+        if args.publish:
+            publish_payload = {
+                "platforms": platform_flags(platforms),
+                "options": {**options, "publicationSessionId": session_id},
+                "persistSettings": args.persist_settings,
+            }
+            print_event(f"Queueing publish to: {', '.join(platforms)}", quiet=args.quiet)
+            published = client.request_json(
+                "POST",
+                f"/api/videos/{video_id}/publish",
+                publish_payload,
+                timeout=120,
+            )
+            final["publish_started"] = published
+            job_id = published.get("job_id") or (published.get("job") or {}).get("id")
+            if job_id and args.wait:
+                final["publish_job"] = wait_for_publish(
+                    client,
+                    int(job_id),
+                    args.publish_timeout,
+                    args.poll_seconds,
+                )
+
+        if args.json:
+            print(json_dumps(final))
+        else:
+            print_event("LazyEdit publish CLI completed.", quiet=args.quiet)
+            if not args.quiet:
+                print(json_dumps({
+                    "video_id": final.get("video_id"),
+                    "publication_session_id": final.get("publication_session_id"),
+                    "publish_job": final.get("publish_job", final.get("publish_started")),
+                }))
+        return 0
+    except Exception as exc:
+        if args.json:
+            print(json_dumps({"error": str(exc), "partial": final}), file=sys.stderr)
+        else:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            if isinstance(exc, ApiError) and exc.payload is not None:
+                print(json_dumps(exc.payload), file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

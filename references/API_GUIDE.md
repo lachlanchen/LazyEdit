@@ -134,12 +134,14 @@ JSON body:
 - platforms: object or list of platforms
 - test (boolean, optional)
 - wait (boolean, optional)
+- persistSettings (boolean, optional; default true). External automation should
+  set this to false so CLI/API calls do not change Studio UI preferences.
 
 Example:
 
 curl -X POST \
   -H "Content-Type: application/json" \
-  -d "{\"platforms\":{\"xiaohongshu\":true,\"douyin\":true}}" \
+  -d "{\"platforms\":{\"xiaohongshu\":true,\"douyin\":true},\"persistSettings\":false}" \
   http://localhost:8787/api/videos/123/publish
 
 Response (example):
@@ -176,6 +178,27 @@ Other useful endpoints (summary)
 
 - POST /api/videos/{id}/process
   Run the app pipeline (app-side orchestrated).
+
+- GET /api/videos/{id}/process-status
+  Poll app pipeline state. Add `?publicationSessionId=123` when processing a
+  specific publication run.
+
+CLI wrapper
+
+Use the dependency-free CLI for cross-repository automation:
+
+```bash
+python scripts/lazyedit_publish.py \
+  --video /path/to/video.mp4 \
+  --platforms shipinhao,youtube,instagram \
+  --languages zh-Hant,ja,en \
+  --prompt-file /path/to/story.md \
+  --correct-subtitles \
+  --use-polished \
+  --wait
+```
+
+See `references/VIDEO_PUBLISH_CLI_HANDOFF.md` for the full handoff guide.
 
 - POST /api/videos/generate
   Generate a video from a prompt (Sora).

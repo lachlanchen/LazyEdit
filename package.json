@@ -14,6 +14,7 @@
     "dev": "bash scripts/npm/start.sh",
     "backend": "bash scripts/npm/backend.sh",
     "web": "bash scripts/npm/web.sh",
+    "publish-video": "python scripts/lazyedit_publish.py",
     "typecheck": "cd app && npx tsc --noEmit"
   },
   "engines": {
