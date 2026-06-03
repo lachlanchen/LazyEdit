@@ -10,6 +10,8 @@ This workflow documents how to publish videos through LazyEdit without manually 
 - Backend API: `http://127.0.0.1:18787`.
 - CLI: `scripts/lazyedit_publish.py`.
 - Remote platform automation runs on `lazyingart` through AutoPublish at `http://lazyingart:8081/publish`.
+- Installable Codex skill copy: `references/skills/lazyedit-publish-workflow`.
+- AgInTiFlow handoff note: `references/HANDOFF_AGINTIFLOW_LAZYEDIT_PUBLISH_SKILL_2026_06_03.md`.
 
 The CLI writes normal LazyEdit publish jobs, so jobs appear in the webapp publish queue. CLI options do not rewrite saved Studio settings unless `--persist-settings` is passed.
 
