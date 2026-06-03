@@ -35,6 +35,7 @@ If AgInTiFlow has its own skill/plugin packaging path, import the same directory
 - Publishing existing LazyEdit outputs without rerunning processing.
 - Processing then publishing through `scripts/lazyedit_publish.py`.
 - Publishing AI-generated LALACHAN/RARACHAN videos with story prompts for subtitle correction and metadata.
+- Using the generated video script as a correction reference, not a verbatim target: compare script/story with ASR output, infer likely intended wording, fix recognition errors, and preserve subtitle timing.
 - One-shot CLI overrides versus persistent webapp Studio settings.
 - Monitoring LazyEdit queue, remote AutoPublish queue, tmux panes, and Shipinhao login/publish state.
 - Coordinating three systems:
@@ -50,6 +51,7 @@ If AgInTiFlow has its own skill/plugin packaging path, import the same directory
 - `--no-process` reuses an already finished run/output.
 - `--languages` is bottom-to-top order.
 - Prefer polished/corrected subtitles unless the user explicitly asks for original subtitles.
+- For generated videos, use the script/story to guide correction of ASR mistakes, but do not blindly copy the script if the audio differs.
 - For Shipinhao, monitor `ssh lachlan@lazyingart 'tmux capture-pane -pt autopub:0 -S -120 | tail -n 120'`.
 
 ## Recent Verified Example

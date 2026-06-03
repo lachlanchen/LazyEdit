@@ -103,7 +103,9 @@ python scripts/lazyedit_publish.py \
   --poll-seconds 10
 ```
 
-Use the LALACHAN story/prompt as both subtitle-correction background and metadata background. If the user requests no rerun, use `--no-process`.
+Use the LALACHAN story/prompt/script as both subtitle-correction background and metadata background. For subtitle correction, treat the script as a reference, not a verbatim source: compare the ASR transcription with the generated script/story, infer the most likely intended wording, fix recognition errors, and preserve the subtitle timing and line structure where possible. The final corrected subtitles do not need to be identical to the script if the audio or generated video differs.
+
+If the user requests no rerun, use `--no-process`.
 
 ## Monitoring
 

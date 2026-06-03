@@ -90,7 +90,7 @@ python scripts/lazyedit_publish.py \
   --wait
 ```
 
-Use the generated story/prompt file as both subtitle-correction background and metadata background. Keep `--use-polished` or current Studio polished defaults unless deliberately testing original subtitles.
+Use the generated story/prompt/script file as both subtitle-correction background and metadata background. For correction, the script is only a reference: compare it with the ASR subtitles, infer the most likely intended wording, fix recognition errors, and keep timing/line structure stable where possible. Do not force the final subtitles to match the script verbatim when the audio or generated video differs. Keep `--use-polished` or current Studio polished defaults unless deliberately testing original subtitles.
 
 ## Monitoring
 
