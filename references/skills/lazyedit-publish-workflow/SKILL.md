@@ -139,6 +139,7 @@ tmux capture-pane -pt autopub-monitor:0.3 -S -120 | tail -n 120
 ## Shipinhao Notes
 
 - Shipinhao may require a WeChat QR/login email. Keep monitoring after the user scans.
+- Keep the long login wait behavior. It is intentional and useful when the user is away or misses the first QR.
 - The automation should wait for upload completion, cover readiness, save draft, then publish.
 - Current UI may not expose short title or cover upload; skip those if absent.
 - Expected successful log includes `Successfully published on ShiPinHao.`
@@ -159,3 +160,48 @@ curl -fsS http://lazyingart:8081/publish/queue | jq '.jobs[:8] | map({id,status,
 ```
 
 Report the LazyEdit job id, remote job id, platforms, status, and whether processing was reused or rerun.
+
+## Verified Run: 2026-06-03 Typhoon Ping Pong Shark
+
+Request:
+
+- Publish `typhoon_pingpong_shark_duanpian_4x3_15s_2026_06_03_22_46_26_COMPLETED` as before.
+- Use generated-video subtitle correction from the LALACHAN prompt/script.
+
+Method:
+
+```bash
+python scripts/lazyedit_publish.py \
+  --video-id 348 \
+  --use-current-settings \
+  --prompt-file /home/lachlan/ProjectsLFS/LALACHAN/references/prompts/2026-06-03-typhoon-pingpong-shark-duanpian-15s-4x3-budget200.md \
+  --correct-subtitles \
+  --correction-source polished \
+  --platforms shipinhao,youtube,instagram \
+  --wait \
+  --poll-seconds 10
+```
+
+What happened:
+
+- LazyEdit had already imported the Nutstore file as `video_id=348`.
+- AI subtitle correction saved polished subtitles before processing.
+- Processing completed: transcribe, translate, burn, metadata, cover.
+- Shipinhao blocked on login until the user scanned the emailed QR.
+- The QR expired once; the existing long wait refreshed it and sent a new email.
+- After login, Shipinhao published, then Instagram published, then YouTube published.
+
+Tools used:
+
+- `scripts/lazyedit_publish.py` for API/CLI orchestration.
+- `curl` + `jq` for LazyEdit and remote AutoPublish queue checks.
+- `ssh lachlan@lazyingart` and `tmux capture-pane -pt autopub:0` for remote browser automation logs.
+- `tmux capture-pane -pt autopub-monitor:*` for Nutstore/import checks.
+- `rg` on the Pi after installing `ripgrep` for faster code/log searches.
+
+Final result:
+
+- LazyEdit job `148`
+- Remote job `job-1780500057985-7`
+- Platforms `shipinhao`, `youtube`, `instagram`
+- Status `done`

@@ -123,3 +123,39 @@ Shipinhao may require a WeChat QR scan. The automation emails the login prompt, 
   - `346`: YouTube/Instagram job `144`, Shipinhao job `146`.
   - `347`: YouTube/Instagram job `145`, Shipinhao job `147`.
 - A local Codex skill was also added at `~/.codex/skills/lazyedit-publish-workflow/SKILL.md`.
+
+## 2026-06-03 Typhoon Generated Video Publish
+
+Generated video:
+
+- `typhoon_pingpong_shark_duanpian_4x3_15s_2026_06_03_22_46_26_COMPLETED`
+- LazyEdit imported it as `video_id=348`.
+
+Command used:
+
+```bash
+python scripts/lazyedit_publish.py \
+  --video-id 348 \
+  --use-current-settings \
+  --prompt-file /home/lachlan/ProjectsLFS/LALACHAN/references/prompts/2026-06-03-typhoon-pingpong-shark-duanpian-15s-4x3-budget200.md \
+  --correct-subtitles \
+  --correction-source polished \
+  --platforms shipinhao,youtube,instagram \
+  --wait \
+  --poll-seconds 10
+```
+
+Important behavior:
+
+- The LALACHAN script was used as a correction reference for ASR errors, not as a verbatim subtitle target.
+- Correction saved polished subtitles before processing.
+- Processing completed transcribe, translation, subtitle burn, metadata, and cover extraction.
+- Shipinhao waited at QR login; the long wait was useful and should remain.
+- The QR expired once and the automation refreshed it, sent a new email, and continued after the user logged in.
+- Remote automation then published Shipinhao, Instagram, and YouTube.
+
+Final result:
+
+- LazyEdit job `148`
+- Remote AutoPublish job `job-1780500057985-7`
+- Status `done`
