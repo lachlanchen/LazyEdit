@@ -74,6 +74,21 @@ Process then publish:
 python scripts/lazyedit_publish.py --video-id VIDEO_ID --use-current-settings --platforms youtube,instagram --wait --poll-seconds 10
 ```
 
+Process/publish with lightweight guided monitoring:
+
+```bash
+python scripts/lazyedit_publish.py \
+  --video-id VIDEO_ID \
+  --use-current-settings \
+  --platforms youtube,instagram \
+  --guided-monitor \
+  --remote-log-command "ssh lachlan@lazyingart 'tmux capture-pane -pt autopub:0 -S -80 | tail -n 80'" \
+  --wait \
+  --poll-seconds 10
+```
+
+Use `--guided-monitor` when the user wants less manual supervision. It prints heartbeat progress during blocking subtitle correction, follows the local LazyEdit queue, checks the remote AutoPublish queue, and can periodically tail the Pi `autopub` tmux log. It should not restart services by itself; diagnose first, then intervene only when the queue reports failure or the logs show a clear stall.
+
 Override languages for one run without changing Studio defaults:
 
 ```bash

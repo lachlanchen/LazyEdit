@@ -8,10 +8,12 @@ from a Codex session without installing a client package first.
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
 import http.client
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import time
 from typing import Any
@@ -23,6 +25,7 @@ from urllib.error import HTTPError, URLError
 DEFAULT_API_URL = os.getenv("LAZYEDIT_API_URL", "http://127.0.0.1:18787")
 DEFAULT_LANGUAGES = ["zh-Hant", "ja", "en"]
 DEFAULT_PLATFORMS: list[str] = []
+DEFAULT_REMOTE_QUEUE_URL = os.getenv("LAZYEDIT_REMOTE_QUEUE_URL", "http://lazyingart:8081/publish/queue")
 PROCESS_TIMEOUT_SECONDS = 3 * 60 * 60
 PUBLISH_TIMEOUT_SECONDS = 2 * 60 * 60
 POLL_SECONDS = 5
@@ -64,6 +67,13 @@ def print_event(message: str, *, quiet: bool = False) -> None:
 
 def json_dumps(payload: Any) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True)
+
+
+def request_url_json(url: str, timeout: int = 20) -> dict[str, Any]:
+    request = Request(url, method="GET", headers={"Accept": "application/json"})
+    with urlopen(request, timeout=timeout) as response:
+        raw = response.read().decode("utf-8", errors="replace")
+        return json.loads(raw or "{}")
 
 
 class LazyEditClient:
@@ -261,6 +271,34 @@ def step_summary(payload: dict[str, Any]) -> str:
     return " ".join(parts)
 
 
+def request_with_heartbeat(
+    client: LazyEditClient,
+    method: str,
+    path: str,
+    payload: dict[str, Any],
+    *,
+    timeout: int,
+    label: str,
+    interval: int,
+    quiet: bool,
+) -> dict[str, Any]:
+    """Run a blocking API call while emitting lightweight progress heartbeats."""
+    heartbeat = max(10, int(interval))
+    start = time.monotonic()
+    next_print = start + heartbeat
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        future = pool.submit(client.request_json, method, path, payload, None, timeout)
+        while True:
+            try:
+                return future.result(timeout=1)
+            except FutureTimeout:
+                now = time.monotonic()
+                if now >= next_print:
+                    elapsed = int(now - start)
+                    print_event(f"{label}: waiting {elapsed}s", quiet=quiet)
+                    next_print = now + heartbeat
+
+
 def wait_for_process(
     client: LazyEditClient,
     video_id: int,
@@ -295,25 +333,120 @@ def wait_for_process(
     raise TimeoutError(f"process did not become ready within {timeout} seconds")
 
 
-def wait_for_publish(client: LazyEditClient, job_id: int, timeout: int, interval: int) -> dict[str, Any]:
+def find_remote_job(queue_url: str, remote_job_id: str | None, filename: str | None) -> dict[str, Any] | None:
+    if not queue_url or (not remote_job_id and not filename):
+        return None
+    payload = request_url_json(queue_url, timeout=20)
+    jobs = payload.get("jobs") if isinstance(payload, dict) else []
+    if not isinstance(jobs, list):
+        return None
+    for job in jobs:
+        if not isinstance(job, dict):
+            continue
+        if remote_job_id and str(job.get("id") or job.get("job_id") or "") == str(remote_job_id):
+            return job
+        if filename and str(job.get("filename") or "") == str(filename):
+            return job
+    return None
+
+
+def same_local_job_id(value: Any, job_id: int) -> bool:
+    try:
+        return int(value) == int(job_id)
+    except (TypeError, ValueError):
+        return False
+
+
+def run_remote_log_command(command: str, *, quiet: bool) -> None:
+    if not command:
+        return
+    try:
+        result = subprocess.run(
+            command,
+            shell=True,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=20,
+        )
+    except Exception as exc:
+        print_event(f"Remote log command failed: {exc}", quiet=quiet)
+        return
+    output = (result.stdout or result.stderr or "").strip()
+    if output:
+        print_event("Remote AutoPublish log tail:\n" + output, quiet=quiet)
+
+
+def publish_message(job_id: int, job: dict[str, Any]) -> str:
+    status = job.get("status")
+    detail = job.get("detail") or ""
+    remote_status = job.get("remote_status") or ""
+    remote_job_id = job.get("remote_job_id") or ""
+    parts = [f"Publish job {job_id}: {status}"]
+    if remote_status:
+        parts.append(f"remote={remote_status}")
+    if remote_job_id:
+        parts.append(f"remote_id={remote_job_id}")
+    if detail:
+        parts.append(str(detail))
+    return " ".join(parts).strip()
+
+
+def wait_for_publish(
+    client: LazyEditClient,
+    job_id: int,
+    timeout: int,
+    interval: int,
+    *,
+    guided_monitor: bool = False,
+    remote_queue_url: str | None = None,
+    remote_log_command: str | None = None,
+    remote_log_seconds: int = 60,
+) -> dict[str, Any]:
     deadline = time.monotonic() + timeout
     last = ""
+    last_remote = ""
+    next_remote_log = time.monotonic() + max(30, remote_log_seconds)
     while time.monotonic() < deadline:
         payload = client.request_json("GET", "/api/autopublish/queue", timeout=60)
         jobs = payload.get("jobs") if isinstance(payload, dict) else []
         match = None
         if isinstance(jobs, list):
             for job in jobs:
-                if isinstance(job, dict) and int(job.get("id") or -1) == int(job_id):
+                if isinstance(job, dict) and same_local_job_id(job.get("id"), job_id):
                     match = job
                     break
         if match:
             status = match.get("status")
-            detail = match.get("detail") or match.get("remote_status") or ""
-            message = f"Publish job {job_id}: {status} {detail}".strip()
+            message = publish_message(job_id, match)
             if message != last:
                 print_event(message, quiet=client.quiet)
                 last = message
+            if guided_monitor and remote_queue_url:
+                remote_job_id = str(match.get("remote_job_id") or "")
+                remote_filename = str(match.get("remote_filename") or match.get("filename") or "")
+                try:
+                    remote = find_remote_job(remote_queue_url, remote_job_id, remote_filename)
+                except Exception as exc:
+                    remote = {"status": "unknown", "error": f"remote queue failed: {exc}"}
+                if remote:
+                    remote_message = (
+                        f"Remote AutoPublish: {remote.get('status')}"
+                        f" id={remote.get('id') or remote_job_id}"
+                        f" file={remote.get('filename') or remote_filename}"
+                    )
+                    if remote.get("detail"):
+                        remote_message += f" detail={remote.get('detail')}"
+                    if remote.get("error"):
+                        remote_message += f" error={remote.get('error')}"
+                    if remote_message != last_remote:
+                        print_event(remote_message, quiet=client.quiet)
+                        last_remote = remote_message
+                    if remote.get("status") == "failed":
+                        raise ApiError(remote.get("error") or "remote publish failed", payload=remote)
+            if guided_monitor and remote_log_command and time.monotonic() >= next_remote_log:
+                run_remote_log_command(remote_log_command, quiet=client.quiet)
+                next_remote_log = time.monotonic() + max(30, remote_log_seconds)
             if status == "done":
                 return match
             if status == "failed":
@@ -365,6 +498,27 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--process-timeout", type=int, default=PROCESS_TIMEOUT_SECONDS)
     parser.add_argument("--publish-timeout", type=int, default=PUBLISH_TIMEOUT_SECONDS)
     parser.add_argument("--poll-seconds", type=int, default=POLL_SECONDS)
+    parser.add_argument(
+        "--guided-monitor",
+        action="store_true",
+        help="Print richer progress for subtitle correction, processing, local queue, and remote AutoPublish.",
+    )
+    parser.add_argument(
+        "--remote-queue-url",
+        default=DEFAULT_REMOTE_QUEUE_URL,
+        help="Remote AutoPublish queue URL used by --guided-monitor.",
+    )
+    parser.add_argument(
+        "--remote-log-command",
+        default=os.getenv("LAZYEDIT_REMOTE_LOG_COMMAND", ""),
+        help="Optional command to print a remote publish log tail during --guided-monitor.",
+    )
+    parser.add_argument(
+        "--remote-log-seconds",
+        type=int,
+        default=int(os.getenv("LAZYEDIT_REMOTE_LOG_SECONDS", "90")),
+        help="Minimum seconds between remote log tail checks.",
+    )
     parser.add_argument("--json", action="store_true", help="Print final machine-readable JSON.")
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args(argv)
@@ -405,17 +559,30 @@ def main(argv: list[str] | None = None) -> int:
 
         if should_correct:
             print_event("Running AI subtitle correction...", quiet=args.quiet)
-            correction = client.request_json(
-                "POST",
-                f"/api/videos/{video_id}/subtitle-correction",
-                {
-                    "action": "ai",
-                    "prompt": correction_prompt,
-                    "sourceVariant": args.correction_source,
-                    "use_cache": True,
-                },
-                timeout=args.process_timeout,
-            )
+            correction_payload = {
+                "action": "ai",
+                "prompt": correction_prompt,
+                "sourceVariant": args.correction_source,
+                "use_cache": True,
+            }
+            if args.guided_monitor:
+                correction = request_with_heartbeat(
+                    client,
+                    "POST",
+                    f"/api/videos/{video_id}/subtitle-correction",
+                    correction_payload,
+                    timeout=args.process_timeout,
+                    label="Subtitle correction",
+                    interval=max(args.poll_seconds, 10),
+                    quiet=args.quiet,
+                )
+            else:
+                correction = client.request_json(
+                    "POST",
+                    f"/api/videos/{video_id}/subtitle-correction",
+                    correction_payload,
+                    timeout=args.process_timeout,
+                )
             final["subtitle_correction"] = {
                 "original": correction.get("original", {}).get("path"),
                 "polished": correction.get("polished", {}).get("path"),
@@ -496,6 +663,10 @@ def main(argv: list[str] | None = None) -> int:
                     int(job_id),
                     args.publish_timeout,
                     args.poll_seconds,
+                    guided_monitor=args.guided_monitor,
+                    remote_queue_url=args.remote_queue_url,
+                    remote_log_command=args.remote_log_command,
+                    remote_log_seconds=args.remote_log_seconds,
                 )
 
         if args.json:
