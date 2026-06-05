@@ -345,8 +345,9 @@ def find_remote_job(queue_url: str, remote_job_id: str | None, filename: str | N
             continue
         if remote_job_id and str(job.get("id") or job.get("job_id") or "") == str(remote_job_id):
             return job
-        if filename and str(job.get("filename") or "") == str(filename):
-            return job
+        if not remote_job_id and filename and str(job.get("filename") or "") == str(filename):
+            if str(job.get("status") or "").lower() in {"queued", "running"}:
+                return job
     return None
 
 

@@ -5605,7 +5605,8 @@ def _merge_publish_queue_jobs(local_jobs: list[dict], remote_jobs: list[dict]) -
         if key:
             remote_by_id[key] = job
         filename = str(job.get("filename") or "")
-        if filename:
+        remote_status = str(job.get("status") or "").lower()
+        if filename and remote_status in {"queued", "running"}:
             remote_by_filename[filename] = job
 
     merged: list[dict] = []
