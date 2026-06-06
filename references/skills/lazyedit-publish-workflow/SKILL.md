@@ -127,7 +127,7 @@ python scripts/lazyedit_publish.py \
   --poll-seconds 10
 ```
 
-Use the LALACHAN story/prompt/script as both subtitle-correction background and metadata background. For subtitle correction, treat the script as a reference, not a verbatim source: compare the ASR transcription with the generated script/story, infer the most likely intended wording, fix recognition errors, and preserve the subtitle timing and line structure where possible. The final corrected subtitles do not need to be identical to the script if the audio or generated video differs.
+Use the LALACHAN story/prompt/script as both subtitle-correction background and metadata background. For subtitle correction, treat the script as a reference, not a verbatim source. Use a human middle path: do not over-edit, and do not stay too conservative when the ASR is obviously abnormal, broken, or mismatched with the context. Read neighboring lines, check whether the sentence makes sense, compare it with the audio/Whisper text and the story context, then infer the most likely intended wording. Fix recognition errors, names, objects, and broken phrases while preserving timing and line structure where possible. The final corrected subtitles do not need to be identical to the script if the audio or generated video differs, and they should not invent unsupported content.
 
 If the prompt needs extra guardrails, create a temporary context wrapper in `temp/`, pass it as `--prompt-file`, then delete it after the run. Do not commit temporary prompt wrappers, generated ZIPs, or runtime media.
 

@@ -233,8 +233,12 @@ When publishing AI-generated videos, pass the story or prompt markdown with
 `--prompt-file`. Treat it as background context:
 
 - Correct obvious ASR mistakes toward names, objects, and dialogue in the script.
+- Use a human middle path: not aggressive, not too conservative.
+- If the transcription is abnormal, broken, or strange and does not match context, read the surrounding lines and infer the most likely intended sentence.
+- Check whether the corrected line makes sense as a human sentence and still matches the audio/Whisper evidence.
 - Do not force the subtitles to exactly match the script if the generated audio differs.
 - Preserve timing and line structure unless a small merge/split is clearly better.
+- Do not invent unsupported content.
 - Use polished subtitles for all real publishes and debug publishes.
 - Use the same context for metadata so titles/descriptions explain the intended story.
 
@@ -259,6 +263,8 @@ Use this prompt in the generating repo:
 > Use `/home/lachlan/DiskMech/Projects/lazyedit/scripts/lazyedit_publish.py` to
 > upload and publish the generated video through LazyEdit. Pass the generated
 > script/story markdown as `--prompt-file` so LazyEdit can correct subtitle
-> recognition errors and use the same story context for metadata. Use polished
-> subtitles, burn subtitles, and explicit bottom-to-top language order. Do not
-> persist Studio settings unless asked.
+> recognition errors and use the same story context for metadata. Correct like
+> a careful human: do not over-edit, but do infer the most likely wording when
+> ASR is broken or context-mismatched. Use polished subtitles, burn subtitles,
+> and explicit bottom-to-top language order. Do not persist Studio settings
+> unless asked.

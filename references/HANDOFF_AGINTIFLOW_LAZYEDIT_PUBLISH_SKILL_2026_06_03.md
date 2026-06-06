@@ -59,6 +59,7 @@ If AgInTiFlow has its own skill/plugin packaging path, import the same directory
 - `--languages` is bottom-to-top order.
 - Prefer polished/corrected subtitles unless the user explicitly asks for original subtitles.
 - For generated videos, use the script/story to guide correction of ASR mistakes, but do not blindly copy the script if the audio differs.
+- Subtitle correction should use a human middle path: not aggressive, not too conservative. If ASR is broken, strange, or context-mismatched, read neighboring lines and infer the most likely intended wording, while preserving timing and avoiding unsupported inventions.
 - For Shipinhao, monitor `ssh lachlan@lazyingart 'tmux capture-pane -pt autopub:0 -S -120 | tail -n 120'`.
 - Before claiming done, verify both `http://127.0.0.1:18787/api/autopublish/queue` and `http://lazyingart:8081/publish/queue` show the job as `done`.
 

@@ -108,7 +108,7 @@ python scripts/lazyedit_publish.py \
   --wait
 ```
 
-Use the generated story/prompt/script file as both subtitle-correction background and metadata background. For correction, the script is only a reference: compare it with the ASR subtitles, infer the most likely intended wording, fix recognition errors, and keep timing/line structure stable where possible. Do not force the final subtitles to match the script verbatim when the audio or generated video differs. Keep `--use-polished` or current Studio polished defaults unless deliberately testing original subtitles.
+Use the generated story/prompt/script file as both subtitle-correction background and metadata background. For correction, the script is only a reference. Use a human middle path: do not over-edit, and do not stay too conservative when the ASR is obviously abnormal, broken, or mismatched with the context. Read neighboring lines, check whether the sentence makes sense, compare it with the audio/Whisper text and the story context, then infer the most likely intended wording. Fix recognition errors, names, objects, and broken phrases while keeping timing/line structure stable where possible. Do not force the final subtitles to match the script verbatim when the audio or generated video differs. Keep `--use-polished` or current Studio polished defaults unless deliberately testing original subtitles.
 
 If the raw prompt needs extra guardrails, create a temporary context wrapper under `temp/`, pass that as `--prompt-file`, and delete it after the run. Do not commit temporary wrappers, ZIPs, or generated runtime media.
 
