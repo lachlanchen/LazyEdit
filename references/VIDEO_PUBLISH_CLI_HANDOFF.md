@@ -36,6 +36,17 @@ The CLI uses the LazyEdit HTTP API. It uploads the video, optionally runs AI
 subtitle correction, runs the process pipeline, queues AutoPublish, and monitors
 until completion by default.
 
+For generated videos copied to Nutstore first, wait for AutoPubMonitor import
+and then reuse the imported `video_id`:
+
+```bash
+cp -f /home/lachlan/ProjectsLFS/LALACHAN/Videos/generated.mp4 \
+  "/home/lachlan/Nutstore Files/AutoPublish/AutoPublish/generated_COMPLETED.mp4"
+tmux capture-pane -pt autopub-monitor:0.1 -S -100 | tail -n 100
+tmux capture-pane -pt autopub-monitor:0.2 -S -100 | tail -n 100
+curl -fsS http://127.0.0.1:18787/api/videos | jq '.videos[:20] | map({id,title,created_at,file_path})'
+```
+
 ## Language Order
 
 `--languages` is bottom-to-top subtitle order. Examples:
@@ -64,6 +75,8 @@ python scripts/lazyedit_publish.py \
   --correct-subtitles \
   --use-polished \
   --burn-subtitles \
+  --guided-monitor \
+  --remote-log-command "ssh lachlan@lazyingart 'tmux capture-pane -pt autopub:0 -S -140 | tail -n 140'" \
   --wait
 ```
 
@@ -211,6 +224,33 @@ curl "http://127.0.0.1:18787/api/autopublish/queue"
 - `--subtitle-font-scale 1.0`: global subtitle scale.
 - `--no-subtitle-font-bold`: disable bold text.
 - `--no-subtitle-outline-bold`: disable thick outline.
+- `--guided-monitor`: show correction/pipeline/local queue/remote queue progress.
+- `--remote-log-command "ssh ... tmux capture-pane ..."`: periodically show Pi browser automation logs.
+
+## Script-To-Subtitle Correction Rules
+
+When publishing AI-generated videos, pass the story or prompt markdown with
+`--prompt-file`. Treat it as background context:
+
+- Correct obvious ASR mistakes toward names, objects, and dialogue in the script.
+- Do not force the subtitles to exactly match the script if the generated audio differs.
+- Preserve timing and line structure unless a small merge/split is clearly better.
+- Use polished subtitles for all real publishes and debug publishes.
+- Use the same context for metadata so titles/descriptions explain the intended story.
+
+If the prompt needs extra guardrails, create a short temporary wrapper in
+`/home/lachlan/DiskMech/Projects/lazyedit/temp/`, pass that wrapper as
+`--prompt-file`, then delete it after completion.
+
+## Evidence Checks
+
+Before claiming the publish is done:
+
+```bash
+curl -fsS http://127.0.0.1:18787/api/autopublish/queue | jq '.jobs[:5] | map({id,video_id,status,platforms,remote_status,remote_job_id,error,updated_at})'
+curl -fsS http://lazyingart:8081/publish/queue | jq '.jobs[-5:] | map({id,status,platforms,filename,error,updated_at})'
+ssh lachlan@lazyingart 'tmux capture-pane -pt autopub:0 -S -120 | tail -n 120'
+```
 
 ## Handoff Prompt For Another Codex Session
 

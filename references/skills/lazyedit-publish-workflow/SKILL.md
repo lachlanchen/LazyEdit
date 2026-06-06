@@ -97,9 +97,18 @@ python scripts/lazyedit_publish.py --video-id VIDEO_ID --use-current-settings --
 
 ## LALACHAN / AI-Generated Video
 
-If a generated video was copied into Nutstore AutoPublish, first find the imported LazyEdit video id:
+If a generated video should go through the normal import path, copy it to Nutstore with a stable `_COMPLETED` name:
 
 ```bash
+cp -f /home/lachlan/ProjectsLFS/LALACHAN/Videos/VIDEO.mp4 \
+  "/home/lachlan/Nutstore Files/AutoPublish/AutoPublish/VIDEO_COMPLETED.mp4"
+```
+
+Then watch AutoPubMonitor and find the imported LazyEdit video id:
+
+```bash
+tmux capture-pane -pt autopub-monitor:0.1 -S -100 | tail -n 100
+tmux capture-pane -pt autopub-monitor:0.2 -S -100 | tail -n 100
 curl -fsS http://127.0.0.1:18787/api/videos | jq '.videos[:20] | map({id,title,created_at,file_path})'
 ```
 
@@ -119,6 +128,8 @@ python scripts/lazyedit_publish.py \
 ```
 
 Use the LALACHAN story/prompt/script as both subtitle-correction background and metadata background. For subtitle correction, treat the script as a reference, not a verbatim source: compare the ASR transcription with the generated script/story, infer the most likely intended wording, fix recognition errors, and preserve the subtitle timing and line structure where possible. The final corrected subtitles do not need to be identical to the script if the audio or generated video differs.
+
+If the prompt needs extra guardrails, create a temporary context wrapper in `temp/`, pass it as `--prompt-file`, then delete it after the run. Do not commit temporary prompt wrappers, generated ZIPs, or runtime media.
 
 If the user requests no rerun, use `--no-process`.
 
@@ -218,5 +229,49 @@ Final result:
 
 - LazyEdit job `148`
 - Remote job `job-1780500057985-7`
+- Platforms `shipinhao`, `youtube`, `instagram`
+- Status `done`
+
+## Verified Run: 2026-06-06 Firefly Cave
+
+Request:
+
+- Copy `/home/lachlan/ProjectsLFS/LALACHAN/Videos/firefly_cave_cicada_rain_4x3_15s.mp4` to Nutstore.
+- Use `/home/lachlan/ProjectsLFS/LALACHAN/references/prompts/2026-06-06-firefly-cave-cicada-rain-duanpian-15s.md` as subtitle/metadata context.
+- Publish to `shipinhao`, `youtube`, and `instagram`.
+
+Method:
+
+```bash
+cp -f /home/lachlan/ProjectsLFS/LALACHAN/Videos/firefly_cave_cicada_rain_4x3_15s.mp4 \
+  "/home/lachlan/Nutstore Files/AutoPublish/AutoPublish/firefly_cave_cicada_rain_4x3_15s_COMPLETED.mp4"
+
+python scripts/lazyedit_publish.py \
+  --video-id 352 \
+  --use-current-settings \
+  --prompt-file temp/firefly_cave_publish_context.md \
+  --correct-subtitles \
+  --correction-source polished \
+  --platforms shipinhao,youtube,instagram \
+  --guided-monitor \
+  --remote-log-command "ssh lachlan@lazyingart 'tmux capture-pane -pt autopub:0 -S -140 | tail -n 140'" \
+  --wait \
+  --poll-seconds 10 \
+  --process-timeout 3600 \
+  --publish-timeout 7200
+```
+
+What happened:
+
+- AutoPubMonitor imported the Nutstore file as `video_id=352`.
+- AI correction saved polished subtitles first.
+- Processing completed translation, burn, metadata, and cover.
+- Shipinhao required QR login, recovered after login, saved draft, waited for cover readiness, and published.
+- Instagram published after crop/Next; YouTube uploaded, filled title/description from metadata, and published.
+
+Final result:
+
+- LazyEdit job `154`
+- Remote job `job-1780723994544-13`
 - Platforms `shipinhao`, `youtube`, `instagram`
 - Status `done`
