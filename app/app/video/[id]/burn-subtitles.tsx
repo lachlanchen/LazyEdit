@@ -110,8 +110,8 @@ const LOGO_POSITION_LABELS: Record<string, string> = {
   center: 'Center',
 };
 const LOGO_POSITION_OPTIONS = [
-  { value: 'top-right', label: 'Top right' },
   { value: 'top-left', label: 'Top left' },
+  { value: 'top-right', label: 'Top right' },
   { value: 'bottom-right', label: 'Bottom right' },
   { value: 'bottom-left', label: 'Bottom left' },
   { value: 'center', label: 'Center' },
@@ -403,7 +403,7 @@ export default function BurnSubtitlesScreen() {
   const logoSummary = useMemo(() => {
     const settings = logoSettings || {};
     const heightRatio = settings.heightRatio ?? 0.1;
-    const position = settings.position ?? 'top-right';
+    const position = settings.position ?? 'top-left';
     const bgOpacity = typeof settings.bgOpacity === 'number' ? settings.bgOpacity : 0.5;
     const bgShape = settings.bgShape === 'square' ? 'square' : 'circle';
     const heightPercent = formatPercent(heightRatio, 0.1);
@@ -528,7 +528,7 @@ export default function BurnSubtitlesScreen() {
       logoPath: logoSettings?.logoPath ?? null,
       logoUrl: logoSettings?.logoUrl ?? null,
       heightRatio: logoSettings?.heightRatio ?? 0.1,
-      position: logoSettings?.position ?? 'top-right',
+      position: logoSettings?.position ?? 'top-left',
       bgOpacity: typeof logoSettings?.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5,
       bgShape: logoSettings?.bgShape ?? 'circle',
       enabled: logoSettings?.enabled ?? logoEnabled,
@@ -558,7 +558,7 @@ export default function BurnSubtitlesScreen() {
           logoPath: value.logoPath ?? null,
           logoUrl: value.logoUrl ?? null,
           heightRatio: typeof value.heightRatio === 'number' ? value.heightRatio : 0.1,
-          position: value.position ?? 'top-right',
+          position: value.position ?? 'top-left',
           bgOpacity: typeof value.bgOpacity === 'number' ? value.bgOpacity : 0.5,
           bgShape: value.bgShape === 'square' ? 'square' : 'circle',
           enabled: typeof value.enabled === 'boolean' ? value.enabled : Boolean(value.logoPath),
@@ -949,7 +949,7 @@ export default function BurnSubtitlesScreen() {
           ? {
               logoPath: logoSettings.logoPath,
               heightRatio: logoSettings.heightRatio ?? 0.1,
-              position: logoSettings.position ?? 'top-right',
+              position: logoSettings.position ?? 'top-left',
               bgOpacity: typeof logoSettings.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5,
               bgShape: logoSettings.bgShape ?? 'circle',
               enabled: true,
@@ -1306,14 +1306,14 @@ export default function BurnSubtitlesScreen() {
                   key={option.value}
                   style={[
                     styles.chip,
-                    (logoSettings?.position ?? 'top-right') === option.value && styles.chipActive,
+                    (logoSettings?.position ?? 'top-left') === option.value && styles.chipActive,
                   ]}
                   onPress={() => updateLogoPosition(option.value)}
                 >
                   <Text
                     style={[
                       styles.chipText,
-                      (logoSettings?.position ?? 'top-right') === option.value && styles.chipTextActive,
+                      (logoSettings?.position ?? 'top-left') === option.value && styles.chipTextActive,
                     ]}
                   >
                     {option.label}

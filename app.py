@@ -352,7 +352,7 @@ DEFAULT_LOGO_SETTINGS = {
     "logoPath": None,
     "logoUrl": None,
     "heightRatio": 0.1,
-    "position": "top-right",
+    "position": "top-left",
     "bgOpacity": 0.5,
     "bgShape": "circle",
     "enabled": True,
@@ -1257,9 +1257,9 @@ def _sanitize_logo_settings(payload: dict | None) -> dict:
         height_ratio = DEFAULT_LOGO_SETTINGS.get("heightRatio", 0.1)
     height_ratio = min(max(height_ratio, 0.02), 0.4)
 
-    position = str(payload.get("position") or DEFAULT_LOGO_SETTINGS.get("position", "top-right"))
+    position = str(payload.get("position") or DEFAULT_LOGO_SETTINGS.get("position", "top-left"))
     if position not in {"top-right", "top-left", "bottom-right", "bottom-left", "center"}:
-        position = DEFAULT_LOGO_SETTINGS.get("position", "top-right")
+        position = DEFAULT_LOGO_SETTINGS.get("position", "top-left")
 
     enabled = payload.get("enabled")
     if not isinstance(enabled, bool):
@@ -2214,7 +2214,7 @@ def overlay_logo_on_video(
     logo_path,
     output_path,
     height_ratio=0.1,
-    position="top-right",
+    position="top-left",
     bg_opacity=0.5,
     bg_shape="circle",
 ):
@@ -10594,7 +10594,7 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                             logo_path,
                             logo_output,
                             height_ratio=logo_config.get("heightRatio", DEFAULT_LOGO_SETTINGS.get("heightRatio", 0.1)),
-                            position=logo_config.get("position", DEFAULT_LOGO_SETTINGS.get("position", "top-right")),
+                            position=logo_config.get("position", DEFAULT_LOGO_SETTINGS.get("position", "top-left")),
                             bg_opacity=logo_config.get("bgOpacity", DEFAULT_LOGO_SETTINGS.get("bgOpacity", 0.5)),
                             bg_shape=logo_config.get("bgShape", DEFAULT_LOGO_SETTINGS.get("bgShape", "circle")),
                         )

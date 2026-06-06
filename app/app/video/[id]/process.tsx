@@ -103,8 +103,8 @@ const LOGO_POSITION_LABELS: Record<string, string> = {
   center: 'Center',
 };
 const LOGO_POSITION_OPTIONS = [
-  { value: 'top-right', label: 'Top right' },
   { value: 'top-left', label: 'Top left' },
+  { value: 'top-right', label: 'Top right' },
   { value: 'bottom-right', label: 'Bottom right' },
   { value: 'bottom-left', label: 'Bottom left' },
   { value: 'center', label: 'Center' },
@@ -314,7 +314,7 @@ export default function ProcessVideoScreen() {
   const logoSummary = useMemo(() => {
     const settings = logoSettings || {};
     const heightRatio = settings.heightRatio ?? 0.1;
-    const position = settings.position ?? 'top-right';
+    const position = settings.position ?? 'top-left';
     const bgOpacity = typeof settings.bgOpacity === 'number' ? settings.bgOpacity : 0.5;
     const bgShape = settings.bgShape === 'square' ? 'square' : 'circle';
     const heightPercent = formatPercent(heightRatio, 0.1);
@@ -344,7 +344,7 @@ export default function ProcessVideoScreen() {
     const height = Math.max(16, Math.round(PREVIEW_HEIGHT * heightRatio));
     const width = Math.round(height * (logoAspectRatio || 1));
     const padding = 10;
-    const position = logoSettings.position ?? 'top-right';
+    const position = logoSettings.position ?? 'top-left';
     const style: ViewStyle = {
       width,
       height,
@@ -402,7 +402,7 @@ export default function ProcessVideoScreen() {
       logoPath: logoSettings?.logoPath ?? null,
       logoUrl: logoSettings?.logoUrl ?? null,
       heightRatio: logoSettings?.heightRatio ?? 0.1,
-      position: logoSettings?.position ?? 'top-right',
+      position: logoSettings?.position ?? 'top-left',
       bgOpacity: typeof logoSettings?.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5,
       bgShape: logoSettings?.bgShape ?? 'circle',
       enabled: logoSettings?.enabled ?? logoEnabled,
@@ -1165,7 +1165,7 @@ export default function ProcessVideoScreen() {
             enabled: true,
             logoPath: logoSettings.logoPath,
             heightRatio: logoSettings.heightRatio ?? 0.1,
-            position: logoSettings.position ?? 'top-right',
+            position: logoSettings.position ?? 'top-left',
             bgOpacity: typeof logoSettings.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5,
             bgShape: logoSettings.bgShape ?? 'circle',
           }
@@ -1324,7 +1324,7 @@ export default function ProcessVideoScreen() {
             enabled: true,
             logoPath: logoSettings.logoPath,
             heightRatio: logoSettings.heightRatio ?? 0.1,
-            position: logoSettings.position ?? 'top-right',
+            position: logoSettings.position ?? 'top-left',
             bgOpacity: typeof logoSettings.bgOpacity === 'number' ? logoSettings.bgOpacity : 0.5,
             bgShape: logoSettings.bgShape ?? 'circle',
           }
@@ -1514,14 +1514,14 @@ export default function ProcessVideoScreen() {
                 key={option.value}
                 style={[
                   styles.chip,
-                  (logoSettings?.position ?? 'top-right') === option.value && styles.chipActive,
+                  (logoSettings?.position ?? 'top-left') === option.value && styles.chipActive,
                 ]}
                 onPress={() => updateLogoPosition(option.value)}
               >
                 <Text
                   style={[
                     styles.chipText,
-                    (logoSettings?.position ?? 'top-right') === option.value && styles.chipTextActive,
+                    (logoSettings?.position ?? 'top-left') === option.value && styles.chipTextActive,
                   ]}
                 >
                   {option.label}

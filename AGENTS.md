@@ -50,6 +50,15 @@ Note on symlinks: Never edit files inside symlinked directories from this reposi
 - Deployed AutoPubMonitor: `/home/lachlan/DiskMech/Projects/autopub-monitor` (tmux session `autopub-monitor` for sync/monitor/process/manual; `am-transcription-sync` remains separate; uses LazyEdit app API endpoints by default).
 - Publishing system (platforms incl. YouTube): `/home/lachlan/Projects/autopub` on `lazyingart` (pull after pushing AutoPublish changes).
 
+## Publish Defaults
+- For real publishes, burn the existing LazyEdit webapp logo at the top-left corner unless the user explicitly says not to.
+- Do not add or replace the logo asset for this rule. Reuse the configured Studio logo from `logo_settings`.
+- Before CLI/API publishes, verify the persisted setting:
+  ```bash
+  curl -fsS http://127.0.0.1:18787/api/ui-settings/logo_settings | jq .
+  ```
+- Required logo state: `enabled=true`, `logoPath` present, and `position="top-left"`. If missing, configure it before processing/publishing.
+
 ## Coding Style & Naming Conventions
 - Python 3.10+, PEP 8, 4‑space indentation.
 - Filenames/functions: snake_case (e.g., `subtitle_metadata.py`). Classes: CapWords. Constants: UPPER_CASE.
