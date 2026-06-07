@@ -181,7 +181,7 @@ def platform_flags(platforms: list[str]) -> dict[str, bool]:
 
 def current_ui_settings(client: LazyEditClient) -> dict[str, Any]:
     settings: dict[str, Any] = {}
-    for key in ("publish_options", "translation_languages", "burn_layout"):
+    for key in ("publish_options", "translation_languages", "burn_layout", "logo_settings"):
         try:
             payload = client.request_json("GET", f"/api/ui-settings/{key}", timeout=30)
             settings[key] = payload.get("value")
@@ -617,6 +617,15 @@ def main(argv: list[str] | None = None) -> int:
                 "polish_notes": correction_prompt,
                 "notes": metadata_prompt,
             }
+            logo_settings = settings.get("logo_settings") if isinstance(settings, dict) else None
+            if isinstance(logo_settings, dict) and logo_settings.get("enabled") and logo_settings.get("logoPath"):
+                process_payload["logo"] = logo_settings
+                final["logo_settings"] = {
+                    "logoPath": logo_settings.get("logoPath"),
+                    "heightRatio": logo_settings.get("heightRatio"),
+                    "position": logo_settings.get("position"),
+                    "enabled": logo_settings.get("enabled"),
+                }
             process_started = client.request_json(
                 "POST",
                 f"/api/videos/{video_id}/process",
