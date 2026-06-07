@@ -243,3 +243,90 @@ Final result:
 - Remote AutoPublish API: `http://lazyingart:8081/publish/queue`.
 - Remote log tail: `ssh lachlan@lazyingart 'tmux capture-pane -pt autopub:0 -S -140 | tail -n 140'`.
 - Local checks: `curl`, `jq`, `tmux capture-pane`, `ssh`, `rg`, and `git status`.
+
+## Failure Notes And Caveats Added 2026-06-07
+
+Duplicate publishing:
+
+- Do not use a real platform publish just to inspect the ZIP or logo output.
+- For debugging, run `scripts/lazyedit_publish.py --no-publish` or publish with `--no-process` only after the processed output is verified.
+- A previous debug cycle republished the same episode because the first real publish exposed a missing logo/packaging issue. The safer check is to inspect the generated ZIP and final MP4 path locally, then publish once only when the package is correct.
+
+Logo packaging:
+
+- Real publishes should burn the configured LazyEdit Studio logo, not a new uploaded asset.
+- Confirm current logo state before CLI publishes:
+
+```bash
+curl -fsS http://127.0.0.1:18787/api/ui-settings/logo_settings | jq .
+```
+
+- Expected state is `enabled: true`, a valid `logoPath`, and top-left placement.
+- Normal subtitle/logo outputs should end in `_subtitles_logo.mp4`.
+
+Subtitle correction:
+
+- Use the generated story/prompt/script as context for LALACHAN videos.
+- Treat the script as reference, not a verbatim transcript. Correct clear ASR failures, broken phrases, names, and objects; avoid inventing unsupported dialogue.
+- If the ASR misses obvious generated dialogue, the correction step may re-segment when the story/script is present. Verify the polished subtitle count before publishing:
+
+```bash
+sed -n '1,180p' DATA/VIDEO_FOLDER/*_mixed_polished.md
+```
+
+Metadata language:
+
+- Chinese metadata should be Traditional Chinese at the root level. English metadata may still be generated separately for YouTube/Instagram.
+- If Chinese metadata appears mostly English, rerun metadata generation with the same prompt/script context before publishing.
+
+Nutstore import:
+
+- Copy generated videos into the synced folder with a stable `_COMPLETED` filename.
+- Watch both the AutoPubMonitor watcher and queue panes. The watcher detects the file first, then waits for stability before `process_queue.sh` imports it into LazyEdit.
+- If a file was copied while LazyEdit was down, check logs before recopying; the wrapper should preserve failures so the queue is not silently dropped.
+
+Remote publish monitoring:
+
+- Shipinhao can pause for QR login and cover generation. Keep the long login wait behavior.
+- Use the Pi tmux log to confirm upload, draft save, cover readiness, and final platform status:
+
+```bash
+ssh lachlan@lazyingart 'tmux capture-pane -pt autopub:0 -S -140 | tail -n 140'
+```
+
+## 2026-06-07 Mars Chip Factory Generated Video
+
+Generated video:
+
+- `/home/lachlan/ProjectsLFS/LALACHAN/Videos/mars_2d_atom_chip_factory_zhuangzi_15s.mp4`
+- `/home/lachlan/ProjectsLFS/LALACHAN/outputs/xyq-2026-06-07-mars-chip/mars_2d_atom_chip_factory_zhuangzi_15s.mp4`
+
+Prompt/script context:
+
+- `/home/lachlan/ProjectsLFS/LALACHAN/references/prompts/2026-06-07-mars-2d-atom-chip-factory-zhuangzi-duanpian-15s.md`
+- Full story: `/home/lachlan/ProjectsLFS/LALACHAN/references/stories/2026-06-07-mars-2d-atom-chip-factory-zhuangzi.md`
+
+Import command:
+
+```bash
+cp -f /home/lachlan/ProjectsLFS/LALACHAN/Videos/mars_2d_atom_chip_factory_zhuangzi_15s.mp4 \
+  "/home/lachlan/Nutstore Files/AutoPublish/AutoPublish/mars_2d_atom_chip_factory_zhuangzi_15s_COMPLETED.mp4"
+```
+
+Publish command pattern:
+
+```bash
+python scripts/lazyedit_publish.py \
+  --video-id VIDEO_ID \
+  --use-current-settings \
+  --prompt-file /home/lachlan/ProjectsLFS/LALACHAN/references/prompts/2026-06-07-mars-2d-atom-chip-factory-zhuangzi-duanpian-15s.md \
+  --correct-subtitles \
+  --correction-source polished \
+  --platforms shipinhao,youtube,instagram \
+  --guided-monitor \
+  --remote-log-command "ssh lachlan@lazyingart 'tmux capture-pane -pt autopub:0 -S -140 | tail -n 140'" \
+  --wait \
+  --poll-seconds 10 \
+  --process-timeout 7200 \
+  --publish-timeout 7200
+```

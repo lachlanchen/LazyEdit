@@ -32,6 +32,14 @@ source ~/miniconda3/etc/profile.d/conda.sh
 conda activate lazyedit
 ```
 
+## Safety Rules
+
+- Do not publish to real platforms just to debug packaging, subtitles, or logo output. Use `--no-publish` first, inspect the generated ZIP/final MP4, then publish exactly once when the package is correct.
+- Real publishes should use polished/corrected subtitles and the configured LazyEdit Studio logo unless the user explicitly asks otherwise. Verify logo settings with `curl -fsS http://127.0.0.1:18787/api/ui-settings/logo_settings | jq .`; normal logo outputs end in `_subtitles_logo.mp4`.
+- For LALACHAN/RARACHAN generated videos, use the corresponding story/prompt/script as subtitle-correction and metadata context. Treat it as a reference, not a verbatim transcript: fix clear ASR errors and broken phrases without inventing unsupported dialogue.
+- If correction is expected to recover missing generated-video dialogue, inspect `DATA/VIDEO_FOLDER/*_mixed_polished.md` before publish so missed or over-recovered subtitles are caught before any platform post.
+- When copying through Nutstore, use one stable `_COMPLETED` filename and watch AutoPubMonitor panes before recopying. Avoid creating duplicate source files just to retrigger the watcher.
+
 ## Setting Semantics
 
 - `--use-current-settings` reads Studio defaults.
