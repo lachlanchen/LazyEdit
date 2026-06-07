@@ -2781,6 +2781,152 @@ def _write_srt_from_items(items: list[dict], output_path: str, text_key: str | N
         handle.write("\n\n".join(blocks).strip() + "\n")
 
 
+_SRT_TIMESTAMP_RE = re.compile(r"^(\d{2}):(\d{2}):(\d{2})[,.](\d{3})$")
+
+
+def _normalize_srt_timestamp(value: object) -> str | None:
+    match = _SRT_TIMESTAMP_RE.match(str(value or "").strip())
+    if not match:
+        return None
+    return f"{match.group(1)}:{match.group(2)}:{match.group(3)},{match.group(4)}"
+
+
+def _srt_timestamp_seconds(value: object) -> float | None:
+    normalized = _normalize_srt_timestamp(value)
+    if not normalized:
+        return None
+    hours, minutes, rest = normalized.split(":")
+    seconds, millis = rest.split(",")
+    return int(hours) * 3600 + int(minutes) * 60 + int(seconds) + int(millis) / 1000.0
+
+
+def _subtitle_midpoint(item: dict) -> float | None:
+    start = _srt_timestamp_seconds(item.get("start"))
+    end = _srt_timestamp_seconds(item.get("end"))
+    if start is None or end is None:
+        return None
+    return (start + end) / 2.0
+
+
+def _nearest_subtitle_item(items: list[dict], midpoint: float | None) -> dict | None:
+    if midpoint is None:
+        return items[0] if items else None
+    candidates: list[tuple[float, dict]] = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        item_midpoint = _subtitle_midpoint(item)
+        if item_midpoint is None:
+            continue
+        candidates.append((abs(item_midpoint - midpoint), item))
+    if not candidates:
+        return items[0] if items else None
+    return min(candidates, key=lambda pair: pair[0])[1]
+
+
+def _validated_resegmented_subtitle_items(
+    original_items: list[dict],
+    candidate_items: list[dict],
+    *,
+    max_end_seconds: float | None = None,
+) -> list[dict] | None:
+    original_valid = [item for item in original_items if isinstance(item, dict)]
+    if not original_valid or not candidate_items:
+        return None
+    if len(candidate_items) > max(len(original_valid) * 3, len(original_valid) + 12):
+        return None
+
+    original_start = _srt_timestamp_seconds(original_valid[0].get("start"))
+    original_end = _srt_timestamp_seconds(original_valid[-1].get("end"))
+    if original_start is None or original_end is None or original_end <= original_start:
+        return None
+    upper_end = original_end
+    if max_end_seconds is not None and max_end_seconds > upper_end:
+        upper_end = max_end_seconds
+
+    cleaned: list[dict] = []
+    previous_end: float | None = None
+    for candidate in candidate_items:
+        if not isinstance(candidate, dict):
+            return None
+        start_text = _normalize_srt_timestamp(candidate.get("start"))
+        end_text = _normalize_srt_timestamp(candidate.get("end"))
+        start_seconds = _srt_timestamp_seconds(start_text)
+        end_seconds = _srt_timestamp_seconds(end_text)
+        text = str(candidate.get("text") or "").strip()
+        if not start_text or not end_text or start_seconds is None or end_seconds is None:
+            return None
+        if end_seconds <= start_seconds or not text:
+            return None
+        if previous_end is not None and start_seconds < previous_end - 0.05:
+            return None
+        if start_seconds < original_start - 0.5 or end_seconds > upper_end + 0.75:
+            return None
+
+        nearest = _nearest_subtitle_item(original_valid, (start_seconds + end_seconds) / 2.0)
+        merged = dict(nearest or {})
+        merged["start"] = start_text
+        merged["end"] = end_text
+        merged["text"] = text
+        if nearest:
+            for lang_key in ("language", "lang"):
+                if lang_key in nearest and lang_key not in merged:
+                    merged[lang_key] = nearest[lang_key]
+        cleaned.append(merged)
+        previous_end = end_seconds
+
+    cleaned_start = _srt_timestamp_seconds(cleaned[0].get("start"))
+    cleaned_end = _srt_timestamp_seconds(cleaned[-1].get("end"))
+    if cleaned_start is None or cleaned_end is None:
+        return None
+    if abs(cleaned_start - original_start) > 1.0:
+        return None
+    if cleaned_end < original_end - 1.0 or cleaned_end > upper_end + 0.75:
+        return None
+    return cleaned
+
+
+def _merge_subtitle_polish_items(
+    original_items: list[dict],
+    polished_items: list[dict],
+    *,
+    allow_resegment: bool,
+    max_end_seconds: float | None = None,
+) -> tuple[list[dict], str]:
+    if len(polished_items) == len(original_items):
+        for idx, item in enumerate(original_items):
+            if not isinstance(item, dict):
+                continue
+            candidate = polished_items[idx]
+            if isinstance(candidate, dict) and candidate.get("text") is not None:
+                item["text"] = str(candidate.get("text"))
+        return original_items, "same_count"
+
+    if allow_resegment:
+        resegmented = _validated_resegmented_subtitle_items(
+            original_items,
+            polished_items,
+            max_end_seconds=max_end_seconds,
+        )
+        if resegmented:
+            return resegmented, "resegmented"
+
+    mapped = {}
+    for candidate in polished_items:
+        if not isinstance(candidate, dict):
+            continue
+        key = (candidate.get("start"), candidate.get("end"))
+        if key[0] and key[1]:
+            mapped[key] = candidate
+    for item in original_items:
+        if not isinstance(item, dict):
+            continue
+        key = (item.get("start"), item.get("end"))
+        if key in mapped and mapped[key].get("text") is not None:
+            item["text"] = str(mapped[key].get("text"))
+    return original_items, "timestamp_mapped"
+
+
 def _items_to_srt_text(items: list[dict], text_key: str = "text") -> str:
     blocks = []
     for index, item in enumerate(items, start=1):
@@ -7090,6 +7236,10 @@ def _polish_subtitles_for_video(
         None,
         create=True,
     )
+    try:
+        video_length_seconds = float(get_video_length(input_file))
+    except Exception:
+        video_length_seconds = None
 
     payload, items, container_key = _load_subtitle_payload(input_json)
     if not items:
@@ -7155,11 +7305,25 @@ def _polish_subtitles_for_video(
         .replace("{{CAPTIONS}}", caption_text)
         .replace("{{SUBTITLES_JSON}}", subtitles_json)
     )
-    prompt_text = (
-        f"{prompt_text}\n\n"
-        "Final requirement: return the same number of subtitle items in the same order. "
-        "Preserve every original start and end timestamp exactly. Only change the text field."
-    )
+    if video_length_seconds:
+        prompt_text = (
+            f"{prompt_text}\n\n"
+            f"Video duration: {format_timestamp(video_length_seconds)}."
+        )
+    if notes.strip():
+        prompt_text = (
+            f"{prompt_text}\n\n"
+            "Because custom notes were provided, check whether the notes include explicit dialogue "
+            "that the ASR missed. If the ASR omitted clear spoken lines, recover them by splitting "
+            "or adding subtitle items with valid timestamps inside the video duration. "
+            "Otherwise keep the same number of subtitle items and preserve timestamps exactly."
+        )
+    else:
+        prompt_text = (
+            f"{prompt_text}\n\n"
+            "Final requirement: return the same number of subtitle items in the same order. "
+            "Preserve every original start and end timestamp exactly. Only change the text field."
+        )
 
     status = "completed"
     error_message = None
@@ -7175,27 +7339,14 @@ def _polish_subtitles_for_video(
         if not isinstance(polished_items, list):
             raise RuntimeError("subtitle polish response missing items")
 
-        if len(polished_items) == len(items):
-            for idx, item in enumerate(items):
-                if not isinstance(item, dict):
-                    continue
-                candidate = polished_items[idx]
-                if isinstance(candidate, dict) and candidate.get("text") is not None:
-                    item["text"] = str(candidate.get("text"))
-        else:
-            mapped = {}
-            for candidate in polished_items:
-                if not isinstance(candidate, dict):
-                    continue
-                key = (candidate.get("start"), candidate.get("end"))
-                if key[0] and key[1]:
-                    mapped[key] = candidate
-            for item in items:
-                if not isinstance(item, dict):
-                    continue
-                key = (item.get("start"), item.get("end"))
-                if key in mapped and mapped[key].get("text") is not None:
-                    item["text"] = str(mapped[key].get("text"))
+        items, merge_mode = _merge_subtitle_polish_items(
+            items,
+            polished_items,
+            allow_resegment=bool(notes.strip()),
+            max_end_seconds=video_length_seconds,
+        )
+        if merge_mode == "resegmented":
+            print(f"Subtitle polish accepted re-segmented output for video {video_id_i}.")
 
         payload_to_write = dict(payload) if isinstance(payload, dict) else payload
         _write_subtitle_payload(output_json_path, payload_to_write, items, container_key)

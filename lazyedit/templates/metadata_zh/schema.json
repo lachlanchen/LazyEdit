@@ -3,24 +3,27 @@
   "properties": {
     "title": {
       "type": "string",
-      "description": "Video title"
+      "description": "Video title in Traditional Chinese only"
     },
     "brief_description": {
       "type": "string",
-      "description": "Brief description of the video"
+      "description": "Brief description of the video in Traditional Chinese only"
     },
     "middle_description": {
       "type": "string",
-      "description": "Medium length description of the video"
+      "description": "Medium length description of the video in Traditional Chinese only"
     },
     "long_description": {
       "type": "string",
-      "description": "Detailed description of the video"
+      "description": "Detailed description of the video in Traditional Chinese only"
     },
     "tags": {
       "type": "array",
-      "items": { "type": "string" },
-      "description": "Array of tags related to the video content"
+      "items": {
+        "type": "string",
+        "description": "Traditional Chinese tag"
+      },
+      "description": "Array of tags related to the video content, Traditional Chinese only"
     },
     "english_words_to_learn": {
       "type": "array",
