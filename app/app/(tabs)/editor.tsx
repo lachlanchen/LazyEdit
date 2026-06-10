@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 
 import { useI18n } from '@/components/I18nProvider';
-import { subscribeStudioRefresh } from '@/lib/studioRefresh';
+import { subscribeStudioRefresh, triggerStudioRefresh } from '@/lib/studioRefresh';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 const PAGE_SIZE = 8;
@@ -183,6 +183,9 @@ export default function EditorScreen() {
   const [listContentHeight, setListContentHeight] = useState(0);
   const [loadingVideos, setLoadingVideos] = useState(false);
   const [selectedVideoId, setSelectedVideoId] = useState<number | null>(null);
+  const [confirmDeleteVideo, setConfirmDeleteVideo] = useState<Video | null>(null);
+  const [deleteVideoPending, setDeleteVideoPending] = useState(false);
+  const [deleteVideoError, setDeleteVideoError] = useState('');
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const [coverStatus, setCoverStatus] = useState('');
   const [coverTone, setCoverTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
@@ -591,7 +594,10 @@ export default function EditorScreen() {
       const items = json.videos || [];
       setVideos(items);
       setVisibleCount((current) => Math.min(Math.max(current, PAGE_SIZE), items.length));
-      setSelectedVideoId((current) => current ?? items[0]?.id ?? null);
+      setSelectedVideoId((current) => {
+        if (current && items.some((video: Video) => video.id === current)) return current;
+        return items[0]?.id ?? null;
+      });
     } catch (_err) {
       // ignore fetch errors
     } finally {
@@ -1086,6 +1092,40 @@ export default function EditorScreen() {
       if (!silent) setQueueLoading(false);
     }
   }, [t]);
+
+  const confirmDeleteSelectedVideo = useCallback(async () => {
+    if (!confirmDeleteVideo || deleteVideoPending) return;
+    const deletingId = confirmDeleteVideo.id;
+    const deletingPath = confirmDeleteVideo.file_path;
+    setDeleteVideoPending(true);
+    setDeleteVideoError('');
+    try {
+      const resp = await fetch(`${API_URL}/api/videos/${deletingId}`, { method: 'DELETE' });
+      const payload = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        throw new Error(payload?.error || 'Delete failed');
+      }
+      const remainingVideos = videosRef.current.filter(
+        (video) => video.id !== deletingId && video.file_path !== deletingPath,
+      );
+      setVideos(remainingVideos);
+      setVisibleCount((current) => Math.min(Math.max(current, PAGE_SIZE), remainingVideos.length));
+      setSelectedVideoId((current) => {
+        if (current && current !== deletingId && remainingVideos.some((video) => video.id === current)) {
+          return current;
+        }
+        return remainingVideos[0]?.id ?? null;
+      });
+      setConfirmDeleteVideo(null);
+      await loadVideos(true);
+      await loadPublishQueue(true);
+      triggerStudioRefresh();
+    } catch (err) {
+      setDeleteVideoError(err instanceof Error ? err.message : 'Delete failed');
+    } finally {
+      setDeleteVideoPending(false);
+    }
+  }, [confirmDeleteVideo, deleteVideoPending, loadPublishQueue, loadVideos]);
 
   const requestCoverExtraction = useCallback(async (
     videoId: number,
@@ -1929,8 +1969,20 @@ export default function EditorScreen() {
                         {video.created_at?.slice(0, 19).replace('T', ' ')}
                       </Text>
                     </View>
-                    <View style={[styles.selectBadge, isActive && styles.selectBadgeActive]}>
-                      {isActive ? <FontAwesome name="check" size={12} color="white" /> : null}
+                    <View style={styles.videoActions}>
+                      <View style={[styles.selectBadge, isActive && styles.selectBadgeActive]}>
+                        {isActive ? <FontAwesome name="check" size={12} color="white" /> : null}
+                      </View>
+                      <Pressable
+                        style={styles.videoDeleteButton}
+                        onPress={(event) => {
+                          event.stopPropagation?.();
+                          setDeleteVideoError('');
+                          setConfirmDeleteVideo(video);
+                        }}
+                      >
+                        <FontAwesome name="trash" size={13} color="#b91c1c" />
+                      </Pressable>
                     </View>
                   </Pressable>
                 );
@@ -2466,6 +2518,57 @@ export default function EditorScreen() {
         </View>
       </View>
       <Modal
+        visible={!!confirmDeleteVideo}
+        animationType="fade"
+        transparent
+        onRequestClose={() => {
+          if (!deleteVideoPending) {
+            setConfirmDeleteVideo(null);
+            setDeleteVideoError('');
+          }
+        }}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.deleteVideoModal}>
+            <Text style={styles.sectionTitle}>{t('library_delete_title')}</Text>
+            <Text style={styles.sectionHint}>{t('library_delete_body')}</Text>
+            {confirmDeleteVideo ? (
+              <Text style={styles.deleteVideoName} numberOfLines={3}>
+                {confirmDeleteVideo.title || confirmDeleteVideo.file_path}
+              </Text>
+            ) : null}
+            {deleteVideoError ? (
+              <Text style={[styles.status, styles.statusBad]}>{deleteVideoError}</Text>
+            ) : null}
+            <View style={styles.deleteVideoActions}>
+              <Pressable
+                style={styles.secondaryButton}
+                onPress={() => {
+                  if (deleteVideoPending) return;
+                  setConfirmDeleteVideo(null);
+                  setDeleteVideoError('');
+                }}
+                disabled={deleteVideoPending}
+              >
+                <Text style={styles.secondaryButtonText}>{t('library_menu_cancel')}</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.deleteVideoConfirmButton, deleteVideoPending && styles.btnDisabled]}
+                onPress={confirmDeleteSelectedVideo}
+                disabled={deleteVideoPending}
+              >
+                <View style={styles.btnContent}>
+                  {deleteVideoPending && <ActivityIndicator color="#b91c1c" style={{ marginRight: 8 }} />}
+                  <Text style={styles.deleteVideoConfirmText}>
+                    {deleteVideoPending ? t('library_delete_pending') : t('library_delete_confirm')}
+                  </Text>
+                </View>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal
         visible={autoCorrectPromptOpen}
         animationType="fade"
         transparent
@@ -2657,6 +2760,12 @@ const styles = StyleSheet.create({
   videoTitle: { fontSize: 15, fontWeight: '600', color: '#0f172a' },
   videoPath: { color: '#64748b', fontSize: 11 },
   videoTime: { color: '#334155', fontSize: 11, marginTop: 4 },
+  videoActions: {
+    marginLeft: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
   selectBadge: {
     width: 22,
     height: 22,
@@ -2670,6 +2779,14 @@ const styles = StyleSheet.create({
   selectBadgeActive: {
     backgroundColor: '#2563eb',
     borderColor: '#2563eb',
+  },
+  videoDeleteButton: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fee2e2',
   },
   moreButton: {
     marginTop: 4,
@@ -3115,6 +3232,44 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e2e8f0',
   },
+  deleteVideoModal: {
+    width: '100%',
+    maxWidth: 420,
+    alignSelf: 'center',
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  deleteVideoName: {
+    marginTop: 12,
+    padding: 10,
+    borderRadius: 12,
+    backgroundColor: '#f8fafc',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+    color: '#0f172a',
+    fontSize: 12,
+  },
+  deleteVideoActions: {
+    marginTop: 12,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  deleteVideoConfirmButton: {
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#fecaca',
+    backgroundColor: '#fee2e2',
+    alignItems: 'center',
+  },
+  deleteVideoConfirmText: { fontSize: 12, fontWeight: '700', color: '#b91c1c' },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
