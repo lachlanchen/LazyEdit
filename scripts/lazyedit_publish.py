@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutureTimeout
+import hashlib
 import http.client
 import json
 import os
@@ -30,6 +31,8 @@ PROCESS_TIMEOUT_SECONDS = 3 * 60 * 60
 PUBLISH_TIMEOUT_SECONDS = 2 * 60 * 60
 POLL_SECONDS = 5
 CHUNK_SIZE = 4 * 1024 * 1024
+LALACHAN_VIDEOS_ROOT = Path("/home/lachlan/ProjectsLFS/LALACHAN/Videos")
+DOWNLOADS_ROOT = Path.home() / "Downloads"
 
 PLATFORMS = {
     "douyin",
@@ -67,6 +70,153 @@ def print_event(message: str, *, quiet: bool = False) -> None:
 
 def json_dumps(payload: Any) -> str:
     return json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True)
+
+
+def file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def probe_media(path: Path) -> dict[str, Any]:
+    result = subprocess.run(
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-show_entries",
+            "format=duration,size",
+            "-of",
+            "json",
+            str(path),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    if result.returncode != 0:
+        raise RuntimeError((result.stderr or result.stdout or "ffprobe failed").strip())
+    payload = json.loads(result.stdout or "{}")
+    fmt = payload.get("format") if isinstance(payload, dict) else {}
+    duration = None
+    size = None
+    if isinstance(fmt, dict):
+        try:
+            duration = float(fmt.get("duration")) if fmt.get("duration") is not None else None
+        except (TypeError, ValueError):
+            duration = None
+        try:
+            size = int(fmt.get("size")) if fmt.get("size") is not None else None
+        except (TypeError, ValueError):
+            size = None
+    return {"duration": duration, "size": size}
+
+
+def path_is_relative_to(path: Path, root: Path) -> bool:
+    try:
+        path.resolve().relative_to(root.resolve())
+        return True
+    except ValueError:
+        return False
+
+
+def latest_download_final_video() -> Path | None:
+    if not DOWNLOADS_ROOT.exists():
+        return None
+    candidates = [
+        path
+        for path in DOWNLOADS_ROOT.glob("final_video*.mp4")
+        if path.is_file()
+    ]
+    if not candidates:
+        return None
+    return max(candidates, key=lambda item: item.stat().st_mtime)
+
+
+def source_preflight(args: argparse.Namespace, *, quiet: bool) -> dict[str, Any]:
+    if not args.video:
+        return {}
+    path = Path(args.video).expanduser().resolve()
+    if not path.exists():
+        raise FileNotFoundError(path)
+    stat = path.stat()
+    media = probe_media(path)
+    digest = file_sha256(path)
+    duration = media.get("duration")
+    size = media.get("size") or stat.st_size
+    info = {
+        "path": str(path),
+        "duration": duration,
+        "size": size,
+        "sha256": digest,
+    }
+    duration_text = f"{duration:.3f}s" if isinstance(duration, (int, float)) else "unknown"
+    print_event(
+        "Source preflight: "
+        f"path={path} duration={duration_text} size={size / 1024 / 1024:.1f}MB sha256={digest}",
+        quiet=quiet,
+    )
+
+    if args.expect_sha256 and digest.lower() != args.expect_sha256.lower():
+        raise ValueError(
+            "source sha256 mismatch: "
+            f"expected {args.expect_sha256.lower()}, got {digest.lower()}"
+        )
+    if args.expect_duration is not None and duration is not None:
+        tolerance = max(0.0, float(args.duration_tolerance))
+        if abs(float(duration) - float(args.expect_duration)) > tolerance:
+            raise ValueError(
+                "source duration mismatch: "
+                f"expected {args.expect_duration:.3f}s +/- {tolerance:.3f}s, got {duration:.3f}s"
+            )
+    if args.expect_min_size_mb is not None:
+        min_bytes = float(args.expect_min_size_mb) * 1024 * 1024
+        if size < min_bytes:
+            raise ValueError(
+                f"source file is smaller than expected: {size / 1024 / 1024:.1f}MB "
+                f"< {args.expect_min_size_mb:.1f}MB"
+            )
+    if args.expect_max_size_mb is not None:
+        max_bytes = float(args.expect_max_size_mb) * 1024 * 1024
+        if size > max_bytes:
+            raise ValueError(
+                f"source file is larger than expected: {size / 1024 / 1024:.1f}MB "
+                f"> {args.expect_max_size_mb:.1f}MB"
+            )
+
+    if (
+        path_is_relative_to(path, LALACHAN_VIDEOS_ROOT)
+        and not args.allow_stale_lalachan_copy
+    ):
+        latest = latest_download_final_video()
+        if latest:
+            latest_stat = latest.stat()
+            # The Xiaoyunque browser workflow often saves the authoritative
+            # render as Downloads/final_video*.mp4 before copying into Videos/.
+            # If a newer final_video exists and differs, make the caller choose
+            # explicitly instead of silently publishing the stale copy.
+            if latest_stat.st_mtime > stat.st_mtime and latest_stat.st_mtime - stat.st_mtime < 24 * 60 * 60:
+                latest_hash = file_sha256(latest)
+                if latest_hash != digest:
+                    latest_media = probe_media(latest)
+                    latest_duration = latest_media.get("duration")
+                    latest_duration_text = (
+                        f"{latest_duration:.3f}s"
+                        if isinstance(latest_duration, (int, float))
+                        else "unknown"
+                    )
+                    raise ValueError(
+                        "possible stale LALACHAN Videos copy: "
+                        f"{path} differs from newer download {latest} "
+                        f"(download duration={latest_duration_text}, "
+                        f"size={latest_stat.st_size / 1024 / 1024:.1f}MB, "
+                        f"sha256={latest_hash}). Use --video with the download path "
+                        "or pass --allow-stale-lalachan-copy if this is intentional."
+                    )
+    return info
 
 
 def request_url_json(url: str, timeout: int = 20) -> dict[str, Any]:
@@ -463,6 +613,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--api-url", default=DEFAULT_API_URL)
     parser.add_argument("--video", help="Path to a local video to upload.")
     parser.add_argument("--video-id", type=int, help="Existing LazyEdit video id to reuse.")
+    parser.add_argument("--expect-sha256", help="Fail if --video does not match this SHA-256.")
+    parser.add_argument("--expect-duration", type=float, help="Fail if --video duration differs from this value.")
+    parser.add_argument("--duration-tolerance", type=float, default=0.75)
+    parser.add_argument("--expect-min-size-mb", type=float)
+    parser.add_argument("--expect-max-size-mb", type=float)
+    parser.add_argument(
+        "--allow-stale-lalachan-copy",
+        action="store_true",
+        help="Allow publishing a LALACHAN Videos/ copy even when a newer differing Downloads/final_video*.mp4 exists.",
+    )
     parser.add_argument("--title", help="Title stored in LazyEdit. Defaults to video filename stem.")
     parser.add_argument("--filename", help="Upload filename. Defaults to source filename.")
     parser.add_argument("--source", default="api")
@@ -547,6 +707,7 @@ def main(argv: list[str] | None = None) -> int:
             video_id = args.video_id
             final["video_id"] = video_id
         else:
+            final["source_preflight"] = source_preflight(args, quiet=args.quiet)
             upload = client.upload_stream(
                 Path(args.video),
                 title=args.title,
