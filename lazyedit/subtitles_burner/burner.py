@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import sys
 import re
+import json
+import os
+import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Optional
@@ -82,6 +85,156 @@ def _load_burner_module():
         )
     except Exception as exc:
         raise RuntimeError(f"Failed to import subtitles_burner: {exc}") from exc
+
+    # LazyEdit patch: speaker marking can create rows whose `tokens` contain
+    # only the helper speaker icon. The upstream loader treats any non-empty
+    # token list as authoritative, so those rows render as just the icon and the
+    # actual subtitle text disappears. Inject fallback content from the normal
+    # text/ruby fields before delegating to the upstream loader.
+    try:
+        if getattr(burner_mod, "_lazyedit_speaker_only_token_patch", False) is not True and hasattr(burner_mod, "load_segments_from_json"):
+            original_load_segments_from_json = burner_mod.load_segments_from_json
+
+            def _speaker_only_tokens(tokens_payload: Any) -> bool:
+                if not isinstance(tokens_payload, list) or not tokens_payload:
+                    return False
+                saw_speaker = False
+                for token in tokens_payload:
+                    if not isinstance(token, dict):
+                        return False
+                    token_type = str(token.get("type") or token.get("pos") or token.get("tag") or "").strip().lower()
+                    token_text = token.get("text") or token.get("word") or token.get("token") or ""
+                    if token_type == "speaker":
+                        saw_speaker = True
+                        continue
+                    if str(token_text).strip():
+                        return False
+                return saw_speaker
+
+            def _base_text_from_item(item: dict[str, Any], text_key: str | None) -> str:
+                value = item.get(text_key) if text_key else None
+                if value is None:
+                    value = item.get("text")
+                return "" if value is None else str(value)
+
+            def _ruby_tokens_to_dicts(tokens: list[Any]) -> list[dict[str, Any]]:
+                out: list[dict[str, Any]] = []
+                for token in tokens:
+                    text = getattr(token, "text", "") or ""
+                    ruby = getattr(token, "ruby", None)
+                    token_type = getattr(token, "token_type", None)
+                    if not text and token_type != "speaker":
+                        continue
+                    row: dict[str, Any] = {"text": text}
+                    if ruby:
+                        row["ruby"] = ruby
+                    if token_type:
+                        row["type"] = token_type
+                    out.append(row)
+                return out
+
+            def _fallback_content_tokens(
+                item: dict[str, Any],
+                text_key: str | None,
+                ruby_key: str | None,
+                pairs_key: str,
+                auto_ruby: bool,
+            ) -> list[dict[str, Any]]:
+                base_text = _base_text_from_item(item, text_key)
+                if pairs_key and item.get(pairs_key):
+                    return _ruby_tokens_to_dicts(burner_mod._tokens_from_pairs(item.get(pairs_key)))
+                if ruby_key and item.get(ruby_key):
+                    return _ruby_tokens_to_dicts(burner_mod._tokens_from_ruby_markup(str(item.get(ruby_key))))
+                if auto_ruby and base_text:
+                    try:
+                        return _ruby_tokens_to_dicts(burner_mod.FuriganaGenerator().generate(base_text))
+                    except Exception:
+                        pass
+                return [{"text": base_text}] if base_text else []
+
+            def load_segments_from_json_lazyedit(
+                json_path: str,
+                text_key: Optional[str] = None,
+                ruby_key: Optional[str] = None,
+                tokens_key: str = "tokens",
+                pairs_key: str = "furigana_pairs",
+                palette: Optional[dict[str, Any]] = None,
+                auto_ruby: bool = False,
+                strip_kana: bool = False,
+                kana_romaji: bool = False,
+                pinyin: bool = False,
+                ipa_lang: Optional[str] = None,
+                jyutping: bool = False,
+                korean_romaja: bool = False,
+                arabic_translit: bool = False,
+            ):
+                def _delegate(path: str):
+                    return original_load_segments_from_json(
+                        path,
+                        text_key=text_key,
+                        ruby_key=ruby_key,
+                        tokens_key=tokens_key,
+                        pairs_key=pairs_key,
+                        palette=palette,
+                        auto_ruby=auto_ruby,
+                        strip_kana=strip_kana,
+                        kana_romaji=kana_romaji,
+                        pinyin=pinyin,
+                        ipa_lang=ipa_lang,
+                        jyutping=jyutping,
+                        korean_romaja=korean_romaja,
+                        arabic_translit=arabic_translit,
+                    )
+
+                if not tokens_key:
+                    return _delegate(json_path)
+
+                try:
+                    with open(json_path, "r", encoding="utf-8") as handle:
+                        payload = json.load(handle)
+                except Exception:
+                    return _delegate(json_path)
+
+                if isinstance(payload, dict):
+                    items = payload.get("items") or payload.get("subtitles") or payload.get("segments") or []
+                elif isinstance(payload, list):
+                    items = payload
+                else:
+                    items = []
+
+                modified = False
+                for item in items:
+                    if not isinstance(item, dict):
+                        continue
+                    tokens_payload = item.get(tokens_key)
+                    if not _speaker_only_tokens(tokens_payload):
+                        continue
+                    fallback_tokens = _fallback_content_tokens(item, text_key, ruby_key, pairs_key, auto_ruby)
+                    if not fallback_tokens:
+                        continue
+                    item[tokens_key] = list(tokens_payload) + fallback_tokens
+                    modified = True
+
+                if not modified:
+                    return _delegate(json_path)
+
+                temp_path = None
+                try:
+                    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8", delete=False) as handle:
+                        json.dump(payload, handle, ensure_ascii=False)
+                        temp_path = handle.name
+                    return _delegate(temp_path)
+                finally:
+                    if temp_path:
+                        try:
+                            os.unlink(temp_path)
+                        except OSError:
+                            pass
+
+            burner_mod.load_segments_from_json = load_segments_from_json_lazyedit
+            burner_mod._lazyedit_speaker_only_token_patch = True
+    except Exception:
+        pass
 
     # LazyEdit patch: keep the upstream dependency read-only and patch behavior
     # at import time instead.
