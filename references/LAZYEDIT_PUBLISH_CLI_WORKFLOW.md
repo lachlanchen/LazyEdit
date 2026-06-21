@@ -268,6 +268,7 @@ Subtitle correction:
 
 - Use the generated story/prompt/script as context for LALACHAN videos.
 - Treat the script as reference, not a verbatim transcript. Correct clear ASR failures, broken phrases, names, and objects; avoid inventing unsupported dialogue.
+- Do not patch recovered missing-language subtitles per video to regain colors. The general path is `lazyedit/subtitle_tokens.py` plus the burner wrapper: plain recovered text, ruby markup, `word`/`reading` tokens, and speaker-helper rows must all normalize into grammar-typed tokens before rendering.
 - If the ASR misses obvious generated dialogue, the correction step may re-segment when the story/script is present. Verify the polished subtitle count before publishing:
 
 ```bash

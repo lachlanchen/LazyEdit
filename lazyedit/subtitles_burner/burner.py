@@ -11,6 +11,12 @@ from typing import Any, Callable, Optional
 
 import cv2
 
+from lazyedit.subtitle_tokens import (
+    has_content_token,
+    is_speaker_only_tokens,
+    normalize_tokens_payload,
+)
+
 
 SPEAKER_ICON_COLOR = (33, 150, 243)
 
@@ -86,30 +92,12 @@ def _load_burner_module():
     except Exception as exc:
         raise RuntimeError(f"Failed to import subtitles_burner: {exc}") from exc
 
-    # LazyEdit patch: speaker marking can create rows whose `tokens` contain
-    # only the helper speaker icon. The upstream loader treats any non-empty
-    # token list as authoritative, so those rows render as just the icon and the
-    # actual subtitle text disappears. Inject fallback content from the normal
-    # text/ruby fields before delegating to the upstream loader.
+    # LazyEdit patch: normalize subtitle token payloads before delegating to
+    # upstream. This keeps recovered/polished plain text, schema-drifted tokens,
+    # ruby markup, and speaker-icon rows on the same grammar-colored path.
     try:
-        if getattr(burner_mod, "_lazyedit_speaker_only_token_patch", False) is not True and hasattr(burner_mod, "load_segments_from_json"):
+        if getattr(burner_mod, "_lazyedit_token_normalization_patch", False) is not True and hasattr(burner_mod, "load_segments_from_json"):
             original_load_segments_from_json = burner_mod.load_segments_from_json
-
-            def _speaker_only_tokens(tokens_payload: Any) -> bool:
-                if not isinstance(tokens_payload, list) or not tokens_payload:
-                    return False
-                saw_speaker = False
-                for token in tokens_payload:
-                    if not isinstance(token, dict):
-                        return False
-                    token_type = str(token.get("type") or token.get("pos") or token.get("tag") or "").strip().lower()
-                    token_text = token.get("text") or token.get("word") or token.get("token") or ""
-                    if token_type == "speaker":
-                        saw_speaker = True
-                        continue
-                    if str(token_text).strip():
-                        return False
-                return saw_speaker
 
             def _base_text_from_item(item: dict[str, Any], text_key: str | None) -> str:
                 value = item.get(text_key) if text_key else None
@@ -139,18 +127,22 @@ def _load_burner_module():
                 ruby_key: str | None,
                 pairs_key: str,
                 auto_ruby: bool,
+                palette: Optional[dict[str, Any]],
             ) -> list[dict[str, Any]]:
                 base_text = _base_text_from_item(item, text_key)
                 if pairs_key and item.get(pairs_key):
-                    return _ruby_tokens_to_dicts(burner_mod._tokens_from_pairs(item.get(pairs_key)))
+                    tokens = _ruby_tokens_to_dicts(burner_mod._tokens_from_pairs(item.get(pairs_key)))
+                    return normalize_tokens_payload(tokens, text=base_text, text_key=text_key, palette=palette)
                 if ruby_key and item.get(ruby_key):
-                    return _ruby_tokens_to_dicts(burner_mod._tokens_from_ruby_markup(str(item.get(ruby_key))))
+                    tokens = _ruby_tokens_to_dicts(burner_mod._tokens_from_ruby_markup(str(item.get(ruby_key))))
+                    return normalize_tokens_payload(tokens, text=base_text, text_key=text_key, palette=palette)
                 if auto_ruby and base_text:
                     try:
-                        return _ruby_tokens_to_dicts(burner_mod.FuriganaGenerator().generate(base_text))
+                        tokens = _ruby_tokens_to_dicts(burner_mod.FuriganaGenerator().generate(base_text))
+                        return normalize_tokens_payload(tokens, text=base_text, text_key=text_key, palette=palette)
                     except Exception:
                         pass
-                return [{"text": base_text}] if base_text else []
+                return normalize_tokens_payload([{"text": base_text}], text=base_text, text_key=text_key, palette=palette) if base_text else []
 
             def load_segments_from_json_lazyedit(
                 json_path: str,
@@ -206,14 +198,37 @@ def _load_burner_module():
                 for item in items:
                     if not isinstance(item, dict):
                         continue
+                    base_text = _base_text_from_item(item, text_key)
                     tokens_payload = item.get(tokens_key)
-                    if not _speaker_only_tokens(tokens_payload):
-                        continue
-                    fallback_tokens = _fallback_content_tokens(item, text_key, ruby_key, pairs_key, auto_ruby)
-                    if not fallback_tokens:
-                        continue
-                    item[tokens_key] = list(tokens_payload) + fallback_tokens
-                    modified = True
+                    if is_speaker_only_tokens(tokens_payload):
+                        fallback_tokens = _fallback_content_tokens(item, text_key, ruby_key, pairs_key, auto_ruby, palette)
+                        if not fallback_tokens:
+                            continue
+                        normalized_tokens = normalize_tokens_payload(
+                            list(tokens_payload) + fallback_tokens,
+                            text=base_text,
+                            text_key=text_key,
+                            palette=palette,
+                        )
+                    elif has_content_token(tokens_payload):
+                        normalized_tokens = normalize_tokens_payload(
+                            tokens_payload,
+                            text=base_text,
+                            text_key=text_key,
+                            palette=palette,
+                        )
+                    else:
+                        normalized_tokens = _fallback_content_tokens(
+                            item,
+                            text_key,
+                            ruby_key,
+                            pairs_key,
+                            auto_ruby,
+                            palette,
+                        )
+                    if normalized_tokens and normalized_tokens != tokens_payload:
+                        item[tokens_key] = normalized_tokens
+                        modified = True
 
                 if not modified:
                     return _delegate(json_path)
@@ -232,7 +247,7 @@ def _load_burner_module():
                             pass
 
             burner_mod.load_segments_from_json = load_segments_from_json_lazyedit
-            burner_mod._lazyedit_speaker_only_token_patch = True
+            burner_mod._lazyedit_token_normalization_patch = True
     except Exception:
         pass
 
