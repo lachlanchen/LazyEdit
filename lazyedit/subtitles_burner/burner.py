@@ -135,7 +135,9 @@ def _load_burner_module():
                     return normalize_tokens_payload(tokens, text=base_text, text_key=text_key, palette=palette)
                 if ruby_key and item.get(ruby_key):
                     tokens = _ruby_tokens_to_dicts(burner_mod._tokens_from_ruby_markup(str(item.get(ruby_key))))
-                    return normalize_tokens_payload(tokens, text=base_text, text_key=text_key, palette=palette)
+                    ruby_is_structured = any(token.get("ruby") for token in tokens)
+                    if ruby_is_structured or not auto_ruby:
+                        return normalize_tokens_payload(tokens, text=base_text, text_key=text_key, palette=palette)
                 if auto_ruby and base_text:
                     try:
                         tokens = _ruby_tokens_to_dicts(burner_mod.FuriganaGenerator().generate(base_text))
