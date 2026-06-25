@@ -84,7 +84,13 @@ tmux capture-pane -pt lazyedit:0 -S -80 | tail -n 80
 - Avoid duplicate publishes. Use `--no-publish` first if you only need to inspect generated package/subtitles.
 - If the user says "same version", "last run", "already finished run", or "no rerun", use `--no-process`.
 - For generated videos, verify that the file is the intended final video before upload or publish. Do not blindly use `Downloads/final_video (N).mp4`.
+- For browser-upload platforms such as Instagram, verify that the MP4 inside the
+  publish ZIP is H.264/AVC `avc1`, `yuv420p`, AAC when audio exists, and
+  browser-faststart. HEVC/H.265 `hvc1`, AV1, or unknown codecs are not
+  acceptable terminal publish artifacts.
 - Before claiming success, verify both LazyEdit local publish status and remote AutoPublish status.
+- If visible platform state conflicts with queue state, inspect the live browser
+  and let visible error/success text override queue assumptions.
 
 ## Verify Logo Settings Before Publish
 
@@ -542,6 +548,29 @@ If the description appears in the editor but not in the published post, inspect 
 
 ## Common Failure Handling
 
+### Instagram Error After Queue Says Done
+
+If Instagram shows a publish error popup while LazyEdit or AutoPublish says
+`done`, check the actual MP4 extracted by AutoPublish. A known 2026-06-25
+failure occurred because the remote ZIP contained an HEVC/H.265 `hvc1` MP4.
+Instagram accepted the upload step but failed during processing/posting.
+
+Required repair:
+
+1. Rebuild the LazyEdit publish bundle.
+2. Verify the local ZIP contains H.264/AVC `avc1`, `yuv420p`, and AAC when audio
+   exists.
+3. Resubmit only Instagram, not platforms that already succeeded.
+4. Verify the remote extracted MP4 codec.
+5. Inspect live Instagram browser evidence; `Your reel has been shared.` is
+   success.
+
+Detailed incident note:
+
+```text
+references/INSTAGRAM_BROWSER_SAFE_PUBLISH_BUNDLE_BUG_2026_06_25.md
+```
+
 ### AutoPublish Service Not Reachable
 
 Check:
@@ -643,4 +672,3 @@ Rules:
 - Burn the configured LazyEdit logo at top-left unless user opts out.
 - Verify local LazyEdit and remote AutoPublish queues before reporting done.
 ```
-
