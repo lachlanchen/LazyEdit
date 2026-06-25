@@ -5253,6 +5253,124 @@ def _pick_publish_video_path(video_id: int, fallback_path: str, publication_sess
     return fallback_path
 
 
+def _probe_publish_video(path: str) -> dict[str, Any]:
+    try:
+        result = subprocess.run(
+            [
+                "ffprobe",
+                "-v",
+                "error",
+                "-show_entries",
+                (
+                    "format=format_name,duration:stream=index,codec_type,"
+                    "codec_name,codec_tag_string,pix_fmt,width,height"
+                ),
+                "-of",
+                "json",
+                path,
+            ],
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=45,
+        )
+        return json.loads(result.stdout or "{}")
+    except Exception as exc:
+        print(f"Publish video probe failed for {path}: {exc}")
+        return {}
+
+
+def _publish_video_is_browser_safe(path: str) -> bool:
+    if not path or not os.path.exists(path):
+        return False
+    payload = _probe_publish_video(path)
+    streams = payload.get("streams") if isinstance(payload, dict) else None
+    if not isinstance(streams, list):
+        return False
+    video_stream = next(
+        (stream for stream in streams if stream.get("codec_type") == "video"),
+        None,
+    )
+    if not video_stream:
+        return False
+    video_codec = str(video_stream.get("codec_name") or "").lower()
+    pixel_format = str(video_stream.get("pix_fmt") or "").lower()
+    if video_codec != "h264":
+        return False
+    if pixel_format not in {"yuv420p", "yuvj420p"}:
+        return False
+    for stream in streams:
+        if stream.get("codec_type") != "audio":
+            continue
+        audio_codec = str(stream.get("codec_name") or "").lower()
+        if audio_codec and audio_codec != "aac":
+            return False
+    return True
+
+
+def _ensure_browser_safe_publish_video(video_path: str, publish_dir: str, bundle_stem: str) -> str:
+    """Return an MP4 that browser upload controls can read reliably."""
+    if _publish_video_is_browser_safe(video_path):
+        return video_path
+
+    os.makedirs(publish_dir, exist_ok=True)
+    output_path = os.path.join(publish_dir, f"{bundle_stem}_browser_upload.mp4")
+    try:
+        if (
+            os.path.exists(output_path)
+            and os.path.getmtime(output_path) >= os.path.getmtime(video_path)
+            and _publish_video_is_browser_safe(output_path)
+        ):
+            return output_path
+    except Exception:
+        pass
+
+    cmd = [
+        "ffmpeg",
+        "-y",
+        "-i",
+        video_path,
+        "-map",
+        "0:v:0",
+        "-map",
+        "0:a?",
+        "-sn",
+        "-dn",
+        "-vf",
+        "scale=trunc(iw/2)*2:trunc(ih/2)*2,format=yuv420p",
+        "-c:v",
+        "libx264",
+        "-preset",
+        "medium",
+        "-crf",
+        "20",
+        "-c:a",
+        "aac",
+        "-b:a",
+        "128k",
+        "-movflags",
+        "+faststart",
+        output_path,
+    ]
+    try:
+        subprocess.run(
+            cmd,
+            check=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            timeout=PUBLISH_PROCESS_TIMEOUT,
+        )
+    except subprocess.CalledProcessError as exc:
+        details = (exc.stderr or exc.stdout or "").strip()
+        raise RuntimeError(f"browser-safe publish transcode failed: {details[-1000:]}") from exc
+
+    if not _publish_video_is_browser_safe(output_path):
+        raise RuntimeError("browser-safe publish transcode produced an incompatible MP4")
+    return output_path
+
+
 def _cover_path_for_video(file_path: str, publication_session_id: int | None = None) -> tuple[str, str, str, str]:
     base_name = os.path.splitext(os.path.basename(file_path))[0]
     publish_dir = _publication_session_publish_dir(file_path, publication_session_id)
@@ -5533,11 +5651,19 @@ def _prepare_publish_bundle(
     metadata_payload["video_filename"] = video_filename
     metadata_payload["cover_filename"] = cover_filename
 
-    video_to_publish = (
+    selected_video_path = (
         _pick_publish_video_path(video_id_i, file_path, publication_session_id=publication_session_id)
         if burn_subtitles
         else preprocess_if_needed(file_path)
     )
+    try:
+        video_to_publish = _ensure_browser_safe_publish_video(
+            selected_video_path,
+            publish_dir,
+            bundle_stem,
+        )
+    except Exception as exc:
+        return 500, {"error": "publish video compatibility failed", "details": str(exc)}
     _base_name, _cover_publish_dir, _cover_filename, cover_path = _cover_path_for_video(
         file_path,
         publication_session_id,
@@ -5579,6 +5705,9 @@ def _prepare_publish_bundle(
         "metadata_path": metadata_path,
         "cover_path": cover_path if os.path.exists(cover_path) else None,
         "video_path": video_to_publish,
+        "selected_video_path": selected_video_path,
+        "browser_safe_publish_video": video_to_publish,
+        "browser_safe_transcoded": video_to_publish != selected_video_path,
         "platforms": platform_flags,
         "burn_subtitles": burn_subtitles,
         "publication_session_id": publication_session_id,
@@ -11038,10 +11167,14 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                     if code >= 400:
                         await mark("burn", "error", status_payload.get("error") or "Failed")
                         return False, statuses, "burn failed"
-                    if status_payload.get("status") == "processing":
+                    burn_status = str(status_payload.get("status") or "").lower()
+                    if burn_status == "processing":
                         continue
-                    if status_payload.get("status") == "completed":
+                    if burn_status == "completed":
                         await mark("burn", "done", "Completed")
+                        break
+                    if burn_status in {"skipped", "not_configured", "empty", "no_subtitles"}:
+                        await mark("burn", "skipped", status_payload.get("detail") or "No subtitles to burn")
                         break
                     await mark("burn", "error", status_payload.get("error") or "Failed")
                     return False, statuses, "burn failed"

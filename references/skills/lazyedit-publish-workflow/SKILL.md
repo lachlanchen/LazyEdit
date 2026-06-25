@@ -40,6 +40,8 @@ conda activate lazyedit
 - If correction is expected to recover missing generated-video dialogue, inspect `DATA/VIDEO_FOLDER/*_mixed_polished.md` before publish so missed or over-recovered subtitles are caught before any platform post.
 - If missing-language recovery creates plain subtitle text, do not restore grammar colors with a per-video patch. Fix or use the shared `lazyedit/subtitle_tokens.py` normalization path so plain text, ruby markup, `word`/`reading` tokens, and speaker-helper rows all render through grammar-typed palette tokens.
 - When copying through Nutstore, use one stable `_COMPLETED` filename and watch AutoPubMonitor panes before recopying. Avoid creating duplicate source files just to retrigger the watcher.
+- Silent or nearly silent videos may produce empty transcripts and `burn=skipped`. This is acceptable when transcribe/translate/caption/keyframes are complete; continue metadata generation, cover extraction, publish queue submission, and terminal platform verification instead of waiting forever or swapping in an older video.
+- AutoPublish browser uploads require a web-safe MP4 inside the ZIP. LazyEdit must package `_highlighted.mp4` as H.264/AVC (`avc1`), `yuv420p`, AAC audio, and `+faststart`. If the selected source/burn output is HEVC/H.265, AV1, or another browser-risk codec, transcode it during publish-bundle preparation before sending the ZIP.
 
 ## Setting Semantics
 
