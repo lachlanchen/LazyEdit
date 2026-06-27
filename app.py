@@ -10962,16 +10962,13 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         def wants(step: str) -> bool:
             return not selected_steps or step in selected_steps
 
-        needs_transcribe = (
-            wants("transcribe")
-            or wants("polish")
-            or wants("translate")
-            or wants("burn")
-            or wants("metadata_zh")
-            or wants("metadata_en")
-        )
+        # Only run Whisper for the full default pipeline or when transcription
+        # is explicitly requested. Downstream steps can reuse existing subtitle
+        # artifacts; forcing transcription here can overwrite corrected
+        # subtitles and race with video preprocessing.
+        needs_transcribe = wants("transcribe")
         needs_translate = wants("translate") or wants("burn")
-        needs_caption = wants("caption") or wants("polish") or wants("metadata_zh") or wants("metadata_en")
+        needs_caption = wants("caption")
         needs_cover = wants("cover") or wants("metadata_zh") or wants("metadata_en")
 
         languages_override = data.get("translation_languages")
