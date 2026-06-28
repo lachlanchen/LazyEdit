@@ -113,25 +113,54 @@ Create a no-subtitle video while keeping the configured Studio logo:
 python scripts/lazyedit_publish.py --video-id VIDEO_ID --use-current-settings --no-burn-subtitles --platforms youtube,instagram --wait
 ```
 
-Pure Shipinhao music/audio upload uses AutoPublish directly, not the LazyEdit
-video ZIP. First run with `--test` until the live desktop route is visually
-confirmed:
+Pure music/audio packaging should go through LazyEdit first, mirroring the
+video ZIP contract. LazyEdit creates the metadata, lyrics, audio copy, manifest,
+and cover candidates; AutoPublish only consumes the ZIP with
+`publish_shipinhao_music=true`.
 
 ```bash
-cd /home/lachlan/DiskMech/Projects/lazyedit/AutoPublish
-python scripts/package_shipinhao_music.py \
+python scripts/lazyedit_music_package.py \
   --audio /path/to/song.mp3 \
-  --cover /path/to/artwork.png \
-  --lyrics-json /path/to/musia/lyrics/mixed-vocal/mul.json \
   --title "Song Title" \
   --author "Musia 慕莎" \
   --language 中文 \
   --genre Pop \
   --story "Short music story for 音乐人说." \
-  --output /tmp/song_shipinhao_music.zip \
-  --post \
-  --test
+  --lyrics-json /path/to/musia/lyrics/mixed-vocal/mul.json \
+  --cover /path/to/artwork.png \
+  --cover-video /path/to/related-video.mp4 \
+  --cover-count 9 \
+  --output-slug song-title-music
 ```
+
+The equivalent API is:
+
+```bash
+curl -fsS http://127.0.0.1:18787/api/music/package \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "audio": "/path/to/song.mp3",
+    "title": "Song Title",
+    "author": "Musia 慕莎",
+    "language": "中文",
+    "lyrics_json": "/path/to/lyrics.json",
+    "cover": "/path/to/artwork.png",
+    "cover_video": "/path/to/related-video.mp4",
+    "cover_count": 9,
+    "slug": "song-title-music"
+  }'
+```
+
+Set `--post` or JSON `"post": true` only after inspecting the package. Use
+`--test` until the live Shipinhao desktop route is visually confirmed. As of
+2026-06-29, the desktop Shipinhao session exposes the music management page and
+`发表音乐`, but no verified audio upload form; do not retry real music publish
+blindly until that route or account eligibility changes.
+
+When cover art is not fully prepared, pass one curated cover plus
+`--cover-video` and `--cover-count 9`; LazyEdit will extract enough frame covers
+to fill the nine-background-image package. If AgInTi generates better covers,
+pass those as repeated `--cover` arguments instead.
 
 ## LALACHAN / AI-Generated Video
 

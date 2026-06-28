@@ -71,6 +71,77 @@ uses `utils.SendMail`, and `SendMail` creates an Apple-Watch-friendly inline QR
 PNG using `QRCodeProcessor.build_watch_friendly_png()`. A music publisher should
 reuse this path rather than building a second email mechanism.
 
+## LazyEdit Music Package Contract
+
+LazyEdit now owns the music package step, mirroring the video publish ZIP flow.
+Use this path for future Musia/LALACHAN handoffs instead of asking
+AutoPublish to assemble the metadata itself.
+
+Implemented LazyEdit additions:
+
+- `lazyedit/music_publish.py`
+- `scripts/lazyedit_music_package.py`
+- `POST /api/music/package`
+
+The package contains:
+
+- the audio file;
+- `{slug}_metadata.json` using the AutoPublish music metadata contract;
+- `{slug}_lyrics.txt`;
+- `{slug}_manifest.json`;
+- up to nine cover candidates under `covers/`.
+
+If a `--cover-video` is supplied, LazyEdit extracts enough frame covers to reach
+`--cover-count` (default `9`). This lets a calling agent provide one curated
+artwork image and let LazyEdit derive the remaining candidates from the video.
+Later, AgInTi-generated images can simply be passed as repeated `--cover`
+arguments; the ZIP format is unchanged.
+
+Example:
+
+```bash
+cd /home/lachlan/DiskMech/Projects/lazyedit
+python scripts/lazyedit_music_package.py \
+  --audio /home/lachlan/ProjectsLFS/Musia/website/assets/audio/one-sky-three-lights-mixed.mp3 \
+  --title "One Sky, Three Lights" \
+  --author "Musia 慕莎" \
+  --language 中文 \
+  --genre Pop \
+  --story "Musia original mixed-language song with English, Mandarin pinyin, and Japanese romaji vocals, shown with trilingual lyric display on Fun Lazying Art." \
+  --lyrics-json /home/lachlan/ProjectsLFS/Musia/website/data/songs/one-sky-three-lights-mixed/lyrics/mixed-vocal/mul.json \
+  --cover /home/lachlan/ProjectsLFS/Musia/recorded_videos/one-sky-three-lights/one-sky-three-lights-mixed-en-ja-zh-portrait-4k-2160x3840-thumb-24s.png \
+  --cover-video /home/lachlan/ProjectsLFS/Musia/recorded_videos/one-sky-three-lights/one-sky-three-lights-mixed-en-ja-zh-portrait-4k-2160x3840.mp4 \
+  --cover-count 9 \
+  --output-slug one-sky-three-lights-mixed-music
+```
+
+The tested output path was:
+
+```text
+/home/lachlan/DiskMech/Projects/lazyedit/DATA/music_publish/one-sky-three-lights-mixed-music/one-sky-three-lights-mixed-music.zip
+```
+
+API equivalent:
+
+```bash
+curl -fsS http://127.0.0.1:18787/api/music/package \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "audio": "/path/to/song.mp3",
+    "title": "Song Title",
+    "author": "Musia 慕莎",
+    "language": "中文",
+    "lyrics_json": "/path/to/lyrics.json",
+    "cover": "/path/to/cover.png",
+    "cover_video": "/path/to/video.mp4",
+    "cover_count": 9,
+    "slug": "song-title-music"
+  }'
+```
+
+Set `"post": true` only when the package has been inspected and the target
+platform route is known to work.
+
 ## Implemented AutoPublish Music Contract
 
 Do not overload `publish_shipinhao` for music. Use the explicit platform flag
@@ -137,9 +208,9 @@ step or a separate mobile automation strategy.
 
 ## Handoff For LALACHAN Or Musia
 
-For pure Shipinhao music uploads, call the AutoPublish music package script and
-post the generated ZIP with `publish_shipinhao_music=true`. First run with
-`--test` until the live desktop route is visually confirmed.
+For pure Shipinhao music uploads, call the LazyEdit music package script/API,
+then post the generated ZIP with `publish_shipinhao_music=true`. First run with
+`test=true` until the live desktop route is visually confirmed.
 
 For a future pure music publish handoff, the calling repo should provide:
 
@@ -162,24 +233,17 @@ post is:
 - a pure music/audio post: use the `shipinhao_music` publisher, initially with
   `test=true` until the route has been verified.
 
-Example for the current Musia mixed song:
+Current blocker found on 2026-06-29: the desktop Shipinhao account/session
+shows the music management page and a `发表音乐` button, but no tested route
+exposes an audio file input. Clicking `发表音乐` stays on the management table;
+`post/create?type=music` falls back to the normal video uploader. The evidence
+is saved on the Pi:
 
-```bash
-cd /home/lachlan/DiskMech/Projects/lazyedit/AutoPublish
-python scripts/package_shipinhao_music.py \
-  --audio /home/lachlan/ProjectsLFS/Musia/website/assets/audio/one-sky-three-lights-mixed.mp3 \
-  --cover /home/lachlan/ProjectsLFS/Musia/recorded_videos/one-sky-three-lights/one-sky-three-lights-mixed-en-ja-zh-portrait-4k-2160x3840-thumb-24s.png \
-  --lyrics-json /home/lachlan/ProjectsLFS/Musia/website/data/songs/one-sky-three-lights-mixed/lyrics/mixed-vocal/mul.json \
-  --title "One Sky, Three Lights" \
-  --author "Musia 慕莎" \
-  --language 中文 \
-  --genre Pop \
-  --story "Musia original mixed-language song with English, Mandarin pinyin, and Japanese romaji vocals, shown with trilingual lyric display on Fun Lazying Art." \
-  --output /tmp/one-sky-three-lights-mixed_shipinhao_music.zip
-```
+- `/home/lachlan/Projects/autopub/logs/shipinhao-music_route_not_found.png`
+- `/home/lachlan/Projects/autopub/logs/selenium-shipinhao.log`
 
-After deploying AutoPublish to `lazyingart`, add `--post --test` to send the
-ZIP to the Pi without final submission.
+Do not keep retrying music publish blindly until either the account eligibility
+or the desktop route changes. The LazyEdit package is still valid and reusable.
 
 ## LazyEdit Logo And Subtitle Burning Rules
 

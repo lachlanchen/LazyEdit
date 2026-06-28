@@ -99,6 +99,7 @@ from lazyedit.venice_video import VeniceVideoClient, poll_venice_video
 from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
 from lazyedit.chinese_simplify import convert_items_to_simplified, convert_traditional_to_simplified
+from lazyedit.music_publish import package_music_publish, post_music_package_to_autopublish
 from lazyedit.subtitles_burner import BurnSlotConfig, burn_video_with_slots
 
 from pprint import pprint
@@ -8425,6 +8426,80 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid json"})
+
+        audio_path = data.get("audio") or data.get("audio_path") or data.get("music_path")
+        title = str(data.get("title") or data.get("song_title") or "").strip()
+        if not audio_path or not title:
+            self.set_status(400)
+            return self.write({"error": "audio and title are required"})
+
+        cover_paths = data.get("covers")
+        if cover_paths is None:
+            cover_paths = data.get("cover_paths")
+        if cover_paths is None:
+            cover_paths = data.get("cover") or data.get("cover_path") or []
+        if isinstance(cover_paths, str):
+            cover_paths = [cover_paths]
+        if not isinstance(cover_paths, list):
+            cover_paths = []
+
+        try:
+            cover_count = int(data.get("cover_count") or data.get("coverCount") or 9)
+        except Exception:
+            cover_count = 9
+        cover_count = min(max(1, cover_count), 24)
+
+        try:
+            result = package_music_publish(
+                audio_path=audio_path,
+                title=title,
+                output_root=os.path.join(UPLOAD_FOLDER, "music_publish"),
+                output_slug=data.get("output_slug") or data.get("slug"),
+                cover_paths=cover_paths,
+                cover_video_path=data.get("cover_video") or data.get("coverVideo") or data.get("video_path"),
+                cover_count=cover_count,
+                lyrics_file=data.get("lyrics_file") or data.get("lyricsFile"),
+                lyrics_json=data.get("lyrics_json") or data.get("lyricsJson"),
+                lyrics_text=str(data.get("lyrics") or data.get("lyrics_text") or ""),
+                metadata_json=data.get("metadata_json") or data.get("metadataJson"),
+                author=str(data.get("author") or "Musia 慕莎"),
+                artist=data.get("artist"),
+                language=str(data.get("language") or "中文"),
+                genre=str(data.get("genre") or ""),
+                story=str(data.get("story") or data.get("music_story") or ""),
+                description=str(data.get("description") or ""),
+            )
+        except Exception as exc:
+            self.set_status(400)
+            return self.write({"error": str(exc)})
+
+        result["zip_url"] = media_url_for_path(result["zip_path"])
+        result["cover_urls"] = [media_url_for_path(path) for path in result.get("cover_paths") or []]
+
+        if _parse_bool(data.get("post"), default=False):
+            autopublish_url = data.get("autopublish_url") or _resolve_autopublish_url()
+            if not autopublish_url:
+                result["autopublish_response"] = {"warning": "autopublish service not reachable"}
+            else:
+                try:
+                    result["autopublish_response"] = post_music_package_to_autopublish(
+                        result["zip_path"],
+                        autopublish_url,
+                        test=_parse_bool(data.get("test"), default=False),
+                    )
+                except Exception as exc:
+                    result["autopublish_response"] = {"error": str(exc)}
+
+        self.write(result)
+
+
 class AutopublishQueueHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self):
         _ensure_publish_worker_started()
@@ -12161,6 +12236,7 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/process", VideoProcessHandler),
         (r"/api/videos/(\d+)/process-status", VideoProcessStatusHandler),
         (r"/api/videos/(\d+)/publish", VideoPublishHandler),
+        (r"/api/music/package", MusicPackageHandler),
         (r"/api/autopublish/queue", AutopublishQueueHandler),
         (r"/api/videos/(\d+)/captions", CaptionsHandler),
         (r"/media/(.*)", MediaHandler, {"path": upload_folder}),
