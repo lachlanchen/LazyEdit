@@ -167,6 +167,27 @@ The management/sidebar route is:
 https://channels.weixin.qq.com/platform/post/music
 ```
 
+Shipinhao currently has no verified standalone desktop `发表专辑` route. Album
+(`专辑`) is handled as required metadata inside the `发表音乐` song form, and
+also appears as a read-only management tab. Use AutoPublish
+`pub_shipinhao_music.py` for song creation and `pub_shipinhao_zhuanji.py` for
+read-only album/music tab inspection:
+
+```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python pub_shipinhao_zhuanji.py'
+```
+
+The zhuanji helper saves `logs/shipinhao-zhuanji-management.json`. Do not
+represent a click on `发表音乐` as final listing proof unless the management tab
+or backend status shows a row.
+
+After the account has at least one album, the music form may show only
+`专辑信息 / 选择专辑 / 请选择专辑`. The publisher must switch the Vue album
+component to `新建专辑` before filling `专辑名称`, cover, and intro; otherwise
+`发表音乐` stays disabled. Verified on 2026-06-29: management showed two albums
+and two music rows after publishing `One Sky, Three Lights` and
+`アヤちゃん 光の雨`.
+
 Shipinhao music rejects MP3 files below 256kbps. LazyEdit now transcodes low
 bitrate MP3 inputs to a package-local `*_shipinhao_320k.mp3` copy. Verify with
 `ffprobe` if a package fails to enable the submit button. Required fields filled
