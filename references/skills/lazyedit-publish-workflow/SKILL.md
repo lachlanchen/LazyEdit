@@ -130,6 +130,8 @@ python scripts/lazyedit_music_package.py \
   --cover /path/to/artwork.png \
   --cover-video /path/to/related-video.mp4 \
   --cover-count 9 \
+  --proof /path/to/website/manifest.json \
+  --source-url "https://fun.lazying.art/#song-id" \
   --output-slug song-title-music
 ```
 
@@ -147,15 +149,38 @@ curl -fsS http://127.0.0.1:18787/api/music/package \
     "cover": "/path/to/artwork.png",
     "cover_video": "/path/to/related-video.mp4",
     "cover_count": 9,
+    "source_url": "https://fun.lazying.art/#song-id",
     "slug": "song-title-music"
   }'
 ```
 
-Set `--post` or JSON `"post": true` only after inspecting the package. Use
-`--test` until the live Shipinhao desktop route is visually confirmed. As of
-2026-06-29, the desktop Shipinhao session exposes the music management page and
-`发表音乐`, but no verified audio upload form; do not retry real music publish
-blindly until that route or account eligibility changes.
+Set `--post` or JSON `"post": true` only after inspecting the package. As of
+2026-06-29, the verified desktop creation route is:
+
+```text
+https://channels.weixin.qq.com/platform/post/createMusic
+```
+
+The management/sidebar route is:
+
+```text
+https://channels.weixin.qq.com/platform/post/music
+```
+
+Shipinhao music rejects MP3 files below 256kbps. LazyEdit now transcodes low
+bitrate MP3 inputs to a package-local `*_shipinhao_320k.mp3` copy. Verify with
+`ffprobe` if a package fails to enable the submit button. Required fields filled
+by AutoPublish include title, lyrics, author, singer, lyricist, composer,
+producer, album name, album description, album cover, original-proof ZIP, and
+the `我已阅读《视频号音乐人发表须知》` checkbox.
+
+Music package records are durable in LazyEdit:
+
+```bash
+python scripts/lazyedit_music_records.py list --limit 20
+python scripts/lazyedit_music_records.py update ID --shipinhao-item-url URL
+python scripts/lazyedit_music_records.py update ID --deleted
+```
 
 When cover art is not fully prepared, pass one curated cover plus
 `--cover-video` and `--cover-count 9`; LazyEdit will extract enough frame covers

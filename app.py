@@ -8505,6 +8505,27 @@ class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
 
         result["zip_url"] = media_url_for_path(result["zip_path"])
         result["cover_urls"] = [media_url_for_path(path) for path in result.get("cover_paths") or []]
+        music_item_id = None
+        if not _parse_bool(data.get("no_record") or data.get("noRecord"), default=False):
+            try:
+                music_item_id = ldb.add_music_publish_item(
+                    slug=Path(result["package_dir"]).name,
+                    title=title,
+                    artist=str(data.get("artist") or data.get("author") or "Musia 慕莎"),
+                    language_code=str(data.get("language") or "中文"),
+                    status="packaged",
+                    audio_path=result.get("audio_path"),
+                    zip_path=result.get("zip_path"),
+                    metadata_path=result.get("metadata_path"),
+                    manifest_path=result.get("manifest_path"),
+                    cover_paths=result.get("cover_paths") or [],
+                    proof_paths=(result.get("proof_paths") or []) + ([result["proof_zip_path"]] if result.get("proof_zip_path") else []),
+                    source_url=str(data.get("source_url") or data.get("sourceUrl") or data.get("canonical_url") or ""),
+                    metadata=result.get("metadata") or {},
+                )
+                result["music_publish_item_id"] = music_item_id
+            except Exception as exc:
+                result["record_error"] = str(exc)
 
         if _parse_bool(data.get("post"), default=False):
             autopublish_url = data.get("autopublish_url") or _resolve_autopublish_url()
@@ -8517,8 +8538,28 @@ class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
                         autopublish_url,
                         test=_parse_bool(data.get("test"), default=False),
                     )
+                    response_payload = result.get("autopublish_response")
+                    if music_item_id:
+                        remote_job_id = None
+                        remote_status = "queued"
+                        if isinstance(response_payload, dict):
+                            remote_job_id = response_payload.get("job_id") or response_payload.get("id")
+                            remote_status = str(response_payload.get("status") or remote_status)
+                            job_payload = response_payload.get("job")
+                            if not remote_job_id and isinstance(job_payload, dict):
+                                remote_job_id = job_payload.get("id") or job_payload.get("job_id")
+                        ldb.update_music_publish_item(
+                            music_item_id,
+                            status="queued",
+                            remote_job_id=str(remote_job_id) if remote_job_id else None,
+                            remote_filename=Path(result["zip_path"]).name,
+                            remote_status=remote_status,
+                            autopublish_response=response_payload if isinstance(response_payload, dict) else {"raw": response_payload},
+                        )
                 except Exception as exc:
                     result["autopublish_response"] = {"error": str(exc)}
+                    if music_item_id:
+                        ldb.update_music_publish_item(music_item_id, status="failed", error=str(exc))
 
         self.write(result)
 

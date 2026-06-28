@@ -88,6 +88,72 @@ def _ffprobe_duration(path: Path) -> float | None:
         return None
 
 
+def _ffprobe_audio_bitrate(path: Path) -> int | None:
+    result = subprocess.run(
+        [
+            "ffprobe",
+            "-v",
+            "error",
+            "-select_streams",
+            "a:0",
+            "-show_entries",
+            "stream=bit_rate",
+            "-of",
+            "default=noprint_wrappers=1:nokey=1",
+            str(path),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    if result.returncode != 0:
+        return None
+    try:
+        return int(float((result.stdout or "").strip()))
+    except ValueError:
+        return None
+
+
+def _prepare_shipinhao_audio(source: Path, package_dir: Path) -> Path:
+    """Return a package-local audio file that satisfies Shipinhao's bitrate rule."""
+    suffix = source.suffix.lower()
+    bitrate = _ffprobe_audio_bitrate(source)
+    needs_transcode = suffix == ".mp3" and (bitrate is None or bitrate < 256_000)
+    if not needs_transcode:
+        target = package_dir / _safe_arcname(source)
+        if target != source:
+            shutil.copy2(source, target)
+        return target
+
+    target = package_dir / f"{_safe_slug(source.stem, fallback='song')}_shipinhao_320k.mp3"
+    result = subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-i",
+            str(source),
+            "-vn",
+            "-ac",
+            "2",
+            "-ar",
+            "44100",
+            "-codec:a",
+            "libmp3lame",
+            "-b:a",
+            "320k",
+            str(target),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=180,
+    )
+    if result.returncode != 0 or not target.exists():
+        raise RuntimeError((result.stderr or result.stdout or "ffmpeg audio transcode failed").strip())
+    return target
+
+
 def _square_cover_image(source: Path, output_dir: Path, *, prefix: str, index: int) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
     target = output_dir / f"{prefix}_cover_{index:02d}_square.jpg"
@@ -267,9 +333,7 @@ def package_music_publish(
     if cover_shape not in {"square", "original"}:
         raise ValueError("cover_shape must be 'square' or 'original'")
 
-    copied_audio = package_dir / _safe_arcname(audio)
-    if copied_audio != audio:
-        shutil.copy2(audio, copied_audio)
+    copied_audio = _prepare_shipinhao_audio(audio, package_dir)
 
     resolved_covers: list[Path] = []
     for cover_index, cover in enumerate(cover_paths or [], start=1):

@@ -233,17 +233,67 @@ post is:
 - a pure music/audio post: use the `shipinhao_music` publisher, initially with
   `test=true` until the route has been verified.
 
-Current blocker found on 2026-06-29: the desktop Shipinhao account/session
-shows the music management page and a `发表音乐` button, but no tested route
-exposes an audio file input. Clicking `发表音乐` stays on the management table;
-`post/create?type=music` falls back to the normal video uploader. The evidence
-is saved on the Pi:
+2026-06-29 update: desktop Shipinhao music publishing is verified.
 
-- `/home/lachlan/Projects/autopub/logs/shipinhao-music_route_not_found.png`
-- `/home/lachlan/Projects/autopub/logs/selenium-shipinhao.log`
+Verified creation route:
 
-Do not keep retrying music publish blindly until either the account eligibility
-or the desktop route changes. The LazyEdit package is still valid and reusable.
+```text
+https://channels.weixin.qq.com/platform/post/createMusic
+```
+
+Verified management/sidebar route:
+
+```text
+https://channels.weixin.qq.com/platform/post/music
+```
+
+The form exposes:
+
+- audio input accepting `audio/x-wav,audio/mpeg,audio/flac`;
+- album cover input accepting JPEG/PNG;
+- original-proof archive input accepting `.zip,.rar`;
+- required fields for song title, lyrics, singer, lyricist, composer,
+  producer, album title, album description, and the agreement checkbox.
+
+Important failure discovered during the first real music publish:
+
+- the Fun Lazying Art website MP3 for `One Sky, Three Lights` was about
+  `187.7kbps`;
+- Shipinhao requires at least `256kbps`;
+- the submit button stayed disabled and the page showed:
+  `请上传码率不低于256kbps的音频, 当前为: 187.7kbps`.
+
+LazyEdit now transcodes low-bitrate MP3 files into a package-local
+`*_shipinhao_320k.mp3` before zipping. AutoPublish now fills the missing
+required music fields and checks `我已阅读《视频号音乐人发表须知》`.
+
+Real publishes completed on 2026-06-29:
+
+- `One Sky, Three Lights`
+  - LazyEdit music item: `2`
+  - Remote AutoPublish job: `job-1782670416666-1`
+  - ZIP: `one-sky-three-lights-mixed-music-20260629-v2.zip`
+  - Status: `done`
+- `アヤちゃん 光の雨`
+  - LazyEdit music item: `3`
+  - Remote AutoPublish job: `job-1782670567462-2`
+  - ZIP: `aya-chan-hikari-ame-ja-music-20260629.zip`
+  - Status: `done`
+
+List/manage records:
+
+```bash
+cd /home/lachlan/DiskMech/Projects/lazyedit
+source ~/miniconda3/etc/profile.d/conda.sh
+conda activate lazyedit
+python scripts/lazyedit_music_records.py list --limit 20
+python scripts/lazyedit_music_records.py update ID --shipinhao-item-url URL
+python scripts/lazyedit_music_records.py update ID --deleted
+```
+
+The current Shipinhao page did not expose direct item IDs or item links after
+submission. Records therefore store the source URL, package paths, remote job id,
+and the management route for later manual review or deletion.
 
 ## LazyEdit Logo And Subtitle Burning Rules
 

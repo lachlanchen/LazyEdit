@@ -14,7 +14,23 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from config import AUTOPUBLISH_URL, UPLOAD_FOLDER  # noqa: E402
+from lazyedit import db as ldb  # noqa: E402
 from lazyedit.music_publish import package_music_publish, post_music_package_to_autopublish  # noqa: E402
+
+
+def _remote_job_id(response: dict | None) -> str | None:
+    if not isinstance(response, dict):
+        return None
+    for key in ("job_id", "id", "remote_job_id"):
+        value = response.get(key)
+        if value:
+            return str(value)
+    job = response.get("job")
+    if isinstance(job, dict):
+        value = job.get("id") or job.get("job_id")
+        if value:
+            return str(value)
+    return None
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -42,6 +58,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--post", action="store_true", help="Post package to AutoPublish after building.")
     parser.add_argument("--autopublish-url", default=AUTOPUBLISH_URL)
     parser.add_argument("--test", action="store_true")
+    parser.add_argument("--source-url", default="", help="Public source URL for tracking, e.g. Fun Lazying Art item URL.")
+    parser.add_argument("--no-record", action="store_true", help="Do not insert a LazyEdit music_publish_items row.")
     args = parser.parse_args(argv)
 
     result = package_music_publish(
@@ -67,12 +85,49 @@ def main(argv: list[str] | None = None) -> int:
         description=args.description,
     )
 
+    item_id = None
+    if not args.no_record:
+        try:
+            item_id = ldb.add_music_publish_item(
+                slug=Path(result["package_dir"]).name,
+                title=args.title,
+                artist=args.artist or args.author,
+                language_code=args.language,
+                status="packaged",
+                audio_path=result.get("audio_path"),
+                zip_path=result.get("zip_path"),
+                metadata_path=result.get("metadata_path"),
+                manifest_path=result.get("manifest_path"),
+                cover_paths=result.get("cover_paths") or [],
+                proof_paths=(result.get("proof_paths") or []) + ([result["proof_zip_path"]] if result.get("proof_zip_path") else []),
+                source_url=args.source_url,
+                metadata=result.get("metadata") or {},
+            )
+            result["music_publish_item_id"] = item_id
+        except Exception as exc:
+            result["record_error"] = str(exc)
+
     if args.post:
-        result["autopublish_response"] = post_music_package_to_autopublish(
-            result["zip_path"],
-            args.autopublish_url,
-            test=args.test,
-        )
+        try:
+            result["autopublish_response"] = post_music_package_to_autopublish(
+                result["zip_path"],
+                args.autopublish_url,
+                test=args.test,
+            )
+            if item_id:
+                response = result.get("autopublish_response")
+                ldb.update_music_publish_item(
+                    item_id,
+                    status="queued",
+                    remote_job_id=_remote_job_id(response),
+                    remote_filename=Path(result["zip_path"]).name,
+                    remote_status="queued",
+                    autopublish_response=response if isinstance(response, dict) else {"raw": response},
+                )
+        except Exception as exc:
+            result["autopublish_response"] = {"error": str(exc)}
+            if item_id:
+                ldb.update_music_publish_item(item_id, status="failed", error=str(exc))
 
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return 0

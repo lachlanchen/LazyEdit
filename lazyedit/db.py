@@ -304,6 +304,61 @@ def ensure_schema():
             "ALTER TABLE publish_jobs ADD COLUMN IF NOT EXISTS publication_session_id INTEGER REFERENCES publication_sessions(id) ON DELETE SET NULL;",
             "CREATE INDEX IF NOT EXISTS idx_publish_jobs_status_created ON publish_jobs (status, created_at, id);",
             "CREATE INDEX IF NOT EXISTS idx_publish_jobs_video_created ON publish_jobs (video_id, created_at DESC, id DESC);",
+            """
+            CREATE TABLE IF NOT EXISTS music_publish_items (
+                id SERIAL PRIMARY KEY,
+                slug TEXT,
+                title TEXT NOT NULL,
+                artist TEXT,
+                language_code TEXT,
+                status TEXT NOT NULL DEFAULT 'packaged',
+                audio_path TEXT,
+                zip_path TEXT,
+                metadata_path TEXT,
+                manifest_path TEXT,
+                cover_paths JSONB NOT NULL DEFAULT '[]'::jsonb,
+                proof_paths JSONB NOT NULL DEFAULT '[]'::jsonb,
+                source_url TEXT,
+                shipinhao_item_id TEXT,
+                shipinhao_item_url TEXT,
+                shipinhao_management_url TEXT,
+                remote_job_id TEXT,
+                remote_filename TEXT,
+                remote_status TEXT,
+                autopublish_response JSONB NOT NULL DEFAULT '{}'::jsonb,
+                metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
+                error TEXT,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+                published_at TIMESTAMPTZ,
+                deleted_at TIMESTAMPTZ
+            );
+            """,
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS slug TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS artist TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS language_code TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'packaged';",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS audio_path TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS zip_path TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS metadata_path TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS manifest_path TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS cover_paths JSONB NOT NULL DEFAULT '[]'::jsonb;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS proof_paths JSONB NOT NULL DEFAULT '[]'::jsonb;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS source_url TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS shipinhao_item_id TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS shipinhao_item_url TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS shipinhao_management_url TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS remote_job_id TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS remote_filename TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS remote_status TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS autopublish_response JSONB NOT NULL DEFAULT '{}'::jsonb;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS metadata JSONB NOT NULL DEFAULT '{}'::jsonb;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS error TEXT;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS published_at TIMESTAMPTZ;",
+            "ALTER TABLE music_publish_items ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;",
+            "CREATE INDEX IF NOT EXISTS idx_music_publish_items_slug_created ON music_publish_items (slug, created_at DESC, id DESC);",
+            "CREATE INDEX IF NOT EXISTS idx_music_publish_items_status_updated ON music_publish_items (status, updated_at DESC, id DESC);",
         ]
 
         with get_cursor(commit=True) as cur:
@@ -1405,6 +1460,129 @@ def list_publish_jobs(limit: int = 100) -> list[tuple]:
                 END ASC,
                 j.updated_at DESC,
                 j.id DESC
+            LIMIT %s
+            """,
+            (limit,),
+        )
+        return cur.fetchall()
+
+
+def add_music_publish_item(
+    *,
+    slug: str | None,
+    title: str,
+    artist: str | None = None,
+    language_code: str | None = None,
+    status: str = "packaged",
+    audio_path: str | None = None,
+    zip_path: str | None = None,
+    metadata_path: str | None = None,
+    manifest_path: str | None = None,
+    cover_paths: list[str] | None = None,
+    proof_paths: list[str] | None = None,
+    source_url: str | None = None,
+    metadata: dict | None = None,
+) -> int:
+    ensure_schema()
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            """
+            INSERT INTO music_publish_items (
+                slug, title, artist, language_code, status, audio_path, zip_path,
+                metadata_path, manifest_path, cover_paths, proof_paths, source_url, metadata
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (
+                slug,
+                title,
+                artist,
+                language_code,
+                status,
+                audio_path,
+                zip_path,
+                metadata_path,
+                manifest_path,
+                Json(cover_paths or []),
+                Json(proof_paths or []),
+                source_url,
+                Json(metadata or {}),
+            ),
+        )
+        (item_id,) = cur.fetchone()
+        return item_id
+
+
+def update_music_publish_item(
+    item_id: int,
+    *,
+    status: str | None = None,
+    shipinhao_item_id: str | None = None,
+    shipinhao_item_url: str | None = None,
+    shipinhao_management_url: str | None = None,
+    remote_job_id: str | None = None,
+    remote_filename: str | None = None,
+    remote_status: str | None = None,
+    autopublish_response: dict | None = None,
+    error: str | None = None,
+    published: bool = False,
+    deleted: bool = False,
+) -> None:
+    ensure_schema()
+    sets = ["updated_at = NOW()"]
+    values: list = []
+
+    def add_set(column: str, value) -> None:
+        sets.append(f"{column} = %s")
+        values.append(value)
+
+    if status is not None:
+        add_set("status", status)
+    if shipinhao_item_id is not None:
+        add_set("shipinhao_item_id", shipinhao_item_id)
+    if shipinhao_item_url is not None:
+        add_set("shipinhao_item_url", shipinhao_item_url)
+    if shipinhao_management_url is not None:
+        add_set("shipinhao_management_url", shipinhao_management_url)
+    if remote_job_id is not None:
+        add_set("remote_job_id", remote_job_id)
+    if remote_filename is not None:
+        add_set("remote_filename", remote_filename)
+    if remote_status is not None:
+        add_set("remote_status", remote_status)
+    if autopublish_response is not None:
+        sets.append("autopublish_response = %s")
+        values.append(Json(autopublish_response))
+    if error is not None:
+        add_set("error", error)
+    if published:
+        sets.append("published_at = COALESCE(published_at, NOW())")
+    if deleted:
+        sets.append("deleted_at = COALESCE(deleted_at, NOW())")
+
+    values.append(item_id)
+    with get_cursor(commit=True) as cur:
+        cur.execute(
+            f"UPDATE music_publish_items SET {', '.join(sets)} WHERE id = %s",
+            tuple(values),
+        )
+
+
+def list_music_publish_items(limit: int = 50) -> list[tuple]:
+    ensure_schema()
+    with get_cursor() as cur:
+        cur.execute(
+            """
+            SELECT
+                id, slug, title, artist, language_code, status, audio_path,
+                zip_path, metadata_path, manifest_path, cover_paths, proof_paths,
+                source_url, shipinhao_item_id, shipinhao_item_url,
+                shipinhao_management_url, remote_job_id, remote_filename,
+                remote_status, error, created_at, updated_at, published_at,
+                deleted_at
+            FROM music_publish_items
+            ORDER BY updated_at DESC, id DESC
             LIMIT %s
             """,
             (limit,),
