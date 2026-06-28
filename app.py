@@ -8450,6 +8450,16 @@ class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
         if not isinstance(cover_paths, list):
             cover_paths = []
 
+        proof_paths = data.get("proof")
+        if proof_paths is None:
+            proof_paths = data.get("proof_paths")
+        if proof_paths is None:
+            proof_paths = data.get("proof_files") or []
+        if isinstance(proof_paths, str):
+            proof_paths = [proof_paths]
+        if not isinstance(proof_paths, list):
+            proof_paths = []
+
         try:
             cover_count = int(data.get("cover_count") or data.get("coverCount") or 9)
         except Exception:
@@ -8465,6 +8475,19 @@ class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
                 cover_paths=cover_paths,
                 cover_video_path=data.get("cover_video") or data.get("coverVideo") or data.get("video_path"),
                 cover_count=cover_count,
+                proof_paths=proof_paths,
+                website_screenshot_path=(
+                    data.get("website_screenshot")
+                    or data.get("websiteScreenshot")
+                    or data.get("public_page_screenshot")
+                    or data.get("publicPageScreenshot")
+                ),
+                webapp_screenshot_path=(
+                    data.get("webapp_screenshot")
+                    or data.get("webappScreenshot")
+                    or data.get("generation_screenshot")
+                    or data.get("generationScreenshot")
+                ),
                 lyrics_file=data.get("lyrics_file") or data.get("lyricsFile"),
                 lyrics_json=data.get("lyrics_json") or data.get("lyricsJson"),
                 lyrics_text=str(data.get("lyrics") or data.get("lyrics_text") or ""),

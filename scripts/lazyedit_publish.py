@@ -340,6 +340,29 @@ def current_ui_settings(client: LazyEditClient) -> dict[str, Any]:
     return settings
 
 
+def current_logo_settings(client: LazyEditClient) -> dict[str, Any]:
+    try:
+        payload = client.request_json("GET", "/api/ui-settings/logo_settings", timeout=30)
+        value = payload.get("value")
+        return value if isinstance(value, dict) else {}
+    except Exception as exc:
+        print_event(f"Warning: failed to load Studio logo settings: {exc}", quiet=client.quiet)
+        return {}
+
+
+def apply_logo_overrides(args: argparse.Namespace, logo_settings: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not isinstance(logo_settings, dict):
+        return logo_settings
+    if args.logo_position is None and args.logo_enabled_override is None:
+        return logo_settings
+    logo_settings = dict(logo_settings)
+    if args.logo_position:
+        logo_settings["position"] = args.logo_position
+    if args.logo_enabled_override is not None:
+        logo_settings["enabled"] = bool(args.logo_enabled_override)
+    return logo_settings
+
+
 def first_present(*values: Any) -> Any:
     for value in values:
         if value is not None:
@@ -431,6 +454,26 @@ def step_summary(payload: dict[str, Any]) -> str:
     return " ".join(parts)
 
 
+def process_ready_with_options(payload: dict[str, Any], *, burn_subtitles: bool, logo_enabled: bool) -> bool:
+    if payload.get("ready_for_publish"):
+        return True
+    steps = payload.get("steps") or {}
+    if not isinstance(steps, dict):
+        return False
+
+    required = ["transcribe", "polish", "keyframes", "caption", "metadata_zh", "metadata_en", "cover"]
+    if burn_subtitles:
+        required.append("translate")
+    if burn_subtitles or logo_enabled:
+        required.append("burn")
+
+    for name in required:
+        status = (steps.get(name) or {}).get("status")
+        if status not in {"done", "skipped"}:
+            return False
+    return True
+
+
 def request_with_heartbeat(
     client: LazyEditClient,
     method: str,
@@ -465,6 +508,9 @@ def wait_for_process(
     session_id: int | None,
     timeout: int,
     interval: int,
+    *,
+    burn_subtitles: bool,
+    logo_enabled: bool,
 ) -> dict[str, Any]:
     deadline = time.monotonic() + timeout
     last = ""
@@ -487,7 +533,7 @@ def wait_for_process(
         ]
         if errors:
             raise ApiError("process failed: " + "; ".join(errors), payload=payload)
-        if payload.get("ready_for_publish"):
+        if process_ready_with_options(payload, burn_subtitles=burn_subtitles, logo_enabled=logo_enabled):
             return payload
         time.sleep(interval)
     raise TimeoutError(f"process did not become ready within {timeout} seconds")
@@ -664,6 +710,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--subtitle-font-color")
     parser.add_argument("--subtitle-outline-bold", action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument("--subtitle-outline-color")
+    parser.add_argument("--logo-position", choices=["top-left", "top-right", "bottom-left", "bottom-right", "center"])
+    parser.add_argument("--logo", dest="logo_enabled_override", action="store_true", default=None)
+    parser.add_argument("--no-logo", dest="logo_enabled_override", action="store_false")
     parser.add_argument("--steps", help="Comma-separated process steps. Defaults to the publish pipeline.")
     parser.add_argument("--wait", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--process-timeout", type=int, default=PROCESS_TIMEOUT_SECONDS)
@@ -762,12 +811,15 @@ def main(argv: list[str] | None = None) -> int:
             print_event("Subtitle correction saved as polished subtitles.", quiet=args.quiet)
 
         settings = current_ui_settings(client) if args.use_current_settings else {}
+        if not args.use_current_settings and (args.logo_position or args.logo_enabled_override is not None):
+            settings["logo_settings"] = current_logo_settings(client)
         if settings:
             final["current_settings"] = settings
             print_event("Loaded current Studio publish settings.", quiet=args.quiet)
 
         options = build_options(args, correction_prompt, metadata_prompt, settings)
         logo_settings = settings.get("logo_settings") if isinstance(settings, dict) else None
+        logo_settings = apply_logo_overrides(args, logo_settings)
         logo_enabled = logo_overlay_enabled(logo_settings)
         final["options"] = {
             "burnSubtitles": options["burnSubtitles"],
@@ -815,6 +867,8 @@ def main(argv: list[str] | None = None) -> int:
                     int(session_id) if session_id else None,
                     args.process_timeout,
                     args.poll_seconds,
+                    burn_subtitles=bool(options["burnSubtitles"]),
+                    logo_enabled=logo_enabled,
                 )
 
         if args.publish:

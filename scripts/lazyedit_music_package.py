@@ -34,6 +34,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cover", action="append", default=[], help="Cover candidate image. Can be repeated.")
     parser.add_argument("--cover-video", help="Video used to extract additional cover candidates.")
     parser.add_argument("--cover-count", type=int, default=9)
+    parser.add_argument("--proof", action="append", default=[], help="Original-proof file. Can be repeated.")
+    parser.add_argument("--website-screenshot", help="Screenshot of the public Musia/Fun Lazying Art song page.")
+    parser.add_argument("--webapp-screenshot", help="Screenshot of the Musia webapp generation/session context.")
     parser.add_argument("--output-slug", help="Stable package folder/zip slug.")
     parser.add_argument("--output-root", default=str(Path(UPLOAD_FOLDER) / "music_publish"))
     parser.add_argument("--post", action="store_true", help="Post package to AutoPublish after building.")
@@ -49,6 +52,9 @@ def main(argv: list[str] | None = None) -> int:
         cover_paths=args.cover,
         cover_video_path=args.cover_video,
         cover_count=args.cover_count,
+        proof_paths=args.proof,
+        website_screenshot_path=args.website_screenshot,
+        webapp_screenshot_path=args.webapp_screenshot,
         lyrics_file=args.lyrics_file,
         lyrics_json=args.lyrics_json,
         lyrics_text=args.lyrics_text,

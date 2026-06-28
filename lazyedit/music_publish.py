@@ -27,6 +27,19 @@ def _safe_arcname(path: Path) -> str:
     return path.name.replace("/", "_").replace("\\", "_")
 
 
+def _unique_child_path(directory: Path, filename: str) -> Path:
+    target = directory / filename
+    if not target.exists():
+        return target
+    stem = target.stem
+    suffix = target.suffix
+    for index in range(2, 1000):
+        candidate = directory / f"{stem}-{index}{suffix}"
+        if not candidate.exists():
+            return candidate
+    raise RuntimeError(f"Could not create a unique filename for {filename}")
+
+
 def _read_text(path: str | Path | None) -> str:
     if not path:
         return ""
@@ -75,7 +88,41 @@ def _ffprobe_duration(path: Path) -> float | None:
         return None
 
 
-def _extract_cover_frames(video_path: Path, output_dir: Path, *, count: int, prefix: str) -> list[Path]:
+def _square_cover_image(source: Path, output_dir: Path, *, prefix: str, index: int) -> Path:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    target = output_dir / f"{prefix}_cover_{index:02d}_square.jpg"
+    result = subprocess.run(
+        [
+            "ffmpeg",
+            "-y",
+            "-i",
+            str(source),
+            "-frames:v",
+            "1",
+            "-vf",
+            "scale=1440:1440:force_original_aspect_ratio=increase,crop=1440:1440,setsar=1",
+            "-q:v",
+            "3",
+            str(target),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=120,
+    )
+    if result.returncode != 0 or not target.exists():
+        raise RuntimeError((result.stderr or result.stdout or "ffmpeg square cover conversion failed").strip())
+    return target
+
+
+def _extract_cover_frames(
+    video_path: Path,
+    output_dir: Path,
+    *,
+    count: int,
+    prefix: str,
+    cover_shape: str = "square",
+) -> list[Path]:
     if count <= 0:
         return []
     duration = _ffprobe_duration(video_path) or 0
@@ -91,6 +138,9 @@ def _extract_cover_frames(video_path: Path, output_dir: Path, *, count: int, pre
     covers: list[Path] = []
     for index, timestamp in enumerate(timestamps, start=1):
         target = output_dir / f"{prefix}_auto_cover_{index:02d}.jpg"
+        vf = "scale=1440:-2"
+        if cover_shape == "square":
+            vf = "scale=1440:1440:force_original_aspect_ratio=increase,crop=1440:1440,setsar=1"
         result = subprocess.run(
             [
                 "ffmpeg",
@@ -102,7 +152,7 @@ def _extract_cover_frames(video_path: Path, output_dir: Path, *, count: int, pre
                 "-frames:v",
                 "1",
                 "-vf",
-                "scale=1440:-2",
+                vf,
                 "-q:v",
                 "3",
                 str(target),
@@ -118,10 +168,25 @@ def _extract_cover_frames(video_path: Path, output_dir: Path, *, count: int, pre
     return covers
 
 
+def _copy_proof_file(source: str | Path, proof_dir: Path, *, name_hint: str | None = None) -> Path:
+    path = Path(source).expanduser().resolve()
+    if not path.exists():
+        raise FileNotFoundError(path)
+    suffix = path.suffix or ".bin"
+    filename = f"{name_hint}{suffix}" if name_hint else _safe_arcname(path)
+    target = _unique_child_path(proof_dir, filename)
+    shutil.copy2(path, target)
+    return target
+
+
 def build_music_metadata(
     *,
     audio_name: str,
     cover_names: list[str],
+    proof_names: list[str] | None = None,
+    proof_zip_name: str | None = None,
+    website_screenshot_name: str | None = None,
+    webapp_screenshot_name: str | None = None,
     title: str,
     author: str = DEFAULT_AUTHOR,
     artist: str | None = None,
@@ -140,6 +205,11 @@ def build_music_metadata(
         "cover_filename": cover_names[0] if cover_names else None,
         "cover_filenames": cover_names,
         "background_image_filenames": cover_names,
+        "proof_filenames": proof_names or [],
+        "original_proof_filename": proof_zip_name,
+        "proof_zip_filename": proof_zip_name,
+        "website_screenshot_filename": website_screenshot_name,
+        "webapp_screenshot_filename": webapp_screenshot_name,
         "title": title,
         "song_title": title,
         "lyrics": lyrics,
@@ -168,6 +238,10 @@ def package_music_publish(
     cover_paths: list[str | Path] | None = None,
     cover_video_path: str | Path | None = None,
     cover_count: int = 9,
+    cover_shape: str = "square",
+    proof_paths: list[str | Path] | None = None,
+    website_screenshot_path: str | Path | None = None,
+    webapp_screenshot_path: str | Path | None = None,
     lyrics_file: str | Path | None = None,
     lyrics_json: str | Path | None = None,
     lyrics_text: str = "",
@@ -187,21 +261,27 @@ def package_music_publish(
     slug = _safe_slug(output_slug or package_title or audio.stem, fallback=audio.stem)
     package_dir = Path(output_root).expanduser().resolve() / slug
     covers_dir = package_dir / "covers"
+    proof_dir = package_dir / "proof"
     package_dir.mkdir(parents=True, exist_ok=True)
     covers_dir.mkdir(parents=True, exist_ok=True)
+    if cover_shape not in {"square", "original"}:
+        raise ValueError("cover_shape must be 'square' or 'original'")
 
     copied_audio = package_dir / _safe_arcname(audio)
     if copied_audio != audio:
         shutil.copy2(audio, copied_audio)
 
     resolved_covers: list[Path] = []
-    for cover in cover_paths or []:
+    for cover_index, cover in enumerate(cover_paths or [], start=1):
         cover_path = Path(cover).expanduser().resolve()
         if not cover_path.exists():
             raise FileNotFoundError(cover_path)
-        target = covers_dir / _safe_arcname(cover_path)
-        if target != cover_path:
-            shutil.copy2(cover_path, target)
+        if cover_shape == "square":
+            target = _square_cover_image(cover_path, covers_dir, prefix=slug, index=cover_index)
+        else:
+            target = covers_dir / _safe_arcname(cover_path)
+            if target != cover_path:
+                shutil.copy2(cover_path, target)
         resolved_covers.append(target)
 
     missing_count = max(0, int(cover_count) - len(resolved_covers))
@@ -211,9 +291,58 @@ def package_music_publish(
             covers_dir,
             count=missing_count,
             prefix=slug,
+            cover_shape=cover_shape,
         )
         resolved_covers.extend(extracted)
     resolved_covers = resolved_covers[: max(1, int(cover_count))]
+
+    resolved_proofs: list[Path] = []
+    website_screenshot: Path | None = None
+    webapp_screenshot: Path | None = None
+    if website_screenshot_path or webapp_screenshot_path or proof_paths:
+        proof_dir.mkdir(parents=True, exist_ok=True)
+    if website_screenshot_path:
+        website_screenshot = _copy_proof_file(
+            website_screenshot_path,
+            proof_dir,
+            name_hint="website-screenshot",
+        )
+        resolved_proofs.append(website_screenshot)
+    if webapp_screenshot_path:
+        webapp_screenshot = _copy_proof_file(
+            webapp_screenshot_path,
+            proof_dir,
+            name_hint="webapp-screenshot",
+        )
+        resolved_proofs.append(webapp_screenshot)
+    for proof in proof_paths or []:
+        copied = _copy_proof_file(proof, proof_dir)
+        if copied not in resolved_proofs:
+            resolved_proofs.append(copied)
+
+    proof_readme_path: Path | None = None
+    proof_zip_path: Path | None = None
+    if resolved_proofs:
+        proof_readme_path = proof_dir / "README.txt"
+        proof_readme_path.write_text(
+            "\n".join(
+                [
+                    "Original proof / 原创证明",
+                    "",
+                    f"Song title: {package_title}",
+                    f"Author: {author}",
+                    f"Artist: {artist or author}",
+                    "This package contains screenshots and source artifacts showing",
+                    "that the song belongs to the Musia / LazyingArt workflow.",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        proof_zip_path = proof_dir / f"{slug}_original_proof.zip"
+        with zipfile.ZipFile(proof_zip_path, "w") as proof_zip:
+            proof_zip.write(proof_readme_path, arcname=proof_readme_path.name)
+            for proof in resolved_proofs:
+                proof_zip.write(proof, arcname=proof.name)
 
     lyrics = lyrics_text.strip() or _read_text(lyrics_file) or lyrics_from_json(lyrics_json)
     metadata_override = None
@@ -223,9 +352,17 @@ def package_music_publish(
             metadata_override = None
 
     cover_names = [f"covers/{cover.name}" for cover in resolved_covers]
+    proof_names = [f"proof/{proof.name}" for proof in resolved_proofs]
+    if proof_readme_path:
+        proof_names.insert(0, f"proof/{proof_readme_path.name}")
+    proof_zip_name = f"proof/{proof_zip_path.name}" if proof_zip_path else None
     metadata = build_music_metadata(
         audio_name=copied_audio.name,
         cover_names=cover_names,
+        proof_names=proof_names,
+        proof_zip_name=proof_zip_name,
+        website_screenshot_name=f"proof/{website_screenshot.name}" if website_screenshot else None,
+        webapp_screenshot_name=f"proof/{webapp_screenshot.name}" if webapp_screenshot else None,
         title=package_title,
         author=author,
         artist=artist,
@@ -252,6 +389,9 @@ def package_music_publish(
         "lyrics": lyrics_path.name,
         "covers": cover_names,
         "cover_count": len(cover_names),
+        "cover_shape": cover_shape,
+        "proof_files": proof_names,
+        "proof_zip": proof_zip_name,
     }
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -263,6 +403,12 @@ def package_music_publish(
         zipf.write(manifest_path, arcname=manifest_path.name)
         for cover in resolved_covers:
             zipf.write(cover, arcname=f"covers/{cover.name}")
+        if proof_readme_path:
+            zipf.write(proof_readme_path, arcname=f"proof/{proof_readme_path.name}")
+        for proof in resolved_proofs:
+            zipf.write(proof, arcname=f"proof/{proof.name}")
+        if proof_zip_path:
+            zipf.write(proof_zip_path, arcname=f"proof/{proof_zip_path.name}")
 
     return {
         "status": "ready",
@@ -274,6 +420,8 @@ def package_music_publish(
         "audio_path": str(copied_audio),
         "cover_paths": [str(path) for path in resolved_covers],
         "cover_count": len(resolved_covers),
+        "proof_paths": [str(path) for path in resolved_proofs],
+        "proof_zip_path": str(proof_zip_path) if proof_zip_path else None,
         "metadata": metadata,
     }
 
