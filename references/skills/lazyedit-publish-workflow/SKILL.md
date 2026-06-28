@@ -188,6 +188,12 @@ component to `新建专辑` before filling `专辑名称`, cover, and intro; oth
 and two music rows after publishing `One Sky, Three Lights` and
 `アヤちゃん 光の雨`.
 
+Do not claim `音乐人说`, `歌曲简介`, `歌曲故事`, or a video-style `声明原创`
+was filled unless the live create form exposes those fields. In the verified
+2026-06-29 run, the story text existed in package metadata and album intro, but
+the separate `音乐人说` field was not present; `作品类型` stayed on the page
+default `原创`, and original proof was uploaded through `证明文件`.
+
 Shipinhao music rejects MP3 files below 256kbps. LazyEdit now transcodes low
 bitrate MP3 inputs to a package-local `*_shipinhao_320k.mp3` copy. Verify with
 `ffprobe` if a package fails to enable the submit button. Required fields filled
