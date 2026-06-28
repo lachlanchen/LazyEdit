@@ -11638,14 +11638,14 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
         else:
             steps["cover"] = step_payload("idle")
 
-        ready_for_publish = (
-            ready_for_cover
-            and steps.get("cover", {}).get("status") == "done"
-            and all(
-                step.get("status") in {"done", "skipped"}
-                for name, step in steps.items()
-                if name != "cover"
-            )
+        required_for_publish = ["transcribe", "polish", "keyframes", "caption", "metadata_zh", "metadata_en", "cover"]
+        if subtitle_burn_required_for_publish:
+            required_for_publish.append("translate")
+        if burn_required_for_publish:
+            required_for_publish.append("burn")
+        ready_for_publish = ready_for_cover and all(
+            (steps.get(name) or {}).get("status") in {"done", "skipped"}
+            for name in required_for_publish
         )
         last_updated = max(updated_at_candidates) if updated_at_candidates else None
 
