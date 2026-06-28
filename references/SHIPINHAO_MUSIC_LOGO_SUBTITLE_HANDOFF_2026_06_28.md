@@ -2,9 +2,11 @@
 
 Date: 2026-06-28
 
-Scope of this note: static research and code-read only. No Shipinhao browser
-session was opened, no live publish was triggered, and no publisher code was
-changed while the normal Shipinhao video publisher may be active.
+Scope of this note: Shipinhao music research, LazyEdit logo/subtitle behavior,
+and the AutoPublish music handoff contract. The first pass was static research
+only. A later code pass added the LazyEdit logo-only processing path and the
+AutoPublish music ZIP/publisher entry point. The live Shipinhao desktop music
+route still needs a `test=true` browser verification before a real music submit.
 
 ## What Was Confirmed
 
@@ -26,8 +28,9 @@ Public references also indicate that WeChat Channels supports music/audio
 publishing. Some public articles distinguish `音乐` from `音频`: desktop
 Channels Assistant has been described as using content management / audio
 management / publish audio, while mobile screenshots show direct music
-publishing. Because the current live desktop route was not tested in this pass,
-the exact automatable desktop URL still needs verification before code is added.
+publishing. Because the current live desktop route has not been test-submitted
+yet, the exact automatable desktop URL still needs verification with
+`test=true`.
 
 Useful public references from this research pass:
 
@@ -37,19 +40,22 @@ Useful public references from this research pass:
 
 ## Current AutoPublish State
 
-AutoPublish currently implements Shipinhao video publishing only.
+AutoPublish implements Shipinhao video publishing and now has a separate
+Shipinhao music entry point. Video and music are intentionally separate routes.
 
 Relevant files:
 
 - `AutoPublish/app.py`
 - `AutoPublish/pub_shipinhao.py`
+- `AutoPublish/pub_shipinhao_music.py`
 - `AutoPublish/login_shipinhao.py`
 - `AutoPublish/utils.py`
+- `AutoPublish/scripts/package_shipinhao_music.py`
 
 Current publish job flow:
 
-1. `/publish` accepts flags such as `publish_shipinhao`, `publish_y2b`, and
-   `publish_instagram`.
+1. `/publish` accepts flags such as `publish_shipinhao`,
+   `publish_shipinhao_music`, `publish_y2b`, and `publish_instagram`.
 2. `_process_publish_job()` extracts the ZIP into `transcription_data`.
 3. It reads `{stem}_metadata.json`.
 4. It expects video metadata fields such as `video_filename` and
@@ -65,19 +71,21 @@ uses `utils.SendMail`, and `SendMail` creates an Apple-Watch-friendly inline QR
 PNG using `QRCodeProcessor.build_watch_friendly_png()`. A music publisher should
 reuse this path rather than building a second email mechanism.
 
-## Safe Future Code Update Plan
+## Implemented AutoPublish Music Contract
 
-Do not overload `publish_shipinhao` for music. Use an explicit new platform flag
-so a music upload cannot accidentally enter the video publish route.
+Do not overload `publish_shipinhao` for music. Use the explicit platform flag
+`publish_shipinhao_music=true` so a music upload cannot accidentally enter the
+video publish route.
 
-Suggested additions:
+Implemented additions:
 
 - `AutoPublish/pub_shipinhao_music.py`
 - `publish_shipinhao_music` request flag in `AutoPublish/app.py`
 - `shipinhao_music` platform label in the queue status
 - optional `ignore_shipinhao_music` ignore file
+- `AutoPublish/scripts/package_shipinhao_music.py`
 
-Suggested package metadata contract:
+Supported package metadata contract:
 
 ```json
 {
@@ -100,7 +108,7 @@ Suggested package metadata contract:
 The publisher should accept either `music_filename` or `audio_filename`, with
 `music_filename` taking priority. Keep video metadata support separate.
 
-Suggested implementation behavior:
+Implementation behavior:
 
 1. Start or reuse Chromium on port `5006`, using the same profile/session logic
    as the video publisher.
@@ -121,16 +129,17 @@ Suggested implementation behavior:
 10. Save HTML/screenshot snapshots on failure with the same `log_html_snapshot`
     pattern used by `pub_shipinhao.py`.
 
-Important blocker to verify before coding: whether the desktop web site exposes
-the music upload form. If it only exists in the mobile WeChat app, AutoPublish
-should not fake a desktop publisher. In that case, the correct fallback is a
-documented manual/mobile step or a separate mobile automation strategy.
+Important blocker before real submit: verify whether the desktop web site
+exposes a usable music upload form at one of the candidate routes. If it only
+exists in the mobile WeChat app, AutoPublish should not fake a desktop
+publisher. In that case, the correct fallback is a documented manual/mobile
+step or a separate mobile automation strategy.
 
 ## Handoff For LALACHAN Or Musia
 
-Until `shipinhao_music` is implemented, LALACHAN/Musia should not call
-AutoPublish for pure Shipinhao music uploads. They can still publish music
-videos through the existing LazyEdit video path.
+For pure Shipinhao music uploads, call the AutoPublish music package script and
+post the generated ZIP with `publish_shipinhao_music=true`. First run with
+`--test` until the live desktop route is visually confirmed.
 
 For a future pure music publish handoff, the calling repo should provide:
 
@@ -150,8 +159,27 @@ For LALACHAN generated story videos with songs, decide first whether the desired
 post is:
 
 - a video post: use the existing LazyEdit video publish pipeline;
-- a pure music/audio post: use the future `shipinhao_music` publisher after it
-  exists.
+- a pure music/audio post: use the `shipinhao_music` publisher, initially with
+  `test=true` until the route has been verified.
+
+Example for the current Musia mixed song:
+
+```bash
+cd /home/lachlan/DiskMech/Projects/lazyedit/AutoPublish
+python scripts/package_shipinhao_music.py \
+  --audio /home/lachlan/ProjectsLFS/Musia/website/assets/audio/one-sky-three-lights-mixed.mp3 \
+  --cover /home/lachlan/ProjectsLFS/Musia/recorded_videos/one-sky-three-lights/one-sky-three-lights-mixed-en-ja-zh-portrait-4k-2160x3840-thumb-24s.png \
+  --lyrics-json /home/lachlan/ProjectsLFS/Musia/website/data/songs/one-sky-three-lights-mixed/lyrics/mixed-vocal/mul.json \
+  --title "One Sky, Three Lights" \
+  --author "Musia 慕莎" \
+  --language 中文 \
+  --genre Pop \
+  --story "Musia original mixed-language song with English, Mandarin pinyin, and Japanese romaji vocals, shown with trilingual lyric display on Fun Lazying Art." \
+  --output /tmp/one-sky-three-lights-mixed_shipinhao_music.zip
+```
+
+After deploying AutoPublish to `lazyingart`, add `--post --test` to send the
+ZIP to the Pi without final submission.
 
 ## LazyEdit Logo And Subtitle Burning Rules
 
@@ -204,24 +232,23 @@ For generated videos, keep the full script as subtitle-correction context, but
 use a concise metadata brief. Do not feed the entire storyboard to metadata
 generation, because the metadata can become an over-detailed script dump.
 
-## Logo-Only Video Output Caveat
+## Logo-Only Video Output
 
-Current CLI behavior does not guarantee a logo-only processed output when
-`--no-burn-subtitles` is used, because the default step list omits the `burn`
-step when subtitle burning is disabled.
+LazyEdit supports logo-only processed output. When Studio logo settings are
+enabled and `burnSubtitles=false`, the process/publish path still runs the burn
+stage as a logo overlay job. The resulting output ends in `_logo.mp4`, is written
+as H.264/AAC with `+faststart`, and is selected for the publish ZIP. Translation
+is skipped because subtitles are disabled.
 
 Meaning:
 
 - `--burn-subtitles` with enabled logo produces the normal subtitle/logo output.
-- `--no-burn-subtitles` is good for no-subtitle video publish, but it should not
-  be assumed to burn the logo unless the process path is explicitly enhanced.
+- `--no-burn-subtitles` with enabled logo produces a no-subtitle logo-only
+  output.
+- `--no-burn-subtitles` with logo disabled publishes the original/preprocessed
+  source video.
 
-If logo-only publishing is needed later, implement it deliberately by separating
-logo overlay from subtitle rendering, or by allowing the burn step to run with
-an empty subtitle overlay and the configured logo overlay. Do not patch this
-during an active LALACHAN/Shipinhao publish session.
-
-## Research-Only Verification Checklist For Later
+## Music Route Verification Checklist
 
 When no Shipinhao publish is active, verify the music route without submitting:
 
@@ -231,7 +258,7 @@ When no Shipinhao publish is active, verify the music route without submitting:
 4. Save the HTML snapshot of the music form.
 5. Confirm the form contains audio upload input, song title, lyrics, story,
    background image upload, agreement checkbox, and `完成`.
-6. Only after that, implement `pub_shipinhao_music.py`.
-7. First run with `test=true`.
+6. Run a package with `publish_shipinhao_music=true&test=true`.
+7. Confirm the page filled audio, title, lyrics, language, author/story,
+   artwork, agreement, and an enabled `完成` button.
 8. Only real-submit after the filled form is visually verified.
-

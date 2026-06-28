@@ -402,9 +402,19 @@ def build_options(
     }
 
 
-def default_steps(burn_subtitles: bool) -> list[str]:
+def logo_overlay_enabled(logo_settings: dict[str, Any] | None) -> bool:
+    return bool(
+        isinstance(logo_settings, dict)
+        and logo_settings.get("enabled")
+        and logo_settings.get("logoPath")
+    )
+
+
+def default_steps(burn_subtitles: bool, logo_enabled: bool = False) -> list[str]:
     if burn_subtitles:
         return ["keyframes", "caption", "transcribe", "translate", "burn", "metadata_zh", "metadata_en", "cover"]
+    if logo_enabled:
+        return ["keyframes", "caption", "transcribe", "burn", "metadata_zh", "metadata_en", "cover"]
     return ["keyframes", "caption", "transcribe", "metadata_zh", "metadata_en", "cover"]
 
 
@@ -757,6 +767,8 @@ def main(argv: list[str] | None = None) -> int:
             print_event("Loaded current Studio publish settings.", quiet=args.quiet)
 
         options = build_options(args, correction_prompt, metadata_prompt, settings)
+        logo_settings = settings.get("logo_settings") if isinstance(settings, dict) else None
+        logo_enabled = logo_overlay_enabled(logo_settings)
         final["options"] = {
             "burnSubtitles": options["burnSubtitles"],
             "translationLanguages": options["translationLanguages"],
@@ -769,7 +781,7 @@ def main(argv: list[str] | None = None) -> int:
         session_id = args.publication_session_id
 
         if args.process:
-            steps = parse_csv(args.steps) or default_steps(bool(options["burnSubtitles"]))
+            steps = parse_csv(args.steps) or default_steps(bool(options["burnSubtitles"]), logo_enabled)
             print_event(f"Starting LazyEdit process: {', '.join(steps)}", quiet=args.quiet)
             process_payload = {
                 **options,
@@ -778,8 +790,7 @@ def main(argv: list[str] | None = None) -> int:
                 "polish_notes": correction_prompt,
                 "notes": metadata_prompt,
             }
-            logo_settings = settings.get("logo_settings") if isinstance(settings, dict) else None
-            if isinstance(logo_settings, dict) and logo_settings.get("enabled") and logo_settings.get("logoPath"):
+            if logo_enabled:
                 process_payload["logo"] = logo_settings
                 final["logo_settings"] = {
                     "logoPath": logo_settings.get("logoPath"),

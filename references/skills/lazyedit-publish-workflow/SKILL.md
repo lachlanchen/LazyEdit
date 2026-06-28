@@ -49,6 +49,7 @@ conda activate lazyedit
 - One-shot flags such as `--platforms`, `--languages`, `--subtitle-lift-ratio`, and `--no-burn-subtitles` do not change Studio settings.
 - Only `--persist-settings` writes CLI options back to the webapp preferences.
 - `--languages` is bottom-to-top subtitle order.
+- If Studio logo settings are enabled, `--no-burn-subtitles` still creates a processed logo-only output ending in `_logo.mp4` and publishes that output. Translation is skipped because subtitles are disabled.
 - Use polished/corrected subtitles for real publishes and debug publishes unless the user explicitly requests original subtitles.
 - `--no-process` reuses an already completed output. Use it when the user says "last run", "same version", or "already finished run".
 - `--publication-session-id ID` targets a specific run. Omit it for the current output.
@@ -104,6 +105,32 @@ Override languages for one run without changing Studio defaults:
 
 ```bash
 python scripts/lazyedit_publish.py --video-id VIDEO_ID --use-current-settings --languages zh-Hant,ja,en --platforms youtube,instagram --wait
+```
+
+Create a no-subtitle video while keeping the configured Studio logo:
+
+```bash
+python scripts/lazyedit_publish.py --video-id VIDEO_ID --use-current-settings --no-burn-subtitles --platforms youtube,instagram --wait
+```
+
+Pure Shipinhao music/audio upload uses AutoPublish directly, not the LazyEdit
+video ZIP. First run with `--test` until the live desktop route is visually
+confirmed:
+
+```bash
+cd /home/lachlan/DiskMech/Projects/lazyedit/AutoPublish
+python scripts/package_shipinhao_music.py \
+  --audio /path/to/song.mp3 \
+  --cover /path/to/artwork.png \
+  --lyrics-json /path/to/musia/lyrics/mixed-vocal/mul.json \
+  --title "Song Title" \
+  --author "Musia 慕莎" \
+  --language 中文 \
+  --genre Pop \
+  --story "Short music story for 音乐人说." \
+  --output /tmp/song_shipinhao_music.zip \
+  --post \
+  --test
 ```
 
 ## LALACHAN / AI-Generated Video

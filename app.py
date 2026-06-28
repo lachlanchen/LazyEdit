@@ -1301,6 +1301,14 @@ def _load_logo_settings_setting() -> dict:
     return _sanitize_logo_settings(saved)
 
 
+def _logo_overlay_enabled(logo_config: dict | None) -> bool:
+    return bool(
+        isinstance(logo_config, dict)
+        and logo_config.get("enabled")
+        and logo_config.get("logoPath")
+    )
+
+
 def _sanitize_video_prompt_spec(payload: dict | None) -> dict:
     if not isinstance(payload, dict):
         return DEFAULT_VIDEO_PROMPT_SPEC.copy()
@@ -2294,9 +2302,10 @@ def overlay_logo_on_video(
             "18",
         ]
         if has_audio_stream(video_path):
-            cmd += ["-c:a", "copy"]
+            cmd += ["-c:a", "aac", "-b:a", get_audio_bitrate(video_path)]
         else:
             cmd += ["-an"]
+        cmd += ["-movflags", "+faststart"]
         cmd.append(output_path)
         subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -5619,6 +5628,7 @@ def _prepare_publish_bundle(
     platform_flags: dict[str, bool],
     *,
     burn_subtitles: bool = True,
+    use_processed_output: bool | None = None,
     publication_session_id: int | None = None,
 ) -> tuple[int, dict]:
     row = _get_video_row(video_id_i)
@@ -5651,9 +5661,12 @@ def _prepare_publish_bundle(
     metadata_payload["video_filename"] = video_filename
     metadata_payload["cover_filename"] = cover_filename
 
+    if use_processed_output is None:
+        use_processed_output = burn_subtitles
+
     selected_video_path = (
         _pick_publish_video_path(video_id_i, file_path, publication_session_id=publication_session_id)
-        if burn_subtitles
+        if use_processed_output
         else preprocess_if_needed(file_path)
     )
     try:
@@ -5710,6 +5723,7 @@ def _prepare_publish_bundle(
         "browser_safe_transcoded": video_to_publish != selected_video_path,
         "platforms": platform_flags,
         "burn_subtitles": burn_subtitles,
+        "use_processed_output": bool(use_processed_output),
         "publication_session_id": publication_session_id,
     }
 
@@ -5781,16 +5795,26 @@ def _extract_process_error(payload: dict | None) -> str:
     return "process failed"
 
 
-def _ready_for_publish_with_options(payload: dict | None, *, burn_subtitles: bool) -> bool:
+def _ready_for_publish_with_options(
+    payload: dict | None,
+    *,
+    burn_subtitles: bool,
+    require_burn: bool | None = None,
+) -> bool:
     if not isinstance(payload, dict):
         return False
     steps = payload.get("steps")
     if not isinstance(steps, dict):
         return bool(payload.get("ready_for_publish"))
 
+    if require_burn is None:
+        require_burn = burn_subtitles
+
     required_steps = ["transcribe", "keyframes", "caption", "metadata_zh", "metadata_en", "cover"]
     if burn_subtitles:
-        required_steps.extend(["translate", "burn"])
+        required_steps.append("translate")
+    if require_burn:
+        required_steps.append("burn")
 
     if (steps.get("metadata_zh") or {}).get("status") != "done":
         return False
@@ -5799,7 +5823,10 @@ def _ready_for_publish_with_options(payload: dict | None, *, burn_subtitles: boo
 
     for name in required_steps:
         status = (steps.get(name) or {}).get("status")
-        if burn_subtitles and name in {"translate", "burn"}:
+        if burn_subtitles and name == "translate":
+            if status != "done":
+                return False
+        elif require_burn and name == "burn":
             if status != "done":
                 return False
         elif status not in {"done", "skipped"}:
@@ -6020,6 +6047,9 @@ def _process_publish_job(job_row: tuple) -> None:
         metadata_prompt = str(job_config.get("metadataPrompt") or "").strip()
     use_polished = bool(job_config.get("usePolishedSubtitles", False)) or auto_correct_subtitles
     translation_languages = job_config.get("translationLanguages") or _load_translation_languages_setting()
+    logo_settings = _load_logo_settings_setting()
+    logo_overlay_required = _logo_overlay_enabled(logo_settings)
+    processed_output_required = burn_subtitles or logo_overlay_required
 
     ldb.update_publish_job(job_id, detail="Checking publish prerequisites")
     status_code, status_payload, _status_text = _local_api_json_request(
@@ -6031,9 +6061,12 @@ def _process_publish_job(job_row: tuple) -> None:
     if status_code >= 400:
         raise RuntimeError(status_payload.get("error") or "process status check failed")
 
-    if auto_correct_subtitles or metadata_prompt or not _ready_for_publish_with_options(status_payload, burn_subtitles=burn_subtitles):
+    if auto_correct_subtitles or metadata_prompt or not _ready_for_publish_with_options(
+        status_payload,
+        burn_subtitles=burn_subtitles,
+        require_burn=processed_output_required,
+    ):
         ldb.update_publish_job(job_id, detail="Processing video before publish")
-        logo_settings = _load_logo_settings_setting()
         process_steps = [
             "keyframes",
             "caption",
@@ -6042,14 +6075,18 @@ def _process_publish_job(job_row: tuple) -> None:
             "metadata_en",
             "cover",
         ]
+        insert_at = 3
         if burn_subtitles:
-            process_steps.insert(3, "translate")
-            process_steps.insert(4, "burn")
+            process_steps.insert(insert_at, "translate")
+            insert_at += 1
+        if processed_output_required:
+            process_steps.insert(insert_at, "burn")
         if auto_correct_subtitles:
             process_steps.insert(3, "polish")
         process_payload: dict[str, Any] = {
             "async": False,
             "steps": process_steps,
+            "burnSubtitles": burn_subtitles,
             "translation_languages": translation_languages,
             "usePolishedSubtitles": use_polished,
             "autoCorrectSubtitles": auto_correct_subtitles,
@@ -6077,6 +6114,7 @@ def _process_publish_job(job_row: tuple) -> None:
         video_id,
         platform_flags,
         burn_subtitles=burn_subtitles,
+        use_processed_output=processed_output_required,
         publication_session_id=publication_session_id,
     )
     if bundle_status >= 400:
@@ -8319,10 +8357,13 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
             ldb.set_ui_preference("translation_languages", publish_config["translationLanguages"])
 
         if wait_for_result:
+            logo_settings = _load_logo_settings_setting()
+            processed_output_required = bool(publish_config.get("burnSubtitles", True)) or _logo_overlay_enabled(logo_settings)
             bundle_status, response_payload = _prepare_publish_bundle(
                 video_id_i,
                 platform_flags,
                 burn_subtitles=bool(publish_config.get("burnSubtitles", True)),
+                use_processed_output=processed_output_required,
                 publication_session_id=publication_session_id,
             )
             if bundle_status != 200:
@@ -10635,6 +10676,11 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         elif _parse_bool(logo_payload, default=False):
             logo_config = _load_logo_settings_setting()
             logo_config["enabled"] = True
+        burn_subtitles_raw = data.get("burnSubtitles")
+        if burn_subtitles_raw is None:
+            burn_subtitles_raw = data.get("burn_subtitles")
+        burn_subtitles_requested = _parse_bool(burn_subtitles_raw, default=True)
+        logo_requested = _logo_overlay_enabled(logo_config)
         slots_config = layout_config.get("slots") or []
         romaji_enabled = bool(layout_config.get("romajiEnabled", True))
         pinyin_enabled = bool(layout_config.get("pinyinEnabled", True))
@@ -10656,6 +10702,89 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         base_name = os.path.splitext(os.path.basename(video_path))[0]
         session_output_folder = _publication_session_dir(output_folder, publication_session_id, create=True)
         speaker_output_dir = os.path.join(session_output_folder, "burn")
+        session_suffix = f"_session_{publication_session_id}" if publication_session_id else ""
+
+        def _active_burn_payload_if_processing():
+            existing_burn = _get_latest_subtitle_burn_with_recovery(video_id_i, publication_session_id)
+            if not existing_burn:
+                return None
+            existing_id, existing_status, existing_output_path, existing_progress, existing_config, existing_error, existing_created_at = existing_burn
+            if existing_status != "processing" or not _is_burn_future_active(existing_id):
+                return None
+            return {
+                "id": existing_id,
+                "video_id": video_id_i,
+                "status": "processing",
+                "output_path": existing_output_path,
+                "output_url": media_url_for_path(existing_output_path),
+                "progress": existing_progress,
+                "config": existing_config,
+                "error": existing_error,
+                "created_at": existing_created_at.isoformat() if existing_created_at else None,
+            }
+
+        def _start_logo_only_overlay(reason: str):
+            active_payload = _active_burn_payload_if_processing()
+            if active_payload:
+                return active_payload
+
+            burn_config = dict(layout_config)
+            burn_config["burnSubtitles"] = False
+            burn_config["logoOnly"] = True
+            burn_config["logoOnlyReason"] = reason
+            burn_config["usePolishedSubtitles"] = use_polished
+            burn_config["publicationSessionId"] = publication_session_id
+            burn_config["logo"] = {
+                "logoPath": logo_config.get("logoPath"),
+                "heightRatio": logo_config.get("heightRatio"),
+                "position": logo_config.get("position"),
+                "bgOpacity": logo_config.get("bgOpacity"),
+                "bgShape": logo_config.get("bgShape"),
+                "enabled": logo_config.get("enabled"),
+            }
+            logo_output = os.path.join(session_output_folder, f"{base_name}{session_suffix}_logo.mp4")
+            burn_id = ldb.add_subtitle_burn(
+                video_id_i,
+                "processing",
+                None,
+                burn_config,
+                None,
+                progress=0,
+                publication_session_id=publication_session_id,
+            )
+
+            def _run_logo_only() -> None:
+                try:
+                    ldb.update_subtitle_burn_progress(burn_id, 10)
+                    overlay_logo_on_video(
+                        video_path,
+                        logo_config.get("logoPath"),
+                        logo_output,
+                        height_ratio=logo_config.get("heightRatio", DEFAULT_LOGO_SETTINGS.get("heightRatio", 0.1)),
+                        position=logo_config.get("position", DEFAULT_LOGO_SETTINGS.get("position", "top-left")),
+                        bg_opacity=logo_config.get("bgOpacity", DEFAULT_LOGO_SETTINGS.get("bgOpacity", 0.5)),
+                        bg_shape=logo_config.get("bgShape", DEFAULT_LOGO_SETTINGS.get("bgShape", "circle")),
+                    )
+                    ldb.finalize_subtitle_burn(burn_id, "completed", logo_output, None, progress=100)
+                except Exception as exc:
+                    ldb.finalize_subtitle_burn(burn_id, "failed", None, str(exc), progress=0)
+
+            future = BURN_EXECUTOR.submit(_run_logo_only)
+            with BURN_STATE_LOCK:
+                ACTIVE_BURN_FUTURES[burn_id] = future
+            future.add_done_callback(lambda _future, _burn_id=burn_id: _forget_active_burn_future(_burn_id))
+            return {
+                "id": burn_id,
+                "video_id": video_id_i,
+                "publication_session_id": publication_session_id,
+                "status": "processing",
+                "progress": 0,
+                "detail": reason,
+            }
+
+        if logo_requested and not burn_subtitles_requested:
+            return self.write(_start_logo_only_overlay("logo-only overlay; subtitles disabled"))
+
         if use_polished:
             _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
         input_json, _input_srt = find_latest_transcription_outputs(
@@ -10667,6 +10796,8 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         if input_json and os.path.exists(input_json):
             _payload, items, _container_key = _load_subtitle_payload(input_json)
             if not items:
+                if logo_requested:
+                    return self.write(_start_logo_only_overlay("logo-only overlay; no subtitles to burn"))
                 burn_id = ldb.add_subtitle_burn(
                     video_id_i,
                     "skipped",
@@ -10789,10 +10920,11 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             )
 
         if not assignments:
+            if logo_requested:
+                return self.write(_start_logo_only_overlay("logo-only overlay; no valid subtitle slots configured"))
             self.set_status(400)
             return self.write({"error": "no valid subtitle slots configured"})
 
-        session_suffix = f"_session_{publication_session_id}" if publication_session_id else ""
         temp_output = os.path.join(session_output_folder, f"{base_name}{session_suffix}_subtitles_render.avi")
         output_path = os.path.join(session_output_folder, f"{base_name}{session_suffix}_subtitles.mp4")
         height_ratio = layout_config.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5))
@@ -10967,7 +11099,15 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         # artifacts; forcing transcription here can overwrite corrected
         # subtitles and race with video preprocessing.
         needs_transcribe = wants("transcribe")
-        needs_translate = wants("translate") or wants("burn")
+        logo_payload = data.get("logo")
+        logo_config = None
+        if isinstance(logo_payload, dict):
+            logo_config = _sanitize_logo_settings(logo_payload)
+            if "enabled" not in logo_payload and logo_config.get("logoPath"):
+                logo_config["enabled"] = True
+        elif _parse_bool(logo_payload, default=False):
+            logo_config = _load_logo_settings_setting()
+            logo_config["enabled"] = True
         needs_caption = wants("caption")
         needs_cover = wants("cover") or wants("metadata_zh") or wants("metadata_en")
 
@@ -10979,15 +11119,6 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             if languages_override is not None
             else _load_translation_languages_setting()
         )
-        logo_payload = data.get("logo")
-        logo_config = None
-        if isinstance(logo_payload, dict):
-            logo_config = _sanitize_logo_settings(logo_payload)
-            if "enabled" not in logo_payload and logo_config.get("logoPath"):
-                logo_config["enabled"] = True
-        elif _parse_bool(logo_payload, default=False):
-            logo_config = _load_logo_settings_setting()
-            logo_config["enabled"] = True
         notes = data.get("notes") or data.get("custom_notes") or ""
         polish_notes = auto_correct_prompt or data.get("polish_notes") or data.get("subtitle_notes")
         if polish_notes is None:
@@ -11005,6 +11136,8 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             translation_languages,
         )
         use_polished_subtitles = bool(process_options.get("usePolishedSubtitles", False)) or auto_correct_subtitles
+        burn_subtitles_requested = bool(process_options.get("burnSubtitles", True))
+        needs_translate = wants("translate") or (wants("burn") and burn_subtitles_requested)
         try:
             publication_session_id = _ensure_publication_session_for_options(
                 video_id_i,
@@ -11137,11 +11270,12 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                 await mark("translate", "skipped", "Skipped")
 
             if wants("burn"):
-                await mark("burn", "working", "Burning subtitles")
+                await mark("burn", "working", "Burning subtitles" if burn_subtitles_requested else "Burning logo")
                 burn_payload = {
                     "layout": burn_layout,
                     "translationLanguages": translation_languages,
                     "usePolishedSubtitles": use_polished_subtitles,
+                    "burnSubtitles": burn_subtitles_requested,
                     "publicationSessionId": publication_session_id,
                 }
                 if logo_config and logo_config.get("enabled") and logo_config.get("logoPath"):
@@ -11355,9 +11489,11 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
                     session_config = {}
             if session_config:
                 publish_options = _sanitize_publish_options({**publish_options, **session_config})
-        burn_required_for_publish = bool(publish_options.get("burnSubtitles", True))
+        subtitle_burn_required_for_publish = bool(publish_options.get("burnSubtitles", True))
+        logo_required_for_publish = _logo_overlay_enabled(_load_logo_settings_setting())
+        burn_required_for_publish = subtitle_burn_required_for_publish or logo_required_for_publish
         translation_languages = publish_options.get("translationLanguages") or _load_translation_languages_setting()
-        if not burn_required_for_publish:
+        if not subtitle_burn_required_for_publish:
             steps["translate"] = step_payload("skipped", "Subtitle burn disabled")
         elif not translation_languages:
             steps["translate"] = step_payload("skipped", "No languages selected")

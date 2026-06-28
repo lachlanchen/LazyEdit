@@ -21,6 +21,7 @@ The CLI writes normal LazyEdit publish jobs, so jobs appear in the webapp publis
 - `--use-current-settings` reads current Studio defaults: subtitle burn, language order, layout, polished subtitle usage, and publication mode.
 - One-shot overrides such as `--platforms`, `--languages`, `--subtitle-lift-ratio`, and `--no-burn-subtitles` apply only to that CLI run unless `--persist-settings` is also used.
 - `--languages` is bottom-to-top subtitle order.
+- If Studio logo settings are enabled, `--no-burn-subtitles` still creates a processed logo-only output ending in `_logo.mp4` and publishes that output. Translation is skipped because subtitles are disabled.
 - `--no-process` publishes the already finished output. Use this for a completed current output or completed publication session.
 - `--publication-session-id <id>` publishes a specific run/session. Omit it for the current output.
 - `--new-run` creates a new publication session and processes into that session.
@@ -75,6 +76,45 @@ python scripts/lazyedit_publish.py \
   --platforms youtube,instagram \
   --wait
 ```
+
+Create a no-subtitle video while keeping the configured Studio logo:
+
+```bash
+python scripts/lazyedit_publish.py \
+  --video-id 346 \
+  --use-current-settings \
+  --no-burn-subtitles \
+  --platforms youtube,instagram \
+  --wait
+```
+
+This runs the burn step as a logo-only overlay when `logo_settings.enabled=true`
+and `logo_settings.logoPath` is set. The output is H.264/AAC with `+faststart`.
+
+## Pure Shipinhao Music Package
+
+For pure music/audio upload, use the AutoPublish package helper instead of the
+LazyEdit video pipeline:
+
+```bash
+cd /home/lachlan/DiskMech/Projects/lazyedit/AutoPublish
+python scripts/package_shipinhao_music.py \
+  --audio /path/to/song.mp3 \
+  --cover /path/to/artwork.png \
+  --lyrics-json /path/to/musia/lyrics/mixed-vocal/mul.json \
+  --title "Song Title" \
+  --author "Musia 慕莎" \
+  --language 中文 \
+  --genre Pop \
+  --story "Short music story for 音乐人说." \
+  --output /tmp/song_shipinhao_music.zip \
+  --post \
+  --test
+```
+
+The helper sends `publish_shipinhao_music=true` when `--post` is used. Keep
+`--test` for the first browser verification of a new Shipinhao music route;
+remove it only after the form fields and `完成` button are visually confirmed.
 
 ## LALACHAN Generated Video Workflow
 
