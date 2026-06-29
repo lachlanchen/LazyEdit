@@ -55,6 +55,7 @@ The platform-management tools live in AutoPublish:
 
 - `AutoPublish/scripts/manage_y2b_videos.py`
 - `AutoPublish/scripts/manage_shipinhao_videos.py`
+- `AutoPublish/scripts/shipinhao_mirror_manager.py`
 
 Both attach to the existing logged-in Chromium sessions:
 
@@ -210,3 +211,49 @@ python scripts/manage_shipinhao_videos.py move \
 - YouTube playlist moves depend on the logged-in Studio UI. If the playlist named `LALACHAN` or `Musia` does not exist, create it manually first or change the env var.
 - Shipinhao upload-time collection selection is automated. Existing-post collection edits are more UI-dependent, so inventory first and apply in small batches.
 - Never run bulk `--apply` before inspecting the exported plan.
+
+## Shipinhao Mirror and Description Recovery
+
+Use the mirrored manager for existing-post control that should stay separate
+from publication. It can export LazyEdit metadata, mirror the Shipinhao list,
+match rows by text and publish time, and generate a conservative repair plan:
+
+```bash
+python AutoPublish/scripts/shipinhao_mirror_manager.py export-metadata \
+  --metadata-root DATA \
+  --days 45 \
+  --output /tmp/lazyedit_shipinhao_metadata_index.json
+
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/shipinhao_mirror_manager.py mirror \
+  --scrolls 5 \
+  --output /tmp/shipinhao_mirror.json'
+
+python AutoPublish/scripts/shipinhao_mirror_manager.py plan-descriptions \
+  --mirror /tmp/shipinhao_mirror.json \
+  --metadata-index /tmp/lazyedit_shipinhao_metadata_index.json \
+  --include-ok \
+  --output /tmp/shipinhao_description_plan.json
+```
+
+Inspect before applying:
+
+```bash
+jq '[.[] | select(.action=="update-description") | {
+  query, metadata_title, row_published_at, metadata_mtime, match_score, new_length
+}]' /tmp/shipinhao_description_plan.json
+```
+
+Important 2026-06-29 finding: Shipinhao's current existing-post
+`修改描述和封面` flow opens `/platform/post/coverEdit`. It only supports
+modifying selected existing text and says the limit is 20 characters. For
+posts whose description is completely blank, `.edit-desc-content` has no text
+and no input appears. The tool now reports
+`unsupported-description-repair` instead of hanging. Do not assume old blank
+descriptions were restored unless a fresh mirror confirms the visible text
+changed.
+
+The detailed AutoPublish-side note is:
+
+```text
+AutoPublish/docs/SHIPINHAO_MIRROR_MANAGEMENT.md
+```

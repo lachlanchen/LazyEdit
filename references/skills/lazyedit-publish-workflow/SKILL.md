@@ -75,6 +75,22 @@ Apply in small batches or by exact visible title fragment:
 ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py move --query "visible title fragment" --collection 啦啦侠 --apply'
 ```
 
+Shipinhao mirrored metadata/description management:
+
+```bash
+python AutoPublish/scripts/shipinhao_mirror_manager.py export-metadata --metadata-root DATA --days 45 --output /tmp/lazyedit_shipinhao_metadata_index.json
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/shipinhao_mirror_manager.py mirror --scrolls 5 --output /tmp/shipinhao_mirror.json'
+python AutoPublish/scripts/shipinhao_mirror_manager.py plan-descriptions --mirror /tmp/shipinhao_mirror.json --metadata-index /tmp/lazyedit_shipinhao_metadata_index.json --include-ok --output /tmp/shipinhao_description_plan.json
+```
+
+Use this mirror manager for existing-post control, not publication. On
+2026-06-29, old date-only rows could be matched back to LazyEdit metadata, but
+Shipinhao's `修改描述和封面` page only allowed modifying selected existing text
+with a 20-character limit. Blank/missing descriptions could not be restored
+through the visible desktop UI; the tool reports
+`unsupported-description-repair` for that state. Inspect every JSON plan before
+`--apply`.
+
 YouTube playlists:
 
 ```bash
