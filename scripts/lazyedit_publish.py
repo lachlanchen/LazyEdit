@@ -407,6 +407,7 @@ def build_options(
         "enabled": args.portrait_blur_fill,
         "mode": args.portrait_blur_mode,
         "foregroundY": args.portrait_foreground_y,
+        "centerShiftRatio": args.portrait_center_shift_ratio,
         "foregroundWidth": args.portrait_foreground_width,
         "width": args.portrait_width,
         "height": args.portrait_height,
@@ -768,6 +769,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--portrait-blur-fill", action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument("--portrait-blur-mode", choices=["lalachan", "center", "custom"])
     parser.add_argument("--portrait-foreground-y", type=int)
+    parser.add_argument("--portrait-center-shift-ratio", type=float)
     parser.add_argument("--portrait-foreground-width", type=int)
     parser.add_argument("--portrait-width", type=int)
     parser.add_argument("--portrait-height", type=int)

@@ -15,11 +15,20 @@ The current LALACHAN publishing behavior is closest to
 - Output frame: `1080x1920` portrait.
 - Background: same input frame, scaled to cover, cropped, blurred.
 - Foreground: original frame kept sharp, scaled to full output width.
-- Default foreground offset: `y=240`, intentionally higher than center to leave lower blurred space for subtitles.
+- Earlier default foreground offset: fixed `y=240`, intentionally higher than center to leave lower blurred space for subtitles.
 - Quality defaults: Lanczos scaling, `gblur=36`, background brightness `-0.08`, saturation `1.08`, x264 CRF around `10-12`.
 - Audio: copied when possible.
 
-LazyEdit uses the same default layout, with one safety improvement: if the input is already tall enough that `y=240` would crop it, the y value is clamped so the foreground remains visible.
+LazyEdit originally copied the fixed `y=240` default, but that placed 16:9
+sources too close to the top. The current default is aspect-ratio-aware:
+
+- Compute the exact vertically centered foreground position.
+- Move that centered top offset upward by `centerShiftRatio`.
+- Default `centerShiftRatio=0.1`.
+
+For a typical 16:9 foreground scaled to 1080px wide, this puts the top margin
+near 31% and the bottom margin near 38%, which is close to the desired
+"top 30% / bottom 40%" placement while keeping other aspect ratios reasonable.
 
 ## LazyEdit Implementation
 
@@ -38,6 +47,7 @@ The option is stored inside the existing `burn_layout` UI preference:
     "height": 1920,
     "foregroundWidth": 1080,
     "foregroundY": 240,
+    "centerShiftRatio": 0.1,
     "blur": 36,
     "backgroundDim": -0.08,
     "backgroundSaturation": 1.08,
@@ -51,7 +61,7 @@ The option is stored inside the existing `burn_layout` UI preference:
 
 Modes:
 
-- `lalachan`: default, foreground top offset `240`.
+- `lalachan`: default, exact center shifted upward by `centerShiftRatio`.
 - `center`: foreground vertically centered; y input is ignored.
 - `custom`: uses the saved foreground y value.
 
@@ -76,7 +86,8 @@ Publish tab controls:
 
 - `Portrait blur fill`: enable or disable.
 - `Portrait layout`: `LALACHAN`, `Center`, or `Custom`.
-- `Foreground Y`: shown for `LALACHAN` and `Custom`; default `240`.
+- `Center shift`: shown for `LALACHAN`; default `0.1`.
+- `Foreground Y`: shown only for `Custom`; default `240`.
 
 The settings are remembered through `burn_layout`, the same preference object used for subtitle rows, lift ratio, font size, and outline settings.
 
@@ -94,7 +105,7 @@ curl -fsS http://127.0.0.1:18787/api/videos/VIDEO_ID/process \
     "portraitBlurFill": {
       "enabled": true,
       "mode": "lalachan",
-      "foregroundY": 240
+      "centerShiftRatio": 0.1
     }
   }'
 ```
@@ -119,6 +130,7 @@ python scripts/lazyedit_publish.py \
   --use-current-settings \
   --portrait-blur-fill \
   --portrait-blur-mode lalachan \
+  --portrait-center-shift-ratio 0.1 \
   --platforms youtube,instagram \
   --wait
 ```

@@ -38,6 +38,9 @@ const DEFAULT_SUBTITLE_OUTLINE_COLOR = '#000000';
 const DEFAULT_PORTRAIT_FOREGROUND_Y = 240;
 const MIN_PORTRAIT_FOREGROUND_Y = 0;
 const MAX_PORTRAIT_FOREGROUND_Y = 1920;
+const DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO = 0.1;
+const MIN_PORTRAIT_CENTER_SHIFT_RATIO = 0;
+const MAX_PORTRAIT_CENTER_SHIFT_RATIO = 0.45;
 const DEFAULT_CORRECTION_PROMPT =
   'Fix recognition errors while preserving every timestamp exactly and keeping the same number of subtitle lines.';
 const LANGUAGE_LABELS: Record<string, string> = {
@@ -181,6 +184,16 @@ const normalizePortraitForegroundY = (value: unknown, fallback = DEFAULT_PORTRAI
   if (!Number.isFinite(parsed)) return fallback;
   return Math.min(MAX_PORTRAIT_FOREGROUND_Y, Math.max(MIN_PORTRAIT_FOREGROUND_Y, Math.round(parsed)));
 };
+const normalizePortraitCenterShiftRatio = (value: unknown, fallback = DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO) => {
+  const parsed = typeof value === 'number' ? value : Number(String(value ?? '').trim());
+  if (!Number.isFinite(parsed)) return fallback;
+  const clamped = Math.min(MAX_PORTRAIT_CENTER_SHIFT_RATIO, Math.max(MIN_PORTRAIT_CENTER_SHIFT_RATIO, parsed));
+  return Math.round(clamped * 1000) / 1000;
+};
+const formatPortraitCenterShiftRatio = (value: number) => {
+  const normalized = normalizePortraitCenterShiftRatio(value);
+  return normalized.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
+};
 
 export default function EditorScreen() {
   const defaultPublishSelection = useMemo(
@@ -287,6 +300,10 @@ export default function EditorScreen() {
   const [portraitBlurMode, setPortraitBlurMode] = useState<PortraitBlurMode>('lalachan');
   const [portraitForegroundY, setPortraitForegroundY] = useState(DEFAULT_PORTRAIT_FOREGROUND_Y);
   const [portraitForegroundYInput, setPortraitForegroundYInput] = useState(String(DEFAULT_PORTRAIT_FOREGROUND_Y));
+  const [portraitCenterShiftRatio, setPortraitCenterShiftRatio] = useState(DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO);
+  const [portraitCenterShiftInput, setPortraitCenterShiftInput] = useState(
+    formatPortraitCenterShiftRatio(DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO),
+  );
   const [correctionOpen, setCorrectionOpen] = useState(false);
   const [correctionLoading, setCorrectionLoading] = useState(false);
   const [correctionSaving, setCorrectionSaving] = useState(false);
@@ -796,10 +813,13 @@ export default function EditorScreen() {
         setSubtitleOutlineColor(normalizeHexColor(burnLayoutJson?.value?.outlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR));
         const portraitValue = burnLayoutJson?.value?.portraitBlurFill || {};
         const nextPortraitY = normalizePortraitForegroundY(portraitValue?.foregroundY);
+        const nextPortraitCenterShift = normalizePortraitCenterShiftRatio(portraitValue?.centerShiftRatio);
         setPortraitBlurFill(Boolean(portraitValue?.enabled));
         setPortraitBlurMode(normalizePortraitMode(portraitValue?.mode));
         setPortraitForegroundY(nextPortraitY);
         setPortraitForegroundYInput(String(nextPortraitY));
+        setPortraitCenterShiftRatio(nextPortraitCenterShift);
+        setPortraitCenterShiftInput(formatPortraitCenterShiftRatio(nextPortraitCenterShift));
       }
       setTranslationLanguages(nextLanguages.slice(0, AVAILABLE_TRANSLATION_LANGUAGES.length));
     } catch (_err) {
@@ -821,6 +841,7 @@ export default function EditorScreen() {
       enabled?: boolean;
       mode?: PortraitBlurMode;
       foregroundY?: number;
+      centerShiftRatio?: number;
     };
   }) => {
     try {
@@ -855,6 +876,13 @@ export default function EditorScreen() {
                   ...(updates.portraitBlurFill.foregroundY === undefined
                     ? {}
                     : { foregroundY: normalizePortraitForegroundY(updates.portraitBlurFill.foregroundY) }),
+                  ...(updates.portraitBlurFill.centerShiftRatio === undefined
+                    ? {}
+                    : {
+                        centerShiftRatio: normalizePortraitCenterShiftRatio(
+                          updates.portraitBlurFill.centerShiftRatio,
+                        ),
+                      }),
                 },
               }),
           liftSlots: 0,
@@ -981,10 +1009,11 @@ export default function EditorScreen() {
           enabled: value,
           mode: portraitBlurMode,
           foregroundY: portraitForegroundY,
+          centerShiftRatio: portraitCenterShiftRatio,
         },
       });
     },
-    [persistBurnLayout, portraitBlurMode, portraitForegroundY],
+    [persistBurnLayout, portraitBlurMode, portraitCenterShiftRatio, portraitForegroundY],
   );
 
   const updatePortraitBlurMode = useCallback(
@@ -995,10 +1024,11 @@ export default function EditorScreen() {
           enabled: portraitBlurFill,
           mode,
           foregroundY: portraitForegroundY,
+          centerShiftRatio: portraitCenterShiftRatio,
         },
       });
     },
-    [persistBurnLayout, portraitBlurFill, portraitForegroundY],
+    [persistBurnLayout, portraitBlurFill, portraitCenterShiftRatio, portraitForegroundY],
   );
 
   const commitPortraitForegroundY = useCallback(async () => {
@@ -1010,10 +1040,40 @@ export default function EditorScreen() {
         enabled: portraitBlurFill,
         mode: portraitBlurMode,
         foregroundY: nextY,
+        centerShiftRatio: portraitCenterShiftRatio,
       },
     });
     return nextY;
-  }, [persistBurnLayout, portraitBlurFill, portraitBlurMode, portraitForegroundY, portraitForegroundYInput]);
+  }, [
+    persistBurnLayout,
+    portraitBlurFill,
+    portraitBlurMode,
+    portraitCenterShiftRatio,
+    portraitForegroundY,
+    portraitForegroundYInput,
+  ]);
+
+  const commitPortraitCenterShiftRatio = useCallback(async () => {
+    const nextShift = normalizePortraitCenterShiftRatio(portraitCenterShiftInput, portraitCenterShiftRatio);
+    setPortraitCenterShiftRatio(nextShift);
+    setPortraitCenterShiftInput(formatPortraitCenterShiftRatio(nextShift));
+    await persistBurnLayout({
+      portraitBlurFill: {
+        enabled: portraitBlurFill,
+        mode: portraitBlurMode,
+        foregroundY: portraitForegroundY,
+        centerShiftRatio: nextShift,
+      },
+    });
+    return nextShift;
+  }, [
+    persistBurnLayout,
+    portraitBlurFill,
+    portraitBlurMode,
+    portraitCenterShiftInput,
+    portraitCenterShiftRatio,
+    portraitForegroundY,
+  ]);
 
   const commitSubtitleBurnLayoutSettings = useCallback(async () => {
     const nextLiftRatio = normalizeSubtitleLiftRatio(subtitleLiftInput, subtitleLiftRatio);
@@ -1022,6 +1082,10 @@ export default function EditorScreen() {
     const nextFontColor = normalizeHexColor(subtitleFontColor, DEFAULT_SUBTITLE_FONT_COLOR);
     const nextOutlineColor = normalizeHexColor(subtitleOutlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR);
     const nextPortraitY = normalizePortraitForegroundY(portraitForegroundYInput, portraitForegroundY);
+    const nextPortraitCenterShift = normalizePortraitCenterShiftRatio(
+      portraitCenterShiftInput,
+      portraitCenterShiftRatio,
+    );
     setSubtitleLiftRatio(nextLiftRatio);
     setSubtitleLiftInput(formatSubtitleLiftRatio(nextLiftRatio));
     setSubtitleRows(nextRows);
@@ -1032,10 +1096,13 @@ export default function EditorScreen() {
     setSubtitleOutlineColor(nextOutlineColor);
     setPortraitForegroundY(nextPortraitY);
     setPortraitForegroundYInput(String(nextPortraitY));
+    setPortraitCenterShiftRatio(nextPortraitCenterShift);
+    setPortraitCenterShiftInput(formatPortraitCenterShiftRatio(nextPortraitCenterShift));
     const nextPortraitBlurFill = {
       enabled: portraitBlurFill,
       mode: portraitBlurMode,
       foregroundY: nextPortraitY,
+      centerShiftRatio: nextPortraitCenterShift,
     };
     await persistBurnLayout({
       liftRatio: nextLiftRatio,
@@ -1061,6 +1128,8 @@ export default function EditorScreen() {
     persistBurnLayout,
     portraitBlurFill,
     portraitBlurMode,
+    portraitCenterShiftInput,
+    portraitCenterShiftRatio,
     portraitForegroundY,
     portraitForegroundYInput,
     subtitleFontBold,
@@ -2671,7 +2740,9 @@ export default function EditorScreen() {
                 <Text style={styles.optionHint}>
                   {portraitBlurMode === 'center'
                     ? t('publish_option_portrait_mode_center_hint')
-                    : t('publish_option_portrait_mode_lalachan_hint')}
+                    : portraitBlurMode === 'custom'
+                      ? t('publish_option_portrait_mode_custom_hint')
+                      : t('publish_option_portrait_mode_lalachan_hint')}
                 </Text>
               </View>
               <View style={styles.languageChipGroup}>
@@ -2693,7 +2764,49 @@ export default function EditorScreen() {
               </View>
             </View>
           ) : null}
-          {portraitBlurFill && portraitBlurMode !== 'center' ? (
+          {portraitBlurFill && portraitBlurMode === 'lalachan' ? (
+            <View style={styles.liftRatioRow}>
+              <View style={styles.publishOptionText}>
+                <Text style={styles.optionLabel}>{t('publish_option_portrait_shift_title')}</Text>
+                <Text style={styles.optionHint}>
+                  {t('publish_option_portrait_shift_hint', {
+                    value: formatPortraitCenterShiftRatio(portraitCenterShiftRatio),
+                  })}
+                </Text>
+              </View>
+              <View style={styles.liftRatioControls}>
+                <Pressable
+                  style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                  onPress={() => {
+                    setPortraitCenterShiftRatio(DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO);
+                    setPortraitCenterShiftInput(formatPortraitCenterShiftRatio(DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO));
+                    void persistBurnLayout({
+                      portraitBlurFill: {
+                        enabled: portraitBlurFill,
+                        mode: portraitBlurMode,
+                        foregroundY: portraitForegroundY,
+                        centerShiftRatio: DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO,
+                      },
+                    });
+                  }}
+                  disabled={!publishOptionsLoaded}
+                >
+                  <Text style={styles.liftRatioButtonText}>0.1</Text>
+                </Pressable>
+                <TextInput
+                  value={portraitCenterShiftInput}
+                  onChangeText={setPortraitCenterShiftInput}
+                  onBlur={() => void commitPortraitCenterShiftRatio()}
+                  onSubmitEditing={() => void commitPortraitCenterShiftRatio()}
+                  keyboardType="decimal-pad"
+                  placeholder="0.1"
+                  editable={publishOptionsLoaded}
+                  style={[styles.liftRatioInput, !publishOptionsLoaded && styles.liftRatioInputDisabled]}
+                />
+              </View>
+            </View>
+          ) : null}
+          {portraitBlurFill && portraitBlurMode === 'custom' ? (
             <View style={styles.liftRatioRow}>
               <View style={styles.publishOptionText}>
                 <Text style={styles.optionLabel}>{t('publish_option_portrait_y_title')}</Text>
@@ -2712,6 +2825,7 @@ export default function EditorScreen() {
                         enabled: portraitBlurFill,
                         mode: portraitBlurMode,
                         foregroundY: DEFAULT_PORTRAIT_FOREGROUND_Y,
+                        centerShiftRatio: portraitCenterShiftRatio,
                       },
                     });
                   }}

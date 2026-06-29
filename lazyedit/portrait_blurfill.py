@@ -13,6 +13,7 @@ DEFAULT_PORTRAIT_BLURFILL: dict[str, Any] = {
     "height": 1920,
     "foregroundWidth": 1080,
     "foregroundY": 240,
+    "centerShiftRatio": 0.1,
     "blur": 36.0,
     "backgroundDim": -0.08,
     "backgroundSaturation": 1.08,
@@ -101,6 +102,15 @@ def sanitize_portrait_blurfill(payload: Any) -> dict[str, Any]:
             0,
             height,
         ),
+        "centerShiftRatio": _float(
+            payload.get(
+                "centerShiftRatio",
+                payload.get("center_shift_ratio", payload.get("shiftRatio", payload.get("shift_ratio"))),
+            ),
+            base["centerShiftRatio"],
+            0.0,
+            0.45,
+        ),
         "blur": _float(payload.get("blur"), base["blur"], 0.0, 96.0),
         "backgroundDim": _float(
             payload.get("backgroundDim", payload.get("background_dim")),
@@ -163,8 +173,12 @@ def _foreground_y(input_path: str, config: dict[str, Any]) -> int:
     if scaled_h % 2:
         scaled_h += 1
     max_y = max(0, output_h - scaled_h)
+    center_y = max_y // 2
     if config.get("mode") == "center":
-        return max_y // 2
+        return center_y
+    if config.get("mode") == "lalachan":
+        shift_ratio = float(config.get("centerShiftRatio") or 0.0)
+        return min(max(int(round(center_y * (1.0 - shift_ratio))), 0), max_y)
     return min(max(int(config.get("foregroundY") or 0), 0), max_y)
 
 
