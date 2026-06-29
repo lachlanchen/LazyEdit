@@ -216,12 +216,18 @@ Problem:
 
 - Shipinhao Music accepted the song publish, but the language dropdown was
   fragile and did not always select Japanese/English/Chinese correctly.
+- In the 2026-06-30 English Xiao Xiao Zhu run, the form accepted the song and
+  all core metadata, but the live dropdown did not expose an English option, so
+  the page state still showed `普通话`.
 
 Fix:
 
 - AutoPublish `pub_shipinhao_music.py` was patched and pushed to use a more
   robust language-selection path.
 - Pull the latest AutoPublish on `lazyingart` before the next music batch.
+- Treat language selection as best-effort until the live dropdown exposes a
+  matching option. Do not block a valid song publish solely because the current
+  page has no English/Japanese option, but report the fallback clearly.
 
 Verification:
 
@@ -244,6 +250,18 @@ For music uploads, fill every visible relevant field when present:
 - originality/declaration checkbox when applicable and safe
 - agreement checkbox
 - proof files in the ZIP: Musia webapp/website screenshot or source artifact
+
+Before posting, verify that `*_lyrics.txt` in the package was derived from the
+corrected Musia website vocal JSON for the exact audio, for example:
+
+```text
+/home/lachlan/ProjectsLFS/Musia/website/data/songs/<song-id>/lyrics/en-vocal/en.json
+```
+
+Do not use the original prompt lyric, companion draft, or another vocal's
+translation JSON. In the Xiao Xiao Zhu English run, the corrected website lyric
+started with `But you are a piggy...`; the original draft started with
+`You are a piggy...`. The package must use the corrected website line.
 
 Do not publish as album/zhuanji when the user asked for a single song. Use the
 music/song upload path.
@@ -348,4 +366,3 @@ Pi browser log:
 ssh lachlan@lazyingart \
   'tmux capture-pane -pt autopub:0 -S -140 | tail -100'
 ```
-
