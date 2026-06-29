@@ -4,6 +4,10 @@ Date: 2026-06-03
 
 This workflow documents how to publish videos through LazyEdit without manually driving the Studio UI.
 
+Latest incident/runbook note:
+
+- `references/PUBLISH_RUNBOOK_MUSIA_AND_PLATFORM_SMOOTHING_2026_06_30.md`
+
 ## Studio And CLI State
 
 - Web Studio: `http://127.0.0.1:18791/editor` and Publish tab.
@@ -90,6 +94,11 @@ python scripts/lazyedit_publish.py \
 
 This runs the burn step as a logo-only overlay when `logo_settings.enabled=true`
 and `logo_settings.logoPath` is set. The output is H.264/AAC with `+faststart`.
+
+For Musia recording videos, force the current Musia/MV default:
+`--no-burn-subtitles --logo --logo-position top-right`. Verify a sample frame
+or inspect the generated ZIP before real publish, because an older `_logo.mp4`
+may still have the logo on the wrong side.
 
 ## Pure Shipinhao Music Package
 

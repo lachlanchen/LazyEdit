@@ -4,6 +4,10 @@ This guide is for another Codex session, for example a Rarachan/LALACHAN session
 that generated a video and already has the story/script prompts. It can publish
 through LazyEdit without opening the Studio UI.
 
+For the latest platform caveats and Musia/video/music smoothing checklist, read
+`references/PUBLISH_RUNBOOK_MUSIA_AND_PLATFORM_SMOOTHING_2026_06_30.md` before
+starting a multi-platform publish.
+
 ## Runtime Assumptions
 
 - LazyEdit backend is running at `http://127.0.0.1:18787`.
@@ -226,6 +230,33 @@ curl "http://127.0.0.1:18787/api/autopublish/queue"
 - `--no-subtitle-outline-bold`: disable thick outline.
 - `--guided-monitor`: show correction/pipeline/local queue/remote queue progress.
 - `--remote-log-command "ssh ... tmux capture-pane ..."`: periodically show Pi browser automation logs.
+
+## Musia Recording Video Defaults
+
+For Musia website/player recordings, publish the video, not the raw song audio,
+with no LazyEdit subtitles unless the user explicitly asks to review subtitles.
+The existing LazyEdit logo should be burned at the top-right.
+
+Use:
+
+```bash
+python scripts/lazyedit_publish.py \
+  --video /home/lachlan/ProjectsLFS/Musia/recorded_videos/SONG/recording.mp4 \
+  --source musia \
+  --publish-category musia \
+  --use-current-settings \
+  --no-correct-subtitles \
+  --no-burn-subtitles \
+  --logo \
+  --logo-position top-right \
+  --platforms shipinhao,youtube,instagram,douyin,xiaohongshu \
+  --guided-monitor \
+  --wait
+```
+
+Before real publish, inspect the generated `_logo.mp4` or the MP4 inside the ZIP
+to verify it is the intended rendered version and the logo is actually on the
+right side. Do not reuse an older ZIP if it contains the wrong render.
 
 ## Script-To-Subtitle Correction Rules
 

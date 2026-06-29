@@ -51,13 +51,16 @@ Note on symlinks: Never edit files inside symlinked directories from this reposi
 - Publishing system (platforms incl. YouTube): `/home/lachlan/Projects/autopub` on `lazyingart` (pull after pushing AutoPublish changes).
 
 ## Publish Defaults
-- For real publishes, burn the existing LazyEdit webapp logo at the top-left corner unless the user explicitly says not to.
+- For real publishes, burn the existing LazyEdit webapp logo unless the user explicitly says not to.
 - Do not add or replace the logo asset for this rule. Reuse the configured Studio logo from `logo_settings`.
+- Default logo position depends on the publish type:
+  - personal/SimpleLife recordings: top-left unless overridden by the user;
+  - Musia recordings, Musia MV/LALACHAN MV, and current music-video recordings: top-right unless overridden by the user.
 - Before CLI/API publishes, verify the persisted setting:
   ```bash
   curl -fsS http://127.0.0.1:18787/api/ui-settings/logo_settings | jq .
   ```
-- Required logo state: `enabled=true`, `logoPath` present, and `position="top-left"`. If missing, configure it before processing/publishing.
+- Required logo state: `enabled=true`, `logoPath` present, and `position` matching the publish type. If missing, configure it before processing/publishing.
 
 ## Coding Style & Naming Conventions
 - Python 3.10+, PEP 8, 4‑space indentation.

@@ -5,8 +5,10 @@ Date: 2026-06-28
 Scope of this note: Shipinhao music research, LazyEdit logo/subtitle behavior,
 and the AutoPublish music handoff contract. The first pass was static research
 only. A later code pass added the LazyEdit logo-only processing path and the
-AutoPublish music ZIP/publisher entry point. The live Shipinhao desktop music
-route still needs a `test=true` browser verification before a real music submit.
+AutoPublish music ZIP/publisher entry point. The desktop Shipinhao music route
+has now been live-tested with Musia songs; keep using `test=true` for new field
+or route changes, but normal song publishes can use the implemented
+`publish_shipinhao_music` path.
 
 ## What Was Confirmed
 
@@ -200,11 +202,21 @@ Implementation behavior:
 10. Save HTML/screenshot snapshots on failure with the same `log_html_snapshot`
     pattern used by `pub_shipinhao.py`.
 
-Important blocker before real submit: verify whether the desktop web site
-exposes a usable music upload form at one of the candidate routes. If it only
-exists in the mobile WeChat app, AutoPublish should not fake a desktop
-publisher. In that case, the correct fallback is a documented manual/mobile
-step or a separate mobile automation strategy.
+Live-run caveats from 2026-06-29/30:
+
+- Publish as music/song, not album/zhuanji.
+- Square covers are safest for the Shipinhao music cover/background UI.
+- Click the cover confirmation overlay after upload; otherwise the image can be
+  visible in the dialog but not accepted by the form.
+- Fill every visible field when present: title, lyrics, language, genre/style,
+  author, story/`音乐人说`, originality/agreement checkboxes.
+- Package proof screenshots or source artifacts with the ZIP when available
+  (`--website-screenshot`, `--webapp-screenshot`, or `--proof`).
+- Language selection was fragile during the first Japanese song run; keep the
+  patched AutoPublish `pub_shipinhao_music.py` pulled on `lazyingart` before
+  future music batches.
+- If lyrics are wrong, fix the curated Musia lyric JSON first. Do not invent
+  different lyrics in LazyEdit just to pass the upload.
 
 ## Handoff For LALACHAN Or Musia
 
