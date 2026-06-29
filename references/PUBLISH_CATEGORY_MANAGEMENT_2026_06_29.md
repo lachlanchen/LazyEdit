@@ -13,11 +13,11 @@ LazyEdit now writes publish-routing fields into every video/music publish ZIP:
 
 Default mapping:
 
-| Content type | YouTube playlist | Shipinhao collection |
-| --- | --- | --- |
-| personal recordings / normal phone videos | `SimpleLife` | `简单生活` |
-| LALACHAN story / Xiaoyunque videos | `LALACHAN` | `啦啦侠` |
-| Musia music / art-track uploads | `Musia` | `Musia` |
+| Content type | YouTube playlist | Shipinhao collection | Instagram |
+| --- | --- | --- | --- |
+| personal recordings / normal phone videos | `SimpleLife` | `简单生活` | no per-post category |
+| LALACHAN story / Xiaoyunque videos | `LALACHAN` | `啦啦侠` | no per-post category |
+| Musia music / art-track uploads | `Musia` | `Musia` | no per-post category |
 
 The defaults can be overridden with environment variables:
 
@@ -48,6 +48,13 @@ python scripts/lazyedit_publish.py \
 ```
 
 LazyEdit asks the metadata model to return `publish_category` as one of `simplelife`, `lalachan`, or `music`. The prompt tells it to choose `simplelife` for personal recordings, `lalachan` for LALACHAN/Xiaoyunque/Seedance fictional story videos, and `music` for Musia/song/audio-focused content. If the model is uncertain between personal recording and LALACHAN, it should choose `simplelife`. LALACHAN videos under `/home/lachlan/ProjectsLFS/LALACHAN/Videos` are still auto-routed to `lalachan` as a fallback. Music packages are always `music`.
+
+Instagram note: Instagram has no stable per-post category, playlist, folder, or
+collection field in the desktop web upload flow used by AutoPublish. Its
+professional category is account/profile-level, not per-post routing.
+AutoPublish logs the inferred `publish_category` for Instagram but does not
+select any Instagram category UI; captions/tags remain the only normal routing
+surface there.
 
 ## Backfill Tools
 
