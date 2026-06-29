@@ -100,6 +100,12 @@ from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
 from lazyedit.chinese_simplify import convert_items_to_simplified, convert_traditional_to_simplified
 from lazyedit.music_publish import package_music_publish, post_music_package_to_autopublish
+from lazyedit.portrait_blurfill import (
+    DEFAULT_PORTRAIT_BLURFILL,
+    apply_portrait_blurfill,
+    is_portrait_blurfill_enabled,
+    sanitize_portrait_blurfill,
+)
 from lazyedit.publish_categories import apply_publish_category
 from lazyedit.subtitles_burner import BurnSlotConfig, burn_video_with_slots
 
@@ -283,6 +289,7 @@ DEFAULT_BURN_LAYOUT = {
     "fontColor": "#FFFFFF",
     "outlineBold": True,
     "outlineColor": "#000000",
+    "portraitBlurFill": DEFAULT_PORTRAIT_BLURFILL.copy(),
     "slots": [
         {
             "slot": 1,
@@ -1607,9 +1614,16 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
     font_color = DEFAULT_BURN_LAYOUT.get("fontColor", "#FFFFFF")
     outline_bold = DEFAULT_BURN_LAYOUT.get("outlineBold", True)
     outline_color = DEFAULT_BURN_LAYOUT.get("outlineColor", "#000000")
+    portrait_blurfill = sanitize_portrait_blurfill(DEFAULT_BURN_LAYOUT.get("portraitBlurFill"))
     font_scale_override = False
     if isinstance(payload, dict):
         slots_payload = payload.get("slots")
+        portrait_blurfill = sanitize_portrait_blurfill(
+            payload.get("portraitBlurFill")
+            or payload.get("portrait_blur_fill")
+            or payload.get("portrait")
+            or portrait_blurfill
+        )
         if "heightRatio" in payload:
             try:
                 height_ratio = float(payload.get("heightRatio"))
@@ -1795,6 +1809,7 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         "fontColor": _sanitize_hex_color(font_color, DEFAULT_BURN_LAYOUT.get("fontColor", "#FFFFFF")),
         "outlineBold": bool(outline_bold),
         "outlineColor": _sanitize_hex_color(outline_color, DEFAULT_BURN_LAYOUT.get("outlineColor", "#000000")),
+        "portraitBlurFill": portrait_blurfill,
     }
 
 
@@ -1875,6 +1890,14 @@ def _burn_layout_payload_from_request(payload: dict | None, base_layout: dict | 
     elif isinstance(layout_payload, list):
         base["slots"] = layout_payload
 
+    portrait_payload = (
+        payload.get("portraitBlurFill")
+        or payload.get("portrait_blur_fill")
+        or payload.get("portrait")
+    )
+    if isinstance(portrait_payload, dict):
+        base["portraitBlurFill"] = portrait_payload
+
     key_map = {
         "subtitleLiftRatio": "liftRatio",
         "subtitle_lift_ratio": "liftRatio",
@@ -1904,6 +1927,36 @@ def _burn_layout_payload_from_request(payload: dict | None, base_layout: dict | 
     for source_key, target_key in key_map.items():
         if source_key in payload:
             base[target_key] = payload[source_key]
+
+    portrait_key_map = {
+        "portraitBlurFillEnabled": "enabled",
+        "portrait_blur_fill_enabled": "enabled",
+        "portraitMode": "mode",
+        "portrait_mode": "mode",
+        "portraitBlurFillMode": "mode",
+        "portrait_blur_fill_mode": "mode",
+        "portraitForegroundY": "foregroundY",
+        "portrait_foreground_y": "foregroundY",
+        "portraitBlurFillY": "foregroundY",
+        "portrait_blur_fill_y": "foregroundY",
+        "portraitForegroundWidth": "foregroundWidth",
+        "portrait_foreground_width": "foregroundWidth",
+        "portraitWidth": "width",
+        "portrait_width": "width",
+        "portraitHeight": "height",
+        "portrait_height": "height",
+        "portraitBlur": "blur",
+        "portrait_blur": "blur",
+    }
+    portrait_updates = {}
+    for source_key, target_key in portrait_key_map.items():
+        if source_key in payload:
+            portrait_updates[target_key] = payload[source_key]
+    if portrait_updates:
+        current_portrait = base.get("portraitBlurFill")
+        if not isinstance(current_portrait, dict):
+            current_portrait = {}
+        base["portraitBlurFill"] = {**current_portrait, **portrait_updates}
 
     return _sanitize_burn_layout(base)
 
@@ -6095,7 +6148,10 @@ def _process_publish_job(job_row: tuple) -> None:
     translation_languages = job_config.get("translationLanguages") or _load_translation_languages_setting()
     logo_settings = _load_logo_settings_setting()
     logo_overlay_required = _logo_overlay_enabled(logo_settings)
-    processed_output_required = burn_subtitles or logo_overlay_required
+    portrait_blurfill_required = is_portrait_blurfill_enabled(
+        (job_config.get("burnLayout") or {}).get("portraitBlurFill")
+    )
+    processed_output_required = burn_subtitles or logo_overlay_required or portrait_blurfill_required
 
     ldb.update_publish_job(job_id, detail="Checking publish prerequisites")
     status_code, status_payload, _status_text = _local_api_json_request(
@@ -8407,7 +8463,13 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
 
         if wait_for_result:
             logo_settings = _load_logo_settings_setting()
-            processed_output_required = bool(publish_config.get("burnSubtitles", True)) or _logo_overlay_enabled(logo_settings)
+            processed_output_required = (
+                bool(publish_config.get("burnSubtitles", True))
+                or _logo_overlay_enabled(logo_settings)
+                or is_portrait_blurfill_enabled(
+                    (publish_config.get("burnLayout") or {}).get("portraitBlurFill")
+                )
+            )
             bundle_status, response_payload = _prepare_publish_bundle(
                 video_id_i,
                 platform_flags,
@@ -10902,6 +10964,8 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             burn_subtitles_raw = data.get("burn_subtitles")
         burn_subtitles_requested = _parse_bool(burn_subtitles_raw, default=True)
         logo_requested = _logo_overlay_enabled(logo_config)
+        portrait_config = sanitize_portrait_blurfill(layout_config.get("portraitBlurFill"))
+        portrait_requested = is_portrait_blurfill_enabled(portrait_config)
         slots_config = layout_config.get("slots") or []
         romaji_enabled = bool(layout_config.get("romajiEnabled", True))
         pinyin_enabled = bool(layout_config.get("pinyinEnabled", True))
@@ -10924,6 +10988,18 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         session_output_folder = _publication_session_dir(output_folder, publication_session_id, create=True)
         speaker_output_dir = os.path.join(session_output_folder, "burn")
         session_suffix = f"_session_{publication_session_id}" if publication_session_id else ""
+        portrait_source_path = os.path.join(session_output_folder, f"{base_name}{session_suffix}_portrait_blurfill.mp4")
+
+        def _prepare_burn_source_path() -> str:
+            if not portrait_requested:
+                return video_path
+            if os.path.exists(portrait_source_path):
+                try:
+                    if os.path.getmtime(portrait_source_path) >= os.path.getmtime(video_path):
+                        return portrait_source_path
+                except Exception:
+                    pass
+            return apply_portrait_blurfill(video_path, portrait_source_path, portrait_config)
 
         def _active_burn_payload_if_processing():
             existing_burn = _get_latest_subtitle_burn_with_recovery(video_id_i, publication_session_id)
@@ -10944,26 +11020,30 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                 "created_at": existing_created_at.isoformat() if existing_created_at else None,
             }
 
-        def _start_logo_only_overlay(reason: str):
+        def _start_processed_only_output(reason: str):
             active_payload = _active_burn_payload_if_processing()
             if active_payload:
                 return active_payload
 
             burn_config = dict(layout_config)
             burn_config["burnSubtitles"] = False
-            burn_config["logoOnly"] = True
+            burn_config["logoOnly"] = logo_requested
+            burn_config["portraitOnly"] = portrait_requested and not logo_requested
             burn_config["logoOnlyReason"] = reason
             burn_config["usePolishedSubtitles"] = use_polished
             burn_config["publicationSessionId"] = publication_session_id
-            burn_config["logo"] = {
-                "logoPath": logo_config.get("logoPath"),
-                "heightRatio": logo_config.get("heightRatio"),
-                "position": logo_config.get("position"),
-                "bgOpacity": logo_config.get("bgOpacity"),
-                "bgShape": logo_config.get("bgShape"),
-                "enabled": logo_config.get("enabled"),
-            }
-            logo_output = os.path.join(session_output_folder, f"{base_name}{session_suffix}_logo.mp4")
+            burn_config["portraitBlurFill"] = portrait_config
+            if logo_requested:
+                burn_config["logo"] = {
+                    "logoPath": logo_config.get("logoPath"),
+                    "heightRatio": logo_config.get("heightRatio"),
+                    "position": logo_config.get("position"),
+                    "bgOpacity": logo_config.get("bgOpacity"),
+                    "bgShape": logo_config.get("bgShape"),
+                    "enabled": logo_config.get("enabled"),
+                }
+            output_suffix = "_portrait_logo" if portrait_requested and logo_requested else "_logo" if logo_requested else "_portrait"
+            processed_output = os.path.join(session_output_folder, f"{base_name}{session_suffix}{output_suffix}.mp4")
             burn_id = ldb.add_subtitle_burn(
                 video_id_i,
                 "processing",
@@ -10977,16 +11057,24 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             def _run_logo_only() -> None:
                 try:
                     ldb.update_subtitle_burn_progress(burn_id, 10)
-                    overlay_logo_on_video(
-                        video_path,
-                        logo_config.get("logoPath"),
-                        logo_output,
-                        height_ratio=logo_config.get("heightRatio", DEFAULT_LOGO_SETTINGS.get("heightRatio", 0.1)),
-                        position=logo_config.get("position", DEFAULT_LOGO_SETTINGS.get("position", "top-left")),
-                        bg_opacity=logo_config.get("bgOpacity", DEFAULT_LOGO_SETTINGS.get("bgOpacity", 0.5)),
-                        bg_shape=logo_config.get("bgShape", DEFAULT_LOGO_SETTINGS.get("bgShape", "circle")),
-                    )
-                    ldb.finalize_subtitle_burn(burn_id, "completed", logo_output, None, progress=100)
+                    source_path = _prepare_burn_source_path()
+                    ldb.update_subtitle_burn_progress(burn_id, 55 if logo_requested else 90)
+                    final_output = source_path
+                    if logo_requested:
+                        overlay_logo_on_video(
+                            source_path,
+                            logo_config.get("logoPath"),
+                            processed_output,
+                            height_ratio=logo_config.get("heightRatio", DEFAULT_LOGO_SETTINGS.get("heightRatio", 0.1)),
+                            position=logo_config.get("position", DEFAULT_LOGO_SETTINGS.get("position", "top-left")),
+                            bg_opacity=logo_config.get("bgOpacity", DEFAULT_LOGO_SETTINGS.get("bgOpacity", 0.5)),
+                            bg_shape=logo_config.get("bgShape", DEFAULT_LOGO_SETTINGS.get("bgShape", "circle")),
+                        )
+                        final_output = processed_output
+                    elif portrait_requested:
+                        shutil.copy2(source_path, processed_output)
+                        final_output = processed_output
+                    ldb.finalize_subtitle_burn(burn_id, "completed", final_output, None, progress=100)
                 except Exception as exc:
                     ldb.finalize_subtitle_burn(burn_id, "failed", None, str(exc), progress=0)
 
@@ -11003,8 +11091,9 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                 "detail": reason,
             }
 
-        if logo_requested and not burn_subtitles_requested:
-            return self.write(_start_logo_only_overlay("logo-only overlay; subtitles disabled"))
+        if (logo_requested or portrait_requested) and not burn_subtitles_requested:
+            detail = "logo-only overlay; subtitles disabled" if logo_requested else "portrait blur-fill; subtitles disabled"
+            return self.write(_start_processed_only_output(detail))
 
         if use_polished:
             _ensure_global_polished_subtitles(video_id_i, output_folder, base_name)
@@ -11017,8 +11106,9 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         if input_json and os.path.exists(input_json):
             _payload, items, _container_key = _load_subtitle_payload(input_json)
             if not items:
-                if logo_requested:
-                    return self.write(_start_logo_only_overlay("logo-only overlay; no subtitles to burn"))
+                if logo_requested or portrait_requested:
+                    detail = "processed output; no subtitles to burn"
+                    return self.write(_start_processed_only_output(detail))
                 burn_id = ldb.add_subtitle_burn(
                     video_id_i,
                     "skipped",
@@ -11141,13 +11231,14 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             )
 
         if not assignments:
-            if logo_requested:
-                return self.write(_start_logo_only_overlay("logo-only overlay; no valid subtitle slots configured"))
+            if logo_requested or portrait_requested:
+                return self.write(_start_processed_only_output("processed output; no valid subtitle slots configured"))
             self.set_status(400)
             return self.write({"error": "no valid subtitle slots configured"})
 
-        temp_output = os.path.join(session_output_folder, f"{base_name}{session_suffix}_subtitles_render.avi")
-        output_path = os.path.join(session_output_folder, f"{base_name}{session_suffix}_subtitles.mp4")
+        burn_suffix = "_portrait_subtitles" if portrait_requested else "_subtitles"
+        temp_output = os.path.join(session_output_folder, f"{base_name}{session_suffix}{burn_suffix}_render.avi")
+        output_path = os.path.join(session_output_folder, f"{base_name}{session_suffix}{burn_suffix}.mp4")
         height_ratio = layout_config.get("heightRatio", DEFAULT_BURN_LAYOUT.get("heightRatio", 0.5))
         rows = layout_config.get("rows", DEFAULT_BURN_LAYOUT.get("rows", 4))
         cols = layout_config.get("cols", DEFAULT_BURN_LAYOUT.get("cols", 1))
@@ -11204,8 +11295,9 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
             status = "completed"
             error_message = None
             try:
+                source_video_path = _prepare_burn_source_path()
                 burn_video_with_slots(
-                    video_path,
+                    source_video_path,
                     temp_output,
                     assignments,
                     height_ratio=height_ratio,
@@ -11216,11 +11308,11 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     ruby_spacing=ruby_spacing,
                     progress_callback=_update_progress,
                 )
-                mux_audio(temp_output, video_path, output_path)
+                mux_audio(temp_output, source_video_path, output_path)
                 final_output = output_path
                 if logo_config and logo_config.get("enabled") and logo_config.get("logoPath"):
                     logo_path = logo_config.get("logoPath")
-                    logo_output = os.path.join(session_output_folder, f"{base_name}{session_suffix}_subtitles_logo.mp4")
+                    logo_output = os.path.join(session_output_folder, f"{base_name}{session_suffix}{burn_suffix}_logo.mp4")
                     try:
                         overlay_logo_on_video(
                             output_path,
@@ -11491,7 +11583,16 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                 await mark("translate", "skipped", "Skipped")
 
             if wants("burn"):
-                await mark("burn", "working", "Burning subtitles" if burn_subtitles_requested else "Burning logo")
+                portrait_requested_for_burn = is_portrait_blurfill_enabled(
+                    (burn_layout.get("portraitBlurFill") if isinstance(burn_layout, dict) else None)
+                )
+                if burn_subtitles_requested:
+                    burn_detail = "Burning subtitles"
+                elif portrait_requested_for_burn:
+                    burn_detail = "Making portrait video"
+                else:
+                    burn_detail = "Burning logo"
+                await mark("burn", "working", burn_detail)
                 burn_payload = {
                     "layout": burn_layout,
                     "translationLanguages": translation_languages,
@@ -11712,7 +11813,14 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
                 publish_options = _sanitize_publish_options({**publish_options, **session_config})
         subtitle_burn_required_for_publish = bool(publish_options.get("burnSubtitles", True))
         logo_required_for_publish = _logo_overlay_enabled(_load_logo_settings_setting())
-        burn_required_for_publish = subtitle_burn_required_for_publish or logo_required_for_publish
+        portrait_required_for_publish = is_portrait_blurfill_enabled(
+            (publish_options.get("burnLayout") or {}).get("portraitBlurFill")
+        )
+        burn_required_for_publish = (
+            subtitle_burn_required_for_publish
+            or logo_required_for_publish
+            or portrait_required_for_publish
+        )
         translation_languages = publish_options.get("translationLanguages") or _load_translation_languages_setting()
         if not subtitle_burn_required_for_publish:
             steps["translate"] = step_payload("skipped", "Subtitle burn disabled")

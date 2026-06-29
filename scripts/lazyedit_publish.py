@@ -403,6 +403,23 @@ def build_options(
     for key, value in layout_overrides.items():
         if value is not None:
             burn_layout[key] = value
+    portrait_overrides = {
+        "enabled": args.portrait_blur_fill,
+        "mode": args.portrait_blur_mode,
+        "foregroundY": args.portrait_foreground_y,
+        "foregroundWidth": args.portrait_foreground_width,
+        "width": args.portrait_width,
+        "height": args.portrait_height,
+        "blur": args.portrait_blur,
+        "crf": args.portrait_crf,
+        "preset": args.portrait_preset,
+    }
+    portrait_overrides = {key: value for key, value in portrait_overrides.items() if value is not None}
+    if portrait_overrides:
+        current_portrait = burn_layout.get("portraitBlurFill")
+        if not isinstance(current_portrait, dict):
+            current_portrait = {}
+        burn_layout["portraitBlurFill"] = {**current_portrait, **portrait_overrides}
 
     publication_mode = "new" if args.new_run else str(current_publish.get("publicationMode") or "override")
     if publication_mode not in {"new", "override"}:
@@ -448,10 +465,26 @@ def logo_overlay_enabled(logo_settings: dict[str, Any] | None) -> bool:
     )
 
 
-def default_steps(burn_subtitles: bool, logo_enabled: bool = False) -> list[str]:
+def portrait_blurfill_enabled(burn_layout: dict[str, Any] | None) -> bool:
+    if not isinstance(burn_layout, dict):
+        return False
+    config = burn_layout.get("portraitBlurFill")
+    if not isinstance(config, dict):
+        return False
+    value = config.get("enabled")
+    if isinstance(value, bool):
+        return value
+    return str(value or "").strip().lower() in {"1", "true", "yes", "y", "on"}
+
+
+def default_steps(
+    burn_subtitles: bool,
+    logo_enabled: bool = False,
+    portrait_enabled: bool = False,
+) -> list[str]:
     if burn_subtitles:
         return ["keyframes", "caption", "transcribe", "translate", "burn", "metadata_zh", "metadata_en", "cover"]
-    if logo_enabled:
+    if logo_enabled or portrait_enabled:
         return ["keyframes", "caption", "transcribe", "burn", "metadata_zh", "metadata_en", "cover"]
     return ["keyframes", "caption", "transcribe", "metadata_zh", "metadata_en", "cover"]
 
@@ -701,8 +734,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--platform", action="append", default=[], help="Target platform; may be repeated.")
     parser.add_argument(
         "--publish-category",
-        choices=["simplelife", "lalachan", "music"],
-        help="Override publish routing. Defaults to simplelife, except LALACHAN source videos auto-route to LALACHAN.",
+        choices=["simplelife", "lazyingart", "musia", "lalachan", "lalamv", "music"],
+        help="Override publish routing. Defaults to simplelife, except LALACHAN source videos auto-route to LALACHAN. 'music' is accepted as an alias for musia.",
     )
     parser.add_argument("--youtube-playlist", help="Override YouTube playlist/category for this one publish.")
     parser.add_argument("--shipinhao-collection", help="Override Shipinhao 合集 for this one publish.")
@@ -732,6 +765,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--subtitle-font-color")
     parser.add_argument("--subtitle-outline-bold", action=argparse.BooleanOptionalAction, default=None)
     parser.add_argument("--subtitle-outline-color")
+    parser.add_argument("--portrait-blur-fill", action=argparse.BooleanOptionalAction, default=None)
+    parser.add_argument("--portrait-blur-mode", choices=["lalachan", "center", "custom"])
+    parser.add_argument("--portrait-foreground-y", type=int)
+    parser.add_argument("--portrait-foreground-width", type=int)
+    parser.add_argument("--portrait-width", type=int)
+    parser.add_argument("--portrait-height", type=int)
+    parser.add_argument("--portrait-blur", type=float)
+    parser.add_argument("--portrait-crf", type=int)
+    parser.add_argument("--portrait-preset")
     parser.add_argument("--logo-position", choices=["top-left", "top-right", "bottom-left", "bottom-right", "center"])
     parser.add_argument("--logo", dest="logo_enabled_override", action="store_true", default=None)
     parser.add_argument("--no-logo", dest="logo_enabled_override", action="store_false")
@@ -843,6 +885,7 @@ def main(argv: list[str] | None = None) -> int:
         logo_settings = settings.get("logo_settings") if isinstance(settings, dict) else None
         logo_settings = apply_logo_overrides(args, logo_settings)
         logo_enabled = logo_overlay_enabled(logo_settings)
+        portrait_enabled = portrait_blurfill_enabled(options.get("burnLayout"))
         final["options"] = {
             "burnSubtitles": options["burnSubtitles"],
             "translationLanguages": options["translationLanguages"],
@@ -855,7 +898,11 @@ def main(argv: list[str] | None = None) -> int:
         session_id = args.publication_session_id
 
         if args.process:
-            steps = parse_csv(args.steps) or default_steps(bool(options["burnSubtitles"]), logo_enabled)
+            steps = parse_csv(args.steps) or default_steps(
+                bool(options["burnSubtitles"]),
+                logo_enabled,
+                portrait_enabled,
+            )
             print_event(f"Starting LazyEdit process: {', '.join(steps)}", quiet=args.quiet)
             process_payload = {
                 **options,

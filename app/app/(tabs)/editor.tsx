@@ -35,6 +35,9 @@ const MIN_SUBTITLE_FONT_SCALE = 0.6;
 const MAX_SUBTITLE_FONT_SCALE = 2.5;
 const DEFAULT_SUBTITLE_FONT_COLOR = '#FFFFFF';
 const DEFAULT_SUBTITLE_OUTLINE_COLOR = '#000000';
+const DEFAULT_PORTRAIT_FOREGROUND_Y = 240;
+const MIN_PORTRAIT_FOREGROUND_Y = 0;
+const MAX_PORTRAIT_FOREGROUND_Y = 1920;
 const DEFAULT_CORRECTION_PROMPT =
   'Fix recognition errors while preserving every timestamp exactly and keeping the same number of subtitle lines.';
 const LANGUAGE_LABELS: Record<string, string> = {
@@ -120,6 +123,7 @@ type SubtitleCorrectionPayload = {
 };
 
 type SubtitleSourceVariant = 'polished' | 'original';
+type PortraitBlurMode = 'lalachan' | 'center' | 'custom';
 
 const PLATFORMS = [
   { key: 'douyin', label: 'Douyin' },
@@ -166,6 +170,16 @@ const normalizeHexColor = (value: unknown, fallback: string) => {
     return `#${text.slice(1).split('').map((char) => char + char).join('')}`.toUpperCase();
   }
   return text.toUpperCase();
+};
+const normalizePortraitMode = (value: unknown): PortraitBlurMode => {
+  const text = String(value ?? '').trim().toLowerCase();
+  if (text === 'center' || text === 'custom') return text;
+  return 'lalachan';
+};
+const normalizePortraitForegroundY = (value: unknown, fallback = DEFAULT_PORTRAIT_FOREGROUND_Y) => {
+  const parsed = typeof value === 'number' ? value : Number(String(value ?? '').trim());
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(MAX_PORTRAIT_FOREGROUND_Y, Math.max(MIN_PORTRAIT_FOREGROUND_Y, Math.round(parsed)));
 };
 
 export default function EditorScreen() {
@@ -269,6 +283,10 @@ export default function EditorScreen() {
   const [subtitleFontColor, setSubtitleFontColor] = useState(DEFAULT_SUBTITLE_FONT_COLOR);
   const [subtitleOutlineBold, setSubtitleOutlineBold] = useState(true);
   const [subtitleOutlineColor, setSubtitleOutlineColor] = useState(DEFAULT_SUBTITLE_OUTLINE_COLOR);
+  const [portraitBlurFill, setPortraitBlurFill] = useState(false);
+  const [portraitBlurMode, setPortraitBlurMode] = useState<PortraitBlurMode>('lalachan');
+  const [portraitForegroundY, setPortraitForegroundY] = useState(DEFAULT_PORTRAIT_FOREGROUND_Y);
+  const [portraitForegroundYInput, setPortraitForegroundYInput] = useState(String(DEFAULT_PORTRAIT_FOREGROUND_Y));
   const [correctionOpen, setCorrectionOpen] = useState(false);
   const [correctionLoading, setCorrectionLoading] = useState(false);
   const [correctionSaving, setCorrectionSaving] = useState(false);
@@ -776,6 +794,12 @@ export default function EditorScreen() {
         setSubtitleFontColor(normalizeHexColor(burnLayoutJson?.value?.fontColor, DEFAULT_SUBTITLE_FONT_COLOR));
         setSubtitleOutlineBold(burnLayoutJson?.value?.outlineBold !== false);
         setSubtitleOutlineColor(normalizeHexColor(burnLayoutJson?.value?.outlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR));
+        const portraitValue = burnLayoutJson?.value?.portraitBlurFill || {};
+        const nextPortraitY = normalizePortraitForegroundY(portraitValue?.foregroundY);
+        setPortraitBlurFill(Boolean(portraitValue?.enabled));
+        setPortraitBlurMode(normalizePortraitMode(portraitValue?.mode));
+        setPortraitForegroundY(nextPortraitY);
+        setPortraitForegroundYInput(String(nextPortraitY));
       }
       setTranslationLanguages(nextLanguages.slice(0, AVAILABLE_TRANSLATION_LANGUAGES.length));
     } catch (_err) {
@@ -793,6 +817,11 @@ export default function EditorScreen() {
     fontColor?: string;
     outlineBold?: boolean;
     outlineColor?: string;
+    portraitBlurFill?: {
+      enabled?: boolean;
+      mode?: PortraitBlurMode;
+      foregroundY?: number;
+    };
   }) => {
     try {
       let existing = {};
@@ -817,6 +846,17 @@ export default function EditorScreen() {
           ...(updates.outlineColor === undefined
             ? {}
             : { outlineColor: normalizeHexColor(updates.outlineColor, subtitleOutlineColor) }),
+          ...(updates.portraitBlurFill === undefined
+            ? {}
+            : {
+                portraitBlurFill: {
+                  ...((existing as any)?.portraitBlurFill || {}),
+                  ...updates.portraitBlurFill,
+                  ...(updates.portraitBlurFill.foregroundY === undefined
+                    ? {}
+                    : { foregroundY: normalizePortraitForegroundY(updates.portraitBlurFill.foregroundY) }),
+                },
+              }),
           liftSlots: 0,
         }),
       });
@@ -933,12 +973,55 @@ export default function EditorScreen() {
     return nextColor;
   }, [persistBurnLayout, subtitleOutlineColor]);
 
+  const updatePortraitBlurFill = useCallback(
+    (value: boolean) => {
+      setPortraitBlurFill(value);
+      void persistBurnLayout({
+        portraitBlurFill: {
+          enabled: value,
+          mode: portraitBlurMode,
+          foregroundY: portraitForegroundY,
+        },
+      });
+    },
+    [persistBurnLayout, portraitBlurMode, portraitForegroundY],
+  );
+
+  const updatePortraitBlurMode = useCallback(
+    (mode: PortraitBlurMode) => {
+      setPortraitBlurMode(mode);
+      void persistBurnLayout({
+        portraitBlurFill: {
+          enabled: portraitBlurFill,
+          mode,
+          foregroundY: portraitForegroundY,
+        },
+      });
+    },
+    [persistBurnLayout, portraitBlurFill, portraitForegroundY],
+  );
+
+  const commitPortraitForegroundY = useCallback(async () => {
+    const nextY = normalizePortraitForegroundY(portraitForegroundYInput, portraitForegroundY);
+    setPortraitForegroundY(nextY);
+    setPortraitForegroundYInput(String(nextY));
+    await persistBurnLayout({
+      portraitBlurFill: {
+        enabled: portraitBlurFill,
+        mode: portraitBlurMode,
+        foregroundY: nextY,
+      },
+    });
+    return nextY;
+  }, [persistBurnLayout, portraitBlurFill, portraitBlurMode, portraitForegroundY, portraitForegroundYInput]);
+
   const commitSubtitleBurnLayoutSettings = useCallback(async () => {
     const nextLiftRatio = normalizeSubtitleLiftRatio(subtitleLiftInput, subtitleLiftRatio);
     const nextRows = normalizeSubtitleRows(subtitleRowsInput, subtitleRows);
     const nextFontScale = normalizeSubtitleFontScale(subtitleFontScaleInput, subtitleFontScale);
     const nextFontColor = normalizeHexColor(subtitleFontColor, DEFAULT_SUBTITLE_FONT_COLOR);
     const nextOutlineColor = normalizeHexColor(subtitleOutlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR);
+    const nextPortraitY = normalizePortraitForegroundY(portraitForegroundYInput, portraitForegroundY);
     setSubtitleLiftRatio(nextLiftRatio);
     setSubtitleLiftInput(formatSubtitleLiftRatio(nextLiftRatio));
     setSubtitleRows(nextRows);
@@ -947,6 +1030,13 @@ export default function EditorScreen() {
     setSubtitleFontScaleInput(formatSubtitleFontScale(nextFontScale));
     setSubtitleFontColor(nextFontColor);
     setSubtitleOutlineColor(nextOutlineColor);
+    setPortraitForegroundY(nextPortraitY);
+    setPortraitForegroundYInput(String(nextPortraitY));
+    const nextPortraitBlurFill = {
+      enabled: portraitBlurFill,
+      mode: portraitBlurMode,
+      foregroundY: nextPortraitY,
+    };
     await persistBurnLayout({
       liftRatio: nextLiftRatio,
       rows: nextRows,
@@ -955,6 +1045,7 @@ export default function EditorScreen() {
       fontColor: nextFontColor,
       outlineBold: subtitleOutlineBold,
       outlineColor: nextOutlineColor,
+      portraitBlurFill: nextPortraitBlurFill,
     });
     return {
       liftRatio: nextLiftRatio,
@@ -964,9 +1055,14 @@ export default function EditorScreen() {
       fontColor: nextFontColor,
       outlineBold: subtitleOutlineBold,
       outlineColor: nextOutlineColor,
+      portraitBlurFill: nextPortraitBlurFill,
     };
   }, [
     persistBurnLayout,
+    portraitBlurFill,
+    portraitBlurMode,
+    portraitForegroundY,
+    portraitForegroundYInput,
     subtitleFontBold,
     subtitleFontColor,
     subtitleFontScale,
@@ -1622,9 +1718,12 @@ export default function EditorScreen() {
       const logoPayload = await fetchLogoSettings();
       const autoCorrectPromptText = autoCorrectActive ? autoCorrectPrompt.trim() : '';
       const metadataPromptText = metadataCorrectionPrompt.trim();
+      const processedOutputRequired = burnSubtitles || portraitBlurFill || Boolean(logoPayload?.enabled && logoPayload?.logoPath);
       const steps = burnSubtitles
         ? ['keyframes', 'caption', 'transcribe', 'translate', 'burn', 'metadata_zh', 'metadata_en', 'cover']
-        : ['keyframes', 'caption', 'transcribe', 'metadata_zh', 'metadata_en', 'cover'];
+        : processedOutputRequired
+          ? ['keyframes', 'caption', 'transcribe', 'burn', 'metadata_zh', 'metadata_en', 'cover']
+          : ['keyframes', 'caption', 'transcribe', 'metadata_zh', 'metadata_en', 'cover'];
       if (autoCorrectPromptText) {
         steps.splice(3, 0, 'polish');
       }
@@ -1649,6 +1748,8 @@ export default function EditorScreen() {
           subtitleFontColor: committedBurnLayout.fontColor,
           subtitleOutlineBold: committedBurnLayout.outlineBold,
           subtitleOutlineColor: committedBurnLayout.outlineColor,
+          portraitBlurFill: committedBurnLayout.portraitBlurFill,
+          burnLayout: committedBurnLayout,
           publicationMode: publishAsNewSession ? 'new' : 'override',
           publicationSessionId: publishAsNewSession ? null : publicationSessionId,
           ...(logoPayload ? { logo: logoPayload } : {}),
@@ -1666,8 +1767,8 @@ export default function EditorScreen() {
         setRunSelectionTouched(true);
         setPublicationSessionId(Number(json.publication_session_id));
         loadPublicationSessions(selectedVideoId, true);
-        if (burnSubtitles) setPreviewSourceKey(`session:${Number(json.publication_session_id)}`);
-      } else if (burnSubtitles) {
+        if (processedOutputRequired) setPreviewSourceKey(`session:${Number(json.publication_session_id)}`);
+      } else if (processedOutputRequired) {
         setPreviewSourceKey('base-burn');
       }
       setProcessStatus(t('publish_process_started'));
@@ -1755,6 +1856,8 @@ export default function EditorScreen() {
             subtitleFontColor: committedBurnLayout.fontColor,
             subtitleOutlineBold: committedBurnLayout.outlineBold,
             subtitleOutlineColor: committedBurnLayout.outlineColor,
+            portraitBlurFill: committedBurnLayout.portraitBlurFill,
+            burnLayout: committedBurnLayout,
             publicationMode: publishAsNewSession ? 'new' : 'override',
             publicationSessionId: publishAsNewSession ? null : publicationSessionId,
           },
@@ -1776,8 +1879,8 @@ export default function EditorScreen() {
         setRunSelectionTouched(true);
         setPublicationSessionId(Number(json.publication_session_id));
         loadPublicationSessions(selectedVideoId, true);
-        if (burnSubtitles) setPreviewSourceKey(`session:${Number(json.publication_session_id)}`);
-      } else if (burnSubtitles) {
+        if (burnSubtitles || portraitBlurFill) setPreviewSourceKey(`session:${Number(json.publication_session_id)}`);
+      } else if (burnSubtitles || portraitBlurFill) {
         setPreviewSourceKey('base-burn');
       }
       setPublishStatus(
@@ -2546,6 +2649,89 @@ export default function EditorScreen() {
               </View>
             </View>
           </View>
+          <View style={styles.publishOptionRow}>
+            <View style={styles.publishOptionText}>
+              <Text style={styles.optionLabel}>{t('publish_option_portrait_title')}</Text>
+              <Text style={styles.optionHint}>
+                {portraitBlurFill ? t('publish_option_portrait_on') : t('publish_option_portrait_off')}
+              </Text>
+            </View>
+            <Switch
+              value={portraitBlurFill}
+              onValueChange={updatePortraitBlurFill}
+              disabled={!publishOptionsLoaded}
+              trackColor={{ false: '#e2e8f0', true: '#2563eb' }}
+              thumbColor={portraitBlurFill ? '#f8fafc' : '#f1f5f9'}
+            />
+          </View>
+          {portraitBlurFill ? (
+            <View style={styles.liftRatioRow}>
+              <View style={styles.publishOptionText}>
+                <Text style={styles.optionLabel}>{t('publish_option_portrait_mode_title')}</Text>
+                <Text style={styles.optionHint}>
+                  {portraitBlurMode === 'center'
+                    ? t('publish_option_portrait_mode_center_hint')
+                    : t('publish_option_portrait_mode_lalachan_hint')}
+                </Text>
+              </View>
+              <View style={styles.languageChipGroup}>
+                {(['lalachan', 'center', 'custom'] as PortraitBlurMode[]).map((mode) => {
+                  const active = portraitBlurMode === mode;
+                  return (
+                    <Pressable
+                      key={mode}
+                      style={[styles.languageChip, active && styles.languageChipActive]}
+                      onPress={() => updatePortraitBlurMode(mode)}
+                      disabled={!publishOptionsLoaded}
+                    >
+                      <Text style={[styles.languageChipText, active && styles.languageChipTextActive]}>
+                        {t(`publish_option_portrait_mode_${mode}`)}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
+          ) : null}
+          {portraitBlurFill && portraitBlurMode !== 'center' ? (
+            <View style={styles.liftRatioRow}>
+              <View style={styles.publishOptionText}>
+                <Text style={styles.optionLabel}>{t('publish_option_portrait_y_title')}</Text>
+                <Text style={styles.optionHint}>
+                  {t('publish_option_portrait_y_hint', { value: String(portraitForegroundY) })}
+                </Text>
+              </View>
+              <View style={styles.liftRatioControls}>
+                <Pressable
+                  style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
+                  onPress={() => {
+                    setPortraitForegroundY(DEFAULT_PORTRAIT_FOREGROUND_Y);
+                    setPortraitForegroundYInput(String(DEFAULT_PORTRAIT_FOREGROUND_Y));
+                    void persistBurnLayout({
+                      portraitBlurFill: {
+                        enabled: portraitBlurFill,
+                        mode: portraitBlurMode,
+                        foregroundY: DEFAULT_PORTRAIT_FOREGROUND_Y,
+                      },
+                    });
+                  }}
+                  disabled={!publishOptionsLoaded}
+                >
+                  <Text style={styles.liftRatioButtonText}>240</Text>
+                </Pressable>
+                <TextInput
+                  value={portraitForegroundYInput}
+                  onChangeText={setPortraitForegroundYInput}
+                  onBlur={() => void commitPortraitForegroundY()}
+                  onSubmitEditing={() => void commitPortraitForegroundY()}
+                  keyboardType="number-pad"
+                  placeholder="240"
+                  editable={publishOptionsLoaded}
+                  style={[styles.liftRatioInput, !publishOptionsLoaded && styles.liftRatioInputDisabled]}
+                />
+              </View>
+            </View>
+          ) : null}
           {renderSubtitleSourceSelector()}
           <View style={styles.publishOptionRow}>
             <View style={styles.publishOptionText}>
