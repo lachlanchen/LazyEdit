@@ -36,6 +36,7 @@ def _remote_job_id(response: dict | None) -> str | None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Package a music/audio publish ZIP through LazyEdit.")
     parser.add_argument("--audio", required=True, help="Song audio file, usually MP3 or WAV.")
+    parser.add_argument("--bandcamp-audio", help="Optional real WAV/AIFF/FLAC master for Bandcamp upload.")
     parser.add_argument("--title", required=True, help="Song title.")
     parser.add_argument("--author", default="Musia 慕莎")
     parser.add_argument("--artist")
@@ -65,9 +66,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-slug", help="Stable package folder/zip slug.")
     parser.add_argument("--output-root", default=str(Path(UPLOAD_FOLDER) / "music_publish"))
     parser.add_argument("--post", action="store_true", help="Post package to AutoPublish after building.")
-    parser.add_argument("--platforms", default="shipinhao_music", help="Comma-separated music platforms: shipinhao_music,youtube_music.")
+    parser.add_argument("--platforms", default="", help="Comma-separated music platforms: shipinhao_music,youtube_music,bandcamp_music. Defaults to shipinhao_music when no target is selected.")
     parser.add_argument("--shipinhao-music", action="store_true", help="Publish to Shipinhao music when --post is used.")
     parser.add_argument("--youtube-music", action="store_true", help="Publish to YouTube as an art-track music video when --post is used.")
+    parser.add_argument("--bandcamp-music", action="store_true", help="Publish to Bandcamp when --post is used.")
     parser.add_argument("--autopublish-url", default=AUTOPUBLISH_URL)
     parser.add_argument("--test", action="store_true")
     parser.add_argument("--source-url", default="", help="Public source URL for tracking, e.g. Fun Lazying Art item URL.")
@@ -76,6 +78,7 @@ def main(argv: list[str] | None = None) -> int:
 
     result = package_music_publish(
         audio_path=args.audio,
+        bandcamp_audio_path=args.bandcamp_audio,
         title=args.title,
         output_root=args.output_root,
         output_slug=args.output_slug,
@@ -131,7 +134,8 @@ def main(argv: list[str] | None = None) -> int:
         }
         publish_shipinhao_music = args.shipinhao_music or "shipinhao_music" in requested_platforms or "sph" in requested_platforms
         publish_youtube_music = args.youtube_music or "youtube_music" in requested_platforms or "youtube" in requested_platforms or "y2b" in requested_platforms
-        if not publish_shipinhao_music and not publish_youtube_music:
+        publish_bandcamp_music = args.bandcamp_music or "bandcamp_music" in requested_platforms or "bandcamp" in requested_platforms
+        if not publish_shipinhao_music and not publish_youtube_music and not publish_bandcamp_music:
             publish_shipinhao_music = True
         try:
             result["autopublish_response"] = post_music_package_to_autopublish(
@@ -139,6 +143,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.autopublish_url,
                 publish_shipinhao_music=publish_shipinhao_music,
                 publish_youtube_music=publish_youtube_music,
+                publish_bandcamp_music=publish_bandcamp_music,
                 test=args.test,
             )
             if item_id:

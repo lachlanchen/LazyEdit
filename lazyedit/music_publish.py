@@ -461,6 +461,7 @@ def build_music_metadata(
 def package_music_publish(
     *,
     audio_path: str | Path,
+    bandcamp_audio_path: str | Path | None = None,
     title: str | None = None,
     output_root: str | Path,
     output_slug: str | None = None,
@@ -501,6 +502,19 @@ def package_music_publish(
         raise ValueError("cover_shape must be 'square' or 'original'")
 
     copied_audio = _prepare_shipinhao_audio(audio, package_dir)
+    bandcamp_audio: Path | None = None
+    if bandcamp_audio_path:
+        candidate = Path(bandcamp_audio_path).expanduser().resolve()
+        if not candidate.exists():
+            raise FileNotFoundError(candidate)
+        if candidate.suffix.lower() not in {".wav", ".aif", ".aiff", ".flac"}:
+            raise ValueError("Bandcamp audio must be a real WAV, AIFF, or FLAC master.")
+        target = package_dir / _safe_arcname(candidate)
+        if target != candidate:
+            shutil.copy2(candidate, target)
+        bandcamp_audio = target
+    elif copied_audio.suffix.lower() in {".wav", ".aif", ".aiff", ".flac"}:
+        bandcamp_audio = copied_audio
 
     resolved_covers: list[Path] = []
     for cover_index, cover in enumerate(cover_paths or [], start=1):
@@ -622,6 +636,12 @@ def package_music_publish(
         codex_cover_count=codex_cover_count,
         metadata_override=metadata_override,
     )
+    if bandcamp_audio:
+        metadata["bandcamp_audio_filename"] = bandcamp_audio.name
+        metadata["bandcamp_ready"] = True
+    else:
+        metadata["bandcamp_ready"] = False
+        metadata["bandcamp_note"] = "Bandcamp needs a real lossless WAV/AIFF/FLAC source; do not upload a derived WAV from MP3."
 
     metadata_name = f"{slug}_metadata.json"
     metadata_path = package_dir / metadata_name
@@ -634,6 +654,7 @@ def package_music_publish(
         "created_at": int(time.time()),
         "title": package_title,
         "audio": copied_audio.name,
+        "bandcamp_audio": bandcamp_audio.name if bandcamp_audio else None,
         "metadata": metadata_name,
         "lyrics": lyrics_path.name,
         "covers": cover_names,
@@ -651,6 +672,8 @@ def package_music_publish(
     zip_path = package_dir / f"{slug}.zip"
     with zipfile.ZipFile(zip_path, "w") as zipf:
         zipf.write(copied_audio, arcname=copied_audio.name)
+        if bandcamp_audio and bandcamp_audio != copied_audio:
+            zipf.write(bandcamp_audio, arcname=bandcamp_audio.name)
         zipf.write(youtube_video, arcname=youtube_video.name)
         zipf.write(metadata_path, arcname=metadata_name)
         zipf.write(lyrics_path, arcname=lyrics_path.name)
@@ -672,6 +695,7 @@ def package_music_publish(
         "lyrics_path": str(lyrics_path),
         "manifest_path": str(manifest_path),
         "audio_path": str(copied_audio),
+        "bandcamp_audio_path": str(bandcamp_audio) if bandcamp_audio else None,
         "youtube_video_path": str(youtube_video),
         "cover_paths": [str(path) for path in resolved_covers],
         "cover_count": len(resolved_covers),
@@ -687,6 +711,7 @@ def post_music_package_to_autopublish(
     *,
     publish_shipinhao_music: bool = True,
     publish_youtube_music: bool = False,
+    publish_bandcamp_music: bool = False,
     test: bool = False,
     timeout: int = 120,
 ) -> dict:
@@ -695,6 +720,7 @@ def post_music_package_to_autopublish(
         'filename': zip_file.name,
         'publish_shipinhao_music': str(bool(publish_shipinhao_music)).lower(),
         'publish_youtube_music': str(bool(publish_youtube_music)).lower(),
+        'publish_bandcamp_music': str(bool(publish_bandcamp_music)).lower(),
         'test': str(bool(test)).lower(),
     }
     endpoint = f"{autopublish_url}?{urlencode(params)}"

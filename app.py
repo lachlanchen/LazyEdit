@@ -8612,10 +8612,15 @@ class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
             data.get("publish_youtube_music") or data.get("publishYoutubeMusic") or data.get("publish_y2b_music"),
             default=music_platforms.get("youtube_music", False) or music_platforms.get("youtube", False),
         )
+        publish_bandcamp_music = _parse_bool(
+            data.get("publish_bandcamp_music") or data.get("publishBandcampMusic"),
+            default=music_platforms.get("bandcamp_music", False) or music_platforms.get("bandcamp", False),
+        )
 
         try:
             result = package_music_publish(
                 audio_path=audio_path,
+                bandcamp_audio_path=data.get("bandcamp_audio") or data.get("bandcampAudio") or data.get("bandcamp_audio_path"),
                 title=title,
                 output_root=os.path.join(UPLOAD_FOLDER, "music_publish"),
                 output_slug=data.get("output_slug") or data.get("slug"),
@@ -8688,6 +8693,7 @@ class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
                         autopublish_url,
                         publish_shipinhao_music=publish_shipinhao_music,
                         publish_youtube_music=publish_youtube_music,
+                        publish_bandcamp_music=publish_bandcamp_music,
                         test=_parse_bool(data.get("test"), default=False),
                     )
                     response_payload = result.get("autopublish_response")

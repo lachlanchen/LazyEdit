@@ -118,7 +118,7 @@ flow maps directly to those sites.
 
 ## LazyEdit Implementation Added
 
-New script:
+Distribution bundle script:
 
 ```bash
 scripts/lazyedit_music_distribution_bundle.py
@@ -150,6 +150,63 @@ Important: if Musia can provide a true WAV/FLAC master, use that for paid DSP
 distribution. The generated WAV in this bundle is a compatibility derivative
 from the available MP3, not a lossless source master.
 
+## Bandcamp Publisher Prepared
+
+AutoPublish now has a guarded Bandcamp music publisher:
+
+```text
+AutoPublish/pub_bandcamp_music.py
+```
+
+LazyEdit music packages now support a separate lossless Bandcamp master:
+
+```bash
+python scripts/lazyedit_music_package.py \
+  --audio song-for-shipinhao-or-youtube.mp3 \
+  --bandcamp-audio real-master.wav \
+  --title "Song Title" \
+  --lyrics-file corrected-lyrics.txt \
+  --cover cover-square.png
+```
+
+The `--bandcamp-audio` file must be a real `.wav`, `.aif`, `.aiff`, or `.flac`
+master. The publisher refuses MP3 and refuses generated WAV derivatives from
+MP3, because Bandcamp expects a genuine lossless upload source.
+
+Submit a prepared package to Bandcamp through AutoPublish:
+
+```bash
+python scripts/lazyedit_music_package.py \
+  --audio song.mp3 \
+  --bandcamp-audio song-master.wav \
+  --title "Song Title" \
+  --lyrics-file corrected-lyrics.txt \
+  --cover cover-square.png \
+  --platforms bandcamp_music \
+  --post \
+  --test
+```
+
+The first run should use `--test`. AutoPublish opens/reuses a dedicated
+Bandcamp browser profile on port `5008`. Register or log in through that
+browser/VNC. If Bandcamp redirects to a specific artist upload/dashboard page,
+set:
+
+```bash
+export BANDCAMP_UPLOAD_URL='https://...'
+```
+
+By default the publisher fills the form and saves a draft when possible. It
+does not force a public release. To allow a public publish click after account,
+payment, and release settings are verified:
+
+```bash
+export BANDCAMP_PUBLISH_PUBLIC=1
+```
+
+Keep this disabled for normal debugging. Bandcamp price/payment settings are
+account-owned and should be checked manually before the first public release.
+
 ## Next Implementation Order
 
 1. Add a Music tab action in LazyEdit UI: `Export distribution bundle`.
@@ -163,8 +220,9 @@ from the available MP3, not a lossless source master.
    - label
    - primary genre and secondary genre
    - composer/lyricist/producer splits
-4. After one manual Bandcamp release succeeds, write a `pub_bandcamp_music.py`
-   only if the upload form is stable and login/session persistence is reliable.
+4. After one Bandcamp draft/public release is verified with the registered
+   account, tighten selectors in `pub_bandcamp_music.py` against the actual
+   logged-in artist upload page.
 5. For YouTube Music as an official music release, use a distributor. LazyEdit
    can still create an art-track MP4 for normal YouTube, but that is not the
    same thing as distributor delivery to YouTube Music.
@@ -179,4 +237,3 @@ Best order:
    release volume and whether subscription or revenue-share is preferred.
 4. After the English release is stable, publish Japanese and Mandarin versions
    as separate version releases using their corrected vocal lyrics.
-
