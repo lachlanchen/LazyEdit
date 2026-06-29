@@ -45,6 +45,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--description", default="", help="Longer public metadata description.")
     parser.add_argument("--lyrics-file")
     parser.add_argument("--lyrics-json")
+    parser.add_argument(
+        "--lyrics-format",
+        choices=("auto", "plain", "lrc"),
+        default="plain",
+        help="How to convert --lyrics-json. Use plain for Shipinhao Music; auto/lrc emits timed LRC when line starts are present.",
+    )
     parser.add_argument("--lyrics-text", default="")
     parser.add_argument("--metadata-json", help="Optional metadata JSON override.")
     parser.add_argument("--cover", action="append", default=[], help="Cover candidate image. Can be repeated.")
@@ -84,6 +90,7 @@ def main(argv: list[str] | None = None) -> int:
         webapp_screenshot_path=args.webapp_screenshot,
         lyrics_file=args.lyrics_file,
         lyrics_json=args.lyrics_json,
+        lyrics_format=args.lyrics_format,
         lyrics_text=args.lyrics_text,
         metadata_json=args.metadata_json,
         author=args.author,

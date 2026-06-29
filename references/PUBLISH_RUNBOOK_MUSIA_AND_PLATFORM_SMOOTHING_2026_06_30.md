@@ -141,6 +141,66 @@ Rule:
 - For songs/Musia lyrics, the curated lyric JSON is authoritative. If lyrics
   are wrong, fix them in Musia first instead of improvising in LazyEdit.
 
+### Shipinhao Music Lyrics Must Use Corrected Plain Text
+
+Problem:
+
+- The English Xiao Xiao Zhu Shipinhao Music item first appeared with incomplete
+  lyrics because the upload used the wrong/old lyric source during an earlier
+  package.
+- A follow-up experiment uploaded timestamped LRC lines like
+  `[00:00.00]But you are...`; the Shipinhao desktop form accepted the text into
+  the textarea but rejected submission with `表单信息不完整, 请检查`.
+
+Fix:
+
+- Use the final corrected Musia website lyric JSON for the exact vocal:
+  `website/data/songs/<song>/lyrics/<vocal>/<lang>.json`.
+- For Shipinhao Music, upload plain lyric lines, not LRC timestamps.
+- Keep timed lyrics only as optional metadata/reference; do not make LRC the
+  default upload field unless the live site adds explicit LRC support.
+- Verify `*_lyrics.txt` before posting. It should begin with the corrected
+  lyric line, for example `But you are a piggy...`, with no timestamp prefix.
+
+Commands:
+
+```bash
+python scripts/lazyedit_music_package.py \
+  --audio /path/to/song.wav \
+  --title "You Little Piggy" \
+  --lyrics-json /home/lachlan/ProjectsLFS/Musia/website/data/songs/xiao-xiao-zhu-trilingual/lyrics/en-vocal/en.json \
+  --lyrics-format plain \
+  --cover /path/to/cover.png \
+  --cover-video /path/to/recording.mp4 \
+  --cover-count 9 \
+  --output-slug xiao-xiao-zhu-en-musia-music-corrected
+```
+
+Validation:
+
+```bash
+sed -n '1,40p' DATA/music_publish/<slug>/<slug>_lyrics.txt
+jq -r '.plain_lyrics' DATA/music_publish/<slug>/<slug>_metadata.json | sed -n '1,20p'
+```
+
+### Shipinhao Music Proof Upload Can Stall At 0%
+
+Problem:
+
+- The proof ZIP can appear in the form as `0% 删除`.
+- Old AutoPublish treated this as ready because the publish button was enabled,
+  then Shipinhao returned `表单信息不完整, 请检查`.
+
+Fix:
+
+- AutoPublish now waits for proof upload progress to disappear or reach
+  completion.
+- If proof remains stuck, it removes the stuck proof upload and proceeds
+  without proof because proof is optional; this is better than submitting a
+  half-uploaded proof.
+- After pulling AutoPublish on `lazyingart`, restart the live Python process.
+  `git pull` alone does not reload `pub_shipinhao_music.py`.
+
 ### Shipinhao Video Collection Was Missing
 
 Problem:

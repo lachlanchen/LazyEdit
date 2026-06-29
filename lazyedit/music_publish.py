@@ -46,20 +46,57 @@ def _read_text(path: str | Path | None) -> str:
     return Path(path).expanduser().resolve().read_text(encoding="utf-8", errors="ignore").strip()
 
 
-def lyrics_from_json(path: str | Path | None) -> str:
+def _format_lrc_timestamp(seconds: object) -> str | None:
+    try:
+        value = float(seconds)
+    except (TypeError, ValueError):
+        return None
+    if value < 0:
+        value = 0.0
+    minutes = int(value // 60)
+    remainder = value - minutes * 60
+    return f"{minutes:02d}:{remainder:05.2f}"
+
+
+def _strip_lrc_timestamps(text: str) -> str:
+    output: list[str] = []
+    for line in (text or "").splitlines():
+        stripped = re.sub(r"^\s*(?:\[[0-9]{1,3}:[0-9]{2}(?:\.[0-9]{1,3})?\])+\s*", "", line).strip()
+        if stripped:
+            output.append(stripped)
+    return "\n".join(output)
+
+
+def _looks_like_lrc(text: str) -> bool:
+    return bool(re.search(r"^\s*\[[0-9]{1,3}:[0-9]{2}(?:\.[0-9]{1,3})?\]", text or "", re.MULTILINE))
+
+
+def lyrics_from_json(path: str | Path | None, *, lyrics_format: str = "plain") -> str:
     if not path:
         return ""
+    if lyrics_format not in {"plain", "lrc", "auto"}:
+        raise ValueError("lyrics_format must be 'plain', 'lrc', or 'auto'")
     payload = json.loads(Path(path).expanduser().resolve().read_text(encoding="utf-8"))
     lines = payload.get("lines") if isinstance(payload, dict) else None
     if not isinstance(lines, list):
         return ""
+    use_lrc = lyrics_format == "lrc" or (
+        lyrics_format == "auto"
+        and any(isinstance(line, dict) and line.get("start") is not None for line in lines)
+    )
     output: list[str] = []
     for line in lines:
         if not isinstance(line, dict):
             continue
         text = str(line.get("singableText") or line.get("text") or "").strip()
-        if text:
-            output.append(text)
+        if not text:
+            continue
+        if use_lrc:
+            timestamp = _format_lrc_timestamp(line.get("start"))
+            if timestamp:
+                output.append(f"[{timestamp}]{text}")
+                continue
+        output.append(text)
     return "\n".join(output)
 
 
@@ -337,6 +374,7 @@ def build_music_metadata(
     language: str = DEFAULT_LANGUAGE,
     genre: str = "",
     lyrics: str = "",
+    plain_lyrics: str = "",
     story: str = "",
     description: str = "",
     cover_model: str = "",
@@ -345,6 +383,8 @@ def build_music_metadata(
     metadata_override: dict | None = None,
 ) -> dict:
     story_text = story or description or ""
+    readable_lyrics = plain_lyrics.strip() or _strip_lrc_timestamps(lyrics)
+    lrc_lyrics = lyrics.strip() if _looks_like_lrc(lyrics) else ""
     tags = [
         value
         for value in [
@@ -375,6 +415,10 @@ def build_music_metadata(
         "song_title": title,
         "lyrics": lyrics,
         "song_lyrics": lyrics,
+        "lrc_lyrics": lrc_lyrics,
+        "timed_lyrics": lrc_lyrics,
+        "plain_lyrics": readable_lyrics,
+        "readable_lyrics": readable_lyrics,
         "music_story": story_text,
         "brief_description": description or story_text,
         "middle_description": story_text,
@@ -432,6 +476,7 @@ def package_music_publish(
     webapp_screenshot_path: str | Path | None = None,
     lyrics_file: str | Path | None = None,
     lyrics_json: str | Path | None = None,
+    lyrics_format: str = "plain",
     lyrics_text: str = "",
     metadata_json: str | Path | None = None,
     author: str = DEFAULT_AUTHOR,
@@ -536,7 +581,14 @@ def package_music_publish(
             for proof in resolved_proofs:
                 proof_zip.write(proof, arcname=proof.name)
 
-    lyrics = lyrics_text.strip() or _read_text(lyrics_file) or lyrics_from_json(lyrics_json)
+    if lyrics_format not in {"plain", "lrc", "auto"}:
+        raise ValueError("lyrics_format must be 'plain', 'lrc', or 'auto'")
+    explicit_lyrics = lyrics_text.strip() or _read_text(lyrics_file)
+    json_lyrics = lyrics_from_json(lyrics_json, lyrics_format=lyrics_format)
+    plain_lyrics = lyrics_from_json(lyrics_json, lyrics_format="plain")
+    lyrics = explicit_lyrics or json_lyrics
+    if explicit_lyrics and not plain_lyrics:
+        plain_lyrics = _strip_lrc_timestamps(explicit_lyrics)
     metadata_override = None
     if metadata_json:
         metadata_override = json.loads(Path(metadata_json).expanduser().resolve().read_text(encoding="utf-8"))
@@ -562,6 +614,7 @@ def package_music_publish(
         language=language,
         genre=genre,
         lyrics=lyrics,
+        plain_lyrics=plain_lyrics,
         story=story,
         description=description,
         cover_model=cover_model,
