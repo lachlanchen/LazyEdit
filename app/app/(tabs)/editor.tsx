@@ -38,9 +38,11 @@ const DEFAULT_SUBTITLE_OUTLINE_COLOR = '#000000';
 const DEFAULT_PORTRAIT_FOREGROUND_Y = 240;
 const MIN_PORTRAIT_FOREGROUND_Y = 0;
 const MAX_PORTRAIT_FOREGROUND_Y = 1920;
-const DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO = 0.1;
-const MIN_PORTRAIT_CENTER_SHIFT_RATIO = 0;
-const MAX_PORTRAIT_CENTER_SHIFT_RATIO = 0.45;
+const DEFAULT_PORTRAIT_BOTTOM_SPACE_RATIO = 0.4;
+const MIN_PORTRAIT_BOTTOM_SPACE_RATIO = 0;
+const MAX_PORTRAIT_BOTTOM_SPACE_RATIO = 0.8;
+const PORTRAIT_OUTPUT_WIDTH = 1080;
+const PORTRAIT_OUTPUT_HEIGHT = 1920;
 const DEFAULT_CORRECTION_PROMPT =
   'Fix recognition errors while preserving every timestamp exactly and keeping the same number of subtitle lines.';
 const LANGUAGE_LABELS: Record<string, string> = {
@@ -128,6 +130,25 @@ type SubtitleCorrectionPayload = {
 type SubtitleSourceVariant = 'polished' | 'original';
 type PortraitBlurMode = 'lalachan' | 'center' | 'custom';
 
+type VideoDimensions = {
+  width: number;
+  height: number;
+};
+
+type PortraitLayoutMetrics = {
+  outputWidth: number;
+  outputHeight: number;
+  sourceWidth: number;
+  sourceHeight: number;
+  foregroundWidth: number;
+  foregroundHeight: number;
+  top: number;
+  bottom: number;
+  centerShift: number;
+  centerShiftRatio: number;
+  narrowed: boolean;
+};
+
 const PLATFORMS = [
   { key: 'douyin', label: 'Douyin' },
   { key: 'xiaohongshu', label: 'Xiaohongshu' },
@@ -184,16 +205,76 @@ const normalizePortraitForegroundY = (value: unknown, fallback = DEFAULT_PORTRAI
   if (!Number.isFinite(parsed)) return fallback;
   return Math.min(MAX_PORTRAIT_FOREGROUND_Y, Math.max(MIN_PORTRAIT_FOREGROUND_Y, Math.round(parsed)));
 };
-const normalizePortraitCenterShiftRatio = (value: unknown, fallback = DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO) => {
+const normalizePortraitBottomSpaceRatio = (value: unknown, fallback = DEFAULT_PORTRAIT_BOTTOM_SPACE_RATIO) => {
   const parsed = typeof value === 'number' ? value : Number(String(value ?? '').trim());
   if (!Number.isFinite(parsed)) return fallback;
-  const clamped = Math.min(MAX_PORTRAIT_CENTER_SHIFT_RATIO, Math.max(MIN_PORTRAIT_CENTER_SHIFT_RATIO, parsed));
+  const clamped = Math.min(MAX_PORTRAIT_BOTTOM_SPACE_RATIO, Math.max(MIN_PORTRAIT_BOTTOM_SPACE_RATIO, parsed));
   return Math.round(clamped * 1000) / 1000;
 };
-const formatPortraitCenterShiftRatio = (value: number) => {
-  const normalized = normalizePortraitCenterShiftRatio(value);
+const formatPortraitBottomSpaceRatio = (value: number) => {
+  const normalized = normalizePortraitBottomSpaceRatio(value);
   return normalized.toFixed(3).replace(/0+$/, '').replace(/\.$/, '');
 };
+const evenAtLeast = (value: number, minimum = 2) => {
+  const rounded = Math.max(minimum, Math.floor(value));
+  const even = rounded % 2 ? rounded - 1 : rounded;
+  return Math.max(minimum, even);
+};
+const scaledForegroundHeight = (sourceWidth: number, sourceHeight: number, foregroundWidth: number) => {
+  const scaled = Math.round(sourceHeight * (foregroundWidth / Math.max(sourceWidth, 1)));
+  return Math.max(2, scaled % 2 ? scaled + 1 : scaled);
+};
+const calculatePortraitLayoutMetrics = (
+  source: VideoDimensions | null,
+  mode: PortraitBlurMode,
+  bottomSpaceRatio: number,
+  foregroundY: number,
+): PortraitLayoutMetrics | null => {
+  if (!source || source.width <= 0 || source.height <= 0) return null;
+  const outputWidth = PORTRAIT_OUTPUT_WIDTH;
+  const outputHeight = PORTRAIT_OUTPUT_HEIGHT;
+  const requestedWidth = outputWidth;
+  const desiredBottom = mode === 'lalachan'
+    ? Math.min(Math.max(Math.round(outputHeight * bottomSpaceRatio), 0), outputHeight - 2)
+    : 0;
+  const maxForegroundHeight = mode === 'lalachan'
+    ? Math.max(2, outputHeight - desiredBottom)
+    : outputHeight;
+  let foregroundWidth = evenAtLeast(requestedWidth);
+  let foregroundHeight = scaledForegroundHeight(source.width, source.height, foregroundWidth);
+  if (foregroundHeight > maxForegroundHeight) {
+    foregroundWidth = evenAtLeast(Math.min(foregroundWidth, maxForegroundHeight * (source.width / Math.max(source.height, 1))));
+    foregroundHeight = scaledForegroundHeight(source.width, source.height, foregroundWidth);
+    while (foregroundWidth > 2 && foregroundHeight > maxForegroundHeight) {
+      foregroundWidth -= 2;
+      foregroundHeight = scaledForegroundHeight(source.width, source.height, foregroundWidth);
+    }
+  }
+  const maxY = Math.max(0, outputHeight - foregroundHeight);
+  const centerY = Math.floor(maxY / 2);
+  let top = centerY;
+  if (mode === 'lalachan') {
+    top = Math.min(Math.max(outputHeight - foregroundHeight - desiredBottom, 0), maxY);
+  } else if (mode === 'custom') {
+    top = Math.min(Math.max(foregroundY, 0), maxY);
+  }
+  const bottom = Math.max(0, outputHeight - top - foregroundHeight);
+  const centerShift = centerY - top;
+  return {
+    outputWidth,
+    outputHeight,
+    sourceWidth: source.width,
+    sourceHeight: source.height,
+    foregroundWidth,
+    foregroundHeight,
+    top,
+    bottom,
+    centerShift,
+    centerShiftRatio: centerY ? centerShift / centerY : 0,
+    narrowed: foregroundWidth < requestedWidth,
+  };
+};
+const formatMetricPercent = (value: number) => `${Math.round(value * 100)}%`;
 
 export default function EditorScreen() {
   const defaultPublishSelection = useMemo(
@@ -300,10 +381,12 @@ export default function EditorScreen() {
   const [portraitBlurMode, setPortraitBlurMode] = useState<PortraitBlurMode>('lalachan');
   const [portraitForegroundY, setPortraitForegroundY] = useState(DEFAULT_PORTRAIT_FOREGROUND_Y);
   const [portraitForegroundYInput, setPortraitForegroundYInput] = useState(String(DEFAULT_PORTRAIT_FOREGROUND_Y));
-  const [portraitCenterShiftRatio, setPortraitCenterShiftRatio] = useState(DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO);
-  const [portraitCenterShiftInput, setPortraitCenterShiftInput] = useState(
-    formatPortraitCenterShiftRatio(DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO),
+  const [portraitBottomSpaceRatio, setPortraitBottomSpaceRatio] = useState(DEFAULT_PORTRAIT_BOTTOM_SPACE_RATIO);
+  const [portraitBottomSpaceInput, setPortraitBottomSpaceInput] = useState(
+    formatPortraitBottomSpaceRatio(DEFAULT_PORTRAIT_BOTTOM_SPACE_RATIO),
   );
+  const [sourceVideoDimensions, setSourceVideoDimensions] = useState<VideoDimensions | null>(null);
+  const [portraitLayoutModalOpen, setPortraitLayoutModalOpen] = useState(false);
   const [correctionOpen, setCorrectionOpen] = useState(false);
   const [correctionLoading, setCorrectionLoading] = useState(false);
   const [correctionSaving, setCorrectionSaving] = useState(false);
@@ -519,6 +602,16 @@ export default function EditorScreen() {
   );
   const selectedPreviewUrl = selectedPreviewSource?.url || null;
   const selectedPreviewPosterUrl = selectedPreviewSource?.poster || previewPosterUrl;
+  const portraitLayoutMetrics = useMemo(
+    () =>
+      calculatePortraitLayoutMetrics(
+        sourceVideoDimensions,
+        portraitBlurMode,
+        portraitBottomSpaceRatio,
+        portraitForegroundY,
+      ),
+    [portraitBlurMode, portraitBottomSpaceRatio, portraitForegroundY, sourceVideoDimensions],
+  );
   const visibleVideos = useMemo(() => videos.slice(0, visibleCount), [videos, visibleCount]);
   const hasMoreVideos = visibleCount < videos.length;
   const activeQueueCount = useMemo(
@@ -813,13 +906,13 @@ export default function EditorScreen() {
         setSubtitleOutlineColor(normalizeHexColor(burnLayoutJson?.value?.outlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR));
         const portraitValue = burnLayoutJson?.value?.portraitBlurFill || {};
         const nextPortraitY = normalizePortraitForegroundY(portraitValue?.foregroundY);
-        const nextPortraitCenterShift = normalizePortraitCenterShiftRatio(portraitValue?.centerShiftRatio);
+        const nextPortraitBottomSpace = normalizePortraitBottomSpaceRatio(portraitValue?.bottomSpaceRatio);
         setPortraitBlurFill(Boolean(portraitValue?.enabled));
         setPortraitBlurMode(normalizePortraitMode(portraitValue?.mode));
         setPortraitForegroundY(nextPortraitY);
         setPortraitForegroundYInput(String(nextPortraitY));
-        setPortraitCenterShiftRatio(nextPortraitCenterShift);
-        setPortraitCenterShiftInput(formatPortraitCenterShiftRatio(nextPortraitCenterShift));
+        setPortraitBottomSpaceRatio(nextPortraitBottomSpace);
+        setPortraitBottomSpaceInput(formatPortraitBottomSpaceRatio(nextPortraitBottomSpace));
       }
       setTranslationLanguages(nextLanguages.slice(0, AVAILABLE_TRANSLATION_LANGUAGES.length));
     } catch (_err) {
@@ -841,7 +934,7 @@ export default function EditorScreen() {
       enabled?: boolean;
       mode?: PortraitBlurMode;
       foregroundY?: number;
-      centerShiftRatio?: number;
+      bottomSpaceRatio?: number;
     };
   }) => {
     try {
@@ -876,11 +969,11 @@ export default function EditorScreen() {
                   ...(updates.portraitBlurFill.foregroundY === undefined
                     ? {}
                     : { foregroundY: normalizePortraitForegroundY(updates.portraitBlurFill.foregroundY) }),
-                  ...(updates.portraitBlurFill.centerShiftRatio === undefined
+                  ...(updates.portraitBlurFill.bottomSpaceRatio === undefined
                     ? {}
                     : {
-                        centerShiftRatio: normalizePortraitCenterShiftRatio(
-                          updates.portraitBlurFill.centerShiftRatio,
+                        bottomSpaceRatio: normalizePortraitBottomSpaceRatio(
+                          updates.portraitBlurFill.bottomSpaceRatio,
                         ),
                       }),
                 },
@@ -1009,11 +1102,11 @@ export default function EditorScreen() {
           enabled: value,
           mode: portraitBlurMode,
           foregroundY: portraitForegroundY,
-          centerShiftRatio: portraitCenterShiftRatio,
+          bottomSpaceRatio: portraitBottomSpaceRatio,
         },
       });
     },
-    [persistBurnLayout, portraitBlurMode, portraitCenterShiftRatio, portraitForegroundY],
+    [persistBurnLayout, portraitBlurMode, portraitBottomSpaceRatio, portraitForegroundY],
   );
 
   const updatePortraitBlurMode = useCallback(
@@ -1024,11 +1117,11 @@ export default function EditorScreen() {
           enabled: portraitBlurFill,
           mode,
           foregroundY: portraitForegroundY,
-          centerShiftRatio: portraitCenterShiftRatio,
+          bottomSpaceRatio: portraitBottomSpaceRatio,
         },
       });
     },
-    [persistBurnLayout, portraitBlurFill, portraitCenterShiftRatio, portraitForegroundY],
+    [persistBurnLayout, portraitBlurFill, portraitBottomSpaceRatio, portraitForegroundY],
   );
 
   const commitPortraitForegroundY = useCallback(async () => {
@@ -1040,7 +1133,7 @@ export default function EditorScreen() {
         enabled: portraitBlurFill,
         mode: portraitBlurMode,
         foregroundY: nextY,
-        centerShiftRatio: portraitCenterShiftRatio,
+        bottomSpaceRatio: portraitBottomSpaceRatio,
       },
     });
     return nextY;
@@ -1048,30 +1141,30 @@ export default function EditorScreen() {
     persistBurnLayout,
     portraitBlurFill,
     portraitBlurMode,
-    portraitCenterShiftRatio,
+    portraitBottomSpaceRatio,
     portraitForegroundY,
     portraitForegroundYInput,
   ]);
 
-  const commitPortraitCenterShiftRatio = useCallback(async () => {
-    const nextShift = normalizePortraitCenterShiftRatio(portraitCenterShiftInput, portraitCenterShiftRatio);
-    setPortraitCenterShiftRatio(nextShift);
-    setPortraitCenterShiftInput(formatPortraitCenterShiftRatio(nextShift));
+  const commitPortraitBottomSpaceRatio = useCallback(async () => {
+    const nextBottomSpace = normalizePortraitBottomSpaceRatio(portraitBottomSpaceInput, portraitBottomSpaceRatio);
+    setPortraitBottomSpaceRatio(nextBottomSpace);
+    setPortraitBottomSpaceInput(formatPortraitBottomSpaceRatio(nextBottomSpace));
     await persistBurnLayout({
       portraitBlurFill: {
         enabled: portraitBlurFill,
         mode: portraitBlurMode,
         foregroundY: portraitForegroundY,
-        centerShiftRatio: nextShift,
+        bottomSpaceRatio: nextBottomSpace,
       },
     });
-    return nextShift;
+    return nextBottomSpace;
   }, [
     persistBurnLayout,
     portraitBlurFill,
     portraitBlurMode,
-    portraitCenterShiftInput,
-    portraitCenterShiftRatio,
+    portraitBottomSpaceInput,
+    portraitBottomSpaceRatio,
     portraitForegroundY,
   ]);
 
@@ -1082,9 +1175,9 @@ export default function EditorScreen() {
     const nextFontColor = normalizeHexColor(subtitleFontColor, DEFAULT_SUBTITLE_FONT_COLOR);
     const nextOutlineColor = normalizeHexColor(subtitleOutlineColor, DEFAULT_SUBTITLE_OUTLINE_COLOR);
     const nextPortraitY = normalizePortraitForegroundY(portraitForegroundYInput, portraitForegroundY);
-    const nextPortraitCenterShift = normalizePortraitCenterShiftRatio(
-      portraitCenterShiftInput,
-      portraitCenterShiftRatio,
+    const nextPortraitBottomSpace = normalizePortraitBottomSpaceRatio(
+      portraitBottomSpaceInput,
+      portraitBottomSpaceRatio,
     );
     setSubtitleLiftRatio(nextLiftRatio);
     setSubtitleLiftInput(formatSubtitleLiftRatio(nextLiftRatio));
@@ -1096,13 +1189,13 @@ export default function EditorScreen() {
     setSubtitleOutlineColor(nextOutlineColor);
     setPortraitForegroundY(nextPortraitY);
     setPortraitForegroundYInput(String(nextPortraitY));
-    setPortraitCenterShiftRatio(nextPortraitCenterShift);
-    setPortraitCenterShiftInput(formatPortraitCenterShiftRatio(nextPortraitCenterShift));
+    setPortraitBottomSpaceRatio(nextPortraitBottomSpace);
+    setPortraitBottomSpaceInput(formatPortraitBottomSpaceRatio(nextPortraitBottomSpace));
     const nextPortraitBlurFill = {
       enabled: portraitBlurFill,
       mode: portraitBlurMode,
       foregroundY: nextPortraitY,
-      centerShiftRatio: nextPortraitCenterShift,
+      bottomSpaceRatio: nextPortraitBottomSpace,
     };
     await persistBurnLayout({
       liftRatio: nextLiftRatio,
@@ -1128,8 +1221,8 @@ export default function EditorScreen() {
     persistBurnLayout,
     portraitBlurFill,
     portraitBlurMode,
-    portraitCenterShiftInput,
-    portraitCenterShiftRatio,
+    portraitBottomSpaceInput,
+    portraitBottomSpaceRatio,
     portraitForegroundY,
     portraitForegroundYInput,
     subtitleFontBold,
@@ -1612,6 +1705,15 @@ export default function EditorScreen() {
     t,
   ]);
 
+  const updateSourceVideoDimensionsFromEvent = useCallback((event: any) => {
+    const target = event?.currentTarget;
+    const width = Number(target?.videoWidth || 0);
+    const height = Number(target?.videoHeight || 0);
+    if (width > 0 && height > 0) {
+      setSourceVideoDimensions({ width, height });
+    }
+  }, []);
+
   useEffect(() => {
     loadVideos();
   }, [loadVideos]);
@@ -1638,6 +1740,11 @@ export default function EditorScreen() {
   useEffect(() => {
     loadPublishOptions();
   }, [loadPublishOptions]);
+
+  useEffect(() => {
+    setSourceVideoDimensions(null);
+    setPortraitLayoutModalOpen(false);
+  }, [previewVideoUrl, selectedVideoId]);
 
   useEffect(() => {
     if (!publishSettingsLoaded) return;
@@ -2770,7 +2877,7 @@ export default function EditorScreen() {
                 <Text style={styles.optionLabel}>{t('publish_option_portrait_shift_title')}</Text>
                 <Text style={styles.optionHint}>
                   {t('publish_option_portrait_shift_hint', {
-                    value: formatPortraitCenterShiftRatio(portraitCenterShiftRatio),
+                    value: formatPortraitBottomSpaceRatio(portraitBottomSpaceRatio),
                   })}
                 </Text>
               </View>
@@ -2778,28 +2885,28 @@ export default function EditorScreen() {
                 <Pressable
                   style={[styles.liftRatioButton, !publishOptionsLoaded && styles.btnDisabled]}
                   onPress={() => {
-                    setPortraitCenterShiftRatio(DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO);
-                    setPortraitCenterShiftInput(formatPortraitCenterShiftRatio(DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO));
+                    setPortraitBottomSpaceRatio(DEFAULT_PORTRAIT_BOTTOM_SPACE_RATIO);
+                    setPortraitBottomSpaceInput(formatPortraitBottomSpaceRatio(DEFAULT_PORTRAIT_BOTTOM_SPACE_RATIO));
                     void persistBurnLayout({
                       portraitBlurFill: {
                         enabled: portraitBlurFill,
                         mode: portraitBlurMode,
                         foregroundY: portraitForegroundY,
-                        centerShiftRatio: DEFAULT_PORTRAIT_CENTER_SHIFT_RATIO,
+                        bottomSpaceRatio: DEFAULT_PORTRAIT_BOTTOM_SPACE_RATIO,
                       },
                     });
                   }}
                   disabled={!publishOptionsLoaded}
                 >
-                  <Text style={styles.liftRatioButtonText}>0.1</Text>
+                  <Text style={styles.liftRatioButtonText}>0.4</Text>
                 </Pressable>
                 <TextInput
-                  value={portraitCenterShiftInput}
-                  onChangeText={setPortraitCenterShiftInput}
-                  onBlur={() => void commitPortraitCenterShiftRatio()}
-                  onSubmitEditing={() => void commitPortraitCenterShiftRatio()}
+                  value={portraitBottomSpaceInput}
+                  onChangeText={setPortraitBottomSpaceInput}
+                  onBlur={() => void commitPortraitBottomSpaceRatio()}
+                  onSubmitEditing={() => void commitPortraitBottomSpaceRatio()}
                   keyboardType="decimal-pad"
-                  placeholder="0.1"
+                  placeholder="0.4"
                   editable={publishOptionsLoaded}
                   style={[styles.liftRatioInput, !publishOptionsLoaded && styles.liftRatioInputDisabled]}
                 />
@@ -2825,7 +2932,7 @@ export default function EditorScreen() {
                         enabled: portraitBlurFill,
                         mode: portraitBlurMode,
                         foregroundY: DEFAULT_PORTRAIT_FOREGROUND_Y,
-                        centerShiftRatio: portraitCenterShiftRatio,
+                        bottomSpaceRatio: portraitBottomSpaceRatio,
                       },
                     });
                   }}
@@ -2844,6 +2951,63 @@ export default function EditorScreen() {
                   style={[styles.liftRatioInput, !publishOptionsLoaded && styles.liftRatioInputDisabled]}
                 />
               </View>
+            </View>
+          ) : null}
+          {portraitBlurFill ? (
+            <View style={styles.portraitMetricsCard}>
+              <View style={styles.portraitMetricsHeader}>
+                <View style={styles.publishOptionText}>
+                  <Text style={styles.optionLabel}>{t('publish_portrait_layout_title')}</Text>
+                  <Text style={styles.optionHint}>
+                    {portraitLayoutMetrics
+                      ? t('publish_portrait_layout_source', {
+                          width: String(portraitLayoutMetrics.sourceWidth),
+                          height: String(portraitLayoutMetrics.sourceHeight),
+                        })
+                      : t('publish_portrait_layout_waiting')}
+                  </Text>
+                </View>
+                <Pressable
+                  style={[styles.miniButton, !portraitLayoutMetrics && styles.btnDisabled]}
+                  onPress={() => setPortraitLayoutModalOpen(true)}
+                  disabled={!portraitLayoutMetrics}
+                >
+                  <Text style={styles.miniButtonText}>{t('publish_portrait_layout_view')}</Text>
+                </Pressable>
+              </View>
+              {portraitLayoutMetrics ? (
+                <>
+                  <View style={styles.portraitMetricRow}>
+                    <View style={styles.portraitMetricChip}>
+                      <Text style={styles.portraitMetricLabel}>{t('publish_portrait_layout_top')}</Text>
+                      <Text style={styles.portraitMetricValue}>
+                        {portraitLayoutMetrics.top}px · {formatMetricPercent(portraitLayoutMetrics.top / portraitLayoutMetrics.outputHeight)}
+                      </Text>
+                    </View>
+                    <View style={styles.portraitMetricChip}>
+                      <Text style={styles.portraitMetricLabel}>{t('publish_portrait_layout_foreground')}</Text>
+                      <Text style={styles.portraitMetricValue}>
+                        {portraitLayoutMetrics.foregroundWidth}x{portraitLayoutMetrics.foregroundHeight}
+                      </Text>
+                    </View>
+                    <View style={styles.portraitMetricChip}>
+                      <Text style={styles.portraitMetricLabel}>{t('publish_portrait_layout_bottom')}</Text>
+                      <Text style={styles.portraitMetricValue}>
+                        {portraitLayoutMetrics.bottom}px · {formatMetricPercent(portraitLayoutMetrics.bottom / portraitLayoutMetrics.outputHeight)}
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={styles.optionHint}>
+                    {t('publish_portrait_layout_shift', {
+                      value: `${portraitLayoutMetrics.centerShift}px`,
+                      ratio: formatPortraitBottomSpaceRatio(portraitLayoutMetrics.centerShiftRatio),
+                    })}
+                    {portraitLayoutMetrics.narrowed ? ` ${t('publish_portrait_layout_narrowed')}` : ''}
+                  </Text>
+                </>
+              ) : (
+                <Text style={styles.optionHint}>{t('publish_portrait_layout_waiting_hint')}</Text>
+              )}
             </View>
           ) : null}
           {renderSubtitleSourceSelector()}
@@ -2929,6 +3093,7 @@ export default function EditorScreen() {
                     muted: true,
                     playsInline: true,
                     preload: 'metadata',
+                    onLoadedMetadata: updateSourceVideoDimensionsFromEvent,
                     poster: selectedPreviewPosterUrl || undefined,
                   })
                 ) : (
@@ -3099,6 +3264,118 @@ export default function EditorScreen() {
           </View>
         </View>
       </View>
+      {Platform.OS === 'web' && previewVideoUrl
+        ? React.createElement('video', {
+            key: previewVideoUrl,
+            src: previewVideoUrl,
+            preload: 'metadata',
+            muted: true,
+            playsInline: true,
+            onLoadedMetadata: updateSourceVideoDimensionsFromEvent,
+            style: {
+              display: 'none',
+              width: 1,
+              height: 1,
+            },
+          })
+        : null}
+      <Modal
+        visible={portraitLayoutModalOpen}
+        animationType="fade"
+        transparent
+        onRequestClose={() => setPortraitLayoutModalOpen(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.portraitLayoutModal}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.sectionTitle}>{t('publish_portrait_layout_modal_title')}</Text>
+              <Pressable onPress={() => setPortraitLayoutModalOpen(false)} style={styles.modalClose}>
+                <FontAwesome name="times" size={16} color="#0f172a" />
+              </Pressable>
+            </View>
+            <Text style={styles.sectionHint}>{t('publish_portrait_layout_modal_hint')}</Text>
+            {portraitLayoutMetrics ? (
+              <View style={styles.portraitLayoutModalBody}>
+                <View style={styles.portraitLayoutCanvas}>
+                  <View
+                    style={[
+                      styles.portraitLayoutRegion,
+                      styles.portraitLayoutTopRegion,
+                      {
+                        height: `${(portraitLayoutMetrics.top / portraitLayoutMetrics.outputHeight) * 100}%`,
+                      },
+                    ]}
+                  >
+                    <Text style={styles.portraitLayoutRegionText}>{t('publish_portrait_layout_top')}</Text>
+                  </View>
+                  <View
+                    style={[
+                      styles.portraitLayoutForegroundSlot,
+                      {
+                        top: `${(portraitLayoutMetrics.top / portraitLayoutMetrics.outputHeight) * 100}%`,
+                        height: `${(portraitLayoutMetrics.foregroundHeight / portraitLayoutMetrics.outputHeight) * 100}%`,
+                      },
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.portraitLayoutForeground,
+                        {
+                          width: `${(portraitLayoutMetrics.foregroundWidth / portraitLayoutMetrics.outputWidth) * 100}%`,
+                        },
+                      ]}
+                    >
+                      <Text style={styles.portraitLayoutForegroundText}>
+                        {portraitLayoutMetrics.foregroundWidth}x{portraitLayoutMetrics.foregroundHeight}
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={[
+                      styles.portraitLayoutRegion,
+                      styles.portraitLayoutBottomRegion,
+                      {
+                        top: `${((portraitLayoutMetrics.outputHeight - portraitLayoutMetrics.bottom) / portraitLayoutMetrics.outputHeight) * 100}%`,
+                        height: `${(portraitLayoutMetrics.bottom / portraitLayoutMetrics.outputHeight) * 100}%`,
+                      },
+                    ]}
+                  >
+                    <Text style={styles.portraitLayoutRegionText}>{t('publish_portrait_layout_bottom')}</Text>
+                  </View>
+                </View>
+                <View style={styles.portraitLayoutDetails}>
+                  <Text style={styles.optionLabel}>
+                    {portraitLayoutMetrics.outputWidth}x{portraitLayoutMetrics.outputHeight}
+                  </Text>
+                  <Text style={styles.optionHint}>
+                    {t('publish_portrait_layout_source', {
+                      width: String(portraitLayoutMetrics.sourceWidth),
+                      height: String(portraitLayoutMetrics.sourceHeight),
+                    })}
+                  </Text>
+                  <Text style={styles.optionHint}>
+                    {t('publish_portrait_layout_top')}: {portraitLayoutMetrics.top}px · {formatMetricPercent(portraitLayoutMetrics.top / portraitLayoutMetrics.outputHeight)}
+                  </Text>
+                  <Text style={styles.optionHint}>
+                    {t('publish_portrait_layout_bottom')}: {portraitLayoutMetrics.bottom}px · {formatMetricPercent(portraitLayoutMetrics.bottom / portraitLayoutMetrics.outputHeight)}
+                  </Text>
+                  <Text style={styles.optionHint}>
+                    {t('publish_portrait_layout_shift', {
+                      value: `${portraitLayoutMetrics.centerShift}px`,
+                      ratio: formatPortraitBottomSpaceRatio(portraitLayoutMetrics.centerShiftRatio),
+                    })}
+                  </Text>
+                  {portraitLayoutMetrics.narrowed ? (
+                    <Text style={styles.optionHint}>{t('publish_portrait_layout_narrowed')}</Text>
+                  ) : null}
+                </View>
+              </View>
+            ) : (
+              <Text style={styles.empty}>{t('publish_portrait_layout_waiting_hint')}</Text>
+            )}
+          </View>
+        </View>
+      </Modal>
       <Modal
         visible={!!confirmDeleteVideo}
         animationType="fade"
@@ -3569,6 +3846,50 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f5f9',
     color: '#94a3b8',
   },
+  miniButton: {
+    minHeight: 30,
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  miniButtonText: { fontSize: 11, fontWeight: '800', color: '#0f172a' },
+  portraitMetricsCard: {
+    marginTop: 8,
+    padding: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#dbeafe',
+    backgroundColor: '#eff6ff',
+    gap: 8,
+  },
+  portraitMetricsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+  },
+  portraitMetricRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  portraitMetricChip: {
+    flex: 1,
+    minWidth: 120,
+    paddingHorizontal: 9,
+    paddingVertical: 8,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#bfdbfe',
+    backgroundColor: 'white',
+  },
+  portraitMetricLabel: { fontSize: 10, fontWeight: '800', color: '#1e40af', textTransform: 'uppercase' },
+  portraitMetricValue: { marginTop: 3, fontSize: 12, fontWeight: '800', color: '#0f172a' },
   subtitleStyleRow: {
     marginTop: 8,
     flexDirection: 'row',
@@ -3876,6 +4197,80 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderWidth: 1,
     borderColor: '#e2e8f0',
+  },
+  portraitLayoutModal: {
+    width: '100%',
+    maxWidth: 640,
+    alignSelf: 'center',
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
+  },
+  portraitLayoutModalBody: {
+    marginTop: 14,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+  },
+  portraitLayoutCanvas: {
+    width: 210,
+    height: 373,
+    borderRadius: 18,
+    backgroundColor: '#0f172a',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#1e293b',
+    position: 'relative',
+  },
+  portraitLayoutRegion: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  portraitLayoutTopRegion: {
+    top: 0,
+    backgroundColor: 'rgba(96, 165, 250, 0.28)',
+  },
+  portraitLayoutBottomRegion: {
+    backgroundColor: 'rgba(34, 197, 94, 0.28)',
+  },
+  portraitLayoutRegionText: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#e0f2fe',
+    textShadowColor: 'rgba(15,23,42,0.65)',
+    textShadowRadius: 3,
+  },
+  portraitLayoutForegroundSlot: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  portraitLayoutForeground: {
+    height: '100%',
+    borderWidth: 2,
+    borderColor: '#f8fafc',
+    backgroundColor: '#475569',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  portraitLayoutForegroundText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: 'white',
+  },
+  portraitLayoutDetails: {
+    minWidth: 220,
+    flex: 1,
+    gap: 6,
   },
   deleteVideoModal: {
     width: '100%',

@@ -14,6 +14,7 @@ DEFAULT_PORTRAIT_BLURFILL: dict[str, Any] = {
     "foregroundWidth": 1080,
     "foregroundY": 240,
     "centerShiftRatio": 0.1,
+    "bottomSpaceRatio": 0.4,
     "blur": 36.0,
     "backgroundDim": -0.08,
     "backgroundSaturation": 1.08,
@@ -111,6 +112,15 @@ def sanitize_portrait_blurfill(payload: Any) -> dict[str, Any]:
             0.0,
             0.45,
         ),
+        "bottomSpaceRatio": _float(
+            payload.get(
+                "bottomSpaceRatio",
+                payload.get("bottom_space_ratio", payload.get("bottomRatio", payload.get("bottom_ratio"))),
+            ),
+            base["bottomSpaceRatio"],
+            0.0,
+            0.8,
+        ),
         "blur": _float(payload.get("blur"), base["blur"], 0.0, 96.0),
         "backgroundDim": _float(
             payload.get("backgroundDim", payload.get("background_dim")),
@@ -165,28 +175,81 @@ def _probe_resolution(video_path: str) -> tuple[int, int]:
     return width, height
 
 
-def _foreground_y(input_path: str, config: dict[str, Any]) -> int:
-    source_w, source_h = _probe_resolution(input_path)
-    output_h = int(config["height"])
-    fg_w = int(config["foregroundWidth"])
+def _even_at_least(value: int, minimum: int = 2) -> int:
+    value = max(minimum, int(value))
+    if value % 2:
+        value -= 1
+    return max(minimum, value)
+
+
+def _scaled_height(source_w: int, source_h: int, fg_w: int) -> int:
     scaled_h = int(round(source_h * (fg_w / max(source_w, 1))))
     if scaled_h % 2:
         scaled_h += 1
-    max_y = max(0, output_h - scaled_h)
-    center_y = max_y // 2
-    if config.get("mode") == "center":
-        return center_y
+    return max(2, scaled_h)
+
+
+def _fit_foreground_width(
+    source_w: int,
+    source_h: int,
+    requested_width: int,
+    max_scaled_h: int,
+) -> tuple[int, int]:
+    fg_w = _even_at_least(requested_width)
+    scaled_h = _scaled_height(source_w, source_h, fg_w)
+    if scaled_h <= max_scaled_h:
+        return fg_w, scaled_h
+
+    fit_width = int(max_scaled_h * (source_w / max(source_h, 1)))
+    fit_width = min(fit_width, fg_w)
+    fg_w = _even_at_least(fit_width)
+    scaled_h = _scaled_height(source_w, source_h, fg_w)
+    while fg_w > 2 and scaled_h > max_scaled_h:
+        fg_w -= 2
+        scaled_h = _scaled_height(source_w, source_h, fg_w)
+    if scaled_h > max_scaled_h:
+        raise RuntimeError(
+            f"portrait blur-fill cannot fit foreground: source={source_w}x{source_h}, "
+            f"max foreground height={max_scaled_h}"
+        )
+    return fg_w, scaled_h
+
+
+def _lalachan_bottom_space(output_h: int, config: dict[str, Any]) -> int:
+    ratio = float(config.get("bottomSpaceRatio") or 0.0)
+    return min(max(int(round(output_h * ratio)), 0), max(0, output_h - 2))
+
+
+def _foreground_geometry(input_path: str, config: dict[str, Any]) -> tuple[int, int]:
+    source_w, source_h = _probe_resolution(input_path)
+    output_w = int(config["width"])
+    output_h = int(config["height"])
+    requested_width = min(int(config["foregroundWidth"]), output_w)
     if config.get("mode") == "lalachan":
-        shift_ratio = float(config.get("centerShiftRatio") or 0.0)
-        return min(max(int(round(center_y * (1.0 - shift_ratio))), 0), max_y)
-    return min(max(int(config.get("foregroundY") or 0), 0), max_y)
+        desired_bottom = _lalachan_bottom_space(output_h, config)
+        max_scaled_h = max(2, output_h - desired_bottom)
+    else:
+        desired_bottom = 0
+        max_scaled_h = output_h
+
+    fg_w, scaled_h = _fit_foreground_width(source_w, source_h, requested_width, max_scaled_h)
+    max_y = max(0, output_h - scaled_h)
+    if config.get("mode") == "center":
+        return fg_w, max_y // 2
+    if config.get("mode") == "lalachan":
+        target_y = output_h - scaled_h - desired_bottom
+        return fg_w, min(max(target_y, 0), max_y)
+    return fg_w, min(max(int(config.get("foregroundY") or 0), 0), max_y)
+
+
+def _foreground_y(input_path: str, config: dict[str, Any]) -> int:
+    return _foreground_geometry(input_path, config)[1]
 
 
 def _ffmpeg_command(input_path: str, output_path: str, config: dict[str, Any], audio_mode: str) -> list[str]:
     width = int(config["width"])
     height = int(config["height"])
-    fg_width = int(config["foregroundWidth"])
-    fg_y = _foreground_y(input_path, config)
+    fg_width, fg_y = _foreground_geometry(input_path, config)
     scale_flags = str(config["scaleFlags"])
     filter_complex = (
         "[0:v]split=2[fgsrc][bgsrc];"

@@ -20,15 +20,21 @@ The current LALACHAN publishing behavior is closest to
 - Audio: copied when possible.
 
 LazyEdit originally copied the fixed `y=240` default, but that placed 16:9
-sources too close to the top. The current default is aspect-ratio-aware:
+sources too close to the top and did not express the real requirement. The
+current default is bottom-space-aware:
 
-- Compute the exact vertically centered foreground position.
-- Move that centered top offset upward by `centerShiftRatio`.
-- Default `centerShiftRatio=0.1`.
+- Target a lower blurred reserve of `bottomSpaceRatio=0.4`.
+- Scale the sharp foreground to full output width when that still leaves the
+  requested bottom reserve.
+- If a tall source cannot leave the requested bottom reserve at full width,
+  reduce the foreground width just enough to fit.
+- Clamp the computed foreground y coordinate to the legal output range.
 
 For a typical 16:9 foreground scaled to 1080px wide, this puts the top margin
-near 31% and the bottom margin near 38%, which is close to the desired
-"top 30% / bottom 40%" placement while keeping other aspect ratios reasonable.
+near 28% and the bottom margin at 40%. For a typical 4:3 foreground, the top
+margin becomes about 18% while the bottom still stays near 40%. The top is
+therefore derived from source aspect ratio; the design anchor is the lower
+space.
 
 ## LazyEdit Implementation
 
@@ -47,7 +53,7 @@ The option is stored inside the existing `burn_layout` UI preference:
     "height": 1920,
     "foregroundWidth": 1080,
     "foregroundY": 240,
-    "centerShiftRatio": 0.1,
+    "bottomSpaceRatio": 0.4,
     "blur": 36,
     "backgroundDim": -0.08,
     "backgroundSaturation": 1.08,
@@ -61,9 +67,26 @@ The option is stored inside the existing `burn_layout` UI preference:
 
 Modes:
 
-- `lalachan`: default, exact center shifted upward by `centerShiftRatio`.
+- `lalachan`: default, keeps roughly `bottomSpaceRatio` of the output height
+  below the sharp foreground.
 - `center`: foreground vertically centered; y input is ignored.
 - `custom`: uses the saved foreground y value.
+
+`centerShiftRatio` is still accepted as a legacy input field for older callers,
+but it is no longer the active placement rule for `lalachan` mode.
+
+Default geometry examples for a `1080x1920` output and `bottomSpaceRatio=0.4`:
+
+- `16:9` landscape: sharp foreground remains `1080px` wide, `y=544`, bottom
+  reserve `768px`.
+- `4:3` landscape: sharp foreground remains `1080px` wide, `y=342`, bottom
+  reserve `768px`.
+- `9:16` portrait: full width would leave no lower reserve, so the foreground
+  is narrowed to about `648px`, `y=0`, bottom reserve `768px`.
+
+This is intentional: normal landscape clips keep full-width sharp content, while
+taller clips are narrowed only when needed to keep the configured lower space
+legal.
 
 The feature is integrated into the existing burn/processed-output step:
 
@@ -86,8 +109,13 @@ Publish tab controls:
 
 - `Portrait blur fill`: enable or disable.
 - `Portrait layout`: `LALACHAN`, `Center`, or `Custom`.
-- `Center shift`: shown for `LALACHAN`; default `0.1`.
+- `Bottom space`: shown for `LALACHAN`; default `0.4`.
 - `Foreground Y`: shown only for `Custom`; default `240`.
+- `Calculated layout`: reads the selected source video's real metadata and
+  shows computed top, foreground size, bottom reserve, and center-relative
+  shift.
+- `View layout`: opens a modal with a scaled `1080x1920` visualization of the
+  top region, sharp foreground, and bottom reserve.
 
 The settings are remembered through `burn_layout`, the same preference object used for subtitle rows, lift ratio, font size, and outline settings.
 
@@ -105,7 +133,7 @@ curl -fsS http://127.0.0.1:18787/api/videos/VIDEO_ID/process \
     "portraitBlurFill": {
       "enabled": true,
       "mode": "lalachan",
-      "centerShiftRatio": 0.1
+      "bottomSpaceRatio": 0.4
     }
   }'
 ```
@@ -130,7 +158,7 @@ python scripts/lazyedit_publish.py \
   --use-current-settings \
   --portrait-blur-fill \
   --portrait-blur-mode lalachan \
-  --portrait-center-shift-ratio 0.1 \
+  --portrait-bottom-space-ratio 0.4 \
   --platforms youtube,instagram \
   --wait
 ```
@@ -167,7 +195,12 @@ Basic checks performed:
 
 - `python -m py_compile app.py lazyedit/portrait_blurfill.py scripts/lazyedit_publish.py`
 - `npx tsc --noEmit` from `app/`
-- Synthetic ffmpeg render from a 640x480 input to a `1080x1920` output with video and audio streams.
+- Synthetic ffmpeg renders from `16:9`, `4:3`, and `9:16` inputs to
+  `1080x1920` outputs with video and audio streams.
+- Geometry probe with default `bottomSpaceRatio=0.4`:
+  - `16:9`: foreground width `1080`, y `544`.
+  - `4:3`: foreground width `1080`, y `342`.
+  - `9:16`: foreground width `648`, y `0`.
 
 Important ffmpeg caveat found during testing:
 
