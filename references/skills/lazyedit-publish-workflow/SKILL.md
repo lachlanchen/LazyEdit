@@ -283,6 +283,15 @@ and `Musia` playlist when available. Direct YouTube Music audio upload is a
 personal library feature, so do not claim it as public YouTube Music
 distribution.
 
+Music monetization beyond Shipinhao should start with a distributor-ready
+bundle, not a brittle direct uploader. Use
+`scripts/lazyedit_music_distribution_bundle.py --package-dir DATA/music_publish/<slug>`
+to export audio, optional WAV derivative, square cover, corrected lyrics,
+JSON/CSV metadata, and upload notes for Bandcamp, SoundCloud, or distributors
+such as DistroKid, TuneCore, CD Baby, RouteNote, or SoundOn. For official
+YouTube Music/Spotify/Apple Music delivery, use a distributor; LazyEdit's
+YouTube art-track MP4 is normal YouTube publishing, not DSP delivery.
+
 Music package records are durable in LazyEdit:
 
 ```bash
