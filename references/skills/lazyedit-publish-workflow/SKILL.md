@@ -42,6 +42,12 @@ conda activate lazyedit
 - When copying through Nutstore, use one stable `_COMPLETED` filename and watch AutoPubMonitor panes before recopying. Avoid creating duplicate source files just to retrigger the watcher.
 - Silent or nearly silent videos may produce empty transcripts and `burn=skipped`. This is acceptable when transcribe/translate/caption/keyframes are complete; continue metadata generation, cover extraction, publish queue submission, and terminal platform verification instead of waiting forever or swapping in an older video.
 - AutoPublish browser uploads require a web-safe MP4 inside the ZIP. LazyEdit must package `_highlighted.mp4` as H.264/AVC (`avc1`), `yuv420p`, AAC audio, and `+faststart`. If the selected source/burn output is HEVC/H.265, AV1, or another browser-risk codec, transcode it during publish-bundle preparation before sending the ZIP.
+- When the source path is already under LazyEdit `DATA/`, use `--video-id` or a non-colliding `--filename`. Do not re-upload `DATA/<stem>/<filename>` with the same filename, because the upload endpoint can truncate the source by writing over it.
+- For XiaoHongShu, close hashtag suggestion popovers with Escape/blur before the final publish click. The red publish control may be inside a custom `xhs-publish-btn`, so use the AutoPublish fallback instead of hand-clicking random page coordinates.
+- For Douyin, reuse an existing unpublished draft when the upload already exists. Do not use native `send_keys()` for title/description fields or the separate topic widget when debugging; the site can wedge Selenium. Use the AutoPublish JS field replacement path and keep hashtags in the description.
+- For Bilibili, optional SMS verification after upload is only for completion notifications; close it and continue. If the page shows `请完成短信验证` while the upload is stuck at `0.0MB/0.0MB`, it is a hard SMS gate, not GeeTest. Click `获取验证码`, get the SMS code from the user, and do not retry upload loops without it.
+- If Bilibili shows `0.0MB/0.0MB` and browser-side `preupload` returns code `601` with `您上传视频过快，请您稍作休息后再继续`, stop retrying and wait for cooldown. Repeated upload retries extend the block.
+- To add a missing platform to an already-processed LazyEdit output, reuse the existing ZIP if it contains the correct rendered MP4. Re-submit the same ZIP with only the missing platform flags. Repackage only when the existing ZIP points at the wrong output.
 
 ## Setting Semantics
 

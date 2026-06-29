@@ -10,8 +10,22 @@ The MV publish target was:
 /home/lachlan/DiskMech/Projects/lazyedit/DATA/aya_chan_hikari_ame_full_mv_song_locked_portrait_fg30_bottom40_2026-06-29/aya_chan_hikari_ame_full_mv_song_locked_portrait_fg30_bottom40_2026-06-29.mp4
 ```
 
-It was repackaged through LazyEdit as video id `427`, publication session `17`,
-category `lalamv`, no burned subtitles, and the configured LazyEdit logo.
+The first package tested was LazyEdit video id `427`, publication session `17`.
+That package contained the wrong landscape-style output for this request, so do
+not reuse it for the Hikari Ame MV multi-platform publish.
+
+The corrected package was built manually from the existing portrait bg-fill
+output with subtitles and logo:
+
+```text
+/home/lachlan/DiskMech/Projects/lazyedit/DATA/aya_chan_hikari_ame_full_mv_song_locked_portrait_fg30_bottom40_2026-06-29/manual_publish_dy_bl_xhs/aya_chan_hikari_ame_portrait_fg30_bottom40_dy_bl_xhs_20260629.zip
+```
+
+Inside the ZIP, the published MP4 is a copy of:
+
+```text
+/home/lachlan/DiskMech/Projects/lazyedit/DATA/aya_chan_hikari_ame_full_mv_song_locked_portrait_fg30_bottom40_2026-06-29/aya_chan_hikari_ame_full_mv_song_locked_portrait_fg30_bottom40_2026-06-29_portrait_subtitles_logo.mp4
+```
 
 ## Things To Remember
 
@@ -32,6 +46,18 @@ category `lalamv`, no burned subtitles, and the configured LazyEdit logo.
 - If Bilibili reports `0.0MB/0.0MB` and the browser-side `preupload` request
   returns code `601` with `您上传视频过快，请您稍作休息后再继续`, stop retrying and
   wait for cooldown. Repeated retries extend the cooldown.
+- Douyin drafts can wedge Selenium on `element.click()` or native `send_keys()`.
+  Use asynchronous JavaScript clicks and direct JavaScript field replacement.
+  Do not use Douyin's separate topic widget from automation; hashtags in the
+  description are enough and avoid a `send_keys` hang.
+- Bilibili can also require real SMS verification before the upload leaves
+  `0.0MB/0.0MB`. This is not GeeTest and cannot be solved by the Tuling captcha
+  API. Click `获取验证码`, get the SMS code from the user, then continue; otherwise
+  fail cleanly as SMS verification required.
+- For adding a new platform to an already processed LazyEdit run, do not
+  regenerate the video/ZIP if the existing package already contains the desired
+  rendered MP4. Re-submit the same ZIP with only the missing platform flags.
+  Repackage only when the existing ZIP points at the wrong rendered file.
 
 ## Useful Commands
 
