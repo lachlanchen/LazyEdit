@@ -388,7 +388,7 @@ def build_music_metadata(
         "producer": author,
         "language": language,
         "genre": genre,
-        "publish_category": "music",
+        "publish_category": "musia",
         "youtube_playlist": "Musia",
         "shipinhao_collection": "Musia",
         "cover_generation": {
@@ -405,7 +405,7 @@ def build_music_metadata(
         "brief_description": description or story_text,
         "middle_description": story_text,
         "tags": tags,
-        "publish_category": "music",
+        "publish_category": "musia",
         "youtube_playlist": "Musia",
         "shipinhao_collection": "Musia",
     }

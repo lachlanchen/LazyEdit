@@ -1074,7 +1074,7 @@ def _sanitize_publish_options(payload) -> dict:
         or payload.get("publish_category")
         or ""
     ).strip().lower()
-    if publish_category not in {"simplelife", "lalachan", "music"}:
+    if publish_category not in {"simplelife", "lazyingart", "musia", "lalachan", "lalamv", "music"}:
         publish_category = ""
     youtube_playlist = str(
         payload.get("youtubePlaylist")

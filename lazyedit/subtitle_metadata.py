@@ -117,8 +117,8 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
                 },
                 "publish_category": {
                     "type": "string",
-                    "enum": ["simplelife", "lalachan", "music"],
-                    "description": "Publishing category: simplelife for personal/self daily recordings, lalachan for LALACHAN/Xiaoyunque fictional story videos, music for song/audio-focused content"
+                    "enum": ["simplelife", "lazyingart", "musia", "lalachan", "lalamv"],
+                    "description": "Publishing category: simplelife for personal/self daily recordings, lazyingart for LazyingArt brand/product/art posts, musia for pure song/audio-focused Musia content, lalachan for LALACHAN/Xiaoyunque fictional story videos, lalamv for LALACHAN character music videos/MVs"
                 }
             },
             "required": [
@@ -234,10 +234,12 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
             "Each word should be accompanied by a timestamp range indicating when it appears in the video.\n\n"
             "Give a 2~4 seconds timestamp range which can reflect the essense of the video as teaser. "
             "Also, suggest a timestamp for the best scene to use as a cover image for the video. \n\n"
-            "For publish_category, choose exactly one of simplelife, lalachan, music. "
+            "For publish_category, choose exactly one of simplelife, lazyingart, musia, lalachan, lalamv. "
             "Use simplelife for personal/self-recorded daily life and real-world vlogs. "
-            "Use lalachan for LALACHAN/Xiaoyunque/Seedance fictional story videos or 啦啦侠/阿芽酱/飒飒君 content. "
-            "Use music for song, music video, lyric video, or audio-focused Musia content. "
+            "Use lazyingart for LazyingArt brand, product, artwork, website, shop, or portfolio posts. "
+            "Use musia for pure song/audio-focused Musia content and art-track uploads. "
+            "Use lalachan for LALACHAN/Xiaoyunque/Seedance fictional story videos or 啦啦侠/阿芽酱/飒飒君 content that is not primarily an MV. "
+            "Use lalamv for LALACHAN character music videos, song-driven MVs, lyric-free MVs, or 阿芽酱/啦啦侠/飒飒君 videos built around a song. "
             "If uncertain between simplelife and lalachan, choose simplelife. \n\n"
             "Try to find instructions also in subtitles if exist. \n\n"
             "Return correct format result with imagination even subtitles is little or even empty. \n\n"
@@ -289,10 +291,12 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
             "Each word should be accompanied by a timestamp range indicating when it appears in the video.\n\n"
             "Give a 2~4 seconds timestamp range which can reflect the essence of the video as teaser. "
             "Also, suggest a timestamp for the best scene to use as a cover image for the video. \n\n"
-            "For publish_category, choose exactly one of simplelife, lalachan, music. "
+            "For publish_category, choose exactly one of simplelife, lazyingart, musia, lalachan, lalamv. "
             "Use simplelife for personal/self-recorded daily life and real-world vlogs. "
-            "Use lalachan for LALACHAN/Xiaoyunque/Seedance fictional story videos or Lala Xia/Aya Chan/Sasa Kun content. "
-            "Use music for song, music video, lyric video, or audio-focused Musia content. "
+            "Use lazyingart for LazyingArt brand, product, artwork, website, shop, or portfolio posts. "
+            "Use musia for pure song/audio-focused Musia content and art-track uploads. "
+            "Use lalachan for LALACHAN/Xiaoyunque/Seedance fictional story videos or Lala Xia/Aya Chan/Sasa Kun content that is not primarily an MV. "
+            "Use lalamv for LALACHAN character music videos, song-driven MVs, lyric-free MVs, or Aya Chan/RaraXia/Sasa Kun videos built around a song. "
             "If uncertain between simplelife and lalachan, choose simplelife. \n\n"
             "Try to find instructions also in subtitles if exist. \n\n"
             "Return correct format result with imagination even subtitles is little or even empty. \n\n"
