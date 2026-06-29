@@ -187,6 +187,8 @@ python scripts/manage_shipinhao_videos.py move-music \
 Dry-run both categories from the same scan:
 
 ```bash
+python scripts/manage_shipinhao_videos.py ensure-collection --collection Musia --apply
+python scripts/manage_shipinhao_videos.py ensure-collection --collection 啦啦侠 --apply
 python scripts/manage_shipinhao_videos.py move-classified \
   --lalachan-collection 啦啦侠 \
   --music-collection Musia \
@@ -194,7 +196,7 @@ python scripts/manage_shipinhao_videos.py move-classified \
   --output /tmp/shipinhao_classified_candidates.json
 ```
 
-Use the generated candidate report to verify whether this account exposes collection editing on existing posts before applying any bulk move. When applying, use a small `--scrolls` value first for recent rows, or move one row by exact title fragment:
+`ensure-collection` creates the missing collection name if the account does not already show it. Use the generated candidate report to verify whether this account exposes collection editing on existing posts before applying any bulk move. When applying, use a small `--scrolls` value first for recent rows, or move one row by exact title fragment:
 
 ```bash
 python scripts/manage_shipinhao_videos.py move \

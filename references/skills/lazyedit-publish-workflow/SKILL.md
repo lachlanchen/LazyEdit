@@ -63,6 +63,8 @@ the logged-in browser sessions and are read-only until `--apply`.
 Shipinhao collections:
 
 ```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py ensure-collection --collection Musia --apply'
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py ensure-collection --collection 啦啦侠 --apply'
 ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py inventory --scrolls 5 --output /tmp/shipinhao_inventory.json'
 ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py move-classified --scrolls 5 --lalachan-collection 啦啦侠 --music-collection Musia --output /tmp/shipinhao_move_plan.json'
 ```
