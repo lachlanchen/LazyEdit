@@ -361,7 +361,7 @@ DEFAULT_LOGO_SETTINGS = {
     "logoPath": None,
     "logoUrl": None,
     "heightRatio": 0.1,
-    "position": "top-left",
+    "position": "top-right",
     "bgOpacity": 0.5,
     "bgShape": "circle",
     "enabled": True,
@@ -1290,9 +1290,9 @@ def _sanitize_logo_settings(payload: dict | None) -> dict:
         height_ratio = DEFAULT_LOGO_SETTINGS.get("heightRatio", 0.1)
     height_ratio = min(max(height_ratio, 0.02), 0.4)
 
-    position = str(payload.get("position") or DEFAULT_LOGO_SETTINGS.get("position", "top-left"))
+    position = str(payload.get("position") or DEFAULT_LOGO_SETTINGS.get("position", "top-right"))
     if position not in {"top-right", "top-left", "bottom-right", "bottom-left", "center"}:
-        position = DEFAULT_LOGO_SETTINGS.get("position", "top-left")
+        position = DEFAULT_LOGO_SETTINGS.get("position", "top-right")
 
     enabled = payload.get("enabled")
     if not isinstance(enabled, bool):
@@ -2309,7 +2309,7 @@ def overlay_logo_on_video(
     logo_path,
     output_path,
     height_ratio=0.1,
-    position="top-left",
+    position="top-right",
     bg_opacity=0.5,
     bg_shape="circle",
 ):
