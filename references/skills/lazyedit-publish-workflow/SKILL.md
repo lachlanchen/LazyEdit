@@ -114,9 +114,10 @@ python scripts/lazyedit_publish.py --video-id VIDEO_ID --use-current-settings --
 ```
 
 Pure music/audio packaging should go through LazyEdit first, mirroring the
-video ZIP contract. LazyEdit creates the metadata, lyrics, audio copy, manifest,
-and cover candidates; AutoPublish only consumes the ZIP with
-`publish_shipinhao_music=true`.
+video ZIP contract. LazyEdit creates the metadata, lyrics, audio copy, YouTube
+art-track MP4, manifest, original-proof ZIP, and cover candidates; AutoPublish
+only consumes the ZIP with `publish_shipinhao_music=true` and/or
+`publish_youtube_music=true`.
 
 ```bash
 python scripts/lazyedit_music_package.py \
@@ -130,9 +131,13 @@ python scripts/lazyedit_music_package.py \
   --cover /path/to/artwork.png \
   --cover-video /path/to/related-video.mp4 \
   --cover-count 9 \
+  --cover-model aginti+codex \
+  --aginti-cover-count 5 \
+  --codex-cover-count 4 \
   --proof /path/to/website/manifest.json \
   --source-url "https://fun.lazying.art/#song-id" \
-  --output-slug song-title-music
+  --output-slug song-title-music \
+  --platforms shipinhao_music,youtube_music
 ```
 
 The equivalent API is:
@@ -149,8 +154,12 @@ curl -fsS http://127.0.0.1:18787/api/music/package \
     "cover": "/path/to/artwork.png",
     "cover_video": "/path/to/related-video.mp4",
     "cover_count": 9,
+    "cover_model": "aginti+codex",
+    "aginti_cover_count": 5,
+    "codex_cover_count": 4,
     "source_url": "https://fun.lazying.art/#song-id",
-    "slug": "song-title-music"
+    "slug": "song-title-music",
+    "platforms": {"shipinhao_music": true, "youtube_music": true}
   }'
 ```
 
@@ -200,6 +209,14 @@ bitrate MP3 inputs to a package-local `*_shipinhao_320k.mp3` copy. Verify with
 by AutoPublish include title, lyrics, author, singer, lyricist, composer,
 producer, album name, album description, album cover, original-proof ZIP, and
 the `我已阅读《视频号音乐人发表须知》` checkbox.
+
+YouTube Music in this workflow means public YouTube Studio upload of a generated
+music art-track video. LazyEdit writes `youtube_music_video_filename` and
+`video_filename` to metadata, and AutoPublish `pub_y2b_music.py` uploads that
+H.264/AAC MP4 with the cover thumbnail, title, description/story, lyrics, tags,
+and `Musia` playlist when available. Direct YouTube Music audio upload is a
+personal library feature, so do not claim it as public YouTube Music
+distribution.
 
 Music package records are durable in LazyEdit:
 

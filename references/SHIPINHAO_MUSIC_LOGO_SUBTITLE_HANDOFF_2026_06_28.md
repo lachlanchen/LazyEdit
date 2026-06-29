@@ -208,9 +208,31 @@ step or a separate mobile automation strategy.
 
 ## Handoff For LALACHAN Or Musia
 
-For pure Shipinhao music uploads, call the LazyEdit music package script/API,
-then post the generated ZIP with `publish_shipinhao_music=true`. First run with
-`test=true` until the live desktop route is visually confirmed.
+For pure music uploads, call the LazyEdit music package script/API, then post
+the generated ZIP with the target music flags. The same ZIP can publish to
+Shipinhao Music and YouTube Music:
+
+```bash
+python scripts/lazyedit_music_package.py \
+  --audio /path/to/song.mp3 \
+  --title "Song Title" \
+  --lyrics-json /path/to/lyrics.json \
+  --cover /path/to/square-cover.png \
+  --cover-video /path/to/recorded-video.mp4 \
+  --cover-count 9 \
+  --cover-model aginti+codex \
+  --aginti-cover-count 5 \
+  --codex-cover-count 4 \
+  --proof /path/to/source-artifact.json \
+  --website-screenshot /path/to/fun-lazying-art.png \
+  --webapp-screenshot /path/to/musia-webapp.png \
+  --platforms shipinhao_music,youtube_music \
+  --post
+```
+
+First run with no `--post` until the package is inspected. Use `--post` only
+when the generated ZIP contains the expected audio, lyrics, cover/proof files,
+metadata JSON, and `*_youtube_music.mp4`.
 
 For a future pure music publish handoff, the calling repo should provide:
 
@@ -219,7 +241,15 @@ For a future pure music publish handoff, the calling repo should provide:
 - short story/context for `音乐人说`, no more than 300 characters;
 - one to nine square or portrait artwork/background images;
 - title, artist/author, language, and optional genre;
-- explicit platform target `shipinhao_music`.
+- explicit platform targets, currently `shipinhao_music` and/or
+  `youtube_music`.
+
+YouTube music publish is not a distributor delivery to public YouTube Music.
+LazyEdit renders a YouTube-compatible art-track MP4 from the audio plus cover,
+and AutoPublish uploads it through the normal YouTube Studio path using
+`pub_y2b_music.py`. This is the reliable public-channel path available to this
+automation. The direct YouTube Music audio upload flow is a personal library
+upload and should not be reported as public publishing.
 
 For Musia, lyrics should be treated as the authoritative context. If an ASR or
 lyric-derived field conflicts with the curated lyrics, use the curated lyrics.

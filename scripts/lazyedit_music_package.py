@@ -50,12 +50,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--cover", action="append", default=[], help="Cover candidate image. Can be repeated.")
     parser.add_argument("--cover-video", help="Video used to extract additional cover candidates.")
     parser.add_argument("--cover-count", type=int, default=9)
+    parser.add_argument("--cover-model", default="", help="Cover generation model note, e.g. aginti/codex/venice.")
+    parser.add_argument("--aginti-cover-count", type=int, default=0)
+    parser.add_argument("--codex-cover-count", type=int, default=0)
     parser.add_argument("--proof", action="append", default=[], help="Original-proof file. Can be repeated.")
     parser.add_argument("--website-screenshot", help="Screenshot of the public Musia/Fun Lazying Art song page.")
     parser.add_argument("--webapp-screenshot", help="Screenshot of the Musia webapp generation/session context.")
     parser.add_argument("--output-slug", help="Stable package folder/zip slug.")
     parser.add_argument("--output-root", default=str(Path(UPLOAD_FOLDER) / "music_publish"))
     parser.add_argument("--post", action="store_true", help="Post package to AutoPublish after building.")
+    parser.add_argument("--platforms", default="shipinhao_music", help="Comma-separated music platforms: shipinhao_music,youtube_music.")
+    parser.add_argument("--shipinhao-music", action="store_true", help="Publish to Shipinhao music when --post is used.")
+    parser.add_argument("--youtube-music", action="store_true", help="Publish to YouTube as an art-track music video when --post is used.")
     parser.add_argument("--autopublish-url", default=AUTOPUBLISH_URL)
     parser.add_argument("--test", action="store_true")
     parser.add_argument("--source-url", default="", help="Public source URL for tracking, e.g. Fun Lazying Art item URL.")
@@ -70,6 +76,9 @@ def main(argv: list[str] | None = None) -> int:
         cover_paths=args.cover,
         cover_video_path=args.cover_video,
         cover_count=args.cover_count,
+        cover_model=args.cover_model,
+        aginti_cover_count=args.aginti_cover_count,
+        codex_cover_count=args.codex_cover_count,
         proof_paths=args.proof,
         website_screenshot_path=args.website_screenshot,
         webapp_screenshot_path=args.webapp_screenshot,
@@ -108,10 +117,21 @@ def main(argv: list[str] | None = None) -> int:
             result["record_error"] = str(exc)
 
     if args.post:
+        requested_platforms = {
+            item.strip().lower()
+            for item in (args.platforms or "").split(",")
+            if item.strip()
+        }
+        publish_shipinhao_music = args.shipinhao_music or "shipinhao_music" in requested_platforms or "sph" in requested_platforms
+        publish_youtube_music = args.youtube_music or "youtube_music" in requested_platforms or "youtube" in requested_platforms or "y2b" in requested_platforms
+        if not publish_shipinhao_music and not publish_youtube_music:
+            publish_shipinhao_music = True
         try:
             result["autopublish_response"] = post_music_package_to_autopublish(
                 result["zip_path"],
                 args.autopublish_url,
+                publish_shipinhao_music=publish_shipinhao_music,
+                publish_youtube_music=publish_youtube_music,
                 test=args.test,
             )
             if item_id:

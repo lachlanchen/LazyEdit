@@ -154,6 +154,83 @@ def _prepare_shipinhao_audio(source: Path, package_dir: Path) -> Path:
     return target
 
 
+def _render_youtube_music_video(audio: Path, cover: Path | None, package_dir: Path, *, slug: str) -> Path:
+    """Render an art-track MP4 for YouTube from one audio file and optional cover art."""
+    target = package_dir / f"{slug}_youtube_music.mp4"
+    duration = _ffprobe_duration(audio)
+    if duration is None or duration <= 0:
+        duration = 3600.0
+
+    if cover and cover.exists():
+        command = [
+            "ffmpeg",
+            "-y",
+            "-loop",
+            "1",
+            "-i",
+            str(cover),
+            "-i",
+            str(audio),
+            "-t",
+            f"{duration:.3f}",
+            "-vf",
+            "scale=1920:1080:force_original_aspect_ratio=decrease,"
+            "pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=0x111827,setsar=1",
+            "-r",
+            "30",
+            "-c:v",
+            "libx264",
+            "-tune",
+            "stillimage",
+            "-pix_fmt",
+            "yuv420p",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "192k",
+            "-shortest",
+            "-movflags",
+            "+faststart",
+            str(target),
+        ]
+    else:
+        command = [
+            "ffmpeg",
+            "-y",
+            "-f",
+            "lavfi",
+            "-i",
+            "color=c=0x111827:s=1920x1080:r=30",
+            "-i",
+            str(audio),
+            "-t",
+            f"{duration:.3f}",
+            "-c:v",
+            "libx264",
+            "-pix_fmt",
+            "yuv420p",
+            "-c:a",
+            "aac",
+            "-b:a",
+            "192k",
+            "-shortest",
+            "-movflags",
+            "+faststart",
+            str(target),
+        ]
+
+    result = subprocess.run(
+        command,
+        check=False,
+        capture_output=True,
+        text=True,
+        timeout=max(180, min(1800, int(duration * 4) + 120)),
+    )
+    if result.returncode != 0 or not target.exists():
+        raise RuntimeError((result.stderr or result.stdout or "ffmpeg YouTube music video render failed").strip())
+    return target
+
+
 def _square_cover_image(source: Path, output_dir: Path, *, prefix: str, index: int) -> Path:
     output_dir.mkdir(parents=True, exist_ok=True)
     target = output_dir / f"{prefix}_cover_{index:02d}_square.jpg"
@@ -248,6 +325,7 @@ def _copy_proof_file(source: str | Path, proof_dir: Path, *, name_hint: str | No
 def build_music_metadata(
     *,
     audio_name: str,
+    youtube_video_name: str | None = None,
     cover_names: list[str],
     proof_names: list[str] | None = None,
     proof_zip_name: str | None = None,
@@ -261,13 +339,30 @@ def build_music_metadata(
     lyrics: str = "",
     story: str = "",
     description: str = "",
+    cover_model: str = "",
+    aginti_cover_count: int = 0,
+    codex_cover_count: int = 0,
     metadata_override: dict | None = None,
 ) -> dict:
     story_text = story or description or ""
+    tags = [
+        value
+        for value in [
+            "Musia",
+            "LazyingArt",
+            "AI music",
+            title,
+            genre,
+            language,
+        ]
+        if value
+    ]
     metadata = {
-        "package_type": "shipinhao_music",
+        "package_type": "music_publish",
         "music_filename": audio_name,
         "audio_filename": audio_name,
+        "youtube_music_video_filename": youtube_video_name,
+        "video_filename": youtube_video_name,
         "cover_filename": cover_names[0] if cover_names else None,
         "cover_filenames": cover_names,
         "background_image_filenames": cover_names,
@@ -284,11 +379,31 @@ def build_music_metadata(
         "brief_description": description or story_text,
         "middle_description": story_text,
         "long_description": description or story_text,
+        "tags": tags,
         "author": author,
         "artist": artist or author,
+        "singer": artist or author,
+        "lyricist": author,
+        "composer": author,
+        "producer": author,
         "language": language,
         "genre": genre,
+        "youtube_playlist": "Musia",
+        "cover_generation": {
+            "model": cover_model,
+            "aginti_count": aginti_cover_count,
+            "codex_count": codex_cover_count,
+            "total_count": len(cover_names),
+        },
         "declare_original": False,
+    }
+    metadata["english_version"] = {
+        "title": title,
+        "long_description": description or story_text,
+        "brief_description": description or story_text,
+        "middle_description": story_text,
+        "tags": tags,
+        "youtube_playlist": "Musia",
     }
     if metadata_override:
         metadata.update({key: value for key, value in metadata_override.items() if value is not None})
@@ -305,6 +420,9 @@ def package_music_publish(
     cover_video_path: str | Path | None = None,
     cover_count: int = 9,
     cover_shape: str = "square",
+    cover_model: str = "",
+    aginti_cover_count: int = 0,
+    codex_cover_count: int = 0,
     proof_paths: list[str | Path] | None = None,
     website_screenshot_path: str | Path | None = None,
     webapp_screenshot_path: str | Path | None = None,
@@ -359,6 +477,12 @@ def package_music_publish(
         )
         resolved_covers.extend(extracted)
     resolved_covers = resolved_covers[: max(1, int(cover_count))]
+    youtube_video = _render_youtube_music_video(
+        copied_audio,
+        resolved_covers[0] if resolved_covers else None,
+        package_dir,
+        slug=slug,
+    )
 
     resolved_proofs: list[Path] = []
     website_screenshot: Path | None = None
@@ -422,6 +546,7 @@ def package_music_publish(
     proof_zip_name = f"proof/{proof_zip_path.name}" if proof_zip_path else None
     metadata = build_music_metadata(
         audio_name=copied_audio.name,
+        youtube_video_name=youtube_video.name,
         cover_names=cover_names,
         proof_names=proof_names,
         proof_zip_name=proof_zip_name,
@@ -435,6 +560,9 @@ def package_music_publish(
         lyrics=lyrics,
         story=story,
         description=description,
+        cover_model=cover_model,
+        aginti_cover_count=aginti_cover_count,
+        codex_cover_count=codex_cover_count,
         metadata_override=metadata_override,
     )
 
@@ -454,6 +582,10 @@ def package_music_publish(
         "covers": cover_names,
         "cover_count": len(cover_names),
         "cover_shape": cover_shape,
+        "cover_model": cover_model,
+        "aginti_cover_count": aginti_cover_count,
+        "codex_cover_count": codex_cover_count,
+        "youtube_music_video": youtube_video.name,
         "proof_files": proof_names,
         "proof_zip": proof_zip_name,
     }
@@ -462,6 +594,7 @@ def package_music_publish(
     zip_path = package_dir / f"{slug}.zip"
     with zipfile.ZipFile(zip_path, "w") as zipf:
         zipf.write(copied_audio, arcname=copied_audio.name)
+        zipf.write(youtube_video, arcname=youtube_video.name)
         zipf.write(metadata_path, arcname=metadata_name)
         zipf.write(lyrics_path, arcname=lyrics_path.name)
         zipf.write(manifest_path, arcname=manifest_path.name)
@@ -482,6 +615,7 @@ def package_music_publish(
         "lyrics_path": str(lyrics_path),
         "manifest_path": str(manifest_path),
         "audio_path": str(copied_audio),
+        "youtube_video_path": str(youtube_video),
         "cover_paths": [str(path) for path in resolved_covers],
         "cover_count": len(resolved_covers),
         "proof_paths": [str(path) for path in resolved_proofs],
@@ -494,13 +628,16 @@ def post_music_package_to_autopublish(
     zip_path: str | Path,
     autopublish_url: str,
     *,
+    publish_shipinhao_music: bool = True,
+    publish_youtube_music: bool = False,
     test: bool = False,
     timeout: int = 120,
 ) -> dict:
     zip_file = Path(zip_path).expanduser().resolve()
     params = {
         'filename': zip_file.name,
-        'publish_shipinhao_music': 'true',
+        'publish_shipinhao_music': str(bool(publish_shipinhao_music)).lower(),
+        'publish_youtube_music': str(bool(publish_youtube_music)).lower(),
         'test': str(bool(test)).lower(),
     }
     endpoint = f"{autopublish_url}?{urlencode(params)}"

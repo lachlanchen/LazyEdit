@@ -129,6 +129,10 @@ const PLATFORMS = [
   { key: 'youtube', label: 'YouTube' },
   { key: 'instagram', label: 'Instagram' },
 ];
+const MUSIC_PLATFORMS = [
+  { key: 'shipinhao_music', label: 'Shipinhao Music' },
+  { key: 'youtube_music', label: 'YouTube Music' },
+];
 const withCacheBust = (url: string) => `${url}${url.includes('?') ? '&' : '?'}t=${Date.now()}`;
 const normalizeSubtitleLiftRatio = (value: unknown, fallback = DEFAULT_SUBTITLE_LIFT_RATIO) => {
   const parsed = typeof value === 'number' ? value : Number(String(value ?? '').trim());
@@ -177,6 +181,37 @@ export default function EditorScreen() {
     [],
   );
   const [selected, setSelected] = useState<Record<string, boolean>>(defaultPublishSelection);
+  const [publishMode, setPublishMode] = useState<'video' | 'music'>('video');
+  const [musicSelected, setMusicSelected] = useState<Record<string, boolean>>({
+    shipinhao_music: true,
+    youtube_music: true,
+  });
+  const [musicAudioPath, setMusicAudioPath] = useState('');
+  const [musicTitle, setMusicTitle] = useState('');
+  const [musicAuthor, setMusicAuthor] = useState('Musia 慕莎');
+  const [musicArtist, setMusicArtist] = useState('Musia 慕莎');
+  const [musicLanguage, setMusicLanguage] = useState('中文');
+  const [musicGenre, setMusicGenre] = useState('流行');
+  const [musicLyricsText, setMusicLyricsText] = useState('');
+  const [musicLyricsPath, setMusicLyricsPath] = useState('');
+  const [musicLyricsJsonPath, setMusicLyricsJsonPath] = useState('');
+  const [musicStory, setMusicStory] = useState('');
+  const [musicDescription, setMusicDescription] = useState('');
+  const [musicCoverPaths, setMusicCoverPaths] = useState('');
+  const [musicCoverVideoPath, setMusicCoverVideoPath] = useState('');
+  const [musicCoverCount, setMusicCoverCount] = useState('9');
+  const [musicCoverModel, setMusicCoverModel] = useState('aginti+codex');
+  const [musicAgintiCoverCount, setMusicAgintiCoverCount] = useState('5');
+  const [musicCodexCoverCount, setMusicCodexCoverCount] = useState('4');
+  const [musicProofPaths, setMusicProofPaths] = useState('');
+  const [musicWebsiteScreenshot, setMusicWebsiteScreenshot] = useState('');
+  const [musicWebappScreenshot, setMusicWebappScreenshot] = useState('');
+  const [musicSourceUrl, setMusicSourceUrl] = useState('');
+  const [musicOutputSlug, setMusicOutputSlug] = useState('');
+  const [musicPackaging, setMusicPackaging] = useState(false);
+  const [musicStatus, setMusicStatus] = useState('');
+  const [musicTone, setMusicTone] = useState<'neutral' | 'good' | 'bad'>('neutral');
+  const [musicZipUrl, setMusicZipUrl] = useState<string | null>(null);
   const [videos, setVideos] = useState<Video[]>([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [listHeight, setListHeight] = useState(0);
@@ -354,6 +389,10 @@ export default function EditorScreen() {
     () => PLATFORMS.filter((platform) => selected[platform.key]).map((platform) => platform.label),
     [selected],
   );
+  const selectedMusicList = useMemo(
+    () => MUSIC_PLATFORMS.filter((platform) => musicSelected[platform.key]).map((platform) => platform.label),
+    [musicSelected],
+  );
   const selectedVideo = useMemo(
     () => videos.find((video) => video.id === selectedVideoId) || null,
     [videos, selectedVideoId],
@@ -454,6 +493,12 @@ export default function EditorScreen() {
     }).length,
     [publishQueue],
   );
+
+  const splitPathLines = useCallback((value: string) =>
+    value
+      .split(/\r?\n/)
+      .map((item) => item.trim())
+      .filter(Boolean), []);
   const selectedPublishJob = useMemo(
     () => publishQueue.find((job) => job.video_id === selectedVideoId) || null,
     [publishQueue, selectedVideoId],
@@ -1750,6 +1795,76 @@ export default function EditorScreen() {
     }
   };
 
+  const packageMusic = async (post: boolean) => {
+    if (musicPackaging) return;
+    const audio = musicAudioPath.trim();
+    const title = musicTitle.trim();
+    if (!audio || !title) {
+      setMusicStatus(t('publish_music_required'));
+      setMusicTone('bad');
+      return;
+    }
+    const platforms = {
+      shipinhao_music: Boolean(musicSelected.shipinhao_music),
+      youtube_music: Boolean(musicSelected.youtube_music),
+    };
+    if (post && !platforms.shipinhao_music && !platforms.youtube_music) {
+      setMusicStatus(t('publish_music_platform_required'));
+      setMusicTone('bad');
+      return;
+    }
+    setMusicPackaging(true);
+    setMusicStatus(post ? t('publish_music_publishing') : t('publish_music_packaging'));
+    setMusicTone('neutral');
+    try {
+      const resp = await fetch(`${API_URL}/api/music/package`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          audio,
+          title,
+          author: musicAuthor.trim() || 'Musia 慕莎',
+          artist: musicArtist.trim() || musicAuthor.trim() || 'Musia 慕莎',
+          language: musicLanguage.trim() || '中文',
+          genre: musicGenre.trim(),
+          lyrics: musicLyricsText,
+          lyrics_file: musicLyricsPath.trim(),
+          lyrics_json: musicLyricsJsonPath.trim(),
+          story: musicStory,
+          description: musicDescription,
+          cover: splitPathLines(musicCoverPaths),
+          cover_video: musicCoverVideoPath.trim(),
+          cover_count: Number(musicCoverCount) || 9,
+          cover_model: musicCoverModel.trim(),
+          aginti_cover_count: Number(musicAgintiCoverCount) || 0,
+          codex_cover_count: Number(musicCodexCoverCount) || 0,
+          proof: splitPathLines(musicProofPaths),
+          website_screenshot: musicWebsiteScreenshot.trim(),
+          webapp_screenshot: musicWebappScreenshot.trim(),
+          source_url: musicSourceUrl.trim(),
+          slug: musicOutputSlug.trim(),
+          platforms,
+          post,
+        }),
+      });
+      const json = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        throw new Error(json?.error || resp.statusText);
+      }
+      if (json?.zip_url) {
+        setMusicZipUrl(resolveMediaSrc(json.zip_url));
+      }
+      setMusicStatus(post ? t('publish_music_queued') : t('publish_music_ready'));
+      setMusicTone('good');
+      await loadPublishQueue(true);
+    } catch (err: any) {
+      setMusicStatus(`${t('publish_status_failed')}: ${err?.message || String(err)}`);
+      setMusicTone('bad');
+    } finally {
+      setMusicPackaging(false);
+    }
+  };
+
   const renderRunSelector = (
     menuOpen: boolean,
     setMenuOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -1910,6 +2025,173 @@ export default function EditorScreen() {
       <View style={styles.container}>
         <Text style={styles.title}>{t('publish_title')}</Text>
         <Text style={styles.sub}>{t('publish_subtitle')}</Text>
+        <View style={styles.modeToggleRow}>
+          <Pressable
+            style={[styles.modeToggleButton, publishMode === 'video' && styles.modeToggleButtonActive]}
+            onPress={() => setPublishMode('video')}
+          >
+            <FontAwesome name="video-camera" size={13} color={publishMode === 'video' ? 'white' : '#0f172a'} />
+            <Text style={[styles.modeToggleText, publishMode === 'video' && styles.modeToggleTextActive]}>
+              {t('publish_mode_video')}
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[styles.modeToggleButton, publishMode === 'music' && styles.modeToggleButtonActive]}
+            onPress={() => setPublishMode('music')}
+          >
+            <FontAwesome name="music" size={13} color={publishMode === 'music' ? 'white' : '#0f172a'} />
+            <Text style={[styles.modeToggleText, publishMode === 'music' && styles.modeToggleTextActive]}>
+              {t('publish_mode_music')}
+            </Text>
+          </Pressable>
+        </View>
+
+        {publishMode === 'music' ? (
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>{t('publish_music_title')}</Text>
+            <Text style={styles.sectionHint}>{t('publish_music_hint')}</Text>
+            <View style={styles.platformGrid}>
+              {MUSIC_PLATFORMS.map((platform) => {
+                const isActive = musicSelected[platform.key];
+                return (
+                  <Pressable
+                    key={platform.key}
+                    style={[styles.platformChip, isActive && styles.platformChipActive]}
+                    onPress={() =>
+                      setMusicSelected((prev) => ({ ...prev, [platform.key]: !prev[platform.key] }))
+                    }
+                  >
+                    <Text style={[styles.platformText, isActive && styles.platformTextActive]}>
+                      {platform.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+            <Text style={styles.selectedText}>
+              {t('label_selected', {
+                value: selectedMusicList.length ? selectedMusicList.join(', ') : t('label_none'),
+              })}
+            </Text>
+            <View style={styles.musicFieldGrid}>
+              <View style={styles.musicFieldWide}>
+                <Text style={styles.optionLabel}>{t('publish_music_audio')}</Text>
+                <TextInput value={musicAudioPath} onChangeText={setMusicAudioPath} style={styles.fieldInput} placeholder="/path/song.mp3" />
+              </View>
+              <View style={styles.musicFieldWide}>
+                <Text style={styles.optionLabel}>{t('publish_music_song_title')}</Text>
+                <TextInput value={musicTitle} onChangeText={setMusicTitle} style={styles.fieldInput} placeholder="Song title" />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_author')}</Text>
+                <TextInput value={musicAuthor} onChangeText={setMusicAuthor} style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_artist')}</Text>
+                <TextInput value={musicArtist} onChangeText={setMusicArtist} style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_language')}</Text>
+                <TextInput value={musicLanguage} onChangeText={setMusicLanguage} style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_genre')}</Text>
+                <TextInput value={musicGenre} onChangeText={setMusicGenre} style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicFieldWide}>
+                <Text style={styles.optionLabel}>{t('publish_music_lyrics')}</Text>
+                <TextInput value={musicLyricsText} onChangeText={setMusicLyricsText} multiline style={styles.fieldInputMultiline} />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_lyrics_file')}</Text>
+                <TextInput value={musicLyricsPath} onChangeText={setMusicLyricsPath} style={styles.fieldInput} placeholder="/path/lyrics.txt" />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_lyrics_json')}</Text>
+                <TextInput value={musicLyricsJsonPath} onChangeText={setMusicLyricsJsonPath} style={styles.fieldInput} placeholder="/path/lyrics.json" />
+              </View>
+              <View style={styles.musicFieldWide}>
+                <Text style={styles.optionLabel}>{t('publish_music_story')}</Text>
+                <TextInput value={musicStory} onChangeText={setMusicStory} multiline style={styles.fieldInputMultiline} />
+              </View>
+              <View style={styles.musicFieldWide}>
+                <Text style={styles.optionLabel}>{t('publish_music_description')}</Text>
+                <TextInput value={musicDescription} onChangeText={setMusicDescription} multiline style={styles.fieldInputMultiline} />
+              </View>
+              <View style={styles.musicFieldWide}>
+                <Text style={styles.optionLabel}>{t('publish_music_covers')}</Text>
+                <TextInput
+                  value={musicCoverPaths}
+                  onChangeText={setMusicCoverPaths}
+                  multiline
+                  style={styles.fieldInputMultiline}
+                  placeholder={'/path/cover1.png\n/path/cover2.png'}
+                />
+              </View>
+              <View style={styles.musicFieldWide}>
+                <Text style={styles.optionLabel}>{t('publish_music_cover_video')}</Text>
+                <TextInput value={musicCoverVideoPath} onChangeText={setMusicCoverVideoPath} style={styles.fieldInput} placeholder="/path/reference-video.mp4" />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_cover_count')}</Text>
+                <TextInput value={musicCoverCount} onChangeText={setMusicCoverCount} keyboardType="number-pad" style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_cover_model')}</Text>
+                <TextInput value={musicCoverModel} onChangeText={setMusicCoverModel} style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_aginti_count')}</Text>
+                <TextInput value={musicAgintiCoverCount} onChangeText={setMusicAgintiCoverCount} keyboardType="number-pad" style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_codex_count')}</Text>
+                <TextInput value={musicCodexCoverCount} onChangeText={setMusicCodexCoverCount} keyboardType="number-pad" style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicFieldWide}>
+                <Text style={styles.optionLabel}>{t('publish_music_proofs')}</Text>
+                <TextInput value={musicProofPaths} onChangeText={setMusicProofPaths} multiline style={styles.fieldInputMultiline} placeholder="/path/proof-or-screenshot.png" />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_website_screenshot')}</Text>
+                <TextInput value={musicWebsiteScreenshot} onChangeText={setMusicWebsiteScreenshot} style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_webapp_screenshot')}</Text>
+                <TextInput value={musicWebappScreenshot} onChangeText={setMusicWebappScreenshot} style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_source_url')}</Text>
+                <TextInput value={musicSourceUrl} onChangeText={setMusicSourceUrl} style={styles.fieldInput} />
+              </View>
+              <View style={styles.musicField}>
+                <Text style={styles.optionLabel}>{t('publish_music_slug')}</Text>
+                <TextInput value={musicOutputSlug} onChangeText={setMusicOutputSlug} style={styles.fieldInput} />
+              </View>
+            </View>
+            <View style={styles.musicActions}>
+              <Pressable
+                style={[styles.secondaryButton, musicPackaging && styles.btnDisabled]}
+                onPress={() => void packageMusic(false)}
+                disabled={musicPackaging}
+              >
+                <Text style={styles.secondaryButtonText}>{t('publish_music_prepare')}</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.publishButton, musicPackaging && styles.btnDisabled]}
+                onPress={() => void packageMusic(true)}
+                disabled={musicPackaging}
+              >
+                <View style={styles.btnContent}>
+                  {musicPackaging && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
+                  <Text style={styles.publishButtonText}>{t('publish_music_publish')}</Text>
+                </View>
+              </Pressable>
+            </View>
+            {musicStatus ? <Text style={[styles.status, toneStyle(musicTone)]}>{musicStatus}</Text> : null}
+            {musicZipUrl ? <Text style={styles.zipText}>{t('publish_zip_ready', { value: musicZipUrl })}</Text> : null}
+          </View>
+        ) : null}
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{t('publish_video_select_title')}</Text>
@@ -2717,6 +2999,28 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 22, fontWeight: '700', color: '#0f172a' },
   sub: { marginTop: 8, color: '#334155' },
+  modeToggleRow: {
+    marginTop: 14,
+    flexDirection: 'row',
+    gap: 8,
+  },
+  modeToggleButton: {
+    minHeight: 34,
+    paddingHorizontal: 12,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    backgroundColor: '#f8fafc',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+  },
+  modeToggleButtonActive: {
+    borderColor: '#0f172a',
+    backgroundColor: '#0f172a',
+  },
+  modeToggleText: { fontSize: 12, fontWeight: '800', color: '#0f172a' },
+  modeToggleTextActive: { color: 'white' },
   card: {
     marginTop: 16,
     padding: 16,
@@ -2822,6 +3126,47 @@ const styles = StyleSheet.create({
   platformText: { fontSize: 12, fontWeight: '600', color: '#1e293b' },
   platformTextActive: { color: '#f8fafc' },
   selectedText: { marginTop: 12, fontSize: 12, color: '#0f172a' },
+  musicFieldGrid: {
+    marginTop: 12,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  musicField: {
+    minWidth: 220,
+    flex: 1,
+  },
+  musicFieldWide: {
+    width: '100%',
+  },
+  fieldInput: {
+    marginTop: 6,
+    minHeight: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    backgroundColor: '#f8fafc',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 12,
+    color: '#0f172a',
+  },
+  fieldInputMultiline: {
+    marginTop: 6,
+    minHeight: 82,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#cbd5e1',
+    backgroundColor: '#f8fafc',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 12,
+    color: '#0f172a',
+    textAlignVertical: 'top',
+  },
+  musicActions: {
+    marginTop: 2,
+  },
   publishOptionRow: {
     marginTop: 12,
     padding: 12,

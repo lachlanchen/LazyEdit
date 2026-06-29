@@ -8465,6 +8465,32 @@ class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
         except Exception:
             cover_count = 9
         cover_count = min(max(1, cover_count), 24)
+        try:
+            aginti_cover_count = int(data.get("aginti_cover_count") or data.get("agintiCoverCount") or 0)
+        except Exception:
+            aginti_cover_count = 0
+        try:
+            codex_cover_count = int(data.get("codex_cover_count") or data.get("codexCoverCount") or 0)
+        except Exception:
+            codex_cover_count = 0
+        aginti_cover_count = max(0, min(24, aginti_cover_count))
+        codex_cover_count = max(0, min(24, codex_cover_count))
+
+        platforms_raw = data.get("platforms") or data.get("publish") or {}
+        if isinstance(platforms_raw, list):
+            music_platforms = {str(item).strip().lower(): True for item in platforms_raw}
+        elif isinstance(platforms_raw, dict):
+            music_platforms = {str(key).strip().lower(): bool(value) for key, value in platforms_raw.items()}
+        else:
+            music_platforms = {}
+        publish_shipinhao_music = _parse_bool(
+            data.get("publish_shipinhao_music") or data.get("publishShipinhaoMusic"),
+            default=music_platforms.get("shipinhao_music", True),
+        )
+        publish_youtube_music = _parse_bool(
+            data.get("publish_youtube_music") or data.get("publishYoutubeMusic") or data.get("publish_y2b_music"),
+            default=music_platforms.get("youtube_music", False) or music_platforms.get("youtube", False),
+        )
 
         try:
             result = package_music_publish(
@@ -8475,6 +8501,9 @@ class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
                 cover_paths=cover_paths,
                 cover_video_path=data.get("cover_video") or data.get("coverVideo") or data.get("video_path"),
                 cover_count=cover_count,
+                cover_model=str(data.get("cover_model") or data.get("coverModel") or ""),
+                aginti_cover_count=aginti_cover_count,
+                codex_cover_count=codex_cover_count,
                 proof_paths=proof_paths,
                 website_screenshot_path=(
                     data.get("website_screenshot")
@@ -8536,6 +8565,8 @@ class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
                     result["autopublish_response"] = post_music_package_to_autopublish(
                         result["zip_path"],
                         autopublish_url,
+                        publish_shipinhao_music=publish_shipinhao_music,
+                        publish_youtube_music=publish_youtube_music,
                         test=_parse_bool(data.get("test"), default=False),
                     )
                     response_payload = result.get("autopublish_response")
