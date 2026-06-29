@@ -408,7 +408,15 @@ def build_options(
     if publication_mode not in {"new", "override"}:
         publication_mode = "override"
 
-    return {
+    publish_category = args.publish_category
+    if not publish_category and args.video:
+        try:
+            if path_is_relative_to(Path(args.video).expanduser().resolve(), LALACHAN_VIDEOS_ROOT):
+                publish_category = "lalachan"
+        except Exception:
+            publish_category = None
+
+    options = {
         "burnSubtitles": bool(burn_subtitles),
         "translationLanguages": languages,
         "usePolishedSubtitles": use_polished,
@@ -423,6 +431,13 @@ def build_options(
         "burnLayout": burn_layout,
         "persistSettings": args.persist_settings,
     }
+    if publish_category:
+        options["publishCategory"] = publish_category
+    if args.youtube_playlist:
+        options["youtubePlaylist"] = args.youtube_playlist
+    if args.shipinhao_collection:
+        options["shipinhaoCollection"] = args.shipinhao_collection
+    return options
 
 
 def logo_overlay_enabled(logo_settings: dict[str, Any] | None) -> bool:
@@ -684,6 +699,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--source", default="api")
     parser.add_argument("--platforms", default=",".join(DEFAULT_PLATFORMS), help="Comma-separated target platforms.")
     parser.add_argument("--platform", action="append", default=[], help="Target platform; may be repeated.")
+    parser.add_argument(
+        "--publish-category",
+        choices=["simplelife", "lalachan", "music"],
+        help="Override publish routing. Defaults to simplelife, except LALACHAN source videos auto-route to LALACHAN.",
+    )
+    parser.add_argument("--youtube-playlist", help="Override YouTube playlist/category for this one publish.")
+    parser.add_argument("--shipinhao-collection", help="Override Shipinhao 合集 for this one publish.")
     parser.add_argument("--languages", help="Bottom-to-top subtitle languages.")
     parser.add_argument("--use-current-settings", action="store_true", help="Use current Studio publish and subtitle layout settings as defaults.")
     parser.add_argument("--prompt-file", help="Prompt/story file used for both subtitle correction and metadata.")

@@ -388,7 +388,9 @@ def build_music_metadata(
         "producer": author,
         "language": language,
         "genre": genre,
+        "publish_category": "music",
         "youtube_playlist": "Musia",
+        "shipinhao_collection": "Musia",
         "cover_generation": {
             "model": cover_model,
             "aginti_count": aginti_cover_count,
@@ -403,7 +405,9 @@ def build_music_metadata(
         "brief_description": description or story_text,
         "middle_description": story_text,
         "tags": tags,
+        "publish_category": "music",
         "youtube_playlist": "Musia",
+        "shipinhao_collection": "Musia",
     }
     if metadata_override:
         metadata.update({key: value for key, value in metadata_override.items() if value is not None})

@@ -100,6 +100,7 @@ from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
 from lazyedit.chinese_simplify import convert_items_to_simplified, convert_traditional_to_simplified
 from lazyedit.music_publish import package_music_publish, post_music_package_to_autopublish
+from lazyedit.publish_categories import apply_publish_category
 from lazyedit.subtitles_burner import BurnSlotConfig, burn_video_with_slots
 
 from pprint import pprint
@@ -1061,8 +1062,25 @@ def _sanitize_publish_options(payload) -> dict:
         or payload.get("metadata_notes")
         or ""
     ).strip()
+    publish_category = str(
+        payload.get("publishCategory")
+        or payload.get("publish_category")
+        or ""
+    ).strip().lower()
+    if publish_category not in {"simplelife", "lalachan", "music"}:
+        publish_category = ""
+    youtube_playlist = str(
+        payload.get("youtubePlaylist")
+        or payload.get("youtube_playlist")
+        or ""
+    ).strip()
+    shipinhao_collection = str(
+        payload.get("shipinhaoCollection")
+        or payload.get("shipinhao_collection")
+        or ""
+    ).strip()
 
-    return {
+    cleaned = {
         "burnSubtitles": _parse_bool(burn_subtitles, default=DEFAULT_PUBLISH_OPTIONS["burnSubtitles"]),
         "translationLanguages": translation_languages,
         "usePolishedSubtitles": _parse_bool(
@@ -1081,6 +1099,13 @@ def _sanitize_publish_options(payload) -> dict:
         "metadataPrompt": metadata_prompt,
         "burnLayout": _burn_layout_payload_from_request(payload),
     }
+    if publish_category:
+        cleaned["publishCategory"] = publish_category
+    if youtube_playlist:
+        cleaned["youtubePlaylist"] = youtube_playlist
+    if shipinhao_collection:
+        cleaned["shipinhaoCollection"] = shipinhao_collection
+    return cleaned
 
 
 def _persistable_publish_options(options: dict) -> dict:
@@ -5631,6 +5656,9 @@ def _prepare_publish_bundle(
     burn_subtitles: bool = True,
     use_processed_output: bool | None = None,
     publication_session_id: int | None = None,
+    publish_category: str | None = None,
+    youtube_playlist: str | None = None,
+    shipinhao_collection: str | None = None,
 ) -> tuple[int, dict]:
     row = _get_video_row(video_id_i)
     if not row:
@@ -5649,7 +5677,24 @@ def _prepare_publish_bundle(
         metadata_en = metadata_zh
 
     metadata_payload = _simplify_metadata_payload(metadata_zh)
+    metadata_payload = apply_publish_category(
+        metadata_payload,
+        media_kind="video",
+        source_path=file_path,
+        publish_category=publish_category,
+        youtube_playlist=youtube_playlist,
+        shipinhao_collection=shipinhao_collection,
+    )
+    metadata_en = apply_publish_category(
+        metadata_en,
+        media_kind="video",
+        source_path=file_path,
+        publish_category=metadata_payload.get("publish_category"),
+        youtube_playlist=metadata_payload.get("youtube_playlist"),
+        shipinhao_collection=metadata_payload.get("shipinhao_collection"),
+    )
     metadata_payload["english_version"] = metadata_en
+    metadata_payload["source_video_path"] = file_path
 
     base_name = os.path.splitext(os.path.basename(file_path))[0]
     publish_dir = _publication_session_publish_dir(file_path, publication_session_id)
@@ -6117,6 +6162,9 @@ def _process_publish_job(job_row: tuple) -> None:
         burn_subtitles=burn_subtitles,
         use_processed_output=processed_output_required,
         publication_session_id=publication_session_id,
+        publish_category=job_config.get("publishCategory") or job_config.get("publish_category"),
+        youtube_playlist=job_config.get("youtubePlaylist") or job_config.get("youtube_playlist"),
+        shipinhao_collection=job_config.get("shipinhaoCollection") or job_config.get("shipinhao_collection"),
     )
     if bundle_status >= 400:
         raise RuntimeError(bundle_payload.get("error") or bundle_payload.get("details") or "publish bundle failed")
@@ -8366,6 +8414,9 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
                 burn_subtitles=bool(publish_config.get("burnSubtitles", True)),
                 use_processed_output=processed_output_required,
                 publication_session_id=publication_session_id,
+                publish_category=publish_config.get("publishCategory") or publish_config.get("publish_category"),
+                youtube_playlist=publish_config.get("youtubePlaylist") or publish_config.get("youtube_playlist"),
+                shipinhao_collection=publish_config.get("shipinhaoCollection") or publish_config.get("shipinhao_collection"),
             )
             if bundle_status != 200:
                 self.set_status(bundle_status)
