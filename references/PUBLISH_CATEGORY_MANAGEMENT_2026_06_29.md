@@ -2,265 +2,131 @@
 
 Date: 2026-06-29
 
-## Forward Routing
+LazyEdit and AutoPublish share one `publish_category` contract. LazyEdit writes
+the category into the publish ZIP metadata; AutoPublish resolves that category
+to a YouTube playlist and Shipinhao collection.
 
-LazyEdit now writes publish-routing fields into every video/music publish ZIP:
+## Category Contract
 
-- `publish_category`
-- `youtube_playlist`
-- `playlist_name`
-- `shipinhao_collection`
+| Category | Use For | YouTube | Shipinhao | Instagram |
+| --- | --- | --- | --- | --- |
+| `simplelife` | personal/self recordings, real-world daily videos | `SimpleLife` | `简单生活` | normal caption/tags |
+| `lazyingart` | LazyingArt brand, product, shop, portfolio posts | `LazyingArt` | `懒人艺术` | normal caption/tags |
+| `musia` | pure Musia songs, audio/art-track uploads | `Musia` | `Musia` | normal caption/tags |
+| `lalachan` | LALACHAN story videos that are not primarily MVs | `LALACHAN` | `啦啦侠` | normal caption/tags |
+| `lalamv` | LALACHAN character music videos and song-led MVs | `LalaMV` | `LalaMV` | normal caption/tags |
 
-Default mapping:
+`music` is only a backwards-compatible alias for `musia`.
 
-| Content type | YouTube playlist | Shipinhao collection | Instagram |
-| --- | --- | --- | --- |
-| personal recordings / normal phone videos | `SimpleLife` | `简单生活` | no per-post category |
-| LALACHAN story / Xiaoyunque videos | `LALACHAN` | `啦啦侠` | no per-post category |
-| Musia music / art-track uploads | `Musia` | `Musia` | no per-post category |
+## LazyEdit Publish Overrides
 
-The defaults can be overridden with environment variables:
-
-```bash
-LAZYEDIT_YOUTUBE_PLAYLIST_SIMPLELIFE=SimpleLife
-LAZYEDIT_YOUTUBE_PLAYLIST_LALACHAN=LALACHAN
-LAZYEDIT_YOUTUBE_PLAYLIST_MUSIC=Musia
-LAZYEDIT_SHIPINHAO_COLLECTION_SIMPLELIFE=简单生活
-LAZYEDIT_SHIPINHAO_COLLECTION_LALACHAN=啦啦侠
-LAZYEDIT_SHIPINHAO_COLLECTION_MUSIC=Musia
-
-AUTOPUB_YOUTUBE_PLAYLIST_SIMPLELIFE=SimpleLife
-AUTOPUB_YOUTUBE_PLAYLIST_LALACHAN=LALACHAN
-AUTOPUB_YOUTUBE_PLAYLIST_MUSIC=Musia
-AUTOPUB_SHIPINHAO_COLLECTION_SIMPLELIFE=简单生活
-AUTOPUB_SHIPINHAO_COLLECTION_LALACHAN=啦啦侠
-AUTOPUB_SHIPINHAO_COLLECTION_MUSIC=Musia
-```
-
-For CLI publishes, use one-shot overrides:
+For an MV, use `lalamv` explicitly:
 
 ```bash
 python scripts/lazyedit_publish.py \
-  --video /path/to/lalachan.mp4 \
-  --publish-category lalachan \
-  --platforms youtube,instagram,shipinhao \
+  --video-id VIDEO_ID \
+  --use-current-settings \
+  --publish-category lalamv \
+  --youtube-playlist LalaMV \
+  --shipinhao-collection LalaMV \
+  --platforms shipinhao,youtube,instagram \
   --wait
 ```
 
-LazyEdit asks the metadata model to return `publish_category` as one of `simplelife`, `lalachan`, or `music`. The prompt tells it to choose `simplelife` for personal recordings, `lalachan` for LALACHAN/Xiaoyunque/Seedance fictional story videos, and `music` for Musia/song/audio-focused content. If the model is uncertain between personal recording and LALACHAN, it should choose `simplelife`. LALACHAN videos under `/home/lachlan/ProjectsLFS/LALACHAN/Videos` are still auto-routed to `lalachan` as a fallback. Music packages are always `music`.
+Forward metadata fields:
 
-Instagram note: Instagram has no stable per-post category, playlist, folder, or
-collection field in the desktop web upload flow used by AutoPublish. Its
-professional category is account/profile-level, not per-post routing.
-AutoPublish logs the inferred `publish_category` for Instagram but does not
-select any Instagram category UI; captions/tags remain the only normal routing
-surface there.
+- `publish_category`
+- `youtube_playlist` / `playlist_name`
+- `shipinhao_collection`
 
-## Backfill Tools
-
-The platform-management tools live in AutoPublish:
-
-- `AutoPublish/scripts/manage_y2b_videos.py`
-- `AutoPublish/scripts/manage_shipinhao_videos.py`
-- `AutoPublish/scripts/shipinhao_mirror_manager.py`
-
-Both attach to the existing logged-in Chromium sessions:
-
-- YouTube: port `9222`
-- Shipinhao: port `5006`
-
-They are read-only by default. Anything destructive or mutating requires `--apply`.
-
-### YouTube Inventory
-
-```bash
-cd /home/lachlan/DiskMech/Projects/lazyedit/AutoPublish
-python scripts/manage_y2b_videos.py inventory \
-  --scrolls 80 \
-  --output /tmp/youtube_inventory.json
-```
-
-The script extracts titles, links, video ids, visible row text, and a conservative `category_guess`. Music detection runs first and looks for `Musia`, `Musica`, `慕莎`, song/lyrics terms, and known song-title fragments. LALACHAN detection uses route hints such as `LALACHAN`, `啦啦侠`, `阿芽酱`, `飒飒君`, `小云雀`, `Seedance`, `Xiaoyunque`, and `duanpian`.
-
-Dry-run all LALACHAN playlist moves:
-
-```bash
-python scripts/manage_y2b_videos.py move-lalachan \
-  --playlist LALACHAN \
-  --scrolls 80 \
-  --output /tmp/youtube_lalachan_move_plan.json
-```
-
-Dry-run Musia playlist moves:
-
-```bash
-python scripts/manage_y2b_videos.py move-music \
-  --playlist Musia \
-  --scrolls 80 \
-  --output /tmp/youtube_music_move_plan.json
-```
-
-Dry-run both music and LALACHAN moves from the same scan:
-
-```bash
-python scripts/manage_y2b_videos.py move-classified \
-  --lalachan-playlist LALACHAN \
-  --music-playlist Musia \
-  --scrolls 80 \
-  --output /tmp/youtube_classified_move_plan.json
-```
-
-Apply after reviewing the plan:
-
-```bash
-python scripts/manage_y2b_videos.py move-lalachan \
-  --playlist LALACHAN \
-  --scrolls 80 \
-  --apply \
-  --output /tmp/youtube_lalachan_move_result.json
-```
-
-Move one video:
-
-```bash
-python scripts/manage_y2b_videos.py move \
-  --video-id VIDEO_ID \
-  --playlist LALACHAN \
-  --apply
-```
-
-Get links by query:
-
-```bash
-python scripts/manage_y2b_videos.py link --query "red sand" --scrolls 80
-```
-
-Delete is intentionally two-lock:
-
-```bash
-python scripts/manage_y2b_videos.py delete \
-  --video-id VIDEO_ID \
-  --title-contains "exact visible title fragment" \
-  --apply
-```
-
-### Shipinhao Inventory
-
-```bash
-cd /home/lachlan/DiskMech/Projects/lazyedit/AutoPublish
-python scripts/manage_shipinhao_videos.py inventory \
-  --scrolls 80 \
-  --output /tmp/shipinhao_inventory.json
-```
-
-If Shipinhao changes the management URL, open the correct management page manually in the `5006` browser and run with `--url ""` to keep the current tab:
-
-```bash
-python scripts/manage_shipinhao_videos.py inventory --url "" --scrolls 80
-```
-
-Get links by query:
-
-```bash
-python scripts/manage_shipinhao_videos.py link --query "阿芽" --scrolls 80
-```
-
-Shipinhao delete is also two-lock:
-
-```bash
-python scripts/manage_shipinhao_videos.py delete \
-  --query "visible title fragment" \
-  --title-contains "same confirmed title fragment" \
-  --apply
-```
-
-Existing-video Shipinhao collection moves are more UI-dependent than upload-time collection selection. The current tool inventories LALACHAN candidates first:
-
-```bash
-python scripts/manage_shipinhao_videos.py move-lalachan \
-  --lalachan-collection 啦啦侠 \
-  --scrolls 80 \
-  --output /tmp/shipinhao_lalachan_candidates.json
-```
-
-Dry-run music candidates:
-
-```bash
-python scripts/manage_shipinhao_videos.py move-music \
-  --music-collection Musia \
-  --scrolls 80 \
-  --output /tmp/shipinhao_music_candidates.json
-```
-
-Dry-run both categories from the same scan:
-
-```bash
-python scripts/manage_shipinhao_videos.py ensure-collection --collection Musia --apply
-python scripts/manage_shipinhao_videos.py ensure-collection --collection 啦啦侠 --apply
-python scripts/manage_shipinhao_videos.py move-classified \
-  --lalachan-collection 啦啦侠 \
-  --music-collection Musia \
-  --scrolls 80 \
-  --output /tmp/shipinhao_classified_candidates.json
-```
-
-`ensure-collection` creates the missing collection name if the account does not already show it. Use the generated candidate report to verify whether this account exposes collection editing on existing posts before applying any bulk move. When applying, use a small `--scrolls` value first for recent rows, or move one row by exact title fragment:
-
-```bash
-python scripts/manage_shipinhao_videos.py move \
-  --query "visible title fragment" \
-  --collection 啦啦侠 \
-  --apply
-```
-
-## Caveats
-
-- YouTube playlist moves depend on the logged-in Studio UI. If the playlist named `LALACHAN` or `Musia` does not exist, create it manually first or change the env var.
-- Shipinhao upload-time collection selection is automated. Existing-post collection edits are more UI-dependent, so inventory first and apply in small batches.
-- Never run bulk `--apply` before inspecting the exported plan.
-
-## Shipinhao Mirror and Description Recovery
-
-Use the mirrored manager for existing-post control that should stay separate
-from publication. It can export LazyEdit metadata, mirror the Shipinhao list,
-match rows by text and publish time, and generate a conservative repair plan:
-
-```bash
-python AutoPublish/scripts/shipinhao_mirror_manager.py export-metadata \
-  --metadata-root DATA \
-  --days 45 \
-  --output /tmp/lazyedit_shipinhao_metadata_index.json
-
-ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/shipinhao_mirror_manager.py mirror \
-  --scrolls 5 \
-  --output /tmp/shipinhao_mirror.json'
-
-python AutoPublish/scripts/shipinhao_mirror_manager.py plan-descriptions \
-  --mirror /tmp/shipinhao_mirror.json \
-  --metadata-index /tmp/lazyedit_shipinhao_metadata_index.json \
-  --include-ok \
-  --output /tmp/shipinhao_description_plan.json
-```
-
-Inspect before applying:
-
-```bash
-jq '[.[] | select(.action=="update-description") | {
-  query, metadata_title, row_published_at, metadata_mtime, match_score, new_length
-}]' /tmp/shipinhao_description_plan.json
-```
-
-Important 2026-06-29 finding: Shipinhao's current existing-post
-`修改描述和封面` flow opens `/platform/post/coverEdit`. It only supports
-modifying selected existing text and says the limit is 20 characters. For
-posts whose description is completely blank, `.edit-desc-content` has no text
-and no input appears. The tool now reports
-`unsupported-description-repair` instead of hanging. Do not assume old blank
-descriptions were restored unless a fresh mirror confirms the visible text
-changed.
-
-The detailed AutoPublish-side note is:
+LazyEdit metadata prompts and schemas should allow exactly:
 
 ```text
-AutoPublish/docs/SHIPINHAO_MIRROR_MANAGEMENT.md
+simplelife, lazyingart, musia, lalachan, lalamv
 ```
+
+## Environment Overrides
+
+```bash
+LAZYEDIT_YOUTUBE_PLAYLIST_SIMPLELIFE=SimpleLife
+LAZYEDIT_YOUTUBE_PLAYLIST_LAZYINGART=LazyingArt
+LAZYEDIT_YOUTUBE_PLAYLIST_MUSIA=Musia
+LAZYEDIT_YOUTUBE_PLAYLIST_LALACHAN=LALACHAN
+LAZYEDIT_YOUTUBE_PLAYLIST_LALAMV=LalaMV
+
+LAZYEDIT_SHIPINHAO_COLLECTION_SIMPLELIFE=简单生活
+LAZYEDIT_SHIPINHAO_COLLECTION_LAZYINGART=懒人艺术
+LAZYEDIT_SHIPINHAO_COLLECTION_MUSIA=Musia
+LAZYEDIT_SHIPINHAO_COLLECTION_LALACHAN=啦啦侠
+LAZYEDIT_SHIPINHAO_COLLECTION_LALAMV=LalaMV
+```
+
+AutoPublish equivalents use the `AUTOPUB_` prefix.
+
+## Validation
+
+Run on the AutoPublish host:
+
+```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python - <<'"'"'PY'"'"'
+from publish_routing import category_names, infer_publish_category, resolve_shipinhao_collection, resolve_youtube_playlist
+
+expected = {
+    "simplelife": ("SimpleLife", "简单生活"),
+    "lazyingart": ("LazyingArt", "懒人艺术"),
+    "musia": ("Musia", "Musia"),
+    "lalachan": ("LALACHAN", "啦啦侠"),
+    "lalamv": ("LalaMV", "LalaMV"),
+}
+for category, names in expected.items():
+    actual = category_names(category)
+    assert (actual["youtube_playlist"], actual["shipinhao_collection"]) == names, actual
+
+metadata = {"publish_category": "lalamv", "title": "Aya Chan Hikari Ame"}
+assert infer_publish_category(metadata)[0] == "lalamv"
+assert resolve_youtube_playlist(metadata) == "LalaMV"
+assert resolve_shipinhao_collection(metadata) == "LalaMV"
+print("category routing ok")
+PY'
+```
+
+## Category Creation and Backfill
+
+Use platform cleanup scripts only after an inventory or dry run. They attach to
+logged-in browser sessions and are read-only until `--apply`.
+
+Shipinhao can create missing collections:
+
+```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py ensure-collection --collection LalaMV --apply'
+```
+
+YouTube upload-time routing can create a missing playlist from the upload dialog
+when the YouTube UI exposes the create control. For existing videos, run a dry
+plan first:
+
+```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_y2b_videos.py move-category --category lalamv --lalamv-playlist LalaMV --scrolls 20 --output /tmp/youtube_lalamv_plan.json'
+```
+
+Shipinhao LalaMV dry run:
+
+```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py move-category --category lalamv --lalamv-collection LalaMV --scrolls 20 --output /tmp/shipinhao_lalamv_plan.json'
+```
+
+Classified dry runs for all non-`simplelife` categories:
+
+```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_y2b_videos.py move-classified --scrolls 20 --output /tmp/youtube_category_plan.json'
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py move-classified --scrolls 20 --output /tmp/shipinhao_category_plan.json'
+```
+
+Never bulk-apply a generated plan without inspecting the JSON. Use exact title
+fragments for existing-post repair when the platform UI is unstable.
+
+## Instagram Status
+
+Instagram does not expose a stable per-post category, playlist, folder, or
+collection in the desktop web upload flow. AutoPublish logs the category for
+traceability but does not select any Instagram category UI.

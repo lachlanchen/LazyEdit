@@ -82,8 +82,8 @@
     },
     "publish_category": {
       "type": "string",
-      "enum": ["simplelife", "lalachan", "music"],
-      "description": "Publishing category: simplelife for personal/self daily recordings, lalachan for LALACHAN/Xiaoyunque fictional story videos, music for music/song/audio-focused content"
+      "enum": ["simplelife", "lazyingart", "musia", "lalachan", "lalamv"],
+      "description": "Publishing category: simplelife for personal/self daily recordings, lazyingart for LazyingArt brand/product/art posts, musia for pure song/audio-focused Musia content, lalachan for LALACHAN/Xiaoyunque fictional story videos, lalamv for LALACHAN character music videos/MVs"
     }
   },
   "required": [

@@ -51,7 +51,7 @@ conda activate lazyedit
 - `--languages` is bottom-to-top subtitle order.
 - If Studio logo settings are enabled, `--no-burn-subtitles` still creates a processed logo-only output ending in `_logo.mp4` and publishes that output. Translation is skipped because subtitles are disabled.
 - Use polished/corrected subtitles for real publishes and debug publishes unless the user explicitly requests original subtitles.
-- Publish category defaults: personal phone/self recordings stay in YouTube `SimpleLife` and Shipinhao `简单生活`; LALACHAN/Xiaoyunque story videos go to YouTube `LALACHAN` and Shipinhao `啦啦侠`; music/art-track packages go to `Musia`. Instagram has no stable per-post category/playlist in the desktop web upload flow, so AutoPublish only logs the inferred category there and uses normal captions/tags. LazyEdit metadata generation asks the model for `publish_category` (`simplelife`, `lalachan`, or `music`) and the router falls back to source-path/keyword inference. Use `--publish-category lalachan`, `--youtube-playlist`, or `--shipinhao-collection` for one-shot overrides.
+- Publish category defaults: personal phone/self recordings use `simplelife`; LazyingArt brand/product posts use `lazyingart`; pure music/art-track posts use `musia`; LALACHAN story videos use `lalachan`; LALACHAN character music videos use `lalamv`. Instagram has no stable per-post category/playlist in the desktop web upload flow, so AutoPublish only logs the inferred category there and uses normal captions/tags. LazyEdit metadata generation asks the model for `publish_category` (`simplelife`, `lazyingart`, `musia`, `lalachan`, or `lalamv`) and the router falls back to source-path/keyword inference. `music` is only a backwards-compatible alias for `musia`. Use `--publish-category lalamv`, `--youtube-playlist LalaMV`, or `--shipinhao-collection LalaMV` for MV overrides.
 - `--no-process` reuses an already completed output. Use it when the user says "last run", "same version", or "already finished run".
 - `--publication-session-id ID` targets a specific run. Omit it for the current output.
 
@@ -63,10 +63,12 @@ the logged-in browser sessions and are read-only until `--apply`.
 Shipinhao collections:
 
 ```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py ensure-collection --collection LalaMV --apply'
 ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py ensure-collection --collection Musia --apply'
 ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py ensure-collection --collection 啦啦侠 --apply'
 ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py inventory --scrolls 5 --output /tmp/shipinhao_inventory.json'
-ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py move-classified --scrolls 5 --lalachan-collection 啦啦侠 --music-collection Musia --output /tmp/shipinhao_move_plan.json'
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py move-category --category lalamv --lalamv-collection LalaMV --scrolls 5 --output /tmp/shipinhao_lalamv_plan.json'
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py move-classified --scrolls 5 --output /tmp/shipinhao_move_plan.json'
 ```
 
 Apply in small batches or by exact visible title fragment:
@@ -96,7 +98,8 @@ the SQLite mirror DB. Inspect every JSON plan before `--apply`.
 YouTube playlists:
 
 ```bash
-ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_y2b_videos.py move-classified --scrolls 20 --lalachan-playlist LALACHAN --music-playlist Musia --output /tmp/youtube_move_plan.json'
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_y2b_videos.py move-category --category lalamv --lalamv-playlist LalaMV --scrolls 20 --output /tmp/youtube_lalamv_plan.json'
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_y2b_videos.py move-classified --scrolls 20 --output /tmp/youtube_move_plan.json'
 ```
 
 Instagram:
