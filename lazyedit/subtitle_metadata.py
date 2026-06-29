@@ -114,11 +114,16 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
                     "type": "string",
                     "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
                     "description": "Cover image timestamp in HH:MM:SS,mmm format"
+                },
+                "publish_category": {
+                    "type": "string",
+                    "enum": ["simplelife", "lalachan", "music"],
+                    "description": "Publishing category: simplelife for personal/self daily recordings, lalachan for LALACHAN/Xiaoyunque fictional story videos, music for song/audio-focused content"
                 }
             },
             "required": [
                 "title", "brief_description", "middle_description", "long_description",
-                "tags", "english_words_to_learn", "teaser", "cover"
+                "tags", "english_words_to_learn", "teaser", "cover", "publish_category"
             ],
             "additionalProperties": False
         }
@@ -229,6 +234,11 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
             "Each word should be accompanied by a timestamp range indicating when it appears in the video.\n\n"
             "Give a 2~4 seconds timestamp range which can reflect the essense of the video as teaser. "
             "Also, suggest a timestamp for the best scene to use as a cover image for the video. \n\n"
+            "For publish_category, choose exactly one of simplelife, lalachan, music. "
+            "Use simplelife for personal/self-recorded daily life and real-world vlogs. "
+            "Use lalachan for LALACHAN/Xiaoyunque/Seedance fictional story videos or 啦啦侠/阿芽酱/飒飒君 content. "
+            "Use music for song, music video, lyric video, or audio-focused Musia content. "
+            "If uncertain between simplelife and lalachan, choose simplelife. \n\n"
             "Try to find instructions also in subtitles if exist. \n\n"
             "Return correct format result with imagination even subtitles is little or even empty. \n\n"
             f"Captions:\n{captions}\n\n"
@@ -279,6 +289,11 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
             "Each word should be accompanied by a timestamp range indicating when it appears in the video.\n\n"
             "Give a 2~4 seconds timestamp range which can reflect the essence of the video as teaser. "
             "Also, suggest a timestamp for the best scene to use as a cover image for the video. \n\n"
+            "For publish_category, choose exactly one of simplelife, lalachan, music. "
+            "Use simplelife for personal/self-recorded daily life and real-world vlogs. "
+            "Use lalachan for LALACHAN/Xiaoyunque/Seedance fictional story videos or Lala Xia/Aya Chan/Sasa Kun content. "
+            "Use music for song, music video, lyric video, or audio-focused Musia content. "
+            "If uncertain between simplelife and lalachan, choose simplelife. \n\n"
             "Try to find instructions also in subtitles if exist. \n\n"
             "Return correct format result with imagination even subtitles is little or even empty. \n\n"
             f"Captions:\n{captions}\n\n"

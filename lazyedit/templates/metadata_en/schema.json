@@ -76,6 +76,11 @@
       "type": "string",
       "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$",
       "description": "Cover image timestamp in HH:MM:SS,mmm format"
+    },
+    "publish_category": {
+      "type": "string",
+      "enum": ["simplelife", "lalachan", "music"],
+      "description": "Publishing category: simplelife for personal/self daily recordings, lalachan for LALACHAN/Xiaoyunque fictional story videos, music for music/song/audio-focused content"
     }
   },
   "required": [
@@ -86,7 +91,8 @@
     "tags",
     "english_words_to_learn",
     "teaser",
-    "cover"
+    "cover",
+    "publish_category"
   ],
   "additionalProperties": false
 }

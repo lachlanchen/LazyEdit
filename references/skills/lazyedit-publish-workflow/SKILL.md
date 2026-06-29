@@ -51,9 +51,37 @@ conda activate lazyedit
 - `--languages` is bottom-to-top subtitle order.
 - If Studio logo settings are enabled, `--no-burn-subtitles` still creates a processed logo-only output ending in `_logo.mp4` and publishes that output. Translation is skipped because subtitles are disabled.
 - Use polished/corrected subtitles for real publishes and debug publishes unless the user explicitly requests original subtitles.
-- Publish category defaults: personal phone/self recordings stay in YouTube `SimpleLife` and Shipinhao `简单生活`; LALACHAN/Xiaoyunque story videos go to YouTube `LALACHAN` and Shipinhao `LALACHAN`; music/art-track packages go to `Musia`. Use `--publish-category lalachan`, `--youtube-playlist`, or `--shipinhao-collection` for one-shot overrides.
+- Publish category defaults: personal phone/self recordings stay in YouTube `SimpleLife` and Shipinhao `简单生活`; LALACHAN/Xiaoyunque story videos go to YouTube `LALACHAN` and Shipinhao `啦啦侠`; music/art-track packages go to `Musia`. LazyEdit metadata generation asks the model for `publish_category` (`simplelife`, `lalachan`, or `music`) and the router falls back to source-path/keyword inference. Use `--publish-category lalachan`, `--youtube-playlist`, or `--shipinhao-collection` for one-shot overrides.
 - `--no-process` reuses an already completed output. Use it when the user says "last run", "same version", or "already finished run".
 - `--publication-session-id ID` targets a specific run. Omit it for the current output.
+
+## Category Cleanup
+
+Use platform cleanup scripts only after an inventory or dry run. They attach to
+the logged-in browser sessions and are read-only until `--apply`.
+
+Shipinhao collections:
+
+```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py inventory --scrolls 5 --output /tmp/shipinhao_inventory.json'
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py move-classified --scrolls 5 --lalachan-collection 啦啦侠 --music-collection Musia --output /tmp/shipinhao_move_plan.json'
+```
+
+Apply in small batches or by exact visible title fragment:
+
+```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_shipinhao_videos.py move --query "visible title fragment" --collection 啦啦侠 --apply'
+```
+
+YouTube playlists:
+
+```bash
+ssh lachlan@lazyingart 'cd ~/Projects/autopub && /home/lachlan/venvs/autopub/bin/python scripts/manage_y2b_videos.py move-classified --scrolls 20 --lalachan-playlist LALACHAN --music-playlist Musia --output /tmp/youtube_move_plan.json'
+```
+
+Never bulk-apply a generated plan without inspecting the JSON. If the page is
+logged out, wrong, or the visible row text is weak, stop and open the correct
+management page in the browser first.
 
 ## Common Commands
 

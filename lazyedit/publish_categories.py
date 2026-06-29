@@ -25,6 +25,7 @@ _CATEGORY_ALIASES = {
     "lala_chAN".lower(): CATEGORY_LALACHAN,
     "啦啦侠": CATEGORY_LALACHAN,
     "music": CATEGORY_MUSIC,
+    "musica": CATEGORY_MUSIC,
     "musia": CATEGORY_MUSIC,
     "慕莎": CATEGORY_MUSIC,
     "歌曲": CATEGORY_MUSIC,
@@ -52,7 +53,7 @@ def publish_category_names(category: str) -> dict[str, str]:
     if normalized == CATEGORY_LALACHAN:
         return {
             "youtube_playlist": _env("LAZYEDIT_YOUTUBE_PLAYLIST_LALACHAN", "LALACHAN"),
-            "shipinhao_collection": _env("LAZYEDIT_SHIPINHAO_COLLECTION_LALACHAN", "LALACHAN"),
+            "shipinhao_collection": _env("LAZYEDIT_SHIPINHAO_COLLECTION_LALACHAN", "啦啦侠"),
         }
     if normalized == CATEGORY_MUSIC:
         return {

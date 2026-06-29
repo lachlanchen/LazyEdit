@@ -16,7 +16,7 @@ Default mapping:
 | Content type | YouTube playlist | Shipinhao collection |
 | --- | --- | --- |
 | personal recordings / normal phone videos | `SimpleLife` | `简单生活` |
-| LALACHAN story / Xiaoyunque videos | `LALACHAN` | `LALACHAN` |
+| LALACHAN story / Xiaoyunque videos | `LALACHAN` | `啦啦侠` |
 | Musia music / art-track uploads | `Musia` | `Musia` |
 
 The defaults can be overridden with environment variables:
@@ -26,14 +26,14 @@ LAZYEDIT_YOUTUBE_PLAYLIST_SIMPLELIFE=SimpleLife
 LAZYEDIT_YOUTUBE_PLAYLIST_LALACHAN=LALACHAN
 LAZYEDIT_YOUTUBE_PLAYLIST_MUSIC=Musia
 LAZYEDIT_SHIPINHAO_COLLECTION_SIMPLELIFE=简单生活
-LAZYEDIT_SHIPINHAO_COLLECTION_LALACHAN=LALACHAN
+LAZYEDIT_SHIPINHAO_COLLECTION_LALACHAN=啦啦侠
 LAZYEDIT_SHIPINHAO_COLLECTION_MUSIC=Musia
 
 AUTOPUB_YOUTUBE_PLAYLIST_SIMPLELIFE=SimpleLife
 AUTOPUB_YOUTUBE_PLAYLIST_LALACHAN=LALACHAN
 AUTOPUB_YOUTUBE_PLAYLIST_MUSIC=Musia
 AUTOPUB_SHIPINHAO_COLLECTION_SIMPLELIFE=简单生活
-AUTOPUB_SHIPINHAO_COLLECTION_LALACHAN=LALACHAN
+AUTOPUB_SHIPINHAO_COLLECTION_LALACHAN=啦啦侠
 AUTOPUB_SHIPINHAO_COLLECTION_MUSIC=Musia
 ```
 
@@ -47,7 +47,7 @@ python scripts/lazyedit_publish.py \
   --wait
 ```
 
-LALACHAN videos under `/home/lachlan/ProjectsLFS/LALACHAN/Videos` are auto-routed to `lalachan`. Personal recordings remain `simplelife` unless explicitly overridden. Music packages are always `music`.
+LazyEdit asks the metadata model to return `publish_category` as one of `simplelife`, `lalachan`, or `music`. The prompt tells it to choose `simplelife` for personal recordings, `lalachan` for LALACHAN/Xiaoyunque/Seedance fictional story videos, and `music` for Musia/song/audio-focused content. If the model is uncertain between personal recording and LALACHAN, it should choose `simplelife`. LALACHAN videos under `/home/lachlan/ProjectsLFS/LALACHAN/Videos` are still auto-routed to `lalachan` as a fallback. Music packages are always `music`.
 
 ## Backfill Tools
 
@@ -72,7 +72,7 @@ python scripts/manage_y2b_videos.py inventory \
   --output /tmp/youtube_inventory.json
 ```
 
-The script extracts titles, links, video ids, visible row text, and a conservative `category_guess`. LALACHAN detection uses route hints such as `LALACHAN`, `啦啦侠`, `阿芽酱`, `飒飒君`, `小云雀`, `Seedance`, `Xiaoyunque`, and `duanpian`.
+The script extracts titles, links, video ids, visible row text, and a conservative `category_guess`. Music detection runs first and looks for `Musia`, `Musica`, `慕莎`, song/lyrics terms, and known song-title fragments. LALACHAN detection uses route hints such as `LALACHAN`, `啦啦侠`, `阿芽酱`, `飒飒君`, `小云雀`, `Seedance`, `Xiaoyunque`, and `duanpian`.
 
 Dry-run all LALACHAN playlist moves:
 
@@ -81,6 +81,25 @@ python scripts/manage_y2b_videos.py move-lalachan \
   --playlist LALACHAN \
   --scrolls 80 \
   --output /tmp/youtube_lalachan_move_plan.json
+```
+
+Dry-run Musia playlist moves:
+
+```bash
+python scripts/manage_y2b_videos.py move-music \
+  --playlist Musia \
+  --scrolls 80 \
+  --output /tmp/youtube_music_move_plan.json
+```
+
+Dry-run both music and LALACHAN moves from the same scan:
+
+```bash
+python scripts/manage_y2b_videos.py move-classified \
+  --lalachan-playlist LALACHAN \
+  --music-playlist Musia \
+  --scrolls 80 \
+  --output /tmp/youtube_classified_move_plan.json
 ```
 
 Apply after reviewing the plan:
@@ -151,15 +170,41 @@ Existing-video Shipinhao collection moves are more UI-dependent than upload-time
 
 ```bash
 python scripts/manage_shipinhao_videos.py move-lalachan \
-  --collection LALACHAN \
+  --lalachan-collection 啦啦侠 \
   --scrolls 80 \
   --output /tmp/shipinhao_lalachan_candidates.json
 ```
 
-Use the generated candidate links to verify whether this account exposes collection editing on existing posts before applying any bulk move.
+Dry-run music candidates:
+
+```bash
+python scripts/manage_shipinhao_videos.py move-music \
+  --music-collection Musia \
+  --scrolls 80 \
+  --output /tmp/shipinhao_music_candidates.json
+```
+
+Dry-run both categories from the same scan:
+
+```bash
+python scripts/manage_shipinhao_videos.py move-classified \
+  --lalachan-collection 啦啦侠 \
+  --music-collection Musia \
+  --scrolls 80 \
+  --output /tmp/shipinhao_classified_candidates.json
+```
+
+Use the generated candidate report to verify whether this account exposes collection editing on existing posts before applying any bulk move. When applying, use a small `--scrolls` value first for recent rows, or move one row by exact title fragment:
+
+```bash
+python scripts/manage_shipinhao_videos.py move \
+  --query "visible title fragment" \
+  --collection 啦啦侠 \
+  --apply
+```
 
 ## Caveats
 
 - YouTube playlist moves depend on the logged-in Studio UI. If the playlist named `LALACHAN` or `Musia` does not exist, create it manually first or change the env var.
-- Shipinhao upload-time collection selection is automated. Existing-post collection edits are not yet fully verified, so inventory first.
+- Shipinhao upload-time collection selection is automated. Existing-post collection edits are more UI-dependent, so inventory first and apply in small batches.
 - Never run bulk `--apply` before inspecting the exported plan.
