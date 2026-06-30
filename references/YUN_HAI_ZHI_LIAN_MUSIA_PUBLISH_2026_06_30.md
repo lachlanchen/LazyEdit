@@ -100,3 +100,10 @@ Fix in `scripts/lazyedit_music_package.py`:
 - record the resolved `autopublish_url` in CLI output.
 
 Future music publish command can omit `--autopublish-url` unless an explicit override is needed.
+
+Additional smoothing in `lazyedit/music_publish.py`:
+
+- reset generated `covers/` and `proof/` subdirectories before rebuilding the
+  same music package slug;
+- this prevents retry builds from accumulating duplicate filenames such as
+  `website-screenshot-2.png` and keeps the package manifest deterministic.

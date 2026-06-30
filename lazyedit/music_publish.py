@@ -497,6 +497,13 @@ def package_music_publish(
     covers_dir = package_dir / "covers"
     proof_dir = package_dir / "proof"
     package_dir.mkdir(parents=True, exist_ok=True)
+
+    # These subdirectories are generated from the current package inputs. Reset
+    # them so repeated builds of the same output slug stay deterministic instead
+    # of accumulating website-screenshot-2.png / proof-3.json style leftovers.
+    for generated_dir in (covers_dir, proof_dir):
+        if generated_dir.exists():
+            shutil.rmtree(generated_dir)
     covers_dir.mkdir(parents=True, exist_ok=True)
     if cover_shape not in {"square", "original"}:
         raise ValueError("cover_shape must be 'square' or 'original'")
