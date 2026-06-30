@@ -5,8 +5,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
+import socket
 import sys
+from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -31,6 +34,65 @@ def _remote_job_id(response: dict | None) -> str | None:
         if value:
             return str(value)
     return None
+
+
+def _normalize_autopublish_url(url: str) -> str:
+    parsed = urlparse(url)
+    if not parsed.scheme or not parsed.netloc:
+        return url
+    path = parsed.path.rstrip("/")
+    if path.endswith("/publish/queue"):
+        path = path[: -len("/queue")]
+    elif path.endswith("/queue"):
+        path = path[: -len("/queue")]
+    elif not path:
+        path = "/publish"
+    return parsed._replace(path=path, query="", fragment="").geturl()
+
+
+def _is_host_reachable(url: str, timeout: float = 1.0) -> bool:
+    try:
+        parsed = urlparse(url)
+        host = parsed.hostname
+        if not host:
+            return False
+        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+        return False
+    except OSError:
+        return False
+
+
+def _resolve_autopublish_url(explicit_url: str | None = None) -> str:
+    candidates: list[str] = []
+    if explicit_url:
+        candidates.append(explicit_url)
+    for key in ("LAZYEDIT_AUTOPUBLISH_URL", "AUTOPUBLISH_URL"):
+        value = os.getenv(key)
+        if value:
+            candidates.append(value)
+
+    host = os.getenv("LAZYEDIT_AUTOPUBLISH_HOST") or os.getenv("AUTOPUBLISH_HOST")
+    port = os.getenv("LAZYEDIT_AUTOPUBLISH_PORT") or os.getenv("AUTOPUBLISH_PORT")
+    if host:
+        candidates.append(f"http://{host}:{port or '8081'}/publish")
+
+    if AUTOPUBLISH_URL:
+        candidates.append(AUTOPUBLISH_URL)
+    candidates.extend(("http://localhost:8081/publish", "http://lazyingart:8081/publish"))
+
+    seen = set()
+    for candidate in candidates:
+        normalized = _normalize_autopublish_url(candidate)
+        if not normalized or normalized in seen:
+            continue
+        seen.add(normalized)
+        if _is_host_reachable(normalized):
+            return normalized
+
+    fallback = _normalize_autopublish_url(explicit_url or AUTOPUBLISH_URL or "http://localhost:8081/publish")
+    return fallback
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -70,7 +132,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--shipinhao-music", action="store_true", help="Publish to Shipinhao music when --post is used.")
     parser.add_argument("--youtube-music", action="store_true", help="Publish to YouTube as an art-track music video when --post is used.")
     parser.add_argument("--bandcamp-music", action="store_true", help="Publish to Bandcamp when --post is used.")
-    parser.add_argument("--autopublish-url", default=AUTOPUBLISH_URL)
+    parser.add_argument("--autopublish-url", default="", help="AutoPublish /publish endpoint. If omitted, the CLI probes the reachable LazyEdit defaults.")
     parser.add_argument("--test", action="store_true")
     parser.add_argument("--source-url", default="", help="Public source URL for tracking, e.g. Fun Lazying Art item URL.")
     parser.add_argument("--no-record", action="store_true", help="Do not insert a LazyEdit music_publish_items row.")
@@ -138,9 +200,11 @@ def main(argv: list[str] | None = None) -> int:
         if not publish_shipinhao_music and not publish_youtube_music and not publish_bandcamp_music:
             publish_shipinhao_music = True
         try:
+            autopublish_url = _resolve_autopublish_url(args.autopublish_url)
+            result["autopublish_url"] = autopublish_url
             result["autopublish_response"] = post_music_package_to_autopublish(
                 result["zip_path"],
-                args.autopublish_url,
+                autopublish_url,
                 publish_shipinhao_music=publish_shipinhao_music,
                 publish_youtube_music=publish_youtube_music,
                 publish_bandcamp_music=publish_bandcamp_music,
