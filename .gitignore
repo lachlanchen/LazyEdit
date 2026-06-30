@@ -51,5 +51,11 @@ lazyedit.db
 *.vtt
 *.ass
 
+# Local downloaded reference assets
+resources/irasutoya-emoji-assets/
+
+# Local handoff drop zone; durable notes belong under references/.
+handoffnotes/input/
+
 # External symlinks/deps
 echomind

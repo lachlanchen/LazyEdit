@@ -1,7 +1,6 @@
 {
   "name": "@lazyingart/lazyedit",
   "version": "0.1.0",
-  "private": true,
   "description": "LazyEdit backend, Studio app, and media-processing runtime orchestration.",
   "bin": {
     "lazyedit": "scripts/npm/lazyedit-cli.js"
@@ -15,10 +14,91 @@
     "backend": "bash scripts/npm/backend.sh",
     "web": "bash scripts/npm/web.sh",
     "publish-video": "python scripts/lazyedit_publish.py",
-    "typecheck": "cd app && npx tsc --noEmit"
+    "typecheck": "cd app && npx tsc --noEmit",
+    "pack:dry-run": "npm pack --dry-run"
   },
   "engines": {
     "node": ">=20",
     "npm": ">=10"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lachlanchen/LazyEdit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lachlanchen/LazyEdit/issues"
+  },
+  "homepage": "https://github.com/lachlanchen/LazyEdit#readme",
+  "keywords": [
+    "lazyedit",
+    "video",
+    "subtitles",
+    "transcription",
+    "translation",
+    "metadata",
+    "autopublish",
+    "expo",
+    "tornado",
+    "lazyingart"
+  ],
+  "files": [
+    "README.md",
+    "LICENSE",
+    "AGENTS.md",
+    "package.json",
+    "package-lock.json",
+    ".npmignore",
+    ".env.example",
+    "app.py",
+    "config.py",
+    "settings.py",
+    "environment.yml",
+    "environment.whisper.yml",
+    "environment.caption.yml",
+    "requirements-whisper.txt",
+    "requirements-caption.txt",
+    "install_lazyedit.sh",
+    "lazyedit_config.sh",
+    "start_lazyedit.sh",
+    "stop_lazyedit.sh",
+    "video_preprocessor.py",
+    "video_rebuilder.py",
+    "agi/**/*.py",
+    "app/app/**/*",
+    "app/assets/**/*",
+    "app/components/**/*",
+    "app/constants/**/*",
+    "app/lib/**/*",
+    "app/app.json",
+    "app/i18n.ts",
+    "app/package.json",
+    "app/package-lock.json",
+    "app/tsconfig.json",
+    "demos/**/*",
+    "figs/**/*",
+    "fonts/**/*",
+    "i18n/**/*",
+    "lazyedit/**/*.json",
+    "lazyedit/**/*.srt",
+    "references/**/*.md",
+    "references/**/*.json",
+    "scripts/**/*.js",
+    "scripts/**/*.py",
+    "scripts/**/*.sh",
+    "scripts/npm/*",
+    "tests/**/*.py",
+    "whisper_with_lang_detect/**/*.md",
+    "whisper_with_lang_detect/**/*.json",
+    "whisper_with_lang_detect/**/*.srt",
+    "lazyedit/*.py",
+    "lazyedit/enhancements_echomind/**/*.py",
+    "lazyedit/plugins/**/*.py",
+    "lazyedit/plugins_echomind/**/*.py",
+    "lazyedit/subtitles_burner/**/*.py",
+    "whisper_with_lang_detect/*.py"
+  ],
+  "publishConfig": {
+    "access": "public"
   }
 }

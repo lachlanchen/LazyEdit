@@ -1,0 +1,66 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+.npmrc
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Git and editor state
+.git/
+.github/
+.DS_Store
+._*
+*.swp
+*.swo
+
+# Python/runtime caches
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Runtime media, generated data, and logs
+DATA/
+DATA.old/
+DATA.old.*/
+DATA_GEN/
+temp/
+cache/
+cache*/
+translation_logs/
+logs/
+logs-*/
+*.log
+*.mp4
+*.mov
+*.MOV
+*.MP4
+*.zip
+*.tgz
+
+# Heavy/private runtime artifacts not needed for npm source package
+weights/
+AutoPublish/
+AutoPubMonitor/
+clip-gpt-captioning/
+vit-gpt2-image-captioning/
+furigana/
+echomind/
+subtitles2metadata/
+
+# Archived/generated source leftovers
+archived/
+**/archived/
+*.old
+*.old2
+*.bak
+*~Stashed changes*
+
+# Large generated docs payloads
+/docs/prompts/
