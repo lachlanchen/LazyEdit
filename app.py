@@ -11929,14 +11929,26 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
 
         caption_row = ldb.get_latest_frame_caption(video_id_i)
         if caption_row:
-            _caption_id, status, _json_path, _srt_path, _md_path, error, created_at = caption_row
+            _caption_id, status, json_path, srt_path, md_path, error, created_at = caption_row
             updated_at_candidates.append(created_at)
             normalized = normalize_status(status, {"completed"})
+            caption_outputs = [path for path in (json_path, srt_path, md_path) if path]
+            existing_caption_outputs = [path for path in caption_outputs if os.path.exists(path)]
+            if normalized == "working" and existing_caption_outputs:
+                normalized = "done"
+                try:
+                    newest_caption_mtime = max(os.path.getmtime(path) for path in existing_caption_outputs)
+                    caption_updated_at = datetime.fromtimestamp(newest_caption_mtime).astimezone()
+                    updated_at_candidates.append(caption_updated_at)
+                except Exception:
+                    caption_updated_at = created_at
+            else:
+                caption_updated_at = created_at
             if normalized == "skipped" and status == "not_configured":
-                steps["caption"] = step_payload("skipped", "Not configured", created_at)
+                steps["caption"] = step_payload("skipped", "Not configured", caption_updated_at)
             else:
                 detail = error or status
-                steps["caption"] = step_payload(normalized, detail if normalized == "error" else None, created_at)
+                steps["caption"] = step_payload(normalized, detail if normalized == "error" else None, caption_updated_at)
         else:
             steps["caption"] = step_payload("idle")
 
