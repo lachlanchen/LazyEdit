@@ -90,6 +90,17 @@ Fix requested:
    with a useful screenshot and DOM excerpt.
 ```
 
+Implemented:
+
+```text
+AutoPublish/pub_douyin.py now probes document.querySelectorAll('input[type=file]'),
+clicks visible upload/drop-area entry points when the input is lazy-rendered,
+temporarily makes hidden file inputs interactable if Selenium rejects send_keys,
+and saves JSON/PNG/HTML snapshots under temp_screenshot/ when no upload input is
+available. Missing upload input is now a specific exception and no longer causes
+recursive full-process retry loops.
+```
+
 ## YouTube
 
 The YouTube publisher logged success in an earlier run, but the user saw the
@@ -124,4 +135,3 @@ Fix requested:
 4. Platform descriptions should focus on song title, mood, theme, language mix,
    and artist.
 ```
-
