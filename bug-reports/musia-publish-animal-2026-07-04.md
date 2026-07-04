@@ -96,9 +96,10 @@ Implemented:
 AutoPublish/pub_douyin.py now probes document.querySelectorAll('input[type=file]'),
 clicks visible upload/drop-area entry points when the input is lazy-rendered,
 temporarily makes hidden file inputs interactable if Selenium rejects send_keys,
-and saves JSON/PNG/HTML snapshots under temp_screenshot/ when no upload input is
-available. Missing upload input is now a specific exception and no longer causes
-recursive full-process retry loops.
+waits for the upload route to render, same-tab reloads when the Creator SPA is
+stuck on "加载中，请稍候...", and saves JSON/PNG/HTML snapshots under
+temp_screenshot/ when no upload input is available. Missing upload input is now
+a specific exception and no longer causes recursive full-process retry loops.
 ```
 
 ## YouTube
