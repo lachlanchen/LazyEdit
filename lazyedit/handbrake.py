@@ -201,12 +201,15 @@ class HandBrakePreprocessor:
         print(f"🔧 Fixing video with HandBrake...")
         print(f"   Input: {self.input_path}")
         print(f"   Output: {self.output_path}")
+        temp_output_path = self.output_path.with_name(
+            f".{self.output_path.name}.tmp.{os.getpid()}"
+        )
         
         # HandBrake command optimized for compatibility
         handbrake_cmd = [
             'HandBrakeCLI',
             '-i', str(self.input_path),
-            '-o', str(self.output_path),
+            '-o', str(temp_output_path),
             
             # Use a reliable preset
             '--preset', 'Fast 1080p30',
@@ -246,7 +249,7 @@ class HandBrakePreprocessor:
                 simple_cmd = [
                     'HandBrakeCLI',
                     '-i', str(self.input_path),
-                    '-o', str(self.output_path),
+                    '-o', str(temp_output_path),
                     '--preset', 'Very Fast 1080p30',
                     '--encoder', 'x264',
                     '--quality', '25'
@@ -255,8 +258,10 @@ class HandBrakePreprocessor:
                 result = subprocess.run(simple_cmd, capture_output=True, text=True, check=True)
             
             # Verify output
-            if not self.output_path.exists() or self.output_path.stat().st_size < 1000:
+            if not temp_output_path.exists() or temp_output_path.stat().st_size < 1000:
                 raise RuntimeError("HandBrake produced no output or file too small")
+
+            os.replace(temp_output_path, self.output_path)
             
             print(f"✅ Video fixed successfully")
             print(f"   Original size: {self.input_path.stat().st_size / 1024 / 1024:.1f} MB")
@@ -265,9 +270,17 @@ class HandBrakePreprocessor:
             return str(self.output_path)
             
         except subprocess.TimeoutExpired:
+            if temp_output_path.exists():
+                temp_output_path.unlink(missing_ok=True)
             raise RuntimeError("HandBrake processing timed out")
         except subprocess.CalledProcessError as e:
+            if temp_output_path.exists():
+                temp_output_path.unlink(missing_ok=True)
             raise RuntimeError(f"HandBrake failed: {e.stderr}")
+        except Exception:
+            if temp_output_path.exists():
+                temp_output_path.unlink(missing_ok=True)
+            raise
     
     def verify_fixed_video(self) -> bool:
         """
