@@ -350,6 +350,23 @@ def current_logo_settings(client: LazyEditClient) -> dict[str, Any]:
         return {}
 
 
+def persist_studio_settings(
+    client: LazyEditClient,
+    options: dict[str, Any],
+    logo_settings: dict[str, Any] | None,
+    *,
+    quiet: bool = False,
+) -> None:
+    """Persist the same settings groups the Studio UI reads separately."""
+    burn_layout = options.get("burnLayout")
+    if isinstance(burn_layout, dict):
+        client.request_json("POST", "/api/ui-settings/burn_layout", burn_layout, timeout=30)
+    client.request_json("POST", "/api/ui-settings/publish_options", options, timeout=30)
+    if isinstance(logo_settings, dict):
+        client.request_json("POST", "/api/ui-settings/logo_settings", logo_settings, timeout=30)
+    print_event("Persisted Studio publish, burn-layout, and logo settings.", quiet=quiet)
+
+
 def apply_logo_overrides(args: argparse.Namespace, logo_settings: dict[str, Any] | None) -> dict[str, Any] | None:
     if not isinstance(logo_settings, dict):
         return logo_settings
@@ -899,6 +916,8 @@ def main(argv: list[str] | None = None) -> int:
             "burnLayout": options["burnLayout"],
             "persistSettings": options["persistSettings"],
         }
+        if args.persist_settings:
+            persist_studio_settings(client, options, logo_settings, quiet=args.quiet)
         session_id = args.publication_session_id
 
         if args.process:
