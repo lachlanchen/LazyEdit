@@ -86,6 +86,9 @@ def probe_media(path: Path) -> dict[str, Any]:
             "ffprobe",
             "-v",
             "error",
+            "-select_streams",
+            "v:0",
+            "-show_streams",
             "-show_entries",
             "format=duration,size",
             "-of",
@@ -112,7 +115,48 @@ def probe_media(path: Path) -> dict[str, Any]:
             size = int(fmt.get("size")) if fmt.get("size") is not None else None
         except (TypeError, ValueError):
             size = None
-    return {"duration": duration, "size": size}
+    width = None
+    height = None
+    display_width = None
+    display_height = None
+    rotation = 0.0
+    streams = payload.get("streams") if isinstance(payload, dict) else []
+    if isinstance(streams, list) and streams:
+        stream = streams[0]
+        try:
+            width = int(stream.get("width") or 0) or None
+            height = int(stream.get("height") or 0) or None
+        except Exception:
+            width = None
+            height = None
+        tags = stream.get("tags") if isinstance(stream.get("tags"), dict) else {}
+        rotation_candidates = [tags.get("rotate")]
+        for item in stream.get("side_data_list") or []:
+            if isinstance(item, dict):
+                rotation_candidates.append(item.get("rotation"))
+        for value in rotation_candidates:
+            if value is None:
+                continue
+            try:
+                rotation = float(value)
+                break
+            except Exception:
+                continue
+        if width and height:
+            normalized = abs(rotation) % 360.0
+            if 45.0 < normalized < 135.0 or 225.0 < normalized < 315.0:
+                display_width, display_height = height, width
+            else:
+                display_width, display_height = width, height
+    return {
+        "duration": duration,
+        "size": size,
+        "width": width,
+        "height": height,
+        "display_width": display_width,
+        "display_height": display_height,
+        "rotation": rotation,
+    }
 
 
 def path_is_relative_to(path: Path, root: Path) -> bool:
@@ -152,6 +196,11 @@ def source_preflight(args: argparse.Namespace, *, quiet: bool) -> dict[str, Any]
         "duration": duration,
         "size": size,
         "sha256": digest,
+        "width": media.get("width"),
+        "height": media.get("height"),
+        "display_width": media.get("display_width"),
+        "display_height": media.get("display_height"),
+        "rotation": media.get("rotation"),
     }
     duration_text = f"{duration:.3f}s" if isinstance(duration, (int, float)) else "unknown"
     print_event(
@@ -494,6 +543,41 @@ def portrait_blurfill_enabled(burn_layout: dict[str, Any] | None) -> bool:
     if isinstance(value, bool):
         return value
     return str(value or "").strip().lower() in {"1", "true", "yes", "y", "on"}
+
+
+def disable_native_portrait_blurfill(options: dict[str, Any], source_info: dict[str, Any], *, quiet: bool = False) -> None:
+    burn_layout = options.get("burnLayout")
+    if not isinstance(burn_layout, dict) or not portrait_blurfill_enabled(burn_layout):
+        return
+    portrait_config = burn_layout.get("portraitBlurFill")
+    if not isinstance(portrait_config, dict):
+        return
+    source_w = source_info.get("display_width")
+    source_h = source_info.get("display_height")
+    target_w = portrait_config.get("width") or 1080
+    target_h = portrait_config.get("height") or 1920
+    try:
+        source_w = int(source_w)
+        source_h = int(source_h)
+        target_w = int(target_w)
+        target_h = int(target_h)
+    except Exception:
+        return
+    if source_w <= 0 or source_h <= 0 or target_w <= 0 or target_h <= 0:
+        return
+    if source_h > source_w and abs((source_w / source_h) - (target_w / target_h)) <= 0.02:
+        reason = (
+            "portrait blur-fill disabled: source display aspect "
+            f"{source_w}x{source_h} already matches target {target_w}x{target_h}"
+        )
+        updated = dict(portrait_config)
+        updated["enabled"] = False
+        updated["skipReason"] = reason
+        updated["sourceDisplayWidth"] = source_w
+        updated["sourceDisplayHeight"] = source_h
+        burn_layout["portraitBlurFill"] = updated
+        burn_layout["portraitBlurFillSkipReason"] = reason
+        print_event(reason, quiet=quiet)
 
 
 def default_steps(
@@ -845,13 +929,15 @@ def main(argv: list[str] | None = None) -> int:
 
     client = LazyEditClient(args.api_url, quiet=args.quiet)
     final: dict[str, Any] = {"api_url": args.api_url}
+    source_info: dict[str, Any] = {}
 
     try:
         if args.video_id:
             video_id = args.video_id
             final["video_id"] = video_id
         else:
-            final["source_preflight"] = source_preflight(args, quiet=args.quiet)
+            source_info = source_preflight(args, quiet=args.quiet)
+            final["source_preflight"] = source_info
             upload = client.upload_stream(
                 Path(args.video),
                 title=args.title,
@@ -906,6 +992,7 @@ def main(argv: list[str] | None = None) -> int:
         logo_settings = settings.get("logo_settings") if isinstance(settings, dict) else None
         logo_settings = apply_logo_overrides(args, logo_settings)
         logo_enabled = logo_overlay_enabled(logo_settings)
+        disable_native_portrait_blurfill(options, source_info, quiet=args.quiet)
         portrait_enabled = portrait_blurfill_enabled(options.get("burnLayout"))
         final["options"] = {
             "burnSubtitles": options["burnSubtitles"],

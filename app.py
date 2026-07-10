@@ -104,6 +104,7 @@ from lazyedit.portrait_blurfill import (
     DEFAULT_PORTRAIT_BLURFILL,
     apply_portrait_blurfill,
     is_portrait_blurfill_enabled,
+    resolve_portrait_blurfill_for_source,
     sanitize_portrait_blurfill,
 )
 from lazyedit.publish_categories import apply_publish_category
@@ -383,6 +384,7 @@ PUBLISH_WORKER_WAKE_EVENT = threading.Event()
 PUBLISH_WORKER_STARTED = False
 PUBLISH_PROCESS_TIMEOUT = int(os.getenv("LAZYEDIT_PUBLISH_PROCESS_TIMEOUT", str(6 * 60 * 60)))
 PUBLISH_QUEUE_HISTORY_LIMIT = int(os.getenv("LAZYEDIT_PUBLISH_QUEUE_HISTORY_LIMIT", "80"))
+PUBLISH_REMOTE_STALE_SECONDS = int(os.getenv("LAZYEDIT_PUBLISH_REMOTE_STALE_SECONDS", str(6 * 60 * 60)))
 
 
 async def run_blocking(func, *args, **kwargs):
@@ -5257,6 +5259,34 @@ def _get_video_row(video_id: int) -> tuple | None:
         return cur.fetchone()
 
 
+def _resolve_portrait_blurfill_for_video(
+    video_id: int,
+    burn_layout: Any,
+) -> tuple[Any, str | None]:
+    if not isinstance(burn_layout, dict):
+        return burn_layout, None
+    portrait_payload = burn_layout.get("portraitBlurFill")
+    portrait_config = sanitize_portrait_blurfill(portrait_payload)
+    if not portrait_config.get("enabled"):
+        burn_layout["portraitBlurFill"] = portrait_config
+        return burn_layout, None
+
+    row = _get_video_row(video_id)
+    video_path = row[1] if row else None
+    if video_path:
+        video_path, _error = _ensure_local_video_path(video_id, video_path)
+    if not video_path:
+        burn_layout["portraitBlurFill"] = portrait_config
+        return burn_layout, None
+
+    resolved_config, reason = resolve_portrait_blurfill_for_source(video_path, portrait_config)
+    burn_layout["portraitBlurFill"] = resolved_config
+    if reason:
+        burn_layout["portraitBlurFillSkipReason"] = reason
+        print(reason)
+    return burn_layout, reason
+
+
 def _serialize_publication_session_row(row: tuple | None) -> dict | None:
     if not row:
         return None
@@ -6006,7 +6036,63 @@ def _serialize_remote_publish_job(job: dict) -> dict:
     }
 
 
-def _merge_publish_queue_jobs(local_jobs: list[dict], remote_jobs: list[dict]) -> list[dict]:
+def _parse_job_datetime(value: Any) -> datetime | None:
+    if isinstance(value, datetime):
+        return value
+    if not value:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if text.endswith("Z"):
+        text = text[:-1] + "+00:00"
+    try:
+        parsed = datetime.fromisoformat(text)
+    except Exception:
+        return None
+    if parsed.tzinfo is not None:
+        return parsed.astimezone().replace(tzinfo=None)
+    return parsed
+
+
+def _seconds_since_job_timestamp(job: dict) -> float | None:
+    for key in ("updated_at", "started_at", "created_at"):
+        parsed = _parse_job_datetime(job.get(key))
+        if parsed:
+            return max(0.0, (datetime.now() - parsed).total_seconds())
+    return None
+
+
+def _mark_stale_remote_publish_job(job: dict) -> dict:
+    error = (
+        "Remote AutoPublish job is no longer present in the reachable remote queue; "
+        "LazyEdit marked this old local row stale so the publish pool can continue."
+    )
+    merged_job = dict(job)
+    merged_job["status"] = "failed"
+    merged_job["remote_status"] = "stale_remote_missing"
+    merged_job["error"] = job.get("error") or error
+    merged_job["detail"] = job.get("detail") or error
+    try:
+        ldb.update_publish_job(
+            int(job["id"]),
+            status="failed",
+            detail=merged_job["detail"],
+            remote_status="stale_remote_missing",
+            error=merged_job["error"],
+            finished=True,
+        )
+    except Exception as exc:
+        print(f"Failed to mark stale publish job {job.get('id')}: {exc}")
+    return merged_job
+
+
+def _merge_publish_queue_jobs(
+    local_jobs: list[dict],
+    remote_jobs: list[dict],
+    *,
+    remote_queue_available: bool = False,
+) -> list[dict]:
     remote_by_id = {}
     remote_by_filename = {}
     for job in remote_jobs:
@@ -6066,6 +6152,15 @@ def _merge_publish_queue_jobs(local_jobs: list[dict], remote_jobs: list[dict]) -
                     error=None if final_status == "done" else merged_job.get("error"),
                     finished=True,
                 )
+        elif (
+            remote_queue_available
+            and job.get("source") == "local"
+            and local_status in {"queued", "running"}
+            and remote_job_id
+            and _seconds_since_job_timestamp(job) is not None
+            and _seconds_since_job_timestamp(job) >= PUBLISH_REMOTE_STALE_SECONDS
+        ):
+            merged_job = _mark_stale_remote_publish_job(job)
 
         merged.append(merged_job)
 
@@ -6092,6 +6187,7 @@ def _load_publish_queue_payload() -> dict:
     autopublish_url = _resolve_autopublish_url()
     remote_jobs: list[dict] = []
     warning = None
+    remote_queue_available = False
 
     if autopublish_url:
         queue_url = _autopublish_queue_url(autopublish_url)
@@ -6100,12 +6196,17 @@ def _load_publish_queue_payload() -> dict:
             if resp.ok:
                 payload = resp.json()
                 remote_jobs = [_serialize_remote_publish_job(job) for job in (payload.get("jobs") or []) if isinstance(job, dict)]
+                remote_queue_available = True
             else:
                 warning = f"autopublish queue failed ({resp.status_code})"
         except Exception as exc:
             warning = f"autopublish queue failed: {exc}"
 
-    merged_jobs = _merge_publish_queue_jobs(local_jobs, remote_jobs)
+    merged_jobs = _merge_publish_queue_jobs(
+        local_jobs,
+        remote_jobs,
+        remote_queue_available=remote_queue_available,
+    )
     status = "ok"
     if warning and not remote_jobs and not local_jobs:
         status = "unavailable"
@@ -6156,6 +6257,12 @@ def _process_publish_job(job_row: tuple) -> None:
     translation_languages = job_config.get("translationLanguages") or _load_translation_languages_setting()
     logo_settings = _load_logo_settings_setting()
     logo_overlay_required = _logo_overlay_enabled(logo_settings)
+    if isinstance(job_config.get("burnLayout"), dict):
+        resolved_burn_layout, _portrait_skip_reason = _resolve_portrait_blurfill_for_video(
+            video_id,
+            dict(job_config["burnLayout"]),
+        )
+        job_config["burnLayout"] = resolved_burn_layout
     portrait_blurfill_required = is_portrait_blurfill_enabled(
         (job_config.get("burnLayout") or {}).get("portraitBlurFill")
     )
@@ -8465,6 +8572,12 @@ class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
         except ValueError as exc:
             self.set_status(400)
             return self.write({"error": str(exc)})
+        if isinstance(publish_config.get("burnLayout"), dict):
+            resolved_burn_layout, _portrait_skip_reason = _resolve_portrait_blurfill_for_video(
+                video_id_i,
+                dict(publish_config["burnLayout"]),
+            )
+            publish_config["burnLayout"] = resolved_burn_layout
         if persist_settings:
             ldb.set_ui_preference("publish_options", _persistable_publish_options(publish_config))
             ldb.set_ui_preference("translation_languages", publish_config["translationLanguages"])
@@ -10996,6 +11109,13 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         if not video_path:
             self.set_status(404)
             return self.write({"error": error or "video file missing"})
+        if portrait_requested:
+            portrait_config, portrait_skip_reason = resolve_portrait_blurfill_for_source(video_path, portrait_config)
+            portrait_requested = is_portrait_blurfill_enabled(portrait_config)
+            layout_config["portraitBlurFill"] = portrait_config
+            if portrait_skip_reason:
+                layout_config["portraitBlurFillSkipReason"] = portrait_skip_reason
+                print(portrait_skip_reason)
 
         output_folder = os.path.dirname(video_path)
         base_name = os.path.splitext(os.path.basename(video_path))[0]
@@ -11451,7 +11571,8 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         if polish_notes is None:
             polish_notes = _load_subtitle_polish_setting().get("notes", "")
         polish_notes = _sanitize_subtitle_polish({"notes": polish_notes}).get("notes", "")
-        if not _get_video_row(video_id_i):
+        video_row = _get_video_row(video_id_i)
+        if not video_row:
             self.set_status(404)
             return self.write({"error": "video not found"})
         process_options = _sanitize_publish_options({
@@ -11462,6 +11583,13 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             process_options.get("burnLayout") or _burn_layout_payload_from_request(data),
             translation_languages,
         )
+        if isinstance(burn_layout, dict):
+            resolved_burn_layout, _portrait_skip_reason = _resolve_portrait_blurfill_for_video(
+                video_id_i,
+                burn_layout,
+            )
+            burn_layout = resolved_burn_layout
+            process_options["burnLayout"] = burn_layout
         use_polished_subtitles = bool(process_options.get("usePolishedSubtitles", False)) or auto_correct_subtitles
         burn_subtitles_requested = bool(process_options.get("burnSubtitles", True))
         needs_translate = wants("translate") or (wants("burn") and burn_subtitles_requested)
@@ -11827,6 +11955,12 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
                 publish_options = _sanitize_publish_options({**publish_options, **session_config})
         subtitle_burn_required_for_publish = bool(publish_options.get("burnSubtitles", True))
         logo_required_for_publish = _logo_overlay_enabled(_load_logo_settings_setting())
+        if isinstance(publish_options.get("burnLayout"), dict):
+            resolved_burn_layout, _portrait_skip_reason = _resolve_portrait_blurfill_for_video(
+                video_id_i,
+                dict(publish_options["burnLayout"]),
+            )
+            publish_options["burnLayout"] = resolved_burn_layout
         portrait_required_for_publish = is_portrait_blurfill_enabled(
             (publish_options.get("burnLayout") or {}).get("portraitBlurFill")
         )

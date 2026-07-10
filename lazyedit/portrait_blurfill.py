@@ -145,7 +145,28 @@ def is_portrait_blurfill_enabled(config: Any) -> bool:
     return bool(sanitize_portrait_blurfill(config).get("enabled"))
 
 
-def _probe_resolution(video_path: str) -> tuple[int, int]:
+def _parse_rotation(stream: dict[str, Any]) -> float:
+    tags = stream.get("tags") if isinstance(stream.get("tags"), dict) else {}
+    candidates: list[Any] = [tags.get("rotate")]
+    for item in stream.get("side_data_list") or []:
+        if isinstance(item, dict):
+            candidates.append(item.get("rotation"))
+    for value in candidates:
+        if value is None:
+            continue
+        try:
+            return float(value)
+        except Exception:
+            continue
+    return 0.0
+
+
+def _rotation_swaps_axes(rotation: float) -> bool:
+    normalized = abs(rotation) % 360.0
+    return 45.0 < normalized < 135.0 or 225.0 < normalized < 315.0
+
+
+def _probe_stream_geometry(video_path: str) -> tuple[int, int, int, int, float]:
     result = subprocess.run(
         [
             "ffprobe",
@@ -153,8 +174,7 @@ def _probe_resolution(video_path: str) -> tuple[int, int]:
             "error",
             "-select_streams",
             "v:0",
-            "-show_entries",
-            "stream=width,height",
+            "-show_streams",
             "-of",
             "json",
             video_path,
@@ -168,11 +188,57 @@ def _probe_resolution(video_path: str) -> tuple[int, int]:
     streams = payload.get("streams") or []
     if not streams:
         raise RuntimeError(f"video stream missing: {video_path}")
-    width = int(streams[0].get("width") or 0)
-    height = int(streams[0].get("height") or 0)
-    if width <= 0 or height <= 0:
+    stream = streams[0]
+    encoded_w = int(stream.get("width") or 0)
+    encoded_h = int(stream.get("height") or 0)
+    if encoded_w <= 0 or encoded_h <= 0:
         raise RuntimeError(f"invalid video resolution: {video_path}")
-    return width, height
+    rotation = _parse_rotation(stream)
+    if _rotation_swaps_axes(rotation):
+        display_w, display_h = encoded_h, encoded_w
+    else:
+        display_w, display_h = encoded_w, encoded_h
+    return encoded_w, encoded_h, display_w, display_h, rotation
+
+
+def probe_display_resolution(video_path: str) -> tuple[int, int]:
+    _encoded_w, _encoded_h, display_w, display_h, _rotation = _probe_stream_geometry(video_path)
+    return display_w, display_h
+
+
+def resolve_portrait_blurfill_for_source(
+    input_path: str,
+    settings: Any,
+    *,
+    aspect_tolerance: float = 0.02,
+) -> tuple[dict[str, Any], str | None]:
+    config = sanitize_portrait_blurfill(settings)
+    if not config.get("enabled"):
+        return config, None
+
+    source_w, source_h = probe_display_resolution(input_path)
+    target_w = int(config.get("width") or DEFAULT_PORTRAIT_BLURFILL["width"])
+    target_h = int(config.get("height") or DEFAULT_PORTRAIT_BLURFILL["height"])
+    if source_w <= 0 or source_h <= 0 or target_w <= 0 or target_h <= 0:
+        return config, None
+
+    source_aspect = source_w / source_h
+    target_aspect = target_w / target_h
+    if source_h > source_w and abs(source_aspect - target_aspect) <= aspect_tolerance:
+        reason = (
+            "portrait blur-fill disabled: source display aspect "
+            f"{source_w}x{source_h} already matches target {target_w}x{target_h}"
+        )
+        config["enabled"] = False
+        config["skipReason"] = reason
+        config["sourceDisplayWidth"] = source_w
+        config["sourceDisplayHeight"] = source_h
+        return config, reason
+    return config, None
+
+
+def _probe_resolution(video_path: str) -> tuple[int, int]:
+    return probe_display_resolution(video_path)
 
 
 def _even_at_least(value: int, minimum: int = 2) -> int:
@@ -288,8 +354,10 @@ def _ffmpeg_command(input_path: str, output_path: str, config: dict[str, Any], a
 
 
 def apply_portrait_blurfill(input_path: str, output_path: str, settings: Any) -> str:
-    config = sanitize_portrait_blurfill(settings)
+    config, skip_reason = resolve_portrait_blurfill_for_source(input_path, settings)
     if not config.get("enabled"):
+        if skip_reason:
+            print(skip_reason)
         return input_path
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     audio_mode = str(config.get("audioMode") or "copy")
