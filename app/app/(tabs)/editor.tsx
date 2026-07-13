@@ -2010,6 +2010,7 @@ export default function EditorScreen() {
     setPublishTone('neutral');
     try {
       const committedBurnLayout = await commitSubtitleBurnLayoutSettings();
+      const logoPayload = await fetchLogoSettings();
       const autoCorrectPromptText = autoCorrectActive ? autoCorrectPrompt.trim() : '';
       const metadataPromptText = metadataCorrectionPrompt.trim();
       const resp = await fetch(`${API_URL}/api/videos/${selectedVideoId}/publish`, {
@@ -2036,6 +2037,7 @@ export default function EditorScreen() {
             burnLayout: committedBurnLayout,
             publicationMode: publishAsNewSession ? 'new' : 'override',
             publicationSessionId: publishAsNewSession ? null : publicationSessionId,
+            ...(logoPayload ? { logo: logoPayload } : {}),
           },
         }),
       });

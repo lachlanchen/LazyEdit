@@ -625,6 +625,79 @@ def process_ready_with_options(payload: dict[str, Any], *, burn_subtitles: bool,
     return True
 
 
+def _step_marker(step: dict[str, Any] | None) -> tuple[Any, ...] | None:
+    if not isinstance(step, dict):
+        return None
+    return (
+        step.get("status"),
+        step.get("detail"),
+        step.get("updated_at"),
+        step.get("progress"),
+    )
+
+
+def process_errors_after_start(
+    payload: dict[str, Any],
+    *,
+    baseline_steps: dict[str, Any] | None = None,
+    requested_steps: list[str] | None = None,
+    burn_subtitles: bool = True,
+) -> list[str]:
+    """Return only errors produced by the process run being monitored.
+
+    Process status is assembled from durable per-step rows. Immediately after a
+    new asynchronous run starts, it can therefore still expose an error from a
+    previous burn or translation until the new step creates its own row. Treat
+    an unchanged baseline error as historical, while still surfacing a fresh
+    error (including the same message with a newer timestamp).
+    """
+    steps = payload.get("steps") or {}
+    if not isinstance(steps, dict):
+        return []
+    baseline_steps = baseline_steps if isinstance(baseline_steps, dict) else {}
+    monitored = {str(step).lower() for step in (requested_steps or []) if step}
+    if "burn" in monitored and burn_subtitles:
+        monitored.add("translate")
+
+    errors: list[str] = []
+    for name, step in steps.items():
+        if not isinstance(step, dict) or step.get("status") != "error":
+            continue
+        if monitored and name not in monitored:
+            continue
+        if _step_marker(step) == _step_marker(baseline_steps.get(name)):
+            continue
+        errors.append(f"{name}: {step.get('detail') or 'error'}")
+    return errors
+
+
+def requested_process_ready(
+    payload: dict[str, Any],
+    *,
+    requested_steps: list[str] | None,
+    burn_subtitles: bool,
+    logo_enabled: bool,
+) -> bool:
+    if not requested_steps:
+        return process_ready_with_options(
+            payload,
+            burn_subtitles=burn_subtitles,
+            logo_enabled=logo_enabled,
+        )
+    steps = payload.get("steps") or {}
+    if not isinstance(steps, dict):
+        return False
+    required = {str(step).lower() for step in requested_steps if step}
+    if "burn" in required and burn_subtitles:
+        required.add("translate")
+    return all((steps.get(name) or {}).get("status") in {"done", "skipped"} for name in required)
+
+
+def should_defer_processing_to_publish_queue(*, process: bool, publish: bool, wait: bool) -> bool:
+    """Let the serial publish worker own processing for fire-and-forget jobs."""
+    return bool(process and publish and not wait)
+
+
 def request_with_heartbeat(
     client: LazyEditClient,
     method: str,
@@ -662,6 +735,8 @@ def wait_for_process(
     *,
     burn_subtitles: bool,
     logo_enabled: bool,
+    baseline_steps: dict[str, Any] | None = None,
+    requested_steps: list[str] | None = None,
 ) -> dict[str, Any]:
     deadline = time.monotonic() + timeout
     last = ""
@@ -677,14 +752,20 @@ def wait_for_process(
             print_event(f"Process status: {summary}", quiet=client.quiet)
             last = summary
         steps = payload.get("steps") or {}
-        errors = [
-            f"{name}: {step.get('detail') or 'error'}"
-            for name, step in steps.items()
-            if isinstance(step, dict) and step.get("status") == "error"
-        ]
+        errors = process_errors_after_start(
+            payload,
+            baseline_steps=baseline_steps,
+            requested_steps=requested_steps,
+            burn_subtitles=burn_subtitles,
+        )
         if errors:
             raise ApiError("process failed: " + "; ".join(errors), payload=payload)
-        if process_ready_with_options(payload, burn_subtitles=burn_subtitles, logo_enabled=logo_enabled):
+        if requested_process_ready(
+            payload,
+            requested_steps=requested_steps,
+            burn_subtitles=burn_subtitles,
+            logo_enabled=logo_enabled,
+        ):
             return payload
         time.sleep(interval)
     raise TimeoutError(f"process did not become ready within {timeout} seconds")
@@ -1007,13 +1088,29 @@ def main(argv: list[str] | None = None) -> int:
             persist_studio_settings(client, options, logo_settings, quiet=args.quiet)
         session_id = args.publication_session_id
 
+        steps: list[str] = []
+        defer_process_to_queue = should_defer_processing_to_publish_queue(
+            process=args.process,
+            publish=args.publish,
+            wait=args.wait,
+        )
         if args.process:
             steps = parse_csv(args.steps) or default_steps(
                 bool(options["burnSubtitles"]),
                 logo_enabled,
                 portrait_enabled,
             )
+        if args.process and not defer_process_to_queue:
             print_event(f"Starting LazyEdit process: {', '.join(steps)}", quiet=args.quiet)
+            try:
+                baseline_payload = client.request_json(
+                    "GET",
+                    f"/api/videos/{video_id}/process-status",
+                    query={"publicationSessionId": session_id},
+                    timeout=60,
+                )
+            except Exception:
+                baseline_payload = {}
             process_payload = {
                 **options,
                 "async": True,
@@ -1048,10 +1145,24 @@ def main(argv: list[str] | None = None) -> int:
                     args.poll_seconds,
                     burn_subtitles=bool(options["burnSubtitles"]),
                     logo_enabled=logo_enabled,
+                    baseline_steps=baseline_payload.get("steps") if isinstance(baseline_payload, dict) else None,
+                    requested_steps=steps,
                 )
+        elif defer_process_to_queue:
+            final["process_started"] = {
+                "status": "deferred_to_publish_queue",
+                "steps": steps,
+                "detail": "The serial publish worker owns processing for --no-wait jobs.",
+            }
+            print_event(
+                "Deferring processing to the serial LazyEdit publish worker.",
+                quiet=args.quiet,
+            )
 
         if args.publish:
             publish_options = {**options, "publicationSessionId": session_id}
+            if isinstance(logo_settings, dict):
+                publish_options["logo"] = logo_settings
             if args.process and args.wait and final.get("process_status", {}).get("ready_for_publish"):
                 # The process phase already used the metadata prompt. Do not
                 # send it again or the publish worker will rerun processing.

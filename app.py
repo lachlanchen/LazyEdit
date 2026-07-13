@@ -397,8 +397,11 @@ async def run_blocking(func, *args, **kwargs):
 
 def _is_burn_future_active(burn_id: int) -> bool:
     with BURN_STATE_LOCK:
-        future = ACTIVE_BURN_FUTURES.get(burn_id)
-    return future is not None and not future.done()
+        # Presence in this registry is the lifecycle signal.  A Future becomes
+        # ``done`` before its callbacks finish, so checking ``future.done()``
+        # creates a small window where status polling can falsely recover a
+        # successfully finishing burn as stale.
+        return burn_id in ACTIVE_BURN_FUTURES
 
 
 def _get_latest_subtitle_burn_with_recovery(video_id: int, publication_session_id: int | None = None) -> tuple | None:
@@ -420,6 +423,68 @@ def _get_latest_subtitle_burn_with_recovery(video_id: int, publication_session_i
 def _forget_active_burn_future(burn_id: int) -> None:
     with BURN_STATE_LOCK:
         ACTIVE_BURN_FUTURES.pop(burn_id, None)
+
+
+def _finalize_subtitle_burn_reliably(
+    burn_id: int,
+    status: str,
+    output_path: str | None,
+    error: str | None,
+    *,
+    progress: int,
+    attempts: int = 4,
+) -> None:
+    """Persist a terminal burn state despite a short database interruption."""
+    last_error: Exception | None = None
+    for attempt in range(1, max(1, attempts) + 1):
+        try:
+            ldb.finalize_subtitle_burn(
+                burn_id,
+                status,
+                output_path,
+                error,
+                progress=progress,
+            )
+            return
+        except Exception as exc:
+            last_error = exc
+            if attempt >= attempts:
+                break
+            print(
+                f"Subtitle burn {burn_id} finalization failed on attempt {attempt}; "
+                f"retrying: {exc}"
+            )
+            time.sleep(min(2.0 * attempt, 5.0))
+    if last_error is not None:
+        raise last_error
+
+
+def _track_active_burn_future(burn_id: int, future: Any) -> None:
+    """Keep a burn active through terminal-state persistence and report crashes."""
+    with BURN_STATE_LOCK:
+        ACTIVE_BURN_FUTURES[burn_id] = future
+
+    def _done(completed_future: Any) -> None:
+        try:
+            exception = completed_future.exception()
+            if exception is not None:
+                print(f"Subtitle burn worker {burn_id} crashed: {exception}")
+                try:
+                    _finalize_subtitle_burn_reliably(
+                        burn_id,
+                        "failed",
+                        None,
+                        str(exception),
+                        progress=0,
+                    )
+                except Exception as finalize_exc:
+                    print(f"Subtitle burn {burn_id} failure state could not be saved: {finalize_exc}")
+        except Exception as exc:
+            print(f"Subtitle burn worker {burn_id} completion check failed: {exc}")
+        finally:
+            _forget_active_burn_future(burn_id)
+
+    future.add_done_callback(_done)
 
 
 def _should_create_preview_proxy(file_path: str) -> bool:
@@ -1088,6 +1153,9 @@ def _sanitize_publish_options(payload) -> dict:
         or payload.get("shipinhao_collection")
         or ""
     ).strip()
+    logo_payload = payload.get("logo")
+    if logo_payload is None:
+        logo_payload = payload.get("logoSettings") or payload.get("logo_settings")
 
     cleaned = {
         "burnSubtitles": _parse_bool(burn_subtitles, default=DEFAULT_PUBLISH_OPTIONS["burnSubtitles"]),
@@ -1114,6 +1182,8 @@ def _sanitize_publish_options(payload) -> dict:
         cleaned["youtubePlaylist"] = youtube_playlist
     if shipinhao_collection:
         cleaned["shipinhaoCollection"] = shipinhao_collection
+    if isinstance(logo_payload, dict):
+        cleaned["logo"] = _sanitize_logo_settings(logo_payload)
     return cleaned
 
 
@@ -1123,6 +1193,7 @@ def _persistable_publish_options(options: dict) -> dict:
     cleaned.pop("autoCorrectPrompt", None)
     cleaned.pop("metadataPrompt", None)
     cleaned.pop("burnLayout", None)
+    cleaned.pop("logo", None)
     return cleaned
 
 
@@ -6255,7 +6326,12 @@ def _process_publish_job(job_row: tuple) -> None:
         metadata_prompt = str(job_config.get("metadataPrompt") or "").strip()
     use_polished = bool(job_config.get("usePolishedSubtitles", False)) or auto_correct_subtitles
     translation_languages = job_config.get("translationLanguages") or _load_translation_languages_setting()
-    logo_settings = _load_logo_settings_setting()
+    job_logo_settings = job_config.get("logo")
+    logo_settings = (
+        _sanitize_logo_settings(job_logo_settings)
+        if isinstance(job_logo_settings, dict)
+        else _load_logo_settings_setting()
+    )
     logo_overlay_required = _logo_overlay_enabled(logo_settings)
     if isinstance(job_config.get("burnLayout"), dict):
         resolved_burn_layout, _portrait_skip_reason = _resolve_portrait_blurfill_for_video(
@@ -11208,14 +11284,24 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     elif portrait_requested:
                         shutil.copy2(source_path, processed_output)
                         final_output = processed_output
-                    ldb.finalize_subtitle_burn(burn_id, "completed", final_output, None, progress=100)
+                    _finalize_subtitle_burn_reliably(
+                        burn_id,
+                        "completed",
+                        final_output,
+                        None,
+                        progress=100,
+                    )
                 except Exception as exc:
-                    ldb.finalize_subtitle_burn(burn_id, "failed", None, str(exc), progress=0)
+                    _finalize_subtitle_burn_reliably(
+                        burn_id,
+                        "failed",
+                        None,
+                        str(exc),
+                        progress=0,
+                    )
 
             future = BURN_EXECUTOR.submit(_run_logo_only)
-            with BURN_STATE_LOCK:
-                ACTIVE_BURN_FUTURES[burn_id] = future
-            future.add_done_callback(lambda _future, _burn_id=burn_id: _forget_active_burn_future(_burn_id))
+            _track_active_burn_future(burn_id, future)
             return {
                 "id": burn_id,
                 "video_id": video_id_i,
@@ -11470,14 +11556,24 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
                     except Exception:
                         pass
             if status == "completed":
-                ldb.finalize_subtitle_burn(burn_id, status, final_output, None, progress=100)
+                _finalize_subtitle_burn_reliably(
+                    burn_id,
+                    status,
+                    final_output,
+                    None,
+                    progress=100,
+                )
             else:
-                ldb.finalize_subtitle_burn(burn_id, status, None, error_message, progress=0)
+                _finalize_subtitle_burn_reliably(
+                    burn_id,
+                    status,
+                    None,
+                    error_message,
+                    progress=0,
+                )
 
         future = BURN_EXECUTOR.submit(_run_burn)
-        with BURN_STATE_LOCK:
-            ACTIVE_BURN_FUTURES[burn_id] = future
-        future.add_done_callback(lambda _future, _burn_id=burn_id: _forget_active_burn_future(_burn_id))
+        _track_active_burn_future(burn_id, future)
 
         created_at = None
         try:
@@ -11606,7 +11702,13 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         async def run_pipeline():
             statuses: dict[str, dict] = {}
 
-            async def call_json(method: str, path: str, payload: dict | None = None):
+            async def call_json(
+                method: str,
+                path: str,
+                payload: dict | None = None,
+                *,
+                retry_transient_http: bool = False,
+            ):
                 url = f"http://127.0.0.1:{PORT}{path}"
                 if payload is None:
                     if method.upper() in ("POST", "PUT", "PATCH"):
@@ -11631,6 +11733,17 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                 for attempt in range(1, 4):
                     try:
                         response = await tornado.httpclient.AsyncHTTPClient().fetch(request, raise_error=False)
+                        if (
+                            retry_transient_http
+                            and response.code in {408, 425, 429, 500, 502, 503, 504}
+                            and attempt < 3
+                        ):
+                            print(
+                                f"Transient local process response ({path}) "
+                                f"status {response.code}; retrying attempt {attempt + 1}"
+                            )
+                            await gen.sleep(2 * attempt)
+                            continue
                         break
                     except tornado.httpclient.HTTPError as exc:
                         last_error = exc
@@ -11712,6 +11825,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                                 "usePolishedSubtitles": use_polished_subtitles,
                                 "publicationSessionId": publication_session_id,
                             },
+                            retry_transient_http=True,
                         )
                         if code >= 400:
                             await mark(
@@ -11788,6 +11902,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                         "usePolishedSubtitles": use_polished_subtitles,
                         "publicationSessionId": publication_session_id,
                     },
+                    retry_transient_http=True,
                 )
                 if code >= 400:
                     await mark("metadata_zh", "error", payload.get("error") or payload.get("details") or "Failed")
@@ -11808,6 +11923,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                         "usePolishedSubtitles": use_polished_subtitles,
                         "publicationSessionId": publication_session_id,
                     },
+                    retry_transient_http=True,
                 )
                 if code >= 400:
                     await mark("metadata_en", "error", payload.get("error") or payload.get("details") or "Failed")
