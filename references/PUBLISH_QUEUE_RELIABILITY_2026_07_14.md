@@ -58,3 +58,19 @@ queue. Do not launch a separate asynchronous process for the same fire-and-
 forget publish job. Always inspect final platform statuses; a queued ZIP is not
 proof of publication.
 
+## Production verification
+
+The repaired flow was verified end to end with three serial jobs. Shipinhao was
+explicitly disabled for this run; each job targeted only Douyin, Instagram, and
+YouTube.
+
+| Video | Local job | Remote job | Result |
+| --- | ---: | --- | --- |
+| `IMG_5607_2026_07_13_22_39_27_COMPLETED` | 304 | `job-1783981553789-3` | Douyin, Instagram, and YouTube confirmed; YouTube: `https://youtube.com/shorts/Yjyo7Vrv1_M` |
+| `IMG_5603_2026_07_13_22_04_33_COMPLETED` | 305 | `job-1783981588903-4` | Douyin, Instagram, and YouTube confirmed; YouTube: `https://youtube.com/shorts/cLte2sqp5AE` |
+| `IMG_5600_2026_07_13_21_33_47_COMPLETED` | 306 | `job-1783981612542-5` | Douyin, Instagram, and YouTube confirmed; YouTube: `https://youtube.com/shorts/Jxer6_PSoeA` |
+
+Final checks showed all six queue records (three local and three remote) in
+`done` state with no error, `queue_size=0`, and `is_publishing=false`. Douyin
+was verified against its management page, Instagram reached its explicit reel
+shared confirmation, and YouTube returned a public video URL for every job.
