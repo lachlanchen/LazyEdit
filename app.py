@@ -2998,6 +2998,7 @@ def _validated_resegmented_subtitle_items(
     candidate_items: list[dict],
     *,
     max_end_seconds: float | None = None,
+    enforce_original_span: bool = True,
 ) -> list[dict] | None:
     original_valid = [item for item in original_items if isinstance(item, dict)]
     if not original_valid or not candidate_items:
@@ -3009,9 +3010,12 @@ def _validated_resegmented_subtitle_items(
     original_end = _srt_timestamp_seconds(original_valid[-1].get("end"))
     if original_start is None or original_end is None or original_end <= original_start:
         return None
-    upper_end = original_end
-    if max_end_seconds is not None and max_end_seconds > upper_end:
+    if not enforce_original_span and max_end_seconds is not None:
         upper_end = max_end_seconds
+    else:
+        upper_end = original_end
+        if max_end_seconds is not None and max_end_seconds > upper_end:
+            upper_end = max_end_seconds
 
     cleaned: list[dict] = []
     previous_end: float | None = None
@@ -3029,7 +3033,9 @@ def _validated_resegmented_subtitle_items(
             return None
         if previous_end is not None and start_seconds < previous_end - 0.05:
             return None
-        if start_seconds < original_start - 0.5 or end_seconds > upper_end + 0.75:
+        lower_start = original_start - 0.5 if enforce_original_span else -0.05
+        end_tolerance = 0.75 if enforce_original_span else 0.05
+        if start_seconds < lower_start or end_seconds > upper_end + end_tolerance:
             return None
 
         nearest = _nearest_subtitle_item(original_valid, (start_seconds + end_seconds) / 2.0)
@@ -3048,10 +3054,11 @@ def _validated_resegmented_subtitle_items(
     cleaned_end = _srt_timestamp_seconds(cleaned[-1].get("end"))
     if cleaned_start is None or cleaned_end is None:
         return None
-    if abs(cleaned_start - original_start) > 1.0:
-        return None
-    if cleaned_end < original_end - 1.0 or cleaned_end > upper_end + 0.75:
-        return None
+    if enforce_original_span:
+        if abs(cleaned_start - original_start) > 1.0:
+            return None
+        if cleaned_end < original_end - 1.0 or cleaned_end > upper_end + 0.75:
+            return None
     return cleaned
 
 
@@ -7451,6 +7458,7 @@ def _save_subtitle_variant_text(
     variant: str,
     edit_text: str,
     publication_session_id: int | None = None,
+    replace_timing: bool = False,
 ) -> dict:
     publication_session_id = None
     _video_id, _file_path, _input_file, base_name, output_folder = _load_correction_sources(
@@ -7478,7 +7486,18 @@ def _save_subtitle_variant_text(
     edited_items = _parse_srt_edit_text(edit_text)
     if not edited_items:
         raise ValueError("subtitle text did not contain valid SRT blocks")
-    items = _merge_edited_subtitle_items(source_items, edited_items)
+    if replace_timing:
+        duration = get_video_length(_input_file)
+        items = _validated_resegmented_subtitle_items(
+            source_items,
+            edited_items,
+            max_end_seconds=duration if duration and duration > 0 else None,
+            enforce_original_span=False,
+        )
+        if not items:
+            raise ValueError("replacement subtitle timing is invalid or outside the video duration")
+    else:
+        items = _merge_edited_subtitle_items(source_items, edited_items)
 
     output_json_path, output_srt_path, output_md_path = _transcription_variant_paths(
         output_folder,
@@ -7550,10 +7569,23 @@ class VideoSubtitleCorrectionHandler(CorsMixin, tornado.web.RequestHandler):
             # Ensure subtitles exist so correction works even if user hasn't run any pipeline stage yet.
             _subtitle_correction_payload(video_id_i, None)
             action = str(data.get("action") or "").strip().lower()
+            replace_timing = _parse_bool(data.get("replace_timing"), default=False)
             if action in {"save_original", "save-original", "original"}:
-                _save_subtitle_variant_text(video_id_i, "original", str(data.get("text") or ""), None)
+                _save_subtitle_variant_text(
+                    video_id_i,
+                    "original",
+                    str(data.get("text") or ""),
+                    None,
+                    replace_timing=replace_timing,
+                )
             elif action in {"save_polished", "save-polished", "polished", "save"}:
-                _save_subtitle_variant_text(video_id_i, "polished", str(data.get("text") or ""), None)
+                _save_subtitle_variant_text(
+                    video_id_i,
+                    "polished",
+                    str(data.get("text") or ""),
+                    None,
+                    replace_timing=replace_timing,
+                )
             elif action in {"ai", "ai_correct", "ai-correct", "correct"}:
                 notes = data.get("prompt") or data.get("notes") or data.get("message") or ""
                 use_cache = _parse_bool(data.get("use_cache"), default=True)
