@@ -108,6 +108,11 @@ from lazyedit.portrait_blurfill import (
     sanitize_portrait_blurfill,
 )
 from lazyedit.publish_categories import apply_publish_category
+from lazyedit.autopublish_attention import (
+    find_remote_attention_artifact,
+    same_origin_attention_url,
+    sanitize_remote_attention,
+)
 from lazyedit.subtitles_burner import BurnSlotConfig, burn_video_with_slots
 
 from pprint import pprint
@@ -6091,7 +6096,7 @@ def _serialize_publish_job_row(row: tuple) -> dict:
 
 def _serialize_remote_publish_job(job: dict) -> dict:
     remote_job_id = job.get("job_id") or job.get("id")
-    return {
+    payload = {
         "id": remote_job_id or job.get("filename"),
         "video_id": None,
         "status": _normalize_publish_status(job.get("status")),
@@ -6112,6 +6117,13 @@ def _serialize_remote_publish_job(job: dict) -> dict:
         "file_path": None,
         "source": "remote",
     }
+    attention = sanitize_remote_attention(
+        str(remote_job_id) if remote_job_id else None,
+        job.get("attention"),
+    )
+    if attention:
+        payload["attention"] = attention
+    return payload
 
 
 def _parse_job_datetime(value: Any) -> datetime | None:
@@ -6212,6 +6224,8 @@ def _merge_publish_queue_jobs(
                 merged_job["updated_at"] = matched_remote.get("updated_at")
             if matched_remote.get("error"):
                 merged_job["error"] = matched_remote.get("error")
+            if matched_remote.get("attention"):
+                merged_job["attention"] = matched_remote.get("attention")
             remote_status = matched_remote.get("status")
             if remote_status:
                 merged_job["status"] = remote_status
@@ -8947,6 +8961,69 @@ class AutopublishQueueHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self):
         _ensure_publish_worker_started()
         self.write(_load_publish_queue_payload())
+
+
+class AutopublishAttentionHandler(CorsMixin, tornado.web.RequestHandler):
+    def get(self, remote_job_id: str, revision: str):
+        try:
+            revision_number = int(revision)
+        except (TypeError, ValueError):
+            self.set_status(400)
+            return self.write({"error": "invalid attention revision"})
+        if revision_number < 1:
+            self.set_status(400)
+            return self.write({"error": "invalid attention revision"})
+
+        autopublish_url = _resolve_autopublish_url()
+        if not autopublish_url:
+            self.set_status(503)
+            return self.write({"error": "autopublish service not reachable"})
+        try:
+            queue_response = requests.get(
+                _autopublish_queue_url(autopublish_url),
+                timeout=(5, AUTOPUBLISH_TIMEOUT),
+            )
+            queue_response.raise_for_status()
+            queue_payload = queue_response.json()
+        except Exception:
+            self.set_status(502)
+            return self.write({"error": "autopublish attention lookup failed"})
+
+        jobs = queue_payload.get("jobs") if isinstance(queue_payload, dict) else []
+        artifact_path = find_remote_attention_artifact(
+            [job for job in (jobs or []) if isinstance(job, dict)],
+            remote_job_id,
+            revision_number,
+        )
+        artifact_url = (
+            same_origin_attention_url(autopublish_url, artifact_path)
+            if artifact_path
+            else None
+        )
+        if not artifact_url:
+            self.set_status(404)
+            return self.write({"error": "attention artifact not found"})
+
+        try:
+            response = requests.get(
+                artifact_url,
+                timeout=(5, AUTOPUBLISH_TIMEOUT),
+            )
+            response.raise_for_status()
+            content = response.content
+        except Exception:
+            self.set_status(502)
+            return self.write({"error": "attention artifact fetch failed"})
+        if (
+            len(content) > 5 * 1024 * 1024
+            or content[:8] != b"\x89PNG\r\n\x1a\n"
+        ):
+            self.set_status(502)
+            return self.write({"error": "invalid attention artifact"})
+
+        self.set_header("Content-Type", "image/png")
+        self.set_header("Cache-Control", "no-store")
+        self.write(content)
 
 
 class VideoPromptHandler(CorsMixin, tornado.web.RequestHandler):
@@ -12800,6 +12877,10 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/publish", VideoPublishHandler),
         (r"/api/music/package", MusicPackageHandler),
         (r"/api/autopublish/queue", AutopublishQueueHandler),
+        (
+            r"/api/autopublish/jobs/([^/]+)/attention/(\d+)",
+            AutopublishAttentionHandler,
+        ),
         (r"/api/videos/(\d+)/captions", CaptionsHandler),
         (r"/media/(.*)", MediaHandler, {"path": upload_folder}),
     ])
