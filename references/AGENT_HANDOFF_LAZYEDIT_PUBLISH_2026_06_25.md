@@ -571,6 +571,15 @@ Detailed incident note:
 references/INSTAGRAM_BROWSER_SAFE_PUBLISH_BUNDLE_BUG_2026_06_25.md
 ```
 
+### Video List API Stalls During Publish
+
+Do not resubmit when an exact `video_id` or publish job ID is already known.
+`GET /api/videos` must not synchronously probe the whole media library. Preview
+codec/HDR probing and proxy/poster generation run on the bounded background
+executor; see `references/ASYNC_PREVIEW_PROBE_AND_PUBLISH_RECOVERY_2026_08_16.md`.
+Use the exact local and remote queue records while the video-list endpoint is
+recovering.
+
 ### AutoPublish Service Not Reachable
 
 Check:

@@ -382,6 +382,7 @@ BURN_STATE_LOCK = threading.Lock()
 ACTIVE_BURN_FUTURES: dict[int, Any] = {}
 PROXY_STATE_LOCK = threading.Lock()
 QUEUED_PREVIEW_VIDEO_IDS: set[int] = set()
+PROBING_PREVIEW_VIDEO_IDS: set[int] = set()
 PREVIEW_BACKFILL_LOCK = threading.Lock()
 PREVIEW_BACKFILL_STARTED = False
 PUBLISH_WORKER_LOCK = threading.Lock()
@@ -528,6 +529,7 @@ def _should_create_preview_proxy(file_path: str) -> bool:
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            timeout=5,
         )
         payload = json.loads(probe.stdout.decode("utf-8", errors="replace") or "{}")
         streams = payload.get("streams") or []
@@ -685,6 +687,27 @@ def _enqueue_preview_proxy(video_id: int, input_path: str, needs_proxy: bool | N
     _submit_preview_proxy(video_id, input_path, create_proxy=bool(needs_proxy), create_poster=needs_poster)
 
 
+def _enqueue_preview_probe(video_id: int, input_path: str) -> None:
+    """Probe preview requirements off the Tornado request thread."""
+    if not input_path or not os.path.exists(input_path):
+        return
+    with PROXY_STATE_LOCK:
+        if video_id in QUEUED_PREVIEW_VIDEO_IDS or video_id in PROBING_PREVIEW_VIDEO_IDS:
+            return
+        PROBING_PREVIEW_VIDEO_IDS.add(video_id)
+
+    def _run() -> None:
+        needs_proxy = False
+        try:
+            needs_proxy = _should_create_preview_proxy(input_path)
+        finally:
+            with PROXY_STATE_LOCK:
+                PROBING_PREVIEW_VIDEO_IDS.discard(video_id)
+        _enqueue_preview_proxy(video_id, input_path, needs_proxy=needs_proxy)
+
+    PROXY_EXECUTOR.submit(_run)
+
+
 def _preview_info_for_video(video_id: int, file_path: str | None, auto_enqueue: bool = False) -> dict[str, Any]:
     if not file_path:
         return {
@@ -699,7 +722,10 @@ def _preview_info_for_video(video_id: int, file_path: str | None, auto_enqueue: 
     has_proxy = os.path.exists(proxy_path)
     has_poster = os.path.exists(poster_path)
     if auto_enqueue and os.path.exists(file_path) and (not has_proxy or not has_poster):
-        _enqueue_preview_proxy(video_id, file_path, needs_proxy=None if not has_proxy else False)
+        if has_proxy:
+            _enqueue_preview_proxy(video_id, file_path, needs_proxy=False)
+        else:
+            _enqueue_preview_probe(video_id, file_path)
     if os.path.exists(proxy_path):
         return {
             "preview_media_url": media_url_for_path(proxy_path),
@@ -709,13 +735,10 @@ def _preview_info_for_video(video_id: int, file_path: str | None, auto_enqueue: 
             "has_preview_image": has_poster,
         }
 
-    needs_proxy = False
-    if os.path.exists(file_path):
-        needs_proxy = _should_create_preview_proxy(file_path)
     return {
         "preview_media_url": media_url_for_path(file_path),
         "preview_image_url": media_url_for_path(poster_path) if has_poster else None,
-        "needs_preview_proxy": bool(needs_proxy),
+        "needs_preview_proxy": False,
         "has_preview_proxy": False,
         "has_preview_image": has_poster,
     }
@@ -748,7 +771,7 @@ def _schedule_preview_backfill() -> None:
             for video_id, file_path in rows:
                 if not file_path or not os.path.exists(file_path):
                     continue
-                _enqueue_preview_proxy(video_id, file_path)
+                _enqueue_preview_probe(video_id, file_path)
         except Exception as exc:
             print(f"Preview backfill scheduling failed: {exc}")
 
