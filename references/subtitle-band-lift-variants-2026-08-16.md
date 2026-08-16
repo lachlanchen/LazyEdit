@@ -59,7 +59,7 @@ lift = 0px
 band top = 1920 - 768 = 1152px
 ```
 
-This keeps the English row at the established unlifted band height when another language is added. The additional language occupies another row inside the same band instead of moving the whole band upward.
+This keeps the band at the established unlifted origin when another language is added. Visually, English stays near its familiar three-language height while the additional language occupies another row inside the same band instead of moving the whole band upward.
 
 ## What actually changed
 
@@ -72,10 +72,19 @@ top_y = max(0, frame_height - band_height - lift_pixels)
 
 Changing the number of rows changes each row's available height. Changing `liftRatio` moves every row together. The inspected difference is therefore exactly the explicit lift change from `0.1` to `0.0`, equal to `192px` at `1080x1920`.
 
+The top-row baseline is not mathematically locked by `liftRatio=0.0`. At the
+same 40% band height and 12px gutter, changing from three rows to four changes
+the first slot center by about 33px because each row becomes shorter. The
+bottom-anchored result is the accepted simple visual match. Exact baseline
+preservation would require comparing against a specific prior layout and
+calculating a compensating ratio.
+
 ## Operational guidance
 
 - Use the lifted variant when the lower row needs extra clearance or the subtitle group should sit closer to the picture.
 - Use the bottom-anchored variant when adding a language should leave the top language at the same vertical anchor as an unlifted layout.
+- Treat those as semantic one-shot styles, not new defaults. A silent request
+  should continue to use the current Studio setting.
 - Keep `heightRatio`, row order, and portrait composition explicit when comparing layouts; otherwise more than one variable may move the text.
 - Inspect a sample frame before publishing. A layout that is good for one source composition can be less suitable for another.
 
