@@ -1269,6 +1269,22 @@ def _apply_ai_model_settings_to_env(settings: dict | None = None) -> dict:
     return cleaned
 
 
+def _translation_openai_client():
+    """Create the legacy OpenAI client only when translation uses OpenAI."""
+    provider = os.getenv("LAZYEDIT_TRANSLATION_PROVIDER", "deepseek").strip().lower()
+    if provider == "deepseek":
+        return None
+    return OpenAI()
+
+
+def _metadata_openai_client():
+    """Create the legacy OpenAI client only when metadata uses OpenAI."""
+    provider = os.getenv("LAZYEDIT_AI_PROVIDER", "deepseek").strip().lower()
+    if provider == "deepseek":
+        return None
+    return OpenAI()
+
+
 def _configured_subtitle_correction_models() -> list[str]:
     configured = (
         os.getenv("LAZYEDIT_SUBTITLE_CORRECTION_MODELS")
@@ -8540,7 +8556,11 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
             metadata_payload = None
             try:
                 template_dir = os.path.join(METADATA_TEMPLATE_DIR, METADATA_TEMPLATE_MAP.get(lang, ""))
-                generator = Subtitle2Metadata(OpenAI(), use_cache=use_cache, cache_dir="cache/metadata")
+                generator = Subtitle2Metadata(
+                    _metadata_openai_client(),
+                    use_cache=use_cache,
+                    cache_dir="cache/metadata",
+                )
                 metadata_payload = generator.generate_metadata_from_template(
                     template_dir=template_dir,
                     transcription_text=transcription_text,
@@ -10910,7 +10930,7 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                 video_length = get_video_length(input_file)
                 video_width, video_height = get_video_resolution(input_file)
                 translator = SubtitlesTranslator(
-                    OpenAI(),
+                    _translation_openai_client(),
                     input_json_path=input_json,
                     input_sub_path=input_srt,
                     output_json_path=output_json_path,
