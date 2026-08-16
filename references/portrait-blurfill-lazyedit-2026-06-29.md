@@ -1,5 +1,7 @@
 # LazyEdit Portrait Blur-Fill
 
+For the two supported subtitle-band vertical arrangements used with portrait blur-fill, see [Subtitle Band Lift Variants](subtitle-band-lift-variants-2026-08-16.md).
+
 Date: 2026-06-29
 
 ## Source Research
