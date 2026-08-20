@@ -676,6 +676,37 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         pprint(translated_subtitles)
         return translated_subtitles
 
+    def process_specified_language_translation(self, target_code: str):
+        """Translate subtitles into any language declared in LANGUAGES."""
+        if target_code not in LANGUAGES:
+            raise ValueError(f"unsupported translation language: {target_code}")
+
+        subtitles = self.load_subtitles_from_json()
+        self.subtitles = subtitles
+        target_name = LANGUAGES[target_code]
+        plain_items = []
+        json_items = []
+
+        for idx, batch in enumerate(self.split_subtitles_into_batches(subtitles)):
+            translated = self.translate_and_merge_subtitles_with_specified_languages(
+                batch,
+                [target_name],
+                idx,
+            )
+            for item in translated:
+                start = item.get("start")
+                end = item.get("end")
+                if not start or not end:
+                    continue
+                text = item.get(target_code) or ""
+                normalized = {"start": start, "end": end, target_code: text}
+                plain_items.append(normalized)
+                json_items.append(dict(normalized))
+
+        plain_items.sort(key=lambda x: datetime.strptime(x["start"], "%H:%M:%S,%f"))
+        json_items.sort(key=lambda x: datetime.strptime(x["start"], "%H:%M:%S,%f"))
+        return plain_items, json_items
+
     # Function to annotate Kanji and Katakana independently
     @staticmethod
     def annotate_kanji_katakana(subtitles):
