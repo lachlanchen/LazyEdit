@@ -2,6 +2,7 @@ from scripts.lazyedit_publish import (
     process_errors_after_start,
     requested_process_ready,
     should_defer_processing_to_publish_queue,
+    sync_burn_layout_languages,
 )
 
 
@@ -60,3 +61,26 @@ def test_no_wait_process_publish_is_owned_by_serial_queue():
     assert should_defer_processing_to_publish_queue(process=True, publish=True, wait=False)
     assert not should_defer_processing_to_publish_queue(process=True, publish=False, wait=False)
     assert not should_defer_processing_to_publish_queue(process=True, publish=True, wait=True)
+
+
+def test_language_override_updates_visible_slots_in_top_to_bottom_order():
+    layout = {
+        "rows": 4,
+        "slots": [
+            {"slot": 1, "language": "en", "fontScale": 1.0},
+            {"slot": 2, "language": "ja", "fontScale": 0.9},
+            {"slot": 3, "language": "zh-Hant", "fontScale": 0.8},
+            {"slot": 4, "language": "fr", "fontScale": 0.7},
+        ],
+    }
+
+    updated = sync_burn_layout_languages(layout, ["it", "zh-Hant", "ja", "en"])
+
+    assert updated["rows"] == 4
+    assert [slot["language"] for slot in updated["slots"]] == [
+        "en",
+        "ja",
+        "zh-Hant",
+        "it",
+    ]
+    assert [slot["fontScale"] for slot in updated["slots"]] == [1.0, 0.9, 0.8, 0.7]

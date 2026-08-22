@@ -81,6 +81,7 @@ from lazyedit.autocut_processor import AutocutProcessor
 from lazyedit.subtitle_metadata import Subtitle2Metadata
 from lazyedit.words_card import VideoAddWordsCard, overlay_word_card_on_cover
 from lazyedit.subtitle_translate import SubtitlesTranslator
+from lazyedit.languages import LANGUAGES, TO_LANGUAGE_CODE
 from lazyedit.video_prompt_generator import VideoPromptGenerator
 from lazyedit.venice_a2e import (
     VenicePromptGenerator,
@@ -1005,6 +1006,12 @@ def _normalize_translation_language(value: object | None) -> str | None:
         return "zh-Hant"
     if lowered in {"zh-hans", "zh_hans", "zh-cn"}:
         return "zh-Hans"
+    canonical_codes = {code.lower(): code for code in LANGUAGES}
+    if lowered in canonical_codes:
+        return canonical_codes[lowered]
+    named_code = TO_LANGUAGE_CODE.get(lowered)
+    if named_code in LANGUAGES:
+        return named_code
     return None
 
 
@@ -10944,12 +10951,17 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                 output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hant.json")
                 output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hant.srt")
                 output_ass_path = None
-            else:
+            elif lang == "zh-Hans":
                 output_json_path = os.path.join(translations_dir, f"{base_name}_zh_hans.json")
                 output_srt_path = os.path.join(translations_dir, f"{base_name}_zh_hans.srt")
                 output_ass_path = None
                 traditional_dir = os.path.join(translations_base_dir, "translations", "zh-Hant")
                 traditional_json_path = os.path.join(traditional_dir, f"{base_name}_zh_hant.json")
+            else:
+                safe_lang = re.sub(r"[^A-Za-z0-9_-]", "_", lang)
+                output_json_path = os.path.join(translations_dir, f"{base_name}_{safe_lang}.json")
+                output_srt_path = os.path.join(translations_dir, f"{base_name}_{safe_lang}.srt")
+                output_ass_path = None
 
             for path in (output_json_path, output_srt_path, output_ass_path):
                 if path and os.path.exists(path):
@@ -11015,7 +11027,7 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                     plain_items, json_items = translator.process_chinese_traditional_translation_single_pass()
                     translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
                     translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
-                else:
+                elif lang == "zh-Hans":
                     traditional_items = None
                     if use_cache and traditional_json_path and os.path.exists(traditional_json_path):
                         try:
@@ -11038,6 +11050,10 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                     translator.save_translated_subtitles_to_json_path(simplified_json_items, output_json_path)
                     translator.save_translated_subtitles_to_srt_path(simplified_plain_items, output_srt_path)
                     json_items = simplified_json_items
+                else:
+                    plain_items, json_items = translator.process_specified_language_translation(lang)
+                    translator.save_translated_subtitles_to_json_path(json_items, output_json_path)
+                    translator.save_translated_subtitles_to_srt_path(plain_items, output_srt_path)
 
                 status = "completed" if json_items else "empty"
                 error_message = None

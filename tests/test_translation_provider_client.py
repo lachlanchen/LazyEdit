@@ -9,6 +9,12 @@ class TranslationProviderClientTests(unittest.TestCase):
         self.assertEqual(app._normalize_translation_language("tr"), "tr")
         self.assertEqual(app._normalize_translation_language("Turkish"), "tr")
         self.assertEqual(app._sanitize_translation_languages(["en", "tr"]), ["en", "tr"])
+        self.assertEqual(app._normalize_translation_language("it"), "it")
+        self.assertEqual(app._normalize_translation_language("Italian"), "it")
+        self.assertEqual(
+            app._sanitize_translation_languages(["it", "zh-Hant", "ja", "en"]),
+            ["it", "zh-Hant", "ja", "en"],
+        )
 
     def test_deepseek_translation_does_not_construct_openai_client(self):
         with patch.dict("os.environ", {"LAZYEDIT_TRANSLATION_PROVIDER": "deepseek"}), patch.object(

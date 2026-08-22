@@ -436,6 +436,30 @@ def first_present(*values: Any) -> Any:
     return None
 
 
+def sync_burn_layout_languages(
+    burn_layout: dict[str, Any],
+    languages: list[str],
+) -> dict[str, Any]:
+    """Keep visible subtitle slots aligned with bottom-to-top CLI languages."""
+    layout = dict(burn_layout or {})
+    existing_slots = layout.get("slots")
+    if not isinstance(existing_slots, list):
+        existing_slots = []
+
+    top_to_bottom = list(reversed(languages))
+    slots: list[dict[str, Any]] = []
+    for index, language in enumerate(top_to_bottom, start=1):
+        previous = existing_slots[index - 1] if index <= len(existing_slots) else {}
+        slot = dict(previous) if isinstance(previous, dict) else {}
+        slot["slot"] = index
+        slot["language"] = language
+        slots.append(slot)
+
+    layout["slots"] = slots
+    layout["rows"] = len(languages)
+    return layout
+
+
 def build_options(
     args: argparse.Namespace,
     correction_prompt: str,
@@ -457,6 +481,8 @@ def build_options(
     use_polished = bool(use_polished) or bool(correction_prompt)
 
     burn_layout: dict[str, Any] = dict(current_layout or {})
+    if args.languages:
+        burn_layout = sync_burn_layout_languages(burn_layout, languages)
     layout_overrides = {
         "liftRatio": args.subtitle_lift_ratio,
         "rows": args.subtitle_rows,
