@@ -1,9 +1,35 @@
 from scripts.lazyedit_publish import (
+    default_steps,
     process_errors_after_start,
+    process_ready_with_options,
     requested_process_ready,
     should_defer_processing_to_publish_queue,
     sync_burn_layout_languages,
 )
+
+
+def test_default_publish_steps_do_not_require_optional_frame_captioning():
+    assert "caption" not in default_steps(True, logo_enabled=True, portrait_enabled=True)
+    assert "caption" not in default_steps(False, logo_enabled=True)
+    assert "caption" not in default_steps(False)
+
+
+def test_failed_optional_frame_caption_does_not_block_ready_video():
+    payload = {
+        "steps": {
+            "transcribe": {"status": "done"},
+            "polish": {"status": "done"},
+            "keyframes": {"status": "done"},
+            "caption": {"status": "error", "detail": "caption backend unavailable"},
+            "metadata_zh": {"status": "done"},
+            "metadata_en": {"status": "done"},
+            "cover": {"status": "done"},
+            "translate": {"status": "done"},
+            "burn": {"status": "done"},
+        }
+    }
+
+    assert process_ready_with_options(payload, burn_subtitles=True, logo_enabled=True)
 
 
 def test_unchanged_historical_burn_error_is_ignored():

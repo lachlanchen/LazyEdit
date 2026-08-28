@@ -6078,7 +6078,10 @@ def _ready_for_publish_with_options(
     if require_burn is None:
         require_burn = burn_subtitles
 
-    required_steps = ["transcribe", "keyframes", "caption", "metadata_zh", "metadata_en", "cover"]
+    # Frame captions enrich metadata, but transcription and creator notes are
+    # sufficient publication inputs. A caption backend outage must not block an
+    # otherwise complete video package.
+    required_steps = ["transcribe", "keyframes", "metadata_zh", "metadata_en", "cover"]
     if burn_subtitles:
         required_steps.append("translate")
     if require_burn:
@@ -6431,7 +6434,6 @@ def _process_publish_job(job_row: tuple) -> None:
         ldb.update_publish_job(job_id, detail="Processing video before publish")
         process_steps = [
             "keyframes",
-            "caption",
             "transcribe",
             "metadata_zh",
             "metadata_en",
@@ -12421,7 +12423,10 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
         else:
             steps["cover"] = step_payload("idle")
 
-        required_for_publish = ["transcribe", "polish", "keyframes", "caption", "metadata_zh", "metadata_en", "cover"]
+        # Visual frame captions are optional metadata enrichment. Keep them in
+        # process status, but do not make publication depend on that auxiliary
+        # model when transcript, metadata, keyframes, and cover are ready.
+        required_for_publish = ["transcribe", "polish", "keyframes", "metadata_zh", "metadata_en", "cover"]
         if subtitle_burn_required_for_publish:
             required_for_publish.append("translate")
         if burn_required_for_publish:

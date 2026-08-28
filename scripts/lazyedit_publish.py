@@ -612,10 +612,10 @@ def default_steps(
     portrait_enabled: bool = False,
 ) -> list[str]:
     if burn_subtitles:
-        return ["keyframes", "caption", "transcribe", "translate", "burn", "metadata_zh", "metadata_en", "cover"]
+        return ["keyframes", "transcribe", "translate", "burn", "metadata_zh", "metadata_en", "cover"]
     if logo_enabled or portrait_enabled:
-        return ["keyframes", "caption", "transcribe", "burn", "metadata_zh", "metadata_en", "cover"]
-    return ["keyframes", "caption", "transcribe", "metadata_zh", "metadata_en", "cover"]
+        return ["keyframes", "transcribe", "burn", "metadata_zh", "metadata_en", "cover"]
+    return ["keyframes", "transcribe", "metadata_zh", "metadata_en", "cover"]
 
 
 def step_summary(payload: dict[str, Any]) -> str:
@@ -638,7 +638,7 @@ def process_ready_with_options(payload: dict[str, Any], *, burn_subtitles: bool,
     if not isinstance(steps, dict):
         return False
 
-    required = ["transcribe", "polish", "keyframes", "caption", "metadata_zh", "metadata_en", "cover"]
+    required = ["transcribe", "polish", "keyframes", "metadata_zh", "metadata_en", "cover"]
     if burn_subtitles:
         required.append("translate")
     if burn_subtitles or logo_enabled:
