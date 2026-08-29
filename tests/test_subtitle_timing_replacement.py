@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from app import _validated_resegmented_subtitle_items
+from app import _validated_imported_subtitle_items, _validated_resegmented_subtitle_items
 
 
 class SubtitleTimingReplacementTests(unittest.TestCase):
@@ -78,6 +78,39 @@ class SubtitleTimingReplacementTests(unittest.TestCase):
                 outside_video,
                 max_end_seconds=15.047,
                 enforce_original_span=False,
+            )
+        )
+
+    def test_authoritative_import_preserves_timing_and_language(self):
+        result = _validated_imported_subtitle_items(
+            self.replacement,
+            language_code="zh",
+            max_end_seconds=15.047,
+        )
+
+        self.assertIsNotNone(result)
+        self.assertEqual(result[0]["start"], "00:00:03,640")
+        self.assertEqual(result[-1]["end"], "00:00:07,680")
+        self.assertTrue(all(item["lang"] == "zh" for item in result))
+
+    def test_authoritative_import_rejects_overlap_and_out_of_bounds_timing(self):
+        overlapping = [dict(item) for item in self.replacement]
+        overlapping[1]["start"] = "00:00:05,000"
+        outside_video = [dict(item) for item in self.replacement]
+        outside_video[1]["end"] = "00:00:15,200"
+
+        self.assertIsNone(
+            _validated_imported_subtitle_items(
+                overlapping,
+                language_code="zh",
+                max_end_seconds=15.047,
+            )
+        )
+        self.assertIsNone(
+            _validated_imported_subtitle_items(
+                outside_video,
+                language_code="zh",
+                max_end_seconds=15.047,
             )
         )
 

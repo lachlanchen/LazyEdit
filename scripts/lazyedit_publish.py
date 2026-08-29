@@ -63,6 +63,16 @@ def read_text(path: str | None) -> str:
     return Path(path).read_text(encoding="utf-8", errors="ignore").strip()
 
 
+def should_run_subtitle_correction(
+    explicit: bool | None,
+    correction_prompt: str,
+    subtitle_file: str | None,
+) -> bool:
+    if explicit is not None:
+        return explicit
+    return bool(correction_prompt) and not bool(subtitle_file)
+
+
 def print_event(message: str, *, quiet: bool = False) -> None:
     if not quiet:
         print(message, flush=True)
@@ -952,6 +962,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--languages", help="Bottom-to-top subtitle languages.")
     parser.add_argument("--use-current-settings", action="store_true", help="Use current Studio publish and subtitle layout settings as defaults.")
     parser.add_argument("--prompt-file", help="Prompt/story file used for both subtitle correction and metadata.")
+    parser.add_argument(
+        "--subtitle-file",
+        help="Authoritative SRT file to import before processing. Skips Whisper and AI correction by default.",
+    )
+    parser.add_argument(
+        "--subtitle-language",
+        default="mixed",
+        help="Language code for --subtitle-file, for example zh, en, or ja.",
+    )
     parser.add_argument("--correction-prompt-file", help="Prompt file for AI subtitle correction.")
     parser.add_argument("--metadata-prompt-file", help="Prompt/story file for metadata generation.")
     parser.add_argument("--correct-subtitles", dest="correct_subtitles", action="store_true", default=None)
@@ -1030,7 +1049,11 @@ def main(argv: list[str] | None = None) -> int:
 
     correction_prompt = read_text(args.correction_prompt_file) or read_text(args.prompt_file)
     metadata_prompt = read_text(args.metadata_prompt_file) or read_text(args.prompt_file)
-    should_correct = args.correct_subtitles if args.correct_subtitles is not None else bool(correction_prompt)
+    should_correct = should_run_subtitle_correction(
+        args.correct_subtitles,
+        correction_prompt,
+        args.subtitle_file,
+    )
     if should_correct and not correction_prompt:
         parser.error("--correct-subtitles requires --correction-prompt-file or --prompt-file")
 
@@ -1055,6 +1078,29 @@ def main(argv: list[str] | None = None) -> int:
             final["upload"] = upload
             final["video_id"] = video_id
             print_event(f"Uploaded video_id={video_id}", quiet=args.quiet)
+
+        if args.subtitle_file:
+            subtitle_path = Path(args.subtitle_file).expanduser().resolve()
+            if not subtitle_path.is_file():
+                raise FileNotFoundError(f"subtitle file not found: {subtitle_path}")
+            subtitle_text = subtitle_path.read_text(encoding="utf-8-sig")
+            if not subtitle_text.strip():
+                raise ValueError(f"subtitle file is empty: {subtitle_path}")
+            subtitle_import = client.request_json(
+                "POST",
+                f"/api/videos/{video_id}/import-subtitles",
+                {
+                    "text": subtitle_text,
+                    "languageCode": args.subtitle_language,
+                    "setPolished": True,
+                },
+                timeout=120,
+            )
+            final["subtitle_import"] = subtitle_import
+            print_event(
+                f"Imported {subtitle_import.get('cue_count', 0)} authoritative subtitle cues; Whisper skipped.",
+                quiet=args.quiet,
+            )
 
         if should_correct:
             print_event("Running AI subtitle correction...", quiet=args.quiet)

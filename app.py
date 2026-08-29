@@ -3193,6 +3193,45 @@ def _parse_srt_edit_text(text: str) -> list[dict]:
     return items
 
 
+def _validated_imported_subtitle_items(
+    items: list[dict],
+    *,
+    language_code: str,
+    max_end_seconds: float | None = None,
+) -> list[dict] | None:
+    if not items or len(items) > 10000:
+        return None
+    normalized_language = _normalize_transcription_language(language_code) or "mixed"
+    cleaned: list[dict] = []
+    previous_end: float | None = None
+    for candidate in items:
+        if not isinstance(candidate, dict):
+            return None
+        start_text = _normalize_srt_timestamp(candidate.get("start"))
+        end_text = _normalize_srt_timestamp(candidate.get("end"))
+        start_seconds = _srt_timestamp_seconds(start_text)
+        end_seconds = _srt_timestamp_seconds(end_text)
+        text = str(candidate.get("text") or "").strip()
+        if not start_text or not end_text or start_seconds is None or end_seconds is None:
+            return None
+        if start_seconds < 0 or end_seconds <= start_seconds or not text:
+            return None
+        if previous_end is not None and start_seconds < previous_end - 0.05:
+            return None
+        if max_end_seconds is not None and end_seconds > max_end_seconds + 0.1:
+            return None
+        cleaned.append(
+            {
+                "start": start_text,
+                "end": end_text,
+                "lang": normalized_language,
+                "text": text,
+            }
+        )
+        previous_end = end_seconds
+    return cleaned
+
+
 def _merge_edited_subtitle_items(original_items: list[dict], edited_items: list[dict]) -> list[dict]:
     if len(original_items) == len(edited_items):
         merged = []
@@ -7679,6 +7718,94 @@ class VideoSubtitleCorrectionHandler(CorsMixin, tornado.web.RequestHandler):
             self.write({"error": str(exc)})
         except RuntimeError as exc:
             self.set_status(500)
+            self.write({"error": str(exc)})
+        except ValueError as exc:
+            self.set_status(400)
+            self.write({"error": str(exc)})
+        except Exception as exc:
+            self.set_status(500)
+            self.write({"error": str(exc)})
+
+
+class VideoSubtitleImportHandler(CorsMixin, tornado.web.RequestHandler):
+    def post(self, video_id):
+        try:
+            video_id_i = int(video_id)
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid id"})
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except Exception:
+            self.set_status(400)
+            return self.write({"error": "invalid json"})
+
+        subtitle_text = str(data.get("text") or "")
+        language_code = str(data.get("languageCode") or data.get("language_code") or "mixed")
+        set_polished = _parse_bool(
+            data.get("setPolished") if "setPolished" in data else data.get("set_polished"),
+            default=True,
+        )
+        try:
+            _video_id, _file_path, input_file, base_name, output_folder = _load_correction_sources(
+                video_id_i,
+                None,
+            )
+            parsed_items = _parse_srt_edit_text(subtitle_text)
+            duration = get_video_length(input_file)
+            items = _validated_imported_subtitle_items(
+                parsed_items,
+                language_code=language_code,
+                max_end_seconds=duration if duration and duration > 0 else None,
+            )
+            if not items:
+                raise ValueError("subtitle file has invalid, empty, overlapping, or out-of-range cues")
+
+            variants = [("mixed", "mixed")]
+            if set_polished:
+                variants.append(("polished", "polished"))
+            imported = []
+            for language_variant, path_variant in variants:
+                output_json_path, output_srt_path, output_md_path = _transcription_variant_paths(
+                    output_folder,
+                    base_name,
+                    path_variant,
+                    create=True,
+                )
+                _write_subtitle_payload(output_json_path, None, items, None)
+                _write_srt_from_items(items, output_srt_path, text_key="text")
+                write_markdown_from_srt(output_srt_path, output_md_path)
+                transcription_id = ldb.add_transcription(
+                    video_id_i,
+                    language_variant,
+                    "completed",
+                    output_json_path,
+                    output_srt_path,
+                    output_md_path,
+                    None,
+                )
+                imported.append(
+                    {
+                        "id": transcription_id,
+                        "variant": language_variant,
+                        "output_json_path": output_json_path,
+                        "output_srt_path": output_srt_path,
+                        "output_md_path": output_md_path,
+                    }
+                )
+            self.write(
+                {
+                    "video_id": video_id_i,
+                    "status": "completed",
+                    "cue_count": len(items),
+                    "language_code": _normalize_transcription_language(language_code) or "mixed",
+                    "set_polished": set_polished,
+                    "skipped_whisper": True,
+                    "imported": imported,
+                }
+            )
+        except FileNotFoundError as exc:
+            self.set_status(404)
             self.write({"error": str(exc)})
         except ValueError as exc:
             self.set_status(400)
@@ -12936,6 +13063,7 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/transcription", VideoTranscriptionHandler),
         (r"/api/videos/(\d+)/polish-subtitles", VideoSubtitlePolishHandler),
         (r"/api/videos/(\d+)/subtitle-correction", VideoSubtitleCorrectionHandler),
+        (r"/api/videos/(\d+)/import-subtitles", VideoSubtitleImportHandler),
         (r"/api/videos/(\d+)/publication-sessions", VideoPublicationSessionsHandler),
         (r"/api/videos/(\d+)/publication-sessions/(\d+)", VideoPublicationSessionHandler),
         (r"/api/videos/(\d+)/caption", VideoCaptionHandler),

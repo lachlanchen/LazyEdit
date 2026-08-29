@@ -4,6 +4,7 @@ from scripts.lazyedit_publish import (
     process_ready_with_options,
     requested_process_ready,
     should_defer_processing_to_publish_queue,
+    should_run_subtitle_correction,
     sync_burn_layout_languages,
 )
 
@@ -110,3 +111,9 @@ def test_language_override_updates_visible_slots_in_top_to_bottom_order():
         "it",
     ]
     assert [slot["fontScale"] for slot in updated["slots"]] == [1.0, 0.9, 0.8, 0.7]
+
+
+def test_authoritative_subtitle_file_disables_implicit_ai_correction():
+    assert not should_run_subtitle_correction(None, "story context", "reviewed.srt")
+    assert should_run_subtitle_correction(True, "story context", "reviewed.srt")
+    assert should_run_subtitle_correction(None, "story context", None)
