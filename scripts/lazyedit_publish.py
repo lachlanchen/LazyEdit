@@ -628,6 +628,29 @@ def default_steps(
     return ["keyframes", "transcribe", "metadata_zh", "metadata_en", "cover"]
 
 
+def resolve_process_steps(
+    explicit_steps: str | None,
+    *,
+    burn_subtitles: bool,
+    logo_enabled: bool = False,
+    portrait_enabled: bool = False,
+    authoritative_subtitles: bool = False,
+) -> list[str]:
+    """Resolve process steps while preserving explicit caller intent.
+
+    A reviewed subtitle import is already the transcription authority. The
+    default pipeline should therefore translate and render it without starting
+    Whisper again. An explicit ``--steps`` value remains authoritative too.
+    """
+    requested = parse_csv(explicit_steps)
+    if requested:
+        return requested
+    steps = default_steps(burn_subtitles, logo_enabled, portrait_enabled)
+    if authoritative_subtitles:
+        steps = [step for step in steps if step != "transcribe"]
+    return steps
+
+
 def step_summary(payload: dict[str, Any]) -> str:
     steps = payload.get("steps") or {}
     if not isinstance(steps, dict):
@@ -1142,6 +1165,7 @@ def main(argv: list[str] | None = None) -> int:
             print_event("Loaded current Studio publish settings.", quiet=args.quiet)
 
         options = build_options(args, correction_prompt, metadata_prompt, settings)
+        options["authoritativeSubtitles"] = bool(args.subtitle_file)
         logo_settings = settings.get("logo_settings") if isinstance(settings, dict) else None
         logo_settings = apply_logo_overrides(args, logo_settings)
         logo_enabled = logo_overlay_enabled(logo_settings)
@@ -1167,10 +1191,12 @@ def main(argv: list[str] | None = None) -> int:
             wait=args.wait,
         )
         if args.process:
-            steps = parse_csv(args.steps) or default_steps(
-                bool(options["burnSubtitles"]),
-                logo_enabled,
-                portrait_enabled,
+            steps = resolve_process_steps(
+                args.steps,
+                burn_subtitles=bool(options["burnSubtitles"]),
+                logo_enabled=logo_enabled,
+                portrait_enabled=portrait_enabled,
+                authoritative_subtitles=bool(args.subtitle_file),
             )
         if args.process and not defer_process_to_queue:
             print_event(f"Starting LazyEdit process: {', '.join(steps)}", quiet=args.quiet)
@@ -1235,7 +1261,16 @@ def main(argv: list[str] | None = None) -> int:
             publish_options = {**options, "publicationSessionId": session_id}
             if isinstance(logo_settings, dict):
                 publish_options["logo"] = logo_settings
-            if args.process and args.wait and final.get("process_status", {}).get("ready_for_publish"):
+            process_status = final.get("process_status")
+            authoritative_default_process_completed = bool(
+                args.subtitle_file
+                and not args.steps
+                and isinstance(process_status, dict)
+            )
+            if args.process and args.wait and (
+                (isinstance(process_status, dict) and process_status.get("ready_for_publish"))
+                or authoritative_default_process_completed
+            ):
                 # The process phase already used the metadata prompt. Do not
                 # send it again or the publish worker will rerun processing.
                 publish_options["metadataPrompt"] = ""

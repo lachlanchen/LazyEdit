@@ -1163,6 +1163,10 @@ def _sanitize_publish_options(payload) -> dict:
         or ""
     ).strip()
     auto_correct_subtitles = _parse_bool(auto_correct_raw, default=False) and bool(auto_correct_prompt)
+    authoritative_subtitles_raw = payload.get("authoritativeSubtitles")
+    if authoritative_subtitles_raw is None:
+        authoritative_subtitles_raw = payload.get("authoritative_subtitles")
+    authoritative_subtitles = _parse_bool(authoritative_subtitles_raw, default=False)
     use_correction_prompt_for_metadata_raw = payload.get("useCorrectionPromptForMetadata")
     if use_correction_prompt_for_metadata_raw is None:
         use_correction_prompt_for_metadata_raw = payload.get("use_correction_prompt_for_metadata")
@@ -1206,6 +1210,7 @@ def _sanitize_publish_options(payload) -> dict:
         "publicationSessionId": publication_session_id,
         "autoCorrectSubtitles": auto_correct_subtitles,
         "autoCorrectPrompt": auto_correct_prompt if auto_correct_subtitles else "",
+        "authoritativeSubtitles": authoritative_subtitles,
         "useCorrectionPromptForMetadata": _parse_bool(
             use_correction_prompt_for_metadata_raw,
             default=DEFAULT_PUBLISH_OPTIONS["useCorrectionPromptForMetadata"],
@@ -1229,6 +1234,7 @@ def _persistable_publish_options(options: dict) -> dict:
     cleaned.pop("autoCorrectSubtitles", None)
     cleaned.pop("autoCorrectPrompt", None)
     cleaned.pop("metadataPrompt", None)
+    cleaned.pop("authoritativeSubtitles", None)
     cleaned.pop("burnLayout", None)
     cleaned.pop("logo", None)
     return cleaned
@@ -6107,6 +6113,7 @@ def _ready_for_publish_with_options(
     *,
     burn_subtitles: bool,
     require_burn: bool | None = None,
+    require_transcription: bool = True,
 ) -> bool:
     if not isinstance(payload, dict):
         return False
@@ -6120,7 +6127,9 @@ def _ready_for_publish_with_options(
     # Frame captions enrich metadata, but transcription and creator notes are
     # sufficient publication inputs. A caption backend outage must not block an
     # otherwise complete video package.
-    required_steps = ["transcribe", "keyframes", "metadata_zh", "metadata_en", "cover"]
+    required_steps = ["keyframes", "metadata_zh", "metadata_en", "cover"]
+    if require_transcription:
+        required_steps.insert(0, "transcribe")
     if burn_subtitles:
         required_steps.append("translate")
     if require_burn:
@@ -6429,6 +6438,7 @@ def _process_publish_job(job_row: tuple) -> None:
         publication_session_id = _parse_int_value(job_config.get("publicationSessionId"))
     burn_subtitles = bool(job_config.get("burnSubtitles", True))
     auto_correct_subtitles = bool(job_config.get("autoCorrectSubtitles", False))
+    authoritative_subtitles = bool(job_config.get("authoritativeSubtitles", False))
     auto_correct_prompt = str(job_config.get("autoCorrectPrompt") or "").strip()
     if auto_correct_subtitles and not auto_correct_prompt:
         auto_correct_subtitles = False
@@ -6469,15 +6479,17 @@ def _process_publish_job(job_row: tuple) -> None:
         status_payload,
         burn_subtitles=burn_subtitles,
         require_burn=processed_output_required,
+        require_transcription=not authoritative_subtitles,
     ):
         ldb.update_publish_job(job_id, detail="Processing video before publish")
         process_steps = [
             "keyframes",
-            "transcribe",
             "metadata_zh",
             "metadata_en",
             "cover",
         ]
+        if not authoritative_subtitles:
+            process_steps.insert(1, "transcribe")
         insert_at = 3
         if burn_subtitles:
             process_steps.insert(insert_at, "translate")

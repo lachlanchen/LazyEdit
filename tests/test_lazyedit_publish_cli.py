@@ -3,6 +3,7 @@ from scripts.lazyedit_publish import (
     process_errors_after_start,
     process_ready_with_options,
     requested_process_ready,
+    resolve_process_steps,
     should_defer_processing_to_publish_queue,
     should_run_subtitle_correction,
     sync_burn_layout_languages,
@@ -13,6 +14,27 @@ def test_default_publish_steps_do_not_require_optional_frame_captioning():
     assert "caption" not in default_steps(True, logo_enabled=True, portrait_enabled=True)
     assert "caption" not in default_steps(False, logo_enabled=True)
     assert "caption" not in default_steps(False)
+
+
+def test_authoritative_subtitles_skip_whisper_in_default_steps():
+    steps = resolve_process_steps(
+        None,
+        burn_subtitles=True,
+        logo_enabled=True,
+        portrait_enabled=True,
+        authoritative_subtitles=True,
+    )
+
+    assert "transcribe" not in steps
+    assert {"translate", "burn", "metadata_zh", "metadata_en", "cover"} <= set(steps)
+
+
+def test_authoritative_subtitles_respect_explicit_transcribe_step():
+    assert resolve_process_steps(
+        "transcribe,burn",
+        burn_subtitles=True,
+        authoritative_subtitles=True,
+    ) == ["transcribe", "burn"]
 
 
 def test_failed_optional_frame_caption_does_not_block_ready_video():
