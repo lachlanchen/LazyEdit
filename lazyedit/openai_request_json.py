@@ -54,6 +54,30 @@ class OpenAIRequestJSONBase:
         self.cache_dir = cache_dir
         self.ensure_dir_exists(self.cache_dir)
 
+    def activate_openai_fallback(self):
+        """Switch a failed DeepSeek structured request to the configured OpenAI client."""
+
+        if self.api_provider != "deepseek":
+            return False
+        fallback_provider = os.environ.get(
+            "LAZYEDIT_DEEPSEEK_FALLBACK_PROVIDER",
+            "openai",
+        ).strip().lower()
+        if fallback_provider != "openai":
+            return False
+        if not os.environ.get("OPENAI_API_KEY") and not os.environ.get("OPENAI_BASE_URL"):
+            return False
+
+        self.api_provider = "openai"
+        self.model = (
+            os.environ.get("LAZYEDIT_OPENAI_FALLBACK_MODEL")
+            or os.environ.get("OPENAI_MODEL")
+            or "gpt-4o-mini"
+        )
+        self.client = OpenAI()
+        print(f"DeepSeek request unavailable; retrying with OpenAI model {self.model}.")
+        return True
+
     def ensure_dir_exists(self, path):
         if not os.path.exists(path):
             os.makedirs(path)
@@ -229,6 +253,15 @@ class OpenAIRequestJSONBase:
                 
                 if retries < self.max_retries:
                     messages.append({"role": "system", "content": f"Previous request failed: {error_msg}. Please try again."})
+
+        if self.activate_openai_fallback():
+            return self.send_request_with_json_schema(
+                prompt=prompt,
+                json_schema=json_schema,
+                system_content=system_content,
+                filename=filename,
+                schema_name=schema_name,
+            )
 
         raise Exception("Maximum retries reached without success.")
 
