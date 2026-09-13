@@ -36,3 +36,32 @@ Do not translate a broken baseline or force a context note into spoken dialogue.
 Keep context factual, preserve ordinary cue timing, and distinguish deliberate
 audio-based resegmentation from text-only correction. Review public metadata
 for unsupported speaker attributions, prices, locations and workflow prose.
+
+## Final publication validation
+
+- LazyEdit video: `566` (source `715371867.mp4`, 50.93 seconds, 544x960).
+- Rebuilt using corrected subtitles; top-to-bottom rows EN / JA / ZH-Hant / FR,
+  pronunciation guides, zero lift, existing top-right logo, no background fill.
+- Saved only zero lift to the existing Studio layout/defaults; other preferences
+  were preserved. The ZIP video hash matched the visually inspected master.
+- Initial local job `409`, remote `job-1789299805700-1`: Douyin, Shipinhao and
+  Instagram succeeded; YouTube stopped on an embedded-JavaScript syntax error.
+  The historical failed combined-job status is retained, not rewritten as done.
+- YouTube-only recovery job `410`, remote `job-1789300832722-1`: **done**.
+  The publisher resumed the same private draft, completed checks, and verified
+  the public receipt. No successful platform was submitted twice.
+- Instagram receipt/caption verification:
+  <https://www.instagram.com/lazyingart/reel/DdOf4qMurd-/>
+- YouTube public receipt:
+  <https://youtube.com/shorts/zMi-4Si_7_8>
+- Douyin's stale management list showed the correct 51-second post after a
+  reload, marked published at 19:45 on 2026-09-13. Shipinhao matched its new
+  description in management after saving a draft and waiting for cover readiness.
+
+AutoPublish fix `c37b0b7` corrects raw JavaScript strings and adds exact-title
+open-draft reuse. Check-flow/metadata tests: 19 local passes; 17 check-flow
+tests also passed on the Pi. The GitHub push succeeded locally, but the Pi could
+not resolve GitHub and has only an `origin` remote (not the older `github`
+alias). Deployment used an SSH-transferred Git bundle containing the same
+commit, then `git fetch <bundle> main` and `git merge --ff-only FETCH_HEAD`.
+The idle Tornado server autoreloaded; no browser or profile was restarted.
