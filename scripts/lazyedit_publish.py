@@ -635,6 +635,7 @@ def resolve_process_steps(
     logo_enabled: bool = False,
     portrait_enabled: bool = False,
     authoritative_subtitles: bool = False,
+    corrected_subtitles: bool = False,
 ) -> list[str]:
     """Resolve process steps while preserving explicit caller intent.
 
@@ -646,7 +647,7 @@ def resolve_process_steps(
     if requested:
         return requested
     steps = default_steps(burn_subtitles, logo_enabled, portrait_enabled)
-    if authoritative_subtitles:
+    if authoritative_subtitles or corrected_subtitles:
         steps = [step for step in steps if step != "transcribe"]
     return steps
 
@@ -736,6 +737,7 @@ def requested_process_ready(
     requested_steps: list[str] | None,
     burn_subtitles: bool,
     logo_enabled: bool,
+    baseline_steps: dict[str, Any] | None = None,
 ) -> bool:
     if not requested_steps:
         return process_ready_with_options(
@@ -749,7 +751,15 @@ def requested_process_ready(
     required = {str(step).lower() for step in requested_steps if step}
     if "burn" in required and burn_subtitles:
         required.add("translate")
-    return all((steps.get(name) or {}).get("status") in {"done", "skipped"} for name in required)
+    if not all((steps.get(name) or {}).get("status") in {"done", "skipped"} for name in required):
+        return False
+    # Durable status can still describe the previous render immediately after
+    # an asynchronous rerun starts. Each requested step must have fresh evidence.
+    if baseline_steps:
+        for name in required:
+            if name in baseline_steps and _step_marker(steps.get(name)) == _step_marker(baseline_steps[name]):
+                return False
+    return True
 
 
 def should_defer_processing_to_publish_queue(*, process: bool, publish: bool, wait: bool) -> bool:
@@ -824,6 +834,7 @@ def wait_for_process(
             requested_steps=requested_steps,
             burn_subtitles=burn_subtitles,
             logo_enabled=logo_enabled,
+            baseline_steps=baseline_steps,
         ):
             return payload
         time.sleep(interval)
@@ -1165,7 +1176,7 @@ def main(argv: list[str] | None = None) -> int:
             print_event("Loaded current Studio publish settings.", quiet=args.quiet)
 
         options = build_options(args, correction_prompt, metadata_prompt, settings)
-        options["authoritativeSubtitles"] = bool(args.subtitle_file)
+        options["authoritativeSubtitles"] = bool(args.subtitle_file or should_correct)
         logo_settings = settings.get("logo_settings") if isinstance(settings, dict) else None
         logo_settings = apply_logo_overrides(args, logo_settings)
         logo_enabled = logo_overlay_enabled(logo_settings)
@@ -1197,6 +1208,7 @@ def main(argv: list[str] | None = None) -> int:
                 logo_enabled=logo_enabled,
                 portrait_enabled=portrait_enabled,
                 authoritative_subtitles=bool(args.subtitle_file),
+                corrected_subtitles=should_correct,
             )
         if args.process and not defer_process_to_queue:
             print_event(f"Starting LazyEdit process: {', '.join(steps)}", quiet=args.quiet)

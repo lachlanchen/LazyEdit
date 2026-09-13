@@ -37,6 +37,31 @@ def test_authoritative_subtitles_respect_explicit_transcribe_step():
     ) == ["transcribe", "burn"]
 
 
+def test_completed_correction_skips_a_second_whisper_run():
+    steps = resolve_process_steps(None, burn_subtitles=True, corrected_subtitles=True)
+    assert "transcribe" not in steps
+    assert "translate" in steps
+    assert resolve_process_steps(
+        "transcribe,burn", burn_subtitles=True, corrected_subtitles=True,
+    ) == ["transcribe", "burn"]
+
+
+def test_rerun_does_not_accept_previous_completed_render():
+    baseline = {
+        "translate": {"status": "done", "updated_at": "old"},
+        "burn": {"status": "done", "updated_at": "old"},
+    }
+    arguments = dict(
+        requested_steps=["translate", "burn"], burn_subtitles=True,
+        logo_enabled=True, baseline_steps=baseline,
+    )
+    assert not requested_process_ready({"steps": baseline}, **arguments)
+    partial = {**baseline, "translate": {"status": "done", "updated_at": "new"}}
+    assert not requested_process_ready({"steps": partial}, **arguments)
+    fresh = {**partial, "burn": {"status": "done", "updated_at": "new"}}
+    assert requested_process_ready({"steps": fresh}, **arguments)
+
+
 def test_failed_optional_frame_caption_does_not_block_ready_video():
     payload = {
         "steps": {
