@@ -622,10 +622,10 @@ def default_steps(
     portrait_enabled: bool = False,
 ) -> list[str]:
     if burn_subtitles:
-        return ["keyframes", "transcribe", "translate", "burn", "metadata_zh", "metadata_en", "cover"]
+        return ["keyframes", "transcribe", "translate", "burn", "metadata_zh", "metadata_en", "metadata_ja", "cover"]
     if logo_enabled or portrait_enabled:
-        return ["keyframes", "transcribe", "burn", "metadata_zh", "metadata_en", "cover"]
-    return ["keyframes", "transcribe", "metadata_zh", "metadata_en", "cover"]
+        return ["keyframes", "transcribe", "burn", "metadata_zh", "metadata_en", "metadata_ja", "cover"]
+    return ["keyframes", "transcribe", "metadata_zh", "metadata_en", "metadata_ja", "cover"]
 
 
 def resolve_process_steps(
@@ -656,7 +656,7 @@ def step_summary(payload: dict[str, Any]) -> str:
     if not isinstance(steps, dict):
         return "no step status"
     parts = []
-    for name in ("transcribe", "polish", "translate", "burn", "keyframes", "caption", "metadata_zh", "metadata_en", "cover"):
+    for name in ("transcribe", "polish", "translate", "burn", "keyframes", "caption", "metadata_zh", "metadata_en", "metadata_ja", "cover"):
         step = steps.get(name)
         if isinstance(step, dict):
             detail = step.get("detail") or step.get("progress")

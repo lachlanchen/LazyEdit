@@ -426,6 +426,7 @@ export default function EditorScreen() {
       { key: 'caption', label: t('publish_step_caption') },
       { key: 'metadata_zh', label: t('publish_step_metadata_zh') },
       { key: 'metadata_en', label: t('publish_step_metadata_en') },
+      { key: 'metadata_ja', label: t('publish_step_metadata_ja') },
       { key: 'cover', label: t('publish_step_cover') },
     ],
     [t],
@@ -1896,10 +1897,10 @@ export default function EditorScreen() {
       const metadataPromptText = metadataCorrectionPrompt.trim();
       const processedOutputRequired = burnSubtitles || portraitBlurFill || Boolean(logoPayload?.enabled && logoPayload?.logoPath);
       const steps = burnSubtitles
-        ? ['keyframes', 'caption', 'transcribe', 'translate', 'burn', 'metadata_zh', 'metadata_en', 'cover']
+        ? ['keyframes', 'caption', 'transcribe', 'translate', 'burn', 'metadata_zh', 'metadata_en', 'metadata_ja', 'cover']
         : processedOutputRequired
-          ? ['keyframes', 'caption', 'transcribe', 'burn', 'metadata_zh', 'metadata_en', 'cover']
-          : ['keyframes', 'caption', 'transcribe', 'metadata_zh', 'metadata_en', 'cover'];
+          ? ['keyframes', 'caption', 'transcribe', 'burn', 'metadata_zh', 'metadata_en', 'metadata_ja', 'cover']
+          : ['keyframes', 'caption', 'transcribe', 'metadata_zh', 'metadata_en', 'metadata_ja', 'cover'];
       if (autoCorrectPromptText) {
         steps.splice(3, 0, 'polish');
       }

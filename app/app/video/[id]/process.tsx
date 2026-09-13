@@ -26,7 +26,8 @@ type StepKey =
   | 'translate'
   | 'burn'
   | 'metadataZh'
-  | 'metadataEn';
+  | 'metadataEn'
+  | 'metadataJa';
 
 type StepState = 'idle' | 'working' | 'done' | 'skipped' | 'error';
 
@@ -68,6 +69,7 @@ const STEP_ORDER: StepKey[] = [
   'burn',
   'metadataZh',
   'metadataEn',
+  'metadataJa',
 ];
 
 const STEP_LABELS: Record<StepKey, string> = {
@@ -79,6 +81,7 @@ const STEP_LABELS: Record<StepKey, string> = {
   burn: 'Burn subtitles',
   metadataZh: 'Generate Chinese metadata',
   metadataEn: 'Generate English metadata',
+  metadataJa: 'Generate Japanese metadata',
 };
 
 const LANG_LABELS: Record<string, string> = {
@@ -139,6 +142,7 @@ const defaultSelections: Record<StepKey, boolean> = {
   caption: true,
   metadataZh: true,
   metadataEn: true,
+  metadataJa: true,
 };
 
 const SliderControl = ({
@@ -749,10 +753,10 @@ export default function ProcessVideoScreen() {
       selectedSteps.translate ||
       selectedSteps.burn ||
       selectedSteps.metadataZh ||
-      selectedSteps.metadataEn;
+      selectedSteps.metadataEn || selectedSteps.metadataJa;
     const needsTranslate = selectedSteps.translate || selectedSteps.burn;
     const needsCaption =
-      selectedSteps.caption || selectedSteps.polish || selectedSteps.metadataZh || selectedSteps.metadataEn;
+      selectedSteps.caption || selectedSteps.polish || selectedSteps.metadataZh || selectedSteps.metadataEn || selectedSteps.metadataJa;
 
     const mark = (step: StepKey, status: StepState, detail = '') => {
       const current = nextStatus[step];
@@ -989,6 +993,21 @@ export default function ProcessVideoScreen() {
     } else {
       markIdle('metadataEn', false);
     }
+    if (selectedSteps.metadataJa) {
+      try {
+        const resp = await fetch(`${API_URL}/api/videos/${id}/metadata?lang=ja`);
+        if (resp.ok) {
+          const json = await resp.json();
+          mark('metadataJa', json.status === 'completed' ? 'done' : json.status === 'failed' ? 'error' : 'working', json.error || json.status);
+        } else {
+          markIdle('metadataJa', true);
+        }
+      } catch (_err) {
+        markIdle('metadataJa', true);
+      }
+    } else {
+      markIdle('metadataJa', false);
+    }
   } finally {
     processStateRef.current.stepStatus = nextStatus;
     processStateRef.current.stepDetail = nextDetail;
@@ -1084,6 +1103,11 @@ export default function ProcessVideoScreen() {
           title: 'English metadata',
           status: stepStatus.metadataEn,
           detail: stepDetail.metadataEn,
+        },
+        {
+          title: 'Japanese metadata',
+          status: stepStatus.metadataJa,
+          detail: stepDetail.metadataJa,
         },
       ],
     };
@@ -1234,7 +1258,7 @@ export default function ProcessVideoScreen() {
     return true;
   };
 
-  const runMetadata = async (lang: 'zh' | 'en', step: StepKey) => {
+  const runMetadata = async (lang: 'zh' | 'en' | 'ja', step: StepKey) => {
     if (!id) return false;
     updateStatus(step, 'working', `Generating ${lang.toUpperCase()} metadata`);
     const resp = await fetch(`${API_URL}/api/videos/${id}/metadata`, {
@@ -1298,10 +1322,10 @@ export default function ProcessVideoScreen() {
       selectedSteps.translate ||
       selectedSteps.burn ||
       selectedSteps.metadataZh ||
-      selectedSteps.metadataEn;
+      selectedSteps.metadataEn || selectedSteps.metadataJa;
     const needsTranslate = selectedSteps.translate || selectedSteps.burn;
     const needsCaption =
-      selectedSteps.caption || selectedSteps.polish || selectedSteps.metadataZh || selectedSteps.metadataEn;
+      selectedSteps.caption || selectedSteps.polish || selectedSteps.metadataZh || selectedSteps.metadataEn || selectedSteps.metadataJa;
 
     const stepMap: Record<StepKey, string> = {
       keyframes: 'keyframes',
@@ -1312,6 +1336,7 @@ export default function ProcessVideoScreen() {
       burn: 'burn',
       metadataZh: 'metadata_zh',
       metadataEn: 'metadata_en',
+      metadataJa: 'metadata_ja',
     };
     const steps = STEP_ORDER.filter((step) => selectedSteps[step]).map((step) => stepMap[step]);
     if (!steps.length) {
@@ -1355,6 +1380,7 @@ export default function ProcessVideoScreen() {
     mark('burn', selectedSteps.burn ? 'working' : 'skipped', selectedSteps.burn ? 'Queued' : 'Skipped');
     mark('metadataZh', selectedSteps.metadataZh ? 'working' : 'skipped', selectedSteps.metadataZh ? 'Queued' : 'Skipped');
     mark('metadataEn', selectedSteps.metadataEn ? 'working' : 'skipped', selectedSteps.metadataEn ? 'Queued' : 'Skipped');
+    mark('metadataJa', selectedSteps.metadataJa ? 'working' : 'skipped', selectedSteps.metadataJa ? 'Queued' : 'Skipped');
 
     processStateRef.current.stepStatus = nextStatus;
     processStateRef.current.stepDetail = nextDetail;

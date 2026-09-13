@@ -177,6 +177,7 @@ METADATA_TEMPLATE_DIR = os.path.join(
 METADATA_TEMPLATE_MAP = {
     "zh": "metadata_zh",
     "en": "metadata_en",
+    "ja": "metadata_ja",
 }
 VIDEO_PROMPT_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_prompt")
 VIDEO_SPEC_TEMPLATE_DIR = os.path.join(METADATA_TEMPLATE_DIR, "video_spec")
@@ -821,6 +822,8 @@ def _normalize_metadata_language(value: str | None) -> str | None:
         return "zh"
     if lowered in {"en", "english"}:
         return "en"
+    if lowered in {"ja", "jp", "ja-jp", "japanese"}:
+        return "ja"
     return None
 
 
@@ -5961,6 +5964,11 @@ def _prepare_publish_bundle(
         shipinhao_collection=metadata_payload.get("shipinhao_collection"),
     )
     metadata_payload["english_version"] = metadata_en
+    metadata_ja, _ = _get_latest_metadata_payload(
+        video_id_i, "ja", publication_session_id=publication_session_id
+    )
+    if metadata_ja:
+        metadata_payload["japanese_version"] = metadata_ja
     metadata_payload["source_video_path"] = file_path
 
     base_name = os.path.splitext(os.path.basename(file_path))[0]
@@ -6486,6 +6494,7 @@ def _process_publish_job(job_row: tuple) -> None:
             "keyframes",
             "metadata_zh",
             "metadata_en",
+            "metadata_ja",
             "cover",
         ]
         if not authoritative_subtitles:
@@ -11971,7 +11980,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             logo_config = _load_logo_settings_setting()
             logo_config["enabled"] = True
         needs_caption = wants("caption")
-        needs_cover = wants("cover") or wants("metadata_zh") or wants("metadata_en")
+        needs_cover = wants("cover") or any(wants(f"metadata_{lang}") for lang in METADATA_TEMPLATE_MAP)
 
         languages_override = data.get("translation_languages")
         if languages_override is None:
@@ -12250,6 +12259,27 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                 await mark("metadata_en", "done", "Completed")
             else:
                 await mark("metadata_en", "skipped", "Skipped")
+
+            if wants("metadata_ja"):
+                await mark("metadata_ja", "working", "Generating")
+                code, payload = await call_json(
+                    "POST",
+                    f"/api/videos/{video_id_i}/metadata",
+                    {
+                        "lang": "ja",
+                        "use_cache": True,
+                        "notes": notes,
+                        "usePolishedSubtitles": use_polished_subtitles,
+                        "publicationSessionId": publication_session_id,
+                    },
+                    retry_transient_http=True,
+                )
+                if code >= 400 or payload.get("status") == "failed":
+                    await mark("metadata_ja", "error", payload.get("error") or "Failed")
+                    return False, statuses, "metadata ja failed"
+                await mark("metadata_ja", "done", "Completed")
+            else:
+                await mark("metadata_ja", "skipped", "Skipped")
 
             if needs_cover:
                 await mark("cover", "working", "Extracting")
@@ -12538,6 +12568,15 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             steps["metadata_en"] = step_payload(normalized, error if normalized == "error" else None, created_at)
         else:
             steps["metadata_en"] = step_payload("idle")
+
+        ja_row = ldb.get_latest_video_metadata(video_id_i, "ja", publication_session_id=publication_session_id)
+        if ja_row:
+            _metadata_id, _language_code, status, _output_json_path, error, created_at = ja_row
+            updated_at_candidates.append(created_at)
+            normalized = normalize_status(status, {"completed"})
+            steps["metadata_ja"] = step_payload(normalized, error if normalized == "error" else None, created_at)
+        else:
+            steps["metadata_ja"] = step_payload("idle")
 
         ready_for_cover = steps.get("metadata_zh", {}).get("status") == "done"
         if ready_for_cover:

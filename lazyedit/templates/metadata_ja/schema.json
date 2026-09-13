@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "title": {"type": "string"},
+    "brief_description": {"type": "string"},
+    "middle_description": {"type": "string"},
+    "long_description": {"type": "string"},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "english_words_to_learn": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "word": {"type": "string"},
+          "timestamp_range": {
+            "type": "object",
+            "properties": {
+              "start": {"type": "string", "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$"},
+              "end": {"type": "string", "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$"}
+            },
+            "required": ["start", "end"], "additionalProperties": false
+          }
+        },
+        "required": ["word", "timestamp_range"], "additionalProperties": false
+      }
+    },
+    "teaser": {
+      "type": "object",
+      "properties": {
+        "start": {"type": "string", "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$"},
+        "end": {"type": "string", "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$"}
+      },
+      "required": ["start", "end"], "additionalProperties": false
+    },
+    "cover": {"type": "string", "pattern": "^\\d{2}:\\d{2}:\\d{2},\\d{3}$"},
+    "publish_category": {"type": "string", "enum": ["simplelife", "lazyingart", "musia", "lalachan", "lalamv"]}
+  },
+  "required": ["title", "brief_description", "middle_description", "long_description", "tags", "english_words_to_learn", "teaser", "cover", "publish_category"],
+  "additionalProperties": false
+}
