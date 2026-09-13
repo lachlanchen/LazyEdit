@@ -12,6 +12,13 @@ AutoPublish's Instagram caption builder displays Japanese, English, then Chinese
 
 Pass story context and any requested attribution through `--prompt-file`; do not hand-write a replacement publication JSON. Ask for concise prose and attribution in the descriptions when needed. Inspect the rendered caption before submitting if placement or length is important.
 
+Each metadata template should produce only its target language. The publisher,
+not the generator, composes multilingual captions. Telling the generator to put
+all three languages into each `middle_description` duplicates the final post.
+When subtitle-specific instructions leak into a description, use a concise
+metadata-only context with `--metadata-prompt-file` and selectively regenerate
+the metadata steps; keep the accepted video and subtitles unchanged.
+
 Subtitle languages remain separate from metadata languages. For English/Japanese/Chinese/French subtitles with a bottom-anchored band, use `--languages fr,zh-Hant,ja,en --subtitle-lift-ratio 0`. This one-shot option does not change global settings.
 
 Validation:
@@ -23,3 +30,17 @@ python -m unittest test_instagram_caption.py
 ```
 
 Deploy the AutoPublish submodule change to the publishing host before posting. Avoid restarting an active publishing task; use its existing auto-reload only when the queue is idle.
+
+## Recovery Notes
+
+- Inspect `git remote -v` on the deployment checkout; remote names need not
+  match the development checkout or an older deployment guide.
+- Prefer the normal LazyEdit CLI to requeue a verified current output with
+  `--no-process` and no correction/metadata prompt. Check platform receipts
+  before retrying so completed posts are not duplicated.
+- AutoPublish `/publish` accepts raw ZIP bytes with options in the query
+  string. A metadata-only retry must explicitly use `reuse_existing=true`
+  after verifying the stored ZIP. Do not send multipart form fields without
+  that flag: this implementation writes the request body as the package.
+- A selective `--steps` rerun can briefly expose previous completed status.
+  Confirm new metadata timestamps before publishing; see the related bug report.
