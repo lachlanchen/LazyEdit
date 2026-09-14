@@ -51,5 +51,17 @@ The focused suite passed 23 tests, including JavaScript syntax checks and
 no-reupload cases. The same commit was pushed and fast-forwarded onto the Pi;
 existing browser profiles were retained.
 
+## Douyin upload recovery
+
+The real publish also exposed an upload readiness problem: presence-only XPath
+checks could treat hidden controls or failure text containing `重新上传` as
+completion. AutoPublish commit `c303f9f` classifies one visible text snapshot,
+with failure and uploading states taking precedence over standalone ready
+controls. Its six focused tests bring the combined relevant suite to 29 passes.
+See [Douyin upload-state details](../AutoPublish/references/douyin-visible-upload-state-2026-09-14.md).
+Deploy this follow-up only after the active queue finishes. The active run's
+existing draft recovery completed Douyin publication and verified the title in
+management, without republishing the other platforms.
+
 Private media, context text, screenshots, and delivery receipts stay under
 ignored runtime paths. This note does not include the private conversation.
