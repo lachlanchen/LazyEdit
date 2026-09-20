@@ -3,7 +3,7 @@
 set -euo pipefail
 umask 077
 root="$HOME/Projects/LazyEditStudio"
-build_number="${LAZYEDIT_BUILD_NUMBER:-3}"
+build_number="${LAZYEDIT_BUILD_NUMBER:-4}"
 [[ "$build_number" =~ ^[0-9]+$ ]] || exit 2
 private="$HOME/.config/echomind/apple"
 keychain="$HOME/Library/Keychains/lazyedit-studio-release.keychain-db"

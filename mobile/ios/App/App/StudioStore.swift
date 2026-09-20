@@ -24,12 +24,19 @@ struct StudioJob: Identifiable {
     let status: String
     let platforms: String
     let detail: String
+    let videoID: Int?
+    let attentionMessage: String?
+    let attentionURL: String?
     init(_ value: [String: Any]) {
         id = String(describing: value["id"] ?? value["filename"] ?? "unknown")
         title = studioText(value["title"], fallback: studioText(value["filename"], fallback: "Publication"))
         status = studioText(value["status"], fallback: "unknown")
         platforms = (value["platforms"] as? [String] ?? []).joined(separator: " · ")
         detail = studioText(value["error"], fallback: studioText(value["detail"]))
+        videoID = value["video_id"] as? Int
+        let attention = value["attention"] as? [String: Any]
+        attentionMessage = attention?["status"] as? String == "required" ? studioText(attention?["message"], fallback: "Login or verification required") : nil
+        attentionURL = attentionMessage == nil ? nil : attention?["artifact_url"] as? String
     }
 }
 
@@ -77,6 +84,8 @@ final class StudioStore: ObservableObject {
     @Published var videos: [StudioVideo] = []
     @Published var jobs: [StudioJob] = []
     @Published var loadingVideos = false
+    @Published var hiddenVideos: [StudioVideo] = []
+    @Published var changingVisibility = Set<Int>()
     @Published var error: String?
     @Published var pending: PendingStudioUpload?
     @Published var uploading = false
@@ -148,6 +157,24 @@ final class StudioStore: ObservableObject {
             if studioText(result["status"]) == "unavailable" { throw StudioFailure(message: "The publication queue is temporarily unavailable.", status: 503) }
             jobs = (result["jobs"] as? [[String: Any]] ?? []).map(StudioJob.init)
             error = nil
+        } catch { report(error) }
+    }
+
+    func refreshHidden() async {
+        do {
+            let result = try await api.json("/api/videos?hidden=true")
+            hiddenVideos = (result["videos"] as? [[String: Any]] ?? []).compactMap(StudioVideo.init)
+        } catch { report(error) }
+    }
+
+    func setHidden(_ video: StudioVideo, hidden: Bool) async {
+        guard !changingVisibility.contains(video.id) else { return }
+        changingVisibility.insert(video.id)
+        defer { changingVisibility.remove(video.id) }
+        do {
+            _ = try await api.json("/v1/studio/videos/\(video.id)/visibility", method: "POST", body: ["hidden": hidden])
+            await refreshVideos()
+            await refreshHidden()
         } catch { report(error) }
     }
 

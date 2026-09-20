@@ -4,6 +4,7 @@ import Security
 struct StudioFailure: LocalizedError {
     let message: String
     let status: Int
+    var submissionRejected: Bool = false
     var errorDescription: String? { message }
 }
 
@@ -116,7 +117,7 @@ final class StudioAPI {
         guard (200..<300).contains(response.statusCode) else {
             let object = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
             let message = studioText(object?["error"], fallback: "Studio request failed (\(response.statusCode)).")
-            throw StudioFailure(message: response.statusCode == 401 ? "Your session expired. Please sign in again." : message, status: response.statusCode)
+            throw StudioFailure(message: response.statusCode == 401 ? "Your session expired. Please sign in again." : message, status: response.statusCode, submissionRejected: object?["submissionState"] as? String == "rejected")
         }
     }
 
@@ -140,12 +141,14 @@ final class StudioAPI {
         throw StudioFailure(message: "Studio is temporarily unavailable.", status: 503)
     }
 
-    func json(_ path: String, method: String = "GET", body: [String: Any]? = nil) async throws -> [String: Any] {
+    func json(_ path: String, method: String = "GET", body: [String: Any]? = nil, idempotencyKey: String? = nil) async throws -> [String: Any] {
         let result: Data
         if method == "GET" { result = try await data(path) }
         else {
             let payload = try body.map { try JSONSerialization.data(withJSONObject: $0) }
-            let (bytes, response) = try await session.data(for: request(path, method: method, body: payload))
+            var req = try request(path, method: method, body: payload)
+            if let idempotencyKey { req.setValue(idempotencyKey, forHTTPHeaderField: "Idempotency-Key") }
+            let (bytes, response) = try await session.data(for: req)
             try validate(bytes, response)
             result = bytes
         }

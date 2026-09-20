@@ -47,6 +47,10 @@ iOS build 3 introduces the approved generated ribbon app icon and native SwiftUI
 screens; see [native iOS](2026-09-20-native-ios.md). The existing video watermark
 is independent and remains unchanged. Android/PWA retain their existing icon.
 
+iOS build 4 adds native preparation/publication choices and reversible library
+removal. See [native publishing](2026-09-21-native-publishing.md) for presets,
+context correction, completed-run reuse, idempotency, and worker-only rollout.
+
 ## Apple
 
 App Store Connect app: **6814061525**.

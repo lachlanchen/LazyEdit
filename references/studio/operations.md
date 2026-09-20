@@ -50,6 +50,12 @@ Do not rerun initial bootstrap/firewall scripts against an already-live edge.
 The deployment manifest is committed; machine-specific rendered scripts and
 prior-state rollback remain in the private operational handoff.
 
+For adapter-only changes, prefer `python scripts/studio/promote_worker.py`.
+It keeps the current web assets and only stages adapter modules, worker config
+and worker unit. It does not bootstrap accounts or rewrite guard/tunnel units.
+Run `node --test studio/test.mjs studio/*.test.mjs` before staging; then activate
+with daemon-reload and restart **only** `lazyedit-studio-worker`.
+
 ## Edge update and ingress
 
 Use the same reviewed archive/digest, extract into a new edge release, then

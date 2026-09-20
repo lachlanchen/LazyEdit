@@ -91,6 +91,7 @@ struct StudioLibraryView: View {
     @EnvironmentObject private var store: StudioStore
     let onUpload: () -> Void
     @State private var search = ""
+    @State private var showHidden = false
     private var filtered: [StudioVideo] { search.isEmpty ? store.videos : store.videos.filter { $0.title.localizedCaseInsensitiveContains(search) } }
     var body: some View {
         NavigationStack {
@@ -115,11 +116,19 @@ struct StudioLibraryView: View {
                             }
                         }.padding(.vertical, 5)
                     }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button { Task { await store.setHidden(video, hidden: true) } } label: { Label("Remove", systemImage: "archivebox") }
+                            .tint(.orange).disabled(store.changingVisibility.contains(video.id))
+                    }
                 }
             }
             .navigationTitle("Your Studio")
             .searchable(text: $search, prompt: "Find a video")
-            .toolbar { ToolbarItem(placement: .navigationBarTrailing) { Button(action: onUpload) { Image(systemName: "plus") }.accessibilityLabel("Add video") } }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) { Button { showHidden = true } label: { Image(systemName: "archivebox") }.accessibilityLabel("Removed videos") }
+                ToolbarItem(placement: .navigationBarTrailing) { Button(action: onUpload) { Image(systemName: "plus") }.accessibilityLabel("Add video") }
+            }
+            .sheet(isPresented: $showHidden) { StudioRemovedVideos() }
             .navigationDestination(for: StudioVideo.self) { StudioVideoView(video: $0) }
             .refreshable { await store.refreshVideos() }
             .task { await store.refreshVideos() }
@@ -198,6 +207,7 @@ struct StudioVideoView: View {
     let video: StudioVideo
     @State private var player: AVPlayer?
     @State private var editor = false
+    @State private var composer = false
     @State private var steps: [(String, String)] = []
     var body: some View {
         ScrollView {
@@ -211,8 +221,8 @@ struct StudioVideoView: View {
                 Text(video.title).font(.title2.bold())
                 Text(video.created).foregroundStyle(.secondary).font(.subheadline)
                 StudioErrorBanner()
-                Button { player?.pause(); editor = true } label: { Label("Edit & publish", systemImage: "slider.horizontal.3").frame(maxWidth: .infinity).padding(.vertical, 8) }.buttonStyle(.borderedProminent)
-                Text("Review subtitles, metadata, logo and target platforms in the full Studio editor before publishing.").font(.footnote).foregroundStyle(.secondary)
+                Button { player?.pause(); composer = true } label: { Label("Prepare & publish", systemImage: "slider.horizontal.3").frame(maxWidth: .infinity).padding(.vertical, 8) }.buttonStyle(.borderedProminent).accessibilityIdentifier("studio.compose")
+                Button("Full editor · subtitles, metadata & cover") { player?.pause(); editor = true }
                 if !steps.isEmpty {
                     Text("Processing").font(.headline)
                     ForEach(steps, id: \.0) { item in HStack { Text(item.0); Spacer(); Text(item.1.capitalized).foregroundStyle(.secondary) }.font(.subheadline) }
@@ -224,6 +234,7 @@ struct StudioVideoView: View {
             .onDisappear { player?.pause() }
             .onChange(of: scenePhase) { phase in if phase != .active { player?.pause() } }
             .sheet(isPresented: $editor) { StudioEditorSheet(path: "/editor?videoId=\(video.id)") }
+            .sheet(isPresented: $composer, onDismiss: { Task { await loadStatus() } }) { StudioComposerView(video: video) }
     }
     private func preview() {
         guard let media = video.media else { return }
@@ -245,6 +256,7 @@ struct StudioVideoView: View {
 struct StudioJobsView: View {
     @EnvironmentObject private var store: StudioStore
     @Environment(\.scenePhase) private var scenePhase
+    @State private var selectedJob: StudioJob?
     var body: some View {
         NavigationStack {
             List {
@@ -256,9 +268,12 @@ struct StudioJobsView: View {
                         Label(job.status.capitalized, systemImage: job.status == "done" ? "checkmark.circle.fill" : "clock").foregroundStyle(job.status == "done" ? studioTint : Color.secondary)
                         Text(job.platforms).font(.caption).foregroundStyle(.secondary)
                         if !job.detail.isEmpty { Text(job.detail).font(.subheadline).foregroundStyle(.secondary) }
+                        if let attention = job.attentionMessage { Label(attention, systemImage: "qrcode.viewfinder").foregroundStyle(.orange) }
+                        Button(job.attentionMessage == nil ? "View task" : "Open login / verification") { selectedJob = job }
                     }.padding(.vertical, 8)
                 }
             }.navigationTitle("Activity")
+                .sheet(item: $selectedJob) { StudioJobSheet(job: $0) }
                 .refreshable { await store.refreshJobs() }
                 .task(id: scenePhase) {
                     guard scenePhase == .active else { return }

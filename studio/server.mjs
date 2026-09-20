@@ -8,6 +8,7 @@ import { promisify } from 'node:util';
 import { AuthStore, SCOPES, fail, secret, digest } from './auth.mjs';
 import { json, body, readJSON, proxy, validPath, startEdge } from './transport.mjs';
 import { CAPTURE_PRESET, CAPTURE_CHANNELS, capturePreparation } from './preparation.mjs';
+import { composerDefaults, validateForm, composeOptions, reuseOptions, checkPublicationJobs } from './composer.mjs';
 process.umask(0o077);
 const exec = promisify(execFile);
 const MIME={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.json':'application/json','.webmanifest':'application/manifest+json','.ttf':'font/ttf','.woff2':'font/woff2','.mp4':'video/mp4','.mov':'video/quicktime'};
@@ -23,6 +24,40 @@ export function createWorker(config) {
  const upstream=readFileSync(config.upstreamSecretFile,'utf8').trim();
  const root=resolve(config.dataRoot), incoming=join(root,'studio_uploads');mkdirSync(incoming,{recursive:true,mode:0o700});
  const locks=new Set();
+ db.exec('CREATE TABLE IF NOT EXISTS hidden_media (owner TEXT, video_id INTEGER, created INTEGER, PRIMARY KEY(owner,video_id))');
+ const hidden = (p,id) => Boolean(db.prepare('SELECT 1 FROM hidden_media WHERE owner=? AND video_id=?').get(p.owner,id));
+ async function composerSettings() {
+  const keys=['publish_options','burn_layout','logo_settings','translation_languages','publish_platforms'];
+  return Object.fromEntries(await Promise.all(keys.map(async k=>[k,(await backend('/api/ui-settings/'+k)).value])));
+ }
+ async function geometry(video, fill) {
+  if(config.geometry) return config.geometry(video,fill); // injected in isolated contract tests
+  const result=await exec(config.python||'python',[new URL('./layout_preview.py',import.meta.url).pathname,
+   video.file_path,JSON.stringify(fill||{}),config.sourceRoot||resolve(root,'..')],{timeout:30000,maxBuffer:1024**2});
+  return JSON.parse(result.stdout);
+ }
+ async function composerPlan(id, form) {
+  const f=validateForm(form),video=await backend('/api/videos/'+id);
+  if(f.mode==='reuse') {
+   const sessions=await backend(`/api/videos/${id}/publication-sessions`);
+   const session=f.sessionID?sessions.sessions?.find(s=>s.id===f.sessionID):null;
+   if(f.sessionID&&!session)fail(404,'Publication run not found');
+   const query=f.sessionID?`?publicationSessionId=${f.sessionID}`:'';
+   const [burn,status]=await Promise.all([backend(`/api/videos/${id}/burn-subtitles${query}`),backend(`/api/videos/${id}/process-status${query}`)]);
+   const options=reuseOptions(session,burn,status);
+   return {form:f,options,preview:burn.output_url,summary:['Reuse '+(session?.title||'current output')+' without changing its render or metadata.', 'Only the selected new platforms will receive this run.']};
+  }
+  const settings=await composerSettings(),source=await geometry(video,{enabled:false});
+  const options=composeOptions(f,settings,source);
+  const layout=await geometry(video,options.burnLayout.portraitBlurFill);
+  return {form:f,options,geometry:layout,summary:[
+   f.burnSubtitles?'Subtitles, top to bottom: '+[...f.languages].reverse().join(' · '):'No burned subtitles',
+   f.burnSubtitles?'Corrected source, grammar colours, Japanese readings and Chinese pinyin.':'Transcription and context can still inform metadata.',
+   f.logo?'Existing Studio logo · '+f.logoPosition:'No logo',
+   source.portrait?'Portrait source stays unchanged; background fill is off.':layout.fill?'Portrait background fill · '+Math.round(layout.bottom/layout.outputHeight*100)+'% bottom space':'Original aspect ratio',
+   'A new run preserves previous outputs. Website defaults are unchanged.',
+  ]};
+ }
  async function backend(path,method='GET',data){
   const r=await fetch(`http://127.0.0.1:${config.backendPort}${path}`,{method,headers:data?{'content-type':'application/json'}:{},body:data?JSON.stringify(data):undefined,signal:AbortSignal.timeout(600000)});
   const text=await r.text();let d;try{d=JSON.parse(text)}catch{fail(502,'Unexpected worker reply');}if(!r.ok)fail(r.status,d.error||'Worker request failed');return d;
@@ -161,6 +196,57 @@ export function createWorker(config) {
   if(path==='/v1/studio/upload-complete'&&method==='POST'){scope(p,'media.upload');json(res,200,await finalize(p,(await readJSON(req)).uploadId));return;}
   if(['/upload-stream','/v1/studio/media'].includes(path)&&method==='PUT'){json(res,200,await directUpload(req,p,u));return;}
   if(path==='/v1/studio/capabilities'&&method==='GET'){json(res,200,{apiVersion:'1',legacyBridgeCompatible:true,resumableUpload:true,accountLink:'device-authorization',publicRegistration:false,preparationPresets:[CAPTURE_PRESET],nativeReview:true,defaultCapturePlatforms:CAPTURE_CHANNELS,platforms:['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'],scopes:p.scopes});return;}
+  const native=/^\/v1\/studio\/videos\/(\d+)\/(composer|plan|submit|visibility|submission)$/.exec(path);
+  if(native){
+   if(p.kind!=='browser')fail(403,'Studio owner session required');
+   const id=numeric(native[1]),action=native[2];scope(p,method==='GET'?'media.read':action==='submit'?'edit.submit':'media.read');
+   if(action==='submission'&&method==='GET'){
+    const prior=db.prepare('SELECT response,state FROM intents WHERE owner=? AND key=?').get(p.owner,u.searchParams.get('key'));
+    json(res,200,prior?{state:prior.state,result:prior.response?JSON.parse(prior.response):null}:{state:'not_submitted'});return;
+   }
+   if(action==='visibility'&&method==='POST'){
+    await backend('/api/videos/'+id);const d=await readJSON(req,1024);
+    if(typeof d.hidden!=='boolean')fail(400,'hidden must be a boolean');
+    if(d.hidden)db.prepare('INSERT OR REPLACE INTO hidden_media VALUES(?,?,?)').run(p.owner,id,Date.now());
+    else db.prepare('DELETE FROM hidden_media WHERE owner=? AND video_id=?').run(p.owner,id);
+    json(res,200,{videoId:id,hidden:d.hidden});return;
+   }
+   if(action==='composer'&&method==='GET'){
+    const [settings,sessions,video]=await Promise.all([composerSettings(),backend(`/api/videos/${id}/publication-sessions`),backend(`/api/videos/${id}`)]);
+    json(res,200,{defaults:composerDefaults(settings),sessions:sessions.sessions||[],geometry:await geometry(video,{enabled:false})});return;
+   }
+   if(action==='plan'&&method==='POST'){
+    const plan=await composerPlan(id,await readJSON(req,100000));plan.planDigest=digest(JSON.stringify(plan.options));delete plan.options;json(res,200,plan);return;
+   }
+   if(action==='submit'&&method==='POST'){
+    const d=await readJSON(req,110000);if(!['prepare','publish'].includes(d.action))fail(400,'Invalid action');
+    if(d.action==='publish'){scope(p,'publication.publish');if(d.confirmation!=='PUBLISH')fail(400,'Confirm publication first');}
+    const lock='compose:'+id;if(locks.has(lock))fail(409,'Submission in progress. Check Activity');locks.add(lock);
+    try{
+     const result=await once(p,req,{path,data:d},async plan=>{
+      if(d.action==='publish')return backend(`/api/videos/${id}/publish`,'POST',{platforms:plan.form.platforms,options:plan.options,persistSettings:false,wait:false});
+      const o=plan.options;
+      const steps=['transcribe',...(o.autoCorrectSubtitles?['polish']:[]),...(o.burnSubtitles?['translate']:[]),'keyframes','metadata_zh','metadata_en','metadata_ja','cover',...((o.burnSubtitles||o.logo.enabled||o.burnLayout.portraitBlurFill.enabled)?['burn']:[])];
+      return backend(`/api/videos/${id}/process`,'POST',{...o,steps,async:true,notes:o.metadataPrompt});
+     },async()=>{
+      const f=validateForm(d.form);if(d.action==='prepare'&&f.mode==='reuse')fail(400,'A reused run does not need processing');
+      if(d.action==='publish'&&!f.platforms.length)fail(400,'Choose at least one platform');
+      checkPublicationJobs((await backend('/api/autopublish/queue')).jobs,id,f.platforms,d.action==='publish');
+      const status=await backend(`/api/videos/${id}/process-status`);
+      if(Object.values(status.steps||{}).some(s=>s.status==='working'))fail(409,'This video is being prepared. Wait for its current run');
+      const plan=await composerPlan(id,f);
+      if(d.planDigest!==digest(JSON.stringify(plan.options)))fail(409,'Studio defaults or this run changed. Review the choices again');
+      return plan;
+     });json(res,200,result);return;
+    }catch(e){
+     const key=req.headers['idempotency-key'];
+     const intent=typeof key==='string'?db.prepare('SELECT state FROM intents WHERE owner=? AND key=?').get(p.owner,key):null;
+     if(!intent&&e.status&&e.status<500){json(res,e.status,{error:e.message,submissionState:'rejected'});return;}
+     throw e;
+    }finally{locks.delete(lock);}
+   }
+   fail(405,'Method not allowed');
+  }
   if(path==='/v1/studio/artifact'&&method==='GET'){
    scope(p,'publication.prepare');const id=numeric(u.searchParams.get('videoId'));auth.own(p,id);
    json(res,200,await artifact(id));return;
@@ -171,7 +257,7 @@ export function createWorker(config) {
   }
   // Owner browser uses the established editor. Linked applications have explicit object/scope checks.
   if(path==='/api/videos'&&method==='GET'){
-   scope(p,'media.read');const d=await backend(raw);if(p.kind!=='browser')d.videos=d.videos.filter(v=>db.prepare('SELECT 1 FROM media WHERE video_id=? AND owner=?').get(v.id,p.owner));if(p.kind==='browser')json(res,200,d);else publicJSON(res,d);return;
+   scope(p,'media.read');const d=await backend(raw);if(p.kind!=='browser')d.videos=d.videos.filter(v=>db.prepare('SELECT 1 FROM media WHERE video_id=? AND owner=?').get(v.id,p.owner));else d.videos=d.videos.filter(v=>hidden(p,v.id)===(u.searchParams.get('hidden')==='true'));if(p.kind==='browser')json(res,200,d);else publicJSON(res,d);return;
   }
   if(path==='/api/autopublish/queue'&&method==='GET'){
    scope(p,'jobs.read');const d=await backend(raw);if(p.kind!=='browser')d.jobs=d.jobs.filter(j=>db.prepare('SELECT 1 FROM media WHERE video_id=? AND owner=?').get(j.video_id,p.owner));if(p.kind==='browser')json(res,200,d);else publicJSON(res,d);return;
