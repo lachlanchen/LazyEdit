@@ -3,18 +3,20 @@
   "app": "LazyEdit Studio",
   "bundleId": "art.lazying.lazyedit",
   "version": "1.0",
-  "build": 2,
   "apple": {
     "appId": "6814061525",
     "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
-    "ipaSha256": "4b3adda0eba24cf52f2f04beafcaff452f7d14ae00cbc48d3787744041c2f8f0",
-    "deliveryUuid": "231f2ef7-a27c-426e-a877-cf87053d102f",
+    "ipaSha256": "ffcdb11acfb88e92de1f6d0342bc0f5659be8e9130dfc77d4f6d051c175ca63f",
+    "deliveryUuid": "36e6e0d8-4793-42a3-a7f4-0e8a870ff3ba",
     "state": "IN_BETA_TESTING",
-    "buildId": "231f2ef7-a27c-426e-a877-cf87053d102f",
+    "buildId": "36e6e0d8-4793-42a3-a7f4-0e8a870ff3ba",
     "processingState": "VALID",
     "internalTesters": 1,
     "publicBeta": false,
-    "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/testflight"
+    "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/testflight",
+    "build": 3,
+    "nativeInterface": true,
+    "qa": "Signed simulator UI test passed; physical TestFlight installation not yet verified"
   },
   "google": {
     "appId": "4975166991517752718",
@@ -25,6 +27,8 @@
     "trackState": "Active",
     "internalTesters": 1,
     "optInUrl": "https://play.google.com/apps/internaltest/4700083281147641073",
-    "publicProduction": false
-  }
+    "publicProduction": false,
+    "build": 2
+  },
+  "sourceCommit": "de169ff"
 }
