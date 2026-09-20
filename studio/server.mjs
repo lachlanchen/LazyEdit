@@ -172,7 +172,20 @@ export function createWorker(config) {
   }
   if(path.startsWith('/media/')&&['GET','HEAD'].includes(method)){
    scope(p,'media.read');const target=resolve(root,decodeURIComponent(path.slice(7)));if(!target.startsWith(root+sep)||!existsSync(target)||!realpathSync(target).startsWith(root+sep))fail(404,'Media unavailable');
-   if(p.kind!=='browser'){const items=db.prepare('SELECT video_id FROM media WHERE owner=?').all(p.owner);let allowed=false;for(const item of items){const v=await backend('/api/videos/'+item.video_id);if(v.file_path&&target.startsWith(resolve(v.file_path,'..')+sep))allowed=true;}if(!allowed)fail(403,'Media unavailable');}
+   if(p.kind!=='browser'){
+    const items=db.prepare('SELECT video_id FROM media WHERE owner=?').all(p.owner);let allowed=false;
+    for(const item of items){
+     let v;
+     try{v=await backend('/api/videos/'+item.video_id);}
+     catch(e){
+      // A deleted video can leave an ownership row; other backend failures must fail closed.
+      if(e.status===404)continue;
+      throw e;
+     }
+     if(v.file_path&&target.startsWith(resolve(v.file_path,'..')+sep)){allowed=true;break;}
+    }
+    if(!allowed)fail(403,'Media unavailable');
+   }
    file(res,req,target);return;
   }
   if(p.kind==='browser'){

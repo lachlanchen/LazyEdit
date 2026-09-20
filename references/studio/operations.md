@@ -23,7 +23,7 @@ absent, and never rotates a password on rerun. There is no public signup.
 ## Update the workstation adapter
 
 1. Read git status, the active queue, memory and current service ownership.
-2. Run Node 22: `node --test studio/test.mjs studio/session.test.mjs`.
+2. Run Node 22: `node --test studio/test.mjs studio/session.test.mjs studio/media.test.mjs`.
 3. For UI changes, export from app/:
 
    ```sh
