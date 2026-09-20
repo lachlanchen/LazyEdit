@@ -1,12 +1,13 @@
 # LazyEdit native beta builds
 
 Application identifier: **art.lazying.lazyedit** on both platforms.
-Version 1.0: iOS build 3, Android build 2. Read store/studio/release.json for hashes and receipts;
+Version 1.0: iOS build 4, Android build 2. Read store/studio/release.json for hashes and receipts;
 a compiled binary, upload receipt, tester assignment and installation are
 different states. No public production submission was made.
 
-Verified 2026-09-20: iOS build 3 is VALID / IN_BETA_TESTING with one internal
-tester; Play internal track is Active with build 2 available to the owner.
+Verified 2026-09-21: iOS build 4 is VALID / IN_BETA_TESTING with one internal
+tester. Play internal track was verified Active with build 2 on 2026-09-20;
+this iOS release does not change Android.
 [Android test opt-in](https://play.google.com/apps/internaltest/4700083281147641073).
 For iOS, open the Apple TestFlight invitation on the owner account; no public
 join URL exists for this internal group.
@@ -64,7 +65,7 @@ An uncertain upload must be reconciled against Build Uploads before retrying.
 Internal group **LazyEdit Studio Internal** uses manual build distribution.
 The owner is its sole tester. No public TestFlight group was created.
 Use `python scripts/studio/apple_beta.py status` for read-only status.
-Once the exact build is VALID, `... apple_beta.py attach --build 3 --notes-file store/studio/ios-build-3-notes.txt` adds
+Once the exact build is VALID, `... apple_beta.py attach --build 4 --notes-file store/studio/ios-build-4-notes.txt` adds
 What to Test and attaches it once to the internal group. Inspect TestFlight's
 actual Testing/Ready state afterward. The owner's TestFlight invitation is
 separate from the Studio account password.

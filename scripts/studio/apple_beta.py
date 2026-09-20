@@ -13,7 +13,7 @@ BUNDLE = "art.lazying.lazyedit"
 GROUP = "6ce2e6a9-2d38-4bef-a317-bdd5564cb717"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("action", choices=["status", "attach"])
-parser.add_argument("--build", default="3")
+parser.add_argument("--build", default="4")
 parser.add_argument("--notes-file", type=Path, help="UTF-8 beta What to Test text for a new build")
 parser.add_argument("--key", type=Path, default=Path.home()/".config/echomind/private/AuthKey_6SSXT8QU6W.p8")
 args = parser.parse_args()

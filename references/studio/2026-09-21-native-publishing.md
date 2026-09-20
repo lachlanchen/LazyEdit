@@ -148,3 +148,19 @@ provider validation; a successful local build alone is not TestFlight delivery.
   Only the Studio worker restarted. Temporary generated library rows are
   cleaned up after confirming they have no publication jobs. No real social
   post was made as a regression test.
+
+## Private TestFlight delivery
+
+Version **1.0 (4)** was validated, uploaded once and attached to the existing
+owner-only internal group on 2026-09-21. Apple reports **VALID** and
+**IN_BETA_TESTING** with one tester. The build/delivery ID is
+`c3775319-c124-4805-b692-4cfb9281f01e`; source is `c72357c` and IPA SHA-256 is
+`7a2bdbb8daa4a8f0ab776c1c7346b872fe5e0dc82ff464a2dcf8a45dfbbddf43`.
+The owner can update LazyEdit Studio in TestFlight. Physical installation of
+this new build remains unverified; Android remains its independent build 2.
+
+Signed artifact, provider receipts, simulator screenshots and cleanup records
+are in the private Nutstore `Share/LazyEdit/runtime/2026-09-21-native-composer/`
+folder. The dedicated simulator is shut down, the temporary Mac QA credential
+copy is removed, and obsolete release-owned log streams were stopped. Shared
+simulators, desktops and publication services were preserved.
