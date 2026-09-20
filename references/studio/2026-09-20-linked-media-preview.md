@@ -41,4 +41,27 @@ return matching bytes/digest, HEAD 200 and Range 206 after deployment, with
 anonymous/revoked access denied. Test through the LightMind browser companion
 as well. This repair does not authorize processing or a social-media post.
 
-Deployment and final live acceptance are recorded after verification.
+## Verified Deployment
+
+Deployed the server change from `3efcecd` as immutable release
+`studio-bfcceea4b1f9` (archive SHA-256
+`bfcceea4b1f9918ebbc9125fffb7052ef01fb00a9c372b5c09d6ff7a569c34c8`).
+Only the server file and new media test differ from the previous release.
+The checkout suite passed 15 tests; the pinned deployed suite passed 14
+(its existing session test file is older and was intentionally preserved).
+The staging harness initially lacked React test dependencies; reusing the
+existing checkout's Node dependency path resolved that before any service edit.
+
+The same synthetic video now returns GET 200, HEAD 200 and Range 206. Its
+115,415 bytes match the original receipt digest. Anonymous GET returned 401;
+the scoped regression grant was revoked and rejected afterward. Real LightMind
+PWA browser playback through the same-origin BFF reached readyState 4, showed
+640x360 video, advanced playback time and reported no media error. The separate
+browser test grant was revoked through the UI. No processing/publication ran.
+
+Only `lazyedit-studio-worker` restarted. Guard and tunnel PIDs were unchanged.
+Previous release and private config/unit snapshots remain available for
+rollback; account/upload data were not edited. Temporary browser/noVNC processes
+were stopped after evidence capture. The broader login-form and immutable
+publication-queue concerns in LightMind's provider follow-up are not fixed by
+this media-only patch.
