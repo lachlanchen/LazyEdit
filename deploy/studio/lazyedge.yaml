@@ -1,0 +1,33 @@
+apiVersion: lazyedge.lazying.art/v1alpha1
+kind: EdgeProject
+metadata:
+  name: lazyedit-studio
+spec:
+  edge:
+    gatewayListen: 127.0.0.1:18795
+    httpPort: 18080
+    httpsPort: 18443
+  transport:
+    provider: openssh-reverse
+    sshHost: 179.236.105.35
+    sshUser: lazystudio-tunnel
+    sshPort: 2222
+  services:
+    - id: studio
+      profile: generic-http
+      domains: [edit.lazying.art]
+      edge:
+        upstream: http://127.0.0.1:18796
+      worker:
+        listen: 127.0.0.1:18797
+        target: http://127.0.0.1:18798
+        healthPath: /healthz
+      public:
+        tokenSet: studio-facade
+        forwardCookies: true
+        maxBodyBytes: 268435456
+        maxConcurrentRequests: 12
+        idleTimeoutSeconds: 900
+        routes:
+          - path: /studio/bridge
+            methods: [GET, HEAD, POST, PUT, DELETE, OPTIONS]

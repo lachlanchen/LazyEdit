@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">LazyEdit Studio</string>
+    <string name="title_activity_main">LazyEdit Studio</string>
+    <string name="package_name">art.lazying.lazyedit</string>
+    <string name="custom_url_scheme">art.lazying.lazyedit</string>
+</resources>

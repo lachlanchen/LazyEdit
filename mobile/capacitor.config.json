@@ -1,0 +1,17 @@
+{
+  "appId": "art.lazying.lazyedit",
+  "appName": "LazyEdit Studio",
+  "webDir": "www",
+  "server": {
+    "url": "https://edit.lazying.art",
+    "cleartext": false,
+    "errorPath": "index.html"
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

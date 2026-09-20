@@ -20,6 +20,7 @@ import { useRouter } from 'expo-router';
 import { useI18n } from '@/components/I18nProvider';
 import VeniceA2EPanel from '@/components/VeniceA2EPanel';
 import { subscribeStudioRefresh, triggerStudioRefresh } from '@/lib/studioRefresh';
+import { uploadRemoteVideo } from '@/lib/remoteStudioUpload';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
 
@@ -80,6 +81,9 @@ const uploadVideoViaStream = async (
 ) => {
   const directFile = (asset as any).file as File | undefined;
   const blob = directFile || await fetch(asset.uri).then((resp) => resp.blob());
+  if (process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1' && Platform.OS === 'web') {
+    return uploadRemoteVideo(API_URL, blob, asset.name || 'video.mp4');
+  }
   const params = new URLSearchParams({
     filename: asset.name || 'video.mp4',
     source,
@@ -230,6 +234,7 @@ export default function HomeScreen() {
   const [activeTab, setActiveTab] = useState<
     'upload' | 'generate' | 'venice_a2e' | 'wan_26' | 'remix' | 'api'
   >(() => {
+    if (process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1') return 'upload';
     if (Platform.OS !== 'web') return 'upload';
     try {
       const saved = localStorage.getItem('lazyedit:homeTab');
@@ -1725,7 +1730,7 @@ const HISTORY_KEYS = {
               { key: 'wan_26', label: t('home_tab_wan_26') },
               { key: 'api', label: t('home_tab_api') },
               { key: 'remix', label: t('home_tab_remix') },
-            ].map((tab) => {
+            ].filter((tab) => process.env.EXPO_PUBLIC_REMOTE_STUDIO !== '1' || ['upload', 'api'].includes(tab.key)).map((tab) => {
               const isActive = activeTab === tab.key;
               return (
                 <Pressable

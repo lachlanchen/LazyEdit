@@ -1,0 +1,11 @@
+node_modules/
+*.jks
+*.keystore
+*.mobileprovision
+*.p12
+*.p8
+*.ipa
+*.apk
+*.aab
+release/
+.DS_Store

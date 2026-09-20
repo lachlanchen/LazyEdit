@@ -1,0 +1,30 @@
+{
+  "updated": "2026-09-20",
+  "app": "LazyEdit Studio",
+  "bundleId": "art.lazying.lazyedit",
+  "version": "1.0",
+  "build": 2,
+  "apple": {
+    "appId": "6814061525",
+    "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
+    "ipaSha256": "4b3adda0eba24cf52f2f04beafcaff452f7d14ae00cbc48d3787744041c2f8f0",
+    "deliveryUuid": "231f2ef7-a27c-426e-a877-cf87053d102f",
+    "state": "IN_BETA_TESTING",
+    "buildId": "231f2ef7-a27c-426e-a877-cf87053d102f",
+    "processingState": "VALID",
+    "internalTesters": 1,
+    "publicBeta": false,
+    "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/testflight"
+  },
+  "google": {
+    "appId": "4975166991517752718",
+    "track": "internal",
+    "state": "available_to_internal_testers",
+    "apkSha256": "45e73c1d6d8e6e1bddd572edcbdb8549a22d7ecad94076dbe68375ad6db0ecfa",
+    "aabSha256": "020f02ced875d6e14f18e2a9485a1429540a96ebacf94060a95b03d332d931f8",
+    "trackState": "Active",
+    "internalTesters": 1,
+    "optInUrl": "https://play.google.com/apps/internaltest/4700083281147641073",
+    "publicProduction": false
+  }
+}

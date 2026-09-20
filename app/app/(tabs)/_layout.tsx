@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs, usePathname, useRouter } from 'expo-router';
-import { Image, Platform, Pressable, Text, View } from 'react-native';
+import { Image, Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
 
 import Colors from '@/constants/Colors';
 import { useI18n } from '@/components/I18nProvider';
@@ -24,6 +24,8 @@ export default function TabLayout() {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useI18n();
+  const { width } = useWindowDimensions();
+  const compactRemote = process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1' && width < 600;
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
@@ -82,9 +84,9 @@ export default function TabLayout() {
                 accessibilityLabel="LazyEdit logo"
               />
             </View>
-            <Text style={{ fontSize: 16, fontWeight: '700', color: '#0f172a' }}>
+            {!compactRemote && <Text style={{ fontSize: 16, fontWeight: '700', color: '#0f172a' }}>
               {t('header_title')}
-            </Text>
+            </Text>}
           </View>
         ),
         headerRight: () => (
