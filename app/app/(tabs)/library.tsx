@@ -15,6 +15,7 @@ type Video = {
   file_path: string;
   media_url?: string | null;
   preview_media_url?: string | null;
+  preview_image_url?: string | null;
   created_at?: string;
 };
 
@@ -127,7 +128,8 @@ export default function LibraryScreen() {
                     style: { width: '100%', height: '100%', borderRadius: 10, objectFit: 'cover' },
                     muted: true,
                     playsInline: true,
-                    preload: 'metadata',
+                    preload: process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1' ? 'none' : 'metadata',
+                    poster: resolveMediaSrc(item.preview_image_url) || undefined,
                   })
                 ) : (
                   <Text style={styles.previewLabel}>{t('library_preview')}</Text>

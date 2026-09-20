@@ -128,6 +128,7 @@ type Video = {
   file_path: string;
   media_url?: string | null;
   preview_media_url?: string | null;
+  preview_image_url?: string | null;
   created_at?: string;
   source?: string | null;
 };
@@ -1000,6 +1001,9 @@ const HISTORY_KEYS = {
   };
 
   useEffect(() => {
+    // These generation tools are hidden in the remote Studio. Their large
+    // histories must not compete with upload/editor requests on the tunnel.
+    if (process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1') return;
     loadPromptSettings();
     (async () => {
       try {
@@ -2662,7 +2666,8 @@ const HISTORY_KEYS = {
                             style: { width: '100%', height: '100%', borderRadius: 10, objectFit: 'cover' },
                             muted: true,
                             playsInline: true,
-                            preload: 'metadata',
+                            preload: process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1' ? 'none' : 'metadata',
+                            poster: resolveMediaSrc(video.preview_image_url) || undefined,
                           });
                         }
                         return <Text style={styles.previewLabel}>{t('library_preview')}</Text>;

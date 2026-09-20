@@ -23,7 +23,7 @@ absent, and never rotates a password on rerun. There is no public signup.
 ## Update the workstation adapter
 
 1. Read git status, the active queue, memory and current service ownership.
-2. Run Node 22: `node --test studio/test.mjs`.
+2. Run Node 22: `node --test studio/test.mjs studio/session.test.mjs`.
 3. For UI changes, export from app/:
 
    ```sh
@@ -81,6 +81,10 @@ before expiry using the pinned LazyEdge CLI, update the private token file and
 restart only the facade. Owner access/refresh tokens are separate.
 
 ## Operational limits and failure handling
+
+The hosted UI's bounded GET scheduler and error normalization are required for
+iOS/Android as well as PWA operation. Do not remove them or enable eager video
+list preloads on the remote app. See [React #31 incident and regression checks](2026-09-20-ios-react31.md).
 
 - HuanaYun's 2 Mbps is the media bottleneck: 100 MB takes at least ~6m40s.
   Chunks improve recovery, not bandwidth. The edge never stores full videos.

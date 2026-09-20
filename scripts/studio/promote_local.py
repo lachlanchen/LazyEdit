@@ -4,7 +4,10 @@ import hashlib,json,os,pathlib,shutil,subprocess,tarfile
 os.umask(0o077)
 r=pathlib.Path(__file__).resolve().parents[2]; p=pathlib.Path.home()/'.config/lazyedit-studio';node=pathlib.Path.home()/'.nvm/versions/node/v22.21.0/bin/node'
 dist=r/'temp/studio-deploy/webdist';index=dist/'index.html';s=index.read_text()
-if '/studio-session.js' not in s:s=s.replace('</head>','<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/studio-icon.png"><script src="/studio-session.js"></script></head>');index.write_text(s)
+if '/studio-session.js' not in s:s=s.replace('</head>','<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/studio-icon.png"><script src="/studio-session.js" defer></script></head>')
+s=s.replace('<script src="/studio-session.js"></script>','<script src="/studio-session.js" defer></script>')
+if 'id="studio-loading"' not in s:s=s.replace('</body>',(r/'studio/web/loading.html').read_text()+'\n</body>')
+index.write_text(s)
 archive=r/'temp/studio-deploy/studio-release.tar.gz'
 with tarfile.open(archive,'w:gz') as tar:
  for f in sorted((r/'studio').rglob('*')):

@@ -1,0 +1,23 @@
+<!-- Visible before the React bundle and fonts finish loading. -->
+<div id="studio-loading" role="status" aria-live="polite">
+  <style>
+    #studio-loading{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#f0f5f1;color:#18342e;font:16px/1.5 system-ui,sans-serif;text-align:center;padding:28px}
+    #studio-loading strong{font-size:24px;letter-spacing:-.5px}
+    #studio-loading p{margin:0;color:#536960}
+    #studio-loading .studio-spinner{width:32px;height:32px;border:3px solid #d7e4dd;border-top-color:#215f49;border-radius:50%;animation:studio-spin 1s linear infinite}
+    #studio-loading-actions{max-width:320px}
+    #studio-loading-actions p{font-size:14px;margin:8px 0 16px}
+    #studio-loading button,#studio-loading a{display:inline-block;padding:10px 16px;margin:4px;border:0;border-radius:10px;background:#215f49;color:white;font:inherit;cursor:pointer;text-decoration:none}
+    #studio-loading a{background:#e3ece6;color:#244b3b}
+    @keyframes studio-spin{to{transform:rotate(360deg)}}
+    @media(prefers-reduced-motion:reduce){#studio-loading .studio-spinner{animation:none}}
+  </style>
+  <div class="studio-spinner" aria-hidden="true"></div>
+  <strong>LazyEdit Studio</strong>
+  <p>Opening your workspace…</p>
+  <div id="studio-loading-actions" hidden>
+    <p>This is taking a little longer. You can reload or return to sign in.</p>
+    <button id="studio-reload" type="button">Reload</button>
+    <a href="/login">Sign in</a>
+  </div>
+</div>
