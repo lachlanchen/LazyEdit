@@ -1,0 +1,9 @@
+Native iOS Studio: sign in, browse/search your library, upload from Photos or Files, preview videos and check publication activity with native controls.
+
+Your session is saved in Keychain. Uploads retain a local copy and can resume after an interruption or app relaunch. Keep the app open for long transfers.
+
+Edit & publish opens the existing full Studio editor for the selected video. Review your subtitle, logo, metadata and platform settings before submitting a publication.
+
+Also fixes the structured-error React crash and blank loading transition in the shared web editor. New forest-teal Studio app icon; video watermarks are unchanged.
+
+Please check login, all four tabs, picking/uploading a short video, preview and reopening the app. Publication remains an explicit action.

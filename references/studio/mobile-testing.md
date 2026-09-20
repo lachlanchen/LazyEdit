@@ -30,8 +30,9 @@ Use the LazyEdit conda python. Android signing is generated once in private
 ~/.config/lazyedit-studio/android and backed up to Nutstore Share/LazyEdit.
 Preserve that upload key; do not regenerate it for a later release.
 
-Increment Android versionCode and iOS CURRENT_PROJECT_VERSION together before
-another upload. build_ios.sh accepts LAZYEDIT_BUILD_NUMBER for artifact naming;
+Increment the platform-specific Android versionCode or iOS
+CURRENT_PROJECT_VERSION before uploading that platform. Independent platform
+releases do not require rebuilding the other app. build_ios.sh accepts LAZYEDIT_BUILD_NUMBER for artifact naming;
 the Xcode project build number must independently match that value.
 
 Sync mobile/ios to the existing Mac project's ios/ directory (without --delete),
@@ -42,8 +43,9 @@ locks its keychain on exit, then verifies the signed archive. Do not alter
 another app's profile, keychain, default Xcode or running simulator.
 
 Copying/syncing Capacitor source never replaces store application identities.
-This project reuses the original LazyEdit panda logo rasterized from figs/logo.svg;
-it does not invent a new logo.
+iOS build 3 introduces the approved generated ribbon app icon and native SwiftUI
+screens; see [native iOS](2026-09-20-native-ios.md). The existing video watermark
+is independent and remains unchanged. Android/PWA retain their existing icon.
 
 ## Apple
 
@@ -100,3 +102,21 @@ server.errorPath, on both platforms. Do not solve this by disabling TLS.
 Shared store browser: retain it for the owner; stop only this project's review
 desktop/emulator/simulator after evidence capture. The private runtime handoff
 records exact ownership and noVNC URL.
+
+## Shared physical Android review devices
+
+Owner-provided noVNC endpoints (2026-09-20):
+
+- `http://127.0.0.1:6129/vnc.html?host=127.0.0.1&port=6129&autoconnect=1&resize=scale&reconnect=1&reconnect_delay=1000`
+- `http://127.0.0.1:16089/vnc.html?host=127.0.0.1&port=16089&autoconnect=1&resize=scale&reconnect=1&reconnect_delay=1000`
+
+Prefer Mi10 Pro for Android checks. Before interacting, identify the actual
+device/owner behind the endpoint and confirm no other project is actively using
+it. Local process ownership identifies port 6129 as the AgenticApp Mi Mix 2S
+desktop. Port 16089 is forwarded through `lazy-7090` to 6089; verify the
+remote device before treating it as Mi10 Pro. Reuse the existing desktop, and never restart its shared
+phone, ADB/scrcpy bridge or noVNC stack merely for a LazyEdit test. These Android
+devices do not replace iOS simulator/TestFlight qualification.
+The owner prefers confirming normal Google sign-in prompts on an available
+Android device; do not initiate account recovery when an ordinary confirmation
+is sufficient.

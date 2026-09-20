@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocalSearchParams } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {
   ActivityIndicator,
@@ -277,6 +278,10 @@ const calculatePortraitLayoutMetrics = (
 const formatMetricPercent = (value: number) => `${Math.round(value * 100)}%`;
 
 export default function EditorScreen() {
+  const { videoId: routeVideoId } = useLocalSearchParams<{ videoId?: string }>();
+  const requestedVideoId = typeof routeVideoId === 'string' && /^[1-9]\d*$/.test(routeVideoId)
+    ? Number(routeVideoId) : null;
+  const routeSelectionApplied = useRef<string | undefined>(undefined);
   const defaultPublishSelection = useMemo(
     () => ({
       douyin: false,
@@ -765,19 +770,29 @@ export default function EditorScreen() {
     try {
       const resp = await fetch(`${API_URL}/api/videos`);
       const json = await resp.json();
-      const items = json.videos || [];
+      if (!resp.ok || !Array.isArray(json.videos)) return;
+      const items: Video[] = json.videos;
       setVideos(items);
+      const applyRoute = routeSelectionApplied.current !== routeVideoId;
+      routeSelectionApplied.current = routeVideoId;
+      if (applyRoute && requestedVideoId) {
+        const index = items.findIndex((video) => video.id === requestedVideoId);
+        setSelectedVideoId(index >= 0 ? requestedVideoId : null);
+        if (index >= 0) setVisibleCount(Math.max(PAGE_SIZE, index + 1));
+        // Never silently open a different video for a missing deep link.
+        return;
+      }
       setVisibleCount((current) => Math.min(Math.max(current, PAGE_SIZE), items.length));
       setSelectedVideoId((current) => {
         if (current && items.some((video: Video) => video.id === current)) return current;
-        return items[0]?.id ?? null;
+        return routeVideoId ? null : items[0]?.id ?? null;
       });
     } catch (_err) {
       // ignore fetch errors
     } finally {
       if (!silent) setLoadingVideos(false);
     }
-  }, []);
+  }, [routeVideoId, requestedVideoId]);
 
   const runVisiblePreviewBackfill = useCallback(async () => {
     if (previewProxyRunningRef.current) return;

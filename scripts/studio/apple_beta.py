@@ -13,7 +13,8 @@ BUNDLE = "art.lazying.lazyedit"
 GROUP = "6ce2e6a9-2d38-4bef-a317-bdd5564cb717"
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("action", choices=["status", "attach"])
-parser.add_argument("--build", default="2")
+parser.add_argument("--build", default="3")
+parser.add_argument("--notes-file", type=Path, help="UTF-8 beta What to Test text for a new build")
 parser.add_argument("--key", type=Path, default=Path.home()/".config/echomind/private/AuthKey_6SSXT8QU6W.p8")
 args = parser.parse_args()
 token = jwt.encode(
@@ -45,13 +46,16 @@ if args.action == "attach":
     if not build or build["attributes"]["processingState"] != "VALID" or build["attributes"]["expired"]:
         raise RuntimeError("Exact build must be VALID and unexpired")
     identifier = build["id"]
+    notes_text = args.notes_file.read_text().strip() if args.notes_file else (
+        "Private owner beta: sign in, upload a video, open the editor, preview output, "
+        "and verify reconnect behavior. Social publication requires your explicit action.")
+    if not notes_text or len(notes_text) > 4000:
+        raise RuntimeError("Beta notes must contain 1–4000 characters")
     notes = api("GET", "builds/"+identifier+"/betaBuildLocalizations")["data"]
     if not any(item["attributes"]["locale"] == "en-US" for item in notes):
         api("POST", "betaBuildLocalizations", json={"data": {
             "type": "betaBuildLocalizations",
-            "attributes": {"locale": "en-US", "whatsNew":
-                "Private owner beta: sign in, upload a video, open the editor, preview output, "
-                "and verify reconnect behavior. Social publication requires your explicit action."},
+            "attributes": {"locale": "en-US", "whatsNew": notes_text},
             "relationships": {"build": {"data": {"type": "builds", "id": identifier}}}}})
     attached = api("GET", "betaGroups/"+GROUP+"/relationships/builds")["data"]
     if not any(item["id"] == identifier for item in attached):
