@@ -7,6 +7,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { AuthStore, SCOPES, fail, secret, digest } from './auth.mjs';
 import { json, body, readJSON, proxy, validPath, startEdge } from './transport.mjs';
+import { CAPTURE_PRESET, CAPTURE_CHANNELS, capturePreparation } from './preparation.mjs';
 process.umask(0o077);
 const exec = promisify(execFile);
 const MIME={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.json':'application/json','.webmanifest':'application/manifest+json','.ttf':'font/ttf','.woff2':'font/woff2','.mp4':'video/mp4','.mov':'video/quicktime'};
@@ -37,6 +38,34 @@ export function createWorker(config) {
  }
  function scope(p,value){if(!p.scopes.includes(value))fail(403,'Required scope: '+value);}
  function publicJSON(res,value,status=200){json(res,status,clean(value));}
+ async function artifact(id) {
+  const b=await backend(`/api/videos/${id}/burn-subtitles`);
+  if(b.status!=='completed'||!b.output_path)fail(409,'Render incomplete');
+  const target=realpathSync(b.output_path);if(!target.startsWith(realpathSync(root)+sep))fail(409,'Render outside data root');
+  const h=createHash('sha256');for await(const c of createReadStream(target))h.update(c);
+  return {videoId:id,sha256:h.digest('hex'),byteLength:statSync(target).size,media_url:b.output_url,config:clean(b.config)};
+ }
+ async function review(id) {
+  const rendered=await artifact(id),metadata={};
+  for(const language of ['zh','en','ja']) {
+   const m=await backend(`/api/videos/${id}/metadata?lang=${language}`);
+   if(m.status!=='completed'||!m.metadata)fail(409,'Metadata incomplete');
+   metadata[language]=clean(m.metadata);
+  }
+  const cover=await backend(`/api/videos/${id}/cover`);
+  if(cover.status!=='completed'||!cover.cover_path)fail(409,'Cover incomplete');
+  const path=realpathSync(cover.cover_path);if(!path.startsWith(realpathSync(root)+sep))fail(409,'Cover outside data root');
+  if(statSync(path).size>16*1024**2)fail(409,'Cover too large');const bytes=readFileSync(path);
+  const result={schemaVersion:'studio_review.v1',videoId:id,artifact:rendered,metadata,
+   cover:{media_url:cover.cover_url,byteLength:bytes.length,sha256:createHash('sha256').update(bytes).digest('hex')}};
+  return {...result,reviewDigest:digest(JSON.stringify(result))};
+ }
+ async function noPreviousPublication(id) {
+  const queue=await backend('/api/autopublish/queue');
+  if(!Array.isArray(queue.jobs))fail(502,'Publication status unavailable');
+  // Failed jobs may already have posted to some channels. Never auto-republish them.
+  if(queue.jobs.some(j=>Number(j.video_id)===id))fail(409,'Publication already exists; reconcile its channel receipts in Studio');
+ }
  function file(res,req,path){
   const stat=statSync(path);let start=0,end=stat.size-1,status=200;
   if(req.headers.range){const m=/^bytes=(\d*)-(\d*)$/.exec(req.headers.range);if(!m)fail(416,'Invalid range');if(!m[1])start=Math.max(0,stat.size-Number(m[2]));else{start=Number(m[1]);if(m[2])end=Number(m[2]);}if(start>end||end>=stat.size||start<0)fail(416,'Unsatisfiable range');status=206;}
@@ -84,13 +113,14 @@ export function createWorker(config) {
   try{for await(const c of req){n+=c.length;if(n>a.size)fail(413,'Declared size exceeded');writeSync(fd,c);}db.prepare('UPDATE uploads SET offset=? WHERE id=?').run(n,a.uploadId);}finally{closeSync(fd);}
   return finalize(p,a.uploadId);
  }
- async function once(p,req,payload,execute){
+ async function once(p,req,payload,execute,prepare=async()=>undefined){
   const key=req.headers['idempotency-key'];if(typeof key!=='string'||!key||key.length>128)fail(400,'Idempotency-Key required');
   const fingerprint=digest(JSON.stringify(payload));const prior=db.prepare('SELECT * FROM intents WHERE owner=? AND key=?').get(p.owner,key);
   if(prior){if(prior.fingerprint!==fingerprint)fail(409,'Idempotency conflict');if(prior.response)return JSON.parse(prior.response);fail(409,'Submission pending reconciliation; do not retry with another key');}
+  const prepared=await prepare();
   const id=secret();db.prepare('INSERT INTO intents VALUES(?,?,?,?,?,?,?)').run(id,p.owner,key,fingerprint,null,'submitting',Date.now());
   // Persist BEFORE dispatch. A crash or unknown timeout must not submit a second task.
-  const result=await execute();db.prepare('UPDATE intents SET state=?,response=? WHERE id=?').run('submitted',JSON.stringify(clean(result)),id);return result;
+  const result=await execute(prepared);db.prepare('UPDATE intents SET state=?,response=? WHERE id=?').run('submitted',JSON.stringify(clean(result)),id);return result;
  }
  async function route(req,res){
   if(req.url==='/healthz'&&req.method==='GET'){json(res,200,{status:'ok'});return;}
@@ -130,13 +160,14 @@ export function createWorker(config) {
   if(path==='/v1/studio/upload-part'&&method==='PUT'){scope(p,'media.upload');json(res,200,await append(req,p,u.searchParams.get('uploadId'),Number(req.headers['upload-offset'])));return;}
   if(path==='/v1/studio/upload-complete'&&method==='POST'){scope(p,'media.upload');json(res,200,await finalize(p,(await readJSON(req)).uploadId));return;}
   if(['/upload-stream','/v1/studio/media'].includes(path)&&method==='PUT'){json(res,200,await directUpload(req,p,u));return;}
-  if(path==='/v1/studio/capabilities'&&method==='GET'){json(res,200,{apiVersion:'1',legacyBridgeCompatible:true,resumableUpload:true,accountLink:'device-authorization',publicRegistration:false,platforms:['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'],scopes:p.scopes});return;}
+  if(path==='/v1/studio/capabilities'&&method==='GET'){json(res,200,{apiVersion:'1',legacyBridgeCompatible:true,resumableUpload:true,accountLink:'device-authorization',publicRegistration:false,preparationPresets:[CAPTURE_PRESET],nativeReview:true,defaultCapturePlatforms:CAPTURE_CHANNELS,platforms:['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'],scopes:p.scopes});return;}
   if(path==='/v1/studio/artifact'&&method==='GET'){
    scope(p,'publication.prepare');const id=numeric(u.searchParams.get('videoId'));auth.own(p,id);
-   const b=await backend(`/api/videos/${id}/burn-subtitles`);if(b.status!=='completed'||!b.output_path)fail(409,'Render incomplete');
-   const target=realpathSync(b.output_path);if(!target.startsWith(realpathSync(root)+sep))fail(409,'Render outside data root');
-   const h=createHash('sha256');for await(const c of createReadStream(target))h.update(c);
-   json(res,200,{videoId:id,sha256:h.digest('hex'),byteLength:statSync(target).size,media_url:b.output_url,config:clean(b.config)});return;
+   json(res,200,await artifact(id));return;
+  }
+  if(path==='/v1/studio/review'&&method==='GET'){
+   scope(p,'publication.prepare');scope(p,'media.read');const id=numeric(u.searchParams.get('videoId'));auth.own(p,id);
+   json(res,200,await review(id));return;
   }
   // Owner browser uses the established editor. Linked applications have explicit object/scope checks.
   if(path==='/api/videos'&&method==='GET'){
@@ -153,6 +184,14 @@ export function createWorker(config) {
    if(p.kind!=='browser'&&method==='POST'){
     if(d.publicationSessionId||u.searchParams.has('publicationSessionId'))fail(400,'Native API uses current output; select historical runs in Studio');
     if(!['process','publish','subtitle-correction'].includes(action))fail(403,'Operation reserved for Studio owner UI');
+    if(action==='process'&&Object.hasOwn(d,'preparationPreset')){
+     // Fingerprint the original brief, not mutable owner settings, so retries are stable.
+     const result=await once(p,req,{path,data:d},prepared=>backend(raw,'POST',prepared),async()=>{
+      await noPreviousPublication(id);
+      const settings=await backend('/api/ui-settings/logo_settings');
+      return capturePreparation(d,settings.value);
+     });publicJSON(res,result);return;
+    }
     if(action==='process'){const allowed=['steps','translationLanguages','translation_languages','burnSubtitles','usePolishedSubtitles','subtitleSourceVersion','notes','polish_notes','async','burnLayout','publicationSessionId','autoCorrectSubtitles','autoCorrectPrompt'];if(Object.keys(d).some(k=>!allowed.includes(k)))fail(400,'Unsupported process option');d.async=true;d.publicationMode='override';return void publicJSON(res,await once(p,req,{path,data:d},()=>backend(raw,'POST',d)));}
     if(action==='publish'){
      if(d.reviewApproved!==true||Number(d.reviewedVideoId)!==id||d.confirmation!=='PUBLISH_REVIEWED_MEDIA'||d.productionConfirmation!=='PUBLISH_REVIEWED_MEDIA_PRODUCTION')fail(400,'Explicit reviewed-media production approval required');
@@ -161,11 +200,14 @@ export function createWorker(config) {
      const burn=await backend(`/api/videos/${id}/burn-subtitles`);const target=burn.output_path||burn.outputPath;
      if(burn.status!=='completed'||!target||!realpathSync(target).startsWith(realpathSync(root)+sep))fail(409,'Rendered artifact unavailable');
      const h=createHash('sha256');for await(const c of createReadStream(target))h.update(c);if(h.digest('hex')!==d.reviewedSha256)fail(409,'Reviewed render has changed');
+     if(d.reviewedReviewDigest!==undefined&&(!/^[a-f0-9]{64}$/.test(d.reviewedReviewDigest)||
+       (await review(id)).reviewDigest!==d.reviewedReviewDigest))fail(409,'Reviewed metadata or cover has changed');
      if(d.options && Object.keys(d.options).some(k=>k!=='publishCategory'))fail(400,'Rendering changes require processing and another review');
      if(!Array.isArray(d.platforms)||!d.platforms.length||d.platforms.some(k=>!['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'].includes(k)))fail(400,'Invalid platforms');
      const render=burn.config||{};
      const options={...d.options,burnSubtitles:render.burnSubtitles!==false,translationLanguages:(render.slots||[]).map(s=>s.language).filter(Boolean),usePolishedSubtitles:render.usePolishedSubtitles!==false,burnLayout:render,logo:render.logo||{enabled:false},publicationMode:'override',autoCorrectSubtitles:false,metadataPrompt:'',useCorrectionPromptForMetadata:false};
-     const result=await once(p,req,{path,data:d},()=>backend(path,'POST',{platforms:d.platforms,options,persistSettings:false,wait:false}));publicJSON(res,result);return;
+     const result=await once(p,req,{path,data:d},()=>backend(path,'POST',{platforms:d.platforms,options,persistSettings:false,wait:false}),
+       ()=>noPreviousPublication(id));publicJSON(res,result);return;
     }
    }
    const result=await backend(raw,method,d);if(p.kind==='browser')json(res,200,result);else publicJSON(res,result);return;

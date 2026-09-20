@@ -16,6 +16,14 @@
     }
   ],
   "paths": {
+    "/v1/studio/review": {
+      "get": {
+        "summary": "Owned render, cover and zh/en/ja metadata snapshot",
+        "description": "Requires media.read and publication.prepare. Returns studio_review.v1 with videoId, artifact, metadata, cover (media_url/byteLength/sha256), and reviewDigest. Send that digest as reviewedReviewDigest when publishing. It detects changed review material at submission, not an immutable queue snapshot.",
+        "parameters": [{"in":"query","name":"videoId","required":true,"schema":{"type":"integer","minimum":1}}],
+        "responses": {"200":{"description":"Review snapshot"},"401":{"description":"Authentication required"},"403":{"description":"Scope or ownership denied"},"409":{"description":"Render, cover or metadata incomplete"}}
+      }
+    },
     "/v1/studio/health": {
       "get": {
         "summary": "Minimal public health",
@@ -741,6 +749,7 @@
           "productionConfirmation"
         ],
         "properties": {
+          "reviewedReviewDigest": {"type":"string","pattern":"^[a-f0-9]{64}$"},
           "platforms": {
             "type": "array",
             "items": {
@@ -774,7 +783,11 @@
       },
       "Process": {
         "type": "object",
+        "description": "Use either legacy process options or only preparationPreset/background/requirements. lightmind-capture.v1 prepares the full corrected EN/JA/ZH-Hant/FR, zero-lift, source-aware portrait-fill output with the configured logo. It never rotates or publishes. Text fields have an 8000-character limit. Existing publication jobs block new preset preparation.",
         "properties": {
+          "preparationPreset": {"const":"lightmind-capture.v1"},
+          "background": {"type":"string","maxLength":8000},
+          "requirements": {"type":"string","maxLength":8000},
           "steps": {
             "type": "array",
             "items": {
