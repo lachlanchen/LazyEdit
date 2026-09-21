@@ -49,6 +49,27 @@ the normal burn handler avoids that dependency rerun. This is a second recovery
 caveat: an explicitly burn-only operation should preserve reviewed translation
 edits or document that it regenerates translations.
 
+## Queue Reprocessing Caveat
+
+The corrected normal-burn output was fully decoded, visually checked, and copied
+to Nutstore. However a later CLI command using `--no-process --no-correct-subtitles`
+with the shared `--prompt-file` created job 420 and triggered processing again.
+`_process_publish_job` unconditionally enters its processing branch whenever
+`metadata_prompt` is nonempty; the CLI's no-process flag is not a queue-level
+reuse contract. Translation restored the bad token from cache again. The six
+reviewed polished source cues and their timing remained correct.
+
+This was discovered after the remote job began and accepted the Douyin publish
+action. No duplicate post was submitted to repair this single Japanese suffix.
+The corrected local export remains preserved. Future reuse must omit an already
+applied metadata prompt, or use a verified bundle reuse path until a real
+queue-level no-process contract and hash guard exist.
+
+Expected regression test: an inspected processed output plus `--no-process`
+and story context should reuse exactly that file (same SHA-256), not call
+transcribe/translate/burn again. Supplying metadata context should not silently
+invalidate reviewed video/subtitle artifacts.
+
 ## General Fix To Consider
 
 - Add an acoustic-quality gate for implausible tail cues; do not blanket-delete
