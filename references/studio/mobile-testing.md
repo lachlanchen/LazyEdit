@@ -1,7 +1,7 @@
 # LazyEdit native beta builds
 
 Application identifier: **art.lazying.lazyedit** on both platforms.
-Version 1.0: iOS build 4, Android build 2. Read store/studio/release.json for hashes and receipts;
+Version 1.0: iOS build 5, Android build 3. Read store/studio/release.json for hashes and receipts;
 a compiled binary, upload receipt, tester assignment and installation are
 different states. No public production submission was made.
 
@@ -11,6 +11,21 @@ this iOS release does not change Android.
 [Android test opt-in](https://play.google.com/apps/internaltest/4700083281147641073).
 For iOS, open the Apple TestFlight invitation on the owner account; no public
 join URL exists for this internal group.
+
+## Latest icon beta (2026-09-24)
+
+The shared launcher icon is now the vivid, symmetrical `v2` studio mark from
+`figs/app-icon/lazyedit-studio-icon-v2.png`. The build script regenerates the
+iOS icon, Android density/adaptive resources, in-app Studio mark, and PWA icon
+from that one source. The prior `v1` asset remains in the repository for
+rollback; the video watermark/logo is unrelated and unchanged.
+
+- iOS build 5: Apple delivery UUID `1906dc76-56ec-4e79-9eee-199181f20439`,
+  VALID and attached to the owner-only internal TestFlight group.
+- Android version code 3: signed AAB uploaded and published to the Internal
+  testing track; Play Console reports it available to internal testers.
+- The Android review showed only the existing supported-device warning; no
+  release-blocking error was reported.
 
 ## Rebuild
 

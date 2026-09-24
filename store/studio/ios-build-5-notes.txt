@@ -1,0 +1,1 @@
+This beta refreshes the LazyEdit Studio launcher icon with a vivid, symmetrical studio mark and keeps the existing private video editing, preview, upload, and publication workflow. Please verify sign-in, the main tabs, video upload, preview, and the native preparation/review flow.

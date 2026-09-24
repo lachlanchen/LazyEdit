@@ -1,34 +1,34 @@
 {
-  "updated": "2026-09-21",
+  "updated": "2026-09-24",
   "app": "LazyEdit Studio",
   "bundleId": "art.lazying.lazyedit",
   "version": "1.0",
   "apple": {
     "appId": "6814061525",
     "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
-    "ipaSha256": "7a2bdbb8daa4a8f0ab776c1c7346b872fe5e0dc82ff464a2dcf8a45dfbbddf43",
-    "deliveryUuid": "c3775319-c124-4805-b692-4cfb9281f01e",
+    "ipaSha256": "95dc33e67be13aeafc0358a76dc2f2012cbf7ed88f39a0b489103d7eeda06c0b",
+    "deliveryUuid": "1906dc76-56ec-4e79-9eee-199181f20439",
     "state": "IN_BETA_TESTING",
-    "buildId": "c3775319-c124-4805-b692-4cfb9281f01e",
+    "buildId": "1906dc76-56ec-4e79-9eee-199181f20439",
     "processingState": "VALID",
     "internalTesters": 1,
     "publicBeta": false,
     "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/testflight",
-    "build": 4,
+    "build": 5,
     "nativeInterface": true,
-    "qa": "21 adapter checks and signed simulator UI test passed (1 test, 0 failures, 126.728 seconds); physical TestFlight installation of build 4 not yet verified"
+    "qa": "Build 5 signed and Apple-validated; refreshed launcher icon. Existing 21 adapter checks and signed simulator UI test passed; physical TestFlight installation not yet verified"
   },
   "google": {
     "appId": "4975166991517752718",
     "track": "internal",
     "state": "available_to_internal_testers",
-    "apkSha256": "45e73c1d6d8e6e1bddd572edcbdb8549a22d7ecad94076dbe68375ad6db0ecfa",
-    "aabSha256": "020f02ced875d6e14f18e2a9485a1429540a96ebacf94060a95b03d332d931f8",
+    "apkSha256": "8350e6a5cb9da728584b4df8570b3f560a514a5ab7ad2f2579d10e02e8848856",
+    "aabSha256": "96090150d067d6c6f5283c44f9e6697107ad49424c4ff89fad15d35d7f666641",
     "trackState": "Active",
     "internalTesters": 1,
     "optInUrl": "https://play.google.com/apps/internaltest/4700083281147641073",
     "publicProduction": false,
-    "build": 2
+    "build": 3
   },
   "sourceCommit": "c72357c"
 }

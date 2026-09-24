@@ -159,6 +159,18 @@ owner-only internal group on 2026-09-21. Apple reports **VALID** and
 The owner can update LazyEdit Studio in TestFlight. Physical installation of
 this new build remains unverified; Android remains its independent build 2.
 
+## Icon beta delivery — 2026-09-24
+
+The generated `figs/app-icon/lazyedit-studio-icon-v2.png` is now the canonical
+application icon. It is vivid, saturated, centered, text-free, and shared by
+the iOS, Android, in-app, and web launcher assets. It does not replace the
+configured video watermark/logo.
+
+iOS build 5 was archived on the existing KVM Mac, uploaded once, reported
+`VALID`, and attached to the existing owner-only internal group. Delivery UUID:
+`1906dc76-56ec-4e79-9eee-199181f20439`. Android version code 3 was signed with
+the preserved upload key and published to the existing Internal testing track.
+
 Signed artifact, provider receipts, simulator screenshots and cleanup records
 are in the private Nutstore `Share/LazyEdit/runtime/2026-09-21-native-composer/`
 folder. The dedicated simulator is shut down, the temporary Mac QA credential
