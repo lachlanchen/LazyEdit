@@ -221,27 +221,6 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             "json": [{"start": start, "end": end, output_key: text}],
         }
 
-    def _same_language_japanese_result(self, subtitles):
-        same = self._same_language_plain_result(subtitles, "ja", "ja")
-        if not same:
-            return None
-        json_items = []
-        for item in same["json"]:
-            text = item.get("ja", "")
-            json_items.append({
-                "start": item["start"],
-                "end": item["end"],
-                "ja": text,
-                "ruby": text,
-                "tokens": [],
-                "furigana_pairs": [],
-            })
-        return {
-            "ruby": list(same["plain"]),
-            "plain": list(same["plain"]),
-            "json": json_items,
-        }
-
     @staticmethod
     def _format_context_value(value: str | None) -> str:
         if not value:
@@ -864,9 +843,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     ):
         """Single-pass Japanese translation + furigana using template prompt + schema."""
         print("Translating subtitles to Japanese with furigana (single pass)...")
-        same_language_result = self._same_language_japanese_result(subtitles)
-        if same_language_result:
-            return same_language_result
+        same_language_result = self._same_language_plain_result(subtitles, "ja", "ja")
 
         prompt_bundle = self._load_template_json("japanese_furigana/prompt.json")
         schema = self._load_template_json("japanese_furigana/schema.json")
@@ -884,21 +861,38 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             next_line,
         )
 
+        if same_language_result:
+            # Japanese speech still needs readings, but must not be retranslated.
+            system_content += (
+                " The source is already Japanese. Annotate it without translating, "
+                "paraphrasing, or changing punctuation. Preserve its exact text and "
+                "timestamps. Tokens must cover every source character in order, "
+                "with kana readings for all kanji."
+            )
+
         response = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=schema,
             system_content=system_content,
-            filename=self.get_filename(lang="ja_furigana_single", idx=idx),
+            filename=self.get_filename(
+                lang="ja_furigana_source" if same_language_result else "ja_furigana_single",
+                idx=idx,
+            ),
             schema_name="japanese_furigana_single_pass",
         )
 
         items = response.get("items", [])
+        if same_language_result and len(items) != 1:
+            raise ValueError("Japanese source annotation must preserve the source cue count")
         ruby_items = []
         plain_items = []
         json_items = []
         for item in items:
             start = item.get("start")
             end = item.get("end")
+            if same_language_result:
+                source = same_language_result["plain"][0]
+                start, end = source["start"], source["end"]
             if not start or not end:
                 continue
             tokens = self._normalize_tokens(item.get("tokens") or [])
@@ -910,6 +904,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                     pairs = [(token["word"], token["reading"]) for token in tokens]
             ruby_text = item.get("ruby") or self._build_ruby_from_pairs(pairs)
             plain_text = item.get("ja") or self._build_plain_from_pairs(pairs) or self.strip_brackets(ruby_text)
+            if same_language_result:
+                source = same_language_result["plain"][0]
+                if plain_text != source["ja"] or "".join(word for word, _ in pairs) != source["ja"]:
+                    raise ValueError("Japanese source annotation changed or omitted source text")
+                for word, reading in pairs:
+                    if re.search(r"[\u3400-\u4dbf\u4e00-\u9fff]", word) and (
+                        not reading or re.search(r"[\u3400-\u4dbf\u4e00-\u9fff]", reading)
+                    ):
+                        raise ValueError("Japanese source annotation is missing a kana reading")
+                ruby_text = self._build_ruby_from_pairs(pairs)
             ruby_items.append({"start": start, "end": end, "ja": ruby_text})
             plain_items.append({"start": start, "end": end, "ja": plain_text})
             json_items.append({
