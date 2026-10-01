@@ -38,26 +38,54 @@ def annotation_contract(schema, language):
         prompt += (
             f"\nRestore only confidently identified {'Sino-Korean Hanja' if language == 'ko' else 'Sino-Vietnamese Chữ Hán'} "
             f"roots using traditional Han characters in word, with their ORIGINAL {native} surface in reading. "
+            "Choose the natural translation first, then examine EVERY lexical root for restoration. "
+            "Resolve homophones using this sentence and adjacent context. Restore clear common roots; "
+            "do not skip them just because modern writing normally uses the native script. "
             "Do not invent Han etymologies, translate native words into Chinese, or replace names speculatively. "
+            "Historical etymology alone is not a conventional modern Han spelling. "
+            "Do not rewrite the translation to use more Sino-derived vocabulary. Zero restored roots is valid. "
             "Split inflection/particles from restored roots without losing characters. "
             f"For all non-restored lexical tokens keep word=surface and give {roman} in reading. "
-            "Vietnamese is already Latin-script, so IPA supplies meaningful pronunciation rather than repeating it."
+            "Before returning JSON, check for missed clear roots, wrong homophones, lost spaces, "
+            "and missing pronunciation. Return only the final JSON, without explanations. "
         )
+        if language == "ko":
+            prompt += (
+                "Example: 학교에서 -> 學校 with reading 학교, then 에서 with reading eseo. "
+                "먹어요 stays 먹어요 with reading meogeoyo; do not substitute Chinese for native words."
+            )
+        else:
+            prompt += (
+                "Example: học sinh -> 學 with reading học, space, 生 with reading sinh. "
+                "Keep native words in Quốc ngữ. Chữ Nôm conversion is not requested. "
+                "Vietnamese already uses Latin script; native-word pronunciation is Hanoi IPA, not repeated spelling."
+            )
     return schema, prompt
 
 
 def validate_annotations(items, sources, language, same_language_result=None):
     """Fail visibly rather than silently burn truncated or unannotated subtitles."""
-    if len(items) != len(sources):
+    if not isinstance(items, list) or len(items) != len(sources):
         raise ValueError("Annotated translation changed subtitle count")
     for index, (item, source) in enumerate(zip(items, sources)):
+        if not isinstance(item, dict):
+            raise ValueError("Annotated subtitle must be an object")
         if any(item.get(key) != source.get(key) for key in ("start", "end")):
             raise ValueError("Annotated translation changed subtitle timing")
         text = item.get(language, "")
+        if not isinstance(text, str) or not text.strip():
+            raise ValueError("Missing clean subtitle text")
         if same_language_result and text != same_language_result["plain"][index][language]:
             raise ValueError("Annotation changed original native subtitle text")
         tokens = item.get("tokens") or []
-        if not tokens or "".join(t.get("surface", "") for t in tokens) != text:
+        if not isinstance(tokens, list) or not tokens:
+            raise ValueError("Missing annotation tokens")
+        if any(not isinstance(t, dict) or any(not isinstance(t.get(k), str)
+               for k in ("surface", "word", "reading", "type")) for t in tokens):
+            raise ValueError("Annotation token fields must be strings")
+        if any(not t["surface"] for t in tokens):
+            raise ValueError("Empty annotation surface")
+        if "".join(t["surface"] for t in tokens) != text:
             raise ValueError("Annotation tokens do not cover the complete subtitle")
         for token in tokens:
             surface, word = token["surface"], token["word"]
@@ -74,3 +102,6 @@ def validate_annotations(items, sources, language, same_language_result=None):
                     raise ValueError("Invalid Han restoration or native ruby")
             if language in {"ko", "vi"} and any(c.isalpha() for c in surface) and not reading.strip():
                 raise ValueError("Missing native reading or pronunciation transliteration")
+            if language == "ko" and word == surface and re.search(r"[가-힣]", surface):
+                if re.search(r"[가-힣]", reading) or not re.search(r"[A-Za-z]", reading):
+                    raise ValueError("Native Korean tokens need romanization, not repeated Hangul")

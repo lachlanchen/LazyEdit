@@ -9,6 +9,13 @@ from lazyedit.subtitle_translate import SubtitlesTranslator
 from lazyedit.subtitles_burner.burner import _load_burner_module
 
 
+@pytest.fixture(autouse=True)
+def local_hanja_candidates(monkeypatch):
+    # Unit tests must not download the production dictionary on a fresh checkout.
+    monkeypatch.setattr("lazyedit.hanja_dictionary.load_dictionary",
+                        lambda: {"학교": [{"word": "學校"}]})
+
+
 @pytest.mark.parametrize('lang,surface,word,reading', [
     ('ko', '학교', '學校', '학교'), ('vi', 'học', '學', 'học'),
     ('ko', '나', '나', 'na'), ('vi', 'tôi', 'tôi', 'toj˧'),

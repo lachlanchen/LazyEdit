@@ -17,6 +17,7 @@ from lazyedit.utils import safe_pretty_print, sample_texts, find_font_size
 from lazyedit.openai_request_json import OpenAIRequestJSONBase, JSONParsingError, JSONValidationError
 from lazyedit.languages import LANGUAGES, TO_LANGUAGE_CODE
 from lazyedit.subtitle_annotations import annotation_contract, validate_annotations
+from lazyedit.hanja_dictionary import review_hints
 
 from datetime import datetime
 from pprint import pprint
@@ -1122,6 +1123,63 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
         return plain_items, json_items
 
+    def _request_han_annotations(self, prompt, schema, system_content, subtitles,
+                                 language, idx, same_language_result):
+        """One normal call; at most one contextual review or validation repair.
+
+        Korean dictionary matches are only candidates, never automatic changes.
+        Freeze valid clean text before any review, so it cannot retranslate it.
+        Vietnamese shares the checks without using the Korean dictionary.
+        """
+        locked = same_language_result
+        request_prompt = prompt
+        for attempt in range(2):
+            response = self.send_request_with_json_schema(
+                prompt=request_prompt, json_schema=schema, system_content=system_content,
+                filename=self.get_filename(lang=f"{language}_annotated_v2_{attempt}", idx=idx),
+                schema_name=f"{language}_annotated_translation",
+            )
+            items = response.get("items") if isinstance(response, dict) else None
+            # Do not freeze malformed, missing or mistimed translation rows.
+            if locked is None and isinstance(items, list) and len(items) == len(subtitles):
+                if all(isinstance(item, dict) and isinstance(item.get(language), str)
+                       and item[language].strip()
+                       and all(item.get(k) == source.get(k) for k in ("start", "end"))
+                       for item, source in zip(items, subtitles)):
+                    locked = {"plain": [
+                        {k: item[k] for k in ("start", "end", language)} for item in items
+                    ]}
+            error = None
+            try:
+                validate_annotations(items, subtitles, language, locked)
+            except ValueError as exc:
+                error = str(exc)
+            if attempt:
+                if error:
+                    raise ValueError(f"{language} annotation still invalid after one repair: {error}")
+                return items
+            hints = review_hints(items) if language == "ko" and not error else []
+            if not error and not hints:
+                return items
+            print(f"Reviewing {language} annotations: {error or 'dictionary candidates need context'}")
+            request_prompt = (
+                prompt + "\nReview the previous JSON below. Correct annotations only. "
+                "Keep the locked clean text and timestamps EXACTLY. Return the complete final JSON.\n"
+                + (f"Validation error to fix: {error}\n" if error else "")
+                + "Locked clean text: " + json.dumps(locked, ensure_ascii=False) + "\n"
+                + "Previous JSON: " + json.dumps(response, ensure_ascii=False) + "\n"
+            )
+            if hints:
+                request_prompt += (
+                    "Dictionary candidates below come from an input-method dictionary. They can be "
+                    "unrelated homophones; a match is NOT proof of a Sino-Korean word. Use the meaning "
+                    "in this sentence. Restore a clear matching root, splitting its particle if needed; "
+                    "otherwise KEEP the native word and romanization. A list may omit a valid spelling; "
+                    "do not replace a correct existing restoration with a wrong listed candidate. "
+                    "In particular, a food word must not become a financial or place-name homophone.\n"
+                    + json.dumps(hints, ensure_ascii=False)
+                )
+
     def translate_and_merge_subtitles_vi_single_pass(
         self,
         subtitles,
@@ -1152,16 +1210,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         if same_language_result:
             prompt += "\nAnnotate the original text exactly; do not paraphrase or normalize it."
 
-        response = self.send_request_with_json_schema(
-            prompt=prompt,
-            json_schema=schema,
-            system_content=system_content,
-            filename=self.get_filename(lang="vi_annotated_v1", idx=idx),
-            schema_name="vietnamese_translation_single_pass",
+        items = self._request_han_annotations(
+            prompt, schema, system_content, subtitles, "vi", idx, same_language_result,
         )
-
-        items = response.get("items", [])
-        validate_annotations(items, subtitles, "vi", same_language_result)
         plain_items = []
         json_items = []
         for item in items:
@@ -1230,16 +1281,9 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         if same_language_result:
             prompt += "\nAnnotate the original text exactly; do not paraphrase or normalize it."
 
-        response = self.send_request_with_json_schema(
-            prompt=prompt,
-            json_schema=schema,
-            system_content=system_content,
-            filename=self.get_filename(lang="ko_annotated_v1", idx=idx),
-            schema_name="korean_translation_single_pass",
+        items = self._request_han_annotations(
+            prompt, schema, system_content, subtitles, "ko", idx, same_language_result,
         )
-
-        items = response.get("items", [])
-        validate_annotations(items, subtitles, "ko", same_language_result)
         plain_items = []
         json_items = []
         for item in items:

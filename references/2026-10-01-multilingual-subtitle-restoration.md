@@ -67,8 +67,10 @@ A burn-only rerun also accepts unchanged successful translation dependencies.
 Validation: 32 focused tests pass. The actual Korean burn was visually inspected
 at 6.3 seconds: romanization is readable above the native words, all four rows
 are separated, the portrait lower area fits them, and the existing logo is top
-right. Native vocabulary such as 소고기 and 감자 is intentionally not replaced
-with invented Hanja. Correct ASR was recovered with explicit Chinese recognition
+right. Words without a confident conventional Han spelling keep Hangul and
+romanization. Do not infer that they lack historical Chinese etymology: 감자
+is treated as native in modern dictionary classification but has a documented
+connection to 감저/甘藷. Correct ASR was recovered with explicit Chinese recognition
 and word alignment: 看着很好吃 (3.50–4.80), 牛肉配土豆 (5.56–7.04).
 
 The same one-shot language parameter must also be passed by the *publish queue
@@ -81,3 +83,10 @@ submission; no platform post occurred. Only this job was active. AutoPublish
 was restarted with browser profiles left intact, corrected metadata regenerated
 through LazyEdit, and replacement job 442 reused the completed output correctly.
 33 targeted regression tests pass after the full fix.
+
+## Lightweight dictionary follow-up
+
+See `2026-10-01-hanja-dictionary-review.md` for the local Korean candidate
+dictionary and one bounded LLM review. Korean/Vietnamese prompts now explicitly
+check every root and homophone. Translation still normally uses one request;
+there is no mandatory second LLM pass or vector database.

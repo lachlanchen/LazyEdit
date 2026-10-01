@@ -16,8 +16,15 @@ Imported these aligned cues using `--subtitle-file --subtitle-language zh`,
 then used normal translation/burn/metadata/cover processing. Context remained
 reference material. Pronunciation: Japanese kanji ruby/kana romanization,
 Chinese pinyin, Korean romanization. Natural Korean translations were
-맛있어 보인다 and 소고기와 감자; these are native words, so no speculative Hanja
-was inserted. The shared restoration path remains enabled for Sino-Korean roots.
+맛있어 보인다 and 소고기와 감자; these kept modern Hangul with romanization.
+The initial explanation that every word has no Han connection was too broad:
+감자 has historical links to 감저/甘藷, although modern dictionary classification
+treats it as native. Historical etymology is not automatically a conventional
+modern Han spelling. The shared restoration path remains enabled for clear
+Sino-Korean roots; no speculative Chinese equivalents were inserted.
+
+Sources: [modern dictionary classification](https://krdict.korean.go.kr/kor/dicSearch/SearchView?ParaWordNo=15203),
+[National Institute of Korean Language etymology article](https://www.korean.go.kr/nkview/nklife/2009_3/2009_0306.pdf).
 
 One-shot settings: languages `ko,zh-Hant,ja,en` bottom-to-top, four reserved rows,
 zero lift, portrait blur-fill with 40% lower reserve, configured top-right logo.
