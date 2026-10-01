@@ -408,7 +408,11 @@ def normalize_tokens_payload(
                 normalized.append(row)
 
     visible = [token for token in normalized if token.get("type") != "speaker" and str(token.get("text") or "").strip()]
-    if len(visible) == 1 and text and visible[0].get("text") == text and not visible[0].get("ruby"):
+    explicitly_classified = any(
+        isinstance(token, dict) and (token.get("type") or token.get("pos") or token.get("tag")) not in (None, "", "other", "speaker")
+        for token in (tokens_payload or [])
+    )
+    if len(visible) == 1 and text and visible[0].get("text") == text and not visible[0].get("ruby") and not explicitly_classified:
         speakers = [token for token in normalized if token.get("type") == "speaker"]
         return speakers + tokens_from_text(text, language=resolved_language, palette=palette)
     return normalized

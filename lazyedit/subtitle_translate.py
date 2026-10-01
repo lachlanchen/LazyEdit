@@ -16,6 +16,7 @@ from lazyedit.utils import JSONParsingError, JSONValidationError
 from lazyedit.utils import safe_pretty_print, sample_texts, find_font_size
 from lazyedit.openai_request_json import OpenAIRequestJSONBase, JSONParsingError, JSONValidationError
 from lazyedit.languages import LANGUAGES, TO_LANGUAGE_CODE
+from lazyedit.subtitle_annotations import annotation_contract, validate_annotations
 
 from datetime import datetime
 from pprint import pprint
@@ -666,21 +667,30 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         plain_items = []
         json_items = []
 
-        for idx, batch in enumerate(self.split_subtitles_into_batches(subtitles)):
-            translated = self.translate_and_merge_subtitles_with_specified_languages(
-                batch,
-                [target_name],
-                idx,
+        base_schema = self._load_template_json("english_translation/schema.json")
+        row = base_schema["properties"]["items"]["items"]
+        row["properties"][target_code] = row["properties"].pop("en")
+        row["required"] = [target_code if key == "en" else key for key in row["required"]]
+        schema, instructions = annotation_contract(base_schema, target_code)
+        for idx, source in enumerate(subtitles):
+            same = self._same_language_plain_result([source], target_code, target_code)
+            context = self._build_context_strings(idx)
+            prompt = self._build_prompt_with_context(
+                "Translate to " + target_name + ". Preserve native source text exactly if already in that language. "
+                "Preserve timestamps and line count. Previous: {{PREV_LINE}} Next: {{NEXT_LINE}} "
+                "Subtitles: {{SUBTITLES_JSON}}", [source], *context,
+            ) + instructions
+            response = self.send_request_with_json_schema(
+                prompt=prompt, json_schema=schema,
+                system_content="You are an expert subtitle translator and grammatical annotator.",
+                filename=self.get_filename(lang=target_code + "_annotated_v1", idx=idx),
+                schema_name="annotated_translation",
             )
-            for item in translated:
-                start = item.get("start")
-                end = item.get("end")
-                if not start or not end:
-                    continue
-                text = item.get(target_code) or ""
-                normalized = {"start": start, "end": end, target_code: text}
-                plain_items.append(normalized)
-                json_items.append(dict(normalized))
+            items = response.get("items", [])
+            validate_annotations(items, [source], target_code, same)
+            for item in items:
+                plain_items.append({key: item[key] for key in ("start", "end", target_code)})
+                json_items.append(item)
 
         plain_items.sort(key=lambda x: datetime.strptime(x["start"], "%H:%M:%S,%f"))
         json_items.sort(key=lambda x: datetime.strptime(x["start"], "%H:%M:%S,%f"))
@@ -967,8 +977,6 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """Single-pass English translation using template prompt + schema."""
         print("Translating subtitles to English (single pass)...")
         same_language_result = self._same_language_plain_result(subtitles, "en", "en")
-        if same_language_result:
-            return same_language_result
 
         prompt_bundle = self._load_template_json("english_translation/prompt.json")
         schema = self._load_template_json("english_translation/schema.json")
@@ -983,15 +991,21 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             next_line,
         )
 
+        schema, annotation_prompt = annotation_contract(schema, "en")
+        prompt += annotation_prompt
+        if same_language_result:
+            prompt += "\nAnnotate the original text exactly; do not paraphrase or normalize it."
+
         response = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=schema,
             system_content=system_content,
-            filename=self.get_filename(lang="en_single", idx=idx),
+            filename=self.get_filename(lang="en_annotated_v1", idx=idx),
             schema_name="english_translation_single_pass",
         )
 
         items = response.get("items", [])
+        validate_annotations(items, subtitles, "en", same_language_result)
         plain_items = []
         json_items = []
         for item in items:
@@ -1001,7 +1015,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 continue
             text = item.get("en") or ""
             plain_items.append({"start": start, "end": end, "en": text})
-            json_items.append({"start": start, "end": end, "en": text})
+            json_items.append({"start": start, "end": end, "en": text, "tokens": item["tokens"]})
 
         return {
             "plain": plain_items,
@@ -1041,8 +1055,6 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """Single-pass Arabic translation using template prompt + schema."""
         print("Translating subtitles to Arabic (single pass)...")
         same_language_result = self._same_language_plain_result(subtitles, "ar", "ar")
-        if same_language_result:
-            return same_language_result
 
         prompt_bundle = self._load_template_json("arabic_translation/prompt.json")
         schema = self._load_template_json("arabic_translation/schema.json")
@@ -1057,15 +1069,21 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             next_line,
         )
 
+        schema, annotation_prompt = annotation_contract(schema, "ar")
+        prompt += annotation_prompt
+        if same_language_result:
+            prompt += "\nAnnotate the original text exactly; do not paraphrase or normalize it."
+
         response = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=schema,
             system_content=system_content,
-            filename=self.get_filename(lang="ar_single", idx=idx),
+            filename=self.get_filename(lang="ar_annotated_v1", idx=idx),
             schema_name="arabic_translation_single_pass",
         )
 
         items = response.get("items", [])
+        validate_annotations(items, subtitles, "ar", same_language_result)
         plain_items = []
         json_items = []
         for item in items:
@@ -1075,7 +1093,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 continue
             text = item.get("ar") or ""
             plain_items.append({"start": start, "end": end, "ar": text})
-            json_items.append({"start": start, "end": end, "ar": text})
+            json_items.append({"start": start, "end": end, "ar": text, "tokens": item["tokens"]})
 
         return {
             "plain": plain_items,
@@ -1115,8 +1133,6 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """Single-pass Vietnamese translation using template prompt + schema."""
         print("Translating subtitles to Vietnamese (single pass)...")
         same_language_result = self._same_language_plain_result(subtitles, "vi", "vi")
-        if same_language_result:
-            return same_language_result
 
         prompt_bundle = self._load_template_json("vietnamese_translation/prompt.json")
         schema = self._load_template_json("vietnamese_translation/schema.json")
@@ -1131,15 +1147,21 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             next_line,
         )
 
+        schema, annotation_prompt = annotation_contract(schema, "vi")
+        prompt += annotation_prompt
+        if same_language_result:
+            prompt += "\nAnnotate the original text exactly; do not paraphrase or normalize it."
+
         response = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=schema,
             system_content=system_content,
-            filename=self.get_filename(lang="vi_single", idx=idx),
+            filename=self.get_filename(lang="vi_annotated_v1", idx=idx),
             schema_name="vietnamese_translation_single_pass",
         )
 
         items = response.get("items", [])
+        validate_annotations(items, subtitles, "vi", same_language_result)
         plain_items = []
         json_items = []
         for item in items:
@@ -1149,7 +1171,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 continue
             text = item.get("vi") or ""
             plain_items.append({"start": start, "end": end, "vi": text})
-            json_items.append({"start": start, "end": end, "vi": text})
+            json_items.append({"start": start, "end": end, "vi": text, "tokens": item["tokens"]})
 
         return {
             "plain": plain_items,
@@ -1189,8 +1211,6 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """Single-pass Korean translation using template prompt + schema."""
         print("Translating subtitles to Korean (single pass)...")
         same_language_result = self._same_language_plain_result(subtitles, "ko", "ko")
-        if same_language_result:
-            return same_language_result
 
         prompt_bundle = self._load_template_json("korean_translation/prompt.json")
         schema = self._load_template_json("korean_translation/schema.json")
@@ -1205,15 +1225,21 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             next_line,
         )
 
+        schema, annotation_prompt = annotation_contract(schema, "ko")
+        prompt += annotation_prompt
+        if same_language_result:
+            prompt += "\nAnnotate the original text exactly; do not paraphrase or normalize it."
+
         response = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=schema,
             system_content=system_content,
-            filename=self.get_filename(lang="ko_single", idx=idx),
+            filename=self.get_filename(lang="ko_annotated_v1", idx=idx),
             schema_name="korean_translation_single_pass",
         )
 
         items = response.get("items", [])
+        validate_annotations(items, subtitles, "ko", same_language_result)
         plain_items = []
         json_items = []
         for item in items:
@@ -1223,7 +1249,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 continue
             text = item.get("ko") or ""
             plain_items.append({"start": start, "end": end, "ko": text})
-            json_items.append({"start": start, "end": end, "ko": text})
+            json_items.append({"start": start, "end": end, "ko": text, "tokens": item["tokens"]})
 
         return {
             "plain": plain_items,
@@ -1263,8 +1289,6 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """Single-pass Spanish translation using template prompt + schema."""
         print("Translating subtitles to Spanish (single pass)...")
         same_language_result = self._same_language_plain_result(subtitles, "es", "es")
-        if same_language_result:
-            return same_language_result
 
         prompt_bundle = self._load_template_json("spanish_translation/prompt.json")
         schema = self._load_template_json("spanish_translation/schema.json")
@@ -1279,15 +1303,21 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             next_line,
         )
 
+        schema, annotation_prompt = annotation_contract(schema, "es")
+        prompt += annotation_prompt
+        if same_language_result:
+            prompt += "\nAnnotate the original text exactly; do not paraphrase or normalize it."
+
         response = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=schema,
             system_content=system_content,
-            filename=self.get_filename(lang="es_single", idx=idx),
+            filename=self.get_filename(lang="es_annotated_v1", idx=idx),
             schema_name="spanish_translation_single_pass",
         )
 
         items = response.get("items", [])
+        validate_annotations(items, subtitles, "es", same_language_result)
         plain_items = []
         json_items = []
         for item in items:
@@ -1297,7 +1327,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 continue
             text = item.get("es") or ""
             plain_items.append({"start": start, "end": end, "es": text})
-            json_items.append({"start": start, "end": end, "es": text})
+            json_items.append({"start": start, "end": end, "es": text, "tokens": item["tokens"]})
 
         return {
             "plain": plain_items,
@@ -1337,8 +1367,6 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """Single-pass French translation using template prompt + schema."""
         print("Translating subtitles to French (single pass)...")
         same_language_result = self._same_language_plain_result(subtitles, "fr", "fr")
-        if same_language_result:
-            return same_language_result
 
         prompt_bundle = self._load_template_json("french_translation/prompt.json")
         schema = self._load_template_json("french_translation/schema.json")
@@ -1353,15 +1381,21 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             next_line,
         )
 
+        schema, annotation_prompt = annotation_contract(schema, "fr")
+        prompt += annotation_prompt
+        if same_language_result:
+            prompt += "\nAnnotate the original text exactly; do not paraphrase or normalize it."
+
         response = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=schema,
             system_content=system_content,
-            filename=self.get_filename(lang="fr_single", idx=idx),
+            filename=self.get_filename(lang="fr_annotated_v1", idx=idx),
             schema_name="french_translation_single_pass",
         )
 
         items = response.get("items", [])
+        validate_annotations(items, subtitles, "fr", same_language_result)
         plain_items = []
         json_items = []
         for item in items:
@@ -1371,7 +1405,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 continue
             text = item.get("fr") or ""
             plain_items.append({"start": start, "end": end, "fr": text})
-            json_items.append({"start": start, "end": end, "fr": text})
+            json_items.append({"start": start, "end": end, "fr": text, "tokens": item["tokens"]})
 
         return {
             "plain": plain_items,
@@ -1411,8 +1445,6 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """Single-pass Russian translation using template prompt + schema."""
         print("Translating subtitles to Russian (single pass)...")
         same_language_result = self._same_language_plain_result(subtitles, "ru", "ru")
-        if same_language_result:
-            return same_language_result
 
         prompt_bundle = self._load_template_json("russian_translation/prompt.json")
         schema = self._load_template_json("russian_translation/schema.json")
@@ -1427,15 +1459,21 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             next_line,
         )
 
+        schema, annotation_prompt = annotation_contract(schema, "ru")
+        prompt += annotation_prompt
+        if same_language_result:
+            prompt += "\nAnnotate the original text exactly; do not paraphrase or normalize it."
+
         response = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=schema,
             system_content=system_content,
-            filename=self.get_filename(lang="ru_single", idx=idx),
+            filename=self.get_filename(lang="ru_annotated_v1", idx=idx),
             schema_name="russian_translation_single_pass",
         )
 
         items = response.get("items", [])
+        validate_annotations(items, subtitles, "ru", same_language_result)
         plain_items = []
         json_items = []
         for item in items:
@@ -1445,7 +1483,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 continue
             text = item.get("ru") or ""
             plain_items.append({"start": start, "end": end, "ru": text})
-            json_items.append({"start": start, "end": end, "ru": text})
+            json_items.append({"start": start, "end": end, "ru": text, "tokens": item["tokens"]})
 
         return {
             "plain": plain_items,
@@ -1463,8 +1501,6 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         """Single-pass Cantonese translation using template prompt + schema."""
         print("Translating subtitles to Cantonese (single pass)...")
         same_language_result = self._same_language_plain_result(subtitles, "yue", "yue")
-        if same_language_result:
-            return same_language_result
 
         prompt_bundle = self._load_template_json("cantonese_translation/prompt.json")
         schema = self._load_template_json("cantonese_translation/schema.json")
@@ -1479,15 +1515,21 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
             next_line,
         )
 
+        schema, annotation_prompt = annotation_contract(schema, "yue")
+        prompt += annotation_prompt
+        if same_language_result:
+            prompt += "\nAnnotate the original text exactly; do not paraphrase or normalize it."
+
         response = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=schema,
             system_content=system_content,
-            filename=self.get_filename(lang="yue_single", idx=idx),
+            filename=self.get_filename(lang="yue_annotated_v1", idx=idx),
             schema_name="cantonese_translation_single_pass",
         )
 
         items = response.get("items", [])
+        validate_annotations(items, subtitles, "yue", same_language_result)
         plain_items = []
         json_items = []
         for item in items:
@@ -1497,7 +1539,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 continue
             text = item.get("yue") or ""
             plain_items.append({"start": start, "end": end, "yue": text})
-            json_items.append({"start": start, "end": end, "yue": text})
+            json_items.append({"start": start, "end": end, "yue": text, "tokens": item["tokens"]})
 
         return {
             "plain": plain_items,
