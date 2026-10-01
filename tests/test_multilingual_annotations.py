@@ -59,3 +59,34 @@ def test_german_generic_path_keeps_grammar(tmp_path):
     assert plain == [{'start': source['start'], 'end': source['end'], 'de': 'Buch'}]
     assert annotated[0]['tokens'][0]['type'] == 'noun'
     assert 'tokens' in translator.send_request_with_json_schema.call_args.kwargs['json_schema']['properties']['items']['items']['required']
+
+
+def test_korean_wrapping_keeps_restored_root_with_native_particle(tmp_path):
+    _load_burner_module()
+    import subtitles_burner.burner as burner
+    item = {'start': '00:00:00,000', 'end': '00:00:05,000', 'ko': '학교에서 먹어요', 'tokens': [
+        {'word': '學校', 'reading': '학교', 'type': 'noun'},
+        {'word': '에서', 'reading': 'eseo', 'type': 'particle'},
+        {'word': ' ', 'reading': '', 'type': 'other'},
+        {'word': '먹어요', 'reading': 'meogeoyo', 'type': 'verb'},
+    ]}
+    path = tmp_path / 'ko.json'
+    path.write_text(json.dumps([item], ensure_ascii=False))
+    tokens = burner.load_segments_from_json(str(path), text_key='ko')[0].tokens
+    assert tokens[0]._lazyedit_group == tokens[1]._lazyedit_group
+    assert tokens[3]._lazyedit_group != tokens[0]._lazyedit_group
+    assert tokens[0].ruby == '학교'
+    assert tokens[1].ruby == 'eseo'
+    # A long cue uses multiple timed chunks without detaching the particle.
+    repeated = tokens + [burner.RubyToken(text=' ')] + tokens
+    segment = burner.SubtitleSegment(0.0, 5.0, repeated, '學校에서 먹어요 學校에서 먹어요')
+    chunks = burner._auto_split_segments_for_slot(
+        [segment], burner.Slot(1, 0, 0, 230, 120), burner.TextStyle(main_font_size=40, ruby_font_size=20),
+    )
+    assert len(chunks) > 1
+    assert chunks[0].start_time == 0.0 and chunks[-1].end_time == 5.0
+    for chunk in chunks:
+        for i, token in enumerate(chunk.tokens):
+            if token.text == '學校':
+                assert chunk.tokens[i + 1].text == '에서'
+                assert token.ruby == '학교'

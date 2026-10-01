@@ -163,7 +163,7 @@ def _load_burner_module():
                 arabic_translit: bool = False,
             ):
                 def _delegate(path: str):
-                    return original_load_segments_from_json(
+                    segments = original_load_segments_from_json(
                         path,
                         text_key=text_key,
                         ruby_key=ruby_key,
@@ -179,6 +179,20 @@ def _load_burner_module():
                         korean_romaja=korean_romaja,
                         arabic_translit=arabic_translit,
                     )
+                    if text_key in {"ko", "vi"}:
+                        # Keep restored roots and adjacent native suffixes in
+                        # the same wrapping unit. Ruby must travel with its base.
+                        for segment in segments:
+                            group = 0
+                            for token in segment.tokens:
+                                value = token.text or ""
+                                if token.token_type == "speaker" or not value.strip():
+                                    group += 1
+                                    continue
+                                token._lazyedit_group = group
+                                if value[-1:] in ".!?。！？,，;；:":
+                                    group += 1
+                    return segments
 
                 if not tokens_key:
                     return _delegate(json_path)

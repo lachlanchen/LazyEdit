@@ -40,3 +40,12 @@ Validation covers contracts and actual renderer segment ingestion, not a live
 model linguistic-quality audit. Ambiguous Han etymologies and Vietnamese IPA
 still require reviewing model output. Invalid/incomplete annotations fail visibly
 instead of silently burning dropped words.
+
+## Korean/Vietnamese wrapping follow-up
+
+The LazyEdit-owned burner adapter groups adjacent restored roots and native
+suffixes until a space or punctuation boundary. This reuses the existing timed
+long-line splitting, preserving ruby and grammar colors without splitting a
+Korean word between its Hanja root and Hangul particle. The external furigana
+symlink remains read-only. A regression test checks an overwide repeated cue,
+root/particle adjacency, preserved ruby and unchanged overall cue interval.
