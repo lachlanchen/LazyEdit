@@ -90,3 +90,28 @@ def test_korean_wrapping_keeps_restored_root_with_native_particle(tmp_path):
             if token.text == '學校':
                 assert chunk.tokens[i + 1].text == '에서'
                 assert token.ruby == '학교'
+
+
+def test_empty_display_for_space_is_repaired_without_losing_spacing():
+    source = {'start': '00:00:00,000', 'end': '00:00:02,000'}
+    item = dict(source, en='Beef potatoes', tokens=[
+        {'surface': 'Beef', 'word': 'Beef', 'reading': '', 'type': 'noun'},
+        {'surface': ' ', 'word': '', 'reading': '', 'type': 'other'},
+        {'surface': 'potatoes', 'word': 'potatoes', 'reading': '', 'type': 'noun'},
+    ])
+    validate_annotations([item], [source], 'en')
+    assert ''.join(t['word'] for t in item['tokens']) == item['en']
+
+
+@pytest.mark.parametrize('lang', ['ko', 'vi'])
+def test_generated_ruby_has_readable_size_without_auto_pronunciation_toggle(monkeypatch, lang):
+    from lazyedit.subtitles_burner import burner as adapter
+    components = adapter._load_burner_module()
+    encode = Mock()
+    monkeypatch.setattr(adapter, '_load_burner_module', lambda: (*components[:-1], encode))
+    monkeypatch.setattr(adapter, '_get_video_resolution', lambda path: (1080, 1920))
+    adapter.burn_video_with_slots('input.mp4', 'output.mp4', [
+        adapter.BurnSlotConfig(4, lang, 'unused.json', lang),
+    ], rows=4, cols=1, lift_ratio=0)
+    style = encode.call_args.args[3][0].style
+    assert style.ruby_font_size >= style.main_font_size * 0.5

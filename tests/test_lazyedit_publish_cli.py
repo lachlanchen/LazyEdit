@@ -164,3 +164,26 @@ def test_authoritative_subtitle_file_disables_implicit_ai_correction():
     assert not should_run_subtitle_correction(None, "story context", "reviewed.srt")
     assert should_run_subtitle_correction(True, "story context", "reviewed.srt")
     assert should_run_subtitle_correction(None, "story context", None)
+
+
+def test_reburn_can_reuse_existing_successful_translation():
+    baseline = {
+        'translate': {'status': 'done', 'updated_at': 'old'},
+        'burn': {'status': 'done', 'updated_at': 'old'},
+    }
+    current = {**baseline, 'burn': {'status': 'done', 'updated_at': 'new'}}
+    assert requested_process_ready(
+        {'steps': current}, requested_steps=['burn'], burn_subtitles=True,
+        logo_enabled=True, baseline_steps=baseline,
+    )
+
+
+def test_process_monitor_passes_one_shot_language_selection():
+    from unittest.mock import Mock
+    from scripts.lazyedit_publish import wait_for_process
+    client = Mock(quiet=True)
+    client.request_json.return_value = {'steps': {'translate': {'status': 'done'}}}
+    wait_for_process(client, 600, None, 5, 0, burn_subtitles=True,
+                     logo_enabled=True, requested_steps=['translate'],
+                     translation_languages=['ko', 'zh-Hant', 'ja', 'en'])
+    assert client.request_json.call_args.kwargs['query']['translationLanguages'] == 'ko,zh-Hant,ja,en'

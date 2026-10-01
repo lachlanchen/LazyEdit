@@ -756,7 +756,7 @@ def requested_process_ready(
     # Durable status can still describe the previous render immediately after
     # an asynchronous rerun starts. Each requested step must have fresh evidence.
     if baseline_steps:
-        for name in required:
+        for name in set(requested_steps):
             if name in baseline_steps and _step_marker(steps.get(name)) == _step_marker(baseline_steps[name]):
                 return False
     return True
@@ -806,6 +806,7 @@ def wait_for_process(
     logo_enabled: bool,
     baseline_steps: dict[str, Any] | None = None,
     requested_steps: list[str] | None = None,
+    translation_languages: list[str] | None = None,
 ) -> dict[str, Any]:
     deadline = time.monotonic() + timeout
     last = ""
@@ -813,7 +814,8 @@ def wait_for_process(
         payload = client.request_json(
             "GET",
             f"/api/videos/{video_id}/process-status",
-            query={"publicationSessionId": session_id},
+            query={"publicationSessionId": session_id,
+                   "translationLanguages": ",".join(translation_languages) if translation_languages is not None else None},
             timeout=60,
         )
         summary = step_summary(payload)
@@ -1216,7 +1218,8 @@ def main(argv: list[str] | None = None) -> int:
                 baseline_payload = client.request_json(
                     "GET",
                     f"/api/videos/{video_id}/process-status",
-                    query={"publicationSessionId": session_id},
+                    query={"publicationSessionId": session_id,
+                           "translationLanguages": ",".join(options["translationLanguages"])},
                     timeout=60,
                 )
             except Exception:
@@ -1257,6 +1260,7 @@ def main(argv: list[str] | None = None) -> int:
                     logo_enabled=logo_enabled,
                     baseline_steps=baseline_payload.get("steps") if isinstance(baseline_payload, dict) else None,
                     requested_steps=steps,
+                    translation_languages=options["translationLanguages"],
                 )
         elif defer_process_to_queue:
             final["process_started"] = {

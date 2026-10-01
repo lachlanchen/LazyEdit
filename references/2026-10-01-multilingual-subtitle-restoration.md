@@ -49,3 +49,24 @@ long-line splitting, preserving ruby and grammar colors without splitting a
 Korean word between its Hanja root and Hangul particle. The external furigana
 symlink remains read-only. A regression test checks an overwide repeated cue,
 root/particle adjacency, preserved ruby and unchanged overall cue interval.
+
+## Live validation: food clip 600
+
+A real render exposed two additional issues: generated space tokens sometimes
+had an empty display word, and Korean ruby was present but rendered almost
+invisibly because the auto-romaja UI toggle was off. The validator now restores
+verified whitespace from `surface`; Korean/Vietnamese token annotations enable
+normal ruby sizing independently of automatic-pronunciation toggles.
+
+The CLI process monitor now passes its one-shot language selection to status
+queries instead of waiting for the persisted French selection when Korean was
+requested. Failed translation status uses the failed language's timestamp,
+not a newer successful language's timestamp (which made an old error look new).
+A burn-only rerun also accepts unchanged successful translation dependencies.
+
+Validation: 32 focused tests pass. The actual Korean burn was visually inspected
+at 6.3 seconds: romanization is readable above the native words, all four rows
+are separated, the portrait lower area fits them, and the existing logo is top
+right. Native vocabulary such as 소고기 and 감자 is intentionally not replaced
+with invented Hanja. Correct ASR was recovered with explicit Chinese recognition
+and word alignment: 看着很好吃 (3.50–4.80), 牛肉配土豆 (5.56–7.04).

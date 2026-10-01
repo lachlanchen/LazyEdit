@@ -1070,6 +1070,8 @@ def burn_video_with_slots(
             or slot.jyutping
             or slot.korean_romaja
             or slot.arabic_translit
+            # ko/vi annotations carry ruby even when auto-romaja is disabled.
+            or slot.language in {"ko", "vi"}
         )
 
         # Derive font sizes from the pixel geometry of each slot so that

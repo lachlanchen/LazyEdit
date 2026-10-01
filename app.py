@@ -12435,6 +12435,9 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             or portrait_required_for_publish
         )
         translation_languages = publish_options.get("translationLanguages") or _load_translation_languages_setting()
+        requested_languages = self.get_argument("translationLanguages", default=None)
+        if requested_languages is not None:
+            translation_languages = _sanitize_translation_languages(requested_languages.split(","))
         if not subtitle_burn_required_for_publish:
             steps["translate"] = step_payload("skipped", "Subtitle burn disabled")
         elif not translation_languages:
@@ -12445,6 +12448,7 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             working = []
             done = []
             newest = None
+            failed_newest = None
             for lang in translation_languages:
                 row = ldb.get_latest_subtitle_translation(
                     video_id_i,
@@ -12485,10 +12489,12 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
                     working.append(lang)
                 elif normalized == "error":
                     failed.append(lang)
+                    if created_at and (failed_newest is None or created_at > failed_newest):
+                        failed_newest = created_at
                 if normalized == "error" and error:
                     failed.append(f"{lang}: {error}")
             if failed:
-                steps["translate"] = step_payload("error", "Failed: " + ", ".join(failed), newest)
+                steps["translate"] = step_payload("error", "Failed: " + ", ".join(failed), failed_newest)
             elif working:
                 steps["translate"] = step_payload("working", "Processing: " + ", ".join(working), newest)
             elif missing:

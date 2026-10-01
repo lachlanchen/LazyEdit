@@ -61,6 +61,11 @@ def validate_annotations(items, sources, language, same_language_result=None):
             raise ValueError("Annotation tokens do not cover the complete subtitle")
         for token in tokens:
             surface, word = token["surface"], token["word"]
+            # Models sometimes leave a whitespace token's display word empty.
+            # Surface coverage was already verified; restore that exact spacing.
+            if surface.isspace() and not word.strip():
+                word = token["word"] = surface
+                token["reading"] = ""
             reading = token.get("reading", "")
             if token.get("type") not in GRAMMAR_TYPES:
                 raise ValueError("Invalid grammar type")
