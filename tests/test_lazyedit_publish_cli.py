@@ -187,3 +187,34 @@ def test_process_monitor_passes_one_shot_language_selection():
                      logo_enabled=True, requested_steps=['translate'],
                      translation_languages=['ko', 'zh-Hant', 'ja', 'en'])
     assert client.request_json.call_args.kwargs['query']['translationLanguages'] == 'ko,zh-Hant,ja,en'
+
+
+def test_publish_worker_checks_job_languages_not_studio_defaults():
+    import ast
+    import json
+    import pytest
+    from pathlib import Path
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+    from urllib.parse import urlencode, urlparse, parse_qs
+    # Execute the actual worker with isolated dependencies: no database/service startup.
+    tree = ast.parse((Path(__file__).resolve().parents[1] / 'app.py').read_text())
+    node = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == '_process_publish_job')
+    request = Mock(side_effect=RuntimeError('captured status query'))
+    env = {
+        'json': json, 'urlencode': urlencode, 'ldb': SimpleNamespace(update_publish_job=Mock()),
+        '_sanitize_publish_options': lambda value: value,
+        '_parse_int_value': lambda value: value,
+        '_load_logo_settings_setting': lambda: {},
+        '_logo_overlay_enabled': lambda value: False,
+        'is_portrait_blurfill_enabled': lambda value: False,
+        '_local_api_json_request': request,
+    }
+    exec(compile(ast.Module(body=[node], type_ignores=[]), 'app.py', 'exec'), env)
+    row = [None] * 20
+    row[0], row[1], row[3], row[4] = 441, 600, {'youtube': True}, False
+    row[18] = {'burnSubtitles': True, 'translationLanguages': ['ko', 'zh-Hant', 'ja', 'en']}
+    with pytest.raises(RuntimeError, match='captured status query'):
+        env['_process_publish_job'](tuple(row))
+    query = parse_qs(urlparse(request.call_args.args[1]).query)
+    assert query['translationLanguages'] == ['ko,zh-Hant,ja,en']

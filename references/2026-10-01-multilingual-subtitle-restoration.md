@@ -70,3 +70,14 @@ are separated, the portrait lower area fits them, and the existing logo is top
 right. Native vocabulary such as 소고기 and 감자 is intentionally not replaced
 with invented Hanja. Correct ASR was recovered with explicit Chinese recognition
 and word alignment: 看着很好吃 (3.50–4.80), 牛肉配土豆 (5.56–7.04).
+
+The same one-shot language parameter must also be passed by the *publish queue
+worker* when checking prerequisites, not only by the CLI monitor. Otherwise a
+ready Korean run is reported as missing persisted French, and the worker
+regenerates the render and metadata despite `--no-process`. This was reproduced
+on job 441 and fixed in `_process_publish_job`, with an isolated worker test.
+The incomplete remote attempt was stopped at Douyin's empty upload form before
+submission; no platform post occurred. Only this job was active. AutoPublish
+was restarted with browser profiles left intact, corrected metadata regenerated
+through LazyEdit, and replacement job 442 reused the completed output correctly.
+33 targeted regression tests pass after the full fix.

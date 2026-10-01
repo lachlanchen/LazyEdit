@@ -62,7 +62,7 @@ import threading
 import subprocess
 import socket
 import time
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlencode
 
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
@@ -6477,7 +6477,10 @@ def _process_publish_job(job_row: tuple) -> None:
     status_code, status_payload, _status_text = _local_api_json_request(
         "GET",
         f"/api/videos/{video_id}/process-status"
-        + (f"?publicationSessionId={publication_session_id}" if publication_session_id else ""),
+        + "?" + urlencode({
+            "translationLanguages": ",".join(translation_languages),
+            **({"publicationSessionId": publication_session_id} if publication_session_id else {}),
+        }),
         timeout=30,
     )
     if status_code >= 400:
