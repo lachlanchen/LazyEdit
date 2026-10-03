@@ -113,6 +113,36 @@ def test_repair_succeeds_and_preserves_clean_translation(dictionary):
     assert '"ko": "학교"' in translator.send_request_with_json_schema.call_args.kwargs["prompt"]
 
 
+@pytest.mark.parametrize("tokens", [None, [None], [
+    {"surface": "학교", "word": "學校", "reading": "hakgyo", "type": "noun"},
+]])
+def test_annotation_repair_still_receives_dictionary_candidates(dictionary, tokens):
+    invalid = dict(row("학교"), tokens=tokens)
+    fixed = row("학교", "學校", "학교")
+    translator = translator_with({"items": [invalid]}, {"items": [fixed]})
+    result = translator._request_han_annotations(
+        "prompt", {}, "system", [row("학교")], "ko", 0, None,
+    )
+    assert result == [fixed]
+    assert translator.send_request_with_json_schema.call_count == 2
+    repair = translator.send_request_with_json_schema.call_args.kwargs["prompt"]
+    assert "Validation error to fix" in repair
+    assert "Dictionary candidates" in repair
+    assert "學校" in repair and "teaching" in repair
+    assert "NOT proof" in repair
+
+
+def test_repair_dictionary_uses_locked_source_not_invalid_retranslation(dictionary):
+    invalid = row("학생")
+    fixed = row("학교", "學校", "학교")
+    translator = translator_with({"items": [invalid]}, {"items": [fixed]})
+    assert request(translator, row("학교")) == [fixed]
+    repair = translator.send_request_with_json_schema.call_args.kwargs["prompt"]
+    candidates = repair.split("Dictionary candidates below", 1)[1]
+    assert '"surface": "학교"' in candidates
+    assert '"surface": "학생"' not in candidates
+
+
 def test_vietnamese_uses_same_validation_but_no_korean_dictionary(monkeypatch):
     lookup = Mock(side_effect=AssertionError("Vietnamese must not use Korean data"))
     monkeypatch.setattr("lazyedit.subtitle_translate.review_hints", lookup)

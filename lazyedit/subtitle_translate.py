@@ -1158,7 +1158,16 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 if error:
                     raise ValueError(f"{language} annotation still invalid after one repair: {error}")
                 return items
-            hints = review_hints(items) if language == "ko" and not error else []
+            hints = []
+            if language == "ko":
+                if not error:
+                    hints = review_hints(items)
+                elif locked:
+                    # The only repair must check roots too. Invalid tokens cannot
+                    # supply offsets, so look up candidates in the locked text.
+                    hints = review_hints([
+                        {**item, "tokens": []} for item in locked["plain"]
+                    ])
             if not error and not hints:
                 return items
             print(f"Reviewing {language} annotations: {error or 'dictionary candidates need context'}")
