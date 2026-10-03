@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 
 import { useI18n } from '@/components/I18nProvider';
+import { useStudioCapabilities } from '@/lib/studioCapabilities';
 import { subscribeStudioRefresh, triggerStudioRefresh } from '@/lib/studioRefresh';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8787';
@@ -278,6 +279,7 @@ const calculatePortraitLayoutMetrics = (
 const formatMetricPercent = (value: number) => `${Math.round(value * 100)}%`;
 
 export default function EditorScreen() {
+  const { publishing: publishingEnabled } = useStudioCapabilities();
   const { videoId: routeVideoId } = useLocalSearchParams<{ videoId?: string }>();
   const requestedVideoId = typeof routeVideoId === 'string' && /^[1-9]\d*$/.test(routeVideoId)
     ? Number(routeVideoId) : null;
@@ -1389,6 +1391,7 @@ export default function EditorScreen() {
   }, []);
 
   const loadPublishQueue = useCallback(async (silent?: boolean) => {
+    if (!publishingEnabled) { setPublishQueue([]); setQueueError(''); return; }
     if (!silent) setQueueLoading(true);
     try {
       const resp = await fetch(`${API_URL}/api/autopublish/queue`);
@@ -1410,7 +1413,7 @@ export default function EditorScreen() {
     } finally {
       if (!silent) setQueueLoading(false);
     }
-  }, [t]);
+  }, [t, publishingEnabled]);
 
   const confirmDeleteSelectedVideo = useCallback(async () => {
     if (!confirmDeleteVideo || deleteVideoPending) return;
@@ -2320,9 +2323,9 @@ export default function EditorScreen() {
   return (
     <ScrollView contentContainerStyle={styles.scrollContent}>
       <View style={styles.container}>
-        <Text style={styles.title}>{t('publish_title')}</Text>
-        <Text style={styles.sub}>{t('publish_subtitle')}</Text>
-        <View style={styles.modeToggleRow}>
+        <Text style={styles.title}>{t(publishingEnabled ? 'publish_title' : 'studio_edit_title')}</Text>
+        <Text style={styles.sub}>{t(publishingEnabled ? 'publish_subtitle' : 'studio_edit_hint')}</Text>
+        {publishingEnabled && <View style={styles.modeToggleRow}>
           <Pressable
             style={[styles.modeToggleButton, publishMode === 'video' && styles.modeToggleButtonActive]}
             onPress={() => setPublishMode('video')}
@@ -2341,9 +2344,9 @@ export default function EditorScreen() {
               {t('publish_mode_music')}
             </Text>
           </Pressable>
-        </View>
+        </View>}
 
-        {publishMode === 'music' ? (
+        {publishingEnabled && publishMode === 'music' ? (
           <View style={styles.card}>
             <Text style={styles.sectionTitle}>{t('publish_music_title')}</Text>
             <Text style={styles.sectionHint}>{t('publish_music_hint')}</Text>
@@ -2492,7 +2495,7 @@ export default function EditorScreen() {
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{t('publish_video_select_title')}</Text>
-          <Text style={styles.sectionHint}>{t('publish_video_select_hint')}</Text>
+          <Text style={styles.sectionHint}>{t(publishingEnabled ? 'publish_video_select_hint' : 'studio_edit_hint')}</Text>
           {loadingVideos ? (
             <ActivityIndicator style={{ marginTop: 12 }} />
           ) : videos.length ? (
@@ -2581,7 +2584,7 @@ export default function EditorScreen() {
           )}
         </View>
 
-        <View style={styles.card}>
+        {publishingEnabled && <View style={styles.card}>
           <Text style={styles.sectionTitle}>{t('publish_select_title')}</Text>
           <Text style={styles.sectionHint}>{t('publish_select_hint')}</Text>
 
@@ -2609,11 +2612,11 @@ export default function EditorScreen() {
               value: selectedList.length ? selectedList.join(', ') : t('label_none'),
             })}
           </Text>
-        </View>
+        </View>}
 
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{t('publish_process_title')}</Text>
-          <Text style={styles.sectionHint}>{t('publish_process_hint')}</Text>
+          <Text style={styles.sectionHint}>{t(publishingEnabled ? 'publish_process_hint' : 'studio_edit_hint')}</Text>
           <View style={styles.publishOptionRow}>
             <View style={styles.publishOptionText}>
               <Text style={styles.optionLabel}>{t('publish_option_burn_title')}</Text>
@@ -3191,7 +3194,7 @@ export default function EditorScreen() {
           {coverStatus ? <Text style={[styles.status, toneStyle(coverTone)]}>{coverStatus}</Text> : null}
         </View>
 
-        <View style={styles.card}>
+        {publishingEnabled && <View style={styles.card}>
           <Text style={styles.sectionTitle}>{t('publish_manual_title')}</Text>
           <Text style={styles.sectionHint}>{t('publish_manual_hint')}</Text>
           {renderRunSelector(
@@ -3280,7 +3283,7 @@ export default function EditorScreen() {
               </>
             ) : null}
           </View>
-        </View>
+        </View>}
       </View>
       {Platform.OS === 'web' && previewVideoUrl
         ? React.createElement('video', {

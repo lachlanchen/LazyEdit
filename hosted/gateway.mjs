@@ -9,6 +9,7 @@ import { closeCell } from './lifecycle.mjs';
 import { createOAuth } from './oauth.mjs';
 import { createBilling } from './billing.mjs';
 import { monthlyPlans } from './plans.mjs';
+import { accountCapabilities } from './features.mjs';
 
 export function createGateway(config) {
   const registry = new Registry(config.database, config.domain, config.capacity || 3, config.sameHost);
@@ -50,6 +51,7 @@ export function createGateway(config) {
     if (w) {
       const headers = {host,'x-studio-path':raw,'x-studio-access':access,
         'x-studio-client':internal?req.headers['x-studio-client']:req.socket.remoteAddress, authorization:`Bearer ${w.transport}`};
+      headers['x-studio-publishing'] = accountCapabilities(config, registry, w.owner).publishing ? '1' : '0';
       if((req.method==='POST'&&/^\/(api|v1\/studio)\/videos\//.test(raw))||(req.method==='GET'&&raw==='/v1/studio/usage')){
         if(registry.isAdmin(w.owner))headers['x-studio-processing-minutes']='owner';
         else {
@@ -83,7 +85,9 @@ export function createGateway(config) {
         let text = ''; for await (const bytes of req) {text += bytes; if (text.length > 16384) fail(413, 'Callback too large');}
         body = Object.fromEntries(new URLSearchParams(text));
       }
-      const location = await oauth.callback(callback[1], body);
+      let location;
+      try { location = await oauth.callback(callback[1], body); }
+      catch (error) { location = oauth.failureLocation(error); }
       res.writeHead(303, {location, 'cache-control': 'no-store', 'referrer-policy': 'no-referrer'}); res.end(); return;
     }
     if (req.method === 'POST' && req.headers.origin !== origin) fail(403,'Same-origin request required');
@@ -142,7 +146,7 @@ export function createGateway(config) {
       return json(res, 200, {ok: true});
     }
     if (req.method==='GET' && path==='/account') {
-      const w=registry.workspace(p.owner);return json(res,200,{subject:p.owner,role:registry.isAdmin(p.owner)?'admin':'member',mode:hostedCookie(req)?'workspace':'owner',username:registry.db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,status:w?.status||'not_created',workspace:w?`https://${registry.host(w)}`:null,apiBase:w?`https://${registry.host(w)}${config.sameHost?'/workspaces/'+w.id:''}`:null});
+      const w=registry.workspace(p.owner);return json(res,200,{subject:p.owner,role:registry.isAdmin(p.owner)?'admin':'member',mode:hostedCookie(req)?'workspace':'owner',capabilities:accountCapabilities(config,registry,p.owner),username:registry.db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,status:w?.status||'not_created',workspace:w?`https://${registry.host(w)}`:null,apiBase:w?`https://${registry.host(w)}${config.sameHost?'/workspaces/'+w.id:''}`:null});
     }
     if(req.method==='POST'&&path==='/invite'){
       if(!registry.isAdmin(p.owner))fail(403,'Administrator required');

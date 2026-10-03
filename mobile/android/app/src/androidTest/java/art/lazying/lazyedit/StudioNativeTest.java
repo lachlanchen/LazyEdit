@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static org.junit.Assert.*;
 import java.io.*;
@@ -66,6 +67,26 @@ public class StudioNativeTest {
         assertEquals("edit.lazying.art",StudioApi.url("/api/videos").getHost());
         for(String invalid:new String[]{"http://edit.lazying.art/","https://evil.test/","https://user@edit.lazying.art/","https://edit.lazying.art:444/"}) {
             try { StudioApi.url(invalid);fail("Untrusted destination accepted"); }catch(IOException expected) {}
+        }
+    }
+    @Test public void memberEditingDoesNotRequireSocialAccounts() throws Exception {
+        Context context=InstrumentationRegistry.getInstrumentation().getTargetContext();
+        File credential=new File(context.getFilesDir(),"qa-member-credentials.json");
+        assertTrue("Prepare private member credentials in the dedicated emulator",credential.isFile());
+        JSONObject account=new JSONObject(StudioApi.readFile(credential));
+        StudioApi previous=new StudioApi(context);if(previous.signedIn())previous.logout();
+        Intent launch=new Intent().setComponent(new ComponentName("art.lazying.lazyedit",MainActivity.class.getName())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(launch)) {
+            onView(withHint("Username")).perform(replaceText(account.getString("username")),closeSoftKeyboard());
+            onView(withHint("Password")).perform(replaceText(account.getString("password")),closeSoftKeyboard());
+            tap("Sign in / Create account");waitText("Your Studio",90000);ready(scenario);
+            assertFalse(new StudioApi(context).publishingEnabled());
+            onView(withText("Account")).perform(click());waitText("Private Docker workspace",30000);ready(scenario);
+            onView(withText("Platform accounts")).check(doesNotExist());
+            onView(withText("Create invitation")).check(doesNotExist());
+            tap("Sign out");waitText("Sign in / Create account",15000);
+        } finally {
+            credential.delete();StudioApi current=new StudioApi(context);if(current.signedIn())current.logout();
         }
     }
 }

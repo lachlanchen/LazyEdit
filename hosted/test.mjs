@@ -43,7 +43,7 @@ test('invite → isolated workspaces → authenticated platform desktop',async t
   await listen(router);servers.push(router);
   // Gateway config is captured by reference.
   gateway.server.close();gateway.registry.db.close();
-  const config={database:join(dir,'registry.sqlite'),domain:'studio.test',capacity:2,workerHost:()=> '127.0.0.1',workerPort:router.address().port};
+  const config={database:join(dir,'registry.sqlite'),domain:'studio.test',capacity:2,workerHost:()=> '127.0.0.1',workerPort:router.address().port,publishing:{enabled:true,accountIds:[]}};
   const live=createGateway(config);
   gateway.server=live.server;gateway.registry=live.registry;
   await listen(gateway.server);servers.push(gateway.server);
@@ -53,7 +53,7 @@ test('invite → isolated workspaces → authenticated platform desktop',async t
     const invitation=gateway.registry.invite();
     const registration=await request(port,'studio.test','/register',{username:name,password:'test-only-long-password',invitation});assert.equal(registration.status,200);
     assert.equal((await request(port,'studio.test','/register',{username:name+'x',password:'test-only-long-password',invitation})).status,400);
-    const owner=gateway.registry.login(name,'test-only-long-password',name),w=gateway.registry.workspace(owner),host=gateway.registry.host(w);
+    const owner=gateway.registry.login(name,'test-only-long-password',name);config.publishing.accountIds.push(owner);const w=gateway.registry.workspace(owner),host=gateway.registry.host(w);
     assert.equal((await request(port,'studio.test','/enter',{},registration.cookie)).status,409);
     const backend=http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify(req.url.startsWith('/api/videos')?{videos:[{id:1,title:name}]}:{jobs:[{id:1,owner:name}],opened:true}));});await listen(backend);servers.push(backend);
     const desktop=http.createServer((req,res)=>res.end(name+' desktop'));desktop.on('upgrade',(req,s)=>s.write('HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n'));await listen(desktop);servers.push(desktop);
@@ -150,7 +150,8 @@ test('same domain preserves owner routes and isolates invite sessions and deskto
   const dir=mkdtempSync(join(tmpdir(),'studio-samehost-')),servers=[],cells=[],ports=new Map(),host='edit.test';
   const secretPath=join(dir,'upstream'),gatewayPath=join(dir,'gateway'),facadePath=join(dir,'facade');
   writeFileSync(secretPath,'test-upstream-capability');writeFileSync(gatewayPath,'test-gateway-capability');writeFileSync(facadePath,'test-facade-capability');
-  const gateway=createGateway({database:join(dir,'registry.sqlite'),domain:host,sameHost:true,ingressSecretFile:gatewayPath,
+  const publishing={enabled:true,accountIds:[]};
+  const gateway=createGateway({database:join(dir,'registry.sqlite'),domain:host,sameHost:true,ingressSecretFile:gatewayPath,publishing,
     workerHost:()=> '127.0.0.1',workerPort:w=>ports.get(w.id)});
   await listen(gateway.server);servers.push(gateway.server);
   const ingress=createIngress({host,database:join(dir,'owner.sqlite'),upstreamSecretFile:secretPath,hostedIngressSecretFile:gatewayPath,
@@ -171,6 +172,7 @@ test('same domain preserves owner routes and isolates invite sessions and deskto
   for(const name of ['alice','bravo']){
     const reg=await pub('/accounts/register',{username:name,password:'test-only-long-password',invitation:gateway.registry.invite()});assert.equal(reg.status,200);
     const w=gateway.registry.workspace(gateway.registry.login(name,'test-only-long-password',name));
+    publishing.accountIds.push(w.owner);
     const backend=http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify({videos:[{id:1,title:name}]}));});await listen(backend);servers.push(backend);
     const desktop=http.createServer((req,res)=>res.end(name));desktop.on('upgrade',(req,s)=>s.write('HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n'));await listen(desktop);servers.push(desktop);
     const key=join(dir,name+'.key');writeFileSync(key,w.transport);

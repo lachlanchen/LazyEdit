@@ -5,7 +5,7 @@ umask 077
 root="$HOME/Projects/LazyEditStudio"
 device="${STUDIO_TEST_SIMULATOR:?Supply the dedicated Studio simulator ID}"
 credentials="${STUDIO_TEST_CREDENTIALS:?Supply the protected QA account file}"
-selection="${STUDIO_TEST_SELECTION:-StudioUITests/StudioUITests/testMemberPrivateLibraryAndLoginDesktop}"
+selection="${STUDIO_TEST_SELECTION:-StudioUITests/StudioUITests/testMemberEditingWithoutSocialAccounts}"
 receipt="${STUDIO_TEST_RECEIPT:-$root/release/qa-current.xcresult}"
 [[ "$device" =~ ^[A-Fa-f0-9-]{36}$ ]] || exit 2
 [[ -f "$credentials" && ! -L "$credentials" ]] || exit 2

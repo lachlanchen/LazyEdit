@@ -84,3 +84,17 @@ Note on symlinks: Never edit files inside symlinked directories from this reposi
 - Never commit API keys or credentials; use environment variables.
 - GPU selection: `CUDA_VISIBLE_DEVICES` is set in `app.py`—adjust locally but avoid committing machine‑specific values.
 - Large media belongs in `DATA/` or external storage; keep the repository lightweight.
+
+## Hosted Studio capabilities
+- Hosted members receive private upload/edit/process/preview access by default.
+- Social publication is a separate backend capability. `publishing.enabled`
+  and an operator-selected administrator/account-ID policy in the protected
+  hosted config control it; billing and invitations never grant publication.
+- Enforce this on browser, native and linked API routes. Hiding controls alone
+  is insufficient. Gate video/music posts and platform desktop/QR access.
+- The reviewer is a normal isolated editing member, not a personal Pi user.
+  Never supply the owner's media, social profile or channel credentials.
+- This applies to all ordinary users, not review detection. Store descriptions
+  and review notes must disclose the optional managed publishing integration.
+- Preserve the original owner's backend and Pi. Its existing workflow remains
+  available only to the authorized owner; do not change it during hosted rollout.

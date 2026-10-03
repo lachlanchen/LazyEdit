@@ -39,6 +39,9 @@ final class StudioApi {
             if(stored.optLong("expires")>System.currentTimeMillis()) identity=stored;
         } catch(Exception ignored) {}
     }
+    private String publishingScope;
+    private boolean publishingAllowed;
+    boolean publishingEnabled() { return scope().equals(publishingScope) && publishingAllowed; }
     boolean signedIn() { return identity!=null; }
     String mode() { return identity==null?"owner":identity.optString("mode","owner"); }
     String username() { return identity==null?"":identity.optString("username"); }
@@ -121,7 +124,7 @@ final class StudioApi {
     JSONObject json(String path) throws Exception {
         String original=cookie();
         for(int attempt=0;;attempt++) {
-            try { Reply reply=send(path,"GET",null,"application/json",null,original,false);if(!cookie().equals(original))throw new IOException("Workspace changed.");return reply.json(); }
+            try { Reply reply=send(path,"GET",null,"application/json",null,original,false);if(!cookie().equals(original))throw new IOException("Workspace changed.");JSONObject result=reply.json();if(path.equals("/auth/me")){publishingScope=scope();publishingAllowed=result.optJSONObject("capabilities")!=null?result.getJSONObject("capabilities").optBoolean("publishing"):mode().equals("owner")&&result.optJSONArray("scopes")!=null&&result.getJSONArray("scopes").toString().contains("publication.publish");}return result; }
             catch(Failure failure) { if(attempt>=2||!Arrays.asList(429,502,503,504).contains(failure.status))throw failure;Thread.sleep((attempt+1)*1000L); }
         }
     }
@@ -160,6 +163,6 @@ final class StudioApi {
         post("/auth/logout",new JSONObject());
         clear();
     }
-    void clear() { identity=null;secretFile().delete(); }
+    void clear() { identity=null;publishingScope=null;publishingAllowed=false;secretFile().delete(); }
     long chunk(String id,long offset,byte[] bytes) throws Exception { return send("/v1/studio/upload-part?uploadId="+id,"PUT",bytes,"application/octet-stream:"+offset,null,cookie(),false).json().getLong("offset"); }
 }

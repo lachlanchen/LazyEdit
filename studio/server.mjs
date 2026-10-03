@@ -24,6 +24,12 @@ export function createWorker(config) {
  const upstream=readFileSync(config.upstreamSecretFile,'utf8').trim();
  const root=resolve(config.dataRoot), incoming=join(root,'studio_uploads');mkdirSync(incoming,{recursive:true,mode:0o700});
  const locks=new Set();
+ const capabilities = () => ({editing:true,publishing:config.publishingEnabled ? config.publishingEnabled() === true : true});
+ const effectiveScopes = scopes => {
+  if(!Array.isArray(scopes))fail(400,'Invalid scopes');
+  return capabilities().publishing ? scopes : scopes.filter(s=>s!=='publication.publish');
+ };
+ function requirePublishing() { if(!capabilities().publishing)fail(403,'Social publishing is not enabled for this account'); }
  db.exec('CREATE TABLE IF NOT EXISTS hidden_media (owner TEXT, video_id INTEGER, created INTEGER, PRIMARY KEY(owner,video_id))');
  const hidden = (p,id) => Boolean(db.prepare('SELECT 1 FROM hidden_media WHERE owner=? AND video_id=?').get(p.owner,id));
  async function composerSettings() {
@@ -70,6 +76,7 @@ export function createWorker(config) {
   if(token?.startsWith('Bearer '))token=token.slice(7);
   else{token=(req.headers.cookie||'').split(';').map(v=>v.trim()).find(v=>v.startsWith('__Host-studio='))?.split('=')[1];browser=true;}
   const p=auth.principal(token);
+  p.scopes=effectiveScopes(p.scopes);
   ownerOnly(p);
   if(browser&&p.kind!=='browser')fail(401,'Invalid browser session');
   if(browser&&!['GET','HEAD','OPTIONS'].includes(req.method)&&req.headers.origin!==origin)fail(403,'Same-origin browser request required');
@@ -183,7 +190,7 @@ export function createWorker(config) {
   if(path==='/v1/studio/health'&&method==='GET'){json(res,200,{status:'ok',service:'LazyEdit Studio',apiVersion:'1'});return;}
   if(path==='/auth/login'&&method==='POST'){
    if(req.headers.origin&&req.headers.origin!==origin)fail(403,'Invalid origin');const d=await readJSON(req,8192);const owner=auth.login(String(d.username||''),String(d.password||''),client);ownerOnly({owner});
-   if(d.mode==='token'){json(res,200,auth.issue(owner,d.scopes||SCOPES,d.client_name||'LightMind'));return;}
+   if(d.mode==='token'){json(res,200,auth.issue(owner,effectiveScopes(d.scopes||SCOPES),d.client_name||'LightMind'));return;}
    if(req.headers.origin!==origin)fail(403,'Browser login requires same origin');
    const t=auth.issue(owner,SCOPES,'Studio browser','browser');json(res,200,{ok:true},{'set-cookie':`__Host-studio=${t.access_token}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=43200`});return;
   }
@@ -193,7 +200,7 @@ export function createWorker(config) {
    const t=d.grant_type==='refresh_token'?auth.refresh(d.refresh_token):d.grant_type==='urn:ietf:params:oauth:grant-type:device_code'?auth.poll(d.device_code):fail(400,'Unsupported grant_type');ownerOnly(auth.principal(t.access_token));json(res,200,t);return;
   }
   if(path==='/auth/device'&&method==='POST'){
-   const d=await readJSON(req,8192),r=auth.device(d.scopes||SCOPES.filter(s=>s!=='publication.publish'),d.client_name,client);json(res,200,{...r,verification_uri:origin+'/connect'});return;
+   const d=await readJSON(req,8192),r=auth.device(effectiveScopes(d.scopes||SCOPES.filter(s=>s!=='publication.publish')),d.client_name,client);json(res,200,{...r,verification_uri:origin+'/connect'});return;
   }
   if(/^\/studio-locales\/(en|zh-Hans|zh-Hant|ja|ko|vi|ar|fr|es|de|ru)\.json$/.test(path)&&method==='GET'){file(res,req,join(new URL('./locales/',import.meta.url).pathname,basename(path)));return;}
   if(['/login','/connect','/privacy','/studio-interface.js','/studio-login.js','/studio-login.css','/studio-session.js','/manifest.webmanifest','/sw.js','/studio-icon.png'].includes(path)&&['GET','HEAD'].includes(method)){
@@ -204,11 +211,11 @@ export function createWorker(config) {
    scope(p,'media.read');if(!config.processingUsage)fail(404,'Usage is not metered on this worker');
    json(res,200,config.processingUsage());return;
   }
-  if(path==='/auth/me'&&method==='GET'||path==='/v1/studio/account'&&method==='GET'){json(res,200,{subject:p.owner,username:db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,scopes:p.scopes,issuer:origin,audience:'lazyedit-studio',limits:{maxVideoBytes:10*1024**3,chunkBytes:8*1024**2}});return;}
+  if(path==='/auth/me'&&method==='GET'||path==='/v1/studio/account'&&method==='GET'){json(res,200,{subject:p.owner,username:db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,scopes:p.scopes,capabilities:capabilities(),issuer:origin,audience:'lazyedit-studio',limits:{maxVideoBytes:10*1024**3,chunkBytes:8*1024**2}});return;}
   if(path==='/studio-context.js'&&method==='GET'){
    if(p.kind!=='browser')fail(403,'Browser session required');
    res.writeHead(200,{'content-type':'text/javascript; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'});
-   res.end('window.__studioContext='+JSON.stringify({scope:digest(p.owner+'\n'+root).slice(0,32),publicationOnly:true})+';');return;
+   res.end('window.__studioContext='+JSON.stringify({scope:digest(p.owner+'\n'+root).slice(0,32),publicationOnly:true,capabilities:capabilities()})+';');return;
   }
   if(path==='/auth/logout'&&method==='POST'){auth.revoke(p.owner,p.id);json(res,200,{ok:true},{'set-cookie':'__Host-studio=; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=0'});return;}
   if(path==='/auth/approve'&&method==='POST'){if(p.kind!=='browser')fail(403,'Browser consent required');const d=await readJSON(req,8192);auth.approve(p.owner,String(d.user_code||'').toUpperCase());json(res,200,{ok:true});return;}
@@ -239,14 +246,15 @@ export function createWorker(config) {
    }
    if(action==='composer'&&method==='GET'){
     const [settings,sessions,video]=await Promise.all([composerSettings(),backend(`/api/videos/${id}/publication-sessions`),backend(`/api/videos/${id}`)]);
-    json(res,200,{defaults:composerDefaults(settings),sessions:sessions.sessions||[],geometry:await geometry(video,{enabled:false})});return;
+    const defaults=composerDefaults(settings);if(!capabilities().publishing)defaults.platforms=[];
+    json(res,200,{capabilities:capabilities(),defaults,sessions:sessions.sessions||[],geometry:await geometry(video,{enabled:false})});return;
    }
    if(action==='plan'&&method==='POST'){
-    const plan=await composerPlan(id,await readJSON(req,100000));plan.planDigest=digest(JSON.stringify(plan.options));delete plan.options;json(res,200,plan);return;
+    const plan=await composerPlan(id,await readJSON(req,100000));plan.capabilities=capabilities();plan.planDigest=digest(JSON.stringify(plan.options));delete plan.options;json(res,200,plan);return;
    }
    if(action==='submit'&&method==='POST'){
     const d=await readJSON(req,110000);if(!['prepare','publish'].includes(d.action))fail(400,'Invalid action');
-    if(d.action==='publish'){scope(p,'publication.publish');if(d.confirmation!=='PUBLISH')fail(400,'Confirm publication first');}
+    if(d.action==='publish'){requirePublishing();scope(p,'publication.publish');if(d.confirmation!=='PUBLISH')fail(400,'Confirm publication first');}
     const lock='compose:'+id;if(locks.has(lock))fail(409,'Submission in progress. Check Activity');locks.add(lock);
     try{
      const result=await once(p,req,{path,data:d},async plan=>{
@@ -257,7 +265,7 @@ export function createWorker(config) {
      },async()=>{
       const f=validateForm(d.form);if(d.action==='prepare'&&f.mode==='reuse')fail(400,'A reused run does not need processing');
       if(d.action==='publish'&&!f.platforms.length)fail(400,'Choose at least one platform');
-      checkPublicationJobs((await backend('/api/autopublish/queue')).jobs,id,f.platforms,d.action==='publish');
+      if(capabilities().publishing)checkPublicationJobs((await backend('/api/autopublish/queue')).jobs,id,f.platforms,d.action==='publish');
       const status=await backend(`/api/videos/${id}/process-status`);
       if(Object.values(status.steps||{}).some(s=>s.status==='working'))fail(409,'This video is being prepared. Wait for its current run');
       const plan=await composerPlan(id,f);
@@ -286,10 +294,12 @@ export function createWorker(config) {
    scope(p,'media.read');const d=await backend(raw);if(p.kind!=='browser')d.videos=d.videos.filter(v=>db.prepare('SELECT 1 FROM media WHERE video_id=? AND owner=?').get(v.id,p.owner));else d.videos=d.videos.filter(v=>hidden(p,v.id)===(u.searchParams.get('hidden')==='true'));if(p.kind==='browser')json(res,200,d);else publicJSON(res,d);return;
   }
   if(path==='/api/autopublish/queue'&&method==='GET'){
+   if(!capabilities().publishing){scope(p,'jobs.read');json(res,200,{status:'ok',jobs:[],publishingEnabled:false});return;}
    scope(p,'jobs.read');const d=await backend(raw);if(p.kind!=='browser')d.jobs=d.jobs.filter(j=>db.prepare('SELECT 1 FROM media WHERE video_id=? AND owner=?').get(j.video_id,p.owner));if(p.kind==='browser')json(res,200,d);else publicJSON(res,d);return;
   }
   const videoMatch=/^\/api\/videos\/(\d+)(?:\/(proxy|transcribe|transcription|polish-subtitles|subtitle-correction|import-subtitles|publication-sessions(?:\/\d+)?|caption|captions|metadata|cover|keyframes|translate|translation|translations|burn-subtitles|process|process-status|publish))?$/.exec(path);
   if(videoMatch){
+   if(videoMatch[2]==='publish')requirePublishing();
    const id=numeric(videoMatch[1]),action=videoMatch[2];auth.own(p,id);scope(p,method==='GET'?'media.read':action==='publish'?'publication.publish':'edit.submit');
    if(!['GET','POST','DELETE'].includes(method)||method==='DELETE'&&p.kind!=='browser')fail(405,'Method not allowed');
    let d=method==='POST'?await readJSON(req,1024**2):undefined;
@@ -344,7 +354,7 @@ export function createWorker(config) {
   }
   if(p.kind==='browser'){
    if(/^\/api\/(languages|video-specs|video-prompts|grammar-palettes\/[A-Za-z_-]+|ui-settings\/[A-Za-z_-]+)$/.test(path)&&['GET','POST'].includes(method)) {const result=await backend(raw,method,method==='POST'?await readJSON(req,1024**2):undefined);json(res,200,result);return;}
-   if(/^\/api\/autopublish\/jobs\/[^/]+\/attention\/\d+$/.test(path)&&method==='GET'){await proxy(req,res,{port:config.backendPort,path:raw});return;}
+   if(/^\/api\/autopublish\/jobs\/[^/]+\/attention\/\d+$/.test(path)&&method==='GET'){requirePublishing();await proxy(req,res,{port:config.backendPort,path:raw});return;}
    if(['/upload-image','/upload-logo','/upload'].includes(path)&&method==='POST'){await proxy(req,res,{port:config.backendPort,path:raw});return;}
    if(['GET','HEAD'].includes(method)&&!path.startsWith('/api/')&&!path.startsWith('/v1/')&&!path.startsWith('/auth/')){
     const relative=decodeURIComponent(path),candidate=resolve(config.staticRoot,'.'+relative);if(!candidate.startsWith(resolve(config.staticRoot)+sep)&&candidate!==resolve(config.staticRoot))fail(404,'Not found');

@@ -360,5 +360,8 @@
   "Browser closed. Your login is saved; choose a platform to reopen it.": "브라우저가 닫혔습니다. 로그인이 저장되었습니다. 플랫폼을 선택해 다시 여세요.",
   "Browser could not close.": "브라우저를 닫을 수 없습니다.",
   "Wait for processing and publication to finish before deleting your account": "계정을 삭제하기 전에 처리 및 게시가 완료될 때까지 기다리세요",
-  "Could not close the workspace safely; try again later": "워크스페이스를 안전하게 닫을 수 없습니다. 나중에 다시 시도하세요"
+  "Could not close the workspace safely; try again later": "워크스페이스를 안전하게 닫을 수 없습니다. 나중에 다시 시도하세요",
+  "Edit & preview": "편집 및 미리보기",
+  "Process your video, then preview the edited result. Social accounts are optional.": "동영상을 처리한 뒤 편집 결과를 미리 보세요. 소셜 계정은 선택 사항입니다.",
+  "Preview edited video": "편집한 동영상 미리보기"
 }

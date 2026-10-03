@@ -91,16 +91,21 @@ not read production credentials or create an external publication.
 ## Pricing and purchase readiness
 
 Requested paid download price: USD 0.99 on Apple and Google; store schedules
-were saved/read back separately. Requested monthly plans: USD 2.99, 14.99 and
-29.89. Do not silently change an unavailable store price point to 29.99.
+were saved/read back separately. Approved monthly plans: USD 2.99, 14.99 and
+29.90. The owner explicitly selected 29.90 after Apple's list lacked 29.89.
+All three USA Apple draft price schedules have been saved and read back.
 
 Native StoreKit 2 and Google Play Billing are prepared. The backend uses the
 Apple App Store Server Library and Google subscriptionsv2, exact own product
 IDs, account-token binding, canonical provider verification, acknowledgement,
 refund/out-of-order/replay protection and encrypted proof storage. Clients
 cannot grant themselves an entitlement. Purchases remain disabled until plan
-benefits, enforced usage limits, store products and sandbox checks are approved
-and verified. Paid-download subscription credit is not implemented yet.
+store products and sandbox checks are verified. Hosted source-minute limits
+are now enforced: 10/60/150 minutes per UTC calendar month. While charging is
+disabled, invited pilot members receive 10 minutes and the administrator is
+exempt. Finished renders can be reused without another processing charge.
+See [processing and billing](studio/2026-10-04-processing-and-billing.md).
+Paid-download subscription credit is not implemented yet.
 
 There is no promise of open unlimited signup or unrestricted public compute.
 Current capacity is a controlled three-workspace pilot including the operator;

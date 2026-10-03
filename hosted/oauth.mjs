@@ -75,7 +75,10 @@ export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
       registry.throttle(`oauth:${client}`);
       const flow = secret(), verifier = secret(), nonce = secret();
       registry.db.prepare('DELETE FROM oauth_flows WHERE expires<?').run(Date.now());
-      registry.db.prepare('INSERT INTO oauth_flows VALUES(?,?,?,?)').run(digest(flow), name, JSON.stringify({challenge: body.challenge, target: body.target, owner: owner || null, verifier, nonce}), Date.now() + 600000);
+      // The owner may finish a provider login later. Only the pending flow has
+      // a longer window; provider identity freshness and the 2-minute PKCE
+      // transfer receipt remain unchanged.
+      registry.db.prepare('INSERT INTO oauth_flows VALUES(?,?,?,?)').run(digest(flow), name, JSON.stringify({challenge: body.challenge, target: body.target, owner: owner || null, verifier, nonce}), Date.now() + 3600000);
       const url = new URL(definitions[name].authorize);
       const values = {client_id: settings[name].clientId, redirect_uri: redirect(name), response_type: 'code', scope: name === 'apple' ? 'name email' : 'openid email', state: flow, nonce};
       if (name === 'apple') values.response_mode = 'form_post';
@@ -89,9 +92,12 @@ export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
       return {url: url.href};
     },
     async callback(name, body) {
-      if (!settings[name] || !proof.test(body.state || '') || typeof body.code !== 'string' || body.code.length > 4096 || !body.code) fail(401, 'Sign-in expired; start again');
+      const expired=()=>{throw Object.assign(Error('Sign-in expired; start again'),{status:401,oauthReason:'expired'});};
+      if (!settings[name] || !proof.test(body.state || '')) expired();
       const row = registry.db.prepare('DELETE FROM oauth_flows WHERE hash=? AND provider=? AND expires>? RETURNING body').get(digest(body.state), name, Date.now());
-      if (!row) fail(401, 'Sign-in expired; start again');
+      if (!row) expired();
+      if(body.error==='access_denied')throw Object.assign(Error('Sign-in cancelled; start again when ready'),{status:401,oauthReason:'cancelled'});
+      if(typeof body.code!=='string'||!body.code||body.code.length>4096)fail(401,'Provider sign-in was incomplete; start again');
       const flow = JSON.parse(row.body);
       const values = {grant_type: 'authorization_code', code: body.code, client_id: settings[name].clientId, client_secret: clientSecret(name), redirect_uri: redirect(name)};
       if (name === 'google') values.code_verifier = flow.verifier;
@@ -111,6 +117,10 @@ export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
       registry.db.prepare('DELETE FROM oauth_receipts WHERE expires<?').run(Date.now());
       registry.db.prepare('INSERT INTO oauth_receipts VALUES(?,?,?,?)').run(digest(ticket), owner, flow.challenge, Date.now() + 120000);
       return flow.target === 'native' ? `art.lazying.lazyedit://auth?ticket=${ticket}` : `${origin}/accounts#ticket=${ticket}`;
+    },
+    failureLocation(error) {
+      const reason=['expired','cancelled'].includes(error.oauthReason)?error.oauthReason:error.status===403?'unlinked':'provider';
+      return `${origin}/accounts?oauth_error=${reason}`;
     },
     redeem(body) {
       if (!proof.test(body.ticket || '') || !proof.test(body.verifier || '')) fail(401, 'Invalid sign-in receipt');

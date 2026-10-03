@@ -1,0 +1,46 @@
+{
+  "en": {
+    "studio_edit_title": "Edit & preview",
+    "studio_edit_hint": "Process your video, then preview the edited result. Social accounts are optional."
+  },
+  "zh-Hans": {
+    "studio_edit_title": "编辑与预览",
+    "studio_edit_hint": "处理视频，然后预览编辑后的结果。社交账号是可选的。"
+  },
+  "zh-Hant": {
+    "studio_edit_title": "編輯與預覽",
+    "studio_edit_hint": "處理影片，然後預覽編輯後的結果。社群帳號是可選的。"
+  },
+  "ja": {
+    "studio_edit_title": "編集とプレビュー",
+    "studio_edit_hint": "動画を処理し、編集結果を確認できます。SNSアカウントは任意です。"
+  },
+  "ko": {
+    "studio_edit_title": "편집 및 미리보기",
+    "studio_edit_hint": "동영상을 처리한 뒤 편집 결과를 미리 보세요. 소셜 계정은 선택 사항입니다."
+  },
+  "vi": {
+    "studio_edit_title": "Chỉnh sửa và xem trước",
+    "studio_edit_hint": "Xử lý video rồi xem trước kết quả chỉnh sửa. Tài khoản mạng xã hội là tùy chọn."
+  },
+  "ar": {
+    "studio_edit_title": "تحرير ومعاينة",
+    "studio_edit_hint": "عالج الفيديو ثم عاين النتيجة المحررة. حسابات التواصل الاجتماعي اختيارية."
+  },
+  "fr": {
+    "studio_edit_title": "Modifier et prévisualiser",
+    "studio_edit_hint": "Traitez la vidéo, puis prévisualisez le résultat. Les comptes sociaux sont facultatifs."
+  },
+  "es": {
+    "studio_edit_title": "Editar y previsualizar",
+    "studio_edit_hint": "Procesa el vídeo y previsualiza el resultado. Las cuentas sociales son opcionales."
+  },
+  "de": {
+    "studio_edit_title": "Bearbeiten und Vorschau",
+    "studio_edit_hint": "Verarbeite dein Video und prüfe das Ergebnis. Social-Media-Konten sind optional."
+  },
+  "ru": {
+    "studio_edit_title": "Редактирование и просмотр",
+    "studio_edit_hint": "Обработайте видео и просмотрите результат. Социальные аккаунты необязательны."
+  }
+}

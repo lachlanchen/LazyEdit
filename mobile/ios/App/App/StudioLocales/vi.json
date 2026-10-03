@@ -360,5 +360,8 @@
   "Browser closed. Your login is saved; choose a platform to reopen it.": "Đã đóng trình duyệt. Thông tin đăng nhập của bạn đã được lưu; chọn một nền tảng để mở lại.",
   "Browser could not close.": "Không thể đóng trình duyệt.",
   "Wait for processing and publication to finish before deleting your account": "Đợi quá trình xử lý và đăng tải hoàn tất trước khi xóa tài khoản của bạn",
-  "Could not close the workspace safely; try again later": "Không thể đóng không gian làm việc an toàn; thử lại sau"
+  "Could not close the workspace safely; try again later": "Không thể đóng không gian làm việc an toàn; thử lại sau",
+  "Edit & preview": "Chỉnh sửa và xem trước",
+  "Process your video, then preview the edited result. Social accounts are optional.": "Xử lý video rồi xem trước kết quả chỉnh sửa. Tài khoản mạng xã hội là tùy chọn.",
+  "Preview edited video": "Xem trước video đã chỉnh sửa"
 }

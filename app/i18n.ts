@@ -1,4 +1,5 @@
 import german from './locales/de.json';
+import studioEditor from './locales/studio-editor.json';
 import russian from './locales/ru.json';
 
 export type Locale =
@@ -2142,6 +2143,10 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
     settings_backend_label: 'Backend: {{value}}',
   },
 };
+
+for (const [locale, messages] of Object.entries(studioEditor)) {
+  Object.assign(TRANSLATIONS[locale as Locale], messages);
+}
 
 export const resolveLocale = (value?: string | null): Locale => {
   if (!value) return DEFAULT_LOCALE;

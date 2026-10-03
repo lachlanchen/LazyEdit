@@ -1,4 +1,5 @@
 import { studioStorage } from '@/lib/studioStorage';
+import { useStudioCapabilities } from '@/lib/studioCapabilities';
 import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs, usePathname, useRouter } from 'expo-router';
@@ -25,6 +26,7 @@ export default function TabLayout() {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useI18n();
+  const { publishing } = useStudioCapabilities();
   const { width } = useWindowDimensions();
   const compactRemote = process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1' && width < 600;
   const publicationOnly = process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1';
@@ -141,8 +143,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="editor"
         options={{
-          title: t('tab_publish'),
-          tabBarIcon: ({ color }) => <TabBarIcon name="upload" color={color} />,
+          title: t(publishing ? 'tab_publish' : 'studio_edit_title'),
+          tabBarIcon: ({ color }) => <TabBarIcon name={publishing ? 'upload' : 'sliders'} color={color} />,
         }}
       />
       <Tabs.Screen

@@ -360,5 +360,8 @@
   "Browser closed. Your login is saved; choose a platform to reopen it.": "瀏覽器已關閉。你的登入資訊已儲存；請選擇平台以重新開啟。",
   "Browser could not close.": "瀏覽器無法關閉。",
   "Wait for processing and publication to finish before deleting your account": "請等待處理與發佈完成後再刪除你的帳號",
-  "Could not close the workspace safely; try again later": "無法安全關閉工作區；請稍後再試"
+  "Could not close the workspace safely; try again later": "無法安全關閉工作區；請稍後再試",
+  "Edit & preview": "編輯與預覽",
+  "Process your video, then preview the edited result. Social accounts are optional.": "處理影片，然後預覽編輯後的結果。社群帳號是可選的。",
+  "Preview edited video": "預覽編輯後的影片"
 }

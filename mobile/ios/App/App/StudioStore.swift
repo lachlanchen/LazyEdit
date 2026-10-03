@@ -85,6 +85,7 @@ final class StudioStore: ObservableObject {
     @Published var switchingWorkspace = false
     @Published var workspaceMode = "owner"
     @Published var isAdmin = false
+    @Published var publishingEnabled = false
     @Published var invitationURL: String?
     @Published var videos: [StudioVideo] = []
     @Published var jobs: [StudioJob] = []
@@ -155,7 +156,7 @@ final class StudioStore: ObservableObject {
         do {
             try await api.signIn(username: username.trimmingCharacters(in: .whitespaces), password: password, workspace: workspace, invitation: invitation)
             videos = []; jobs = []; images.removeAllObjects(); workspaceMode = api.workspaceMode
-            signedIn = true
+            signedIn = true; publishingEnabled = false
             pending = (try? Data(contentsOf: api.privateFile("upload.json"))).flatMap { try? JSONDecoder().decode(PendingStudioUpload.self, from: $0) }
             await refreshAccount()
             await refreshVideos()
@@ -163,6 +164,11 @@ final class StudioStore: ObservableObject {
     }
     func refreshAccount() async {
         guard signedIn else { return }
+        do {
+            let account = try await api.json("/auth/me")
+            publishingEnabled = (account["capabilities"] as? [String: Bool])?["publishing"] ?? (workspaceMode == "owner" && (account["scopes"] as? [String] ?? []).contains("publication.publish"))
+        }
+        catch { publishingEnabled = false }
         do { isAdmin = try await api.json("/accounts/account")["role"] as? String == "admin" }
         catch { isAdmin = false }
         do {
@@ -182,6 +188,7 @@ final class StudioStore: ObservableObject {
         switchingWorkspace = true; error = nil
         defer { switchingWorkspace = false }
         do {
+            publishingEnabled = false
             try await api.switchMode(mode)
             workspaceMode = api.workspaceMode; videos = []; jobs = []; hiddenVideos = []; uploadedVideo = nil; images.removeAllObjects(); invitationURL = nil
             await refreshVideos(); await refreshAccount()
@@ -195,7 +202,7 @@ final class StudioStore: ObservableObject {
             try await api.signOut()
             signedIn = false; error = nil; videos = []; jobs = []; images.removeAllObjects()
             try? FileManager.default.removeItem(at: libraryFile)
-            isAdmin = false; invitationURL = nil
+            isAdmin = false; publishingEnabled = false; invitationURL = nil
         } catch { report(error) }
     }
 

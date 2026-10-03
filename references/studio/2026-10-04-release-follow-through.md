@@ -10,8 +10,8 @@ create invitations and switch workspace modes. New accounts get the authorized
 Vancouver demo, with no owner library or social credentials.
 
 The hosted pilot has three workspace slots including the administrator. Both
-permanent cells, gateway and provisioner now run `native-login-20261004f`, built
-from hosted music-isolation source `27fbae0`. Native binaries remain from
+permanent cells, gateway and provisioner now run `native-login-20261004g`, built
+from processing-limit source `c7f5799`. Native binaries remain from
 account-lifecycle/native-sign-in source `256a9ac`. The promotion
 checked publication queues and manual processing, preserved volumes and saved
 a private rollback. Only Studio's ingress units were reloaded. The owner
@@ -20,12 +20,12 @@ backend process, original Pi and shared LazyTunnel services were not restarted.
 Live acceptance verified scoped demo access, member denial of Pi/invitation
 access, disposable-member provisioning, immediate grant revocation on deletion
 and removal of only that member's worker. Capacity returned after cleanup.
-The two permanent cells stayed healthy. Thirty-two Node contract tests pass,
-plus two focused Python upgrade tests.
+The two permanent cells stayed healthy. Thirty-six Node contract tests pass,
+plus three focused Python upgrade/readiness tests.
 
 Before the final promotion, the gateway was independently updated to
 `native-oauth-20261004a` from source `66e8a7d` for identity qualification. The
-current f images include that implementation. Configured provider keys and
+current g images include that implementation. Configured provider keys and
 identity encryption remain external and were preserved during promotion.
 
 The final live check authenticated both administrator and reviewer workspaces,
@@ -146,19 +146,22 @@ files, preserve the existing identity encryption key and other provider, save
 rollback files and never restart services. Apple's helper rejects a different
 primary App ID before mutation. See [identity operations](identity-operations.md).
 
-Monthly USD 2.99/14.99/29.89 plans need
-defined benefits, enforced usage limits, exact store products and sandbox
-purchase/refund tests. Paid-download subscription credit is not implemented.
-Keep charging disabled until those steps succeed.
+The owner approved monthly USD **2.99/14.99/29.90** with conservative
+**10/60/150 source-video minutes per UTC calendar month**. The hosted meter is
+live; browser and linked-app requests use trusted allowances and a private
+atomic ledger. Live member/admin allowance and forged-header checks pass.
+Finished-run reuse consumes no new processing time. Store purchase/restore/
+refund checks remain pending. Paid-download subscription credit is not
+implemented. Charging remains disabled.
 
-`scripts/studio/store_products.py status|prepare` reconciles only this app's
-three own monthly Apple drafts. Preparation created them once, and a separate
-readback verified the product IDs and monthly periods without creating another
-group. All remain `MISSING_METADATA`; no price schedule, subscription offer or
-review submission was changed. Apple's actual USA price list supports USD 2.99
-and 14.99, but not 29.89. Its nearest alternatives are 29.90, 29.95 and 29.99.
-The requested 29.89 remains unchanged pending the owner's choice; no alternative
-price was silently substituted.
+`scripts/studio/store_products.py status|prepare|configure` reconciles only this
+app's three own monthly Apple drafts. A separate readback verifies the exact
+approved USA price schedules and monthly periods. The current Apple catalog
+requires UPFRONT plan availability before saving a USA price; UPFRONT for a
+ONE_MONTH product is ordinary monthly renewal, whereas its MONTHLY enum means
+a 12-month instalment commitment. The helper hydrates price relationships for
+readback and preserves any existing different schedule. Draft pricing is not
+product approval or billing activation. See [the billing handoff](2026-10-04-processing-and-billing.md).
 
 The authoritative boundaries and promotion/deletion workflow are in
 [the account handoff](../2026-10-04-hosted-account-and-release-handoff.md).

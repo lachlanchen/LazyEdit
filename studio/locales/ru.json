@@ -360,5 +360,8 @@
   "Browser closed. Your login is saved; choose a platform to reopen it.": "Браузер закрыт. Ваш вход сохранён; выберите платформу, чтобы открыть его снова.",
   "Browser could not close.": "Не удалось закрыть браузер.",
   "Wait for processing and publication to finish before deleting your account": "Дождитесь завершения обработки и публикации, прежде чем удалять аккаунт",
-  "Could not close the workspace safely; try again later": "Не удалось безопасно закрыть рабочую область; повторите попытку позже"
+  "Could not close the workspace safely; try again later": "Не удалось безопасно закрыть рабочую область; повторите попытку позже",
+  "Edit & preview": "Редактирование и просмотр",
+  "Process your video, then preview the edited result. Social accounts are optional.": "Обработайте видео и просмотрите результат. Социальные аккаунты необязательны.",
+  "Preview edited video": "Просмотр обработанного видео"
 }

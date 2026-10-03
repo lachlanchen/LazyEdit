@@ -39,6 +39,16 @@ test('provider proof, linking, account isolation and single-use transfer', async
     return {state: url.searchParams.get('state'), code: 'fixture-code'};
   }
   assert.deepEqual(oauth.providers(), ['google']);
+  const expired=start(alice);
+  const flow=registry.db.prepare('SELECT expires FROM oauth_flows').get();
+  assert.ok(flow.expires-Date.now()>3590000,'pending provider login permits a full hour');
+  registry.db.prepare('UPDATE oauth_flows SET expires=?').run(Date.now()-1);
+  await assert.rejects(oauth.callback('google',expired),{status:401,oauthReason:'expired'});
+  const cancelled=start(alice);
+  await assert.rejects(oauth.callback('google',{state:cancelled.state,error:'access_denied'}),{status:401,oauthReason:'cancelled'});
+  await assert.rejects(oauth.callback('google',cancelled),{status:401,oauthReason:'expired'},'cancelled state is consumed once');
+  assert.equal(oauth.failureLocation({status:401,oauthReason:'expired'}),'https://edit.test/accounts?oauth_error=expired');
+  assert.equal(oauth.failureLocation({status:502,oauthReason:'https://evil.test/?secret=fixture'}),'https://edit.test/accounts?oauth_error=provider');
   await assert.rejects(oauth.callback('google', start(undefined)), {status: 403}, 'email alone must not create or merge an account');
   missingRefresh = true;
   await assert.rejects(oauth.callback('google', start(alice)), {status: 502}, 'a new link must support provider revocation');

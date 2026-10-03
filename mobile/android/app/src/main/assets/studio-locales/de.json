@@ -360,5 +360,8 @@
   "Browser closed. Your login is saved; choose a platform to reopen it.": "Browser geschlossen. Deine Anmeldung ist gespeichert; wähle eine Plattform, um ihn erneut zu öffnen.",
   "Browser could not close.": "Browser konnte nicht geschlossen werden.",
   "Wait for processing and publication to finish before deleting your account": "Warte, bis Verarbeitung und Veröffentlichung abgeschlossen sind, bevor du dein Konto löschst",
-  "Could not close the workspace safely; try again later": "Arbeitsbereich konnte nicht sicher geschlossen werden; versuche es später erneut"
+  "Could not close the workspace safely; try again later": "Arbeitsbereich konnte nicht sicher geschlossen werden; versuche es später erneut",
+  "Edit & preview": "Bearbeiten und Vorschau",
+  "Process your video, then preview the edited result. Social accounts are optional.": "Verarbeite dein Video und prüfe das Ergebnis. Social-Media-Konten sind optional.",
+  "Preview edited video": "Bearbeitetes Video ansehen"
 }

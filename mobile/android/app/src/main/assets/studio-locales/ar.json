@@ -360,5 +360,8 @@
   "Browser closed. Your login is saved; choose a platform to reopen it.": "تم إغلاق المتصفح. تم حفظ تسجيل دخولك؛ اختر منصة لإعادة فتحه.",
   "Browser could not close.": "تعذر إغلاق المتصفح.",
   "Wait for processing and publication to finish before deleting your account": "انتظر حتى انتهاء المعالجة والنشر قبل حذف حسابك",
-  "Could not close the workspace safely; try again later": "تعذر إغلاق مساحة العمل بأمان؛ حاول مرة أخرى لاحقًا"
+  "Could not close the workspace safely; try again later": "تعذر إغلاق مساحة العمل بأمان؛ حاول مرة أخرى لاحقًا",
+  "Edit & preview": "تحرير ومعاينة",
+  "Process your video, then preview the edited result. Social accounts are optional.": "عالج الفيديو ثم عاين النتيجة المحررة. حسابات التواصل الاجتماعي اختيارية.",
+  "Preview edited video": "معاينة الفيديو المحرر"
 }

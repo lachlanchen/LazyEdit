@@ -360,5 +360,8 @@
   "Browser closed. Your login is saved; choose a platform to reopen it.": "Browser closed. Your login is saved; choose a platform to reopen it.",
   "Browser could not close.": "Browser could not close.",
   "Wait for processing and publication to finish before deleting your account": "Wait for processing and publication to finish before deleting your account",
-  "Could not close the workspace safely; try again later": "Could not close the workspace safely; try again later"
+  "Could not close the workspace safely; try again later": "Could not close the workspace safely; try again later",
+  "Edit & preview": "Edit & preview",
+  "Process your video, then preview the edited result. Social accounts are optional.": "Process your video, then preview the edited result. Social accounts are optional.",
+  "Preview edited video": "Preview edited video"
 }

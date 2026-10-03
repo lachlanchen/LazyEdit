@@ -11,8 +11,9 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { ProcessingMeter, processingLimit } from './processing.mjs';
 
 export function createCell(config, seed) {
-  const worker = createWorker(config), db = worker.auth.db;
   const requests = new AsyncLocalStorage();
+  config.publishingEnabled = () => requests.getStore()?.publishing === true;
+  const worker = createWorker(config), db = worker.auth.db;
   if(config.processingQuotas){
     const meter=new ProcessingMeter(db,config.dataRoot,config.durationProbe);
     config.processingRequest=(path,method,data,dispatch)=>meter.run(path,method,data,dispatch,requests.getStore());
@@ -62,6 +63,7 @@ export function createCell(config, seed) {
     }
     if(path.startsWith('/platforms')) {
       browser(req);
+      if (!config.publishingEnabled()) fail(403, 'Social publishing is not enabled for this account');
       if(head!==undefined || req.method==='POST')if(req.headers.origin!==origin)fail(403,'Same-origin request required');
       if(['/platforms/open','/platforms/close'].includes(path)&&req.method==='POST'&&head===undefined) {
         const d=await readJSON(req,1024);
@@ -90,7 +92,9 @@ export function createCell(config, seed) {
     }
     if(path==='/api/music/package'&&req.method==='POST'&&head===undefined){
       browser(req);if(req.headers.origin!==origin)fail(403,'Same-origin request required');
-      const input = privateMusicInput(await readJSON(req, 1024 * 1024), config.dataRoot);
+      const data = await readJSON(req, 1024 * 1024);
+      if (data.post !== false && !config.publishingEnabled()) fail(403, 'Social publishing is not enabled for this account');
+      const input = privateMusicInput(data, config.dataRoot);
       const reply = await fetch(`http://127.0.0.1:${config.backendPort}/api/music/package`, {
         method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(input),
         signal:AbortSignal.timeout(600000), redirect:'error',
@@ -100,9 +104,10 @@ export function createCell(config, seed) {
     if(head!==undefined)fail(404,'Not found');
     worker.server.emit('request',req,res);
   }
-  const server=http.createServer((req,res)=>requests.run({limit:req.headers['x-studio-processing-minutes'],key:req.headers['idempotency-key']},
+  const requestContext = req => ({limit:req.headers['x-studio-processing-minutes'],key:req.headers['idempotency-key'],publishing:req.headers['x-studio-publishing']==='1'});
+  const server=http.createServer((req,res)=>requests.run(requestContext(req),
     ()=>route(req,res).catch(e=>{if(!res.headersSent)json(res,e.status||502,{error:e.status?e.message:'Workspace temporarily unavailable'});else res.destroy();})));
-  server.on('upgrade',(req,socket,head)=>route(req,socket,head).catch(e=>socket.end(`HTTP/1.1 ${e.status||403} Forbidden\r\nConnection: close\r\n\r\n`)));
+  server.on('upgrade',(req,socket,head)=>requests.run(requestContext(req),()=>route(req,socket,head).catch(e=>socket.end(`HTTP/1.1 ${e.status||403} Forbidden\r\nConnection: close\r\n\r\n`))));
   server.on('close',()=>{desktopSocket?.destroy();worker.server.emit('close');});
   server.requestTimeout=900000;
   return {server,auth:worker.auth};

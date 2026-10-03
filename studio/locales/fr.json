@@ -360,5 +360,8 @@
   "Browser closed. Your login is saved; choose a platform to reopen it.": "Navigateur fermé. Votre connexion est conservée ; choisissez une plateforme pour le rouvrir.",
   "Browser could not close.": "Impossible de fermer le navigateur.",
   "Wait for processing and publication to finish before deleting your account": "Attendez la fin du traitement et de la publication avant de supprimer votre compte.",
-  "Could not close the workspace safely; try again later": "Impossible de fermer l’espace de travail en toute sécurité. Réessayez plus tard."
+  "Could not close the workspace safely; try again later": "Impossible de fermer l’espace de travail en toute sécurité. Réessayez plus tard.",
+  "Edit & preview": "Modifier et prévisualiser",
+  "Process your video, then preview the edited result. Social accounts are optional.": "Traitez la vidéo, puis prévisualisez le résultat. Les comptes sociaux sont facultatifs.",
+  "Preview edited video": "Prévisualiser la vidéo modifiée"
 }

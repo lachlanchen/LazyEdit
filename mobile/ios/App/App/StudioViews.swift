@@ -199,6 +199,7 @@ struct StudioLibraryView: View {
                             }
                         }.padding(.vertical, 5)
                     }
+                    .accessibilityIdentifier("studio.video.\(video.id)")
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         Button { Task { await store.setHidden(video, hidden: true) } } label: { Label(StudioStrings.text("Remove"), systemImage: "archivebox") }
                             .tint(.orange).disabled(store.changingVisibility.contains(video.id))
@@ -290,6 +291,7 @@ struct StudioVideoView: View {
     @State private var editor = false
     @State private var composer = false
     @State private var steps: [(String, String)] = []
+    @State private var editedMedia: String?
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
@@ -301,8 +303,9 @@ struct StudioVideoView: View {
                 }
                 Text(video.title).font(.title2.bold())
                 Text(video.created).foregroundStyle(.secondary).font(.subheadline)
+                if let editedMedia { Button(StudioStrings.text("Preview edited video")) { preview(path: editedMedia) } }
                 StudioErrorBanner()
-                Button { player?.pause(); composer = true } label: { Label(StudioStrings.text("Prepare & publish"), systemImage: "slider.horizontal.3").frame(maxWidth: .infinity).padding(.vertical, 8) }.buttonStyle(.borderedProminent).accessibilityIdentifier("studio.compose")
+                Button { player?.pause(); composer = true } label: { Label(StudioStrings.text(store.publishingEnabled ? "Prepare & publish" : "Edit & preview"), systemImage: "slider.horizontal.3").frame(maxWidth: .infinity).padding(.vertical, 8) }.buttonStyle(.borderedProminent).accessibilityIdentifier("studio.compose")
                 Button(StudioStrings.text("Full editor · subtitles, metadata & cover")) { player?.pause(); editor = true }
                 if !steps.isEmpty {
                     Text(StudioStrings.text("Processing")).font(.headline)
@@ -317,8 +320,9 @@ struct StudioVideoView: View {
             .sheet(isPresented: $editor) { StudioEditorSheet(path: "/editor?videoId=\(video.id)") }
             .sheet(isPresented: $composer, onDismiss: { Task { await loadStatus() } }) { StudioComposerView(video: video) }
     }
-    private func preview() {
-        guard let media = video.media else { return }
+    private func preview() { preview(path: video.media) }
+    private func preview(path: String?) {
+        guard let media = path else { return }
         do {
             let asset = AVURLAsset(url: try store.api.url(media), options: [AVURLAssetHTTPCookiesKey: store.api.webCookies])
             player = AVPlayer(playerItem: AVPlayerItem(asset: asset))
@@ -330,6 +334,8 @@ struct StudioVideoView: View {
             let values = result["steps"] as? [String: [String: Any]] ?? [:]
             let names = [("transcribe", "Transcription"), ("polish", "Subtitle correction"), ("translate", "Translation"), ("burn", "Render"), ("metadata_zh", "Chinese metadata"), ("metadata_en", "English metadata"), ("cover", "Cover")]
             steps = names.map { ($0.1, studioText(values[$0.0]?["status"], fallback: "idle")) }
+            let render = try await store.api.json("/api/videos/\(video.id)/burn-subtitles")
+            editedMedia = render["status"] as? String == "completed" ? render["output_url"] as? String : nil
         } catch { store.report(error) }
     }
 }
@@ -397,9 +403,9 @@ struct StudioAccountView: View {
                             Text(StudioStrings.text("Single use · expires in 72 hours")).font(.footnote).foregroundStyle(.secondary)
                         }
                     }
-                    if store.workspaceMode == "workspace" { Button(StudioStrings.text("Platform accounts")) { platformAccounts = true } }
+                    if store.workspaceMode == "workspace" && store.publishingEnabled { Button(StudioStrings.text("Platform accounts")) { platformAccounts = true } }
                 }
-                Section { Button(StudioStrings.text("Enable login notifications")) { Task { await store.enableLoginNotifications() } }; Button(StudioStrings.text("Open full Studio")) { editor = true }; Link("Privacy", destination: URL(string: "https://edit.lazying.art/privacy")!) }
+                Section { if store.publishingEnabled { Button(StudioStrings.text("Enable login notifications")) { Task { await store.enableLoginNotifications() } } }; Button(StudioStrings.text("Open full Studio")) { editor = true }; Link("Privacy", destination: URL(string: "https://edit.lazying.art/privacy")!) }
                 Section { StudioErrorBanner(); Button(StudioStrings.text("Sign out"), role: .destructive) { signOut = true } }
                 if store.workspaceMode == "workspace" && !store.isAdmin {
                     Section { Button(StudioStrings.text("Delete account"), role: .destructive) { deletion = true }.disabled(store.uploading || store.preparingFile) }

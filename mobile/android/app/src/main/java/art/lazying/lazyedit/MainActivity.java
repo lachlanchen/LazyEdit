@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     private void library(boolean hidden) {
         frame(hidden?"Removed videos":"Your Studio",true);
         button("Refresh",()->library(hidden));button(hidden?"Back to library":"Removed videos",()->library(!hidden));
-        task("Opening your library…",()->api.json("/api/videos"+(hidden?"?hidden=true":"")),value->{
+        task("Opening your library…",()->{api.json("/auth/me");return api.json("/api/videos"+(hidden?"?hidden=true":""));},value->{
             libraryPage(value.optJSONArray("videos"),hidden,0);
         });
     }
@@ -153,11 +153,12 @@ public class MainActivity extends AppCompatActivity {
             try { player=new VideoView(this);content.addView(player,0,new LinearLayout.LayoutParams(-1,dp(270)));MediaController controls=new MediaController(this);controls.setAnchorView(player);player.setMediaController(controls);player.setVideoURI(Uri.parse(StudioApi.url(media).toString()),Collections.singletonMap("Cookie",api.cookie()));player.start(); }
             catch(Exception e){error(e);}
         });
-        button("Prepare & publish",()->composer(id));button("Full editor · subtitles, metadata & cover",()->openEditor("/editor?videoId="+id));
+        button(api.publishingEnabled()?"Prepare & publish":"Edit & preview",()->composer(id));button("Full editor · subtitles, metadata & cover",()->openEditor("/editor?videoId="+id));
+        button("Preview edited video",()->task("Reading status…",()->api.json("/api/videos/"+id+"/burn-subtitles"),render->{String output=render.optString("output_url");if(!render.optString("status").equals("completed")||output.isEmpty()){message.setText("Processing");return;}player=new VideoView(this);content.addView(player,0,new LinearLayout.LayoutParams(-1,dp(270)));MediaController controls=new MediaController(this);controls.setAnchorView(player);player.setMediaController(controls);player.setVideoURI(Uri.parse(StudioApi.url(output).toString()),Collections.singletonMap("Cookie",api.cookie()));player.start();}));
         button("Processing status",()->task("Reading status…",()->api.json("/api/videos/"+id+"/process-status"),value->message.setText(value.optJSONObject("steps")==null?value.toString():value.getJSONObject("steps").toString(2))));
     }
     private void activity() {
-        frame("Publication activity",true);button("Refresh",this::activity);
+        frame(api.publishingEnabled()?"Publication activity":"Activity",true);button("Refresh",this::activity);
         task("Reading your queue…",()->api.json("/api/autopublish/queue"),value->{
             message.setText("");notifyAttention(value);JSONArray jobs=value.optJSONArray("jobs");if(jobs==null||jobs.length()==0)text("No publication tasks to show.");
             if(jobs!=null)for(int i=0;i<jobs.length();i++){
@@ -170,10 +171,11 @@ public class MainActivity extends AppCompatActivity {
     }
     private void account() {
         frame("Account",true);button("Language",this::chooseLanguage);text(api.username());text(api.mode().equals("owner")?"Existing Pi workspace":"Private Docker workspace");
-        button("Enable login notifications",()->{if(Build.VERSION.SDK_INT>=33)requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"},73);else message.setText(tr("Login notifications"));});
-        button("Full Studio",()->openEditor("/home"));if(api.mode().equals("workspace"))button("Platform accounts",()->openEditor("/platforms"));
+        if(api.publishingEnabled())button("Enable login notifications",()->{if(Build.VERSION.SDK_INT>=33)requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"},73);else message.setText(tr("Login notifications"));});
+        button("Full Studio",()->openEditor("/home"));
         button("Sign out",()->task("Signing out…",()->{api.logout();return true;},value->show()));
-        task("Reading account…",()->api.json("/accounts/account").put("providers",api.json("/accounts/oauth/providers").optJSONArray("providers")).put("linked",api.json("/accounts/oauth/links").optJSONArray("providers")).put("billing",api.json("/accounts/billing/catalog")),value->{
+        task("Reading account…",()->api.json("/accounts/account").put("capabilities",api.json("/auth/me").optJSONObject("capabilities")).put("providers",api.json("/accounts/oauth/providers").optJSONArray("providers")).put("linked",api.json("/accounts/oauth/links").optJSONArray("providers")).put("billing",api.json("/accounts/billing/catalog")),value->{
+            if(api.mode().equals("workspace")&&api.publishingEnabled())button("Platform accounts",()->openEditor("/platforms"));
             JSONObject catalog=value.optJSONObject("billing");if(catalog!=null&&catalog.optBoolean("enabled")&&catalog.optJSONArray("providers").toString().contains("google"))button("Plans and billing",this::billingScreen);
             JSONArray providers=value.optJSONArray("providers"),linked=value.optJSONArray("linked");
             if(providers!=null)for(int i=0;i<providers.length();i++){
@@ -272,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
         },receipt->{message.setText("Added to your Studio.");screen=0;show();});
     }
     private void composer(int id) {
-        frame("Prepare & publish",true);String path="/v1/studio/videos/"+id;
+        frame(api.publishingEnabled()?"Prepare & publish":"Edit & preview",true);String path="/v1/studio/videos/"+id;
         File pending=api.file("submission-"+id+".json");
         if(pending.exists()){
             text("A saved request needs confirmation. No second request has been sent.");
@@ -285,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
             }));return;
         }
         task("Loading current settings…",()->api.json(path+"/composer"),result->{
-            message.setText("");JSONObject form=result.getJSONObject("defaults");File draft=api.file("choices-"+id+".json");
+            message.setText("");final boolean canPublish=result.optJSONObject("capabilities")!=null&&result.getJSONObject("capabilities").optBoolean("publishing");JSONObject form=result.getJSONObject("defaults");File draft=api.file("choices-"+id+".json");
             if(draft.exists())try{form=new JSONObject(StudioApi.readFile(draft));}catch(Exception ignored){}
             final JSONObject choices=form;
             boolean portrait=result.optJSONObject("geometry")!=null&&result.getJSONObject("geometry").optBoolean("portrait");
@@ -302,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
             CheckBox bold=check("Bold text",form.optBoolean("fontBold",true)),outline=check("Bold outline",form.optBoolean("outlineBold",true));
             Spinner category=choice("Category",new String[]{"","simplelife","lalachan","musia","lalamv","lazyingart"},form.optString("category"));
             Map<String,CheckBox> platforms=new LinkedHashMap<>();List<String> selected=Arrays.asList(join(form.optJSONArray("platforms")).split(","));
-            for(String channel:new String[]{"shipinhao","instagram","youtube","douyin","xiaohongshu","bilibili"})platforms.put(channel,check(channel,selected.contains(channel)));
+            if(canPublish)for(String channel:new String[]{"shipinhao","instagram","youtube","douyin","xiaohongshu","bilibili"})platforms.put(channel,check(channel,selected.contains(channel)));
             JSONArray sessions=result.optJSONArray("sessions");List<String> runLabels=new ArrayList<>();List<Integer> runIds=new ArrayList<>();runLabels.add("New run");runIds.add(0);
             if(sessions!=null)for(int i=0;i<sessions.length();i++){JSONObject run=sessions.getJSONObject(i);runLabels.add("Reuse run #"+run.optInt("id"));runIds.add(run.optInt("id"));}
             Spinner run=choice("Publication run",runLabels.toArray(new String[0]),"New run");if(form.optString("mode").equals("reuse")){int selectedRun=runIds.indexOf(form.optInt("sessionID"));if(selectedRun>=0)run.setSelection(selectedRun);}
@@ -312,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
                     choices.put("logo",logo.isChecked()).put("logoPosition",logoPosition.getSelectedItem().toString()).put("background",background.getSelectedItem().toString()).put("bottomSpace",Double.parseDouble(bottom.getText().toString())).put("lift",Double.parseDouble(lift.getText().toString())).put("rows",Integer.parseInt(rows.getText().toString())).put("fontScale",Double.parseDouble(font.getText().toString())).put("fontBold",bold.isChecked()).put("outlineBold",outline.isChecked()).put("category",category.getSelectedItem().toString());
                     JSONArray targets=new JSONArray();for(Map.Entry<String,CheckBox> channel:platforms.entrySet())if(channel.getValue().isChecked())targets.put(channel.getKey());choices.put("platforms",targets).put("mode",run.getSelectedItemPosition()==0?"new":"reuse").put("sessionID",runIds.get(run.getSelectedItemPosition()));
                     StudioApi.writeFile(draft,choices.toString());
-                    task("Reviewing your choices…",()->api.post(path+"/plan",choices),plan->new AlertDialog.Builder(this).setTitle("Review publication").setMessage(joinLines(plan.optJSONArray("summary"))).setNegativeButton("Cancel",null).setNeutralButton("Prepare only",(d,w)->confirm(path,pending,choices,plan,"prepare")).setPositiveButton("Publish",(d,w)->confirm(path,pending,choices,plan,"publish")).show());
+                    task("Reviewing your choices…",()->api.post(path+"/plan",choices),plan->{AlertDialog.Builder reviewDialog=new AlertDialog.Builder(this).setTitle(tr("Review choices")).setMessage(joinLines(plan.optJSONArray("summary"))).setNegativeButton(tr("Cancel"),null);if(!choices.optString("mode").equals("reuse"))reviewDialog.setNeutralButton(tr("Prepare only"),(d,w)->confirm(path,pending,choices,plan,"prepare"));if(canPublish)reviewDialog.setPositiveButton(tr("Publish"),(d,w)->confirm(path,pending,choices,plan,"publish"));reviewDialog.show();});
                 }catch(Exception e){error(e);}
             };
             button("Review choices",review);button("Full editor",()->openEditor("/editor?videoId="+id));

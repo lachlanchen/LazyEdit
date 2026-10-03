@@ -64,6 +64,8 @@ window.fetch = async (...args) => {
   }
 };
 window.addEventListener('DOMContentLoaded', () => {
+  const platforms = document.getElementById('studio-platform-accounts');
+  if (platforms) platforms.hidden = window.__studioContext?.capabilities?.publishing !== true;
   const loading = document.getElementById('studio-loading');
   const root = document.getElementById('root');
   if (loading && root) {

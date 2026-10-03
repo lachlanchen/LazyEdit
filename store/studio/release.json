@@ -56,10 +56,11 @@
     "monthlyRequestedUSD": [
       "2.99",
       "14.99",
-      "29.89"
+      "29.90"
     ],
     "subscriptionsActive": false,
     "appleMonthlyDrafts": {
+      "appId": "6814061525",
       "groupId": "22437675",
       "products": [
         {
@@ -69,6 +70,20 @@
           "requestedUSD": "2.99",
           "exactUSDPricePointAvailable": true,
           "priceScheduleChanged": false,
+          "usaPriceScheduleMatches": true,
+          "localizedBenefits": [
+            "ar-SA",
+            "de-DE",
+            "en-US",
+            "es-ES",
+            "fr-FR",
+            "ja",
+            "ko",
+            "ru",
+            "vi",
+            "zh-Hans",
+            "zh-Hant"
+          ],
           "nearestAvailableUSD": []
         },
         {
@@ -78,26 +93,57 @@
           "requestedUSD": "14.99",
           "exactUSDPricePointAvailable": true,
           "priceScheduleChanged": false,
+          "usaPriceScheduleMatches": true,
+          "localizedBenefits": [
+            "ar-SA",
+            "de-DE",
+            "en-US",
+            "es-ES",
+            "fr-FR",
+            "ja",
+            "ko",
+            "ru",
+            "vi",
+            "zh-Hans",
+            "zh-Hant"
+          ],
           "nearestAvailableUSD": []
         },
         {
           "id": "6818867082",
           "productId": "art.lazying.lazyedit.studio.monthly",
           "state": "MISSING_METADATA",
-          "requestedUSD": "29.89",
-          "exactUSDPricePointAvailable": false,
+          "requestedUSD": "29.90",
+          "exactUSDPricePointAvailable": true,
           "priceScheduleChanged": false,
-          "nearestAvailableUSD": [
-            "29.9",
-            "29.95",
-            "29.99"
-          ]
+          "usaPriceScheduleMatches": true,
+          "localizedBenefits": [
+            "ar-SA",
+            "de-DE",
+            "en-US",
+            "es-ES",
+            "fr-FR",
+            "ja",
+            "ko",
+            "ru",
+            "vi",
+            "zh-Hans",
+            "zh-Hant"
+          ],
+          "nearestAvailableUSD": []
         }
       ],
       "billingActivated": false,
       "reviewSubmitted": false
     },
-    "paidDownloadSubscriptionCreditImplemented": false
+    "paidDownloadSubscriptionCreditImplemented": false,
+    "monthlyProcessingMinutes": [
+      10,
+      60,
+      150
+    ],
+    "processingBasis": "source duration per requested run; UTC calendar month",
+    "quotaEnforcedForHostedPilot": true
   },
   "applicationSource": "256a9ac6db85a855366a711e45fa17af9f098180",
   "identity": {
@@ -115,15 +161,58 @@
       "replacementDistributionProfile": "LazyEdit Studio App Store 2; existing distribution certificate reused; future archive/export reads current profile identity."
     }
   },
-  "gatewaySource": "27fbae0325eb48414ca64f9851f13dad9782bd2c",
-  "workspaceSource": "27fbae0325eb48414ca64f9851f13dad9782bd2c",
-  "hostedImageTag": "native-login-20261004f",
+  "gatewaySource": "c7f579924420f81a42e226149071f606ef473c4d",
+  "workspaceSource": "c7f579924420f81a42e226149071f606ef473c4d",
+  "hostedImageTag": "native-login-20261004g",
   "hostedQualification": {
-    "nodeContractsPassed": 32,
-    "pythonPromotionTestsPassed": 2,
+    "nodeContractsPassed": 36,
+    "pythonPromotionTestsPassed": 3,
     "livePrivateMusicAssetIsolation": true,
     "permanentWorkspacesHealthy": 2,
     "originalOwnerBackendAndPiPreserved": true,
-    "externalPostsCreatedByQualification": false
+    "externalPostsCreatedByQualification": false,
+    "liveProcessingAllowanceAndHeaderForgery": true
+  },
+  "preparedNativeBuilds": {
+    "apple": 9,
+    "google": 6,
+    "state": "source prepared; not yet uploaded"
+  },
+  "editorFirst": {
+    "normalMemberPublishing": false,
+    "reviewerPublishing": false,
+    "operatorPublishing": "separately enabled by protected backend policy",
+    "socialAccountsRequiredForEditing": false,
+    "ownerPiSharedWithReviewer": false,
+    "contractsPassed": 38,
+    "deployment": "prepared; activation receipt recorded separately"
+  },
+  "googleSubscriptionDrafts": {
+    "app": "art.lazying.lazyedit",
+    "products": [
+      {
+        "productId": "art.lazying.lazyedit.starter.monthly",
+        "requestedUSD": "2.99",
+        "processingMinutes": 10,
+        "draftBenefitsSaved": true,
+        "basePlanActivated": false
+      },
+      {
+        "productId": "art.lazying.lazyedit.plus.monthly",
+        "requestedUSD": "14.99",
+        "processingMinutes": 60,
+        "draftBenefitsSaved": true,
+        "basePlanActivated": false
+      },
+      {
+        "productId": "art.lazying.lazyedit.studio.monthly",
+        "requestedUSD": "29.90",
+        "processingMinutes": 150,
+        "draftBenefitsSaved": true,
+        "basePlanActivated": false
+      }
+    ],
+    "billingActivated": false,
+    "reviewSubmitted": false
   }
 }

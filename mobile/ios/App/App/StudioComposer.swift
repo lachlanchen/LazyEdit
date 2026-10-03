@@ -51,6 +51,7 @@ final class StudioComposer: ObservableObject {
     @Published var choices = StudioPublishChoices()
     @Published var defaults = StudioPublishChoices()
     @Published var loaded = false
+    @Published var publishingEnabled = false
     @Published var busy = false
     @Published var error: String?
     @Published var receipt: String?
@@ -79,9 +80,11 @@ final class StudioComposer: ObservableObject {
         defer { busy = false }
         do {
             let result = try await api.json(root + "/composer")
+            publishingEnabled = (result["capabilities"] as? [String: Bool])?["publishing"] ?? (api.workspaceMode == "owner")
             defaults = try JSONDecoder().decode(StudioPublishChoices.self, from: JSONSerialization.data(withJSONObject: result["defaults"] ?? [:]))
             choices = defaults
             if let bytes = try? Data(contentsOf: draftURL), let draft = try? JSONDecoder().decode(StudioPublishChoices.self, from: bytes) { choices = draft }
+            if !publishingEnabled { choices.platforms = [] }
             if let bytes = try? Data(contentsOf: pendingURL) { pending = try? JSONDecoder().decode(StudioPendingSubmission.self, from: bytes) }
             runs = (result["sessions"] as? [[String: Any]] ?? []).compactMap(StudioRun.init)
             if let geometry = result["geometry"] as? [String: Any] { setGeometry(geometry) }
@@ -135,6 +138,7 @@ final class StudioComposer: ObservableObject {
 
     func submit(_ action: String) async {
         guard let api, !busy, pending == nil else { return }
+        guard action != "publish" || publishingEnabled else { return }
         busy = true; error = nil
         defer { busy = false }
         do {
@@ -253,13 +257,13 @@ struct StudioComposerView: View {
                         subtitlesSection
                         appearanceSection
                     }
-                    Section(StudioStrings.text("Publish to")) {
+                    if model.publishingEnabled { Section(StudioStrings.text("Publish to")) {
                         ForEach(platformNames, id: \.0) { key, name in
                             Toggle(name, isOn: Binding(get: { model.choices.platforms.contains(key) }, set: { enabled in
                                 model.choices.platforms.removeAll { $0 == key }; if enabled { model.choices.platforms.append(key) }
                             }))
                         }
-                    }
+                    } }
                     Section {
                         Button {
                             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -268,10 +272,10 @@ struct StudioComposerView: View {
                             HStack { if model.busy { ProgressView() }; Label(StudioStrings.text("Review & continue"), systemImage: "checkmark.circle") }
                         }.disabled(model.busy || model.pending != nil).accessibilityIdentifier("studio.reviewChoices")
                         Button(StudioStrings.text("Full editor · subtitles, metadata & cover")) { editor = true }
-                    } footer: { Text(StudioStrings.text("Preparation and publication use the existing Studio pipeline. You can prepare without posting, or queue preparation and publication together.")) }
+                    } footer: { Text(StudioStrings.text(model.publishingEnabled ? "Preparation and publication use the existing Studio pipeline. You can prepare without posting, or queue preparation and publication together." : "Process your video, then preview the edited result. Social accounts are optional.")) }
                 }
             }.studioKeyboardDismissal()
-                .navigationTitle(StudioStrings.text("Prepare & publish")).navigationBarTitleDisplayMode(.inline)
+                .navigationTitle(StudioStrings.text(model.publishingEnabled ? "Prepare & publish" : "Edit & preview")).navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) { Button(StudioStrings.text("Done")) { dismiss() } }
                     ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(StudioStrings.text("Hide keyboard")) { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) } }
@@ -393,7 +397,7 @@ struct StudioComposerView: View {
                     }
                 }
                 if model.geometry["fill"] == 1 { Section(StudioStrings.text("Frame layout")) { StudioLayoutPreview(geometry: model.geometry) } }
-                Section(StudioStrings.text("Platforms")) { Text(model.choices.platforms.map { key in platformNames.first { $0.0 == key }?.1 ?? key }.joined(separator: ", ")) }
+                if model.publishingEnabled { Section(StudioStrings.text("Platforms")) { Text(model.choices.platforms.map { key in platformNames.first { $0.0 == key }?.1 ?? key }.joined(separator: ", ")) } }
                 if let error = model.error { Text(error).foregroundStyle(.orange) }
                 if let receipt = model.receipt { Text(receipt).foregroundStyle(.green) }
                 Section {
@@ -402,13 +406,14 @@ struct StudioComposerView: View {
                         if model.choices.mode == "new" {
                             Button(StudioStrings.text("Prepare only · do not post")) { Task { await model.submit("prepare") } }.disabled(model.busy || model.receipt != nil).accessibilityIdentifier("studio.prepareOnly")
                         }
-                        Button(model.choices.mode == "reuse" ? "Queue this run for publication" : "Prepare & queue publication") { Task { await model.submit("publish") } }
+                        if model.publishingEnabled { Button(model.choices.mode == "reuse" ? "Queue this run for publication" : "Prepare & queue publication") { Task { await model.submit("publish") } }
                             .disabled(model.busy || model.choices.platforms.isEmpty || model.receipt != nil).accessibilityIdentifier("studio.confirmPublish")
+                        }
                     }
                     if model.busy { ProgressView(StudioStrings.text("Submitting once…")) }
                     if model.canRetrySubmission { Button(StudioStrings.text("Retry same submission")) { Task { await model.retrySubmission() } }.disabled(model.busy) }
                     Button(StudioStrings.text("Open full editor")) { review = false; editor = true }
-                } footer: { Text(StudioStrings.text("Publication sends this video to the selected accounts. Studio continues the task after you close the app. Check Activity for progress and any login request.")) }
+                } footer: { Text(StudioStrings.text(model.publishingEnabled ? "Publication sends this video to the selected accounts. Studio continues the task after you close the app. Check Activity for progress and any login request." : "Process your video, then preview the edited result. Social accounts are optional.")) }
             }.navigationTitle(StudioStrings.text("Review choices")).navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button(StudioStrings.text("Done")) { review = false } } }
         }

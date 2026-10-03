@@ -360,5 +360,8 @@
   "Browser closed. Your login is saved; choose a platform to reopen it.": "ブラウザを閉じました。ログイン情報は保存されています。再度開くにはプラットフォームを選択してください。",
   "Browser could not close.": "ブラウザを閉じられませんでした。",
   "Wait for processing and publication to finish before deleting your account": "アカウントを削除する前に、処理と公開が完了するまでお待ちください",
-  "Could not close the workspace safely; try again later": "ワークスペースを安全に閉じられませんでした。後でもう一度お試しください"
+  "Could not close the workspace safely; try again later": "ワークスペースを安全に閉じられませんでした。後でもう一度お試しください",
+  "Edit & preview": "編集とプレビュー",
+  "Process your video, then preview the edited result. Social accounts are optional.": "動画を処理し、編集結果を確認できます。SNSアカウントは任意です。",
+  "Preview edited video": "編集した動画をプレビュー"
 }

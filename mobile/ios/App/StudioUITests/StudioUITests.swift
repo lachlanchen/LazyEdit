@@ -2,7 +2,7 @@ import XCTest
 
 final class StudioUITests: XCTestCase {
     @MainActor
-    func testMemberPrivateLibraryAndLoginDesktop() throws {
+    func testMemberEditingWithoutSocialAccounts() throws {
         continueAfterFailure = false
         let path = ProcessInfo.processInfo.environment["STUDIO_TEST_CREDENTIALS"] ?? ""
         guard !path.isEmpty else { throw XCTSkip("Set private STUDIO_TEST_CREDENTIALS.") }
@@ -36,25 +36,29 @@ final class StudioUITests: XCTestCase {
         capture("Invited member demo library", app)
         tapTab("Account", app)
         XCTAssertTrue(app.staticTexts["Private Docker workspace"].waitForExistence(timeout: 30))
-        XCTAssertTrue(app.buttons["Platform accounts"].waitForExistence(timeout: 30))
         XCTAssertTrue(app.buttons["Delete account"].waitForExistence(timeout: 30))
+        XCTAssertFalse(app.buttons["Platform accounts"].exists)
         XCTAssertFalse(app.buttons["Create invitation"].exists)
         XCTAssertFalse(app.buttons["Switch to existing Pi workspace"].exists)
         capture("Invited member account controls", app)
-        app.buttons["Platform accounts"].tap()
+        tapTab("Studio", app)
+        let video = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "studio.video.")).firstMatch
+        XCTAssertTrue(video.waitForExistence(timeout: 30)); video.tap()
+        app.buttons["studio.compose"].tap()
+        XCTAssertTrue(app.navigationBars["Edit & preview"].waitForExistence(timeout: 30))
+        XCTAssertFalse(app.switches["Shipinhao"].exists)
+        XCTAssertFalse(app.buttons["studio.confirmPublish"].exists)
+        app.buttons["Full editor · subtitles, metadata & cover"].tap()
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 30))
-        XCTAssertTrue(app.webViews.buttons["Shipinhao"].waitForExistence(timeout: 60), "Login module is ready, not merely static HTML")
-        XCTAssertTrue(app.webViews.buttons["Keep QR visible"].waitForExistence(timeout: 60))
+        XCTAssertTrue(app.webViews.staticTexts["Edit & preview"].waitForExistence(timeout: 60), "The editor must hydrate, not merely show HTML")
+        XCTAssertFalse(app.webViews.staticTexts["Manual publish"].exists)
+        XCTAssertFalse(app.webViews.links["Platform accounts"].exists)
         let finished = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: app.staticTexts["Opening editor…"])
         XCTAssertEqual(XCTWaiter.wait(for: [finished], timeout: 20), .completed)
-        app.webViews.buttons["Shipinhao"].tap()
-        XCTAssertTrue(app.webViews.staticTexts["Connected. Sign in using the private browser below."].waitForExistence(timeout: 60))
-        app.webViews.buttons["Keep QR visible"].tap()
-        XCTAssertTrue(app.webViews.staticTexts["QR image kept visible. Tap the image to enlarge a QR area; tap again to restore. No live traffic. Reconnect to refresh."].waitForExistence(timeout: 10))
-        capture("Mobile platform login controls", app)
-        app.webViews.buttons["Close platform browser"].tap()
-        XCTAssertTrue(app.webViews.staticTexts["Browser closed. Your login is saved; choose a platform to reopen it."].waitForExistence(timeout: 15))
+        capture("Editing without social accounts", app)
         app.navigationBars["Studio editor"].buttons["Done"].tap()
+        app.navigationBars["Edit & preview"].buttons["Done"].tap()
+        tapTab("Account", app)
         let signOut = app.buttons["Sign out"]; scrollTo(signOut, app); signOut.tap()
         try XCTUnwrap(app.buttons.matching(identifier: "Sign out").allElementsBoundByIndex.first(where: { $0.isHittable })).coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(app.secureTextFields["studio.password"].waitForExistence(timeout: 30))

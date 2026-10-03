@@ -44,8 +44,12 @@ async function providerControls(link=false){
   }
 }
 async function initialize(){
+  const recovery=new URLSearchParams(location.search).get('oauth_error');
+  const reasons={expired:'Sign-in expired. Choose Apple or Google again to start a fresh secure login.',cancelled:'Sign-in cancelled. You can try again when ready.',unlinked:'Create an invited Studio account first, then link this provider in Account.',provider:'The provider could not finish sign-in. Please start again.'};
+  if(recovery){history.replaceState(null,'',location.pathname);sessionStorage.removeItem('studio-oauth-verifier');$('oauth-password').value='';}
   const ticket=new URLSearchParams(location.hash.slice(1)).get('ticket');
   if(ticket){history.replaceState(null,'',location.pathname);const verifier=sessionStorage.getItem('studio-oauth-verifier');sessionStorage.removeItem('studio-oauth-verifier');try{await api('/oauth/redeem',{ticket,verifier});}catch(e){$('status').textContent=e.message;}}
   await providerControls().catch(()=>{});await refresh();
+  if(reasons[recovery])$('status').textContent=reasons[recovery];
 }
 initialize();
