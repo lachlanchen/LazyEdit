@@ -12,6 +12,7 @@ from pathlib import Path
 import subprocess
 import sys
 import time
+from promotion_workspaces import promotion_workspaces
 
 os.umask(0o077)
 parser = argparse.ArgumentParser(description=__doc__)
@@ -27,7 +28,7 @@ config_file = root / 'config.json'
 config = json.loads(config_file.read_text())
 control_file = root / 'compose.json'
 control = json.loads(control_file.read_text())
-cells = sorted((root / 'workspaces').glob('*/compose.json'))
+cells = promotion_workspaces(root, Path(config['database']))
 images = {name: f'lazyedit-{name}:{args.tag}' for name in ('workspace', 'gateway', 'provisioner')}
 for image in images.values():
     subprocess.run(['docker', 'image', 'inspect', image], check=True, stdout=subprocess.DEVNULL)

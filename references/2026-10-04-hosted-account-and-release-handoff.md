@@ -112,9 +112,12 @@ account recovery and a global GPU scheduler are not active.
 1. Build exact `workspace`, `gateway` and `provisioner` images from
    `deploy/hosted/Dockerfile`, retaining the current and previous images.
 2. `scripts/studio/promote_cells.py --state PRIVATE_STATE --tag EXACT_TAG`
-   checks both queues and manual processing, backs up config, preserves volumes,
+   selects ready accounts from the registry, checks both queues and manual
+   processing, backs up config, preserves volumes,
    rolls only private workers, then gateway/provisioner. Never run `down -v` for
    an upgrade. That operation is only for confirmed member deletion.
+   Deleted-account Compose receipts are skipped; pending provisioning, failed
+   workers and unfinished deletion must be resolved before promotion.
 3. `scripts/studio/promote_hosted.py --state PRIVATE_STATE --admin-user lachlanchen`
    stages immutable ingress; reload/restart only the two Studio ingress units.
    It does not restart owner backend, Pi, AutoPubMonitor or LazyTunnel.

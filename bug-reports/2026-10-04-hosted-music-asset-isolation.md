@@ -30,3 +30,11 @@ NODE_PATH="$PWD/app/node_modules" node --test \
 Promote only immutable private workspace images at an idle queue boundary with
 `scripts/studio/promote_cells.py`. Keep databases, media and profiles; do not
 restart the original owner backend or Pi. See the [account handoff](../references/2026-10-04-hosted-account-and-release-handoff.md).
+
+The first live promotion stopped before changing any service because the old
+helper enumerated retained Compose receipts, including a deleted test member.
+`promotion_workspaces.py` now reads the registry without writing it, selects
+only ready members and verifies each Compose/bootstrap identity. Deleted
+receipts are never replayed. Unfinished provisioning/deletion or mismatched
+identity stops the upgrade. Two focused pytest cases passed for deleted
+receipts, unchanged registry state, incomplete cleanup and identity mismatch.
