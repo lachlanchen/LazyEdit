@@ -67,9 +67,26 @@ accounts link a provider only after confirming their Studio password. Email or
 display names never claim an existing owner identity. Unlink/revocation and
 account deletion are supported.
 
-Provider buttons are hidden until the operator configures and qualifies its
-own client IDs, redirect URLs and protected keys. This release does not claim
-that Apple/Google provider registration or real sign-in has been completed.
+Provider buttons depend on the operator's own configured client IDs, redirect
+URLs and protected keys. Google browser linking, fresh sign-in and revocation
+have been verified for the pilot. Apple registration is prepared; real Apple
+Account authentication and native provider UI qualification remain pending.
+See [identity operations](studio/identity-operations.md) for the exact boundaries.
+
+## Private music packages
+
+The hosted `/api/music/package` endpoint accepts asset files only from the
+signed-in member's private media directory. It checks both the requested path
+and the resolved filesystem path; sibling directories, parent traversal and
+symlinks to runtime files are rejected before reaching the package builder.
+This applies to audio, covers, proof, lyrics, metadata and screenshot aliases.
+Upload assets into the workspace first. Hosted requests cannot override the
+publisher URL; packages use that worker's configured publication service.
+The existing owner's local CLI and Pi workflow retain their established behavior.
+
+The regression uses harmless fixtures, authenticates a real isolated cell and
+verifies that rejected requests never reach its fake package backend. It does
+not read production credentials or create an external publication.
 
 ## Pricing and purchase readiness
 

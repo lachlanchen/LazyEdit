@@ -6,6 +6,7 @@ import { SCOPES, fail } from '../studio/auth.mjs';
 import { json, readJSON, validPath } from '../studio/transport.mjs';
 import { forward } from './proxy.mjs';
 import { assertWorkspaceIdle } from './lifecycle.mjs';
+import { privateMusicInput } from './music-input.mjs';
 
 export function createCell(config, seed) {
   const worker = createWorker(config), db = worker.auth.db;
@@ -81,7 +82,12 @@ export function createCell(config, seed) {
     }
     if(path==='/api/music/package'&&req.method==='POST'&&head===undefined){
       browser(req);if(req.headers.origin!==origin)fail(403,'Same-origin request required');
-      forward(req,res,{hostname:'127.0.0.1',port:config.backendPort,path:raw});return;
+      const input = privateMusicInput(await readJSON(req, 1024 * 1024), config.dataRoot);
+      const reply = await fetch(`http://127.0.0.1:${config.backendPort}/api/music/package`, {
+        method:'POST', headers:{'content-type':'application/json'}, body:JSON.stringify(input),
+        signal:AbortSignal.timeout(600000), redirect:'error',
+      });
+      return json(res, reply.status, await reply.json());
     }
     if(head!==undefined)fail(404,'Not found');
     worker.server.emit('request',req,res);
