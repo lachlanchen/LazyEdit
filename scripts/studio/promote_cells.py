@@ -59,10 +59,17 @@ for name in ('gateway', 'provisioner'):
 control_file.write_text(json.dumps(control, indent=2))
 repository = Path(__file__).resolve().parents[2]
 render = "import {workspaceCompose} from './hosted/compose.mjs'; console.log(JSON.stringify(workspaceCompose(JSON.parse(process.argv[1]),JSON.parse(process.argv[2]),process.argv[3]),null,2));"
+# Provider keys and identity/billing encryption keys belong only in protected
+# control-plane files, never a subprocess's visible command line. The worker
+# renderer needs only these non-secret deployment settings.
+render_config = {key: config[key] for key in (
+    'workerImage', 'workerMemory', 'workerCPUs', 'postgresImage', 'network',
+    'sampleFile', 'sampleSha256',
+) if key in config}
 for file in cells:
     seed = json.loads((file.parent / 'account.json').read_text())
     # Only non-secret workspace identity is passed to the renderer.
-    result = subprocess.run(['node', '--input-type=module', '-e', render, json.dumps({'id': seed['id']}), json.dumps(config), str(file.parent)], cwd=repository, check=True, capture_output=True, text=True)
+    result = subprocess.run(['node', '--input-type=module', '-e', render, json.dumps({'id': seed['id']}), json.dumps(render_config), str(file.parent)], cwd=repository, check=True, capture_output=True, text=True)
     file.write_text(result.stdout)
     subprocess.run(['docker', 'compose', '-f', str(file), 'up', '-d', '--no-deps', '--wait', '--wait-timeout', '180', 'worker'], check=True)
 subprocess.run(['docker', 'compose', '-f', str(control_file), 'up', '-d', '--no-deps', 'gateway', 'provisioner'], check=True)

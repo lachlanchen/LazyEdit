@@ -79,7 +79,12 @@ export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
       const url = new URL(definitions[name].authorize);
       const values = {client_id: settings[name].clientId, redirect_uri: redirect(name), response_type: 'code', scope: name === 'apple' ? 'name email' : 'openid email', state: flow, nonce};
       if (name === 'apple') values.response_mode = 'form_post';
-      else Object.assign(values, {code_challenge: challengeFor(verifier), code_challenge_method: 'S256', prompt: 'select_account'});
+      else {
+        Object.assign(values, {code_challenge: challengeFor(verifier), code_challenge_method: 'S256', prompt: owner ? 'consent select_account' : 'select_account'});
+        // Request revocation credentials once while password-confirmed linking.
+        // Normal sign-in need not repeatedly ask for consent or offline access.
+        if (owner) values.access_type = 'offline';
+      }
       for (const [key, value] of Object.entries(values)) url.searchParams.set(key, value);
       return {url: url.href};
     },
@@ -99,7 +104,7 @@ export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
         if (prior && prior.owner !== flow.owner) fail(409, 'Provider is linked to another Studio account');
         const existing = registry.db.prepare('SELECT subject FROM oauth_links WHERE provider=? AND owner=?').get(name, owner);
         if (existing && existing.subject !== claims.sub) fail(409, 'Unlink the current provider account first');
-        if (name === 'apple' && !tokens.refresh_token && !prior?.refresh) fail(502, 'Apple did not provide account-revocation credentials');
+        if (!tokens.refresh_token && !prior?.refresh) fail(502, 'The provider did not provide account-revocation credentials');
         registry.db.prepare('INSERT INTO oauth_links VALUES(?,?,?,?) ON CONFLICT(provider,subject) DO UPDATE SET refresh=excluded.refresh').run(name, claims.sub, owner, tokens.refresh_token ? encrypt(tokens.refresh_token) : prior?.refresh || null);
       }
       const ticket = secret();
