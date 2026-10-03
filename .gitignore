@@ -58,6 +58,7 @@ resources/irasutoya-emoji-assets/
 handoffnotes/input/
 # Private reviewer credentials/access handoff; public guidance is in references/.
 handoffnotes/output/2026-10-03-lightmind-google-review-ready.md
+handoffnotes/output/2026-10-03-lightmind-reviewer-recovery.md
 
 # External symlinks/deps
 echomind

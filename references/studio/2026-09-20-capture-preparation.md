@@ -43,6 +43,12 @@ its original receipt. Never blindly retry all channels. Pre-dispatch validation
 failures do not create an uncertain dispatch intent; uncertain backend responses
 still require reconciliation. Owner editor recovery remains available.
 
+For known interrupted editing tasks, see
+[preparation recovery](preparation-recovery.md). Recovery keeps the original
+intent/media identity and never publishes. Use the extension only when the
+actual deployment advertises `preparationRecovery=true`; keep the same key and
+read-only polling for older accepted receipts while the operator reconciles.
+
 ## Limitations
 
 The legacy queue still reads mutable output, and its worker can stop after a

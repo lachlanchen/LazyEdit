@@ -48,3 +48,11 @@ def test_unfinished_cleanup_or_wrong_identity_prevents_promotion(tmp_path):
     account.write_text(json.dumps({"id": "b" * 24}))
     with pytest.raises(RuntimeError, match="identity mismatch"):
         module.promotion_workspaces(tmp_path, database)
+
+
+def test_active_peer_acceptance_prevents_worker_replacement(tmp_path):
+    database = fixture(tmp_path)
+    lock = tmp_path / "workspaces" / ("a" * 24) / "acceptance.lock"
+    lock.write_text("Reviewer client qualification owns this worker lifecycle.\n")
+    with pytest.raises(RuntimeError, match="Acceptance lock"):
+        module.promotion_workspaces(tmp_path, database)

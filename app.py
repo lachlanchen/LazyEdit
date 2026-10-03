@@ -12097,7 +12097,14 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             return self.write({"error": str(exc)})
 
         progress_key = (video_id_i, publication_session_id)
-        if not _VIDEO_PROCESS_PROGRESS.start(progress_key):
+        operation_id = data.get("operationId")
+        if operation_id is not None and (
+            not isinstance(operation_id, str)
+            or not re.fullmatch(r"[A-Za-z0-9_-]{20,80}", operation_id)
+        ):
+            self.set_status(400)
+            return self.write({"error": "invalid preparation operation id"})
+        if not _VIDEO_PROCESS_PROGRESS.start(progress_key, operation_id):
             self.set_status(409)
             return self.write({"error": "This video is already processing. Check its status before retrying."})
 
@@ -12388,6 +12395,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                 "video_id": video_id_i,
                 "publication_session_id": publication_session_id,
                 "status": "started",
+                **({"operation_id": operation_id} if operation_id else {}),
                 "steps": sorted(selected_steps) if selected_steps else None,
             })
 

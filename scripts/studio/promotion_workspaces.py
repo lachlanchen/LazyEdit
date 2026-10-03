@@ -22,6 +22,8 @@ def promotion_workspaces(state: Path, database: Path) -> list[Path]:
         if not re.fullmatch(r"[a-f0-9]{24}", identifier):
             raise RuntimeError("Invalid registry workspace identity")
         file = state / "workspaces" / identifier / "compose.json"
+        if (file.parent / "acceptance.lock").exists():
+            raise RuntimeError("Acceptance lock: do not replace this worker until its owning qualification finishes")
         document = json.loads(file.read_text())
         account = json.loads((file.parent / "account.json").read_text())
         if (document.get("name") != f"le-{identifier}"

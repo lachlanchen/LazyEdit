@@ -16,6 +16,23 @@
     }
   ],
   "paths": {
+    "/v1/studio/preparations/{operationId}": {
+      "get": {
+        "summary": "Read the original private editing operation and recovery state",
+        "description": "Requires jobs.read, media.read and ownership of the operation/media. operationId is returned as operation_id from preparation acceptance. An accepted receipt is not completion. A restarted worker reports interrupted when an accepted editing task lost its live pipeline; unknown dispatches report reconciliation_required. Check authenticated capabilities.preparationRecovery before using this extension.",
+        "parameters": [{"in":"path","name":"operationId","required":true,"schema":{"type":"string","pattern":"^[A-Za-z0-9_-]{20,80}$"}}],
+        "responses": {"200":{"description":"Original operation identity, state, recoverable flag, recovery count and private pipeline status"},"401":{"description":"Authentication required"},"403":{"description":"Required scope or media ownership denied"},"404":{"description":"Operation unavailable to this account"}}
+      }
+    },
+    "/v1/studio/preparations/{operationId}/resume": {
+      "post": {
+        "summary": "Resume an interrupted editing preparation, never a social publication",
+        "description": "Requires edit.submit and media.read for the original owner/media. Send an empty object. Original settings, request identity, source SHA and publication-session identity are retained; completed checkpoints from this operation are reused. It does not create another intent, charge another processing run, upload, publish or select an owner worker. Any prior social job, changed source, superseding operation or uncertain dispatch blocks recovery. An already running/done operation returns its state without redispatch. This API is advertised only by recovery-capable deployments.",
+        "parameters": [{"in":"path","name":"operationId","required":true,"schema":{"type":"string","pattern":"^[A-Za-z0-9_-]{20,80}$"}}],
+        "requestBody": {"required":true,"content":{"application/json":{"schema":{"type":"object","maxProperties":0}}}},
+        "responses": {"200":{"description":"Same editing operation resumed or already working/done"},"400":{"description":"Replacement options are not accepted"},"401":{"description":"Authentication required"},"403":{"description":"Required scope or source ownership denied"},"404":{"description":"Operation unavailable to this account"},"409":{"description":"Source, operation, publication or dispatch state needs reconciliation"},"503":{"description":"Cannot verify private preparation state"}}
+      }
+    },
     "/v1/studio/review": {
       "get": {
         "summary": "Owned render, cover and zh/en/ja metadata snapshot",

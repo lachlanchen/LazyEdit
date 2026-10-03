@@ -8,6 +8,7 @@ import { promisify } from 'node:util';
 import { AuthStore, SCOPES, fail, secret, digest } from './auth.mjs';
 import { json, body, readJSON, proxy, validPath, startEdge } from './transport.mjs';
 import { CAPTURE_PRESET, CAPTURE_CHANNELS, capturePreparation } from './preparation.mjs';
+import { PreparationRecovery } from './preparation-recovery.mjs';
 import { composerDefaults, validateForm, composeOptions, reuseOptions, checkPublicationJobs } from './composer.mjs';
 process.umask(0o077);
 const exec = promisify(execFile);
@@ -21,6 +22,7 @@ const numeric=v=>{if(!/^\d+$/.test(String(v))||Number(v)<1||!Number.isSafeIntege
 const clean=value=>Array.isArray(value)?value.map(clean):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).filter(([k])=>!/password|secret|authorization|cookie|credential|file_path|zip_path|local_path|logoPath|source_video_path|output_path/i.test(k)).map(([k,v])=>[k,clean(v)])):value;
 export function createWorker(config) {
  const auth=new AuthStore(config.database),db=auth.db, origin=`https://${config.host}`;
+ const preparations=new PreparationRecovery(db);
  const upstream=readFileSync(config.upstreamSecretFile,'utf8').trim();
  const root=resolve(config.dataRoot), incoming=join(root,'studio_uploads');mkdirSync(incoming,{recursive:true,mode:0o700});
  const locks=new Set();
@@ -70,6 +72,25 @@ export function createWorker(config) {
  }
  async function backend(path,method='GET',data){
   return config.processingRequest ? config.processingRequest(path,method,data,dispatchBackend) : dispatchBackend(path,method,data);
+ }
+ async function prepareBackend(p,id,request,intentId) {
+  const source=db.prepare('SELECT sha256 FROM media WHERE owner=? AND video_id=?').get(p.owner,id);
+  preparations.register(intentId,p.owner,id,request,source?.sha256);
+  try {
+   return preparations.accepted(intentId,await backend(`/api/videos/${id}/process`,'POST',{...request,operationId:intentId}));
+  } catch(error) {preparations.rejected(intentId,error);throw error;}
+ }
+ async function preparationStatus(row) {
+  const session=row.response?JSON.parse(row.response).publication_session_id:null;
+  return dispatchBackend(`/api/videos/${row.video_id}/process-status${session?`?publicationSessionId=${session}`:''}`);
+ }
+ async function verifyPreparationSource(row) {
+  const media=db.prepare('SELECT sha256 FROM media WHERE owner=? AND video_id=?').get(row.owner,row.video_id);
+  if(media?.sha256!==row.source_sha256)fail(409,'Original owned source identity changed');
+  const video=await dispatchBackend('/api/videos/'+row.video_id),path=realpathSync(video.file_path);
+  if(!path.startsWith(realpathSync(root)+sep))fail(403,'Source outside this workspace');
+  const hash=createHash('sha256');for await(const bytes of createReadStream(path))hash.update(bytes);
+  if(hash.digest('hex')!==row.source_sha256)fail(409,'Original source has changed');
  }
  function getPrincipal(req){
   let token=req.headers['x-studio-access'];let browser=false;
@@ -170,7 +191,7 @@ export function createWorker(config) {
   const id=secret();db.prepare('INSERT INTO intents VALUES(?,?,?,?,?,?,?)').run(id,p.owner,key,fingerprint,null,'submitting',Date.now());
   // Persist BEFORE dispatch. A crash or unknown timeout must not submit a second task.
   let result;
-  try {result=await execute(prepared);}
+  try {result=await execute(prepared,id);}
   catch(error){
    // A quota rejection happens before upstream dispatch, so it is safe to retry
    // the same intent after a period reset/upgrade. Unknown dispatches stay held.
@@ -211,6 +232,27 @@ export function createWorker(config) {
    scope(p,'media.read');if(!config.processingUsage)fail(404,'Usage is not metered on this worker');
    json(res,200,config.processingUsage());return;
   }
+  const preparation=/^\/v1\/studio\/preparations\/([A-Za-z0-9_-]{20,80})(\/resume)?$/.exec(path);
+  if(preparation){
+   scope(p,method==='GET'?'jobs.read':'edit.submit');scope(p,'media.read');
+   const row=preparations.owned(preparation[1],p.owner);auth.own(p,row.video_id);
+   if(method==='GET'&&!preparation[2]){
+    const status=await preparationStatus(row);publicJSON(res,{...preparations.describe(row,status),status});return;
+   }
+   if(method==='POST'&&preparation[2]){
+    const data=await readJSON(req,1024);if(Object.keys(data).length)fail(400,'Recovery reuses the original request; no replacement options allowed');
+    const lock='prepare-recovery:'+row.video_id;if(locks.has(lock))fail(409,'Recovery in progress; check Activity');locks.add(lock);
+    try {
+     const latest=preparations.latest(p.owner,row.video_id);if(latest?.id!==row.id)fail(409,'Another preparation superseded this operation');
+     const result=await preparations.resume(row,{status:preparationStatus,verifySource:verifyPreparationSource,
+      publicationJobs:()=>dispatchBackend('/api/autopublish/queue').then(value=>value.jobs),
+      // Same accepted operation and quota reservation, not another billed run.
+      dispatch:(_row,data)=>dispatchBackend(`/api/videos/${row.video_id}/process`,'POST',data)});
+     publicJSON(res,result);return;
+    }finally{locks.delete(lock);}
+   }
+   fail(405,'Method not allowed');
+  }
   if(path==='/auth/me'&&method==='GET'||path==='/v1/studio/account'&&method==='GET'){json(res,200,{subject:p.owner,username:db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,scopes:p.scopes,capabilities:capabilities(),issuer:origin,audience:'lazyedit-studio',limits:{maxVideoBytes:10*1024**3,chunkBytes:8*1024**2}});return;}
   if(path==='/studio-context.js'&&method==='GET'){
    if(p.kind!=='browser')fail(403,'Browser session required');
@@ -228,7 +270,7 @@ export function createWorker(config) {
   if(path==='/v1/studio/upload-part'&&method==='PUT'){scope(p,'media.upload');json(res,200,await append(req,p,u.searchParams.get('uploadId'),Number(req.headers['upload-offset'])));return;}
   if(path==='/v1/studio/upload-complete'&&method==='POST'){scope(p,'media.upload');json(res,200,await finalize(p,(await readJSON(req)).uploadId));return;}
   if(['/upload-stream','/v1/studio/media'].includes(path)&&method==='PUT'){json(res,200,await directUpload(req,p,u));return;}
-  if(path==='/v1/studio/capabilities'&&method==='GET'){json(res,200,{apiVersion:'1',legacyBridgeCompatible:true,resumableUpload:true,accountLink:'device-authorization',publicRegistration:false,preparationPresets:[CAPTURE_PRESET],nativeReview:true,defaultCapturePlatforms:CAPTURE_CHANNELS,platforms:['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'],scopes:p.scopes});return;}
+  if(path==='/v1/studio/capabilities'&&method==='GET'){json(res,200,{apiVersion:'1',legacyBridgeCompatible:true,resumableUpload:true,preparationRecovery:true,accountLink:'device-authorization',publicRegistration:false,preparationPresets:[CAPTURE_PRESET],nativeReview:true,defaultCapturePlatforms:CAPTURE_CHANNELS,platforms:['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'],scopes:p.scopes});return;}
   const native=/^\/v1\/studio\/videos\/(\d+)\/(composer|plan|submit|visibility|submission)$/.exec(path);
   if(native){
    if(p.kind!=='browser')fail(403,'Studio owner session required');
@@ -257,11 +299,11 @@ export function createWorker(config) {
     if(d.action==='publish'){requirePublishing();scope(p,'publication.publish');if(d.confirmation!=='PUBLISH')fail(400,'Confirm publication first');}
     const lock='compose:'+id;if(locks.has(lock))fail(409,'Submission in progress. Check Activity');locks.add(lock);
     try{
-     const result=await once(p,req,{path,data:d},async plan=>{
+     const result=await once(p,req,{path,data:d},async (plan,intentId)=>{
       if(d.action==='publish')return backend(`/api/videos/${id}/publish`,'POST',{platforms:plan.form.platforms,options:plan.options,persistSettings:false,wait:false});
       const o=plan.options;
       const steps=['transcribe',...(o.autoCorrectSubtitles?['polish']:[]),...(o.burnSubtitles?['translate']:[]),'keyframes','metadata_zh','metadata_en','metadata_ja','cover',...((o.burnSubtitles||o.logo.enabled||o.burnLayout.portraitBlurFill.enabled)?['burn']:[])];
-      return backend(`/api/videos/${id}/process`,'POST',{...o,steps,async:true,notes:o.metadataPrompt});
+      return prepareBackend(p,id,{...o,steps,async:true,notes:o.metadataPrompt},intentId);
      },async()=>{
       const f=validateForm(d.form);if(d.action==='prepare'&&f.mode==='reuse')fail(400,'A reused run does not need processing');
       if(d.action==='publish'&&!f.platforms.length)fail(400,'Choose at least one platform');
@@ -308,13 +350,13 @@ export function createWorker(config) {
     if(!['process','publish','subtitle-correction'].includes(action))fail(403,'Operation reserved for Studio owner UI');
     if(action==='process'&&Object.hasOwn(d,'preparationPreset')){
      // Fingerprint the original brief, not mutable owner settings, so retries are stable.
-     const result=await once(p,req,{path,data:d},prepared=>backend(raw,'POST',prepared),async()=>{
+     const result=await once(p,req,{path,data:d},(prepared,intentId)=>prepareBackend(p,id,prepared,intentId),async()=>{
       await noPreviousPublication(id);
       const settings=await backend('/api/ui-settings/logo_settings');
       return capturePreparation(d,settings.value);
      });publicJSON(res,result);return;
     }
-    if(action==='process'){const allowed=['steps','translationLanguages','translation_languages','burnSubtitles','usePolishedSubtitles','subtitleSourceVersion','notes','polish_notes','async','burnLayout','publicationSessionId','autoCorrectSubtitles','autoCorrectPrompt'];if(Object.keys(d).some(k=>!allowed.includes(k)))fail(400,'Unsupported process option');d.async=true;d.publicationMode='override';return void publicJSON(res,await once(p,req,{path,data:d},()=>backend(raw,'POST',d)));}
+    if(action==='process'){const allowed=['steps','translationLanguages','translation_languages','burnSubtitles','usePolishedSubtitles','subtitleSourceVersion','notes','polish_notes','async','burnLayout','publicationSessionId','autoCorrectSubtitles','autoCorrectPrompt'];if(Object.keys(d).some(k=>!allowed.includes(k)))fail(400,'Unsupported process option');d.async=true;d.publicationMode='override';return void publicJSON(res,await once(p,req,{path,data:d},(_prepared,intentId)=>prepareBackend(p,id,d,intentId)));}
     if(action==='publish'){
      if(d.reviewApproved!==true||Number(d.reviewedVideoId)!==id||d.confirmation!=='PUBLISH_REVIEWED_MEDIA'||d.productionConfirmation!=='PUBLISH_REVIEWED_MEDIA_PRODUCTION')fail(400,'Explicit reviewed-media production approval required');
      const status=await backend(`/api/videos/${id}/process-status`);if(!status.ready_for_publish)fail(409,'Media is not ready for publication');
@@ -332,7 +374,19 @@ export function createWorker(config) {
        ()=>noPreviousPublication(id));publicJSON(res,result);return;
     }
    }
-   const result=await backend(raw,method,d);if(p.kind==='browser')json(res,200,result);else publicJSON(res,result);return;
+   const result=await backend(raw,method,d);
+   if(action==='process-status'&&method==='GET'&&result.pipeline===null&&!u.searchParams.has('publicationSessionId')){
+    const operation=preparations.latest(p.owner,id);
+    if(operation){
+     const recovery=preparations.describe(operation,result);
+     result.preparation=recovery;
+     if(recovery.state!=='done'){
+      result.pipeline={status:recovery.state,operation_id:operation.id,recoverable:recovery.recoverable,updated_at:new Date(operation.created).toISOString()};
+      result.ready_for_publish=false;
+     }
+    }
+   }
+   if(p.kind==='browser')json(res,200,result);else publicJSON(res,result);return;
   }
   if(path.startsWith('/media/')&&['GET','HEAD'].includes(method)){
    scope(p,'media.read');const target=resolve(root,decodeURIComponent(path.slice(7)));if(!target.startsWith(root+sep)||!existsSync(target)||!realpathSync(target).startsWith(root+sep))fail(404,'Media unavailable');

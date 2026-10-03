@@ -98,3 +98,8 @@ Note on symlinks: Never edit files inside symlinked directories from this reposi
   and review notes must disclose the optional managed publishing integration.
 - Preserve the original owner's backend and Pi. Its existing workflow remains
   available only to the authorized owner; do not change it during hosted rollout.
+- Treat accepted preparation receipts as acceptance, not completion. Reconcile
+  interrupted editing with its original intent/source; never invent a new key
+  or social post. See `references/studio/preparation-recovery.md`.
+- Respect a workspace's private `acceptance.lock`. Do not replace/restart it
+  while another client owns qualification, even if its publication queue is empty.

@@ -23,3 +23,13 @@ def test_sessions_are_independent_and_retention_preserves_active_work():
     assert progress.get((1, 1))["status"] == "working"
     assert progress.get((1, 2)) is None
     assert not progress.start((3, None))
+
+
+def test_operation_identity_and_step_checkpoint_times_are_visible():
+    progress = PipelineProgress()
+    key = (2, None)
+    assert progress.start(key, "original-preparation-operation")
+    progress.step(key, "transcribe", "done", "Completed")
+    row = progress.get(key)
+    assert row["operation_id"] == "original-preparation-operation"
+    assert row["steps"]["transcribe"]["updated_at"] == row["updated_at"]
