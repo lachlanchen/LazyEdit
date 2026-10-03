@@ -6,17 +6,17 @@
   "apple": {
     "appId": "6814061525",
     "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
-    "ipaSha256": "e8d2039dcaef8dcb2ff7bdbb084a22b988f33dafe8f789681530976bb24ad4e4",
-    "deliveryUuid": "f1bcdfa2-c96c-4b79-88aa-98625f6782de",
+    "ipaSha256": "266be74930378f41bb475ab2b8196fa2dc74ee3f2c5c638d5d7e076fc06a02a8",
+    "deliveryUuid": "ab2aeb28-264d-4636-a8a8-8051c2156214",
     "state": "IN_BETA_TESTING",
-    "buildId": "f1bcdfa2-c96c-4b79-88aa-98625f6782de",
+    "buildId": "ab2aeb28-264d-4636-a8a8-8051c2156214",
     "processingState": "VALID",
     "internalTesters": 1,
     "publicBeta": false,
     "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/testflight",
-    "build": 8,
+    "build": 9,
     "nativeInterface": true,
-    "qa": "Native member sign-in, scoped demo library, private account controls, no Pi/invitation access, platform login web controls and sign-out passed on a fresh dedicated iPhone 17 Pro Max simulator. Exact signed distribution archive separately validated by Apple. Prior build 7 owner device feedback is separate evidence. Additional native WKWebView test passed after module hydration, including private Shipinhao desktop connection, QR freeze and browser close with saved profile; no real post or platform authentication claim."
+    "qa": "Member sign-in, private library/account controls, native editing composer, hydrated full editor without platform/publish controls, and sign-out passed on a dedicated iPhone 17 Pro Max simulator. Exact signed IPA separately validated/uploaded once and is VALID in internal TestFlight. No real social publication or physical-install claim."
   },
   "google": {
     "appId": "4975166991517752718",
@@ -35,15 +35,15 @@
   },
   "sourceNote": "Native release sources and exact provider receipts are recorded by the commit containing this manifest.",
   "macos": {
-    "build": 8,
+    "build": 9,
     "architectures": [
       "x86_64",
       "arm64"
     ],
     "minimumVersion": "12.0",
-    "zipSha256": "f8475aed9630c03581788b58ca87db89d8a2b3ae066d776ce8a7b95a249f799c",
+    "zipSha256": "f7c7a16b2d3dd9a3ed7283e36db713bff4f6b5c55cace2bd48da994f1c2fc885",
     "signature": "ad-hoc local QA; not notarized",
-    "qa": "Exact universal native Mac Catalyst build 8 launched on Intel Monterey 3040, iMac 7050 and ARM Mac mini; signatures and both architectures verified. Mac mini normal open succeeded after exact-bundle Launch Services registration. Full Mac UI regression requires TCC authorization and is not claimed. Local QA signature only, not notarized."
+    "qa": "Exact universal native Mac Catalyst build 9 launched on Intel Monterey 3040, iMac 7050 and ARM Mac mini. Strict signatures and both architectures verified; owned review apps stopped after launch checks. Local ad-hoc QA signature, not notarized; full Mac UI regression is not claimed."
   },
   "downloadPricing": {
     "apple": {
@@ -146,7 +146,7 @@
     "processingBasis": "source duration per requested run; UTC calendar month",
     "quotaEnforcedForHostedPilot": true
   },
-  "applicationSource": "256a9ac6db85a855366a711e45fa17af9f098180",
+  "applicationSource": "329679514be0173d378609f169348c23ad4ce49e",
   "identity": {
     "google": {
       "client": "app-owned web identity client",
@@ -179,7 +179,7 @@
   "preparedNativeBuilds": {
     "apple": 9,
     "google": 6,
-    "state": "Android6 released to internal testing; iOS9 qualification in progress"
+    "state": "iOS9 in internal TestFlight; Android6 available to internal testers; universal Mac9 launch-qualified on three Macs"
   },
   "editorFirst": {
     "normalMemberPublishing": false,
@@ -217,5 +217,10 @@
     ],
     "billingActivated": false,
     "reviewSubmitted": false
+  },
+  "nativeSources": {
+    "apple": "329679514be0173d378609f169348c23ad4ce49e",
+    "google": "9fbe02bf1388ded26af1616cb4adbf025c23fe72",
+    "macos": "329679514be0173d378609f169348c23ad4ce49e"
   }
 }

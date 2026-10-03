@@ -11,8 +11,8 @@ Vancouver demo, with no owner library or social credentials.
 
 The hosted pilot has three workspace slots including the administrator. Both
 permanent cells, gateway and provisioner now run `editor-first-20261004h`, built
-from source `9fbe02b`. Native binaries in testing remain build 8 / Android 5
-until the next exact release is qualified and uploaded. The promotion
+from source `9fbe02b`. Native iOS/Mac build 9 uses source `3296795`; Android build 6 uses `9fbe02b`.
+Both mobile builds are available in their internal test tracks. The promotion
 checked publication queues and manual processing, preserved volumes and saved
 a private rollback. The h promotion did not restart ingress units. The owner
 backend process, original Pi and shared LazyTunnel services were not restarted.
@@ -58,8 +58,8 @@ PWA. Monthly purchases remain hidden while billing is disabled. Optional
 provider buttons follow the configured pilot providers; native provider UI
 qualification is separate from the completed Google browser tests.
 
-- Apple: exact signed build **8**, IPA SHA-256
-  `e8d2039dcaef8dcb2ff7bdbb084a22b988f33dafe8f789681530976bb24ad4e4`,
+- Apple: exact signed build **9**, IPA SHA-256
+  `266be74930378f41bb475ab2b8196fa2dc74ee3f2c5c638d5d7e076fc06a02a8`,
   validated and uploaded once; processed `VALID` and attached to the existing
   internal group as `IN_BETA_TESTING`.
 - Google: exact signed AAB **6**, SHA-256
@@ -69,7 +69,7 @@ qualification is separate from the completed Google browser tests.
   authentication/capabilities and trusted-origin checks. This is
   not a physical-device installation claim.
 - Paid download: USD **0.99** was configured/read back on both stores.
-- macOS: exact universal Catalyst build **8** launched on Intel Monterey 3040,
+- macOS: exact universal Catalyst build **9** launched on Intel Monterey 3040,
   iMac 7050 and the ARM Mac mini. Strict ad-hoc QA signatures and both
   architectures were verified; this is not a notarized public installer or a
   full Mac UI regression claim.
@@ -98,11 +98,15 @@ AMFI reject it. Neither case justifies weakening app credential storage or
 changing system trust. XCTest also must handle the system Save Password dialog,
 retained login fields and observed Liquid Glass tab frames.
 
-The completed member XCTest also waited for the editor module to hydrate,
-opened the private Shipinhao desktop inside WKWebView, observed its connected
-state, froze the QR view and closed the browser with its profile retained.
-This qualifies native desktop transport, not authentication or posting to a
-real social account. The dedicated simulators/emulator and project review
+The build 9 member XCTest waited for the editor module to hydrate and checked
+that publication and platform desktop controls were absent. Its native account,
+composer, PWA editor and sign-out passed. The earlier build 8 desktop transport
+test remains separate evidence for an enabled account, not social authentication
+or publication. System Password AutoFill can appear after sign-in through
+SafariViewService and intercept later scrolling; QA dismisses its observed
+Not Now prompt, including delayed presentation. Composer accessibility IDs
+distinguish the sheet from the underlying video view. Tab tests check the actual
+requested screen instead of a cached Liquid Glass icon’s selection property. The dedicated simulators/emulator and project review
 desktop were stopped after evidence capture.
 
 `scripts/studio/install_macos_review.sh ZIP BUILD SHA256` verifies the exact
@@ -143,7 +147,7 @@ The newly enabled capability invalidated this app's old distribution profile.
 A new profile using the existing distribution certificate was generated and
 verified on the Mac. `build_ios.sh` now reads and validates the private profile's
 app ID/team/name/UUID and updates temporary export options; it no longer
-hard-codes the invalidated profile. The already uploaded build 8 is unchanged.
+hard-codes the invalidated profile. The already uploaded build 8 is preserved; the new exact build 9 uses the current profile.
 
 Both provider configuration helpers default to disabled, require protected
 files, preserve the existing identity encryption key and other provider, save

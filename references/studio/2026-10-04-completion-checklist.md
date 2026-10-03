@@ -11,8 +11,8 @@
 - PWA editing interface without generation/owner tabs; authorized Vancouver
   sample; native library/upload/configuration/activity/account screens in 11
   languages, with the established editor/login UI available inside the app.
-- iOS TestFlight build 8 and Android internal build 6. Dedicated simulator and
-  emulator tests passed; the universal Catalyst build 8 launched on the three
+- iOS TestFlight build 9 and Android internal build 6. Dedicated simulator and
+  emulator tests passed; the universal Catalyst build 9 launched on the three
   agreed Macs. It is local QA signing, not a notarized public Mac installer.
 - Member account deletion revokes grants and removes only its own workspace at
   an idle boundary. An isolated reviewer account is prepared privately.
