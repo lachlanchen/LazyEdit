@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Reconcile only LazyEdit's own Apple monthly product drafts.
 
-Preparation is not billing activation or review submission. Only an exact USD
-price point is accepted; no replacement amount is chosen for a missing point.
+Preparation/configuration is not billing activation or review submission. Only
+an exact USD price point is accepted; no replacement amount is silently chosen.
 """
 import argparse
 from decimal import Decimal
@@ -17,12 +17,12 @@ APP = "6814061525"
 BUNDLE = "art.lazying.lazyedit"
 GROUP = "LazyEdit Studio Monthly"
 PLANS = [("starter", "Starter", "2.99", 3), ("plus", "Plus", "14.99", 2),
-         ("studio", "Studio", "29.89", 1)]
+         ("studio", "Studio", "29.90", 1)]
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["status", "prepare"])
+    parser.add_argument("action", choices=["status", "prepare", "configure"])
     parser.add_argument("--key", type=Path, default=Path.home()/".config/echomind/private/AuthKey_6SSXT8QU6W.p8")
     args = parser.parse_args()
     session = requests.Session()
@@ -61,7 +61,7 @@ def main():
         raise RuntimeError("Ambiguous own subscription group")
     if not matches and groups:
         raise RuntimeError("Reconcile an existing group before creating another")
-    if not matches and args.action == "prepare":
+    if not matches and args.action in ("prepare", "configure"):
         matches = [api("POST", "subscriptionGroups", json={"data": {
             "type": "subscriptionGroups", "attributes": {"referenceName": GROUP},
             "relationships": {"app": {"data": {"type": "apps", "id": APP}}}}})["data"]]
@@ -77,7 +77,7 @@ def main():
         found = [p for p in existing if p["attributes"]["productId"] == product_id]
         if len(found) > 1:
             raise RuntimeError("Ambiguous monthly product")
-        if not found and args.action == "prepare":
+        if not found and args.action in ("prepare", "configure"):
             found = [api("POST", "subscriptions", json={"data": {
                 "type": "subscriptions", "attributes": {"name": "LazyEdit "+name,
                     "productId": product_id, "subscriptionPeriod": "ONE_MONTH",
@@ -89,16 +89,35 @@ def main():
         product = found[0]
         if product["attributes"].get("subscriptionPeriod") != "ONE_MONTH":
             raise RuntimeError("Preserve an existing non-monthly product; reconcile it first")
-        if product["attributes"]["state"] not in ("MISSING_METADATA", "READY_TO_SUBMIT", "DEVELOPER_ACTION_NEEDED") and args.action == "prepare":
+        if product["attributes"]["state"] not in ("MISSING_METADATA", "READY_TO_SUBMIT", "DEVELOPER_ACTION_NEEDED") and args.action != "status":
             raise RuntimeError("Preserve an active or reviewed subscription")
         points = rows(f"subscriptions/{product['id']}/pricePoints?filter[territory]=USA&limit=200")
         exact = [point for point in points if Decimal(point["attributes"]["customerPrice"]) == Decimal(price)]
         if len(exact) > 1:
             raise RuntimeError("Ambiguous exact USD price")
-        # Availability is recorded without changing an existing price schedule.
+        schedule_changed = False
+        prices = rows(f"subscriptions/{product['id']}/prices?filter[territory]=USA&limit=200")
+        if args.action == "configure":
+            if not exact:
+                raise RuntimeError("Approved exact USA price is unavailable; preserve the draft")
+            if any(p["relationships"]["subscriptionPricePoint"]["data"]["id"] != exact[0]["id"] for p in prices):
+                raise RuntimeError("Preserve an existing different price schedule; reconcile it first")
+            if not prices:
+                api("POST", "subscriptionPrices", json={"data": {"type": "subscriptionPrices",
+                    "attributes": {"startDate": None, "preserveCurrentPrice": True},
+                    "relationships": {
+                        "subscription": {"data": {"type": "subscriptions", "id": product["id"]}},
+                        "subscriptionPricePoint": {"data": {"type": "subscriptionPricePoints", "id": exact[0]["id"]}},
+                        "territory": {"data": {"type": "territories", "id": "USA"}}}}})
+                prices = rows(f"subscriptions/{product['id']}/prices?filter[territory]=USA&limit=200")
+                if not prices or any(p["relationships"]["subscriptionPricePoint"]["data"]["id"] != exact[0]["id"] for p in prices):
+                    raise RuntimeError("USA draft price readback mismatch")
+                schedule_changed = True
         result["products"].append({"id": product["id"], "productId": product_id,
             "state": product["attributes"]["state"], "requestedUSD": price,
-            "exactUSDPricePointAvailable": bool(exact), "priceScheduleChanged": False,
+            "exactUSDPricePointAvailable": bool(exact), "priceScheduleChanged": schedule_changed,
+            "usaPriceScheduleMatches": bool(exact and prices and all(
+                p["relationships"]["subscriptionPricePoint"]["data"]["id"] == exact[0]["id"] for p in prices)),
             "nearestAvailableUSD": [] if exact else [str(value) for value in sorted(
                 {Decimal(p["attributes"]["customerPrice"]) for p in points},
                 key=lambda value: (abs(value-Decimal(price)), value))[:3]]})

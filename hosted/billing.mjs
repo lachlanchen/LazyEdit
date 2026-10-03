@@ -75,7 +75,9 @@ export function createBilling(registry, config = {}, verifierOverride) {
           }
         } finally {refreshing.delete(owner);}
       }
-      return {enabled, accountToken, providers: enabled ? verifier.providers() : [], plans: monthlyPlans.map(plan => ({...plan, benefits: config.benefits?.[plan.id] || null})), entitlement: ledger.status(owner), paidDownloadCreditEnabled: false};
+      return {enabled, accountToken, providers: enabled ? verifier.providers() : [], plans: monthlyPlans.map(plan => ({...plan, benefits: {
+        processingMinutes:plan.processingMinutes, basis:'source duration per requested processing run', reset:'UTC calendar month',
+      }})), entitlement: ledger.status(owner), paidDownloadCreditEnabled: false};
     },
     async submit(owner, provider, body) {
       if (!enabled || !verifier.providers().includes(provider)) fail(503, 'Billing is being prepared. No charge will be made.');

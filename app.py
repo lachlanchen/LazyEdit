@@ -6170,6 +6170,24 @@ def _ready_for_publish_with_options(
     return True
 
 
+def _publish_requires_processing(status_payload, config, logo_settings):
+    """Shared publish/hosted-meter decision; a completed run is free to reuse."""
+    burn = bool(config.get("burnSubtitles", True))
+    auto_correct = bool(config.get("autoCorrectSubtitles", False)) and bool(
+        str(config.get("autoCorrectPrompt") or "").strip()
+    )
+    metadata_prompt = str(config.get("metadataPrompt") or "").strip() if bool(
+        config.get("useCorrectionPromptForMetadata", True)
+    ) else ""
+    require_burn = burn or _logo_overlay_enabled(logo_settings) or is_portrait_blurfill_enabled(
+        (config.get("burnLayout") or {}).get("portraitBlurFill")
+    )
+    return bool(auto_correct or metadata_prompt or not _ready_for_publish_with_options(
+        status_payload, burn_subtitles=burn, require_burn=require_burn,
+        require_transcription=not bool(config.get("authoritativeSubtitles", False)),
+    ))
+
+
 def _serialize_publish_job_row(row: tuple) -> dict:
     platforms_raw = row[3]
     if isinstance(platforms_raw, dict):
@@ -6495,12 +6513,7 @@ def _process_publish_job(job_row: tuple) -> None:
     if status_code >= 400:
         raise RuntimeError(status_payload.get("error") or "process status check failed")
 
-    if auto_correct_subtitles or metadata_prompt or not _ready_for_publish_with_options(
-        status_payload,
-        burn_subtitles=burn_subtitles,
-        require_burn=processed_output_required,
-        require_transcription=not authoritative_subtitles,
-    ):
+    if _publish_requires_processing(status_payload, job_config, logo_settings):
         ldb.update_publish_job(job_id, detail="Processing video before publish")
         process_steps = [
             "keyframes",
@@ -8866,6 +8879,47 @@ class VideoCoverHandler(CorsMixin, tornado.web.RequestHandler):
         if status != 200:
             self.set_status(status)
         self.write(payload)
+
+
+class VideoProcessingQuoteHandler(CorsMixin, tornado.web.RequestHandler):
+    """Read-only private-cell estimate; no session, processing or post is created."""
+    async def post(self, video_id):
+        if os.getenv("LAZYEDIT_HOSTED") != "1":
+            self.set_status(404)
+            return self.write({"error": "not found"})
+        video_id_i = int(video_id)
+        if not _get_video_row(video_id_i):
+            self.set_status(404)
+            return self.write({"error": "video not found"})
+        data = json.loads(self.request.body or b"{}")
+        request = data.get("request") or {}
+        if data.get("action") != "publish":
+            return self.write({"requiresProcessing": True})
+        options = request.get("options") if isinstance(request.get("options"), dict) else request
+        config = _sanitize_publish_options(options)
+        if _parse_bool(request.get("wait"), default=False):
+            return self.write({"requiresProcessing": False})
+        if config.get("publicationMode") == "new":
+            return self.write({"requiresProcessing": True})
+        if ldb.find_active_publish_job(video_id_i):
+            return self.write({"requiresProcessing": False})
+        if isinstance(config.get("burnLayout"), dict):
+            config["burnLayout"], _ = _resolve_portrait_blurfill_for_video(
+                video_id_i, dict(config["burnLayout"]),
+            )
+        session_id = _parse_int_value(config.get("publicationSessionId"))
+        query = urlencode({"translationLanguages": ",".join(config.get("translationLanguages") or _load_translation_languages_setting()),
+            **({"publicationSessionId": session_id} if session_id else {})})
+        response = await tornado.httpclient.AsyncHTTPClient().fetch(
+            f"http://127.0.0.1:{PORT}/api/videos/{video_id_i}/process-status?{query}",
+            request_timeout=30, raise_error=False,
+        )
+        if response.code >= 400:
+            self.set_status(502)
+            return self.write({"error": "processing estimate unavailable"})
+        status = json.loads(response.body)
+        logo = _sanitize_logo_settings(config["logo"]) if isinstance(config.get("logo"), dict) else _load_logo_settings_setting()
+        self.write({"requiresProcessing": _publish_requires_processing(status, config, logo)})
 
 
 class VideoPublishHandler(CorsMixin, tornado.web.RequestHandler):
@@ -13171,6 +13225,7 @@ def make_app(upload_folder):
         (r"/api/videos/(\d+)/process", VideoProcessHandler),
         (r"/api/videos/(\d+)/process-status", VideoProcessStatusHandler),
         (r"/api/videos/(\d+)/publish", VideoPublishHandler),
+        (r"/api/videos/(\d+)/processing-quote", VideoProcessingQuoteHandler),
         (r"/api/music/package", MusicPackageHandler),
         (r"/api/autopublish/queue", AutopublishQueueHandler),
         (

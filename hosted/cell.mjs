@@ -7,9 +7,17 @@ import { json, readJSON, validPath } from '../studio/transport.mjs';
 import { forward } from './proxy.mjs';
 import { assertWorkspaceIdle } from './lifecycle.mjs';
 import { privateMusicInput } from './music-input.mjs';
+import { AsyncLocalStorage } from 'node:async_hooks';
+import { ProcessingMeter, processingLimit } from './processing.mjs';
 
 export function createCell(config, seed) {
   const worker = createWorker(config), db = worker.auth.db;
+  const requests = new AsyncLocalStorage();
+  if(config.processingQuotas){
+    const meter=new ProcessingMeter(db,config.dataRoot,config.durationProbe);
+    config.processingRequest=(path,method,data,dispatch)=>meter.run(path,method,data,dispatch,requests.getStore());
+    config.processingUsage=()=>meter.usage(processingLimit(requests.getStore()?.limit));
+  }
   let desktopSocket;
   let closed = false;
   const exists = db.prepare('SELECT id FROM users').all();
@@ -92,7 +100,8 @@ export function createCell(config, seed) {
     if(head!==undefined)fail(404,'Not found');
     worker.server.emit('request',req,res);
   }
-  const server=http.createServer((req,res)=>route(req,res).catch(e=>{if(!res.headersSent)json(res,e.status||502,{error:e.status?e.message:'Workspace temporarily unavailable'});else res.destroy();}));
+  const server=http.createServer((req,res)=>requests.run({limit:req.headers['x-studio-processing-minutes'],key:req.headers['idempotency-key']},
+    ()=>route(req,res).catch(e=>{if(!res.headersSent)json(res,e.status||502,{error:e.status?e.message:'Workspace temporarily unavailable'});else res.destroy();})));
   server.on('upgrade',(req,socket,head)=>route(req,socket,head).catch(e=>socket.end(`HTTP/1.1 ${e.status||403} Forbidden\r\nConnection: close\r\n\r\n`)));
   server.on('close',()=>{desktopSocket?.destroy();worker.server.emit('close');});
   server.requestTimeout=900000;
@@ -103,6 +112,6 @@ if(process.argv[1]===new URL(import.meta.url).pathname){
   mkdirSync('/state/studio',{recursive:true});
   writeFileSync('/state/studio/transport',seed.transport,{mode:0o600});
   createCell({host:seed.host,database:'/state/studio/accounts.sqlite',upstreamSecretFile:'/state/studio/transport',
-    dataRoot:'/state/data',backendPort:18787,webRoot:'/opt/lazyedit/studio/web',staticRoot:'/opt/lazyedit/webdist',python:'/opt/venv/bin/python',sourceRoot:'/opt/lazyedit',
+    dataRoot:'/state/data',backendPort:18787,webRoot:'/opt/lazyedit/studio/web',staticRoot:'/opt/lazyedit/webdist',python:'/opt/venv/bin/python',sourceRoot:'/opt/lazyedit',processingQuotas:true,
     ...(process.env.LAZYEDIT_SAMPLE_SHA256?{sampleMappingFile:'/state/studio/sample.json',sampleSha256:process.env.LAZYEDIT_SAMPLE_SHA256}:{})},seed).server.listen(18080,'0.0.0.0');
 }

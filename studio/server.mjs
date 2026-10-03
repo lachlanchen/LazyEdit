@@ -58,9 +58,12 @@ export function createWorker(config) {
    'A new run preserves previous outputs. Website defaults are unchanged.',
   ]};
  }
- async function backend(path,method='GET',data){
+ async function dispatchBackend(path,method='GET',data){
   const r=await fetch(`http://127.0.0.1:${config.backendPort}${path}`,{method,headers:data?{'content-type':'application/json'}:{},body:data?JSON.stringify(data):undefined,signal:AbortSignal.timeout(600000)});
   const text=await r.text();let d;try{d=JSON.parse(text)}catch{fail(502,'Unexpected worker reply');}if(!r.ok)fail(r.status,d.error||'Worker request failed');return d;
+ }
+ async function backend(path,method='GET',data){
+  return config.processingRequest ? config.processingRequest(path,method,data,dispatchBackend) : dispatchBackend(path,method,data);
  }
  function getPrincipal(req){
   let token=req.headers['x-studio-access'];let browser=false;
@@ -159,7 +162,15 @@ export function createWorker(config) {
   const prepared=await prepare();
   const id=secret();db.prepare('INSERT INTO intents VALUES(?,?,?,?,?,?,?)').run(id,p.owner,key,fingerprint,null,'submitting',Date.now());
   // Persist BEFORE dispatch. A crash or unknown timeout must not submit a second task.
-  const result=await execute(prepared);db.prepare('UPDATE intents SET state=?,response=? WHERE id=?').run('submitted',JSON.stringify(clean(result)),id);return result;
+  let result;
+  try {result=await execute(prepared);}
+  catch(error){
+   // A quota rejection happens before upstream dispatch, so it is safe to retry
+   // the same intent after a period reset/upgrade. Unknown dispatches stay held.
+   if(error.quotaRejected===true)db.prepare('DELETE FROM intents WHERE id=?').run(id);
+   throw error;
+  }
+  db.prepare('UPDATE intents SET state=?,response=? WHERE id=?').run('submitted',JSON.stringify(clean(result)),id);return result;
  }
  async function route(req,res){
   if(req.url==='/healthz'&&req.method==='GET'){json(res,200,{status:'ok'});return;}
@@ -189,6 +200,10 @@ export function createWorker(config) {
    const files={'/login':'login.html','/connect':'login.html','/privacy':'privacy.html','/studio-interface.js':'interface.js','/studio-login.js':'login.js','/studio-login.css':'login.css','/studio-session.js':'session.js','/manifest.webmanifest':'manifest.webmanifest','/sw.js':'sw.js','/studio-icon.png':'icon.png'};file(res,req,join(config.webRoot,files[path]));return;
   }
   let p;try{p=getPrincipal(req);}catch(e){if(method==='GET'&&!path.startsWith('/api/')&&!path.startsWith('/v1/')&&!path.startsWith('/auth/')&&!path.startsWith('/media/')){res.writeHead(302,{location:'/login','cache-control':'no-store'});res.end();return;}throw e;}
+  if(path==='/v1/studio/usage'&&method==='GET'){
+   scope(p,'media.read');if(!config.processingUsage)fail(404,'Usage is not metered on this worker');
+   json(res,200,config.processingUsage());return;
+  }
   if(path==='/auth/me'&&method==='GET'||path==='/v1/studio/account'&&method==='GET'){json(res,200,{subject:p.owner,username:db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,scopes:p.scopes,issuer:origin,audience:'lazyedit-studio',limits:{maxVideoBytes:10*1024**3,chunkBytes:8*1024**2}});return;}
   if(path==='/studio-context.js'&&method==='GET'){
    if(p.kind!=='browser')fail(403,'Browser session required');

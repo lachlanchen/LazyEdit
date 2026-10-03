@@ -33,7 +33,8 @@ test('prepared billing cannot charge or accept a client claimed entitlement', as
   const billing = createBilling(registry, {}, {providers: () => ['apple'], verify: () => {calls++;}});
   const catalog = await billing.catalog(owner);
   assert.equal(catalog.enabled, false); assert.equal(catalog.paidDownloadCreditEnabled, false);
-  assert.deepEqual(catalog.plans.map(p => p.requestedUSD), ['2.99', '14.99', '29.89']);
+  assert.deepEqual(catalog.plans.map(p => p.requestedUSD), ['2.99', '14.99', '29.90']);
+  assert.deepEqual(catalog.plans.map(p => p.benefits.processingMinutes), [10,60,150]);
   await assert.rejects(billing.submit(owner, 'apple', {verified: true, expires: Date.now() + 36000000}), {status: 503});
   assert.equal(calls, 0);
 });

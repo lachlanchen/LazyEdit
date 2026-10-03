@@ -8,6 +8,7 @@ import { forward } from './proxy.mjs';
 import { closeCell } from './lifecycle.mjs';
 import { createOAuth } from './oauth.mjs';
 import { createBilling } from './billing.mjs';
+import { monthlyPlans } from './plans.mjs';
 
 export function createGateway(config) {
   const registry = new Registry(config.database, config.domain, config.capacity || 3, config.sameHost);
@@ -49,6 +50,14 @@ export function createGateway(config) {
     if (w) {
       const headers = {host,'x-studio-path':raw,'x-studio-access':access,
         'x-studio-client':internal?req.headers['x-studio-client']:req.socket.remoteAddress, authorization:`Bearer ${w.transport}`};
+      if((req.method==='POST'&&/^\/(api|v1\/studio)\/videos\//.test(raw))||(req.method==='GET'&&raw==='/v1/studio/usage')){
+        if(registry.isAdmin(w.owner))headers['x-studio-processing-minutes']='owner';
+        else {
+          const catalog=await billing.catalog(w.owner);
+          const plan=catalog.entitlement.active?monthlyPlans.find(p=>p.product===catalog.entitlement.product):null;
+          headers['x-studio-processing-minutes']=String(catalog.enabled?(plan?.processingMinutes||0):10);
+        }
+      }
       if (raw.startsWith('/hosted-entry?')) {
         if (head !== undefined || req.method !== 'GET' || !registry.consume(new URL(raw,origin).searchParams.get('ticket'),w.id)) fail(401,'Entry link expired; return to the account page');
         headers['x-hosted-owner'] = w.owner;
