@@ -110,6 +110,31 @@ def test_empty_display_for_space_is_repaired_without_losing_spacing():
     assert ''.join(t['word'] for t in item['tokens']) == item['en']
 
 
+def test_omitted_spaces_are_restored_but_missing_words_are_rejected():
+    source = {'start': '00:00:00,000', 'end': '00:00:02,000'}
+    item = dict(source, ko='학교에서 먹어요', tokens=[
+        {'surface': '학교', 'word': '學校', 'reading': '학교', 'type': 'noun'},
+        {'surface': '에서', 'word': '에서', 'reading': 'eseo', 'type': 'particle'},
+        {'surface': '먹어요', 'word': '먹어요', 'reading': 'meogeoyo', 'type': 'verb'},
+    ])
+    validate_annotations([item], [source], 'ko')
+    assert ''.join(t['surface'] for t in item['tokens']) == item['ko']
+    assert item['tokens'][2] == dict(surface=' ', word=' ', reading='', type='other')
+    item['ko'] = '학교에서 같이 먹어요'
+    with pytest.raises(ValueError, match='complete subtitle'):
+        validate_annotations([item], [source], 'ko')
+
+
+def test_han_repair_error_identifies_invalid_token():
+    source = {'start': '00:00:00,000', 'end': '00:00:02,000'}
+    item = dict(source, ko='도착했어', tokens=[
+        {'surface': '도착했어', 'word': '到着했어', 'reading': 'dochakhaesseo', 'type': 'verb'},
+    ])
+    with pytest.raises(ValueError, match='ONLY Han characters') as error:
+        validate_annotations([item], [source], 'ko')
+    assert '到着했어' in str(error.value)
+
+
 @pytest.mark.parametrize('lang', ['ko', 'vi'])
 def test_generated_ruby_has_readable_size_without_auto_pronunciation_toggle(monkeypatch, lang):
     from lazyedit.subtitles_burner import burner as adapter

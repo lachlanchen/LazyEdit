@@ -86,7 +86,30 @@ def validate_annotations(items, sources, language, same_language_result=None):
         if any(not t["surface"] for t in tokens):
             raise ValueError("Empty annotation surface")
         if "".join(t["surface"] for t in tokens) != text:
-            raise ValueError("Annotation tokens do not cover the complete subtitle")
+            # Restore only exact whitespace gaps from the authoritative clean text.
+            # Missing letters, punctuation, reordered tokens and extra text still fail.
+            restored = []
+            offset = 0
+            for token in tokens:
+                surface = token["surface"]
+                if not text.startswith(surface, offset):
+                    end = offset
+                    while end < len(text) and text[end].isspace():
+                        end += 1
+                    if end == offset or not text.startswith(surface, end):
+                        raise ValueError("Annotation tokens do not cover the complete subtitle")
+                    gap = text[offset:end]
+                    restored.append(dict(surface=gap, word=gap, reading="", type="other"))
+                    offset = end
+                restored.append(token)
+                offset += len(surface)
+            if offset < len(text) and text[offset:].isspace():
+                gap = text[offset:]
+                restored.append(dict(surface=gap, word=gap, reading="", type="other"))
+                offset = len(text)
+            if offset != len(text):
+                raise ValueError("Annotation tokens do not cover the complete subtitle")
+            tokens = item["tokens"] = restored
         for token in tokens:
             surface, word = token["surface"], token["word"]
             # Models sometimes leave a whitespace token's display word empty.
@@ -99,7 +122,13 @@ def validate_annotations(items, sources, language, same_language_result=None):
                 raise ValueError("Invalid grammar type")
             if word != surface:
                 if language not in {"ko", "vi"} or not HAN.fullmatch(word) or reading != surface:
-                    raise ValueError("Invalid Han restoration or native ruby")
+                    raise ValueError(
+                        f"Invalid Han restoration or native ruby: surface={surface!r}, "
+                        f"word={word!r}, reading={reading!r}. A restored word must contain "
+                        "ONLY Han characters and reading must be the exact native surface, "
+                        "not romanization. Split native suffixes/particles into separate "
+                        "tokens with word=surface and their own pronunciation."
+                    )
             if language in {"ko", "vi"} and any(c.isalpha() for c in surface) and not reading.strip():
                 raise ValueError("Missing native reading or pronunciation transliteration")
             if language == "ko" and word == surface and re.search(r"[가-힣]", surface):
