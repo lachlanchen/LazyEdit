@@ -115,5 +115,15 @@
       "replacementDistributionProfile": "LazyEdit Studio App Store 2; existing distribution certificate reused; future archive/export reads current profile identity."
     }
   },
-  "gatewaySource": "66e8a7d"
+  "gatewaySource": "27fbae0325eb48414ca64f9851f13dad9782bd2c",
+  "workspaceSource": "27fbae0325eb48414ca64f9851f13dad9782bd2c",
+  "hostedImageTag": "native-login-20261004f",
+  "hostedQualification": {
+    "nodeContractsPassed": 32,
+    "pythonPromotionTestsPassed": 2,
+    "livePrivateMusicAssetIsolation": true,
+    "permanentWorkspacesHealthy": 2,
+    "originalOwnerBackendAndPiPreserved": true,
+    "externalPostsCreatedByQualification": false
+  }
 }

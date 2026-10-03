@@ -10,8 +10,9 @@ create invitations and switch workspace modes. New accounts get the authorized
 Vancouver demo, with no owner library or social credentials.
 
 The hosted pilot has three workspace slots including the administrator. Both
-permanent cells and provisioner run `native-login-20261004e`, built
-from the account-lifecycle/native-sign-in sources at `256a9ac`. The promotion
+permanent cells, gateway and provisioner now run `native-login-20261004f`, built
+from hosted music-isolation source `27fbae0`. Native binaries remain from
+account-lifecycle/native-sign-in source `256a9ac`. The promotion
 checked publication queues and manual processing, preserved volumes and saved
 a private rollback. Only Studio's ingress units were reloaded. The owner
 backend process, original Pi and shared LazyTunnel services were not restarted.
@@ -19,11 +20,21 @@ backend process, original Pi and shared LazyTunnel services were not restarted.
 Live acceptance verified scoped demo access, member denial of Pi/invitation
 access, disposable-member provisioning, immediate grant revocation on deletion
 and removal of only that member's worker. Capacity returned after cleanup.
-The two permanent cells stayed healthy. Thirty-one Node contract tests pass.
+The two permanent cells stayed healthy. Thirty-two Node contract tests pass,
+plus two focused Python upgrade tests.
 
-The gateway was subsequently promoted independently to
-`native-oauth-20261004a` from source `66e8a7d`. No worker image, browser profile,
-volume, provisioner or owner service changed for this identity-only update.
+Before the final promotion, the gateway was independently updated to
+`native-oauth-20261004a` from source `66e8a7d` for identity qualification. The
+current f images include that implementation. Configured provider keys and
+identity encryption remain external and were preserved during promotion.
+
+The final live check authenticated both administrator and reviewer workspaces,
+verified their own demo library, forwarded a valid private asset to the package
+handler's required-field check, and rejected outside music assets and publisher
+overrides. Billing stayed disabled; member Pi/invitation access remained denied.
+No music package or external post was created by these checks. The upgrade
+helper now selects ready registry accounts instead of replaying retained
+deleted-member Compose receipts. See the [isolation incident](../../bug-reports/2026-10-04-hosted-music-asset-isolation.md).
 
 ## Platform login desktop
 
@@ -41,7 +52,9 @@ open another usable window. Real authentication on every platform is not claimed
 Native iOS and Android library, upload, publication configuration, activity and
 account screens include 11 languages. The detailed editor/login view uses the
 authenticated existing web UI. Native UI is not replaced by an embedded whole
-PWA. Monthly purchase and provider-link buttons stay hidden until qualified.
+PWA. Monthly purchases remain hidden while billing is disabled. Optional
+provider buttons follow the configured pilot providers; native provider UI
+qualification is separate from the completed Google browser tests.
 
 - Apple: exact signed build **8**, IPA SHA-256
   `e8d2039dcaef8dcb2ff7bdbb084a22b988f33dafe8f789681530976bb24ad4e4`,
@@ -58,7 +71,12 @@ PWA. Monthly purchase and provider-link buttons stay hidden until qualified.
   architectures were verified; this is not a notarized public installer or a
   full Mac UI regression claim.
 - Apple English name/subtitle/description/support/privacy/copyright were saved
-  in the existing editable 1.0 record. Google saved the privacy URL.
+  in the existing editable 1.0 record. Google saved the privacy URL and truthful
+  no-ads, no-advertising-ID, non-government, no-financial-features and
+  no-health-features declarations. Its content questionnaire was completed as
+  an editing utility with a remote demo; Google returned Everyone/PEGI 3.
+  Target audience, data safety and reviewer sign-in access remain separate
+  declarations and do not become complete from that rating alone.
 - Public review is not submitted. Google's full-access certification requires
   separate social test-account access. The private reviewer can upload, edit,
   process and configure publication, but has no connected social channels.

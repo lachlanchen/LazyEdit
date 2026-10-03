@@ -38,3 +38,10 @@ only ready members and verifies each Compose/bootstrap identity. Deleted
 receipts are never replayed. Unfinished provisioning/deletion or mismatched
 identity stops the upgrade. Two focused pytest cases passed for deleted
 receipts, unchanged registry state, incomplete cleanup and identity mismatch.
+
+The corrected promotion completed for both permanent workers and the
+gateway/provisioner on `native-login-20261004f` (image source `27fbae0`). Live
+authenticated administrator and member requests verified normal private asset
+forwarding, outside-file rejection and publisher-override rejection. Both
+workers were healthy and the original owner backend/Pi were preserved. No
+package or external post was created during the live checks.
