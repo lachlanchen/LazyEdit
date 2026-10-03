@@ -10,7 +10,7 @@ create invitations and switch workspace modes. New accounts get the authorized
 Vancouver demo, with no owner library or social credentials.
 
 The hosted pilot has three workspace slots including the administrator. Both
-permanent cells, gateway and provisioner now run `native-login-20261004e`, built
+permanent cells and provisioner run `native-login-20261004e`, built
 from the account-lifecycle/native-sign-in sources at `256a9ac`. The promotion
 checked publication queues and manual processing, preserved volumes and saved
 a private rollback. Only Studio's ingress units were reloaded. The owner
@@ -20,6 +20,10 @@ Live acceptance verified scoped demo access, member denial of Pi/invitation
 access, disposable-member provisioning, immediate grant revocation on deletion
 and removal of only that member's worker. Capacity returned after cleanup.
 The two permanent cells stayed healthy. Thirty-one Node contract tests pass.
+
+The gateway was subsequently promoted independently to
+`native-oauth-20261004a` from source `66e8a7d`. No worker image, browser profile,
+volume, provisioner or owner service changed for this identity-only update.
 
 ## Platform login desktop
 
@@ -101,13 +105,42 @@ ambiguous/non-editable versions and does not submit review. Store text is in
 
 ## Remaining provider work
 
-Apple/Google OAuth code and billing verification contracts are prepared, not
-live provider qualification. Register/configure the app's own OAuth clients and
-complete real sign-in/revocation tests. Monthly USD 2.99/14.99/29.89 plans need
+Google's own web client was registered and configured privately. Real browser
+linking and sign-out/sign-in returned to the correct Studio account. A second
+link obtained an encrypted revocation credential; unlinking successfully
+revoked the Google grant, removed the Studio link, and a subsequent Google
+sign-in was refused because it was no longer linked. Ordinary sign-in requests
+no offline access or repeated consent; password-confirmed linking does. The
+Google project remains External/Testing with only `openid email` scopes and no
+billing. This is not brand verification or native OAuth UI qualification.
+
+Apple's own native primary App ID, web Services ID, exact HTTPS callback and
+Sign in with Apple key were configured. Its real OAuth page still needs Apple
+Account authentication; successful real linking/revocation is not yet claimed.
+The newly enabled capability invalidated this app's old distribution profile.
+A new profile using the existing distribution certificate was generated and
+verified on the Mac. `build_ios.sh` now reads and validates the private profile's
+app ID/team/name/UUID and updates temporary export options; it no longer
+hard-codes the invalidated profile. The already uploaded build 8 is unchanged.
+
+Both provider configuration helpers default to disabled, require protected
+files, preserve the existing identity encryption key and other provider, save
+rollback files and never restart services. Apple's helper rejects a different
+primary App ID before mutation. See [identity operations](identity-operations.md).
+
+Monthly USD 2.99/14.99/29.89 plans need
 defined benefits, enforced usage limits, exact store products and sandbox
 purchase/refund tests. Paid-download subscription credit is not implemented.
-Keep charging disabled until those steps succeed. Never silently replace 29.89
-with a different store price point.
+Keep charging disabled until those steps succeed.
+
+`scripts/studio/store_products.py status|prepare` reconciles only this app's
+three own monthly Apple drafts. Preparation created them once, and a separate
+readback verified the product IDs and monthly periods without creating another
+group. All remain `MISSING_METADATA`; no price schedule, subscription offer or
+review submission was changed. Apple's actual USA price list supports USD 2.99
+and 14.99, but not 29.89. Its nearest alternatives are 29.90, 29.95 and 29.99.
+The requested 29.89 remains unchanged pending the owner's choice; no alternative
+price was silently substituted.
 
 The authoritative boundaries and promotion/deletion workflow are in
 [the account handoff](../2026-10-04-hosted-account-and-release-handoff.md).

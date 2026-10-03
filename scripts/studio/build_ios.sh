@@ -27,12 +27,25 @@ security set-keychain-settings -lut 14400 "$keychain"
 security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$password" "$keychain" >/dev/null
 security list-keychains -d user -s "$keychain" "$HOME/Library/Keychains/login.keychain-db"
 mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles" "$root/release"
-cp "$root/LazyEdit.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/0a68cf60-c0b8-4e11-b8c0-4440e346a8cc.mobileprovision"
+# Capabilities can invalidate an old profile. Read this app's current private
+# profile instead of preserving a stale hard-coded UUID and export name.
+profile_info=$(mktemp "$root/release/.profile.XXXXXX")
+export_options=$(mktemp "$root/release/.export.XXXXXX")
+trap 'rm -f "$profile_info" "$export_options"; cleanup' EXIT
+security cms -D -i "$root/LazyEdit.mobileprovision" > "$profile_info"
+profile_uuid=$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$profile_info")
+profile_name=$(/usr/libexec/PlistBuddy -c 'Print :Name' "$profile_info")
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$profile_info")" == Q8M2S2FY77.art.lazying.lazyedit ]]
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :TeamIdentifier:0' "$profile_info")" == Q8M2S2FY77 ]]
+# Xcode remains authoritative for certificate/profile expiry and device signing.
+cp "$root/LazyEdit.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/${profile_uuid}.mobileprovision"
+cp "$root/ExportOptions.plist" "$export_options"
+/usr/libexec/PlistBuddy -c "Set :provisioningProfiles:art.lazying.lazyedit $profile_name" "$export_options"
 cd "$root/ios/App"
-xcodebuild -project App.xcodeproj -scheme StudioNative -configuration Release -destination generic/platform=iOS -archivePath "$root/release/LazyEditStudio-${build_number}.xcarchive" -derivedDataPath "$root/release/DerivedData" archive DEVELOPMENT_TEAM=Q8M2S2FY77 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' PROVISIONING_PROFILE_SPECIFIER='LazyEdit Studio App Store 1' "OTHER_CODE_SIGN_FLAGS=--keychain $keychain" COMPILER_INDEX_STORE_ENABLE=NO > "$root/release/archive.log" 2>&1
+xcodebuild -project App.xcodeproj -scheme StudioNative -configuration Release -destination generic/platform=iOS -archivePath "$root/release/LazyEditStudio-${build_number}.xcarchive" -derivedDataPath "$root/release/DerivedData" archive DEVELOPMENT_TEAM=Q8M2S2FY77 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' "PROVISIONING_PROFILE_SPECIFIER=$profile_name" "OTHER_CODE_SIGN_FLAGS=--keychain $keychain" COMPILER_INDEX_STORE_ENABLE=NO > "$root/release/archive.log" 2>&1
 archive_app="$root/release/LazyEditStudio-${build_number}.xcarchive/Products/Applications/App.app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$archive_app/Info.plist")" == art.lazying.lazyedit ]]
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$archive_app/Info.plist")" == "$build_number" ]]
-xcodebuild -exportArchive -archivePath "$root/release/LazyEditStudio-${build_number}.xcarchive" -exportOptionsPlist "$root/ExportOptions.plist" -exportPath "$root/release/export-${build_number}" > "$root/release/export.log" 2>&1
+xcodebuild -exportArchive -archivePath "$root/release/LazyEditStudio-${build_number}.xcarchive" -exportOptionsPlist "$export_options" -exportPath "$root/release/export-${build_number}" > "$root/release/export.log" 2>&1
 codesign --verify --deep --strict "$root/release/LazyEditStudio-${build_number}.xcarchive/Products/Applications/App.app"
 shasum -a 256 "$root/release/export-${build_number}/App.ipa"

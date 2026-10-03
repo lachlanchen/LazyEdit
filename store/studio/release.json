@@ -58,7 +58,62 @@
       "14.99",
       "29.89"
     ],
-    "subscriptionsActive": false
+    "subscriptionsActive": false,
+    "appleMonthlyDrafts": {
+      "groupId": "22437675",
+      "products": [
+        {
+          "id": "6818867383",
+          "productId": "art.lazying.lazyedit.starter.monthly",
+          "state": "MISSING_METADATA",
+          "requestedUSD": "2.99",
+          "exactUSDPricePointAvailable": true,
+          "priceScheduleChanged": false,
+          "nearestAvailableUSD": []
+        },
+        {
+          "id": "6818867111",
+          "productId": "art.lazying.lazyedit.plus.monthly",
+          "state": "MISSING_METADATA",
+          "requestedUSD": "14.99",
+          "exactUSDPricePointAvailable": true,
+          "priceScheduleChanged": false,
+          "nearestAvailableUSD": []
+        },
+        {
+          "id": "6818867082",
+          "productId": "art.lazying.lazyedit.studio.monthly",
+          "state": "MISSING_METADATA",
+          "requestedUSD": "29.89",
+          "exactUSDPricePointAvailable": false,
+          "priceScheduleChanged": false,
+          "nearestAvailableUSD": [
+            "29.9",
+            "29.95",
+            "29.99"
+          ]
+        }
+      ],
+      "billingActivated": false,
+      "reviewSubmitted": false
+    },
+    "paidDownloadSubscriptionCreditImplemented": false
   },
-  "applicationSource": "256a9ac6db85a855366a711e45fa17af9f098180"
+  "applicationSource": "256a9ac6db85a855366a711e45fa17af9f098180",
+  "identity": {
+    "google": {
+      "client": "app-owned web identity client",
+      "enabledForPilot": true,
+      "audience": "External / Testing",
+      "brandVerified": false,
+      "realBrowserQA": "Link, fresh sign-in, encrypted refresh credential, provider revoke/unlink and subsequent sign-in denial passed; explicit relinking required.",
+      "nativeProviderUIQualified": false
+    },
+    "apple": {
+      "configuration": "Own primary App ID, Services ID, exact callback and P-256 key prepared.",
+      "realProviderQA": "Awaiting Apple Account authentication for real link/sign-in/revoke.",
+      "replacementDistributionProfile": "LazyEdit Studio App Store 2; existing distribution certificate reused; future archive/export reads current profile identity."
+    }
+  },
+  "gatewaySource": "66e8a7d"
 }
