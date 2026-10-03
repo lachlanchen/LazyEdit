@@ -80,7 +80,10 @@ public class StudioNativeTest {
             onView(withHint("Username")).perform(replaceText(account.getString("username")),closeSoftKeyboard());
             onView(withHint("Password")).perform(replaceText(account.getString("password")),closeSoftKeyboard());
             tap("Sign in / Create account");waitText("Your Studio",90000);ready(scenario);
-            assertFalse(new StudioApi(context).publishingEnabled());
+            StudioApi memberApi=new StudioApi(context);
+            JSONObject memberSession=memberApi.json("/auth/me");
+            assertFalse(memberSession.getJSONObject("capabilities").getBoolean("publishing"));
+            assertFalse(memberApi.publishingEnabled());
             onView(withText("Account")).perform(click());waitText("Private Docker workspace",30000);ready(scenario);
             onView(withText("Platform accounts")).check(doesNotExist());
             onView(withText("Create invitation")).check(doesNotExist());

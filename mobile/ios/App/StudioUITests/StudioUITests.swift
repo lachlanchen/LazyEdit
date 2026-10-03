@@ -29,6 +29,7 @@ final class StudioUITests: XCTestCase {
             replaceText(app.secureTextFields["studio.password"], with: try XCTUnwrap(credentials["password"]))
             app.buttons["studio.signIn"].tap()
             if notNow.waitForExistence(timeout: 5) { notNow.tap() }
+            dismissPasswordPrompt(app)
         }
         XCTAssertTrue(app.tabBars.buttons["Studio"].waitForExistence(timeout: 60))
         tapTab("Studio", app)
@@ -48,7 +49,8 @@ final class StudioUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Edit & preview"].waitForExistence(timeout: 30))
         XCTAssertFalse(app.switches["Shipinhao"].exists)
         XCTAssertFalse(app.buttons["studio.confirmPublish"].exists)
-        app.buttons["Full editor · subtitles, metadata & cover"].tap()
+        let fullEditor = app.buttons["studio.composerEditor"]
+        scrollTo(fullEditor, app); fullEditor.tap()
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 30))
         XCTAssertTrue(app.webViews.staticTexts["Edit & preview"].waitForExistence(timeout: 60), "The editor must hydrate, not merely show HTML")
         XCTAssertFalse(app.webViews.staticTexts["Manual publish"].exists)
@@ -200,8 +202,10 @@ final class StudioUITests: XCTestCase {
     @MainActor
     private func scrollTo(_ element: XCUIElement, _ app: XCUIApplication) {
         for _ in 0..<10 {
+            dismissPasswordPrompt(app)
             if element.exists && element.isHittable { return }
-            let form = app.collectionViews.firstMatch
+            let composer = app.descendants(matching: .any)["studio.composerForm"]
+            let form = composer.exists ? composer : app.collectionViews.firstMatch
             form.coordinate(withNormalizedOffset: CGVector(dx: 0.97, dy: 0.85))
                 .press(forDuration: 0.1, thenDragTo: form.coordinate(withNormalizedOffset: CGVector(dx: 0.97, dy: 0.2)))
         }
@@ -216,14 +220,29 @@ final class StudioUITests: XCTestCase {
         field.typeText(text)
     }
     @MainActor
+    private func dismissPasswordPrompt(_ app: XCUIApplication) {
+        // Password AutoFill can present through SafariViewService rather than
+        // SpringBoard. Dismiss only its observed Save Password prompt.
+        for source in [app, XCUIApplication(bundleIdentifier: "com.apple.SafariViewService"), XCUIApplication(bundleIdentifier: "com.apple.springboard")] {
+            let button = source.buttons["Not Now"]
+            if button.exists && button.isHittable { button.tap() }
+        }
+    }
+    @MainActor
     private func tapTab(_ label: String, _ app: XCUIApplication) {
+        dismissPasswordPrompt(app)
         let button = app.tabBars.buttons[label]
         XCTAssertTrue(button.waitForExistence(timeout: 10))
         // Liquid Glass simulator tabs sometimes report {-1, -1} for the
         // suggested hit point. The observed accessibility frame is usable.
-        button.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        let selected = XCTNSPredicateExpectation(predicate: NSPredicate(format: "selected == true"), object: button)
-        XCTAssertEqual(XCTWaiter.wait(for: [selected], timeout: 10), .completed, "Requested native tab is selected")
+        let title = label == "Studio" ? "Your Studio" : label
+        if !app.navigationBars[title].exists {
+            button.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        }
+        // SwiftUI's Liquid Glass hierarchy can resolve the tab's label to its
+        // inner icon after selection. Verify the requested screen instead of
+        // a cached child element's selected property.
+        XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 10), "Requested native screen is visible")
     }
     @MainActor
     private func capture(_ name: String, _ app: XCUIApplication) {

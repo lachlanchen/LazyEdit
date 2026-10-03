@@ -10,25 +10,27 @@ create invitations and switch workspace modes. New accounts get the authorized
 Vancouver demo, with no owner library or social credentials.
 
 The hosted pilot has three workspace slots including the administrator. Both
-permanent cells, gateway and provisioner now run `native-login-20261004g`, built
-from processing-limit source `c7f5799`. Native binaries remain from
-account-lifecycle/native-sign-in source `256a9ac`. The promotion
+permanent cells, gateway and provisioner now run `editor-first-20261004h`, built
+from source `9fbe02b`. Native binaries in testing remain build 8 / Android 5
+until the next exact release is qualified and uploaded. The promotion
 checked publication queues and manual processing, preserved volumes and saved
-a private rollback. Only Studio's ingress units were reloaded. The owner
+a private rollback. The h promotion did not restart ingress units. The owner
 backend process, original Pi and shared LazyTunnel services were not restarted.
 
 Live acceptance verified scoped demo access, member denial of Pi/invitation
 access, disposable-member provisioning, immediate grant revocation on deletion
 and removal of only that member's worker. Capacity returned after cleanup.
-The two permanent cells stayed healthy. Thirty-six Node contract tests pass,
+The two permanent cells stayed healthy. Thirty-eight Node contract tests pass,
 plus three focused Python upgrade/readiness tests.
 
 Before the final promotion, the gateway was independently updated to
 `native-oauth-20261004a` from source `66e8a7d` for identity qualification. The
-current g images include that implementation. Configured provider keys and
+current h images include that implementation. Configured provider keys and
 identity encryption remain external and were preserved during promotion.
 
 The final live check authenticated both administrator and reviewer workspaces,
+verified publication enabled for the administrator and disabled for members,
+rejected forged grants, video/music posts and platform-desktop requests,
 verified their own demo library, forwarded a valid private asset to the package
 handler's required-field check, and rejected outside music assets and publisher
 overrides. Billing stayed disabled; member Pi/invitation access remained denied.
@@ -60,10 +62,11 @@ qualification is separate from the completed Google browser tests.
   `e8d2039dcaef8dcb2ff7bdbb084a22b988f33dafe8f789681530976bb24ad4e4`,
   validated and uploaded once; processed `VALID` and attached to the existing
   internal group as `IN_BETA_TESTING`.
-- Google: exact signed AAB **5**, SHA-256
-  `f6b0d9d1f2efc159ebbfc6b0d9be4b9b4ebc9d0a0a4a37b478e61fe367f2b26f`,
+- Google: exact signed AAB **6**, SHA-256
+  `1232df09acf819af759086600f4d8e92a7ea7f4a20e470df550f7e2b027184d3`,
   saved/published once and read back **Available to internal testers**. Two
-  instrumentation tests passed on the dedicated Android 14 emulator. This is
+  targeted instrumentation tests passed on the dedicated Android 14 emulator: member
+  authentication/capabilities and trusted-origin checks. This is
   not a physical-device installation claim.
 - Paid download: USD **0.99** was configured/read back on both stores.
 - macOS: exact universal Catalyst build **8** launched on Intel Monterey 3040,
@@ -77,10 +80,11 @@ qualification is separate from the completed Google browser tests.
   an editing utility with a remote demo; Google returned Everyone/PEGI 3.
   Target audience, data safety and reviewer sign-in access remain separate
   declarations and do not become complete from that rating alone.
-- Public review is not submitted. Google's full-access certification requires
-  separate social test-account access. The private reviewer can upload, edit,
-  process and configure publication, but has no connected social channels.
-  Do not certify complete publication access or share owner platform credentials.
+- Public review is not submitted. The ordinary editing-only member and
+  reviewer have the same upload/edit/process/preview capabilities and need no
+  social credentials. Listings disclose the separate operator-enabled publishing
+  integration. Do not certify access to every publication feature from editing
+  QA alone, and never share owner platform credentials.
 
 ## Repeatable qualification
 

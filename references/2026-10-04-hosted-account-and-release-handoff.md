@@ -7,6 +7,13 @@ gets a private Docker database, media volume and browser profiles. The existing
 Pi and owner backend are separate. Only `lachlanchen` may select that mode.
 Membership, invitation and workspace routing checks are server-enforced.
 
+Editing and preview are the normal member workflow. Social publication is a
+separate operator-enabled capability, disabled for ordinary members and the
+reviewer alike. Only approved accounts can open platform desktops or submit
+posts; they still use their own profiles. Neither subscriptions nor invitations
+grant publishing. Read [the capability contract](studio/editor-first-and-optional-publication.md)
+before linking another app. The personal Pi is never reviewer infrastructure.
+
 Upload, editing, subtitle context correction, metadata/cover preview, rendering
 and explicit publication use the established Studio APIs and shared per-worker
 queue. A new upload does not publish automatically. Choose platforms and review
@@ -20,7 +27,8 @@ copied. LightMind review credentials live only in the protected external handoff
 
 ## Platform login desktop
 
-The native Account screen opens an authenticated private browser view. The PWA
+For publishing-enabled accounts, the native Account screen opens an
+authenticated private browser view. The PWA
 has the same view. There is one desktop and at most one connected viewer per
 workspace. A connection times out after 20 seconds; inactivity pauses streaming
 after five minutes. Leaving the page also pauses it. Reconnect deliberately.
@@ -83,6 +91,8 @@ This applies to audio, covers, proof, lyrics, metadata and screenshot aliases.
 Upload assets into the workspace first. Hosted requests cannot override the
 publisher URL; packages use that worker's configured publication service.
 The existing owner's local CLI and Pi workflow retain their established behavior.
+Editing-only hosted accounts can prepare a music package with explicit
+`post:false`; a music post is rejected before asset processing or dispatch.
 
 The regression uses harmless fixtures, authenticates a real isolated cell and
 verifies that rejected requests never reach its fake package backend. It does

@@ -272,9 +272,10 @@ struct StudioComposerView: View {
                             HStack { if model.busy { ProgressView() }; Label(StudioStrings.text("Review & continue"), systemImage: "checkmark.circle") }
                         }.disabled(model.busy || model.pending != nil).accessibilityIdentifier("studio.reviewChoices")
                         Button(StudioStrings.text("Full editor · subtitles, metadata & cover")) { editor = true }
+                            .accessibilityIdentifier("studio.composerEditor")
                     } footer: { Text(StudioStrings.text(model.publishingEnabled ? "Preparation and publication use the existing Studio pipeline. You can prepare without posting, or queue preparation and publication together." : "Process your video, then preview the edited result. Social accounts are optional.")) }
                 }
-            }.studioKeyboardDismissal()
+            }.accessibilityIdentifier("studio.composerForm").studioKeyboardDismissal()
                 .navigationTitle(StudioStrings.text(model.publishingEnabled ? "Prepare & publish" : "Edit & preview")).navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) { Button(StudioStrings.text("Done")) { dismiss() } }
