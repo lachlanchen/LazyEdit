@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private volatile boolean uploading=false;
     private WebView editor;
     private VideoView player;
+    private String oauthVerifier;
+    private StudioBilling billing;
     private final Runnable attentionPoll=()->{ if(foreground&&api.signedIn()) { if(screen!=2)checkAttention();ui.postDelayed(this.attentionPoll,30000); } };
     private final Runnable poll=()->{if(foreground&&screen==2&&!busy&&api.signedIn())activity();};
     private interface Work<T> { T run() throws Exception; }
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private int dp(int value) { return Math.round(value*getResources().getDisplayMetrics().density); }
     private LinearLayout column() { LinearLayout value=new LinearLayout(this);value.setOrientation(LinearLayout.VERTICAL);return value; }
     private void frame(String title,boolean tabs) {
+        if(billing!=null){billing.close();billing=null;}
         ui.removeCallbacks(poll);if(player!=null){player.stopPlayback();player=null;}if(editor!=null){editor.destroy();editor=null;}
         root=column();root.setPadding(dp(20),dp(12),dp(20),0);root.setBackgroundColor(Color.rgb(246,248,252));root.setLayoutDirection(StudioStrings.language(this).equals("ar")?View.LAYOUT_DIRECTION_RTL:View.LAYOUT_DIRECTION_LTR);
         root.setOnApplyWindowInsetsListener((v,insets)->{v.setPadding(dp(20),insets.getSystemWindowInsetTop()+dp(12),dp(20),insets.getSystemWindowInsetBottom());return insets;});
@@ -97,6 +100,26 @@ public class MainActivity extends AppCompatActivity {
             api.login(username,password.getText().toString(),!username.equals("lachlanchen")||mode.getSelectedItemPosition()==1,register.isChecked()?invitation.getText().toString().trim():null);return true;
         },value->{password.setText("");screen=0;show();}));
         text("Sign in to your private workspace, or register with an invitation.");
+        task("",()->api.json("/accounts/oauth/providers"),value->{JSONArray providers=value.optJSONArray("providers");if(providers!=null)for(int i=0;i<providers.length();i++){String provider=providers.getString(i);button(provider.equals("apple")?"Continue with Apple":"Continue with Google",()->oauthStart(provider,null));}});
+    }
+    private void oauthStart(String provider,String password) {
+        task("Opening secure sign-in…",()->{
+            byte[] bytes=new byte[32];new java.security.SecureRandom().nextBytes(bytes);
+            String verifier=android.util.Base64.encodeToString(bytes,android.util.Base64.URL_SAFE|android.util.Base64.NO_WRAP|android.util.Base64.NO_PADDING);
+            String challenge=android.util.Base64.encodeToString(java.security.MessageDigest.getInstance("SHA-256").digest(verifier.getBytes(java.nio.charset.StandardCharsets.UTF_8)),android.util.Base64.URL_SAFE|android.util.Base64.NO_WRAP|android.util.Base64.NO_PADDING);
+            JSONObject body=new JSONObject().put("provider",provider).put("challenge",challenge).put("target","native");
+            if(password!=null)body.put("link",true).put("password",password);
+            String address=api.post("/accounts/oauth/start",body).getString("url");Uri uri=Uri.parse(address);
+            if(!uri.getScheme().equals("https")||!Arrays.asList("appleid.apple.com","accounts.google.com").contains(uri.getHost()))throw new IOException("Invalid sign-in provider link.");
+            oauthVerifier=verifier;return address;
+        },address->startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(address))));
+    }
+    private void oauthReturn(Intent intent) {
+        Uri uri=intent.getData();
+        if(uri==null||!"art.lazying.lazyedit".equals(uri.getScheme())||!"auth".equals(uri.getHost())||oauthVerifier==null)return;
+        String verifier=oauthVerifier,ticket=uri.getQueryParameter("ticket");oauthVerifier=null;
+        if(ticket==null||!ticket.matches("[A-Za-z0-9_-]{43}")){message.setText("Sign-in was incomplete.");return;}
+        task("Signing in and opening your workspace…",()->{api.oauthRedeem(ticket,verifier);return true;},ok->{screen=0;show();});
     }
     private void library(boolean hidden) {
         frame(hidden?"Removed videos":"Your Studio",true);
@@ -150,8 +173,35 @@ public class MainActivity extends AppCompatActivity {
         button("Enable login notifications",()->{if(Build.VERSION.SDK_INT>=33)requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"},73);else message.setText(tr("Login notifications"));});
         button("Full Studio",()->openEditor("/home"));if(api.mode().equals("workspace"))button("Platform accounts",()->openEditor("/platforms"));
         button("Sign out",()->task("Signing out…",()->{api.logout();return true;},value->show()));
-        task("Reading account…",()->api.json("/accounts/account"),value->{
-            message.setText("");if(!value.optString("role").equals("admin"))return;
+        task("Reading account…",()->api.json("/accounts/account").put("providers",api.json("/accounts/oauth/providers").optJSONArray("providers")).put("linked",api.json("/accounts/oauth/links").optJSONArray("providers")).put("billing",api.json("/accounts/billing/catalog")),value->{
+            JSONObject catalog=value.optJSONObject("billing");if(catalog!=null&&catalog.optBoolean("enabled")&&catalog.optJSONArray("providers").toString().contains("google"))button("Plans and billing",this::billingScreen);
+            JSONArray providers=value.optJSONArray("providers"),linked=value.optJSONArray("linked");
+            if(providers!=null)for(int i=0;i<providers.length();i++){
+                String provider=providers.getString(i);boolean found=false;
+                if(linked!=null)for(int j=0;j<linked.length();j++)if(provider.equals(linked.getString(j)))found=true;
+                final boolean unlink=found;
+                String label=unlink?(provider.equals("apple")?"Unlink Apple account":"Unlink Google account"):(provider.equals("apple")?"Link Apple account":"Link Google account");
+                button(label,()->{
+                    EditText password=new EditText(this);password.setInputType(129);password.setHint(tr("Password"));
+                    new AlertDialog.Builder(this).setTitle(tr(label)).setMessage(tr("Confirm your Studio password, then choose the provider account to link.")).setView(password)
+                        .setNegativeButton(tr("Cancel"),(dialog,which)->password.setText(""))
+                        .setPositiveButton(tr("Continue"),(dialog,which)->{
+                            String proof=password.getText().toString();password.setText("");
+                            if(unlink)task("Reading account…",()->api.post("/accounts/oauth/unlink",new JSONObject().put("provider",provider).put("password",proof)),ok->account());
+                            else oauthStart(provider,proof);
+                        }).show();
+                });
+            }
+            message.setText("");if(!value.optString("role").equals("admin")){
+                button("Delete account",()->{
+                    EditText password=new EditText(this);password.setHint(tr("Password"));password.setInputType(129);
+                    new AlertDialog.Builder(this).setTitle(tr("Delete account")).setMessage(tr("This permanently removes your private workspace and platform logins. Published posts remain on their platforms. Wait for active work to finish first.")).setView(password).setNegativeButton(tr("Cancel"),(dialog,which)->password.setText(""))
+                        .setPositiveButton(tr("Delete account"),(dialog,which)->{
+                            String proof=password.getText().toString();password.setText("");
+                            task("Deleting account…",()->{api.post("/accounts/delete",new JSONObject().put("confirm",api.username()).put("password",proof));api.file("library.json").delete();api.file("upload.json").delete();api.clear();return true;},ok->show());
+                        }).show();
+                });return;
+            }
             text("Administrator");
             button(api.mode().equals("owner")?"Switch to private Docker workspace":"Switch to existing Pi workspace",()->{
                 if(api.file("upload.json").exists()||uploading){message.setText("Finish or remove your current upload before switching.");return;}
@@ -162,6 +212,18 @@ public class MainActivity extends AppCompatActivity {
                 button("Share invitation",()->{Intent share=new Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT,link);startActivity(Intent.createChooser(share,"Invite to Studio"));});
                 button("Copy invitation",()->{((android.content.ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("Studio invitation",link));message.setText("Invitation copied.");});
             }));
+        });
+    }
+    private void billingScreen() {
+        frame("Plans and billing",true);button("Back",()->{screen=3;show();});
+        task("Reading account…",()->api.json("/accounts/billing/catalog"),catalog->{
+            JSONArray providers=catalog.optJSONArray("providers");boolean google=false;
+            if(providers!=null)for(int i=0;i<providers.length();i++)if(providers.getString(i).equals("google"))google=true;
+            if(!catalog.optBoolean("enabled")||!google){text("Billing is being prepared. No charge will be made.");return;}
+            text("Plans renew monthly. Cancel anytime in your store account.");
+            billing=new StudioBilling(this,api,catalog,new StudioBilling.Display(){public void product(String label,Runnable buy){button(label,buy);}public void message(String text){message.setText(tr(text));}});
+            button("Restore purchases",()->{if(billing!=null)billing.restore();});
+            button("Manage subscription",()->startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("https://play.google.com/store/account/subscriptions?package=art.lazying.lazyedit"))));
         });
     }
     private void uploadScreen() {
@@ -302,8 +364,8 @@ public class MainActivity extends AppCompatActivity {
             seen.edit().putBoolean(key,true).apply();
         }
     }
-    @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);if(api.signedIn()&&api.scope().equals(intent.getStringExtra("attentionScope"))){screen=2;show();}}
+    @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);oauthReturn(intent);if(api.signedIn()&&api.scope().equals(intent.getStringExtra("attentionScope"))){screen=2;show();}}
     @Override protected void onStart(){super.onStart();foreground=true;if(screen==2&&api!=null&&api.signedIn())ui.postDelayed(poll,1000);ui.postDelayed(attentionPoll,30000);}
     @Override protected void onStop(){super.onStop();foreground=false;ui.removeCallbacks(poll);ui.removeCallbacks(attentionPoll);uploading=false;if(player!=null)player.pause();}
-    @Override protected void onDestroy(){ui.removeCallbacks(poll);ui.removeCallbacks(attentionPoll);uploading=false;if(editor!=null)editor.destroy();worker.shutdownNow();super.onDestroy();}
+    @Override protected void onDestroy(){if(billing!=null)billing.close();ui.removeCallbacks(poll);ui.removeCallbacks(attentionPoll);uploading=false;if(editor!=null)editor.destroy();worker.shutdownNow();super.onDestroy();}
 }

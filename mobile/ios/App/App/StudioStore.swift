@@ -165,7 +165,12 @@ final class StudioStore: ObservableObject {
         guard signedIn else { return }
         do { isAdmin = try await api.json("/accounts/account")["role"] as? String == "admin" }
         catch { isAdmin = false }
+        do {
+            let catalog = try await api.json("/accounts/billing/catalog")
+            billingAvailable = catalog["enabled"] as? Bool == true && (catalog["providers"] as? [String] ?? []).contains("apple")
+        } catch { billingAvailable = false }
     }
+    @Published var billingAvailable = false
     func createInvitation() async {
         do { invitationURL = try await api.json("/accounts/invite", method: "POST", body: [:])["url"] as? String }
         catch { report(error) }
@@ -191,6 +196,39 @@ final class StudioStore: ObservableObject {
             signedIn = false; error = nil; videos = []; jobs = []; images.removeAllObjects()
             try? FileManager.default.removeItem(at: libraryFile)
             isAdmin = false; invitationURL = nil
+        } catch { report(error) }
+    }
+
+    func deleteAccount(password: String) async {
+        guard workspaceMode == "workspace", !isAdmin, !uploading, !preparingFile else { return }
+        do {
+            _ = try await api.json("/accounts/delete", method: "POST", body: ["confirm": username, "password": password])
+            discardUpload()
+            for name in ["library.json", "notified-jobs.json"] { try? FileManager.default.removeItem(at: api.privateFile(name)) }
+            api.clearSession(); signedIn = false; videos = []; jobs = []; hiddenVideos = []; images.removeAllObjects()
+            invitationURL = nil; error = nil
+        } catch { report(error) }
+    }
+
+    @Published var oauthProviders: [String] = []
+    @Published var linkedProviders: [String] = []
+    func refreshSignInProviders() async {
+        oauthProviders = (try? await api.json("/accounts/oauth/providers")["providers"] as? [String]) ?? []
+        linkedProviders = signedIn ? (try? await api.json("/accounts/oauth/links")["providers"] as? [String]) ?? [] : []
+    }
+    func unlinkProvider(_ provider: String, password: String) async {
+        do {_ = try await api.json("/accounts/oauth/unlink", method: "POST", body: ["provider": provider, "password": password]); await refreshSignInProviders()}
+        catch { report(error) }
+    }
+    func oauthSignIn(provider: String, password: String? = nil) async {
+        guard !signingIn, !uploading, !preparingFile, pending == nil else { return }
+        signingIn = true; error = nil
+        defer { signingIn = false }
+        do {
+            try await api.oauthSignIn(provider: provider, password: password)
+            username = api.identity?.username ?? ""; signedIn = true; workspaceMode = api.workspaceMode
+            videos = []; jobs = []; images.removeAllObjects()
+            await refreshAccount(); await refreshVideos()
         } catch { report(error) }
     }
 

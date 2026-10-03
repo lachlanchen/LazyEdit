@@ -15,6 +15,17 @@
     <keybind key="C-S-c"><action name="Execute"><command>/bin/true</command></action></keybind>
     <keybind key="A-f"><action name="Execute"><command>/bin/true</command></action></keybind>
     <keybind key="A-e"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-l"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-k"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-o"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-n"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-t"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-s"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-p"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-h"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-j"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-u"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="S-Escape"><action name="Execute"><command>/bin/true</command></action></keybind>
   </keyboard>
   <mouse>
     <context name="Client"><mousebind button="Right" action="Press"><action name="Execute"><command>/bin/true</command></action></mousebind></context>

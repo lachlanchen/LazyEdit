@@ -145,6 +145,12 @@ final class StudioApi {
         Reply reply=send(url,"GET",null,"application/json",null,cookie(),true);
         if(reply.status!=303)throw new IOException("Workspace entry was incomplete.");absorb(reply);
     }
+    void oauthRedeem(String ticket,String verifier) throws Exception {
+        JSONObject body=new JSONObject().put("ticket",ticket).put("verifier",verifier);
+        Reply reply=send("/accounts/oauth/redeem","POST",body.toString().getBytes(StandardCharsets.UTF_8),"application/json",null,cookie(),false);
+        String username=reply.json().getString("username");
+        identity=new JSONObject().put("username",username).put("mode","workspace");absorb(reply);enterWorkspace();
+    }
     void switchMode() throws Exception {
         boolean workspace=!mode().equals("workspace");
         Reply reply=send(workspace?"/accounts/docker":"/accounts/owner","POST","{}".getBytes(StandardCharsets.UTF_8),"application/json",null,cookie(),false);

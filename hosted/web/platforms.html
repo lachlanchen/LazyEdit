@@ -3,6 +3,7 @@
 <main><a href="/">← Studio</a><h1>Platform accounts</h1><p>Sign in to your own platform account in this private browser. Passwords, QR scans and verification codes stay in your workspace. Your login is saved for future publications.</p>
 <nav id="platforms"></nav><p id="status" role="status" aria-live="polite">Choose a platform to open its login browser.</p>
 <button id="connect" disabled>Reconnect desktop</button><button id="disconnect" disabled>Pause desktop</button><button id="freeze" disabled>Keep QR visible</button>
+<button id="close-browser" disabled>Close platform browser</button>
 <label>View <select id="zoom"><option value="1">Fit desktop</option><option value="1.5">Zoom 150%</option><option value="2">Zoom 200%</option><option value="3">Zoom 300%</option></select></label><p>Zoom in, then scroll to the login area. The same desktop stream is used.</p>
 <details><summary>Phone keyboard and clipboard</summary><p>Tap the remote text field first, then send text here. A QR may require a second device.</p><input id="input" type="password" maxlength="512" autocomplete="off" placeholder="Text or verification code"><button id="send">Type text</button><button id="paste">Send clipboard</button><button id="enter">Enter ↵</button></details>
 <div id="desktop" aria-label="Your private platform login desktop"></div><p>Leaving this screen pauses the stream. Reconnect to continue. Keep QR visible saves a still image with no live traffic; reconnect if it expires. Avoid navigating the browser during a publication.</p></main>

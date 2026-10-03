@@ -16,6 +16,7 @@ export class Registry extends AuthStore {
         transport TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending', created INTEGER, lease INTEGER DEFAULT 0);
       CREATE TABLE IF NOT EXISTS entry_tickets(hash TEXT PRIMARY KEY, workspace TEXT, expires INTEGER);
       CREATE TABLE IF NOT EXISTS administrators(owner TEXT PRIMARY KEY REFERENCES users(id));
+      CREATE TABLE IF NOT EXISTS closed_accounts(owner TEXT PRIMARY KEY, requested INTEGER, completed INTEGER);
     `);
     if(!this.db.prepare('PRAGMA table_info(workspaces)').all().some(c=>c.name==='lease'))this.db.exec('ALTER TABLE workspaces ADD COLUMN lease INTEGER DEFAULT 0');
   }
@@ -25,6 +26,32 @@ export class Registry extends AuthStore {
     return token;
   }
   isAdmin(owner) { return Boolean(this.db.prepare('SELECT 1 FROM administrators WHERE owner=?').get(owner)); }
+  principal(token, kind = 'access') {
+    const value = super.principal(token, kind);
+    if (this.db.prepare('SELECT 1 FROM closed_accounts WHERE owner=?').get(value.owner)) fail(401, 'Account deleted');
+    return value;
+  }
+  login(username, password, client) {
+    const owner = super.login(username, password, client);
+    if (this.db.prepare('SELECT 1 FROM closed_accounts WHERE owner=?').get(owner)) fail(401, 'Invalid username or password');
+    return owner;
+  }
+  closeAccount(owner) {
+    if (this.isAdmin(owner)) fail(403, 'The operator account is protected; contact the operator to retire the service');
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      this.db.prepare('INSERT OR IGNORE INTO closed_accounts(owner,requested) VALUES(?,?)').run(owner, Date.now());
+      this.db.prepare('UPDATE grants SET revoked=1 WHERE owner=?').run(owner);
+      this.db.prepare('DELETE FROM tokens WHERE grant_id IN (SELECT id FROM grants WHERE owner=?)').run(owner);
+      this.db.prepare('DELETE FROM grants WHERE owner=?').run(owner);
+      this.db.prepare('DELETE FROM devices WHERE owner=?').run(owner);
+      const w = this.workspace(owner);
+      if (w) this.db.prepare("UPDATE workspaces SET status='deleting' WHERE id=?").run(w.id);
+      this.db.prepare('DELETE FROM entry_tickets WHERE workspace=?').run(w?.id || '');
+      this.db.prepare('UPDATE users SET username=?,password=? WHERE id=?').run('deleted_' + digest(owner).slice(0, 24), '0:' + digest(secret()).repeat(2), owner);
+      this.db.exec('COMMIT');
+    } catch (error) { this.db.exec('ROLLBACK'); throw error; }
+  }
   linkOwner(row) {
     if (!row?.id || !row.username || !row.password) throw Error('Existing owner record required');
     const prior=this.db.prepare('SELECT * FROM users WHERE username=? OR id=?').get(row.username,row.id);
@@ -41,7 +68,7 @@ export class Registry extends AuthStore {
     this.db.exec('BEGIN IMMEDIATE');
     try {
       if(!this.workspace(owner)) {
-        if(this.db.prepare('SELECT count(*) AS n FROM workspaces').get().n>=this.capacity)fail(503,'Workspace capacity reached');
+        if(this.db.prepare("SELECT count(*) AS n FROM workspaces WHERE status!='deleted'").get().n>=this.capacity)fail(503,'Workspace capacity reached');
         this.db.prepare('INSERT INTO workspaces(id,owner,transport,created) VALUES(?,?,?,?)').run(digest(secret()).slice(0,24),owner,secret(),Date.now());
       }
       this.db.exec('COMMIT');return this.workspace(owner);
@@ -55,7 +82,7 @@ export class Registry extends AuthStore {
     try {
       const inv = this.db.prepare('SELECT * FROM invitations WHERE hash=? AND used=0 AND expires>?').get(digest(String(invitation || '')), Date.now());
       if (!inv) fail(400, 'Invitation unavailable');
-      if (this.db.prepare('SELECT count(*) AS n FROM workspaces').get().n >= this.capacity) fail(503, 'Workspace capacity reached; contact the operator');
+      if (this.db.prepare("SELECT count(*) AS n FROM workspaces WHERE status!='deleted'").get().n >= this.capacity) fail(503, 'Workspace capacity reached; contact the operator');
       if (this.db.prepare('SELECT 1 FROM users WHERE username=?').get(username)) fail(409, 'Username unavailable');
       const owner = this.addOwner(username, password), id = digest(secret()).slice(0, 24);
       this.db.prepare('INSERT INTO workspaces(id,owner,transport,created) VALUES(?,?,?,?)').run(id, owner, secret(), Date.now());

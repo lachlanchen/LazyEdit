@@ -1,5 +1,8 @@
 import Foundation
 import Security
+import AuthenticationServices
+import CryptoKit
+import UIKit
 
 struct StudioFailure: LocalizedError {
     let message: String
@@ -219,6 +222,24 @@ final class StudioAPI {
     }
 
     func clearSession() { identity = nil; StudioKeychain.clear() }
+    func oauthSignIn(provider: String, password: String? = nil) async throws {
+        var bytes = [UInt8](repeating: 0, count: 32)
+        guard SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess else { throw StudioFailure(message: "Could not start secure sign-in.", status: 0) }
+        func encoded(_ value: Data) -> String { value.base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "") }
+        let verifier = encoded(Data(bytes)), challenge = encoded(Data(SHA256.hash(data: Data(verifier.utf8))))
+        var body: [String: Any] = ["provider": provider, "challenge": challenge, "target": "native"]
+        if let password { body["link"] = true; body["password"] = password }
+        let start = try await json("/accounts/oauth/start", method: "POST", body: body)
+        guard let address = start["url"] as? String, let url = URL(string: address), url.scheme == "https", ["appleid.apple.com", "accounts.google.com"].contains(url.host) else { throw StudioFailure(message: "Invalid sign-in provider link.", status: 0) }
+        let returned = try await StudioOAuthBrowser.shared.open(url)
+        guard returned.scheme == "art.lazying.lazyedit", returned.host == "auth", let ticket = URLComponents(url: returned, resolvingAgainstBaseURL: false)?.queryItems?.first(where: {$0.name == "ticket"})?.value else { throw StudioFailure(message: "Sign-in was incomplete.", status: 0) }
+        let payload = try JSONSerialization.data(withJSONObject: ["ticket": ticket, "verifier": verifier])
+        let (data, response) = try await session.data(for: request("/accounts/oauth/redeem", method: "POST", body: payload))
+        try validate(data, response)
+        guard let result = try JSONSerialization.jsonObject(with: data) as? [String: Any], let username = result["username"] as? String, let cookie = cookies(response).first(where: {$0.name == "__Host-hosted"}) else { throw StudioFailure(message: "Studio did not create a sign-in session.", status: 0) }
+        try remember(StudioSession(cookie: "", expires: cookie.expiresDate ?? Date().addingTimeInterval(43200), username: username, hostedCookie: cookie.value, mode: "workspace"))
+        try await enterWorkspace()
+    }
     func signOut() async throws {
         _ = try await json("/auth/logout", method: "POST", body: [:])
         clearSession()
@@ -244,5 +265,28 @@ final class StudioAPI {
             throw StudioFailure(message: "Upload acknowledgement was incomplete. Resume to check the saved position.", status: 0)
         }
         return position
+    }
+}
+
+@MainActor
+final class StudioOAuthBrowser: NSObject, ASWebAuthenticationPresentationContextProviding {
+    static let shared = StudioOAuthBrowser()
+    private var browser: ASWebAuthenticationSession?
+    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        UIApplication.shared.connectedScenes.compactMap {$0 as? UIWindowScene}.flatMap { $0.windows }.first(where: {$0.isKeyWindow}) ?? UIWindow()
+    }
+    func open(_ url: URL) async throws -> URL {
+        guard browser == nil else { throw StudioFailure(message: "Sign-in is already open.", status: 0) }
+        return try await withCheckedThrowingContinuation { continuation in
+            let value = ASWebAuthenticationSession(url: url, callbackURLScheme: "art.lazying.lazyedit") { [weak self] url, error in
+                Task { @MainActor in
+                    self?.browser = nil
+                    if let url { continuation.resume(returning: url) }
+                    else { continuation.resume(throwing: error ?? StudioFailure(message: "Sign-in was cancelled.", status: 0)) }
+                }
+            }
+            browser = value; value.presentationContextProvider = self
+            if !value.start() { browser = nil; continuation.resume(throwing: StudioFailure(message: "Could not open secure sign-in.", status: 0)) }
+        }
     }
 }

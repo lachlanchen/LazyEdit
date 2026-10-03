@@ -11,6 +11,7 @@ FROM node:22-bookworm-slim AS gateway
 WORKDIR /opt/lazyedit
 COPY studio/ ./studio/
 COPY hosted/ ./hosted/
+RUN cd hosted && npm ci --ignore-scripts --no-audit --no-fund
 RUN chmod -R a+rX /opt/lazyedit
 USER node
 CMD ["node", "hosted/gateway.mjs", "/registry/gateway.json"]

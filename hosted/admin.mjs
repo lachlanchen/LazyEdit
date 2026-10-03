@@ -41,6 +41,28 @@ else if(command==='retry'){
   if(!/^[a-z0-9-]{24}$/.test(arg||''))throw Error('Supply workspace ID');
   registry.db.prepare("UPDATE workspaces SET status='pending' WHERE id=? AND status IN ('failed','provisioning')").run(arg);
 } else if(command==='provision'){
+    for (const row of registry.db.prepare("SELECT * FROM workspaces WHERE status='deleting'").all()) {
+      if (registry.isAdmin(row.owner) || !/^[a-f0-9]{24}$/.test(row.id)) throw Error('Refusing unsafe account cleanup');
+      const dir = join(root, 'workspaces', row.id), compose = join(dir, 'compose.json');
+      if (existsSync(compose)) {
+        // A crashed/restarted worker is checked again before any volume removal.
+        const document = JSON.parse(readFileSync(compose));
+        if (document.name !== `le-${row.id}` || document.services.worker.container_name !== `le-${row.id}-worker`) throw Error('Workspace cleanup identity mismatch');
+        const running = spawnSync('docker', ['inspect', '--format', '{{.State.Running}}', `le-${row.id}-worker`], {encoding: 'utf8'});
+        if (running.status === 0 && running.stdout.trim() === 'true') {
+          const probe = spawnSync('docker', ['exec', `le-${row.id}-worker`, 'node', '--input-type=module', '-e', "import {assertWorkspaceIdle} from '/opt/lazyedit/hosted/lifecycle.mjs'; await assertWorkspaceIdle();"], {stdio: 'inherit'});
+          if (probe.status !== 0) { console.error('Cleanup waits for an idle workspace:', row.id); continue; }
+        }
+        const result = spawnSync('docker', ['compose', '-f', compose, 'down', '--volumes'], {stdio: 'inherit'});
+        if (result.status !== 0) { console.error('Workspace cleanup will retry:', row.id); continue; }
+        // Private bootstrap secrets are removed only after Docker confirms cleanup.
+        for (const name of ['account.json', 'providers.env', 'db_password']) {
+          const {rmSync} = await import('node:fs'); rmSync(join(dir, name), {force: true});
+        }
+      }
+      registry.db.prepare("UPDATE workspaces SET status='deleted' WHERE id=?").run(row.id);
+      registry.db.prepare('UPDATE closed_accounts SET completed=? WHERE owner=?').run(Date.now(), row.owner);
+    }
     const rows=registry.db.prepare("SELECT w.*,u.username,u.password FROM workspaces w JOIN users u ON u.id=w.owner WHERE w.status='pending' OR (w.status='provisioning' AND w.lease<?) ORDER BY w.created").all(Date.now());
     for(const row of rows){
       if(!/^[a-z0-9-]{24}$/.test(row.id))throw Error('Invalid registry workspace ID');

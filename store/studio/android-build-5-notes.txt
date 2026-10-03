@@ -1,0 +1,3 @@
+<en-US>
+Native private Studio with 11 interface languages. Invite-only workspaces, resumable uploads, publication choices and saved platform logins. Improved mobile QR zoom, pause and browser close controls. Members can delete their private account. Purchases and unconfigured external sign-in are disabled in this pilot.
+</en-US>

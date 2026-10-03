@@ -2,6 +2,46 @@ import XCTest
 
 final class StudioUITests: XCTestCase {
     @MainActor
+    func testMemberPrivateLibraryAndLoginDesktop() throws {
+        continueAfterFailure = false
+        let path = ProcessInfo.processInfo.environment["STUDIO_TEST_CREDENTIALS"] ?? ""
+        guard !path.isEmpty else { throw XCTSkip("Set private STUDIO_TEST_CREDENTIALS.") }
+        let credentials = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: URL(fileURLWithPath: path))) as? [String: String])
+        let app = XCUIApplication(); app.launch()
+        // A prior administrator QA session can survive in the simulator's
+        // Keychain. Explicitly sign it out before qualifying member isolation.
+        if !app.secureTextFields["studio.password"].waitForExistence(timeout: 5) {
+            XCTAssertTrue(app.navigationBars["Your Studio"].waitForExistence(timeout: 30))
+            tapTab("Account", app)
+            let signOut = app.buttons["Sign out"]; scrollTo(signOut, app); signOut.tap()
+            app.buttons.matching(identifier: "Sign out").element(boundBy: app.buttons.matching(identifier: "Sign out").count - 1).tap()
+            XCTAssertTrue(app.secureTextFields["studio.password"].waitForExistence(timeout: 30))
+        }
+        if app.secureTextFields["studio.password"].waitForExistence(timeout: 5) {
+            app.textFields["studio.username"].tap(); app.textFields["studio.username"].typeText(try XCTUnwrap(credentials["username"]))
+            app.secureTextFields["studio.password"].tap(); app.secureTextFields["studio.password"].typeText(try XCTUnwrap(credentials["password"]))
+            app.buttons["studio.signIn"].tap()
+        }
+        XCTAssertTrue(app.navigationBars["Your Studio"].waitForExistence(timeout: 60))
+        capture("Invited member demo library", app)
+        tapTab("Account", app)
+        XCTAssertTrue(app.staticTexts["Private Docker workspace"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.buttons["Platform accounts"].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.buttons["Delete account"].waitForExistence(timeout: 30))
+        XCTAssertFalse(app.buttons["Create invitation"].exists)
+        XCTAssertFalse(app.buttons["Switch to existing Pi workspace"].exists)
+        capture("Invited member account controls", app)
+        app.buttons["Platform accounts"].tap()
+        XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 30))
+        XCTAssertTrue(app.webViews.buttons["Keep QR visible"].waitForExistence(timeout: 60))
+        capture("Mobile platform login controls", app)
+        app.navigationBars["Studio editor"].buttons["Done"].tap()
+        let signOut = app.buttons["Sign out"]; scrollTo(signOut, app); signOut.tap()
+        app.buttons.matching(identifier: "Sign out").element(boundBy: app.buttons.matching(identifier: "Sign out").count - 1).tap()
+        XCTAssertTrue(app.secureTextFields["studio.password"].waitForExistence(timeout: 30))
+        app.terminate()
+    }
+    @MainActor
     func testMacNativeAccount() throws {
         continueAfterFailure = false
         let path = ProcessInfo.processInfo.environment["STUDIO_TEST_CREDENTIALS"] ?? ""

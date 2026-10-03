@@ -5,10 +5,15 @@ import { Registry } from './store.mjs';
 import { fail } from '../studio/auth.mjs';
 import { validPath, json, readJSON } from '../studio/transport.mjs';
 import { forward } from './proxy.mjs';
+import { closeCell } from './lifecycle.mjs';
+import { createOAuth } from './oauth.mjs';
+import { createBilling } from './billing.mjs';
 
 export function createGateway(config) {
   const registry = new Registry(config.database, config.domain, config.capacity || 3, config.sameHost);
   const origin = `https://${config.domain}`;
+  const oauth = createOAuth(registry, config.oauth, origin, config.oauthFetcher);
+  const billing = createBilling(registry, config.billing, config.purchaseVerifier);
   const internal = config.ingressSecretFile && readFileSync(config.ingressSecretFile,'utf8').trim();
   const prefix = config.sameHost ? '/accounts' : '';
   const hostedCookie = req => (req.headers.cookie || '').split(';').map(x=>x.trim()).find(x=>x.startsWith('__Host-hosted='))?.slice(14);
@@ -19,7 +24,7 @@ export function createGateway(config) {
   }
   function session(res, owner) {
     const t = registry.issue(owner, undefined, 'Hosted Studio', 'browser');
-    json(res,200,{ok:true},{'set-cookie':`__Host-hosted=${t.access_token}; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=43200`});
+    json(res,200,{ok:true,username:registry.db.prepare('SELECT username FROM users WHERE id=?').get(owner).username},{'set-cookie':`__Host-hosted=${t.access_token}; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=43200`});
   }
   async function route(req, res, head) {
     if(internal){const supplied=Buffer.from(req.headers.authorization||''),expected=Buffer.from(`Bearer ${internal}`);if(supplied.length!==expected.length||!timingSafeEqual(supplied,expected))fail(401,'Invalid ingress');}
@@ -58,9 +63,35 @@ export function createGateway(config) {
     }
     if (host !== config.domain) fail(404,'Workspace unavailable');
     if (head !== undefined) fail(404,'WebSocket unavailable');
-    if (req.method === 'POST' && req.headers.origin !== origin) fail(403,'Same-origin request required');
     const path = req.url.split('?')[0].slice(prefix.length)||'/';
     const client=internal?req.headers['x-studio-client']:req.socket.remoteAddress;
+    const callback = /^\/oauth\/callback\/(apple|google)$/.exec(path);
+    if (callback && ((callback[1] === 'apple' && req.method === 'POST') || (callback[1] === 'google' && req.method === 'GET'))) {
+      let body;
+      if (req.method === 'GET') body = Object.fromEntries(new URL(req.url, origin).searchParams);
+      else {
+        if (!req.headers['content-type']?.startsWith('application/x-www-form-urlencoded')) fail(400, 'Invalid provider callback');
+        let text = ''; for await (const bytes of req) {text += bytes; if (text.length > 16384) fail(413, 'Callback too large');}
+        body = Object.fromEntries(new URLSearchParams(text));
+      }
+      const location = await oauth.callback(callback[1], body);
+      res.writeHead(303, {location, 'cache-control': 'no-store', 'referrer-policy': 'no-referrer'}); res.end(); return;
+    }
+    if (req.method === 'POST' && req.headers.origin !== origin) fail(403,'Same-origin request required');
+    if (req.method === 'GET' && path === '/oauth/providers') return json(res, 200, {providers: oauth.providers()});
+    if (req.method === 'POST' && path === '/oauth/start') {
+      const d = await readJSON(req, 4096); let owner;
+      if (d.link) {
+        owner = principal(req).owner;
+        const name = registry.db.prepare('SELECT username FROM users WHERE id=?').get(owner).username;
+        registry.login(name, String(d.password || ''), client);
+      }
+      return json(res, 200, oauth.start(d.provider, d, owner, client));
+    }
+    if (req.method === 'POST' && path === '/oauth/redeem') {
+      registry.throttle(`oauth-redeem:${client}`);
+      return session(res, oauth.redeem(await readJSON(req, 4096)));
+    }
     if (req.method==='GET' && path==='/healthz') return json(res,200,{status:'ok'});
     if(req.method==='GET'&&path==='/interface.js') {res.writeHead(200,{'content-type':'text/javascript','cache-control':'no-store'});res.end(readFileSync(new URL('../studio/web/interface.js',import.meta.url)));return;}
     if(req.method==='GET'&&/^\/locales\/(en|zh-Hans|zh-Hant|ja|ko|vi|ar|fr|es|de|ru)\.json$/.test(path)) {res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.end(readFileSync(new URL('../studio'+path,import.meta.url)));return;}
@@ -75,6 +106,32 @@ export function createGateway(config) {
       const d=await readJSON(req,4096);return session(res,registry.login(String(d.username||''),String(d.password||''),client));
     }
     const p = principal(req);
+    if (req.method === 'POST' && path === '/delete') {
+      const d = await readJSON(req, 4096);
+      if (registry.isAdmin(p.owner)) fail(403, 'The operator account is protected');
+      const user = registry.db.prepare('SELECT * FROM users WHERE id=?').get(p.owner);
+      if (d.confirm !== user.username) fail(400, 'Type your username to confirm deletion');
+      registry.login(user.username, String(d.password || ''), client);
+      const w = registry.workspace(p.owner);
+      if (w?.status === 'ready') await closeCell(config, w, true);
+      for (const provider of oauth.links(p.owner)) await oauth.unlink(p.owner, provider);
+      if (w?.status === 'ready') await closeCell(config, w);
+      else if (w && !['pending', 'failed', 'suspended'].includes(w.status)) fail(409, 'Wait for your workspace to finish starting');
+      registry.closeAccount(p.owner);
+      billing.ledger.close(p.owner);
+      return json(res, 202, {ok: true, status: 'deleting'}, {'set-cookie': ['__Host-hosted=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0', '__Host-studio=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0']});
+    }
+    if (req.method === 'GET' && path === '/billing/catalog') return json(res, 200, await billing.catalog(p.owner));
+    if (req.method === 'POST' && path === '/billing/verify') {
+      const d = await readJSON(req, 48000);
+      return json(res, 200, await billing.submit(p.owner, d.provider, d));
+    }
+    if (req.method === 'GET' && path === '/oauth/links') return json(res, 200, {providers: oauth.links(p.owner)});
+    if (req.method === 'POST' && path === '/oauth/unlink') {
+      const d = await readJSON(req, 4096), username = registry.db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username;
+      registry.login(username, String(d.password || ''), client); await oauth.unlink(p.owner, d.provider);
+      return json(res, 200, {ok: true});
+    }
     if (req.method==='GET' && path==='/account') {
       const w=registry.workspace(p.owner);return json(res,200,{subject:p.owner,role:registry.isAdmin(p.owner)?'admin':'member',mode:hostedCookie(req)?'workspace':'owner',username:registry.db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,status:w?.status||'not_created',workspace:w?`https://${registry.host(w)}`:null,apiBase:w?`https://${registry.host(w)}${config.sameHost?'/workspaces/'+w.id:''}`:null});
     }

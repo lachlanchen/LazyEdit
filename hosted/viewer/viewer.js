@@ -1,7 +1,7 @@
 // Bundle noVNC once: unbundled imports exceed the guarded ingress burst limit.
 import RFB from '/usr/share/novnc/core/rfb.js';
 const $ = id => document.getElementById(id);
-let rfb, connectionTimer, idleTimer, opened = false;
+let rfb, connectionTimer, idleTimer, opened = false, selectedPlatform;
 const status = message => { $('status').textContent = message; };
 function pause(message = 'Desktop paused. Your platform login is saved.') {
   clearTimeout(connectionTimer); clearTimeout(idleTimer);
@@ -42,13 +42,23 @@ for (const [platform,name] of Object.entries(names)) {
     try {
       const response = await fetch('/platforms/open', {method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({platform}),signal:AbortSignal.timeout(45000)});
       const data = await response.json(); if (!response.ok) throw Error(data.error || 'Browser could not open.');
-      opened = true; if (!rfb) connect(); else {status('Sign in to '+name+' below.');activity();}
+      opened = true; selectedPlatform = platform; $('close-browser').disabled = false;
+      if (!rfb) connect(); else {status('Sign in to '+name+' below.');activity();}
     } catch (error) { status(error.name === 'TimeoutError' ? 'Browser startup timed out. Tap the platform to try again.' : error.message); }
     finally { buttons.forEach(b => b.disabled = false); }
   };
   $('platforms').append(button);
 }
 $('connect').onclick = connect; $('disconnect').onclick = () => pause();
+$('close-browser').onclick = async () => {
+  if (!selectedPlatform) return;
+  $('close-browser').disabled = true;
+  try {
+    const response = await fetch('/platforms/close', {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({platform: selectedPlatform}), signal: AbortSignal.timeout(10000)});
+    const data = await response.json(); if (!response.ok) throw Error(data.error || 'Browser could not close.');
+    pause('Browser closed. Your login is saved; choose a platform to reopen it.'); $('desktop').replaceChildren(); opened = false; $('connect').disabled = true;
+  } catch (error) {status(error.message); $('close-browser').disabled = false;}
+};
 $('zoom').onchange=()=>{
   const surface=$('surface');if(!surface)return;
   const factor=Number($('zoom').value);surface.style.width=100*factor+'%';surface.style.height=100*factor+'%';
@@ -69,7 +79,7 @@ $('freeze').onclick = () => {
     crop.getContext('2d').drawImage(original, x, y, size, size, 0, 0, size, size);
     image.src = crop.toDataURL('image/png'); focused = true;
   };
-  pause('QR image kept visible. Tap the image to enlarge a QR area; tap again to restore. No live traffic. Reconnect to refresh.'); $('desktop').append(image);
+  pause('QR image kept visible. Tap the image to enlarge a QR area; tap again to restore. No live traffic. Reconnect to refresh.'); $('desktop').replaceChildren(image);
 };
 // Send Unicode via keysyms, without a server-side clipboard endpoint.
 $('send').onclick = () => {

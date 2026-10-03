@@ -1,4 +1,5 @@
 import SwiftUI
+import StoreKit
 import AVKit
 import PhotosUI
 import UniformTypeIdentifiers
@@ -124,9 +125,12 @@ struct StudioLoginView: View {
                     Button(action: signIn) {
                         HStack { Spacer(); if store.signingIn { ProgressView().tint(.white) }; Text(StudioStrings.text(store.signingIn ? "Signing in…" : "Sign in")).bold(); Spacer() }.padding(.vertical, 7)
                     }.buttonStyle(.borderedProminent).disabled(store.signingIn || password.isEmpty || store.username.isEmpty).accessibilityIdentifier("studio.signIn")
+                    ForEach(store.oauthProviders, id: \.self) { provider in
+                        Button(StudioStrings.text(provider == "apple" ? "Continue with Apple" : "Continue with Google")) { Task { await store.oauthSignIn(provider: provider) } }.buttonStyle(.bordered).disabled(store.signingIn)
+                    }
                     Text("edit.lazying.art").font(.footnote).foregroundStyle(.secondary)
                 }.padding(28).padding(.top, 48)
-            }.background(Color(uiColor: .systemGroupedBackground))
+            }.background(Color(uiColor: .systemGroupedBackground)).task { await store.refreshSignInProviders() }
         }
     }
     private func signIn() {
@@ -361,6 +365,11 @@ struct StudioAccountView: View {
     @State private var signOut = false
     @State private var editor = false
     @State private var platformAccounts = false
+    @State private var deletion = false
+    @State private var deletionPassword = ""
+    @State private var linkProvider: String? = nil
+    @State private var linkPassword = ""
+    @State private var billing = false
     var body: some View {
         StudioNavigation {
             Form {
@@ -371,6 +380,12 @@ struct StudioAccountView: View {
                     }.padding(.vertical, 8)
                 }
                 Section(StudioStrings.text("Language")) { StudioLanguagePicker().disabled(store.uploading || store.switchingWorkspace) }
+                if store.billingAvailable { Section { Button(StudioStrings.text("Plans and billing")) { billing = true } } }
+                if !store.oauthProviders.isEmpty {
+                    Section(StudioStrings.text("Linked sign-in accounts")) {
+                        ForEach(store.oauthProviders, id: \.self) { provider in Button(StudioStrings.text(store.linkedProviders.contains(provider) ? (provider == "apple" ? "Unlink Apple account" : "Unlink Google account") : (provider == "apple" ? "Link Apple account" : "Link Google account"))) { linkProvider = provider } }
+                    }
+                }
                 Section(StudioStrings.text("Workspace")) {
                     Text(StudioStrings.text(store.workspaceMode == "owner" ? "Existing Pi workspace" : "Private Docker workspace"))
                     if store.switchingWorkspace { ProgressView(StudioStrings.text("Opening workspace…")) }
@@ -386,13 +401,101 @@ struct StudioAccountView: View {
                 }
                 Section { Button(StudioStrings.text("Enable login notifications")) { Task { await store.enableLoginNotifications() } }; Button(StudioStrings.text("Open full Studio")) { editor = true }; Link("Privacy", destination: URL(string: "https://edit.lazying.art/privacy")!) }
                 Section { StudioErrorBanner(); Button(StudioStrings.text("Sign out"), role: .destructive) { signOut = true } }
+                if store.workspaceMode == "workspace" && !store.isAdmin {
+                    Section { Button(StudioStrings.text("Delete account"), role: .destructive) { deletion = true }.disabled(store.uploading || store.preparingFile) }
+                }
                 Section { Text("LazyEdit Studio · \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""))").foregroundStyle(.secondary) }
             }.navigationTitle(StudioStrings.text("Account"))
                 .sheet(isPresented: $editor) { StudioEditorSheet(path: "/home") }
                 .sheet(isPresented: $platformAccounts) { StudioEditorSheet(path: "/platforms") }
-                .task { await store.refreshAccount() }
+                .sheet(isPresented: $billing) { StudioBillingView() }
+                .task { await store.refreshAccount(); await store.refreshSignInProviders() }
+                .alert(StudioStrings.text("Link sign-in account"), isPresented: Binding(get: {linkProvider != nil}, set: {if !$0 {linkProvider = nil}})) {
+                    SecureField(StudioStrings.text("Password"), text: $linkPassword)
+                    Button(StudioStrings.text("Cancel"), role: .cancel) { linkProvider = nil; linkPassword = "" }
+                    Button(StudioStrings.text("Continue")) { let provider = linkProvider, password = linkPassword; linkProvider = nil; linkPassword = ""; if let provider { Task { if store.linkedProviders.contains(provider) {await store.unlinkProvider(provider, password: password)} else {await store.oauthSignIn(provider: provider, password: password)} } } }
+                } message: { Text(StudioStrings.text("Confirm your Studio password, then choose the provider account to link.")) }
                 .confirmationDialog(StudioStrings.text("Sign out of Studio?"), isPresented: $signOut) { Button(StudioStrings.text("Sign out"), role: .destructive) { Task { await store.logout() } } }
+                .alert(StudioStrings.text("Delete account"), isPresented: $deletion) {
+                    SecureField(StudioStrings.text("Password"), text: $deletionPassword)
+                    Button(StudioStrings.text("Cancel"), role: .cancel) { deletionPassword = "" }
+                    Button(StudioStrings.text("Delete account"), role: .destructive) {
+                        let password = deletionPassword; deletionPassword = ""
+                        Task { await store.deleteAccount(password: password) }
+                    }
+                } message: { Text(StudioStrings.text("This permanently removes your private workspace and platform logins. Published posts remain on their platforms. Wait for active work to finish first.")) }
         }
+    }
+}
+
+struct StudioBillingView: View {
+    @EnvironmentObject private var store: StudioStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var catalog: [String: Any] = [:]
+    @State private var products: [Product] = []
+    @State private var busy = false
+    @State private var message = ""
+    private var enabled: Bool { catalog["enabled"] as? Bool == true && (catalog["providers"] as? [String] ?? []).contains("apple") }
+    var body: some View {
+        StudioNavigation {
+            Form {
+                Section { Text(StudioStrings.text(enabled ? "Plans renew monthly. Cancel anytime in your store account." : "Billing is being prepared. No charge will be made.")) }
+                ForEach(products) { product in
+                    Section { Text(product.displayName).font(.headline); Text(product.description); Button(product.displayPrice) { Task { await purchase(product) } }.disabled(busy || !enabled) }
+                }
+                if enabled {
+                    Section { Button(StudioStrings.text("Restore purchases")) { Task { await restore() } }.disabled(busy); Link(StudioStrings.text("Manage subscription"), destination: URL(string: "https://apps.apple.com/account/subscriptions")!) }
+                }
+                if !message.isEmpty { Section { Text(message).foregroundStyle(.secondary) } }
+                if busy { ProgressView() }
+                Section { Link("Privacy", destination: URL(string: "https://edit.lazying.art/privacy")!) }
+            }.navigationTitle(StudioStrings.text("Plans and billing")).toolbar { ToolbarItem(placement: .cancellationAction) { Button(StudioStrings.text("Close")) { dismiss() } } }
+                .task {
+                    await load()
+                    guard enabled else { return }
+                    let context = store.api.contextKey
+                    for await result in StoreKit.Transaction.updates {
+                        if Task.isCancelled || context != store.api.contextKey { break }
+                        do { try await send(result, context: context) } catch { message = error.localizedDescription }
+                    }
+                }
+        }
+    }
+    private func load() async {
+        do {
+            catalog = try await store.api.json("/accounts/billing/catalog")
+            guard enabled else { products = []; return }
+            let ids = (catalog["plans"] as? [[String: Any]] ?? []).compactMap {$0["product"] as? String}
+            products = try await Product.products(for: ids).sorted {$0.price < $1.price}
+            message = products.isEmpty ? StudioStrings.text("Store products are not available yet.") : ""
+        } catch { message = error.localizedDescription }
+    }
+    private func send(_ result: VerificationResult<StoreKit.Transaction>, context: String) async throws {
+        guard context == store.api.contextKey, enabled, case .verified(let transaction) = result else { throw StudioFailure(message: "Purchase could not be verified for this Studio account.", status: 0) }
+        var environment = "Production"
+        if #available(iOS 16.0, macCatalyst 16.0, *) { environment = transaction.environment == .sandbox ? "Sandbox" : "Production" }
+        _ = try await store.api.json("/accounts/billing/verify", method: "POST", body: ["provider": "apple", "signedTransaction": result.jwsRepresentation, "environment": environment])
+        guard context == store.api.contextKey else { throw CancellationError() }
+        await transaction.finish()
+    }
+    private func purchase(_ product: Product) async {
+        guard enabled, !busy, let raw = catalog["accountToken"] as? String, let token = UUID(uuidString: raw) else { return }
+        busy = true; defer { busy = false }
+        let context = store.api.contextKey
+        do {
+            switch try await product.purchase(options: [.appAccountToken(token)]) {
+            case .success(let result): try await send(result, context: context); await load()
+            case .pending: message = StudioStrings.text("Waiting for payment confirmation")
+            case .userCancelled: break
+            @unknown default: message = StudioStrings.text("Store request could not finish.")
+            }
+        } catch { message = error.localizedDescription }
+    }
+    private func restore() async {
+        guard enabled, !busy else { return }; busy = true; defer { busy = false }
+        let context = store.api.contextKey
+        do { try await AppStore.sync(); for await result in StoreKit.Transaction.currentEntitlements { try await send(result, context: context) }; await load() }
+        catch { message = error.localizedDescription }
     }
 }
 

@@ -36,16 +36,15 @@ if args.sample:
         if hashlib.file_digest(stream, 'sha256').hexdigest() != args.sample_sha256:
             raise SystemExit('Authorized sample hash mismatch')
     config.update(sampleFile=str(args.sample.resolve()), sampleSha256=args.sample_sha256)
-probe = '''import json, urllib.request
-for port,path in [(18787,"/api/autopublish/queue"),(8081,"/publish/queue")]:
- d=json.load(urllib.request.urlopen(f"http://127.0.0.1:{port}{path}",timeout=10))
- jobs=d.get("jobs",[])
- if isinstance(jobs,dict): jobs=list(jobs.values())
- if d.get("is_publishing") or any(j.get("status") in ("queued","running","processing","pending","publishing") for j in jobs): raise SystemExit("Publication is active")
-'''
+# Check manual processing as well as both queues before interrupting a cell.
+# Stream reviewed source into the old container: the previous release might not
+# have the lifecycle module yet. No identity or credentials enter argv.
+probe = (repository := Path(__file__).resolve().parents[2]) / 'hosted/lifecycle.mjs'
+source = probe.read_text().replace("import { fail } from '../studio/auth.mjs';", "function fail(status, message) { throw Object.assign(Error(message), {status}); }")
+source += "\nawait assertWorkspaceIdle();\n"
 for file in cells:
     compose = json.loads(file.read_text())
-    subprocess.run(['docker', 'exec', compose['services']['worker']['container_name'], 'python', '-c', probe], check=True)
+    subprocess.run(['docker', 'exec', '-i', compose['services']['worker']['container_name'], 'node', '--input-type=module'], input=source, text=True, check=True)
 backup = root / 'rollbacks' / (args.tag + '-' + str(int(time.time())))
 backup.mkdir(parents=True)
 for file in [config_file, control_file, *cells]:

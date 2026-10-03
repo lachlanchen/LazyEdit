@@ -5,10 +5,12 @@ import { createWorker } from '../studio/server.mjs';
 import { SCOPES, fail } from '../studio/auth.mjs';
 import { json, readJSON, validPath } from '../studio/transport.mjs';
 import { forward } from './proxy.mjs';
+import { assertWorkspaceIdle } from './lifecycle.mjs';
 
 export function createCell(config, seed) {
   const worker = createWorker(config), db = worker.auth.db;
   let desktopSocket;
+  let closed = false;
   const exists = db.prepare('SELECT id FROM users').all();
   if (exists.some(r=>r.id!==seed.owner)) throw Error('Workspace already belongs to a different owner');
   db.prepare('INSERT OR IGNORE INTO users VALUES(?,?,?)').run(seed.owner,seed.username,seed.password);
@@ -34,6 +36,15 @@ export function createCell(config, seed) {
   async function route(req,res,head) {
     if(req.url==='/healthz'&&req.method==='GET'&&head===undefined) return json(res,200,{status:'ok'});
     const raw=transport(req), path=raw.split('?')[0];
+    if (['/hosted-close', '/hosted-check-idle'].includes(path) && req.method === 'POST' && head === undefined) {
+      if (req.headers['x-hosted-owner'] !== seed.owner) fail(403, 'Operator transport required');
+      await assertWorkspaceIdle(config.backendPort, config.publisherPort);
+      if (path === '/hosted-check-idle') return json(res, 200, {ok: true});
+      closed = true; desktopSocket?.destroy();
+      db.prepare('UPDATE grants SET revoked=1').run();
+      return json(res, 200, {ok: true});
+    }
+    if (closed) fail(401, 'Workspace closed');
     if(path==='/hosted-entry'&&req.method==='GET'&&head===undefined) {
       if(req.headers['x-hosted-owner']!==seed.owner)fail(401,'Entry link required');
       const t=worker.auth.issue(seed.owner,SCOPES,'Studio browser','browser');
@@ -43,10 +54,10 @@ export function createCell(config, seed) {
     if(path.startsWith('/platforms')) {
       browser(req);
       if(head!==undefined || req.method==='POST')if(req.headers.origin!==origin)fail(403,'Same-origin request required');
-      if(path==='/platforms/open'&&req.method==='POST'&&head===undefined) {
+      if(['/platforms/open','/platforms/close'].includes(path)&&req.method==='POST'&&head===undefined) {
         const d=await readJSON(req,1024);
         if(!['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'].includes(d.platform))fail(400,'Invalid platform');
-        const r=await fetch(`http://127.0.0.1:${config.publisherPort||8081}/platform-login`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({platform:d.platform}),signal:AbortSignal.timeout(45000)});
+        const r=await fetch(`http://127.0.0.1:${config.publisherPort||8081}/platform-login`,{method:path==='/platforms/close'?'DELETE':'POST',headers:{'content-type':'application/json'},body:JSON.stringify({platform:d.platform}),signal:AbortSignal.timeout(45000)});
         return json(res,r.status,await r.json());
       }
       if(path.startsWith('/platforms/desktop/')&&req.method==='GET'){
