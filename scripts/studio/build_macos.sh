@@ -4,7 +4,7 @@
 set -euo pipefail
 umask 077
 root="$HOME/Projects/LazyEditStudio"
-build_number="${LAZYEDIT_BUILD_NUMBER:-7}"
+build_number="${LAZYEDIT_BUILD_NUMBER:?Supply the exact expected build number}"
 [[ "$build_number" =~ ^[0-9]+$ ]] || exit 2
 cd "$root/ios/App"
 xcodebuild -project App.xcodeproj -scheme StudioNative -configuration Release \
@@ -19,7 +19,8 @@ app="$root/release/MacDerivedData/Build/Products/Release-maccatalyst/App.app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info.plist")" == "$build_number" ]]
 codesign --force --deep --sign - "$app"
 codesign --verify --deep --strict "$app"
-lipo "$app/Contents/MacOS/App" -verify_arch arm64 x86_64
+architectures=$(lipo -archs "$app/Contents/MacOS/App")
+[[ " $architectures " == *" arm64 "* && " $architectures " == *" x86_64 "* ]]
 output="$root/release/LazyEditStudio-macOS-${build_number}.zip"
 ditto -c -k --sequesterRsrc --keepParent "$app" "$output"
 shasum -a 256 "$output"

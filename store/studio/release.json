@@ -6,43 +6,43 @@
   "apple": {
     "appId": "6814061525",
     "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
-    "ipaSha256": "b451885e85d4f3c2892a4ee9e7b8eea83d6c7a2f047c22a602a230874f89c631",
-    "deliveryUuid": "f1ab9257-60f0-4aa4-9fad-e197648e2e8f",
+    "ipaSha256": "e8d2039dcaef8dcb2ff7bdbb084a22b988f33dafe8f789681530976bb24ad4e4",
+    "deliveryUuid": "f1bcdfa2-c96c-4b79-88aa-98625f6782de",
     "state": "IN_BETA_TESTING",
-    "buildId": "f1ab9257-60f0-4aa4-9fad-e197648e2e8f",
+    "buildId": "f1bcdfa2-c96c-4b79-88aa-98625f6782de",
     "processingState": "VALID",
     "internalTesters": 1,
     "publicBeta": false,
     "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/testflight",
-    "build": 7,
+    "build": 8,
     "nativeInterface": true,
-    "qa": "Native account/invitation/workspace and owner upload/review/removal UI tests passed on dedicated iOS simulator. Private reviewer full preparation verified. Owner reported build 7 works on their phone; dedicated simulator qualification is recorded separately."
+    "qa": "Native member sign-in, scoped demo library, private account controls, no Pi/invitation access, platform login web controls and sign-out passed on a fresh dedicated iPhone 17 Pro Max simulator. Exact signed distribution archive separately validated by Apple. Prior build 7 owner device feedback is separate evidence. Additional native WKWebView test passed after module hydration, including private Shipinhao desktop connection, QR freeze and browser close with saved profile; no real post or platform authentication claim."
   },
   "google": {
     "appId": "4975166991517752718",
     "track": "internal",
     "state": "available_to_internal_testers",
-    "apkSha256": "d82775dde75a2ec738abc795fd4a3bd424f0639709423843a65d51b98a242ba0",
-    "aabSha256": "3128cf5e1a0cf48f10260702a02967f9c7df80cc144dff2e4250eb415927efef",
+    "apkSha256": "ba23db0be58707bf53bfcf8a3e82676744ab8c12580d8fd6db3039e81c9c18b0",
+    "aabSha256": "f6b0d9d1f2efc159ebbfc6b0d9be4b9b4ebc9d0a0a4a37b478e61fe367f2b26f",
     "trackState": "Active",
     "internalTesters": 1,
     "optInUrl": "https://play.google.com/apps/internaltest/4700083281147641073",
     "publicProduction": false,
-    "build": 4,
+    "build": 5,
     "nativeInterface": true,
-    "qa": "Two native Android instrumentation tests passed on dedicated Android 14 emulator; signed AAB4 available in internal testing, physical installation not claimed."
+    "qa": "Two native instrumentation tests passed on dedicated Android 14 emulator for build 5. Exact signed AAB5 is available to internal testers; no physical-install claim."
   },
   "sourceNote": "Native release sources and exact provider receipts are recorded by the commit containing this manifest.",
   "macos": {
-    "build": 7,
+    "build": 8,
     "architectures": [
       "x86_64",
       "arm64"
     ],
     "minimumVersion": "12.0",
-    "zipSha256": "41d0062e09d539f0de0f1146720fd55da7fe614b05d2acd826e82e9ec529bc1e",
+    "zipSha256": "f8475aed9630c03581788b58ca87db89d8a2b3ae066d776ce8a7b95a249f799c",
     "signature": "ad-hoc local QA; not notarized",
-    "qa": "Universal native Mac Catalyst build and signatures verified. App launched on Monterey 3040 after weak SwiftUICore linking; the preceding build launched on iMac 7050 and Apple Silicon Mac mini. Full Mac UI automation was not qualified because the runner requires TCC authorization."
+    "qa": "Exact universal native Mac Catalyst build 8 launched on Intel Monterey 3040, iMac 7050 and ARM Mac mini; signatures and both architectures verified. Mac mini normal open succeeded after exact-bundle Launch Services registration. Full Mac UI regression requires TCC authorization and is not claimed. Local QA signature only, not notarized."
   },
   "downloadPricing": {
     "apple": {
@@ -59,5 +59,6 @@
       "29.89"
     ],
     "subscriptionsActive": false
-  }
+  },
+  "applicationSource": "256a9ac6db85a855366a711e45fa17af9f098180"
 }

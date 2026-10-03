@@ -7,22 +7,32 @@ final class StudioUITests: XCTestCase {
         let path = ProcessInfo.processInfo.environment["STUDIO_TEST_CREDENTIALS"] ?? ""
         guard !path.isEmpty else { throw XCTSkip("Set private STUDIO_TEST_CREDENTIALS.") }
         let credentials = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: URL(fileURLWithPath: path))) as? [String: String])
+        addUIInterruptionMonitor(withDescription: "Private QA password prompt") { alert in
+            if alert.buttons["Not Now"].exists { alert.buttons["Not Now"].tap(); return true }
+            return false
+        }
         let app = XCUIApplication(); app.launch()
+        // System AutoFill can outlive a previous QA run. Do not save the
+        // reviewer password or let that overlay intercept native tab taps.
+        let notNow = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Not Now"]
+        if notNow.waitForExistence(timeout: 3) { notNow.tap() }
         // A prior administrator QA session can survive in the simulator's
         // Keychain. Explicitly sign it out before qualifying member isolation.
         if !app.secureTextFields["studio.password"].waitForExistence(timeout: 5) {
-            XCTAssertTrue(app.navigationBars["Your Studio"].waitForExistence(timeout: 30))
             tapTab("Account", app)
             let signOut = app.buttons["Sign out"]; scrollTo(signOut, app); signOut.tap()
-            app.buttons.matching(identifier: "Sign out").element(boundBy: app.buttons.matching(identifier: "Sign out").count - 1).tap()
+            try XCTUnwrap(app.buttons.matching(identifier: "Sign out").allElementsBoundByIndex.first(where: { $0.isHittable })).coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
             XCTAssertTrue(app.secureTextFields["studio.password"].waitForExistence(timeout: 30))
         }
         if app.secureTextFields["studio.password"].waitForExistence(timeout: 5) {
-            app.textFields["studio.username"].tap(); app.textFields["studio.username"].typeText(try XCTUnwrap(credentials["username"]))
-            app.secureTextFields["studio.password"].tap(); app.secureTextFields["studio.password"].typeText(try XCTUnwrap(credentials["password"]))
+            replaceText(app.textFields["studio.username"], with: try XCTUnwrap(credentials["username"]))
+            replaceText(app.secureTextFields["studio.password"], with: try XCTUnwrap(credentials["password"]))
             app.buttons["studio.signIn"].tap()
+            if notNow.waitForExistence(timeout: 5) { notNow.tap() }
         }
-        XCTAssertTrue(app.navigationBars["Your Studio"].waitForExistence(timeout: 60))
+        XCTAssertTrue(app.tabBars.buttons["Studio"].waitForExistence(timeout: 60))
+        tapTab("Studio", app)
+        XCTAssertTrue(app.navigationBars["Your Studio"].waitForExistence(timeout: 30))
         capture("Invited member demo library", app)
         tapTab("Account", app)
         XCTAssertTrue(app.staticTexts["Private Docker workspace"].waitForExistence(timeout: 30))
@@ -33,11 +43,20 @@ final class StudioUITests: XCTestCase {
         capture("Invited member account controls", app)
         app.buttons["Platform accounts"].tap()
         XCTAssertTrue(app.webViews.firstMatch.waitForExistence(timeout: 30))
+        XCTAssertTrue(app.webViews.buttons["Shipinhao"].waitForExistence(timeout: 60), "Login module is ready, not merely static HTML")
         XCTAssertTrue(app.webViews.buttons["Keep QR visible"].waitForExistence(timeout: 60))
+        let finished = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: app.staticTexts["Opening editor…"])
+        XCTAssertEqual(XCTWaiter.wait(for: [finished], timeout: 20), .completed)
+        app.webViews.buttons["Shipinhao"].tap()
+        XCTAssertTrue(app.webViews.staticTexts["Connected. Sign in using the private browser below."].waitForExistence(timeout: 60))
+        app.webViews.buttons["Keep QR visible"].tap()
+        XCTAssertTrue(app.webViews.staticTexts["QR image kept visible. Tap the image to enlarge a QR area; tap again to restore. No live traffic. Reconnect to refresh."].waitForExistence(timeout: 10))
         capture("Mobile platform login controls", app)
+        app.webViews.buttons["Close platform browser"].tap()
+        XCTAssertTrue(app.webViews.staticTexts["Browser closed. Your login is saved; choose a platform to reopen it."].waitForExistence(timeout: 15))
         app.navigationBars["Studio editor"].buttons["Done"].tap()
         let signOut = app.buttons["Sign out"]; scrollTo(signOut, app); signOut.tap()
-        app.buttons.matching(identifier: "Sign out").element(boundBy: app.buttons.matching(identifier: "Sign out").count - 1).tap()
+        try XCTUnwrap(app.buttons.matching(identifier: "Sign out").allElementsBoundByIndex.first(where: { $0.isHittable })).coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(app.secureTextFields["studio.password"].waitForExistence(timeout: 30))
         app.terminate()
     }
@@ -185,13 +204,22 @@ final class StudioUITests: XCTestCase {
         XCTAssertTrue(element.isHittable, app.debugDescription)
     }
     @MainActor
+    private func replaceText(_ field: XCUIElement, with text: String) {
+        field.tap()
+        if let existing = field.value as? String, existing != field.placeholderValue {
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: min(existing.count, 256)))
+        }
+        field.typeText(text)
+    }
+    @MainActor
     private func tapTab(_ label: String, _ app: XCUIApplication) {
         let button = app.tabBars.buttons[label]
         XCTAssertTrue(button.waitForExistence(timeout: 10))
-        // Simulator accessibility may supply an invalid suggested hit point
-        // for a Liquid Glass tab; the observed element frame remains correct.
-        let frame = button.frame
-        app.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: frame.midX, dy: frame.midY)).tap()
+        // Liquid Glass simulator tabs sometimes report {-1, -1} for the
+        // suggested hit point. The observed accessibility frame is usable.
+        button.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        let selected = XCTNSPredicateExpectation(predicate: NSPredicate(format: "selected == true"), object: button)
+        XCTAssertEqual(XCTWaiter.wait(for: [selected], timeout: 10), .completed, "Requested native tab is selected")
     }
     @MainActor
     private func capture(_ name: String, _ app: XCUIApplication) {
