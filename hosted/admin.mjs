@@ -15,17 +15,18 @@ if(command==='init'){
   if(!arg||!/^[a-z0-9.-]+$/.test(arg))throw Error('Supply a dedicated service domain');
   mkdirSync(root,{recursive:true,mode:0o700});
   mkdirSync(join(root,'registry'),{mode:0o700});
-  const config={domain:arg,database:join(root,'registry','registry.sqlite'),capacity:3,network:'lazyedit-hosted',workerImage:'lazyedit-workspace:local',workerMemory:'8g',workerCPUs:2};
+  const config={domain:arg,sameHost:process.argv.includes('--same-host'),database:join(root,'registry','registry.sqlite'),capacity:3,network:'lazyedit-hosted',workerImage:'lazyedit-workspace:local',workerMemory:'8g',workerCPUs:2};
+  if(config.sameHost)writeFileSync(join(root,'registry','ingress.secret'),secret());
   writeFileSync(configPath,JSON.stringify(config,null,2));
-  writeFileSync(join(root,'registry','gateway.json'),JSON.stringify({...config,database:'/registry/registry.sqlite'},null,2));
+  writeFileSync(join(root,'registry','gateway.json'),JSON.stringify({...config,database:'/registry/registry.sqlite',...(config.sameHost?{ingressSecretFile:'/registry/ingress.secret'}:{})},null,2));
   const compose={name:'lazyedit-hosted',services:{gateway:{image:'lazyedit-gateway:local',user:'1000:1000',init:true,restart:'unless-stopped',read_only:true,cap_drop:['ALL'],security_opt:['no-new-privileges:true'],mem_limit:'256m',cpus:0.5,pids_limit:64,ports:['127.0.0.1:18980:8080'],volumes:[`${join(root,'registry')}:/registry`],command:['node','hosted/gateway.mjs','/registry/gateway.json'],networks:['front']},
     provisioner:{image:'lazyedit-provisioner:local',user:'1000:1000',group_add:[String(statSync('/var/run/docker.sock').gid)],init:true,restart:'unless-stopped',network_mode:'none',mem_limit:'256m',cpus:0.5,pids_limit:64,volumes:[`${root}:${root}`,'/var/run/docker.sock:/var/run/docker.sock'],command:['node','hosted/provision-loop.mjs',root]}},networks:{front:{name:config.network}}};
   writeFileSync(join(root,'compose.json'),JSON.stringify(compose,null,2));
-  new Registry(config.database,config.domain,config.capacity).db.close();
+  new Registry(config.database,config.domain,config.capacity,config.sameHost).db.close();
   console.log('Initialized private configuration. Build images, then docker compose -f '+join(root,'compose.json')+' up -d');
   process.exit(0);
 }
-const config=JSON.parse(readFileSync(configPath)), registry=new Registry(config.database,config.domain,config.capacity);
+const config=JSON.parse(readFileSync(configPath)), registry=new Registry(config.database,config.domain,config.capacity,config.sameHost);
 if(command==='invite'){console.log(registry.invite());}
 else if(command==='status'){console.table(registry.db.prepare('SELECT w.id,u.username,w.status FROM workspaces w JOIN users u ON u.id=w.owner').all());}
 else if(command==='retry'){

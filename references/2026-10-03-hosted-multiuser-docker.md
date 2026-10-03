@@ -1,8 +1,13 @@
 # Invite-only LazyEdit + AutoPublish service
 
-This is a separate hosted deployment. It does not migrate, restart, or reuse
-the owner's live LazyEdit database, Pi publisher, browser profiles, .env, logo
-preferences, or account. The initial registration policy is **invite-only**.
+This is an isolated hosted deployment with **invite-only** registration. It
+can use a separate domain or the existing `edit.lazying.art` LazyEdge route.
+The latter is now deployed: [account portal](https://edit.lazying.art/accounts).
+The original account continues at the usual Studio URL. Its backend,
+database, Pi publisher, browser profiles and logo preferences stay in place.
+Only Studio's ingress adapters changed; the original backend was not restarted.
+See the [public deployment and rollback handoff](2026-10-03-edit-lazyedge-hosted-deployment.md)
+for the current routing, API bases, private state and acceptance results.
 
 ## User experience
 
@@ -22,9 +27,11 @@ preferences, or account. The initial registration policy is **invite-only**.
    persistent platform profiles as the login screen. No Raspberry Pi is
    required: the browser publisher runs in the workspace container.
 
-The existing scoped API/device-link flow is available at the user's workspace
-URL. LightMind and other clients must link to that URL, not to the registration
-domain or the owner's existing `edit.lazying.art` account.
+The existing scoped API/device-link flow is available at the user's API base.
+On the shared domain it is `https://edit.lazying.art/workspaces/<id>`;
+`GET /accounts/account` reports `apiBase`. Clients must use that base for every
+API request, including login and refresh. The original owner's API base stays
+`https://edit.lazying.art`. Subdomain deployments use the workspace URL.
 
 ## Why a workspace per user
 
@@ -83,8 +90,9 @@ writable state. Record image digests and pin them in production config.
 
 ## Operator setup
 
-Use a **new** service domain during the pilot. Do not replace the live
-`edit.lazying.art` routing until a reviewed migration is ready.
+For a separate-domain installation use the commands below. The current
+`edit.lazying.art` installation instead uses `--same-host`; read its deployment
+handoff and do not rerun initialization against existing state.
 
 ```bash
 node hosted/admin.mjs init "$HOME/.local/share/lazyedit-hosted" studio.example.com
@@ -144,7 +152,7 @@ before expansion. GPU allocation/scheduling is intentionally not implicit. The
 portable image uses CPU Whisper small/base; quality/performance upgrades need
 an explicit resource plan. Generating a large video remains compute-heavy.
 
-## HTTPS / LazyEdge
+## Separate-domain HTTPS / LazyEdge
 
 The gateway publishes only `127.0.0.1:18980`. Keep the existing LazyEdge
 authenticated reverse-tunnel separation: bind a new service to this loopback
@@ -158,10 +166,10 @@ otherwise use separately issued certificates for explicitly provisioned names.
 Do not claim that an A record alone configures wildcard HTTPS. Do not share the
 live Studio/LazyTunnel transport credential with this new deployment.
 
-The gateway deliberately ignores caller-supplied forwarding/identity headers.
-Login throttling currently keys on its immediate peer: behind a single reverse
-proxy the limit is shared across that proxy. This is suitable for a small invite
-pilot; a reviewed trusted-proxy client-IP contract is needed before expansion.
+Direct gateway deployments ignore caller-supplied forwarding/identity headers
+and throttle their immediate peer. In deployed same-host mode, ingress
+authentication is mandatory; identity comes from Caddy's overwritten socket
+peer through the authenticated Studio transport.
 
 ## Browser login and publishing
 
@@ -270,7 +278,7 @@ transport, authenticated desktop/WebSocket origins, and safe journal recovery.
 Real platform publication is deliberately excluded from Docker smoke tests.
 See the validation record appended after image/runtime checks.
 
-### 2026-10-03 validation record
+### Initial loopback validation, 2026-10-03
 
 Built all three Docker images and ran a disposable, loopback-only deployment
 with an empty account and no real platform or AI credentials. The automatic
@@ -314,8 +322,11 @@ Real ASR/LLM provider calls and end-to-end social submissions were not performed
 An invited pilot user still needs provider configuration, dedicated DNS/TLS,
 and their own platform login. Keep those distinctions when reporting readiness.
 The disposable containers and test volumes are removed after validation;
-no public service is enabled by these checks. The live owner backend and Pi
+no public service was enabled by these initial checks. The live owner backend and Pi
 remain on their existing deployment.
+
+The subsequent same-domain deployment and public acceptance checks are
+recorded in the [deployment handoff](2026-10-03-edit-lazyedge-hosted-deployment.md).
 
 Dependency reference: TorchCodec must match the installed PyTorch release; the
 image pins TorchCodec 0.8.0 with PyTorch 2.9.1 according to the

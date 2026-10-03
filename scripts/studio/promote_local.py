@@ -3,6 +3,8 @@
 import hashlib,json,os,pathlib,shutil,subprocess,tarfile,sys
 os.umask(0o077)
 r=pathlib.Path(__file__).resolve().parents[2]; p=pathlib.Path.home()/'.config/lazyedit-studio';node=pathlib.Path.home()/'.nvm/versions/node/v22.21.0/bin/node'
+if json.loads((p/'worker.json').read_text()).get('hostedIngressSecretFile'):
+ raise SystemExit('Hosted routing is active. Use promote_hosted.py --state STATE_DIR; do not remove the hosted ingress.')
 dist=r/'temp/studio-deploy/webdist';index=dist/'index.html';s=index.read_text()
 if '/studio-session.js' not in s:s=s.replace('</head>','<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/studio-icon.png"><script src="/studio-session.js" defer></script></head>')
 s=s.replace('<script src="/studio-session.js"></script>','<script src="/studio-session.js" defer></script>')

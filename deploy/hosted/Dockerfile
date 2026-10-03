@@ -4,8 +4,8 @@ WORKDIR /build
 COPY app/package.json app/package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY app/ ./
-ENV EXPO_PUBLIC_API_URL="" LAZYEDIT_REMOTE_STUDIO=1 CI=1 NODE_OPTIONS=--max-old-space-size=2048
-RUN npx expo export --platform web --output-dir /webdist
+ENV EXPO_PUBLIC_API_URL="" EXPO_PUBLIC_REMOTE_STUDIO=1 LAZYEDIT_REMOTE_STUDIO=1 CI=1 NODE_OPTIONS=--max-old-space-size=2048
+RUN npx expo export --platform web --max-workers 2 --output-dir /webdist
 
 FROM node:22-bookworm-slim AS gateway
 WORKDIR /opt/lazyedit

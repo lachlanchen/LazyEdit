@@ -2,12 +2,13 @@ import { AuthStore, secret, digest, fail } from '../studio/auth.mjs';
 
 // This registry contains account routing, never media or platform credentials.
 export class Registry extends AuthStore {
-  constructor(path, domain, capacity = 3) {
+  constructor(path, domain, capacity = 3, sameHost = false) {
     super(path);
     this.db.exec('PRAGMA busy_timeout=5000');
     if (!/^[a-z0-9.-]+$/.test(domain) || domain.includes('..')) throw Error('Invalid service domain');
     this.domain = domain;
     this.capacity = capacity;
+    this.sameHost = sameHost;
     this.db.exec(`
       CREATE TABLE IF NOT EXISTS invitations(hash TEXT PRIMARY KEY, expires INTEGER, used INTEGER DEFAULT 0);
       CREATE TABLE IF NOT EXISTS workspaces(
@@ -40,7 +41,7 @@ export class Registry extends AuthStore {
     } catch (e) { this.db.exec('ROLLBACK'); throw e; }
   }
   workspace(owner) { return this.db.prepare('SELECT * FROM workspaces WHERE owner=?').get(owner); }
-  host(row) { return `w-${row.id}.${this.domain}`; }
+  host(row) { return this.sameHost ? this.domain : `w-${row.id}.${this.domain}`; }
   route(host) {
     const suffix = `.${this.domain}`;
     if (!host.startsWith('w-') || !host.endsWith(suffix)) return null;

@@ -2,6 +2,7 @@ import http from 'node:http';
 import { readFileSync } from 'node:fs';
 import { pipeline } from 'node:stream';
 import { isIP } from 'node:net';
+import { forward } from '../hosted/proxy.mjs';
 
 export function json(res,status,value,headers={}) {
   const body=Buffer.from(JSON.stringify(value));res.writeHead(status,{'content-type':'application/json; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff','content-length':body.length,...headers});res.end(body);
@@ -35,7 +36,7 @@ export function proxy(req,res,{port,path,headers={},max=268435456}) {
 }
 export function startEdge(config) {
   const token=readFileSync(config.clientTokenFile,'utf8').trim();
-  return http.createServer((req,res)=>{
+  const server=http.createServer((req,res)=>{
     if(req.headers.host!==config.host && req.headers.host!==`${config.host}:443`){json(res,421,{error:'Unknown host'});return;}
     if(!validPath(req.url)){json(res,400,{error:'Invalid path'});return;}
     // Strip all caller-supplied internal identity/path headers. Only the worker authenticates the user's credential.
@@ -45,4 +46,13 @@ export function startEdge(config) {
     if(!isIP(peer)){json(res,400,{error:'Ingress identity unavailable'});return;}
     proxy(req,res,{port:config.gatewayPort,path:'/studio/bridge',headers:{host:config.host,'x-studio-path':req.url,'x-studio-access':String(req.headers.authorization||''),'x-studio-client':peer,authorization:`Bearer ${token}`}});
   });
+  server.on('upgrade',(req,socket,head)=>{
+    if(req.headers.host!==config.host||req.method!=='GET'||!validPath(req.url)||
+      !/^\/platforms\/desktop\/websockify(?:\?.*)?$/.test(req.url)||
+      req.headers.origin!==`https://${config.host}`||!isIP(String(req.headers['x-studio-peer']||''))){socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n');return;}
+    forward(req,socket,{hostname:'127.0.0.1',port:config.gatewayPort,path:'/studio/bridge',head,headers:{host:config.host,
+      'x-studio-path':req.url,'x-studio-access':String(req.headers.authorization||''),
+      'x-studio-client':String(req.headers['x-studio-peer']),authorization:`Bearer ${token}`}});
+  });
+  return server;
 }

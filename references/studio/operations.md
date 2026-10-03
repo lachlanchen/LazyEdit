@@ -1,8 +1,11 @@
 # Operating the private Studio pilot
 
-Read README.md and the LightMind handoff before extending the routes. The pilot
-has one owner. It is not a multi-user hosted editing business or a replacement
-for LazyTunnel. Public URL: https://edit.lazying.art.
+Read README.md and the LightMind handoff before extending the routes. The
+original account still has one owner. Separate invite-only Docker workspaces
+are now available at `/accounts` on the same domain through LazyEdge. Read the
+[hosted deployment handoff](../2026-10-03-edit-lazyedge-hosted-deployment.md)
+before promoting adapter or gateway code. This does not replace LazyTunnel.
+Public URL: https://edit.lazying.art.
 
 ## Source and runtime
 
@@ -51,6 +54,8 @@ The deployment manifest is committed; machine-specific rendered scripts and
 prior-state rollback remain in the private operational handoff.
 
 For adapter-only changes, prefer `python scripts/studio/promote_worker.py`.
+When `hostedIngressSecretFile` is configured, use `promote_hosted.py --state
+STATE_DIR` instead; the owner-only helpers refuse to remove the hosted router.
 It keeps the current web assets and only stages adapter modules, worker config
 and worker unit. It does not bootstrap accounts or rewrite guard/tunnel units.
 Run `node --test studio/test.mjs studio/*.test.mjs` before staging; then activate

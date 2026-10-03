@@ -1,5 +1,6 @@
 const $=id=>document.getElementById(id);
-async function api(path,data){const r=await fetch(path,data?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)}:{});const d=await r.json();if(!r.ok)throw Error(d.error);return d;}
+const base=location.pathname.startsWith('/accounts')?'/accounts':'';
+async function api(path,data){const r=await fetch(base+path,data?{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(data)}:{});const d=await r.json();if(!r.ok)throw Error(d.error);return d;}
 async function refresh(){try{const d=await api('/account');$('login').hidden=true;$('signup').hidden=true;$('account').hidden=false;const messages={ready:'Your Studio is ready',pending:'Preparing your private workspace',provisioning:'Preparing your private workspace',failed:'Workspace could not start. Please contact the administrator.',suspended:'Workspace paused. Please contact the administrator.'};$('who').textContent=`${d.username} · ${messages[d.status]||'Workspace unavailable'}`;$('enter').disabled=d.status!=='ready';if(d.status!=='ready')setTimeout(refresh,d.status==='failed'||d.status==='suspended'?30000:5000);}catch{}}
 for(const id of ['login','register'])$(id).onsubmit=async e=>{e.preventDefault();try{await api('/'+id,Object.fromEntries(new FormData(e.target)));e.target.reset();$('status').textContent='';await refresh();}catch(e){$('status').textContent=e.message;}};
 $('enter').onclick=async()=>{try{location.assign((await api('/enter',{})).url);}catch(e){$('status').textContent=e.message;}};

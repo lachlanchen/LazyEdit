@@ -5,8 +5,9 @@ workspace for each user. Browser profiles, media, settings and queues persist
 in that user's volumes. No Pi is required for this deployment.
 
 Read the complete [setup, security and operations guide](../../references/2026-10-03-hosted-multiuser-docker.md)
-before starting it. The deployment is separate from the existing live owner
-Studio/Pi and does not import their accounts or secrets.
+before starting it. The workspaces are separate from the live owner Studio/Pi.
+The same-host deployment is live at https://edit.lazying.art/accounts through
+the existing LazyEdge route; the original account stays at the usual Studio URL.
 
 Images built from this directory's Dockerfile:
 

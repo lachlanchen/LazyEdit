@@ -1,0 +1,21 @@
+# Apply only this site's settings to the existing shared ingress. Never replace
+# its whole Caddyfile or change DNS, ports, certificates or firewall rules.
+edit.lazying.art {
+    encode zstd gzip
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy same-origin
+        Strict-Transport-Security "max-age=31536000"
+    }
+    @studioDesktop path /platforms/desktop/*
+    @studioNotDesktop not path /platforms/desktop/*
+    header @studioDesktop X-Frame-Options SAMEORIGIN
+    header @studioNotDesktop X-Frame-Options DENY
+    reverse_proxy 127.0.0.1:18794 {
+        header_up Host edit.lazying.art
+        header_up X-Studio-Peer {remote_host}
+        transport http {
+            read_timeout 900s
+        }
+    }
+}

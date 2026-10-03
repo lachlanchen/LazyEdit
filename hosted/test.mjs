@@ -7,6 +7,9 @@ import { join } from 'node:path';
 import { createGateway } from './gateway.mjs';
 import { createCell } from './cell.mjs';
 import { workspaceCompose } from './compose.mjs';
+import { createIngress } from './ingress.mjs';
+import { attachDesktopUpgrade } from './desktop-upgrade.mjs';
+import { startEdge } from '../studio/transport.mjs';
 
 const listen=s=>new Promise(r=>{s.testSockets=new Set();s.on('connection',socket=>{s.testSockets.add(socket);socket.on('close',()=>s.testSockets.delete(socket));});s.listen(0,'127.0.0.1',r);});
 function request(port,host,path,body,cookie,extra={}){
@@ -89,4 +92,59 @@ test('workspace template has private volumes, loopback services and bounded reso
   assert.equal(a.services.worker.privileged,undefined);assert.equal(a.services.worker.user,'1000:1000');
   assert.equal(a.services.worker.environment.LAZYEDIT_BIND,'127.0.0.1');assert.equal(a.networks.private.internal,true);
   assert.ok(!JSON.stringify(a).includes('docker.sock'));assert.throws(()=>workspaceCompose({id:'../../evil'},{},'/x'));
+});
+
+test('same domain preserves owner routes and isolates invite sessions and desktop relay',async t=>{
+  const dir=mkdtempSync(join(tmpdir(),'studio-samehost-')),servers=[],cells=[],ports=new Map(),host='edit.test';
+  const secretPath=join(dir,'upstream'),gatewayPath=join(dir,'gateway'),facadePath=join(dir,'facade');
+  writeFileSync(secretPath,'test-upstream-capability');writeFileSync(gatewayPath,'test-gateway-capability');writeFileSync(facadePath,'test-facade-capability');
+  const gateway=createGateway({database:join(dir,'registry.sqlite'),domain:host,sameHost:true,ingressSecretFile:gatewayPath,
+    workerHost:()=> '127.0.0.1',workerPort:w=>ports.get(w.id)});
+  await listen(gateway.server);servers.push(gateway.server);
+  const ingress=createIngress({host,database:join(dir,'owner.sqlite'),upstreamSecretFile:secretPath,hostedIngressSecretFile:gatewayPath,
+    hostedPort:gateway.server.address().port,dataRoot:dir,webRoot:join(dir,'missing'),staticRoot:dir});
+  await listen(ingress.server);servers.push(ingress.server);
+  t.after(()=>{for(const s of servers){for(const socket of s.testSockets)socket.destroy();s.closeAllConnections();s.close();}for(const c of cells)c.auth.db.close();gateway.registry.db.close();rmSync(dir,{recursive:true,force:true});});
+  const guard=http.createServer();attachDesktopUpgrade(guard,{host,target:`http://127.0.0.1:${ingress.server.address().port}`,
+    authorize:r=>r.headers['x-studio-access']!=='bad',headers:{authorization:'Bearer test-upstream-capability'}});
+  await listen(guard);servers.push(guard);
+  // HTTP requests retain the same bridge capabilities as the production guard.
+  guard.on('request',(req,res)=>{req.headers.authorization='Bearer test-upstream-capability';ingress.server.emit('request',req,res);});
+  const facade=startEdge({host,clientTokenFile:facadePath,gatewayPort:guard.address().port});await listen(facade);servers.push(facade);
+  const port=facade.address().port;
+  const pub=(path,body,cookie,extra={})=>request(port,host,path,body,cookie,{'x-studio-peer':'127.0.0.1',...extra});
+  assert.equal((await pub('/api/videos')).status,401,'legacy anonymous denial survives');
+  assert.equal((await request(gateway.server.address().port,host,'/accounts')).status,401,'gateway requires ingress capability');
+  const users=[];
+  for(const name of ['alice','bravo']){
+    const reg=await pub('/accounts/register',{username:name,password:'test-only-long-password',invitation:gateway.registry.invite()});assert.equal(reg.status,200);
+    const w=gateway.registry.workspace(gateway.registry.login(name,'test-only-long-password',name));
+    const backend=http.createServer((req,res)=>{res.setHeader('content-type','application/json');res.end(JSON.stringify({videos:[{id:1,title:name}]}));});await listen(backend);servers.push(backend);
+    const desktop=http.createServer((req,res)=>res.end(name));desktop.on('upgrade',(req,s)=>s.write('HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\n\r\n'));await listen(desktop);servers.push(desktop);
+    const key=join(dir,name+'.key');writeFileSync(key,w.transport);
+    const cell=createCell({host,database:join(dir,name+'.sqlite'),upstreamSecretFile:key,dataRoot:dir,backendPort:backend.address().port,desktopPort:desktop.address().port,webRoot:dir,staticRoot:dir},
+      {...w,username:name,password:gateway.registry.db.prepare('SELECT password FROM users WHERE id=?').get(w.owner).password});
+    await listen(cell.server);servers.push(cell.server);cells.push(cell);ports.set(w.id,cell.server.address().port);
+    gateway.registry.db.prepare("UPDATE workspaces SET status='ready' WHERE id=?").run(w.id);
+    const entry=await pub('/accounts/enter',{},reg.cookie),url=new URL(entry.data.url);
+    const signed=await pub(url.pathname+url.search,undefined,reg.cookie);assert.equal(signed.status,303);
+    const cookie=reg.cookie+'; '+signed.cookie;
+    assert.equal((await pub('/api/videos',undefined,cookie)).data.videos[0].title,name);
+    assert.equal((await pub('/platforms/desktop/vnc.html',undefined,cookie)).data,name);
+    const token=cell.auth.issue(w.owner,['media.read'],'test API');
+    assert.equal((await pub(`/workspaces/${w.id}/v1/studio/account`,undefined,undefined,{authorization:`Bearer ${token.access_token}`})).data.subject,w.owner);
+    const linked=await pub(`/workspaces/${w.id}/auth/login`,{username:name,password:'test-only-long-password',mode:'token',scopes:['media.read']});
+    assert.equal(linked.status,200);
+    assert.equal((await pub(`/workspaces/${w.id}/v1/studio/account`,undefined,undefined,{authorization:`Bearer ${linked.data.access_token}`})).data.subject,w.owner);
+    assert.equal((await pub(`/workspaces/${w.id}/api/videos`)).status,401);
+    users.push({cookie,w});
+  }
+  assert.equal((await pub(`/workspaces/${users[1].w.id}/api/videos`,undefined,users[0].cookie,{authorization:'Bearer bad'})).status,403);
+  assert.equal((await pub('/api/videos',undefined,'__Host-hosted=expired')).status,401,'expired hosted cookie never falls through to owner');
+  // Full facade → guarded upgrade → ingress → gateway → private desktop.
+  const ws=http.request({host:'127.0.0.1',port,path:'/platforms/desktop/websockify',headers:{host,origin:`https://${host}`,cookie:users[0].cookie,
+    'x-studio-peer':'127.0.0.1',connection:'Upgrade',upgrade:'websocket','sec-websocket-key':'dGhlIHNhbXBsZSBub25jZQ==','sec-websocket-version':'13'}});
+  const code=await new Promise((resolve,reject)=>{ws.on('upgrade',(r,s)=>{s.destroy();resolve(r.statusCode);});ws.on('response',r=>{r.resume();resolve(r.statusCode);});ws.on('error',reject);ws.end();});assert.equal(code,101);
+  assert.equal((await pub('/auth/logout',{},users[0].cookie)).status,200);
+  assert.equal((await pub('/api/videos',undefined,users[0].cookie)).status,401);
 });

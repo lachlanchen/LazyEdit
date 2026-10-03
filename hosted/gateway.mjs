@@ -1,56 +1,82 @@
 import http from 'node:http';
 import { readFileSync } from 'node:fs';
+import { timingSafeEqual } from 'node:crypto';
 import { Registry } from './store.mjs';
 import { fail } from '../studio/auth.mjs';
 import { validPath, json, readJSON } from '../studio/transport.mjs';
 import { forward } from './proxy.mjs';
 
 export function createGateway(config) {
-  const registry = new Registry(config.database, config.domain, config.capacity || 3);
+  const registry = new Registry(config.database, config.domain, config.capacity || 3, config.sameHost);
   const origin = `https://${config.domain}`;
+  const internal = config.ingressSecretFile && readFileSync(config.ingressSecretFile,'utf8').trim();
+  const prefix = config.sameHost ? '/accounts' : '';
+  const hostedCookie = req => (req.headers.cookie || '').split(';').map(x=>x.trim()).find(x=>x.startsWith('__Host-hosted='))?.slice(14);
   function principal(req) {
-    const token = (req.headers.cookie || '').split(';').map(x=>x.trim()).find(x=>x.startsWith('__Host-hosted='))?.slice(14);
-    return registry.principal(token);
+    return registry.principal(hostedCookie(req));
   }
   function session(res, owner) {
     const t = registry.issue(owner, undefined, 'Hosted Studio', 'browser');
     json(res,200,{ok:true},{'set-cookie':`__Host-hosted=${t.access_token}; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=43200`});
   }
   async function route(req, res, head) {
+    if(internal){const supplied=Buffer.from(req.headers.authorization||''),expected=Buffer.from(`Bearer ${internal}`);if(supplied.length!==expected.length||!timingSafeEqual(supplied,expected))fail(401,'Invalid ingress');}
     if (!validPath(req.url)) fail(400,'Invalid path');
     const host = String(req.headers.host || '').toLowerCase().replace(/:443$/, '');
-    const w = registry.route(host);
+    const access = internal ? String(req.headers['x-studio-access']||'') : String(req.headers.authorization||'');
+    let raw=req.url, w=registry.route(host);
+    if(config.sameHost){
+      if(host!==config.domain)fail(404,'Workspace unavailable');
+      const explicit=/^\/workspaces\/([a-f0-9]{24})(\/.*)$/.exec(raw);
+      if(explicit){
+        w=registry.db.prepare("SELECT * FROM workspaces WHERE id=? AND status='ready'").get(explicit[1]);raw=explicit[2];
+        if(!w)fail(404,'Workspace unavailable');
+        if(hostedCookie(req)&&principal(req).owner!==w.owner)fail(403,'Wrong workspace');
+        const bootstrap=req.method==='POST'&&['/auth/login','/auth/token','/auth/device'].includes(raw.split('?')[0]);
+        if(!access&&!bootstrap)fail(401,'Workspace API token required');
+      }else if(!(raw.split('?')[0]===prefix||raw.startsWith(prefix+'/'))){
+        w=registry.workspace(principal(req).owner);
+        if(w?.status!=='ready')fail(409,'Workspace unavailable');
+      }
+    }
     if (w) {
-      const headers = {host,'x-studio-path':req.url,'x-studio-access':req.headers.authorization || '',
-        'x-studio-client':req.socket.remoteAddress, authorization:`Bearer ${w.transport}`};
-      if (req.url.startsWith('/hosted-entry?')) {
-        if (head !== undefined || req.method !== 'GET' || !registry.consume(new URL(req.url,origin).searchParams.get('ticket'),w.id)) fail(401,'Entry link expired; return to the account page');
+      const headers = {host,'x-studio-path':raw,'x-studio-access':access,
+        'x-studio-client':internal?req.headers['x-studio-client']:req.socket.remoteAddress, authorization:`Bearer ${w.transport}`};
+      if (raw.startsWith('/hosted-entry?')) {
+        if (head !== undefined || req.method !== 'GET' || !registry.consume(new URL(raw,origin).searchParams.get('ticket'),w.id)) fail(401,'Entry link expired; return to the account page');
         headers['x-hosted-owner'] = w.owner;
       }
-      forward(req,res,{hostname:config.workerHost?.(w) || `le-${w.id}-worker`,port:config.workerPort || 18080,path:'/studio/bridge',headers,head});return;
+      // In same-host mode signing out must also stop routing to this workspace.
+      if(config.sameHost&&raw==='/auth/logout'&&req.method==='POST'&&hostedCookie(req)&&!access){
+        if(req.headers.origin!==origin)fail(403,'Same-origin request required');
+        const p=principal(req);registry.revoke(p.owner,p.id);
+        return json(res,200,{ok:true},{'set-cookie':['__Host-hosted=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0','__Host-studio=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0']});
+      }
+      forward(req,res,{hostname:config.workerHost?.(w) || `le-${w.id}-worker`,port:typeof config.workerPort==='function'?config.workerPort(w):config.workerPort || 18080,path:'/studio/bridge',headers,head});return;
     }
     if (host !== config.domain) fail(404,'Workspace unavailable');
     if (head !== undefined) fail(404,'WebSocket unavailable');
     if (req.method === 'POST' && req.headers.origin !== origin) fail(403,'Same-origin request required');
-    const path = req.url.split('?')[0];
+    const path = req.url.split('?')[0].slice(prefix.length)||'/';
+    const client=internal?req.headers['x-studio-client']:req.socket.remoteAddress;
     if (req.method==='GET' && path==='/healthz') return json(res,200,{status:'ok'});
     if (req.method==='GET' && (path==='/' || path==='/index.js')) {
       res.writeHead(200,{'content-type':path==='/'?'text/html; charset=utf-8':'text/javascript',
         'content-security-policy':"default-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
         'cache-control':'no-store','referrer-policy':'no-referrer'});
-      res.end(readFileSync(new URL(path==='/'?'./web/index.html':'./web/index.js',import.meta.url)));return;
+      res.end(readFileSync(new URL(path==='/'?'./web/index.html':'./web/index.js',import.meta.url),'utf8').replaceAll('"/index.js"',`"${prefix}/index.js"`));return;
     }
-    if (req.method==='POST' && path==='/register') return session(res,registry.register(await readJSON(req,4096),req.socket.remoteAddress));
+    if (req.method==='POST' && path==='/register') return session(res,registry.register(await readJSON(req,4096),client));
     if (req.method==='POST' && path==='/login') {
-      const d=await readJSON(req,4096);return session(res,registry.login(String(d.username||''),String(d.password||''),req.socket.remoteAddress));
+      const d=await readJSON(req,4096);return session(res,registry.login(String(d.username||''),String(d.password||''),client));
     }
     const p = principal(req);
     if (req.method==='GET' && path==='/account') {
-      const w=registry.workspace(p.owner);return json(res,200,{username:registry.db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,status:w.status,workspace:`https://${registry.host(w)}`});
+      const w=registry.workspace(p.owner);return json(res,200,{username:registry.db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,status:w.status,workspace:`https://${registry.host(w)}`,apiBase:`https://${registry.host(w)}${config.sameHost?'/workspaces/'+w.id:''}`});
     }
     if (req.method==='POST' && path==='/enter') return json(res,200,{url:registry.enter(p.owner)});
     if (req.method==='POST' && path==='/logout') {
-      registry.revoke(p.owner,p.id);return json(res,200,{ok:true},{'set-cookie':'__Host-hosted=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0'});
+      registry.revoke(p.owner,p.id);return json(res,200,{ok:true},{'set-cookie':['__Host-hosted=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0','__Host-studio=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0']});
     }
     fail(404,'Not found');
   }

@@ -14,6 +14,8 @@ root = Path(__file__).resolve().parents[2]
 private = Path.home() / '.config/lazyedit-studio'
 config_path = private / 'worker.json'
 config = json.loads(config_path.read_text())
+if config.get('hostedIngressSecretFile'):
+    raise SystemExit('Hosted routing is active. Use promote_hosted.py --state STATE_DIR; do not remove the hosted ingress.')
 old_release = Path(config['webRoot']).parent.parent
 release_root = old_release.parent
 unit = Path.home() / '.config/systemd/user/lazyedit-studio-worker.service'
