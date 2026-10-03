@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8787';
 
 type TranscriptionDetail = {
   id: number;

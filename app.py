@@ -109,6 +109,7 @@ from lazyedit.portrait_blurfill import (
     sanitize_portrait_blurfill,
 )
 from lazyedit.publish_categories import apply_publish_category
+from lazyedit.local_delivery import local_package_params
 from lazyedit.autopublish_attention import (
     find_remote_attention_artifact,
     same_origin_attention_url,
@@ -6065,14 +6066,21 @@ def _post_publish_zip(zip_path: str, platform_flags: dict[str, bool], test_mode:
         "test": str(test_mode).lower(),
     }
 
-    with open(zip_path, "rb") as handle:
+    local_delivery = local_package_params(zip_path, autopublish_url)
+    if local_delivery:
         response = requests.post(
-            autopublish_url,
-            params=params,
-            data=handle,
-            headers={"Content-Type": "application/octet-stream"},
-            timeout=(10, AUTOPUBLISH_TIMEOUT),
+            autopublish_url, params={**params, **local_delivery},
+            data=b'', timeout=(10, AUTOPUBLISH_TIMEOUT),
         )
+    else:
+        with open(zip_path, "rb") as handle:
+            response = requests.post(
+                autopublish_url,
+                params=params,
+                data=handle,
+                headers={"Content-Type": "application/octet-stream"},
+                timeout=(10, AUTOPUBLISH_TIMEOUT),
+            )
     try:
         payload = response.json()
     except Exception:
@@ -13157,9 +13165,10 @@ if __name__ == "__main__":
     upload_folder = UPLOAD_FOLDER
     app = make_app(upload_folder)
     port = PORT
-    app.listen(port, max_body_size=10*1024 * 1024 * 1024)
+    app.listen(port, address=os.getenv('LAZYEDIT_BIND', ''), max_body_size=10*1024 * 1024 * 1024)
     print(f"LazyEdit backend listening on port {port}")
-    tornado.autoreload.start()
+    if os.getenv('LAZYEDIT_AUTORELOAD', '1') == '1':
+        tornado.autoreload.start()
     # tornado.autoreload.watch('path/to/config.yaml')
     # tornado.autoreload.watch('path/to/static/file.html')
     tornado.ioloop.IOLoop.current().start()

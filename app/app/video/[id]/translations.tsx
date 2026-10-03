@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator, Modal, ScrollView, StyleSheet, Switch, Text, TextInput, View, Pressable } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8787';
 
 type TranslationDetail = {
   id: number;

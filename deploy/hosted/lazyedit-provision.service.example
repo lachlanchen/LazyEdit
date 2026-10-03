@@ -1,0 +1,11 @@
+[Unit]
+Description=Provision pending LazyEdit workspaces
+After=docker.service
+
+[Service]
+Type=oneshot
+User=CHANGE_TO_OPERATOR
+WorkingDirectory=/ABSOLUTE/PATH/TO/lazyedit
+ExecStart=/ABSOLUTE/PATH/TO/node hosted/admin.mjs provision /ABSOLUTE/PRIVATE/STATE
+UMask=0077
+# This operator needs Docker access. The public gateway does not get Docker access.

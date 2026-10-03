@@ -16,7 +16,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8787';
 
 type StepKey =
   | 'keyframes'

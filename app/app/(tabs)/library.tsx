@@ -6,7 +6,7 @@ import { useRouter } from 'expo-router';
 import { useI18n } from '@/components/I18nProvider';
 import { subscribeStudioRefresh, triggerStudioRefresh } from '@/lib/studioRefresh';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8787';
 const PAGE_SIZE = 12;
 
 type Video = {

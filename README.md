@@ -47,6 +47,11 @@ LazyEdit is an end-to-end AI-assisted video workflow for creation, processing, a
 | 🎯 Primary references | `README.md`, `references/QUICKSTART.md`, `references/API_GUIDE.md`, `references/APP_GUIDE.md` |
 | 🛠️ Ops references | `references/DEPLOYMENT_SYSTEMS.md`, `references/TMUX_SESSIONS.md`, `references/LAZYEDIT_DATABASE_SPLIT_FROM_ECHOMIND.md`, `references/LOCAL_DNS_HOST_CACHE.md`, `references/XIAOHONGSHU_AUTOPUBLISH_LAYOUT_CHANGE_2026_03.md` |
 
+For an invite-only service with private per-user browser logins, see the
+[Docker hosting guide](references/2026-10-03-hosted-multiuser-docker.md).
+It combines Studio and AutoPublish in isolated workspaces and leaves the
+existing owner/Pi installation separate.
+
 ## 🧭 Contents
 
 - [Overview](#overview)

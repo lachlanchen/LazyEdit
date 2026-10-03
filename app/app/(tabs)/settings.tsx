@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 
 import { useI18n } from '@/components/I18nProvider';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8787';
 
 type AiProvider = 'deepseek' | 'openai';
 

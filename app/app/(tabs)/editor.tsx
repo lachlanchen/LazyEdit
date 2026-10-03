@@ -20,7 +20,7 @@ import {
 import { useI18n } from '@/components/I18nProvider';
 import { subscribeStudioRefresh, triggerStudioRefresh } from '@/lib/studioRefresh';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8787';
 const PAGE_SIZE = 8;
 const PROCESS_READY_TIMEOUT_MS = 90 * 60 * 1000;
 const AVAILABLE_TRANSLATION_LANGUAGES = ['ja', 'en', 'zh-Hant', 'fr'];

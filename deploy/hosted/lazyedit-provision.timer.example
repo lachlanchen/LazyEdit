@@ -1,0 +1,8 @@
+[Unit]
+Description=Check for newly registered LazyEdit workspaces
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=30s
+Unit=lazyedit-provision.service
+[Install]
+WantedBy=timers.target

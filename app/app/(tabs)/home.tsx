@@ -22,7 +22,7 @@ import VeniceA2EPanel from '@/components/VeniceA2EPanel';
 import { subscribeStudioRefresh, triggerStudioRefresh } from '@/lib/studioRefresh';
 import { uploadRemoteVideo } from '@/lib/remoteStudioUpload';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8787';
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8787';
 
 const formatBytes = (bytes?: number | null) => {
   if (bytes === undefined || bytes === null) return 'Unknown size';

@@ -730,10 +730,13 @@ def post_music_package_to_autopublish(
         'publish_bandcamp_music': str(bool(publish_bandcamp_music)).lower(),
         'test': str(bool(test)).lower(),
     }
+    from lazyedit.local_delivery import local_package_params
+    local_delivery = local_package_params(zip_file, autopublish_url)
+    params.update(local_delivery)
     endpoint = f"{autopublish_url}?{urlencode(params)}"
     request = Request(
         endpoint,
-        data=zip_file.read_bytes(),
+        data=b'' if local_delivery else zip_file.read_bytes(),
         method="POST",
         headers={"Content-Type": "application/octet-stream"},
     )
