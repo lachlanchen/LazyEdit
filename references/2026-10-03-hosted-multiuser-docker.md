@@ -9,6 +9,10 @@ Only Studio's ingress adapters changed; the original backend was not restarted.
 See the [public deployment and rollback handoff](2026-10-03-edit-lazyedge-hosted-deployment.md)
 for the current routing, API bases, private state and acceptance results.
 
+The existing owner can also be linked as administrator, create invitations and
+switch to a private Docker workspace without moving the Pi pipeline. See the
+[native account and invitation guide](studio/2026-10-03-native-hosted-accounts.md).
+
 ## User experience
 
 1. Open the service domain and redeem a one-use invitation. Choose a username

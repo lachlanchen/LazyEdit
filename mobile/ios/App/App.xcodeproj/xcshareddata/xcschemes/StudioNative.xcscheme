@@ -26,7 +26,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
+      shouldUseLaunchSchemeArgsEnv = "NO">
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
@@ -48,6 +48,9 @@
             </BuildableReference>
          </TestableReference>
       </Testables>
+      <EnvironmentVariables>
+         <EnvironmentVariable key="STUDIO_TEST_CREDENTIALS" value="$(STUDIO_TEST_CREDENTIALS)" isEnabled="YES"/>
+      </EnvironmentVariables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

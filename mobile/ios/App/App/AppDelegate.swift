@@ -1,14 +1,25 @@
 import UIKit
-import Capacitor
+import UserNotifications
+
+extension Notification.Name { static let studioLoginAttention = Notification.Name("studioLoginAttention") }
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        UNUserNotificationCenter.current().delegate = self
         return true
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound])
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        DispatchQueue.main.async { NotificationCenter.default.post(name: .studioLoginAttention, object: nil, userInfo: response.notification.request.content.userInfo) }
+        completionHandler()
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

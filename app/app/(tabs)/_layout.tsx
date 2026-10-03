@@ -1,3 +1,4 @@
+import { studioStorage } from '@/lib/studioStorage';
 import React, { useEffect } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Link, Tabs, usePathname, useRouter } from 'expo-router';
@@ -26,12 +27,17 @@ export default function TabLayout() {
   const { t } = useI18n();
   const { width } = useWindowDimensions();
   const compactRemote = process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1' && width < 600;
+  const publicationOnly = process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1';
+
+  useEffect(() => {
+    if (publicationOnly && pathname === '/settings') router.replace('/home');
+  }, [publicationOnly, pathname, router]);
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
     if (!pathname) return;
     try {
-      localStorage.setItem('lazyedit:lastTab', pathname);
+      studioStorage.setItem('lazyedit:lastTab', pathname);
     } catch (_err) {
       // ignore storage errors
     }
@@ -41,8 +47,8 @@ export default function TabLayout() {
     if (Platform.OS !== 'web') return;
     try {
       if (pathname !== '/' && pathname !== '') return;
-      const saved = localStorage.getItem('lazyedit:lastTab');
-      if (saved && saved !== pathname) {
+      const saved = studioStorage.getItem('lazyedit:lastTab');
+      if (saved && saved !== pathname && (!publicationOnly || ['/home', '/library', '/editor'].includes(saved))) {
         router.replace(saved as any);
       }
     } catch (_err) {
@@ -142,6 +148,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
+          href: publicationOnly ? null : '/settings',
           title: t('tab_settings'),
           tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
         }}

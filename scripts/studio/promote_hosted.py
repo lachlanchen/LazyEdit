@@ -12,6 +12,7 @@ import tempfile
 os.umask(0o077)
 p = argparse.ArgumentParser()
 p.add_argument('--state', required=True)
+p.add_argument('--admin-user', help='Existing owner allowed to manage invitations and switch workspaces')
 a = p.parse_args()
 root = Path(__file__).resolve().parents[2]
 private = Path.home() / '.config/lazyedit-studio'
@@ -23,7 +24,9 @@ if not (state / 'registry/ingress.secret').is_file():
     raise SystemExit('Initialize the private same-host registry first')
 digest = hashlib.sha256()
 for directory in ('studio', 'hosted'):
-    for source in sorted((root / directory).glob('*.mjs')):
+    for source in sorted((root / directory).rglob('*')):
+        if not source.is_file() or 'node_modules' in source.parts or source.suffix not in {'.mjs', '.js', '.html', '.css', '.py', '.json'} or source.name.endswith('.test.mjs') or source.name == 'test.mjs':
+            continue
         digest.update(source.relative_to(root).as_posix().encode())
         digest.update(source.read_bytes())
 revision = digest.hexdigest()[:12]
@@ -37,6 +40,8 @@ with tempfile.TemporaryDirectory(dir=old_release.parent, prefix='hosted-stage-')
                     ignore=shutil.ignore_patterns('*.test.mjs', 'test.mjs'))
     for source in (root / 'studio').glob('*.mjs'):
         shutil.copy2(source, staged / 'studio' / source.name)
+    shutil.copytree(root / 'studio/web', staged / 'studio/web', dirs_exist_ok=True)
+    shutil.copytree(root / 'studio/locales', staged / 'studio/locales', dirs_exist_ok=True)
     staged.rename(release)
 backup = private / 'rollbacks' / ('hosted-' + revision)
 backup.mkdir(parents=True)
@@ -47,6 +52,10 @@ shutil.copy2(config_path, backup / 'worker.json')
 config.update(hostedIngressSecretFile=str(state / 'registry/ingress.secret'),
               python=sys.executable, sourceRoot=str(root),
               webRoot=str(release / 'studio/web'), staticRoot=str(release / 'webdist'))
+if a.admin_user:
+    if not a.admin_user.replace('-', '').replace('_', '').isalnum():
+        raise SystemExit('Invalid administrator username')
+    config['hostedAdminUsername'] = a.admin_user
 config_path.write_text(json.dumps(config, indent=2))
 worker = units / 'lazyedit-studio-worker.service'
 text = worker.read_text()

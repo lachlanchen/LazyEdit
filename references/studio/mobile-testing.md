@@ -1,7 +1,7 @@
 # LazyEdit native beta builds
 
 Application identifier: **art.lazying.lazyedit** on both platforms.
-Version 1.0: iOS build 5, Android build 3. Read store/studio/release.json for hashes and receipts;
+Version 1.0: see `store/studio/release.json` for the latest provider-confirmed builds. Read store/studio/release.json for hashes and receipts;
 a compiled binary, upload receipt, tester assignment and installation are
 different states. No public production submission was made.
 
@@ -11,6 +11,15 @@ this iOS release does not change Android.
 [Android test opt-in](https://play.google.com/apps/internaltest/4700083281147641073).
 For iOS, open the Apple TestFlight invitation on the owner account; no public
 join URL exists for this internal group.
+
+## Native account beta
+
+iOS build 6 and Android build 4 introduce native private-workspace login,
+administrator invitations and Pi/Docker mode switching. Android now uses native
+views for its primary screens; iOS retains SwiftUI. The PWA and secondary
+advanced editor remain available. Read the [account guide](2026-10-03-native-hosted-accounts.md).
+Provider delivery is recorded in `store/studio/release.json`; prepared builds
+are not automatically available to testers.
 
 ## Latest icon beta (2026-09-24)
 
@@ -61,7 +70,7 @@ another app's profile, keychain, default Xcode or running simulator.
 Copying/syncing Capacitor source never replaces store application identities.
 iOS build 3 introduces the approved generated ribbon app icon and native SwiftUI
 screens; see [native iOS](2026-09-20-native-ios.md). The existing video watermark
-is independent and remains unchanged. Android/PWA retain their existing icon.
+is independent and remains unchanged. Android/PWA use the same shared current icon.
 
 iOS build 4 adds native preparation/publication choices and reversible library
 removal. See [native publishing](2026-09-21-native-publishing.md) for presets,

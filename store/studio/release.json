@@ -1,34 +1,63 @@
 {
-  "updated": "2026-09-24",
+  "updated": "2026-10-04",
   "app": "LazyEdit Studio",
   "bundleId": "art.lazying.lazyedit",
   "version": "1.0",
   "apple": {
     "appId": "6814061525",
     "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
-    "ipaSha256": "95dc33e67be13aeafc0358a76dc2f2012cbf7ed88f39a0b489103d7eeda06c0b",
-    "deliveryUuid": "1906dc76-56ec-4e79-9eee-199181f20439",
+    "ipaSha256": "b451885e85d4f3c2892a4ee9e7b8eea83d6c7a2f047c22a602a230874f89c631",
+    "deliveryUuid": "f1ab9257-60f0-4aa4-9fad-e197648e2e8f",
     "state": "IN_BETA_TESTING",
-    "buildId": "1906dc76-56ec-4e79-9eee-199181f20439",
+    "buildId": "f1ab9257-60f0-4aa4-9fad-e197648e2e8f",
     "processingState": "VALID",
     "internalTesters": 1,
     "publicBeta": false,
     "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/testflight",
-    "build": 5,
+    "build": 7,
     "nativeInterface": true,
-    "qa": "Build 5 signed and Apple-validated; refreshed launcher icon. Existing 21 adapter checks and signed simulator UI test passed; physical TestFlight installation not yet verified"
+    "qa": "Native account/invitation/workspace and owner upload/review/removal UI tests passed on dedicated iOS simulator. Private reviewer full preparation verified. Owner reported build 7 works on their phone; dedicated simulator qualification is recorded separately."
   },
   "google": {
     "appId": "4975166991517752718",
     "track": "internal",
     "state": "available_to_internal_testers",
-    "apkSha256": "8350e6a5cb9da728584b4df8570b3f560a514a5ab7ad2f2579d10e02e8848856",
-    "aabSha256": "96090150d067d6c6f5283c44f9e6697107ad49424c4ff89fad15d35d7f666641",
+    "apkSha256": "d82775dde75a2ec738abc795fd4a3bd424f0639709423843a65d51b98a242ba0",
+    "aabSha256": "3128cf5e1a0cf48f10260702a02967f9c7df80cc144dff2e4250eb415927efef",
     "trackState": "Active",
     "internalTesters": 1,
     "optInUrl": "https://play.google.com/apps/internaltest/4700083281147641073",
     "publicProduction": false,
-    "build": 3
+    "build": 4,
+    "nativeInterface": true,
+    "qa": "Two native Android instrumentation tests passed on dedicated Android 14 emulator; signed AAB4 available in internal testing, physical installation not claimed."
   },
-  "sourceCommit": "9170897f9916b959648abe1e8d6c6ed938556857"
+  "sourceNote": "Native release sources and exact provider receipts are recorded by the commit containing this manifest.",
+  "macos": {
+    "build": 7,
+    "architectures": [
+      "x86_64",
+      "arm64"
+    ],
+    "minimumVersion": "12.0",
+    "zipSha256": "41d0062e09d539f0de0f1146720fd55da7fe614b05d2acd826e82e9ec529bc1e",
+    "signature": "ad-hoc local QA; not notarized",
+    "qa": "Universal native Mac Catalyst build and signatures verified. App launched on Monterey 3040 after weak SwiftUICore linking; the preceding build launched on iMac 7050 and Apple Silicon Mac mini. Full Mac UI automation was not qualified because the runner requires TCC authorization."
+  },
+  "downloadPricing": {
+    "apple": {
+      "usd": "0.99",
+      "state": "configured; production not submitted"
+    },
+    "google": {
+      "usd": "0.99",
+      "state": "saved and read back; production not submitted"
+    },
+    "monthlyRequestedUSD": [
+      "2.99",
+      "14.99",
+      "29.89"
+    ],
+    "subscriptionsActive": false
+  }
 }

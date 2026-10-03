@@ -1,0 +1,24 @@
+{
+  "URLBlocklist": ["*"],
+  "URLAllowlist": [
+    "https://channels.weixin.qq.com", "https://mp.weixin.qq.com", "https://open.weixin.qq.com", "https://weixin.qq.com", "https://ssl.ptlogin2.qq.com", "https://xui.ptlogin2.qq.com",
+    "https://www.instagram.com", "https://accountscenter.instagram.com", "https://www.facebook.com/login", "https://www.facebook.com/checkpoint", "https://accountscenter.facebook.com",
+    "https://studio.youtube.com", "https://accounts.google.com", "https://myaccount.google.com", "https://www.youtube.com/signin", "https://www.youtube.com/upload", "https://www.youtube.com/account",
+    "https://creator.douyin.com", "https://sso.douyin.com", "https://www.douyin.com/passport", "https://lf-passport.bytetos.com", "https://verify.snssdk.com", "https://security.snssdk.com", "https://captcha.bytedance.com",
+    "https://creator.xiaohongshu.com", "https://www.xiaohongshu.com/login", "https://customer.xiaohongshu.com",
+    "https://member.bilibili.com", "https://passport.bilibili.com", "https://account.bilibili.com", "https://www.bilibili.com/account", "https://www.geetest.com", "https://gcaptcha4.geetest.com"
+  ],
+  "ExtensionInstallBlocklist": ["*"],
+  "BrowserGuestModeEnabled": false,
+  "BrowserAddPersonEnabled": false,
+  "IncognitoModeAvailability": 1,
+  "DeveloperToolsAvailability": 1,
+  "AllowFileSelectionDialogs": false,
+  "PrintingEnabled": false,
+  "BackgroundModeEnabled": false,
+  "PasswordManagerEnabled": true,
+  "SyncDisabled": true,
+  "BrowserSignin": 0,
+  "DefaultPopupsSetting": 2,
+  "PopupsAllowedForUrls": ["https://channels.weixin.qq.com", "https://studio.youtube.com", "https://creator.douyin.com", "https://creator.xiaohongshu.com", "https://member.bilibili.com", "https://www.instagram.com", "https://accounts.google.com"]
+}

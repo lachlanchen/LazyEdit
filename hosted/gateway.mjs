@@ -13,6 +13,8 @@ export function createGateway(config) {
   const prefix = config.sameHost ? '/accounts' : '';
   const hostedCookie = req => (req.headers.cookie || '').split(';').map(x=>x.trim()).find(x=>x.startsWith('__Host-hosted='))?.slice(14);
   function principal(req) {
+    const owner=internal&&req.headers['x-hosted-admin-owner'];
+    if(!hostedCookie(req)&&owner&&registry.isAdmin(owner))return {owner,kind:'browser'};
     return registry.principal(hostedCookie(req));
   }
   function session(res, owner) {
@@ -60,6 +62,8 @@ export function createGateway(config) {
     const path = req.url.split('?')[0].slice(prefix.length)||'/';
     const client=internal?req.headers['x-studio-client']:req.socket.remoteAddress;
     if (req.method==='GET' && path==='/healthz') return json(res,200,{status:'ok'});
+    if(req.method==='GET'&&path==='/interface.js') {res.writeHead(200,{'content-type':'text/javascript','cache-control':'no-store'});res.end(readFileSync(new URL('../studio/web/interface.js',import.meta.url)));return;}
+    if(req.method==='GET'&&/^\/locales\/(en|zh-Hans|zh-Hant|ja|ko|vi|ar|fr|es|de|ru)\.json$/.test(path)) {res.writeHead(200,{'content-type':'application/json','cache-control':'no-store'});res.end(readFileSync(new URL('../studio'+path,import.meta.url)));return;}
     if (req.method==='GET' && (path==='/' || path==='/index.js')) {
       res.writeHead(200,{'content-type':path==='/'?'text/html; charset=utf-8':'text/javascript',
         'content-security-policy':"default-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
@@ -72,11 +76,19 @@ export function createGateway(config) {
     }
     const p = principal(req);
     if (req.method==='GET' && path==='/account') {
-      const w=registry.workspace(p.owner);return json(res,200,{username:registry.db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,status:w.status,workspace:`https://${registry.host(w)}`,apiBase:`https://${registry.host(w)}${config.sameHost?'/workspaces/'+w.id:''}`});
+      const w=registry.workspace(p.owner);return json(res,200,{subject:p.owner,role:registry.isAdmin(p.owner)?'admin':'member',mode:hostedCookie(req)?'workspace':'owner',username:registry.db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,status:w?.status||'not_created',workspace:w?`https://${registry.host(w)}`:null,apiBase:w?`https://${registry.host(w)}${config.sameHost?'/workspaces/'+w.id:''}`:null});
+    }
+    if(req.method==='POST'&&path==='/invite'){
+      if(!registry.isAdmin(p.owner))fail(403,'Administrator required');
+      registry.throttle(`invite:${p.owner}`);
+      const token=registry.invite();return json(res,201,{url:`${origin}${prefix}?invitation=${token}`,expiresIn:72*3600});
+    }
+    if(req.method==='POST'&&path==='/docker'){
+      registry.ensureWorkspace(p.owner);return session(res,p.owner);
     }
     if (req.method==='POST' && path==='/enter') return json(res,200,{url:registry.enter(p.owner)});
     if (req.method==='POST' && path==='/logout') {
-      registry.revoke(p.owner,p.id);return json(res,200,{ok:true},{'set-cookie':['__Host-hosted=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0','__Host-studio=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0']});
+      if(p.id)registry.revoke(p.owner,p.id);return json(res,200,{ok:true},{'set-cookie':['__Host-hosted=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0','__Host-studio=; Secure; HttpOnly; SameSite=Strict; Path=/; Max-Age=0']});
     }
     fail(404,'Not found');
   }

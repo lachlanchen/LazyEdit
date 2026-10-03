@@ -1,3 +1,4 @@
+import { studioStorage } from '@/lib/studioStorage';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {
@@ -82,6 +83,7 @@ const uploadVideoViaStream = async (
   const directFile = (asset as any).file as File | undefined;
   const blob = directFile || await fetch(asset.uri).then((resp) => resp.blob());
   if (process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1' && Platform.OS === 'web') {
+    if (!blob) throw new Error('Choose a video first.');
     return uploadRemoteVideo(API_URL, blob, asset.name || 'video.mp4');
   }
   const params = new URLSearchParams({
@@ -238,7 +240,7 @@ export default function HomeScreen() {
     if (process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1') return 'upload';
     if (Platform.OS !== 'web') return 'upload';
     try {
-      const saved = localStorage.getItem('lazyedit:homeTab');
+      const saved = studioStorage.getItem('lazyedit:homeTab');
       if (
         saved === 'upload' ||
         saved === 'generate' ||
@@ -1028,7 +1030,7 @@ const HISTORY_KEYS = {
       const loadLocal = (key: string) => {
         if (Platform.OS !== 'web') return [];
         try {
-          const raw = localStorage.getItem(`lazyedit:${key}`);
+          const raw = studioStorage.getItem(`lazyedit:${key}`);
           if (!raw) return [];
           const parsed = JSON.parse(raw);
           return Array.isArray(parsed) ? parsed : [];
@@ -1212,7 +1214,7 @@ const HISTORY_KEYS = {
     }).catch(() => {});
     if (Platform.OS === 'web') {
       try {
-        localStorage.setItem(`lazyedit:${HISTORY_KEYS.wanPrompt}`, JSON.stringify(next));
+        studioStorage.setItem(`lazyedit:${HISTORY_KEYS.wanPrompt}`, JSON.stringify(next));
       } catch (_err) {
         // ignore
       }
@@ -1240,7 +1242,7 @@ const HISTORY_KEYS = {
   useEffect(() => {
     if (Platform.OS !== 'web') return;
     try {
-      localStorage.setItem('lazyedit:homeTab', activeTab);
+      studioStorage.setItem('lazyedit:homeTab', activeTab);
     } catch (_err) {
       // ignore storage errors
     }
@@ -1354,7 +1356,7 @@ const HISTORY_KEYS = {
         }).catch(() => {});
         if (Platform.OS === 'web') {
           try {
-            localStorage.setItem(`lazyedit:${HISTORY_KEYS.spec}`, JSON.stringify(next));
+            studioStorage.setItem(`lazyedit:${HISTORY_KEYS.spec}`, JSON.stringify(next));
           } catch (_err) {
             // ignore
           }
@@ -1370,7 +1372,7 @@ const HISTORY_KEYS = {
         }).catch(() => {});
         if (Platform.OS === 'web') {
           try {
-            localStorage.setItem(`lazyedit:${HISTORY_KEYS.promptText}`, JSON.stringify(nextPromptHistory));
+            studioStorage.setItem(`lazyedit:${HISTORY_KEYS.promptText}`, JSON.stringify(nextPromptHistory));
           } catch (_err) {
             // ignore
           }
@@ -1394,7 +1396,7 @@ const HISTORY_KEYS = {
         }).catch(() => {});
         if (Platform.OS === 'web') {
           try {
-            localStorage.setItem(`lazyedit:${HISTORY_KEYS.promptResult}`, JSON.stringify(nextPromptResultHistory));
+            studioStorage.setItem(`lazyedit:${HISTORY_KEYS.promptResult}`, JSON.stringify(nextPromptResultHistory));
           } catch (_err) {
             // ignore
           }
@@ -1502,7 +1504,7 @@ const HISTORY_KEYS = {
         }).catch(() => {});
         if (Platform.OS === 'web') {
           try {
-            localStorage.setItem(`lazyedit:${HISTORY_KEYS.idea}`, JSON.stringify(nextIdeaHistory));
+            studioStorage.setItem(`lazyedit:${HISTORY_KEYS.idea}`, JSON.stringify(nextIdeaHistory));
           } catch (_err) {
             // ignore
           }
@@ -1518,7 +1520,7 @@ const HISTORY_KEYS = {
         }).catch(() => {});
         if (Platform.OS === 'web') {
           try {
-            localStorage.setItem(`lazyedit:${HISTORY_KEYS.spec}`, JSON.stringify(nextSpecHistory));
+            studioStorage.setItem(`lazyedit:${HISTORY_KEYS.spec}`, JSON.stringify(nextSpecHistory));
           } catch (_err) {
             // ignore
           }
@@ -1734,7 +1736,7 @@ const HISTORY_KEYS = {
               { key: 'wan_26', label: t('home_tab_wan_26') },
               { key: 'api', label: t('home_tab_api') },
               { key: 'remix', label: t('home_tab_remix') },
-            ].filter((tab) => process.env.EXPO_PUBLIC_REMOTE_STUDIO !== '1' || ['upload', 'api'].includes(tab.key)).map((tab) => {
+            ].filter((tab) => process.env.EXPO_PUBLIC_REMOTE_STUDIO !== '1' || tab.key === 'upload').map((tab) => {
               const isActive = activeTab === tab.key;
               return (
                 <Pressable

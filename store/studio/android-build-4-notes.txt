@@ -1,0 +1,4 @@
+Native Android library, upload, preview, publish review and activity screens.
+Invite-only private workspaces alongside the existing Pi workspace.
+Administrator invitations and workspace switching in Account.
+Secure session storage and resumable uploads. The PWA and advanced editor remain available.

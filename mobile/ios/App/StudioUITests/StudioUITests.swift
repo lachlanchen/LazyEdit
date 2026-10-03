@@ -2,6 +2,54 @@ import XCTest
 
 final class StudioUITests: XCTestCase {
     @MainActor
+    func testMacNativeAccount() throws {
+        continueAfterFailure = false
+        let path = ProcessInfo.processInfo.environment["STUDIO_TEST_CREDENTIALS"] ?? ""
+        guard !path.isEmpty else { throw XCTSkip("Set private STUDIO_TEST_CREDENTIALS.") }
+        let credentials = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: URL(fileURLWithPath: path))) as? [String: String])
+        let app = XCUIApplication(); app.launch()
+        if app.secureTextFields["studio.password"].waitForExistence(timeout: 5) {
+            app.textFields["studio.username"].tap()
+            app.textFields["studio.username"].typeText(try XCTUnwrap(credentials["username"]))
+            app.secureTextFields["studio.password"].tap()
+            app.secureTextFields["studio.password"].typeText(try XCTUnwrap(credentials["password"]))
+            app.buttons["studio.signIn"].tap()
+        }
+        XCTAssertTrue(app.staticTexts["Your Studio"].waitForExistence(timeout: 60) || app.navigationBars["Your Studio"].exists)
+        capture("Native Mac library", app)
+        app.terminate(); app.launch()
+        XCTAssertFalse(app.secureTextFields["studio.password"].waitForExistence(timeout: 5), "Native session survives relaunch")
+        capture("Native Mac persisted session", app)
+    }
+    @MainActor
+    func testAdministratorInvitesAndWorkspaceSwitch() throws {
+        continueAfterFailure = false
+        let path = ProcessInfo.processInfo.environment["STUDIO_TEST_CREDENTIALS"] ?? ""
+        guard !path.isEmpty else { throw XCTSkip("Set private STUDIO_TEST_CREDENTIALS.") }
+        let credentials = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: URL(fileURLWithPath: path))) as? [String: String])
+        let app = XCUIApplication(); app.launch()
+        if app.secureTextFields["studio.password"].waitForExistence(timeout: 5) {
+            let username = app.textFields["studio.username"]
+            username.tap(); username.typeText(try XCTUnwrap(credentials["username"]))
+            app.secureTextFields["studio.password"].tap(); app.secureTextFields["studio.password"].typeText(try XCTUnwrap(credentials["password"]))
+            app.buttons["studio.signIn"].tap()
+        }
+        XCTAssertTrue(app.navigationBars["Your Studio"].waitForExistence(timeout: 60))
+        tapTab("Account", app)
+        XCTAssertTrue(app.buttons["Create invitation"].waitForExistence(timeout: 30))
+        app.buttons["Create invitation"].tap()
+        XCTAssertTrue(app.buttons["Share invitation"].waitForExistence(timeout: 30))
+        let docker = app.buttons["Switch to private Docker workspace"]
+        scrollTo(docker, app); docker.tap()
+        XCTAssertTrue(app.staticTexts["Private Docker workspace"].waitForExistence(timeout: 240))
+        XCTAssertTrue(app.buttons["Platform accounts"].exists)
+        capture("Native private workspace", app)
+        let owner = app.buttons["Switch to existing Pi workspace"]
+        scrollTo(owner, app); owner.tap()
+        XCTAssertTrue(app.staticTexts["Existing Pi workspace"].waitForExistence(timeout: 60))
+        capture("Native administrator Pi workspace", app)
+    }
+    @MainActor
     func testOwnerNavigationAndUpload() throws {
         continueAfterFailure = false
         // Credentials remain in the simulator host's private configuration.
@@ -13,6 +61,8 @@ final class StudioUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         if app.secureTextFields["studio.password"].waitForExistence(timeout: 5) {
+            let username = app.textFields["studio.username"]
+            username.tap(); username.typeText(try XCTUnwrap(credentials["username"]))
             let password = app.secureTextFields["studio.password"]
             password.tap(); password.typeText(try XCTUnwrap(credentials["password"]))
             app.buttons["studio.signIn"].tap()

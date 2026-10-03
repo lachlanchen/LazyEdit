@@ -1,3 +1,6 @@
+import german from './locales/de.json';
+import russian from './locales/ru.json';
+
 export type Locale =
   | 'en'
   | 'zh-Hant'
@@ -7,7 +10,9 @@ export type Locale =
   | 'vi'
   | 'ar'
   | 'fr'
-  | 'es';
+  | 'es'
+  | 'de'
+  | 'ru';
 
 export const DEFAULT_LOCALE: Locale = 'en';
 
@@ -21,9 +26,13 @@ export const SUPPORTED_LANGUAGES: Array<{ code: Locale; label: string }> = [
   { code: 'ar', label: 'العربية' },
   { code: 'fr', label: 'Français' },
   { code: 'es', label: 'Español' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'ru', label: 'Русский' },
 ];
 
 export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
+  de: german,
+  ru: russian,
   en: {
     header_title: 'LazyEdit - Powered by LazyingArt',
     tab_home: 'Home',

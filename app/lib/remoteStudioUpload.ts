@@ -1,3 +1,4 @@
+import { studioStorage } from '@/lib/studioStorage';
 /** Remote-only resumable upload; local Studio keeps its existing upload path. */
 export async function uploadRemoteVideo(base: string, blob: Blob, filename: string) {
   const request = async (path: string, init?: RequestInit) => {
@@ -7,16 +8,16 @@ export async function uploadRemoteVideo(base: string, blob: Blob, filename: stri
     return data;
   };
   const key = `lazyedit-upload:${filename}:${blob.size}:${(blob as File).lastModified || 0}`;
-  let uploadId = localStorage.getItem(key), state;
+  let uploadId = studioStorage.getItem(key), state;
   if (uploadId) {
     try { state = await request('/v1/studio/upload?uploadId=' + uploadId); }
     catch { uploadId = null; }
   }
   if (!uploadId) {
     state = await request('/v1/studio/uploads', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({filename,size:blob.size})});
-    uploadId = state.uploadId; localStorage.setItem(key, uploadId!);
+    uploadId = state.uploadId; studioStorage.setItem(key, uploadId!);
   }
-  if (state.receipt) { localStorage.removeItem(key); return {resp:{ok:true},json:state.receipt}; }
+  if (state.receipt) { studioStorage.removeItem(key); return {resp:{ok:true,statusText:"OK"},json:state.receipt}; }
   let offset = state.offset;
   while (offset < blob.size) {
     const end = Math.min(offset + 8 * 1024 * 1024, blob.size);
@@ -33,5 +34,5 @@ export async function uploadRemoteVideo(base: string, blob: Blob, filename: stri
     }
   }
   const json = await request('/v1/studio/upload-complete', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uploadId})});
-  localStorage.removeItem(key); return {resp:{ok:true},json};
+  studioStorage.removeItem(key); return {resp:{ok:true,statusText:"OK"},json};
 }

@@ -1,3 +1,4 @@
+import { studioStorage } from '@/lib/studioStorage';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -226,7 +227,7 @@ const readStoredProcessState = (videoId?: string) => {
   const key = buildStorageKey(videoId);
   if (!key) return null;
   try {
-    const raw = window.localStorage.getItem(key);
+    const raw = studioStorage.getItem(key);
     if (!raw) return null;
     return JSON.parse(raw);
   } catch (_err) {
@@ -272,7 +273,7 @@ export default function ProcessVideoScreen() {
     const key = buildStorageKey(id);
     if (!key || typeof window === 'undefined') return;
     try {
-      window.localStorage.setItem(key, JSON.stringify(processStateRef.current));
+      studioStorage.setItem(key, JSON.stringify(processStateRef.current));
     } catch (_err) {
       // ignore
     }

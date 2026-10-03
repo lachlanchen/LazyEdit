@@ -1,0 +1,5 @@
+Native Studio account linking and invite-only private workspaces.
+
+Sign in with your existing account. In Account, the administrator can create and share a single-use invitation, switch to a private Docker workspace, and switch back to the existing Pi workspace. Invited users choose Private workspace and create their account with an invitation.
+
+Test native library navigation, Photos/Files upload and resume, preview, preparation/review choices and publication activity. The PWA and advanced editor remain available. New private workspaces need their own platform logins and logo configuration. A real publish requires your explicit confirmation; queued jobs stay in the workspace where they were submitted.

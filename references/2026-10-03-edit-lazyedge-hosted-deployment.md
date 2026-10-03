@@ -33,10 +33,13 @@ Docker port is the authenticated gateway on `127.0.0.1:18980`.
 The central cookie is `__Host-hosted`; the workspace cookie is
 `__Host-studio`. Both are Secure, HttpOnly, SameSite=Strict with 12-hour sessions.
 Sign-out clears both. One browser session selects one workspace on this domain;
-sign out before switching to the original owner. Shared-domain operation gives
+the administrator can switch modes under Account, while guests cannot enter the original owner endpoint. Shared-domain operation gives
 separate data/profiles/credentials, not separate browser origins against hostile
 tenants. The optional subdomain mode and browser/network hardening remain the
 appropriate expansion path before public signup.
+
+The configured administrator can create invitations and switch between the
+original Pi and a private Docker workspace. Read the [native account guide](studio/2026-10-03-native-hosted-accounts.md) for linking, native apps and role checks.
 
 ## User flow and API linking
 
@@ -153,7 +156,7 @@ of original media, corrected subtitles or prior runs. Console logs are bounded.
 
 ## Acceptance and practical limits
 
-Twenty Node tests pass, including same-host selection, expired-session denial,
+Twenty-one Node tests pass, including same-host selection, expired-session denial,
 scoped API password login, cross-workspace denial and guarded desktop relay.
 Public HTTPS verified owner login/library, anonymous API denial, one-use invite
 registration, automatic provisioning, isolated empty library, resumable upload

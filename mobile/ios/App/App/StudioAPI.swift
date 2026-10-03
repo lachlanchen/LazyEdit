@@ -52,6 +52,8 @@ struct StudioSession: Codable {
     let cookie: String
     let expires: Date
     let username: String
+    var hostedCookie: String? = nil
+    var mode: String? = nil
 }
 
 class StudioNetworkDelegate: NSObject, URLSessionTaskDelegate {
@@ -106,7 +108,7 @@ final class StudioAPI {
         var req = URLRequest(url: try url(path))
         req.httpMethod = method
         req.setValue(origin.absoluteString, forHTTPHeaderField: "Origin")
-        if let identity { req.setValue("__Host-studio=" + identity.cookie, forHTTPHeaderField: "Cookie") }
+        if identity != nil { req.setValue(cookieHeader, forHTTPHeaderField: "Cookie") }
         req.httpBody = body
         if body != nil { req.setValue("application/json", forHTTPHeaderField: "Content-Type") }
         return req
@@ -122,6 +124,7 @@ final class StudioAPI {
     }
 
     func data(_ path: String) async throws -> Data {
+        let context = cookieHeader
         if activeReads < 4 { activeReads += 1 }
         else { await withCheckedContinuation { waiters.append($0) } }
         defer {
@@ -130,7 +133,9 @@ final class StudioAPI {
         }
         for attempt in 0...2 {
             try Task.checkCancellation()
+            guard cookieHeader == context else { throw CancellationError() }
             let (data, response) = try await session.data(for: request(path, method: "GET"))
+            guard cookieHeader == context else { throw CancellationError() }
             if let response = response as? HTTPURLResponse, [429, 502, 503, 504].contains(response.statusCode), attempt < 2 {
                 try await Task.sleep(nanoseconds: UInt64(attempt + 1) * 1_000_000_000)
                 continue
@@ -158,18 +163,59 @@ final class StudioAPI {
         return value
     }
 
-    func signIn(username: String, password: String) async throws {
-        let payload = try JSONSerialization.data(withJSONObject: ["username": username, "password": password])
-        let (data, response) = try await session.data(for: request("/auth/login", method: "POST", body: payload))
-        try validate(data, response)
-        guard let response = response as? HTTPURLResponse else { return }
+    var workspaceMode: String { identity?.mode ?? "owner" }
+    var contextKey: String { (identity?.username ?? "anonymous") + "-" + workspaceMode }
+    var cookieHeader: String {
+        guard let identity else { return "" }
+        return ([identity.cookie.isEmpty ? nil : "__Host-studio=" + identity.cookie, identity.hostedCookie.map { "__Host-hosted=" + $0 }].compactMap { $0 }).joined(separator: "; ")
+    }
+    func privateFile(_ name: String) -> URL { StudioFiles.directory.appendingPathComponent(contextKey + "-" + name) }
+    private func cookies(_ response: URLResponse) -> [HTTPCookie] {
+        guard let response = response as? HTTPURLResponse else { return [] }
         let headers = response.allHeaderFields.reduce(into: [String: String]()) { $0[String(describing: $1.key)] = String(describing: $1.value) }
-        guard let cookie = HTTPCookie.cookies(withResponseHeaderFields: headers, for: origin).first(where: { $0.name == "__Host-studio" }) else {
+        return HTTPCookie.cookies(withResponseHeaderFields: headers, for: origin)
+    }
+    private func remember(_ value: StudioSession) throws {
+        try StudioKeychain.save(JSONEncoder().encode(value)); identity = value
+    }
+    func signIn(username: String, password: String, workspace: Bool = false, invitation: String? = nil) async throws {
+        var values = ["username": username, "password": password]
+        if let invitation { values["invitation"] = invitation }
+        let payload = try JSONSerialization.data(withJSONObject: values)
+        var req = try request(workspace ? (invitation == nil ? "/accounts/login" : "/accounts/register") : "/auth/login", method: "POST", body: payload)
+        req.setValue(nil, forHTTPHeaderField: "Cookie")
+        let (data, response) = try await session.data(for: req)
+        try validate(data, response)
+        guard let cookie = cookies(response).first(where: { $0.name == (workspace ? "__Host-hosted" : "__Host-studio") }) else {
             throw StudioFailure(message: "Studio did not create a sign-in session.", status: 0)
         }
-        let saved = StudioSession(cookie: cookie.value, expires: cookie.expiresDate ?? Date().addingTimeInterval(43200), username: username)
-        try StudioKeychain.save(JSONEncoder().encode(saved))
-        identity = saved
+        try remember(StudioSession(cookie: workspace ? "" : cookie.value, expires: cookie.expiresDate ?? Date().addingTimeInterval(43200), username: username, hostedCookie: workspace ? cookie.value : nil, mode: workspace ? "workspace" : "owner"))
+        if workspace { try await enterWorkspace() }
+    }
+    func enterWorkspace() async throws {
+        for _ in 0..<36 {
+            let account = try await json("/accounts/account")
+            if account["status"] as? String == "ready" { break }
+            if ["failed", "suspended"].contains(account["status"] as? String ?? "") {
+                throw StudioFailure(message: "Your workspace could not start. Contact the administrator.", status: 409)
+            }
+            try await Task.sleep(nanoseconds: 5_000_000_000)
+        }
+        let entry = try await json("/accounts/enter", method: "POST", body: [:])
+        guard let link = entry["url"] as? String, let value = identity else { throw StudioFailure(message: "Workspace entry was incomplete.", status: 0) }
+        let (data, response) = try await session.data(for: request(link, method: "GET"))
+        guard (response as? HTTPURLResponse)?.statusCode == 303, let cookie = cookies(response).first(where: { $0.name == "__Host-studio" }) else {
+            try validate(data, response); throw StudioFailure(message: "Could not open your workspace.", status: 0)
+        }
+        try remember(StudioSession(cookie: cookie.value, expires: min(value.expires, cookie.expiresDate ?? value.expires), username: value.username, hostedCookie: value.hostedCookie, mode: "workspace"))
+    }
+    func switchMode(_ mode: String) async throws {
+        guard let value = identity, mode != workspaceMode else { return }
+        let (data, response) = try await session.data(for: request(mode == "workspace" ? "/accounts/docker" : "/accounts/owner", method: "POST", body: Data("{}".utf8)))
+        try validate(data, response)
+        guard let cookie = cookies(response).first(where: { $0.name == (mode == "workspace" ? "__Host-hosted" : "__Host-studio") }) else { throw StudioFailure(message: "Mode switch did not create a session.", status: 0) }
+        try remember(StudioSession(cookie: mode == "workspace" ? "" : cookie.value, expires: cookie.expiresDate ?? value.expires, username: value.username, hostedCookie: mode == "workspace" ? cookie.value : nil, mode: mode))
+        if mode == "workspace" { try await enterWorkspace() }
     }
 
     func clearSession() { identity = nil; StudioKeychain.clear() }
@@ -178,12 +224,14 @@ final class StudioAPI {
         clearSession()
     }
 
-    var webCookie: HTTPCookie? {
-        guard let identity else { return nil }
+    var webCookies: [HTTPCookie] {
+        guard let identity else { return [] }
         let seconds = max(0, Int(identity.expires.timeIntervalSinceNow))
-        let header = "__Host-studio=\(identity.cookie); Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=\(seconds)"
-        return HTTPCookie.cookies(withResponseHeaderFields: ["Set-Cookie": header], for: origin).first
+        return cookieHeader.components(separatedBy: "; ").flatMap { value in
+            HTTPCookie.cookies(withResponseHeaderFields: ["Set-Cookie": "\(value); Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=\(seconds)"], for: origin)
+        }
     }
+    var webCookie: HTTPCookie? { webCookies.first }
 
     func chunk(uploadID: String, offset: Int64, bytes: Data, progress: @escaping (Int64) -> Void) async throws -> Int64 {
         var req = try request("/v1/studio/upload-part?uploadId=\(uploadID)", method: "PUT")

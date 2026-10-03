@@ -15,6 +15,7 @@ export class Registry extends AuthStore {
         id TEXT PRIMARY KEY, owner TEXT UNIQUE NOT NULL REFERENCES users(id),
         transport TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending', created INTEGER, lease INTEGER DEFAULT 0);
       CREATE TABLE IF NOT EXISTS entry_tickets(hash TEXT PRIMARY KEY, workspace TEXT, expires INTEGER);
+      CREATE TABLE IF NOT EXISTS administrators(owner TEXT PRIMARY KEY REFERENCES users(id));
     `);
     if(!this.db.prepare('PRAGMA table_info(workspaces)').all().some(c=>c.name==='lease'))this.db.exec('ALTER TABLE workspaces ADD COLUMN lease INTEGER DEFAULT 0');
   }
@@ -22,6 +23,29 @@ export class Registry extends AuthStore {
     const token = secret();
     this.db.prepare('INSERT INTO invitations(hash,expires) VALUES(?,?)').run(digest(token), Date.now() + hours * 3600000);
     return token;
+  }
+  isAdmin(owner) { return Boolean(this.db.prepare('SELECT 1 FROM administrators WHERE owner=?').get(owner)); }
+  linkOwner(row) {
+    if (!row?.id || !row.username || !row.password) throw Error('Existing owner record required');
+    const prior=this.db.prepare('SELECT * FROM users WHERE username=? OR id=?').get(row.username,row.id);
+    if(prior && (prior.id!==row.id || prior.username!==row.username)) throw Error('Account identity conflict');
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      this.db.prepare('INSERT INTO users VALUES(?,?,?) ON CONFLICT(id) DO UPDATE SET password=excluded.password').run(row.id,row.username,row.password);
+      this.db.prepare('INSERT OR IGNORE INTO administrators VALUES(?)').run(row.id);
+      this.db.exec('COMMIT');
+    } catch(e) { this.db.exec('ROLLBACK'); throw e; }
+  }
+  ensureWorkspace(owner) {
+    if(!this.isAdmin(owner))fail(403,'Administrator required');
+    this.db.exec('BEGIN IMMEDIATE');
+    try {
+      if(!this.workspace(owner)) {
+        if(this.db.prepare('SELECT count(*) AS n FROM workspaces').get().n>=this.capacity)fail(503,'Workspace capacity reached');
+        this.db.prepare('INSERT INTO workspaces(id,owner,transport,created) VALUES(?,?,?,?)').run(digest(secret()).slice(0,24),owner,secret(),Date.now());
+      }
+      this.db.exec('COMMIT');return this.workspace(owner);
+    } catch(e) { this.db.exec('ROLLBACK');throw e; }
   }
   register({ username, password, invitation }, client) {
     this.throttle(`register:${client}`);

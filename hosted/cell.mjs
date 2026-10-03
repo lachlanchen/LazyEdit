@@ -1,5 +1,5 @@
 import http from 'node:http';
-import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import { readFileSync, mkdirSync, writeFileSync, existsSync } from 'node:fs';
 import { timingSafeEqual } from 'node:crypto';
 import { createWorker } from '../studio/server.mjs';
 import { SCOPES, fail } from '../studio/auth.mjs';
@@ -8,9 +8,15 @@ import { forward } from './proxy.mjs';
 
 export function createCell(config, seed) {
   const worker = createWorker(config), db = worker.auth.db;
+  let desktopSocket;
   const exists = db.prepare('SELECT id FROM users').all();
   if (exists.some(r=>r.id!==seed.owner)) throw Error('Workspace already belongs to a different owner');
   db.prepare('INSERT OR IGNORE INTO users VALUES(?,?,?)').run(seed.owner,seed.username,seed.password);
+  if(config.sampleMappingFile&&existsSync(config.sampleMappingFile)) {
+    const sample=JSON.parse(readFileSync(config.sampleMappingFile));
+    if(!Number.isSafeInteger(sample.videoId)||sample.videoId<1||sample.sha256!==config.sampleSha256||sample.filename!=='vancouver.mp4')throw Error('Authorized sample mapping mismatch');
+    db.prepare('INSERT OR IGNORE INTO media VALUES(?,?,?,?)').run(sample.videoId,seed.owner,sample.sha256,sample.filename);
+  }
   const token = readFileSync(config.upstreamSecretFile,'utf8').trim();
   const origin = `https://${config.host}`;
   function transport(req) {
@@ -44,12 +50,21 @@ export function createCell(config, seed) {
         return json(res,r.status,await r.json());
       }
       if(path.startsWith('/platforms/desktop/')&&req.method==='GET'){
+        if(head!==undefined){
+          if(desktopSocket&&!desktopSocket.destroyed)fail(429,'Close the other desktop viewer first');
+          desktopSocket=res;res.once('close',()=>{if(desktopSocket===res)desktopSocket=undefined;});
+          res.setTimeout(300000,()=>res.destroy());
+        }
         forward(req,res,{hostname:'127.0.0.1',port:config.desktopPort||6080,path:raw.slice('/platforms/desktop'.length),head});return;
       }
       if(head!==undefined)fail(404,'Not found');
       if(path==='/platforms'&&req.method==='GET'){
         res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store','x-frame-options':'SAMEORIGIN','referrer-policy':'no-referrer'});
         res.end(readFileSync(new URL('./web/platforms.html',import.meta.url)));return;
+      }
+      if(path==='/platforms/viewer.js'&&req.method==='GET'){
+        res.writeHead(200,{'content-type':'text/javascript; charset=utf-8','cache-control':'private, max-age=300','x-content-type-options':'nosniff'});
+        res.end(readFileSync(new URL('./web/viewer.js',import.meta.url)));return;
       }
       fail(404,'Not found');
     }
@@ -61,8 +76,8 @@ export function createCell(config, seed) {
     worker.server.emit('request',req,res);
   }
   const server=http.createServer((req,res)=>route(req,res).catch(e=>{if(!res.headersSent)json(res,e.status||502,{error:e.status?e.message:'Workspace temporarily unavailable'});else res.destroy();}));
-  server.on('upgrade',(req,socket,head)=>route(req,socket,head).catch(()=>socket.end('HTTP/1.1 403 Forbidden\r\nConnection: close\r\n\r\n')));
-  server.on('close',()=>worker.server.emit('close'));
+  server.on('upgrade',(req,socket,head)=>route(req,socket,head).catch(e=>socket.end(`HTTP/1.1 ${e.status||403} Forbidden\r\nConnection: close\r\n\r\n`)));
+  server.on('close',()=>{desktopSocket?.destroy();worker.server.emit('close');});
   server.requestTimeout=900000;
   return {server,auth:worker.auth};
 }
@@ -71,5 +86,6 @@ if(process.argv[1]===new URL(import.meta.url).pathname){
   mkdirSync('/state/studio',{recursive:true});
   writeFileSync('/state/studio/transport',seed.transport,{mode:0o600});
   createCell({host:seed.host,database:'/state/studio/accounts.sqlite',upstreamSecretFile:'/state/studio/transport',
-    dataRoot:'/state/data',backendPort:18787,webRoot:'/opt/lazyedit/studio/web',staticRoot:'/opt/lazyedit/webdist',python:'/opt/venv/bin/python',sourceRoot:'/opt/lazyedit'},seed).server.listen(18080,'0.0.0.0');
+    dataRoot:'/state/data',backendPort:18787,webRoot:'/opt/lazyedit/studio/web',staticRoot:'/opt/lazyedit/webdist',python:'/opt/venv/bin/python',sourceRoot:'/opt/lazyedit',
+    ...(process.env.LAZYEDIT_SAMPLE_SHA256?{sampleMappingFile:'/state/studio/sample.json',sampleSha256:process.env.LAZYEDIT_SAMPLE_SHA256}:{})},seed).server.listen(18080,'0.0.0.0');
 }

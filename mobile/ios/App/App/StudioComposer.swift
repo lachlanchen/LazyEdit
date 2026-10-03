@@ -63,15 +63,17 @@ final class StudioComposer: ObservableObject {
     @Published var pending: StudioPendingSubmission?
     @Published var canRetrySubmission = false
     private var api: StudioAPI?
+    private var workspaceKey = ""
     let videoID: Int
     private var root: String { "/v1/studio/videos/\(videoID)" }
-    private var draftURL: URL { StudioFiles.directory.appendingPathComponent("choices-\(videoID).json") }
-    private var pendingURL: URL { StudioFiles.directory.appendingPathComponent("submission-\(videoID).json") }
+    private var draftURL: URL { StudioFiles.directory.appendingPathComponent(workspaceKey + "-choices-\(videoID).json") }
+    private var pendingURL: URL { StudioFiles.directory.appendingPathComponent(workspaceKey + "-submission-\(videoID).json") }
 
     init(videoID: Int) { self.videoID = videoID }
 
     func load(api: StudioAPI) async {
         self.api = api
+        workspaceKey = api.contextKey
         guard !loaded, !busy else { return }
         busy = true
         defer { busy = false }
@@ -217,41 +219,41 @@ struct StudioComposerView: View {
     init(video: StudioVideo) { self.video = video; _model = StateObject(wrappedValue: StudioComposer(videoID: video.id)) }
 
     var body: some View {
-        NavigationStack {
+        StudioNavigation {
             Form {
-                if let error = model.error { Section { Text(error).foregroundStyle(.orange); if !model.loaded { Button("Try again") { Task { await model.load(api: store.api) } } } } }
-                if !model.loaded { ProgressView("Loading your Studio defaults…") }
+                if let error = model.error { Section { Text(error).foregroundStyle(.orange); if !model.loaded { Button(StudioStrings.text("Try again")) { Task { await model.load(api: store.api) } } } } }
+                if !model.loaded { ProgressView(StudioStrings.text("Loading your Studio defaults…")) }
                 else {
                     Section {
                         Text(video.title).font(.headline)
                         if let receipt = model.receipt { Label(receipt, systemImage: "checkmark.circle").foregroundStyle(.green) }
-                        if model.pending != nil { Button("Check submission status") { Task { await model.reconcile() } } }
-                        if model.canRetrySubmission { Button("Retry same submission") { Task { await model.retrySubmission() } }.disabled(model.busy) }
-                        Picker("Output", selection: $model.choices.mode) {
-                            Text("Prepare a new run").tag("new")
-                            Text("Reuse a finished run").tag("reuse")
+                        if model.pending != nil { Button(StudioStrings.text("Check submission status")) { Task { await model.reconcile() } } }
+                        if model.canRetrySubmission { Button(StudioStrings.text("Retry same submission")) { Task { await model.retrySubmission() } }.disabled(model.busy) }
+                        Picker(StudioStrings.text("Output"), selection: $model.choices.mode) {
+                            Text(StudioStrings.text("Prepare a new run")).tag("new")
+                            Text(StudioStrings.text("Reuse a finished run")).tag("reuse")
                         }.accessibilityIdentifier("studio.runMode")
                         if model.choices.mode == "reuse" {
-                            Picker("Finished run", selection: $model.choices.sessionID) {
-                                Text("Current output").tag(0)
+                            Picker(StudioStrings.text("Finished run"), selection: $model.choices.sessionID) {
+                                Text(StudioStrings.text("Current output")).tag(0)
                                 ForEach(model.runs.filter(\.ready)) { Text($0.title).tag($0.id) }
                             }
-                            Text("Reuse keeps its subtitles, logo, cover and metadata. Choose only platforms that still need this version.").font(.footnote).foregroundStyle(.secondary)
+                            Text(StudioStrings.text("Reuse keeps its subtitles, logo, cover and metadata. Choose only platforms that still need this version.")).font(.footnote).foregroundStyle(.secondary)
                         } else {
                             Menu("Start from a preset") {
-                                Button("Current website defaults") { model.preset("defaults") }
-                                Button("Daily recording · EN / JP / ZH") { model.preset("simplelife") }
-                                Button("LALACHAN story · EN / JP / ZH") { model.preset("lalachan") }
-                                Button("Musia recording · no subtitles") { model.preset("musia") }
+                                Button(StudioStrings.text("Current website defaults")) { model.preset("defaults") }
+                                Button(StudioStrings.text("Daily recording · EN / JP / ZH")) { model.preset("simplelife") }
+                                Button(StudioStrings.text("LALACHAN story · EN / JP / ZH")) { model.preset("lalachan") }
+                                Button(StudioStrings.text("Musia recording · no subtitles")) { model.preset("musia") }
                             }
                         }
-                    } footer: { Text("Choices are saved for this video on this device. Website defaults stay unchanged.") }
+                    } footer: { Text(StudioStrings.text("Choices are saved for this video on this device. Website defaults stay unchanged.")) }
                     if model.choices.mode == "new" {
                         contextSection
                         subtitlesSection
                         appearanceSection
                     }
-                    Section("Publish to") {
+                    Section(StudioStrings.text("Publish to")) {
                         ForEach(platformNames, id: \.0) { key, name in
                             Toggle(name, isOn: Binding(get: { model.choices.platforms.contains(key) }, set: { enabled in
                                 model.choices.platforms.removeAll { $0 == key }; if enabled { model.choices.platforms.append(key) }
@@ -263,16 +265,16 @@ struct StudioComposerView: View {
                             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                             Task { if await model.review() { review = true } }
                         } label: {
-                            HStack { if model.busy { ProgressView() }; Label("Review & continue", systemImage: "checkmark.circle") }
+                            HStack { if model.busy { ProgressView() }; Label(StudioStrings.text("Review & continue"), systemImage: "checkmark.circle") }
                         }.disabled(model.busy || model.pending != nil).accessibilityIdentifier("studio.reviewChoices")
-                        Button("Full editor · subtitles, metadata & cover") { editor = true }
-                    } footer: { Text("Preparation and publication use the existing Studio pipeline. You can prepare without posting, or queue preparation and publication together.") }
+                        Button(StudioStrings.text("Full editor · subtitles, metadata & cover")) { editor = true }
+                    } footer: { Text(StudioStrings.text("Preparation and publication use the existing Studio pipeline. You can prepare without posting, or queue preparation and publication together.")) }
                 }
-            }.scrollDismissesKeyboard(.interactively)
-                .navigationTitle("Prepare & publish").navigationBarTitleDisplayMode(.inline)
+            }.studioKeyboardDismissal()
+                .navigationTitle(StudioStrings.text("Prepare & publish")).navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
-                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Hide keyboard") { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) } }
+                    ToolbarItem(placement: .confirmationAction) { Button(StudioStrings.text("Done")) { dismiss() } }
+                    ToolbarItemGroup(placement: .keyboard) { Spacer(); Button(StudioStrings.text("Hide keyboard")) { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) } }
                 }
                 .task { await model.load(api: store.api) }
                 .onChange(of: model.choices) { _ in model.save() }
@@ -288,70 +290,70 @@ struct StudioComposerView: View {
     private var contextSection: some View {
         Section {
             TextEditor(text: $model.choices.context).frame(minHeight: 110).accessibilityIdentifier("studio.context")
-            Button { importNote = true } label: { Label("Import a script or context note", systemImage: "doc.text") }
-            Toggle("Correct recognition errors", isOn: $model.choices.correct)
-            Toggle("Use context for metadata", isOn: $model.choices.contextForMetadata)
+            Button { importNote = true } label: { Label(StudioStrings.text("Import a script or context note"), systemImage: "doc.text") }
+            Toggle(StudioStrings.text("Correct recognition errors"), isOn: $model.choices.correct)
+            Toggle(StudioStrings.text("Use context for metadata"), isOn: $model.choices.contextForMetadata)
             DisclosureGroup("Metadata direction") {
-                TextField("Tone, focus, names to preserve…", text: $model.choices.metadataDirection, axis: .vertical).lineLimit(3...6)
-                Picker("Category", selection: $model.choices.category) {
-                    Text("Let Studio decide").tag(""); Text("SimpleLife").tag("simplelife")
-                    Text("LALACHAN").tag("lalachan"); Text("Musia").tag("musia")
-                    Text("LalaMV").tag("lalamv"); Text("LazyingArt").tag("lazyingart")
+                StudioContextInput(text: $model.choices.metadataDirection)
+                Picker(StudioStrings.text("Category"), selection: $model.choices.category) {
+                    Text(StudioStrings.text("Let Studio decide")).tag(""); Text(StudioStrings.text("SimpleLife")).tag("simplelife")
+                    Text(StudioStrings.text("LALACHAN")).tag("lalachan"); Text(StudioStrings.text("Musia")).tag("musia")
+                    Text(StudioStrings.text("LalaMV")).tag("lalamv"); Text(StudioStrings.text("LazyingArt")).tag("lazyingart")
                 }
             }
-        } header: { Text("What is this video about?") }
-        footer: { Text("Add names, background or the original script. Studio checks the full conversation, fixes plausible ASR mistakes and keeps the actual timing. The script is a reference, not a replacement transcript. Metadata describes the video, not the production process.") }
+        } header: { Text(StudioStrings.text("What is this video about?")) }
+        footer: { Text(StudioStrings.text("Add names, background or the original script. Studio checks the full conversation, fixes plausible ASR mistakes and keeps the actual timing. The script is a reference, not a replacement transcript. Metadata describes the video, not the production process.")) }
     }
 
     private var subtitlesSection: some View {
         Section {
-            Toggle("Burn subtitles", isOn: $model.choices.burnSubtitles)
+            Toggle(StudioStrings.text("Burn subtitles"), isOn: $model.choices.burnSubtitles)
             if model.choices.burnSubtitles {
                 Button { showLanguages = true } label: {
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Languages & order")
-                        Text("Top → bottom: " + model.choices.languages.reversed().map { languageNames[$0] ?? $0 }.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
+                        Text(StudioStrings.text("Languages & order"))
+                        Text(StudioStrings.text("Top → bottom: ") + model.choices.languages.reversed().map { languageNames[$0] ?? $0 }.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
                     }
                 }
                 DisclosureGroup("Subtitle appearance", isExpanded: $advanced) {
                     Stepper("Reserved rows: \(model.choices.rows)", value: $model.choices.rows, in: max(1, model.choices.languages.count)...8)
-                    LabeledContent("Lift", value: String(format: "%.0f%%", model.choices.lift * 100))
+                    StudioLabeledValue("Lift", value: String(format: "%.0f%%", model.choices.lift * 100))
                     Slider(value: $model.choices.lift, in: 0...0.4, step: 0.01)
-                    Button("No lift") { model.choices.lift = 0 }
-                    LabeledContent("Font size", value: String(format: "%.2f×", model.choices.fontScale))
+                    Button(StudioStrings.text("No lift")) { model.choices.lift = 0 }
+                    StudioLabeledValue(StudioStrings.text("Font size"), value: String(format: "%.2f×", model.choices.fontScale))
                     Slider(value: $model.choices.fontScale, in: 0.6...2.5, step: 0.05)
-                    Toggle("Bold text", isOn: $model.choices.fontBold)
-                    Toggle("Thick outline", isOn: $model.choices.outlineBold)
+                    Toggle(StudioStrings.text("Bold text"), isOn: $model.choices.fontBold)
+                    Toggle(StudioStrings.text("Thick outline"), isOn: $model.choices.outlineBold)
                 }
             }
-        } header: { Text("Subtitles") }
+        } header: { Text(StudioStrings.text("Subtitles")) }
         footer: { Text(model.choices.burnSubtitles ? "Uses corrected subtitles, grammar colours, Japanese furigana and kana readings, and Chinese pinyin. Reserved rows keep font sizes consistent when fewer languages are selected." : "Your video can keep its existing on-screen text. Logo and metadata are prepared independently.") }
     }
 
     private var appearanceSection: some View {
         Section {
-            Picker("Background fill", selection: $model.choices.background) {
-                Text("Off · original frame").tag("off")
-                if !model.portrait { Text("Portrait · bottom space").tag("bottom"); Text("Portrait · centred").tag("center") }
+            Picker(StudioStrings.text("Background fill"), selection: $model.choices.background) {
+                Text(StudioStrings.text("Off · original frame")).tag("off")
+                if !model.portrait { Text(StudioStrings.text("Portrait · bottom space")).tag("bottom"); Text(StudioStrings.text("Portrait · centred")).tag("center") }
             }.disabled(model.portrait)
-            if model.portrait { Text("Portrait source: background fill is disabled.").font(.footnote).foregroundStyle(.secondary) }
+            if model.portrait { Text(StudioStrings.text("Portrait source: background fill is disabled.")).font(.footnote).foregroundStyle(.secondary) }
             if model.choices.background == "bottom" && !model.portrait {
-                LabeledContent("Bottom space", value: String(format: "%.0f%%", model.choices.bottomSpace * 100))
+                StudioLabeledValue(StudioStrings.text("Bottom space"), value: String(format: "%.0f%%", model.choices.bottomSpace * 100))
                 Slider(value: $model.choices.bottomSpace, in: 0...0.8, step: 0.01)
-                Text("The original frame fits above this space without cropping. The review shows the resulting layout.").font(.footnote).foregroundStyle(.secondary)
+                Text(StudioStrings.text("The original frame fits above this space without cropping. The review shows the resulting layout.")).font(.footnote).foregroundStyle(.secondary)
             }
-            Toggle("Studio logo", isOn: $model.choices.logo)
+            Toggle(StudioStrings.text("Studio logo"), isOn: $model.choices.logo)
             if model.choices.logo {
-                Picker("Logo position", selection: $model.choices.logoPosition) {
-                    Text("Top right").tag("top-right"); Text("Top left").tag("top-left")
-                    Text("Bottom right").tag("bottom-right"); Text("Bottom left").tag("bottom-left")
+                Picker(StudioStrings.text("Logo position"), selection: $model.choices.logoPosition) {
+                    Text(StudioStrings.text("Top right")).tag("top-right"); Text(StudioStrings.text("Top left")).tag("top-left")
+                    Text(StudioStrings.text("Bottom right")).tag("bottom-right"); Text(StudioStrings.text("Bottom left")).tag("bottom-left")
                 }
             }
-        } header: { Text("Frame & logo") }
+        } header: { Text(StudioStrings.text("Frame & logo")) }
     }
 
     private var languageSheet: some View {
-        NavigationStack {
+        StudioNavigation {
             List {
                 Section {
                     ForEach(model.choices.languages, id: \.self) { lang in
@@ -359,30 +361,30 @@ struct StudioComposerView: View {
                     }
                     .onMove { from, to in model.choices.languages.move(fromOffsets: from, toOffset: to) }
                     .onDelete { model.choices.languages.remove(atOffsets: $0) }
-                } header: { Text("Bottom → top") } footer: { Text("Drag to reorder. The first language is closest to the bottom of the video.") }
-                Section("Add a language") {
+                } header: { Text(StudioStrings.text("Bottom → top")) } footer: { Text(StudioStrings.text("Drag to reorder. The first language is closest to the bottom of the video.")) }
+                Section(StudioStrings.text("Add a language")) {
                     ForEach(["en", "ja", "zh-Hant", "zh-Hans", "fr"].filter { !model.choices.languages.contains($0) }, id: \.self) { lang in
                         Button(languageNames[lang] ?? lang) {
                             model.choices.languages.append(lang)
                             model.choices.rows = max(model.choices.rows, model.choices.languages.count)
                         }
                     }
-                    Button("EN / JP / ZH / FR · top to bottom") { model.choices.languages = ["fr", "zh-Hant", "ja", "en"]; model.choices.rows = max(4, model.choices.rows) }
+                    Button(StudioStrings.text("EN / JP / ZH / FR · top to bottom")) { model.choices.languages = ["fr", "zh-Hant", "ja", "en"]; model.choices.rows = max(4, model.choices.rows) }
                 }
             }.environment(\.editMode, .constant(.active))
-                .navigationTitle("Subtitle order").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { showLanguages = false } } }
+                .navigationTitle(StudioStrings.text("Subtitle order")).navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button(StudioStrings.text("Done")) { showLanguages = false } } }
         }
     }
 
     private var reviewSheet: some View {
-        NavigationStack {
+        StudioNavigation {
             List {
                 Section { Text(video.title).font(.headline); ForEach(model.summary, id: \.self) { Text($0) } }
                 if let path = model.preview {
-                    Section("Finished output") {
+                    Section(StudioStrings.text("Finished output")) {
                         if let reviewPlayer { VideoPlayer(player: reviewPlayer).frame(height: 280) }
-                        else { Button("Preview this run") {
+                        else { Button(StudioStrings.text("Preview this run")) {
                             do {
                                 let asset = AVURLAsset(url: try store.api.url(path), options: [AVURLAssetHTTPCookiesKey: store.api.webCookie.map { [$0] } ?? []])
                                 reviewPlayer = AVPlayer(playerItem: AVPlayerItem(asset: asset))
@@ -390,25 +392,25 @@ struct StudioComposerView: View {
                         } }
                     }
                 }
-                if model.geometry["fill"] == 1 { Section("Frame layout") { StudioLayoutPreview(geometry: model.geometry) } }
-                Section("Platforms") { Text(model.choices.platforms.map { key in platformNames.first { $0.0 == key }?.1 ?? key }.joined(separator: ", ")) }
+                if model.geometry["fill"] == 1 { Section(StudioStrings.text("Frame layout")) { StudioLayoutPreview(geometry: model.geometry) } }
+                Section(StudioStrings.text("Platforms")) { Text(model.choices.platforms.map { key in platformNames.first { $0.0 == key }?.1 ?? key }.joined(separator: ", ")) }
                 if let error = model.error { Text(error).foregroundStyle(.orange) }
                 if let receipt = model.receipt { Text(receipt).foregroundStyle(.green) }
                 Section {
-                    if model.pending != nil { Button("Check submission status") { Task { await model.reconcile() } } }
+                    if model.pending != nil { Button(StudioStrings.text("Check submission status")) { Task { await model.reconcile() } } }
                     else {
                         if model.choices.mode == "new" {
-                            Button("Prepare only · do not post") { Task { await model.submit("prepare") } }.disabled(model.busy || model.receipt != nil).accessibilityIdentifier("studio.prepareOnly")
+                            Button(StudioStrings.text("Prepare only · do not post")) { Task { await model.submit("prepare") } }.disabled(model.busy || model.receipt != nil).accessibilityIdentifier("studio.prepareOnly")
                         }
                         Button(model.choices.mode == "reuse" ? "Queue this run for publication" : "Prepare & queue publication") { Task { await model.submit("publish") } }
                             .disabled(model.busy || model.choices.platforms.isEmpty || model.receipt != nil).accessibilityIdentifier("studio.confirmPublish")
                     }
-                    if model.busy { ProgressView("Submitting once…") }
-                    if model.canRetrySubmission { Button("Retry same submission") { Task { await model.retrySubmission() } }.disabled(model.busy) }
-                    Button("Open full editor") { review = false; editor = true }
-                } footer: { Text("Publication sends this video to the selected accounts. Studio continues the task after you close the app. Check Activity for progress and any login request.") }
-            }.navigationTitle("Review choices").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { review = false } } }
+                    if model.busy { ProgressView(StudioStrings.text("Submitting once…")) }
+                    if model.canRetrySubmission { Button(StudioStrings.text("Retry same submission")) { Task { await model.retrySubmission() } }.disabled(model.busy) }
+                    Button(StudioStrings.text("Open full editor")) { review = false; editor = true }
+                } footer: { Text(StudioStrings.text("Publication sends this video to the selected accounts. Studio continues the task after you close the app. Check Activity for progress and any login request.")) }
+            }.navigationTitle(StudioStrings.text("Review choices")).navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button(StudioStrings.text("Done")) { review = false } } }
         }
     }
 }
@@ -423,11 +425,11 @@ struct StudioLayoutPreview: View {
             ZStack(alignment: .topLeading) {
                 RoundedRectangle(cornerRadius: 12).fill(Color.teal.opacity(0.15))
                 Rectangle().fill(Color.teal.opacity(0.6)).frame(width: 170 * fgWidth / width, height: 170 * fgHeight / width)
-                    .overlay(Text("Original video").font(.caption).foregroundStyle(.white))
+                    .overlay(Text(StudioStrings.text("Original video")).font(.caption).foregroundStyle(.white))
                     .offset(x: 85 * (1 - fgWidth / width), y: 170 * top / width)
             }.frame(width: 170, height: 170 * height / width).clipped()
             Text("Top \(Int((top / height * 100).rounded()))% · Video \(Int((fgHeight / height * 100).rounded()))% · Bottom \(Int((bottom / height * 100).rounded()))%").font(.caption)
-            Text("Layout preview; the final render includes your chosen subtitles and logo.").font(.caption).foregroundStyle(.secondary)
+            Text(StudioStrings.text("Layout preview; the final render includes your chosen subtitles and logo.")).font(.caption).foregroundStyle(.secondary)
         }.frame(maxWidth: .infinity).padding(.vertical)
     }
 }
@@ -436,20 +438,20 @@ struct StudioRemovedVideos: View {
     @EnvironmentObject private var store: StudioStore
     @Environment(\.dismiss) private var dismiss
     var body: some View {
-        NavigationStack {
+        StudioNavigation {
             List {
-                Section { Text("Removed videos keep their files, runs and publication history. Restore them whenever you need them.").font(.footnote).foregroundStyle(.secondary) }
+                Section { Text(StudioStrings.text("Removed videos keep their files, runs and publication history. Restore them whenever you need them.")).font(.footnote).foregroundStyle(.secondary) }
                 StudioErrorBanner()
                 ForEach(store.hiddenVideos) { video in
                     HStack {
                         Text(video.title).lineLimit(2)
                         Spacer()
-                        Button("Restore") { Task { await store.setHidden(video, hidden: false) } }.disabled(store.changingVisibility.contains(video.id))
+                        Button(StudioStrings.text("Restore")) { Task { await store.setHidden(video, hidden: false) } }.disabled(store.changingVisibility.contains(video.id))
                     }
                 }
-                if store.hiddenVideos.isEmpty { Text("No removed videos").foregroundStyle(.secondary) }
-            }.navigationTitle("Removed videos").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+                if store.hiddenVideos.isEmpty { Text(StudioStrings.text("No removed videos")).foregroundStyle(.secondary) }
+            }.navigationTitle(StudioStrings.text("Removed videos")).navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button(StudioStrings.text("Done")) { dismiss() } } }
                 .task { await store.refreshHidden() }.refreshable { await store.refreshHidden() }
         }
     }
@@ -463,22 +465,22 @@ struct StudioJobSheet: View {
     @State private var error: String?
     @State private var editor = false
     var body: some View {
-        NavigationStack {
+        StudioNavigation {
             List {
                 Text(job.title).font(.headline)
-                LabeledContent("Status", value: job.status.capitalized)
+                StudioLabeledValue("Status", value: job.status.capitalized)
                 Text(job.platforms)
                 if !job.detail.isEmpty { Text(job.detail) }
                 if let message = job.attentionMessage {
                     Text(message).foregroundStyle(.orange)
                     if let image { Image(uiImage: image).resizable().scaledToFit().padding().background(.white) }
-                    else if job.attentionURL != nil && error == nil { ProgressView("Loading verification image…") }
+                    else if job.attentionURL != nil && error == nil { ProgressView(StudioStrings.text("Loading verification image…")) }
                     if let error { Text(error).foregroundStyle(.orange) }
-                    Text("Finish verification, then return to Activity. The publisher keeps waiting; do not submit another post.").font(.footnote)
+                    Text(StudioStrings.text("Finish verification, then return to Activity. The publisher keeps waiting; do not submit another post.")).font(.footnote)
                 }
-                if job.videoID != nil { Button("Open this video in Studio") { editor = true } }
-            }.navigationTitle("Publication task").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
+                if job.videoID != nil { Button(StudioStrings.text("Open this video in Studio")) { editor = true } }
+            }.navigationTitle(StudioStrings.text("Publication task")).navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button(StudioStrings.text("Done")) { dismiss() } } }
                 .sheet(isPresented: $editor) { StudioEditorSheet(path: "/editor?videoId=\(job.videoID ?? 0)") }
                 .task {
                     if let path = job.attentionURL {

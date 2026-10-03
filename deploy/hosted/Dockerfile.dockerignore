@@ -31,6 +31,8 @@
 !studio/*.py
 !studio/web/
 !studio/web/**
+!studio/locales/
+!studio/locales/*.json
 !hosted/
 !hosted/**
 !deploy/

@@ -6,9 +6,10 @@ import { spawnSync } from 'node:child_process';
 import { Registry } from './store.mjs';
 import { secret } from '../studio/auth.mjs';
 import { workspaceCompose } from './compose.mjs';
+import { DatabaseSync } from 'node:sqlite';
 process.umask(0o077);
 const [command, directory, arg] = process.argv.slice(2);
-if(!directory)throw Error('Usage: node hosted/admin.mjs init|invite|status|provision|retry STATE_DIR [domain|workspace-id]');
+if(!directory)throw Error('Usage: node hosted/admin.mjs init|invite|status|provision|retry|link-owner STATE_DIR [domain|workspace-id|username OWNER_DB]');
 const root=resolve(directory), configPath=join(root,'config.json');
 if(command==='init'){
   if(existsSync(configPath))throw Error('Already initialized');
@@ -27,7 +28,14 @@ if(command==='init'){
   process.exit(0);
 }
 const config=JSON.parse(readFileSync(configPath)), registry=new Registry(config.database,config.domain,config.capacity,config.sameHost);
-if(command==='invite'){console.log(registry.invite());}
+if(command==='link-owner'){
+  const file=process.argv[5];if(!arg||!file)throw Error('Supply username and existing owner database');
+  const old=new DatabaseSync(resolve(file),{readOnly:true});
+  try { registry.linkOwner(old.prepare('SELECT id,username,password FROM users WHERE username=?').get(arg)); }
+  finally { old.close(); }
+  console.log('Existing account linked as administrator; owner database unchanged.');
+}
+else if(command==='invite'){console.log(registry.invite());}
 else if(command==='status'){console.table(registry.db.prepare('SELECT w.id,u.username,w.status FROM workspaces w JOIN users u ON u.id=w.owner').all());}
 else if(command==='retry'){
   if(!/^[a-z0-9-]{24}$/.test(arg||''))throw Error('Supply workspace ID');

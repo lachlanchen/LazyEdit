@@ -22,6 +22,14 @@ COPY --from=docker:29-cli /usr/local/libexec/docker/cli-plugins/ /usr/local/libe
 USER node
 CMD ["node", "hosted/provision-loop.mjs", "/registry"]
 
+FROM node:22-bookworm-slim AS desktop
+RUN apt-get update && apt-get install -y --no-install-recommends novnc && rm -rf /var/lib/apt/lists/*
+WORKDIR /build
+COPY hosted/viewer/package.json hosted/viewer/package-lock.json ./
+RUN npm ci --ignore-scripts --no-audit --no-fund
+COPY hosted/viewer/viewer.js hosted/viewer/build.mjs ./
+RUN node build.mjs
+
 FROM node:22-bookworm-slim AS workspace
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -49,6 +57,10 @@ COPY fonts/ ./fonts/
 COPY studio/ ./studio/
 COPY hosted/ ./hosted/
 COPY --from=web /webdist ./webdist
+COPY --from=desktop /viewer.js ./hosted/web/viewer.js
+RUN mkdir -p /etc/chromium/policies/managed \
+ && cp hosted/browser-policy.json /etc/chromium/policies/managed/lazyedit.json \
+ && chmod 644 /etc/chromium/policies/managed/lazyedit.json
 RUN chmod -R a+rX /opt/lazyedit \
  && node hosted/build-web.mjs \
  && mkdir -p /state \

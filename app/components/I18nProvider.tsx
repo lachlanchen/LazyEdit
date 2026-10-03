@@ -1,3 +1,4 @@
+import { studioStorage } from '@/lib/studioStorage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Platform } from 'react-native';
 
@@ -20,7 +21,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (Platform.OS !== 'web') return;
     try {
-      const stored = localStorage.getItem(STORAGE_KEY);
+      const stored = studioStorage.getItem(STORAGE_KEY);
       const resolved = resolveLocale(stored);
       setLocaleState(resolved);
     } catch (_err) {
@@ -43,7 +44,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     setLocaleState(resolved);
     if (Platform.OS !== 'web') return;
     try {
-      localStorage.setItem(STORAGE_KEY, resolved);
+      studioStorage.setItem(STORAGE_KEY, resolved);
     } catch (_err) {
       // ignore storage errors
     }

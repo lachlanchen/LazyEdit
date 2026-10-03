@@ -25,6 +25,10 @@ export function forward(req, output, { hostname, port, path, headers = {}, head 
     if (head.length) socket.write(head);
     socket.on('error', ()=>output.destroy()); output.on('error', ()=>socket.destroy());
     output.on('close', ()=>socket.destroy()); socket.on('close', ()=>output.destroy());
+    // Upgrade sockets can be half-open after a phone/network disappears.
+    // Release the workspace's single-viewer lease on either peer's EOF.
+    output.on('end', ()=>{socket.destroy();output.destroy();});
+    socket.on('end', ()=>{output.destroy();socket.destroy();});
     socket.pipe(output); output.pipe(socket);
   });
   up.on('error',()=>{

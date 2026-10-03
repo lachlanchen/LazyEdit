@@ -19,10 +19,10 @@ function request(port,host,path,body,cookie,extra={}){
     });req.on('error',reject);req.end(body===undefined?undefined:JSON.stringify(body));
   });
 }
-function upgrade(port,host,path,cookie,origin=`https://${host}`){
+function upgrade(port,host,path,cookie,origin=`https://${host}`,hold=false){
   return new Promise((resolve,reject)=>{
     const req=http.request({hostname:'127.0.0.1',port,path,headers:{host,origin,cookie:cookie||'',connection:'Upgrade',upgrade:'websocket','sec-websocket-key':'dGhlIHNhbXBsZSBub25jZQ==','sec-websocket-version':'13'}});
-    req.on('response',r=>{r.resume();resolve(r.statusCode);});req.on('upgrade',(r,s)=>{s.destroy();resolve(r.statusCode);});req.on('error',reject);req.end();
+    req.on('response',r=>{r.resume();resolve(hold?{status:r.statusCode}:r.statusCode);});req.on('upgrade',(r,s)=>{if(hold)resolve({status:r.statusCode,socket:s});else{s.destroy();resolve(r.statusCode);}});req.on('error',reject);req.end();
   });
 }
 
@@ -37,7 +37,7 @@ test('invite → isolated workspaces → authenticated platform desktop',async t
   });
   router.on('upgrade',(req,socket,head)=>{
     const port=ports.get(req.headers.host);const up=http.request({host:'127.0.0.1',port,path:req.url,headers:req.headers});
-    up.on('upgrade',(r,s,h)=>{socket.write(`HTTP/1.1 101 Switching Protocols\r\n${Object.entries(r.headers).map(([k,v])=>`${k}: ${v}`).join('\r\n')}\r\n\r\n`);if(h.length)socket.write(h);if(head.length)s.write(head);s.pipe(socket);socket.pipe(s);socket.on('close',()=>s.destroy());});
+    up.on('upgrade',(r,s,h)=>{socket.write(`HTTP/1.1 101 Switching Protocols\r\n${Object.entries(r.headers).map(([k,v])=>`${k}: ${v}`).join('\r\n')}\r\n\r\n`);if(h.length)socket.write(h);if(head.length)s.write(head);s.pipe(socket);socket.pipe(s);socket.on('close',()=>s.destroy());socket.on('end',()=>{s.destroy();socket.destroy();});});
     up.on('response',r=>{socket.end(`HTTP/1.1 ${r.statusCode} Forbidden\r\n\r\n`);r.resume();});up.on('error',()=>socket.destroy());up.end();
   });
   await listen(router);servers.push(router);
@@ -71,6 +71,11 @@ test('invite → isolated workspaces → authenticated platform desktop',async t
     assert.equal((await request(port,host,'/platforms/open',{platform:'file:///etc/passwd'},signed.cookie)).status,400);
     assert.equal((await request(port,host,'/platforms/desktop/vnc.html',undefined,signed.cookie)).data,name+' desktop');
     assert.equal(await upgrade(port,host,'/platforms/desktop/websockify',signed.cookie),101);
+    await new Promise(resolve=>setTimeout(resolve,20));
+    const active=await upgrade(port,host,'/platforms/desktop/websockify',signed.cookie,`https://${host}`,true);
+    assert.equal(active.status,101);
+    assert.equal(await upgrade(port,host,'/platforms/desktop/websockify',signed.cookie),403,'a second desktop cannot stream concurrently');
+    active.socket.destroy();
     assert.equal(await upgrade(port,host,'/platforms/desktop/websockify',signed.cookie,'https://evil.test'),403);
     assert.equal(await upgrade(port,host,'/platforms/desktop/websockify'),403);
     users.push({host,cookie:signed.cookie,cell,w});
@@ -94,6 +99,53 @@ test('workspace template has private volumes, loopback services and bounded reso
   assert.ok(!JSON.stringify(a).includes('docker.sock'));assert.throws(()=>workspaceCompose({id:'../../evil'},{},'/x'));
 });
 
+test('administrator invites and switches modes without granting members owner access',async t=>{
+  const dir=mkdtempSync(join(tmpdir(),'studio-admin-')),servers=[],host='edit.test';
+  const upstream=join(dir,'upstream'),capability=join(dir,'gateway');
+  writeFileSync(upstream,'test-upstream');writeFileSync(capability,'test-gateway');
+  const gateway=createGateway({database:join(dir,'registry.sqlite'),domain:host,sameHost:true,ingressSecretFile:capability});
+  await listen(gateway.server);servers.push(gateway.server);
+  const ingress=createIngress({host,database:join(dir,'owner.sqlite'),dataRoot:dir,webRoot:dir,staticRoot:dir,
+    upstreamSecretFile:upstream,hostedIngressSecretFile:capability,hostedPort:gateway.server.address().port,hostedAdminUsername:'lachlanchen'});
+  await listen(ingress.server);servers.push(ingress.server);
+  t.after(()=>{for(const s of servers){for(const socket of s.testSockets)socket.destroy();s.closeAllConnections();s.close();}gateway.registry.db.close();rmSync(dir,{recursive:true,force:true});});
+  const owner=ingress.owner.auth.addOwner('lachlanchen','test-only-long-password');
+  gateway.registry.linkOwner(ingress.owner.auth.db.prepare('SELECT * FROM users WHERE id=?').get(owner));
+  const port=ingress.server.address().port;
+  const pub=(path,body,cookie,extra={})=>request(port,host,'/studio/bridge',body,cookie,{authorization:'Bearer test-upstream','x-studio-path':path,...extra});
+  const login=await pub('/auth/login',{username:'lachlanchen',password:'test-only-long-password'});
+  assert.equal(login.status,200);
+  const legacyMember=ingress.owner.auth.addOwner('legacy-member','test-only-long-password');
+  const legacyGrant=ingress.owner.auth.issue(legacyMember,undefined,'legacy fixture','browser');
+  assert.equal((await pub('/auth/login',{username:'legacy-member',password:'test-only-long-password'})).status,403);
+  assert.equal((await pub('/auth/me',undefined,'__Host-studio='+legacyGrant.access_token)).status,403,'old non-owner session cannot see the Pi');
+  assert.equal((await pub('/auth/token',{grant_type:'refresh_token',refresh_token:legacyGrant.refresh_token})).status,403);
+  const account=await pub('/accounts/account',undefined,login.cookie);
+  assert.equal(account.data.role,'admin');assert.equal(account.data.status,'not_created');
+  const invitation=await pub('/accounts/invite',{},login.cookie);assert.equal(invitation.status,201);
+  const token=new URL(invitation.data.url).searchParams.get('invitation');assert.ok(token);
+  const member=await pub('/accounts/register',{username:'member',password:'test-only-long-password',invitation:token});assert.equal(member.status,200);
+  assert.equal((await pub('/accounts/invite',{},member.cookie)).status,403);
+  assert.equal((await pub('/accounts/docker',{},member.cookie)).status,403);
+  assert.equal((await pub('/accounts/owner',{},member.cookie)).status,403);
+  assert.equal((await pub('/accounts/invite',{},undefined,{'x-hosted-admin-owner':owner})).status,401,'forged admin header cannot cross ingress');
+  assert.equal((await pub('/accounts/invite',{},login.cookie,{origin:'https://evil.test'})).status,403);
+  assert.equal((await pub('/accounts/owner',{},login.cookie,{origin:'https://evil.test'})).status,403);
+  const docker=await pub('/accounts/docker',{},login.cookie);assert.equal(docker.status,200);
+  const w=gateway.registry.workspace(owner);assert.equal(w.status,'pending');
+  await pub('/accounts/docker',{},docker.cookie);assert.equal(gateway.registry.workspace(owner).id,w.id,'mode retries do not create a second workspace');
+  assert.equal((await pub('/accounts/account',undefined,docker.cookie)).data.role,'admin');
+  const back=await pub('/accounts/owner',{},docker.cookie);assert.equal(back.status,200);
+  const restored=back.headers['set-cookie'].find(v=>v.startsWith('__Host-studio=')).split(';')[0];
+  assert.equal((await pub('/auth/me',undefined,restored)).data.subject,owner);
+  assert.equal((await pub('/accounts/account',undefined,docker.cookie)).status,401,'closed Docker session is revoked');
+  assert.equal(gateway.registry.workspace(owner).id,w.id);
+  assert.equal(ingress.owner.auth.db.prepare('SELECT id FROM users WHERE username=?').get('member'),undefined,'invited member never copied to owner database');
+  assert.equal((await pub('/accounts/logout',{},restored,{origin:'https://evil.test'})).status,403);
+  assert.equal((await pub('/accounts/logout',{},restored)).status,200);
+  assert.equal((await pub('/auth/me',undefined,restored)).status,401,'account portal sign-out revokes the owner session too');
+});
+
 test('same domain preserves owner routes and isolates invite sessions and desktop relay',async t=>{
   const dir=mkdtempSync(join(tmpdir(),'studio-samehost-')),servers=[],cells=[],ports=new Map(),host='edit.test';
   const secretPath=join(dir,'upstream'),gatewayPath=join(dir,'gateway'),facadePath=join(dir,'facade');
@@ -115,7 +167,7 @@ test('same domain preserves owner routes and isolates invite sessions and deskto
   const pub=(path,body,cookie,extra={})=>request(port,host,path,body,cookie,{'x-studio-peer':'127.0.0.1',...extra});
   assert.equal((await pub('/api/videos')).status,401,'legacy anonymous denial survives');
   assert.equal((await request(gateway.server.address().port,host,'/accounts')).status,401,'gateway requires ingress capability');
-  const users=[];
+  const users=[],contexts=[];
   for(const name of ['alice','bravo']){
     const reg=await pub('/accounts/register',{username:name,password:'test-only-long-password',invitation:gateway.registry.invite()});assert.equal(reg.status,200);
     const w=gateway.registry.workspace(gateway.registry.login(name,'test-only-long-password',name));
@@ -130,6 +182,9 @@ test('same domain preserves owner routes and isolates invite sessions and deskto
     const signed=await pub(url.pathname+url.search,undefined,reg.cookie);assert.equal(signed.status,303);
     const cookie=reg.cookie+'; '+signed.cookie;
     assert.equal((await pub('/api/videos',undefined,cookie)).data.videos[0].title,name);
+    const context=await pub('/studio-context.js',undefined,cookie);
+    assert.equal(context.status,200);assert.equal(context.headers['cache-control'],'no-store');
+    contexts.push(context.data);assert.match(context.data,/publicationOnly/);
     assert.equal((await pub('/platforms/desktop/vnc.html',undefined,cookie)).data,name);
     const token=cell.auth.issue(w.owner,['media.read'],'test API');
     assert.equal((await pub(`/workspaces/${w.id}/v1/studio/account`,undefined,undefined,{authorization:`Bearer ${token.access_token}`})).data.subject,w.owner);
@@ -139,6 +194,7 @@ test('same domain preserves owner routes and isolates invite sessions and deskto
     assert.equal((await pub(`/workspaces/${w.id}/api/videos`)).status,401);
     users.push({cookie,w});
   }
+  assert.notEqual(contexts[0],contexts[1],'each account has a separate browser cache namespace');
   assert.equal((await pub(`/workspaces/${users[1].w.id}/api/videos`,undefined,users[0].cookie,{authorization:'Bearer bad'})).status,403);
   assert.equal((await pub('/api/videos',undefined,'__Host-hosted=expired')).status,401,'expired hosted cookie never falls through to owner');
   // Full facade → guarded upgrade → ingress → gateway → private desktop.

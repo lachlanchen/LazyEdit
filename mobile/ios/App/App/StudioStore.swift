@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import UIKit
+import UserNotifications
 
 struct StudioVideo: Identifiable, Hashable, Codable {
     let id: Int
@@ -79,8 +80,12 @@ enum StudioFiles {
 final class StudioStore: ObservableObject {
     let api = StudioAPI()
     @Published var signedIn = false
-    @Published var username = "lachlanchen"
+    @Published var username = ""
     @Published var signingIn = false
+    @Published var switchingWorkspace = false
+    @Published var workspaceMode = "owner"
+    @Published var isAdmin = false
+    @Published var invitationURL: String?
     @Published var videos: [StudioVideo] = []
     @Published var jobs: [StudioJob] = []
     @Published var loadingVideos = false
@@ -96,16 +101,42 @@ final class StudioStore: ObservableObject {
     private var uploadTask: Task<Void, Never>?
     private var backgroundTask: UIBackgroundTaskIdentifier = .invalid
     private let images = NSCache<NSString, UIImage>()
+    func enableLoginNotifications() async {
+        do { _ = try await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) }
+        catch { report(error) }
+    }
+    private func notifyLoginAttention() async {
+        let center = UNUserNotificationCenter.current()
+        let context = api.contextKey
+        guard await center.notificationSettings().authorizationStatus == .authorized else { return }
+        guard signedIn, context == api.contextKey else { return }
+        let file = api.privateFile("notified-jobs.json")
+        var seen = ((try? Data(contentsOf: file)).flatMap { try? JSONDecoder().decode([String].self, from: $0) }) ?? []
+        for job in jobs where job.attentionMessage != nil {
+            // Generic lock-screen text; do not put QR codes, media or credentials in notifications.
+            let key = job.id + ":" + job.status
+            if seen.contains(key) { continue }
+            let content = UNMutableNotificationContent()
+            content.title = "LazyEdit Studio"
+            content.body = StudioStrings.text("Login or verification required")
+            content.sound = .default
+            content.userInfo = ["studioContext": context]
+            do { try await center.add(UNNotificationRequest(identifier: context+":"+job.id, content: content, trigger: nil)); seen.append(key) }
+            catch { continue }
+        }
+        try? JSONEncoder().encode(Array(seen.suffix(256))).write(to: file, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+    }
 
     init() {
         images.countLimit = 80
         signedIn = api.identity != nil
-        username = api.identity?.username ?? "lachlanchen"
-        if let bytes = try? Data(contentsOf: StudioFiles.pendingURL) {
+        username = api.identity?.username ?? ""
+        workspaceMode = api.workspaceMode
+        if let bytes = try? Data(contentsOf: api.privateFile("upload.json")) {
             pending = try? JSONDecoder().decode(PendingStudioUpload.self, from: bytes)
             if pending != nil { uploadMessage = "Your video is ready to resume." }
         }
-        if let bytes = try? Data(contentsOf: StudioFiles.directory.appendingPathComponent("library.json")) {
+        if let bytes = try? Data(contentsOf: api.privateFile("library.json")) {
             videos = (try? JSONDecoder().decode([StudioVideo].self, from: bytes)) ?? []
         }
     }
@@ -118,22 +149,48 @@ final class StudioStore: ObservableObject {
         }
     }
 
-    func login(password: String) async {
+    func login(password: String, workspace: Bool = false, invitation: String? = nil) async {
         signingIn = true; error = nil
         defer { signingIn = false }
         do {
-            try await api.signIn(username: username.trimmingCharacters(in: .whitespaces), password: password)
+            try await api.signIn(username: username.trimmingCharacters(in: .whitespaces), password: password, workspace: workspace, invitation: invitation)
+            videos = []; jobs = []; images.removeAllObjects(); workspaceMode = api.workspaceMode
             signedIn = true
+            pending = (try? Data(contentsOf: api.privateFile("upload.json"))).flatMap { try? JSONDecoder().decode(PendingStudioUpload.self, from: $0) }
+            await refreshAccount()
             await refreshVideos()
         } catch { report(error) }
+    }
+    func refreshAccount() async {
+        guard signedIn else { return }
+        do { isAdmin = try await api.json("/accounts/account")["role"] as? String == "admin" }
+        catch { isAdmin = false }
+    }
+    func createInvitation() async {
+        do { invitationURL = try await api.json("/accounts/invite", method: "POST", body: [:])["url"] as? String }
+        catch { report(error) }
+    }
+    func switchWorkspace(_ mode: String) async {
+        guard !switchingWorkspace, !uploading, pending == nil, !preparingFile else {
+            error = "Finish or remove your current upload before switching workspaces."; return
+        }
+        switchingWorkspace = true; error = nil
+        defer { switchingWorkspace = false }
+        do {
+            try await api.switchMode(mode)
+            workspaceMode = api.workspaceMode; videos = []; jobs = []; hiddenVideos = []; uploadedVideo = nil; images.removeAllObjects(); invitationURL = nil
+            await refreshVideos(); await refreshAccount()
+        } catch { workspaceMode = api.workspaceMode; videos = []; jobs = []; images.removeAllObjects(); report(error) }
     }
 
     func logout() async {
         pauseUpload()
+        let libraryFile = api.privateFile("library.json")
         do {
             try await api.signOut()
             signedIn = false; error = nil; videos = []; jobs = []; images.removeAllObjects()
-            try? FileManager.default.removeItem(at: StudioFiles.directory.appendingPathComponent("library.json"))
+            try? FileManager.default.removeItem(at: libraryFile)
+            isAdmin = false; invitationURL = nil
         } catch { report(error) }
     }
 
@@ -145,17 +202,20 @@ final class StudioStore: ObservableObject {
             let value = try await api.json("/api/videos")
             guard let rows = value["videos"] as? [[String: Any]] else { throw StudioFailure(message: "Could not read your library.", status: 0) }
             videos = rows.compactMap(StudioVideo.init)
-            try? JSONEncoder().encode(videos).write(to: StudioFiles.directory.appendingPathComponent("library.json"), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+            try? JSONEncoder().encode(videos).write(to: api.privateFile("library.json"), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
             error = nil
         } catch { report(error) }
     }
 
     func refreshJobs() async {
         guard signedIn else { return }
+        let context = api.contextKey
         do {
             let result = try await api.json("/api/autopublish/queue")
+            guard signedIn, context == api.contextKey else { return }
             if studioText(result["status"]) == "unavailable" { throw StudioFailure(message: "The publication queue is temporarily unavailable.", status: 503) }
             jobs = (result["jobs"] as? [[String: Any]] ?? []).map(StudioJob.init)
+            await notifyLoginAttention()
             error = nil
         } catch { report(error) }
     }
@@ -200,14 +260,14 @@ final class StudioStore: ObservableObject {
             try? FileManager.default.removeItem(at: StudioFiles.directory.appendingPathComponent(staged.localName))
             throw StudioFailure(message: "Finish or remove your current upload first.", status: 0)
         }
-        try JSONEncoder().encode(staged).write(to: StudioFiles.pendingURL, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        try JSONEncoder().encode(staged).write(to: api.privateFile("upload.json"), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
         pending = staged; uploadedVideo = nil; uploadProgress = 0; uploadMessage = "Ready to upload."
     }
 
     func discardUpload() {
         guard !uploading, let pending else { return }
         try? FileManager.default.removeItem(at: StudioFiles.directory.appendingPathComponent(pending.localName))
-        try? FileManager.default.removeItem(at: StudioFiles.pendingURL)
+        try? FileManager.default.removeItem(at: api.privateFile("upload.json"))
         self.pending = nil; uploadProgress = 0; uploadMessage = ""
     }
 
@@ -235,7 +295,7 @@ final class StudioStore: ObservableObject {
     }
 
     private func savePending(_ value: PendingStudioUpload) throws {
-        try JSONEncoder().encode(value).write(to: StudioFiles.pendingURL, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        try JSONEncoder().encode(value).write(to: api.privateFile("upload.json"), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
         pending = value
     }
 
@@ -284,7 +344,7 @@ final class StudioStore: ObservableObject {
         uploadProgress = 1; uploadMessage = "Added to your Studio."
         if let current = pending {
             try? FileManager.default.removeItem(at: StudioFiles.directory.appendingPathComponent(current.localName))
-            try? FileManager.default.removeItem(at: StudioFiles.pendingURL)
+            try? FileManager.default.removeItem(at: api.privateFile("upload.json"))
         }
         pending = nil
         await refreshVideos()

@@ -1,5 +1,4 @@
 import UIKit
-import Capacitor
 import SwiftUI
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -11,15 +10,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = UIHostingController(rootView: NativeStudioRoot())
         window?.makeKeyAndVisible()
+        if let response = connectionOptions.notificationResponse {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                NotificationCenter.default.post(name: .studioLoginAttention, object: nil, userInfo: response.notification.request.content.userInfo)
+            }
+        }
 
-        SceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)
+        #if targetEnvironment(macCatalyst)
+        windowScene.sizeRestrictions?.minimumSize = CGSize(width: 540, height: 720)
+        #endif
     }
 
-    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-        SceneDelegateProxy.shared.scene(scene, openURLContexts: URLContexts)
-    }
-
-    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-        SceneDelegateProxy.shared.scene(scene, continue: userActivity)
-    }
 }

@@ -26,6 +26,8 @@ password = Path('/run/secrets/db_password').read_text().strip()
 os.environ['LAZYEDIT_DATABASE_URL'] = f'postgresql://lazyedit:{quote(password, safe="")}@database/lazyedit'
 os.environ.setdefault('LAZYEDIT_CAPTION_PRIMARY_SCRIPT', '/opt/lazyedit/vit-gpt2-image-captioning/vit_captioner_video.py')
 os.environ.setdefault('LAZYEDIT_CAPTION_PRIMARY_ROOT', '/opt/lazyedit/vit-gpt2-image-captioning')
+if Path('/samples/vancouver.mp4').is_file():
+    subprocess.run(['python', '-m', 'hosted.seed_sample'], cwd='/opt/lazyedit', check=True, timeout=60)
 processes = []
 
 
@@ -50,7 +52,7 @@ try:
             break
         time.sleep(0.1)
     for command, cwd in [
-        (['openbox', '--sm-disable'], '/state'),
+        (['openbox', '--sm-disable', '--config-file', '/opt/lazyedit/hosted/openbox-rc.xml'], '/state'),
         (['x11vnc', '-display', ':99', '-localhost', '-nopw', '-forever', '-shared', '-rfbport', '5900', '-quiet'], '/state'),
         (['websockify', '--web=/usr/share/novnc', '127.0.0.1:6080', '127.0.0.1:5900'], '/state'),
         (['python', 'app.py'], '/opt/lazyedit'),

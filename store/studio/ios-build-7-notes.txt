@@ -1,0 +1,3 @@
+Native Studio: sign in to your private workspace, upload/resume video, preview and review publication choices. The administrator can create invitations and switch between the existing Pi and an isolated Docker workspace; other users cannot access Pi.
+
+Platform accounts now use a bounded desktop viewer: choose a platform, sign in, pause or keep a QR still image visible. Tap the still image to enlarge the QR area without streaming. The PWA and advanced editor remain available. Each workspace needs its own social logins; social publication requires explicit confirmation.

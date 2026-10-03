@@ -67,9 +67,13 @@ export function createWorker(config) {
   if(token?.startsWith('Bearer '))token=token.slice(7);
   else{token=(req.headers.cookie||'').split(';').map(v=>v.trim()).find(v=>v.startsWith('__Host-studio='))?.split('=')[1];browser=true;}
   const p=auth.principal(token);
+  ownerOnly(p);
   if(browser&&p.kind!=='browser')fail(401,'Invalid browser session');
   if(browser&&!['GET','HEAD','OPTIONS'].includes(req.method)&&req.headers.origin!==origin)fail(403,'Same-origin browser request required');
   return p;
+ }
+ function ownerOnly(p){
+  if(config.ownerUsername&&db.prepare('SELECT username FROM users WHERE id=?').get(p.owner)?.username!==config.ownerUsername)fail(403,'Workspace unavailable');
  }
  function scope(p,value){if(!p.scopes.includes(value))fail(403,'Required scope: '+value);}
  function publicJSON(res,value,status=200){json(res,status,clean(value));}
@@ -167,23 +171,30 @@ export function createWorker(config) {
   const u=new URL(raw,origin),path=u.pathname,method=req.method,client=String(req.headers['x-studio-client']||'unknown');
   if(path==='/v1/studio/health'&&method==='GET'){json(res,200,{status:'ok',service:'LazyEdit Studio',apiVersion:'1'});return;}
   if(path==='/auth/login'&&method==='POST'){
-   if(req.headers.origin&&req.headers.origin!==origin)fail(403,'Invalid origin');const d=await readJSON(req,8192);const owner=auth.login(String(d.username||''),String(d.password||''),client);
+   if(req.headers.origin&&req.headers.origin!==origin)fail(403,'Invalid origin');const d=await readJSON(req,8192);const owner=auth.login(String(d.username||''),String(d.password||''),client);ownerOnly({owner});
    if(d.mode==='token'){json(res,200,auth.issue(owner,d.scopes||SCOPES,d.client_name||'LightMind'));return;}
    if(req.headers.origin!==origin)fail(403,'Browser login requires same origin');
    const t=auth.issue(owner,SCOPES,'Studio browser','browser');json(res,200,{ok:true},{'set-cookie':`__Host-studio=${t.access_token}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=43200`});return;
   }
   if(path==='/auth/token'&&method==='POST'){
    const d=await readJSON(req,8192);
-   const t=d.grant_type==='refresh_token'?auth.refresh(d.refresh_token):d.grant_type==='urn:ietf:params:oauth:grant-type:device_code'?auth.poll(d.device_code):fail(400,'Unsupported grant_type');json(res,200,t);return;
+   if(d.grant_type==='refresh_token')ownerOnly(auth.principal(d.refresh_token,'refresh'));
+   const t=d.grant_type==='refresh_token'?auth.refresh(d.refresh_token):d.grant_type==='urn:ietf:params:oauth:grant-type:device_code'?auth.poll(d.device_code):fail(400,'Unsupported grant_type');ownerOnly(auth.principal(t.access_token));json(res,200,t);return;
   }
   if(path==='/auth/device'&&method==='POST'){
    const d=await readJSON(req,8192),r=auth.device(d.scopes||SCOPES.filter(s=>s!=='publication.publish'),d.client_name,client);json(res,200,{...r,verification_uri:origin+'/connect'});return;
   }
-  if(['/login','/connect','/privacy','/studio-login.js','/studio-login.css','/studio-session.js','/manifest.webmanifest','/sw.js','/studio-icon.png'].includes(path)&&['GET','HEAD'].includes(method)){
-   const files={'/login':'login.html','/connect':'login.html','/privacy':'privacy.html','/studio-login.js':'login.js','/studio-login.css':'login.css','/studio-session.js':'session.js','/manifest.webmanifest':'manifest.webmanifest','/sw.js':'sw.js','/studio-icon.png':'icon.png'};file(res,req,join(config.webRoot,files[path]));return;
+  if(/^\/studio-locales\/(en|zh-Hans|zh-Hant|ja|ko|vi|ar|fr|es|de|ru)\.json$/.test(path)&&method==='GET'){file(res,req,join(new URL('./locales/',import.meta.url).pathname,basename(path)));return;}
+  if(['/login','/connect','/privacy','/studio-interface.js','/studio-login.js','/studio-login.css','/studio-session.js','/manifest.webmanifest','/sw.js','/studio-icon.png'].includes(path)&&['GET','HEAD'].includes(method)){
+   const files={'/login':'login.html','/connect':'login.html','/privacy':'privacy.html','/studio-interface.js':'interface.js','/studio-login.js':'login.js','/studio-login.css':'login.css','/studio-session.js':'session.js','/manifest.webmanifest':'manifest.webmanifest','/sw.js':'sw.js','/studio-icon.png':'icon.png'};file(res,req,join(config.webRoot,files[path]));return;
   }
   let p;try{p=getPrincipal(req);}catch(e){if(method==='GET'&&!path.startsWith('/api/')&&!path.startsWith('/v1/')&&!path.startsWith('/auth/')&&!path.startsWith('/media/')){res.writeHead(302,{location:'/login','cache-control':'no-store'});res.end();return;}throw e;}
   if(path==='/auth/me'&&method==='GET'||path==='/v1/studio/account'&&method==='GET'){json(res,200,{subject:p.owner,username:db.prepare('SELECT username FROM users WHERE id=?').get(p.owner).username,scopes:p.scopes,issuer:origin,audience:'lazyedit-studio',limits:{maxVideoBytes:10*1024**3,chunkBytes:8*1024**2}});return;}
+  if(path==='/studio-context.js'&&method==='GET'){
+   if(p.kind!=='browser')fail(403,'Browser session required');
+   res.writeHead(200,{'content-type':'text/javascript; charset=utf-8','cache-control':'no-store','x-content-type-options':'nosniff'});
+   res.end('window.__studioContext='+JSON.stringify({scope:digest(p.owner+'\n'+root).slice(0,32),publicationOnly:true})+';');return;
+  }
   if(path==='/auth/logout'&&method==='POST'){auth.revoke(p.owner,p.id);json(res,200,{ok:true},{'set-cookie':'__Host-studio=; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=0'});return;}
   if(path==='/auth/approve'&&method==='POST'){if(p.kind!=='browser')fail(403,'Browser consent required');const d=await readJSON(req,8192);auth.approve(p.owner,String(d.user_code||'').toUpperCase());json(res,200,{ok:true});return;}
   if(path==='/auth/device-info'&&method==='GET'){if(p.kind!=='browser')fail(403,'Browser consent required');const d=db.prepare('SELECT code,label,scopes FROM devices WHERE code=? AND expires>? AND approved=0').get(u.searchParams.get('code'),Date.now());if(!d)fail(404,'Code unavailable');json(res,200,{...d,scopes:JSON.parse(d.scopes)});return;}

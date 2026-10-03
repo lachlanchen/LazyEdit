@@ -101,6 +101,7 @@ from lazyedit.utils import find_font_size
 from lazyedit.video_captioner import VideoCaptioner
 from lazyedit.chinese_simplify import convert_items_to_simplified, convert_traditional_to_simplified
 from lazyedit.music_publish import package_music_publish, post_music_package_to_autopublish
+from lazyedit.pipeline_progress import PipelineProgress
 from lazyedit.portrait_blurfill import (
     DEFAULT_PORTRAIT_BLURFILL,
     apply_portrait_blurfill,
@@ -11935,6 +11936,9 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         })
 
 
+_VIDEO_PROCESS_PROGRESS = PipelineProgress()
+
+
 class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
     async def post(self, video_id):
         try:
@@ -12038,6 +12042,11 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
             self.set_status(400)
             return self.write({"error": str(exc)})
 
+        progress_key = (video_id_i, publication_session_id)
+        if not _VIDEO_PROCESS_PROGRESS.start(progress_key):
+            self.set_status(409)
+            return self.write({"error": "This video is already processing. Check its status before retrying."})
+
         async def run_pipeline():
             statuses: dict[str, dict] = {}
 
@@ -12101,6 +12110,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
 
             async def mark(step: str, status: str, detail: str | None = None):
                 statuses[step] = {"status": status, "detail": detail}
+                _VIDEO_PROCESS_PROGRESS.step(progress_key, step, status, detail)
 
             if wants("keyframes"):
                 await mark("keyframes", "working", "Extracting")
@@ -12312,7 +12322,12 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
 
         if parse_bool(data.get("async")):
             async def _background_run():
-                await run_pipeline()
+                try:
+                    ok, _statuses, error = await run_pipeline()
+                    _VIDEO_PROCESS_PROGRESS.finish(progress_key, ok, error)
+                except Exception:
+                    _VIDEO_PROCESS_PROGRESS.finish(progress_key, False, "Preparation stopped unexpectedly. Check the worker log.")
+                    raise
 
             tornado.ioloop.IOLoop.current().spawn_callback(_background_run)
             return self.write({
@@ -12322,7 +12337,12 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                 "steps": sorted(selected_steps) if selected_steps else None,
             })
 
-        ok, statuses, error_message = await run_pipeline()
+        try:
+            ok, statuses, error_message = await run_pipeline()
+        except Exception:
+            _VIDEO_PROCESS_PROGRESS.finish(progress_key, False, "Preparation stopped unexpectedly. Check the worker log.")
+            raise
+        _VIDEO_PROCESS_PROGRESS.finish(progress_key, ok, error_message)
         if not ok:
             self.set_status(500)
             return self.write({"error": error_message or "pipeline failed", "steps": statuses})
@@ -12626,19 +12646,25 @@ class VideoProcessStatusHandler(CorsMixin, tornado.web.RequestHandler):
             required_for_publish.append("translate")
         if burn_required_for_publish:
             required_for_publish.append("burn")
+        live = _VIDEO_PROCESS_PROGRESS.get((video_id_i, publication_session_id))
+        if live and live["status"] != "done":
+            steps.update(live["steps"])
         ready_for_publish = ready_for_cover and all(
             (steps.get(name) or {}).get("status") in {"done", "skipped"}
             for name in required_for_publish
         )
+        if live and live["status"] != "done":
+            ready_for_publish = False
         last_updated = max(updated_at_candidates) if updated_at_candidates else None
 
         self.write({
             "video_id": video_id_i,
             "publication_session_id": publication_session_id,
             "steps": steps,
+            "pipeline": {k: v for k, v in live.items() if k != "steps"} if live else None,
             "ready_for_cover": ready_for_cover,
             "ready_for_publish": ready_for_publish,
-            "updated_at": iso(last_updated),
+            "updated_at": live["updated_at"] if live else iso(last_updated),
         })
 
 class VideoKeyframesHandler(CorsMixin, tornado.web.RequestHandler):

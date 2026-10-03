@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Browser windows only. No root menu, command shortcuts or launcher. -->
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+  <desktops><number>1</number><firstdesk>1</firstdesk></desktops>
+  <!-- Grabs happen at the X desktop, before Chromium receives viewer input.
+       CDP remains private and usable by the publisher. Never disable its targets. -->
+  <keyboard>
+    <keybind key="F10"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="F11"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="F12"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="Menu"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="S-F10"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-S-i"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-S-j"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="C-S-c"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="A-f"><action name="Execute"><command>/bin/true</command></action></keybind>
+    <keybind key="A-e"><action name="Execute"><command>/bin/true</command></action></keybind>
+  </keyboard>
+  <mouse>
+    <context name="Client"><mousebind button="Right" action="Press"><action name="Execute"><command>/bin/true</command></action></mousebind></context>
+  </mouse>
+  <applications><application class="*"><decor>no</decor><focus>yes</focus></application></applications>
+</openbox_config>
