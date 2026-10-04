@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-04",
+  "updated": "2026-10-05",
   "app": "LazyEdit Studio",
   "bundleId": "art.lazying.lazyedit",
   "version": "1.0",
@@ -255,7 +255,12 @@
       150
     ],
     "processingBasis": "source duration per requested run; UTC calendar month",
-    "quotaEnforcedForHostedPilot": true
+    "quotaEnforcedForHostedPilot": true,
+    "windows": {
+      "requestedUSD": "0.99",
+      "configured": false,
+      "state": "Company enrollment pending; not yet saved in Partner Center"
+    }
   },
   "applicationSource": "329679514be0173d378609f169348c23ad4ce49e",
   "identity": {
@@ -290,9 +295,9 @@
   "preparedNativeBuilds": {
     "apple": 9,
     "google": 6,
-    "state": "iOS9 in internal TestFlight and formal review; Android6 internal and production review; Mac12 WAITING_FOR_REVIEW; native Windows1.0.0 portable package qualified",
+    "state": "iOS9 in internal TestFlight and formal review; Android6 internal and production review; Mac12 WAITING_FOR_REVIEW; native Windows1.0.1 signed development MSIX qualified; Microsoft enrollment pending",
     "macos": 12,
-    "windows": "1.0.0"
+    "windows": "1.0.1"
   },
   "editorFirst": {
     "normalMemberPublishing": false,
@@ -335,7 +340,7 @@
     "apple": "329679514be0173d378609f169348c23ad4ce49e",
     "google": "9fbe02bf1388ded26af1616cb4adbf025c23fe72",
     "macos": "commit containing Mac12/Windows desktop source and this manifest",
-    "windows": "commit containing Mac12/Windows desktop source and this manifest"
+    "windows": "commit containing Windows1.0.1 signing/qualification sources and this manifest"
   },
   "webAssetPromotion": {
     "qualifiedBase": "9fbe02bf1388ded26af1616cb4adbf025c23fe72",
@@ -356,19 +361,90 @@
     "reviewerWorkerRestarted": false
   },
   "windows": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "architecture": "x64",
     "nativeInterface": true,
     "framework": "WPF / .NET 10",
-    "package": "portable self-contained ZIP",
-    "zipSha256": "5ceb3a987038634b9057ada60f87d8a9967f0ad996170f33e57b6fbde9d26e40",
-    "signature": "unsigned",
+    "package": "portable self-contained ZIP plus separately signed development MSIX",
+    "zipSha256": "2c4e4a3cb414b6a082b7163c51e8b8223cc0643bd13608cfe1ef6bac3be109e4",
+    "signature": "Portable ZIP unsigned; development MSIX/launcher signed with nonexportable Windows certificate; temporary TrustedPeople local test trust only, no public CA claim",
     "storeSubmitted": false,
     "webRuntime": "Microsoft Edge WebView2 Evergreen required",
-    "qa": "Release build and native/authenticated-origin contract passed. Isolated live reviewer login, private library, native composer, server plan, hydrated secondary editor, account isolation and logout passed twice, including final package. Actual interactive Windows QA; no upload/preparation/post. Owned temporary task and credential file removed.",
+    "qa": "Same signed development MSIX installed and live editing-only reviewer login/library/native composer/server plan/selected-video hydrated editor/isolation/sign-out passed on physical HKU Windows 11 Enterprise and KVM Windows 11 Pro. No upload, preparation or social post. Genuine screenshots captured; own app and temporary tasks cleaned up. Windows 10 hardware not tested.",
     "limitations": [
       "Native password/invitation sign-in; native OAuth not implemented on Windows",
       "New Windows-specific labels fall back to English alongside 11 shared locale files"
+    ],
+    "msixVersion": "1.0.1.0",
+    "msixSha256": "1bf3f8aff06b1cc095e4443dd605a66628ac27fa8746476fdb1ace18c15f0eb0",
+    "installedExecutableSha256": "9b55504b4462e5a39985302c2a760b765634663b25a76c3df37e6b4f114d409d",
+    "productionStoreIdentityReserved": false,
+    "storeState": "Company enrollment contact-email verification pending; no name/production identity/price saved or review submitted",
+    "qualification": [
+      {
+        "machine": "HKU physical lab PC",
+        "os": "Windows 11 Enterprise 10.0.26200 x64",
+        "passed": true,
+        "qualifiedAt": "2026-10-04T21:32:39.1868004Z"
+      },
+      {
+        "machine": "KVM Windows",
+        "os": "Windows 11 Pro 10.0.26200 x64",
+        "passed": true,
+        "qualifiedAt": "2026-10-04T21:32:12.5893803Z"
+      }
+    ],
+    "certificationKit": {
+      "overall": "WARNING",
+      "toolVersion": "10.0.19041.5609",
+      "mandatoryNonPass": [
+        {
+          "name": "DPIAwarenessValidation",
+          "result": "WARNING",
+          "optional": false
+        }
+      ],
+      "otherNonPass": [
+        {
+          "name": "Blocked executables",
+          "result": "FAIL",
+          "optional": true
+        }
+      ],
+      "tests": 24
+    },
+    "dpi": {
+      "embeddedManifestVerified": true,
+      "processPerMonitorV2": true,
+      "windowPerMonitorV2": true,
+      "observedDpi": 96,
+      "kitWarningRetained": true
+    },
+    "screenshots": [
+      {
+        "file": "store/studio/screenshots/windows/studio-windows-account-1.0.1.png",
+        "sha256": "21884be7f75ab55d1f5d5f1f66ddfcf89847480ba34ffe2ee7706b7c54f8bec3",
+        "dimensions": [
+          1160,
+          850
+        ]
+      },
+      {
+        "file": "store/studio/screenshots/windows/studio-windows-composer-1.0.1.png",
+        "sha256": "e3e3e17613c5aff8d9c9431039dcec64629dd65d0dea6a1027059d7b59a50b21",
+        "dimensions": [
+          1160,
+          850
+        ]
+      },
+      {
+        "file": "store/studio/screenshots/windows/studio-windows-library-1.0.1.png",
+        "sha256": "cecc6c8b404fb045c1bc52ebc9f03102ab64bc59466d790168cbe3f1df6ca566",
+        "dimensions": [
+          1160,
+          850
+        ]
+      }
     ]
   }
 }

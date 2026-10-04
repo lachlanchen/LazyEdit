@@ -92,7 +92,7 @@ public sealed class MainWindow : Window
         selectedVideo = videos[0]!["id"]!.GetValue<int>(); await Compose(); Capture("windows-native-composer");
         var plan = await api.Json($"/v1/studio/videos/{selectedVideo}/plan", choices);
         if (plan["planDigest"]?.ToString().Length != 64) throw new StudioException("Invalid plan digest.");
-        await Web($"/editor?videoId={selectedVideo}", true);
+        await Web($"/editor?videoId={selectedVideo}", true, videos[0]!["title"]?.ToString());
         await Account(); Capture("windows-native-account");
         await api.Logout();
         File.WriteAllText(Path.Combine(StudioApi.StateRoot, "workspace-check.txt"), "PASS: reviewer login, private library, native composer, server plan, hydrated editor, account isolation and logout. No preparation or publication submitted.\n");
@@ -345,7 +345,7 @@ public sealed class MainWindow : Window
         File.Delete(path);
         MessageBox.Show(result.ToJsonString(), T("Activity")); page = "Activity"; await Activity();
     }
-    private async Task Web(string path, bool qualify = false)
+    private async Task Web(string path, bool qualify = false, string? expectedTitle = null)
     {
         var viewer = new Window { Title = T("Studio editor"), Width = 1100, Height = 800, Owner = this };
         var web = new WebView2(); viewer.Content = web; viewers.Add(viewer);
@@ -376,7 +376,9 @@ public sealed class MainWindow : Window
                 for (var attempt = 0; attempt < 30; attempt++) {
                     await Task.Delay(1000);
                     var body = await web.CoreWebView2.ExecuteScriptAsync("document.body.innerText");
-                    if (body.Contains("Edit & preview") && !body.Contains("Opening editor")) { hydrated = true; break; }
+                    var text = System.Text.Json.JsonSerializer.Deserialize<string>(body) ?? "";
+                    if (text.Contains("Edit & preview") && !text.Contains("Opening editor") &&
+                        !string.IsNullOrEmpty(expectedTitle) && text.Contains(expectedTitle)) { hydrated = true; break; }
                 }
                 if (!hydrated) throw new StudioException("Advanced editor did not hydrate.");
                 using var stream = File.Create(Path.Combine(StudioApi.StateRoot, "windows-editor.png"));

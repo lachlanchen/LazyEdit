@@ -13,11 +13,13 @@ Passwords, reviewer logins and platform cookies are not embedded in the app.
 
 ## Install
 
-Extract `LazyEditStudio-windows-x64-1.0.0.zip` into a directory and run
+Extract `LazyEditStudio-windows-x64-1.0.1.zip` into a directory and run
 `LazyEditStudio.exe`. Windows 10/11 x64 and the Microsoft Edge WebView2
 Evergreen Runtime are required. The package includes its .NET runtime; users
-do not need an SDK. This first portable package is unsigned and has not been
-submitted to the Microsoft Store. Do not disable system protection to run it.
+do not need an SDK. The portable ZIP remains unsigned. A separate MSIX was
+signed with a nonexportable development certificate and tested on the HKU lab
+PC and KVM Windows. This is local test trust, not a public CA signature or a
+Microsoft Store release. Do not disable system protection to run the ZIP.
 
 Sign in with an invited Studio account. Sessions are encrypted with Windows
 DPAPI for the current Windows user. This version uses password/invitation
@@ -72,3 +74,21 @@ afterward. Never put these credentials in source or command-line values.
 The qualified package and Mac submission are recorded in
 [the desktop release note](../../references/studio/2026-10-04-desktop-apps-and-mac-review.md)
 and [the provider manifest](../../store/studio/release.json).
+
+## MSIX signing and Microsoft Store
+
+See [the Windows qualification and submission handoff](../../references/studio/2026-10-05-windows-signing-and-store.md).
+`package_windows.ps1` packages the existing native build and preserves its
+portable ZIP. A Store build requires the exact reserved Partner Center name,
+publisher CN and publisher display name in an identity JSON with
+`"source": "partner-center"`. Never upload the dedicated `.QA` identity.
+
+Run signing from the existing interactive Windows console. An SSH service
+token may see a certificate but cannot unlock its private key. The key stays
+on its Windows machine; do not export a PFX to work around that restriction.
+
+`install_windows_test.ps1` and `check_windows.ps1` use bounded, temporary tasks
+in that console for remote qualification. They protect other apps, preserve
+the exact candidate digest, and remove their own tasks and temporary reviewer
+input. Sideload trust is limited to the public test certificate in TrustedPeople
+and is removed after the dedicated QA package is uninstalled.

@@ -84,6 +84,8 @@ def main() -> None:
     windows = ROOT / "mobile/windows/Assets/Studio.ico"
     windows.parent.mkdir(parents=True, exist_ok=True)
     Image.open(SOURCE).convert("RGB").save(windows, sizes=[(n, n) for n in (16, 32, 48, 64, 128, 256)])
+    for name, size in (("Logo44", 44), ("Logo150", 150), ("StoreLogo", 50)):
+        rasterize(SOURCE, ROOT / f"mobile/windows/msix/Assets/{name}.png", size)
 
 
 if __name__ == "__main__":

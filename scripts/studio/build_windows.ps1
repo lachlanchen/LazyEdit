@@ -7,7 +7,9 @@ $output = Join-Path $Root "temp\desktop\windows-x64"
 if ($LASTEXITCODE -ne 0) { throw "Windows publish failed" }
 $test = Start-Process -FilePath (Join-Path $output "LazyEditStudio.exe") -ArgumentList "--contract-test" -Wait -PassThru
 if ($test.ExitCode -ne 0) { throw "Windows contract test failed" }
-$archive = Join-Path $Root "temp\desktop\LazyEditStudio-windows-x64-1.0.0.zip"
-Compress-Archive -Path "$output\*" -DestinationPath $archive -Force
+$version = ([xml](Get-Content $project -Raw)).Project.PropertyGroup.Version
+$archive = Join-Path $Root ("temp\desktop\LazyEditStudio-windows-x64-" + $version + ".zip")
+if (Test-Path $archive) { throw "Preserve an existing candidate; use a new version or reconcile it" }
+Compress-Archive -Path "$output\*" -DestinationPath $archive
 Get-FileHash $archive -Algorithm SHA256 | Select-Object Algorithm,Hash
 Write-Output "Prepared native Windows package. No Microsoft Store submission or code-signing claim."

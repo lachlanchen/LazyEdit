@@ -20,5 +20,5 @@
     "invitationRequiredForSuppliedReviewer": false,
     "platformCredentialsRequiredForOrdinaryMemberFeatures": false
   },
-  "reviewState": "Google Android6 production in review; Apple iOS9 and Mac12 WAITING_FOR_REVIEW; Windows native portable package qualified, no Microsoft Store submission."
+  "reviewState": "Google Android6 production in review; Apple iOS9 and Mac12 WAITING_FOR_REVIEW; Windows1.0.1 signed development MSIX qualified on two Windows machines, Microsoft company enrollment pending."
 }

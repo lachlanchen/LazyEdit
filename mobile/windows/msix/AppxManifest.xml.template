@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+         IgnorableNamespaces="uap rescap">
+  <Identity Name="@NAME@" Publisher="@PUBLISHER@" Version="@VERSION@" ProcessorArchitecture="x64" />
+  <Properties>
+    <DisplayName>LazyEdit Studio</DisplayName>
+    <PublisherDisplayName>@PUBLISHER_DISPLAY_NAME@</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+    <Description>Private video editing, subtitles and preview</Description>
+  </Properties>
+  <Resources>
+    <Resource Language="en-US" /><Resource Language="zh-Hans" /><Resource Language="zh-Hant" />
+    <Resource Language="ja-JP" /><Resource Language="ko-KR" /><Resource Language="vi-VN" />
+    <Resource Language="ar-SA" /><Resource Language="fr-FR" /><Resource Language="es-ES" />
+    <Resource Language="de-DE" /><Resource Language="ru-RU" />
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26200.0" />
+  </Dependencies>
+  <Applications>
+    <Application Id="Studio" Executable="LazyEditStudio.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements DisplayName="LazyEdit Studio" Description="Your videos. Your private Studio."
+        BackgroundColor="transparent" Square150x150Logo="Assets\Logo150.png" Square44x44Logo="Assets\Logo44.png" />
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="internetClient" />
+    <rescap:Capability Name="runFullTrust" />
+  </Capabilities>
+</Package>
