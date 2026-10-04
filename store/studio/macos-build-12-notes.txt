@@ -1,0 +1,13 @@
+LazyEdit Studio Mac 1.0 (12)
+
+Universal native Mac Catalyst library, upload, editor configuration, activity
+and account screens. Existing 11-language Studio strings and approved icon.
+Private editing workspace, resumable uploads and existing reviewed task queue.
+Secondary advanced editor and optional authorized platform account views.
+Mac sandbox, app-owned Keychain access and complete desktop icon family.
+Avoid a false missing-render error on newly uploaded videos.
+
+Submitted 2026-10-04T14:35:26.1Z. Official state: WAITING_FOR_REVIEW.
+Exact VALID build: 98348a3d-1b41-4bf5-8adc-7b5c1a99ceba.
+Not a claim of approval or public availability.
+iOS9 and Android6 submissions preserved.

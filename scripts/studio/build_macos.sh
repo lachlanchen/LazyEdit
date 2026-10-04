@@ -12,6 +12,7 @@ xcodebuild -project App.xcodeproj -scheme StudioNative -configuration Release \
   -derivedDataPath "$root/release/MacDerivedData" \
   IPHONEOS_DEPLOYMENT_TARGET=15.0 MACOSX_DEPLOYMENT_TARGET=12.0 \
   ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO \
+  CURRENT_PROJECT_VERSION="$build_number" \
   OTHER_LDFLAGS='$(inherited) -weak_framework SwiftUICore' \
   build > "$root/release/mac-build.log" 2>&1
 app="$root/release/MacDerivedData/Build/Products/Release-maccatalyst/App.app"

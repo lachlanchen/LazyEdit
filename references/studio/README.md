@@ -1,9 +1,12 @@
 # LazyEdit Studio remote access
 
-The private owner pilot is at **https://edit.lazying.art**. `studio.lazying.art`
-remains the landing page. One configured account, `lachlanchen`; no signup.
-This is not a public multi-tenant service. The account password is in the
-owner's Nutstore `Share/LazyEdit/studio-account.json`, never in this repository.
+Studio is at **https://edit.lazying.art**; `studio.lazying.art` remains the
+landing page. The original owner pilot is preserved alongside invite-only
+private member workspaces. See [current account/publication boundaries](editor-first-and-optional-publication.md)
+and [native desktop apps and Mac review](2026-10-04-desktop-apps-and-mac-review.md).
+The transport notes below describe the original owner deployment; the current
+member service and native release state are recorded in those newer guides.
+Account credentials stay in protected configuration, never in this repository.
 
 ## Boundaries
 

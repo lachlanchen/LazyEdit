@@ -76,6 +76,25 @@ def test_reuses_complete_asset_without_upload(upload, capsys):
     assert all(method == "GET" for method, _ in calls)
 
 
+def test_rejects_mac_display_on_ios_before_provider_request(upload, monkeypatch):
+    module, _, calls, _, _ = upload
+    monkeypatch.setattr(sys, "argv", [*sys.argv, "--platform", "MAC_OS"])
+    with pytest.raises(ValueError, match="does not match the platform"):
+        module.main()
+    assert calls == []
+
+
+def test_mac_assets_do_not_select_or_change_pending_ios_review(upload):
+    module, _, calls, _, _ = upload
+    ios = {"id": "ios", "attributes": {"platform": "IOS", "versionString": "1.0", "appStoreState": "WAITING_FOR_REVIEW"}}
+    mac = {"id": "mac", "attributes": {"platform": "MAC_OS", "versionString": "1.0", "appStoreState": "PREPARE_FOR_SUBMISSION"}}
+    assert module.editable_version([ios, mac], "MAC_OS", "1.0") is mac
+    with pytest.raises(ValueError, match="Preserve"):
+        module.editable_version([ios, mac], "IOS", "1.0")
+    assert ios["attributes"]["appStoreState"] == "WAITING_FOR_REVIEW"
+    assert calls == []
+
+
 def test_reconciles_async_processing_without_reupload(upload, capsys):
     module, asset, calls, deliveries, _ = upload
     asset["attributes"]["assetDeliveryState"]["state"] = "UPLOAD_COMPLETE"

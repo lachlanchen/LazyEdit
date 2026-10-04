@@ -52,6 +52,11 @@ For an invite-only service with private per-user browser logins, see the
 It combines Studio and AutoPublish in isolated workspaces and leaves the
 existing owner/Pi installation separate.
 
+Studio also has native desktop clients: universal **macOS 12+** (Mac Catalyst)
+and **Windows x64** (WPF). See the [desktop release and Mac review guide](references/studio/2026-10-04-desktop-apps-and-mac-review.md)
+and [Windows setup](mobile/windows/README.md). Store submission and portable
+package qualification are recorded separately in [the release manifest](store/studio/release.json).
+
 ## 🧭 Contents
 
 - [Overview](#overview)

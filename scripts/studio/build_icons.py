@@ -76,6 +76,15 @@ def main() -> None:
         256,
     )
 
+    # Desktop assets reuse the same approved master, without changing the artwork.
+    mac = ROOT / "mobile/ios/App/App/Assets.xcassets/AppIcon.appiconset"
+    for size in (16, 32, 64, 128, 256, 512, 1024):
+        rasterize(SOURCE, mac / f"StudioMac-{size}.png", size)
+    from PIL import Image
+    windows = ROOT / "mobile/windows/Assets/Studio.ico"
+    windows.parent.mkdir(parents=True, exist_ok=True)
+    Image.open(SOURCE).convert("RGB").save(windows, sizes=[(n, n) for n in (16, 32, 48, 64, 128, 256)])
+
 
 if __name__ == "__main__":
     main()

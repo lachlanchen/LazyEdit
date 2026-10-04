@@ -334,8 +334,13 @@ struct StudioVideoView: View {
             let values = result["steps"] as? [String: [String: Any]] ?? [:]
             let names = [("transcribe", "Transcription"), ("polish", "Subtitle correction"), ("translate", "Translation"), ("burn", "Render"), ("metadata_zh", "Chinese metadata"), ("metadata_en", "English metadata"), ("cover", "Cover")]
             steps = names.map { ($0.1, studioText(values[$0.0]?["status"], fallback: "idle")) }
-            let render = try await store.api.json("/api/videos/\(video.id)/burn-subtitles")
-            editedMedia = render["status"] as? String == "completed" ? render["output_url"] as? String : nil
+            if values["burn"]?["status"] as? String == "completed" {
+                let render = try await store.api.json("/api/videos/\(video.id)/burn-subtitles")
+                editedMedia = render["status"] as? String == "completed" ? render["output_url"] as? String : nil
+            } else {
+                // A newly uploaded video has no render yet; this is normal.
+                editedMedia = nil
+            }
         } catch { store.report(error) }
     }
 }

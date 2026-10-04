@@ -87,3 +87,6 @@ UI automation. Never disable TCC or Gatekeeper to manufacture a passing result.
 
 The subsequent browser-policy conflict and 11-language work are documented in
 [the 2026-10-04 qualification note](2026-10-04-workspace-login-and-localization.md).
+
+Mac App Store build 12 and the native Windows client supersede the earlier
+ad-hoc release state: see [desktop release and review](2026-10-04-desktop-apps-and-mac-review.md).

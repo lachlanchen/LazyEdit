@@ -83,15 +83,78 @@
   },
   "sourceNote": "Native release sources and exact provider receipts are recorded by the commit containing this manifest.",
   "macos": {
-    "build": 9,
+    "build": 12,
+    "version": "1.0",
     "architectures": [
       "x86_64",
       "arm64"
     ],
     "minimumVersion": "12.0",
-    "zipSha256": "f7c7a16b2d3dd9a3ed7283e36db713bff4f6b5c55cace2bd48da994f1c2fc885",
-    "signature": "ad-hoc local QA; not notarized",
-    "qa": "Exact universal native Mac Catalyst build 9 launched on Intel Monterey 3040, iMac 7050 and ARM Mac mini. Strict signatures and both architectures verified; owned review apps stopped after launch checks. Local ad-hoc QA signature, not notarized; full Mac UI regression is not claimed."
+    "nativeInterface": true,
+    "signature": "Mac App Store distribution; sandboxed Catalyst profile",
+    "pkgSha256": "2dcf7534415d83aba4eaed79033d7cb52cdfb7ad95b73fb90377e3aa1a290d6b",
+    "buildId": "98348a3d-1b41-4bf5-8adc-7b5c1a99ceba",
+    "deliveryUuid": "98348a3d-1b41-4bf5-8adc-7b5c1a99ceba",
+    "processingState": "VALID",
+    "validation": "Apple altool VERIFY SUCCEEDED",
+    "formalReview": {
+      "versionId": "75ec2713-0287-46a7-a556-e588ed57a2c7",
+      "submissionId": "68643764-845a-4dd1-ada8-95f7a01dc1e7",
+      "submitted": true,
+      "state": "WAITING_FOR_REVIEW",
+      "submittedAt": "2026-10-04T14:35:26.1Z",
+      "attachedBuild": 12,
+      "screenshotCount": 3,
+      "reviewAccountSavedAndVerified": true,
+      "publicAvailabilityVerified": false
+    },
+    "screenshots": [
+      {
+        "file": "store/studio/screenshots/mac/studio-mac-library-12.png",
+        "sha256": "e34b5390fc37d9d6a8d8e188bb758834eb4b41eb5efd90e7a1dda72eba317606",
+        "assetId": "ce000019-6265-83d5-8037-088f9855805f",
+        "delivery": "COMPLETE",
+        "checksumMatches": true,
+        "dimensions": [
+          1280,
+          800
+        ]
+      },
+      {
+        "file": "store/studio/screenshots/mac/studio-mac-composer-12.png",
+        "sha256": "388b59bdfa2c7d83a8f4caa73fc920aac4b021faa547d6630db37c207364991f",
+        "assetId": "a7400019-6265-83d5-8034-c27bb8612832",
+        "delivery": "COMPLETE",
+        "checksumMatches": true,
+        "dimensions": [
+          1280,
+          800
+        ]
+      },
+      {
+        "file": "store/studio/screenshots/mac/studio-mac-options-12.png",
+        "sha256": "6fc3710dba5ee5363f51d52e30a2272a0bd4b44d8d98080f71cd668dbdcb7c6f",
+        "assetId": "e8c00019-6265-83d5-800f-f1c816d7b46d",
+        "delivery": "COMPLETE",
+        "checksumMatches": true,
+        "dimensions": [
+          1280,
+          800
+        ]
+      }
+    ],
+    "qa": "Exact universal candidate executable re-signed in a separate registered-device development copy. Actual native private reviewer login, Keychain persistence across relaunch, library, editing composer, subtitle/logo controls, hydrated full editor and editing-only account isolation observed on KVM macOS 15.7.9. No processing/publication request made; own app stopped afterward. Earlier build9 launch-qualified on three physical Macs; not a claim of full build12 QA on those Macs.",
+    "previousLaunchQualification": {
+      "build": 9,
+      "architectures": [
+        "x86_64",
+        "arm64"
+      ],
+      "minimumVersion": "12.0",
+      "zipSha256": "f7c7a16b2d3dd9a3ed7283e36db713bff4f6b5c55cace2bd48da994f1c2fc885",
+      "signature": "ad-hoc local QA; not notarized",
+      "qa": "Exact universal native Mac Catalyst build 9 launched on Intel Monterey 3040, iMac 7050 and ARM Mac mini. Strict signatures and both architectures verified; owned review apps stopped after launch checks. Local ad-hoc QA signature, not notarized; full Mac UI regression is not claimed."
+    }
   },
   "downloadPricing": {
     "apple": {
@@ -227,7 +290,9 @@
   "preparedNativeBuilds": {
     "apple": 9,
     "google": 6,
-    "state": "iOS9 in internal TestFlight; Android6 available to internal testers; universal Mac9 launch-qualified on three Macs"
+    "state": "iOS9 in internal TestFlight and formal review; Android6 internal and production review; Mac12 WAITING_FOR_REVIEW; native Windows1.0.0 portable package qualified",
+    "macos": 12,
+    "windows": "1.0.0"
   },
   "editorFirst": {
     "normalMemberPublishing": false,
@@ -269,7 +334,8 @@
   "nativeSources": {
     "apple": "329679514be0173d378609f169348c23ad4ce49e",
     "google": "9fbe02bf1388ded26af1616cb4adbf025c23fe72",
-    "macos": "329679514be0173d378609f169348c23ad4ce49e"
+    "macos": "commit containing Mac12/Windows desktop source and this manifest",
+    "windows": "commit containing Mac12/Windows desktop source and this manifest"
   },
   "webAssetPromotion": {
     "qualifiedBase": "9fbe02bf1388ded26af1616cb4adbf025c23fe72",
@@ -288,5 +354,21 @@
     "productionSubmission": "LightMind1.0.1(54) in Google review at 20%, submitted by its owning session on 2026-10-04T01:09Z",
     "ownerPiOrSocialProfilesShared": false,
     "reviewerWorkerRestarted": false
+  },
+  "windows": {
+    "version": "1.0.0",
+    "architecture": "x64",
+    "nativeInterface": true,
+    "framework": "WPF / .NET 10",
+    "package": "portable self-contained ZIP",
+    "zipSha256": "5ceb3a987038634b9057ada60f87d8a9967f0ad996170f33e57b6fbde9d26e40",
+    "signature": "unsigned",
+    "storeSubmitted": false,
+    "webRuntime": "Microsoft Edge WebView2 Evergreen required",
+    "qa": "Release build and native/authenticated-origin contract passed. Isolated live reviewer login, private library, native composer, server plan, hydrated secondary editor, account isolation and logout passed twice, including final package. Actual interactive Windows QA; no upload/preparation/post. Owned temporary task and credential file removed.",
+    "limitations": [
+      "Native password/invitation sign-in; native OAuth not implemented on Windows",
+      "New Windows-specific labels fall back to English alongside 11 shared locale files"
+    ]
   }
 }

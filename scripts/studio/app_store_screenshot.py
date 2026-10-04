@@ -14,7 +14,16 @@ import requests
 APP = "6814061525"
 BUNDLE = "art.lazying.lazyedit"
 SIZES = {"APP_IPHONE_67": {(1320, 2868), (1290, 2796), (1260, 2736)},
-         "APP_IPAD_PRO_3GEN_129": {(2064, 2752), (2048, 2732)}}
+         "APP_IPAD_PRO_3GEN_129": {(2064, 2752), (2048, 2732)},
+         "APP_DESKTOP": {(1280, 800), (1440, 900), (2560, 1600), (2880, 1800)}}
+
+
+def editable_version(versions, platform, number):
+    candidates = [v for v in versions if v["attributes"]["platform"] == platform
+                  and v["attributes"]["versionString"] == number]
+    if len(candidates) != 1 or candidates[0]["attributes"]["appStoreState"] != "PREPARE_FOR_SUBMISSION":
+        raise ValueError("Preserve an existing review; expected an editable version of the requested platform")
+    return candidates[0]
 
 
 def main():
@@ -23,6 +32,8 @@ def main():
     parser.add_argument("--sha256", required=True)
     parser.add_argument("--display", choices=SIZES, required=True)
     parser.add_argument("--locale", default="en-US")
+    parser.add_argument("--platform", choices=["IOS", "MAC_OS"], default="IOS")
+    parser.add_argument("--version", default="1.0")
     parser.add_argument("--wait-seconds", type=int, default=120,
                         help="Bounded wait for Apple's asynchronous asset processing")
     parser.add_argument("--key", type=Path, default=Path.home()/".config/echomind/private/AuthKey_6SSXT8QU6W.p8")
@@ -37,6 +48,8 @@ def main():
         raise ValueError("Screenshot digest, size or PNG signature mismatch")
     if struct.unpack(">II", raw[16:24]) not in SIZES[args.display]:
         raise ValueError("Screenshot dimensions do not match this device class")
+    if (args.platform == "MAC_OS") != (args.display == "APP_DESKTOP"):
+        raise ValueError("Screenshot display does not match the platform")
     checksum = hashlib.md5(raw).hexdigest()
     session = requests.Session()
     session.headers["Authorization"] = "Bearer " + jwt.encode(
@@ -53,10 +66,8 @@ def main():
     if app["attributes"]["bundleId"] != BUNDLE:
         raise ValueError("App identity mismatch")
     versions = api("GET", "apps/"+APP+"/appStoreVersions")["data"]
-    version = [v for v in versions if v["attributes"]["platform"] == "IOS" and v["attributes"]["versionString"] == "1.0"]
-    if len(version) != 1 or version[0]["attributes"]["appStoreState"] != "PREPARE_FOR_SUBMISSION":
-        raise ValueError("Preserve an existing review; expected editable iOS 1.0")
-    loc = api("GET", "appStoreVersions/"+version[0]["id"]+"/appStoreVersionLocalizations")["data"]
+    version = editable_version(versions, args.platform, args.version)
+    loc = api("GET", "appStoreVersions/"+version["id"]+"/appStoreVersionLocalizations")["data"]
     loc = [v for v in loc if v["attributes"]["locale"] == args.locale]
     if len(loc) != 1:
         raise ValueError("Expected exactly one existing localization")
