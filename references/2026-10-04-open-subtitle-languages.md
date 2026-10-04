@@ -8,6 +8,8 @@ change awaiting deployment after LightMind reviewer qualification. It does not
 replace the current worker, install a native build, publish, regenerate video
 603, call a paid provider or modify persisted user settings.
 
+Implementation commit: `e572f54` (`open subtitle language selection across Studio`).
+
 The focused Korean repair in `17fd4ee` and prior annotation fix `8a88df8` remain
 intact. No changes were made to `subtitle_annotations.py`, `hanja_dictionary.py`,
 the ASR language table or the external furigana/EchoMind symlinks. The only

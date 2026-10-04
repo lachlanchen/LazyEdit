@@ -4,6 +4,8 @@ Updated 2026-10-04 after the LALACHAN handoff. General language integration is
 implemented and tested in source. **Deployment is held during LightMind reviewer
 acceptance.** No worker replacement, restart, paid model call or real post occurred.
 
+Implementation commit: `e572f54` (`open subtitle language selection across Studio`).
+
 ## Implemented
 
 - One Babel/CLDR subtitle resolver, separate from the 11 UI locales and unchanged
@@ -70,6 +72,6 @@ words are shaped, but word order is wrong. The catalogue, PWA picker and native
 plan surface a preview warning. Repair is documented separately and is not claimed
 complete: [RTL report](../../bug-reports/2026-10-04-rtl-subtitle-token-order.md).
 
-Source commits should be located with `git log --oneline --
-lazyedit/subtitle_languages.py`; this note is committed with that implementation.
+The implementation and full test/render contract are committed in `e572f54`.
+This response's commit reference is a documentation follow-through.
 No acceptance lock, private runtime evidence, credentials or media is committed.
