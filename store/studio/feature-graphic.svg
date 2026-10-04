@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1024" height="500" viewBox="0 0 1024 500">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#101e38"/>
+      <stop offset="1" stop-color="#163b52"/>
+    </linearGradient>
+    <clipPath id="icon"><rect x="72" y="122" width="256" height="256" rx="55"/></clipPath>
+  </defs>
+  <rect width="1024" height="500" fill="url(#background)"/>
+  <circle cx="1010" cy="-40" r="300" fill="#19c9a4" opacity=".07"/>
+  <circle cx="32" cy="508" r="225" fill="#6d80ff" opacity=".09"/>
+  <image x="72" y="122" width="256" height="256" clip-path="url(#icon)" xlink:href="../../figs/app-icon/lazyedit-studio-icon-v2.png"/>
+  <g fill="#fff" font-family="DejaVu Sans, sans-serif">
+    <text x="378" y="214" font-size="56" font-weight="700">LazyEdit Studio</text>
+    <text x="381" y="276" font-size="27" fill="#a2e9dd">Your videos. Your private Studio.</text>
+    <text x="381" y="326" font-size="23" fill="#d4dcea">Upload · Correct subtitles · Preview</text>
+  </g>
+</svg>

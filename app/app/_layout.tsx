@@ -28,18 +28,19 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  // Optional interface fonts must not prevent editing on a slow connection.
+  // React Native/Web use their system fallback when a font fails to load.
   useEffect(() => {
-    if (error) throw error;
+    if (error) console.warn('Studio interface font unavailable; using system fonts.');
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded || error) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, error]);
 
-  if (!loaded) {
+  if (!loaded && !error) {
     return null;
   }
 

@@ -16,7 +16,9 @@
     "externalPlatformLoginRequiredForRealPosts": true,
     "notes": "Use the separately supplied private reviewer Studio account. This account has the same editing capabilities as ordinary invited members: its own Vancouver sample, upload, subtitle correction, layout, processing, cover/metadata and preview. No social account is needed for these functions. Publication is an explicitly documented operator-enabled integration, disabled for ordinary members and this account. Do not request the operator's Pi, media or channel credentials. Disclose this capability distinction to review; do not certify access to all publication features solely on the basis of editor access.",
     "socialAccountRequiredForEditing": false,
-    "reviewerPublishingEnabled": false
+    "reviewerPublishingEnabled": false,
+    "invitationRequiredForSuppliedReviewer": false,
+    "platformCredentialsRequiredForOrdinaryMemberFeatures": false
   },
-  "reviewState": "listing preparation; not submitted"
+  "reviewState": "Google Android6 in review; Apple iOS9 draft prepared and blocked by unpublished app privacy responses."
 }

@@ -31,7 +31,7 @@ final class StudioUITests: XCTestCase {
             if notNow.waitForExistence(timeout: 5) { notNow.tap() }
             dismissPasswordPrompt(app)
         }
-        XCTAssertTrue(app.tabBars.buttons["Studio"].waitForExistence(timeout: 60))
+        XCTAssertTrue(nativeTab("Studio", app).waitForExistence(timeout: 60))
         tapTab("Studio", app)
         XCTAssertTrue(app.navigationBars["Your Studio"].waitForExistence(timeout: 30))
         capture("Invited member demo library", app)
@@ -229,9 +229,17 @@ final class StudioUITests: XCTestCase {
         }
     }
     @MainActor
+    private func nativeTab(_ label: String, _ app: XCUIApplication) -> XCUIElement {
+        // iPadOS places adaptive tabs at the top, outside the iPhone tab-bar
+        // accessibility container. Match the same visible native button.
+        let bottom = app.tabBars.buttons[label]
+        if bottom.exists { return bottom }
+        return app.buttons.matching(identifier: label).firstMatch
+    }
+    @MainActor
     private func tapTab(_ label: String, _ app: XCUIApplication) {
         dismissPasswordPrompt(app)
-        let button = app.tabBars.buttons[label]
+        let button = nativeTab(label, app)
         XCTAssertTrue(button.waitForExistence(timeout: 10))
         // Liquid Glass simulator tabs sometimes report {-1, -1} for the
         // suggested hit point. The observed accessibility frame is usable.

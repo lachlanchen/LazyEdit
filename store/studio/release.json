@@ -16,7 +16,21 @@
     "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/testflight",
     "build": 9,
     "nativeInterface": true,
-    "qa": "Member sign-in, private library/account controls, native editing composer, hydrated full editor without platform/publish controls, and sign-out passed on a dedicated iPhone 17 Pro Max simulator. Exact signed IPA separately validated/uploaded once and is VALID in internal TestFlight. No real social publication or physical-install claim."
+    "qa": "Member sign-in, private library/account controls, native editing composer, hydrated full editor without platform/publish controls, and sign-out passed on a dedicated iPhone 17 Pro Max simulator. Exact signed IPA separately validated/uploaded once and is VALID in internal TestFlight. No real social publication or physical-install claim. iPad Pro 13-inch simulator native member editing test passed (1 test, 108.870s) after the hosted optional-font fallback; adaptive-tab changes affect the test helper only. The same signed IPA9 is preserved.",
+    "formalReview": {
+      "versionId": "5097e8ff-f535-489b-b4c3-ef01561b8e9a",
+      "state": "PREPARE_FOR_SUBMISSION",
+      "draftSubmissionId": "38267310-a95e-435f-9008-1349611c9307",
+      "submitted": false,
+      "attachedBuild": 9,
+      "screenshotCount": 4,
+      "screenshotDelivery": "COMPLETE; checksum verified",
+      "configuredTerritories": 175,
+      "availableInNewTerritories": true,
+      "blockingRequirement": "Published app privacy responses; browser App Store Connect login expired.",
+      "providerError": "STATE_ERROR.APP_DATA_USAGES_REQUIRED",
+      "reviewAccountSavedAndVerified": true
+    }
   },
   "google": {
     "appId": "4975166991517752718",
@@ -30,8 +44,23 @@
     "publicProduction": false,
     "build": 6,
     "nativeInterface": true,
-    "qa": "Two targeted tests passed on the dedicated Android 14 emulator: real member authentication with server-confirmed editing-only capability and absent platform/invitation controls, plus authenticated-origin checks. Exact signed AAB6 is available to internal testers; no physical-install claim.",
-    "listingText": "Editor-first default English listing saved as draft; required visual assets and public review remain pending."
+    "qa": "Two targeted tests passed on the dedicated Android 14 emulator: real member authentication with server-confirmed editing-only capability and absent platform/invitation controls, plus authenticated-origin checks. Exact signed AAB6 is available to internal testers; no physical-install claim. Four current native member screenshots were captured for the store; the owned emulator was stopped afterward.",
+    "listingText": "Default English listing, approved icon/feature graphic and four genuine native phone screenshots submitted for review.",
+    "production": {
+      "state": "in_review",
+      "submittedAt": "2026-10-04T02:24:23Z",
+      "versionCode": 6,
+      "releaseName": "1.0 (6) — Private Studio editing",
+      "countries": 173,
+      "rollout": "full first release after approval",
+      "managedPublishing": false,
+      "changesSubmitted": 10,
+      "publicAvailabilityVerified": false
+    },
+    "reviewFollowUps": [
+      "Missing deobfuscation map (non-blocking).",
+      "Console recommends edge-to-edge validation and R8 optimization; this unchanged qualified bundle was not rebuilt."
+    ]
   },
   "sourceNote": "Native release sources and exact provider receipts are recorded by the commit containing this manifest.",
   "macos": {
@@ -48,11 +77,11 @@
   "downloadPricing": {
     "apple": {
       "usd": "0.99",
-      "state": "configured; production not submitted"
+      "state": "USD 0.99 configured; exact IPA9 still internal TestFlight; formal review blocked by app privacy questionnaire"
     },
     "google": {
       "usd": "0.99",
-      "state": "saved and read back; production not submitted"
+      "state": "USD 0.99 saved/read back; exact bundle6 production in review, not yet publicly available"
     },
     "monthlyRequestedUSD": [
       "2.99",
@@ -164,7 +193,7 @@
   },
   "gatewaySource": "9fbe02bf1388ded26af1616cb4adbf025c23fe72",
   "workspaceSource": "9fbe02bf1388ded26af1616cb4adbf025c23fe72",
-  "hostedImageTag": "editor-first-20261004h",
+  "hostedImageTag": "editor-first-20261004h-font-fallback",
   "hostedQualification": {
     "nodeContractsPassed": 38,
     "pythonPromotionTestsPassed": 3,
@@ -188,7 +217,7 @@
     "socialAccountsRequiredForEditing": false,
     "ownerPiSharedWithReviewer": false,
     "contractsPassed": 38,
-    "deployment": "live; editor-first-20261004h; both permanent workers healthy"
+    "deployment": "live h backend plus atomic optional-font frontend fallback; both workers healthy without restart"
   },
   "googleSubscriptionDrafts": {
     "app": "art.lazying.lazyedit",
@@ -222,5 +251,23 @@
     "apple": "329679514be0173d378609f169348c23ad4ce49e",
     "google": "9fbe02bf1388ded26af1616cb4adbf025c23fe72",
     "macos": "329679514be0173d378609f169348c23ad4ce49e"
+  },
+  "webAssetPromotion": {
+    "qualifiedBase": "9fbe02bf1388ded26af1616cb4adbf025c23fe72",
+    "scope": "Only root interface-font failure fallback, exported with remote Studio flags and original build-web decoration",
+    "image": "lazyedit-workspace:editor-first-20261004h-font-fallback",
+    "imageDigest": "sha256:44bf661ac09f9cb693afeb8b24075a3579d671f13a38592ea62425b61b77b93a",
+    "bundle": "entry-71ccc91c98ad155dca24ea38be710a6b.js",
+    "workerRestarted": false,
+    "preparedReviewerOperationPreserved": true,
+    "broaderLanguageDeploymentHeld": true
+  },
+  "lightmindReviewer": {
+    "role": "ordinary isolated editing member",
+    "credentials": "Protected external Nutstore account file; no credentials in this manifest",
+    "nativeAcceptance": "LightMind54 live native test: 1 passed in 48.154s; authenticated source/Range/refresh/render playback/cover/review",
+    "productionSubmission": "LightMind1.0.1(54) in Google review at 20%, submitted by its owning session on 2026-10-04T01:09Z",
+    "ownerPiOrSocialProfilesShared": false,
+    "reviewerWorkerRestarted": false
   }
 }
