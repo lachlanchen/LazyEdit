@@ -135,5 +135,52 @@ def review_hints(items, entries=None):
     return hints
 
 
+def normalize_selected_restorations(items, entries=None):
+    """Repair formatting of Hanja already chosen by the model, not etymology.
+
+    Pure Hanja gets its exact native surface as ruby. Split a mixed Hanja/Hangul
+    token only when the unchanged Hangul suffix aligns exactly and the selected
+    root is a dictionary candidate. Never choose a different Han spelling.
+    """
+    if not isinstance(items, list):
+        return
+    entries = load_dictionary() if entries is None else entries
+    for item in items:
+        if not isinstance(item, dict) or not isinstance(item.get('tokens'), list):
+            continue
+        normalized = []
+        for token in item['tokens']:
+            if not isinstance(token, dict) or any(not isinstance(token.get(k), str)
+                    for k in ('surface', 'word', 'reading', 'type')):
+                normalized.append(token)
+                continue
+            surface, word = token['surface'], token['word']
+            mixed = re.fullmatch(r'([\u3400-\u4dbf\u4e00-\u9fff]+)([가-힣]+)', word)
+            root, suffix = mixed.groups() if mixed else (word, '')
+            native_root = surface[:-len(suffix)] if suffix and surface.endswith(suffix) else ''
+            if HAN.fullmatch(word) and re.fullmatch(r'[가-힣]+', surface):
+                token = {**token, 'reading': surface}
+                # A model can omit an ending from word while retaining it in
+                # surface/ruby (축하해 -> 祝賀). Preserve that visible ending too.
+                if word not in {c['word'] for c in entries.get(surface, [])}:
+                    for end in range(len(surface) - 1, 1, -1):
+                        if word in {c['word'] for c in entries.get(surface[:end], [])}:
+                            native_root, suffix = surface[:end], surface[end:]
+                            break
+            if suffix and root in {c['word'] for c in entries.get(native_root, [])}:
+                try:
+                    from koroman import romanize
+                    reading = romanize(suffix, use_pronunciation_rules=True)
+                except (ImportError, ValueError):
+                    reading = ''
+                if isinstance(reading, str) and re.search(r'[A-Za-z]', reading):
+                    normalized.append({**token, 'surface': native_root,
+                                       'word': root, 'reading': native_root})
+                    token = {**token, 'surface': suffix, 'word': suffix,
+                             'reading': reading}
+            normalized.append(token)
+        item['tokens'] = normalized
+
+
 if __name__ == "__main__":
     print(install_dictionary())

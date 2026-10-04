@@ -9,6 +9,42 @@ from lazyedit.subtitle_translate import SubtitlesTranslator
 from lazyedit.subtitles_burner.burner import _load_burner_module
 
 
+def test_corrected_chinese_cue_with_stale_english_tag_is_translated(tmp_path):
+    translator = SubtitlesTranslator.__new__(SubtitlesTranslator)
+    source = {'start': '00:00:19,112', 'end': '00:00:28,884',
+              'lang': 'en', 'text': '拌面'}
+    item = {'start': source['start'], 'end': source['end'], 'en': 'Mixing noodles',
+            'tokens': [{'surface': 'Mixing', 'word': 'Mixing', 'reading': '', 'type': 'verb'},
+                       {'surface': ' noodles', 'word': ' noodles', 'reading': '', 'type': 'noun'}]}
+    translator.get_filename = Mock(return_value=str(tmp_path / 'response.json'))
+    translator.send_request_with_json_schema = Mock(return_value={'items': [item]})
+    result = translator.translate_and_merge_subtitles_en_single_pass([source], 0)
+    assert result['plain'][0]['en'] == 'Mixing noodles'
+    assert result['plain'][0]['start'] == source['start']
+    assert source['lang'] == 'en'  # Preserve the original recognition evidence.
+
+
+@pytest.mark.parametrize('text', ['Thank you', 'This is 莲香西域', '99.99%', '🧡'])
+def test_actual_english_mixed_speech_and_nonletters_still_lock(text):
+    translator = SubtitlesTranslator.__new__(SubtitlesTranslator)
+    source = {'start': '00:00:01,000', 'end': '00:00:02,000', 'lang': 'en', 'text': text}
+    locked = translator._same_language_plain_result([source], 'en', 'en')
+    assert locked['plain'][0]['en'] == text
+    item = dict(start=source['start'], end=source['end'], en='Changed', tokens=[])
+    with pytest.raises(ValueError, match='changed original'):
+        validate_annotations([item], [source], 'en', locked)
+
+
+def test_empty_corrected_hallucination_is_not_sent_for_translation(tmp_path):
+    path = tmp_path / 'polished.json'
+    path.write_text(json.dumps([
+        {'text': '谢谢你们', 'lang': 'zh'}, {'text': '', 'lang': 'en'},
+        {'text': '   ', 'lang': 'en'}], ensure_ascii=False))
+    translator = SubtitlesTranslator.__new__(SubtitlesTranslator)
+    translator.input_json_path = path
+    assert translator.load_subtitles_from_json() == [{'text': '谢谢你们', 'lang': 'zh'}]
+
+
 @pytest.fixture(autouse=True)
 def local_hanja_candidates(monkeypatch):
     # Unit tests must not download the production dictionary on a fresh checkout.

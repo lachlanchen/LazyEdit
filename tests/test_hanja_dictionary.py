@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from lazyedit.hanja_dictionary import parse_dictionary, review_hints
+from lazyedit.hanja_dictionary import parse_dictionary, review_hints, normalize_selected_restorations
 from lazyedit.subtitle_annotations import validate_annotations
 from lazyedit.subtitle_translate import SubtitlesTranslator
 
@@ -30,6 +30,7 @@ def dictionary(monkeypatch):
     ])
     monkeypatch.setattr("lazyedit.subtitle_translate.review_hints",
                         lambda items: review_hints(items, entries))
+    monkeypatch.setattr('lazyedit.hanja_dictionary.load_dictionary', lambda: entries)
     return entries
 
 
@@ -114,7 +115,7 @@ def test_repair_succeeds_and_preserves_clean_translation(dictionary):
 
 
 @pytest.mark.parametrize("tokens", [None, [None], [
-    {"surface": "학교", "word": "學校", "reading": "hakgyo", "type": "noun"},
+    {"surface": "학교", "word": "學校", "reading": "hakgyo", "type": "invalid"},
 ]])
 def test_annotation_repair_still_receives_dictionary_candidates(dictionary, tokens):
     invalid = dict(row("학교"), tokens=tokens)
@@ -157,6 +158,30 @@ def test_surface_coverage_rejects_empty_tokens():
     item["tokens"].append({"surface": "", "word": "漢", "reading": "", "type": "noun"})
     with pytest.raises(ValueError, match="Empty annotation surface"):
         validate_annotations([item], [item], "ko")
+
+
+def test_selected_hanja_ruby_is_repaired_without_another_model_call(dictionary):
+    item = row('학교', '學校', 'hakgyo')
+    translator = translator_with({'items': [item]})
+    result = request(translator, item)
+    assert result[0]['tokens'][0]['reading'] == '학교'
+    assert translator.send_request_with_json_schema.call_count == 1
+
+
+@pytest.mark.parametrize('word', ['祝賀해요', '祝賀'])
+def test_selected_mixed_root_splits_losslessly_and_preserves_model_choice(word):
+    item = row('축하해요', word, 'chukhahaeyo')
+    original = deepcopy(item)
+    normalize_selected_restorations([item], {'축하': [{'word': '祝賀'}]})
+    assert [(t['surface'], t['word'], t['reading']) for t in item['tokens']] == [
+        ('축하', '祝賀', '축하'), ('해요', '해요', 'haeyo')]
+    validate_annotations([item], [original], 'ko', {'plain': [original]})
+    wrong = deepcopy(original)
+    normalize_selected_restorations([wrong], {'축하': [{'word': '祝夏'}]})
+    assert [t['word'] for t in wrong['tokens']] == [word]  # Never substitute another Han spelling.
+    if word == '祝賀해요':
+        with pytest.raises(ValueError, match='Invalid Han restoration'):
+            validate_annotations([wrong], [original], 'ko')
 
 
 def test_missing_dictionary_falls_back_without_repeated_download(monkeypatch, tmp_path):

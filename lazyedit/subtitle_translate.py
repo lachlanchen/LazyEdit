@@ -18,7 +18,7 @@ from lazyedit.openai_request_json import OpenAIRequestJSONBase, JSONParsingError
 from lazyedit.languages import LANGUAGES, TO_LANGUAGE_CODE
 from lazyedit.subtitle_languages import require_subtitle_language, subtitle_language
 from lazyedit.subtitle_annotations import annotation_contract, validate_annotations
-from lazyedit.hanja_dictionary import review_hints
+from lazyedit.hanja_dictionary import review_hints, normalize_selected_restorations
 
 from datetime import datetime
 from pprint import pprint
@@ -206,6 +206,15 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     def _target_matches_source_language(self, item: dict, target_lang: str) -> bool:
         source_lang = self._subtitle_source_language(item)
         target = self._normalize_language_code(target_lang)
+        # Polishing replaces text but preserves Whisper's original language tag.
+        # A Han-only correction of a misdetected Latin-language cue is not native
+        # text to lock verbatim. Mixed speech, names and numeric cues stay locked.
+        text = self._extract_subtitle_text(item)
+        if source_lang in {"en", "fr", "es", "de", "vi", "pt", "it", "nl"}:
+            if re.search(r"[\u3400-\u4dbf\u4e00-\u9fff]", text) and not any(
+                "LATIN" in unicodedata.name(char, "") for char in text
+            ):
+                return False
         return bool(source_lang and target and source_lang == target)
 
     def _same_language_plain_result(self, subtitles, target_lang: str, output_key: str):
@@ -351,7 +360,13 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
     def load_subtitles_from_json(self):
         """Load subtitles from a JSON file."""
         with open(self.input_json_path, 'r', encoding='utf-8') as file:
-            return json5.load(file)
+            items = json5.load(file)
+        if isinstance(items, list):
+            # A corrected empty cue records removed ASR hallucination. Do not
+            # ask the translator to invent dialogue from neighbouring context.
+            items = [item for item in items if not isinstance(item, dict)
+                     or self._extract_subtitle_text(item).strip()]
+        return items
 
     def translate_and_merge_subtitles(self, subtitles):
         self.subtitles = subtitles
@@ -1140,6 +1155,8 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 schema_name=f"{language}_annotated_translation",
             )
             items = response.get("items") if isinstance(response, dict) else None
+            if language == "ko":
+                normalize_selected_restorations(items)
             # Do not freeze malformed, missing or mistimed translation rows.
             if locked is None and isinstance(items, list) and len(items) == len(subtitles):
                 if all(isinstance(item, dict) and isinstance(item.get(language), str)

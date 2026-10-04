@@ -52,6 +52,8 @@ def annotation_contract(schema, language):
         if language == "ko":
             prompt += (
                 "Example: 학교에서 -> 學校 with reading 학교, then 에서 with reading eseo. "
+                "축하해요 -> surface 축하 / word 祝賀 / reading 축하, then surface 해요 / "
+                "word 해요 / reading haeyo. Never use 祝賀해요 as one display word. "
                 "먹어요 stays 먹어요 with reading meogeoyo; do not substitute Chinese for native words."
             )
         else:

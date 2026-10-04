@@ -8029,8 +8029,9 @@ def _polish_subtitles_for_video(
     if notes.strip():
         prompt_text = (
             f"{prompt_text}\n\n"
-            "Because custom notes were provided, check whether the notes include explicit dialogue "
-            "that the ASR missed. If the ASR omitted clear spoken lines, recover them by splitting "
+            "Background descriptions of actions, places or a story are not spoken dialogue. "
+            "Only if the notes explicitly identify verified spoken lines that the ASR missed, "
+            "recover them by splitting "
             "or adding subtitle items with valid timestamps inside the video duration. "
             "Otherwise keep the same number of subtitle items and preserve timestamps exactly."
         )
@@ -8040,6 +8041,11 @@ def _polish_subtitles_for_video(
             "Final requirement: return the same number of subtitle items in the same order. "
             "Preserve every original start and end timestamp exactly. Only change the text field."
         )
+    prompt_text += (
+        "\nIf the user identifies an ASR cue as hallucinated noise, silence or unspoken "
+        "background context, keep that cue's timestamps and set text to an empty string. "
+        "Never replace it with a description of what is visible."
+    )
 
     status = "completed"
     error_message = None
