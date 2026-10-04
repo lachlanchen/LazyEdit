@@ -16,21 +16,26 @@ The production Console's single release warning is the missing deobfuscation
 map. Its dashboard also recommends edge-to-edge validation and R8 optimization;
 these are follow-ups, not approval or new QA evidence.
 
-**Apple iOS 1.0 build 9 remains in internal TestFlight.** The same VALID signed
-IPA was attached to the existing formal version. Category, age declaration,
+**Apple iOS 1.0 build 9 was submitted for formal review at 11:18 HKT /
+03:18:40.974Z.** Both the Console and official API confirm
+**WAITING_FOR_REVIEW**, one review item and the exact attached build 9.
+The same VALID signed IPA remains in internal TestFlight. Category, age declaration,
 rights declaration, USD 0.99 pricing, reviewer login/contact/notes and four
 verified screenshots are prepared. Availability is configured for 175
 territories, including future territories; this does not imply regulatory
 approval or public availability in those territories.
 
-Apple's actual attempt to add the version to review failed with
+The earlier attempt to add the version to review failed with
 `STATE_ERROR.APP_DATA_USAGES_REQUIRED`: published answers to app data collection
-are required. The existing browser login expired. No review item was created,
-and **no Apple formal submission was sent**. Preserve the empty draft submission
-`38267310-a95e-435f-9008-1349611c9307` and version
-`5097e8ff-f535-489b-b4c3-ef01561b8e9a`; complete and publish truthful privacy
-answers through App Store Connect, then reuse that draft and attached build 9.
-Do not infer readiness from the draft's `READY_FOR_REVIEW` state.
+are required. The existing browser login expired. After the owner renewed it,
+App Privacy was completed and published through the visible Console. The same
+draft `38267310-a95e-435f-9008-1349611c9307` and version
+`5097e8ff-f535-489b-b4c3-ef01561b8e9a` were reused. The documented API added
+one version item; the Console showed **Item Ready to Submit / 1.0 (9)**.
+**Submit for Review** was clicked once. The Console showed **1 Item Submitted**
+and **Waiting for Review**; an independent API read confirmed the timestamp,
+exact build attachment, one item and `WAITING_FOR_REVIEW`. Neither store's
+submission is approval or public availability. No new binary was built/uploaded.
 
 ## Reviewer access and coordination
 
@@ -133,6 +138,22 @@ disclosed in the privacy policy. Do not misdescribe a service-provider or
 user-initiated sharing exemption as meaning that no data leaves the server.
 Account deletion is supported; hiding an item is not partial data deletion.
 
+Apple's published responses declare eight retained data types: Photos or
+Videos, Audio Data, Other User Content, Browsing History, User ID, Product
+Interaction, Performance Data and Other Diagnostic Data. Each is used for
+**App Functionality**, linked to the account and **not used for tracking**.
+The audit covered the account registry, private media/context and operation
+ledgers, connection/error logs and the optional operator platform-browser
+profile. Browsing History includes navigation retained in that private browser
+profile; ordinary members still have no unrestricted browser or owner access.
+Account-linked diagnostics are not described as anonymous. Optional OAuth
+email/name claims are used for immediate verification and are not persisted
+in Studio's identity-link registry; provider subject IDs are declared as User ID.
+Inactive purchases and absent advertising/device-ID/location collection were
+not declared as active features. Apple explicitly includes server uptime,
+security and performance in App Functionality; Google's technical-diagnosis
+Analytics label was not mechanically copied into Apple's questionnaire.
+
 The reviewer login was saved and verified in both providers' private review
 fields, not in a public listing. It does not certify access to the separately
 restricted operator publication integration. Google target audience is 18+;
@@ -146,11 +167,29 @@ and provider readbacks: `temp/store-submission-20261004/`, mirrored selectively
 to the protected Nutstore runtime directory. Do not commit keys, passwords,
 cookies, browser profiles, raw session histories or media packages.
 
-Monitor the existing Google review; do not click Create new release or send the
-same changes again. For Apple, renew the existing store browser login and
-complete/publish the remaining privacy questionnaire. Read the exact app,
-version, draft and attached build again before creating its item and submitting
-once. Preserve the ordinary reviewer worker during store acceptance.
+Monitor the existing Google and Apple reviews; do not create another release,
+submit the same changes again or replace a pending binary. Preserve the ordinary
+reviewer worker during store acceptance. Both worker start times remained
+unchanged and health checks passed after the Apple submission.
+
+The reusable `store-login-session` skill is installed in
+`~/.codex/skills/store-login-session/` and mirrored in the canonical
+`/home/lachlan/ProjectsLFS/LazySkills/skills/store-login-session/` inventory.
+It tries the existing remembered account and observed Continue transitions
+before asking for reauthentication. ASC, Developer Portal and Sign in with
+Apple OAuth are separate authentication scopes. The owner's common two-click
+recovery is documented as a strategy, not an untested guarantee or a blind
+double-click. The existing user-requested store desktop remains at
+`http://127.0.0.1:6165/vnc.html?autoconnect=1&resize=scale`, local CDP `9497`,
+with its persistent Chrome profile. No cookies were reset, new desktop created,
+or recurring login/keepalive traffic scheduled. Provider-required fresh 2FA
+can still need the owner; session persistence is not permanent authentication.
+
+The October 4 continuation's protected receipts are
+`apple-privacy-published-dom.json`, `apple-review-item-after-privacy.json`,
+`apple-submit-ui.json` and `apple-formal-submitted.json`. Privacy and submission
+screenshots are saved beside them. No private account/password appears in these
+public notes or the skill.
 
 Primary provider references:
 

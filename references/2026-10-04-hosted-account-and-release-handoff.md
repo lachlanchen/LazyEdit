@@ -149,9 +149,10 @@ credentials, screenshots and runtime ownership belong outside Git. No OAuth,
 store review or publisher login secrets belong in a README or command line.
 
 October 4 continuation: [store submission and reviewer evidence](studio/2026-10-04-store-submission-and-lightmind-reviewer.md).
-Studio Android6 and LightMind Android54 are in Google review. Studio iOS9 is
-still internal TestFlight; its prepared formal draft is blocked only by Apple's
-unpublished privacy answers and expired browser login. An optional-font fallback
+Studio Android6 and LightMind Android54 are in Google review. Studio iOS9 was
+submitted at 11:18 HKT, after the privacy questionnaire was published in the
+renewed existing browser. Console/API confirm `WAITING_FOR_REVIEW`; the same
+build9 and draft were reused, with one item and one submission. An optional-font fallback
 was deployed to static editor assets without replacing either worker or the
 reviewer's completed operation. Preserve this accepted runtime through review;
 the general source promotion procedure above is not authorization to restart it.

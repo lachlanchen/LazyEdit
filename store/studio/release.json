@@ -19,17 +19,36 @@
     "qa": "Member sign-in, private library/account controls, native editing composer, hydrated full editor without platform/publish controls, and sign-out passed on a dedicated iPhone 17 Pro Max simulator. Exact signed IPA separately validated/uploaded once and is VALID in internal TestFlight. No real social publication or physical-install claim. iPad Pro 13-inch simulator native member editing test passed (1 test, 108.870s) after the hosted optional-font fallback; adaptive-tab changes affect the test helper only. The same signed IPA9 is preserved.",
     "formalReview": {
       "versionId": "5097e8ff-f535-489b-b4c3-ef01561b8e9a",
-      "state": "PREPARE_FOR_SUBMISSION",
+      "state": "WAITING_FOR_REVIEW",
       "draftSubmissionId": "38267310-a95e-435f-9008-1349611c9307",
-      "submitted": false,
+      "submitted": true,
       "attachedBuild": 9,
       "screenshotCount": 4,
       "screenshotDelivery": "COMPLETE; checksum verified",
       "configuredTerritories": 175,
       "availableInNewTerritories": true,
-      "blockingRequirement": "Published app privacy responses; browser App Store Connect login expired.",
-      "providerError": "STATE_ERROR.APP_DATA_USAGES_REQUIRED",
-      "reviewAccountSavedAndVerified": true
+      "reviewAccountSavedAndVerified": true,
+      "submittedAt": "2026-10-04T03:18:40.974Z",
+      "submissionId": "38267310-a95e-435f-9008-1349611c9307",
+      "reviewItemCount": 1,
+      "privacyPublished": true,
+      "privacyDataTypes": [
+        "Photos or Videos",
+        "Audio Data",
+        "Other User Content",
+        "Browsing History",
+        "User ID",
+        "Product Interaction",
+        "Performance Data",
+        "Other Diagnostic Data"
+      ],
+      "privacyPurpose": "App Functionality",
+      "privacyLinkedToUser": true,
+      "privacyTracking": false,
+      "resolvedRequirement": "Published audited App Privacy answers in the existing renewed browser session; existing one-item submission sent once and read back through Console and official API.",
+      "publicAvailabilityVerified": false,
+      "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/distribution/reviewsubmissions",
+      "previousProviderError": "STATE_ERROR.APP_DATA_USAGES_REQUIRED"
     }
   },
   "google": {
@@ -77,7 +96,7 @@
   "downloadPricing": {
     "apple": {
       "usd": "0.99",
-      "state": "USD 0.99 configured; exact IPA9 still internal TestFlight; formal review blocked by app privacy questionnaire"
+      "state": "USD 0.99 configured; exact IPA9 remains internal TestFlight; formal iOS 1.0 review submitted and WAITING_FOR_REVIEW, not yet public"
     },
     "google": {
       "usd": "0.99",
