@@ -82,6 +82,11 @@ from lazyedit.subtitle_metadata import Subtitle2Metadata
 from lazyedit.words_card import VideoAddWordsCard, overlay_word_card_on_cover
 from lazyedit.subtitle_translate import SubtitlesTranslator
 from lazyedit.languages import LANGUAGES, TO_LANGUAGE_CODE
+from lazyedit.subtitle_languages import (
+    SubtitleLanguageError, normalize_subtitle_languages, resolve_subtitle_language,
+    require_subtitle_language, subtitle_language, subtitle_language_family,
+    subtitle_languages_from_options,
+)
 from lazyedit.video_prompt_generator import VideoPromptGenerator
 from lazyedit.venice_a2e import (
     VenicePromptGenerator,
@@ -981,54 +986,11 @@ def _sanitize_translation_style(payload: dict | None) -> dict:
 
 
 def _normalize_translation_language(value: object | None) -> str | None:
-    if value is None:
-        return None
-    raw = str(value).strip()
-    if not raw:
-        return None
-    lowered = raw.lower()
-    if lowered == "ja":
-        return "ja"
-    if lowered == "en":
-        return "en"
-    if lowered in {"ar", "arabic"}:
-        return "ar"
-    if lowered in {"vi", "vietnamese"}:
-        return "vi"
-    if lowered in {"ko", "korean"}:
-        return "ko"
-    if lowered in {"es", "spanish"}:
-        return "es"
-    if lowered in {"fr", "french"}:
-        return "fr"
-    if lowered in {"tr", "turkish", "türkçe"}:
-        return "tr"
-    if lowered in {"ru", "russian"}:
-        return "ru"
-    if lowered in {"yue", "cantonese", "zh-yue", "zh-yue-hk"}:
-        return "yue"
-    if lowered in {"zh", "zh-hant", "zh_hant", "zh-tw", "zh-hk", "zh-mo"}:
-        return "zh-Hant"
-    if lowered in {"zh-hans", "zh_hans", "zh-cn"}:
-        return "zh-Hans"
-    canonical_codes = {code.lower(): code for code in LANGUAGES}
-    if lowered in canonical_codes:
-        return canonical_codes[lowered]
-    named_code = TO_LANGUAGE_CODE.get(lowered)
-    if named_code in LANGUAGES:
-        return named_code
-    return None
+    return resolve_subtitle_language(value)
 
 
 def _sanitize_translation_languages(payload) -> list[str]:
-    if not isinstance(payload, (list, tuple)):
-        return DEFAULT_TRANSLATION_LANGUAGES.copy()
-    cleaned = []
-    for item in payload:
-        code = _normalize_translation_language(item)
-        if code and code not in cleaned:
-            cleaned.append(code)
-    return cleaned or DEFAULT_TRANSLATION_LANGUAGES.copy()
+    return normalize_subtitle_languages(payload, default=DEFAULT_TRANSLATION_LANGUAGES)
 
 
 def _sanitize_subtitle_polish(payload: dict | None) -> dict:
@@ -1117,10 +1079,9 @@ def _sanitize_publish_options(payload) -> dict:
     if burn_subtitles is None:
         burn_subtitles = DEFAULT_PUBLISH_OPTIONS["burnSubtitles"]
 
-    languages_raw = payload.get("translationLanguages")
-    if languages_raw is None:
-        languages_raw = payload.get("translation_languages")
-    translation_languages = _sanitize_translation_languages(languages_raw)
+    translation_languages = subtitle_languages_from_options(payload, default=DEFAULT_TRANSLATION_LANGUAGES)
+    if _parse_bool(burn_subtitles, default=True) and not translation_languages:
+        raise SubtitleLanguageError("Choose at least one subtitle language when burning subtitles")
 
     use_polished = payload.get("usePolishedSubtitles")
     if use_polished is None:
@@ -1890,6 +1851,8 @@ def _sanitize_burn_layout(payload: dict | list | None) -> dict:
         if slot_id < 1 or slot_id > slot_count:
             continue
         normalized = _normalize_translation_language(language) if language else None
+        if language not in (None, "") and normalized is None:
+            raise SubtitleLanguageError(f"Unsupported subtitle slot language: {language!r}")
         font_scale = min(max(font_scale, 0.6), 2.5)
         slot_map[slot_id] = {
             "language": normalized,
@@ -2840,7 +2803,7 @@ def _speaker_lang_key(value: str | None) -> str | None:
         return "zh"
     if raw in {"yue", "zh-yue", "yue-hk", "zh-yue-hk"}:
         return "yue"
-    return raw
+    return subtitle_language_family(value) or raw
 
 
 def _prepare_speaker_json(
@@ -6665,6 +6628,13 @@ def _ensure_publish_worker_started() -> None:
 
 
 class CorsMixin:
+    def write_error(self, status_code, **kwargs):
+        error = kwargs.get("exc_info", (None, None, None))[1]
+        if isinstance(error, SubtitleLanguageError):
+            self.set_status(400)
+            return self.finish({"error": str(error), "code": "unsupported_subtitle_language"})
+        return super().write_error(status_code, **kwargs)
+
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE")
@@ -6837,6 +6807,18 @@ class LanguagesHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self):
         self.write({"languages": list_languages()})
 
+    def post(self):
+        try:
+            data = json.loads(self.request.body or b"{}")
+        except (ValueError, TypeError):
+            self.set_status(400)
+            return self.write({"error": "Expected JSON with an ordered languages list"})
+        if (not isinstance(data, dict) or set(data) != {"languages"}
+                or not isinstance(data["languages"], list)):
+            raise SubtitleLanguageError("Expected only an ordered languages list")
+        codes = _sanitize_translation_languages(data["languages"])
+        self.write({"codes": codes, "languages": [subtitle_language(code) for code in codes]})
+
 
 class GrammarPaletteHandler(CorsMixin, tornado.web.RequestHandler):
     def get(self, lang):
@@ -6924,7 +6906,7 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
             "wan_prompt_history",
         }:
             return self.write({"key": key, "value": _sanitize_history_list(saved)})
-        if not saved:
+        if saved is None:
             return self.write({"key": key, "value": DEFAULT_TRANSLATION_LANGUAGES})
         return self.write({"key": key, "value": _sanitize_translation_languages(saved)})
 
@@ -6988,6 +6970,8 @@ class UISettingsHandler(CorsMixin, tornado.web.RequestHandler):
         }:
             cleaned = _sanitize_history_list(data)
         else:
+            if not isinstance(data, list):
+                raise SubtitleLanguageError("Subtitle languages must be an ordered list")
             cleaned = _sanitize_translation_languages(data)
         ldb.set_ui_preference(key, cleaned)
         self.write({"key": key, "value": cleaned})
@@ -11048,19 +11032,18 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
 
         try:
             data = json.loads(self.request.body or b"{}")
-        except Exception:
-            data = {}
-
-        raw_lang = (
-            data.get("language")
-            or data.get("lang")
-            or self.get_argument("lang", default=None)
-            or "ja"
-        )
-        lang = _normalize_translation_language(raw_lang)
-        if not lang:
+        except (ValueError, TypeError):
             self.set_status(400)
-            return self.write({"error": f"language '{raw_lang}' not supported yet"})
+            return self.write({"error": "Expected translation options as a JSON object"})
+        if not isinstance(data, dict):
+            self.set_status(400)
+            return self.write({"error": "Expected translation options as a JSON object"})
+        raw_lang = data["language"] if "language" in data else (
+            data["lang"] if "lang" in data else self.get_argument("lang", default="ja")
+        )
+        lang = require_subtitle_language(raw_lang)
+        if "language" in data and "lang" in data and lang != require_subtitle_language(data["lang"]):
+            raise SubtitleLanguageError("Conflicting subtitle-language choices")
 
         def parse_bool(value, default=True):
             if value is None:
@@ -12051,12 +12034,9 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
         needs_caption = wants("caption")
         needs_cover = wants("cover") or any(wants(f"metadata_{lang}") for lang in METADATA_TEMPLATE_MAP)
 
-        languages_override = data.get("translation_languages")
-        if languages_override is None:
-            languages_override = data.get("translationLanguages")
         translation_languages = (
-            _sanitize_translation_languages(languages_override)
-            if languages_override is not None
+            subtitle_languages_from_options(data)
+            if "translation_languages" in data or "translationLanguages" in data
             else _load_translation_languages_setting()
         )
         notes = data.get("notes") or data.get("custom_notes") or ""

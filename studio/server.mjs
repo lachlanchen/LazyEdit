@@ -45,7 +45,11 @@ export function createWorker(config) {
   return JSON.parse(result.stdout);
  }
  async function composerPlan(id, form) {
-  const f=validateForm(form),video=await backend('/api/videos/'+id);
+  const f=validateForm(form);
+  const resolved=await backend('/api/languages','POST',{languages:f.languages});
+  if(!Array.isArray(resolved.codes)||resolved.codes.length!==f.languages.length)fail(400,'Invalid or duplicate subtitle languages');
+  f.languages=resolved.codes;
+  const video=await backend('/api/videos/'+id);
   if(f.mode==='reuse') {
    const sessions=await backend(`/api/videos/${id}/publication-sessions`);
    const session=f.sessionID?sessions.sessions?.find(s=>s.id===f.sessionID):null;
@@ -64,6 +68,7 @@ export function createWorker(config) {
    f.logo?'Existing Studio logo · '+f.logoPosition:'No logo',
    source.portrait?'Portrait source stays unchanged; background fill is off.':layout.fill?'Portrait background fill · '+Math.round(layout.bottom/layout.outputHeight*100)+'% bottom space':'Original aspect ratio',
    'A new run preserves previous outputs. Website defaults are unchanged.',
+   ...(resolved.languages||[]).filter(l=>l.renderingWarning).map(l=>l.name+': '+l.renderingWarning),
   ]};
  }
  async function dispatchBackend(path,method='GET',data){
@@ -270,7 +275,10 @@ export function createWorker(config) {
   if(path==='/v1/studio/upload-part'&&method==='PUT'){scope(p,'media.upload');json(res,200,await append(req,p,u.searchParams.get('uploadId'),Number(req.headers['upload-offset'])));return;}
   if(path==='/v1/studio/upload-complete'&&method==='POST'){scope(p,'media.upload');json(res,200,await finalize(p,(await readJSON(req)).uploadId));return;}
   if(['/upload-stream','/v1/studio/media'].includes(path)&&method==='PUT'){json(res,200,await directUpload(req,p,u));return;}
-  if(path==='/v1/studio/capabilities'&&method==='GET'){json(res,200,{apiVersion:'1',legacyBridgeCompatible:true,resumableUpload:true,preparationRecovery:true,accountLink:'device-authorization',publicRegistration:false,preparationPresets:[CAPTURE_PRESET],nativeReview:true,defaultCapturePlatforms:CAPTURE_CHANNELS,platforms:['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'],scopes:p.scopes});return;}
+  if(path==='/v1/studio/capabilities'&&method==='GET'){json(res,200,{apiVersion:'1',legacyBridgeCompatible:true,resumableUpload:true,preparationRecovery:true,subtitleLanguageCatalogue:true,accountLink:'device-authorization',publicRegistration:false,preparationPresets:[CAPTURE_PRESET],nativeReview:true,defaultCapturePlatforms:CAPTURE_CHANNELS,platforms:['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'],scopes:p.scopes});return;}
+  if(path==='/v1/studio/languages'&&['GET','POST'].includes(method)){
+   scope(p,'media.read');json(res,200,await backend('/api/languages',method,method==='POST'?await readJSON(req,16384):undefined));return;
+  }
   const native=/^\/v1\/studio\/videos\/(\d+)\/(composer|plan|submit|visibility|submission)$/.exec(path);
   if(native){
    if(p.kind!=='browser')fail(403,'Studio owner session required');
@@ -287,9 +295,12 @@ export function createWorker(config) {
     json(res,200,{videoId:id,hidden:d.hidden});return;
    }
    if(action==='composer'&&method==='GET'){
-    const [settings,sessions,video]=await Promise.all([composerSettings(),backend(`/api/videos/${id}/publication-sessions`),backend(`/api/videos/${id}`)]);
+    const [settings,sessions,video,catalogue,translations]=await Promise.all([composerSettings(),backend(`/api/videos/${id}/publication-sessions`),backend(`/api/videos/${id}`),backend('/api/languages'),backend(`/api/videos/${id}/translations`)]);
     const defaults=composerDefaults(settings);if(!capabilities().publishing)defaults.platforms=[];
-    json(res,200,{capabilities:capabilities(),defaults,sessions:sessions.sessions||[],geometry:await geometry(video,{enabled:false})});return;
+    const languageMap=new Map((catalogue.languages||[]).map(l=>[l.code,l]));
+    for(const code of defaults.languages)if(!languageMap.has(code))languageMap.set(code,{code,name:code,requiresPreview:true});
+    for(const t of translations.translations||[])if(t.status==='completed'&&!languageMap.has(t.language_code))languageMap.set(t.language_code,{code:t.language_code,name:t.language_code,requiresPreview:true});
+    json(res,200,{capabilities:capabilities(),defaults,subtitleLanguages:[...languageMap.values()],sessions:sessions.sessions||[],geometry:await geometry(video,{enabled:false})});return;
    }
    if(action==='plan'&&method==='POST'){
     const plan=await composerPlan(id,await readJSON(req,100000));plan.capabilities=capabilities();plan.planDigest=digest(JSON.stringify(plan.options));delete plan.options;json(res,200,plan);return;
@@ -407,7 +418,7 @@ export function createWorker(config) {
    file(res,req,target);return;
   }
   if(p.kind==='browser'){
-   if(/^\/api\/(languages|video-specs|video-prompts|grammar-palettes\/[A-Za-z_-]+|ui-settings\/[A-Za-z_-]+)$/.test(path)&&['GET','POST'].includes(method)) {const result=await backend(raw,method,method==='POST'?await readJSON(req,1024**2):undefined);json(res,200,result);return;}
+   if(/^\/api\/(languages|video-specs|video-prompts|grammar-palettes\/[A-Za-z0-9_-]+|ui-settings\/[A-Za-z_-]+)$/.test(path)&&['GET','POST'].includes(method)) {const result=await backend(raw,method,method==='POST'?await readJSON(req,1024**2):undefined);json(res,200,result);return;}
    if(/^\/api\/autopublish\/jobs\/[^/]+\/attention\/\d+$/.test(path)&&method==='GET'){requirePublishing();await proxy(req,res,{port:config.backendPort,path:raw});return;}
    if(['/upload-image','/upload-logo','/upload'].includes(path)&&method==='POST'){await proxy(req,res,{port:config.backendPort,path:raw});return;}
    if(['GET','HEAD'].includes(method)&&!path.startsWith('/api/')&&!path.startsWith('/v1/')&&!path.startsWith('/auth/')){

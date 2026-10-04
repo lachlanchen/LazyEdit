@@ -395,6 +395,8 @@ def current_ui_settings(client: LazyEditClient) -> dict[str, Any]:
             payload = client.request_json("GET", f"/api/ui-settings/{key}", timeout=30)
             settings[key] = payload.get("value")
         except Exception as exc:
+            if isinstance(exc, ApiError) and isinstance(exc.payload, dict) and exc.payload.get("code") == "unsupported_subtitle_language":
+                raise  # Explicit invalid choices must not become CLI defaults.
             print_event(f"Warning: failed to load Studio setting {key}: {exc}", quiet=client.quiet)
     return settings
 
@@ -466,7 +468,11 @@ def sync_burn_layout_languages(
         slots.append(slot)
 
     layout["slots"] = slots
-    layout["rows"] = len(languages)
+    try:
+        reserved_rows = int(layout.get("rows") or 4)
+    except (TypeError, ValueError):
+        reserved_rows = 4
+    layout["rows"] = max(reserved_rows, len(languages))
     return layout
 
 
@@ -483,9 +489,11 @@ def build_options(
     current_layout = settings.get("burn_layout")
     if not isinstance(current_layout, dict):
         current_layout = current_publish.get("burnLayout") if isinstance(current_publish.get("burnLayout"), dict) else {}
-    current_languages = current_publish.get("translationLanguages") or settings.get("translation_languages")
+    current_languages = current_publish.get("translationLanguages", settings.get("translation_languages"))
 
-    languages = parse_csv(args.languages) or current_languages or DEFAULT_LANGUAGES
+    languages = parse_csv(args.languages) if args.languages is not None else (
+        current_languages if current_languages is not None else DEFAULT_LANGUAGES
+    )
     burn_subtitles = first_present(args.burn_subtitles, current_publish.get("burnSubtitles"), True)
     use_polished = first_present(args.use_polished, current_publish.get("usePolishedSubtitles"), True)
     use_polished = bool(use_polished) or bool(correction_prompt)

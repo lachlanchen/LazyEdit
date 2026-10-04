@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSubtitleLanguages } from '@/lib/useSubtitleLanguages';
+import SubtitleLanguagePicker from '@/components/SubtitleLanguagePicker';
 import {
   ActivityIndicator,
   Image,
@@ -106,7 +108,7 @@ type MetadataDetail = {
   created_at?: string | null;
 };
 
-type TranslateLang = 'ja' | 'en' | 'ar' | 'vi' | 'ko' | 'es' | 'fr' | 'ru' | 'yue' | 'zh-Hant' | 'zh-Hans';
+type TranslateLang = string;
 
 const formatTimestamp = (value?: string | null) =>
   value ? value.slice(0, 19).replace('T', ' ') : 'Unknown time';
@@ -144,23 +146,8 @@ const formatAudioLanguage = (code: string) => {
 };
 
 const normalizeTranslateLang = (value: string): TranslateLang | null => {
-  const lowered = value.trim().toLowerCase();
-  if (lowered === 'ja') return 'ja';
-  if (lowered === 'en') return 'en';
-  if (lowered === 'ar' || lowered === 'arabic') return 'ar';
-  if (lowered === 'vi' || lowered === 'vietnamese') return 'vi';
-  if (lowered === 'ko' || lowered === 'korean') return 'ko';
-  if (lowered === 'es' || lowered === 'spanish') return 'es';
-  if (lowered === 'fr' || lowered === 'french') return 'fr';
-  if (lowered === 'ru' || lowered === 'russian') return 'ru';
-  if (lowered === 'yue' || lowered === 'cantonese' || lowered === 'zh-yue') return 'yue';
-  if (['zh', 'zh-hant', 'zh_hant', 'zh-tw', 'zh-hk', 'zh-mo'].includes(lowered)) {
-    return 'zh-Hant';
-  }
-  if (['zh-hans', 'zh_hans', 'zh-cn'].includes(lowered)) {
-    return 'zh-Hans';
-  }
-  return null;
+  // Settings are canonicalized by the API; never discard a newly supported tag.
+  return value.trim() || null;
 };
 
 const MAIN_TABS = ['captions', 'subtitles', 'metadata'] as const;
@@ -226,6 +213,8 @@ export default function VideoDetailScreen() {
   ]);
   const [previewLang, setPreviewLang] = useState<TranslateLang>('ja');
   const [translateLangsLoaded, setTranslateLangsLoaded] = useState(false);
+  const subtitleCatalogue = useSubtitleLanguages(API_URL,
+    [...selectedTranslateLangs, ...translations.map((item) => item.language_code)]);
   const [lightbox, setLightbox] = useState<{ url: string; label?: string } | null>(null);
 
   const mediaSrc = useMemo(() => {
@@ -270,19 +259,9 @@ export default function VideoDetailScreen() {
 
   const headerTitle = video?.title ? video.title : 'Video';
   const captionFrameItems = caption?.frames || [];
-  const translateLangOptions: Array<{ code: TranslateLang; label: string }> = [
-    { code: 'en', label: TRANSLATE_LANG_LABELS.en },
-    { code: 'zh-Hant', label: TRANSLATE_LANG_LABELS['zh-Hant'] },
-    { code: 'zh-Hans', label: TRANSLATE_LANG_LABELS['zh-Hans'] },
-    { code: 'yue', label: TRANSLATE_LANG_LABELS.yue },
-    { code: 'ja', label: TRANSLATE_LANG_LABELS.ja },
-    { code: 'ar', label: TRANSLATE_LANG_LABELS.ar },
-    { code: 'vi', label: TRANSLATE_LANG_LABELS.vi },
-    { code: 'ko', label: TRANSLATE_LANG_LABELS.ko },
-    { code: 'es', label: TRANSLATE_LANG_LABELS.es },
-    { code: 'fr', label: TRANSLATE_LANG_LABELS.fr },
-    { code: 'ru', label: TRANSLATE_LANG_LABELS.ru },
-  ];
+  const translateLangOptions = subtitleCatalogue.languages
+    .filter((item) => selectedTranslateLangs.includes(item.code) || translations.some((row) => row.language_code === item.code))
+    .map((item) => ({ code: item.code, label: item.name }));
   const previewTranslation = translations.find((item) => item.language_code === previewLang) || null;
   const previewLabel = TRANSLATE_LANG_LABELS[previewLang] || previewLang;
   const transcriptionLanguages = useMemo(() => {
@@ -499,7 +478,7 @@ export default function VideoDetailScreen() {
       try {
         const resp = await fetch(`${API_URL}/api/ui-settings/translation_languages`);
         const json = await resp.json();
-        if (!resp.ok) return;
+        if (!resp.ok) throw new Error(json.error || 'Could not load subtitle choices');
         const value: unknown[] = Array.isArray(json.value) ? json.value : [];
         const cleaned: TranslateLang[] = [];
         value.forEach((item) => {
@@ -508,16 +487,15 @@ export default function VideoDetailScreen() {
             cleaned.push(normalized);
           }
         });
-        if (cleaned.length) {
-          setSelectedTranslateLangs(cleaned);
-          if (!cleaned.includes(previewLang)) {
-            setPreviewLang(cleaned[0]);
-          }
+        setSelectedTranslateLangs(cleaned);
+        if (cleaned.length && !cleaned.includes(previewLang)) {
+          setPreviewLang(cleaned[0]);
         }
-      } catch (_err) {
-        // ignore load failures; keep defaults
-      } finally {
         setTranslateLangsLoaded(true);
+      } catch (err: any) {
+        // Never overwrite failed/invalid saved choices with screen defaults.
+        setTranslateStatus(err.message || 'Could not load subtitle choices');
+        setTranslateTone('bad');
       }
     })();
   }, []);
@@ -543,13 +521,16 @@ export default function VideoDetailScreen() {
     const payload = selectedTranslateLangs;
     const timeout = setTimeout(async () => {
       try {
-        await fetch(`${API_URL}/api/ui-settings/translation_languages`, {
+        const response = await fetch(`${API_URL}/api/ui-settings/translation_languages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-      } catch (_err) {
-        // ignore save failures
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || 'Could not save subtitle choices');
+      } catch (err: any) {
+        setTranslateStatus(err.message || 'Could not save subtitle choices');
+        setTranslateTone('bad');
       }
     }, 200);
     return () => clearTimeout(timeout);
@@ -1173,30 +1154,9 @@ export default function VideoDetailScreen() {
             </View>
           </View>
 
-          <View style={styles.langChecklist}>
-            {translateLangOptions.map((option) => {
-              const isChecked = selectedTranslateLangs.includes(option.code);
-              return (
-                <Pressable
-                  key={option.code}
-                  style={styles.langCheckItem}
-                  onPress={() => {
-                    setSelectedTranslateLangs((prev) => {
-                      if (prev.includes(option.code)) {
-                        return prev.filter((lang) => lang !== option.code);
-                      }
-                      return [...prev, option.code];
-                    });
-                  }}
-                >
-                  <View style={[styles.langCheckBox, isChecked && styles.langCheckBoxActive]}>
-                    {isChecked ? <Text style={styles.langCheckMark}>✓</Text> : null}
-                  </View>
-                  <Text style={styles.langCheckLabel}>{option.label}</Text>
-                </Pressable>
-              );
-            })}
-          </View>
+          <SubtitleLanguagePicker selected={selectedTranslateLangs} {...subtitleCatalogue}
+            disabled={!translateLangsLoaded}
+            onChange={setSelectedTranslateLangs} />
 
           <Pressable
             style={[styles.btnSecondaryAlt, translating && styles.btnDisabled]}

@@ -293,6 +293,15 @@ public class MainActivity extends AppCompatActivity {
             boolean portrait=result.optJSONObject("geometry")!=null&&result.getJSONObject("geometry").optBoolean("portrait");
             CheckBox subtitles=check("Burn subtitles",form.optBoolean("burnSubtitles",true));
             EditText languages=field("Languages, bottom to top",join(form.optJSONArray("languages")),false);text("Examples: zh-Hant,ja,en · Japanese readings and Chinese pinyin use the normal renderer.");
+            JSONArray subtitleLanguages=result.optJSONArray("subtitleLanguages");
+            if(subtitleLanguages!=null)button("Add a language",()->{
+                List<String> labels=new ArrayList<>(),codes=new ArrayList<>();
+                for(int i=0;i<subtitleLanguages.length();i++){JSONObject item=subtitleLanguages.optJSONObject(i);if(item!=null){codes.add(item.optString("code"));labels.add(item.optString("name")+" · "+item.optString("code"));}}
+                new AlertDialog.Builder(this).setTitle(tr("Add a language")).setItems(labels.toArray(new String[0]),(dialog,index)->{
+                    List<String> current=Arrays.asList(languages.getText().toString().split(","));String code=codes.get(index);
+                    if(!current.contains(code))languages.setText(languages.getText().toString().trim().isEmpty()?code:languages.getText()+","+code);
+                }).setNegativeButton(tr("Cancel"),null).show();
+            });
             CheckBox correct=check("Correct subtitles with context",form.optBoolean("correct",true));
             EditText context=field("Background / script reference",form.optString("context"),true);
             CheckBox metadata=check("Use context for metadata",form.optBoolean("contextForMetadata",true));

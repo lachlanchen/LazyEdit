@@ -16,6 +16,19 @@
     }
   ],
   "paths": {
+    "/v1/studio/languages": {
+      "get": {
+        "summary": "List subtitle targets, independently of UI and ASR languages",
+        "description": "Requires media.read. Check capabilities.subtitleLanguageCatalogue before using this extension. Returns code, name, grammarColors, reading, rtl and requiresPreview, plus renderingWarning where applicable. A registered target is not certification of provider quality or font/shaping coverage. RTL token order needs preview review; specialized readings apply to the exact advertised canonical targets.",
+        "responses": {"200":{"description":"Common subtitle-language catalogue"},"401":{"description":"Authentication required"},"403":{"description":"media.read required"}}
+      },
+      "post": {
+        "summary": "Validate additional subtitle language tags without saving settings",
+        "description": "Requires media.read. Supports known CLDR language/script/region tags, such as pt-BR, sr-Latn, fil and eo. Preserves requested order, canonicalizes aliases and deduplicates. Unsafe or unknown tags fail instead of reverting to defaults. This does not register an account, start editing or publish.",
+        "requestBody":{"required":true,"content":{"application/json":{"schema":{"type":"object","required":["languages"],"additionalProperties":false,"properties":{"languages":{"type":"array","maxItems":40,"items":{"type":"string"}}}}}}},
+        "responses":{"200":{"description":"Canonical codes and language descriptors"},"400":{"description":"Unknown, unsafe or invalid language selection"},"403":{"description":"media.read required"}}
+      }
+    },
     "/v1/studio/preparations/{operationId}": {
       "get": {
         "summary": "Read the original private editing operation and recovery state",

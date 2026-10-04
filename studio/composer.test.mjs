@@ -42,6 +42,13 @@ test('native requests use existing pipeline once, hide is reversible, linked per
   calls.push({url:req.url,method:req.method,data});
   let out={};
   if(req.url.startsWith('/api/ui-settings/'))out={value:settings[req.url.split('/').at(-1)]};
+  else if(req.url==='/api/languages'){
+   if(req.method==='POST'){
+    if(data.languages.includes('zz')){res.statusCode=400;out={error:'Unsupported subtitle language: zz'};}
+    else out={codes:data.languages,languages:data.languages.map(code=>({code,name:code}))};
+   }else out={languages:['en','ja','zh-Hant','de','ko'].map(code=>({code,name:code}))};
+  }
+  else if(req.url==='/api/videos/1/translations')out={translations:[{language_code:'eo',status:'completed'}]};
   else if(req.url.startsWith('/api/videos?')||req.url==='/api/videos')out={videos:[{id:1,title:'Fixture'}]};
   else if(req.url==='/api/videos/1')out={id:1,file_path:'/fixture.mp4'};
   else if(req.url==='/api/videos/1/publication-sessions')out={sessions:[]};
@@ -60,10 +67,18 @@ test('native requests use existing pipeline once, hide is reversible, linked per
  const owner=worker.auth.addOwner('owner','private-test-password'),token=worker.auth.issue(owner,SCOPES,'native','browser');
  const request=(path,method='GET',data,extra={})=>fetch(`http://127.0.0.1:${worker.server.address().port}/studio/bridge`,{method,headers:{authorization:'Bearer private-test-transport','x-studio-path':path,cookie:'__Host-studio='+token.access_token,origin:'https://studio.test','content-type':'application/json',...extra},body:data?JSON.stringify(data):undefined});
  const form=composerDefaults(settings),prefix='/v1/studio/videos/1';
- assert.equal((await request(prefix+'/composer')).status,200);
+ assert.equal((await request('/api/grammar-palettes/es-419')).status,200,'numeric regions reach the normal palette endpoint');
+ const loaded=await request(prefix+'/composer');assert.equal(loaded.status,200);
+ assert.ok((await loaded.json()).subtitleLanguages.some(row=>row.code==='eo'),'imported targets stay selectable');
+ const broadForm={...form,languages:['pt-BR','sr-Latn','fil','eo']};
+ const broad=await request(prefix+'/plan','POST',broadForm);assert.equal(broad.status,200);
+ assert.deepEqual((await broad.json()).form.languages,broadForm.languages);
+ const actionCount=calls.filter(c=>c.url.endsWith('/process')||c.url.endsWith('/publish')).length;
+ assert.equal((await request(prefix+'/plan','POST',{...form,languages:['zz']})).status,400);
+ assert.equal(calls.filter(c=>c.url.endsWith('/process')||c.url.endsWith('/publish')).length,actionCount);
  const before=calls.length;
  const plan=await request(prefix+'/plan','POST',form);assert.equal(plan.status,200);const planResult=await plan.json();assert.equal(planResult.geometry.portrait,true);
- assert.equal(calls.slice(before).filter(c=>c.method==='POST').length,0);
+ assert.deepEqual(calls.slice(before).filter(c=>c.method==='POST').map(c=>c.url),['/api/languages']);
  const body={action:'publish',confirmation:'PUBLISH',form,planDigest:planResult.planDigest};
  assert.equal((await request(prefix+'/submit','POST',body,{'idempotency-key':'test-one'})).status,200);
  assert.equal((await request(prefix+'/submit','POST',body,{'idempotency-key':'test-one'})).status,200);
@@ -88,6 +103,10 @@ test('native requests use existing pipeline once, hide is reversible, linked per
  assert.equal((await request(prefix+'/submit','POST',body,{'idempotency-key':'uncertain'})).status,409);
  assert.equal(calls.filter(c=>c.url.endsWith('/publish')).length,2,'unknown publication is not submitted twice');
  const linked=worker.auth.issue(owner,SCOPES);
+ const linkedHeader={'x-studio-access':'Bearer '+linked.access_token};
+ assert.equal((await request('/v1/studio/languages','GET',null,linkedHeader)).status,200);
+ assert.deepEqual((await request('/v1/studio/languages','POST',{languages:['pt-BR','eo']},linkedHeader).then(r=>r.json())).codes,['pt-BR','eo']);
+ assert.equal((await request('/v1/studio/languages','POST',{languages:['zz']},linkedHeader)).status,400);
  assert.equal((await request(prefix+'/composer','GET',null,{'x-studio-access':'Bearer '+linked.access_token})).status,403);
  assert.equal((await request(prefix+'/visibility','POST',{hidden:true},{origin:'https://foreign.test'})).status,403);
 });

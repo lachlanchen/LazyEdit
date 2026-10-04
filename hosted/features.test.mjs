@@ -29,6 +29,7 @@ test('editor member can prepare and preview; stale tokens and forged headers can
     let text='';for await(const bytes of req)text+=bytes;received.push({method:req.method,path:req.url});
     let reply={id:1,file_path:join(dir,'source.mp4')};
     if(req.url.startsWith('/api/ui-settings/'))reply={value:req.url.endsWith('/logo_settings')?{enabled:true,logoPath:'own-logo.png'}:req.url.endsWith('/translation_languages')?['zh-Hant','ja','en']:{}};
+    if(req.url==='/api/languages')reply=req.method==='POST'?{codes:JSON.parse(text).languages,languages:JSON.parse(text).languages.map(code=>({code,name:code}))}:{languages:[]};
     if(req.url.endsWith('/publication-sessions'))reply={sessions:[]};
     if(req.url.endsWith('/process-status'))reply={steps:{},ready_for_publish:true};
     if(req.url.endsWith('/burn-subtitles'))reply={status:'completed',output_url:'/media/own-render.mp4'};

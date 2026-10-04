@@ -16,6 +16,7 @@ from lazyedit.utils import JSONParsingError, JSONValidationError
 from lazyedit.utils import safe_pretty_print, sample_texts, find_font_size
 from lazyedit.openai_request_json import OpenAIRequestJSONBase, JSONParsingError, JSONValidationError
 from lazyedit.languages import LANGUAGES, TO_LANGUAGE_CODE
+from lazyedit.subtitle_languages import require_subtitle_language, subtitle_language
 from lazyedit.subtitle_annotations import annotation_contract, validate_annotations
 from lazyedit.hanja_dictionary import review_hints
 
@@ -658,13 +659,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         return translated_subtitles
 
     def process_specified_language_translation(self, target_code: str):
-        """Translate subtitles into any language declared in LANGUAGES."""
-        if target_code not in LANGUAGES:
-            raise ValueError(f"unsupported translation language: {target_code}")
+        """Translate into a registered language or a validated CLDR locale."""
+        target_code = require_subtitle_language(target_code)
 
         subtitles = self.load_subtitles_from_json()
         self.subtitles = subtitles
-        target_name = LANGUAGES[target_code]
+        target_name = subtitle_language(target_code)["name"]
         plain_items = []
         json_items = []
 

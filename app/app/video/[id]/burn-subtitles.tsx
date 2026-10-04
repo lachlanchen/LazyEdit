@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSubtitleLanguages } from '@/lib/useSubtitleLanguages';
 import {
   ActivityIndicator,
   Image,
@@ -137,19 +138,6 @@ const DEFAULT_JYUTPING = false;
 const DEFAULT_ROMAJA = false;
 const DEFAULT_ARABIC_TRANSLIT = false;
 
-const LANGUAGE_OPTIONS: SelectOption[] = [
-  { value: 'en', label: LANG_LABELS.en },
-  { value: 'ja', label: LANG_LABELS.ja },
-  { value: 'zh-Hant', label: LANG_LABELS['zh-Hant'] },
-  { value: 'zh-Hans', label: LANG_LABELS['zh-Hans'] },
-  { value: 'yue', label: LANG_LABELS.yue },
-  { value: 'ar', label: LANG_LABELS.ar },
-  { value: 'vi', label: LANG_LABELS.vi },
-  { value: 'ko', label: LANG_LABELS.ko },
-  { value: 'es', label: LANG_LABELS.es },
-  { value: 'fr', label: LANG_LABELS.fr },
-  { value: 'ru', label: LANG_LABELS.ru },
-];
 
 const DEFAULT_SLOTS: BurnSlot[] = [
   {
@@ -385,18 +373,21 @@ export default function BurnSubtitlesScreen() {
     const set = new Set<string>();
     for (const item of translations) {
       if (item.status !== 'completed') continue;
-      set.add(item.language_code);
+      set.add(item.language_code === 'zh' ? 'zh-Hant' : item.language_code);
     }
     return set;
   }, [translations]);
 
+  const subtitleCatalogue = useSubtitleLanguages(API_URL,
+    [...availableLanguages, ...slots.map((slot) => slot.language || '')]);
+
   const languageOptions = useMemo(() => {
     const base: SelectOption[] = [{ value: '', label: 'None', available: true }];
-    for (const option of LANGUAGE_OPTIONS) {
-      base.push({ ...option, available: availableLanguages.has(option.value) });
+    for (const option of subtitleCatalogue.languages) {
+      base.push({ value: option.code, label: option.name, available: availableLanguages.has(option.code) });
     }
     return base;
-  }, [availableLanguages]);
+  }, [availableLanguages, subtitleCatalogue.languages]);
 
   const sortedSlots = useMemo(() => [...slots].sort((a, b) => a.slot - b.slot), [slots]);
 
@@ -1007,6 +998,7 @@ export default function BurnSubtitlesScreen() {
         <View style={styles.card}>
           <Text style={styles.title}>Burn subtitles</Text>
           <Text style={styles.meta}>Assign languages to the 4-slot bottom grid.</Text>
+          {subtitleCatalogue.error ? <Text style={styles.meta}>{subtitleCatalogue.error}</Text> : null}
 
           <View style={styles.optionRow}>
             <View style={{ flex: 1, marginRight: 10 }}>

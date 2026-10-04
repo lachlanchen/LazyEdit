@@ -1,5 +1,6 @@
 import german from './locales/de.json';
 import studioEditor from './locales/studio-editor.json';
+import subtitleLanguages from './locales/subtitle-languages.json';
 import russian from './locales/ru.json';
 
 export type Locale =
@@ -2145,6 +2146,9 @@ export const TRANSLATIONS: Record<Locale, Record<string, string>> = {
 };
 
 for (const [locale, messages] of Object.entries(studioEditor)) {
+  Object.assign(TRANSLATIONS[locale as Locale], messages);
+}
+for (const [locale, messages] of Object.entries(subtitleLanguages)) {
   Object.assign(TRANSLATIONS[locale as Locale], messages);
 }
 

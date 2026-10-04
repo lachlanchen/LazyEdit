@@ -160,6 +160,62 @@ def test_language_override_updates_visible_slots_in_top_to_bottom_order():
     assert [slot["fontScale"] for slot in updated["slots"]] == [1.0, 0.9, 0.8, 0.7]
 
 
+def test_subset_language_override_does_not_shrink_reserved_rows():
+    layout = {"rows": 4, "liftRatio": 0, "slots": []}
+    updated = sync_burn_layout_languages(layout, ["pt-BR", "eo"])
+    assert updated["rows"] == 4 and updated["liftRatio"] == 0
+    assert layout == {"rows": 4, "liftRatio": 0, "slots": []}
+
+
+def test_cli_plan_preserves_new_language_tags_without_settings_writes(monkeypatch, capsys):
+    import copy
+    import json
+    from unittest.mock import Mock
+    from scripts import lazyedit_publish as cli
+    settings = {"publish_options": {"translationLanguages": ["ja", "en", "zh-Hant"]},
+                "translation_languages": ["ja", "en", "zh-Hant"],
+                "burn_layout": {"rows": 4, "liftRatio": 0}, "logo_settings": {}}
+    original = copy.deepcopy(settings)
+    client = Mock(quiet=True)
+    client.request_json.side_effect = lambda method, path, **kwargs: {"value": settings[path.rsplit("/", 1)[1]]}
+    monkeypatch.setattr(cli, "LazyEditClient", lambda *args, **kwargs: client)
+    assert cli.main(["--video-id", "9", "--no-process", "--no-publish", "--json", "--use-current-settings",
+                     "--languages", "pt-BR,sr-Latn,fil,eo"]) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["options"]["translationLanguages"] == ["pt-BR", "sr-Latn", "fil", "eo"]
+    assert result["options"]["burnLayout"]["rows"] == 4
+    assert result["options"]["burnLayout"]["liftRatio"] == 0
+    assert settings == original and not result["options"]["persistSettings"]
+    assert all(call.args[0] == "GET" for call in client.request_json.call_args_list)
+
+
+def test_cli_does_not_replace_rejected_saved_languages(monkeypatch, capsys):
+    from unittest.mock import Mock
+    from scripts import lazyedit_publish as cli
+    client = Mock(quiet=True)
+    client.request_json.side_effect = cli.ApiError("Unsupported subtitle language: zz", 400,
+        {"code": "unsupported_subtitle_language"})
+    monkeypatch.setattr(cli, "LazyEditClient", lambda *args, **kwargs: client)
+    assert cli.main(["--video-id", "9", "--no-process", "--no-publish", "--json", "--use-current-settings"]) == 1
+    assert "Unsupported subtitle language" in capsys.readouterr().err
+    assert client.request_json.call_count == 1
+
+
+def test_cli_keeps_explicit_empty_no_subtitle_setting(monkeypatch, capsys):
+    import json
+    from unittest.mock import Mock
+    from scripts import lazyedit_publish as cli
+    client = Mock(quiet=True)
+    client.request_json.return_value = {"value": {}}
+    monkeypatch.setattr(cli, "LazyEditClient", lambda *args, **kwargs: client)
+    monkeypatch.setattr(cli, "current_ui_settings", lambda client: {
+        "publish_options": {"translationLanguages": [], "burnSubtitles": False},
+        "translation_languages": ["ja", "en", "zh-Hant"]})
+    assert cli.main(["--video-id", "9", "--no-process", "--no-publish", "--json", "--use-current-settings"]) == 0
+    assert json.loads(capsys.readouterr().out)["options"]["translationLanguages"] == []
+    client.request_json.assert_not_called()
+
+
 def test_authoritative_subtitle_file_disables_implicit_ai_correction():
     assert not should_run_subtitle_correction(None, "story context", "reviewed.srt")
     assert should_run_subtitle_correction(True, "story context", "reviewed.srt")

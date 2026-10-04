@@ -20,11 +20,12 @@ import {
 import { useI18n } from '@/components/I18nProvider';
 import { useStudioCapabilities } from '@/lib/studioCapabilities';
 import { subscribeStudioRefresh, triggerStudioRefresh } from '@/lib/studioRefresh';
+import { useSubtitleLanguages } from '@/lib/useSubtitleLanguages';
+import SubtitleLanguagePicker from '@/components/SubtitleLanguagePicker';
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:8787';
 const PAGE_SIZE = 8;
 const PROCESS_READY_TIMEOUT_MS = 90 * 60 * 1000;
-const AVAILABLE_TRANSLATION_LANGUAGES = ['ja', 'en', 'zh-Hant', 'fr'];
 const DEFAULT_TRANSLATION_LANGUAGES = ['ja', 'en', 'zh-Hant'];
 const DEFAULT_SUBTITLE_LIFT_RATIO = 0.1;
 const MIN_SUBTITLE_LIFT_RATIO = 0;
@@ -47,18 +48,6 @@ const PORTRAIT_OUTPUT_WIDTH = 1080;
 const PORTRAIT_OUTPUT_HEIGHT = 1920;
 const DEFAULT_CORRECTION_PROMPT =
   'Fix recognition errors while preserving every timestamp exactly and keeping the same number of subtitle lines.';
-const LANGUAGE_LABELS: Record<string, string> = {
-  ja: 'Japanese',
-  en: 'English',
-  'zh-Hant': 'Chinese',
-  fr: 'French',
-};
-const LANGUAGE_SHORT_LABELS: Record<string, string> = {
-  ja: 'JP',
-  en: 'EN',
-  'zh-Hant': 'ZH',
-  fr: 'FR',
-};
 
 type Video = {
   id: number;
@@ -359,6 +348,7 @@ export default function EditorScreen() {
   const [queueExpanded, setQueueExpanded] = useState(false);
   const [publishSettingsLoaded, setPublishSettingsLoaded] = useState(false);
   const [publishOptionsLoaded, setPublishOptionsLoaded] = useState(false);
+  const [publishOptionsError, setPublishOptionsError] = useState('');
   const [burnSubtitles, setBurnSubtitles] = useState(true);
   const [usePolishedSubtitles, setUsePolishedSubtitles] = useState(true);
   const [subtitleSourceMenuOpen, setSubtitleSourceMenuOpen] = useState(false);
@@ -374,6 +364,22 @@ export default function EditorScreen() {
   const [baseBurnPreviewUrl, setBaseBurnPreviewUrl] = useState<string | null>(null);
   const [baseBurnPreviewStatus, setBaseBurnPreviewStatus] = useState<string | null>(null);
   const [translationLanguages, setTranslationLanguages] = useState<string[]>(DEFAULT_TRANSLATION_LANGUAGES);
+  const [importedLanguages, setImportedLanguages] = useState<string[]>([]);
+  const subtitleCatalogue = useSubtitleLanguages(API_URL, [...translationLanguages, ...importedLanguages]);
+  useEffect(() => {
+    let active = true;
+    setImportedLanguages([]);
+    if (selectedVideoId) void (async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/videos/${selectedVideoId}/translations`);
+        const data = await response.json();
+        if (active && response.ok) setImportedLanguages((data.translations || [])
+          .filter((item: { status: string }) => item.status === 'completed')
+          .map((item: { language_code: string }) => item.language_code));
+      } catch { /* Catalogue choices and saved languages remain available. */ }
+    })();
+    return () => { active = false; };
+  }, [selectedVideoId]);
   const [subtitleLiftRatio, setSubtitleLiftRatio] = useState(DEFAULT_SUBTITLE_LIFT_RATIO);
   const [subtitleLiftInput, setSubtitleLiftInput] = useState(formatSubtitleLiftRatio(DEFAULT_SUBTITLE_LIFT_RATIO));
   const [subtitleRows, setSubtitleRows] = useState(DEFAULT_SUBTITLE_ROWS);
@@ -870,20 +876,25 @@ export default function EditorScreen() {
   }, [normalizePublishSelection]);
 
   const loadPublishOptions = useCallback(async () => {
+    setPublishOptionsLoaded(false);
+    setPublishOptionsError('');
     try {
       const [optionsResp, languagesResp, burnLayoutResp] = await Promise.all([
         fetch(`${API_URL}/api/ui-settings/publish_options`),
         fetch(`${API_URL}/api/ui-settings/translation_languages`),
         fetch(`${API_URL}/api/ui-settings/burn_layout`),
       ]);
+      for (const response of [optionsResp, languagesResp, burnLayoutResp]) {
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Could not load subtitle choices');
+        }
+      }
       let nextLanguages: string[] = DEFAULT_TRANSLATION_LANGUAGES;
       if (languagesResp.ok) {
         const languagesJson = await languagesResp.json();
-        if (Array.isArray(languagesJson?.value) && languagesJson.value.length) {
-          nextLanguages = languagesJson.value
-            .map((lang: unknown) => String(lang))
-            .filter((lang: string) => AVAILABLE_TRANSLATION_LANGUAGES.includes(lang));
-          if (!nextLanguages.length) nextLanguages = DEFAULT_TRANSLATION_LANGUAGES;
+        if (Array.isArray(languagesJson?.value)) {
+          nextLanguages = languagesJson.value.map((lang: unknown) => String(lang));
         }
       }
       if (optionsResp.ok) {
@@ -900,11 +911,9 @@ export default function EditorScreen() {
           setUsePolishedSubtitles(true);
         }
         setUseCorrectionPromptForMetadata(value.useCorrectionPromptForMetadata !== false);
-        if (Array.isArray(value.translationLanguages) && value.translationLanguages.length) {
-          const cleaned = value.translationLanguages
-            .map((lang: unknown) => String(lang))
-            .filter((lang: string) => AVAILABLE_TRANSLATION_LANGUAGES.includes(lang));
-          if (cleaned.length) nextLanguages = cleaned;
+        if (Array.isArray(value.translationLanguages)) {
+          const cleaned = value.translationLanguages.map((lang: unknown) => String(lang));
+          nextLanguages = cleaned;
         }
       }
       if (burnLayoutResp.ok) {
@@ -932,11 +941,11 @@ export default function EditorScreen() {
         setPortraitBottomSpaceRatio(nextPortraitBottomSpace);
         setPortraitBottomSpaceInput(formatPortraitBottomSpaceRatio(nextPortraitBottomSpace));
       }
-      setTranslationLanguages(nextLanguages.slice(0, AVAILABLE_TRANSLATION_LANGUAGES.length));
-    } catch (_err) {
-      // ignore
-    } finally {
+      setTranslationLanguages(nextLanguages);
       setPublishOptionsLoaded(true);
+    } catch (err: any) {
+      setPublishOptionsError(err.message || 'Could not load publish choices');
+      setPublishStatus(err.message || 'Could not load publish choices');
     }
   }, []);
 
@@ -1262,7 +1271,7 @@ export default function EditorScreen() {
     nextUseCorrectionPromptForMetadata = useCorrectionPromptForMetadata,
   ) => {
     try {
-      await fetch(`${API_URL}/api/ui-settings/publish_options`, {
+      const response = await fetch(`${API_URL}/api/ui-settings/publish_options`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1274,23 +1283,14 @@ export default function EditorScreen() {
           publicationMode: 'override',
         }),
       });
-    } catch (_err) {
-      // ignore
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Could not save publish choices');
+      }
+    } catch (err: any) {
+      setPublishStatus(err.message || 'Could not save publish choices');
     }
   }, [useCorrectionPromptForMetadata, usePolishedSubtitles]);
-
-  const toggleTranslationLanguage = useCallback(
-    (language: string) => {
-      const active = translationLanguages.includes(language);
-      if (active && translationLanguages.length <= 1) return;
-      const nextLanguages = active
-        ? translationLanguages.filter((candidate) => candidate !== language)
-        : [...translationLanguages, language].filter((candidate, index, all) => all.indexOf(candidate) === index);
-      setTranslationLanguages(nextLanguages);
-      void persistPublishOptions(burnSubtitles, nextLanguages);
-    },
-    [burnSubtitles, persistPublishOptions, translationLanguages],
-  );
 
   const updateBurnSubtitles = useCallback(
     (value: boolean) => {
@@ -2634,28 +2634,16 @@ export default function EditorScreen() {
           </View>
           <View style={styles.languageOptionRow}>
             <Text style={styles.optionLabel}>{t('publish_option_language_count_title')}</Text>
-            <View style={styles.languageChipGroup}>
-              {AVAILABLE_TRANSLATION_LANGUAGES.map((language) => {
-                const active = translationLanguages.includes(language);
-                const activeIndex = translationLanguages.indexOf(language);
-                const effectiveRows = Math.max(subtitleRows, translationLanguages.length);
-                const targetSlot = active && activeIndex >= 0 ? Math.max(1, effectiveRows - activeIndex) : null;
-                const shortLabel = LANGUAGE_SHORT_LABELS[language] || language.toUpperCase();
-                return (
-                  <Pressable
-                    key={language}
-                    accessibilityLabel={LANGUAGE_LABELS[language] || language}
-                    style={[styles.languageChip, active && styles.languageChipActive]}
-                    onPress={() => toggleTranslationLanguage(language)}
-                    disabled={!publishOptionsLoaded}
-                  >
-                    <Text style={[styles.languageChipText, active && styles.languageChipTextActive]}>
-                      {targetSlot ? `${targetSlot} ${shortLabel}` : shortLabel}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
+            <SubtitleLanguagePicker selected={translationLanguages} {...subtitleCatalogue}
+              disabled={!publishOptionsLoaded} reservedRows={subtitleRows}
+              onChange={(codes) => {
+                setTranslationLanguages(codes);
+                void persistPublishOptions(burnSubtitles, codes);
+              }} />
+            {publishOptionsError ? <View>
+              <Text style={styles.status}>{publishOptionsError}</Text>
+              <Pressable onPress={() => void loadPublishOptions()}><Text>{t('subtitle_languages_reload')}</Text></Pressable>
+            </View> : null}
           </View>
           <View style={styles.liftRatioRow}>
             <View style={styles.publishOptionText}>
@@ -3089,9 +3077,9 @@ export default function EditorScreen() {
             <Text style={styles.secondaryButtonText}>{t('publish_correction_button')}</Text>
           </Pressable>
           <Pressable
-            style={[styles.processButton, (!selectedVideo || processBusy) && styles.btnDisabled]}
+            style={[styles.processButton, (!selectedVideo || processBusy || !publishOptionsLoaded) && styles.btnDisabled]}
             onPress={startProcess}
-            disabled={!selectedVideo || processBusy}
+            disabled={!selectedVideo || processBusy || !publishOptionsLoaded}
           >
             <View style={styles.btnContent}>
               {processBusy && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}
@@ -3205,10 +3193,10 @@ export default function EditorScreen() {
           <Pressable
             style={[
               styles.publishButton,
-              (!selectedVideo || publishing) && styles.btnDisabled,
+              (!selectedVideo || publishing || !publishOptionsLoaded) && styles.btnDisabled,
             ]}
             onPress={publishNow}
-            disabled={!selectedVideo || publishing}
+            disabled={!selectedVideo || publishing || !publishOptionsLoaded}
           >
             <View style={styles.btnContent}>
               {publishing && <ActivityIndicator color="white" style={{ marginRight: 8 }} />}

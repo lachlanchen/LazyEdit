@@ -2,7 +2,8 @@
 import {fail} from './auth.mjs';
 
 export const CHANNELS = ['shipinhao', 'instagram', 'youtube', 'douyin', 'xiaohongshu', 'bilibili'];
-export const LANGUAGES = ['en', 'ja', 'zh-Hant', 'zh-Hans', 'fr'];
+// Syntax only; the backend's shared CLDR resolver validates actual targets.
+const languageTag = /^[A-Za-z]{2,3}(?:-[A-Za-z]{4})?(?:-(?:[A-Za-z]{2}|[0-9]{3}))?$/;
 const copy = value => structuredClone(value || {});
 const number = (v, min, max, name) => {
   if (typeof v !== 'number' || !Number.isFinite(v) || v < min || v > max) fail(400, `Invalid ${name}`);
@@ -14,7 +15,7 @@ const text = (v, max) => {
 };
 export function composerDefaults(settings) {
   const options = settings.publish_options || {}, layout = settings.burn_layout || {}, logo = settings.logo_settings || {};
-  const languages = (options.translationLanguages || settings.translation_languages || ['zh-Hant', 'ja', 'en']).filter(l => LANGUAGES.includes(l));
+  const languages = [...(options.translationLanguages || settings.translation_languages || ['zh-Hant', 'ja', 'en'])];
   const platforms = CHANNELS.filter(p => settings.publish_platforms?.[p]);
   return {
     burnSubtitles: options.burnSubtitles !== false, languages,
@@ -37,7 +38,8 @@ export function validateForm(value) {
   for (const key of ['burnSubtitles', 'fontBold', 'outlineBold', 'logo', 'correct', 'contextForMetadata']) {
     if (typeof f[key] !== 'boolean') fail(400, `Invalid ${key}`);
   }
-  for (const [key, allowed] of [['languages', LANGUAGES], ['platforms', CHANNELS]]) {
+  if (!Array.isArray(f.languages) || f.languages.length > 8 || new Set(f.languages).size !== f.languages.length || f.languages.some(v => typeof v !== 'string' || !languageTag.test(v))) fail(400, 'Invalid subtitle language codes');
+  for (const [key, allowed] of [['platforms', CHANNELS]]) {
     if (!Array.isArray(f[key]) || new Set(f[key]).size !== f[key].length || f[key].some(v => !allowed.includes(v))) fail(400, `Invalid ${key}`);
   }
   if (f.burnSubtitles && !f.languages.length) fail(400, 'Choose at least one subtitle language');

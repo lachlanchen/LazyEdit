@@ -12,6 +12,7 @@ opencv-python<4.11
 moviepy==1.0.3
 cjkwrap
 packaging
+babel>=2.17,<3
 pypinyin
 pycantonese==3.4.0
 koroman

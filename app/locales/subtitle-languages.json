@@ -1,0 +1,90 @@
+{
+  "en": {
+    "subtitle_languages_order": "Bottom → top · select in display order",
+    "subtitle_languages_add": "Add a language",
+    "subtitle_languages_remove": "Remove {{value}}",
+    "subtitle_languages_search": "Search or enter a code: pt-BR, sr-Latn, eo",
+    "subtitle_languages_use": "Use this language code",
+    "subtitle_languages_reload": "Reload saved choices"
+  },
+  "zh-Hans": {
+    "subtitle_languages_order": "从下到上 · 按显示顺序选择",
+    "subtitle_languages_add": "添加语言",
+    "subtitle_languages_remove": "移除{{value}}",
+    "subtitle_languages_search": "搜索或输入语言代码：pt-BR、sr-Latn、eo",
+    "subtitle_languages_use": "使用此语言代码",
+    "subtitle_languages_reload": "重新加载已保存的选项"
+  },
+  "zh-Hant": {
+    "subtitle_languages_order": "由下至上 · 按顯示順序選擇",
+    "subtitle_languages_add": "新增語言",
+    "subtitle_languages_remove": "移除{{value}}",
+    "subtitle_languages_search": "搜尋或輸入語言代碼：pt-BR、sr-Latn、eo",
+    "subtitle_languages_use": "使用此語言代碼",
+    "subtitle_languages_reload": "重新載入已儲存的選項"
+  },
+  "ja": {
+    "subtitle_languages_order": "下 → 上 · 表示する順に選択",
+    "subtitle_languages_add": "言語を追加",
+    "subtitle_languages_remove": "{{value}}を削除",
+    "subtitle_languages_search": "検索または言語コードを入力：pt-BR、sr-Latn、eo",
+    "subtitle_languages_use": "この言語コードを使用",
+    "subtitle_languages_reload": "保存した設定を再読み込み"
+  },
+  "ko": {
+    "subtitle_languages_order": "아래 → 위 · 표시할 순서대로 선택",
+    "subtitle_languages_add": "언어 추가",
+    "subtitle_languages_remove": "{{value}} 삭제",
+    "subtitle_languages_search": "검색 또는 언어 코드 입력: pt-BR, sr-Latn, eo",
+    "subtitle_languages_use": "이 언어 코드 사용",
+    "subtitle_languages_reload": "저장한 설정 다시 불러오기"
+  },
+  "vi": {
+    "subtitle_languages_order": "Dưới → trên · chọn theo thứ tự hiển thị",
+    "subtitle_languages_add": "Thêm ngôn ngữ",
+    "subtitle_languages_remove": "Xóa {{value}}",
+    "subtitle_languages_search": "Tìm hoặc nhập mã ngôn ngữ: pt-BR, sr-Latn, eo",
+    "subtitle_languages_use": "Dùng mã ngôn ngữ này",
+    "subtitle_languages_reload": "Tải lại lựa chọn đã lưu"
+  },
+  "ar": {
+    "subtitle_languages_order": "من الأسفل إلى الأعلى · اختر حسب ترتيب العرض",
+    "subtitle_languages_add": "إضافة لغة",
+    "subtitle_languages_remove": "إزالة {{value}}",
+    "subtitle_languages_search": "ابحث أو أدخل رمز اللغة: pt-BR، sr-Latn، eo",
+    "subtitle_languages_use": "استخدام رمز اللغة هذا",
+    "subtitle_languages_reload": "إعادة تحميل الخيارات المحفوظة"
+  },
+  "fr": {
+    "subtitle_languages_order": "Bas → haut · sélectionner dans l’ordre d’affichage",
+    "subtitle_languages_add": "Ajouter une langue",
+    "subtitle_languages_remove": "Retirer {{value}}",
+    "subtitle_languages_search": "Rechercher ou saisir un code : pt-BR, sr-Latn, eo",
+    "subtitle_languages_use": "Utiliser ce code de langue",
+    "subtitle_languages_reload": "Recharger les choix enregistrés"
+  },
+  "es": {
+    "subtitle_languages_order": "Abajo → arriba · elegir en orden de presentación",
+    "subtitle_languages_add": "Añadir un idioma",
+    "subtitle_languages_remove": "Quitar {{value}}",
+    "subtitle_languages_search": "Buscar o introducir un código: pt-BR, sr-Latn, eo",
+    "subtitle_languages_use": "Usar este código de idioma",
+    "subtitle_languages_reload": "Recargar las opciones guardadas"
+  },
+  "de": {
+    "subtitle_languages_order": "Unten → oben · in Anzeigereihenfolge auswählen",
+    "subtitle_languages_add": "Sprache hinzufügen",
+    "subtitle_languages_remove": "{{value}} entfernen",
+    "subtitle_languages_search": "Suchen oder Sprachcode eingeben: pt-BR, sr-Latn, eo",
+    "subtitle_languages_use": "Diesen Sprachcode verwenden",
+    "subtitle_languages_reload": "Gespeicherte Auswahl neu laden"
+  },
+  "ru": {
+    "subtitle_languages_order": "Снизу → вверх · выбирайте в порядке отображения",
+    "subtitle_languages_add": "Добавить язык",
+    "subtitle_languages_remove": "Удалить {{value}}",
+    "subtitle_languages_search": "Поиск или код языка: pt-BR, sr-Latn, eo",
+    "subtitle_languages_use": "Использовать этот код языка",
+    "subtitle_languages_reload": "Загрузить сохранённые настройки"
+  }
+}

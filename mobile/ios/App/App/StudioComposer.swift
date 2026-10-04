@@ -41,6 +41,16 @@ struct StudioRun: Identifiable {
     }
 }
 
+struct StudioSubtitleLanguage: Identifiable {
+    let id: String
+    let name: String
+    init?(_ row: [String: Any]) {
+        guard let code = row["code"] as? String, !code.isEmpty else { return nil }
+        id = code
+        name = studioText(row["name"], fallback: code)
+    }
+}
+
 struct StudioPendingSubmission: Codable {
     let key: String
     let body: Data
@@ -56,6 +66,7 @@ final class StudioComposer: ObservableObject {
     @Published var error: String?
     @Published var receipt: String?
     @Published var runs: [StudioRun] = []
+    @Published var subtitleLanguages: [StudioSubtitleLanguage] = []
     @Published var geometry: [String: Double] = [:]
     @Published var portrait = false
     @Published var summary: [String] = []
@@ -87,6 +98,7 @@ final class StudioComposer: ObservableObject {
             if !publishingEnabled { choices.platforms = [] }
             if let bytes = try? Data(contentsOf: pendingURL) { pending = try? JSONDecoder().decode(StudioPendingSubmission.self, from: bytes) }
             runs = (result["sessions"] as? [[String: Any]] ?? []).compactMap(StudioRun.init)
+            subtitleLanguages = (result["subtitleLanguages"] as? [[String: Any]] ?? []).compactMap(StudioSubtitleLanguage.init)
             if let geometry = result["geometry"] as? [String: Any] { setGeometry(geometry) }
             else { geometry = [:] }
             if portrait { choices.background = "off" }
@@ -105,6 +117,29 @@ final class StudioComposer: ObservableObject {
         guard loaded else { return }
         do { try JSONEncoder().encode(choices).write(to: draftURL, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication]) }
         catch { self.error = "Your choices could not be saved on this device." }
+    }
+
+    func languageName(_ code: String) -> String {
+        subtitleLanguages.first { $0.id == code }?.name ?? languageNames[code] ?? code
+    }
+
+    func addLanguage(_ code: String) async {
+        guard let api, !busy, pending == nil else { return }
+        guard choices.languages.count < 8 else { error = "At most eight subtitle rows are available."; return }
+        busy = true; error = nil
+        defer { busy = false }
+        do {
+            let result = try await api.json("/api/languages", method: "POST", body: ["languages": [code.trimmingCharacters(in: .whitespacesAndNewlines)]])
+            guard let canonical = (result["codes"] as? [String])?.first else { throw StudioFailure(message: "Invalid subtitle language reply", status: 0) }
+            if !choices.languages.contains(canonical) {
+                choices.languages.append(canonical)
+                choices.rows = max(choices.rows, choices.languages.count)
+            }
+            if let row = (result["languages"] as? [[String: Any]])?.first, let language = StudioSubtitleLanguage(row), !subtitleLanguages.contains(where: { $0.id == canonical }) {
+                subtitleLanguages.append(language)
+            }
+            save()
+        } catch { self.error = error.localizedDescription }
     }
 
     func preset(_ name: String) {
@@ -217,6 +252,7 @@ struct StudioComposerView: View {
     @State private var review = false
     @State private var editor = false
     @State private var showLanguages = false
+    @State private var languageQuery = ""
     @State private var advanced = false
     @State private var reviewPlayer: AVPlayer?
 
@@ -317,7 +353,7 @@ struct StudioComposerView: View {
                 Button { showLanguages = true } label: {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(StudioStrings.text("Languages & order"))
-                        Text(StudioStrings.text("Top → bottom: ") + model.choices.languages.reversed().map { languageNames[$0] ?? $0 }.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
+                        Text(StudioStrings.text("Top → bottom: ") + model.choices.languages.reversed().map { model.languageName($0) }.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
                     }
                 }
                 DisclosureGroup("Subtitle appearance", isExpanded: $advanced) {
@@ -362,17 +398,19 @@ struct StudioComposerView: View {
             List {
                 Section {
                     ForEach(model.choices.languages, id: \.self) { lang in
-                        HStack { Text(languageNames[lang] ?? lang); Spacer(); Text(model.choices.languages.first == lang ? "Bottom" : model.choices.languages.last == lang ? "Top" : "").font(.caption).foregroundStyle(.secondary) }
+                        HStack { Text(model.languageName(lang)); Spacer(); Text(model.choices.languages.first == lang ? "Bottom" : model.choices.languages.last == lang ? "Top" : "").font(.caption).foregroundStyle(.secondary) }
                     }
                     .onMove { from, to in model.choices.languages.move(fromOffsets: from, toOffset: to) }
                     .onDelete { model.choices.languages.remove(atOffsets: $0) }
                 } header: { Text(StudioStrings.text("Bottom → top")) } footer: { Text(StudioStrings.text("Drag to reorder. The first language is closest to the bottom of the video.")) }
                 Section(StudioStrings.text("Add a language")) {
-                    ForEach(["en", "ja", "zh-Hant", "zh-Hans", "fr"].filter { !model.choices.languages.contains($0) }, id: \.self) { lang in
-                        Button(languageNames[lang] ?? lang) {
-                            model.choices.languages.append(lang)
-                            model.choices.rows = max(model.choices.rows, model.choices.languages.count)
-                        }
+                    TextField("Search or enter a language code", text: $languageQuery).textInputAutocapitalization(.never).autocorrectionDisabled()
+                    if !languageQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        Button("Use this language code") { Task { await model.addLanguage(languageQuery) } }.disabled(model.busy)
+                    }
+                    if let error = model.error { Text(error).foregroundStyle(.red) }
+                    ForEach(model.subtitleLanguages.filter { !model.choices.languages.contains($0.id) && (languageQuery.isEmpty || ($0.name + " " + $0.id).localizedCaseInsensitiveContains(languageQuery)) }) { language in
+                        Button(language.name + " · " + language.id) { Task { await model.addLanguage(language.id) } }.disabled(model.busy)
                     }
                     Button(StudioStrings.text("EN / JP / ZH / FR · top to bottom")) { model.choices.languages = ["fr", "zh-Hant", "ja", "en"]; model.choices.rows = max(4, model.choices.rows) }
                 }
