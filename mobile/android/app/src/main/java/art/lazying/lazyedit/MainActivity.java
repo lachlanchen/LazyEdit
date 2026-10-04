@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
             }));return;
         }
         task("Loading current settings…",()->api.json(path+"/composer"),result->{
-            message.setText("");final boolean canPublish=result.optJSONObject("capabilities")!=null&&result.getJSONObject("capabilities").optBoolean("publishing");JSONObject form=result.getJSONObject("defaults");File draft=api.file("choices-"+id+".json");
+            message.setText("");final boolean canPublish=result.optJSONObject("capabilities")!=null?result.getJSONObject("capabilities").optBoolean("publishing"):api.publishingEnabled();JSONObject form=result.getJSONObject("defaults");File draft=api.file("choices-"+id+".json");
             if(draft.exists())try{form=new JSONObject(StudioApi.readFile(draft));}catch(Exception ignored){}
             final JSONObject choices=form;
             boolean portrait=result.optJSONObject("geometry")!=null&&result.getJSONObject("geometry").optBoolean("portrait");

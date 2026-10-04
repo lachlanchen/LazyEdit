@@ -33,6 +33,19 @@ test('invalid ranges and orders fail; reuse uses the saved output without recorr
  assert.throws(()=>checkPublicationJobs([{video_id:1,status:'running',platforms:['youtube']}],1,['shipinhao'],true));
 });
 
+test('only proven failures before dispatch allow a fresh native submission',()=>{
+ const failed={id:444,video_id:1,source:'local',status:'failed',internal_status:'failed',
+  finished_at:'2026-10-04T07:00:47Z',error:'translation failed',platforms:['youtube'],
+  remote_job_id:null,remote_status:null,zip_path:null,zip_url:null,filename:null};
+ assert.doesNotThrow(()=>checkPublicationJobs([failed],1,['youtube'],true));
+ for(const changed of [{source:'remote'},{error:'Unknown upstream result'},
+  {zip_path:'/publish.zip'},{filename:'publish.zip'},{remote_job_id:'remote-1'},
+  {remote_status:'queued'},{finished_at:null},{status:'running'}])
+  assert.throws(()=>checkPublicationJobs([{...failed,...changed}],1,['youtube'],true));
+ const unknown={...failed};delete unknown.zip_path;
+ assert.throws(()=>checkPublicationJobs([unknown],1,['youtube'],true));
+});
+
 test('native requests use existing pipeline once, hide is reversible, linked permissions stay isolated',async t=>{
  const dir=mkdtempSync(join(tmpdir(),'studio-composer-')),calls=[],jobs=[];
  let failPublish=false;

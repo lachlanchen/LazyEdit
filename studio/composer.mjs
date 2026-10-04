@@ -99,6 +99,14 @@ export function checkPublicationJobs(jobs, videoId, platforms, publishing) {
   if (previous.some(j => ['queued', 'processing', 'running', 'publishing', 'submitted'].includes(j.status))) fail(409, 'This video already has an active task. Follow it in Activity');
   if (publishing) {
     for (const job of previous) {
+      // The backend writes a ZIP before dispatching to AutoPublish. Only a
+      // proven local preparation failure can be retried without post receipts.
+      // Missing fields or any dispatch artifact remain ambiguous and blocked.
+      const beforeDispatch = job.source === 'local' && job.status === 'failed' && job.internal_status === 'failed'
+        && Number.isSafeInteger(job.id) && !!job.finished_at
+        && ['keyframes failed', 'caption failed', 'transcription failed', 'polish failed', 'translation failed', 'burn failed', 'metadata zh failed', 'metadata en failed', 'metadata ja failed', 'cover extraction failed'].includes(job.error)
+        && ['remote_job_id', 'remote_status', 'zip_path', 'zip_url', 'filename'].every(k => Object.hasOwn(job, k) && job[k] === null);
+      if (beforeDispatch) continue;
       const channels = Array.isArray(job.platforms) ? job.platforms : Object.keys(job.platforms || {}).filter(k => job.platforms[k]);
       const overlap = platforms.filter(p => channels.includes(p));
       if (overlap.length) fail(409, `Publication history exists for ${overlap.join(', ')}. Check its receipts in the full editor before repeating`);
