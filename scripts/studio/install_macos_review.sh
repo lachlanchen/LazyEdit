@@ -2,6 +2,7 @@
 # Install one verified local-QA Mac bundle; no signing or TCC settings change.
 set -euo pipefail
 umask 077
+helper_dir=$(cd "$(dirname "$0")" && pwd)
 archive="${1:?Supply the exact QA ZIP}"
 build="${2:?Supply the expected build number}"
 expected="${3:?Supply the verified SHA-256}"
@@ -16,9 +17,7 @@ ditto -x -k "$archive" "$staging"
 app="$staging/App.app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Contents/Info.plist")" == art.lazying.lazyedit ]]
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info.plist")" == "$build" ]]
-codesign --verify --deep --strict "$app"
-architectures=$(lipo -archs "$app/Contents/MacOS/App")
-[[ " $architectures " == *" arm64 "* && " $architectures " == *" x86_64 "* ]]
+bash "$helper_dir/check_macos_bundle.sh" "$app" "$build"
 # Stop only this project's superseded review executable, after verification.
 while read -r pid; do
   command=$(ps -p "$pid" -o comm= || true)

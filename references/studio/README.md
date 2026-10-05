@@ -6,6 +6,8 @@ private member workspaces. See [current account/publication boundaries](editor-f
 and [native desktop apps and Mac review](2026-10-04-desktop-apps-and-mac-review.md).
 The transport notes below describe the original owner deployment; the current
 member service and native release state are recorded in those newer guides.
+For Intel Mac installation, use the separate native Mac TestFlight build;
+see [Mac compatibility and beta delivery](2026-10-05-mac-intel-testflight.md).
 Account credentials stay in protected configuration, never in this repository.
 
 ## Boundaries

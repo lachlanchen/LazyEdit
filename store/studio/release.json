@@ -97,6 +97,25 @@
     "deliveryUuid": "98348a3d-1b41-4bf5-8adc-7b5c1a99ceba",
     "processingState": "VALID",
     "validation": "Apple altool VERIFY SUCCEEDED",
+    "testFlight": {
+      "platform": "MAC_OS",
+      "version": "1.0",
+      "buildNumber": "12",
+      "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
+      "groupName": "LazyEdit Studio Internal",
+      "attached": true,
+      "internalBuildState": "IN_BETA_TESTING",
+      "verifiedOn": "2026-10-05",
+      "note": "Native universal Mac build; prior internal group assignment included only iOS builds. Existing iOS assignments and formal review preserved."
+    },
+    "compatibilityQualification": {
+      "verifiedOn": "2026-10-05",
+      "build": 12,
+      "intelEnvironment": "x86_64 KVM macOS 15.7.9",
+      "nativeChecks": "Reviewer sign-in, private sample library, editing composer, hydrated full editor, member isolation and Keychain persistence after relaunch passed using the exact candidate's development-signed QA copy.",
+      "bundleCheck": "All bundled Mach-O binaries contain x86_64 and arm64; exact bundle/build/minimum macOS 12.0 and strict signature verified. A disposable ARM-only copy was correctly rejected.",
+      "limits": "No new build12 UI qualification on ARM or the currently unreachable physical Intel Monterey/7050 Macs. Previous build9 launch evidence remains separate. No processing, upload or social post created."
+    },
     "formalReview": {
       "versionId": "75ec2713-0287-46a7-a556-e588ed57a2c7",
       "submissionId": "68643764-845a-4dd1-ada8-95f7a01dc1e7",

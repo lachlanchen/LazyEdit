@@ -3,7 +3,8 @@
 # Native Mac Catalyst; local QA signature only, not a notarized public installer.
 set -euo pipefail
 umask 077
-root="$HOME/Projects/LazyEditStudio"
+root="${LAZYEDIT_MAC_ROOT:-$HOME/Projects/LazyEditStudio}"
+helper_dir=$(cd "$(dirname "$0")" && pwd)
 build_number="${LAZYEDIT_BUILD_NUMBER:?Supply the exact expected build number}"
 [[ "$build_number" =~ ^[0-9]+$ ]] || exit 2
 cd "$root/ios/App"
@@ -20,8 +21,7 @@ app="$root/release/MacDerivedData/Build/Products/Release-maccatalyst/App.app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info.plist")" == "$build_number" ]]
 codesign --force --deep --sign - "$app"
 codesign --verify --deep --strict "$app"
-architectures=$(lipo -archs "$app/Contents/MacOS/App")
-[[ " $architectures " == *" arm64 "* && " $architectures " == *" x86_64 "* ]]
+bash "$helper_dir/check_macos_bundle.sh" "$app" "$build_number"
 output="$root/release/LazyEditStudio-macOS-${build_number}.zip"
 ditto -c -k --sequesterRsrc --keepParent "$app" "$output"
 shasum -a 256 "$output"

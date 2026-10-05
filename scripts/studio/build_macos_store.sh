@@ -3,6 +3,7 @@
 set -euo pipefail
 umask 077
 root="${LAZYEDIT_MAC_ROOT:-$HOME/Projects/LazyEditStudio}"
+helper_dir=$(cd "$(dirname "$0")" && pwd)
 build="${LAZYEDIT_BUILD_NUMBER:?Set the exact Mac candidate build}"
 [[ "$build" =~ ^[0-9]+$ ]] || exit 2
 private="$HOME/.config/echomind/apple"
@@ -67,8 +68,7 @@ fi
 app="$archive/Products/Applications/App.app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Contents/Info.plist")" == art.lazying.lazyedit ]]
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info.plist")" == "$build" ]]
-codesign --verify --deep --strict "$app"
-lipo -archs "$app/Contents/MacOS/App"
+bash "$helper_dir/check_macos_bundle.sh" "$app" "$build"
 # Installed resources must be readable by ordinary users. The release parent
 # directory stays private; credential/export-option files remain mode 0600.
 chmod -R a+rX "$app"

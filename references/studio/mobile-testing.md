@@ -88,11 +88,16 @@ An uncertain upload must be reconciled against Build Uploads before retrying.
 
 Internal group **LazyEdit Studio Internal** uses manual build distribution.
 The owner is its sole tester. No public TestFlight group was created.
-Use `python scripts/studio/apple_beta.py status` for read-only status.
-Once the exact build is VALID, `... apple_beta.py attach --build 4 --notes-file store/studio/ios-build-4-notes.txt` adds
+Use `python scripts/studio/apple_beta.py status --platform IOS --version 1.0 --build 9` for read-only status.
+Once the exact build is VALID, `... apple_beta.py attach --platform IOS --version 1.0 --build 9 --notes-file store/studio/ios-build-9-notes.txt` adds
 What to Test and attaches it once to the internal group. Inspect TestFlight's
 actual Testing/Ready state afterward. The owner's TestFlight invitation is
 separate from the Studio account password.
+
+Native Intel/Apple Silicon Mac testing uses **MAC_OS**, not the iOS-on-Mac
+candidate. Mac1.0/build12 is now in this group; see
+[Mac TestFlight delivery and compatibility checks](2026-10-05-mac-intel-testflight.md).
+Always supply the exact candidate platform, marketing version and build.
 
 Apple login recovery: try the already-authorized existing browser session and
 its Continue buttons first. An expired page does not imply a new 2FA code.
