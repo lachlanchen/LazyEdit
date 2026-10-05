@@ -1,0 +1,2 @@
+# Preserve exact review attachments; ReportLab PDFs can contain ASCII streams.
+output/pdf/*.pdf binary

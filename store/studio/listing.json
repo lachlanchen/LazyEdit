@@ -20,5 +20,5 @@
     "invitationRequiredForSuppliedReviewer": false,
     "platformCredentialsRequiredForOrdinaryMemberFeatures": false
   },
-  "reviewState": "Google Android6 production in review; Apple iOS9 and Mac12 WAITING_FOR_REVIEW; Windows1.0.1 signed development MSIX qualified on two Windows machines, Microsoft company enrollment pending."
+  "reviewState": "Google Android6 production in review; Apple iOS9 and Mac12 REJECTED on 2026-10-06 for 4.3/4.2.6 clarification; latest platform builds preserved; Windows1.0.1 signed development MSIX qualified on two Windows machines, Microsoft company enrollment pending."
 }

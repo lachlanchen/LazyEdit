@@ -1,0 +1,25 @@
+Thank you for the detailed questions. We request reconsideration of LazyEdit Studio iOS 1.0 (9) and macOS 1.0 (12). Following your instruction, we are replying within the existing submissions rather than resubmitting an unchanged binary.
+
+Attached: LazyEdit-App-Review-Response-20261006.pdf, five pages answering all nine questions in full, with a portfolio comparison, qualification evidence and genuine screenshots. Summary:
+
+1. Studio takes the user's own video through context-assisted transcription correction, synchronized multilingual captions/readings, layout/logo choices, processing and finished-video preview. Native import/configuration/review/playback surround our server-side processor; detailed editing remains a secondary authenticated web view.
+
+2. The initial audience is invited independent creators and language educators preparing their own recordings for multilingual audiences, including viewers who need Japanese readings or Chinese pinyin. They can edit without social accounts.
+
+3. The specific combination is timed multi-language captions with separate ruby placement, consistent reserved-row sizing, context that corrects recognition without replacing recorded speech, geometry-checked portrait layouts and reusable render runs. We do not claim no competing editor can translate video.
+
+4. Beta testing involved one internal developer/owner TestFlight participant plus automated and interactive QA, not a large public cohort. Reported navigation errors, blank loading, too much reliance on web editing, repeated settings and retry concerns led to native screens, native editing/review controls, reversible removal and persisted operation identities. The PDF distinguishes simulator tests, Mac candidate qualification and later read-only checks.
+
+5. This is a standalone product; iOS and Mac are platforms of the same app record. The PDF compares each other portfolio record. Books (Bunko), notes (AiMemo), conversation (EchoMind), papers (OnlyIdeas), music practice (Musia) and smart-glasses workflows (GlassAgent) are different tasks, not Studio editions.
+
+6. Adding all of Studio to those products would mean adding a separate source-video/library/render/job lifecycle, not a content pack or unlock. None is required to use Studio.
+
+7. Studio iOS/Mac share Studio's native code. Across products we reuse conventional auth/localization/billing patterns, company branding and backend infrastructure. The attachment describes their roles and the limits of our source/binary audit rather than asserting zero shared code.
+
+8. Standard server tools include Tornado, FFmpeg/libass and Whisper-based transcription, with configured AI providers. Legacy Capacitor scaffolding exists, but the submitted native target does not link its runtime. Our original implementation is the editing/cue/annotation/layout/run workflow; this is not a licensed white-label editor or a content-library clone.
+
+9. LazyingArt LLC develops and operates its own Studio concept, brand and service, and submits directly. It is not a client/partner app submitted on their behalf. Users supply their own videos.
+
+Review access: use the demo credentials already saved in App Review Information and select Private workspace. Open the Vancouver sample, choose Edit & preview, then review caption/context/layout controls. Full editor provides detailed subtitle/metadata/cover editing. You can upload a small clip and prepare/preview without any public post. The existing small reviewer fixture also has a completed render.
+
+We rechecked login, ordinary editing-only permissions and authenticated sample playback retrieval on 6 October. No personal social credentials are required or shared. Please identify any specific duplicated app/component or missing behavior if further changes are needed.

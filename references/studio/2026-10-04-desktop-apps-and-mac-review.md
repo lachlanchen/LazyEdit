@@ -1,5 +1,10 @@
 # Native desktop apps and Mac review — 2026-10-04
 
+Historical submission receipt. On 6 October Apple rejected iOS 9 and Mac 12
+with a 4.3/4.2.6 questionnaire; see the
+[current clarification record](2026-10-06-apple-rejection-resolution.md).
+The submission status below was verified on October 4, not today's status.
+
 ## Confirmed release state
 
 **Mac 1.0, build 12 is WAITING_FOR_REVIEW**, submitted at

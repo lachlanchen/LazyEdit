@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-05",
+  "updated": "2026-10-06",
   "app": "LazyEdit Studio",
   "bundleId": "art.lazying.lazyedit",
   "version": "1.0",
@@ -19,7 +19,7 @@
     "qa": "Member sign-in, private library/account controls, native editing composer, hydrated full editor without platform/publish controls, and sign-out passed on a dedicated iPhone 17 Pro Max simulator. Exact signed IPA separately validated/uploaded once and is VALID in internal TestFlight. No real social publication or physical-install claim. iPad Pro 13-inch simulator native member editing test passed (1 test, 108.870s) after the hosted optional-font fallback; adaptive-tab changes affect the test helper only. The same signed IPA9 is preserved.",
     "formalReview": {
       "versionId": "5097e8ff-f535-489b-b4c3-ef01561b8e9a",
-      "state": "WAITING_FOR_REVIEW",
+      "state": "REJECTED",
       "draftSubmissionId": "38267310-a95e-435f-9008-1349611c9307",
       "submitted": true,
       "attachedBuild": 9,
@@ -48,7 +48,32 @@
       "resolvedRequirement": "Published audited App Privacy answers in the existing renewed browser session; existing one-item submission sent once and read back through Console and official API.",
       "publicAvailabilityVerified": false,
       "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/distribution/reviewsubmissions",
-      "previousProviderError": "STATE_ERROR.APP_DATA_USAGES_REQUIRED"
+      "previousProviderError": "STATE_ERROR.APP_DATA_USAGES_REQUIRED",
+      "submissionState": "UNRESOLVED_ISSUES",
+      "rejection": {
+        "observedOn": "2026-10-06",
+        "guidelines": [
+          "4.3",
+          "4.2.6"
+        ],
+        "reason": "Spam/template questionnaire: nine requests for product, originality, shared-code, ownership and beta-testing clarification. No specific runtime failure identified.",
+        "responseRoute": "Reply in the existing review thread; Apple expressly requested no unchanged resubmission.",
+        "responseStatus": "POSTED_AWAITING_APPLE_RECONSIDERATION",
+        "newSubmissionCreated": false,
+        "document": "references/studio/2026-10-06-apple-rejection-resolution.md",
+        "replyReceipt": {
+          "messageId": "f646c86d-8e38-4bed-a979-c9191c3401a4",
+          "createdDate": "2026-10-05T22:05:22.245Z",
+          "textSha256": "b245dac0cc1dae20d2d926c41500cdfe2694e7ae6a465aa6ed7d39d9ea937370",
+          "exactReadback": true,
+          "attachmentId": "34021c27-7b26-321a-b2fd-9d898bddba21",
+          "attachmentDownloaded": true,
+          "attachmentSha256": "9dd538b533d3732c93b83e565dc572c418ad1f1c9f4f32073c899c7eda213cc2",
+          "fileName": "LazyEdit-App-Review-Response-20261006.pdf",
+          "fileSize": 222109
+        }
+      },
+      "checkedAt": "2026-10-05T22:16:11.108566+00:00"
     }
   },
   "google": {
@@ -120,12 +145,69 @@
       "versionId": "75ec2713-0287-46a7-a556-e588ed57a2c7",
       "submissionId": "68643764-845a-4dd1-ada8-95f7a01dc1e7",
       "submitted": true,
-      "state": "WAITING_FOR_REVIEW",
+      "state": "REJECTED",
       "submittedAt": "2026-10-04T14:35:26.1Z",
       "attachedBuild": 12,
       "screenshotCount": 3,
       "reviewAccountSavedAndVerified": true,
-      "publicAvailabilityVerified": false
+      "publicAvailabilityVerified": false,
+      "submissionState": "UNRESOLVED_ISSUES",
+      "rejection": {
+        "observedOn": "2026-10-06",
+        "guidelines": [
+          "4.3",
+          "4.2.6"
+        ],
+        "reason": "Spam/template questionnaire: nine requests for product, originality, shared-code, ownership and beta-testing clarification. No specific runtime failure identified.",
+        "responseRoute": "Reply in the existing review thread; Apple expressly requested no unchanged resubmission.",
+        "responseStatus": "POSTED_AWAITING_APPLE_RECONSIDERATION",
+        "newSubmissionCreated": false,
+        "document": "references/studio/2026-10-06-apple-rejection-resolution.md",
+        "replyReceipts": [
+          {
+            "part": 1,
+            "messageId": "f4697a05-879d-4679-a2f4-90203c1df574",
+            "createdDate": "2026-10-05T22:13:30.272Z",
+            "lastUpdatedDate": null,
+            "sha256": "da5c45f1369b002b2dba4c2dedecbef9e71340363f7e5f38ca6ba93ae503bfdd",
+            "exactReadback": true
+          },
+          {
+            "part": 2,
+            "messageId": "fd2abf05-5e7f-4d2e-8c08-869a9e65096b",
+            "createdDate": "2026-10-05T22:13:33.707Z",
+            "lastUpdatedDate": null,
+            "sha256": "eb5aea0207d2e586715d3faedb63b1632901b555833224c11f529975e4af00ec",
+            "exactReadback": true
+          },
+          {
+            "part": 3,
+            "messageId": "d01dddb4-52c0-422d-90f5-0991c2f6f3ef",
+            "createdDate": "2026-10-05T22:13:36.811Z",
+            "lastUpdatedDate": null,
+            "sha256": "d97cda8f364adb93cb834a8e98141a4de6c7525dbb21d5fa5263cb5dbe0aaea8",
+            "exactReadback": true
+          },
+          {
+            "part": 4,
+            "messageId": "24be4623-4964-4d24-bc70-702ee1501860",
+            "createdDate": "2026-10-05T22:13:40.038Z",
+            "lastUpdatedDate": null,
+            "sha256": "b00abafc5c1830cf2a601187abb985679dcd905f33e57b77bd1c48ba0f0f1292",
+            "exactReadback": true
+          },
+          {
+            "part": 5,
+            "messageId": "218dfda0-f2c2-42a4-8557-fa0fb23fce59",
+            "createdDate": "2026-10-05T22:13:43.423Z",
+            "lastUpdatedDate": null,
+            "sha256": "c3bd9adb96f3ffad3042c5cf0ccbe904f526d3dbb9070d492b37e188f943df19",
+            "exactReadback": true
+          }
+        ],
+        "delivery": "Five numbered text messages containing the full response; removed own unfinished PDF from draft after provider processing stalled. Exact message bodies independently read back; no unsent draft remains."
+      },
+      "checkedAt": "2026-10-05T22:16:11.108566+00:00"
     },
     "screenshots": [
       {
@@ -178,7 +260,7 @@
   "downloadPricing": {
     "apple": {
       "usd": "0.99",
-      "state": "USD 0.99 configured; exact IPA9 remains internal TestFlight; formal iOS 1.0 review submitted and WAITING_FOR_REVIEW, not yet public"
+      "state": "USD 0.99 configured; exact IPA9 remains internal TestFlight; formal iOS 1.0 rejected for 4.3/4.2.6 clarification, not public"
     },
     "google": {
       "usd": "0.99",
@@ -314,7 +396,7 @@
   "preparedNativeBuilds": {
     "apple": 9,
     "google": 6,
-    "state": "iOS9 in internal TestFlight and formal review; Android6 internal and production review; Mac12 WAITING_FOR_REVIEW; native Windows1.0.1 signed development MSIX qualified; Microsoft enrollment pending",
+    "state": "iOS9 in internal TestFlight; formal review rejected for 4.3/4.2.6 clarification; Android6 internal and production review; Mac12 internal TestFlight; formal review rejected for the same clarification; native Windows1.0.1 signed development MSIX qualified; Microsoft enrollment pending",
     "macos": 12,
     "windows": "1.0.1"
   },
@@ -465,5 +547,36 @@
         ]
       }
     ]
+  },
+  "appleReviewClarificationQA": {
+    "checkedAt": "2026-10-05T22:16:11.108566+00:00",
+    "sourceAudit": "Submitted archives load only Apple system/Swift frameworks; native Studio entry confirmed; shared infrastructure and historical Capacitor resources disclosed.",
+    "liveReviewer": {
+      "checkedAt": "2026-10-05T22:00:51.468902+00:00",
+      "capabilities": {
+        "editing": true,
+        "publishing": false
+      },
+      "libraryHTTP": 200,
+      "videoCount": 3,
+      "rangeHTTP": 206,
+      "renderSha256": "2d3bdeddbaf1f594b2cf2238e917698c4247709ef848b5d896282c9d98035aa2",
+      "renderBytes": 158131,
+      "metadataLanguages": [
+        "zh",
+        "en",
+        "ja"
+      ],
+      "newProcessingOrPublication": false
+    },
+    "responsePDF": {
+      "file": "output/pdf/LazyEdit-App-Review-Response-20261006.pdf",
+      "sha256": "9dd538b533d3732c93b83e565dc572c418ad1f1c9f4f32073c899c7eda213cc2",
+      "pages": 5,
+      "visuallyReviewedPages": 5,
+      "appleDownloadMatches": true
+    },
+    "noAppRuntimeOrWorkerRestart": true,
+    "sourceOrBinariesReplaced": false
   }
 }
