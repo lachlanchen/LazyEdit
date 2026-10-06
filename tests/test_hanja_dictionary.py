@@ -196,6 +196,25 @@ def test_missing_dictionary_falls_back_without_repeated_download(monkeypatch, tm
     assert install.call_count == 1
 
 
+def test_selected_hanja_with_native_prefix_and_particle_is_lossless():
+    original = row('콧수염이', '콧鬚髥이', 'kotsuyeomi')
+    item = deepcopy(original)
+    normalize_selected_restorations([item], {'수염': [{'word': '鬚髥'}]})
+    assert [(t['surface'], t['word'], t['reading']) for t in item['tokens']] == [
+        ('콧', '콧', 'kot'), ('수염', '鬚髥', '수염'), ('이', '이', 'i')]
+    validate_annotations([item], [original], 'ko', {'plain': [original]})
+    wrong = deepcopy(original)
+    normalize_selected_restorations([wrong], {'수염': [{'word': '水鹽'}]})
+    assert wrong == original
+
+
+def test_native_romanization_preserves_name_without_forcing_hanja():
+    item = row('그랜빌섬', reading='geuraenbilleom')
+    normalize_selected_restorations([item], {})
+    assert item['tokens'][0]['reading'] == 'geuraenbilseom'
+    assert item['tokens'][0]['word'] == item['ko'] == '그랜빌섬'
+
+
 def test_failed_download_preserves_existing_dictionary(monkeypatch, tmp_path):
     import lazyedit.hanja_dictionary as dictionary_module
     path = tmp_path / "hanja.txt"

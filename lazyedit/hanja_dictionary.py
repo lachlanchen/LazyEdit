@@ -139,7 +139,7 @@ def normalize_selected_restorations(items, entries=None):
     """Repair formatting of Hanja already chosen by the model, not etymology.
 
     Pure Hanja gets its exact native surface as ruby. Split a mixed Hanja/Hangul
-    token only when the unchanged Hangul suffix aligns exactly and the selected
+    token only when unchanged Hangul affixes align exactly and the selected
     root is a dictionary candidate. Never choose a different Han spelling.
     """
     if not isinstance(items, list):
@@ -155,6 +155,35 @@ def normalize_selected_restorations(items, entries=None):
                 normalized.append(token)
                 continue
             surface, word = token['surface'], token['word']
+            if word == surface and re.fullmatch(r'[가-힣]+', surface) and re.fullmatch(
+                    r'[A-Za-z -]+', token['reading']):
+                try:
+                    from koroman import romanize
+                    token = {**token, 'reading': romanize(surface, use_pronunciation_rules=True)}
+                except (ImportError, ValueError):
+                    pass
+            # A native prefix may surround an already selected Sino-Korean root.
+            # Preserve it rather than interpreting the whole token as Hanja.
+            prefixed = re.fullmatch(r'([가-힣]+)([\u3400-\u4dbf\u4e00-\u9fff]+)([가-힣]*)', word)
+            if prefixed:
+                prefix, selected, ending = prefixed.groups()
+                stop = len(surface) - len(ending) if ending else len(surface)
+                native = surface[len(prefix):stop]
+                if (surface == prefix + native + ending and native
+                        and selected in {c['word'] for c in entries.get(native, [])}):
+                    try:
+                        from koroman import romanize
+                        parts = [(prefix, prefix, romanize(prefix, use_pronunciation_rules=True)),
+                                 (native, selected, native)]
+                        if ending:
+                            parts.append((ending, ending, romanize(ending, use_pronunciation_rules=True)))
+                    except (ImportError, ValueError):
+                        parts = []
+                    if parts and all(reading for _, _, reading in parts):
+                        normalized.extend({**token, 'surface': native_part, 'word': display,
+                                           'reading': reading}
+                                          for native_part, display, reading in parts)
+                        continue
             mixed = re.fullmatch(r'([\u3400-\u4dbf\u4e00-\u9fff]+)([가-힣]+)', word)
             root, suffix = mixed.groups() if mixed else (word, '')
             native_root = surface[:-len(suffix)] if suffix and surface.endswith(suffix) else ''
