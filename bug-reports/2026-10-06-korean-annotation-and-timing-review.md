@@ -20,6 +20,12 @@ The final actual restored words were checked against the National Institute of K
 
 ## Separate Observations For The Owning Agent
 
+Follow-up: the user's common-only, sentence-level optimization is implemented in
+`references/korean-restoration-single-pass.md`. Valid partial restorations now
+return without a completeness review. Readings are computed locally; only invalid
+structure receives one repair. The earlier 49-test publication record above is
+preserved as history. The published video was not rerendered or republished.
+
 These broader behaviors were not changed during this publication:
 
 1. The initial ASR's third cue began at 2.680s, while independent word-timestamp ASR placed that speech at 5.660s. Text polishing correctly preserved the bad original timing, so timeline equality alone cannot certify alignment. Original and first-polished SRTs were preserved in the video's local QA evidence. A separately reviewed five-cue SRT was imported via the supported `--subtitle-file` flow. The exact imported timeline was validated before publication.

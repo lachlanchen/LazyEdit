@@ -144,71 +144,84 @@ def normalize_selected_restorations(items, entries=None):
     """
     if not isinstance(items, list):
         return
-    entries = load_dictionary() if entries is None else entries
     for item in items:
         if not isinstance(item, dict) or not isinstance(item.get('tokens'), list):
             continue
         normalized = []
         for token in item['tokens']:
             if not isinstance(token, dict) or any(not isinstance(token.get(k), str)
-                    for k in ('surface', 'word', 'reading', 'type')):
+                    for k in ('surface', 'word', 'type')):
                 normalized.append(token)
                 continue
             surface, word = token['surface'], token['word']
-            if word == surface and re.fullmatch(r'[가-힣]+', surface) and re.fullmatch(
-                    r'[A-Za-z -]+', token['reading']):
-                try:
-                    from koroman import romanize
-                    token = {**token, 'reading': romanize(surface, use_pronunciation_rules=True)}
-                except (ImportError, ValueError):
-                    pass
-            # A native prefix may surround an already selected Sino-Korean root.
-            # Preserve it rather than interpreting the whole token as Hanja.
-            prefixed = re.fullmatch(r'([가-힣]+)([\u3400-\u4dbf\u4e00-\u9fff]+)([가-힣]*)', word)
-            if prefixed:
-                prefix, selected, ending = prefixed.groups()
-                stop = len(surface) - len(ending) if ending else len(surface)
-                native = surface[len(prefix):stop]
-                if (surface == prefix + native + ending and native
-                        and selected in {c['word'] for c in entries.get(native, [])}):
-                    try:
-                        from koroman import romanize
-                        parts = [(prefix, prefix, romanize(prefix, use_pronunciation_rules=True)),
-                                 (native, selected, native)]
-                        if ending:
-                            parts.append((ending, ending, romanize(ending, use_pronunciation_rules=True)))
-                    except (ImportError, ValueError):
-                        parts = []
-                    if parts and all(reading for _, _, reading in parts):
-                        normalized.extend({**token, 'surface': native_part, 'word': display,
-                                           'reading': reading}
-                                          for native_part, display, reading in parts)
-                        continue
-            mixed = re.fullmatch(r'([\u3400-\u4dbf\u4e00-\u9fff]+)([가-힣]+)', word)
-            root, suffix = mixed.groups() if mixed else (word, '')
-            native_root = surface[:-len(suffix)] if suffix and surface.endswith(suffix) else ''
-            if HAN.fullmatch(word) and re.fullmatch(r'[가-힣]+', surface):
-                token = {**token, 'reading': surface}
-                # A model can omit an ending from word while retaining it in
-                # surface/ruby (축하해 -> 祝賀). Preserve that visible ending too.
-                if word not in {c['word'] for c in entries.get(surface, [])}:
-                    for end in range(len(surface) - 1, 1, -1):
-                        if word in {c['word'] for c in entries.get(surface[:end], [])}:
-                            native_root, suffix = surface[:end], surface[end:]
-                            break
-            if suffix and root in {c['word'] for c in entries.get(native_root, [])}:
-                try:
-                    from koroman import romanize
-                    reading = romanize(suffix, use_pronunciation_rules=True)
-                except (ImportError, ValueError):
-                    reading = ''
-                if isinstance(reading, str) and re.search(r'[A-Za-z]', reading):
-                    normalized.append({**token, 'surface': native_root,
-                                       'word': root, 'reading': native_root})
-                    token = {**token, 'surface': suffix, 'word': suffix,
-                             'reading': reading}
+            token = {**token, 'reading': token.get('reading', '')}
+            if re.search(r'[가-힣]', surface) and not HAN.search(word):
+                # A dictionary-form lemma (하다) is not the spoken surface (합니다).
+                word = token['word'] = surface
+            if word == surface:
+                # Models choose meanings; local code supplies pronunciation.
+                # Keep Latin names/numerals intact while romanizing Hangul runs.
+                reading = re.sub(r'[가-힣]+', lambda m: romanize_native(m[0]) or m[0], surface)
+                token['reading'] = reading if any(c.isalpha() for c in surface) else ''
+            elif re.fullmatch(r'[가-힣]+', surface):
+                if entries is None:
+                    entries = load_dictionary()
+                parts = _selected_parts(surface, word, entries)
+                if parts:
+                    normalized.extend({**token, 'surface': native, 'word': display,
+                                       'reading': reading}
+                                      for native, display, reading in parts)
+                    continue
+                if HAN.fullmatch(word):
+                    token = {**token, 'reading': surface}
             normalized.append(token)
         item['tokens'] = normalized
+
+
+@lru_cache(maxsize=4096)
+def romanize_native(text):
+    """Local pronunciation is repeatable and does not need another LLM call."""
+    try:
+        from koroman import romanize
+        value = romanize(text, use_pronunciation_rules=True)
+    except (ImportError, ValueError):
+        return ''
+    return value if isinstance(value, str) and re.fullmatch(r'[A-Za-z -]+', value) else ''
+
+
+def _selected_parts(surface, word, entries):
+    """Split a common selected root with native affixes; leave complex cases alone."""
+    match = re.fullmatch(r'([가-힣]*)([\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]+)([가-힣]*)', word)
+    if not match:
+        return None
+    prefix, han, suffix = match.groups()
+
+    def selected(native):
+        return han in {candidate['word'] for candidate in entries.get(native, [])}
+    if prefix or suffix:
+        stop = len(surface) - len(suffix) if suffix else len(surface)
+        native = surface[len(prefix):stop]
+        if surface != prefix + native + suffix or not selected(native):
+            return None
+    elif selected(surface):
+        native = surface
+    else:
+        # Some responses select a root but omit its native affixes from word.
+        # Only restore those affixes if the root has one unambiguous placement.
+        matches = []
+        for start in range(len(surface)):
+            for end in range(start + 2, min(len(surface), start + 16) + 1):
+                if selected(surface[start:end]):
+                    matches.append((surface[:start], surface[start:end], surface[end:]))
+                    if len(matches) == 2:
+                        return None
+        if not matches:
+            return None
+        prefix, native, suffix = matches[0]
+    parts = [(prefix, prefix), (native, han), (suffix, suffix)]
+    result = [(native, display, native if HAN.fullmatch(display) else romanize_native(native))
+              for native, display in parts if native]
+    return result if all(reading for _, _, reading in result) else None
 
 
 if __name__ == "__main__":

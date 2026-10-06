@@ -23,6 +23,19 @@ def annotation_contract(schema, language):
         },
     }
     row["required"] = list(row["required"]) + ["tokens"]
+    if language == "ko":
+        token = row["properties"]["tokens"]["items"]
+        del token["properties"]["reading"]
+        token["required"].remove("reading")
+        return schema, (
+            "\nTranslate this cue naturally into Korean using adjacent context. Keep timestamps. "
+            "Return grammar tokens with surface, word and type; their surfaces must concatenate "
+            "to the exact clean Korean text, including spaces and punctuation. Usually word=surface. "
+            "For common, confidently identified Sino-Korean roots, use traditional Hanja in word. "
+            "Leave uncertain roots, native words and foreign names in Hangul; partial restoration is enough. "
+            "Split particles/endings: 학교에서 -> surface 학교 / word 學校, then surface 에서 / word 에서. "
+            "먹어요 stays 먹어요. Readings are added locally; omit them. Return only JSON."
+        )
     prompt = (
         "\nInclude grammar-colored tokens for every line. Concatenating token.surface "
         "must reproduce the clean translated text EXACTLY, including spaces and punctuation. "
@@ -32,11 +45,11 @@ def annotation_contract(schema, language):
         "Punctuation has empty reading. Keep the clean language field in native orthography. "
         "For languages without a rule below use empty reading; pronunciation is handled by the renderer."
     )
-    if language in {"ko", "vi"}:
-        native = "Hangul" if language == "ko" else "Vietnamese with all tone marks"
-        roman = "Revised Romanization" if language == "ko" else "IPA pronunciation (standard Hanoi Vietnamese)"
+    if language == "vi":
+        native = "Vietnamese with all tone marks"
+        roman = "IPA pronunciation (standard Hanoi Vietnamese)"
         prompt += (
-            f"\nRestore only confidently identified {'Sino-Korean Hanja' if language == 'ko' else 'Sino-Vietnamese Chữ Hán'} "
+            "\nRestore only confidently identified Sino-Vietnamese Chữ Hán "
             f"roots using traditional Han characters in word, with their ORIGINAL {native} surface in reading. "
             "Choose the natural translation first, then examine EVERY lexical root for restoration. "
             "Resolve homophones using this sentence and adjacent context. Restore clear common roots; "
@@ -49,19 +62,11 @@ def annotation_contract(schema, language):
             "Before returning JSON, check for missed clear roots, wrong homophones, lost spaces, "
             "and missing pronunciation. Return only the final JSON, without explanations. "
         )
-        if language == "ko":
-            prompt += (
-                "Example: 학교에서 -> 學校 with reading 학교, then 에서 with reading eseo. "
-                "축하해요 -> surface 축하 / word 祝賀 / reading 축하, then surface 해요 / "
-                "word 해요 / reading haeyo. Never use 祝賀해요 as one display word. "
-                "먹어요 stays 먹어요 with reading meogeoyo; do not substitute Chinese for native words."
-            )
-        else:
-            prompt += (
-                "Example: học sinh -> 學 with reading học, space, 生 with reading sinh. "
-                "Keep native words in Quốc ngữ. Chữ Nôm conversion is not requested. "
-                "Vietnamese already uses Latin script; native-word pronunciation is Hanoi IPA, not repeated spelling."
-            )
+        prompt += (
+            "Example: học sinh -> 學 with reading học, space, 生 with reading sinh. "
+            "Keep native words in Quốc ngữ. Chữ Nôm conversion is not requested. "
+            "Vietnamese already uses Latin script; native-word pronunciation is Hanoi IPA, not repeated spelling."
+        )
     return schema, prompt
 
 

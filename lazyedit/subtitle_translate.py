@@ -18,7 +18,7 @@ from lazyedit.openai_request_json import OpenAIRequestJSONBase, JSONParsingError
 from lazyedit.languages import LANGUAGES, TO_LANGUAGE_CODE
 from lazyedit.subtitle_languages import require_subtitle_language, subtitle_language
 from lazyedit.subtitle_annotations import annotation_contract, validate_annotations
-from lazyedit.hanja_dictionary import review_hints, normalize_selected_restorations
+from lazyedit.hanja_dictionary import normalize_selected_restorations
 
 from datetime import datetime
 from pprint import pprint
@@ -1140,18 +1140,18 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
 
     def _request_han_annotations(self, prompt, schema, system_content, subtitles,
                                  language, idx, same_language_result):
-        """One normal call; at most one contextual review or validation repair.
+        """One call per cue; repair invalid structure once, never chase coverage.
 
-        Korean dictionary matches are only candidates, never automatic changes.
-        Freeze valid clean text before any review, so it cannot retranslate it.
-        Vietnamese shares the checks without using the Korean dictionary.
+        Korean readings/affixes are normalized locally before validation. Keep
+        valid partial restoration, and freeze clean text before any repair.
         """
         locked = same_language_result
         request_prompt = prompt
         for attempt in range(2):
             response = self.send_request_with_json_schema(
                 prompt=request_prompt, json_schema=schema, system_content=system_content,
-                filename=self.get_filename(lang=f"{language}_annotated_v2_{attempt}", idx=idx),
+                filename=self.get_filename(
+                    lang=f"{language}_annotated_v{3 if language == 'ko' else 2}_{attempt}", idx=idx),
                 schema_name=f"{language}_annotated_translation",
             )
             items = response.get("items") if isinstance(response, dict) else None
@@ -1171,40 +1171,18 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
                 validate_annotations(items, subtitles, language, locked)
             except ValueError as exc:
                 error = str(exc)
+            if not error:
+                return items
             if attempt:
-                if error:
-                    raise ValueError(f"{language} annotation still invalid after one repair: {error}")
-                return items
-            hints = []
-            if language == "ko":
-                if not error:
-                    hints = review_hints(items)
-                elif locked:
-                    # The only repair must check roots too. Invalid tokens cannot
-                    # supply offsets, so look up candidates in the locked text.
-                    hints = review_hints([
-                        {**item, "tokens": []} for item in locked["plain"]
-                    ])
-            if not error and not hints:
-                return items
-            print(f"Reviewing {language} annotations: {error or 'dictionary candidates need context'}")
+                raise ValueError(f"{language} annotation still invalid after one repair: {error}")
+            print(f"Repairing {language} annotations: {error}")
             request_prompt = (
-                prompt + "\nReview the previous JSON below. Correct annotations only. "
+                prompt + "\nRepair the previous JSON below. Correct annotations only. "
                 "Keep the locked clean text and timestamps EXACTLY. Return the complete final JSON.\n"
-                + (f"Validation error to fix: {error}\n" if error else "")
+                + f"Validation error to fix: {error}\n"
                 + "Locked clean text: " + json.dumps(locked, ensure_ascii=False) + "\n"
                 + "Previous JSON: " + json.dumps(response, ensure_ascii=False) + "\n"
             )
-            if hints:
-                request_prompt += (
-                    "Dictionary candidates below come from an input-method dictionary. They can be "
-                    "unrelated homophones; a match is NOT proof of a Sino-Korean word. Use the meaning "
-                    "in this sentence. Restore a clear matching root, splitting its particle if needed; "
-                    "otherwise KEEP the native word and romanization. A list may omit a valid spelling; "
-                    "do not replace a correct existing restoration with a wrong listed candidate. "
-                    "In particular, a food word must not become a financial or place-name homophone.\n"
-                    + json.dumps(hints, ensure_ascii=False)
-                )
 
     def translate_and_merge_subtitles_vi_single_pass(
         self,
