@@ -70,6 +70,13 @@ idle queue. The corrected raw-archive retry is `job-1791282667698-1`; no other
 platform is being replayed. The malformed request is an operator/API-contract
 failure, not evidence of another Douyin upload failure.
 
+Douyin-only job `job-1791282667698-1` completed at 18:39:52 after one bounded
+upload retry. Publish receipt and management row matched; the row displayed
+`审核中` on a separate read-only check. This is a successful submission, not
+proof that moderation has finished. No duplicate posts were needed. Follow-up
+AutoPublish `c56930e` also verifies extracted member CRCs and covers the HTTP
+retry contract in tests.
+
 Shipinhao Music item 44 / remote `job-1791281606306-8` did publish successfully:
 the management snapshot contains the exact Japanese release title and `已上架`.
 The package and form used the correct 36 Japanese lyric lines, square cover,
