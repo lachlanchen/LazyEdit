@@ -1,9 +1,20 @@
-# LazyEdit native beta builds
+# LazyEdit native builds and testing
 
 Application identifier: **art.lazying.lazyedit** on both platforms.
 Version 1.0: see `store/studio/release.json` for the latest provider-confirmed builds. Read store/studio/release.json for hashes and receipts;
 a compiled binary, upload receipt, tester assignment and installation are
-different states. No public production submission was made.
+different states.
+
+Current status verified **2026-10-07**: Android **1.0 (6)** is publicly available
+on [Google Play](https://play.google.com/store/apps/details?id=art.lazying.lazyedit),
+fully rolled out to 173 countries/regions; the US download price is $0.99.
+The hosted service still requires an invitation and internet access. iOS9 and
+universal Mac12 remain in internal TestFlight; their formal reviews remain
+rejected while Apple considers our posted October 6 clarification. No newer
+qualified Android candidate exists. See the
+[release audit](2026-10-07-google-public-release.md) for evidence and follow-ups.
+
+## Historical beta milestones
 
 Verified 2026-09-21: iOS build 4 is VALID / IN_BETA_TESTING with one internal
 tester. Play internal track was verified Active with build 2 on 2026-09-20;
@@ -107,10 +118,14 @@ verification. Do not ask the owner for a code without observing that prompt.
 ## Google Play
 
 Console app **4975166991517752718**, package art.lazying.lazyedit,
-**Internal testing only**, free. Upload AAB, inspect version code and warnings,
-enter release notes with language tags on separate lines, review, then use
-Save and publish and its final confirmation. Add only the LazyEdit owner list,
-not an unrelated app's existing list.
+production **1.0 (6)** is now public; managed publishing is off and no manual
+release action remains. The internal track independently retains build6.
+Do not treat internal-test availability as production approval. Before a later
+release, increment the version code, qualify the exact signed bundle, inspect
+warnings, and enter release notes with language tags on separate lines.
+Preserve this app's existing tester list, signing key and production release.
+
+Historical internal-track troubleshooting:
 
 If a draft already contains build 1 and build 2, remove build 1 using its
 Manage artifact menu → Remove app bundle → confirm Remove. Deleting the
@@ -118,7 +133,7 @@ upload progress row alone does not remove the artifact. Read back the review
 page: exactly one version code, 2. Otherwise Play rejects the shadowed bundle.
 No mapping-file warning is expected to block this unminified test client.
 
-Until app setup/public review is complete, Google displays the temporary name
+Before app setup/public review was complete, Google displayed the temporary name
 art.lazying.lazyedit (unreviewed). Internal availability does not imply a public
 listing or production approval.
 

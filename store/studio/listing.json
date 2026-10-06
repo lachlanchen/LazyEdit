@@ -20,5 +20,5 @@
     "invitationRequiredForSuppliedReviewer": false,
     "platformCredentialsRequiredForOrdinaryMemberFeatures": false
   },
-  "reviewState": "Google Android6 production in review; Apple iOS9 and Mac12 REJECTED on 2026-10-06 for 4.3/4.2.6 clarification; latest platform builds preserved; Windows1.0.1 signed development MSIX qualified on two Windows machines, Microsoft company enrollment pending."
+  "reviewState": "Verified 2026-10-07: Google Android6 public production with full rollout to 173 countries/regions, USD 0.99 on the US listing. Apple iOS9 and Mac12 remain REJECTED for 4.3/4.2.6 clarification; our October 6 replies are posted, no newer Apple response. Existing Windows1.0.1 development MSIX qualification and pending Microsoft enrollment not rechecked in this audit."
 }

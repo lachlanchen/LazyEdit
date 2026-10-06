@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-06",
+  "updated": "2026-10-07",
   "app": "LazyEdit Studio",
   "bundleId": "art.lazying.lazyedit",
   "version": "1.0",
@@ -71,9 +71,16 @@
           "attachmentSha256": "9dd538b533d3732c93b83e565dc572c418ad1f1c9f4f32073c899c7eda213cc2",
           "fileName": "LazyEdit-App-Review-Response-20261006.pdf",
           "fileSize": 222109
+        },
+        "followUpAudit": {
+          "checkedAt": "2026-10-06T23:38:52.420046+00:00",
+          "visibleMessageCount": 2,
+          "newAppleResponse": false,
+          "ownRepliesVisible": true,
+          "newSubmissionCreated": false
         }
       },
-      "checkedAt": "2026-10-05T22:16:11.108566+00:00"
+      "checkedAt": "2026-10-06T23:38:52.420046+00:00"
     }
   },
   "google": {
@@ -85,26 +92,49 @@
     "trackState": "Active",
     "internalTesters": 1,
     "optInUrl": "https://play.google.com/apps/internaltest/4700083281147641073",
-    "publicProduction": false,
+    "publicProduction": true,
     "build": 6,
     "nativeInterface": true,
     "qa": "Two targeted tests passed on the dedicated Android 14 emulator: real member authentication with server-confirmed editing-only capability and absent platform/invitation controls, plus authenticated-origin checks. Exact signed AAB6 is available to internal testers; no physical-install claim. Four current native member screenshots were captured for the store; the owned emulator was stopped afterward.",
     "listingText": "Default English listing, approved icon/feature graphic and four genuine native phone screenshots submitted for review.",
     "production": {
-      "state": "in_review",
+      "state": "available_on_google_play",
       "submittedAt": "2026-10-04T02:24:23Z",
       "versionCode": 6,
       "releaseName": "1.0 (6) — Private Studio editing",
       "countries": 173,
-      "rollout": "full first release after approval",
+      "rollout": "full",
       "managedPublishing": false,
       "changesSubmitted": 10,
-      "publicAvailabilityVerified": false
+      "publicAvailabilityVerified": true,
+      "publishedOn": "2026-10-06",
+      "checkedAt": "2026-10-06T23:38:52.420046+00:00",
+      "lastUpdatedConsoleDisplay": "Oct 6, 2026, 6:38 PM (console timezone not independently verified)",
+      "publicUSPriceUSD": "0.99",
+      "publicListingHTTPStatus": 200
     },
     "reviewFollowUps": [
-      "Missing deobfuscation map (non-blocking).",
-      "Console recommends edge-to-edge validation and R8 optimization; this unchanged qualified bundle was not rebuilt."
-    ]
+      "Validate edge-to-edge rendering before the next Android release.",
+      "Consider R8 separately after qualification. Release 6 is unminified, so a missing deobfuscation mapping file does not require generating a fictitious file or rebuilding.",
+      "Crash/ANR data unavailable at this audit; no zero-crash claim."
+    ],
+    "publicStoreUrl": "https://play.google.com/store/apps/details?id=art.lazying.lazyedit",
+    "latestCandidateAudit": {
+      "checkedAt": "2026-10-06T23:38:52.420046+00:00",
+      "latestUploadedVersionCode": 6,
+      "newerQualifiedBuildReady": false,
+      "unreleasedSourceChanges": [
+        {
+          "commit": "e572f54",
+          "change": "Backend subtitle-language picker in native composer."
+        },
+        {
+          "commit": "66708d1",
+          "change": "Account-scoped publishing capability fallback for owner endpoints."
+        }
+      ],
+      "nextStep": "Build a new versionCode and qualify these source changes before considering another submission; no new upload or submission made by this audit."
+    }
   },
   "sourceNote": "Native release sources and exact provider receipts are recorded by the commit containing this manifest.",
   "macos": {
@@ -205,9 +235,16 @@
             "exactReadback": true
           }
         ],
-        "delivery": "Five numbered text messages containing the full response; removed own unfinished PDF from draft after provider processing stalled. Exact message bodies independently read back; no unsent draft remains."
+        "delivery": "Five numbered text messages containing the full response; removed own unfinished PDF from draft after provider processing stalled. Exact message bodies independently read back; no unsent draft remains.",
+        "followUpAudit": {
+          "checkedAt": "2026-10-06T23:38:52.420046+00:00",
+          "visibleMessageCount": 6,
+          "newAppleResponse": false,
+          "ownRepliesVisible": true,
+          "newSubmissionCreated": false
+        }
       },
-      "checkedAt": "2026-10-05T22:16:11.108566+00:00"
+      "checkedAt": "2026-10-06T23:38:52.420046+00:00"
     },
     "screenshots": [
       {
@@ -264,7 +301,7 @@
     },
     "google": {
       "usd": "0.99",
-      "state": "USD 0.99 saved/read back; exact bundle6 production in review, not yet publicly available"
+      "state": "USD 0.99 verified on the public US Google Play listing; bundle6 fully rolled out to 173 countries/regions"
     },
     "monthlyRequestedUSD": [
       "2.99",
@@ -396,7 +433,7 @@
   "preparedNativeBuilds": {
     "apple": 9,
     "google": 6,
-    "state": "iOS9 in internal TestFlight; formal review rejected for 4.3/4.2.6 clarification; Android6 internal and production review; Mac12 internal TestFlight; formal review rejected for the same clarification; native Windows1.0.1 signed development MSIX qualified; Microsoft enrollment pending",
+    "state": "Android6 public production and internal testing; iOS9 and Mac12 internal TestFlight, formal reviews remain rejected awaiting Apple response to posted clarification; native Windows1.0.1 signed development MSIX qualified, Microsoft enrollment pending (not rechecked in this audit)",
     "macos": 12,
     "windows": "1.0.1"
   },
