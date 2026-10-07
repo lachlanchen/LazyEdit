@@ -1,1 +1,62 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#102d29"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/studio-icon.png"><link rel="stylesheet" href="/studio-login.css"><title>LazyEdit Studio · Sign in</title><main><img src="/studio-icon.png" width="64" height="64" alt="LazyEdit"><p class="eyebrow">LAZYING ART</p><h1>Your stories.<br>Your Studio.</h1><p>Upload, edit and publish with your private LazyEdit workspace.</p><form id="login"><label>Username<input name="username" autocomplete="username" required></label><label>Password<input name="password" type="password" autocomplete="current-password" required></label><button>Sign in</button></form><section id="account" hidden><p id="who"></p><a class="button" href="/">Open Studio</a><button id="logout" class="secondary">Sign out</button><h2>Connect LightMind</h2><p>Enter the code displayed by your app. Only approve a connection you started.</p><form id="lookup"><label>Connection code<input name="code" maxlength="10" autocomplete="off" required></label><button>Review connection</button></form><div id="consent" hidden><p id="client"></p><ul id="scopes"></ul><button id="approve">Approve connection</button></div><h2>Connected devices</h2><div id="grants"></div></section><p id="status" role="status"></p><footer>Private workspace · <a href="https://studio.lazying.art">About LazyEdit</a> · <a href="/privacy">Privacy</a></footer></main><script src="/studio-login.js" defer></script><script src="/studio-interface.js" defer></script></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102d29">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/studio-icon.png">
+  <link rel="stylesheet" href="/studio-login.css">
+  <title>LazyEdit Studio · Sign in</title>
+</head>
+<body>
+  <main>
+    <header class="signin-header">
+      <img class="studio-mark" src="/studio-icon.png" width="52" height="52" alt="LazyEdit Studio">
+      <div class="language-control">
+        <svg class="language-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z"/></svg>
+        <select data-interface-language aria-label="Language" dir="auto">
+          <option value="en">English</option>
+          <option value="zh-Hans">简体中文</option>
+          <option value="zh-Hant">繁體中文</option>
+          <option value="ja">日本語</option>
+          <option value="ko">한국어</option>
+          <option value="vi">Tiếng Việt</option>
+          <option value="ar">العربية</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+          <option value="de">Deutsch</option>
+          <option value="ru">Русский</option>
+        </select>
+        <svg class="language-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+      </div>
+    </header>
+    <p class="eyebrow">LAZYING ART</p>
+    <h1>Your stories.<br>Your Studio.</h1>
+    <p>Upload, edit and publish with your private LazyEdit workspace.</p>
+    <form id="login">
+      <label>Username<input name="username" autocomplete="username" required></label>
+      <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
+      <button>Sign in</button>
+    </form>
+    <section id="account" hidden>
+      <p id="who"></p>
+      <a class="button" href="/">Open Studio</a>
+      <button id="logout" class="secondary">Sign out</button>
+      <h2>Connect LightMind</h2>
+      <p>Enter the code displayed by your app. Only approve a connection you started.</p>
+      <form id="lookup">
+        <label>Connection code<input name="code" maxlength="10" autocomplete="off" required></label>
+        <button>Review connection</button>
+      </form>
+      <div id="consent" hidden><p id="client"></p><ul id="scopes"></ul><button id="approve">Approve connection</button></div>
+      <h2>Connected devices</h2>
+      <div id="grants"></div>
+    </section>
+    <p id="status" role="status"></p>
+    <footer>Private workspace · <a href="https://studio.lazying.art">About LazyEdit</a> · <a href="/privacy">Privacy</a></footer>
+  </main>
+  <script src="/studio-login.js" defer></script>
+  <script src="/studio-interface.js" defer></script>
+</body>
+</html>

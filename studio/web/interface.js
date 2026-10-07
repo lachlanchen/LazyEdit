@@ -1,7 +1,7 @@
 // Public UI dictionaries only. Never store passwords, QR codes or media here.
 const languages=[['en','English'],['zh-Hans','简体中文'],['zh-Hant','繁體中文'],['ja','日本語'],['ko','한국어'],['vi','Tiếng Việt'],['ar','العربية'],['fr','Français'],['es','Español'],['de','Deutsch'],['ru','Русский']];
 const key='studio.interfaceLanguage', original=new WeakMap();let table={},generation=0;
-const language=()=>{const fromURL=new URL(location.href).searchParams.get('interfaceLanguage');return fromURL||localStorage.getItem(key)||navigator.language;};
+const language=()=>{const fromURL=new URL(location.href).searchParams.get('interfaceLanguage');let saved;try{saved=localStorage.getItem(key);}catch{}return fromURL||saved||navigator.language;};
 function normalize(value){if(languages.some(([c])=>c===value))return value;if(value?.startsWith('zh'))return /Hant|TW|HK/.test(value)?'zh-Hant':'zh-Hans';const prefix=value?.slice(0,2);return languages.some(([c])=>c===prefix)?prefix:'en';}
 function translate(){
   const nodes=document.createTreeWalker(document.querySelector('main')||document.body,NodeFilter.SHOW_TEXT);
@@ -16,13 +16,14 @@ function translate(){
   }
   for(const node of document.querySelectorAll('[placeholder]')){const source=node.dataset.interfacePlaceholder||node.getAttribute('placeholder');node.dataset.interfacePlaceholder=source;node.setAttribute('placeholder',table[source]||source);}
 }
-async function change(code){const current=++generation;localStorage.setItem(key,code);document.documentElement.lang=code;document.documentElement.dir=code==='ar'?'rtl':'ltr';
-  try{const response=await fetch((location.pathname.startsWith('/accounts')?'/accounts/locales/':'/studio-locales/')+code+'.json');if(!response.ok)return;const values=await response.json();if(current!==generation)return;table=values;translate();}catch{}
+async function change(code){const current=++generation;try{localStorage.setItem(key,code);}catch{}document.documentElement.lang=code;document.documentElement.dir=code==='ar'?'rtl':'ltr';
+  try{const response=await fetch((location.pathname.startsWith('/accounts')?'/accounts/locales/':'/studio-locales/')+code+'.json');if(!response.ok)return;const values=await response.json();if(current!==generation)return;table=values;picker.setAttribute('aria-label',table.Language||'Language');translate();}catch{}
 }
-const picker=document.createElement('select');picker.dataset.interfaceLanguage='';picker.setAttribute('aria-label','Language');
+const picker=document.querySelector('select[data-interface-language]')||document.createElement('select');picker.dataset.interfaceLanguage='';picker.setAttribute('aria-label','Language');
+picker.replaceChildren();
 for(const [code,name]of languages){const option=document.createElement('option');option.value=code;option.textContent=name;picker.append(option);}
 picker.value=normalize(language());picker.onchange=()=>change(picker.value);
-(document.querySelector('main')||document.body).prepend(picker);
+if(!picker.isConnected)(document.querySelector('main')||document.body).prepend(picker);
 new MutationObserver(()=>translate()).observe(document.querySelector('main')||document.body,{childList:true,subtree:true,characterData:true});
 change(picker.value);
 window.addEventListener('studio-language',()=>{picker.value=normalize(language());change(picker.value);});

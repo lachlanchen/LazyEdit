@@ -1,1 +1,67 @@
-*{box-sizing:border-box}body{margin:0;background:#f0f5f1;color:#18342e;font:16px/1.55 system-ui,sans-serif}main{max-width:490px;margin:6vh auto;padding:36px;background:#fff;border:1px solid #dae6de;border-radius:24px;box-shadow:0 20px 70px #153a2810}h1{font-size:42px;line-height:1.08;margin:16px 0}h2{font-size:21px;margin-top:32px}.eyebrow{font-size:11px;letter-spacing:.18em;color:#537367}p{color:#536960}label{display:block;font-weight:600;margin:18px 0}input{width:100%;font:inherit;border:1px solid #adc3b7;border-radius:9px;padding:12px;margin-top:6px}button,.button{background:#215f49;color:white;border:0;border-radius:9px;padding:12px 20px;font:inherit;cursor:pointer;display:inline-block;text-decoration:none}button:disabled{opacity:.5}.secondary{background:#e3ece6;color:#244b3b;margin:4px}footer{font-size:13px;margin-top:28px;color:#607669}a{color:#215f49}#status{white-space:pre-wrap}.grant{padding:12px 0;border-bottom:1px solid #eee}.grant button{font-size:13px;margin-left:8px}@media(max-width:540px){main{margin:0;border:0;border-radius:0;min-height:100vh;padding:26px}}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 48px 20px;
+  background: radial-gradient(ellipse at top, #e4efe8, transparent 65%), #f3f6f3;
+  color: #18342e;
+  font: 16px/1.55 system-ui, sans-serif;
+}
+main {
+  max-width: 490px;
+  margin: 0 auto;
+  padding: 36px;
+  background: #fff;
+  border: 1px solid #dae6de;
+  border-radius: 24px;
+  box-shadow: 0 20px 70px #153a2810;
+}
+.signin-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; direction: ltr; }
+.studio-mark { display: block; flex: none; border-radius: 14px; }
+.language-control { position: relative; width: 174px; max-width: calc(100% - 68px); color: #537367; }
+.language-control select {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 9px 32px 9px 40px;
+  margin: 0;
+  border: 1px solid #dce6df;
+  border-radius: 999px;
+  background: #f7faf8;
+  color: #244b3b;
+  font: 500 16px/1.5 system-ui, sans-serif;
+  cursor: pointer;
+}
+.language-control select:hover { background: #eff5f1; border-color: #adc3b7; }
+.language-control svg { position: absolute; top: 50%; transform: translateY(-50%); pointer-events: none; }
+.language-globe { left: 13px; width: 19px; height: 19px; }
+.language-chevron { right: 12px; width: 15px; height: 15px; }
+h1 { font-size: 42px; line-height: 1.12; letter-spacing: -.035em; margin: 16px 0; overflow-wrap: anywhere; }
+h2 { font-size: 21px; margin-top: 32px; }
+.eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .18em; color: #537367; }
+p { color: #536960; }
+label { display: block; font-weight: 600; margin: 18px 0; }
+input { width: 100%; font: inherit; border: 1px solid #adc3b7; border-radius: 12px; padding: 12px; margin-top: 6px; background: #fcfdfc; color: inherit; }
+button, .button { background: #215f49; color: white; border: 0; border-radius: 12px; padding: 12px 20px; font: inherit; cursor: pointer; display: inline-block; text-decoration: none; }
+button:hover, .button:hover { background: #194d3a; }
+button:disabled { opacity: .5; }
+#login > button { width: 100%; margin-top: 6px; font-weight: 600; }
+:is(input, select, button, a):focus-visible { outline: 3px solid #7dba9b; outline-offset: 3px; }
+.secondary { background: #e3ece6; color: #244b3b; margin: 4px; }
+.secondary:hover { background: #d6e5dc; }
+footer { font-size: 13px; margin-top: 28px; padding-top: 20px; border-top: 1px solid #edf1ee; color: #607669; }
+a { color: #215f49; }
+#status { white-space: pre-wrap; overflow-wrap: anywhere; }
+.grant { padding: 12px 0; border-bottom: 1px solid #eee; overflow-wrap: anywhere; }
+.grant button { font-size: 13px; margin-inline-start: 8px; }
+@media (max-width: 540px) {
+  body { padding: max(20px, env(safe-area-inset-top)) 12px max(20px, env(safe-area-inset-bottom)); }
+  main { padding: 24px; border-radius: 20px; }
+  h1 { font-size: 36px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  button, .button, .language-control select { transition: background .15s, border-color .15s; }
+}
