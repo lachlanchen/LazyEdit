@@ -1,0 +1,1 @@
+Private internal beta. Rounded Studio brand artwork, refreshed native editing controls and backend-provided subtitle-language choices. Check sign-in, library, editing options, preview and sign-out. Fresh unprocessed videos should not report a missing burn artifact. iOS applies its own system mask to the opaque AppIcon. No social account is required for ordinary member editing.

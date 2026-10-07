@@ -1,4 +1,37 @@
-# LazyEdit Studio icon concept
+# LazyEdit Studio app icons
+
+## Current rounded icon (2026-10-07)
+
+The current colorful ribbon/play artwork is `lazyedit-studio-icon-v2.png`.
+Its rounded, transparent counterpart is
+`lazyedit-studio-icon-v2-rounded.png`, edited with the image-generation tool
+to preserve the existing artwork and remove the square outer corners.
+These are application icons, never publication watermarks.
+
+Regenerate platform assets with the LazyEdit environment:
+
+```bash
+/home/lachlan/miniconda3/envs/lazyedit/bin/python scripts/studio/build_icons.py
+```
+
+- iOS: opaque full-bleed RGB AppIcon; iOS applies its own corner mask.
+- Android: rounded transparent legacy launcher exports; adaptive foreground
+  remains full-bleed so the launcher can apply its supported mask.
+- macOS: complete 16–1024px rounded RGBA family, with a 1/16 transparent inset
+  on each side for balanced Dock sizing. This also supports older Mac systems
+  that display the supplied PNG silhouette directly.
+- In-app/PWA and Windows: transparent rounded PNG/ICO assets.
+
+Check alpha at the corners, small-size legibility and the signed bundle's
+actual icon resources before uploading. A changed source PNG does not update
+an installed native app: build and upload a new version code/build number.
+The October 7 release is internal testing only; see
+`references/studio/2026-10-07-rounded-icon-test-builds.md`.
+
+Platform guidance: [Apple app icons](https://developer.apple.com/design/human-interface-guidelines/app-icons/)
+and [Android adaptive icons](https://developer.android.com/develop/ui/compose/system/icon_design_adaptive).
+
+## Original concept (historical)
 
 `lazyedit-studio-ribbon-v1.png` is the original generated app-icon artwork.
 Created with the built-in image-generation tool on 2026-09-20.

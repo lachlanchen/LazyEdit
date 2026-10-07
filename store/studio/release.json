@@ -6,17 +6,17 @@
   "apple": {
     "appId": "6814061525",
     "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
-    "ipaSha256": "266be74930378f41bb475ab2b8196fa2dc74ee3f2c5c638d5d7e076fc06a02a8",
-    "deliveryUuid": "ab2aeb28-264d-4636-a8a8-8051c2156214",
+    "ipaSha256": "4ae7d6e2008af79e9f070f071689894157105227d99e5caa615665e66ac381f2",
+    "deliveryUuid": "b933f68a-e753-4768-b59f-5966c25657b9",
     "state": "IN_BETA_TESTING",
-    "buildId": "ab2aeb28-264d-4636-a8a8-8051c2156214",
+    "buildId": "b933f68a-e753-4768-b59f-5966c25657b9",
     "processingState": "VALID",
     "internalTesters": 1,
     "publicBeta": false,
     "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/testflight",
-    "build": 9,
+    "build": 10,
     "nativeInterface": true,
-    "qa": "Member sign-in, private library/account controls, native editing composer, hydrated full editor without platform/publish controls, and sign-out passed on a dedicated iPhone 17 Pro Max simulator. Exact signed IPA separately validated/uploaded once and is VALID in internal TestFlight. No real social publication or physical-install claim. iPad Pro 13-inch simulator native member editing test passed (1 test, 108.870s) after the hosted optional-font fallback; adaptive-tab changes affect the test helper only. The same signed IPA9 is preserved.",
+    "qa": "Dedicated iPhone 17 Pro Max simulator member editing test passed (1 test, 117.572s): sign-in, private library/account, composer, hydrated editor without social controls, sign-out. Exact signed IPA separately passed Apple validation/upload. Simulator screenshot has a translucent-sheet graphics artifact; no physical-device visual test claimed. No new App Review submission.",
     "formalReview": {
       "versionId": "5097e8ff-f535-489b-b4c3-ef01561b8e9a",
       "state": "REJECTED",
@@ -80,22 +80,42 @@
           "newSubmissionCreated": false
         }
       },
-      "checkedAt": "2026-10-06T23:38:52.420046+00:00"
+      "checkedAt": "2026-10-06T23:38:52.420046+00:00",
+      "ipaSha256": "266be74930378f41bb475ab2b8196fa2dc74ee3f2c5c638d5d7e076fc06a02a8"
+    },
+    "testFlight": {
+      "appId": "6814061525",
+      "bundleId": "art.lazying.lazyedit",
+      "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
+      "internal": true,
+      "platform": "IOS",
+      "version": "1.0",
+      "buildNumber": "10",
+      "build": "b933f68a-e753-4768-b59f-5966c25657b9",
+      "processingState": "VALID",
+      "attached": true,
+      "testerCount": 1,
+      "beta": {
+        "autoNotifyEnabled": true,
+        "internalBuildState": "IN_BETA_TESTING",
+        "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+      },
+      "verifiedOn": "2026-10-07"
     }
   },
   "google": {
     "appId": "4975166991517752718",
     "track": "internal",
     "state": "available_to_internal_testers",
-    "apkSha256": "7b24e55257007e4ba16973c632b627735232ef39fc2f9d30c27ab69f1faa902b",
-    "aabSha256": "1232df09acf819af759086600f4d8e92a7ea7f4a20e470df550f7e2b027184d3",
+    "apkSha256": "43ca648e2c78cd145e9c6dc9d2576cddfe69b9f2b0c1046e2927467ed2ee2293",
+    "aabSha256": "91e6f3fadab1bc07e6686bb2c686001d937ef9cc493796463ad74f7cee36d35a",
     "trackState": "Active",
     "internalTesters": 1,
     "optInUrl": "https://play.google.com/apps/internaltest/4700083281147641073",
     "publicProduction": true,
-    "build": 6,
+    "build": 7,
     "nativeInterface": true,
-    "qa": "Two targeted tests passed on the dedicated Android 14 emulator: real member authentication with server-confirmed editing-only capability and absent platform/invitation controls, plus authenticated-origin checks. Exact signed AAB6 is available to internal testers; no physical-install claim. Four current native member screenshots were captured for the store; the owned emulator was stopped afterward.",
+    "qa": "Exact signed APK7 installed/launched on the dedicated API34 emulator; two same-source instrumentation tests passed for live isolated member editing and authenticated-origin restrictions. AAB7 available to existing internal testers. Emulator stopped; no physical-device test or social post.",
     "listingText": "Default English listing, approved icon/feature graphic and four genuine native phone screenshots submitted for review.",
     "production": {
       "state": "available_on_google_play",
@@ -111,7 +131,9 @@
       "checkedAt": "2026-10-06T23:38:52.420046+00:00",
       "lastUpdatedConsoleDisplay": "Oct 6, 2026, 6:38 PM (console timezone not independently verified)",
       "publicUSPriceUSD": "0.99",
-      "publicListingHTTPStatus": 200
+      "publicListingHTTPStatus": 200,
+      "apkSha256": "7b24e55257007e4ba16973c632b627735232ef39fc2f9d30c27ab69f1faa902b",
+      "aabSha256": "1232df09acf819af759086600f4d8e92a7ea7f4a20e470df550f7e2b027184d3"
     },
     "reviewFollowUps": [
       "Validate edge-to-edge rendering before the next Android release.",
@@ -120,25 +142,18 @@
     ],
     "publicStoreUrl": "https://play.google.com/store/apps/details?id=art.lazying.lazyedit",
     "latestCandidateAudit": {
-      "checkedAt": "2026-10-06T23:38:52.420046+00:00",
-      "latestUploadedVersionCode": 6,
-      "newerQualifiedBuildReady": false,
-      "unreleasedSourceChanges": [
-        {
-          "commit": "e572f54",
-          "change": "Backend subtitle-language picker in native composer."
-        },
-        {
-          "commit": "66708d1",
-          "change": "Account-scoped publishing capability fallback for owner endpoints."
-        }
-      ],
-      "nextStep": "Build a new versionCode and qualify these source changes before considering another submission; no new upload or submission made by this audit."
-    }
+      "checkedOn": "2026-10-07",
+      "latestUploadedVersionCode": 7,
+      "qualified": true,
+      "scope": "internal testing only",
+      "productionVersionCode": 6,
+      "document": "references/studio/2026-10-07-rounded-icon-test-builds.md"
+    },
+    "internalReleasedOn": "2026-10-07"
   },
   "sourceNote": "Native release sources and exact provider receipts are recorded by the commit containing this manifest.",
   "macos": {
-    "build": 12,
+    "build": 13,
     "version": "1.0",
     "architectures": [
       "x86_64",
@@ -147,21 +162,32 @@
     "minimumVersion": "12.0",
     "nativeInterface": true,
     "signature": "Mac App Store distribution; sandboxed Catalyst profile",
-    "pkgSha256": "2dcf7534415d83aba4eaed79033d7cb52cdfb7ad95b73fb90377e3aa1a290d6b",
-    "buildId": "98348a3d-1b41-4bf5-8adc-7b5c1a99ceba",
-    "deliveryUuid": "98348a3d-1b41-4bf5-8adc-7b5c1a99ceba",
+    "pkgSha256": "ccf1cfcdfb0063b3c781040be64b2887a0720cf62ee430c176c386ca0d3cb76f",
+    "buildId": "a1a60ffe-44af-49ff-8b06-2fe407b6c9e4",
+    "deliveryUuid": "a1a60ffe-44af-49ff-8b06-2fe407b6c9e4",
     "processingState": "VALID",
     "validation": "Apple altool VERIFY SUCCEEDED",
     "testFlight": {
+      "appId": "6814061525",
+      "bundleId": "art.lazying.lazyedit",
+      "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
+      "internal": true,
       "platform": "MAC_OS",
       "version": "1.0",
-      "buildNumber": "12",
-      "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
-      "groupName": "LazyEdit Studio Internal",
+      "buildNumber": "13",
+      "build": "a1a60ffe-44af-49ff-8b06-2fe407b6c9e4",
+      "processingState": "VALID",
       "attached": true,
+      "testerCount": 1,
+      "beta": {
+        "autoNotifyEnabled": true,
+        "internalBuildState": "IN_BETA_TESTING",
+        "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+      },
+      "groupName": "LazyEdit Studio Internal",
       "internalBuildState": "IN_BETA_TESTING",
-      "verifiedOn": "2026-10-05",
-      "note": "Native universal Mac build; prior internal group assignment included only iOS builds. Existing iOS assignments and formal review preserved."
+      "verifiedOn": "2026-10-07",
+      "note": "Internal-only rounded-icon beta; existing iOS/Mac assignments and formal review preserved."
     },
     "compatibilityQualification": {
       "verifiedOn": "2026-10-05",
@@ -244,7 +270,8 @@
           "newSubmissionCreated": false
         }
       },
-      "checkedAt": "2026-10-06T23:38:52.420046+00:00"
+      "checkedAt": "2026-10-06T23:38:52.420046+00:00",
+      "pkgSha256": "2dcf7534415d83aba4eaed79033d7cb52cdfb7ad95b73fb90377e3aa1a290d6b"
     },
     "screenshots": [
       {
@@ -292,12 +319,26 @@
       "zipSha256": "f7c7a16b2d3dd9a3ed7283e36db713bff4f6b5c55cace2bd48da994f1c2fc885",
       "signature": "ad-hoc local QA; not notarized",
       "qa": "Exact universal native Mac Catalyst build 9 launched on Intel Monterey 3040, iMac 7050 and ARM Mac mini. Strict signatures and both architectures verified; owned review apps stopped after launch checks. Local ad-hoc QA signature, not notarized; full Mac UI regression is not claimed."
+    },
+    "compatibilityQualification13": {
+      "verifiedOn": "2026-10-07",
+      "architectures": [
+        "x86_64",
+        "arm64"
+      ],
+      "minimumVersion": "12.0",
+      "bundleAndSignatureChecks": true,
+      "appleValidation": "VERIFY SUCCEEDED",
+      "intelDevelopmentSignedCandidateLaunched": true,
+      "roundedDockIconVisuallyInspected": true,
+      "fullUIRegression": false,
+      "limitation": "Shared Mac GUI occupied by another app; no interaction with its authentication prompts. Only Studio QA app quit afterward. No physical/ARM test."
     }
   },
   "downloadPricing": {
     "apple": {
       "usd": "0.99",
-      "state": "USD 0.99 configured; exact IPA9 remains internal TestFlight; formal iOS 1.0 rejected for 4.3/4.2.6 clarification, not public"
+      "state": "USD 0.99 configured; test candidates do not change formal iOS9/Mac12 review or public availability."
     },
     "google": {
       "usd": "0.99",
@@ -431,10 +472,10 @@
     "liveMemberPwaEditing": true
   },
   "preparedNativeBuilds": {
-    "apple": 9,
-    "google": 6,
-    "state": "Android6 public production and internal testing; iOS9 and Mac12 internal TestFlight, formal reviews remain rejected awaiting Apple response to posted clarification; native Windows1.0.1 signed development MSIX qualified, Microsoft enrollment pending (not rechecked in this audit)",
-    "macos": 12,
+    "apple": 10,
+    "google": 7,
+    "state": "Android7 available to internal testers; iOS10 and universal Mac13 IN_BETA_TESTING in the existing private group. Production Android6 and existing Apple formal-review attachments iOS9/Mac12 unchanged. Windows1.0.1 unchanged.",
+    "macos": 13,
     "windows": "1.0.1"
   },
   "editorFirst": {
@@ -475,9 +516,9 @@
     "reviewSubmitted": false
   },
   "nativeSources": {
-    "apple": "329679514be0173d378609f169348c23ad4ce49e",
-    "google": "9fbe02bf1388ded26af1616cb4adbf025c23fe72",
-    "macos": "commit containing Mac12/Windows desktop source and this manifest",
+    "apple": "commit containing rounded-icon candidates and this manifest",
+    "google": "commit containing rounded-icon candidates and this manifest",
+    "macos": "commit containing rounded-icon candidates and this manifest",
     "windows": "commit containing Windows1.0.1 signing/qualification sources and this manifest"
   },
   "webAssetPromotion": {
@@ -615,5 +656,49 @@
     },
     "noAppRuntimeOrWorkerRestart": true,
     "sourceOrBinariesReplaced": false
+  },
+  "iconBetaRelease": {
+    "date": "2026-10-07",
+    "scope": "internal testing only",
+    "reviewSubmitted": false,
+    "externalBetaReviewSubmitted": false,
+    "productionPromoted": false,
+    "document": "references/studio/2026-10-07-rounded-icon-test-builds.md",
+    "windowsAssetsOnly": true,
+    "webAssetSourceOnly": true,
+    "formalReviewReadback": {
+      "checkedAt": "2026-10-07T11:08:22.628341+00:00",
+      "versions": [
+        {
+          "id": "75ec2713-0287-46a7-a556-e588ed57a2c7",
+          "platform": "MAC_OS",
+          "version": "1.0",
+          "state": "REJECTED",
+          "attachedBuild": "12"
+        },
+        {
+          "id": "5097e8ff-f535-489b-b4c3-ef01561b8e9a",
+          "platform": "IOS",
+          "version": "1.0",
+          "state": "REJECTED",
+          "attachedBuild": "9"
+        }
+      ]
+    },
+    "providerReadback": {
+      "android": {
+        "build": 7,
+        "state": "available_to_internal_testers",
+        "productionBuild": 6
+      },
+      "ios": {
+        "build": 10,
+        "state": "IN_BETA_TESTING"
+      },
+      "macos": {
+        "build": 13,
+        "state": "IN_BETA_TESTING"
+      }
+    }
   }
 }

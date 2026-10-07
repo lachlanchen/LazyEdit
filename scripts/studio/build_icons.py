@@ -10,29 +10,28 @@ import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = ROOT / "figs/app-icon/lazyedit-studio-icon-v2.png"
+ROUNDED_SOURCE = ROOT / "figs/app-icon/lazyedit-studio-icon-v2-rounded.png"
 
 
-def rasterize(source: Path, destination: Path, size: int) -> None:
+def rasterize(source: Path, destination: Path, size: int, *, opaque=False, inset=0) -> None:
+    """Preserve rounded alpha except for Apple's system-masked iOS app icon."""
     destination.parent.mkdir(parents=True, exist_ok=True)
-    subprocess.run(
-        [
-            "convert",
-            str(source),
-            "-resize",
-            f"{size}x{size}",
-            "-alpha",
-            "off",
-            f"PNG24:{destination}",
-        ],
-        check=True,
-    )
+    inner = size - 2 * inset
+    command = ["convert", str(source), "-resize", f"{inner}x{inner}"]
+    if inset:
+        command += ["-background", "none", "-gravity", "center", "-extent", f"{size}x{size}"]
+    if opaque:
+        command += ["-alpha", "off", f"PNG24:{destination}"]
+    else:
+        command += [f"PNG32:{destination}"]
+    subprocess.run(command, check=True)
 
 
 def main() -> None:
-    if not SOURCE.is_file():
-        raise SystemExit(f"missing canonical app icon: {SOURCE}")
+    if not SOURCE.is_file() or not ROUNDED_SOURCE.is_file():
+        raise SystemExit("missing full-bleed or rounded canonical app icon")
 
-    rasterize(SOURCE, ROOT / "studio/web/icon.png", 1024)
+    rasterize(ROUNDED_SOURCE, ROOT / "studio/web/icon.png", 1024)
 
     for density, size in (
         ("mdpi", 48),
@@ -43,7 +42,7 @@ def main() -> None:
     ):
         for name in ("ic_launcher", "ic_launcher_round"):
             rasterize(
-                SOURCE,
+                ROUNDED_SOURCE,
                 ROOT / f"mobile/android/app/src/main/res/mipmap-{density}/{name}.png",
                 size,
             )
@@ -69,9 +68,10 @@ def main() -> None:
         SOURCE,
         ROOT / "mobile/ios/App/App/Assets.xcassets/AppIcon.appiconset/StudioRibbon-v2.png",
         1024,
+        opaque=True,
     )
     rasterize(
-        SOURCE,
+        ROUNDED_SOURCE,
         ROOT / "mobile/ios/App/App/Assets.xcassets/StudioMark.imageset/StudioMark.png",
         256,
     )
@@ -79,13 +79,13 @@ def main() -> None:
     # Desktop assets reuse the same approved master, without changing the artwork.
     mac = ROOT / "mobile/ios/App/App/Assets.xcassets/AppIcon.appiconset"
     for size in (16, 32, 64, 128, 256, 512, 1024):
-        rasterize(SOURCE, mac / f"StudioMac-{size}.png", size)
+        rasterize(ROUNDED_SOURCE, mac / f"StudioMac-{size}.png", size, inset=max(1, size // 16))
     from PIL import Image
     windows = ROOT / "mobile/windows/Assets/Studio.ico"
     windows.parent.mkdir(parents=True, exist_ok=True)
-    Image.open(SOURCE).convert("RGB").save(windows, sizes=[(n, n) for n in (16, 32, 48, 64, 128, 256)])
+    Image.open(ROUNDED_SOURCE).convert("RGBA").save(windows, sizes=[(n, n) for n in (16, 32, 48, 64, 128, 256)])
     for name, size in (("Logo44", 44), ("Logo150", 150), ("StoreLogo", 50)):
-        rasterize(SOURCE, ROOT / f"mobile/windows/msix/Assets/{name}.png", size)
+        rasterize(ROUNDED_SOURCE, ROOT / f"mobile/windows/msix/Assets/{name}.png", size)
 
 
 if __name__ == "__main__":
