@@ -50,6 +50,11 @@ Note on symlinks: Never edit files inside symlinked directories from this reposi
 - Deployed AutoPubMonitor: `/home/lachlan/DiskMech/Projects/autopub-monitor` (tmux session `autopub-monitor` for sync/monitor/process/manual; `am-transcription-sync` remains separate; uses LazyEdit app API endpoints by default).
 - Publishing system (platforms incl. YouTube): `/home/lachlan/Projects/autopub` on `lazyingart` (pull after pushing AutoPublish changes).
 
+## Coordination Notes
+- Save LazyEdit handoffs, tutorials and coordination notes under `/home/lachlan/Nutstore Files/OneTimeSync/LazyEdit/` by default.
+- Do not write LazyEdit notes directly into the `OneTimeSync/` root. Keep other projects' folders unchanged.
+- Keep private notes and credentials outside Git; repository-safe documentation may remain in `references/`.
+
 ## Publish Defaults
 - For real publishes, burn the existing LazyEdit webapp logo unless the user explicitly says not to.
 - Do not add or replace the logo asset for this rule. Reuse the configured Studio logo from `logo_settings`.

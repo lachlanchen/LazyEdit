@@ -109,4 +109,4 @@ The dedicated Android emulator and Studio iOS simulator were stopped after
 tests. Studio's Mac QA app was quit and its temporary reviewer credential was
 removed. Shared Mac services, other apps and the existing store noVNC desktop
 were preserved. The final coordination note is in the owner's default
-`Nutstore Files/OneTimeSync/` folder.
+`Nutstore Files/OneTimeSync/LazyEdit/` folder.
