@@ -72,6 +72,7 @@ struct NativeStudioRoot: View {
                 TabView(selection: $tab) {
                     StudioLibraryView(onUpload: { tab = 1 }).tabItem { Label(StudioStrings.text("Studio"), systemImage: "square.stack") }.tag(0)
                     StudioUploadView().tabItem { Label(StudioStrings.text("Upload"), systemImage: "plus.circle") }.tag(1)
+                    if store.agentEnabled { StudioAgentView().tabItem { Label(StudioStrings.text("Agent"), systemImage: "bubble.left.and.bubble.right") }.tag(4) }
                     StudioJobsView().tabItem { Label(StudioStrings.text("Activity"), systemImage: "clock.arrow.circlepath") }.badge(store.jobs.filter { $0.attentionMessage != nil }.count).tag(2)
                     StudioAccountView().tabItem { Label(StudioStrings.text("Account"), systemImage: "person.crop.circle") }.tag(3)
                 }.id(store.workspaceMode).disabled(store.switchingWorkspace)
@@ -621,4 +622,169 @@ struct StudioLanguagePicker: View {
             ForEach(StudioStrings.languages, id: \.0) { Text($0.1).tag($0.0) }
         }.onAppear { if language.isEmpty { language = StudioStrings.language } }
     }
+}
+
+// Native chat reuses the same upload and queue contracts as the full editor.
+struct StudioAgentView: View {
+    @EnvironmentObject private var store: StudioStore
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var chat: [String: Any] = [:]
+    @State private var chats: [[String: Any]] = []
+    @State private var draft = ""
+    @State private var publish = false
+    @State private var busy = false
+    @State private var error = ""
+    @State private var pending: [String: Any]?
+    @State private var files = false
+    @State private var photos = false
+    @State private var attaching = false
+    private let path = "/v1/studio/agent/chats"
+    private var chatID: String { chat["id"] as? String ?? "" }
+    private var messages: [[String: Any]] { chat["messages"] as? [[String: Any]] ?? [] }
+    private func label(_ value: String) -> String { StudioStrings.text(value) }
+
+    var body: some View {
+        StudioNavigation {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    Text(label("Attach a video. Tell Studio what to do.")).font(.title2.bold())
+                    Text(label("Describe the story, subtitle languages, layout and where to publish. Context guides corrections; it does not replace speech.")).foregroundStyle(.secondary)
+                    HStack {
+                        Menu {
+                            Button(label("Photos")) { photos = true }
+                            Button(label("Files")) { files = true }
+                        } label: { Label(label("Attach video"), systemImage: "paperclip") }
+                        .disabled(store.pending != nil || store.uploading || pending != nil)
+                        Menu(label("Choose from Studio")) {
+                            ForEach(store.videos) { video in
+                                Button(video.title) { perform { try await attach(video.id) } }
+                            }
+                        }.disabled(pending != nil)
+                    }.buttonStyle(.bordered)
+                    if store.preparingFile || store.uploading {
+                        ProgressView(value: store.uploadProgress)
+                        Text(label(store.uploadMessage)).font(.caption)
+                    } else if store.pending != nil {
+                        Button(label("Resume upload")) { attaching = true; store.beginUpload() }
+                    }
+                    if !chats.isEmpty {
+                        Menu(label("Conversations")) {
+                            ForEach(chats, id: \.agentID) { row in
+                                Button(studioText(row["title"])) { perform { try await load(studioText(row["id"])) } }
+                            }
+                        }
+                    }
+                    if !error.isEmpty { Text(error).foregroundStyle(.red).textSelection(.enabled) }
+                    StudioErrorBanner()
+                    if busy { ProgressView(label("Working…")) }
+                    if !chatID.isEmpty {
+                        Text(studioText(chat["title"])).font(.headline)
+                        ForEach(messages, id: \.agentID) { item in
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text(studioText(item["text"])).frame(maxWidth: .infinity, alignment: .leading).padding(16).background(studioTint.opacity(0.09), in: RoundedRectangle(cornerRadius: 16))
+                                Text(label("agent_state_" + studioText(item["state"]))).font(.subheadline.bold())
+                                Text(studioText(item["reply"])).textSelection(.enabled)
+                                ForEach(item["summary"] as? [String] ?? [], id: \.self) { Text($0).font(.caption).foregroundStyle(.secondary) }
+                                if let problem = item["error"] as? String { Text(problem).foregroundStyle(.red) }
+                            }.padding(.vertical, 8)
+                        }
+                        progress
+                        if pending != nil {
+                            Text(label("A saved message is waiting for its receipt. Checking it will not create another task."))
+                            Button(label("Check / retry saved message")) { send(saved: pending) }.buttonStyle(.bordered)
+                        } else {
+                            if store.publishingEnabled { Toggle(label("Publish after editing"), isOn: $publish) }
+                            Text(label(publish && store.publishingEnabled ? "Send authorizes publication to the platforms in your instructions or saved defaults." : "Studio will prepare an edited preview. Nothing will be posted.")).font(.caption).foregroundStyle(.secondary)
+                            TextEditor(text: $draft).frame(minHeight: 110, maxHeight: 200).padding(8).background(Color(uiColor: .secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12)).accessibilityLabel(label("Message Studio"))
+                            Button(label("Send")) { send() }.buttonStyle(.borderedProminent).disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || draft.count > 16000)
+                        }
+                    } else { Text(label("Attach or choose a video to begin.")).foregroundStyle(.secondary) }
+                }.padding(24).disabled(busy).studioKeyboardDismissal()
+            }.background(Color(uiColor: .systemGroupedBackground)).navigationTitle(label("Agent"))
+            .fileImporter(isPresented: $files, allowedContentTypes: [.movie]) { result in
+                if case .success(let url) = result { attaching = true; Task { await store.prepareFile(url); if store.pending != nil { store.beginUpload() } } }
+                else if case .failure(let e) = result { error = e.localizedDescription }
+            }
+            .sheet(isPresented: $photos) {
+                StudioPhotoPicker { result in
+                    photos = false; store.preparingFile = false
+                    switch result {
+                    case .success(let staged): do { try store.accept(staged); attaching = true; store.beginUpload() } catch { self.error = error.localizedDescription }
+                    case .failure(let e): error = e.localizedDescription
+                    }
+                } onLoading: { store.preparingFile = true; photos = false }
+            }
+            .onChange(of: store.uploadedVideo?.id) { id in
+                if attaching, let id { attaching = false; perform { try await attach(id) } }
+            }
+            .task(id: "\(store.api.contextKey)-\(scenePhase)") {
+                guard scenePhase == .active else { return }
+                do {
+                    if let data = try? Data(contentsOf: store.api.privateFile("agent-pending.json")) { pending = try JSONSerialization.jsonObject(with: data) as? [String: Any] }
+                    chats = try await store.api.json(path)["chats"] as? [[String: Any]] ?? []
+                    await store.refreshVideos()
+                    if let data = try? Data(contentsOf: store.api.privateFile("agent-chat.txt")), let id = String(data: data, encoding: .utf8) { try await load(id) }
+                    while !Task.isCancelled {
+                        try await Task.sleep(nanoseconds: 10_000_000_000)
+                        if !chatID.isEmpty && !busy { try await load(chatID) }
+                    }
+                } catch is CancellationError {} catch { self.error = error.localizedDescription }
+            }
+        }
+    }
+    @ViewBuilder private var progress: some View {
+        if let job = chat["job"] as? [String: Any] {
+            Text(label("Publication job") + " #\(job["id"] ?? "") · " + studioText(job["status"])).font(.headline)
+            if let e = job["error"] as? String { Text(e).foregroundStyle(.red) }
+            if let attention = job["attention"] as? [String: Any], attention["status"] as? String == "required" { Text(studioText(attention["message"])).foregroundStyle(.orange) }
+        }
+        if let preparation = chat["preparation"] as? [String: Any] { Text(label("Preparation") + " · " + studioText(preparation["state"])) }
+        if let process = chat["process"] as? [String: Any], let steps = process["steps"] as? [String: [String: Any]] {
+            ForEach(steps.keys.sorted(), id: \.self) { key in
+                VStack(alignment: .leading) {
+                    Text(key + " · " + studioText(steps[key]?["status"])).font(.caption).foregroundStyle(.secondary)
+                    if let problem = steps[key]?["error"] as? String { Text(problem).font(.caption).foregroundStyle(.red) }
+                }
+            }
+        }
+        if chat["preview"] is String, let id = chat["videoId"] as? Int, let video = store.videos.first(where: { $0.id == id }) {
+            NavigationLink(label("Preview edited video"), destination: StudioVideoView(video: video))
+        }
+        NavigationLink(label("Open Activity"), destination: StudioJobsView())
+    }
+    private func perform(_ work: @escaping () async throws -> Void) {
+        guard !busy else { return }; busy = true; error = ""
+        Task { defer { busy = false }; do { try await work() } catch { self.error = error.localizedDescription } }
+    }
+    private func accept(_ value: [String: Any]) throws {
+        chat = value
+        try Data(chatID.utf8).write(to: store.api.privateFile("agent-chat.txt"), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+        if let pending, pending["chatId"] as? String == chatID, let row = messages.first(where: { $0["id"] as? String == pending["id"] as? String }), ["submitted", "reply", "rejected", "held"].contains(studioText(row["state"])) {
+            self.pending = nil; try? FileManager.default.removeItem(at: store.api.privateFile("agent-pending.json"))
+        }
+    }
+    private func load(_ id: String) async throws { try accept(await store.api.json(path + "/" + id)) }
+    private func attach(_ id: Int) async throws {
+        try accept(await store.api.json(path, method: "POST", body: ["id": UUID().uuidString, "videoId": id]))
+        chats = try await store.api.json(path)["chats"] as? [[String: Any]] ?? []
+    }
+    private func send(saved: [String: Any]? = nil) {
+        perform {
+            var body = saved ?? ["chatId": chatID, "id": UUID().uuidString, "message": draft, "action": publish && store.publishingEnabled ? "publish" : "prepare", "language": StudioStrings.language]
+            let target = body["chatId"] as! String, id = body["id"] as! String
+            try JSONSerialization.data(withJSONObject: body).write(to: store.api.privateFile("agent-pending.json"), options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
+            pending = body; draft = ""; body.removeValue(forKey: "chatId")
+            do { try accept(await store.api.json(path + "/" + target + "/messages", method: "POST", body: body, idempotencyKey: "agent-" + id)) }
+            catch let failure as StudioFailure {
+                if failure.submissionRejected {
+                    pending = nil; draft = studioText(body["message"])
+                    try? FileManager.default.removeItem(at: store.api.privateFile("agent-pending.json"))
+                }
+                throw failure
+            }
+        }
+    }
+}
+private extension Dictionary where Key == String, Value == Any {
+    var agentID: String { self["id"] as? String ?? "" }
 }

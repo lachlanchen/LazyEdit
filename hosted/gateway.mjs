@@ -52,7 +52,7 @@ export function createGateway(config) {
       const headers = {host,'x-studio-path':raw,'x-studio-access':access,
         'x-studio-client':internal?req.headers['x-studio-client']:req.socket.remoteAddress, authorization:`Bearer ${w.transport}`};
       headers['x-studio-publishing'] = accountCapabilities(config, registry, w.owner).publishing ? '1' : '0';
-      if((req.method==='POST'&&/^\/(api|v1\/studio)\/videos\//.test(raw))||(req.method==='GET'&&raw==='/v1/studio/usage')){
+      if((req.method==='POST'&&(/^\/(api|v1\/studio)\/videos\//.test(raw)||/^\/v1\/studio\/agent\/chats\/[^/]+\/messages$/.test(raw)))||(req.method==='GET'&&raw==='/v1/studio/usage')){
         if(registry.isAdmin(w.owner))headers['x-studio-processing-minutes']='owner';
         else {
           const catalog=await billing.catalog(w.owner);

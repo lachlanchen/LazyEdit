@@ -24,7 +24,8 @@ with tempfile.TemporaryDirectory(dir=release_root, prefix='worker-stage-') as tm
     shutil.copytree(old_release, staged)
     for source in (root / 'studio').glob('*.mjs'):
         shutil.copy2(source, staged / 'studio' / source.name)
-    shutil.copy2(root / 'studio/layout_preview.py', staged / 'studio/layout_preview.py')
+    for source in (root / 'studio').glob('*.py'):
+        shutil.copy2(source, staged / 'studio' / source.name)
     archive = Path(tmp) / 'worker.tar.gz'
     with tarfile.open(archive, 'w:gz') as tar:
         tar.add(staged, arcname='.')

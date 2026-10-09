@@ -38,7 +38,7 @@ with tempfile.TemporaryDirectory(dir=old_release.parent, prefix='hosted-stage-')
     shutil.copytree(old_release, staged)
     shutil.copytree(root / 'hosted', staged / 'hosted', dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns('*.test.mjs', 'test.mjs'))
-    for source in (root / 'studio').glob('*.mjs'):
+    for source in [*(root / 'studio').glob('*.mjs'), *(root / 'studio').glob('*.py')]:
         shutil.copy2(source, staged / 'studio' / source.name)
     shutil.copytree(root / 'studio/web', staged / 'studio/web', dirs_exist_ok=True)
     shutil.copytree(root / 'studio/locales', staged / 'studio/locales', dirs_exist_ok=True)

@@ -1,3 +1,4 @@
+import agent from './locales/agent.json';
 import german from './locales/de.json';
 import studioEditor from './locales/studio-editor.json';
 import subtitleLanguages from './locales/subtitle-languages.json';
@@ -2149,6 +2150,10 @@ for (const [locale, messages] of Object.entries(studioEditor)) {
   Object.assign(TRANSLATIONS[locale as Locale], messages);
 }
 for (const [locale, messages] of Object.entries(subtitleLanguages)) {
+  Object.assign(TRANSLATIONS[locale as Locale], messages);
+}
+
+for (const [locale, messages] of Object.entries(agent)) {
   Object.assign(TRANSLATIONS[locale as Locale], messages);
 }
 

@@ -101,3 +101,41 @@ test('meter rejects a symlinked outside source and never trusts a client duratio
   await assert.rejects(f.meter.run('/api/videos/1/process','POST',{duration:0},f.dispatch,{limit:'10'}),{status:403});
   assert.equal(f.calls(),0);assert.equal(f.meter.usage(10).usedMinutes,0);
 });
+
+test('chat inherits the gateway allowance, strips forged quota bypass, and charges a retry once',async t=>{
+  const dir=mkdtempSync(join(tmpdir(),'studio-agent-quota-'));
+  const config={database:join(dir,'registry.sqlite'),domain:'chat.test',workerHost:()=> '127.0.0.1'};
+  const gateway=createGateway(config),owner=gateway.registry.register({username:'chatmember',password:'test-only-long-password',invitation:gateway.registry.invite()},'test');
+  const w=gateway.registry.workspace(owner),host=gateway.registry.host(w),file=join(dir,'source.mp4');
+  writeFileSync(file,'fixture');writeFileSync(join(dir,'transport'),w.transport);let dispatches=0,seconds=720;
+  const backend=http.createServer(async(req,res)=>{
+    let input='';for await(const bytes of req)input+=bytes;
+    let value={};
+    if(req.url.endsWith('/processing-quote'))value={requiresProcessing:true};
+    else if(req.url.startsWith('/api/ui-settings/'))value={value:req.url.endsWith('logo_settings')?{enabled:true,logoPath:'existing-logo.png'}:req.url.endsWith('translation_languages')?['zh-Hant','ja','en']:{}};
+    else if(req.url==='/api/languages')value={codes:JSON.parse(input).languages};
+    else if(req.url==='/api/videos/1')value={id:1,title:'Fixture',file_path:file};
+    else if(req.url.endsWith('/publication-sessions'))value={sessions:[]};
+    else if(req.url.includes('/process-status'))value={steps:{}};
+    else if(req.url.endsWith('/process')){dispatches++;value={status:'processing',publication_session_id:1};}
+    res.setHeader('content-type','application/json');res.end(JSON.stringify(value));
+  });await listen(backend);
+  const cell=createCell({host,database:join(dir,'cell.sqlite'),upstreamSecretFile:join(dir,'transport'),dataRoot:dir,backendPort:backend.address().port,
+    webRoot:dir,staticRoot:dir,processingQuotas:true,durationProbe:async()=>seconds,geometry:async()=>({portrait:true}),
+    agentPlanner:async()=>({decision:'run',message:'Prepare',changes:{}})},
+    {...w,username:'chatmember',password:gateway.registry.db.prepare('SELECT password FROM users WHERE id=?').get(owner).password});
+  await listen(cell.server);config.workerPort=cell.server.address().port;
+  gateway.registry.db.prepare("UPDATE workspaces SET status='ready' WHERE id=?").run(w.id);await listen(gateway.server);
+  t.after(()=>{for(const s of [gateway.server,cell.server,backend]){s.closeAllConnections();s.close();}cell.auth.db.close();gateway.registry.db.close();rmSync(dir,{recursive:true,force:true});});
+  const port=gateway.server.address().port,browser=cell.auth.issue(owner,undefined,'native','browser');
+  const headers={cookie:`__Host-studio=${browser.access_token}`,'x-studio-processing-minutes':'owner'};
+  const chat=(await request(port,host,'/v1/studio/agent/chats','POST',{videoId:1},headers)).body.id;
+  const send=id=>request(port,host,`/v1/studio/agent/chats/${chat}/messages`,'POST',{id,action:'prepare',message:'Prepare the video',language:'en'},
+    {...headers,'idempotency-key':'agent-'+id});
+  const denied=await send('denied-message-00001');assert.equal(denied.body.messages[0].state,'rejected');assert.match(denied.body.messages[0].error,/Monthly processing allowance exceeded/);
+  assert.equal(dispatches,0);assert.equal(cell.auth.db.prepare('SELECT COUNT(*) n FROM intents').get().n,0);
+  seconds=60;
+  const accepted=await send('allowed-message-00001');assert.equal(accepted.body.messages.at(-1).state,'submitted',JSON.stringify(accepted));
+  await send('allowed-message-00001');assert.equal(dispatches,1);
+  const usage=await request(port,host,'/v1/studio/usage','GET',undefined,headers);assert.equal(usage.body.limitMinutes,10);assert.equal(usage.body.usedMinutes,1);
+});

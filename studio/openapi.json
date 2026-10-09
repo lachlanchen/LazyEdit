@@ -16,6 +16,166 @@
     }
   ],
   "paths": {
+    "/v1/studio/agent/chats": {
+      "get": {
+        "summary": "List own Agent conversations",
+        "description": "First-party Studio session only. Hosted capabilities and quotas apply. See references/studio/agent-mode.md. An accepted receipt is not completion.",
+        "responses": {
+          "200": {
+            "description": "Private conversation or receipt"
+          },
+          "403": {
+            "description": "Session or capability does not allow this operation"
+          },
+          "409": {
+            "description": "Conflicting or unresolved request"
+          }
+        }
+      },
+      "post": {
+        "summary": "Bind a Studio video to a private Agent conversation",
+        "description": "First-party Studio session only. Hosted capabilities and quotas apply. See references/studio/agent-mode.md. An accepted receipt is not completion.",
+        "responses": {
+          "200": {
+            "description": "Private conversation or receipt"
+          },
+          "403": {
+            "description": "Session or capability does not allow this operation"
+          },
+          "409": {
+            "description": "Conflicting or unresolved request"
+          },
+          "201": {
+            "description": "Private conversation created"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "videoId"
+                ],
+                "properties": {
+                  "videoId": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{16,80}$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/studio/agent/chats/{chatId}": {
+      "get": {
+        "summary": "Read conversation and actual queue/preparation progress",
+        "description": "First-party Studio session only. Hosted capabilities and quotas apply. See references/studio/agent-mode.md. An accepted receipt is not completion.",
+        "responses": {
+          "200": {
+            "description": "Private conversation or receipt"
+          },
+          "403": {
+            "description": "Session or capability does not allow this operation"
+          },
+          "409": {
+            "description": "Conflicting or unresolved request"
+          }
+        },
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/v1/studio/agent/chats/{chatId}/messages": {
+      "post": {
+        "summary": "Interpret one editing/publication instruction using the existing pipeline",
+        "description": "First-party Studio session only. Hosted capabilities and quotas apply. See references/studio/agent-mode.md. An accepted receipt is not completion.",
+        "responses": {
+          "200": {
+            "description": "Private conversation or receipt"
+          },
+          "403": {
+            "description": "Session or capability does not allow this operation"
+          },
+          "409": {
+            "description": "Conflicting or unresolved request"
+          }
+        },
+        "parameters": [
+          {
+            "name": "chatId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "description": "agent- followed by the immutable message id",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "message",
+                  "action",
+                  "language"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z0-9_-]{16,80}$"
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 16000
+                  },
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "prepare",
+                      "publish"
+                    ]
+                  },
+                  "language": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/studio/languages": {
       "get": {
         "summary": "List subtitle targets, independently of UI and ASR languages",

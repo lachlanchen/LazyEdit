@@ -10,6 +10,7 @@ import { json, body, readJSON, proxy, validPath, startEdge } from './transport.m
 import { CAPTURE_PRESET, CAPTURE_CHANNELS, capturePreparation } from './preparation.mjs';
 import { PreparationRecovery } from './preparation-recovery.mjs';
 import { composerDefaults, validateForm, composeOptions, reuseOptions, checkPublicationJobs } from './composer.mjs';
+import { AgentChats, validateMessage, validateDecision, planWithModel } from './agent.mjs';
 process.umask(0o077);
 const exec = promisify(execFile);
 const MIME={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.json':'application/json','.webmanifest':'application/manifest+json','.ttf':'font/ttf','.woff2':'font/woff2','.mp4':'video/mp4','.mov':'video/quicktime'};
@@ -23,10 +24,11 @@ const clean=value=>Array.isArray(value)?value.map(clean):value&&typeof value==='
 export function createWorker(config) {
  const auth=new AuthStore(config.database),db=auth.db, origin=`https://${config.host}`;
  const preparations=new PreparationRecovery(db);
+ const chats=new AgentChats(db);
  const upstream=readFileSync(config.upstreamSecretFile,'utf8').trim();
  const root=resolve(config.dataRoot), incoming=join(root,'studio_uploads');mkdirSync(incoming,{recursive:true,mode:0o700});
  const locks=new Set();
- const capabilities = () => ({editing:true,publishing:config.publishingEnabled ? config.publishingEnabled() === true : true});
+ const capabilities = () => ({editing:true,agentChat:true,publishing:config.publishingEnabled ? config.publishingEnabled() === true : true});
  const effectiveScopes = scopes => {
   if(!Array.isArray(scopes))fail(400,'Invalid scopes');
   return capabilities().publishing ? scopes : scopes.filter(s=>s!=='publication.publish');
@@ -84,6 +86,91 @@ export function createWorker(config) {
   try {
    return preparations.accepted(intentId,await backend(`/api/videos/${id}/process`,'POST',{...request,operationId:intentId}));
   } catch(error) {preparations.rejected(intentId,error);throw error;}
+ }
+ async function dispatchPlan(p,id,action,plan,intentId) {
+  if(action==='publish')return backend(`/api/videos/${id}/publish`,'POST',{platforms:plan.form.platforms,options:plan.options,persistSettings:false,wait:false});
+  const o=plan.options;
+  const steps=['transcribe',...(o.autoCorrectSubtitles?['polish']:[]),...(o.burnSubtitles?['translate']:[]),'keyframes','metadata_zh','metadata_en','metadata_ja','cover',...((o.burnSubtitles||o.logo.enabled||o.burnLayout.portraitBlurFill.enabled)?['burn']:[])];
+  return prepareBackend(p,id,{...o,steps,async:true,notes:o.metadataPrompt},intentId);
+ }
+ async function validateSubmission(p,id,form,action,except='') {
+  chats.assertResolved(p.owner,id,except);
+  const f=validateForm(form);
+  if(action==='prepare'&&f.mode==='reuse')fail(400,'A reused run does not need processing');
+  if(action==='publish'&&!f.platforms.length)fail(400,'Choose at least one platform');
+  if(capabilities().publishing)checkPublicationJobs((await backend('/api/autopublish/queue')).jobs,id,f.platforms,action==='publish');
+  const status=await backend(`/api/videos/${id}/process-status`);
+  if(Object.values(status.steps||{}).some(s=>s.status==='working'))fail(409,'This video is being prepared. Wait for its current run');
+  return composerPlan(id,f);
+ }
+ async function chatStatus(p,chatId) {
+  const chat=chats.describe(p.owner,chatId);auth.own(p,chat.videoId);
+  // Recover the case where dispatch completed but the chat receipt was not saved.
+  for(const message of chat.messages.filter(m=>['planned','held'].includes(m.state))) {
+   const intent=db.prepare('SELECT response FROM intents WHERE owner=? AND key=?').get(p.owner,'agent-'+message.id);
+   if(intent?.response)chats.update(p.owner,message.id,'submitted',{result:JSON.parse(intent.response)});
+  }
+  const result=chats.describe(p.owner,chatId),last=[...result.messages].reverse().find(m=>m.receipt);
+  if(last?.receipt?.job_id&&capabilities().publishing) {
+   const queue=await backend('/api/autopublish/queue');
+   result.job=queue.jobs?.find(j=>Number(j.id)===Number(last.receipt.job_id)&&Number(j.video_id)===result.videoId)||null;
+  }
+  if(last) {
+   const query=last.receipt.publication_session_id?`?publicationSessionId=${last.receipt.publication_session_id}`:'';
+   result.process=await backend(`/api/videos/${result.videoId}/process-status${query}`);
+   if(last.receipt.operation_id) {
+    const preparation=preparations.owned(last.receipt.operation_id,p.owner);
+    result.preparation=preparations.describe(preparation,result.process);
+   }
+   const burn=await backend(`/api/videos/${result.videoId}/burn-subtitles${query}`);
+   if(burn.status==='completed')result.preview=burn.output_url;
+  }
+  return result;
+ }
+ async function chatMessage(p,req,chatId,data) {
+  const request=validateMessage(data),chat=chats.owned(p.owner,chatId),id=chat.video_id;
+  auth.own(p,id);scope(p,'edit.submit');scope(p,'publication.prepare');
+  if(request.action==='publish'){requirePublishing();scope(p,'publication.publish');}
+  const key='agent-'+request.id;
+  if(req.headers['idempotency-key']!==key)fail(400,'Idempotency-Key must be agent- plus the message ID');
+  const lock='compose:'+id;if(locks.has(lock))fail(409,'Submission in progress. Check this chat again');locks.add(lock);
+  try {
+   const turn=chats.accept(p.owner,chatId,request);
+   if(['submitted','reply','rejected','held'].includes(turn.state))return chatStatus(p,chatId);
+   try {
+    let decision=turn.plan;
+    if(!decision) {
+     const history=chats.turns(p.owner,chatId).filter(t=>t.id!==turn.id);
+     const previous=[...history].reverse().find(t=>t.plan?.form&&t.state!=='rejected');
+     const defaults=previous?.plan.form||composerDefaults(await composerSettings());
+     const sessions=await backend(`/api/videos/${id}/publication-sessions`);
+     const input={message:request.message,interfaceLanguage:request.language,action:request.action,
+      title:chat.title,defaults,availableRuns:(sessions.sessions||[]).slice(0,20).map(s=>({id:s.id,title:s.title})),
+      history:history.slice(-8).map(t=>({user:t.request.message.slice(0,1500),reply:(t.plan?.message||'').slice(0,500),state:t.state}))};
+     const modelSettings=(await backend('/api/ui-settings/ai_model_settings')).value;
+     input.modelSettings=modelSettings?{provider:modelSettings.defaultProvider,model:modelSettings.defaultModel}:{};
+     decision=validateDecision(await planWithModel(config,input),defaults);
+     // Models sometimes claim submission in future-tense planning. Only the
+     // durable receipt and deterministic summary may describe an executable turn.
+     if(decision.decision==='run')decision.message='';
+     // Persist interpretation before any mutation, so retries never re-interpret it.
+     chats.update(p.owner,turn.id,decision.decision==='reply'?'reply':'planned',{plan:decision});
+    }
+    if(decision.decision==='reply')return chatStatus(p,chatId);
+    const result=await once(p,req,{chat:chatId,request},(plan,intentId)=>dispatchPlan(p,id,request.action,plan,intentId),async()=>{
+     const plan=await validateSubmission(p,id,decision.form,request.action,turn.id);
+     decision={...decision,form:plan.form,summary:plan.summary};
+     chats.update(p.owner,turn.id,'planned',{plan:decision});
+     return plan;
+    });
+    chats.update(p.owner,turn.id,'submitted',{result:clean(result)});
+   }catch(e){
+    const intent=db.prepare('SELECT response FROM intents WHERE owner=? AND key=?').get(p.owner,key);
+    if(intent?.response)chats.update(p.owner,turn.id,'submitted',{result:JSON.parse(intent.response)});
+    else chats.update(p.owner,turn.id,intent?'held':'rejected',{error:intent?'Submission needs reconciliation. Do not send another publication request. Check Activity.':e.message});
+   }
+   return chatStatus(p,chatId);
+  }finally{locks.delete(lock);}
  }
  async function preparationStatus(row) {
   const session=row.response?JSON.parse(row.response).publication_session_id:null;
@@ -275,9 +362,37 @@ export function createWorker(config) {
   if(path==='/v1/studio/upload-part'&&method==='PUT'){scope(p,'media.upload');json(res,200,await append(req,p,u.searchParams.get('uploadId'),Number(req.headers['upload-offset'])));return;}
   if(path==='/v1/studio/upload-complete'&&method==='POST'){scope(p,'media.upload');json(res,200,await finalize(p,(await readJSON(req)).uploadId));return;}
   if(['/upload-stream','/v1/studio/media'].includes(path)&&method==='PUT'){json(res,200,await directUpload(req,p,u));return;}
-  if(path==='/v1/studio/capabilities'&&method==='GET'){json(res,200,{apiVersion:'1',legacyBridgeCompatible:true,resumableUpload:true,preparationRecovery:true,subtitleLanguageCatalogue:true,accountLink:'device-authorization',publicRegistration:false,preparationPresets:[CAPTURE_PRESET],nativeReview:true,defaultCapturePlatforms:CAPTURE_CHANNELS,platforms:['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'],scopes:p.scopes});return;}
+  if(path==='/v1/studio/capabilities'&&method==='GET'){json(res,200,{apiVersion:'1',agentChat:true,legacyBridgeCompatible:true,resumableUpload:true,preparationRecovery:true,subtitleLanguageCatalogue:true,accountLink:'device-authorization',publicRegistration:false,preparationPresets:[CAPTURE_PRESET],nativeReview:true,defaultCapturePlatforms:CAPTURE_CHANNELS,platforms:['shipinhao','instagram','youtube','douyin','xiaohongshu','bilibili'],scopes:p.scopes});return;}
   if(path==='/v1/studio/languages'&&['GET','POST'].includes(method)){
    scope(p,'media.read');json(res,200,await backend('/api/languages',method,method==='POST'?await readJSON(req,16384):undefined));return;
+  }
+  if(path==='/v1/studio/agent/chats') {
+   scope(p,'media.read');
+   if(p.kind!=='browser')fail(403,'Chat requires a Studio session; linked clients use the existing reviewed publication API');
+   if(method==='GET'){json(res,200,{chats:chats.list(p.owner),capabilities:capabilities()});return;}
+   if(method==='POST'){
+    const d=await readJSON(req,4096);if(Object.keys(d).some(k=>!['videoId','id'].includes(k)))fail(400,'Invalid chat');
+    const id=numeric(d.videoId);auth.own(p,id);const video=await backend('/api/videos/'+id);
+    const chat=chats.create(p.owner,id,video.title||video.filename,d.id);json(res,201,chats.describe(p.owner,chat.id));return;
+   }
+   fail(405,'Method not allowed');
+  }
+  const agent=/^\/v1\/studio\/agent\/chats\/([A-Za-z0-9_-]{16,80})(\/messages)?$/.exec(path);
+  if(agent){
+   if(p.kind!=='browser')fail(403,'Chat requires a Studio session');
+   scope(p,'media.read');scope(p,'jobs.read');
+   if(method==='GET'&&!agent[2]){publicJSON(res,await chatStatus(p,agent[1]));return;}
+   if(method==='POST'&&agent[2]){
+    const data=await readJSON(req,90000);
+    try{publicJSON(res,await chatMessage(p,req,agent[1],data));}
+    catch(e){
+     const prior=typeof data?.id==='string'&&db.prepare('SELECT state FROM agent_turns WHERE owner=? AND id=?').get(p.owner,data.id);
+     if(!prior&&e.status&&e.status<500){json(res,e.status,{error:e.message,submissionState:'rejected'});return;}
+     throw e;
+    }
+    return;
+   }
+   fail(405,'Method not allowed');
   }
   const native=/^\/v1\/studio\/videos\/(\d+)\/(composer|plan|submit|visibility|submission)$/.exec(path);
   if(native){
@@ -311,17 +426,9 @@ export function createWorker(config) {
     const lock='compose:'+id;if(locks.has(lock))fail(409,'Submission in progress. Check Activity');locks.add(lock);
     try{
      const result=await once(p,req,{path,data:d},async (plan,intentId)=>{
-      if(d.action==='publish')return backend(`/api/videos/${id}/publish`,'POST',{platforms:plan.form.platforms,options:plan.options,persistSettings:false,wait:false});
-      const o=plan.options;
-      const steps=['transcribe',...(o.autoCorrectSubtitles?['polish']:[]),...(o.burnSubtitles?['translate']:[]),'keyframes','metadata_zh','metadata_en','metadata_ja','cover',...((o.burnSubtitles||o.logo.enabled||o.burnLayout.portraitBlurFill.enabled)?['burn']:[])];
-      return prepareBackend(p,id,{...o,steps,async:true,notes:o.metadataPrompt},intentId);
+      return dispatchPlan(p,id,d.action,plan,intentId);
      },async()=>{
-      const f=validateForm(d.form);if(d.action==='prepare'&&f.mode==='reuse')fail(400,'A reused run does not need processing');
-      if(d.action==='publish'&&!f.platforms.length)fail(400,'Choose at least one platform');
-      if(capabilities().publishing)checkPublicationJobs((await backend('/api/autopublish/queue')).jobs,id,f.platforms,d.action==='publish');
-      const status=await backend(`/api/videos/${id}/process-status`);
-      if(Object.values(status.steps||{}).some(s=>s.status==='working'))fail(409,'This video is being prepared. Wait for its current run');
-      const plan=await composerPlan(id,f);
+      const plan=await validateSubmission(p,id,d.form,d.action);
       if(d.planDigest!==digest(JSON.stringify(plan.options)))fail(409,'Studio defaults or this run changed. Review the choices again');
       return plan;
      });json(res,200,result);return;

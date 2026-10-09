@@ -1,6 +1,6 @@
 import { studioStorage } from '@/lib/studioStorage';
 /** Remote-only resumable upload; local Studio keeps its existing upload path. */
-export async function uploadRemoteVideo(base: string, blob: Blob, filename: string) {
+export async function uploadRemoteVideo(base: string, blob: Blob, filename: string, progress?: (fraction:number)=>void) {
   const request = async (path: string, init?: RequestInit) => {
     const response = await fetch(base + path, init);
     const data = await response.json();
@@ -19,6 +19,7 @@ export async function uploadRemoteVideo(base: string, blob: Blob, filename: stri
   }
   if (state.receipt) { studioStorage.removeItem(key); return {resp:{ok:true,statusText:"OK"},json:state.receipt}; }
   let offset = state.offset;
+  progress?.(offset / blob.size);
   while (offset < blob.size) {
     const end = Math.min(offset + 8 * 1024 * 1024, blob.size);
     let completed = false;
@@ -32,6 +33,7 @@ export async function uploadRemoteVideo(base: string, blob: Blob, filename: stri
         else if (attempt === 2) throw error;
       }
     }
+    progress?.(offset / blob.size);
   }
   const json = await request('/v1/studio/upload-complete', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({uploadId})});
   studioStorage.removeItem(key); return {resp:{ok:true,statusText:"OK"},json};

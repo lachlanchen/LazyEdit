@@ -86,6 +86,7 @@ final class StudioStore: ObservableObject {
     @Published var workspaceMode = "owner"
     @Published var isAdmin = false
     @Published var publishingEnabled = false
+    @Published var agentEnabled = false
     @Published var invitationURL: String?
     @Published var videos: [StudioVideo] = []
     @Published var jobs: [StudioJob] = []
@@ -166,9 +167,10 @@ final class StudioStore: ObservableObject {
         guard signedIn else { return }
         do {
             let account = try await api.json("/auth/me")
+            agentEnabled = (account["capabilities"] as? [String: Bool])?["agentChat"] == true
             publishingEnabled = (account["capabilities"] as? [String: Bool])?["publishing"] ?? (workspaceMode == "owner" && (account["scopes"] as? [String] ?? []).contains("publication.publish"))
         }
-        catch { publishingEnabled = false }
+        catch { publishingEnabled = false; agentEnabled = false }
         do { isAdmin = try await api.json("/accounts/account")["role"] as? String == "admin" }
         catch { isAdmin = false }
         do {

@@ -41,6 +41,8 @@ final class StudioApi {
     }
     private String publishingScope;
     private boolean publishingAllowed;
+    private boolean agentAllowed;
+    boolean agentEnabled() { return scope().equals(publishingScope) && agentAllowed; }
     boolean publishingEnabled() { return scope().equals(publishingScope) && publishingAllowed; }
     boolean signedIn() { return identity!=null; }
     String mode() { return identity==null?"owner":identity.optString("mode","owner"); }
@@ -124,7 +126,7 @@ final class StudioApi {
     JSONObject json(String path) throws Exception {
         String original=cookie();
         for(int attempt=0;;attempt++) {
-            try { Reply reply=send(path,"GET",null,"application/json",null,original,false);if(!cookie().equals(original))throw new IOException("Workspace changed.");JSONObject result=reply.json();if(path.equals("/auth/me")){publishingScope=scope();publishingAllowed=result.optJSONObject("capabilities")!=null?result.getJSONObject("capabilities").optBoolean("publishing"):mode().equals("owner")&&result.optJSONArray("scopes")!=null&&result.getJSONArray("scopes").toString().contains("publication.publish");}return result; }
+            try { Reply reply=send(path,"GET",null,"application/json",null,original,false);if(!cookie().equals(original))throw new IOException("Workspace changed.");JSONObject result=reply.json();if(path.equals("/auth/me")){publishingScope=scope();agentAllowed=result.optJSONObject("capabilities")!=null&&result.getJSONObject("capabilities").optBoolean("agentChat");publishingAllowed=result.optJSONObject("capabilities")!=null?result.getJSONObject("capabilities").optBoolean("publishing"):mode().equals("owner")&&result.optJSONArray("scopes")!=null&&result.getJSONArray("scopes").toString().contains("publication.publish");}return result; }
             catch(Failure failure) { if(attempt>=2||!Arrays.asList(429,502,503,504).contains(failure.status))throw failure;Thread.sleep((attempt+1)*1000L); }
         }
     }

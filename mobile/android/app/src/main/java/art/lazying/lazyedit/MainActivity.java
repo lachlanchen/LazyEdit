@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         TextView heading=new TextView(this);heading.setText(tr(title));heading.setTextSize(28);heading.setTextColor(Color.rgb(24,45,78));root.addView(heading);
         message=new TextView(this) { @Override public void setText(CharSequence value,BufferType type) { super.setText(value instanceof String?tr((String)value):value,type); } };message.setTextSize(14);message.setTextColor(Color.rgb(125,67,25));message.setPadding(0,dp(8),0,dp(8));root.addView(message);
         ScrollView scroll=new ScrollView(this);content=column();scroll.addView(content);root.addView(scroll,new LinearLayout.LayoutParams(-1,0,1));
-        if(tabs){LinearLayout nav=new LinearLayout(this);String[] labels={"Studio","Upload","Activity","Account"};for(int i=0;i<labels.length;i++){final int index=i;Button button=new Button(this);button.setText(tr(labels[i]));button.setTextSize(12);button.setOnClickListener(v->{if(busy)return;screen=index;show();});nav.addView(button,new LinearLayout.LayoutParams(0,dp(60),1));}root.addView(nav);}
+        if(tabs){LinearLayout nav=new LinearLayout(this);String[] labels=api.agentEnabled()?new String[]{"Studio","Upload","Activity","Account","Agent"}:new String[]{"Studio","Upload","Activity","Account"};for(int i=0;i<labels.length;i++){final int index=i;Button button=new Button(this);button.setText(tr(labels[i]));button.setTextSize(12);button.setOnClickListener(v->{if(busy)return;screen=index;show();});nav.addView(button,new LinearLayout.LayoutParams(0,dp(60),1));}root.addView(nav);}
         setContentView(root);
     }
     private TextView text(String value) { TextView view=new TextView(this);view.setText(tr(value));view.setTextSize(16);view.setPadding(0,dp(10),0,dp(10));content.addView(view);return view; }
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void show() {
         if(!api.signedIn()){login();return;}
-        if(screen==1)uploadScreen();else if(screen==2)activity();else if(screen==3)account();else library(false);
+        if(screen==1)uploadScreen();else if(screen==2)activity();else if(screen==3)account();else if(screen==4)agent();else library(false);
     }
     private void chooseLanguage() {
         if(busy||uploading)return;
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 if(!uploading)throw new IOException("Upload paused. Tap Resume when ready.");
                 receipt=api.post("/v1/studio/upload-complete",new JSONObject().put("uploadId",id));state.delete();return receipt;
             }finally{uploading=false;}
-        },receipt->{message.setText("Added to your Studio.");screen=0;show();});
+        },receipt->{message.setText("Added to your Studio.");if(agentAttach){agentAttachVideo(receipt.optInt("videoId",receipt.optInt("video_id")));}else{screen=0;show();}});
     }
     private void composer(int id) {
         frame(api.publishingEnabled()?"Prepare & publish":"Edit & preview",true);String path="/v1/studio/videos/"+id;
@@ -375,8 +375,108 @@ public class MainActivity extends AppCompatActivity {
             seen.edit().putBoolean(key,true).apply();
         }
     }
+    private String agentID="";
+    private boolean agentAttach=false,agentReading=false;
+    private TextView agentLog;
+    private EditText agentDraft;
+    private CheckBox agentPublish;
+    private String agentPreview="";
+    private final String agentPath="/v1/studio/agent/chats";
+    private final Runnable agentPoll=()->{
+        if(foreground&&screen==4&&api.signedIn()){
+            if(!busy&&!agentReading&&!agentID.isEmpty()){
+                agentReading=true;String id=agentID,scope=api.scope();
+                worker.execute(()->{try{JSONObject value=api.json(agentPath+"/"+id);ui.post(()->{if(screen==4&&scope.equals(api.scope())&&id.equals(agentID))try{agentRender(value);}catch(Exception e){error(e);}});}catch(Exception e){ui.post(()->{if(screen==4)error(e);});}finally{ui.post(()->agentReading=false);}});
+            }
+            ui.postDelayed(this.agentPoll,10000);
+        }
+    };
+    private void agent() {
+        frame("Agent",true);ui.removeCallbacks(agentPoll);
+        text("Attach a video. Tell Studio what to do.");
+        text("Describe the story, subtitle languages, layout and where to publish. Context guides corrections; it does not replace speech.");
+        button("Attach video",()->{
+            if(api.file("agent-pending.json").exists()){message.setText("Check / retry saved message");return;}
+            agentAttach=true;
+            if(api.file("upload.json").exists()){screen=1;uploadScreen();return;}
+            Intent pick=new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("video/*").addCategory(Intent.CATEGORY_OPENABLE).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);startActivityForResult(pick,42);
+        });
+        button("Choose from Studio",()->{
+            if(api.file("agent-pending.json").exists()){message.setText("Check / retry saved message");return;}
+            task("Opening your library…",()->api.json("/api/videos"),data->agentChoose(data.optJSONArray("videos"),false));
+        });
+        button("Conversations",()->task("Working…",()->api.json(agentPath),data->agentChoose(data.optJSONArray("chats"),true)));
+        agentLog=text("");agentLog.setTextIsSelectable(true);
+        agentPublish=check("Publish after editing",false);agentPublish.setVisibility(api.publishingEnabled()?View.VISIBLE:View.GONE);
+        TextView intent=text("Studio will prepare an edited preview. Nothing will be posted.");
+        agentPublish.setOnCheckedChangeListener((v,checked)->intent.setText(tr(checked?"Send authorizes publication to the platforms in your instructions or saved defaults.":"Studio will prepare an edited preview. Nothing will be posted.")));
+        agentDraft=field("Message Studio","",true);agentDraft.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(16000)});
+        button("Send",()->agentSend(false));
+        if(api.file("agent-pending.json").exists()){
+            text("A saved message is waiting for its receipt. Checking it will not create another task.");
+        }
+        button("Check / retry saved message",()->{if(api.file("agent-pending.json").exists())agentSend(true);});
+        button("Open Activity",()->{screen=2;show();});
+        button("Preview edited video",()->{
+            if(agentPreview.isEmpty())return;
+            try { player=new VideoView(this);content.addView(player,0,new LinearLayout.LayoutParams(-1,dp(270)));MediaController controls=new MediaController(this);controls.setAnchorView(player);player.setMediaController(controls);player.setVideoURI(Uri.parse(StudioApi.url(agentPreview).toString()),Collections.singletonMap("Cookie",api.cookie()));player.start(); }
+            catch(Exception e){error(e);}
+        });
+        try{agentID=api.file("agent-chat.txt").exists()?StudioApi.readFile(api.file("agent-chat.txt")).trim():"";}
+        catch(Exception e){error(e);}
+        if(!agentID.isEmpty())task("Working…",()->api.json(agentPath+"/"+agentID),this::agentRender);
+        else agentLog.setText(tr("Attach or choose a video to begin."));
+        ui.postDelayed(agentPoll,10000);
+    }
+    private void agentChoose(JSONArray rows,boolean history) throws Exception {
+        if(rows==null||rows.length()==0){message.setText("No videos yet. Add one in Upload.");return;}
+        String[] titles=new String[rows.length()];for(int i=0;i<rows.length();i++)titles[i]=rows.getJSONObject(i).optString("title","Video");
+        new AlertDialog.Builder(this).setTitle(tr(history?"Conversations":"Choose from Studio")).setItems(titles,(d,index)->{
+            try{JSONObject row=rows.getJSONObject(index);if(history){agentID=row.getString("id");StudioApi.writeFile(api.file("agent-chat.txt"),agentID);agent();}else agentAttachVideo(row.getInt("id"));}catch(Exception e){error(e);}
+        }).show();
+    }
+    private void agentAttachVideo(int id) {
+        task("Working…",()->api.post(agentPath,new JSONObject().put("id",UUID.randomUUID().toString()).put("videoId",id)),value->{
+            agentID=value.getString("id");StudioApi.writeFile(api.file("agent-chat.txt"),agentID);agentAttach=false;screen=4;agent();
+        });
+    }
+    private void agentRender(JSONObject value) throws Exception {
+        agentPreview=value.optString("preview","");
+        agentID=value.getString("id");StudioApi.writeFile(api.file("agent-chat.txt"),agentID);
+        JSONObject saved=api.file("agent-pending.json").exists()?new JSONObject(StudioApi.readFile(api.file("agent-pending.json"))):null;
+        StringBuilder text=new StringBuilder(value.optString("title")).append("\n\n");JSONArray rows=value.optJSONArray("messages");
+        if(rows!=null)for(int i=0;i<rows.length();i++){
+            JSONObject row=rows.getJSONObject(i);text.append(row.optString("text")).append("\n\n").append(tr("agent_state_"+row.optString("state"))).append("\n").append(row.optString("reply")).append("\n");
+            JSONArray summary=row.optJSONArray("summary");if(summary!=null)for(int n=0;n<summary.length();n++)text.append(summary.getString(n)).append("\n");
+            if(!row.isNull("error"))text.append(row.optString("error")).append("\n");text.append("\n");
+            if(saved!=null&&saved.optString("chatId").equals(agentID)&&saved.optString("id").equals(row.optString("id"))&&Arrays.asList("submitted","reply","rejected","held").contains(row.optString("state")))api.file("agent-pending.json").delete();
+        }
+        JSONObject job=value.optJSONObject("job");if(job!=null){text.append(tr("Publication job")).append(" #").append(job.optString("id")).append(" · ").append(job.optString("status")).append("\n");if(!job.isNull("error"))text.append(job.optString("error")).append("\n");JSONObject attention=job.optJSONObject("attention");if(attention!=null&&attention.optString("status").equals("required"))text.append(attention.optString("message")).append("\n");}
+        JSONObject prep=value.optJSONObject("preparation");if(prep!=null)text.append(tr("Preparation")).append(" · ").append(prep.optString("state")).append("\n");
+        JSONObject process=value.optJSONObject("process"),steps=process==null?null:process.optJSONObject("steps");if(steps!=null){Iterator<String> keys=steps.keys();while(keys.hasNext()){String key=keys.next();text.append(key).append(" · ").append(steps.getJSONObject(key).optString("status")).append("\n");if(!steps.getJSONObject(key).isNull("error"))text.append(steps.getJSONObject(key).optString("error")).append("\n");}}
+        agentLog.setText(text.toString());
+    }
+    private void agentSend(boolean retry) {
+        if(agentID.isEmpty())return;
+        try {
+            File file=api.file("agent-pending.json");JSONObject body;
+            if(retry){body=new JSONObject(StudioApi.readFile(file));}
+            else {
+                if(file.exists()){message.setText("Check / retry saved message");return;}
+                String text=agentDraft.getText().toString().trim();if(text.isEmpty())return;
+                body=new JSONObject().put("chatId",agentID).put("id",UUID.randomUUID().toString()).put("message",text).put("language",StudioStrings.language(this)).put("action",api.publishingEnabled()&&agentPublish.isChecked()?"publish":"prepare");
+                StudioApi.writeFile(file,body.toString());
+            }
+            String target=body.getString("chatId"),key="agent-"+body.getString("id");body.remove("chatId");agentDraft.setText("");
+            task("Working…",()->{
+                try{return api.post(agentPath+"/"+target+"/messages",body,key);}
+                catch(StudioApi.Failure failure){if(failure.rejected)file.delete();throw failure;}
+            },this::agentRender);
+        }catch(Exception e){error(e);}
+    }
+
     @Override protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);oauthReturn(intent);if(api.signedIn()&&api.scope().equals(intent.getStringExtra("attentionScope"))){screen=2;show();}}
-    @Override protected void onStart(){super.onStart();foreground=true;if(screen==2&&api!=null&&api.signedIn())ui.postDelayed(poll,1000);ui.postDelayed(attentionPoll,30000);}
-    @Override protected void onStop(){super.onStop();foreground=false;ui.removeCallbacks(poll);ui.removeCallbacks(attentionPoll);uploading=false;if(player!=null)player.pause();}
-    @Override protected void onDestroy(){if(billing!=null)billing.close();ui.removeCallbacks(poll);ui.removeCallbacks(attentionPoll);uploading=false;if(editor!=null)editor.destroy();worker.shutdownNow();super.onDestroy();}
+    @Override protected void onStart(){super.onStart();foreground=true;if(screen==2&&api!=null&&api.signedIn())ui.postDelayed(poll,1000);ui.postDelayed(attentionPoll,30000);if(screen==4)ui.postDelayed(agentPoll,1000);}
+    @Override protected void onStop(){super.onStop();foreground=false;ui.removeCallbacks(poll);ui.removeCallbacks(attentionPoll);ui.removeCallbacks(agentPoll);uploading=false;if(player!=null)player.pause();}
+    @Override protected void onDestroy(){if(billing!=null)billing.close();ui.removeCallbacks(poll);ui.removeCallbacks(attentionPoll);ui.removeCallbacks(agentPoll);uploading=false;if(editor!=null)editor.destroy();worker.shutdownNow();super.onDestroy();}
 }

@@ -50,7 +50,7 @@ export default function TabLayout() {
     try {
       if (pathname !== '/' && pathname !== '') return;
       const saved = studioStorage.getItem('lazyedit:lastTab');
-      if (saved && saved !== pathname && (!publicationOnly || ['/home', '/library', '/editor'].includes(saved))) {
+      if (saved && saved !== pathname && (!publicationOnly || ['/home', '/library', '/editor', '/agent'].includes(saved))) {
         router.replace(saved as any);
       }
     } catch (_err) {
@@ -139,6 +139,10 @@ export default function TabLayout() {
           title: t('tab_studio'),
           tabBarIcon: ({ color }) => <TabBarIcon name="film" color={color} />,
         }}
+      />
+      <Tabs.Screen
+        name="agent"
+        options={{title: t('Agent'), tabBarIcon: ({color}) => <TabBarIcon name="comments" color={color} />}}
       />
       <Tabs.Screen
         name="editor"

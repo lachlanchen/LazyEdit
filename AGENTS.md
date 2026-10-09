@@ -108,3 +108,9 @@ Note on symlinks: Never edit files inside symlinked directories from this reposi
   or social post. See `references/studio/preparation-recovery.md`.
 - Respect a workspace's private `acceptance.lock`. Do not replace/restart it
   while another client owns qualification, even if its publication queue is empty.
+
+## Studio Agent mode
+- Chat must dispatch through the shared Studio composer and existing LazyEdit queue, never a second publisher.
+- Use immutable message IDs and preserve unknown dispatches for reconciliation; model prose never proves publication.
+- Keep one-time overrides separate from saved settings and enforce hosted capabilities/quotas on agent routes.
+- See `references/studio/agent-mode.md`; keep reviewer acceptance locks intact during rollout.
