@@ -480,6 +480,7 @@ def package_music_publish(
     lyrics_format: str = "plain",
     lyrics_text: str = "",
     metadata_json: str | Path | None = None,
+    source_url: str = "",
     author: str = DEFAULT_AUTHOR,
     artist: str | None = None,
     language: str = DEFAULT_LANGUAGE,
@@ -643,6 +644,9 @@ def package_music_publish(
         codex_cover_count=codex_cover_count,
         metadata_override=metadata_override,
     )
+    if source_url:
+        metadata["source_url"] = source_url.strip()
+        metadata["published_elsewhere"] = True
     if bandcamp_audio:
         metadata["bandcamp_audio_filename"] = bandcamp_audio.name
         metadata["bandcamp_ready"] = True

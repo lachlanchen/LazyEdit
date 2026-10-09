@@ -9140,6 +9140,7 @@ class MusicPackageHandler(CorsMixin, tornado.web.RequestHandler):
                 lyrics_json=data.get("lyrics_json") or data.get("lyricsJson"),
                 lyrics_text=str(data.get("lyrics") or data.get("lyrics_text") or ""),
                 metadata_json=data.get("metadata_json") or data.get("metadataJson"),
+                source_url=str(data.get("source_url") or data.get("sourceUrl") or ""),
                 author=str(data.get("author") or "Musia 慕莎"),
                 artist=data.get("artist"),
                 language=str(data.get("language") or "中文"),

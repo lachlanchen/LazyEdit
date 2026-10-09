@@ -50,3 +50,22 @@ post failed.
 Deployment/retry receipts and final publication status are in Musia's
 `handoff/lazyedit/aya-home-on-the-breeze/README.md`. Do not replay all four video
 platforms to debug the remaining Shipinhao targets.
+
+## Final Recovery, 2026-10-10
+
+Shipinhao video completed in scoped job `job-1791560823457-1`; the other three
+platforms were not reposted. Music job `job-1791562024442-1` exhausted its immediate
+retries with a generic incomplete-form error. The retained form later passed all
+four native validators; submitting that existing form succeeded. Management
+shows **ただいま、風のなか · Home on the Breeze**, **已上架**, dated October 10.
+The exact previously failing field was not captured, so do not invent a cause.
+
+Added upload/form readiness gating, explicit submitted confirmation and no
+automatic retry after a submit click. Added five browser regression tests.
+The CLI/API now propagates the public source URL into the package and fills
+the external playback field. One package regression test verifies the ZIP.
+All six music browser tests, ten retention tests and the package test passed.
+
+Production autoreload is disabled by default. A source-only pull had interrupted
+one music attempt; its unknown receipt was preserved, the management listing
+was checked, and only music was resumed. Never deploy into an active queue.

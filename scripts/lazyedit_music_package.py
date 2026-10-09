@@ -158,6 +158,7 @@ def main(argv: list[str] | None = None) -> int:
         lyrics_format=args.lyrics_format,
         lyrics_text=args.lyrics_text,
         metadata_json=args.metadata_json,
+        source_url=args.source_url,
         author=args.author,
         artist=args.artist,
         language=args.language,
