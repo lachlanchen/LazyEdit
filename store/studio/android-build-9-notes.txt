@@ -1,0 +1,3 @@
+<en-US>
+Native Agent chat: attach a video, describe edits and track progress. Preview first; authorized publishing is optional. Improved reconnect and saved-message recovery.
+</en-US>

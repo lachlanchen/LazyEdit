@@ -69,6 +69,31 @@ public class StudioNativeTest {
             try { StudioApi.url(invalid);fail("Untrusted destination accepted"); }catch(IOException expected) {}
         }
     }
+    @Test public void agentNavigationDoesNotSubmitOrPublish() throws Exception {
+        Context context=InstrumentationRegistry.getInstrumentation().getTargetContext();
+        File credential=new File(context.getFilesDir(),"qa-credentials.json");
+        JSONObject account=new JSONObject(StudioApi.readFile(credential));
+        StudioApi previous=new StudioApi(context);if(previous.signedIn())previous.logout();
+        Intent launch=new Intent().setComponent(new ComponentName("art.lazying.lazyedit",MainActivity.class.getName())).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        try(ActivityScenario<MainActivity> scenario=ActivityScenario.launch(launch)) {
+            onView(withHint("Username")).perform(replaceText(account.getString("username")),closeSoftKeyboard());
+            onView(withHint("Password")).perform(replaceText(account.getString("password")),closeSoftKeyboard());
+            tap("Sign in / Create account");waitText("Your Studio",90000);ready(scenario);
+            onView(withText("Agent")).perform(click());
+            waitText("Attach a video. Tell Studio what to do.",30000);ready(scenario);
+            onView(withText("Publish after editing")).perform(scrollTo()).check(matches(isNotChecked()));
+            onView(withHint("Message Studio")).perform(scrollTo(),replaceText("Preview only; do not publish."),closeSoftKeyboard());
+            // Opening the file picker is read-only; never press Send in this smoke test.
+            tap("Attach video");SystemClock.sleep(1500);
+            // The picker belongs to DocumentsUI, so Espresso cannot wait for
+            // our activity to resume before sending Back to that other app.
+            InstrumentationRegistry.getInstrumentation().getUiAutomation()
+                .performGlobalAction(android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_BACK);
+            waitText("Attach a video. Tell Studio what to do.",15000);
+        } finally {
+            credential.delete();StudioApi current=new StudioApi(context);if(current.signedIn())current.logout();
+        }
+    }
     @Test public void memberEditingDoesNotRequireSocialAccounts() throws Exception {
         Context context=InstrumentationRegistry.getInstrumentation().getTargetContext();
         File credential=new File(context.getFilesDir(),"qa-member-credentials.json");

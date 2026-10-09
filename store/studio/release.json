@@ -1,22 +1,22 @@
 {
-  "updated": "2026-10-07",
+  "updated": "2026-10-09",
   "app": "LazyEdit Studio",
   "bundleId": "art.lazying.lazyedit",
   "version": "1.0",
   "apple": {
     "appId": "6814061525",
     "groupId": "6ce2e6a9-2d38-4bef-a317-bdd5564cb717",
-    "ipaSha256": "4ae7d6e2008af79e9f070f071689894157105227d99e5caa615665e66ac381f2",
-    "deliveryUuid": "b933f68a-e753-4768-b59f-5966c25657b9",
+    "ipaSha256": "37e46b7c6cc0ce980c449d12b35456aa817ba70a8a5826c5cb472ef394796d5d",
+    "deliveryUuid": "b77df6eb-2606-487b-a824-46e7efe8dbe8",
     "state": "IN_BETA_TESTING",
-    "buildId": "b933f68a-e753-4768-b59f-5966c25657b9",
+    "buildId": "b77df6eb-2606-487b-a824-46e7efe8dbe8",
     "processingState": "VALID",
     "internalTesters": 1,
     "publicBeta": false,
     "consoleUrl": "https://appstoreconnect.apple.com/apps/6814061525/testflight",
-    "build": 10,
+    "build": 11,
     "nativeInterface": true,
-    "qa": "Dedicated iPhone 17 Pro Max simulator member editing test passed (1 test, 117.572s): sign-in, private library/account, composer, hydrated editor without social controls, sign-out. Exact signed IPA separately passed Apple validation/upload. Simulator screenshot has a translucent-sheet graphics artifact; no physical-device visual test claimed. No new App Review submission.",
+    "qa": "Dedicated Studio iOS simulator passed live owner sign-in, native Agent navigation, Files picker cancellation and sign-out (1 test, 68.669s). Final signed IPA validated and accepted by Apple, then attached to the existing internal TestFlight group. No chat submission, social post, physical-device test or new public review. Known simulator translucent tab-bar framebuffer artifact remains.",
     "formalReview": {
       "versionId": "5097e8ff-f535-489b-b4c3-ef01561b8e9a",
       "state": "REJECTED",
@@ -90,8 +90,8 @@
       "internal": true,
       "platform": "IOS",
       "version": "1.0",
-      "buildNumber": "10",
-      "build": "b933f68a-e753-4768-b59f-5966c25657b9",
+      "buildNumber": "11",
+      "build": "b77df6eb-2606-487b-a824-46e7efe8dbe8",
       "processingState": "VALID",
       "attached": true,
       "testerCount": 1,
@@ -99,23 +99,22 @@
         "autoNotifyEnabled": true,
         "internalBuildState": "IN_BETA_TESTING",
         "externalBuildState": "READY_FOR_BETA_SUBMISSION"
-      },
-      "verifiedOn": "2026-10-07"
+      }
     }
   },
   "google": {
     "appId": "4975166991517752718",
     "track": "internal",
     "state": "available_to_internal_testers",
-    "apkSha256": "43ca648e2c78cd145e9c6dc9d2576cddfe69b9f2b0c1046e2927467ed2ee2293",
-    "aabSha256": "91e6f3fadab1bc07e6686bb2c686001d937ef9cc493796463ad74f7cee36d35a",
+    "apkSha256": "e10e14ec4b4ece71cc049888afc64ac5cf8ab0ed45ecfc7fb019fed514d3b821",
+    "aabSha256": "6124e2229dd6d246ea19302176fb24f9f1be8e3ea7f707b406f2262e222aa87b",
     "trackState": "Active",
     "internalTesters": 1,
     "optInUrl": "https://play.google.com/apps/internaltest/4700083281147641073",
     "publicProduction": true,
-    "build": 7,
+    "build": 9,
     "nativeInterface": true,
-    "qa": "Exact signed APK7 installed/launched on the dedicated API34 emulator; two same-source instrumentation tests passed for live isolated member editing and authenticated-origin restrictions. AAB7 available to existing internal testers. Emulator stopped; no physical-device test or social post.",
+    "qa": "Exact signed APK9 installed and launched on the dedicated API34 emulator. Two same-source tests passed in 6.014s: live native Agent navigation, preview-only default, message entry, file-picker cancellation and authenticated-origin restrictions. No chat submission, social post or physical-device claim. AAB9 available to existing internal testers.",
     "listingText": "Default English listing, approved icon/feature graphic and four genuine native phone screenshots submitted for review.",
     "production": {
       "state": "available_on_google_play",
@@ -142,14 +141,14 @@
     ],
     "publicStoreUrl": "https://play.google.com/store/apps/details?id=art.lazying.lazyedit",
     "latestCandidateAudit": {
-      "checkedOn": "2026-10-07",
-      "latestUploadedVersionCode": 7,
+      "checkedOn": "2026-10-09",
+      "latestUploadedVersionCode": 9,
       "qualified": true,
       "scope": "internal testing only",
       "productionVersionCode": 6,
-      "document": "references/studio/2026-10-07-rounded-icon-test-builds.md"
+      "document": "references/studio/2026-10-09-agent-native-test-builds.md"
     },
-    "internalReleasedOn": "2026-10-07"
+    "internalReleasedOn": "2026-10-09"
   },
   "sourceNote": "Native release sources and exact provider receipts are recorded by the commit containing this manifest.",
   "macos": {
@@ -472,9 +471,9 @@
     "liveMemberPwaEditing": true
   },
   "preparedNativeBuilds": {
-    "apple": 10,
-    "google": 7,
-    "state": "Android7 available to internal testers; iOS10 and universal Mac13 IN_BETA_TESTING in the existing private group. Production Android6 and existing Apple formal-review attachments iOS9/Mac12 unchanged. Windows1.0.1 unchanged.",
+    "apple": 11,
+    "google": 9,
+    "state": "Android9 available to internal testers; iOS11 IN_BETA_TESTING in the existing private group. Mac13, Windows1.0.1, production Android6 and existing Apple formal-review attachments are unchanged.",
     "macos": 13,
     "windows": "1.0.1"
   },
@@ -516,8 +515,8 @@
     "reviewSubmitted": false
   },
   "nativeSources": {
-    "apple": "commit containing rounded-icon candidates and this manifest",
-    "google": "commit containing rounded-icon candidates and this manifest",
+    "apple": "6bada9d Agent implementation plus the attachment-cancellation fix in the commit containing this manifest",
+    "google": "6bada9d Agent implementation plus the attachment-cancellation fix in the commit containing this manifest",
     "macos": "commit containing rounded-icon candidates and this manifest",
     "windows": "commit containing Windows1.0.1 signing/qualification sources and this manifest"
   },
@@ -700,5 +699,40 @@
         "state": "IN_BETA_TESTING"
       }
     }
+  },
+  "agentBetaRelease": {
+    "date": "2026-10-09",
+    "scope": "internal testing only",
+    "document": "references/studio/2026-10-09-agent-native-test-builds.md",
+    "reviewSubmitted": false,
+    "externalBetaReviewSubmitted": false,
+    "productionPromoted": false,
+    "ownerAgentBackend": "agent-725bbd980e24",
+    "hostedReviewerWorkerRestarted": false,
+    "providerReadback": {
+      "ios": {
+        "build": 11,
+        "state": "IN_BETA_TESTING",
+        "buildId": "b77df6eb-2606-487b-a824-46e7efe8dbe8"
+      },
+      "android": {
+        "build": 9,
+        "state": "available_to_internal_testers",
+        "supersededUnreleasedBuild": 8
+      }
+    },
+    "nativeTests": {
+      "ios": {
+        "count": 1,
+        "passed": 1,
+        "seconds": 68.669
+      },
+      "android": {
+        "count": 2,
+        "passed": 2,
+        "seconds": 6.014
+      }
+    },
+    "publicationsCreatedByTests": false
   }
 }

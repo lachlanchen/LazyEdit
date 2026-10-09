@@ -1,0 +1,1 @@
+Agent mode: attach a video, describe context and subtitle/layout preferences, and track editing from a native conversation. Preview is the default; publishing is available only to enabled accounts and must be explicitly selected. Please test attachments, navigation, reconnection and saved-message recovery. This build is for internal testing.

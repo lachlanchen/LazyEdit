@@ -703,14 +703,14 @@ struct StudioAgentView: View {
             }.background(Color(uiColor: .systemGroupedBackground)).navigationTitle(label("Agent"))
             .fileImporter(isPresented: $files, allowedContentTypes: [.movie]) { result in
                 if case .success(let url) = result { attaching = true; Task { await store.prepareFile(url); if store.pending != nil { store.beginUpload() } } }
-                else if case .failure(let e) = result { error = e.localizedDescription }
+                else if case .failure(let e) = result { attaching = false; error = e.localizedDescription }
             }
             .sheet(isPresented: $photos) {
                 StudioPhotoPicker { result in
                     photos = false; store.preparingFile = false
                     switch result {
                     case .success(let staged): do { try store.accept(staged); attaching = true; store.beginUpload() } catch { self.error = error.localizedDescription }
-                    case .failure(let e): error = e.localizedDescription
+                    case .failure(let e): attaching = false; error = e.localizedDescription
                     }
                 } onLoading: { store.preparingFile = true; photos = false }
             }

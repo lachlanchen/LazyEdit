@@ -239,14 +239,15 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override protected void onActivityResult(int request,int result,Intent data) {
         super.onActivityResult(request,result,data);
-        if(request!=42||result!=RESULT_OK||data==null||data.getData()==null)return;
+        if(request!=42)return;
+        if(result!=RESULT_OK||data==null||data.getData()==null){agentAttach=false;return;}
         try {
             Uri uri=data.getData();getContentResolver().takePersistableUriPermission(uri,data.getFlags()&Intent.FLAG_GRANT_READ_URI_PERMISSION);
             String name="video.mp4";long size=-1;
             try(Cursor cursor=getContentResolver().query(uri,new String[]{OpenableColumns.DISPLAY_NAME,OpenableColumns.SIZE},null,null,null)) { if(cursor!=null&&cursor.moveToFirst()){name=cursor.getString(0);size=cursor.getLong(1);} }
             if(size<=0||size>10L*1024*1024*1024)throw new IOException("Choose a video between 1 byte and 10 GB.");
             StudioApi.writeFile(api.file("upload.json"),new JSONObject().put("uri",uri.toString()).put("filename",name).put("size",size).toString());screen=1;show();
-        }catch(Exception e){error(e);}
+        }catch(Exception e){agentAttach=false;error(e);}
     }
     private void upload() {
         if(uploading)return;uploading=true;File state=api.file("upload.json");

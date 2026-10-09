@@ -2,6 +2,38 @@ import XCTest
 
 final class StudioUITests: XCTestCase {
     @MainActor
+    func testAgentNavigationWithoutSubmission() throws {
+        continueAfterFailure = false
+        let path = ProcessInfo.processInfo.environment["STUDIO_TEST_CREDENTIALS"] ?? ""
+        guard !path.isEmpty else { throw XCTSkip("Set private STUDIO_TEST_CREDENTIALS.") }
+        let credentials = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: URL(fileURLWithPath: path))) as? [String: String])
+        let app = XCUIApplication(); app.launch()
+        if !app.secureTextFields["studio.password"].waitForExistence(timeout: 5) {
+            tapTab("Account", app)
+            let signOut = app.buttons["Sign out"]; scrollTo(signOut, app); signOut.tap()
+            try XCTUnwrap(app.buttons.matching(identifier: "Sign out").allElementsBoundByIndex.first(where: { $0.isHittable })).tap()
+        }
+        XCTAssertTrue(app.secureTextFields["studio.password"].waitForExistence(timeout: 30))
+        replaceText(app.textFields["studio.username"], with: try XCTUnwrap(credentials["username"]))
+        replaceText(app.secureTextFields["studio.password"], with: try XCTUnwrap(credentials["password"]))
+        app.buttons["studio.signIn"].tap()
+        dismissPasswordPrompt(app)
+        XCTAssertTrue(nativeTab("Agent", app).waitForExistence(timeout: 60))
+        tapTab("Agent", app)
+        XCTAssertTrue(app.staticTexts["Attach a video. Tell Studio what to do."].waitForExistence(timeout: 30))
+        XCTAssertTrue(app.buttons["Choose from Studio"].exists)
+        capture("Native Agent ready without submission", app)
+        app.buttons["Attach video"].tap()
+        app.buttons["Files"].tap()
+        XCTAssertTrue(app.buttons["Cancel"].waitForExistence(timeout: 20))
+        app.buttons["Cancel"].tap()
+        tapTab("Account", app)
+        let signOut = app.buttons["Sign out"]; scrollTo(signOut, app); signOut.tap()
+        try XCTUnwrap(app.buttons.matching(identifier: "Sign out").allElementsBoundByIndex.first(where: { $0.isHittable })).tap()
+        XCTAssertTrue(app.secureTextFields["studio.password"].waitForExistence(timeout: 30))
+        app.terminate()
+    }
+    @MainActor
     func testMemberEditingWithoutSocialAccounts() throws {
         continueAfterFailure = false
         let path = ProcessInfo.processInfo.environment["STUDIO_TEST_CREDENTIALS"] ?? ""
