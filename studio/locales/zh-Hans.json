@@ -391,5 +391,8 @@
   "agent_state_submitted": "任务已接受——在下方关注进度",
   "agent_state_reply": "Studio",
   "agent_state_rejected": "未提交任何内容",
-  "agent_state_held": "重试前请检查现有请求"
+  "agent_state_held": "重试前请检查现有请求",
+  "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Apple 登录已验证。请输入邀请码，选择用户名并设置至少 12 个字符的恢复密码，完成账户设置。",
+  "Finish account setup": "完成账户设置",
+  "Use another sign-in method": "使用其他登录方式"
 }

@@ -391,5 +391,8 @@
   "agent_state_submitted": "タスクを受け付けました — 下の進行状況をご確認ください",
   "agent_state_reply": "Studio",
   "agent_state_rejected": "送信されませんでした",
-  "agent_state_held": "再試行する前に既存のリクエストを確認してください"
+  "agent_state_held": "再試行する前に既存のリクエストを確認してください",
+  "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Appleでの認証が完了しました。招待コード、ユーザー名、12文字以上の復旧用パスワードを入力して設定を完了してください。",
+  "Finish account setup": "アカウント設定を完了",
+  "Use another sign-in method": "別の方法でサインイン"
 }

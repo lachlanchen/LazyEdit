@@ -391,5 +391,8 @@
   "agent_state_submitted": "Tâche acceptée — suivez la progression ci-dessous",
   "agent_state_reply": "Studio",
   "agent_state_rejected": "Rien n’a été soumis",
-  "agent_state_held": "Vérifiez la demande existante avant de réessayer"
+  "agent_state_held": "Vérifiez la demande existante avant de réessayer",
+  "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Connexion Apple vérifiée. Saisissez votre invitation, choisissez un identifiant et un mot de passe de récupération de 12 caractères minimum pour terminer.",
+  "Finish account setup": "Terminer la création du compte",
+  "Use another sign-in method": "Utiliser une autre méthode de connexion"
 }

@@ -4,6 +4,8 @@ import AuthenticationServices
 import CryptoKit
 import UIKit
 
+struct StudioAppleEnrollmentRequired: Error {}
+
 struct StudioFailure: LocalizedError {
     let message: String
     let status: Int
@@ -79,6 +81,10 @@ final class StudioUploadProgress: StudioNetworkDelegate {
 
 @MainActor
 final class StudioAPI {
+    private var appleEnrollment: (token: String, verifier: String)?
+    var hasAppleEnrollment: Bool { appleEnrollment != nil }
+    func cancelAppleEnrollment() { appleEnrollment = nil }
+
     let origin = URL(string: "https://edit.lazying.art")!
     private(set) var identity: StudioSession?
     private let session: URLSession
@@ -221,18 +227,53 @@ final class StudioAPI {
         if mode == "workspace" { try await enterWorkspace() }
     }
 
-    func clearSession() { identity = nil; StudioKeychain.clear() }
-    func oauthSignIn(provider: String, password: String? = nil) async throws {
+    func clearSession() { appleEnrollment = nil; identity = nil; StudioKeychain.clear() }
+    func oauthSignIn(provider: String, password: String? = nil, registration: [String: String]? = nil) async throws {
         var bytes = [UInt8](repeating: 0, count: 32)
         guard SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess else { throw StudioFailure(message: "Could not start secure sign-in.", status: 0) }
         func encoded(_ value: Data) -> String { value.base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "") }
-        let verifier = encoded(Data(bytes)), challenge = encoded(Data(SHA256.hash(data: Data(verifier.utf8))))
+        var verifier = encoded(Data(bytes))
+        let challenge = encoded(Data(SHA256.hash(data: Data(verifier.utf8))))
         var body: [String: Any] = ["provider": provider, "challenge": challenge, "target": "native"]
         if let password { body["link"] = true; body["password"] = password }
-        let start = try await json("/accounts/oauth/start", method: "POST", body: body)
-        guard let address = start["url"] as? String, let url = URL(string: address), url.scheme == "https", ["appleid.apple.com", "accounts.google.com"].contains(url.host) else { throw StudioFailure(message: "Invalid sign-in provider link.", status: 0) }
-        let returned = try await StudioOAuthBrowser.shared.open(url)
-        guard returned.scheme == "art.lazying.lazyedit", returned.host == "auth", let ticket = URLComponents(url: returned, resolvingAgainstBaseURL: false)?.queryItems?.first(where: {$0.name == "ticket"})?.value else { throw StudioFailure(message: "Sign-in was incomplete.", status: 0) }
+        let ticket: String
+        if provider == "apple", let enrollment = appleEnrollment, let registration {
+            verifier = enrollment.verifier
+            do {
+                let result = try await json("/accounts/oauth/apple/native/enroll", method: "POST", body: ["enrollment": enrollment.token, "verifier": verifier, "registration": registration])
+                guard let value = result["ticket"] as? String else { throw StudioFailure(message: "Sign-in was incomplete.", status: 0) }
+                ticket = value; appleEnrollment = nil
+            } catch {
+                if (error as? StudioFailure)?.status == 401 { appleEnrollment = nil }
+                throw error
+            }
+        } else if provider == "apple" {
+            appleEnrollment = nil
+            let start = try await json("/accounts/oauth/apple/native/start", method: "POST", body: body)
+            guard let state = start["state"] as? String, let nonce = start["nonce"] as? String else { throw StudioFailure(message: "Could not start secure sign-in.", status: 0) }
+            let code = try await StudioAppleAuthorization.shared.authorize(state: state, nonce: nonce)
+            var finish: [String: Any] = ["state": state, "verifier": verifier, "code": code]
+            if let registration { finish["registration"] = registration }
+            let result = try await json("/accounts/oauth/apple/native/finish", method: "POST", body: finish)
+            if result["registrationRequired"] as? Bool == true, let enrollment = result["enrollment"] as? String {
+                appleEnrollment = (enrollment, verifier)
+                throw StudioAppleEnrollmentRequired()
+            }
+            guard let value = result["ticket"] as? String else { throw StudioFailure(message: "Sign-in was incomplete.", status: 0) }
+            ticket = value
+        } else {
+            let start = try await json("/accounts/oauth/start", method: "POST", body: body)
+            guard let address = start["url"] as? String, let url = URL(string: address), url.scheme == "https", url.host == "accounts.google.com" else { throw StudioFailure(message: "Invalid sign-in provider link.", status: 0) }
+            let returned = try await StudioOAuthBrowser.shared.open(url)
+            guard returned.scheme == "art.lazying.lazyedit", returned.host == "auth" else { throw StudioFailure(message: "Sign-in was incomplete.", status: 0) }
+            let items = URLComponents(url: returned, resolvingAgainstBaseURL: false)?.queryItems ?? []
+            if let reason = items.first(where: {$0.name == "oauth_error"})?.value {
+                if reason == "cancelled" { throw CancellationError() }
+                throw StudioFailure(message: reason == "unlinked" ? "Sign in with your Studio password, then link this provider in Account." : "Sign-in could not finish. Please try again.", status: 0)
+            }
+            guard let value = items.first(where: {$0.name == "ticket"})?.value else { throw StudioFailure(message: "Sign-in was incomplete.", status: 0) }
+            ticket = value
+        }
         let payload = try JSONSerialization.data(withJSONObject: ["ticket": ticket, "verifier": verifier])
         let (data, response) = try await session.data(for: request("/accounts/oauth/redeem", method: "POST", body: payload))
         try validate(data, response)
@@ -282,11 +323,54 @@ final class StudioOAuthBrowser: NSObject, ASWebAuthenticationPresentationContext
                 Task { @MainActor in
                     self?.browser = nil
                     if let url { continuation.resume(returning: url) }
-                    else { continuation.resume(throwing: error ?? StudioFailure(message: "Sign-in was cancelled.", status: 0)) }
+                    else if (error as? ASWebAuthenticationSessionError)?.code == .canceledLogin { continuation.resume(throwing: CancellationError()) }
+                    else { continuation.resume(throwing: StudioFailure(message: "Secure sign-in could not finish. Please try again.", status: 0)) }
                 }
             }
             browser = value; value.presentationContextProvider = self
             if !value.start() { browser = nil; continuation.resume(throwing: StudioFailure(message: "Could not open secure sign-in.", status: 0)) }
         }
+    }
+}
+
+
+// Apple identity stays in the system sheet. No browser, provider cookies, or
+// email-based account merging; the server exchanges the one-use code.
+@MainActor
+final class StudioAppleAuthorization: NSObject, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    static let shared = StudioAppleAuthorization()
+    private var pending: CheckedContinuation<String, Error>?
+    private var controller: ASAuthorizationController?
+    private var expectedState: String?
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        UIApplication.shared.connectedScenes.compactMap {$0 as? UIWindowScene}.flatMap {$0.windows}.first(where: {$0.isKeyWindow}) ?? UIWindow()
+    }
+    func authorize(state: String, nonce: String) async throws -> String {
+        guard pending == nil else { throw StudioFailure(message: "Sign-in is already open.", status: 0) }
+        return try await withCheckedThrowingContinuation { continuation in
+            pending = continuation; expectedState = state
+            let request = ASAuthorizationAppleIDProvider().createRequest()
+            request.requestedScopes = [.email, .fullName]; request.state = state; request.nonce = nonce
+            let controller = ASAuthorizationController(authorizationRequests: [request])
+            self.controller = controller; controller.delegate = self; controller.presentationContextProvider = self
+            controller.performRequests()
+        }
+    }
+    private func finish(_ result: Result<String, Error>) {
+        let continuation = pending
+        pending = nil; controller = nil; expectedState = nil
+        continuation?.resume(with: result)
+    }
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+              credential.state == expectedState,
+              let data = credential.authorizationCode, let code = String(data: data, encoding: .utf8), !code.isEmpty else {
+            finish(.failure(StudioFailure(message: "Apple sign-in was incomplete. Please try again.", status: 0))); return
+        }
+        finish(.success(code))
+    }
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        if (error as? ASAuthorizationError)?.code == .canceled { finish(.failure(CancellationError())) }
+        else { finish(.failure(StudioFailure(message: "Apple sign-in could not finish. Check that you are signed in to your Apple Account in System Settings, then try again.", status: 0))) }
     }
 }

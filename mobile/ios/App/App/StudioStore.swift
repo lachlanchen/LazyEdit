@@ -219,26 +219,29 @@ final class StudioStore: ObservableObject {
         } catch { report(error) }
     }
 
+    @Published var appleEnrollmentPending = false
+    func cancelAppleEnrollment() { api.cancelAppleEnrollment(); appleEnrollmentPending = false; error = nil }
     @Published var oauthProviders: [String] = []
     @Published var linkedProviders: [String] = []
     func refreshSignInProviders() async {
-        oauthProviders = (try? await api.json("/accounts/oauth/providers")["providers"] as? [String]) ?? []
+        let readiness = (try? await api.json("/accounts/oauth/providers")) ?? [:]
+        oauthProviders = ((readiness["providers"] as? [String]) ?? []).filter { $0 != "apple" || readiness["nativeApple"] as? Bool == true }
         linkedProviders = signedIn ? (try? await api.json("/accounts/oauth/links")["providers"] as? [String]) ?? [] : []
     }
     func unlinkProvider(_ provider: String, password: String) async {
         do {_ = try await api.json("/accounts/oauth/unlink", method: "POST", body: ["provider": provider, "password": password]); await refreshSignInProviders()}
         catch { report(error) }
     }
-    func oauthSignIn(provider: String, password: String? = nil) async {
+    func oauthSignIn(provider: String, password: String? = nil, registration: [String: String]? = nil) async {
         guard !signingIn, !uploading, !preparingFile, pending == nil else { return }
         signingIn = true; error = nil
-        defer { signingIn = false }
+        defer { signingIn = false; appleEnrollmentPending = api.hasAppleEnrollment }
         do {
-            try await api.oauthSignIn(provider: provider, password: password)
+            try await api.oauthSignIn(provider: provider, password: password, registration: registration)
             username = api.identity?.username ?? ""; signedIn = true; workspaceMode = api.workspaceMode
             videos = []; jobs = []; images.removeAllObjects()
             await refreshAccount(); await refreshVideos()
-        } catch { report(error) }
+        } catch is StudioAppleEnrollmentRequired { /* Show native invited onboarding. */ } catch is CancellationError { /* User dismissed the system sheet. */ } catch { self.error = error.localizedDescription }
     }
 
     func refreshVideos() async {

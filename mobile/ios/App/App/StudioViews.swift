@@ -1,4 +1,5 @@
 import SwiftUI
+import AuthenticationServices
 import StoreKit
 import AVKit
 import PhotosUI
@@ -115,29 +116,46 @@ struct StudioLoginView: View {
                             }.pickerStyle(.segmented)
                         }
                         if workspace || store.username.trimmingCharacters(in: .whitespaces) != "lachlanchen" {
-                            Toggle(StudioStrings.text("Create account with invitation"), isOn: $register)
+                            Toggle(StudioStrings.text("Create account with invitation"), isOn: $register).disabled(store.appleEnrollmentPending)
                             if register { TextField(StudioStrings.text("Invitation code"), text: $invitation).textInputAutocapitalization(.never).autocorrectionDisabled() }
                         }
                         TextField(StudioStrings.text("Username"), text: $store.username).textContentType(.username).textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityIdentifier("studio.username")
                         SecureField(StudioStrings.text("Password"), text: $password).textContentType(.password).submitLabel(.go).accessibilityIdentifier("studio.password")
                             .onSubmit { signIn() }
                     }.textFieldStyle(.roundedBorder)
+                    if store.appleEnrollmentPending {
+                        Text(StudioStrings.text("Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.")).font(.callout)
+                        Button(StudioStrings.text("Use another sign-in method")) { store.cancelAppleEnrollment(); register = false }
+                    }
                     StudioErrorBanner()
                     Button(action: signIn) {
-                        HStack { Spacer(); if store.signingIn { ProgressView().tint(.white) }; Text(StudioStrings.text(store.signingIn ? "Signing in…" : "Sign in")).bold(); Spacer() }.padding(.vertical, 7)
-                    }.buttonStyle(.borderedProminent).disabled(store.signingIn || password.isEmpty || store.username.isEmpty).accessibilityIdentifier("studio.signIn")
-                    ForEach(store.oauthProviders, id: \.self) { provider in
-                        Button(StudioStrings.text(provider == "apple" ? "Continue with Apple" : "Continue with Google")) { Task { await store.oauthSignIn(provider: provider) } }.buttonStyle(.bordered).disabled(store.signingIn)
+                        HStack { Spacer(); if store.signingIn { ProgressView().tint(.white) }; Text(StudioStrings.text(store.signingIn ? "Signing in…" : (store.appleEnrollmentPending ? "Finish account setup" : "Sign in"))).bold(); Spacer() }.padding(.vertical, 7)
+                    }.buttonStyle(.borderedProminent).disabled(store.signingIn || password.isEmpty || store.username.isEmpty || (store.appleEnrollmentPending && (password.count < 12 || invitation.isEmpty))).accessibilityIdentifier("studio.signIn")
+                    if store.oauthProviders.contains("apple") && !store.appleEnrollmentPending {
+                        StudioAppleSignInButton {
+                            let registration = register ? ["username": store.username, "password": password, "invitation": invitation] : nil
+                            Task { await store.oauthSignIn(provider: "apple", registration: registration); if store.signedIn { password = "" } }
+                        }.frame(height: 48)
+                            .disabled(store.signingIn || (register && (password.count < 12 || store.username.isEmpty || invitation.isEmpty)))
+                            .accessibilityIdentifier("studio.appleSignIn")
+                    }
+                    if store.oauthProviders.contains("google") && !register && !store.appleEnrollmentPending {
+                        Button(StudioStrings.text("Continue with Google")) { Task { await store.oauthSignIn(provider: "google") } }.buttonStyle(.bordered).disabled(store.signingIn)
                     }
                     Text("edit.lazying.art").font(.footnote).foregroundStyle(.secondary)
                 }.padding(28).padding(.top, 48)
             }.background(Color(uiColor: .systemGroupedBackground)).task { await store.refreshSignInProviders() }
+                .onChange(of: store.appleEnrollmentPending) { pending in if pending { register = true } }
         }
     }
     private func signIn() {
         guard !store.signingIn, !password.isEmpty else { return }
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         let value = password
+        if store.appleEnrollmentPending {
+            Task { await store.oauthSignIn(provider: "apple", registration: ["username": store.username, "password": value, "invitation": invitation]); if store.signedIn { password = "" } }
+            return
+        }
         let usePrivate = workspace || store.username.trimmingCharacters(in: .whitespaces) != "lachlanchen"
         Task { await store.login(password: value, workspace: usePrivate, invitation: usePrivate && register ? invitation : nil); if store.signedIn { password = "" } }
     }
@@ -787,4 +805,26 @@ struct StudioAgentView: View {
 }
 private extension Dictionary where Key == String, Value == Any {
     var agentID: String { self["id"] as? String ?? "" }
+}
+
+
+// Use Apple's localized system control, including its accessibility label.
+private struct StudioAppleSignInButton: UIViewRepresentable {
+    var action: () -> Void
+    func makeCoordinator() -> Coordinator { Coordinator(action: action) }
+    func makeUIView(context: Context) -> ASAuthorizationAppleIDButton {
+        let button = ASAuthorizationAppleIDButton(type: .continue, style: .black)
+        button.cornerRadius = 10
+        button.addTarget(context.coordinator, action: #selector(Coordinator.invoke), for: .touchUpInside)
+        return button
+    }
+    func updateUIView(_ button: ASAuthorizationAppleIDButton, context: Context) {
+        context.coordinator.action = action
+        button.isEnabled = context.environment.isEnabled
+    }
+    final class Coordinator: NSObject {
+        var action: () -> Void
+        init(action: @escaping () -> Void) { self.action = action }
+        @objc func invoke() { action() }
+    }
 }

@@ -25,6 +25,7 @@ profile_info=$(mktemp "$root/release/.mac-profile.XXXXXX")
 options=$(mktemp "$root/release/.mac-export.XXXXXX")
 trap 'rm -f "$profile_info" "$options"; cleanup' EXIT
 security cms -D -i "$root/LazyEditMac.provisionprofile" > "$profile_info"
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.developer.applesignin:0' "$profile_info")" == Default ]]
 uuid=$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$profile_info")
 name=$(/usr/libexec/PlistBuddy -c 'Print :Name' "$profile_info")
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.application-identifier' "$profile_info")" == Q8M2S2FY77.art.lazying.lazyedit ]]
@@ -62,10 +63,10 @@ xcodebuild -project App.xcodeproj -scheme StudioNative -configuration Release \
   CODE_SIGN_IDENTITY='Apple Distribution' "PROVISIONING_PROFILE_SPECIFIER=$name" \
   "CODE_SIGN_ENTITLEMENTS=$root/ios/App/App/StudioMac.entitlements" \
   "OTHER_CODE_SIGN_FLAGS=--keychain $keychain" \
-  OTHER_LDFLAGS='$(inherited) -weak_framework SwiftUICore' COMPILER_INDEX_STORE_ENABLE=NO \
+  COMPILER_INDEX_STORE_ENABLE=NO \
   > "$root/release/mac-store-$build-archive.log" 2>&1
 fi
-app="$archive/Products/Applications/App.app"
+app="$archive/Products/Applications/LazyEdit Studio.app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Contents/Info.plist")" == art.lazying.lazyedit ]]
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info.plist")" == "$build" ]]
 bash "$helper_dir/check_macos_bundle.sh" "$app" "$build"
@@ -74,4 +75,4 @@ bash "$helper_dir/check_macos_bundle.sh" "$app" "$build"
 chmod -R a+rX "$app"
 xcodebuild -exportArchive -archivePath "$archive" -exportOptionsPlist "$options" \
   -exportPath "$root/release/mac-store-export-$build" > "$root/release/mac-store-$build-export.log" 2>&1
-shasum -a 256 "$root/release/mac-store-export-$build/App.pkg"
+shasum -a 256 "$root/release/mac-store-export-$build/LazyEdit Studio.pkg"

@@ -9,13 +9,13 @@ identity="${LAZYEDIT_QA_IDENTITY:?Supply the app-owned development identity hash
 [[ "$build" =~ ^[0-9]+$ && "$identity" =~ ^[A-Fa-f0-9]{40}$ ]] || exit 2
 profile="$HOME/.config/lazyedit-studio/qa-signing/MacQA.provisionprofile"
 keychain="$HOME/Library/Keychains/lazyedit-studio-release.keychain-db"
-source="$root/release/LazyEditStudio-macOS-$build.xcarchive/Products/Applications/App.app"
-destination="$root/release/MacQA$build/App.app"
+source="$root/release/LazyEditStudio-macOS-$build.xcarchive/Products/Applications/LazyEdit Studio.app"
+destination="$root/release/MacQA$build/LazyEdit Studio.app"
 [[ ! -e "$destination" || "${LAZYEDIT_QA_RESUME:-0}" == 1 ]] || { echo 'Preserve existing QA candidate; explicit QA resume is required.' >&2; exit 2; }
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$source/Contents/Info.plist")" == "$build" ]]
 mkdir -p "$(dirname "$destination")"
 if [[ ! -e "$destination" ]]; then ditto "$source" "$destination"; fi
-cmp "$source/Contents/MacOS/App" "$destination/Contents/MacOS/App"
+cmp "$source/Contents/MacOS/LazyEdit Studio" "$destination/Contents/MacOS/LazyEdit Studio"
 cp "$profile" "$destination/Contents/embedded.provisionprofile"
 entitlements=$(mktemp "$root/release/.qa-entitlements.XXXXXX")
 previous=$(security list-keychains -d user)

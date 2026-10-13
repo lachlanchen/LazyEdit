@@ -29,7 +29,7 @@ settings=(CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- "CODE_SIGN_ENTITLEMENTS=
 xcodebuild -project App.xcodeproj -scheme StudioNative \
   -destination "platform=iOS Simulator,id=$device" -derivedDataPath "$derived" \
   "${settings[@]}" -only-testing:"$selection" build-for-testing
-app="$derived/Build/Products/Debug-iphonesimulator/App.app"
+app="$derived/Build/Products/Debug-iphonesimulator/LazyEdit Studio.app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist")" == art.lazying.lazyedit ]]
 codesign --verify --deep --strict "$app"
 xcodebuild -project App.xcodeproj -scheme StudioNative \

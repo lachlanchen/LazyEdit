@@ -8,6 +8,9 @@ plist="$app/Contents/Info.plist"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$plist")" == art.lazying.lazyedit ]]
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$plist")" == "$build" ]]
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :LSMinimumSystemVersion' "$plist")" == 12.0 ]]
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$plist")" == 'LazyEdit Studio' ]]
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleName' "$plist")" == 'LazyEdit Studio' ]]
+[[ "$(basename "$app")" == 'LazyEdit Studio.app' ]]
 executable=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$plist")
 [[ -f "$app/Contents/MacOS/$executable" ]]
 count=0

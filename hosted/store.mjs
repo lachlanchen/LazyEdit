@@ -78,7 +78,7 @@ export class Registry extends AuthStore {
     this.throttle(`register:${client}`);
     if (!/^[a-z][a-z0-9_-]{2,31}$/.test(username || '')) fail(400, 'Use 3–32 lowercase letters, numbers, hyphens or underscores');
     if (typeof password !== 'string' || password.length < 12 || password.length > 128) fail(400, 'Use a password of 12–128 characters');
-    this.db.exec('BEGIN IMMEDIATE');
+    this.db.exec('SAVEPOINT registration');
     try {
       const inv = this.db.prepare('SELECT * FROM invitations WHERE hash=? AND used=0 AND expires>?').get(digest(String(invitation || '')), Date.now());
       if (!inv) fail(400, 'Invitation unavailable');
@@ -87,9 +87,9 @@ export class Registry extends AuthStore {
       const owner = this.addOwner(username, password), id = digest(secret()).slice(0, 24);
       this.db.prepare('INSERT INTO workspaces(id,owner,transport,created) VALUES(?,?,?,?)').run(id, owner, secret(), Date.now());
       this.db.prepare('UPDATE invitations SET used=1 WHERE hash=?').run(inv.hash);
-      this.db.exec('COMMIT');
+      this.db.exec('RELEASE registration');
       return owner;
-    } catch (e) { this.db.exec('ROLLBACK'); throw e; }
+    } catch (e) { this.db.exec('ROLLBACK TO registration; RELEASE registration'); throw e; }
   }
   workspace(owner) { return this.db.prepare('SELECT * FROM workspaces WHERE owner=?').get(owner); }
   host(row) { return this.sameHost ? this.domain : `w-${row.id}.${this.domain}`; }

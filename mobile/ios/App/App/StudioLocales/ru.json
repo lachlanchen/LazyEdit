@@ -391,5 +391,8 @@
   "agent_state_submitted": "Задача принята — следите за ходом ниже",
   "agent_state_reply": "Studio",
   "agent_state_rejected": "Ничего не отправлено",
-  "agent_state_held": "Проверьте существующий запрос перед повтором"
+  "agent_state_held": "Проверьте существующий запрос перед повтором",
+  "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Вход через Apple подтверждён. Введите код приглашения, выберите имя пользователя и пароль для восстановления длиной не менее 12 символов.",
+  "Finish account setup": "Завершить настройку аккаунта",
+  "Use another sign-in method": "Войти другим способом"
 }

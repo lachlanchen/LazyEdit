@@ -391,5 +391,8 @@
   "agent_state_submitted": "Aufgabe angenommen – verfolge den Fortschritt unten",
   "agent_state_reply": "Studio",
   "agent_state_rejected": "Nichts eingereicht",
-  "agent_state_held": "Prüfe die bestehende Anfrage, bevor du sie erneut sendest"
+  "agent_state_held": "Prüfe die bestehende Anfrage, bevor du sie erneut sendest",
+  "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Apple-Anmeldung bestätigt. Gib deinen Einladungscode ein und wähle einen Benutzernamen sowie ein Wiederherstellungspasswort mit mindestens 12 Zeichen.",
+  "Finish account setup": "Kontoeinrichtung abschließen",
+  "Use another sign-in method": "Andere Anmeldemethode verwenden"
 }

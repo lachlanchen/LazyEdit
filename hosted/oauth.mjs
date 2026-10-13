@@ -13,6 +13,7 @@ export const challengeFor = verifier => Buffer.from(digest(verifier), 'hex').toS
 export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
   registry.db.exec(`CREATE TABLE IF NOT EXISTS oauth_flows(hash TEXT PRIMARY KEY, provider TEXT, body TEXT, expires INTEGER);
     CREATE TABLE IF NOT EXISTS oauth_links(provider TEXT, subject TEXT, owner TEXT, refresh TEXT, PRIMARY KEY(provider,subject), UNIQUE(provider,owner));
+    CREATE TABLE IF NOT EXISTS oauth_enrollments(hash TEXT PRIMARY KEY, body TEXT, challenge TEXT, expires INTEGER);
     CREATE TABLE IF NOT EXISTS oauth_receipts(hash TEXT PRIMARY KEY, owner TEXT, challenge TEXT, expires INTEGER);`);
   const settings = Object.create(null);
   for (const name of Object.keys(definitions)) {
@@ -42,14 +43,14 @@ export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
     return Buffer.concat([cipher.update(Buffer.from(v.body, 'base64url')), cipher.final()]).toString();
   }
   const redirect = name => `${origin}/accounts/oauth/callback/${name}`;
-  function clientSecret(name) {
+  function clientSecret(name, clientId = settings[name].clientId) {
     const s = settings[name];
     if (name === 'google') return s.clientSecret;
     const now = Math.floor(Date.now() / 1000);
-    const input = Buffer.from(JSON.stringify({alg: 'ES256', kid: s.keyId})).toString('base64url') + '.' + Buffer.from(JSON.stringify({iss: s.teamId, iat: now, exp: now + 300, aud: 'https://appleid.apple.com', sub: s.clientId})).toString('base64url');
+    const input = Buffer.from(JSON.stringify({alg: 'ES256', kid: s.keyId})).toString('base64url') + '.' + Buffer.from(JSON.stringify({iss: s.teamId, iat: now, exp: now + 300, aud: 'https://appleid.apple.com', sub: clientId})).toString('base64url');
     return input + '.' + sign('sha256', Buffer.from(input), {key: s.key, dsaEncoding: 'ieee-p1363'}).toString('base64url');
   }
-  async function identity(name, token, nonce) {
+  async function identity(name, token, nonce, audience = settings[name].clientId) {
     if (typeof token !== 'string' || token.length > 16000) fail(401, 'Invalid provider identity');
     let header, claims, parts;
     try { parts = token.split('.'); header = JSON.parse(Buffer.from(parts[0], 'base64url')); claims = JSON.parse(Buffer.from(parts[1], 'base64url')); } catch { fail(401, 'Invalid provider identity'); }
@@ -63,12 +64,84 @@ export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
     const key = keys.values.find(value => value.kid === header.kid && value.kty === 'RSA' && (!value.alg || value.alg === 'RS256'));
     if (!key || !verify('RSA-SHA256', Buffer.from(parts[0] + '.' + parts[1]), createPublicKey({key, format: 'jwk'}), Buffer.from(parts[2], 'base64url'))) fail(401, 'Invalid provider signature');
     const now = Math.floor(Date.now() / 1000);
-    if (!definitions[name].issuers.includes(claims.iss) || claims.aud !== settings[name].clientId || claims.nonce !== nonce || typeof claims.sub !== 'string' || !claims.sub || claims.sub.length > 300 || !Number.isFinite(claims.exp) || claims.exp <= now || !Number.isFinite(claims.iat) || claims.iat < now - 600 || claims.iat > now + 60) fail(401, 'Provider identity expired or did not match Studio');
+    if (!definitions[name].issuers.includes(claims.iss) || claims.aud !== audience || claims.nonce !== nonce || typeof claims.sub !== 'string' || !claims.sub || claims.sub.length > 300 || !Number.isFinite(claims.exp) || claims.exp <= now || !Number.isFinite(claims.iat) || claims.iat < now - 600 || claims.iat > now + 60) fail(401, 'Provider identity expired or did not match Studio');
     return claims;
+  }
+  function completeApple(flow, claims, tokens, registration, client) {
+    const clientId = settings.apple.nativeClientId;
+    registry.db.exec('SAVEPOINT native_apple');
+    try {
+      const prior = registry.db.prepare('SELECT * FROM oauth_links WHERE provider=? AND subject=?').get('apple', claims.sub);
+      let owner = flow.owner || prior?.owner;
+      if (owner && registry.db.prepare('SELECT 1 FROM closed_accounts WHERE owner=?').get(owner)) fail(403, 'This Studio account was deleted');
+      if (flow.owner && prior && prior.owner !== flow.owner) fail(409, 'Provider is linked to another Studio account');
+      if (!owner) {
+        if (!registration || flow.owner) fail(403, 'Use Create account with invitation to join Studio, or sign in with your Studio password and link Apple in Account');
+        owner = registry.register(registration, client);
+      }
+      const existing = registry.db.prepare('SELECT subject FROM oauth_links WHERE provider=? AND owner=?').get('apple', owner);
+      if (existing && existing.subject !== claims.sub) fail(409, 'Unlink the current provider account first');
+      if (!tokens.refresh_token) fail(502, 'Apple did not provide account-revocation credentials; please try again');
+      // Include the issuing client inside the encrypted envelope, so old web
+      // links and new native links are revoked using the correct audience.
+      registry.db.prepare('INSERT INTO oauth_links VALUES(?,?,?,?) ON CONFLICT(provider,subject) DO UPDATE SET refresh=excluded.refresh').run('apple', claims.sub, owner, encrypt(JSON.stringify({clientId, token: tokens.refresh_token})));
+      const ticket = secret();
+      registry.db.prepare('DELETE FROM oauth_receipts WHERE expires<?').run(Date.now());
+      registry.db.prepare('INSERT INTO oauth_receipts VALUES(?,?,?,?)').run(digest(ticket), owner, flow.challenge, Date.now() + 120000);
+      registry.db.exec('RELEASE native_apple');
+      return {ticket};
+    } catch (error) { registry.db.exec('ROLLBACK TO native_apple; RELEASE native_apple'); throw error; }
   }
   return {
     providers: () => Object.keys(settings),
+    nativeAppleAvailable: () => Boolean(settings.apple?.nativeClientId),
     links: owner => registry.db.prepare('SELECT provider FROM oauth_links WHERE owner=?').all(owner).map(row => row.provider),
+    startApple(body, owner, client) {
+      if (!settings.apple?.nativeClientId) fail(503, 'Native Apple sign-in is not configured');
+      if (!proof.test(body.challenge || '')) fail(400, 'Invalid sign-in challenge');
+      registry.throttle(`oauth:${client}`);
+      const state = secret(), nonce = secret();
+      registry.db.prepare('DELETE FROM oauth_flows WHERE expires<?').run(Date.now());
+      registry.db.prepare('INSERT INTO oauth_flows VALUES(?,?,?,?)').run(digest(state), 'apple', JSON.stringify({target: 'apple-native', challenge: body.challenge, nonce, owner: owner || null}), Date.now() + 600000);
+      return {state, nonce};
+    },
+    async finishApple(body, client) {
+      if (!settings.apple?.nativeClientId) fail(503, 'Native Apple sign-in is not configured');
+      if (!proof.test(body.state || '') || !proof.test(body.verifier || '')) fail(401, 'Invalid Apple sign-in attempt');
+      const row = registry.db.prepare('SELECT * FROM oauth_flows WHERE hash=? AND provider=? AND expires>?').get(digest(body.state), 'apple', Date.now());
+      if (!row) fail(401, 'Sign-in expired; start again');
+      const flow = JSON.parse(row.body);
+      if (flow.target !== 'apple-native' || flow.challenge !== challengeFor(body.verifier)) fail(401, 'Apple sign-in did not match this device');
+      // Consume before network IO: a timed-out exchange must not replay a code.
+      registry.db.prepare('DELETE FROM oauth_flows WHERE hash=?').run(row.hash);
+      if (typeof body.code !== 'string' || !body.code || body.code.length > 4096) fail(401, 'Apple sign-in was incomplete');
+      const clientId = settings.apple.nativeClientId;
+      const tokens = await remote(definitions.apple.token, {method: 'POST', headers: {'content-type': 'application/x-www-form-urlencoded'}, body: new URLSearchParams({grant_type: 'authorization_code', code: body.code, client_id: clientId, client_secret: clientSecret('apple', clientId)})});
+      const claims = await identity('apple', tokens.id_token, flow.nonce, clientId);
+      const prior = registry.db.prepare('SELECT owner FROM oauth_links WHERE provider=? AND subject=?').get('apple', claims.sub);
+      if (!flow.owner && !prior && !body.registration) {
+        if (!tokens.refresh_token) fail(502, 'Apple did not provide account-revocation credentials; please try again');
+        const enrollment = secret();
+        registry.db.prepare('DELETE FROM oauth_enrollments WHERE expires<?').run(Date.now());
+        registry.db.prepare('INSERT INTO oauth_enrollments VALUES(?,?,?,?)').run(digest(enrollment), encrypt(JSON.stringify({flow, claims: {sub: claims.sub}, tokens: {refresh_token: tokens.refresh_token}})), flow.challenge, Date.now() + 300000);
+        return {registrationRequired: true, enrollment};
+      }
+      return completeApple(flow, claims, tokens, body.registration, client);
+    },
+    enrollApple(body, client) {
+      if (!settings.apple?.nativeClientId) fail(503, 'Native Apple sign-in is not configured');
+      if (!proof.test(body.enrollment || '') || !proof.test(body.verifier || '')) fail(401, 'Invalid account setup attempt');
+      registry.db.exec('SAVEPOINT apple_enrollment');
+      try {
+        const row = registry.db.prepare('DELETE FROM oauth_enrollments WHERE hash=? AND challenge=? AND expires>? RETURNING body').get(digest(body.enrollment), challengeFor(body.verifier), Date.now());
+        if (!row) fail(401, 'Account setup expired; continue with Apple again');
+        const {flow, claims, tokens} = JSON.parse(decrypt(row.body));
+        const result = completeApple(flow, claims, tokens, body.registration, client);
+        registry.db.exec('RELEASE apple_enrollment');
+        return result;
+      } catch (error) { registry.db.exec('ROLLBACK TO apple_enrollment; RELEASE apple_enrollment'); throw error; }
+
+    },
     start(name, body, owner, client) {
       if (!settings[name]) fail(503, 'This sign-in provider is not configured');
       if (!proof.test(body.challenge || '') || !['native', 'web'].includes(body.target)) fail(400, 'Invalid sign-in challenge');
@@ -94,11 +167,14 @@ export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
     async callback(name, body) {
       const expired=()=>{throw Object.assign(Error('Sign-in expired; start again'),{status:401,oauthReason:'expired'});};
       if (!settings[name] || !proof.test(body.state || '')) expired();
-      const row = registry.db.prepare('DELETE FROM oauth_flows WHERE hash=? AND provider=? AND expires>? RETURNING body').get(digest(body.state), name, Date.now());
+      const row = registry.db.prepare('DELETE FROM oauth_flows WHERE hash=? AND provider=? RETURNING body,expires').get(digest(body.state), name);
       if (!row) expired();
+      const flow = JSON.parse(row.body);
+      try {
+      if (row.expires <= Date.now()) expired();
+      if (flow.target === 'apple-native') fail(401, 'Use native Apple sign-in');
       if(body.error==='access_denied')throw Object.assign(Error('Sign-in cancelled; start again when ready'),{status:401,oauthReason:'cancelled'});
       if(typeof body.code!=='string'||!body.code||body.code.length>4096)fail(401,'Provider sign-in was incomplete; start again');
-      const flow = JSON.parse(row.body);
       const values = {grant_type: 'authorization_code', code: body.code, client_id: settings[name].clientId, client_secret: clientSecret(name), redirect_uri: redirect(name)};
       if (name === 'google') values.code_verifier = flow.verifier;
       const tokens = await remote(definitions[name].token, {method: 'POST', headers: {'content-type': 'application/x-www-form-urlencoded'}, body: new URLSearchParams(values)});
@@ -117,10 +193,11 @@ export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
       registry.db.prepare('DELETE FROM oauth_receipts WHERE expires<?').run(Date.now());
       registry.db.prepare('INSERT INTO oauth_receipts VALUES(?,?,?,?)').run(digest(ticket), owner, flow.challenge, Date.now() + 120000);
       return flow.target === 'native' ? `art.lazying.lazyedit://auth?ticket=${ticket}` : `${origin}/accounts#ticket=${ticket}`;
+      } catch (error) { error.oauthTarget = flow.target; throw error; }
     },
     failureLocation(error) {
       const reason=['expired','cancelled'].includes(error.oauthReason)?error.oauthReason:error.status===403?'unlinked':'provider';
-      return `${origin}/accounts?oauth_error=${reason}`;
+      return error.oauthTarget === 'native' ? `art.lazying.lazyedit://auth?oauth_error=${reason}` : `${origin}/accounts?oauth_error=${reason}`;
     },
     redeem(body) {
       if (!proof.test(body.ticket || '') || !proof.test(body.verifier || '')) fail(401, 'Invalid sign-in receipt');
@@ -134,7 +211,12 @@ export function createOAuth(registry, config = {}, origin, fetcher = fetch) {
       if (!row) return;
       if (row.refresh) {
         if (!settings[name]) fail(503, 'Provider revocation is temporarily unavailable');
-        const values = name === 'apple' ? {client_id: settings[name].clientId, client_secret: clientSecret(name), token: decrypt(row.refresh), token_type_hint: 'refresh_token'} : {token: decrypt(row.refresh)};
+        let token = decrypt(row.refresh), clientId = settings[name].clientId;
+        if (name === 'apple' && token.startsWith('{')) {
+          const envelope = JSON.parse(token); token = envelope.token; clientId = envelope.clientId;
+          if (![settings.apple.clientId, settings.apple.nativeClientId].includes(clientId)) fail(503, 'Provider revocation client is unavailable');
+        }
+        const values = name === 'apple' ? {client_id: clientId, client_secret: clientSecret(name, clientId), token, token_type_hint: 'refresh_token'} : {token};
         const response = await fetcher(name === 'apple' ? 'https://appleid.apple.com/auth/revoke' : 'https://oauth2.googleapis.com/revoke', {method: 'POST', redirect: 'error', signal: AbortSignal.timeout(20000), headers: {'content-type': 'application/x-www-form-urlencoded'}, body: new URLSearchParams(values)});
         await response.body?.cancel(); if (!response.ok) fail(502, 'Provider revocation did not finish; try again');
       }

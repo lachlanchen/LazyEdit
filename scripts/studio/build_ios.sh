@@ -33,6 +33,7 @@ profile_info=$(mktemp "$root/release/.profile.XXXXXX")
 export_options=$(mktemp "$root/release/.export.XXXXXX")
 trap 'rm -f "$profile_info" "$export_options"; cleanup' EXIT
 security cms -D -i "$root/LazyEdit.mobileprovision" > "$profile_info"
+[[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:com.apple.developer.applesignin:0' "$profile_info")" == Default ]]
 profile_uuid=$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$profile_info")
 profile_name=$(/usr/libexec/PlistBuddy -c 'Print :Name' "$profile_info")
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$profile_info")" == Q8M2S2FY77.art.lazying.lazyedit ]]
@@ -42,10 +43,10 @@ cp "$root/LazyEdit.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Pro
 cp "$root/ExportOptions.plist" "$export_options"
 /usr/libexec/PlistBuddy -c "Set :provisioningProfiles:art.lazying.lazyedit $profile_name" "$export_options"
 cd "$root/ios/App"
-xcodebuild -project App.xcodeproj -scheme StudioNative -configuration Release -destination generic/platform=iOS -archivePath "$root/release/LazyEditStudio-${build_number}.xcarchive" -derivedDataPath "$root/release/DerivedData" archive DEVELOPMENT_TEAM=Q8M2S2FY77 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' "PROVISIONING_PROFILE_SPECIFIER=$profile_name" "OTHER_CODE_SIGN_FLAGS=--keychain $keychain" COMPILER_INDEX_STORE_ENABLE=NO > "$root/release/archive.log" 2>&1
-archive_app="$root/release/LazyEditStudio-${build_number}.xcarchive/Products/Applications/App.app"
+xcodebuild -project App.xcodeproj -scheme StudioNative -configuration Release -destination generic/platform=iOS -archivePath "$root/release/LazyEditStudio-${build_number}.xcarchive" -derivedDataPath "$root/release/DerivedData" archive "CURRENT_PROJECT_VERSION=$build_number" DEVELOPMENT_TEAM=Q8M2S2FY77 CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY='Apple Distribution' "PROVISIONING_PROFILE_SPECIFIER=$profile_name" "OTHER_CODE_SIGN_FLAGS=--keychain $keychain" COMPILER_INDEX_STORE_ENABLE=NO > "$root/release/archive.log" 2>&1
+archive_app="$root/release/LazyEditStudio-${build_number}.xcarchive/Products/Applications/LazyEdit Studio.app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$archive_app/Info.plist")" == art.lazying.lazyedit ]]
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$archive_app/Info.plist")" == "$build_number" ]]
 xcodebuild -exportArchive -archivePath "$root/release/LazyEditStudio-${build_number}.xcarchive" -exportOptionsPlist "$export_options" -exportPath "$root/release/export-${build_number}" > "$root/release/export.log" 2>&1
-codesign --verify --deep --strict "$root/release/LazyEditStudio-${build_number}.xcarchive/Products/Applications/App.app"
-shasum -a 256 "$root/release/export-${build_number}/App.ipa"
+codesign --verify --deep --strict "$root/release/LazyEditStudio-${build_number}.xcarchive/Products/Applications/LazyEdit Studio.app"
+shasum -a 256 "$root/release/export-${build_number}/LazyEdit Studio.ipa"

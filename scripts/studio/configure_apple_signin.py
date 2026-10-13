@@ -25,6 +25,7 @@ def main():
     parser.add_argument("--state", type=Path, required=True)
     parser.add_argument("--client-json", type=Path, required=True)
     parser.add_argument("--enable", action="store_true")
+    parser.add_argument("--native", action="store_true", help="Enable the native App ID audience after verifying its Sign in with Apple capability")
     args = parser.parse_args()
     root = args.state.resolve()
     info = root.stat()
@@ -69,6 +70,7 @@ def main():
         "enabled": args.enable, "clientId": client["clientId"],
         "teamId": client["teamId"], "keyId": client["keyId"],
         "privateKeyFile": "/registry/apple-signin.p8",
+        **({"nativeClientId": client["primaryAppId"]} if args.native or existing.get("apple", {}).get("nativeClientId") == client["primaryAppId"] else {}),
     }}
     atomic_json(config_path, {**config, "oauth": oauth})
     atomic_json(gateway_path, {**gateway, "oauth": oauth})

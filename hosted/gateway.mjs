@@ -91,15 +91,23 @@ export function createGateway(config) {
       res.writeHead(303, {location, 'cache-control': 'no-store', 'referrer-policy': 'no-referrer'}); res.end(); return;
     }
     if (req.method === 'POST' && req.headers.origin !== origin) fail(403,'Same-origin request required');
-    if (req.method === 'GET' && path === '/oauth/providers') return json(res, 200, {providers: oauth.providers()});
-    if (req.method === 'POST' && path === '/oauth/start') {
+    if (req.method === 'GET' && path === '/oauth/providers') return json(res, 200, {providers: oauth.providers(), nativeApple: oauth.nativeAppleAvailable()});
+    if (req.method === 'POST' && ['/oauth/start', '/oauth/apple/native/start'].includes(path)) {
       const d = await readJSON(req, 4096); let owner;
       if (d.link) {
         owner = principal(req).owner;
         const name = registry.db.prepare('SELECT username FROM users WHERE id=?').get(owner).username;
         registry.login(name, String(d.password || ''), client);
       }
-      return json(res, 200, oauth.start(d.provider, d, owner, client));
+      return json(res, 200, path === '/oauth/apple/native/start' ? oauth.startApple(d, owner, client) : oauth.start(d.provider, d, owner, client));
+    }
+    if (req.method === 'POST' && path === '/oauth/apple/native/finish') {
+      registry.throttle(`oauth-native:${client}`);
+      return json(res, 200, await oauth.finishApple(await readJSON(req, 8192), client));
+    }
+    if (req.method === 'POST' && path === '/oauth/apple/native/enroll') {
+      registry.throttle(`oauth-enroll:${client}`);
+      return json(res, 200, oauth.enrollApple(await readJSON(req, 4096), client));
     }
     if (req.method === 'POST' && path === '/oauth/redeem') {
       registry.throttle(`oauth-redeem:${client}`);

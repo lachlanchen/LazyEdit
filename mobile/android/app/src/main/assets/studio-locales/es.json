@@ -391,5 +391,8 @@
   "agent_state_submitted": "Tarea aceptada — sigue el progreso abajo",
   "agent_state_reply": "Studio",
   "agent_state_rejected": "Nada enviado",
-  "agent_state_held": "Verifica la solicitud existente antes de reintentar"
+  "agent_state_held": "Verifica la solicitud existente antes de reintentar",
+  "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Inicio de sesión con Apple verificado. Introduce tu invitación, elige un usuario y una contraseña de recuperación de al menos 12 caracteres para terminar.",
+  "Finish account setup": "Completar la configuración de la cuenta",
+  "Use another sign-in method": "Usar otro método de inicio de sesión"
 }

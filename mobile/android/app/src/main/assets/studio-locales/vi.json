@@ -391,5 +391,8 @@
   "agent_state_submitted": "Đã nhận tác vụ — theo dõi tiến trình bên dưới",
   "agent_state_reply": "Studio",
   "agent_state_rejected": "Không có gì được gửi",
-  "agent_state_held": "Kiểm tra yêu cầu hiện có trước khi thử lại"
+  "agent_state_held": "Kiểm tra yêu cầu hiện có trước khi thử lại",
+  "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Đã xác minh đăng nhập Apple. Nhập mã mời, chọn tên người dùng và mật khẩu khôi phục có ít nhất 12 ký tự để hoàn tất.",
+  "Finish account setup": "Hoàn tất thiết lập tài khoản",
+  "Use another sign-in method": "Dùng cách đăng nhập khác"
 }

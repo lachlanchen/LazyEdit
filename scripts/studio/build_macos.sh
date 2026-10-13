@@ -14,9 +14,8 @@ xcodebuild -project App.xcodeproj -scheme StudioNative -configuration Release \
   IPHONEOS_DEPLOYMENT_TARGET=15.0 MACOSX_DEPLOYMENT_TARGET=12.0 \
   ARCHS='arm64 x86_64' ONLY_ACTIVE_ARCH=NO CODE_SIGNING_ALLOWED=NO \
   CURRENT_PROJECT_VERSION="$build_number" \
-  OTHER_LDFLAGS='$(inherited) -weak_framework SwiftUICore' \
   build > "$root/release/mac-build.log" 2>&1
-app="$root/release/MacDerivedData/Build/Products/Release-maccatalyst/App.app"
+app="$root/release/MacDerivedData/Build/Products/Release-maccatalyst/LazyEdit Studio.app"
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Contents/Info.plist")" == art.lazying.lazyedit ]]
 [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app/Contents/Info.plist")" == "$build_number" ]]
 codesign --force --deep --sign - "$app"
