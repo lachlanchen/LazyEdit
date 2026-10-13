@@ -3,7 +3,7 @@
 
 
 
-[![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://github.com/lachlanchen/lachlanchen/blob/main/figs/banner.png)
+[![LazyingArt banner](https://github.com/lachlanchen/lachlanchen/raw/main/figs/banner.png)](https://lazying.art)
 
 <p align="center">
   <b>سير عمل فيديو مدعوم بالذكاء الاصطناعي</b> للتوليد، ومعالجة الترجمات، والبيانات الوصفية، والنشر الاختياري.
