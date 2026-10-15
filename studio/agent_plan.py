@@ -5,6 +5,33 @@ import os
 from pathlib import Path
 import re
 import sys
+import urllib.request
+from urllib.parse import urlsplit
+
+
+def sandbox_plan(payload):
+    """Operator-only endpoint. Never silently revert to an unsandboxed provider."""
+    endpoint = os.environ['STUDIO_AGENT_URL']
+    url = urlsplit(endpoint)
+    if (url.scheme not in ('http', 'https') or url.username or url.password
+            or url.query or url.fragment or url.path not in ('', '/')
+            or (url.scheme == 'http' and url.hostname not in ('127.0.0.1', 'localhost', 'planner'))):
+        raise ValueError('Invalid planner endpoint')
+    token = Path(os.environ['STUDIO_AGENT_TOKEN_FILE']).read_text().strip()
+    if len(token) < 32:
+        raise ValueError('Invalid planner token')
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, *args, **kwargs):
+            return None
+    request = urllib.request.Request(endpoint.rstrip('/') + '/v1/plan',
+        data=json.dumps(payload).encode(), headers={'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token}, method='POST')
+    opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
+    with opener.open(request, timeout=78) as response:
+        raw = response.read(100001)
+        if len(raw) > 100000:
+            raise ValueError('Oversized plan')
+        return json.loads(raw)
 
 
 SYSTEM = """You interpret a LazyEdit Studio video chat into JSON. You cannot execute tools.
@@ -16,13 +43,13 @@ The UI action is the maximum authority: prepare never publishes. Explain this if
 in prepare mode. Never claim that anything has been processed or published; the queue supplies outcomes.
 Reply briefly in interfaceLanguage (or the user's language). Do not invent video content or dialogue.
 Copy only requested overrides into changes; all omitted choices inherit defaults. No settings persist.
-Recognize sph/视频号=shipinhao, ins=instagram, y2b/ytb=youtube, dy=douyin, xhs=xiaohongshu, bl=bilibili.
+Recognize sph/视频号 as shipinhao, ins as instagram, y2b/ytb as youtube, dy as douyin, xhs as xiaohongshu, bl as bilibili.
 languages are ordered BOTTOM TO TOP (en, ja, zh-Hant, fr, ko, vi etc). If the user gives a top-to-bottom
 order, reverse it. JP is ja; ZH defaults to zh-Hant. Pronunciation/grammar colours use the normal renderer.
 Context must contain only user-supplied background/script/names for ASR correction, never invented speech.
-A script is evidence, not a transcript to force into the audio. correct=true uses full transcript context.
+A script is evidence, not a transcript to force into the audio. A true correct field uses full transcript context.
 metadataDirection is short viewer-facing editorial direction; never turn editing instructions into a story.
-No subtitles means burnSubtitles=false, independent of logo. No lift means lift=0.
+No subtitles means a false burnSubtitles field, independent of logo. No lift means a zero lift field.
 Use existing logo only; logoPosition may be top-left/top-right/bottom-left/bottom-right.
 background is off/bottom/center. Portrait source always disables fill regardless of instructions.
 bottomSpace is ratio 0..0.8, lift 0..0.4, fontScale .6..2.5, rows integer 1..8 at least language count.
@@ -49,8 +76,11 @@ def main():
                 if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
                     value = value[1:-1]
                 os.environ[key] = value
-    from openai import OpenAI
     payload = json.loads(sys.stdin.read(100000))
+    if os.environ.get('STUDIO_AGENT_URL'):
+        print(json.dumps(sandbox_plan(payload), ensure_ascii=False))
+        return
+    from openai import OpenAI
     settings = payload.pop("modelSettings", {})
     provider = (settings.get("provider") or os.environ.get("LAZYEDIT_AI_PROVIDER", "openai")).lower().strip()
     model = settings.get("model") or os.environ.get("LAZYEDIT_AI_MODEL")

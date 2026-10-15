@@ -1,0 +1,35 @@
+# Run from repository root: docker compose -f deploy/agent/compose.yaml ...
+name: lazyedit-agent
+services:
+  planner:
+    build:
+      context: ../..
+      dockerfile: deploy/agent/Dockerfile
+    image: lazyedit-agent:local
+    init: true
+    restart: unless-stopped
+    user: '1000:1000'
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 768m
+    cpus: 1
+    pids_limit: 96
+    tmpfs: ['/tmp:size=96m,mode=1777']
+    ports: ['127.0.0.1:18992:8092']
+    environment:
+      STUDIO_AGENT_TOKEN_FILE: /run/secrets/agent_token
+      DEEPSEEK_API_KEY_FILE: /run/secrets/deepseek_key
+      CODEX_API_KEY_FILE: /run/secrets/codex_key
+      CODEX_FALLBACK: '1'
+    secrets: [agent_token, deepseek_key, codex_key]
+    logging:
+      driver: json-file
+      options: {max-size: 2m, max-file: '2'}
+secrets:
+  agent_token:
+    file: ${STUDIO_AGENT_SECRETS:?Set a private secrets directory}/agent_token
+  deepseek_key:
+    file: ${STUDIO_AGENT_SECRETS}/deepseek_key
+  codex_key:
+    file: ${STUDIO_AGENT_SECRETS}/codex_key

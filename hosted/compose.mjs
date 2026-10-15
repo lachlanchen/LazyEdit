@@ -2,7 +2,7 @@
 export function workspaceCompose({ id }, config, bootstrap) {
   if(!/^[a-z0-9-]{24}$/.test(id))throw Error('Invalid workspace ID');
   const name=`le-${id}`;
-  return {
+  const compose = {
     name,
     services:{
       database:{image:config.postgresImage||'postgres:16-bookworm',restart:'unless-stopped',
@@ -36,4 +36,27 @@ export function workspaceCompose({ id }, config, bootstrap) {
     volumes:{database:{},workspace:{}},
     secrets:{db_password:{file:`${bootstrap}/db_password`}},
   };
+  // Optional operator-owned planner. Never mount the worker state or Docker socket.
+  // Existing workspaces stay on their direct API route unless explicitly enabled.
+  if(config.agentSandbox === true){
+    compose.networks.agent = {internal:true};
+    compose.networks.agentEgress = {};
+    compose.services.worker.networks.agent = {};
+    compose.services.worker.environment.STUDIO_AGENT_URL = 'http://planner:8092';
+    compose.services.worker.environment.STUDIO_AGENT_TOKEN_FILE = '/run/secrets/agent_token';
+    compose.services.worker.secrets.push('agent_token');
+    for(const key of ['agent_token','agent_deepseek_key','agent_codex_key'])
+      compose.secrets[key] = {file:`${bootstrap}/${key}`};
+    compose.services.planner = {
+      image:config.agentImage||'lazyedit-agent:local',init:true,restart:'unless-stopped',
+      user:'1000:1000',read_only:true,cap_drop:['ALL'],security_opt:['no-new-privileges:true'],
+      tmpfs:['/tmp:size=96m,mode=1777'],mem_limit:'768m',cpus:1,pids_limit:96,
+      networks:['agent','agentEgress'],secrets:['agent_token','agent_deepseek_key','agent_codex_key'],
+      environment:{STUDIO_AGENT_TOKEN_FILE:'/run/secrets/agent_token',
+        DEEPSEEK_API_KEY_FILE:'/run/secrets/agent_deepseek_key',
+        CODEX_API_KEY_FILE:'/run/secrets/agent_codex_key',CODEX_FALLBACK:'1'},
+      logging:{driver:'json-file',options:{'max-size':'2m','max-file':'2'}},
+    };
+  }
+  return compose;
 }

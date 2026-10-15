@@ -141,3 +141,10 @@ locks are released. Never remove another client's lock to enable chat.
 
 Keep private deployment receipts and coordination notes under
 `Nutstore Files/OneTimeSync/LazyEdit/`; no credentials, conversations or media in Git.
+
+## Optional sandboxed planner
+
+Direct DeepSeek/OpenAI intent parsing remains the lightweight default. Operator
+`STUDIO_AGENT_URL` opts into the isolated AgInTi-first/Codex-fallback planner;
+there is no second publication worker. See [agent-sandbox.md](agent-sandbox.md)
+for exact limits, deployment, migration and qualification boundaries.
