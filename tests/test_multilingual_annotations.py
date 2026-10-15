@@ -146,6 +146,31 @@ def test_empty_display_for_space_is_repaired_without_losing_spacing():
     assert ''.join(t['word'] for t in item['tokens']) == item['en']
 
 
+@pytest.mark.parametrize('surface,lemma', [("d'", 'de'), ("l'", 'le'), ('suis', 'etre')])
+def test_french_display_keeps_validated_surface_instead_of_lemma(surface, lemma):
+    source = {'start': '00:00:00,000', 'end': '00:00:02,000'}
+    item = dict(source, fr=surface, tokens=[
+        {'surface': surface, 'word': lemma, 'reading': 'unused', 'type': 'other'},
+    ])
+    validate_annotations([item], [source], 'fr')
+    assert item['fr'] == surface
+    assert item['tokens'][0]['word'] == surface
+    assert item['tokens'][0]['reading'] == ''
+
+
+def test_french_surface_repair_still_rejects_missing_text_and_han_replacement():
+    source = {'start': '00:00:00,000', 'end': '00:00:02,000'}
+    item = dict(source, fr="d'ici", tokens=[
+        {'surface': "d'", 'word': 'de', 'reading': '', 'type': 'preposition'},
+    ])
+    with pytest.raises(ValueError, match='complete subtitle'):
+        validate_annotations([item], [source], 'fr')
+    item['fr'] = "d'"
+    item['tokens'][0]['word'] = '\u7684'
+    with pytest.raises(ValueError, match='Invalid Han restoration'):
+        validate_annotations([item], [source], 'fr')
+
+
 def test_omitted_spaces_are_restored_but_missing_words_are_rejected():
     source = {'start': '00:00:00,000', 'end': '00:00:02,000'}
     item = dict(source, ko='학교에서 먹어요', tokens=[

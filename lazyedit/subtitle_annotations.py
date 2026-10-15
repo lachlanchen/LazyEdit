@@ -124,6 +124,11 @@ def validate_annotations(items, sources, language, same_language_result=None):
             if surface.isspace() and not word.strip():
                 word = token["word"] = surface
                 token["reading"] = ""
+            # French tokenizers may return a lemma (de) for an elision (d').
+            # Coverage above validates the surface; display that exact spelling.
+            if language == "fr" and word != surface and not HAN.search(word):
+                word = token["word"] = surface
+                token["reading"] = ""
             reading = token.get("reading", "")
             if token.get("type") not in GRAMMAR_TYPES:
                 raise ValueError("Invalid grammar type")
