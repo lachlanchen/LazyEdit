@@ -2,3 +2,4 @@
 !studio/
 !studio/agent_plan.py
 !studio/agent_sandbox.py
+!studio/provider_credentials.py

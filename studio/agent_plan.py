@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import re
 import sys
+from provider_credentials import load_openai_key_file
 import urllib.request
 from urllib.parse import urlsplit
 
@@ -76,6 +77,7 @@ def main():
                 if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
                     value = value[1:-1]
                 os.environ[key] = value
+    load_openai_key_file()
     payload = json.loads(sys.stdin.read(100000))
     if os.environ.get('STUDIO_AGENT_URL'):
         print(json.dumps(sandbox_plan(payload), ensure_ascii=False))

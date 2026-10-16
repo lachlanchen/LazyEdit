@@ -31,6 +31,8 @@ def _load_env_file(path: str | Path) -> None:
 
 
 _load_env_file(Path(__file__).resolve().parent / ".env")
+from studio.provider_credentials import load_openai_key_file
+load_openai_key_file()
 
 if "CUDA_VISIBLE_DEVICES" not in os.environ:
     os.environ["CUDA_VISIBLE_DEVICES"] = os.getenv("LAZYEDIT_CUDA_VISIBLE_DEVICES", "0")
