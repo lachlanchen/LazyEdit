@@ -21,6 +21,18 @@ while IFS= read -r -d '' binary; do
         echo "Universal Mac bundle is missing an architecture: $binary ($architectures)" >&2
         exit 2
     fi
+    # The plist alone cannot prove Monterey compatibility: each architecture
+    # (including embedded frameworks) has its own loader minimum.
+    xcrun vtool -show-build "$binary" | awk '
+        $1 == "platform" { platform = $2 }
+        $1 == "minos" {
+            split($2, version, ".")
+            limit = platform == "MACCATALYST" ? 15 : platform == "MACOS" ? 12 : 0
+            if (!limit || version[1] > limit || (version[1] == limit && (version[2] > 0 || version[3] > 0))) bad = 1
+            count++
+        }
+        END { exit (bad || count < 2) }
+    ' || { echo "Mach-O minimum does not qualify for Monterey: $binary" >&2; exit 2; }
     count=$((count + 1))
 done < <(find "$app/Contents" -type f -print0)
 [[ "$count" -gt 0 ]]
