@@ -394,5 +394,6 @@
   "agent_state_held": "再試行する前に既存のリクエストを確認してください",
   "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Appleでの認証が完了しました。招待コード、ユーザー名、12文字以上の復旧用パスワードを入力して設定を完了してください。",
   "Finish account setup": "アカウント設定を完了",
-  "Use another sign-in method": "別の方法でサインイン"
+  "Use another sign-in method": "別の方法でサインイン",
+  "Progress is temporarily unavailable. Studio will check again; your accepted task has not been resubmitted.": "現在、進捗を取得できません。Studio が再確認します。受け付け済みのタスクは再送信されていません。"
 }

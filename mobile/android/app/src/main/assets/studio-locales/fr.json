@@ -394,5 +394,6 @@
   "agent_state_held": "Vérifiez la demande existante avant de réessayer",
   "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Connexion Apple vérifiée. Saisissez votre invitation, choisissez un identifiant et un mot de passe de récupération de 12 caractères minimum pour terminer.",
   "Finish account setup": "Terminer la création du compte",
-  "Use another sign-in method": "Utiliser une autre méthode de connexion"
+  "Use another sign-in method": "Utiliser une autre méthode de connexion",
+  "Progress is temporarily unavailable. Studio will check again; your accepted task has not been resubmitted.": "La progression est momentanément indisponible. Studio vérifiera à nouveau ; la tâche acceptée n’a pas été renvoyée."
 }

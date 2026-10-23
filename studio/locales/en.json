@@ -394,5 +394,6 @@
   "agent_state_held": "Check the existing request before retrying",
   "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.",
   "Finish account setup": "Finish account setup",
-  "Use another sign-in method": "Use another sign-in method"
+  "Use another sign-in method": "Use another sign-in method",
+  "Progress is temporarily unavailable. Studio will check again; your accepted task has not been resubmitted.": "Progress is temporarily unavailable. Studio will check again; your accepted task has not been resubmitted."
 }

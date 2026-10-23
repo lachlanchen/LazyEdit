@@ -445,7 +445,9 @@ public class MainActivity extends AppCompatActivity {
         agentPreview=value.optString("preview","");
         agentID=value.getString("id");StudioApi.writeFile(api.file("agent-chat.txt"),agentID);
         JSONObject saved=api.file("agent-pending.json").exists()?new JSONObject(StudioApi.readFile(api.file("agent-pending.json"))):null;
-        StringBuilder text=new StringBuilder(value.optString("title")).append("\n\n");JSONArray rows=value.optJSONArray("messages");
+        StringBuilder text=new StringBuilder(value.optString("title")).append("\n\n");
+        if(!value.isNull("statusError"))text.append(tr(value.optString("statusError"))).append("\n\n");
+        JSONArray rows=value.optJSONArray("messages");
         if(rows!=null)for(int i=0;i<rows.length();i++){
             JSONObject row=rows.getJSONObject(i);text.append(row.optString("text")).append("\n\n").append(tr("agent_state_"+row.optString("state"))).append("\n").append(row.optString("reply")).append("\n");
             JSONArray summary=row.optJSONArray("summary");if(summary!=null)for(int n=0;n<summary.length();n++)text.append(summary.getString(n)).append("\n");

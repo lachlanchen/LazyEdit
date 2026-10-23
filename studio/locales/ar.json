@@ -394,5 +394,6 @@
   "agent_state_held": "تحقق من الطلب الحالي قبل إعادة المحاولة",
   "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "تم التحقق من تسجيل الدخول باستخدام Apple. أدخل رمز الدعوة واختر اسم مستخدم وكلمة مرور للاسترداد من 12 حرفًا على الأقل لإكمال الإعداد.",
   "Finish account setup": "إكمال إعداد الحساب",
-  "Use another sign-in method": "استخدام طريقة أخرى لتسجيل الدخول"
+  "Use another sign-in method": "استخدام طريقة أخرى لتسجيل الدخول",
+  "Progress is temporarily unavailable. Studio will check again; your accepted task has not been resubmitted.": "يتعذر عرض التقدم مؤقتًا. سيحاول Studio التحقق مرة أخرى؛ لم تتم إعادة إرسال مهمتك المقبولة."
 }

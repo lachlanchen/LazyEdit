@@ -12,7 +12,7 @@ const remote = process.env.EXPO_PUBLIC_REMOTE_STUDIO === '1';
 const root = '/v1/studio/agent/chats';
 const uuid = () => globalThis.crypto.randomUUID();
 type Turn = {id:string;text:string;reply:string;state:string;error?:string;summary?:string[];receipt?:{job_id?:number}};
-type Chat = {id:string;videoId:number;title:string;messages:Turn[];job?:any;process?:any;preparation?:any;preview?:string};
+type Chat = {id:string;videoId:number;title:string;messages:Turn[];job?:any;process?:any;preparation?:any;preview?:string;statusError?:string};
 type Saved = {chatId:string;id:string;message:string;action:string;language:string};
 async function api(path:string, data?:unknown, key?:string) {
   const res=await fetch(base+path,{method:data?'POST':'GET',headers:data?{'Content-Type':'application/json',...(key?{'Idempotency-Key':key}:{})}:undefined,body:data?JSON.stringify(data):undefined});
@@ -65,6 +65,7 @@ export default function AgentScreen() {
     {busy&&<ActivityIndicator accessibilityLabel={t('Working…')}/>}
     {chat?<>
       <Text style={styles.videoTitle}>{chat.title}</Text>
+      {!!chat.statusError&&<Text accessibilityRole="alert" style={styles.error}>{t(chat.statusError)}</Text>}
       {!chat.messages.length&&<View style={styles.card}><Text>{t('Describe the story, subtitle languages, layout and where to publish. Context guides corrections; it does not replace speech.')}</Text></View>}
       {chat.messages.map(m=><View key={m.id} style={{gap:10}}>
         <View style={styles.userBubble}><Text selectable>{m.text}</Text></View>

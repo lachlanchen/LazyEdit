@@ -139,6 +139,18 @@ class AutocutProcessor:
         return returncode in (-11, -4, 132, 139)
 
     @staticmethod
+    def _is_cuda_runtime_unavailable(output):
+        message = str(output or "").lower()
+        return any(marker in message for marker in (
+            "failed to initialize nvml",
+            "nvmlinit_v2_() internal assert failed",
+            "driver/library version mismatch",
+            "cuda driver version is insufficient",
+            "cuda driver initialization failed",
+            "found no nvidia driver",
+        ))
+
+    @staticmethod
     def _run_logged_command(command, env):
         process = subprocess.Popen(
             ["bash", "-lc", f"ulimit -c 0; {command}"],
@@ -185,6 +197,7 @@ class AutocutProcessor:
         gpu_model_candidates, gpu_memory = self._select_gpu_model_candidates(model_candidates, gpu_id)
         last_failure_output = ""
         saw_cuda_oom = False
+        runtime_unavailable = False
         for index, model_name in enumerate(gpu_model_candidates, start=1):
             autocut_command = (
                 f"{shlex.quote(whisper_python)} "
@@ -197,6 +210,10 @@ class AutocutProcessor:
             )
             returncode, output = self._run_logged_command(autocut_command, env)
             last_failure_output = output
+            if self._is_cuda_runtime_unavailable(output):
+                runtime_unavailable = True
+                print("CUDA driver/NVML is unavailable. Skipping smaller GPU models; trying CPU once.")
+                break
             if returncode == 0 and not self._is_cuda_oom(output):
                 print(f"Finished autocut with lang={lang} on GPU {gpu_id} using model {model_name}")
                 return
@@ -214,6 +231,9 @@ class AutocutProcessor:
                     retry_env["LAZYEDIT_WHISPER_WORD_TIMESTAMPS"] = "0"
                     returncode, output = self._run_logged_command(autocut_command, retry_env)
                     last_failure_output = output
+                    if self._is_cuda_runtime_unavailable(output):
+                        runtime_unavailable = True
+                        break
                     if returncode == 0 and not self._is_cuda_oom(output):
                         print(
                             f"Finished autocut with lang={lang} on GPU {gpu_id} "
@@ -234,7 +254,11 @@ class AutocutProcessor:
         fallback_env["ATEN_CPU_CAPABILITY"] = "default"
         fallback_env["ONEDNN_MAX_CPU_ISA"] = "AVX2"
         fallback_env["MKL_DEBUG_CPU_TYPE"] = "5"
-        cpu_model = model_candidates[-1] if model_candidates else whisper_model
+        cpu_model = os.getenv("LAZYEDIT_WHISPER_CPU_MODEL") or (
+            "medium" if runtime_unavailable else model_candidates[-1] if model_candidates else whisper_model
+        )
+        if runtime_unavailable:
+            print(f"Transcription will continue on CPU with multilingual Whisper {cpu_model}; shared GPU services are unchanged.")
         if saw_cuda_oom:
             print(f"All GPU Whisper model attempts exhausted VRAM. Falling back to CPU with model {cpu_model}.")
         elif gpu_memory and not gpu_model_candidates:

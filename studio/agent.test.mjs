@@ -19,14 +19,23 @@ async function fixture(t) {
   if(req.url.startsWith('/api/ui-settings/'))out={value:settings[req.url.split('/').at(-1)]};
   else if(req.url==='/api/languages')out={codes:data?.languages||[],languages:[]};
   else if(req.url==='/api/autopublish/queue')out={jobs};
-  else if(req.url==='/api/videos/1')out={id:1,title:'Only this owned video',file_path:'/private/video.mp4'};
+  else if(req.url==='/api/videos/1')out={id:1,title:'Only this owned video',file_path:'/private/video.mp4',media_url:'/media/source.mp4'};
   else if(req.url.includes('/publication-sessions'))out={sessions:[{id:7,title:'Completed run'}]};
-  else if(req.url.includes('/process-status'))out={ready_for_publish:true,steps:state.busy?{burn:{status:'working'}}:{},pipeline:null};
-  else if(req.url.includes('/burn-subtitles'))out={status:'completed',output_url:'/media/edited.mp4',config:{slots:[],logo:{enabled:true},burnSubtitles:false}};
+  else if(req.url.includes('/process-status')) {
+   if(state.statusUnavailable){res.statusCode=503;out={error:'Status temporarily unavailable'};}
+   else out=(req.url.includes('publicationSessionId=')?state.sessionProcess:null)||state.process||{ready_for_publish:true,steps:state.busy?{burn:{status:'working'}}:{},pipeline:null};
+  }
+  else if(req.url.includes('/burn-subtitles')) {
+   if(state.noRender){res.statusCode=404;out={error:'burn not found'};}
+   else out={status:'completed',output_url:'/media/edited.mp4',config:{slots:[],logo:{enabled:true},burnSubtitles:false}};
+  }
   else if(req.url.endsWith('/process'))out={status:'processing',publication_session_id:7};
   else if(req.url.endsWith('/publish')){
    if(state.unknown){res.statusCode=502;out={error:'Upstream connection lost'};}
-   else out={job_id:42,publication_session_id:7,status:'queued'};
+   else {
+    out={job_id:42,...(state.waitingSession?{}:{publication_session_id:7}),status:'queued'};
+    if(state.waitingSession)jobs.push({id:42,video_id:1,status:'queued'});
+   }
   }
   res.setHeader('content-type','application/json');res.end(JSON.stringify(out));
  });
@@ -107,4 +116,60 @@ test('explicit reuse preserves a completed run without correction or rerendering
  const options=f.calls.find(c=>c.path.endsWith('/publish')).data.options;
  assert.equal(options.publicationSessionId,7);assert.equal(options.publicationMode,'override');assert.equal(options.autoCorrectSubtitles,false);
  assert.equal(f.calls.filter(c=>c.path.endsWith('/process')).length,0);
+});
+test('a new preparation returns its receipt before a render exists and later exposes the preview',async t=>{
+ const f=await fixture(t);f.state.noRender=true;
+ const first=await f.send('prepare','new-render-message-0001');
+ assert.equal(first.status,200);assert.equal(first.messages[0].state,'submitted');
+ assert.ok(first.messages[0].receipt.operation_id);assert.equal(first.preview,undefined);
+ const pending=await f.request('/v1/studio/agent/chats/'+f.chat);
+ assert.equal(pending.status,200);assert.equal(pending.messages[0].state,'submitted');
+ f.state.noRender=false;
+ assert.equal((await f.request('/v1/studio/agent/chats/'+f.chat)).preview,'/media/edited.mp4');
+ await f.send('prepare','new-render-message-0001');
+ assert.equal(f.calls.filter(c=>c.path.endsWith('/process')).length,1);
+});
+test('progress outages preserve accepted messages and do not cause another dispatch',async t=>{
+ const f=await fixture(t);await f.send('prepare','progress-message-0001');
+ f.state.statusUnavailable=true;
+ const status=await f.request('/v1/studio/agent/chats/'+f.chat);
+ assert.equal(status.status,200);assert.equal(status.messages[0].state,'submitted');
+ assert.match(status.statusError,/progress/i);assert.equal(status.preview,undefined);
+ const repeated=await f.send('prepare','progress-message-0001');
+ assert.equal(repeated.status,200);assert.equal(f.calls.filter(c=>c.path.endsWith('/process')).length,1);
+});
+test('status questions receive real bounded task evidence without dispatching again',async t=>{
+ const f=await fixture(t);const initial=await f.send();
+ f.state.process={pipeline:{status:'working',operation_id:initial.messages[0].receipt.operation_id},steps:{translate:{status:'working'}}};
+ f.state.decision={decision:'reply',message:'Translation is in progress.',changes:{}};
+ const reply=await f.send('prepare','status-question-0001','What is the progress?');
+ assert.equal(reply.messages.at(-1).state,'reply');
+ assert.equal(f.state.input.task.preparation.state,'working');
+ assert.equal(f.state.input.task.steps.translate.status,'working');
+ assert.equal(f.state.input.task.publication,null);
+ assert.equal(f.calls.filter(c=>c.path.endsWith('/process')).length,1);
+ assert.ok(!JSON.stringify(f.state.input.task).includes('/private/'));
+});
+test('editing without visual changes previews the source only after preparation completes',async t=>{
+ const f=await fixture(t);f.state.noRender=true;
+ f.state.decision.changes={burnSubtitles:false,logo:false,background:'off'};
+ const initial=await f.send();assert.equal(initial.preview,undefined);
+ f.state.process={pipeline:{status:'done',updated_at:new Date().toISOString(),operation_id:initial.messages[0].receipt.operation_id},steps:{}};
+ const completed=await f.request('/v1/studio/agent/chats/'+f.chat);
+ assert.equal(completed.preparation.state,'done');assert.equal(completed.preview,'/media/source.mp4');
+ assert.ok(!f.calls.find(c=>c.path.endsWith('/process')).data.steps.includes('burn'));
+});
+test('a queued new publication never exposes an older preview before its run exists',async t=>{
+ const f=await fixture(t);f.state.waitingSession=true;
+ const initial=await f.send('publish');
+ assert.equal(initial.messages[0].state,'submitted');assert.equal(initial.job.status,'queued');
+ assert.equal(initial.preview,undefined);assert.equal(initial.process,undefined);
+});
+test('a preparation in a new run blocks conflicting edits even when current output is idle',async t=>{
+ const f=await fixture(t),first=await f.send();
+ f.state.sessionProcess={pipeline:{status:'working',operation_id:first.messages[0].receipt.operation_id},steps:{burn:{status:'working'}}};
+ const again=await f.send();
+ assert.equal(again.messages.at(-1).state,'rejected');
+ assert.match(again.messages.at(-1).error,/unfinished preparation/);
+ assert.equal(f.calls.filter(c=>c.path.endsWith('/process')).length,1);
 });

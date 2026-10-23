@@ -24,6 +24,23 @@ export function validateDecision(value, defaults) {
   return {...value,form:validateForm(form)};
 }
 
+// Only structured, observed task state enters the planner. No paths, credentials,
+// raw backend diagnostics or model-written claims are execution evidence.
+export function taskEvidence(chat) {
+  const last=[...chat.messages].reverse().find(m=>m.receipt);
+  const status=value=>typeof value==='string'&&/^[a-z_ -]{1,40}$/i.test(value)?value:'unknown';
+  return {
+    receipt:last?{action:last.action,state:last.state,sessionID:last.receipt.publication_session_id??null}:null,
+    preparation:chat.preparation?{state:status(chat.preparation.state),recoverable:chat.preparation.recoverable===true}:null,
+    publication:chat.job?{id:chat.job.id,status:status(chat.job.status),
+      remoteStatus:status(chat.job.remote_status),loginRequired:chat.job.attention?.status==='required'}:null,
+    steps:Object.fromEntries(Object.entries(chat.process?.steps||{}).filter(([name])=>
+      /^(transcribe|polish|translate|burn|keyframes|caption|cover|metadata_(zh|en|ja))$/.test(name))
+      .map(([name,step])=>[name,{status:status(step.status)}])),
+    previewAvailable:!!chat.preview,statusAvailable:!chat.statusError,
+  };
+}
+
 export function planWithModel(config, input) {
   if(config.agentPlanner)return config.agentPlanner(input); // isolated contract tests
   return new Promise((resolve,reject)=>{

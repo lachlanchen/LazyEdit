@@ -394,5 +394,6 @@
   "agent_state_held": "重试前请检查现有请求",
   "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Apple 登录已验证。请输入邀请码，选择用户名并设置至少 12 个字符的恢复密码，完成账户设置。",
   "Finish account setup": "完成账户设置",
-  "Use another sign-in method": "使用其他登录方式"
+  "Use another sign-in method": "使用其他登录方式",
+  "Progress is temporarily unavailable. Studio will check again; your accepted task has not been resubmitted.": "暂时无法获取进度。Studio 会再次检查；已接受的任务没有重复提交。"
 }

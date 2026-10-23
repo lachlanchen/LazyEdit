@@ -394,5 +394,6 @@
   "agent_state_held": "Kiểm tra yêu cầu hiện có trước khi thử lại",
   "Apple sign-in verified. Enter your invitation, choose a username and a recovery password of at least 12 characters to finish setup.": "Đã xác minh đăng nhập Apple. Nhập mã mời, chọn tên người dùng và mật khẩu khôi phục có ít nhất 12 ký tự để hoàn tất.",
   "Finish account setup": "Hoàn tất thiết lập tài khoản",
-  "Use another sign-in method": "Dùng cách đăng nhập khác"
+  "Use another sign-in method": "Dùng cách đăng nhập khác",
+  "Progress is temporarily unavailable. Studio will check again; your accepted task has not been resubmitted.": "Tạm thời chưa thể xem tiến độ. Studio sẽ kiểm tra lại; tác vụ đã được tiếp nhận không bị gửi lại."
 }

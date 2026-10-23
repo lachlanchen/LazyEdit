@@ -62,7 +62,8 @@ lookup, web research, code editing or publication authority. It reads configurat
 without importing the GPU/backend application and does not cache or log prompts.
 
 The planner sees the bound video's title, current choices, available run labels,
-and bounded prior conversation. It does not watch the video. The established
+bounded prior conversation, and observed task status (steps, preparation,
+publication state and preview availability). It does not watch the video. The established
 transcription/correction/caption pipeline examines the media after submission.
 Ask for external research separately, then paste its relevant context into chat.
 
@@ -119,6 +120,13 @@ links to the authenticated Agent page instead of creating another public API.
    routes; a client cannot turn itself into an unlimited owner or Pi user.
 7. Actual platform login or verification may still need the owner. Agent does not
    bypass it, automatically repair source code, or repeatedly re-post failed jobs.
+8. A missing render before processing finishes is normal. Chat retains the
+   accepted receipt instead of failing with `burn not found`. Temporary progress
+   failures return the conversation with a status warning; reads never resubmit.
+   A queued new publication cannot borrow an earlier run's preview.
+9. Before another edit or publication, the composer checks the previous
+   preparation's own session. An idle current-output status does not make an
+   unfinished separate run safe to replace. Status questions remain read-only.
 
 ## Validation and rollout
 
@@ -141,6 +149,9 @@ locks are released. Never remove another client's lock to enable chat.
 
 Keep private deployment receipts and coordination notes under
 `Nutstore Files/OneTimeSync/LazyEdit/`; no credentials, conversations or media in Git.
+
+See [the October 24 reliability qualification](agent-reliability-20261024.md)
+for the reproduced failures, real browser acceptance and deployment boundaries.
 
 ## Optional sandboxed planner
 

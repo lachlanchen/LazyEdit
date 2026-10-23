@@ -10,7 +10,7 @@ import { json, body, readJSON, proxy, validPath, startEdge } from './transport.m
 import { CAPTURE_PRESET, CAPTURE_CHANNELS, capturePreparation } from './preparation.mjs';
 import { PreparationRecovery } from './preparation-recovery.mjs';
 import { composerDefaults, validateForm, composeOptions, reuseOptions, checkPublicationJobs } from './composer.mjs';
-import { AgentChats, validateMessage, validateDecision, planWithModel } from './agent.mjs';
+import { AgentChats, validateMessage, validateDecision, planWithModel, taskEvidence } from './agent.mjs';
 process.umask(0o077);
 const exec = promisify(execFile);
 const MIME={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.ico':'image/x-icon','.json':'application/json','.webmanifest':'application/manifest+json','.ttf':'font/ttf','.woff2':'font/woff2','.mp4':'video/mp4','.mov':'video/quicktime'};
@@ -99,6 +99,13 @@ export function createWorker(config) {
   if(action==='prepare'&&f.mode==='reuse')fail(400,'A reused run does not need processing');
   if(action==='publish'&&!f.platforms.length)fail(400,'Choose at least one platform');
   if(capabilities().publishing)checkPublicationJobs((await backend('/api/autopublish/queue')).jobs,id,f.platforms,action==='publish');
+  // New runs have their own status scope. The current-output status can be idle
+  // while a prior chat/composer preparation is still rendering in its session.
+  const previous=preparations.latest(p.owner,id);
+  if(previous&&previous.state!=='rejected') {
+   const current=preparations.describe(previous,await preparationStatus(previous));
+   if(!['done','error'].includes(current.state))fail(409,'This video has an unfinished preparation. Check its progress or recovery in Activity before starting another run');
+  }
   const status=await backend(`/api/videos/${id}/process-status`);
   if(Object.values(status.steps||{}).some(s=>s.status==='working'))fail(409,'This video is being prepared. Wait for its current run');
   return composerPlan(id,f);
@@ -111,19 +118,38 @@ export function createWorker(config) {
    if(intent?.response)chats.update(p.owner,message.id,'submitted',{result:JSON.parse(intent.response)});
   }
   const result=chats.describe(p.owner,chatId),last=[...result.messages].reverse().find(m=>m.receipt);
+  const unavailable=()=>{result.statusError='Progress is temporarily unavailable. Studio will check again; your accepted task has not been resubmitted.';};
   if(last?.receipt?.job_id&&capabilities().publishing) {
-   const queue=await backend('/api/autopublish/queue');
-   result.job=queue.jobs?.find(j=>Number(j.id)===Number(last.receipt.job_id)&&Number(j.video_id)===result.videoId)||null;
+   try {
+    const queue=await backend('/api/autopublish/queue');
+    result.job=queue.jobs?.find(j=>Number(j.id)===Number(last.receipt.job_id)&&Number(j.video_id)===result.videoId)||null;
+    if(!result.job)unavailable();
+   }catch{unavailable();}
   }
   if(last) {
-   const query=last.receipt.publication_session_id?`?publicationSessionId=${last.receipt.publication_session_id}`:'';
-   result.process=await backend(`/api/videos/${result.videoId}/process-status${query}`);
+   const session=last.receipt.publication_session_id||result.job?.publication_session_id;
+   // A queued new publication may not have created its run yet. Never show a
+   // previous run's output as the result of this request.
+   if(last.action==='publish'&&last.form?.mode!=='reuse'&&!session)return result;
+   const query=session?`?publicationSessionId=${session}`:'';
+   try {result.process=await backend(`/api/videos/${result.videoId}/process-status${query}`);}
+   catch{unavailable();return result;}
    if(last.receipt.operation_id) {
     const preparation=preparations.owned(last.receipt.operation_id,p.owner);
     result.preparation=preparations.describe(preparation,result.process);
    }
-   const burn=await backend(`/api/videos/${result.videoId}/burn-subtitles${query}`);
-   if(burn.status==='completed')result.preview=burn.output_url;
+   try {
+    const burn=await backend(`/api/videos/${result.videoId}/burn-subtitles${query}`);
+    if(burn.status==='completed')result.preview=burn.output_url;
+   }catch(e){
+    // No render row is normal while ASR/translation are running. It must not
+    // turn a successful submission or a conversation refresh into HTTP 404.
+    if(e.status!==404)unavailable();
+   }
+   if(!result.preview&&result.preparation?.state==='done'&&!last.form?.burnSubtitles&&!last.form?.logo&&last.form?.background==='off') {
+    try {result.preview=(await backend('/api/videos/'+result.videoId)).media_url;}
+    catch{unavailable();}
+   }
   }
   return result;
  }
@@ -144,7 +170,8 @@ export function createWorker(config) {
      const previous=[...history].reverse().find(t=>t.plan?.form&&t.state!=='rejected');
      const defaults=previous?.plan.form||composerDefaults(await composerSettings());
      const sessions=await backend(`/api/videos/${id}/publication-sessions`);
-     const input={message:request.message,interfaceLanguage:request.language,action:request.action,
+     const task=taskEvidence(await chatStatus(p,chatId));
+     const input={message:request.message,interfaceLanguage:request.language,action:request.action,task,
       title:chat.title,defaults,availableRuns:(sessions.sessions||[]).slice(0,20).map(s=>({id:s.id,title:s.title})),
       history:history.slice(-8).map(t=>({user:t.request.message.slice(0,1500),reply:(t.plan?.message||'').slice(0,500),state:t.state}))};
      const modelSettings=(await backend('/api/ui-settings/ai_model_settings')).value;

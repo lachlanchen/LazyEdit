@@ -742,15 +742,21 @@ struct StudioAgentView: View {
                     chats = try await store.api.json(path)["chats"] as? [[String: Any]] ?? []
                     await store.refreshVideos()
                     if let data = try? Data(contentsOf: store.api.privateFile("agent-chat.txt")), let id = String(data: data, encoding: .utf8) { try await load(id) }
-                    while !Task.isCancelled {
-                        try await Task.sleep(nanoseconds: 10_000_000_000)
-                        if !chatID.isEmpty && !busy { try await load(chatID) }
-                    }
                 } catch is CancellationError {} catch { self.error = error.localizedDescription }
+                // A temporary network error must not permanently stop polling.
+                // Reads only: retries never send another editing/publication task.
+                while !Task.isCancelled {
+                    do {
+                        try await Task.sleep(nanoseconds: 10_000_000_000)
+                        if !chatID.isEmpty && !busy { try await load(chatID); error = "" }
+                    } catch is CancellationError { break }
+                    catch { self.error = error.localizedDescription }
+                }
             }
         }
     }
     @ViewBuilder private var progress: some View {
+        if let problem = chat["statusError"] as? String { Text(label(problem)).foregroundStyle(.orange) }
         if let job = chat["job"] as? [String: Any] {
             Text(label("Publication job") + " #\(job["id"] ?? "") · " + studioText(job["status"])).font(.headline)
             if let e = job["error"] as? String { Text(e).foregroundStyle(.red) }

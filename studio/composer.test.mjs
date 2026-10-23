@@ -48,7 +48,7 @@ test('only proven failures before dispatch allow a fresh native submission',()=>
 
 test('native requests use existing pipeline once, hide is reversible, linked permissions stay isolated',async t=>{
  const dir=mkdtempSync(join(tmpdir(),'studio-composer-')),calls=[],jobs=[];
- let failPublish=false;
+ let failPublish=false,preparationCompleted=false;
  const backend=http.createServer(async(req,res)=>{
   const chunks=[];for await(const c of req)chunks.push(c);
   const data=chunks.length?JSON.parse(Buffer.concat(chunks)):null;
@@ -65,7 +65,8 @@ test('native requests use existing pipeline once, hide is reversible, linked per
   else if(req.url.startsWith('/api/videos?')||req.url==='/api/videos')out={videos:[{id:1,title:'Fixture'}]};
   else if(req.url==='/api/videos/1')out={id:1,file_path:'/fixture.mp4'};
   else if(req.url==='/api/videos/1/publication-sessions')out={sessions:[]};
-  else if(req.url==='/api/videos/1/process-status')out={steps:{},ready_for_publish:true};
+  else if(req.url.startsWith('/api/videos/1/process-status'))out={steps:{},ready_for_publish:true,
+   ...(preparationCompleted?{pipeline:{status:'done',updated_at:new Date().toISOString(),operation_id:calls.find(c=>c.url.endsWith('/process'))?.data.operationId}}:{})};
   else if(req.url==='/api/autopublish/queue')out={jobs};
   else if(req.url.endsWith('/publish')) {out={job_id:10};if(failPublish){res.statusCode=502;out={error:'Unknown upstream result'};}}
   else if(req.url.endsWith('/process'))out={status:'processing',publication_session_id:3};
@@ -111,6 +112,8 @@ test('native requests use existing pipeline once, hide is reversible, linked per
  const changed=await request(prefix+'/submit','POST',{...body,form:{...form,lift:0.1,platforms:['instagram']}},{'idempotency-key':'changed-plan'});
  assert.equal(changed.status,409);assert.equal((await changed.json()).submissionState,'rejected');
  jobs.length=0;failPublish=true;
+ assert.equal((await request(prefix+'/submit','POST',body,{'idempotency-key':'unfinished-preparation'})).status,409);
+ preparationCompleted=true;
  assert.equal((await request(prefix+'/submit','POST',body,{'idempotency-key':'uncertain'})).status,502);
  assert.equal((await request(prefix+'/submission?key=uncertain').then(r=>r.json())).state,'submitting');
  assert.equal((await request(prefix+'/submit','POST',body,{'idempotency-key':'uncertain'})).status,409);
