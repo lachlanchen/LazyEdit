@@ -16,6 +16,7 @@ from lazyedit.subtitle_tokens import (
     is_speaker_only_tokens,
     normalize_tokens_payload,
 )
+from lazyedit.subtitles_burner.rtl import measure_rtl, render_rtl, rtl_line
 
 
 SPEAKER_ICON_COLOR = (33, 150, 243)
@@ -706,6 +707,14 @@ def _load_burner_module():
     try:
         if getattr(burner_mod, "_lazyedit_ruby_layout_patch", False) is not True and hasattr(burner_mod, "RubyRenderer"):
             OriginalRubyRenderer = burner_mod.RubyRenderer
+            original_measure_tokens = OriginalRubyRenderer.measure_tokens
+
+            def measure_tokens_lazyedit(self, tokens):
+                if rtl_line(tokens):
+                    return measure_rtl(self, tokens)
+                return original_measure_tokens(self, tokens)
+
+            OriginalRubyRenderer.measure_tokens = measure_tokens_lazyedit
 
             def _build_layout_compact_ruby(self, tokens):  # type: ignore[no-redef]
                 temp_img = burner_mod.Image.new("RGB", (1, 1))
@@ -794,6 +803,8 @@ def _load_burner_module():
             def render_tokens_lazyedit(self, tokens, padding=16):  # type: ignore[no-redef]
                 if not tokens:
                     return burner_mod.Image.new("RGBA", (1, 1), (0, 0, 0, 0))
+                if rtl_line(tokens):
+                    return render_rtl(self, tokens, padding)
 
                 padding = max(int(padding), int(self.style.stroke_width * 2))
                 speaker = tokens[0] if getattr(tokens[0], "token_type", None) == "speaker" else None
