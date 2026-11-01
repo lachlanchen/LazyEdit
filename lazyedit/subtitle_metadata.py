@@ -10,6 +10,26 @@ import glob
 from concurrent.futures import ThreadPoolExecutor
 
 
+STORY_METADATA_POLICY = (
+    "For narrative/story videos, write titles, descriptions and tags about the characters, "
+    "events, relationships, setting and emotional payoff. Keep production provenance out of "
+    "this story copy by default: AI-generated, 2D/3D, animation/rendering tools, model names "
+    "and disclosure boilerplate belong outside the narrative description, even when creator "
+    "notes mention them. Creator notes are background, not ready-to-paste copy. Discuss "
+    "production methods only when the video itself is a tutorial/making-of or the creator "
+    "explicitly requests technical copy. An AI robot within the story remains a valid story "
+    "subject. Preserve required native platform declarations separately; this writing rule "
+    "does not change disclosure flags or claim fictional scenes are real events."
+)
+
+
+def metadata_editor_system(base):
+    """Apply the same story-copy policy to template and legacy entry points."""
+    if STORY_METADATA_POLICY in base:
+        return base
+    return f"{base}\n\n{STORY_METADATA_POLICY}"
+
+
 def robust_json5_parse(json_str):
     # Attempt to handle unexpected newlines and unescaped double quotes
     json_str = ''.join(line.strip() if not line.strip().startswith('"') else line for line in json_str.split('\n'))
@@ -252,7 +272,7 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
         result = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=self.metadata_schema,
-            system_content=system_content,
+            system_content=metadata_editor_system(system_content),
             filename=self.get_filename(subtitle_path, lang="zh"),
             schema_name="video_metadata"
         )
@@ -309,7 +329,7 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
         result = self.send_request_with_json_schema(
             prompt=prompt,
             json_schema=self.metadata_schema,
-            system_content=system_content,
+            system_content=metadata_editor_system(system_content),
             filename=self.get_filename(subtitle_path, lang="en"),
             schema_name="video_metadata"
         )
@@ -331,7 +351,9 @@ class Subtitle2Metadata(OpenAIRequestJSONBase):
         prompt_payload = self._load_json_file(prompt_path)
         json_schema = self._load_json_file(schema_path)
 
-        system_content = prompt_payload.get("system") or "You are an AI assistant."
+        system_content = metadata_editor_system(
+            prompt_payload.get("system") or "You are a social media metadata editor."
+        )
         user_template = prompt_payload.get("user") or ""
         notes_value = (custom_notes or "").strip() or "None"
         prompt = self._render_prompt_template(
