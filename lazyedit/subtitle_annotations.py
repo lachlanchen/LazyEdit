@@ -1,6 +1,7 @@
 """Lossless grammar/ruby contracts for single-pass subtitle translation."""
 from copy import deepcopy
 import re
+import unicodedata
 
 GRAMMAR_TYPES = ["noun", "pronoun", "verb", "adjective", "adverb", "particle",
                  "preposition", "conjunction", "determiner", "auxiliary",
@@ -122,6 +123,14 @@ def validate_annotations(items, sources, language, same_language_result=None):
             # Models sometimes leave a whitespace token's display word empty.
             # Surface coverage was already verified; restore that exact spacing.
             if surface.isspace() and not word.strip():
+                word = token["word"] = surface
+                token["reading"] = ""
+            # Preserve punctuation omitted only from the display word. Surface
+            # coverage has already proved the exact characters and position.
+            if not word.strip() and all(
+                c.isspace() or unicodedata.category(c).startswith("P")
+                for c in surface
+            ):
                 word = token["word"] = surface
                 token["reading"] = ""
             # French tokenizers may return a lemma (de) for an elision (d').
