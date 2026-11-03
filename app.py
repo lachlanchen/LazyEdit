@@ -8725,7 +8725,9 @@ class VideoMetadataHandler(CorsMixin, tornado.web.RequestHandler):
                 if caption_text:
                     transcription_text = caption_text
                     caption_text = ""
-                else:
+                elif not custom_notes.strip():
+                    # Silent clips can still have owner-supplied story/visual
+                    # context. Let the normal generator use it when present.
                     metadata_payload = _build_placeholder_metadata(
                         _sanitize_title(video_title) if video_title else _sanitize_title(base_name)
                     )
