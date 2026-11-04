@@ -138,6 +138,11 @@ def validate_annotations(items, sources, language, same_language_result=None):
             if language == "fr" and word != surface and not HAN.search(word):
                 word = token["word"] = surface
                 token["reading"] = ""
+            # English display casing can differ from a tokenizer's lowercase
+            # form. Exact surface coverage is already checked above.
+            if language == "en" and word != surface and word.casefold() == surface.casefold():
+                word = token["word"] = surface
+                token["reading"] = ""
             reading = token.get("reading", "")
             if token.get("type") not in GRAMMAR_TYPES:
                 raise ValueError("Invalid grammar type")

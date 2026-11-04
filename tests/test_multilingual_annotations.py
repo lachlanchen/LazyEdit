@@ -158,6 +158,29 @@ def test_french_display_keeps_validated_surface_instead_of_lemma(surface, lemma)
     assert item['tokens'][0]['reading'] == ''
 
 
+@pytest.mark.parametrize('surface,word', [('Make', 'make'), ('I', 'i'), ('OK', 'ok')])
+def test_english_display_keeps_validated_casing(surface, word):
+    source = {'start': '00:00:00,000', 'end': '00:00:02,000'}
+    item = dict(source, en=surface, tokens=[
+        {'surface': surface, 'word': word, 'reading': '', 'type': 'other'},
+    ])
+    validate_annotations([item], [source], 'en')
+    assert item['en'] == surface
+    assert item['tokens'][0]['word'] == surface
+    assert item['tokens'][0]['reading'] == ''
+    assert (item['start'], item['end']) == (source['start'], source['end'])
+
+
+@pytest.mark.parametrize('word', ['eat', '\u5403'])
+def test_english_casing_repair_rejects_lemmas_and_han_replacements(word):
+    source = {'start': '00:00:00,000', 'end': '00:00:02,000'}
+    item = dict(source, en='Ate', tokens=[
+        {'surface': 'Ate', 'word': word, 'reading': '', 'type': 'verb'},
+    ])
+    with pytest.raises(ValueError, match='Invalid Han restoration'):
+        validate_annotations([item], [source], 'en')
+
+
 def test_french_surface_repair_still_rejects_missing_text_and_han_replacement():
     source = {'start': '00:00:00,000', 'end': '00:00:02,000'}
     item = dict(source, fr="d'ici", tokens=[
