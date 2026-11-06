@@ -11713,7 +11713,12 @@ class VideoSubtitleBurnHandler(CorsMixin, tornado.web.RequestHandler):
         )
         if input_json and os.path.exists(input_json):
             _payload, items, _container_key = _load_subtitle_payload(input_json)
-            if not items:
+            # Correction preserves rejected cues with empty text for timing audit.
+            # Treat those like an empty transcript, without deleting the audit cues.
+            if all(
+                isinstance(item, dict) and not str(item.get("text") or "").strip()
+                for item in items
+            ):
                 if logo_requested or portrait_requested:
                     detail = "processed output; no subtitles to burn"
                     return self.write(_start_processed_only_output(detail))
