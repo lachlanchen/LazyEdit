@@ -11449,10 +11449,11 @@ class VideoTranslationHandler(CorsMixin, tornado.web.RequestHandler):
         item = items[index]
         text_key = _resolve_translation_text_key(lang, item)
         item[text_key] = str(text_raw)
-        if text_key == "ja":
-            item.pop("tokens", None)
-            item.pop("furigana_pairs", None)
-            item.pop("ruby", None)
+        # Render annotations describe the previous text, in every language.
+        # Let the normal renderer derive fresh tokens/readings for this edit.
+        item.pop("tokens", None)
+        item.pop("furigana_pairs", None)
+        item.pop("ruby", None)
         _write_subtitle_payload(output_json_path, payload, items, container_key)
         if output_srt_path:
             _write_srt_from_items(items, output_srt_path, text_key=text_key)

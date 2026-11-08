@@ -4,6 +4,7 @@ import hashlib
 import traceback
 from datetime import datetime
 from openai import OpenAI
+from jsonschema import validators
 
 
 class JSONValidationError(Exception):
@@ -168,12 +169,27 @@ class OpenAIRequestJSONBase:
             schema_name=schema_name,
             filename=filename,
         )
+        validator = validators.validator_for(json_schema)(json_schema)
+
+        def validate_response(value):
+            error = next(validator.iter_errors(value), None)
+            if error is not None:
+                # Do not log subtitle/private content embedded in validation errors.
+                path = "/".join(str(part) for part in error.absolute_path) or "root"
+                raise JSONValidationError(
+                    f"Response schema mismatch at {path} ({error.validator})"
+                )
 
         if self.use_cache:
             cached_response = self.load_from_cache(prompt, filename=cache_filename)
             if cached_response:
-                print("OpenAI cache found. ")
-                return cached_response
+                try:
+                    validate_response(cached_response)
+                except JSONValidationError as exc:
+                    print(f"Ignoring invalid cached response: {exc}")
+                else:
+                    print("OpenAI cache found. ")
+                    return cached_response
 
         while retries < self.max_retries:
             try:
@@ -229,6 +245,7 @@ class OpenAIRequestJSONBase:
 
                 # Parse the structured response
                 parsed_response = json.loads(message.content)
+                validate_response(parsed_response)
                 
                 # Save to cache
                 if self.use_cache:

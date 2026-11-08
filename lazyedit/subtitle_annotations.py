@@ -140,7 +140,8 @@ def validate_annotations(items, sources, language, same_language_result=None):
                 token["reading"] = ""
             # English display casing can differ from a tokenizer's lowercase
             # form. Exact surface coverage is already checked above.
-            if language == "en" and word != surface and word.casefold() == surface.casefold():
+            if (language == "en" and word != surface
+                    and word.strip().casefold() == surface.strip().casefold()):
                 word = token["word"] = surface
                 token["reading"] = ""
             reading = token.get("reading", "")

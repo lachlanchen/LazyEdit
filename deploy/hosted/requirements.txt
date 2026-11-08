@@ -4,6 +4,7 @@ psycopg2-binary>=2.9,<3
 openai>=1.8,<2
 httpx<0.28
 json5
+jsonschema>=4.21,<5
 requests
 requests-toolbelt
 numpy<2

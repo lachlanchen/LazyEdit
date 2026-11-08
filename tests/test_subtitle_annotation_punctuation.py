@@ -35,3 +35,16 @@ def test_missing_punctuation_surface_still_fails():
     ])
     with pytest.raises(ValueError, match="complete subtitle"):
         validate_annotations([item], [source], "en")
+
+
+def test_english_display_preserves_attached_spaces_without_changing_words():
+    source = {"start": "00:00:01,000", "end": "00:00:02,000"}
+    item = dict(source, en="Oh my god", tokens=[
+        dict(surface=s, word=w, reading="", type="other")
+        for s, w in [("Oh", "oh"), (" my", "my"), (" god", "god")]
+    ])
+    validate_annotations([item], [source], "en")
+    assert "".join(t["word"] for t in item["tokens"]) == item["en"]
+    item["tokens"][1]["word"] = "your"
+    with pytest.raises(ValueError, match="Invalid Han restoration"):
+        validate_annotations([item], [source], "en")
