@@ -54,6 +54,7 @@ def _resolve_autocut_gpu_id() -> int:
 
 from lazyedit.openai_version_check import OpenAI
 from lazyedit.openai_request_json import OpenAIRequestJSONBase
+from lazyedit.publish_dispatch import find_uncertain_dispatch_receipt
 from config import UPLOAD_FOLDER, PORT, AUTOPUBLISH_URL, AUTOPUBLISH_TIMEOUT
 
 
@@ -6303,10 +6304,13 @@ def _merge_publish_queue_jobs(
         local_status = str(job.get("status") or "").lower()
         if remote_job_id:
             matched_remote = remote_by_id.get(remote_job_id)
+        if not matched_remote:
+            matched_remote = find_uncertain_dispatch_receipt(job, remote_jobs)
         if (
             not matched_remote
             and not remote_job_id
             and local_status in {"queued", "running"}
+            and job.get("remote_status") != "dispatch_unknown"
             and job.get("filename")
         ):
             matched_remote = remote_by_filename.get(str(job.get("filename")))
@@ -6317,6 +6321,17 @@ def _merge_publish_queue_jobs(
                 used_remote_keys.add(remote_key)
             merged_job["remote_job_id"] = matched_remote.get("remote_job_id") or merged_job.get("remote_job_id")
             merged_job["remote_status"] = matched_remote.get("remote_status")
+            if not remote_job_id and job.get("source") == "local":
+                ldb.update_publish_job(
+                    int(job["id"]),
+                    remote_job_id=matched_remote.get("remote_job_id"),
+                    status=matched_remote.get("status"),
+                    remote_status=matched_remote.get("remote_status"),
+                    error=matched_remote.get("error"),
+                    detail="AutoPublish receipt reconciled",
+                )
+                merged_job["error"] = matched_remote.get("error")
+                merged_job["detail"] = "AutoPublish receipt reconciled"
             if matched_remote.get("platforms"):
                 merged_job["platforms"] = matched_remote.get("platforms")
             if matched_remote.get("updated_at"):
@@ -6549,7 +6564,17 @@ def _process_publish_job(job_row: tuple) -> None:
         remote_filename=zip_filename,
     )
 
-    autopublish_url, response, response_payload = _post_publish_zip(zip_path, platform_flags, test_mode)
+    try:
+        autopublish_url, response, response_payload = _post_publish_zip(zip_path, platform_flags, test_mode)
+    except requests.RequestException as exc:
+        # The server may have accepted the ZIP before its response was lost.
+        # Keep this intent; queue polling reconciles it without reposting.
+        ldb.update_publish_job(
+            job_id, status="running", remote_status="dispatch_unknown",
+            detail="Awaiting AutoPublish receipt; do not resubmit",
+            error=str(exc),
+        )
+        return
     if not autopublish_url or response is None:
         raise RuntimeError("autopublish service not reachable")
     if not response.ok:

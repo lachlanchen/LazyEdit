@@ -30,3 +30,19 @@ old tokens/ruby fields for the edited cue, preserve its timestamps and other
 cues, and let the renderer derive fresh pronunciation/tokens from the edited
 text. Validate this through the normal translation endpoint and a final render;
 do not rewrite generated JSON files manually.
+
+## Lost dispatch acknowledgment
+
+The Pi accepted the verified package, but the owner's HTTP request timed out
+while the publisher initialized browser sessions. The native job continued; the
+local job had incorrectly been marked failed. Never resend solely because the
+HTTP response was lost.
+
+Dispatch transport exceptions now preserve a running `dispatch_unknown` intent.
+Queue reconciliation adopts only one receipt with the same filename/platforms,
+created during this local attempt or within five minutes of its last observation.
+Older posts and ambiguous candidates are not adopted. The remote job ID is saved
+immediately, including while it is still running. Legacy read-timeout failures
+can be reconciled under the same checks. No retry or second upload is performed.
+This is bounded recovery for the existing single-owner queue, not a replacement
+for a future end-to-end immutable dispatch-token protocol.
