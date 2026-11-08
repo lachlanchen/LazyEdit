@@ -34,7 +34,9 @@ do not rewrite generated JSON files manually.
 ## Lost dispatch acknowledgment
 
 The Pi accepted the verified package, but the owner's HTTP request timed out
-while the publisher initialized browser sessions. The native job continued; the
+during large-package acceptance, before the queue acknowledgment arrived. The
+Pi acceptance path performs synchronous archive storage/validation; queue timestamps
+place the delay before queue insertion. The native job continued; the
 local job had incorrectly been marked failed. Never resend solely because the
 HTTP response was lost.
 
@@ -46,3 +48,19 @@ immediately, including while it is still running. Legacy read-timeout failures
 can be reconciled under the same checks. No retry or second upload is performed.
 This is bounded recovery for the existing single-owner queue, not a replacement
 for a future end-to-end immutable dispatch-token protocol.
+
+## Verified completion
+
+The reviewed 45-second portrait master was published to Shipinhao, Instagram,
+YouTube and Douyin. The first remote run completed the first three platforms but
+failed Douyin media transfer before final submission. The Douyin-only recovery
+reused the identical archive and used the existing optional relay for exact media
+hosts observed in this upload. Native management subsequently confirmed the
+correct title, 00:45 duration, current publication time, and `已发布` status.
+
+Douyin's listing took several minutes to show the accepted post. The existing
+bounded verification loop refreshed the stale listing and confirmed it; no second
+final submission was made. A submit acknowledgment alone was never reported as
+publication. The original browser command/profile was restored after the queue
+became idle; the relay, SSH forwards and observer were stopped, and their loopback
+listeners were verified closed. Other platform posts were not repeated.
