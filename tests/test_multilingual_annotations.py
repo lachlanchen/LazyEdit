@@ -38,6 +38,27 @@ def test_corrected_nonlatin_cue_with_stale_english_tag_is_translated(tmp_path, t
     assert source['lang'] == 'en'
 
 
+@pytest.mark.parametrize('text,readings', [
+    ('乾杯', ['gān', 'bēi']), ('乾燥', ['gān', 'zào']),
+    ('乾隆', ['qián', 'lóng']), ('乾坤', ['qián', 'kūn']),
+])
+def test_traditional_pinyin_uses_phrase_reading_without_changing_text(text, readings):
+    _load_burner_module()
+    import subtitles_burner.burner as burner
+    tokens = burner._tokens_with_pinyin(text)
+    assert ''.join(t.text for t in tokens) == text
+    assert [t.ruby for t in tokens] == readings
+
+
+def test_pinyin_lookup_never_launches_optional_opencc_cli(monkeypatch):
+    import lazyedit.chinese_simplify as simplify
+    monkeypatch.setattr(simplify, '_OPENCC', None)
+    cli = Mock(side_effect=AssertionError('No subprocess in reading lookup'))
+    monkeypatch.setattr(simplify, '_convert_with_cli', cli)
+    assert simplify.convert_traditional_to_simplified('乾杯', allow_cli=False) == '乾杯'
+    cli.assert_not_called()
+
+
 @pytest.mark.parametrize('text', ['Thank you', 'This is 莲香西域', '99.99%', '🧡'])
 def test_actual_english_mixed_speech_and_nonletters_still_lock(text):
     translator = SubtitlesTranslator.__new__(SubtitlesTranslator)

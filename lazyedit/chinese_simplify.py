@@ -42,12 +42,14 @@ def _convert_with_cli(text: str) -> str | None:
         return None
 
 
-def convert_traditional_to_simplified(text: str) -> str:
+def convert_traditional_to_simplified(text: str, *, allow_cli: bool = True) -> str:
     if not text:
         return text
     converted = _convert_with_opencc(text)
     if converted is not None:
         return converted
+    if not allow_cli:
+        return text
     converted = _convert_with_cli(text)
     if converted is not None:
         return converted

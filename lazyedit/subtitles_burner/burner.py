@@ -16,6 +16,7 @@ from lazyedit.subtitle_tokens import (
     is_speaker_only_tokens,
     normalize_tokens_payload,
 )
+from lazyedit.chinese_simplify import convert_traditional_to_simplified
 from lazyedit.subtitles_burner.rtl import measure_rtl, render_rtl, rtl_line
 
 
@@ -354,7 +355,13 @@ def _load_burner_module():
                 if not pinyin_available or not callable(pypinyin_fn):
                     return [None] * len(text)
                 try:
-                    result = pypinyin_fn(text, style=pinyin_style, errors=lambda value: [value])
+                    # Phrase dictionaries primarily use simplified spelling.
+                    # Normalize only the reading lookup, retaining the displayed
+                    # traditional characters and their one-to-one alignment.
+                    lookup = convert_traditional_to_simplified(text, allow_cli=False)
+                    if len(lookup) != len(text):
+                        lookup = text
+                    result = pypinyin_fn(lookup, style=pinyin_style, errors=lambda value: [value])
                 except Exception:
                     return [_pinyin_for_char(char) for char in text]
                 readings: list[str | None] = []

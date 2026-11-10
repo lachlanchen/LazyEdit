@@ -30,3 +30,18 @@ For an affected failed preparation, retry the normal translate/render/metadata
 steps using the reviewed polished transcript. Do not retranscribe, change cue
 timings, disable annotation validation or dispatch another social publication
 to repair a preparation failure.
+
+## Traditional Chinese pronunciation lookup
+
+Visual QA also found the generic pinyin dictionary reading traditional `乾杯`
+as `qián bēi`. Reading lookup now uses the in-process OpenCC simplified phrase
+when it preserves character count. Only the lookup changes: displayed text and
+token alignment remain traditional. This selects `gān bēi` for `乾杯` and
+`gān zào` for `乾燥`, while preserving `qián` in `乾隆` and `乾坤`.
+
+The renderer disables the optional CLI conversion fallback, so missing OpenCC
+cannot create a subprocess for each phrase. It retains the original lookup in
+that case or when conversion changes character count. Five additional tests
+cover phrase readings, unchanged display text and the no-subprocess boundary;
+the same focused suite now passes 45 tests. Rerender through the normal burn
+endpoint before dispatching the corrected output.
