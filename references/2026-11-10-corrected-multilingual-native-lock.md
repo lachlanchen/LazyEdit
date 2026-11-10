@@ -45,3 +45,23 @@ that case or when conversion changes character count. Five additional tests
 cover phrase readings, unchanged display text and the no-subprocess boundary;
 the same focused suite now passes 45 tests. Rerender through the normal burn
 endpoint before dispatching the corrected output.
+
+## Native publication findings
+
+Publication qualification exposed separate AutoPublish issues. Their fixes live
+in the submodule and apply to normal queued publishing:
+
+- Shipinhao disabled classes, single-click dispatch, native submission
+  acknowledgment, iframe management receipts and no whole-process retry after
+  an uncertain submission: see
+  [Shipinhao recovery](../AutoPublish/references/shipinhao-dependencies-and-published-retention.md).
+- YouTube can hide an already completed success receipt. A matching current
+  video ID, native completed receipt and public oEmbed title confirm completion
+  without another upload: see
+  [YouTube receipt reconciliation](../AutoPublish/references/youtube-hidden-publication-receipt.md).
+
+Activate publisher changes at an idle queue boundary and preserve the explicit
+queue-journal location. The Pi uses the protected repo `.env` for that location;
+checking only HTTP health can miss accidentally opening an empty default
+journal. Verify that historical job IDs and reconciled results survive startup.
+Never turn a lost acknowledgment into another public post.
