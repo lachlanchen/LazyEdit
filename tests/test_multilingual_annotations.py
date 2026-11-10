@@ -24,6 +24,20 @@ def test_corrected_chinese_cue_with_stale_english_tag_is_translated(tmp_path):
     assert source['lang'] == 'en'  # Preserve the original recognition evidence.
 
 
+@pytest.mark.parametrize('text', ['건배!', 'かんぱい！', 'Спасибо!', 'صحتك!', '乾杯！건배!'])
+def test_corrected_nonlatin_cue_with_stale_english_tag_is_translated(tmp_path, text):
+    translator = SubtitlesTranslator.__new__(SubtitlesTranslator)
+    source = {'start': '00:00:00,000', 'end': '00:00:02,000', 'lang': 'en', 'text': text}
+    item = dict(start=source['start'], end=source['end'], en='Cheers!',
+                tokens=[dict(surface='Cheers!', word='Cheers!', reading='', type='interjection')])
+    translator.get_filename = Mock(return_value=str(tmp_path / 'response.json'))
+    translator.send_request_with_json_schema = Mock(return_value={'items': [item]})
+    result = translator.translate_and_merge_subtitles_en_single_pass([source], 0)
+    assert result['plain'][0]['en'] == 'Cheers!'
+    assert 'Annotate the original text exactly' not in translator.send_request_with_json_schema.call_args.kwargs['prompt']
+    assert source['lang'] == 'en'
+
+
 @pytest.mark.parametrize('text', ['Thank you', 'This is 莲香西域', '99.99%', '🧡'])
 def test_actual_english_mixed_speech_and_nonletters_still_lock(text):
     translator = SubtitlesTranslator.__new__(SubtitlesTranslator)

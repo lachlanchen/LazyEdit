@@ -207,11 +207,12 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         source_lang = self._subtitle_source_language(item)
         target = self._normalize_language_code(target_lang)
         # Polishing replaces text but preserves Whisper's original language tag.
-        # A Han-only correction of a misdetected Latin-language cue is not native
-        # text to lock verbatim. Mixed speech, names and numeric cues stay locked.
+        # A non-Latin correction of a misdetected Latin-language cue is not
+        # native text to lock verbatim. Mixed speech, names and numeric cues
+        # stay locked; script mismatch does not guess the actual language.
         text = self._extract_subtitle_text(item)
         if source_lang in {"en", "fr", "es", "de", "vi", "pt", "it", "nl"}:
-            if re.search(r"[\u3400-\u4dbf\u4e00-\u9fff]", text) and not any(
+            if any(char.isalpha() for char in text) and not any(
                 "LATIN" in unicodedata.name(char, "") for char in text
             ):
                 return False
