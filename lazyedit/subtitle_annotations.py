@@ -94,12 +94,21 @@ def validate_annotations(items, sources, language, same_language_result=None):
         if any(not t["surface"] for t in tokens):
             raise ValueError("Empty annotation surface")
         if "".join(t["surface"] for t in tokens) != text:
-            # Restore only exact whitespace gaps from the authoritative clean text.
+            # Reconcile whitespace-only tokens against the authoritative clean text.
             # Missing letters, punctuation, reordered tokens and extra text still fail.
             restored = []
             offset = 0
             for token in tokens:
                 surface = token["surface"]
+                if surface.isspace():
+                    end = offset
+                    while end < len(text) and text[end].isspace():
+                        end += 1
+                    if end > offset:
+                        gap = text[offset:end]
+                        restored.append(dict(surface=gap, word=gap, reading="", type="other"))
+                        offset = end
+                    continue
                 if not text.startswith(surface, offset):
                     end = offset
                     while end < len(text) and text[end].isspace():
