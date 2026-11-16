@@ -2,7 +2,7 @@
 
 Subtitle correction and metadata generation used the supplied scene context, but translation only received adjacent subtitle lines. That could make a salon conversation's ボリューム become sound volume, or セット become device settings. Short source-language lines can also leave speaker references ambiguous.
 
-The normal process pipeline now passes its existing notes (or correction notes when no metadata notes are present) to translation. The translator uses this optional background only to disambiguate terminology and references. It must translate the supplied dialogue, without inserting background facts or changing native source text during annotation.
+The normal process pipeline now passes its current notes (or explicitly supplied/enabled correction notes when no metadata notes are present) to translation. It does not silently reuse an older saved correction prompt when correction was not requested. The translator uses this optional background only to disambiguate terminology and references. It must translate the supplied dialogue, without inserting background facts or changing native source text during annotation.
 
 No new publisher, saved preference or mandatory configuration is added. Existing CLI `--prompt-file` processing carries the context automatically. Direct translation calls may supply `translationContext` or the existing `notes` field:
 
@@ -22,4 +22,4 @@ Validation covers the actual translation handler with a stubbed provider, contex
 python -m pytest tests/test_translation_background_context.py tests/test_translation_editor_annotations.py tests/test_publish_dispatch.py tests/test_remote_queued_publish_receipt.py tests/test_lazyedit_publish_cli.py -q
 ```
 
-All 44 tests pass. Keep active preparations and hosted acceptance locks intact when activating the backend change. Regenerate affected translations and the unpublished subtitle render through the normal pipeline; do not patch generated translation JSON or republish already completed videos.
+All 48 tests pass. Keep active preparations and hosted acceptance locks intact when activating the backend change. Regenerate affected translations and the unpublished subtitle render through the normal pipeline; do not patch generated translation JSON or republish already completed videos.

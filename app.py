@@ -12273,7 +12273,10 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                                 "use_cache": True,
                                 "usePolishedSubtitles": use_polished_subtitles,
                                 "publicationSessionId": publication_session_id,
-                                "translationContext": notes or polish_notes,
+                                "translationContext": notes or (
+                                    polish_notes if auto_correct_subtitles else
+                                    data.get("polish_notes") or data.get("subtitle_notes") or ""
+                                ),
                             },
                             retry_transient_http=True,
                         )

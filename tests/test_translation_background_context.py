@@ -59,6 +59,26 @@ def test_background_is_trimmed_bounded_and_json_quoted():
     assert 'DO_NOT_INCLUDE_TAIL' not in prompt
 
 
+@pytest.mark.parametrize('notes,polish,enabled,options,expected', [
+    ('current salon', 'older story', False, {}, 'current salon'),
+    ('', 'older saved story', False, {}, ''),
+    ('', 'current correction', True, {}, 'current correction'),
+    ('', 'older saved story', False, {'polish_notes': 'current supplied note'}, 'current supplied note'),
+])
+def test_pipeline_uses_current_context_not_unrequested_saved_polish_notes(notes, polish, enabled, options, expected):
+    tree = ast.parse(Path('app.py').read_text())
+    payload = next(node for node in ast.walk(tree) if isinstance(node, ast.Dict)
+                   and any(isinstance(k, ast.Constant) and k.value == 'translationContext'
+                           for k in node.keys))
+    expression = next(value for key, value in zip(payload.keys, payload.values)
+                      if isinstance(key, ast.Constant) and key.value == 'translationContext')
+    result = eval(compile(ast.Expression(expression), 'app.py', 'eval'), {
+        'notes': notes, 'polish_notes': polish,
+        'auto_correct_subtitles': enabled, 'data': options,
+    })
+    assert result == expected
+
+
 def translate_handler(tmp_path):
     source = Path('app.py')
     handler = next(n for n in ast.parse(source.read_text()).body
