@@ -927,7 +927,26 @@ def wait_for_publish(
     last_remote = ""
     next_remote_log = time.monotonic() + max(30, remote_log_seconds)
     while time.monotonic() < deadline:
-        payload = client.request_json("GET", "/api/autopublish/queue", timeout=60)
+        try:
+            payload = client.request_json("GET", "/api/autopublish/queue", timeout=60)
+        except (OSError, http.client.HTTPException, json.JSONDecodeError, ApiError) as exc:
+            if isinstance(exc, ApiError) and exc.status not in {
+                None, 408, 429, 500, 502, 503, 504,
+            }:
+                raise
+            # Dispatch already happened. A lost status response must neither
+            # abandon monitoring nor turn into a second publication request.
+            message = (
+                f"Publish job {job_id}: status temporarily unavailable ({exc}); "
+                "continuing to monitor the existing job without resubmitting"
+            )
+            if message != last:
+                print_event(message, quiet=client.quiet)
+                last = message
+            remaining = deadline - time.monotonic()
+            if remaining > 0:
+                time.sleep(min(interval, remaining))
+            continue
         jobs = payload.get("jobs") if isinstance(payload, dict) else []
         match = None
         if isinstance(jobs, list):

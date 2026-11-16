@@ -10,6 +10,60 @@ from scripts.lazyedit_publish import (
 )
 
 
+def test_publish_monitor_recovers_timeout_without_redispatch(monkeypatch):
+    from unittest.mock import Mock
+    import scripts.lazyedit_publish as cli
+
+    monkeypatch.setattr(cli.time, "sleep", lambda _: None)
+    done = {"id": 544, "status": "done"}
+    client = Mock(quiet=True)
+    client.request_json.side_effect = [TimeoutError("timed out"), {"jobs": [done]}]
+
+    assert cli.wait_for_publish(client, 544, timeout=10, interval=1) == done
+    assert len(client.request_json.call_args_list) == 2
+    assert all(call.args == ("GET", "/api/autopublish/queue")
+               for call in client.request_json.call_args_list)
+
+
+def test_publish_monitor_recovers_temporary_server_error(monkeypatch):
+    from unittest.mock import Mock
+    import scripts.lazyedit_publish as cli
+
+    monkeypatch.setattr(cli.time, "sleep", lambda _: None)
+    done = {"id": "544", "status": "done"}
+    client = Mock(quiet=True)
+    client.request_json.side_effect = [cli.ApiError("gateway unavailable", 503),
+                                       {"jobs": [done]}]
+    assert cli.wait_for_publish(client, 544, timeout=10, interval=1) == done
+
+
+def test_publish_monitor_does_not_hide_authentication_failure():
+    from unittest.mock import Mock
+    import pytest
+    import scripts.lazyedit_publish as cli
+
+    client = Mock(quiet=True)
+    client.request_json.side_effect = cli.ApiError("forbidden", 403)
+    with pytest.raises(cli.ApiError, match="forbidden"):
+        cli.wait_for_publish(client, 544, timeout=10, interval=1)
+    assert client.request_json.call_count == 1
+
+
+def test_publish_monitor_outage_respects_existing_deadline(monkeypatch):
+    from unittest.mock import Mock
+    import pytest
+    import scripts.lazyedit_publish as cli
+
+    ticks = iter([0, 0, 0, 2, 2])
+    monkeypatch.setattr(cli.time, "monotonic", lambda: next(ticks))
+    monkeypatch.setattr(cli.time, "sleep", lambda _: None)
+    client = Mock(quiet=True)
+    client.request_json.side_effect = TimeoutError("timed out")
+    with pytest.raises(TimeoutError, match="publish job 544 did not finish within 1"):
+        cli.wait_for_publish(client, 544, timeout=1, interval=1)
+    assert client.request_json.call_count == 1
+
+
 def test_default_publish_steps_do_not_require_optional_frame_captioning():
     assert "caption" not in default_steps(True, logo_enabled=True, portrait_enabled=True)
     assert "caption" not in default_steps(False, logo_enabled=True)
