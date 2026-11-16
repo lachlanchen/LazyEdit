@@ -23,3 +23,5 @@ python -m pytest tests/test_translation_background_context.py tests/test_transla
 ```
 
 All 48 tests pass. Keep active preparations and hosted acceptance locks intact when activating the backend change. Regenerate affected translations and the unpublished subtitle render through the normal pipeline; do not patch generated translation JSON or republish already completed videos.
+
+A subsequent model response kept `level,` in its verified English surface but returned `level` as its display word. The shared annotation validator now restores verified boundary punctuation for that token, just as it already restores display casing and spacing. Changed lexical content, missing surface punctuation, internal apostrophes and symbols remain errors. This safely reuses the validated cached translation without repeating provider requests or changing Korean/Vietnamese restoration rules. Six regressions cover accepted punctuation and rejected lexical changes.

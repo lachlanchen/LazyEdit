@@ -9,6 +9,15 @@ GRAMMAR_TYPES = ["noun", "pronoun", "verb", "adjective", "adverb", "particle",
 HAN = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]+")
 
 
+def _without_boundary_punctuation(value):
+    value = value.strip()
+    while value and unicodedata.category(value[0]).startswith("P"):
+        value = value[1:]
+    while value and unicodedata.category(value[-1]).startswith("P"):
+        value = value[:-1]
+    return value
+
+
 def annotation_contract(schema, language):
     schema = deepcopy(schema)
     row = schema["properties"]["items"]["items"]
@@ -147,10 +156,15 @@ def validate_annotations(items, sources, language, same_language_result=None):
             if language == "fr" and word != surface and not HAN.search(word):
                 word = token["word"] = surface
                 token["reading"] = ""
-            # English display casing can differ from a tokenizer's lowercase
-            # form. Exact surface coverage is already checked above.
+            # English display words can omit boundary punctuation or casing.
+            # Exact surface coverage is already checked; never alter letters,
+            # internal apostrophes, or mathematical symbols.
             if (language == "en" and word != surface
-                    and word.strip().casefold() == surface.strip().casefold()):
+                    and word.strip()
+                    and word.strip().casefold() in {
+                        surface.strip().casefold(),
+                        _without_boundary_punctuation(surface).casefold(),
+                    }):
                 word = token["word"] = surface
                 token["reading"] = ""
             reading = token.get("reading", "")

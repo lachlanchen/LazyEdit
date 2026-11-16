@@ -48,3 +48,23 @@ def test_english_display_preserves_attached_spaces_without_changing_words():
     item["tokens"][1]["word"] = "your"
     with pytest.raises(ValueError, match="Invalid Han restoration"):
         validate_annotations([item], [source], "en")
+
+
+@pytest.mark.parametrize("surface,word", [("level,", "level"), ("‘Style!’", "style"), (" hair…", "hair")])
+def test_english_display_restores_verified_boundary_punctuation(surface, word):
+    source = {"start": "00:00:01,000", "end": "00:00:02,000"}
+    item = dict(source, en=surface, tokens=[
+        dict(surface=surface, word=word, reading="", type="noun"),
+    ])
+    validate_annotations([item], [source], "en")
+    assert item["tokens"][0]["word"] == surface
+
+
+@pytest.mark.parametrize("surface,word", [("level,", "lever"), ("can't", "cant"), ("+hair", "hair")])
+def test_english_boundary_repair_does_not_allow_changed_lexical_content(surface, word):
+    source = {"start": "00:00:01,000", "end": "00:00:02,000"}
+    item = dict(source, en=surface, tokens=[
+        dict(surface=surface, word=word, reading="", type="noun"),
+    ])
+    with pytest.raises(ValueError, match="Invalid Han restoration"):
+        validate_annotations([item], [source], "en")
