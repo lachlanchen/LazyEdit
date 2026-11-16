@@ -6321,17 +6321,27 @@ def _merge_publish_queue_jobs(
                 used_remote_keys.add(remote_key)
             merged_job["remote_job_id"] = matched_remote.get("remote_job_id") or merged_job.get("remote_job_id")
             merged_job["remote_status"] = matched_remote.get("remote_status")
-            if not remote_job_id and job.get("source") == "local":
+            receipt_status = matched_remote.get("status")
+            local_receipt_status = (
+                "running" if receipt_status in {"queued", "running"} else receipt_status
+            )
+            if job.get("source") == "local" and (
+                not remote_job_id
+                or (receipt_status in {"queued", "running"} and local_status != "running")
+            ):
                 ldb.update_publish_job(
                     int(job["id"]),
                     remote_job_id=matched_remote.get("remote_job_id"),
-                    status=matched_remote.get("status"),
+                    status=local_receipt_status,
                     remote_status=matched_remote.get("remote_status"),
                     error=matched_remote.get("error"),
                     detail="AutoPublish receipt reconciled",
                 )
+                merged_job["internal_status"] = local_receipt_status
                 merged_job["error"] = matched_remote.get("error")
                 merged_job["detail"] = "AutoPublish receipt reconciled"
+            if receipt_status in {"queued", "running"}:
+                merged_job["error"] = matched_remote.get("error")
             if matched_remote.get("platforms"):
                 merged_job["platforms"] = matched_remote.get("platforms")
             if matched_remote.get("updated_at"):

@@ -1315,6 +1315,8 @@ def claim_next_publish_job() -> tuple | None:
                 SELECT id
                 FROM publish_jobs
                 WHERE status = 'queued'
+                  AND COALESCE(remote_job_id, '') = ''
+                  AND COALESCE(remote_status, '') = ''
                 ORDER BY created_at ASC, id ASC
                 LIMIT 1
                 FOR UPDATE SKIP LOCKED
