@@ -32,6 +32,8 @@ import numpy as np
 
 import unicodedata
 
+MAX_TRANSLATION_CONTEXT_CHARS = 8000
+
 
 class SubtitlesTranslator(OpenAIRequestJSONBase):
     def __init__(self, 
@@ -45,7 +47,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         video_height=1920,
         max_retries=3,
         use_cache=False,
-        *args, **kwargs
+        *args, translation_context="", **kwargs
     ):
         kwargs["use_cache"] = use_cache
         kwargs["max_retries"] = max_retries
@@ -68,6 +70,7 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         self.input_sub_path = input_sub_path
         self.output_json_path = output_json_path
         self.output_sub_path = output_sub_path
+        self.translation_context = translation_context
 
         self.base_filename = os.path.splitext(os.path.basename(self.input_json_path))[0]
         self.datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -270,6 +273,15 @@ class SubtitlesTranslator(OpenAIRequestJSONBase):
         prompt = prompt.replace("{{CURRENT_LINE}}", self._format_context_value(current_line))
         prompt = prompt.replace("{{NEXT_LINE}}", self._format_context_value(next_line))
         prompt = prompt.replace("{{PREV_TRANSLATION}}", "")
+        background = str(getattr(self, "translation_context", "") or "").strip()
+        if background:
+            prompt += (
+                "\n\nBackground for interpreting terminology and speaker references only. "
+                "This is not spoken dialogue: do not add its facts to the subtitles. "
+                "Translate only the supplied subtitle text, and preserve native source "
+                "text when annotating it.\nBackground: "
+                + json.dumps(background[:MAX_TRANSLATION_CONTEXT_CHARS], ensure_ascii=False)
+            )
         return prompt
 
     @staticmethod

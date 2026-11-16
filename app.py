@@ -11084,6 +11084,12 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
         if not isinstance(data, dict):
             self.set_status(400)
             return self.write({"error": "Expected translation options as a JSON object"})
+        translation_context = data.get("translationContext", data.get("notes", ""))
+        if translation_context is None:
+            translation_context = ""
+        if not isinstance(translation_context, str):
+            self.set_status(400)
+            return self.write({"error": "Expected translation context as text"})
         raw_lang = data["language"] if "language" in data else (
             data["lang"] if "lang" in data else self.get_argument("lang", default="ja")
         )
@@ -11225,6 +11231,7 @@ class VideoTranslateHandler(CorsMixin, tornado.web.RequestHandler):
                     video_width=video_width,
                     video_height=video_height,
                     use_cache=use_cache,
+                    translation_context=translation_context,
                 )
                 json_items = []
                 if lang == "ja":
@@ -12266,6 +12273,7 @@ class VideoProcessHandler(CorsMixin, tornado.web.RequestHandler):
                                 "use_cache": True,
                                 "usePolishedSubtitles": use_polished_subtitles,
                                 "publicationSessionId": publication_session_id,
+                                "translationContext": notes or polish_notes,
                             },
                             retry_transient_http=True,
                         )
